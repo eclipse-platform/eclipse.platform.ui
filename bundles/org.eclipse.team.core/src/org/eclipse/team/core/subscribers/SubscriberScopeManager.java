@@ -15,13 +15,11 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory;
-import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 
 /**
- * A {@link IResourceMappingScopeManager} that uses a {@link Subscriber} to provide 
+ * A {@link ISynchronizationScopeManager} that uses a {@link Subscriber} to provide 
  * a {@link RemoteResourceMappingContext} and to notify participants when the
  * remote state of resources change.
  * <p>
@@ -32,7 +30,7 @@ import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
  * </p>
  * @since 3.2
  */
-public class SubscriberScopeManager extends ResourceMappingScopeManager implements ISubscriberChangeListener {
+public class SubscriberScopeManager extends SynchronizationScopeManager implements ISubscriberChangeListener {
 
 	private final Subscriber subscriber;
 	private Map participants = new HashMap();
@@ -72,7 +70,7 @@ public class SubscriberScopeManager extends ResourceMappingScopeManager implemen
 	 */
 	public void dispose() {
 		for (Iterator iter = participants.values().iterator(); iter.hasNext();) {
-			IResourceMappingScopeParticipant p = (IResourceMappingScopeParticipant) iter.next();
+			ISynchronizationScopeParticipant p = (ISynchronizationScopeParticipant) iter.next();
 			p.dispose();
 		}
 		super.dispose();
@@ -118,7 +116,7 @@ public class SubscriberScopeManager extends ResourceMappingScopeManager implemen
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
 			if (!participants.containsKey(provider)) {
-				IResourceMappingScopeParticipant p = createParticipant(provider);
+				ISynchronizationScopeParticipant p = createParticipant(provider);
 				if (p != null) {
 					participants.put(provider, p);
 				}
@@ -129,10 +127,10 @@ public class SubscriberScopeManager extends ResourceMappingScopeManager implemen
 	/*
 	 * Obtain a participant through the factory which is obtained using IAdaptable
 	 */
-	private IResourceMappingScopeParticipant createParticipant(ModelProvider provider) {
-		Object factoryObject = provider.getAdapter(IResourceMappingScopeParticipantFactory.class);
-		if (factoryObject instanceof IResourceMappingScopeParticipantFactory) {
-			IResourceMappingScopeParticipantFactory factory = (IResourceMappingScopeParticipantFactory) factoryObject;
+	private ISynchronizationScopeParticipant createParticipant(ModelProvider provider) {
+		Object factoryObject = provider.getAdapter(ISynchronizationScopeParticipantFactory.class);
+		if (factoryObject instanceof ISynchronizationScopeParticipantFactory) {
+			ISynchronizationScopeParticipantFactory factory = (ISynchronizationScopeParticipantFactory) factoryObject;
 			return factory.createParticipant(provider, this);
 		}
 		return null;
@@ -158,9 +156,9 @@ public class SubscriberScopeManager extends ResourceMappingScopeManager implemen
 
 	private void fireChange(final IResource[] resources, final IProject[] projects) {
 		final Set result = new HashSet();
-		IResourceMappingScopeParticipant[] handlers = (IResourceMappingScopeParticipant[]) participants.values().toArray(new IResourceMappingScopeParticipant[participants.size()]);
+		ISynchronizationScopeParticipant[] handlers = (ISynchronizationScopeParticipant[]) participants.values().toArray(new ISynchronizationScopeParticipant[participants.size()]);
 		for (int i = 0; i < handlers.length; i++) {
-			final IResourceMappingScopeParticipant participant = handlers[i];
+			final ISynchronizationScopeParticipant participant = handlers[i];
 			Platform.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					ResourceMapping[] mappings = participant.handleContextChange(SubscriberScopeManager.this, resources, projects);

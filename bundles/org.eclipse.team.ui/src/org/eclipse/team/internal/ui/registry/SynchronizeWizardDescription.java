@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Descriptor for accessing and creating synchronize wizards
@@ -41,7 +40,7 @@ public class SynchronizeWizardDescription {
 	}
 	
 	public IWizard createWizard() throws CoreException {
-		Object obj = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
+		Object obj = RegistryReader.createExtension(configElement, ATT_CLASS);
 		return (IWizard) obj;
 	}
 	

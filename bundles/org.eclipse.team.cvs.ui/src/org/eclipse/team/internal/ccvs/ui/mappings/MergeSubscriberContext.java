@@ -24,13 +24,13 @@ import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 
 public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 
-	public static IMergeContext createContext(IResourceMappingScopeManager manager, Subscriber subscriber) {
+	public static IMergeContext createContext(ISynchronizationScopeManager manager, Subscriber subscriber) {
 		MergeSubscriberContext mergeContext = new MergeSubscriberContext(subscriber, manager);
 		mergeContext.initialize();
 		return mergeContext;
 	}
 	
-	public MergeSubscriberContext(Subscriber subscriber, IResourceMappingScopeManager manager) {
+	public MergeSubscriberContext(Subscriber subscriber, ISynchronizationScopeManager manager) {
 		super(subscriber, manager);
 	}
 

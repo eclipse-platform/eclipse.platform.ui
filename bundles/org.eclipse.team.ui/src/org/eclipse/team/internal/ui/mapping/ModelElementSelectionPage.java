@@ -20,8 +20,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshElementSelectionPage;
@@ -35,7 +35,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage {
 	
 	private INavigatorContentService service;
-	private IResourceMappingScopeManager manager;
+	private ISynchronizationScopeManager manager;
 
 	protected ModelElementSelectionPage(IResource[] roots) {
 		super("elementSelection"); //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 			IResource resource = roots[i];
 			result.add(Utils.getResourceMapping(resource));
 		}
-		manager = new ResourceMappingScopeManager((ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]), 
+		manager = new SynchronizationScopeManager((ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]), 
 						ResourceMappingContext.LOCAL_CONTEXT, true);
 		try {
 			// TODO

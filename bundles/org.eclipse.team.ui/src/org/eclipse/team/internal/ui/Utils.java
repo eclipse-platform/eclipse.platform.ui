@@ -39,7 +39,7 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -47,7 +47,7 @@ import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.ICompareAdapter;
+import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IContributorResourceAdapter2;
@@ -796,12 +796,12 @@ public class Utils {
         return null;
     }
 
-	public static ICompareAdapter getCompareAdapter(Object element) {
+	public static ISynchronizationCompareAdapter getCompareAdapter(Object element) {
 		ModelProvider provider = getModelProvider(element);
 		if (provider != null) {
-			Object o = provider.getAdapter(ICompareAdapter.class);
-			if (o instanceof ICompareAdapter) {
-				return (ICompareAdapter) o;
+			Object o = provider.getAdapter(ISynchronizationCompareAdapter.class);
+			if (o instanceof ISynchronizationCompareAdapter) {
+				return (ISynchronizationCompareAdapter) o;
 			}
 		}
 		return null;
@@ -868,11 +868,11 @@ public class Utils {
 
 	public static String getLabel(ResourceMapping mapping) {
 		ModelProvider provider = mapping.getModelProvider();
-		ICompareAdapter adapter = (ICompareAdapter)getAdapter(provider, ICompareAdapter.class);
+		ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)getAdapter(provider, ISynchronizationCompareAdapter.class);
 		return adapter.getFullPath(mapping.getModelObject()).toString();
 	}
 
-	public static String getScopeDescription(IResourceMappingScope scope) {
+	public static String getScopeDescription(ISynchronizationScope scope) {
 		ResourceMapping[] mappings = scope.getInputMappings();
 		StringBuffer  buffer = new StringBuffer();
 		int count = 0;

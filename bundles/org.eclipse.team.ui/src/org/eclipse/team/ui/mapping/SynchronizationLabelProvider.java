@@ -15,7 +15,7 @@ import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider;
 import org.eclipse.ui.IMemento;
@@ -35,11 +35,11 @@ import org.eclipse.ui.navigator.*;
  */
 public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLabelProvider implements ICommonLabelProvider, IFontProvider {
 
-	private IResourceMappingScope scope;
+	private ISynchronizationScope scope;
 	private ISynchronizationContext context;
 	private ITreeContentProvider contentProvider;
 	
-	private void init(IResourceMappingScope input, ISynchronizationContext context) {
+	private void init(ISynchronizationScope input, ISynchronizationContext context) {
 		this.scope = input;
 		this.context = context;
 	}
@@ -49,7 +49,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 */
 	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
 		contentProvider = aContentProvider;
-		init((IResourceMappingScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT));
+		init((ISynchronizationScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT));
 		ILabelProvider provider = getDelegateLabelProvider();
 		if (provider instanceof ICommonLabelProvider) {
 			if (aContentProvider instanceof SynchronizationContentProvider) {
@@ -80,7 +80,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 * no scope is available.
 	 * @return the resource mapping scope or <code>null</code>
 	 */
-	public IResourceMappingScope getScope() {
+	public ISynchronizationScope getScope() {
 		return scope;
 	}
 	

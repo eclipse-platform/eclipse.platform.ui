@@ -15,13 +15,13 @@ import java.util.Set;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.core.subscribers.AbstractSynchronizationScope;
 
 /**
  * Class that contains common resource mapping scope code.
  */
-public abstract class AbstractResourceMappingScope extends AbstractSynchronizationScope implements IResourceMappingScope {
+public abstract class AbstractResourceMappingScope extends AbstractSynchronizationScope implements ISynchronizationScope {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#getMapping(java.lang.Object)

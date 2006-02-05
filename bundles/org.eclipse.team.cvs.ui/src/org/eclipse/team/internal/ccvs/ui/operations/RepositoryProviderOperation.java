@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -46,7 +46,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	 */
 	public static boolean consultModelsWhenBuildingScope = true;
 	
-	private IResourceMappingScopeManager manager;
+	private ISynchronizationScopeManager manager;
 	private final ResourceMapping[] selectedMappings;
 	
     /**
@@ -213,9 +213,9 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
         }
 	}
 
-    public IResourceMappingScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
+    public ISynchronizationScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
     	if (manager == null) {
-    		manager = new ResourceMappingScopeManager(selectedMappings, getResourceMappingContext(), consultModelsWhenBuildingScope && consultModelsForMappings());
+    		manager = new SynchronizationScopeManager(selectedMappings, getResourceMappingContext(), consultModelsWhenBuildingScope && consultModelsForMappings());
     		BuildScopeOperation op = new BuildScopeOperation(getPart(), manager);
 			try {
 				op.run(monitor);
@@ -470,11 +470,11 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 		return selectedMappings;
 	}
 
-	public IResourceMappingScope getScope() {
+	public ISynchronizationScope getScope() {
 		return manager.getScope();
 	}
 
-	public IResourceMappingScopeManager getScopeManager() {
+	public ISynchronizationScopeManager getScopeManager() {
 		return manager;
 	}
 }

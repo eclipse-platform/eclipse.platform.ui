@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
-import org.eclipse.team.core.mapping.PropertyChangeEvent;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 
 /**
- * Concrete implementation of the {@link IResourceMappingScope}
+ * Concrete implementation of the {@link ISynchronizationScope}
  * interface for use by clients.
  * <p>
  * This class is not intended to be subclasses by clients
@@ -42,37 +41,6 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private boolean hasAdditionalMappings;
 	private boolean hasAdditionalResources;
 	private final CompoundResourceTraversal compoundTraversal = new CompoundResourceTraversal();
-	
-	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
-		Set zero = new HashSet();
-		Set shallow = new HashSet();
-		Set deep = new HashSet();
-		for (int i = 0; i < allTraversals.length; i++) {
-			ResourceTraversal traversal = allTraversals[i];
-			switch (traversal.getDepth()) {
-			case IResource.DEPTH_ZERO:
-				zero.addAll(Arrays.asList(traversal.getResources()));
-				break;
-			case IResource.DEPTH_ONE:
-				shallow.addAll(Arrays.asList(traversal.getResources()));
-				break;
-			case IResource.DEPTH_INFINITE:
-				deep.addAll(Arrays.asList(traversal.getResources()));
-				break;
-			}
-		}
-		List result = new ArrayList();
-		if (!zero.isEmpty()) {
-			result.add(new ResourceTraversal((IResource[]) zero.toArray(new IResource[zero.size()]), IResource.DEPTH_ZERO, IResource.NONE));
-		}
-		if (!shallow.isEmpty()) {
-			result.add(new ResourceTraversal((IResource[]) shallow.toArray(new IResource[shallow.size()]), IResource.DEPTH_ONE, IResource.NONE));
-		}
-		if (!deep.isEmpty()) {
-			result.add(new ResourceTraversal((IResource[]) deep.toArray(new IResource[deep.size()]), IResource.DEPTH_INFINITE, IResource.NONE));
-		}
-		return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
-	}
 	
 	public ResourceMappingScope(ResourceMapping[] selectedMappings) {
 		inputMappings = selectedMappings;
@@ -152,23 +120,15 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	public boolean hasAdditonalResources() {
 		return hasAdditionalResources;
 	}
-	
-	public void fireTraversalsChangedEvent(ResourceTraversal[] oldTraversals) {
-		firePropertyChangedEvent(new PropertyChangeEvent(this, IResourceMappingScope.TRAVERSALS, oldTraversals, getTraversals()));
-	}
 
 	public CompoundResourceTraversal getCompoundTraversal() {
 		return compoundTraversal;
-	}
-
-	public void fireMappingChangedEvent(ResourceMapping[] originalMappings) {
-		firePropertyChangedEvent(new PropertyChangeEvent(this, IResourceMappingScope.MAPPINGS, originalMappings, getMappings()));
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#asInputScope()
 	 */
-	public IResourceMappingScope asInputScope() {
+	public ISynchronizationScope asInputScope() {
 		return new ResourceMappingInputScope(this);
 	}
 }

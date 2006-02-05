@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -22,7 +23,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.core.mapping.ISynchronizationScopeChangeListener;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.*;
 
@@ -48,7 +50,7 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	private final Subscriber subscriber;
 	private ISynchronizationScope scope;
 
-	private IPropertyChangeListener scopeChangeListener;
+	private ISynchronizationScopeChangeListener scopeChangeListener;
 	
 	/**
 	 * Internal resource synchronization event. Can contain a result.
@@ -114,14 +116,14 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 			NLS.bind(Messages.SubscriberEventHandler_errors, new String[] { subscriber.getName() }));
 		this.subscriber = subscriber;
 		this.scope = scope;
-		scopeChangeListener = new IPropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent event) {
-						if (event.getProperty().equals(ISynchronizationScope.TRAVERSALS)) {
-							reset((ResourceTraversal[])event.getOldValue(), (ResourceTraversal[])event.getNewValue());
-						}
-					}
-				};
-		this.scope.addPropertyChangeListener(scopeChangeListener);
+		scopeChangeListener = new ISynchronizationScopeChangeListener() {
+			public void scopeChanged(ISynchronizationScope scope,
+					ResourceMapping[] newMappings,
+					ResourceTraversal[] newTraversals) {
+				reset(new ResourceTraversal[0], scope.getTraversals());
+			}
+		};
+		this.scope.addScopeChangeListener(scopeChangeListener);
 	}
 	
 	/**
@@ -431,6 +433,6 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	 */
 	public void shutdown() {
 		super.shutdown();
-		scope.removePropertyChangeListener(scopeChangeListener);
+		scope.removeScopeChangeListener(scopeChangeListener);
 	}
 }

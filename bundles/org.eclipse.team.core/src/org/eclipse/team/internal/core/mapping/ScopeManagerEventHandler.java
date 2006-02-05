@@ -17,15 +17,15 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
 
 public class ScopeManagerEventHandler extends BackgroundEventHandler {
 
 	public static final int REFRESH = 10;
 	private Set toRefresh = new HashSet();
-	private IResourceMappingScopeManager manager;
+	private ISynchronizationScopeManager manager;
 
 	class ResourceMappingEvent extends Event {
 		private final ResourceMapping[] mappings;
@@ -35,7 +35,7 @@ public class ScopeManagerEventHandler extends BackgroundEventHandler {
 		}
 	}
 
-	public ScopeManagerEventHandler(ResourceMappingScopeManager manager) {
+	public ScopeManagerEventHandler(SynchronizationScopeManager manager) {
 		super("Reconciling Scope", "Error occurred reconsiling the scope");
 		this.manager = manager;
 	}

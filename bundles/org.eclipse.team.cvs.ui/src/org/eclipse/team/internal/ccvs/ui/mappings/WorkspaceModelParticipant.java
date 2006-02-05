@@ -146,7 +146,7 @@ public class WorkspaceModelParticipant extends
 	public WorkspaceModelParticipant() {
 	}
 	
-	public WorkspaceModelParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context) {
+	public WorkspaceModelParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context) {
 		super(manager, context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.cvs.ui.workspace-participant")); //$NON-NLS-1$
@@ -174,14 +174,14 @@ public class WorkspaceModelParticipant extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#restoreContext(org.eclipse.team.core.mapping.IResourceMappingScope, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IMergeContext restoreContext(IResourceMappingScopeManager manager) {
+	protected IMergeContext restoreContext(ISynchronizationScopeManager manager) {
 		return WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
 	 */
-	protected IResourceMappingScopeManager createScopeManager(ResourceMapping[] mappings) {
+	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
 		return new SubscriberScopeManager(mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
 	}
 	

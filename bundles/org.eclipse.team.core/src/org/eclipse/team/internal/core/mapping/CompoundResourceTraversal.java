@@ -247,10 +247,9 @@ public class CompoundResourceTraversal {
 		return getUncoveredTraversals(other);
 	}
 
-	private ResourceTraversal[] getUncoveredTraversals(CompoundResourceTraversal otherTraversal) {
+	public ResourceTraversal[] getUncoveredTraversals(CompoundResourceTraversal otherTraversal) {
 		CompoundResourceTraversal uncovered = new CompoundResourceTraversal();
 		for (Iterator iter = otherTraversal.files.iterator(); iter.hasNext();) {
-			Set files = new HashSet();
 			IResource resource = (IResource) iter.next();
 			if (!isCovered(resource, IResource.DEPTH_ZERO)) {
 				uncovered.addResource(resource, IResource.DEPTH_ZERO);

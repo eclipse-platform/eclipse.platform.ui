@@ -11,41 +11,74 @@
 package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 
 /**
- * A synchronization scope defines the set of resources involved in a synchronization
- * operation.
+ * Interface which defines the protocol for translating a set of
+ * <code>ResourceMapping</code> objects representing a view selection into the
+ * complete set of resources to be operated on.
  * <p>
- * This interface is not intended to be implemented by clients
- * </p>
+ * This interface is not intended to be implemented by clients. Instead, clients should
+ * use a {@link SynchronizationScopeManager} to generate a resource mapping scope from
+ * a set of input resource mappings.
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/Team team.
- * </p> 
+ * </p>
+ * 
+ * @see org.eclipse.core.resources.mapping.ResourceMapping
+ * @see SynchronizationScopeManager
+ * 
  * @since 3.2
  */
-public interface ISynchronizationScope {
+public interface ISynchronizationScope extends IResourceMappingScope {
+	
+	/**
+	 * Return the array of mappings that acted as the input to the scope builder
+	 * that was used to build this scope. This set usually come from a view
+	 * selection but could come from another source. In most cases, clients will
+	 * want to call the {@link #getMappings()} method instead of this one as it
+	 * returns the complete set of mappings to be operated on.
+	 * 
+	 * @return the set of mappings that acted as the input to the scope builder
+	 *         that was used to build this scope
+	 */
+	public ResourceMapping[] getInputMappings();
+	
+	/**
+	 * Return a scope that only contains the input mappings of this
+	 * scope.
+	 * @return a scope that only contains the input mappings of this
+	 * scope
+	 */
+	public ISynchronizationScope asInputScope();
 
 	/**
-	 * Property change constant used to indicate that the traversals
-	 * of the scope have changed. The value associated with the
-	 * change event will be an array of traversals (i.e.
-	 * <code>ResourceTraversal[]</code>
+	 * Return an array of all of the mappings to be operated on. The returned
+	 * mappings were included in the operation during the scope building
+	 * process. The returned mappings may be the same as the input mappings but
+	 * may also be a super set. Clients can call the
+	 * {@link #hasAdditionalMappings()} method to determine if the two sets are
+	 * the same or not.
+	 * 
+	 * @return an array of all of the mappings to be operated on.
 	 */
-	public static final String TRAVERSALS = "org.eclipse.team.core.traversalsChanged"; //$NON-NLS-1$
-	
+	public ResourceMapping[] getMappings();
+
 	/**
-	 * Return the set of resource traversals that define this scope.
-	 * A resource is considered to be contained in this scope if
-	 * the resource is contained in at least one of the returned
-	 * traversals.
-	 * @return the set of resource traversals that define this scope
+	 * Return an array of traversals that cover the resource mappings to be
+	 * operated on as returned by the {@link #getMappings()} method. The
+	 * traversals were calculated during the scope building process and cached
+	 * with the scope.
+	 * 
+	 * @return the complete set of mappings to be operated on
 	 */
 	public ResourceTraversal[] getTraversals();
-	
+
 	/**
 	 * Return the resources that are the roots of this scope.
 	 * The roots are determined by collecting the roots of
@@ -64,19 +97,75 @@ public interface ISynchronizationScope {
 	public boolean contains(IResource resource);
 	
 	/**
-	 * Add a property change listener that will get invoked when a
+	 * Add a scope change listener that will get invoked when a
 	 * property of the receiver changes. Adding a listener that is
 	 * already added has no effect.
 	 * 
 	 * @param listener the listener to be added
 	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener);
+	public void addScopeChangeListener(ISynchronizationScopeChangeListener listener);
 	
 	/**
-	 * Remove a property change listener. Removing an unregistered listener
+	 * Remove a scope change listener. Removing an unregistered listener
 	 * has no effect.
 	 * 
 	 * @param listener the listener to be removed
 	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener);
+	public void removeScopeChangeListener(ISynchronizationScopeChangeListener listener);
+	
+	/**
+	 * Return an array of traversals that cover the given resource mapping to be
+	 * operated on. The traversals were calculated during the scope building
+	 * process and cached with the scope.
+	 * 
+	 * @param mapping a resource mapping being operated on
+	 * @return the traversals that cover the given resource mapping (or
+	 *         <code>null</code> if the mapping is not contained in the input)
+	 */
+	public ResourceTraversal[] getTraversals(ResourceMapping mapping);
+
+	/**
+	 * Return whether the scope has additional mappings added to the input
+	 * mappings during the scope building process.
+	 * 
+	 * @return whether the input has additional mappings added to the seed
+	 *         mappings
+	 */
+	public boolean hasAdditionalMappings();
+
+	/**
+	 * Return whether the scope has additional resources added due to additional
+	 * resource mappings.
+	 * 
+	 * @return whether the input has additional resources added due to
+	 *         additional resource mappings
+	 */
+	public boolean hasAdditonalResources();
+	
+	/**
+	 * Return all the model providers that have mappings in this scope.
+	 * 
+	 * @return all the model providers that have mappings in this scope
+	 */
+	public ModelProvider[] getModelProviders();
+
+	/**
+	 * Return all the mappings to be operated on for the given model provider
+	 * id.
+	 * 
+	 * @param modelProviderId the id of the model provider
+	 * @return all the mappings for the given model provider id
+	 */
+	public ResourceMapping[] getMappings(String modelProviderId);
+
+	/**
+	 * Return the resource mapping in the scope associated with the given model
+	 * object or <code>null</code> if there isn't one. This method has no knowledge
+	 * of hierarchical models so it only matches directly against the mappings
+	 * that are contained in the scope.
+	 * @param modelObject the model object
+	 * @return the mapping for the model object that is contained in this scope
+	 */
+	public ResourceMapping getMapping(Object modelObject);
+
 }

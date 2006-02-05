@@ -8,22 +8,20 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping.provider;
+package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.team.core.mapping.*;
 
 /**
  * A scope participant is responsible for ensuring that the resources contained
- * within an {@link IResourceMappingScope} that overlap with the participant's
+ * within an {@link ISynchronizationScope} that overlap with the participant's
  * model provider stay up-to-date with the model elements (represented as
  * {@link ResourceMapping} instances) contained in the scope.
  * 
  * <p>
- * This interface is not intended to be implemented by clients. CLients should instead subclass
- * {@link ResourceMappingScopeParticipant}.
+ * Clients may implement this interface
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -32,11 +30,11 @@ import org.eclipse.team.core.mapping.*;
  * </p>
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
- * @see IResourceMappingScopeManager
+ * @see ISynchronizationScopeManager
  * 
  * @since 3.2
  */
-public interface IResourceMappingScopeParticipant {
+public interface ISynchronizationScopeParticipant {
 
 	/**
 	 * Callback that the manager makes to participants when the state of
@@ -46,7 +44,7 @@ public interface IResourceMappingScopeParticipant {
 	 * more resources changes w.r.t. the context. It is the responsibility of the
 	 * participant to react to local changes that affect the resources in the
 	 * scope by calling
-	 * {@link IResourceMappingScopeManager#refresh(ResourceMapping[], org.eclipse.core.runtime.IProgressMonitor)}.
+	 * {@link ISynchronizationScopeManager#refresh(ResourceMapping[])}.
 	 * 
 	 * @param manager
 	 *            the scope manager
@@ -57,7 +55,7 @@ public interface IResourceMappingScopeParticipant {
 	 * @return the resource mappings that need to be refreshed.
 	 */
 	ResourceMapping[] handleContextChange(
-			IResourceMappingScopeManager manager, IResource[] resources, IProject[] projects);
+			ISynchronizationScopeManager manager, IResource[] resources, IProject[] projects);
 
 	/**
 	 * Callback from the scope manager when the scope is no longer needed.

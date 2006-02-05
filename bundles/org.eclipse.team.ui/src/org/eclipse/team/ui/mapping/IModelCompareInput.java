@@ -14,11 +14,12 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 
 /**
  * This interface defines extensions to the {@link ICompareInput}
  * interface that are used for compae inputs that are returned from the 
- * {@link ICompareAdapter#asCompareInput(org.eclipse.team.core.mapping.ISynchronizationContext, Object)}
+ * {@link ISynchronizationCompareAdapter#asCompareInput(org.eclipse.team.core.mapping.ISynchronizationContext, Object)}
  * method.
  * <p>
  * Clients may implement this interface.
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see ICompareAdapter#asCompareInput(org.eclipse.team.core.mapping.ISynchronizationContext, Object)
+ * @see ISynchronizationCompareAdapter#asCompareInput(org.eclipse.team.core.mapping.ISynchronizationContext, Object)
  * 
  * @since 3.2
  */

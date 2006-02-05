@@ -107,7 +107,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * @param part the workbench part from which the operation was requested or <code>null</code>
 	 * @param manager the scope manager
 	 */
-	protected ModelMergeOperation(IWorkbenchPart part, IResourceMappingScopeManager manager) {
+	protected ModelMergeOperation(IWorkbenchPart part, ISynchronizationScopeManager manager) {
 		super(part, manager);
 	}
 	

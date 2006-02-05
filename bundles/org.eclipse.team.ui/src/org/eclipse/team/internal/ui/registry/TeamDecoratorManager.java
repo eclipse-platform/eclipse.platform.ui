@@ -30,9 +30,9 @@ public class TeamDecoratorManager {
 		return instance;
 	}
 	
-	public TeamContentProviderDescriptor[] getDescriptors() {
+	public ITeamContentProviderDescriptor[] getDescriptors() {
 		lazyInitialize();
-		return (TeamContentProviderDescriptor[]) descriptors.values().toArray(new TeamContentProviderDescriptor[descriptors.size()]);
+		return (ITeamContentProviderDescriptor[]) descriptors.values().toArray(new ITeamContentProviderDescriptor[descriptors.size()]);
 	}
 	
 	public TeamDecoratorDescription getDecoratorDescription(String providerId) {

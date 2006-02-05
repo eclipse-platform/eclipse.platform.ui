@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -39,9 +39,9 @@ public abstract class SubscriberMergeContext extends MergeContext {
 
 	private Subscriber subscriber;
 	private SubscriberDiffTreeEventHandler handler;
-	private final IResourceMappingScopeManager manager;
+	private final ISynchronizationScopeManager manager;
 	
-	protected SubscriberMergeContext(Subscriber subscriber, IResourceMappingScopeManager manager) {
+	protected SubscriberMergeContext(Subscriber subscriber, ISynchronizationScopeManager manager) {
 		super(manager.getScope(), getType(subscriber), new ResourceDiffTree());
 		this.subscriber = subscriber;
 		this.manager = manager;

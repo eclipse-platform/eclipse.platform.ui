@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping;
-
+package org.eclipse.team.core;
 
 /**
  * A cache that is associated with a synchronization that allows clients
@@ -28,41 +27,41 @@ package org.eclipse.team.core.mapping;
  * 
  * @since 3.2
  */
-public interface IDiffCache {
+public interface ICache {
 
 	/**
-	 * Cache the given property with this context.
-	 * @param name the property name that uniquely identifies the property
+	 * Cache the given object with this context.
+	 * @param name the name that uniquely identifies the object
 	 * @param value the value to be cached.
 	 */
-	void putProperty(String name, Object value);
+	void put(String name, Object value);
 	
 	/**
-	 * Retrieve a property that has been cached with the context
-	 * @param name the name of the property
-	 * @return the object associated with the property name or <code>null</code>
+	 * Retrieve an object that has been cached with the context
+	 * @param name the name of the object
+	 * @return the object associated with the name or <code>null</code>
 	 */
-	Object getProperty(String name);
+	Object get(String name);
 	
 	/**
-	 * Remove the named property from the context
-	 * @param name the property name
+	 * Remove the named object from the cache
+	 * @param name the name
 	 */
-	void removeProperty(String name);
+	void remove(String name);
 	
 	/**
-	 * Add a listener to the context that will receive notification
-	 * when the context is disposed. Adding a listener that has already
+	 * Add a listener to the cache that will receive notification
+	 * when the cache is disposed. Adding a listener that has already
 	 * been added has no effect.
 	 * @param listener the listener to add
 	 */
-	void addDisposeListener(IDisposeListener listener);
+	void addCacheListener(ICacheListener listener);
 	
 	/**
 	 * Remove the listener. Removing a listener that is not registered
 	 * has no effect.
 	 * @param listener the listener to remove
 	 */
-	void removeDisposeListener(IDisposeListener listener);
+	void removeDisposeListener(ICacheListener listener);
 	
 }

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
@@ -86,7 +87,7 @@ public interface ISynchronizationContext {
 	 * 
 	 * @return the input that defined the scope of this synchronization context.
 	 */
-	IResourceMappingScope getScope();
+	ISynchronizationScope getScope();
 
 	/**
 	 * Return a tree that contains {@link IDiff} entries for resources that
@@ -94,7 +95,7 @@ public interface ISynchronizationContext {
 	 * resources that are within the scope of this context. The tree may include
 	 * diffs for additional resources, which should be ignored by the client.
 	 * Clients can test for inclusion using the method
-	 * {@link IResourceMappingScope#contains(IResource)}.
+	 * {@link ISynchronizationScope#contains(IResource)}.
 	 * <p>
 	 * The returned {@link IResourceDiffTree} will be homogeneous and contain either
 	 * {@link IResourceDiff} or {@link IThreeWayDiff} instances. Any
@@ -135,7 +136,7 @@ public interface ISynchronizationContext {
 	 * applies.
 	 * @return the cache associated with this synchronization context
 	 */
-	public IDiffCache getCache();
+	public ICache getCache();
 
 	/**
 	 * Dispose of the synchronization context and the cache of the context. This

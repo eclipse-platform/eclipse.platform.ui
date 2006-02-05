@@ -18,8 +18,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.tests.core.TeamTest;
 import org.eclipse.team.ui.operations.ModelOperation;
@@ -32,7 +32,7 @@ public class ScopeBuildingTests extends TeamTest {
 	private class TestResourceMappingOperation extends ModelOperation {
 
 		protected TestResourceMappingOperation(ResourceMapping[] selectedMappings, final ResourceMapping[] additionalMappings) {
-			super(null, new ResourceMappingScopeManager(selectedMappings, ResourceMappingContext.LOCAL_CONTEXT, false) {	
+			super(null, new SynchronizationScopeManager(selectedMappings, ResourceMappingContext.LOCAL_CONTEXT, false) {	
 				public void initialize(
 						IProgressMonitor monitor) throws CoreException {
 					super.initialize(monitor);
@@ -48,7 +48,7 @@ public class ScopeBuildingTests extends TeamTest {
 			});
 		}
 		protected void endOperation(IProgressMonitor monitor) {
-			IResourceMappingScopeManager manager= getScopeManager();
+			ISynchronizationScopeManager manager= getScopeManager();
 			manager.dispose();
 			super.endOperation(monitor);
 		}

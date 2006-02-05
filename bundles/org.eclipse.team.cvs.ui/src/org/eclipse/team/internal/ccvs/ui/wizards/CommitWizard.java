@@ -26,9 +26,9 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -165,7 +165,7 @@ public class CommitWizard extends ResizableWizard {
 		this.jobListener = jobListener;
 	}
 
-	public CommitWizard(Shell shell, IWorkbenchPart part, IResourceMappingScope scope) throws CVSException {
+	public CommitWizard(Shell shell, IWorkbenchPart part, ISynchronizationScope scope) throws CVSException {
 		// TODO: should use scope to create appropriate model sync
 		this(scope.getRoots());
 		this.part = part;
@@ -304,7 +304,7 @@ public class CommitWizard extends ResizableWizard {
 
 	public static void run(IWorkbenchPart part, Shell shell, ResourceMapping[] mappings) throws CVSException {
         try {
-        	IResourceMappingScope scope = buildScope(part, mappings);
+        	ISynchronizationScope scope = buildScope(part, mappings);
         	CommitWizard commitWizard = new CommitWizard(shell, part, scope);
 			run(shell, commitWizard);
 		} catch (OperationCanceledException e) {
@@ -316,8 +316,8 @@ public class CommitWizard extends ResizableWizard {
 		}
 	}
 	
-    private static IResourceMappingScope buildScope(final IWorkbenchPart part, final ResourceMapping[] mappings) throws InvocationTargetException, InterruptedException {
-    	final IResourceMappingScope[] scope = new IResourceMappingScope[] { null };
+    private static ISynchronizationScope buildScope(final IWorkbenchPart part, final ResourceMapping[] mappings) throws InvocationTargetException, InterruptedException {
+    	final ISynchronizationScope[] scope = new ISynchronizationScope[] { null };
 		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException,
 					InterruptedException {
@@ -331,8 +331,8 @@ public class CommitWizard extends ResizableWizard {
 		return scope[0];
 	}
     
-    public static IResourceMappingScope buildScope(IWorkbenchPart part, ResourceMapping[] mappings, IProgressMonitor monitor) throws InterruptedException, CVSException {
-		IResourceMappingScopeManager manager = new ResourceMappingScopeManager(mappings, 
+    public static ISynchronizationScope buildScope(IWorkbenchPart part, ResourceMapping[] mappings, IProgressMonitor monitor) throws InterruptedException, CVSException {
+		ISynchronizationScopeManager manager = new SynchronizationScopeManager(mappings, 
 				SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
 				true);
 		try {

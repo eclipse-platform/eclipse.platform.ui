@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.mapping;
+package org.eclipse.team.core;
 
 
 /**
- * Listener that, when registered with a synchronization context, gets invoked
- * when the context is disposed.
+ * Listener that, when registered with a cache, gets invoked
+ * when the cache is disposed.
+ * <p>
+ * Clients may implement this interface
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -24,11 +26,11 @@ package org.eclipse.team.core.mapping;
  * 
  * @since 3.2
  */
-public interface IDisposeListener {
+public interface ICacheListener {
 
 	/**
-	 * The given context has been disposed.
+	 * The given cache has been disposed.
 	 * @param context the context that was disposed
 	 */
-	void contextDisposed(ISynchronizationContext context);
+	void cacheDisposed(ICache cache);
 }

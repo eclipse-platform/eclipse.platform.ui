@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
@@ -74,7 +74,7 @@ public class ModelSynchronizeParticipant extends
 	private static final String CTX_MODEL_PROVIDER_MAPPINGS = "mappings"; //$NON-NLS-1$
 	
 	private ISynchronizationContext context;
-	private IResourceMappingScopeManager manager;
+	private ISynchronizationScopeManager manager;
 	private boolean mergingEnabled = true;
 	protected SubscriberRefreshSchedule refreshSchedule;
 	private String description;
@@ -96,7 +96,7 @@ public class ModelSynchronizeParticipant extends
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	public static ModelSynchronizeParticipant createParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context, String name) {
+	public static ModelSynchronizeParticipant createParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context, String name) {
 		return new ModelSynchronizeParticipant(manager, context, name);
 	}
 	
@@ -105,7 +105,7 @@ public class ModelSynchronizeParticipant extends
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	private ModelSynchronizeParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context, String name) {
+	private ModelSynchronizeParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context, String name) {
 		this.manager = manager;
 		initializeContext(context);
 		try {
@@ -122,7 +122,7 @@ public class ModelSynchronizeParticipant extends
 	 * Create a participant for the given context
 	 * @param context the synchronization context
 	 */
-	public ModelSynchronizeParticipant(IResourceMappingScopeManager manager, ISynchronizationContext context) {
+	public ModelSynchronizeParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context) {
 		this.manager = manager;
 		initializeContext(context);
 		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
@@ -251,7 +251,7 @@ public class ModelSynchronizeParticipant extends
 			return (ICompareInput) object;
 		}
 		// Get a compare input from the model provider's compare adapter
-		ICompareAdapter adapter = Utils.getCompareAdapter(object);
+		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(object);
 		if (adapter != null)
 			return adapter.asCompareInput(getContext(), object);
 		return null;
@@ -266,7 +266,7 @@ public class ModelSynchronizeParticipant extends
 	 */
 	public boolean hasCompareInputFor(Object object) {
 		// Get a content viewer from the model provider's compare adapter
-		ICompareAdapter adapter = Utils.getCompareAdapter(object);
+		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(object);
 		if (adapter != null)
 			return adapter.hasCompareInput(getContext(), object);
 		return false;
@@ -386,7 +386,7 @@ public class ModelSynchronizeParticipant extends
 	}
 
 	private void saveMappings(IMemento settings) {
-		IResourceMappingScope inputScope = getScopeManager().getScope().asInputScope();
+		ISynchronizationScope inputScope = getScopeManager().getScope().asInputScope();
 		ModelProvider[] providers = inputScope.getModelProviders();
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
@@ -464,7 +464,7 @@ public class ModelSynchronizeParticipant extends
 	 * @return the context for this participant
 	 * @throws CoreException
 	 */
-	protected IMergeContext restoreContext(IResourceMappingScopeManager manager) throws CoreException {
+	protected IMergeContext restoreContext(ISynchronizationScopeManager manager) throws CoreException {
 		throw new PartInitException(NLS.bind("Participant {0} is not capable of restoring its context", getId()));
 	}
 
@@ -478,8 +478,8 @@ public class ModelSynchronizeParticipant extends
 	 * @return a scope manager that can be used to build the scope of this
 	 * participant when it is restored after a restart
 	 */
-	protected IResourceMappingScopeManager createScopeManager(ResourceMapping[] mappings) {
-		return new ResourceMappingScopeManager(mappings, ResourceMappingContext.LOCAL_CONTEXT, true);
+	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
+		return new SynchronizationScopeManager(mappings, ResourceMappingContext.LOCAL_CONTEXT, true);
 	}
 	
 	/* private */ void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
@@ -543,7 +543,7 @@ public class ModelSynchronizeParticipant extends
 		return true;
 	}
 
-	public IResourceMappingScopeManager getScopeManager() {
+	public ISynchronizationScopeManager getScopeManager() {
 		return manager;
 	}
 	

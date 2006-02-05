@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
@@ -22,7 +22,7 @@ import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.operations.ModelOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-public class ModelSelectionDropDownAction extends Action implements IMenuCreator, IPropertyChangeListener {
+public class ModelSelectionDropDownAction extends Action implements IMenuCreator, ISynchronizationScopeChangeListener {
 
 	private final ISynchronizePageConfiguration configuration;
 	private MenuManager menuManager;
@@ -40,7 +40,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 					}
 				};
 		this.configuration.addPropertyChangeListener(listener);
-		getSynchronizationContext().getScope().addPropertyChangeListener(this);
+		getSynchronizationContext().getScope().addScopeChangeListener(this);
 		showAllAction = new Action("Show All") { 
 			public void run() {
 				Viewer v = ModelSelectionDropDownAction.this.configuration.getPage().getViewer();
@@ -63,27 +63,12 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		return (ISynchronizationContext)configuration.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 	}
 
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IResourceMappingScope.MAPPINGS)) {
-			Display display = TeamUIPlugin.getStandardDisplay();
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if(menuManager != null) {
-						menuManager.dispose();
-						menuManager = null;
-					}
-					update();
-				}
-			});
-		}
-	}
-
 	public void dispose() {
 		if(menuManager != null) {
 			menuManager.dispose();
 			menuManager = null;
 		}
-		getSynchronizationContext().getScope().removePropertyChangeListener(this);
+		getSynchronizationContext().getScope().removeScopeChangeListener(this);
 		configuration.removePropertyChangeListener(listener);
 	}
 
@@ -174,5 +159,23 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		ModelProvider next = getNextProvider();
 		Action action = new ShowModelProviderAction(configuration, next);
 		action.run();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationScopeChangeListener#scopeChanged(org.eclipse.team.core.mapping.ISynchronizationScope, org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.core.resources.mapping.ResourceTraversal[])
+	 */
+	public void scopeChanged(ISynchronizationScope scope, ResourceMapping[] newMappings, ResourceTraversal[] newTraversals) {
+		if (newMappings.length > 0) {
+			Display display = TeamUIPlugin.getStandardDisplay();
+			display.asyncExec(new Runnable() {
+				public void run() {
+					if(menuManager != null) {
+						menuManager.dispose();
+						menuManager = null;
+					}
+					update();
+				}
+			});
+		}
 	}
 }

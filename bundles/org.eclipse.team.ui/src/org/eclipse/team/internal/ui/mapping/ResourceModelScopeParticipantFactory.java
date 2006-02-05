@@ -11,12 +11,10 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory;
-import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
+import org.eclipse.team.core.mapping.*;
 
 public class ResourceModelScopeParticipantFactory implements
-		IResourceMappingScopeParticipantFactory {
+		ISynchronizationScopeParticipantFactory {
 
 	private final ModelProvider provider;
 
@@ -27,8 +25,8 @@ public class ResourceModelScopeParticipantFactory implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory#createParticipant(org.eclipse.core.resources.mapping.ModelProvider, org.eclipse.team.core.mapping.provider.ResourceMappingScopeManager)
 	 */
-	public IResourceMappingScopeParticipant createParticipant(
-			ModelProvider provider, IResourceMappingScopeManager manager) {
+	public ISynchronizationScopeParticipant createParticipant(
+			ModelProvider provider, ISynchronizationScopeManager manager) {
 		return new ResourceModelScopeParticipant(this.provider, manager);
 	}
 

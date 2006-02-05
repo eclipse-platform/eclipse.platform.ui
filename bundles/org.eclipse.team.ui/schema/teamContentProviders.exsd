@@ -76,7 +76,7 @@
          <attribute name="preferencePage" type="string">
             <annotation>
                <documentation>
-                  
+                  A preference page that can be displayed by views that host the content extension
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.IPreferencePage"/>

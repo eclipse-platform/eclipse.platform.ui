@@ -15,10 +15,27 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils.Sorter;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	protected static Hashtable extensionPoints = new Hashtable();
+	
+    /**
+     * Creates an extension.  If the extension plugin has not
+     * been loaded a busy cursor will be activated during the duration of
+     * the load.
+     *
+     * @param element the config element defining the extension
+     * @param classAttribute the name of the attribute carrying the class
+     * @return the extension object
+     * @throws CoreException if the extension cannot be created
+     */
+    public static Object createExtension(final IConfigurationElement element,
+            final String classAttribute) throws CoreException {
+        return WorkbenchPlugin.createExtension(element, classAttribute);
+    }
+    
 	/**
 	 * The constructor.
 	 */

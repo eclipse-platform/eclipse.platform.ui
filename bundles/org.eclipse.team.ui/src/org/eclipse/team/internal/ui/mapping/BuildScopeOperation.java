@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ui.mapping;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.ui.operations.ModelOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -22,12 +22,12 @@ import org.eclipse.ui.IWorkbenchPart;
  * manager. Clients who want to build the scope can do the following:
  * <p>
  * 
- * @see IResourceMappingScopeManager
+ * @see ISynchronizationScopeManager
  * @since 3.2
  */
 public class BuildScopeOperation extends ModelOperation {
 
-	public BuildScopeOperation(IWorkbenchPart part, IResourceMappingScopeManager manager) {
+	public BuildScopeOperation(IWorkbenchPart part, ISynchronizationScopeManager manager) {
 		super(part, manager);
 	}
 

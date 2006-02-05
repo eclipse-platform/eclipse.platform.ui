@@ -13,11 +13,10 @@ package org.eclipse.team.core.mapping;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
 
 /**
  * Factory interface for creating a participant for use with an
- * {@link IResourceMappingScopeManager}. This factory should be
+ * {@link ISynchronizationScopeManager}. This factory should be
  * assocated with a {@link ModelProvider} using the {@link IAdaptable}
  * mechanism.
  * <p>
@@ -26,8 +25,8 @@ import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
  * @see ModelProvider
  * @see IAdaptable
  * @see IAdapterManager
- * @see IResourceMappingScopeManager
- * @see IResourceMappingScopeParticipant
+ * @see ISynchronizationScopeManager
+ * @see ISynchronizationScopeParticipant
  * @see ResourceMappingScopeParticipant
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -37,7 +36,7 @@ import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
  * </p>
  * @since 3.2
  */
-public interface IResourceMappingScopeParticipantFactory {
+public interface ISynchronizationScopeParticipantFactory {
 
 	/**
 	 * Create a participant in the scope management process for the given model provider.
@@ -45,6 +44,6 @@ public interface IResourceMappingScopeParticipantFactory {
 	 * @param manager the scope manager
 	 * @return a participant in the scope management process
 	 */
-	IResourceMappingScopeParticipant createParticipant(ModelProvider provider, IResourceMappingScopeManager manager);
+	ISynchronizationScopeParticipant createParticipant(ModelProvider provider, ISynchronizationScopeManager manager);
 
 }

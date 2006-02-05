@@ -29,7 +29,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 
 	private ResourceDiffTree tree;
 	private SubscriberDiffCollector collector;
-	private IResourceMappingScopeManager manager;
+	private ISynchronizationScopeManager manager;
 	private Object family;
 
 	/*
@@ -84,7 +84,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * @param scope the scope of the handler
 	 * @param tree the tree to be populated by this handler
 	 */
-	public SubscriberDiffTreeEventHandler(Subscriber subscriber, IResourceMappingScopeManager manager, ResourceDiffTree tree) {
+	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScopeManager manager, ResourceDiffTree tree) {
 		super(subscriber, manager.getScope());
 		this.manager = manager;
 		this.tree = tree;

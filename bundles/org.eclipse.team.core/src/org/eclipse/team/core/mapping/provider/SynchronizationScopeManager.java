@@ -62,12 +62,12 @@ import org.eclipse.team.internal.core.mapping.*;
  * 
  * @since 3.2
  */
-public class ResourceMappingScopeManager implements IResourceMappingScopeManager {
+public class SynchronizationScopeManager implements ISynchronizationScopeManager {
 
 	private static final int MAX_ITERATION = 10;
 	private final ResourceMappingContext context;
 	private final boolean consultModels;
-	private IResourceMappingScope scope;
+	private ISynchronizationScope scope;
 	private boolean initialized;
 	private ScopeManagerEventHandler handler;
 
@@ -116,7 +116,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	 * @param resourceMappingContext a resource mapping context
 	 * @param consultModels whether modle providers should be consulted
 	 */
-	public ResourceMappingScopeManager(ResourceMapping[] inputMappings, ResourceMappingContext resourceMappingContext, boolean consultModels) {
+	public SynchronizationScopeManager(ResourceMapping[] inputMappings, ResourceMappingContext resourceMappingContext, boolean consultModels) {
 		this.context = resourceMappingContext;
 		this.consultModels = consultModels;
 		scope = createScope(inputMappings);
@@ -216,11 +216,35 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 				refreshTraversals.addTraversals(result);
 			}
 		}
-		if (scope.getMappings().length > originalMappings.length) {
-			fileMappingsChangedEvent(originalMappings);
-		}
-		if (expanded) {
-			fireTraversalsChangedEvent(originalTraversals);
+		ResourceMapping[] currentMappings = scope.getMappings();
+		if (expanded || currentMappings.length > originalMappings.length) {
+			ResourceTraversal[] newTraversals;
+			if (expanded) {
+				CompoundResourceTraversal originals = new CompoundResourceTraversal();
+				originals.addTraversals(originalTraversals);
+				newTraversals = originals.getUncoveredTraversals(refreshTraversals);
+			} else {
+				newTraversals = new ResourceTraversal[0];
+			}
+			ResourceMapping[] newMappings;
+			if (currentMappings.length > originalMappings.length) {
+				Set originalSet = new HashSet();
+				List result = new ArrayList();
+				for (int i = 0; i < originalMappings.length; i++) {
+					ResourceMapping mapping = originalMappings[i];
+					originalSet.add(mapping);
+				}
+				for (int i = 0; i < currentMappings.length; i++) {
+					ResourceMapping mapping = currentMappings[i];
+					if (!originalSet.contains(mapping)) {
+						result.add(mapping);
+					}
+				}
+				newMappings = (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+			} else {
+				newMappings = new ResourceMapping[0];
+			}
+			fireMappingsChangedEvent(newMappings, newTraversals);
 		}
 		
 		monitor.done();
@@ -285,17 +309,8 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	 * The new mappings are obtained from the scope.
 	 * @param originalMappings the original mappings of the scope.
 	 */
-	private void fileMappingsChangedEvent(ResourceMapping[] originalMappings) {
-		((ResourceMappingScope)scope).fireMappingChangedEvent(originalMappings);
-	}
-	
-	/*
-	 * Fire a traversals changed event to any listeners on the scope.
-	 * The new traversals are obtained from the scope.
-	 * @param originalTraversals the original traversals of the scope.
-	 */
-	protected final void fireTraversalsChangedEvent(ResourceTraversal[] originalTraversals) {
-		((ResourceMappingScope)scope).fireTraversalsChangedEvent(originalTraversals);
+	private void fireMappingsChangedEvent(ResourceMapping[] newMappings, ResourceTraversal[] newTraversals) {
+		((ResourceMappingScope)scope).fireTraversalsChangedEvent(newTraversals, newMappings);
 	}
 
 	/**
@@ -306,7 +321,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	 *            additional mappings
 	 */
 	protected final void setHasAdditionalMappings(
-			IResourceMappingScope scope, boolean hasAdditionalMappings) {
+			ISynchronizationScope scope, boolean hasAdditionalMappings) {
 		((ResourceMappingScope)scope).setHasAdditionalMappings(hasAdditionalMappings);
 	}
 
@@ -328,7 +343,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	 * @return a newly created scope that will be populated and returned by the
 	 *         builder
 	 */
-	protected final IResourceMappingScope createScope(
+	protected final ISynchronizationScope createScope(
 			ResourceMapping[] inputMappings) {
 		return new ResourceMappingScope(inputMappings);
 	}
@@ -412,7 +427,7 @@ public class ResourceMappingScopeManager implements IResourceMappingScopeManager
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#getScope()
 	 */
-	public IResourceMappingScope getScope() {
+	public ISynchronizationScope getScope() {
 		return scope;
 	}
 	

@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ui.registry;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -19,15 +21,21 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
  * A team content provider descriptor associates a model provider
  * with a navigator content extension
  */
-public class TeamContentProviderDescriptor {
+public class TeamContentProviderDescriptor implements ITeamContentProviderDescriptor {
 
 	private static final String TAG_TEAM_CONTENT_PROVIDER = "teamContentProvider"; //$NON-NLS-1$
 	
 	private static final String ATT_MODEL_PROVIDER_ID = "modelProviderId"; //$NON-NLS-1$
 	private static final String ATT_CONTENT_EXTENSION_ID = "contentExtensionId"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATT_PREFERENCE_PAGE = "preferencePage"; //$NON-NLS-1$
 
 	private String modelProviderId;
 	private String contentExtensionId;
+
+	private ImageDescriptor imageDescriptor;
+
+	private IConfigurationElement configElement;
 
 	public TeamContentProviderDescriptor(IExtension extension) throws CoreException {
 		readExtension(extension);
@@ -43,11 +51,13 @@ public class TeamContentProviderDescriptor {
 		int count = elements.length;
 		for (int i = 0; i < count; i++) {
 			IConfigurationElement element = elements[i];
+			configElement = element;
 			String name = element.getName();
 			if (name.equalsIgnoreCase(TAG_TEAM_CONTENT_PROVIDER)) {
 				modelProviderId = element.getAttribute(ATT_MODEL_PROVIDER_ID);
 				contentExtensionId = element.getAttribute(ATT_CONTENT_EXTENSION_ID);
 			}
+			break;
 		}
 		if (modelProviderId == null)
 			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1, new String[] { ATT_MODEL_PROVIDER_ID, TAG_TEAM_CONTENT_PROVIDER, id == null ? "" : id})); //$NON-NLS-1$
@@ -59,12 +69,38 @@ public class TeamContentProviderDescriptor {
 		throw new CoreException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, reason, null));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderDescriptor#getContentExtensionId()
+	 */
 	public String getContentExtensionId() {
 		return contentExtensionId;
 	}
 
-	protected String getModelProviderId() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderDescriptor#getModelProviderId()
+	 */
+	public String getModelProviderId() {
 		return modelProviderId;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderDescriptor#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		if (imageDescriptor != null)
+			return imageDescriptor;
+		String iconName = configElement.getAttribute(ATT_ICON);
+		if (iconName == null)
+			return null;
+		imageDescriptor = TeamUIPlugin.getImageDescriptorFromExtension(configElement.getDeclaringExtension(), iconName);
+		return imageDescriptor;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderDescriptor#createPreferencePage()
+	 */
+	public IPreferencePage createPreferencePage() throws CoreException {
+		Object obj = RegistryReader.createExtension(configElement, ATT_PREFERENCE_PAGE);
+		return (IPreferencePage) obj;
+	}
 }

@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 
 /**
  * This scope wraps another scope and treats the input mappings of
@@ -23,9 +20,9 @@ import org.eclipse.team.core.mapping.IResourceMappingScope;
  */
 public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 
-	IResourceMappingScope wrappedScope;
+	ISynchronizationScope wrappedScope;
 	
-	public ResourceMappingInputScope(IResourceMappingScope wrappedScope) {
+	public ResourceMappingInputScope(ISynchronizationScope wrappedScope) {
 		
 		this.wrappedScope = wrappedScope;
 	}
@@ -48,17 +45,14 @@ public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 	 * @see org.eclipse.team.ui.mapping.IResourceMappingScope#getTraversals()
 	 */
 	public ResourceTraversal[] getTraversals() {
+		CompoundResourceTraversal result = new CompoundResourceTraversal();
 		ResourceMapping[] mappings = getMappings();
-		List result = new ArrayList();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			ResourceTraversal[] traversals = getTraversals(mapping);
-			for (int j = 0; j < traversals.length; j++) {
-				ResourceTraversal traversal = traversals[j];
-				result.add(traversal);
-			}
+			result.addTraversals(traversals);
 		}
-		return ResourceMappingScope.combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
+		return result.asTraversals();
 	}
 
 	/* (non-Javadoc)
@@ -99,7 +93,7 @@ public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#asInputScope()
 	 */
-	public IResourceMappingScope asInputScope() {
+	public ISynchronizationScope asInputScope() {
 		return this;
 	}
 }

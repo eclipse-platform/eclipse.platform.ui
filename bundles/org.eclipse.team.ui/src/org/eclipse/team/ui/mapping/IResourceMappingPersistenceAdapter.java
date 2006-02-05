@@ -17,6 +17,8 @@ import org.eclipse.ui.IMemento;
 /**
  * A {@link ModelProvider} adaptation for persisting the model elements
  * associated with a model synchronization.
+ * <p>
+ * Clients may implement this interface.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

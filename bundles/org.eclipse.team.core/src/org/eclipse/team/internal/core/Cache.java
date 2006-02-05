@@ -8,13 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.mapping;
+package org.eclipse.team.internal.core;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.ICache;
+import org.eclipse.team.core.ICacheListener;
 
 /**
  * A synchronize operation context that supports caching of
@@ -28,33 +29,25 @@ import org.eclipse.team.core.mapping.*;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see org.eclipse.team.core.mapping.IDiffCache
+ * @see org.eclipse.team.core.ICache
  * @since 3.2
  */
-public class DiffCache implements IDiffCache {
+public class Cache implements ICache {
 
 	Map properties;
 	ListenerList listeners;
-	private final ISynchronizationContext context;
-	
-	/**
-	 * CCreate an empty cache
-	 */
-	public DiffCache(ISynchronizationContext context) {
-		this.context = context;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext#addProperty(java.lang.String, java.lang.Object)
 	 */
-	public synchronized void putProperty(String name, Object value) {
+	public synchronized void put(String name, Object value) {
 		if (properties == null) {
 			properties = new HashMap();
 		}
 		properties.put(name, value);
 	}
 
-	public synchronized Object getProperty(String name) {
+	public synchronized Object get(String name) {
 		if (properties == null)
 			return null;
 		return properties.get(name);
@@ -63,7 +56,7 @@ public class DiffCache implements IDiffCache {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext#removeProperty(java.lang.String)
 	 */
-	public synchronized void removeProperty(String name) {
+	public synchronized void remove(String name) {
 		if (properties != null)
 			properties.remove(name);
 		if (properties.isEmpty()) {
@@ -75,7 +68,7 @@ public class DiffCache implements IDiffCache {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext#addDisposeListener(org.eclipse.team.ui.mapping.IDisposeListener)
 	 */
-	public synchronized void addDisposeListener(IDisposeListener listener) {
+	public synchronized void addCacheListener(ICacheListener listener) {
 		if (listeners == null)
 			listeners = new ListenerList(ListenerList.IDENTITY);
 		listeners.add(listener);
@@ -85,7 +78,7 @@ public class DiffCache implements IDiffCache {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext#removeDisposeListener(org.eclipse.team.ui.mapping.IDisposeListener)
 	 */
-	public synchronized void removeDisposeListener(IDisposeListener listener) {
+	public synchronized void removeDisposeListener(ICacheListener listener) {
 		if (listeners != null)
 			listeners.remove(listener);
 	}
@@ -100,7 +93,7 @@ public class DiffCache implements IDiffCache {
 				final Object listener = allListeners[i];
 				Platform.run(new ISafeRunnable(){
 					public void run() throws Exception {
-						((IDisposeListener)listener).contextDisposed(context);
+						((ICacheListener)listener).cacheDisposed(Cache.this);
 					}
 					public void handleException(Throwable exception) {
 						// Ignore since the platform logs the error

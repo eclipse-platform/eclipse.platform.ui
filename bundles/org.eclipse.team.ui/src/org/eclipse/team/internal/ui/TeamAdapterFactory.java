@@ -14,10 +14,11 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.core.mapping.IResourceMappingMerger;
-import org.eclipse.team.core.mapping.IResourceMappingScopeParticipantFactory;
+import org.eclipse.team.core.mapping.ISynchronizationScopeParticipantFactory;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
 import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 
@@ -25,7 +26,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 
 	private DiffNodeWorkbenchAdapter diffNodeAdapter = new DiffNodeWorkbenchAdapter();
 	
-	private static final ICompareAdapter COMPARE_ADAPTER = new AbstractCompareAdapter() {};
+	private static final ISynchronizationCompareAdapter COMPARE_ADAPTER = new SynchronizationCompareAdapter() {};
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -40,7 +41,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 				if (adapterType == IResourceMappingMerger.class) {
 					return new DefaultResourceMappingMerger((ModelProvider)adaptableObject);
 				}
-				if (adapterType == IResourceMappingScopeParticipantFactory.class) {
+				if (adapterType == ISynchronizationScopeParticipantFactory.class) {
 					return new ResourceModelScopeParticipantFactory((ModelProvider)adaptableObject);
 				}
 				if (adapterType == IResourceMappingPersistenceAdapter.class) {
@@ -48,7 +49,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 				}
 			}
 		}
-		if (adaptableObject instanceof ModelProvider && adapterType == ICompareAdapter.class) {
+		if (adaptableObject instanceof ModelProvider && adapterType == ISynchronizationCompareAdapter.class) {
 			return COMPARE_ADAPTER;
 		}
 		return null;
@@ -59,8 +60,8 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	 */
 	public Class[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class,
-				IResourceMappingMerger.class, ICompareAdapter.class,
+				IResourceMappingMerger.class, ISynchronizationCompareAdapter.class,
 				IResourceMappingPersistenceAdapter.class,
-				IResourceMappingScopeParticipantFactory.class };
+				ISynchronizationScopeParticipantFactory.class };
 	}
 }

@@ -19,7 +19,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -43,7 +43,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  */
 public abstract class SynchronizationContentProvider implements ICommonContentProvider, IDiffChangeListener, IPropertyChangeListener {
 
-	private IResourceMappingScope scope;
+	private ISynchronizationScope scope;
 	private ISynchronizationContext context;
 	private Viewer viewer;
 	private IExtensionStateModel stateModel;
@@ -100,9 +100,9 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	}
 	
 	private Object[] internalGetChildren(Object parent, boolean isElement) {
-		if (parent instanceof IResourceMappingScope) {
+		if (parent instanceof ISynchronizationScope) {
 			// If the root is a scope, we want to include all models in the scope
-			IResourceMappingScope rms = (IResourceMappingScope) parent;
+			ISynchronizationScope rms = (ISynchronizationScope) parent;
 			if (rms.getMappings(getModelProviderId()).length > 0) {
 				empty = false;
 				return new Object[] { getModelProvider() };
@@ -134,7 +134,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		Object[] delegateChildren = getDelegateChildren(parent, isElement);
 		ISynchronizationContext sc = getContext();
 		if (context == null) {
-			IResourceMappingScope scope = getScope();
+			ISynchronizationScope scope = getScope();
 			if (scope == null) {
 				return delegateChildren;
 			} else {
@@ -200,7 +200,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		if (getDelegateContentProvider().hasChildren(element)) {
 			ISynchronizationContext sc = getContext();
 			if (context == null) {
-				IResourceMappingScope scope = getScope();
+				ISynchronizationScope scope = getScope();
 				if (scope == null) {
 					return true;
 				} else {
@@ -225,7 +225,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @param element the element
 	 * @return whether the given element has children in the given scope
 	 */
-	protected boolean hasChildrenInScope(IResourceMappingScope scope, Object element) {
+	protected boolean hasChildrenInScope(ISynchronizationScope scope, Object element) {
 		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
 			ResourceMapping[] mappings = scope.getMappings(mapping.getModelProviderId());
@@ -288,7 +288,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration != null)
 			configuration.addPropertyChangeListener(this);
-		scope = (IResourceMappingScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE);
+		scope = (ISynchronizationScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE);
 		context = (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 		ITreeContentProvider provider = getDelegateContentProvider();
 		if (provider instanceof ICommonContentProvider) {
@@ -357,7 +357,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return the resource mapping scope or <code>null</code>
 	 * @deprecated is now provided in method calls
 	 */
-	protected IResourceMappingScope getScope() {
+	protected ISynchronizationScope getScope() {
 		return scope;
 	}
 	
@@ -472,7 +472,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return the subset of the given children that are in the
 	 * scope of the content provider
 	 */
-	protected Object[] getChildrenInScope(IResourceMappingScope scope, Object parent, Object[] children) {
+	protected Object[] getChildrenInScope(ISynchronizationScope scope, Object parent, Object[] children) {
 		List result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
@@ -593,7 +593,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return whether the given object is within the scope of this
 	 * content provider
 	 */
-	protected boolean isInScope(IResourceMappingScope scope, Object parent, Object element) {
+	protected boolean isInScope(ISynchronizationScope scope, Object parent, Object element) {
 		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
 			ResourceMapping[] mappings = scope.getMappings(mapping.getModelProviderId());

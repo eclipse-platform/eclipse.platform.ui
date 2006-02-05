@@ -15,7 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -24,12 +24,12 @@ public class AdditionalMappingsDialog extends DetailsDialog {
 
     private ResourceMappingHierarchyArea selectedMappingsArea;
     private ResourceMappingHierarchyArea allMappingsArea;
-	private final IResourceMappingScope scope;
+	private final ISynchronizationScope scope;
 	private final ISynchronizationContext context;
 	private String previewMessage;
 	protected boolean forcePreview = true;
 
-    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, IResourceMappingScope scope, ISynchronizationContext context) {
+    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, ISynchronizationScope scope, ISynchronizationContext context) {
         super(parentShell, dialogTitle);
 		this.scope = scope;
 		this.context = context;

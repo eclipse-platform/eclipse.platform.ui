@@ -19,19 +19,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
-import org.eclipse.team.core.mapping.provider.IResourceMappingScopeParticipant;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeParticipant;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.*;
 
 public class ResourceModelScopeParticipant implements
-		IResourceMappingScopeParticipant, IResourceChangeListener, IPropertyChangeListener {
+		ISynchronizationScopeParticipant, IResourceChangeListener, IPropertyChangeListener {
 
-	private final IResourceMappingScopeManager manager;
+	private final ISynchronizationScopeManager manager;
 	private final ModelProvider provider;
 
-	public ResourceModelScopeParticipant(ModelProvider provider, IResourceMappingScopeManager manager) {
+	public ResourceModelScopeParticipant(ModelProvider provider, ISynchronizationScopeManager manager) {
 		this.provider = provider;
 		this.manager = manager;
 		if (hasWorkspaceMapping()) {
@@ -70,7 +70,7 @@ public class ResourceModelScopeParticipant implements
 	}
 
 	public ResourceMapping[] handleContextChange(
-			IResourceMappingScopeManager manager, IResource[] resources,
+			ISynchronizationScopeManager manager, IResource[] resources,
 			IProject[] projects) {
 		Set result = new HashSet();
 		for (int i = 0; i < projects.length; i++) {

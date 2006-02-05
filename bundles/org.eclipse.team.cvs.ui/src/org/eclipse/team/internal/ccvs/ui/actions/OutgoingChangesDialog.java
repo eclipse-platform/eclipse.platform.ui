@@ -20,7 +20,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
@@ -37,9 +37,9 @@ public class OutgoingChangesDialog extends DetailsDialog {
 	private ModelSynchronizeParticipant participant;
 	private final String title;
 	private final String detailsMessage;
-	private final IResourceMappingScopeManager manager;
+	private final ISynchronizationScopeManager manager;
 
-	public OutgoingChangesDialog(Shell parentShell, IResourceMappingScopeManager manager, String title, String message, String detailsMessage) {
+	public OutgoingChangesDialog(Shell parentShell, ISynchronizationScopeManager manager, String title, String message, String detailsMessage) {
 		super(parentShell, title);
 		this.manager = manager;
 		this.title = title;
@@ -112,7 +112,7 @@ public class OutgoingChangesDialog extends DetailsDialog {
 		return participant;
 	}
 
-	private ISynchronizationContext createSynchronizationContext(final IResourceMappingScopeManager manager) throws InvocationTargetException, InterruptedException {
+	private ISynchronizationContext createSynchronizationContext(final ISynchronizationScopeManager manager) throws InvocationTargetException, InterruptedException {
 		final ISynchronizationContext[] context = new ISynchronizationContext[] { null };
 		context[0] = WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
 		return context[0];

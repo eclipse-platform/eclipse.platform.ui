@@ -111,7 +111,7 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
 	 * @param manager the scope manager
 	 */
-	protected ModelParticipantMergeOperation(IWorkbenchPart part, IResourceMappingScopeManager manager) {
+	protected ModelParticipantMergeOperation(IWorkbenchPart part, ISynchronizationScopeManager manager) {
 		super(part, manager);
 	}
 

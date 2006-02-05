@@ -8,14 +8,20 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.internal.ui.registry;
 
-import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.resource.ImageDescriptor;
 
-/**
- * @deprecated reference {@link ISynchronizationCompareAdapter} instead
- * @since 3.2
- */
-public interface ICompareAdapter extends ISynchronizationCompareAdapter {
+public interface ITeamContentProviderDescriptor {
+
+	public abstract String getContentExtensionId();
+
+	public abstract String getModelProviderId();
+
+	public abstract ImageDescriptor getImageDescriptor();
+
+	public abstract IPreferencePage createPreferencePage() throws CoreException;
 
 }

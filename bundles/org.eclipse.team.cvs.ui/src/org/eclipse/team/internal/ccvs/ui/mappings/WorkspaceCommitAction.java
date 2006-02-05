@@ -15,9 +15,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.ICache;
+import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.IDisposeListener;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
@@ -38,8 +39,8 @@ public class WorkspaceCommitAction extends ModelProviderAction implements IDiffC
 		super(null, configuration);
 		final IDiffTree tree = getDiffTree();
 		tree.addDiffChangeListener(this);
-		getContext().getCache().addDisposeListener(new IDisposeListener() {
-			public void contextDisposed(ISynchronizationContext context) {
+		getContext().getCache().addCacheListener(new ICacheListener() {
+			public void cacheDisposed(ICache cache) {
 				tree.removeDiffChangeListener(WorkspaceCommitAction.this);
 			}
 		});

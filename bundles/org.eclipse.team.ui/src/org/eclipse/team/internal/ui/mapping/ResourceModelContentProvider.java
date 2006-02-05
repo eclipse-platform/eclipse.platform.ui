@@ -65,7 +65,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#isInScope(org.eclipse.team.core.mapping.IResourceMappingScope, java.lang.Object, java.lang.Object)
 	 */
-	protected boolean isInScope(IResourceMappingScope scope, Object parent, Object object) {
+	protected boolean isInScope(ISynchronizationScope scope, Object parent, Object object) {
 		if (object instanceof IResource) {
 			IResource resource = (IResource) object;
 			if (resource == null)
@@ -79,7 +79,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		return false;
 	}
 	
-	private boolean hasChildrenInScope(IResourceMappingScope scope, Object object, IResource resource) {
+	private boolean hasChildrenInScope(ISynchronizationScope scope, Object object, IResource resource) {
 		IResource[] roots = scope.getRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IResource root = roots[i];
@@ -134,7 +134,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 
 	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object) {
-		IResourceMappingScope scope = context.getScope();
+		ISynchronizationScope scope = context.getScope();
 		// First see if the object is a root of the scope
 		ResourceMapping mapping = scope.getMapping(object);
 		if (mapping != null)

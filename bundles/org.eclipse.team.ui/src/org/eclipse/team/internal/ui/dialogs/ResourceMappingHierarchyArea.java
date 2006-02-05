@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
@@ -30,15 +30,15 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
 	private static final String TEAM_NAVIGATOR_CONTENT = "org.eclipse.team.ui.navigatorViewer"; //$NON-NLS-1$
 	private String description;
     private CommonViewer viewer;
-	private final IResourceMappingScope scope;
+	private final ISynchronizationScope scope;
 	private final ISynchronizationContext context;
     
     
-    public static ResourceMappingHierarchyArea create(IResourceMappingScope scope, ISynchronizationContext context) {
+    public static ResourceMappingHierarchyArea create(ISynchronizationScope scope, ISynchronizationContext context) {
         return new ResourceMappingHierarchyArea(scope, context);
     }
     
-	private ResourceMappingHierarchyArea(IResourceMappingScope scope, ISynchronizationContext context) {
+	private ResourceMappingHierarchyArea(ISynchronizationScope scope, ISynchronizationContext context) {
 		this.scope = scope;
 		this.context = context;
 	}

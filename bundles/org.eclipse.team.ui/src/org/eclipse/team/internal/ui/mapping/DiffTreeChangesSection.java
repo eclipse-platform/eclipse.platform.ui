@@ -29,8 +29,8 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
+import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.operations.ModelOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -82,7 +82,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		return numChanges;
 	}
 	
-	protected long getChangesInMode(ICompareAdapter adapter, int candidateMode) {
+	protected long getChangesInMode(ISynchronizationCompareAdapter adapter, int candidateMode) {
 		long numChanges;
 		long numConflicts = adapter.countFor(context, IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK);
 		switch (candidateMode) {
@@ -113,7 +113,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		if (id != null && !id.equals(ISynchronizationConstants.ALL_MODEL_PROVIDERS_ACTIVE)) {
 			try {
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
-				ICompareAdapter adapter = (ICompareAdapter)Utils.getAdapter(desc.getModelProvider(), ICompareAdapter.class);
+				ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)Utils.getAdapter(desc.getModelProvider(), ISynchronizationCompareAdapter.class);
 				if (adapter != null) {
 					return getChangesInMode(adapter, getConfiguration().getMode());
 				}
@@ -176,7 +176,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 			providers = ModelOperation.sortByExtension(providers);
 			for (int i = 0; i < providers.length; i++) {
 				ModelProvider provider = providers[i];
-				ICompareAdapter adapter = (ICompareAdapter)Utils.getAdapter(provider, ICompareAdapter.class);
+				ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)Utils.getAdapter(provider, ISynchronizationCompareAdapter.class);
 				if (adapter != null) {
 					long count = getChangesInMode(adapter, getConfiguration().getMode());
 					if (count > 0 && !provider.getDescriptor().getId().equals(id)) {

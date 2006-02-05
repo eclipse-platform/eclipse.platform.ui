@@ -11,7 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.mapping.IResourceMappingScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.ui.operations.ModelParticipantMergeOperation;
@@ -22,7 +22,7 @@ public abstract class AbstractModelMergeOperation extends ModelParticipantMergeO
 	
 	private boolean ownsManager = false;
 	
-	public AbstractModelMergeOperation(IWorkbenchPart part, IResourceMappingScopeManager manager, boolean ownsManager) {
+	public AbstractModelMergeOperation(IWorkbenchPart part, ISynchronizationScopeManager manager, boolean ownsManager) {
 		super(part, manager);
 		this.ownsManager = ownsManager;
 	}
@@ -43,7 +43,7 @@ public abstract class AbstractModelMergeOperation extends ModelParticipantMergeO
 	
 	protected void endOperation(IProgressMonitor monitor) {
 		if (ownsManager) {
-			IResourceMappingScopeManager manager = getScopeManager();
+			ISynchronizationScopeManager manager = getScopeManager();
 			manager.dispose();
 		}
 		super.endOperation(monitor);

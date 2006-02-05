@@ -44,7 +44,7 @@ public class SubscriberSyncInfoEventHandler extends SubscriberEventHandler {
 	public static ISynchronizationScope createScope(IResource[] roots, Subscriber subscriber) {
 		if (roots == null)
 			roots = subscriber.roots();
-		return new SynchronizationScope(new ResourceTraversal[] {new ResourceTraversal(roots, IResource.DEPTH_INFINITE, IResource.NONE)});
+		return new RootResourceSynchronizationScope(roots);
 	}
 	
 	/**
@@ -201,7 +201,7 @@ public class SubscriberSyncInfoEventHandler extends SubscriberEventHandler {
 	 * queued by this method are back-to-back
 	 */
 	public void reset(IResource[] roots) {
-		SynchronizationScope scope = (SynchronizationScope)getScope();
+		RootResourceSynchronizationScope scope = (RootResourceSynchronizationScope)getScope();
 		if (roots == null)
 			roots = getSubscriber().roots();
 		scope.setRoots(roots);

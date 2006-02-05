@@ -11,16 +11,13 @@
 package org.eclipse.team.internal.core.subscribers;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.core.mapping.ISynchronizationScopeChangeListener;
 
 /**
  * An abstract implementation of an {@link ISynchronizationScope}.
@@ -82,16 +79,17 @@ public abstract class AbstractSynchronizationScope implements ISynchronizationSc
 	}
 	
 	/**
-	 * Fire the given event to all listeners.
-	 * @param event the event
+	 * Fire the scope change event
+	 * @param newTraversals the new traversals (may be empty)
+	 * @param newMappings the new mappings (may be empty)
 	 */
-	protected void firePropertyChangedEvent(final PropertyChangeEvent event) {
+	public void fireTraversalsChangedEvent(final ResourceTraversal[] newTraversals, final ResourceMapping[] newMappings) {
 		Object[] allListeners = listeners.getListeners();
 		for (int i = 0; i < allListeners.length; i++) {
 			final Object listener = allListeners[i];
 			Platform.run(new ISafeRunnable() {
 				public void run() throws Exception {
-					((IPropertyChangeListener)listener).propertyChange(event);
+					((ISynchronizationScopeChangeListener)listener).scopeChanged(AbstractSynchronizationScope.this, newMappings, newTraversals);
 				}
 				public void handleException(Throwable exception) {
 					// Logged by Platform
@@ -103,19 +101,15 @@ public abstract class AbstractSynchronizationScope implements ISynchronizationSc
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#addPropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
 	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	public void addScopeChangeListener(ISynchronizationScopeChangeListener listener) {
 		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#removePropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
 	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	public void removeScopeChangeListener(ISynchronizationScopeChangeListener listener) {
 		listeners.remove(listener);
-	}
-	
-	protected void fireTraveralsChangedEvent(ResourceTraversal[] oldTraversals, ResourceTraversal[] newTraversals) {
-		firePropertyChangedEvent(new PropertyChangeEvent(this, TRAVERSALS, oldTraversals, newTraversals));
 	}
 
 }

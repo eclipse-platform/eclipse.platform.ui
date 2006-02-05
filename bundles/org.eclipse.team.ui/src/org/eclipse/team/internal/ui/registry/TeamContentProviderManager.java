@@ -32,16 +32,16 @@ public class TeamContentProviderManager {
 		return instance;
 	}
 	
-	public TeamContentProviderDescriptor[] getDescriptors() {
+	public ITeamContentProviderDescriptor[] getDescriptors() {
 		lazyInitialize();
-		return (TeamContentProviderDescriptor[]) descriptors.toArray(new TeamContentProviderDescriptor[descriptors.size()]);
+		return (ITeamContentProviderDescriptor[]) descriptors.toArray(new ITeamContentProviderDescriptor[descriptors.size()]);
 	}
 	
 	public String[] getContentProviderIds() {
 		List result = new ArrayList();
-		TeamContentProviderDescriptor[] descriptors = getDescriptors();
+		ITeamContentProviderDescriptor[] descriptors = getDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			TeamContentProviderDescriptor descriptor = descriptors[i];
+			ITeamContentProviderDescriptor descriptor = descriptors[i];
 			result.add(descriptor.getContentExtensionId());
 		}
 		// TODO: Is this still required?
@@ -56,7 +56,7 @@ public class TeamContentProviderManager {
 		IExtension[] extensions = point.getExtensions();
 		descriptors = new ArrayList(extensions.length);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {
-			TeamContentProviderDescriptor desc = null;
+			ITeamContentProviderDescriptor desc = null;
 			try {
 				desc = new TeamContentProviderDescriptor(extensions[i]);
 			} catch (CoreException e) {

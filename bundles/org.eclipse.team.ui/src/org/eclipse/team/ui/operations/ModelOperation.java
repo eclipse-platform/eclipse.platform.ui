@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
+import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
 import org.eclipse.team.ui.TeamOperation;
@@ -44,7 +44,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public abstract class ModelOperation extends TeamOperation {
 	
 	private boolean previewRequested;
-	private IResourceMappingScopeManager manager;
+	private ISynchronizationScopeManager manager;
 	
 	/**
 	 * Return the list of provides sorted by their extends relationship.
@@ -88,7 +88,7 @@ public abstract class ModelOperation extends TeamOperation {
 	 * @param part the workbench part from which the merge was launched or <code>null</code>
 	 * @param manager the scope manager for this operation
 	 */
-	protected ModelOperation(IWorkbenchPart part, IResourceMappingScopeManager manager) {
+	protected ModelOperation(IWorkbenchPart part, ISynchronizationScopeManager manager) {
 		super(part);
 		this.manager = manager;
 	}
@@ -155,7 +155,7 @@ public abstract class ModelOperation extends TeamOperation {
 	 * @param monitor a progress monitor
 	 */
 	protected void promptIfInputChange(IProgressMonitor monitor) {
-		IResourceMappingScope inputScope = getScope().asInputScope();
+		ISynchronizationScope inputScope = getScope().asInputScope();
 		if (getScope().hasAdditionalMappings()) {
 			boolean prompt = false;
 			// There are additional mappings so we may need to prompt
@@ -310,13 +310,13 @@ public abstract class ModelOperation extends TeamOperation {
 		return false;
 	}
 
-	private ResourceTraversal[] getTraversals(IResourceMappingScope inputScope, ResourceMapping[] inputMappings) {
-		List result = new ArrayList();
+	private ResourceTraversal[] getTraversals(ISynchronizationScope inputScope, ResourceMapping[] inputMappings) {
+		CompoundResourceTraversal result = new CompoundResourceTraversal();
 		for (int i = 0; i < inputMappings.length; i++) {
 			ResourceMapping mapping = inputMappings[i];
-			result.addAll(Arrays.asList(inputScope.getTraversals(mapping)));
+			result.addTraversals(inputScope.getTraversals(mapping));
 		}
-		return ResourceMappingScope.combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
+		return result.asTraversals();
 	}
 
 	private boolean isIndependantModel(String modelProviderId, String id) {
@@ -407,7 +407,7 @@ public abstract class ModelOperation extends TeamOperation {
 	 * Return the scope of this operation.
 	 * @return the scope of this operation
 	 */
-	public IResourceMappingScope getScope() {
+	public ISynchronizationScope getScope() {
 		return manager.getScope();
 	}
 
@@ -425,7 +425,7 @@ public abstract class ModelOperation extends TeamOperation {
 	 * Return the scope manager for this operation.
 	 * @return the scope manager for this operation.
 	 */
-	public IResourceMappingScopeManager getScopeManager() {
+	public ISynchronizationScopeManager getScopeManager() {
 		return manager;
 	}
 	

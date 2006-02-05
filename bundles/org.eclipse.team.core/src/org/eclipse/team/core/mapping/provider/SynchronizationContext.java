@@ -15,9 +15,10 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.internal.core.Cache;
 import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.mapping.DiffCache;
 
 /**
  * Abstract implementation of the {@link ISynchronizationContext} interface.
@@ -35,10 +36,10 @@ import org.eclipse.team.internal.core.mapping.DiffCache;
  */
 public abstract class SynchronizationContext implements ISynchronizationContext {
 
-	private IResourceMappingScope scope;
+	private ISynchronizationScope scope;
     private final int type;
     private final IResourceDiffTree diffTree;
-    private DiffCache cache;
+    private Cache cache;
 
     /**
      * Create a synchronization context.
@@ -46,7 +47,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
      * @param diffTree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(IResourceMappingScope scope, int type, IResourceDiffTree diffTree) {
+    protected SynchronizationContext(ISynchronizationScope scope, int type, IResourceDiffTree diffTree) {
     	this.scope = scope;
 		this.type = type;
 		this.diffTree = diffTree;
@@ -55,7 +56,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IResourceMappingScope getScope() {
+	public ISynchronizationScope getScope() {
 		return scope;
 	}
 
@@ -78,9 +79,9 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized IDiffCache getCache() {
+	public synchronized ICache getCache() {
 		if (cache == null) {
-			cache = new DiffCache(this);
+			cache = new Cache();
 		}
 		return cache;
 	}
@@ -97,7 +98,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 */
 	public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
-		ResourceMappingScopeManager manager = null; //getScopeManager();
+		SynchronizationScopeManager manager = null; //getScopeManager();
 		if (manager == null) {
 			// The scope manager is missing so just refresh everything
 			refresh(scope.getTraversals(), IResource.NONE, Policy.subMonitorFor(monitor, 50));
