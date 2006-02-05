@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.contexts;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,6 +72,27 @@ public class SlaveContextService implements IContextService {
 	protected Map fLocalActivations;
 
 	/**
+	 * A collection of context manager listeners. The listeners are not
+	 * activated/deactivated, but they will be removed when this service is
+	 * disposed.
+	 */
+	private Collection fContextManagerListeners;
+
+	/**
+	 * A collection of source providers. The listeners are not
+	 * activated/deactivated, but they will be removed when this service is
+	 * disposed.
+	 */
+	private Collection fSourceProviders;
+
+	/**
+	 * A collection of shells registered through this service. The listeners are
+	 * not activated/deactivated, but they will be removed when this service is
+	 * disposed.
+	 */
+	private Collection fRegisteredShells;
+
+	/**
 	 * Construct the new slave.
 	 * 
 	 * @param parentService
@@ -90,6 +112,9 @@ public class SlaveContextService implements IContextService {
 		fDefaultExpression = defaultExpression;
 		fParentActivations = new HashSet();
 		fLocalActivations = new HashMap();
+		fContextManagerListeners = new ArrayList();
+		fSourceProviders = new ArrayList();
+		fRegisteredShells = new ArrayList();
 	}
 
 	/*
@@ -158,6 +183,9 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#addContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
 	 */
 	public void addContextManagerListener(IContextManagerListener listener) {
+		if (!fContextManagerListeners.contains(listener)) {
+			fContextManagerListeners.add(listener);
+		}
 		fParentService.addContextManagerListener(listener);
 	}
 
@@ -167,6 +195,9 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	public void addSourceProvider(ISourceProvider provider) {
+		if (!fSourceProviders.contains(provider)) {
+			fSourceProviders.add(provider);
+		}
 		fParentService.addSourceProvider(provider);
 	}
 
@@ -211,6 +242,30 @@ public class SlaveContextService implements IContextService {
 		fParentService.deactivateContexts(fParentActivations);
 		fParentActivations.clear();
 		fLocalActivations.clear();
+		
+		// Remove any "resource", like listeners, that were associated
+		// with this service.
+		if (!fContextManagerListeners.isEmpty()) {
+			Object[] array = fContextManagerListeners.toArray();
+			for (int i = 0; i < array.length; i++) {
+				removeContextManagerListener((IContextManagerListener) array[i]);
+			}
+			fContextManagerListeners.clear();
+		}
+		if (!fSourceProviders.isEmpty()) {
+			Object[] array = fSourceProviders.toArray();
+			for (int i = 0; i < array.length; i++) {
+				removeSourceProvider((ISourceProvider) array[i]);
+			}
+			fSourceProviders.clear();
+		}
+		if (!fRegisteredShells.isEmpty()) {
+			Object[] array = fRegisteredShells.toArray();
+			for (int i = 0; i < array.length; i++) {
+				unregisterShell((Shell) array[i]);
+			}
+			fRegisteredShells.clear();
+		}
 	}
 
 	/**
@@ -291,6 +346,9 @@ public class SlaveContextService implements IContextService {
 	 *      int)
 	 */
 	public boolean registerShell(Shell shell, int type) {
+		if (!fRegisteredShells.contains(shell)) {
+			fRegisteredShells.add(shell);
+		}
 		return fParentService.registerShell(shell, type);
 	}
 
@@ -300,6 +358,7 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#removeContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
 	 */
 	public void removeContextManagerListener(IContextManagerListener listener) {
+		fContextManagerListeners.remove(listener);
 		fParentService.removeContextManagerListener(listener);
 	}
 
@@ -309,6 +368,7 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	public void removeSourceProvider(ISourceProvider provider) {
+		fSourceProviders.remove(provider);
 		fParentService.removeSourceProvider(provider);
 	}
 
@@ -318,6 +378,7 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#unregisterShell(org.eclipse.swt.widgets.Shell)
 	 */
 	public boolean unregisterShell(Shell shell) {
+		fRegisteredShells.remove(shell);
 		return fParentService.unregisterShell(shell);
 	}
 }
