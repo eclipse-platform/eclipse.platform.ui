@@ -48,8 +48,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(ISynchronizationScope input, int type, IResourceDiffTree deltaTree) {
-    	super(input, type, deltaTree);
+    protected MergeContext(ISynchronizationScopeManager manager, int type, IResourceDiffTree deltaTree) {
+    	super(manager, type, deltaTree);
     }
     
     /* (non-Javadoc)

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.mapping.ModelParticipantPageDialog;
 import org.eclipse.team.ui.TeamUI;
@@ -220,7 +221,7 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 	 * @return a newly created synchronize pariticipant to be used by this operation
 	 */
 	protected ModelSynchronizeParticipant createParticipant() {
-		return ModelSynchronizeParticipant.createParticipant(getScopeManager(), createMergeContext(), getJobName());
+		return ModelSynchronizeParticipant.createParticipant(createMergeContext(), getJobName());
 	}
 
 	/**
@@ -232,6 +233,6 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 	 * family that matches the context.
 	 * @return a merge context for use by this operation
 	 */
-	protected abstract ISynchronizationContext createMergeContext();
+	protected abstract SynchronizationContext createMergeContext();
 
 }

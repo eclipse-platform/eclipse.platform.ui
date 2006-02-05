@@ -52,7 +52,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 			new SynchronizationOperation(getConfiguration(), getContext().getScope().getMappings()) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
-					new ModelMergeOperation(getPart(), ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getScopeManager()) {
+					new ModelMergeOperation(getPart(), ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext().getScopeManager()) {
 						public boolean isPreviewRequested() {
 							return false;
 						}

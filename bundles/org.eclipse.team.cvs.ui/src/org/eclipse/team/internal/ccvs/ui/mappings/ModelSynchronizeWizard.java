@@ -33,7 +33,7 @@ public class ModelSynchronizeWizard extends ModelParticipantWizard {
 	protected ISynchronizeParticipant createParticipant(ResourceMapping[] selectedMappings) {
 		ISynchronizationScopeManager manager = new SubscriberScopeManager(selectedMappings, 
 				CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
-		WorkspaceModelParticipant p =  new WorkspaceModelParticipant(manager, 
+		WorkspaceModelParticipant p =  new WorkspaceModelParticipant( 
 				WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY));
 		return p;
 	}

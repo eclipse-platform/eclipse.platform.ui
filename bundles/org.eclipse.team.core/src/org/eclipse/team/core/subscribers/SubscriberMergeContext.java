@@ -42,7 +42,7 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	private final ISynchronizationScopeManager manager;
 	
 	protected SubscriberMergeContext(Subscriber subscriber, ISynchronizationScopeManager manager) {
-		super(manager.getScope(), getType(subscriber), new ResourceDiffTree());
+		super(manager, getType(subscriber), new ResourceDiffTree());
 		this.subscriber = subscriber;
 		this.manager = manager;
 	}

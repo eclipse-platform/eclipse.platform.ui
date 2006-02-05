@@ -38,7 +38,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
 	private final int type;
 
-	public static IMergeContext createContext(ISynchronizationScopeManager manager, int type) {
+	public static WorkspaceSubscriberContext createContext(ISynchronizationScopeManager manager, int type) {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, manager, type);
 		mergeContext.initialize();

@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -58,13 +59,13 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	 * @see org.eclipse.team.ui.operations.ResourceMappingMergeOperation#createParticipant()
 	 */
 	protected ModelSynchronizeParticipant createParticipant() {
-		return new WorkspaceModelParticipant(getScopeManager(), createMergeContext());
+		return new WorkspaceModelParticipant(createMergeContext());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ModelParticipantMergeOperation#createMergeContext()
 	 */
-	protected ISynchronizationContext createMergeContext() {
+	protected SynchronizationContext createMergeContext() {
 		return WorkspaceSubscriberContext.createContext(getScopeManager(), getMergeType());
 	}
 }

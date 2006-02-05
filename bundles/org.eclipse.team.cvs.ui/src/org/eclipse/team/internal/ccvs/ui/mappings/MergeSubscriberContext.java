@@ -18,13 +18,13 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 
 public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 
-	public static IMergeContext createContext(ISynchronizationScopeManager manager, Subscriber subscriber) {
+	public static MergeSubscriberContext createContext(ISynchronizationScopeManager manager, Subscriber subscriber) {
 		MergeSubscriberContext mergeContext = new MergeSubscriberContext(subscriber, manager);
 		mergeContext.initialize();
 		return mergeContext;

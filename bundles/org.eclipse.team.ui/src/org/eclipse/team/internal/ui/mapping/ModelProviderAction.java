@@ -217,7 +217,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * no buffer is active).
 	 */
 	protected ISaveableCompareModel getActiveBuffer() {
-		return ((ModelSynchronizeParticipant)configuration.getParticipant()).getCurrentModel();
+		return ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveModel();
 	}
 
 	/**
@@ -227,7 +227,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * no buffer is active).
 	 */
 	protected void setActiveBuffer(ISaveableCompareModel buffer) {
-		((ModelSynchronizeParticipant)configuration.getParticipant()).setCurrentModel(buffer);
+		((ModelSynchronizeParticipant)configuration.getParticipant()).setActiveModel(buffer);
 	}
 	
 	/**

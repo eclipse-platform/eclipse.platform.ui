@@ -55,7 +55,7 @@ public class MergeAction extends Action {
 	public void runWithEvent(Event event) {
 		IHandler handler = getHandler();
 		if (handler != null && handler.isEnabled()) {
-			final ISaveableCompareModel currentBuffer = ((ModelSynchronizeParticipant)configuration.getParticipant()).getCurrentModel();
+			final ISaveableCompareModel currentBuffer = ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveModel();
 			if (currentBuffer != null && currentBuffer.isDirty()) {
 				ISaveableCompareModel targetBuffer = null;
 				if (handler instanceof MergeActionHandler) {
@@ -80,7 +80,7 @@ public class MergeAction extends Action {
 				} catch (InterruptedException e) {
 					return;
 				}
-				((ModelSynchronizeParticipant)configuration.getParticipant()).setCurrentModel(targetBuffer);
+				((ModelSynchronizeParticipant)configuration.getParticipant()).setActiveModel(targetBuffer);
 			}
 			try {
 				handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, event, null));

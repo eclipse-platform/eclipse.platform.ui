@@ -13,7 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.MergeContext;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -144,8 +147,8 @@ public class WorkspaceModelParticipant extends
 	public WorkspaceModelParticipant() {
 	}
 	
-	public WorkspaceModelParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context) {
-		super(manager, context);
+	public WorkspaceModelParticipant(SynchronizationContext context) {
+		super(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.cvs.ui.workspace-participant")); //$NON-NLS-1$
 		} catch (CoreException e) {
@@ -172,7 +175,7 @@ public class WorkspaceModelParticipant extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#restoreContext(org.eclipse.team.core.mapping.IResourceMappingScope, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IMergeContext restoreContext(ISynchronizationScopeManager manager) {
+	protected MergeContext restoreContext(ISynchronizationScopeManager manager) {
 		return WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
 	}
 	

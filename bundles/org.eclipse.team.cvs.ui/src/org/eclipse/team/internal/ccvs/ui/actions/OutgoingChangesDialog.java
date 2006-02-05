@@ -20,8 +20,9 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ui.SWTUtils;
@@ -104,14 +105,14 @@ public class OutgoingChangesDialog extends DetailsDialog {
 	}
 
 	private ModelSynchronizeParticipant createParticipant() throws InvocationTargetException, InterruptedException {
-		ISynchronizationContext context = createSynchronizationContext(manager);
-		ModelSynchronizeParticipant participant = ModelSynchronizeParticipant.createParticipant(manager, context, title);
+		SynchronizationContext context = createSynchronizationContext(manager);
+		ModelSynchronizeParticipant participant = ModelSynchronizeParticipant.createParticipant(context, title);
 		participant.setMergingEnabled(false);
 		return participant;
 	}
 
-	private ISynchronizationContext createSynchronizationContext(final ISynchronizationScopeManager manager) throws InvocationTargetException, InterruptedException {
-		final ISynchronizationContext[] context = new ISynchronizationContext[] { null };
+	private SynchronizationContext createSynchronizationContext(final ISynchronizationScopeManager manager) throws InvocationTargetException, InterruptedException {
+		final SynchronizationContext[] context = new SynchronizationContext[] { null };
 		context[0] = WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
 		return context[0];
 	}

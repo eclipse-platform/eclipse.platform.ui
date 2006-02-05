@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.mapping.ModelOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 
 public class ModelSelectionDropDownAction extends Action implements IMenuCreator, ISynchronizationScopeChangeListener {
 
@@ -78,7 +79,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 			menuManager = new MenuManager();
 			fMenu = menuManager.createContextMenu(parent);
 			menuManager.add(showAllAction);
-			ModelProvider[] modelProviders = getSynchronizationContext().getScope().getModelProviders();
+			ModelProvider[] modelProviders = ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveModelProviders();
 			if (modelProviders.length > 0)
 				menuManager.add(new Separator());
 			addModelsToMenu(modelProviders);

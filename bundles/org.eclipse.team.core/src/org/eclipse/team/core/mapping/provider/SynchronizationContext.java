@@ -36,19 +36,19 @@ import org.eclipse.team.internal.core.Policy;
  */
 public abstract class SynchronizationContext implements ISynchronizationContext {
 
-	private ISynchronizationScope scope;
     private final int type;
     private final IResourceDiffTree diffTree;
     private Cache cache;
+	private final ISynchronizationScopeManager manager;
 
     /**
      * Create a synchronization context.
-     * @param scope the input that defines the scope of the synchronization
+     * @param manager the manager that defines the scope of the synchronization
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
      * @param diffTree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(ISynchronizationScope scope, int type, IResourceDiffTree diffTree) {
-    	this.scope = scope;
+    protected SynchronizationContext(ISynchronizationScopeManager manager, int type, IResourceDiffTree diffTree) {
+    	this.manager = manager;
 		this.type = type;
 		this.diffTree = diffTree;
     }
@@ -57,9 +57,17 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 * {@inheritDoc}
 	 */
 	public ISynchronizationScope getScope() {
-		return scope;
+		return getScopeManager().getScope();
 	}
 
+	/**
+	 * Return the scope manager for the scope of this context.
+	 * @return the scope manager for the scope of this context
+	 */
+	public ISynchronizationScopeManager getScopeManager() {
+		return manager;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -74,6 +82,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		if (cache != null) {
 			cache.dispose();
 		}
+		manager.dispose();
 	}
 
 	/**
@@ -101,7 +110,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 		SynchronizationScopeManager manager = null; //getScopeManager();
 		if (manager == null) {
 			// The scope manager is missing so just refresh everything
-			refresh(scope.getTraversals(), IResource.NONE, Policy.subMonitorFor(monitor, 50));
+			refresh(getScope().getTraversals(), IResource.NONE, Policy.subMonitorFor(monitor, 50));
 		} else {
 			ResourceTraversal[] traversals = manager.refresh(mappings, Policy.subMonitorFor(monitor, 50));
 			if (traversals.length > 0)

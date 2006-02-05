@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
@@ -46,7 +46,11 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class ModelSynchronizeParticipant extends
 		AbstractSynchronizeParticipant implements ISaveableModelSource {
 	
-	public static final String PROP_CURRENT_MODEL = TeamUIPlugin.ID + ".CURRENT_MODEL"; //$NON-NLS-1$
+	/**
+	 * Property constant used during property change notification to indicate
+	 * that the active model of this participant has changed.
+	 */
+	public static final String PROP_ACTIVE_SAVEABLE_MODEL = TeamUIPlugin.ID + ".ACTIVE_SAVEABLE_MODEL"; //$NON-NLS-1$
 	
 	public static final String PROP_DIRTY = TeamUIPlugin.ID + ".DIRTY"; //$NON-NLS-1$
 	
@@ -72,12 +76,11 @@ public class ModelSynchronizeParticipant extends
 	private static final String CTX_MODEL_PROVIDER_ID = "modelProviderId"; //$NON-NLS-1$
 	private static final String CTX_MODEL_PROVIDER_MAPPINGS = "mappings"; //$NON-NLS-1$
 	
-	private ISynchronizationContext context;
-	private ISynchronizationScopeManager manager;
+	private SynchronizationContext context;
 	private boolean mergingEnabled = true;
 	protected SubscriberRefreshSchedule refreshSchedule;
 	private String description;
-	private ISaveableCompareModel currentModel;
+	private ISaveableCompareModel activeModel;
 
 	private IPropertyListener dirtyListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int propId) {
@@ -91,12 +94,11 @@ public class ModelSynchronizeParticipant extends
 
 	/**
 	 * Create a participant for the given context
-	 * @param manager the scope manager
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	public static ModelSynchronizeParticipant createParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context, String name) {
-		return new ModelSynchronizeParticipant(manager, context, name);
+	public static ModelSynchronizeParticipant createParticipant(SynchronizationContext context, String name) {
+		return new ModelSynchronizeParticipant(context, name);
 	}
 	
 	/*
@@ -104,8 +106,7 @@ public class ModelSynchronizeParticipant extends
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 */
-	private ModelSynchronizeParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context, String name) {
-		this.manager = manager;
+	private ModelSynchronizeParticipant(SynchronizationContext context, String name) {
 		initializeContext(context);
 		try {
 			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor("org.eclipse.team.ui.synchronization_context_synchronize_participant")); //$NON-NLS-1$
@@ -121,8 +122,7 @@ public class ModelSynchronizeParticipant extends
 	 * Create a participant for the given context
 	 * @param context the synchronization context
 	 */
-	public ModelSynchronizeParticipant(ISynchronizationScopeManager manager, ISynchronizationContext context) {
-		this.manager = manager;
+	public ModelSynchronizeParticipant(SynchronizationContext context) {
 		initializeContext(context);
 		refreshSchedule = new SubscriberRefreshSchedule(createRefreshable());
 	}
@@ -215,7 +215,6 @@ public class ModelSynchronizeParticipant extends
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#dispose()
 	 */
 	public void dispose() {
-		manager.dispose();
 		context.dispose();
 		Platform.getJobManager().cancel(this);
 		refreshSchedule.dispose();
@@ -226,7 +225,7 @@ public class ModelSynchronizeParticipant extends
 	 * before a page is obtained from the participant.
 	 * @param context the context for this participant
 	 */
-	protected void initializeContext(ISynchronizationContext context) {
+	protected void initializeContext(SynchronizationContext context) {
 		this.context = context;
 		mergingEnabled = context instanceof IMergeContext;
 	}
@@ -235,7 +234,7 @@ public class ModelSynchronizeParticipant extends
 	 * Return the synchronization context for this participant.
 	 * @return the synchronization context for this participant
 	 */
-	public ISynchronizationContext getContext() {
+	public SynchronizationContext getContext() {
 		return context;
 	}
 	
@@ -385,7 +384,7 @@ public class ModelSynchronizeParticipant extends
 	}
 
 	private void saveMappings(IMemento settings) {
-		ISynchronizationScope inputScope = getScopeManager().getScope().asInputScope();
+		ISynchronizationScope inputScope = getContext().getScope().asInputScope();
 		ModelProvider[] providers = inputScope.getModelProviders();
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
@@ -446,8 +445,8 @@ public class ModelSynchronizeParticipant extends
 
 	private void initializeContext(ResourceMapping[] mappings) throws PartInitException {
 		try {
-			manager = createScopeManager(mappings);
-			IMergeContext context = restoreContext(manager);
+			ISynchronizationScopeManager manager = createScopeManager(mappings);
+			MergeContext context = restoreContext(manager);
 			initializeContext(context);
 		} catch (CoreException e) {
 			TeamUIPlugin.log(e);
@@ -463,7 +462,7 @@ public class ModelSynchronizeParticipant extends
 	 * @return the context for this participant
 	 * @throws CoreException
 	 */
-	protected IMergeContext restoreContext(ISynchronizationScopeManager manager) throws CoreException {
+	protected MergeContext restoreContext(ISynchronizationScopeManager manager) throws CoreException {
 		throw new PartInitException(NLS.bind("Participant {0} is not capable of restoring its context", getId()));
 	}
 
@@ -495,55 +494,84 @@ public class ModelSynchronizeParticipant extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
 	 */
-	public ISaveableModel[] getModels() {
-		if (currentModel == null)
+	public final ISaveableModel[] getModels() {
+		if (getActiveModel() == null)
 			return new ISaveableModel[0];
-		return new ISaveableModel[] { currentModel };
+		return new ISaveableModel[] { getActiveModel() };
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
 	 */
-	public ISaveableModel[] getActiveModels() {
+	public final ISaveableModel[] getActiveModels() {
 		return getModels();
 	}
 
-	public ISaveableCompareModel getCurrentModel() {
-		return currentModel;
+	/**
+	 * Return the active saveable model for this participant.
+	 * There is at most one saveable model active at any
+	 * time.
+	 * @return the active saveable model for this participant
+	 * or <code>null</code>
+	 */
+	public ISaveableCompareModel getActiveModel() {
+		return activeModel;
 	}
 
-	public void setCurrentModel(ISaveableCompareModel currentModel) {
+	/**
+	 * Set the active saveable model of this participant.
+	 * @param activeModel the active saveable model (may be <code>null</code>)
+	 */
+	public void setActiveModel(ISaveableCompareModel activeModel) {
 		boolean wasDirty = false;
-		ISaveableCompareModel oldModel = this.currentModel;
+		ISaveableCompareModel oldModel = this.activeModel;
 		if (oldModel != null) {
 			oldModel.removePropertyListener(dirtyListener);
 			wasDirty = oldModel.isDirty();
 		}
-		this.currentModel = currentModel;
-		firePropertyChange(this, PROP_CURRENT_MODEL, oldModel, currentModel);
+		this.activeModel = activeModel;
+		firePropertyChange(this, PROP_ACTIVE_SAVEABLE_MODEL, oldModel, activeModel);
 		boolean isDirty = false;
-		if (currentModel != null) {
-			currentModel.addPropertyListener(dirtyListener);
-			isDirty = currentModel.isDirty();
+		if (activeModel != null) {
+			activeModel.addPropertyListener(dirtyListener);
+			isDirty = activeModel.isDirty();
 		}
 		if (isDirty != wasDirty)
 			firePropertyChange(this, PROP_DIRTY, Boolean.valueOf(wasDirty), Boolean.valueOf(isDirty));
 	}
 	
+	/**
+	 * Convenience method for switching the active saveable model of this participant
+	 * to the model of the given input.
+	 * @param shell a shell
+	 * @param input the compar einput about to be displayed
+	 * @param cancelAllowed whether the display of the compar einput can be cancelled
+	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not required
+	 * @return whether the user choose to continue with the display of the given compare input
+	 * @throws CoreException
+	 */
 	public boolean checkForBufferChange(Shell shell, IModelCompareInput input, boolean cancelAllowed, IProgressMonitor monitor) throws CoreException {
-		ISaveableCompareModel currentBuffer = getCurrentModel();
+		ISaveableCompareModel currentBuffer = getActiveModel();
 		ISaveableCompareModel targetBuffer = input.getCompareModel();
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
 		try {
 			ModelProviderAction.handleBufferChange(shell, targetBuffer, currentBuffer, cancelAllowed, Policy.subMonitorFor(monitor, 10));
 		} catch (InterruptedException e) {
 			return false;
 		}
-		setCurrentModel(targetBuffer);
+		setActiveModel(targetBuffer);
 		return true;
 	}
-
-	public ISynchronizationScopeManager getScopeManager() {
-		return manager;
+	
+	/**
+	 * Return the list of model providers that are active for the participant.
+	 * By default, the list is those model providers that contain mappings
+	 * in the scope. Subclasses may override to add additional model providers.
+	 * @return the list of model providers that are active for the participant
+	 */
+	public ModelProvider[] getActiveModelProviders() {
+		return getContext().getScope().getModelProviders();
 	}
 	
 }
