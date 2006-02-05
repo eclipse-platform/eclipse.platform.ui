@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal.intro.shared;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
@@ -12,6 +13,10 @@ public class PageData {
 	private String id;
 	private ArrayList groups = new ArrayList();
 	private GroupData hidden=null;
+	
+	public PageData(String id) {
+		this.id = id;
+	}
 	
 	public PageData(Element page) {
 		this.id = page.getAttribute("id"); //$NON-NLS-1$
@@ -61,7 +66,7 @@ public class PageData {
 		return hidden!=null && hidden.contains(extensionId);
 	}
 	
-	private GroupData findGroup(String groupId) {
+	public GroupData findGroup(String groupId) {
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gdata = (GroupData)groups.get(i);
 			IPath path = new Path(gdata.getPath());
@@ -76,8 +81,47 @@ public class PageData {
 		groups.add(gd);
 	}
 	
+	public void addImplicitExtension(String extensionId, String name) {
+		ExtensionData ed = findExtension(extensionId);
+		if (ed!=null) {
+			// see if name needs to be supplied
+			if (ed.getName()==null || ed.getName().length()==0)
+				ed.setName(name);
+			return;
+		}
+		GroupData gd = findDefaultGroup();
+		if (gd==null && groups.size()==0) {
+			// add bottom as the default group
+			gd = new GroupData("page-content/bottom"); //$NON-NLS-1$
+			groups.add(gd);
+		}
+		gd.addImplicitExtension(extensionId, name);
+	}
+	
+	private GroupData findDefaultGroup() {
+		for (int i=0; i<groups.size(); i++) {
+			GroupData gd = (GroupData)groups.get(i);
+			if (gd.isDefault())
+				return gd;
+		}
+		return null;
+	}
+	
 	public String getId() {
 		return id;
+	}
+	
+	private ExtensionData findExtension(String extensionId) {
+		for (int i=0; i<groups.size(); i++) {
+			GroupData gdata = (GroupData)groups.get(i);
+			ExtensionData ed = gdata.find(extensionId);
+			if (ed!=null)
+				return ed;
+		}
+		// check the hidden
+		if (hidden!=null)
+			return hidden.find(extensionId);
+		return null;
 	}
 
 	public String resolveExtension(String extensionId) {
@@ -95,5 +139,16 @@ public class PageData {
 		if (groups.size()==0) return null;
 		GroupData last = (GroupData)groups.get(groups.size()-1);
 		return id + "/" + last.getPath() + "/" + ISharedIntroConstants.DEFAULT_ANCHOR;  //$NON-NLS-1$//$NON-NLS-2$
+	}
+	
+	public void write(PrintWriter writer, String indent) {
+		writer.print(indent);
+		writer.println("<page id=\""+id+"\">");  //$NON-NLS-1$//$NON-NLS-2$
+		for (int i=0; i<groups.size(); i++) {
+			GroupData gd = (GroupData)groups.get(i);
+			gd.write(writer, indent+"   "); //$NON-NLS-1$
+		}
+		writer.print(indent);
+		writer.println("</page>"); //$NON-NLS-1$
 	}
 }

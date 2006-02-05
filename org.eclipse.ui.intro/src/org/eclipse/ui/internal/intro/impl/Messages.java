@@ -80,9 +80,29 @@ public class Messages extends NLS {
 	public static String SharedIntroConfigurer_whatsnew_nav;
 	public static String SharedIntroConfigurer_migrate_nav;
 	public static String SharedIntroConfigurer_webresources_nav;
+	public static String WelcomeCustomizationPreferencePage_available;
+	public static String WelcomeCustomizationPreferencePage_left;
+	public static String WelcomeCustomizationPreferencePage_right;
+	public static String WelcomeCustomizationPreferencePage_bottom;
 	public static String WelcomeCustomizationPreferencePage_background;
 	public static String WelcomeCustomizationPreferencePage_preview;
-	public static String WelcomeCustomizationPreferencePage_home_links;
+	public static String WelcomeCustomizationPreferencePage_rootpages;
+	public static String WelcomeCustomizationPreferencePage_overview;
+	public static String WelcomeCustomizationPreferencePage_firststeps;
+	public static String WelcomeCustomizationPreferencePage_tutorials;
+	public static String WelcomeCustomizationPreferencePage_samples;
+	public static String WelcomeCustomizationPreferencePage_whatsnew;
+	public static String WelcomeCustomizationPreferencePage_webresources;
+	public static String WelcomeCustomizationPreferencePage_migrate;
+	public static String WelcomeCustomizationPreferencePage_applyToAll;
+	public static String ExtensionData_callout;
+	public static String ExtensionData_low;
+	public static String ExtensionData_medium;
+	public static String ExtensionData_high;
+	public static String ExtensionData_new;
+	public static String WelcomeCustomizationPreferencePage_serialize;
+	public static String WelcomeCustomizationPreferencePage_serializeTitle;
+	public static String WelcomeCustomizationPreferencePage_serializeMessage;
 
 
 

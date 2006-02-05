@@ -7,6 +7,7 @@ public interface ISharedIntroConstants {
 	String HIGH = "high"; //$NON-NLS-1$
 	String CALLOUT = "callout"; //$NON-NLS-1$
 	String HIDDEN = "hidden"; //$NON-NLS-1$
+	String NEW = "new"; //$NON-NLS-1$
 	String DEFAULT_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
 	// Page ids
 	String ID_ROOT = "root"; //$NON-NLS-1$

@@ -1,17 +1,26 @@
 package org.eclipse.ui.internal.intro.shared;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
+import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -21,10 +30,11 @@ public class IntroData {
 	private Hashtable pages=new Hashtable();
 	private boolean active;
 	
-	public IntroData(String productId, String dataFile, boolean active) {
+	public IntroData(String productId, String fileNameOrData, boolean active) {
 		this.productId = productId;
 		this.active = active;
-		initialize(dataFile);
+		if (fileNameOrData!=null)
+			initialize(fileNameOrData);
 	}
 	
 	public String getProductId() {
@@ -39,8 +49,8 @@ public class IntroData {
 		return active;
 	}
 
-	private void initialize(String dataFile) {
-		Document doc = parse(dataFile);
+	private void initialize(String fileNameOrData) {
+		Document doc = parse(fileNameOrData);
 		if (doc == null)
 			return;
 		Element root = doc.getDocumentElement();
@@ -57,8 +67,65 @@ public class IntroData {
 		PageData pd = new PageData(page);
 		pages.put(pd.getId(), pd);
 	}
+	
+	public void addImplicitContent() {
+		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
+		for (int i=0; i<elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			if (element.getName().equals("configExtension")) { //$NON-NLS-1$
+				String cid = element.getAttribute("configId"); //$NON-NLS-1$
+				if (cid!=null && cid.equals("org.eclipse.ui.intro.sharedConfig")) { //$NON-NLS-1$
+					addCandidate(element);
+				}
+			}
+		}
+	}
 
-	private Document parse(String fileURI) {
+	private void addCandidate(IConfigurationElement element) {
+		String fileName = element.getAttribute("content"); //$NON-NLS-1$
+		if (fileName==null)
+			return;
+		String bundleId = element.getDeclaringExtension().getNamespace();
+		Bundle bundle = Platform.getBundle(bundleId);
+		if (bundle==null)
+			return;
+		String content = BundleUtil.getResolvedResourceLocation("", fileName, //$NON-NLS-1$
+	                bundle);
+	    IntroContentParser parser = new IntroContentParser(content);
+	    Document dom = parser.getDocument();
+	    Element root = dom.getDocumentElement();
+	    Element extension = null;
+	    NodeList children = root.getChildNodes();
+	    for (int i=0; i<children.getLength(); i++) {
+	       	Node child = children.item(i);
+	       	if (child.getNodeType()==Node.ELEMENT_NODE) {
+	       		Element el = (Element)child;
+	       		if (el.getNodeName().equalsIgnoreCase("extensionContent")) { //$NON-NLS-1$
+	       			extension = el;
+	       			break;
+	       		}
+	       	}
+	    }
+	    if (extension==null)
+	       	return;
+	    String id = extension.getAttribute("id"); //$NON-NLS-1$
+	    String name = extension.getAttribute("name"); //$NON-NLS-1$
+	    String path = extension.getAttribute("path"); //$NON-NLS-1$
+	    if (id==null || path==null)
+	       	return;
+	    int at = path.lastIndexOf("/@"); //$NON-NLS-1$
+	    if (at == -1)
+	       	return;
+	    String pageId = path.substring(0, at);
+	    PageData pd = (PageData)pages.get(pageId);
+	    if (pd==null) {
+	    	pd = new PageData(pageId);
+	    	pages.put(pageId, pd);
+	    }
+	    pd.addImplicitExtension(id, name);
+	}
+
+	private Document parse(String fileNameOrData) {
 		Document document = null;
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -68,7 +135,13 @@ public class IntroData {
 			docFactory.setExpandEntityReferences(false);
 			DocumentBuilder parser = docFactory.newDocumentBuilder();
 
-			document = parser.parse(fileURI);
+			if (fileNameOrData.charAt(0)=='<') {
+				//This is actual content, not the file name
+				StringReader reader = new StringReader(fileNameOrData);
+				document = parser.parse(new InputSource(reader));
+			}
+			else
+				document = parser.parse(fileNameOrData);
 			return document;
 
 		} catch (SAXParseException spe) {
@@ -99,5 +172,16 @@ public class IntroData {
 			Log.error(ioe.getMessage(), ioe);
 		}
 		return null;
+	}
+	
+	public void write(PrintWriter writer) {
+		writer.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>"); //$NON-NLS-1$
+		writer.println("<extensions>"); //$NON-NLS-1$
+		for (Enumeration keys = pages.keys(); keys.hasMoreElements();) {
+			String id = (String)keys.nextElement();
+			PageData pd = (PageData)pages.get(id);
+			pd.write(writer, "   "); //$NON-NLS-1$
+		}
+		writer.println("</extensions>"); //$NON-NLS-1$
 	}
 }

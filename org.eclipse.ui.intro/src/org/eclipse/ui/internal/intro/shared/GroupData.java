@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal.intro.shared;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import org.eclipse.ui.intro.config.IntroElement;
@@ -12,6 +13,11 @@ public class GroupData {
 	boolean fDefault=false;
 	private String path;
 	private ArrayList extensions = new ArrayList();
+	
+	public GroupData(String path) {
+		fDefault = true;
+		this.path = path;
+	}
 
 	public GroupData(Element element) {
 		if (element.getNodeName().equals("hidden")) //$NON-NLS-1$
@@ -43,11 +49,17 @@ public class GroupData {
 			result.add(anchor);
 		}
 	}
+	
+	public void addImplicitExtension(String id, String name) {
+		ExtensionData ed = new ExtensionData(id, name, ISharedIntroConstants.LOW, true);
+		extensions.add(ed);
+	}
 
 	private void loadExtension(Element element) {
 		String id = element.getAttribute("id"); //$NON-NLS-1$
+		String name = element.getAttribute("name"); //$NON-NLS-1$
 		String importance = element.getAttribute("importance"); //$NON-NLS-1$
-		ExtensionData ed = new ExtensionData(id, importance);
+		ExtensionData ed = new ExtensionData(id, name, importance, false);
 		extensions.add(ed);
 	}
 
@@ -60,11 +72,30 @@ public class GroupData {
 	}
 
 	public boolean contains(String extensionId) {
+		return find(extensionId)!=null;
+	}
+	
+	ExtensionData find(String extensionId) {
 		for (int i = 0; i < extensions.size(); i++) {
 			ExtensionData ed = (ExtensionData) extensions.get(i);
 			if (ed.getId().equals(extensionId))
-				return true;
+				return ed;
 		}
-		return false;
+		return null;
+	}
+	
+	public void write(PrintWriter writer, String indent) {
+		writer.print(indent);
+		writer.print("<group path=\""+path+"\"");  //$NON-NLS-1$ //$NON-NLS-2$
+		if (fDefault)
+			writer.println(" default=\"true\">"); //$NON-NLS-1$
+		else
+			writer.println(">"); //$NON-NLS-1$
+		for (int i=0; i<extensions.size(); i++) {
+			ExtensionData ed = (ExtensionData)extensions.get(i);
+			ed.write(writer, indent+"   "); //$NON-NLS-1$
+		}
+		writer.print(indent);
+		writer.println("</group>"); //$NON-NLS-1$
 	}
 }
