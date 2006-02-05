@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.model;
 
+import org.eclipse.team.core.diff.IThreeWayDiff;
+
 import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.widgets.Composite;
 
@@ -41,7 +47,7 @@ public final class RefactoringDescriptorCompareViewer extends RefactoringDescrip
 		super(parent, style);
 		Assert.isNotNull(configuration);
 		fConfiguration= configuration;
-		fBrowser.setData(CompareUI.COMPARE_VIEWER_TITLE, ModelMessages.RefactoringDescriptorCompareInput_pending_refactoring);
+		fBrowser.setData(CompareUI.COMPARE_VIEWER_TITLE, RefactoringUIMessages.RefactoringWizard_refactoring);
 	}
 
 	/**
@@ -56,9 +62,19 @@ public final class RefactoringDescriptorCompareViewer extends RefactoringDescrip
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setInput(final Object input) {
-		if (input instanceof RefactoringDescriptorCompareInput)
-			super.setInput(((RefactoringDescriptorCompareInput) input).getDescriptor());
-		super.setInput(input);
+	public void setInput(final Object element) {
+		if (element instanceof RefactoringDescriptorCompareInput) {
+			final RefactoringDescriptorCompareInput input= (RefactoringDescriptorCompareInput) element;
+			final RefactoringDescriptorProxy descriptor= input.getDescriptor();
+			if (descriptor instanceof RefactoringDescriptorSynchronizationProxy) {
+				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) descriptor;
+				if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+					fBrowser.setData(CompareUI.COMPARE_VIEWER_TITLE, ModelMessages.RefactoringDescriptorCompareInput_pending_refactoring);
+				else
+					fBrowser.setData(CompareUI.COMPARE_VIEWER_TITLE, ModelMessages.RefactoringDescriptorCompareInput_performed_refactoring);
+			}
+			super.setInput(descriptor);
+		}
+		super.setInput(element);
 	}
 }

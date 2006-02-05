@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.model;
 
+import org.eclipse.team.core.diff.IThreeWayDiff;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -45,7 +48,14 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 		 * {@inheritDoc}
 		 */
 		public String getName() {
-			return ModelMessages.RefactoringDescriptorCompareInput_pending_refactoring;
+			if (fDescriptor instanceof RefactoringDescriptorSynchronizationProxy) {
+				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fDescriptor;
+				if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+					return ModelMessages.RefactoringDescriptorCompareInput_pending_refactoring;
+				else
+					return ModelMessages.RefactoringDescriptorCompareInput_performed_refactoring;
+			}
+			return RefactoringUIMessages.RefactoringWizard_refactoring;
 		}
 
 		/**

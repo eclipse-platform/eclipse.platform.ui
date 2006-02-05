@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 
@@ -24,6 +28,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImple
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWizard;
 
 import org.eclipse.swt.widgets.Shell;
@@ -119,7 +124,16 @@ public final class AcceptRefactoringsAction extends Action {
 	 * {@inheritDoc}
 	 */
 	public boolean isEnabled() {
-		return fProxies != null && fProxies.length > 0;
+		if (fProxies != null && fProxies.length > 0) {
+			for (int index= 0; index < fProxies.length; index++) {
+				if (fProxies[index] instanceof RefactoringDescriptorSynchronizationProxy) {
+					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fProxies[index];
+					if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -132,13 +146,19 @@ public final class AcceptRefactoringsAction extends Action {
 			try {
 				final WizardDialog dialog= new WizardDialog(fShell, wizard);
 				IProject project= null;
+				Set proxies= new HashSet();
 				for (int index= 0; index < fProxies.length; index++) {
+					if (fProxies[index] instanceof RefactoringDescriptorSynchronizationProxy) {
+						final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fProxies[index];
+						if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+							proxies.add(proxy);
+					}
 					String name= fProxies[index].getProject();
 					if (name != null && !"".equals(name)) //$NON-NLS-1$
 						project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				}
 				wizard.setConfiguration(new RefactoringHistoryAcceptConfiguration(project));
-				wizard.setInput(new RefactoringHistoryImplementation(fProxies));
+				wizard.setInput(new RefactoringHistoryImplementation((RefactoringDescriptorProxy[]) proxies.toArray(new RefactoringDescriptorProxy[proxies.size()])));
 				dialog.create();
 				dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_ACCEPT_REFACTORING_PAGE);

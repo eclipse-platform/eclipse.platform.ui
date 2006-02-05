@@ -32,6 +32,8 @@ public final class ModelMessages extends NLS {
 
 	public static String RefactoringDescriptorCompareInput_pending_refactoring;
 
+	public static String RefactoringDescriptorCompareInput_performed_refactoring;
+
 	public static String RefactoringDescriptorDiff_diff_string;
 
 	public static String RefactoringDescriptorViewer_breaking_change_message;
