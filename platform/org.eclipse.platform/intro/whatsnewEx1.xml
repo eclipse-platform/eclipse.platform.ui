@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
-  	<extensionContent id="org.eclipse.ui.workbench.news" alt-style="css/swt.properties" style="css/overview.css" path="whatsnew/@">
+  	<extensionContent id="org.eclipse.ui.workbench.news" name="Eclipse Platform" alt-style="css/swt.properties" style="css/overview.css" path="whatsnew/@">
        <link label="Eclipse Platform" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/whatsNew/platform_whatsnew.html&amp;embedTarget=page-content" id="platform-noteworthy" style-id="noteworthy-link">
           <text>Find out about the major new features in this release</text>
        </link>

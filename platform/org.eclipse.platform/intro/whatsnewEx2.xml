@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
-  	<extensionContent id="org.eclipse.ui.workbench" alt-style="css/swt.properties" style="css/overview.css" path="whatsnew/@">
+  	<extensionContent id="org.eclipse.ui.workbench" name="Updates and Eclipse.org" alt-style="css/swt.properties" style="css/overview.css" path="whatsnew/@">
        <link label="New Updates" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.platform&amp;class=org.eclipse.platform.internal.LaunchUpdateIntroAction" id="updates">
           <text>Get the latest updates from Eclipse.org</text>
        </link>
