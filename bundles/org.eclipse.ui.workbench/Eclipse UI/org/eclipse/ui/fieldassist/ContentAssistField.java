@@ -11,14 +11,12 @@
 
 package org.eclipse.ui.fieldassist;
 
-import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
 import org.eclipse.jface.fieldassist.IControlCreator;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -62,10 +60,6 @@ public class ContentAssistField extends DecoratedField {
 	 *            the <code>IContentProposalProvider</code> used to obtain
 	 *            content proposals for this control, or <code>null</code> if
 	 *            no content proposal is available.
-	 * @param labelProvider
-	 *            an optional label provider which provides text and image
-	 *            information for content proposals. Clients are responsible for
-	 *            disposing the label provider when it is no longer needed.
 	 * @param commandId
 	 *            the String id of the command that will invoke the content
 	 *            assistant. If not supplied, the default value will be
@@ -80,16 +74,13 @@ public class ContentAssistField extends DecoratedField {
 			IControlCreator controlCreator,
 			IControlContentAdapter controlContentAdapter,
 			IContentProposalProvider proposalProvider,
-			ILabelProvider labelProvider, String commandId,
+			 String commandId,
 			char[] autoActivationCharacters) {
 
 		super(parent, style, controlCreator);
 		adapter = new ContentAssistCommandAdapter(getControl(),
-				controlContentAdapter, proposalProvider, labelProvider,
-				commandId, autoActivationCharacters,
-				true /* propagate keystrokes */,
-				ContentProposalAdapter.FILTER_NONE,
-				ContentProposalAdapter.PROPOSAL_INSERT);
+				controlContentAdapter, proposalProvider, 
+				commandId, autoActivationCharacters);
 
 		addFieldDecoration(getFieldDecoration(), SWT.LEFT | SWT.TOP, true);
 
@@ -146,5 +137,15 @@ public class ContentAssistField extends DecoratedField {
 
 		// Now return the field decoration
 		return dec;
+	}
+	/**
+	 * Return the ContentAssistCommandAdapter installed on the receiver. This
+	 * adapter is provided so that clients can configure the adapter if the
+	 * default values are not appropriate.
+	 * 
+	 * @return the ContentAssistCommandAdapter installed on the field.
+	 */
+	public ContentAssistCommandAdapter getContentAssistCommandAdapter() {
+		return adapter;
 	}
 }

@@ -17,7 +17,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -79,10 +78,6 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 *            the <code>IContentProposalProvider</code> used to obtain
 	 *            content proposals for this control, or <code>null</code> if
 	 *            no content proposal is available.
-	 * @param labelProvider
-	 *            an optional label provider which provides text and image
-	 *            information for content proposals. Clients are responsible for
-	 *            disposing the label provider when it is no longer needed.
 	 * @param commandId
 	 *            the String id of the command that will invoke the content
 	 *            assistant. If not supplied, the default value will be
@@ -92,31 +87,14 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 *            proposal. If specified, these characters will trigger
 	 *            auto-activation of the proposal popup, regardless of the
 	 *            specified command id.
-	 * @param propagateKeys
-	 *            a boolean that indicates whether key events (including
-	 *            auto-activation characters) should be propagated to the
-	 *            adapted control when the proposal popup is open.
-	 * @param filterStyle
-	 *            a constant indicating whether keystrokes in the proposal popup
-	 *            should filter the proposals shown <code>FILTER_NONE</code>,
-	 *            <code>FILTER_CUMULATIVE</code>, or
-	 *            <code>FILTER_CHARACTER</code>
-	 * @param acceptance
-	 *            a constant indicating how an accepted proposal should affect
-	 *            the control's content. Should be one of
-	 *            <code>PROPOSAL_INSERT</code>, <code>PROPOSAL_REPLACE</code>,
-	 *            or <code>PROPOSAL_IGNORE</code>
-	 * 
 	 */
 	public ContentAssistCommandAdapter(Control control,
 			IControlContentAdapter controlContentAdapter,
 			IContentProposalProvider proposalProvider,
-			ILabelProvider labelProvider, String commandId,
-			char[] autoActivationCharacters, boolean propagateKeys,
-			int filterStyle, int acceptance) {
-		super(control, controlContentAdapter, proposalProvider, labelProvider,
-				null, autoActivationCharacters, propagateKeys, filterStyle,
-				acceptance);
+			String commandId,
+			char[] autoActivationCharacters) {
+		super(control, controlContentAdapter, proposalProvider,
+				null, autoActivationCharacters);
 		this.commandId = commandId;
 		if (commandId == null)
 			this.commandId = CONTENT_PROPOSAL_COMMAND;

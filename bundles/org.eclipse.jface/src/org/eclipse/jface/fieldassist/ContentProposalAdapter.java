@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -25,8 +24,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -354,13 +351,41 @@ public class ContentProposalAdapter {
 			 */
 			protected void adjustBounds() {
 				Rectangle parentBounds = getParentShell().getBounds();
-				getShell().setBounds(
-						new Rectangle(parentBounds.x + parentBounds.width
-								+ PopupDialog.POPUP_HORIZONTALSPACING,
-								parentBounds.y
-										+ PopupDialog.POPUP_VERTICALSPACING,
-								parentBounds.width, parentBounds.height));
-
+				Rectangle proposedBounds;
+				// Try placing the info popup to the right
+				Rectangle rightProposedBounds = new Rectangle(parentBounds.x
+						+ parentBounds.width
+						+ PopupDialog.POPUP_HORIZONTALSPACING, parentBounds.y
+						+ PopupDialog.POPUP_VERTICALSPACING,
+						parentBounds.width, parentBounds.height);
+				rightProposedBounds = getConstrainedShellBounds(rightProposedBounds);
+				// If it won't fit on the right, try the left
+				if (rightProposedBounds.intersects(parentBounds)) {
+					Rectangle leftProposedBounds = new Rectangle(parentBounds.x
+							- parentBounds.width - POPUP_HORIZONTALSPACING - 1,
+							parentBounds.y, parentBounds.width,
+							parentBounds.height);
+					leftProposedBounds = getConstrainedShellBounds(leftProposedBounds);
+					// If it won't fit on the left, choose the proposed bounds
+					// that fits the best
+					if (leftProposedBounds.intersects(parentBounds)) {
+						if (rightProposedBounds.x - parentBounds.x >= parentBounds.x
+								- leftProposedBounds.x ) {
+							rightProposedBounds.x = parentBounds.x + parentBounds.width + PopupDialog.POPUP_HORIZONTALSPACING;
+							proposedBounds = rightProposedBounds;
+						} else {
+							leftProposedBounds.width = parentBounds.x - POPUP_HORIZONTALSPACING - leftProposedBounds.x;
+							proposedBounds = leftProposedBounds;
+						}
+					} else {
+						// use the proposed bounds on the left
+						proposedBounds = leftProposedBounds;
+					}
+				} else {
+					// use the proposed bounds on the right
+					proposedBounds = rightProposedBounds;
+				}
+				getShell().setBounds(proposedBounds);
 			}
 
 			/*
@@ -435,8 +460,8 @@ public class ContentProposalAdapter {
 		 *            as keys are typed in the popup.
 		 */
 		ContentProposalPopup(String infoText) {
-			super(control.getShell(), PopupDialog.INFOPOPUP_SHELLSTYLE, false,
-					false, false, false, null, infoText);
+			super(control.getShell(), PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE,
+					false, false, false, false, null, infoText);
 			this.proposals = getProposals(filterText);
 		}
 
@@ -489,17 +514,6 @@ public class ContentProposalAdapter {
 					acceptCurrentProposal();
 				}
 			});
-
-			// Compute a height and width for the table.
-			GridData data = new GridData(GridData.FILL_BOTH);
-			GC gc = new GC(proposalTable);
-			gc.setFont(proposalTable.getFont());
-			FontMetrics fontMetrics = gc.getFontMetrics();
-			gc.dispose();
-			data.widthHint = control.getBounds().width;
-			data.heightHint = Dialog.convertHeightInCharsToPixels(fontMetrics,
-					POPUP_CHARHEIGHT);
-			proposalTable.setLayoutData(data);
 			return proposalTable;
 		}
 
@@ -512,8 +526,32 @@ public class ContentProposalAdapter {
 			// Get our control's location in display coordinates.
 			Point location = control.getDisplay().map(control.getParent(),
 					null, control.getLocation());
-			getShell().setLocation(location.x + 3,
-					location.y + control.getSize().y + 3);
+			int initialX = location.x + POPUP_OFFSET;
+			int initialY = location.y + control.getSize().y + POPUP_OFFSET;
+
+			// If there is no specified size, force it by setting
+			// up a layout on the table.
+			if (popupSize == null) {
+				GridData data = new GridData(GridData.FILL_BOTH);
+				data.heightHint = proposalTable.getItemHeight()
+						* POPUP_CHAR_HEIGHT;
+				data.widthHint = Math.max(control.getSize().x,
+						POPUP_MINIMUM_WIDTH);
+				proposalTable.setLayoutData(data);
+				getShell().pack();
+				popupSize = getShell().getSize();
+			}
+			getShell().setBounds(initialX, initialY, popupSize.x, popupSize.y);
+
+			// Now set up a listener to monitor any changes in size.
+			getShell().addListener(SWT.Resize, new Listener() {
+				public void handleEvent(Event e) {
+					popupSize = getShell().getSize();
+					if (infoPopup != null) {
+						infoPopup.adjustBounds();
+					}
+				}
+			});
 		}
 
 		/*
@@ -876,9 +914,21 @@ public class ContentProposalAdapter {
 	private static final int POPUP_DELAY = 500;
 
 	/*
-	 * The character height hint for the popup.
+	 * The character height hint for the popup. May be overridden by using
+	 * setInitialPopupSize.
 	 */
-	private static final int POPUP_CHARHEIGHT = 10;
+	private static final int POPUP_CHAR_HEIGHT = 10;
+
+	/*
+	 * The minimum pixel width for the popup. May be overridden by using
+	 * setInitialPopupSize.
+	 */
+	private static final int POPUP_MINIMUM_WIDTH = 300;
+
+	/*
+	 * The pixel offset of the popup from the bottom corner of the control.
+	 */
+	private static final int POPUP_OFFSET = 3;
 
 	/*
 	 * Empty string.
@@ -923,21 +973,24 @@ public class ContentProposalAdapter {
 	private String autoActivateString;
 
 	/*
-	 * A flag indicating how an accepted proposal should affect the control. One
-	 * of PROPOSAL_IGNORE, PROPOSAL_INSERT, or PROPOSAL_REPLACE.
+	 * Integer that indicates how an accepted proposal should affect the
+	 * control. One of PROPOSAL_IGNORE, PROPOSAL_INSERT, or PROPOSAL_REPLACE.
+	 * Default value is PROPOSAL_INSERT.
 	 */
-	private int acceptance;
+	private int proposalAcceptanceStyle = PROPOSAL_INSERT;
 
 	/*
-	 * A boolean that indicates whether keys events received while the proposal
-	 * popup is open should also be propagated to the control.
+	 * A boolean that indicates whether key events received while the proposal
+	 * popup is open should also be propagated to the control. Default value is
+	 * true.
 	 */
-	private boolean propagateKeys;
+	private boolean propagateKeys = true;
 
 	/*
-	 * Integer that indicates the filtering style.
+	 * Integer that indicates the filtering style. One of FILTER_CHARACTER,
+	 * FILTER_CUMULATIVE, FILTER_NONE.
 	 */
-	private int filterStyle;
+	private int filterStyle = FILTER_NONE;
 
 	/*
 	 * The listener we install on the control.
@@ -961,6 +1014,11 @@ public class ContentProposalAdapter {
 	 */
 	private int autoActivationDelay = 0;
 
+	/*
+	 * The desired size in pixels of the proposal popup.
+	 */
+	private Point popupSize;
+
 	/**
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for the field.
@@ -976,14 +1034,6 @@ public class ContentProposalAdapter {
 	 *            the <code>IContentProposalProvider</code> used to obtain
 	 *            content proposals for this control, or <code>null</code> if
 	 *            no content proposal is available.
-	 * @param labelProvider
-	 *            the label provider which provides text and image information
-	 *            for content proposals. A <code>null</code> value indicates
-	 *            that no label provider is needed, and all values will be
-	 *            obtained from the proposals themselves. The lifecycle of the
-	 *            specified label provider is not managed by this adapter.
-	 *            Clients must dispose the label provider when it is no longer
-	 *            needed.
 	 * @param keyStroke
 	 *            the keystroke that will invoke the content proposal popup. If
 	 *            this value is <code>null</code>, then proposals will be
@@ -999,28 +1049,11 @@ public class ContentProposalAdapter {
 	 *            <code>null</code> and the keyStroke parameter is
 	 *            <code>null</code>, then all alphanumeric characters will
 	 *            auto-activate content proposal.
-	 * @param propagateKeys
-	 *            a boolean that indicates whether key events (including
-	 *            auto-activation characters) should be propagated to the
-	 *            adapted control when the proposal popup is open.
-	 * @param filterStyle
-	 *            a constant indicating whether keystrokes in the proposal popup
-	 *            should filter the proposals shown <code>FILTER_NONE</code>,
-	 *            <code>FILTER_CUMULATIVE</code>, or
-	 *            <code>FILTER_CHARACTER</code>
-	 * @param acceptance
-	 *            a constant indicating how an accepted proposal should affect
-	 *            the control's content. Should be one of
-	 *            <code>PROPOSAL_INSERT</code>, <code>PROPOSAL_REPLACE</code>,
-	 *            or <code>PROPOSAL_IGNORE</code>
-	 * 
 	 */
 	public ContentProposalAdapter(Control control,
 			IControlContentAdapter controlContentAdapter,
-			IContentProposalProvider proposalProvider,
-			ILabelProvider labelProvider, KeyStroke keyStroke,
-			char[] autoActivationCharacters, boolean propagateKeys,
-			int filterStyle, int acceptance) {
+			IContentProposalProvider proposalProvider, KeyStroke keyStroke,
+			char[] autoActivationCharacters) {
 		super();
 		// We always assume the control and content adapter are valid.
 		Assert.isNotNull(control);
@@ -1030,13 +1063,9 @@ public class ContentProposalAdapter {
 
 		// The rest of these may be null
 		this.proposalProvider = proposalProvider;
-		this.labelProvider = labelProvider;
 		this.triggerKeyStroke = keyStroke;
 		if (autoActivationCharacters != null)
 			this.autoActivateString = new String(autoActivationCharacters);
-		this.propagateKeys = propagateKeys;
-		this.filterStyle = filterStyle;
-		this.acceptance = acceptance;
 		addControlListener(control);
 	}
 
@@ -1164,6 +1193,122 @@ public class ContentProposalAdapter {
 	public void setAutoActivationDelay(int delay) {
 		autoActivationDelay = delay;
 
+	}
+
+	/**
+	 * Get the integer style that indicates how an accepted proposal affects the
+	 * control's content.
+	 * 
+	 * @return a constant indicating how an accepted proposal should affect the
+	 *         control's content. Should be one of <code>PROPOSAL_INSERT</code>,
+	 *         <code>PROPOSAL_REPLACE</code>, or <code>PROPOSAL_IGNORE</code>.
+	 *         (Default is <code>PROPOSAL_INSERT</code>).
+	 */
+	public int getProposalAcceptanceStyle() {
+		return proposalAcceptanceStyle;
+	}
+
+	/**
+	 * Set the integer style that indicates how an accepted proposal affects the
+	 * control's content.
+	 * 
+	 * @param acceptance
+	 *            a constant indicating how an accepted proposal should affect
+	 *            the control's content. Should be one of
+	 *            <code>PROPOSAL_INSERT</code>, <code>PROPOSAL_REPLACE</code>,
+	 *            or <code>PROPOSAL_IGNORE</code>
+	 */
+	public void setProposalAcceptanceStyle(int acceptance) {
+		proposalAcceptanceStyle = acceptance;
+	}
+
+	/**
+	 * Return the integer style that indicates how keystrokes affect the content
+	 * of the proposal popup while it is open.
+	 * 
+	 * @return a constant indicating how keystrokes in the proposal popup affect
+	 *         filtering of the proposals shown. <code>FILTER_NONE</code>
+	 *         specifies that no filtering will occur in the content proposal
+	 *         list as keys are typed. <code>FILTER_CUMULATIVE</code>
+	 *         specifies that the content of the popup will be filtered by a
+	 *         string containing all the characters typed since the popup has
+	 *         been open. <code>FILTER_CHARACTER</code> specifies the content
+	 *         of the popup will be filtered by the most recently typed
+	 *         character. The default is <code>FILTER_NONE</code>.
+	 */
+	public int getFilterStyle() {
+		return filterStyle;
+	}
+
+	/**
+	 * Set the integer style that indicates how keystrokes affect the content of
+	 * the proposal popup while it is open.
+	 * 
+	 * @param filterStyle
+	 *            a constant indicating how keystrokes in the proposal popup
+	 *            affect filtering of the proposals shown.
+	 *            <code>FILTER_NONE</code> specifies that no filtering will
+	 *            occur in the content proposal list as keys are typed.
+	 *            <code>FILTER_CUMULATIVE</code> specifies that the content of
+	 *            the popup will be filtered by a string containing all the
+	 *            characters typed since the popup has been open.
+	 *            <code>FILTER_CHARACTER</code> specifies the content of the
+	 *            popup will be filtered by the most recently typed character.
+	 */
+	public void setFilterStyle(int filterStyle) {
+		this.filterStyle = filterStyle;
+	}
+
+	/**
+	 * Return the size, in pixels, of the content proposal popup.
+	 * 
+	 * @return a Point specifying the last width and height, in pixels, of the
+	 *         content proposal popup.
+	 */
+	public Point getPopupSize() {
+		return popupSize;
+	}
+
+	/**
+	 * Set the size, in pixels, of the content proposal popup. This size will be
+	 * used the next time the content proposal popup is opened.
+	 * 
+	 * @param size
+	 *            a Point specifying the desired width and height, in pixels, of
+	 *            the content proposal popup.
+	 */
+	public void setPopupSize(Point size) {
+		popupSize = size;
+	}
+
+	/**
+	 * Get the boolean that indicates whether key events (including
+	 * auto-activation characters) received by the content proposal popup should
+	 * also be propagated to the adapted control when the proposal popup is
+	 * open.
+	 * 
+	 * @return a boolean that indicates whether key events (including
+	 *         auto-activation characters) should be propagated to the adapted
+	 *         control when the proposal popup is open. Default value is
+	 *         <code>true</code>.
+	 */
+	public boolean getPropagateKeys() {
+		return propagateKeys;
+	}
+
+	/**
+	 * Set the boolean that indicates whether key events (including
+	 * auto-activation characters) received by the content proposal popup should
+	 * also be propagated to the adapted control when the proposal popup is
+	 * open.
+	 * 
+	 * @param propagateKeys
+	 *            a boolean that indicates whether key events (including
+	 *            auto-activation characters) should be propagated to the
+	 *            adapted control when the proposal popup is open.
+	 */
+	public void setPropagateKeys(boolean propagateKeys) {
+		this.propagateKeys = propagateKeys;
 	}
 
 	/**
@@ -1384,7 +1529,7 @@ public class ContentProposalAdapter {
 	 * @param proposal the accepted proposal
 	 */
 	private void proposalAccepted(IContentProposal proposal) {
-		switch (acceptance) {
+		switch (proposalAcceptanceStyle) {
 		case (PROPOSAL_REPLACE):
 			setControlContent(proposal.getContent(), proposal
 					.getCursorPosition());
