@@ -57,7 +57,7 @@ public interface ISynchronizationConstants {
 	public static final String P_SYNCHRONIZATION_PAGE_CONFIGURATION = "org.eclipse.team.ui.synchronizationPageConfiguration"; //$NON-NLS-1$
 	
 	/**
-	 * Property constant used to store and retrieve the id active
+	 * Property constant used to store and retrieve the id of the active
 	 * {@link ModelProvider} from an {@link ISynchronizePageConfiguration}. The
 	 * active model provider will be the only one visible in the page. If
 	 * <code>null</code> or <code>ALL_MODEL_PROVIDERS_ACTIVE</code> is
