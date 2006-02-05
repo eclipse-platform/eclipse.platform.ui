@@ -56,17 +56,20 @@ public final class ModelParticipantPageDialog extends ParticipantPageDialog {
 	 * @see org.eclipse.team.ui.synchronize.ParticipantPageDialog#isOfferToRememberParticipant()
 	 */
 	protected boolean isOfferToRememberParticipant() {
-		boolean isReplace = ((IMergeContext)participant.getContext()).getMergeType() == ISynchronizationContext.TWO_WAY;
-		if (isReplace)
+		if (isReplace())
 			return false;
 		return super.isOfferToRememberParticipant();
+	}
+
+	private boolean isReplace() {
+		return ((IMergeContext)participant.getContext()).getMergeType() == ISynchronizationContext.TWO_WAY;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.SaveablePartDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		boolean isReplace = ((IMergeContext)participant.getContext()).getMergeType() == ISynchronizationContext.TWO_WAY;
+		boolean isReplace = isReplace();
 		isReplace = false; // TODO: Disbled for now
 		if (isReplace) {
 			replaceButton = createButton(parent, REPLACE_ID, "&Replace", true); 

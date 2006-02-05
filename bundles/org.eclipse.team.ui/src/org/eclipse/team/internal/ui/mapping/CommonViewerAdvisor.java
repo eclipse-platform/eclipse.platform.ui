@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
@@ -187,11 +188,10 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	public void onLoad(INavigatorContentExtension anExtension) {
 		extensions.add(anExtension);
-		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE, getParticipant().getContext().getScope());
+		SynchronizationContext context = getParticipant().getContext();
+		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE, context.getScope());
 		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION, getConfiguration());
-		if (getParticipant().getContext() != null) {
-			anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT, getParticipant().getContext());
-		}
+		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT, context);
 		for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
 			String element = (String) iter.next();
 			Object value = properties.get(element);

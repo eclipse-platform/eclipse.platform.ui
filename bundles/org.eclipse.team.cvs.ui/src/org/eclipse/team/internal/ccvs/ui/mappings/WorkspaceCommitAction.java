@@ -39,7 +39,7 @@ public class WorkspaceCommitAction extends ModelProviderAction implements IDiffC
 		super(null, configuration);
 		final IDiffTree tree = getDiffTree();
 		tree.addDiffChangeListener(this);
-		getContext().getCache().addCacheListener(new ICacheListener() {
+		getSynchronizationContext().getCache().addCacheListener(new ICacheListener() {
 			public void cacheDisposed(ICache cache) {
 				tree.removeDiffChangeListener(WorkspaceCommitAction.this);
 			}

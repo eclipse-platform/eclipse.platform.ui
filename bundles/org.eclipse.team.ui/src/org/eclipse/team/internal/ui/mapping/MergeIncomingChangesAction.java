@@ -19,10 +19,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -47,12 +47,12 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 			// Cancelled so return
 			return;
 		}
-		final IMergeContext context = (IMergeContext)((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		final IMergeContext context = (IMergeContext)getSynchronizationContext();
 		try {
-			new SynchronizationOperation(getConfiguration(), getContext().getScope().getMappings()) {
+			new SynchronizationOperation(getConfiguration(), context.getScope().getMappings()) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
-					new ModelMergeOperation(getPart(), ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext().getScopeManager()) {
+					new ModelMergeOperation(getPart(), ((SynchronizationContext)context).getScopeManager()) {
 						public boolean isPreviewRequested() {
 							return false;
 						}

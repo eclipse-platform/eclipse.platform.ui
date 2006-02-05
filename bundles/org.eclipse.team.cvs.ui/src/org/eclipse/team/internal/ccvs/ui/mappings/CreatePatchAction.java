@@ -49,7 +49,7 @@ public class CreatePatchAction extends CVSModelProviderAction {
 			ResourceMapping mapping = Utils.getResourceMapping(element);
 			if (mapping != null) {
 				ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-				final IResourceDiffTree diffTree = getContext().getDiffTree();
+				final IResourceDiffTree diffTree = getSynchronizationContext().getDiffTree();
 				diffTree.accept(new IDiffVisitor() {
 					public boolean visit(IDiff delta) throws CoreException {
 						IResource resource = diffTree.getResource(delta);

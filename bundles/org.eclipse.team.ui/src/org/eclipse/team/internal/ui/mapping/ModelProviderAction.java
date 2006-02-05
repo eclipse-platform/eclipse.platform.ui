@@ -26,6 +26,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
+import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.PlatformUI;
@@ -107,8 +108,8 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * Return the synchronization context associated with this action.
 	 * @return the synchronization context associated with this action
 	 */
-	protected ISynchronizationContext getContext() {
-		return ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+	protected ISynchronizationContext getSynchronizationContext() {
+		return (ISynchronizationContext)getConfiguration().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 	}
 
 	/**
