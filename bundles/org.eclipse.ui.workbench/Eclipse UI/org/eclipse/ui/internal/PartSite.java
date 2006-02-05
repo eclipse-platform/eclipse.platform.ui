@@ -38,10 +38,8 @@ import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
-import org.eclipse.ui.internal.keys.SlaveBindingService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.ServiceLocator;
-import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -190,11 +188,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				parentCommandService);
 		serviceLocator.registerService(ICommandService.class, commandService);
 		
-		final IBindingService parentBindingService = (IBindingService) serviceLocator
-				.getService(IBindingService.class);
-		final IBindingService bindingService = new SlaveBindingService(
-				parentBindingService);
-		serviceLocator.registerService(IBindingService.class, bindingService);
 	}
 
 	/**

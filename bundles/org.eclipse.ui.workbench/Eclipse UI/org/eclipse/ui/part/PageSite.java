@@ -32,11 +32,9 @@ import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.NestableContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
-import org.eclipse.ui.internal.keys.SlaveBindingService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
-import org.eclipse.ui.keys.IBindingService;
 
 /**
  * This implementation of <code>IPageSite</code> provides a site for a page
@@ -114,11 +112,6 @@ public class PageSite implements IPageSite, INestable {
 				parentCommandService);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
-		final IBindingService parentBindingService = (IBindingService) serviceLocator
-				.getService(IBindingService.class);
-		final IBindingService bindingService = new SlaveBindingService(
-				parentBindingService);
-		serviceLocator.registerService(IBindingService.class, bindingService);
 	}
 
 	/**

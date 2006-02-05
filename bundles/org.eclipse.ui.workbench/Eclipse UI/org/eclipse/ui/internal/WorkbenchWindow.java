@@ -110,7 +110,6 @@ import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.LegacyActionHandlerPersistence;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
-import org.eclipse.ui.internal.keys.SlaveBindingService;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
@@ -127,7 +126,6 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
@@ -3413,11 +3411,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				parentCommandService);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
-		final IBindingService parentBindingService = (IBindingService) serviceLocator
-				.getService(IBindingService.class);
-		final IBindingService bindingService = new SlaveBindingService(
-				parentBindingService);
-		serviceLocator.registerService(IBindingService.class, bindingService);
 	}
 
 	public final Object getService(final Object key) {
