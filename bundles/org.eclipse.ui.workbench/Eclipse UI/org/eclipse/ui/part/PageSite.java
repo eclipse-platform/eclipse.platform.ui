@@ -23,10 +23,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.NestableContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
@@ -103,6 +105,12 @@ public class PageSite implements IPageSite, INestable {
 		final IContextService contextSlave = new NestableContextService(
 				contextParent, defaultExpression);
 		serviceLocator.registerService(IContextService.class, contextSlave);
+		
+		final ICommandService parentCommandService = (ICommandService) serviceLocator
+				.getService(ICommandService.class);
+		final ICommandService commandService = new SlaveCommandService(
+				parentCommandService);
+		serviceLocator.registerService(ICommandService.class, commandService);
 	}
 
 	/**

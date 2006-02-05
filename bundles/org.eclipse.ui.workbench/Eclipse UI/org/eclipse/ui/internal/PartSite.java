@@ -31,8 +31,10 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
@@ -178,6 +180,13 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		final IContextService contextService = new SlaveContextService(
 				parentContextService, defaultExpression);
 		serviceLocator.registerService(IContextService.class, contextService);
+		
+
+		final ICommandService parentCommandService = (ICommandService) serviceLocator
+				.getService(ICommandService.class);
+		final ICommandService commandService = new SlaveCommandService(
+				parentCommandService);
+		serviceLocator.registerService(ICommandService.class, commandService);
 	}
 
 	/**

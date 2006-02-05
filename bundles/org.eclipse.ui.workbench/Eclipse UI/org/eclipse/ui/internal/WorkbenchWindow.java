@@ -94,10 +94,12 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -3366,11 +3368,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * window.
 	 */
 	private final void initializeDefaultServices() {
-		final IWorkbench workbench = getWorkbench();
-
-		final IHandlerService parentHandlerService = (IHandlerService) workbench
-				.getAdapter(IHandlerService.class);
 		final Expression defaultExpression = new WorkbenchWindowExpression(this);
+
+		final IHandlerService parentHandlerService = (IHandlerService) serviceLocator
+				.getService(IHandlerService.class);
 		final IHandlerService handlerService = new SlaveHandlerService(
 				parentHandlerService, defaultExpression);
 		serviceLocator.registerService(IHandlerService.class, handlerService);
@@ -3403,6 +3404,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		serviceLocator.registerService(LegacyActionHandlerPersistence.class,
 				deprecatedSupport);
 		deprecatedSupport.read();
+		
+		final ICommandService parentCommandService = (ICommandService) serviceLocator
+				.getService(ICommandService.class);
+		final ICommandService commandService = new SlaveCommandService(
+				parentCommandService);
+		serviceLocator.registerService(ICommandService.class, commandService);
 	}
 
 	public final Object getService(final Object key) {
