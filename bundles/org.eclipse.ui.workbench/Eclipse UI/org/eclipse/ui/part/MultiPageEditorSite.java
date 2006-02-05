@@ -39,8 +39,10 @@ import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.NestableContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
+import org.eclipse.ui.internal.keys.SlaveBindingService;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -146,6 +148,12 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		final ICommandService commandService = new SlaveCommandService(
 				parentCommandService);
 		serviceLocator.registerService(ICommandService.class, commandService);
+
+		final IBindingService parentBindingService = (IBindingService) serviceLocator
+				.getService(IBindingService.class);
+		final IBindingService bindingService = new SlaveBindingService(
+				parentBindingService);
+		serviceLocator.registerService(IBindingService.class, bindingService);
 	}
 
 	public final void activate() {
