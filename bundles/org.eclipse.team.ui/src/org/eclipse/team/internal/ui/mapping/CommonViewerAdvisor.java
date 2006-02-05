@@ -179,7 +179,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	}
 
 	private Object getInitialInput() {
-		return ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		return getConfiguration().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 	}
 	
 	/* (non-Javadoc)

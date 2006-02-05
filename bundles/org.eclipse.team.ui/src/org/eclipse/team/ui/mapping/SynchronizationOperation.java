@@ -85,7 +85,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	 * @return the synchronization context associated with this action
 	 */
 	protected ISynchronizationContext getContext() {
-		return ((ModelSynchronizeParticipant)getConfiguration().getParticipant()).getContext();
+		return (ISynchronizationContext)getConfiguration().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
 	}
 	
 	/**
