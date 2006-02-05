@@ -29,7 +29,6 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.FileStateTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -201,7 +200,7 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 	 * 
 	 * @param object the model object
 	 * @return the name of the object
-	 * @see org.eclipse.team.ui.operations.ISynchronizationCompareAdapter#getName(java.lang.Object)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#getName(java.lang.Object)
 	 */
 	public String getName(Object object) {
 		if (object instanceof ResourceMapping) {
@@ -232,7 +231,7 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 	 * 
 	 * @param object the model object
 	 * @return the path of the object
-	 * @see org.eclipse.team.ui.operations.ISynchronizationCompareAdapter#getFullPath(Object)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#getFullPath(Object)
 	 */
 	public IPath getFullPath(Object object) {
 		if (object instanceof ResourceMapping) {

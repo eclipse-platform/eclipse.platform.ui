@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 
 /**
  * @deprecated reference {@link ISynchronizationCompareAdapter} instead

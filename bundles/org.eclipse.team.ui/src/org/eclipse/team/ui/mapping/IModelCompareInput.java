@@ -14,7 +14,6 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 
 /**
  * This interface defines extensions to the {@link ICompareInput}

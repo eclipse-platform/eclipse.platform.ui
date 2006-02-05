@@ -327,7 +327,7 @@
             adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
             class="org.eclipse.team.internal.ui.TeamAdapterFactory">
          <adapter type="org.eclipse.team.core.mapping.IResourceMappingMerger"/>
-         <adapter type="org.eclipse.team.ui.operations.ISynchronizationCompareAdapter"/>
+         <adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
          <adapter type="org.eclipse.team.ui.mapping.IResourceMappingPersistenceAdapter"/>
          <adapter type="org.eclipse.team.core.mapping.ISynchronizationScopeParticipantFactory"/>
       </factory>

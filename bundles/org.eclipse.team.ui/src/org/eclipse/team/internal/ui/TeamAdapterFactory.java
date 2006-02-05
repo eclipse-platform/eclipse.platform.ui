@@ -18,7 +18,6 @@ import org.eclipse.team.core.mapping.ISynchronizationScopeParticipantFactory;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
 import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.operations.ISynchronizationCompareAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 
