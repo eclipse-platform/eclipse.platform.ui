@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 
 public class TeamDecoratorManager {
 	

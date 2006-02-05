@@ -1,4 +1,4 @@
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.team.core.mapping.IMergeContext;
@@ -6,8 +6,6 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 /**
  * Action group that contributes the merge actions to the model
@@ -32,7 +30,7 @@ import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
  * 
  * @since 3.2
  **/
-public class MergeActionGroup extends SynchronizePageActionGroup {
+public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActionGroup {
 
 	/**
 	 * The id of the merge action group that determines where the merge
@@ -54,7 +52,7 @@ public class MergeActionGroup extends SynchronizePageActionGroup {
 	/**
 	 * Create a merge action group.
 	 */
-	public MergeActionGroup() {
+	public ModelSynchronizeParticipantActionGroup() {
 	}
 
 	private MergeIncomingChangesAction updateToolbarAction;

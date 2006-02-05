@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.ui.synchronize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,6 @@ import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -162,7 +161,7 @@ public class ModelSynchronizeParticipant extends
 			ISynchronizePageConfiguration configuration) {
 		if (isMergingEnabled()) {
 			// The contetx menu groups are defined by the org.eclipse.ui.navigator.viewer extension
-			configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, MergeActionGroup.MERGE_ACTION_GROUP);
+			configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ModelSynchronizeParticipantActionGroup.MERGE_ACTION_GROUP);
 			configuration.addActionContribution(createMergeActionGroup());
 		}
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
@@ -178,8 +177,8 @@ public class ModelSynchronizeParticipant extends
 	 * of the merge actions.
 	 * @return the merge action group for this participant
 	 */
-	protected MergeActionGroup createMergeActionGroup() {
-		return new MergeActionGroup();
+	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
+		return new ModelSynchronizeParticipantActionGroup();
 	}
 
 	/* (non-Javadoc)

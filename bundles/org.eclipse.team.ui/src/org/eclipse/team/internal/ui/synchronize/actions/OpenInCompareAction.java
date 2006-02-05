@@ -27,7 +27,6 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.mapping.IModelCompareInput;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 

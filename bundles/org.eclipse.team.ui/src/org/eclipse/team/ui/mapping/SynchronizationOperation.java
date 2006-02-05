@@ -20,9 +20,7 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamOperation;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**

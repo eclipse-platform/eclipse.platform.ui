@@ -19,7 +19,6 @@ Export-Package: org.eclipse.team.internal.ui;x-friends:="org.eclipse.team.cvs.ss
  org.eclipse.team.ui,
  org.eclipse.team.ui.history,
  org.eclipse.team.ui.mapping,
- org.eclipse.team.ui.operations,
  org.eclipse.team.ui.synchronize
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

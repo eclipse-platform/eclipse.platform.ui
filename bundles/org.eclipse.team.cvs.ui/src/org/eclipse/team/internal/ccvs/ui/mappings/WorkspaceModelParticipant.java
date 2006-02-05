@@ -23,9 +23,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
-import org.eclipse.team.ui.operations.MergeActionGroup;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * @author MValenta
@@ -51,7 +49,7 @@ public class WorkspaceModelParticipant extends
 	/**
 	 * CVS workspace action contribution
 	 */
-	public class WorkspaceMergeActionGroup extends MergeActionGroup {
+	public class WorkspaceMergeActionGroup extends ModelSynchronizeParticipantActionGroup {
 		private WorkspaceCommitAction commitToolbar;
 		
 		public void initialize(ISynchronizePageConfiguration configuration) {
@@ -167,7 +165,7 @@ public class WorkspaceModelParticipant extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant#createMergeActionGroup()
 	 */
-	protected MergeActionGroup createMergeActionGroup() {
+	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
 		return new WorkspaceMergeActionGroup();
 	}
 	

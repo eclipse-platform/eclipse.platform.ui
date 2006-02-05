@@ -17,7 +17,6 @@ import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.SaveablePartAdapter;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.*;
 
 public final class ModelParticipantPageDialog extends ParticipantPageDialog {

@@ -13,8 +13,10 @@ package org.eclipse.team.ui;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.history.GenericHistoryView;
+import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.history.IHistoryView;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -78,6 +80,7 @@ public class TeamUI {
 	 * of the history view.
 	 * 
 	 * @return an IHistoryView which is the main history view if it is found or null if it can't be found
+	 * @since 3.2
 	 */
 	public static IHistoryView getHistoryView() {
 		try {
@@ -97,6 +100,7 @@ public class TeamUI {
 	 * adapt to an IHistoryPageSource.
 	 * @param object
 	 * @return an instance of the history view
+	 * @since 3.2
 	 */
 	public static IHistoryView getHistoryView(IWorkbenchPage page, Object object) {
 		try {
@@ -106,5 +110,17 @@ public class TeamUI {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Return the team content provider manager which gives access to the team
+	 * content proivders registered with the
+	 * <code>org.eclipse.team.ui.teamContentProviders</code> extension point.
+	 * 
+	 * @return the team content provider manager
+	 * @since 3.2
+	 */
+	public static ITeamContentProviderManager getTeamContentProviderManager() {
+		return TeamContentProviderManager.getInstance();
 	}
 }

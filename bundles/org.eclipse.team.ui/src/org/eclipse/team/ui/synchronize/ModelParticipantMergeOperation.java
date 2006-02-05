@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -16,11 +16,12 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.mapping.ModelParticipantPageDialog;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.mapping.ModelMergeOperation;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.progress.WorkbenchJob;
 

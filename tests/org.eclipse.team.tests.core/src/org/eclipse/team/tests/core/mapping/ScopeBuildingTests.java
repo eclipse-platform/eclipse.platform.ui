@@ -22,7 +22,7 @@ import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.core.mapping.ResourceMappingScope;
 import org.eclipse.team.tests.core.TeamTest;
-import org.eclipse.team.ui.operations.ModelOperation;
+import org.eclipse.team.ui.mapping.ModelOperation;
 
 public class ScopeBuildingTests extends TeamTest {
 

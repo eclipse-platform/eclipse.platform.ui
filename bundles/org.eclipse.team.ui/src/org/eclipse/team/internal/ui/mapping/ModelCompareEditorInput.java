@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.IModelCompareInput;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.*;
 
 public class ModelCompareEditorInput extends CompareEditorInput implements ISaveableModelSource, IPropertyListener {

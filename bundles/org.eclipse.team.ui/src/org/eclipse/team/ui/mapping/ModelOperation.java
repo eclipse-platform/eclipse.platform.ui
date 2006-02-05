@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.operations;
+package org.eclipse.team.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;

@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 
 /**
  * A team content provider descriptor associates a model provider

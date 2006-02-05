@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.ui.operations.ModelParticipantMergeOperation;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ModelParticipantMergeOperation;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class AbstractModelMergeOperation extends ModelParticipantMergeOperation {

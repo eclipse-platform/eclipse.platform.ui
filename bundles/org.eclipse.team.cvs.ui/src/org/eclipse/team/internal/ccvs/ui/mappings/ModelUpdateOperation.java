@@ -15,7 +15,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelUpdateOperation extends AbstractModelMergeOperation {

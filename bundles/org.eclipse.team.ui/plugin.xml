@@ -389,7 +389,7 @@
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
       <participant
-            class="org.eclipse.team.ui.operations.ModelSynchronizeParticipant"
+            class="org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant"
             icon="$nl$/icons/full/eview16/synch_synch.gif"
             id="org.eclipse.team.ui.synchronization_context_synchronize_participant"
             name="%ModelSyncParticipant"

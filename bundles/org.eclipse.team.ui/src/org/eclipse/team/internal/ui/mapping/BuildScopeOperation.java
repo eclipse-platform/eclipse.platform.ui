@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
-import org.eclipse.team.ui.operations.ModelOperation;
+import org.eclipse.team.ui.mapping.ModelOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**

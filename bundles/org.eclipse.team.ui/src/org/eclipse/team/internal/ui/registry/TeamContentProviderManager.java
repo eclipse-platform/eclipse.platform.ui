@@ -14,29 +14,37 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 
 /**
  * Manages the team content provider extension point
  */
-public class TeamContentProviderManager {
+public class TeamContentProviderManager implements ITeamContentProviderManager {
 	
 	public static final String PT_TEAM_CONTENT_PROVIDERS = "teamContentProviders"; //$NON-NLS-1$
 
-	private static TeamContentProviderManager instance;
+	private static ITeamContentProviderManager instance;
 	
-	List descriptors;
+	Map descriptors;
 	
-	public static TeamContentProviderManager getInstance() {
+	public static ITeamContentProviderManager getInstance() {
 		if (instance == null)
 			instance = new TeamContentProviderManager();
 		return instance;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderManager#getDescriptors()
+	 */
 	public ITeamContentProviderDescriptor[] getDescriptors() {
 		lazyInitialize();
-		return (ITeamContentProviderDescriptor[]) descriptors.toArray(new ITeamContentProviderDescriptor[descriptors.size()]);
+		return (ITeamContentProviderDescriptor[]) descriptors.values().toArray(new ITeamContentProviderDescriptor[descriptors.size()]);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderManager#getContentProviderIds()
+	 */
 	public String[] getContentProviderIds() {
 		List result = new ArrayList();
 		ITeamContentProviderDescriptor[] descriptors = getDescriptors();
@@ -49,12 +57,20 @@ public class TeamContentProviderManager {
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderManager#getDescriptor(java.lang.String)
+	 */
+	public ITeamContentProviderDescriptor getDescriptor(String modelProviderId) {
+		lazyInitialize();
+		return (ITeamContentProviderDescriptor)descriptors.get(modelProviderId);
+	}
+	
 	protected void lazyInitialize() {
 		if (descriptors != null)
 			return;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(TeamUIPlugin.ID, PT_TEAM_CONTENT_PROVIDERS);
 		IExtension[] extensions = point.getExtensions();
-		descriptors = new ArrayList(extensions.length);
+		descriptors = new HashMap(extensions.length * 2);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {
 			ITeamContentProviderDescriptor desc = null;
 			try {
@@ -63,7 +79,7 @@ public class TeamContentProviderManager {
 				TeamUIPlugin.log(e);
 			}
 			if (desc != null)
-				descriptors.add(desc);
+				descriptors.put(desc.getModelProviderId(), desc);
 		}
 	}
 }

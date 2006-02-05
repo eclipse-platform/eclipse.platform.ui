@@ -26,9 +26,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ParticipantPagePane;
+import org.eclipse.team.ui.synchronize.*;
 
 public class OutgoingChangesDialog extends DetailsDialog {
 

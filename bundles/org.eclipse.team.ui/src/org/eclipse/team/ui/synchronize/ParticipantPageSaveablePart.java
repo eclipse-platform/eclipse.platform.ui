@@ -28,7 +28,6 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.PageSaveablePart;
 import org.eclipse.team.ui.mapping.IModelCompareInput;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
-import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
 
