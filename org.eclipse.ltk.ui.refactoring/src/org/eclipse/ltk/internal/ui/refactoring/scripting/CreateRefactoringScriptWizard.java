@@ -161,7 +161,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		if (fScriptLocation != null) {
 			final File file= new File(fScriptLocation);
 			if (file.exists()) {
-				final MessageDialog message= new MessageDialog(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, null, Messages.format(ScriptingMessages.CreateRefactoringScriptWizard_overwrite_query, new String[] { ScriptingMessages.CreateRefactoringScriptWizard_merge_button, ScriptingMessages.CreateRefactoringScriptWizard_overwrite_button}), MessageDialog.QUESTION, new String[] { ScriptingMessages.CreateRefactoringScriptWizard_merge_button, ScriptingMessages.CreateRefactoringScriptWizard_overwrite_button, IDialogConstants.CANCEL_LABEL}, 0);
+				final MessageDialog message= new MessageDialog(getShell(), RefactoringUIMessages.RefactoringWizard_refactoring, null, Messages.format(ScriptingMessages.CreateRefactoringScriptWizard_overwrite_query, new String[] { ScriptingMessages.CreateRefactoringScriptWizard_merge_button, ScriptingMessages.CreateRefactoringScriptWizard_overwrite_button}), MessageDialog.QUESTION, new String[] { ScriptingMessages.CreateRefactoringScriptWizard_merge_button, ScriptingMessages.CreateRefactoringScriptWizard_overwrite_button, IDialogConstants.CANCEL_LABEL}, 0);
 				final int result= message.open();
 				if (result == 0) {
 					InputStream stream= null;
