@@ -869,7 +869,7 @@ public class Utils {
 	public static String getLabel(ResourceMapping mapping) {
 		ModelProvider provider = mapping.getModelProvider();
 		ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)getAdapter(provider, ISynchronizationCompareAdapter.class);
-		return adapter.getFullPath(mapping.getModelObject()).toString();
+		return adapter.getFullPath(mapping).toString();
 	}
 
 	public static String getScopeDescription(ISynchronizationScope scope) {

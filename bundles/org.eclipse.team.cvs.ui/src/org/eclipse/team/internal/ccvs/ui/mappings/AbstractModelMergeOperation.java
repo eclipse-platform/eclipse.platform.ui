@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -41,7 +43,7 @@ public abstract class AbstractModelMergeOperation extends ModelParticipantMergeO
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_PREVIEW).equals(ICVSUIConstants.PREF_UPDATE_PREVIEW_IN_DIALOG);
 	}
 	
-	protected void endOperation(IProgressMonitor monitor) {
+	protected void endOperation(IProgressMonitor monitor) throws InvocationTargetException {
 		if (ownsManager) {
 			ISynchronizationScopeManager manager = getScopeManager();
 			manager.dispose();

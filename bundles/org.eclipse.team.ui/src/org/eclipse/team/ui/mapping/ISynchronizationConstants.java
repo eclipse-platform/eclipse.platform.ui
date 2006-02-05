@@ -67,7 +67,7 @@ public interface ISynchronizationConstants {
 	
 	/**
 	 * Constant used with the <code>P_ACTIVE_MODEL_PROVIDER</code> property to indicate
-	 * that all modle providers are active.
+	 * that all model providers are active.
 	 */
 	public static final String ALL_MODEL_PROVIDERS_ACTIVE = "org.eclipse.team.ui.activeModelProvider"; //$NON-NLS-1$
 

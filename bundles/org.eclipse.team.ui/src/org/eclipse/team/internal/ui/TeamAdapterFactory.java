@@ -25,7 +25,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 
 	private DiffNodeWorkbenchAdapter diffNodeAdapter = new DiffNodeWorkbenchAdapter();
 	
-	private static final ISynchronizationCompareAdapter COMPARE_ADAPTER = new SynchronizationCompareAdapter() {};
+	private static final ISynchronizationCompareAdapter COMPARE_ADAPTER = new ResourceModelPersistenceAdapter();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -43,9 +43,6 @@ public class TeamAdapterFactory implements IAdapterFactory {
 				if (adapterType == ISynchronizationScopeParticipantFactory.class) {
 					return new ResourceModelScopeParticipantFactory((ModelProvider)adaptableObject);
 				}
-				if (adapterType == IResourceMappingPersistenceAdapter.class) {
-					return new ResourceModelPersistenceAdapter((ModelProvider)adaptableObject);
-				}
 			}
 		}
 		if (adaptableObject instanceof ModelProvider && adapterType == ISynchronizationCompareAdapter.class) {
@@ -60,7 +57,6 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	public Class[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class,
 				IResourceMappingMerger.class, ISynchronizationCompareAdapter.class,
-				IResourceMappingPersistenceAdapter.class,
 				ISynchronizationScopeParticipantFactory.class };
 	}
 }

@@ -15,16 +15,14 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.mapping.IResourceMappingPersistenceAdapter;
+import org.eclipse.team.ui.mapping.SynchronizationCompareAdapter;
 import org.eclipse.ui.*;
 
-public class ResourceModelPersistenceAdapter implements
-		IResourceMappingPersistenceAdapter {
+public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapter {
 
 	private static final String RESOURCES = "resources"; //$NON-NLS-1$
 	private static final String RESOURCE_PATH = "resourcePath"; //$NON-NLS-1$
@@ -32,12 +30,12 @@ public class ResourceModelPersistenceAdapter implements
 	private static final String WORKING_SETS = "workingSets"; //$NON-NLS-1$
 	private static final String WORKING_SET_NAME = "workingSetName"; //$NON-NLS-1$
 	
-	private final ModelProvider provider;
-
-	public ResourceModelPersistenceAdapter(ModelProvider provider) {
-		this.provider = provider;
+	public ResourceModelPersistenceAdapter() {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationCompareAdapter#save(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.ui.IMemento)
+	 */
 	public void save(ResourceMapping[] mappings, IMemento memento) {
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
@@ -55,6 +53,9 @@ public class ResourceModelPersistenceAdapter implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationCompareAdapter#restore(org.eclipse.ui.IMemento)
+	 */
 	public ResourceMapping[] restore(IMemento memento) {
 		IMemento[] children = memento.getChildren(RESOURCES);
 		List result = new ArrayList();
@@ -108,5 +109,5 @@ public class ResourceModelPersistenceAdapter implements
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 	}
-
+	
 }

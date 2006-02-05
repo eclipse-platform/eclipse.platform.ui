@@ -47,7 +47,7 @@ public class ScopeBuildingTests extends TeamTest {
 				}
 			});
 		}
-		protected void endOperation(IProgressMonitor monitor) {
+		protected void endOperation(IProgressMonitor monitor) throws InvocationTargetException {
 			ISynchronizationScopeManager manager= getScopeManager();
 			manager.dispose();
 			super.endOperation(monitor);

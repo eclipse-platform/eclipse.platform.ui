@@ -11,9 +11,11 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.ui.IMemento;
 
 /**
  * The compare adapter provides compare support for the model objects
@@ -31,17 +33,6 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
  * @since 3.2
  */
 public interface ISynchronizationCompareAdapter {
-	
-	/**
-	 * Prepare the context for use with the compare infrastructure.
-	 * This usually involves the calculation of the synchronization states
-	 * of the model objects that are in the scope of the context and
-	 * caching the calculations with the context for later retrieval.
-	 * @param context the synchronization context
-	 * @param monitor a progress monitor
-	 * @throws CoreException 
-	 */
-	void prepareContext(ISynchronizationContext context, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Return whether their is a compare input associated with the given object.
@@ -95,19 +86,36 @@ public interface ISynchronizationCompareAdapter {
 	public long countFor(ISynchronizationContext context, int state, int mask);
 	
 	/**
-	 * Get the name associated with the given model object.
+	 * Get the name associated with the model object of the given mapping.
 	 * This name sould be suitable for display to the user.
-	 * @param object the model object
-	 * @return the name of the object
+	 * @param mapping the mapping
+	 * @return the name of the mapping's model object
 	 */
-	public String getName(Object object);
+	public String getName(ResourceMapping mapping);
 	
 	/**
-	 * Get the path associated with the given model object.
+	 * Get the path associated with the model object
+	 * of the given mapping.
 	 * Ths path sould be suitable for display to the user.
-	 * @param object the model object
-	 * @return the path of the object
+	 * @param mapping the mapping
+	 * @return the path of the model object of the mapping
 	 */
-	public IPath getFullPath(Object object);
+	public IPath getFullPath(ResourceMapping mapping);
+	
+	/**
+	 * Save the given resource mappings from this adapters 
+	 * model provider into the given memento in a form
+	 * that can be restored at a future time.
+	 * @param mappings the resource mappings to save
+	 * @param memento the memento where the mappings should be saved
+	 */
+	public void save(ResourceMapping[] mappings, IMemento memento);
+	
+	/**
+	 * Restore the previosuly saved resource mappings.
+	 * @param memento a memento
+	 * @return the mappings restored from the given memento
+	 */
+	public ResourceMapping[] restore(IMemento memento);
 
 }

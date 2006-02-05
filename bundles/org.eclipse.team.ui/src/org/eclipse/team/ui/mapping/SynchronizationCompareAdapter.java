@@ -29,6 +29,7 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.FileStateTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -126,14 +127,23 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 			return new FileStateTypedElement(state);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#prepareInput(org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+		 */
 		public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 			Utils.updateLabels(node, configuration);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#getCompareModel()
+		 */
 		public ISaveableCompareModel getCompareModel() {
 			return null;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
 		public Object getAdapter(Class adapter) {
 			if (adapter == IFile.class || adapter == IResource.class) {
 				if (node instanceof IResourceDiff) {
@@ -155,13 +165,6 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 			return null;
 		}
 		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#prepareContext(org.eclipse.team.ui.mapping.ISynchronizationContext, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void prepareContext(ISynchronizationContext context, IProgressMonitor monitor) throws CoreException {
-		// Do nothing by default
 	}
 
 	/* (non-Javadoc)
@@ -193,20 +196,11 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 		return context.getDiffTree().countFor(state, mask);
 	}
 
-	/**
-	 * Return the name of the given object. By default, the object is adapted to
-	 * {@link IWorkbenchAdapter} to obtain the name. Models that do not adpapt to
-	 * this interface should override to provide a more meaningful name.
-	 * 
-	 * @param object the model object
-	 * @return the name of the object
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#getName(java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.IResourceMappingPersistenceAdapter#getName(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */
-	public String getName(Object object) {
-		if (object instanceof ResourceMapping) {
-			ResourceMapping mapping = (ResourceMapping) object;
-			object = mapping.getModelObject();
-		}
+	public String getName(ResourceMapping mapping) {
+		Object object = mapping.getModelObject();
 		IWorkbenchAdapter adapter = (IWorkbenchAdapter) Utils.getAdapter(
 				object, IWorkbenchAdapter.class);
 		if (adapter != null) {
@@ -224,20 +218,11 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 		return ""; //$NON-NLS-1$
 	}
 	
-	/**
-	 * Return the path of the given object. By default, the object is adapted to
-	 * {@link IWorkbenchAdapter} to obtain the path. Models that do not adapt to
-	 * this interface should override to provide a more meaningful path.
-	 * 
-	 * @param object the model object
-	 * @return the path of the object
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#getFullPath(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.IResourceMappingPersistenceAdapter#getFullPath(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */
-	public IPath getFullPath(Object object) {
-		if (object instanceof ResourceMapping) {
-			ResourceMapping mapping = (ResourceMapping) object;
-			object = mapping.getModelObject();
-		}
+	public IPath getFullPath(ResourceMapping mapping) {
+		Object object = mapping.getModelObject();
 		IWorkbenchAdapter adapter = (IWorkbenchAdapter) Utils.getAdapter(
 				object, IWorkbenchAdapter.class);
 		if (adapter != null) {
@@ -258,6 +243,16 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 				return path;
 			}
 		}
-		return new Path(getName(object));
+		return new Path(getName(mapping));
+	}
+
+	public void save(ResourceMapping[] mappings, IMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public ResourceMapping[] restore(IMemento memento) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
