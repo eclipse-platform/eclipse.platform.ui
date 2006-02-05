@@ -18,10 +18,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff;
 
 /**
- * Partial implementation of a refactoring-aware synchronization label provider. *
+ * Partial implementation of a refactoring-aware synchronization label provider.
  * <p>
  * This class overrides several methods from
  * {@link SynchronizationLabelProvider} to customize the rendering of
@@ -78,7 +79,31 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	 * 
 	 * @see IThreeWayDiff#getDirection()
 	 */
-	protected abstract int getDirection(Object element);
+	protected int getDirection(Object element) {
+		if (element instanceof RefactoringHistory) {
+			final RefactoringHistory history= (RefactoringHistory) element;
+			final RefactoringDescriptorProxy[] descriptors= history.getDescriptors();
+			int direction= 0;
+			if (descriptors.length > 0) {
+				if (descriptors[0] instanceof RefactoringDescriptorSynchronizationProxy) {
+					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) descriptors[0];
+					direction= proxy.getDirection();
+				}
+			}
+			for (int index= 1; index < descriptors.length; index++) {
+				if (descriptors[index] instanceof RefactoringDescriptorSynchronizationProxy) {
+					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) descriptors[index];
+					if (proxy.getDirection() != direction)
+						return IThreeWayDiff.CONFLICTING;
+				}
+			}
+			return direction;
+		} else if (element instanceof RefactoringDescriptorSynchronizationProxy) {
+			final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) element;
+			return proxy.getDirection();
+		}
+		return IThreeWayDiff.CONFLICTING;
+	}
 
 	/**
 	 * Returns the kind of difference between the three sides ancestor, left and
@@ -95,5 +120,9 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	 * 
 	 * @see IDiff#getKind()
 	 */
-	protected abstract int getKind(Object element);
+	protected int getKind(Object element) {
+		if (element instanceof RefactoringHistory)
+			return IDiff.CHANGE;
+		return IDiff.ADD;
+	}
 }

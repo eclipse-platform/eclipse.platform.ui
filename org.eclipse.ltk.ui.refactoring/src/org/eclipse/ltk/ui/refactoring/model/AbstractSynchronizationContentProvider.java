@@ -45,14 +45,15 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImple
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 
 /**
  * Partial implementation of a refactoring-aware synchronization content
  * provider.
  * <p>
  * This class provides a method
- * {@link #getPendingRefactorings(ISynchronizationContext, IProject, IProgressMonitor)}
- * which may be used in subclasses to render pending refactorings in team
+ * {@link #getRefactorings(ISynchronizationContext, IProject, IProgressMonitor)}
+ * which may be used in subclasses to render refactorings in team
  * synchronization views.
  * </p>
  * <p>
@@ -72,22 +73,23 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 public abstract class AbstractSynchronizationContentProvider extends SynchronizationContentProvider {
 
 	/**
-	 * Returns the pending refactorings for the specified project.
+	 * Returns the refactorings for the specified project which are not in sync.
 	 * <p>
-	 * This method fetches history information for all refactorings which are
-	 * present in the remote location and have not already been performed on the
-	 * local workspace.
+	 * This method fetches refactoring information for all refactorings which
+	 * are not in sync for a project (e.g. have not yet been checked into the
+	 * respository, or are pending refactorings to execute on the local
+	 * workspace).
 	 * </p>
 	 * 
 	 * @param context
 	 *            the synchronization context to use
 	 * @param project
-	 *            the project to compute its pending refactorings
+	 *            the project to compute its refactorings
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
-	 * @return the refactoring history representing the pending refactorings
+	 * @return the refactoring history representing the refactorings
 	 */
-	protected RefactoringHistory getPendingRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {
+	protected RefactoringHistory getRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {
 		Assert.isNotNull(context);
 		Assert.isNotNull(project);
 		if (monitor == null)
@@ -95,7 +97,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, 12);
 			final IProgressMonitor finalMonitor= monitor;
-			final Set incoming= new HashSet();
+			final Set refactorings= new HashSet();
 			try {
 				final IResourceDiffTree tree= context.getDiffTree();
 				tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
@@ -126,7 +128,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 												if (history != null && !history.isEmpty()) {
 													final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 													for (int offset= 0; offset < proxies.length; offset++)
-														incoming.add(proxies[offset]);
+														refactorings.add(new RefactoringDescriptorSynchronizationProxy(proxies[offset], IThreeWayDiff.INCOMING));
 												}
 											} catch (CoreException exception) {
 												RefactoringUIPlugin.log(exception);
@@ -153,10 +155,12 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 			}
 			final RefactoringHistory history= RefactoringCore.getRefactoringHistoryService().getProjectHistory(project, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 			final RefactoringDescriptorProxy[] descriptors= history.getDescriptors();
-			for (int index= 0; index < descriptors.length; index++)
-				incoming.remove(descriptors[index]);
-			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[incoming.size()];
-			incoming.toArray(proxies);
+			for (int index= 0; index < descriptors.length; index++) {
+				if (!refactorings.remove(descriptors[index]))
+					refactorings.add(new RefactoringDescriptorSynchronizationProxy(descriptors[index], IThreeWayDiff.OUTGOING));
+			}
+			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[refactorings.size()];
+			refactorings.toArray(proxies);
 			return new RefactoringHistoryImplementation(proxies);
 		} finally {
 			monitor.done();

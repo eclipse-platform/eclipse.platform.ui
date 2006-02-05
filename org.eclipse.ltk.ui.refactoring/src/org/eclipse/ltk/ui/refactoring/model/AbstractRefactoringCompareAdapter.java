@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.model;
 
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.AbstractCompareAdapter;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 
+import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 /**
@@ -67,5 +70,16 @@ public abstract class AbstractRefactoringCompareAdapter extends AbstractCompareA
 	 * 
 	 * @see ICompareInput#getKind()
 	 */
-	protected abstract int getKind(ISynchronizationContext context, RefactoringDescriptorProxy proxy);
+	protected int getKind(final ISynchronizationContext context, final RefactoringDescriptorProxy proxy) {
+		int kind= Differencer.ADDITION;
+		if (proxy instanceof RefactoringDescriptorSynchronizationProxy) {
+			final RefactoringDescriptorSynchronizationProxy extended= (RefactoringDescriptorSynchronizationProxy) proxy;
+			final int direction= extended.getDirection();
+			if (direction == IThreeWayDiff.OUTGOING)
+				kind|= Differencer.LEFT;
+			else if (direction == IThreeWayDiff.INCOMING)
+				kind|= Differencer.RIGHT;
+		}
+		return kind;
+	}
 }
