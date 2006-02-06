@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.core.runtime.compatibility.registry
 Bundle-Version: 1.0.0
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.equinox.registry
-Bundle-Localization: fragment-compatibility
+Bundle-Localization: fragment
 Require-Bundle: system.bundle
 Eclipse-PatchFragment: true
 Bundle-ClassPath: runtime_registry_compatibility.jar
