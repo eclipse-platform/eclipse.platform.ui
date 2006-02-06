@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
@@ -22,6 +23,7 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.LegacyHandlerSubmissionExpression;
+import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -65,11 +67,16 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 	 * @see org.eclipse.ui.IKeyBindingService#getScopes()
 	 */
 	public String[] getScopes() {
-		Collection c = fContextService.getActiveContextIds();
-		if (c == null) {
+		if (fEnabledContexts.isEmpty()) {
 			return null;
 		}
-		return (String[]) c.toArray(new String[c.size()]);
+		String[] ids = new String[fEnabledContexts.size()];
+		Iterator i = fEnabledContexts.iterator();
+		int j=0;
+		while (i.hasNext()) {
+			ids[j++] = ((IContextActivation)i.next()).getContextId();
+		}
+		return ids;
 	}
 
 	/*
