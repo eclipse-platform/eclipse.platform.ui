@@ -23,8 +23,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.*;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
@@ -88,6 +87,12 @@ import org.eclipse.compare.structuremergeviewer.*;
  * by passing a subclass of <code>CompareConfiguration</code> and by implementing the <code>prepareInput</code> method.
  * If a subclass cannot use the <code>DiffTreeViewer</code> which is installed by default in the
  * top left pane, method <code>createDiffViewer</code> can be overridden.
+ * <p>
+ * If subclasses of this class implement {@link ISaveableModelSource}, the compare editor will
+ * pass these models through to the workbench. The editor will still show the dirty indicator 
+ * if one of these underlying models is dirty. It is the reponsibility of subclasses that
+ * implement this interface to call {@link #setDirty(boolean)} when the dirty state of
+ * any of the models managed by the sublcass change dirty state.
  * 
  * @see CompareUI
  * @see CompareEditorInput

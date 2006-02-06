@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
 
@@ -35,7 +36,7 @@ import org.eclipse.compare.*;
  * A CompareEditor takes a ICompareEditorInput as input.
  * Most functionality is delegated to the ICompareEditorInput.
  */
-public class CompareEditor extends EditorPart implements IReusableEditor {
+public class CompareEditor extends EditorPart implements IReusableEditor, ISaveableModelSource, ISaveableModel {
 	
 	/**
 	 * Internal property change listener for handling changes in the editor's input.
@@ -257,6 +258,15 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 	 */
 	public boolean isDirty() {
 		IEditorInput input= getEditorInput();
+		if (input instanceof ISaveableModelSource) {
+			ISaveableModelSource sms = (ISaveableModelSource) input;
+			ISaveableModel[] models = sms.getModels();
+			for (int i = 0; i < models.length; i++) {
+				ISaveableModel model = models[i];
+				if (model.isDirty())
+					return true;
+			}
+		}
 		if (input instanceof CompareEditorInput)
 			return ((CompareEditorInput)input).isSaveNeeded();
 		return false;
@@ -267,6 +277,51 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 		Object new_value= event.getNewValue();
 		if (old_value == null || new_value == null || !old_value.equals(new_value))
 			firePropertyChange(PROP_DIRTY);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
+	 */
+	public ISaveableModel[] getModels() {
+		IEditorInput input= getEditorInput();
+		if (input instanceof ISaveableModelSource) {
+			ISaveableModelSource source = (ISaveableModelSource) input;
+			return source.getModels();
+		}
+		return new ISaveableModel[] { this };
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
+	 */
+	public ISaveableModel[] getActiveModels() {
+		IEditorInput input= getEditorInput();
+		if (input instanceof ISaveableModelSource) {
+			ISaveableModelSource source = (ISaveableModelSource) input;
+			return source.getActiveModels();
+		}
+		return new ISaveableModel[] { this };
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModel#getName()
+	 */
+	public String getName() {
+		return getPartName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModel#getToolTipText()
+	 */
+	public String getToolTipText() {
+		return getTitleToolTip();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveableModel#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		return ImageDescriptor.createFromImage(getTitleImage());
 	}
 }
 
