@@ -73,6 +73,58 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchr
 public abstract class AbstractSynchronizationContentProvider extends SynchronizationContentProvider {
 
 	/**
+	 * Gets the refactoring descriptor proxies stored in the specified file
+	 * revision.
+	 * 
+	 * @param revision
+	 *            the file revision
+	 * @param set
+	 *            the set of refactoring descriptor proxies
+	 * @param direction
+	 *            the direction
+	 * @param monitor
+	 *            the progress monitor to use
+	 */
+	private void getRefactorings(final IFileRevision revision, final Set set, final int direction, final IProgressMonitor monitor) {
+		IStorage storage= null;
+		try {
+			storage= revision.getStorage(new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+		} catch (CoreException exception) {
+			RefactoringUIPlugin.log(exception);
+		}
+		if (storage != null) {
+			InputStream stream= null;
+			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+			try {
+				service.connect();
+				stream= storage.getContents();
+				final RefactoringHistory history= service.readRefactoringHistory(stream, RefactoringDescriptor.MULTI_CHANGE);
+				if (history != null && !history.isEmpty()) {
+					final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
+					for (int offset= 0; offset < proxies.length; offset++) {
+						final RefactoringDescriptorSynchronizationProxy proxy= new RefactoringDescriptorSynchronizationProxy(proxies[offset], direction);
+						if (!set.contains(proxy))
+							set.add(proxy);
+						else
+							set.remove(proxy);
+					}
+				}
+			} catch (CoreException exception) {
+				RefactoringUIPlugin.log(exception);
+			} finally {
+				service.disconnect();
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException exception) {
+						// Do nothing
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Returns the refactorings for the specified project which are not in sync.
 	 * <p>
 	 * This method fetches refactoring information for all refactorings which
@@ -97,7 +149,8 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, 12);
 			final IProgressMonitor finalMonitor= monitor;
-			final Set refactorings= new HashSet();
+			final Set remote= new HashSet();
+			final Set local= new HashSet();
 			try {
 				final IResourceDiffTree tree= context.getDiffTree();
 				tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
@@ -107,43 +160,23 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 							final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
 							final IResource resource= tree.getResource(diff);
 							if (resource.getName().equals(RefactoringHistoryService.NAME_HISTORY_FILE) && resource.getType() == IResource.FILE) {
-								final int direction= threeWay.getDirection();
-								if (direction == IThreeWayDiff.INCOMING || direction == IThreeWayDiff.CONFLICTING) {
-									final ITwoWayDiff remoteDiff= threeWay.getRemoteChange();
-									if (remoteDiff instanceof IResourceDiff) {
-										final IFileRevision remoteRevision= ((IResourceDiff) remoteDiff).getAfterState();
-										IStorage storage= null;
-										try {
-											storage= remoteRevision.getStorage(new SubProgressMonitor(finalMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-										} catch (CoreException exception) {
-											RefactoringUIPlugin.log(exception);
-										}
-										if (storage != null) {
-											InputStream stream= null;
-											final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
-											try {
-												service.connect();
-												stream= storage.getContents();
-												final RefactoringHistory history= service.readRefactoringHistory(stream, RefactoringDescriptor.MULTI_CHANGE);
-												if (history != null && !history.isEmpty()) {
-													final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
-													for (int offset= 0; offset < proxies.length; offset++)
-														refactorings.add(new RefactoringDescriptorSynchronizationProxy(proxies[offset], IThreeWayDiff.INCOMING));
-												}
-											} catch (CoreException exception) {
-												RefactoringUIPlugin.log(exception);
-											} finally {
-												service.disconnect();
-												if (stream != null) {
-													try {
-														stream.close();
-													} catch (IOException exception) {
-														// Do nothing
-													}
-												}
-											}
-										}
-									}
+								final ITwoWayDiff remoteDiff= threeWay.getRemoteChange();
+								if (remoteDiff instanceof IResourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
+									final IFileRevision afterRevision= ((IResourceDiff) remoteDiff).getAfterState();
+									if (afterRevision != null)
+										getRefactorings(afterRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
+									final IFileRevision beforeRevision= ((IResourceDiff) remoteDiff).getBeforeState();
+									if (beforeRevision != null)
+										getRefactorings(beforeRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
+								}
+								final ITwoWayDiff localDiff= threeWay.getLocalChange();
+								if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
+									final IFileRevision beforeRevision= ((IResourceDiff) localDiff).getBeforeState();
+									if (beforeRevision != null)
+										getRefactorings(beforeRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
+									final IFileRevision afterRevision= ((IResourceDiff) localDiff).getAfterState();
+									if (afterRevision != null)
+										getRefactorings(afterRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
 								}
 							}
 						}
@@ -153,14 +186,9 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 			} catch (CoreException exception) {
 				RefactoringUIPlugin.log(exception);
 			}
-			final RefactoringHistory history= RefactoringCore.getRefactoringHistoryService().getProjectHistory(project, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-			final RefactoringDescriptorProxy[] descriptors= history.getDescriptors();
-			for (int index= 0; index < descriptors.length; index++) {
-				if (!refactorings.remove(descriptors[index]))
-					refactorings.add(new RefactoringDescriptorSynchronizationProxy(descriptors[index], IThreeWayDiff.OUTGOING));
-			}
-			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[refactorings.size()];
-			refactorings.toArray(proxies);
+			remote.addAll(local);
+			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[remote.size()];
+			remote.toArray(proxies);
 			return new RefactoringHistoryImplementation(proxies);
 		} finally {
 			monitor.done();
