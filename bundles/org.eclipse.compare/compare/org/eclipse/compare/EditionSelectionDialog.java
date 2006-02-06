@@ -224,7 +224,17 @@ public class EditionSelectionDialog extends ResizableDialog {
 		}
 		return fCompareConfiguration;
 	}
-		
+	
+	/**
+	 * Sets the help context for this dialog.
+	 * 
+	 * @param contextId the help context id.
+	 * @since 3.2
+	 */
+	public void setHelpContextId(String contextId) {
+		super.setHelpContextId(contextId);
+	}
+	
 	/**
 	 * Sets an additional and optional argument for the edition pane's title.
 	 *  
