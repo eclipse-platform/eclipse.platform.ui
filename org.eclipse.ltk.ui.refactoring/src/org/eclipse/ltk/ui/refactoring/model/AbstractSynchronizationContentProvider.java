@@ -13,6 +13,7 @@ package org.eclipse.ltk.ui.refactoring.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.team.core.diff.IDiff;
@@ -186,7 +187,13 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 			} catch (CoreException exception) {
 				RefactoringUIPlugin.log(exception);
 			}
-			remote.addAll(local);
+			for (final Iterator iterator= local.iterator(); iterator.hasNext();) {
+				final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) iterator.next();
+				if (!remote.contains(proxy))
+					remote.add(proxy);
+				else
+					remote.remove(proxy);
+			}
 			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[remote.size()];
 			remote.toArray(proxies);
 			return new RefactoringHistoryImplementation(proxies);
