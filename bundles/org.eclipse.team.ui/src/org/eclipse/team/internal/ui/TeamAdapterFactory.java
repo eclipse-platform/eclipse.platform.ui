@@ -45,7 +45,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 				}
 			}
 		}
-		if (adaptableObject instanceof ModelProvider && adapterType == ISynchronizationCompareAdapter.class) {
+		if (adaptableObject instanceof ModelProvider && adapterType == ICompareAdapter.class) {
 			return COMPARE_ADAPTER;
 		}
 		return null;
@@ -57,6 +57,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	public Class[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class,
 				IResourceMappingMerger.class, ISynchronizationCompareAdapter.class,
+				ICompareAdapter.class,
 				ISynchronizationScopeParticipantFactory.class };
 	}
 }

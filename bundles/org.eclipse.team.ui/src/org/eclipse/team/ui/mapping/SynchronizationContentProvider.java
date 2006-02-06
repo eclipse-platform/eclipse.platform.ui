@@ -19,8 +19,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.ISynchronizationScope;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -593,10 +592,10 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return whether the given object is within the scope of this
 	 * content provider
 	 */
-	protected boolean isInScope(ISynchronizationScope scope, Object parent, Object element) {
+	protected boolean isInScope(IResourceMappingScope scope, Object parent, Object element) {
 		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
-			ResourceMapping[] mappings = scope.getMappings(mapping.getModelProviderId());
+			ResourceMapping[] mappings = ((ISynchronizationScope)scope).getMappings(mapping.getModelProviderId());
 			for (int i = 0; i < mappings.length; i++) {
 				ResourceMapping sm = mappings[i];
 				if (mapping.contains(sm)) {

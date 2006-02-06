@@ -47,6 +47,7 @@ import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
@@ -799,7 +800,7 @@ public class Utils {
 	public static ISynchronizationCompareAdapter getCompareAdapter(Object element) {
 		ModelProvider provider = getModelProvider(element);
 		if (provider != null) {
-			Object o = provider.getAdapter(ISynchronizationCompareAdapter.class);
+			Object o = provider.getAdapter(ICompareAdapter.class);
 			if (o instanceof ISynchronizationCompareAdapter) {
 				return (ISynchronizationCompareAdapter) o;
 			}
@@ -808,6 +809,9 @@ public class Utils {
 	}
 
 	public static ModelProvider getModelProvider(Object o) {
+		if (o instanceof ModelProvider) {
+			return (ModelProvider) o;	
+		}
 		ResourceMapping mapping = getResourceMapping(o);
 		if (mapping != null)
 			return mapping.getModelProvider();
@@ -868,7 +872,9 @@ public class Utils {
 
 	public static String getLabel(ResourceMapping mapping) {
 		ModelProvider provider = mapping.getModelProvider();
-		ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)getAdapter(provider, ISynchronizationCompareAdapter.class);
+		ISynchronizationCompareAdapter adapter = getCompareAdapter(provider);
+		if (adapter == null)
+			return "";
 		return adapter.getFullPath(mapping).toString();
 	}
 

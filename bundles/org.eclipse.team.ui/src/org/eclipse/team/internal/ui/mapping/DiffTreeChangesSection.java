@@ -111,7 +111,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		if (id != null && !id.equals(ISynchronizationConstants.ALL_MODEL_PROVIDERS_ACTIVE)) {
 			try {
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
-				ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)Utils.getAdapter(desc.getModelProvider(), ISynchronizationCompareAdapter.class);
+				ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(desc.getModelProvider());
 				if (adapter != null) {
 					return getChangesInMode(adapter, getConfiguration().getMode());
 				}
@@ -174,7 +174,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 			providers = ModelOperation.sortByExtension(providers);
 			for (int i = 0; i < providers.length; i++) {
 				ModelProvider provider = providers[i];
-				ISynchronizationCompareAdapter adapter = (ISynchronizationCompareAdapter)Utils.getAdapter(provider, ISynchronizationCompareAdapter.class);
+				ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
 				if (adapter != null) {
 					long count = getChangesInMode(adapter, getConfiguration().getMode());
 					if (count > 0 && !provider.getDescriptor().getId().equals(id)) {
