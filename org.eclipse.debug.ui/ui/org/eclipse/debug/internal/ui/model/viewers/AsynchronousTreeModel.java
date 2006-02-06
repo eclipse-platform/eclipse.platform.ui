@@ -54,7 +54,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	            for (int i = 0; i < nodes.length; i++) {
 	                ModelNode node = nodes[i];
 	                if (treePath.startsWith(node.getTreePath())) {
-	                    AddRequestMonitor addRequest = new AddRequestMonitor(node, treePath, this);
+	                    ModelAddRequestMonitor addRequest = new ModelAddRequestMonitor(node, treePath, this);
 	                    requestScheduled(addRequest);
 	                    addRequest.done();
 	                    return;

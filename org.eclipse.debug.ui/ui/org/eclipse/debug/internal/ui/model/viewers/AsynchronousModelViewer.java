@@ -314,10 +314,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 */
 	protected abstract AsynchronousModel createModel(Object input);
 
-	public IModelUpdatePolicy createUpdatePolicy() {
-		DefaultUpdatePolicy policy = new DefaultUpdatePolicy();
-		return policy;
-	}
+	public abstract IModelUpdatePolicy createUpdatePolicy();
 
 	Image[] getImages(ImageDescriptor[] descriptors) {
 		if (descriptors == null || descriptors.length == 0) {

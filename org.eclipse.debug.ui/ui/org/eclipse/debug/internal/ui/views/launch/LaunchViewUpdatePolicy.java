@@ -11,14 +11,14 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.DefaultUpdatePolicy;
+import org.eclipse.debug.internal.ui.model.viewers.TreeUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 
 /**
  * @since 3.2
  *
  */
-public class LaunchViewUpdatePolicy extends DefaultUpdatePolicy {
+public class LaunchViewUpdatePolicy extends TreeUpdatePolicy {
 	
 	private LaunchView fView = null;
 	

@@ -8,11 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.update;
+package org.eclipse.debug.internal.ui.model.viewers;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
@@ -23,7 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
  * 
  * @since 3.2
  */
-public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
+public class TreeUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
 	
 	// cache of latest tree path for a node
 	private TreePath fTreePath;
@@ -36,7 +35,7 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
     }
 
     protected void updateNodes(IModelDelta[] nodes) {
-        AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
+        AsynchronousTreeModelViewer viewer = (AsynchronousTreeModelViewer) getViewer();
         if (viewer == null) {
             return;
         }
@@ -74,27 +73,27 @@ public class DefaultUpdatePolicy extends AbstractUpdatePolicy implements IModelC
         }
     }
 
-    protected void handleState(AsynchronousTreeViewer viewer, IModelDelta delta) {
+    protected void handleState(AsynchronousTreeModelViewer viewer, IModelDelta delta) {
         viewer.update(delta.getElement());
     }
 
-    protected void handleSelect(AsynchronousTreeViewer viewer, IModelDelta delta) {
+    protected void handleSelect(AsynchronousTreeModelViewer viewer, IModelDelta delta) {
         viewer.setSelection(new TreeSelection(getTreePath(delta)));
     }
 
-    protected void handleExpand(AsynchronousTreeViewer viewer, IModelDelta delta) {
+    protected void handleExpand(AsynchronousTreeModelViewer viewer, IModelDelta delta) {
         viewer.expand(new TreeSelection(getTreePath(delta)));
     }
 
-    protected void handleContent(AsynchronousTreeViewer viewer, IModelDelta delta) {
+    protected void handleContent(AsynchronousTreeModelViewer viewer, IModelDelta delta) {
         viewer.refresh(delta.getElement());
     }
 
-    protected void handleRemove(AsynchronousTreeViewer viewer, IModelDelta delta) {
+    protected void handleRemove(AsynchronousTreeModelViewer viewer, IModelDelta delta) {
         viewer.remove(getTreePath(delta));
     }
 
-    protected void handleAdd(AsynchronousTreeViewer viewer, IModelDelta delta) {
+    protected void handleAdd(AsynchronousTreeModelViewer viewer, IModelDelta delta) {
         viewer.add(getTreePath(delta));
     }
 

@@ -73,7 +73,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
      * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
      */
     protected boolean contains(AsynchronousRequestMonitor update) {
-        return (update instanceof ChildrenRequestMonitor || update instanceof ContainerRequestMonitor) && contains(update.getWidget());
+        return update instanceof ChildrenRequestMonitor  && contains(update.getWidget());
     }
 
     /* (non-Javadoc)

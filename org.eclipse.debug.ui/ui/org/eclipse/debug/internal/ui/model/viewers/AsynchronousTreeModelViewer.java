@@ -869,4 +869,11 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         }
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#createUpdatePolicy()
+	 */
+	public IModelUpdatePolicy createUpdatePolicy() {
+		return new TreeUpdatePolicy();
+	}
+
 }

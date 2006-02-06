@@ -19,7 +19,7 @@ import org.eclipse.debug.internal.ui.viewers.TreePath;
  *  
  * @since 3.2
  */
-class AddRequestMonitor extends AbstractAddRemoveRequestMonitor {
+class ModelAddRequestMonitor extends AbstractAddRemoveRequestMonitor {
 
 	/**
 	 * Adds the given child to the specified parent.
@@ -29,7 +29,7 @@ class AddRequestMonitor extends AbstractAddRemoveRequestMonitor {
 	 * @param viewer
 	 * 
 	 */
-	AddRequestMonitor(ModelNode parent, TreePath path, AsynchronousModel model) {
+	ModelAddRequestMonitor(ModelNode parent, TreePath path, AsynchronousModel model) {
 		super(parent, path, model);
 	}
 	/* (non-Javadoc)

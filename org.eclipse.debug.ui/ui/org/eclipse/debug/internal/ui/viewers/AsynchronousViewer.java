@@ -29,7 +29,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -442,10 +441,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 		}
 	}
 
-	public IUpdatePolicy createUpdatePolicy() {
-		DefaultUpdatePolicy policy = new DefaultUpdatePolicy();
-		return policy;
-	}
+	public abstract IUpdatePolicy createUpdatePolicy();
 	
 	/**
 	 * Installs the model proxy for the given element into this viewer
