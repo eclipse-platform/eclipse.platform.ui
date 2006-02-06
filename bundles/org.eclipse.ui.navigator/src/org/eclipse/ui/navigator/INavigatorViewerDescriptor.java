@@ -2,7 +2,7 @@ package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.ui.navigator.internal.extensions.InsertionPoint;
+import org.eclipse.ui.internal.navigator.extensions.InsertionPoint;
 
 /**
  * Provides a basic metadata about the abstract viewer for a particular content

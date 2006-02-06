@@ -26,9 +26,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.navigator.internal.CommonNavigatorActionGroup;
-import org.eclipse.ui.navigator.internal.CommonNavigatorManager;
-import org.eclipse.ui.navigator.internal.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
+import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
 

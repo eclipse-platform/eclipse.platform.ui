@@ -12,7 +12,7 @@ package org.eclipse.ui.navigator;
 
 import java.util.Set;
 
-import org.eclipse.ui.navigator.internal.extensions.OverridePolicy;
+import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 
 
 /**

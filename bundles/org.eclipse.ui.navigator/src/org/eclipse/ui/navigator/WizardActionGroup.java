@@ -24,8 +24,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.navigator.internal.wizards.CommonWizardDescriptorManager;
-import org.eclipse.ui.navigator.internal.wizards.WizardShortcutAction;
+import org.eclipse.ui.internal.navigator.wizards.CommonWizardDescriptorManager;
+import org.eclipse.ui.internal.navigator.wizards.WizardShortcutAction;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 

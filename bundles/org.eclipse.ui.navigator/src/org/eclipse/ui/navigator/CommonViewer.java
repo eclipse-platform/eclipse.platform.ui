@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.navigator.internal.DelegateTreeViewerSorter;
-import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDragAdapter;
-import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDropAdapter;
+import org.eclipse.ui.internal.navigator.DelegateTreeViewerSorter;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.dnd.CommonNavigatorDragAdapter;
+import org.eclipse.ui.internal.navigator.dnd.CommonNavigatorDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
 
 /**

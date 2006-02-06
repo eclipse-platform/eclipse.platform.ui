@@ -17,7 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.navigator.internal.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 
 /**

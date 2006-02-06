@@ -31,12 +31,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.NavigatorPlugin;
-import org.eclipse.ui.navigator.internal.actions.CommonActionDescriptorManager;
-import org.eclipse.ui.navigator.internal.actions.CommonActionProviderDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.InsertionPoint;
-import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.actions.CommonActionDescriptorManager;
+import org.eclipse.ui.internal.navigator.actions.CommonActionProviderDescriptor;
+import org.eclipse.ui.internal.navigator.extensions.InsertionPoint;
+import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
 
 /**
  * <p>

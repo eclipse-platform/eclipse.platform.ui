@@ -4,10 +4,10 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.navigator.internal.CommonViewerSiteDelegate;
-import org.eclipse.ui.navigator.internal.CommonViewerSiteIEditorPartSiteDelegate;
-import org.eclipse.ui.navigator.internal.CommonViewerSiteIPageSiteDelegate;
-import org.eclipse.ui.navigator.internal.CommonViewerSiteIViewSiteDelegate;
+import org.eclipse.ui.internal.navigator.CommonViewerSiteDelegate;
+import org.eclipse.ui.internal.navigator.CommonViewerSiteIEditorPartSiteDelegate;
+import org.eclipse.ui.internal.navigator.CommonViewerSiteIPageSiteDelegate;
+import org.eclipse.ui.internal.navigator.CommonViewerSiteIViewSiteDelegate;
 import org.eclipse.ui.part.IPageSite;
 
 /**

@@ -12,7 +12,7 @@ package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.ui.navigator.internal.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
 
 
 /**
