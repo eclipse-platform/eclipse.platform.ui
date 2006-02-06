@@ -122,7 +122,7 @@ public interface IProgressService extends IRunnableContext {
     
     /**
      * Open a dialog on job when it starts to run and close it 
-     * when the job is finished. Wait for LONG_OPERATION_MILLISECONDS
+     * when the job is finished. Wait for ProgressManagerUtil#SHORT_OPERATION_TIME
      * before opening the dialog. Do not open if it is already done or
      * if the user has set a preference to always run in the background.
      * 
