@@ -17,9 +17,11 @@ public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 
 	public void updateElement(Object parent, int index) {
 		TestElement parentElement = (TestElement) parent;
-		TestElement childElement = parentElement.getChildAt(index);
-		treeViewer.replace(parent, index, childElement);
-		treeViewer.setChildCount(childElement, childElement.getChildCount());
+		if(parentElement.getChildCount() > index) {
+			TestElement childElement = parentElement.getChildAt(index);
+			treeViewer.replace(parent, index, childElement);
+			treeViewer.setChildCount(childElement, childElement.getChildCount());
+		}
 	}
 
 	public Object[] getChildren(Object element) {
@@ -44,6 +46,10 @@ public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 		if (newInput != null) {
 			final TestElement testElement = (TestElement) newInput;
 		}
+	}
+
+	public void updateChildCount(Object element, int currentChildCount) {
+		treeViewer.setChildCount(element, ((TestElement) element).getChildCount());
 	}
 
 }

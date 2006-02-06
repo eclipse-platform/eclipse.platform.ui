@@ -53,6 +53,15 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		public Object getParent(Object element) {
 			return null;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object, int)
+		 */
+		public void updateChildCount(Object element, int currentChildCount) {
+			if (callbacksEnabled) {
+				getTreeViewer().setChildCount(element, 10);
+			}
+		}
 	}
 
 	private int updateElementCallCount = 0;

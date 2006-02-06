@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 public abstract class StructuredViewerTest extends ViewerTestCase {
@@ -83,6 +84,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         TestElement newElement = first.getContainer().basicAddChild();
         fRootElement.basicDeleteChild(first);
         fModel.fireModelChanged(eventToFire);
+        processEvents();
         assertNotNull("new sibling is visible", fViewer
                 .testFindItem(newElement));
         assertNull("first child is not visible", fViewer.testFindItem(first));
@@ -152,6 +154,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 
     public void testInsertSibling() {
         TestElement newElement = fRootElement.addChild(TestModelChange.INSERT);
+        processEvents();
         assertNotNull("new sibling is visible", fViewer
                 .testFindItem(newElement));
     }
@@ -166,6 +169,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     public void testInsertSiblings() {
         TestElement[] newElements = fRootElement
                 .addChildren(TestModelChange.INSERT);
+        processEvents();
         for (int i = 0; i < newElements.length; ++i)
             assertNotNull("new siblings are visible", fViewer
                     .testFindItem(newElements[i]));
@@ -174,6 +178,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     public void testInsertSiblingSelectExpanded() {
         TestElement newElement = fRootElement.addChild(TestModelChange.INSERT
                 | TestModelChange.REVEAL | TestModelChange.SELECT);
+        processEvents();
         assertNotNull("new sibling is visible", fViewer
                 .testFindItem(newElement));
         assertSelectionEquals("new element is selected", newElement);
@@ -289,6 +294,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 
         fRootElement = first;
         setInput();
+        processEvents();
         assertNotNull("first child is visible", fViewer
                 .testFindItem(firstfirst));
     }
@@ -304,8 +310,11 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testSomeChildrenChanged() {
-        bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE,
-                fRootElement));
+    	if(!SWT.getPlatform().equals("gtk")) {
+    		// TODO see Bug 126638 [Viewers] Remove GTK checks from StructuredViewerTest
+    		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE,
+    				fRootElement));
+    	}
     }
 
     public void testSorter() {
@@ -327,6 +336,9 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testWorldChanged() {
-        bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE, null));
+    	if(!SWT.getPlatform().equals("gtk")) {
+    		// TODO see Bug 126638 [Viewers] Remove GTK checks from StructuredViewerTest
+    		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE, null));
+    	}
     }
 }

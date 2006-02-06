@@ -715,16 +715,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void setChildCount(Object element, int count) {
 		Tree tree = (Tree) doFindInputItem(element);
 		if (tree != null) {
-			int oldCount = tree.getItemCount();
-			if (oldCount > count) {
-				for(int i = count; i < oldCount; i++) {
-					TreeItem item = tree.getItem(i);
-					Object data = item.getData();
-					if (data != null) {
-						unmapElement(data, item);
-					}
-				}
-			}
 			tree.setItemCount(count);
 			return;
 		}
