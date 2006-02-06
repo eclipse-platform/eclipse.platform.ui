@@ -641,7 +641,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         setAction("ContentAssistProposal", action); //$NON-NLS-1$
         
 		action = new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
-		action.setActionDefinitionId("org.eclipse.ant.ui.format"); //$NON-NLS-1$
         setAction("ContentFormat", action); //$NON-NLS-1$
         
         action = new OpenDeclarationAction(this);
@@ -798,9 +797,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         } catch (IllegalArgumentException x) {
         	AntUIPlugin.log(x);
         } finally {
-            if (textWidget != null) {
-                textWidget.setRedraw(true);
-            }
+            textWidget.setRedraw(true);
         }
     }
 
@@ -917,7 +914,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	}
 	
 	/**
-	 * Ses the given message as error message to this editor's status line.
+	 * Set the given message as error message to this editor's status line.
 	 * @param msg message to be set
 	 */
 	protected void setStatusLineErrorMessage(String msg) {
