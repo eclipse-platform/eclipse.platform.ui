@@ -225,7 +225,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
         
         Composite topComp = new Composite(container, SWT.FLAT);
         GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = 0;
         topComp.setLayout(layout);
         
 		fNameLabel = new Label(topComp, SWT.HORIZONTAL | SWT.LEFT);

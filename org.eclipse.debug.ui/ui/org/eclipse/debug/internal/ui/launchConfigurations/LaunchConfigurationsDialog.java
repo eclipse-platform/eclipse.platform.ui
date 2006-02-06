@@ -602,14 +602,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         
         ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
         
-        Composite toolBarComp = new Composite(viewForm, SWT.FLAT);
-        GridLayout gl = new GridLayout(1, false);
-        gl.marginHeight = 0;
-        toolBarComp.setLayout(gl);
-        ToolBar toolBar = new ToolBar(toolBarComp, SWT.FLAT);
-        GridData gridData = new GridData();
-        toolBar.setLayoutData(gridData);
-        viewForm.setTopLeft(toolBarComp);
+        ToolBar toolBar = new ToolBar(viewForm, SWT.FLAT);
+        viewForm.setTopLeft(toolBar);
         ToolBarManager toolBarManager= new ToolBarManager(toolBar);
         
 		setSelectionArea(viewForm);
