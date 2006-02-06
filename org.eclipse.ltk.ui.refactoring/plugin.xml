@@ -60,4 +60,19 @@
          <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.team.core.storageMergers">
+      <storageMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringIndexMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringIndex"
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <storageMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+   </extension>
 </plugin>

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.model;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -17,10 +18,14 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.team.core.mapping.IStorageMerger;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IStorage;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
@@ -35,7 +40,7 @@ import org.eclipse.compare.IStreamMerger;
  * 
  * @since 3.2
  */
-public final class RefactoringHistoryMerger implements IStreamMerger {
+public final class RefactoringHistoryMerger implements IStreamMerger, IStorageMerger {
 
 	/**
 	 * Creates a new refactoring history merger.
@@ -49,27 +54,74 @@ public final class RefactoringHistoryMerger implements IStreamMerger {
 	 */
 	public IStatus merge(final OutputStream output, final String outputEncoding, final InputStream ancestor, final String ancestorEncoding, final InputStream target, final String targetEncoding, final InputStream source, final String sourceEncoding, final IProgressMonitor monitor) {
 		try {
-			final RefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source, 0, Long.MAX_VALUE);
-			final RefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target, 0, Long.MAX_VALUE);
-			final Set set= new HashSet();
-			for (int index= 0; index < sourceDescriptors.length; index++)
-				set.add(sourceDescriptors[index]);
-			for (int index= 0; index < targetDescriptors.length; index++)
-				set.add(targetDescriptors[index]);
-			final RefactoringDescriptor[] outputDescriptors= new RefactoringDescriptor[set.size()];
-			set.toArray(outputDescriptors);
-			Arrays.sort(outputDescriptors, new Comparator() {
-
-				public final int compare(final Object first, final Object second) {
-					final RefactoringDescriptor predecessor= (RefactoringDescriptor) first;
-					final RefactoringDescriptor successor= (RefactoringDescriptor) second;
-					return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
-				}
-			});
-			RefactoringHistoryManager.writeRefactoringDescriptors(output, outputDescriptors);
+			performMerge(output, target, source);
 		} catch (CoreException exception) {
 			return new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 1, RefactoringUIMessages.RefactoringHistoryMerger_error_auto_merge, exception);
 		}
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IStatus merge(final OutputStream output, final String encoding, final IStorage ancestor, final IStorage target, final IStorage other, final IProgressMonitor monitor) throws CoreException {
+		InputStream targetStream= null;
+		InputStream sourceStream= null;
+		try {
+			targetStream= target.getContents();
+			sourceStream= target.getContents();
+			performMerge(output, targetStream, sourceStream);
+		} catch (CoreException exception) {
+			return new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 1, RefactoringUIMessages.RefactoringHistoryMerger_error_auto_merge, exception);
+		} finally {
+			if (targetStream != null) {
+				try {
+					targetStream.close();
+				} catch (IOException exception) {
+					// Do nothing
+				}
+			}
+			if (sourceStream != null) {
+				try {
+					sourceStream.close();
+				} catch (IOException exception) {
+					// Do nothing
+				}
+			}
+		}
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Performs the actual merge operation.
+	 * 
+	 * @param output
+	 *            the output stream
+	 * @param target
+	 *            the target input stream
+	 * @param source
+	 *            the source input stream
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	private void performMerge(final OutputStream output, final InputStream target, final InputStream source) throws CoreException {
+		final RefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source, 0, Long.MAX_VALUE);
+		final RefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target, 0, Long.MAX_VALUE);
+		final Set set= new HashSet();
+		for (int index= 0; index < sourceDescriptors.length; index++)
+			set.add(sourceDescriptors[index]);
+		for (int index= 0; index < targetDescriptors.length; index++)
+			set.add(targetDescriptors[index]);
+		final RefactoringDescriptor[] outputDescriptors= new RefactoringDescriptor[set.size()];
+		set.toArray(outputDescriptors);
+		Arrays.sort(outputDescriptors, new Comparator() {
+
+			public final int compare(final Object first, final Object second) {
+				final RefactoringDescriptor predecessor= (RefactoringDescriptor) first;
+				final RefactoringDescriptor successor= (RefactoringDescriptor) second;
+				return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+			}
+		});
+		RefactoringHistoryManager.writeRefactoringDescriptors(output, outputDescriptors);
 	}
 }
