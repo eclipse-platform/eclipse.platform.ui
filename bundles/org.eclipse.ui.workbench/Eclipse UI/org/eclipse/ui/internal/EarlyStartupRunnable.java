@@ -34,7 +34,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
 
     private static final String EXTENSION_CLASS = "org.eclipse.core.runtime.IExtension"; //$NON-NLS-1$
 
-    private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.runtime.IPluginDescriptor"; //$NON-NLS-1$
+//    private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.runtime.IPluginDescriptor"; //$NON-NLS-1$
 
     private static final String GET_PLUGIN_METHOD = "getPlugin"; //$NON-NLS-1$
 
@@ -139,7 +139,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
                 return null;
 
             // Plugin plugin = pluginDesc.getPlugin();
-            Class pluginDescClass = compatBundle.loadClass(PLUGIN_DESC_CLASS);
+            Class pluginDescClass = pluginDesc.getClass();
             Method getPluginMethod = pluginDescClass.getDeclaredMethod(
                     GET_PLUGIN_METHOD, new Class[0]);
             return getPluginMethod.invoke(pluginDesc, new Object[0]);
