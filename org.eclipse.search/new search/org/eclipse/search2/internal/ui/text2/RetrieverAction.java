@@ -76,7 +76,7 @@ abstract public class RetrieverAction extends Action {
 					}
 				}
 
-				if (selection.getLength() > 0) {
+				if (selection.getLength() > 0 && selection.getText() != null) {
 					return trimSearchString(selection.getText());
 				}
 			}
@@ -86,7 +86,10 @@ abstract public class RetrieverAction extends Action {
 
 	final protected String extractSearchTextFromSelection(ISelection sel) {
 		if (sel instanceof ITextSelection) {
-			return trimSearchString(((ITextSelection) sel).getText());
+			String text= ((ITextSelection) sel).getText();
+			if (text != null) {
+				return trimSearchString(text);
+			}
 		}
 		return null;
 	}

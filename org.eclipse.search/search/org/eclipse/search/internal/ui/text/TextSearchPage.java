@@ -552,18 +552,20 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		ISelection selection= getSelection();
 		if (selection instanceof ITextSelection && !selection.isEmpty()) {
 			String text= ((ITextSelection) selection).getText();
-			fPattern.setText(insertEscapeChars(text));
-			
-			if (getPreviousExtensions().length > 0) {
-				fExtensions.setText(getPreviousExtensions()[0]);
-			} else {
-				String extension= getExtensionFromEditor();
-				if (extension != null)
-					fExtensions.setText(extension);
-				else 
-					fExtensions.setText("*"); //$NON-NLS-1$
+			if (text != null) {
+				fPattern.setText(insertEscapeChars(text));
+				
+				if (getPreviousExtensions().length > 0) {
+					fExtensions.setText(getPreviousExtensions()[0]);
+				} else {
+					String extension= getExtensionFromEditor();
+					if (extension != null)
+						fExtensions.setText(extension);
+					else 
+						fExtensions.setText("*"); //$NON-NLS-1$
+				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
