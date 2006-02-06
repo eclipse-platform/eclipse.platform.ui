@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TreeListener;
@@ -126,6 +128,11 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * The color and font collector for the cells.
 	 */
 	private TreeColorAndFontCollector treeColorAndFont = new TreeColorAndFontCollector();
+	
+	/**
+	 * Flag for whether the tree has been disposed of.
+	 */
+	private boolean treeIsDisposed = false;
 
 	/**
 	 * Creates a tree viewer on a newly-created tree control under the given
@@ -437,6 +444,11 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		});
 		if ((treeControl.getStyle() & SWT.VIRTUAL) != 0) {
+			treeControl.addDisposeListener(new DisposeListener(){
+				public void widgetDisposed(DisposeEvent e) {
+					treeIsDisposed = true;
+					unmapAllElements();
+				}});
 			treeControl.addListener(SWT.SetData, new Listener(){
 
 				public void handleEvent(Event event) {
@@ -644,7 +656,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		// Go through the items of the current collection
 		// If there is a mismatch return false
 		for (int i = 0; i < current.length; i++) {
-			if (!itemSet.containsKey(current[i].getData()))
+			if (current[i].getData() == null || !itemSet.containsKey(current[i].getData()))
 				return false;
 		}
 
@@ -703,12 +715,23 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void setChildCount(Object element, int count) {
 		Tree tree = (Tree) doFindInputItem(element);
 		if (tree != null) {
+			int oldCount = tree.getItemCount();
+			if (oldCount > count) {
+				for(int i = count; i < oldCount; i++) {
+					TreeItem item = tree.getItem(i);
+					Object data = item.getData();
+					if (data != null) {
+						unmapElement(data, item);
+					}
+				}
+			}
 			tree.setItemCount(count);
 			return;
 		}
 		Widget[] items = findItems(element);
 		for (int i = 0; i < items.length; i++) {
-			((TreeItem)items[i]).setItemCount(count);
+			TreeItem treeItem = (TreeItem)items[i];
+			treeItem.setItemCount(count);
 		}		
 	}
 
@@ -738,12 +761,16 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	public void replace(Object parent, int index, Object element) {
 		if(parent.equals(getInput())) {
-			updateItem(tree.getItem(index), element);
+			if (index < tree.getItemCount()) {
+				updateItem(tree.getItem(index), element);
+			}
 		} else {
 			Widget[] parentItems = findItems(parent);
 			for (int i = 0; i < parentItems.length; i++) {
-				TreeItem item = ((TreeItem) parentItems[i]).getItem(index);
-				updateItem(item, element);
+				TreeItem parentItem = (TreeItem) parentItems[i];
+				if (index < parentItem.getItemCount()) {
+					updateItem(parentItem.getItem(index), element);
+				}
 			}			
 		}
 	}
@@ -770,6 +797,14 @@ public class TreeViewer extends AbstractTreeViewer {
     
     protected void createChildren(Widget widget) {
     	if (getContentProvider() instanceof ILazyTreeContentProvider) {
+    		final Item[] tis = getChildren(widget);
+    		if (tis != null && tis.length > 0) {
+    			// children already there, touch them
+    			for (int i = 0; i < tis.length; i++) {
+					tis[i].getText();
+				}
+    			return;
+    		}
     		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
     		Object element = widget.getData();
     		if (element == null && widget instanceof TreeItem) {
@@ -778,14 +813,14 @@ public class TreeViewer extends AbstractTreeViewer {
     			// try getting the element now that updateElement was called
     			element = widget.getData();
     		}
-    		int childCount;
+    		TreeItem[] children;
     		if (widget instanceof Tree) {
-    			childCount = ((Tree) widget).getItemCount();
+    			children = ((Tree) widget).getItems();
     		} else {
-    			childCount = ((TreeItem) widget).getItemCount();
+    			children = ((TreeItem) widget).getItems();
     		}
-    		if (element != null && childCount > 0) {
-    			for (int i = 0; i < childCount; i++) {
+    		if (element != null && children.length > 0) {
+    			for (int i = 0; i < children.length; i++) {
     				lazyTreeContentProvider.updateElement(element, i);
     			}
     		}
@@ -799,11 +834,12 @@ public class TreeViewer extends AbstractTreeViewer {
     	if (getContentProvider() instanceof ILazyTreeContentProvider) {
     		if (widget instanceof TreeItem) {
     			TreeItem ti = (TreeItem) widget;
-    			ti.setItemCount(ti.getItemCount() + 1);
+    			int count = ti.getItemCount() + childElements.length;
+				ti.setItemCount(count);
     			ti.clearAll(false);
     		} else {
     			Tree t = (Tree) widget;
-    			t.setItemCount(t.getItemCount() + 1);
+    			t.setItemCount(t.getItemCount() + childElements.length);
     			t.clearAll(false);
     		}
     		return;
@@ -833,6 +869,69 @@ public class TreeViewer extends AbstractTreeViewer {
 				index = ((TreeItem) parent).indexOf(treeItem);
 			}
 			lazyTreeContentProvider.updateElement(parentElement, index);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefreshStruct(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
+	 */
+	protected void internalRefreshStruct(Widget widget, Object element, boolean updateLabels) {
+    	if (getContentProvider() instanceof ILazyTreeContentProvider) {
+    		// first phase: update child counts
+    		virtualRefreshChildCounts(widget, element);
+    		// second phase: update labels
+    		if (updateLabels) {
+    			if (widget instanceof Tree) {
+    				((Tree)widget).clearAll(true);
+    			} else if (widget instanceof TreeItem) {
+    				((TreeItem)widget).clearAll(true);
+    			}
+    		}
+    		return;
+    	}
+		super.internalRefreshStruct(widget, element, updateLabels);
+	}
+
+	/**
+	 * Traverses the visible (expanded) part of the tree and updates child counts.
+	 * @param widget
+	 * @param element
+	 * @param updateLabels
+	 */
+	private void virtualRefreshChildCounts(Widget widget, Object element) {
+		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+		if (widget instanceof Tree || ((TreeItem)widget).getExpanded()) {
+			// widget shows children - it is safe to call getChildren
+			lazyTreeContentProvider.updateChildCount(element, getChildren(widget).length);
+			// need to get children again because they might have been updated through a callback to setChildCount.
+			Item[] items = getChildren(widget);
+			for (int i = 0; i < items.length; i++) {
+				Item item = items[i];
+				Object data = item.getData();
+				if (data != null) {
+					virtualRefreshChildCounts(item, data);
+				}
+			}
+		}
+	}
+	
+	/*
+	 * To unmap elements correctly, we need to register a dispose listener with
+	 * the item if the tree is virtual.
+	 */
+	protected void mapElement(Object element, final Widget item) {
+		super.mapElement(element, item);
+		// make sure to unmap elements if the tree is virtual
+		if ((getTree().getStyle() & SWT.VIRTUAL) != 0) {
+			item.addDisposeListener(new DisposeListener(){
+				public void widgetDisposed(DisposeEvent e) {
+					if (!treeIsDisposed) {
+						Object data = item.getData();
+						if (usingElementMap() && data != null) {
+							unmapElement(data, item);
+						}
+					}
+				}});
 		}
 	}
 }

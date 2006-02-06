@@ -15,11 +15,6 @@ package org.eclipse.jface.viewers;
  * using the SWT.VIRTUAL flag that only wish to return their contents as they
  * are queried.
  * 
- * <strong>NOTE:</strong> Changes to the number of items for a given parent
- * require a call to {@link TreeViewer#setChildCount(Object, int)} on the tree viewer, or
- * calls to the viewer's <code>add()</code> or <code>remove()</code>
- * methods.
- * 
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
  * unchanged during the 3.2 release cycle. Please do not use this API without
@@ -33,9 +28,11 @@ public interface ILazyTreeContentProvider extends IContentProvider {
 	 * Called when a previously-blank item becomes visible in the TreeViewer. If
 	 * the content provider knows the child element for the given parent at this
 	 * index, it should respond by calling
-	 * {@link TreeViewer#replace(Object, int, Object)}. If the content provider
-	 * knows the number of children for the child element, it should also call
-	 * {@link TreeViewer#setChildCount(Object, int)}.
+	 * {@link TreeViewer#replace(Object, int, Object)}. The content provider
+	 * should also update the child count for any replaced element by calling
+	 * {@link TreeViewer#setChildCount(Object, int)}. If the given current child
+	 * count is already correct, setChildCount does not have to be called since
+	 * a call to replace will not change the child count.
 	 * 
 	 * <strong>NOTE</strong> #updateElement(int index) can be used to determine
 	 * selection values. If TableViewer#replace(Object, int) is not called
@@ -44,13 +41,30 @@ public interface ILazyTreeContentProvider extends IContentProvider {
 	 * for again after replace() has been called.
 	 * 
 	 * @param parent
-	 *            The parent of the element
+	 *            The parent of the element, or the viewer's input if the
+	 *            element to update is a root element
 	 * @param index
-	 *            The child index of the parent that is being updated in the
-	 *            tree.
+	 *            The index of the element to update in the tree
 	 */
 	public void updateElement(Object parent, int index);
 
+	/**
+	 * Called when the TreeViewer needs an up-to-date child count for the given
+	 * element, for example from {@link TreeViewer#refresh()} and
+	 * {@link TreeViewer#setInput(Object)}. If the content provider knows the
+	 * given element, it should respond by calling
+	 * {@link TreeViewer#setChildCount(Object, int)}. If the given current
+	 * child count is already correct, no action has to be taken by this content
+	 * provider.
+	 * 
+	 * @param element
+	 *            The element for which an up-to-date child count is needed, or
+	 *            the viewer's input if the number of root elements is requested 
+	 * @param currentChildCount 
+	 * 			  The current child count for the element that needs updating
+	 */
+	public void updateChildCount(Object element, int currentChildCount);
+	
     /**
      * Returns the parent for the given element, or <code>null</code> 
      * indicating that the parent can't be computed. 

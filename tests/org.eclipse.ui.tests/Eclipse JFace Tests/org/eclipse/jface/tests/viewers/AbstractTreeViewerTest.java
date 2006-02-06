@@ -41,7 +41,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	    assertTrue(selection instanceof IStructuredSelection);
 	    List expectedList = new ArrayList();
 	    expectedList.add(expected);
-	    assertEquals("selectionEquals - " + message, ((IStructuredSelection)selection).toList(), expectedList);
+	    assertEquals("selectionEquals - " + message, expectedList, ((IStructuredSelection)selection).toList());
 	}
 
     protected abstract int getItemCount(TestElement element); //was IElement
@@ -60,6 +60,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
         Object[] list1 = fTreeViewer.getExpandedElements();
         // flush viewer
         setInput();
+        processEvents();
 
         // restore old expand state
         fTreeViewer.collapseAll();
@@ -178,6 +179,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
         // setExpanded(true)).  
         // This behaviour makes it impossible to do this regression test.
         // See bug 40797 for more details.
+        processEvents();
         if (((AbstractTreeViewer) fViewer).getExpandedState(parent)) {
             assertNotNull("new child is visible", fViewer.testFindItem(child));
         }

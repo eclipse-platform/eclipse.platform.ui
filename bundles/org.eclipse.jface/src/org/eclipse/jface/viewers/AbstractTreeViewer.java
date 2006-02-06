@@ -1088,23 +1088,20 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 if (pw != null) {
                     // let my parent create me
                     createChildren(pw);
-                    // expand parent and find me
-                    if (pw instanceof Item) {
-                        Item item = (Item) pw;
-                        Object element = internalToElement(elementOrPath);
-                        w = internalFindChild(item, element);
-                        if (expand) {
-                        	// expand parent items top-down
-                        	LinkedList toExpandList = new LinkedList();
-                        	while (item != null && !getExpanded(item)) {
-                        		toExpandList.addFirst(item);
-                        		item = getParentItem(item);
-                        	}
-                        	for(Iterator it = toExpandList.iterator(); it.hasNext();) {
-                        		Item toExpand = (Item) it.next();
-                        		setExpanded(toExpand, true);
-                        	}
-                        }
+                    Object element = internalToElement(elementOrPath);
+                    w = internalFindChild(pw, element);
+                    if (expand && pw instanceof Item) {
+                    	// expand parent items top-down
+                    	Item item = (Item) pw;
+                    	LinkedList toExpandList = new LinkedList();
+                    	while (item != null && !getExpanded(item)) {
+                    		toExpandList.addFirst(item);
+                    		item = getParentItem(item);
+                    	}
+                    	for(Iterator it = toExpandList.iterator(); it.hasNext();) {
+                    		Item toExpand = (Item) it.next();
+                    		setExpanded(toExpand, true);
+                    	}
                     }
                 }
             }
@@ -1211,7 +1208,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
     /**
      * Non-recursively tries to find the given element as a child of the given
-     * parent item.
+     * parent (item or tree).
      * 
      * @param parent
      *           the parent item
@@ -1219,7 +1216,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      *           the element
      * @return Widget
      */
-    private Widget internalFindChild(Item parent, Object element) {
+    private Widget internalFindChild(Widget parent, Object element) {
         Item[] items = getChildren(parent);
         for (int i = 0; i < items.length; i++) {
             Item item = items[i];
@@ -1340,7 +1337,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @param element
      * @param updateLabels
      */
-    private void internalRefreshStruct(Widget widget, Object element,
+    /* package */ void internalRefreshStruct(Widget widget, Object element,
             boolean updateLabels) {
         updateChildren(widget, element, null, updateLabels);
         Item[] children = getChildren(widget);
@@ -1486,7 +1483,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                     setExpanded(item, expanded);
                 }
             }
-            internalSetExpanded(expandedElements, item);
+            if (expandedElements.size() > 0) {
+            	internalSetExpanded(expandedElements, item);
+            }
         }
     }
 
