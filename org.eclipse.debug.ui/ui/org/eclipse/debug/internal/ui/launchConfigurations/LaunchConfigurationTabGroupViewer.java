@@ -31,6 +31,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,6 +42,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -207,7 +209,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @return the composite used for launch configuration editing
 	 */
 	private void createControl(Composite parent) {
-		Font font = parent.getFont();
 		fViewerControl = new Composite(parent, SWT.NONE);
 		GridLayout outerCompLayout = new GridLayout();
 		outerCompLayout.numColumns = 1;
@@ -217,28 +218,26 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fViewerControl.setLayoutData(gd);
 		
-		Composite container = new Composite(fViewerControl, SWT.NONE);
-		outerCompLayout = new GridLayout();
-		outerCompLayout.numColumns = 2;
-		outerCompLayout.marginHeight = 0;
-		outerCompLayout.marginWidth = 5;
-		container.setLayout(outerCompLayout);
+        ViewForm container = new ViewForm(fViewerControl, SWT.FLAT|SWT.BORDER);
 		gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
 		setVisibleArea(container);
-
-		fNameLabel = new Label(container, SWT.HORIZONTAL | SWT.LEFT);
+        
+        Composite topComp = new Composite(container, SWT.FLAT);
+        GridLayout layout = new GridLayout(2, false);
+        layout.marginHeight = 0;
+        topComp.setLayout(layout);
+        
+		fNameLabel = new Label(topComp, SWT.HORIZONTAL | SWT.LEFT);
 		fNameLabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16); 
-		gd = new GridData(GridData.BEGINNING);
-		fNameLabel.setLayoutData(gd);
-		fNameLabel.setFont(font);
-		
-		Text nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		nameText.setLayoutData(gd);
-		nameText.setFont(font);
+        fNameLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+       
+		Text nameText = new Text(topComp, SWT.SINGLE | SWT.BORDER);
 		setNameWidget(nameText);
-
+        nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        
+        container.setTopLeft(topComp);
+        
 		getNameWidget().addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -246,21 +245,20 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				}
 			}
 		);
-
-		Label spacer = new Label(container, SWT.NONE);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		spacer.setLayoutData(gd);
 		
+        
+        Composite mainComp = new Composite(container, SWT.FLAT);
+        mainComp.setLayout(new GridLayout(1, false));
+
 		/*
 		 * fix for bug 66576 and 79709
 		 */
-		fTabPlaceHolder = new Composite(container, SWT.NONE);
+		fTabPlaceHolder = new Composite(mainComp, SWT.NONE);
 		fTabPlaceHolder.setLayout(new StackLayout());
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		fTabPlaceHolder.setLayoutData(gd);
-		
+        
 		fGettingStarted = new Composite(fTabPlaceHolder, SWT.NONE);
 		fGettingStarted.setLayout(new GridLayout());
 		gd = new GridData(GridData.FILL_BOTH);
@@ -278,7 +276,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 
 		createTabFolder(fTabComposite);
 		
-		Composite buttonComp = new Composite(container, SWT.NONE);
+		Composite buttonComp = new Composite(mainComp, SWT.NONE);
 		GridLayout buttonCompLayout = new GridLayout();
 		buttonCompLayout.numColumns = 2;
 		buttonComp.setLayout(buttonCompLayout);
@@ -290,7 +288,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		getApplyButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		getApplyButton().setLayoutData(gd);
-		getApplyButton().setFont(font);
 		SWTUtil.setButtonDimensionHint(getApplyButton());
 		getApplyButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -302,14 +299,15 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		getRevertButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2);   
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		getRevertButton().setLayoutData(gd);
-		getRevertButton().setFont(font);
 		SWTUtil.setButtonDimensionHint(getRevertButton());
 		getRevertButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleRevertPressed();
 			}
 		});
-
+        
+        container.setContent(mainComp);
+        Dialog.applyDialogFont(parent);
 	}
 	
 	/**
@@ -1307,4 +1305,5 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			handleTabSelected();
 		}
 	}
+
 }

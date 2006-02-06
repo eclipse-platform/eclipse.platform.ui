@@ -40,7 +40,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -602,15 +601,25 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         comp.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
-        ToolBar tb= new ToolBar(viewForm, SWT.FLAT);
-        viewForm.setTopLeft(tb);
-        ToolBarManager toolBarManager= new ToolBarManager(tb);
-                
+        
+        Composite toolBarComp = new Composite(viewForm, SWT.FLAT);
+        GridLayout gl = new GridLayout(1, false);
+        gl.marginHeight = 0;
+        toolBarComp.setLayout(gl);
+        ToolBar toolBar = new ToolBar(toolBarComp, SWT.FLAT);
+        GridData gridData = new GridData();
+        toolBar.setLayoutData(gridData);
+        viewForm.setTopLeft(toolBarComp);
+        ToolBarManager toolBarManager= new ToolBarManager(toolBar);
+        
 		setSelectionArea(viewForm);
         viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
+        viewFormContents.setLayout(new GridLayout(1, false));
 		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
-		fLaunchConfigurationView.createLaunchDialogControl(viewForm);
+		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
 		
 	//create toolbar actions, we reuse the actions form the view so we wait until after
 	//the view is created to add them to the toolbar
@@ -654,9 +663,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Control control = viewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
-        viewForm.setContent(control);
+        viewForm.setContent(viewFormContents);
 		
-		fFilteringLabel = new Label(comp, SWT.NONE);
+		fFilteringLabel = new Label(viewFormContents, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 5;
 		fFilteringLabel.setLayoutData(gd);
@@ -680,12 +689,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 			}
 		});
-        
-        Dialog.applyDialogFont(comp);
+       
 		return comp;
 	}	
-	
-	/**
+
+    /**
 	 * Returns whether the given categories are equal.
 	 * 
 	 * @param c1 category identifier or <code>null</code>
