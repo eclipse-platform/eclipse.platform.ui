@@ -46,24 +46,14 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#copy(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IPath)
 	 */
 	public void copy(IResource resource, IPath destination) {
-		moveOrCopy(resource, destination, false /* copy */);
+		moveOrCopyDeep(resource, destination, false /* copy */);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory#create(org.eclipse.core.resources.IResource)
 	 */
 	public void create(IResource resource) {
-		try {
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource child) {
-					ProposedResourceDelta delta = getDelta(child);
-					delta.setKind(IResourceDelta.ADDED);
-					return true;
-				}
-			});
-		} catch (CoreException e) {
-			fail(e);
-		}
+		getDelta(resource).setKind(IResourceDelta.ADDED);
 	}
 
 	/* (non-Javadoc)
@@ -71,13 +61,18 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	 */
 	public void delete(IResource resource) {
 		try {
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource child) {
-					ProposedResourceDelta delta = getDelta(child);
-					delta.setKind(IResourceDelta.REMOVED);
-					return true;
-				}
-			});
+			if (resource.isAccessible()) {
+				resource.accept(new IResourceVisitor() {
+					public boolean visit(IResource child) {
+						ProposedResourceDelta delta = getDelta(child);
+						delta.setKind(IResourceDelta.REMOVED);
+						return true;
+					}
+				});
+			} else {
+				//closed or does not currently exist - the best we can do is a delta for the resource itself
+				getDelta(resource).setKind(IResourceDelta.REMOVED);
+			}
 		} catch (CoreException e) {
 			fail(e);
 		}
@@ -138,76 +133,95 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#move(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IPath)
 	 */
 	public void move(IResource resource, IPath destination) {
-		moveOrCopy(resource, destination, true /* move */);
+		moveOrCopyDeep(resource, destination, true /* move */);
 	}
 
-	/*
-	 * Helper method that generate a move or copy delta for each resource
-	 * moved or copied
+	/**
+	 * Builds the delta representing a single resource being moved or copied.
+	 * 
+	 * @param resource The resource being moved
+	 * @param sourcePrefix The root of the sub-tree being moved
+	 * @param destinationPrefix The root of the destination sub-tree
+	 * @param move <code>true</code> for a move, <code>false</code> for a copy
+	 * @return Whether to move or copy the child
 	 */
-	private void moveOrCopy(IResource resource, IPath destination, final boolean move) {
+	boolean moveOrCopy(IResource resource, final IPath sourcePrefix, final IPath destinationPrefix, final boolean move) {
+		ProposedResourceDelta sourceDelta = getDelta(resource);
+		if (sourceDelta.getKind() == IResourceDelta.REMOVED) {
+			// There is already a removed delta here so there
+			// is nothing to move/copy
+			return false;
+		}
+		IResource destinationResource = getDestinationResource(resource, sourcePrefix, destinationPrefix);
+		ProposedResourceDelta destinationDelta = getDelta(destinationResource);
+		if ((destinationDelta.getKind() & (IResourceDelta.ADDED | IResourceDelta.CHANGED)) > 0) {
+			// There is already a resource at the destination
+			// TODO: What do we do
+			return false;
+		}
+		// First, create the delta for the source
+		IPath fromPath = resource.getFullPath();
+		boolean wasAdded = false;
+		final int sourceFlags = sourceDelta.getFlags();
+		if (move) {
+			// We transfer the source flags to the destination
+			if (sourceDelta.getKind() == IResourceDelta.ADDED) {
+				if ((sourceFlags & IResourceDelta.MOVED_FROM) != 0) {
+					// The resource was moved from somewhere else so
+					// we need to transfer the path to the new location
+					fromPath = sourceDelta.getMovedFromPath();
+					sourceDelta.setMovedFromPath(null);
+				}
+				// The source was added and then moved so we'll
+				// make it an add at the destination
+				sourceDelta.setKind(0);
+				wasAdded = true;
+			} else {
+				// We reset the status to be a remove/move_to
+				sourceDelta.setKind(IResourceDelta.REMOVED);
+				sourceDelta.setFlags(IResourceDelta.MOVED_TO);
+				sourceDelta.setMovedToPath(destinationPrefix.append(fromPath.removeFirstSegments(sourcePrefix.segmentCount())));
+			}
+		}
+		// Next, create the delta for the destination
+		if (destinationDelta.getKind() == IResourceDelta.REMOVED) {
+			// The destination was removed and is being re-added
+			destinationDelta.setKind(IResourceDelta.CHANGED);
+			destinationDelta.addFlags(IResourceDelta.REPLACED);
+		} else {
+			destinationDelta.setKind(IResourceDelta.ADDED);
+		}
+		if (!wasAdded || !fromPath.equals(resource.getFullPath())) {
+			// The source wasn't added so it is a move/copy
+			destinationDelta.addFlags(move ? IResourceDelta.MOVED_FROM : IResourceDelta.COPIED_FROM);
+			destinationDelta.setMovedFromPath(fromPath);
+			// Apply the source flags
+			if (move)
+				destinationDelta.addFlags(sourceFlags);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Helper method that generate a move or copy delta for a sub-tree
+	 * of resources being moved or copied.
+	 */
+	private void moveOrCopyDeep(IResource resource, IPath destination, final boolean move) {
 		final IPath sourcePrefix = resource.getFullPath();
 		final IPath destinationPrefix = destination;
 		try {
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource child) {
-					ProposedResourceDelta sourceDelta = getDelta(child);
-					if (sourceDelta.getKind() == IResourceDelta.REMOVED) {
-						// There is already a removed delta here so there
-						// is nothing to move/copy
-						return false;
+			//build delta for the entire sub-tree if available
+			if (resource.isAccessible()) {
+				resource.accept(new IResourceVisitor() {
+					public boolean visit(IResource child) {
+						return moveOrCopy(child, sourcePrefix, destinationPrefix, move);
 					}
-					IResource destinationResource = getDestinationResource(child, sourcePrefix, destinationPrefix);
-					ProposedResourceDelta destinationDelta = getDelta(destinationResource);
-					if ((destinationDelta.getKind() & (IResourceDelta.ADDED | IResourceDelta.CHANGED)) > 0) {
-						// There is already a resource at the destination
-						// TODO: What do we do
-						return false;
-					}
-					// First, create the delta for the source
-					IPath fromPath = child.getFullPath();
-					boolean wasAdded = false;
-					final int sourceFlags = sourceDelta.getFlags();
-					if (move) {
-						// We transfer the source flags to the destination
-						if (sourceDelta.getKind() == IResourceDelta.ADDED) {
-							if ((sourceFlags & IResourceDelta.MOVED_FROM) != 0) {
-								// The resource was moved from somewhere else so
-								// we need to transfer the path to the new location
-								fromPath = sourceDelta.getMovedFromPath();
-								sourceDelta.setMovedFromPath(null);
-							}
-							// The source was added and then moved so we'll
-							// make it an add at the destination
-							sourceDelta.setKind(0);
-							wasAdded = true;
-						} else {
-							// We reset the status to be a remove/move_to
-							sourceDelta.setKind(IResourceDelta.REMOVED);
-							sourceDelta.setFlags(IResourceDelta.MOVED_TO);
-							sourceDelta.setMovedToPath(destinationPrefix.append(fromPath.removeFirstSegments(sourcePrefix.segmentCount())));
-						}
-					}
-					// Next, create the delta for the destination
-					if (destinationDelta.getKind() == IResourceDelta.REMOVED) {
-						// The destination was removed and is being re-added
-						destinationDelta.setKind(IResourceDelta.CHANGED);
-						destinationDelta.addFlags(IResourceDelta.REPLACED);
-					} else {
-						destinationDelta.setKind(IResourceDelta.ADDED);
-					}
-					if (!wasAdded || !fromPath.equals(child.getFullPath())) {
-						// The source wasn't added so it is a move/copy
-						destinationDelta.addFlags(move ? IResourceDelta.MOVED_FROM : IResourceDelta.COPIED_FROM);
-						destinationDelta.setMovedFromPath(fromPath);
-						// Apply the source flags
-						if (move)
-							destinationDelta.addFlags(sourceFlags);
-					}
-
-					return true;
-				}
-			});
+				});
+			} else {
+				//just build a delta for the single resource
+				moveOrCopy(resource, sourcePrefix, destination, move);
+			}
 		} catch (CoreException e) {
 			fail(e);
 		}
