@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -398,7 +397,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 							Thread
 									.sleep(ProgressManagerUtil.SHORT_OPERATION_TIME);
 						} catch (InterruptedException e) {
-							WorkbenchPlugin.log(getClass(), "show(Job)", e); //$NON-NLS-1$
+							//Do not log as this is a common operation from the lock listener
 						}
 					}
 				});
