@@ -477,16 +477,6 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M1+F10"/>
-	  <!-- Command+SPACE is spot light on panther, so use Ctrl+SPACE everywhere -->
-	  <key
-	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
-	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="CTRL+SPACE"/>
-	  <key
-	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="M1+M2+SPACE"/>
 	  <!-- Command+Q is quit on carbon, so don't overwrite it -->
 	  <key
 	        sequence="CTRL+Q"
@@ -582,22 +572,6 @@
             locale="zh"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+SPACE"/>
-      <key
-            locale="zh"
-            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M3+/"/>
-      <key
-            locale="zh"
-            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M3+?"/>
-      <key
-            locale="zh"
-            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M2+M3+?"/>
       <key
             commandId="org.eclipse.ui.edit.text.toggleInsertMode"
             contextId="org.eclipse.ui.textEditorScope"
@@ -826,19 +800,6 @@
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
             contextId="org.eclipse.ui.textEditorScope"
             sequence="ESC D"
-            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
-      <key
-            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
-	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            sequence="ALT+/"
-            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
-      <key
-            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            sequence="ALT+?"
-            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
-      <key
-            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            sequence="ALT+SHIFT+?"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
    </extension>
    
