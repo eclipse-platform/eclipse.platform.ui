@@ -577,12 +577,10 @@ public class ProjectHelper extends ProjectHelper2 {
         } catch (IOException exc) {
             throw new BuildException(exc);
         } finally {
-            if (stream != null) {
-                try {
-                	stream.close();
-                } catch (IOException ioe) {
-                    // ignore this
-                }
+            try {
+                stream.close();
+            } catch (IOException ioe) {
+                // ignore this
             }
         }
     }
