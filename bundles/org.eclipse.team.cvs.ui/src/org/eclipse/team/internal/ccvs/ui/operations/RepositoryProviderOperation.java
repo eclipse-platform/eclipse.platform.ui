@@ -205,12 +205,16 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
         } catch (CoreException e) {
             throw CVSException.wrapException(e);
         } finally {
-        	if (manager != null) {
-        		manager.dispose();
-        		manager = null;
-        	}
             monitor.done();
         }
+	}
+	
+	protected void endOperation() throws CVSException {
+    	if (manager != null) {
+    		manager.dispose();
+    		manager = null;
+    	}
+		super.endOperation();
 	}
 
     public ISynchronizationScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
