@@ -506,26 +506,70 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		List result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
-			ResourceTraversal[] traversals = getTraversals(context, object);
-			IDiff[] deltas = context.getDiffTree().getDiffs(traversals);
-			if (deltas.length > 0) {
-				boolean include = false;
-				for (int j = 0; j < deltas.length; j++) {
-					IDiff delta = deltas[j];
-					if (delta instanceof IThreeWayDiff) {
-						IThreeWayDiff twd = (IThreeWayDiff) delta;
-						if (includeDirection(twd.getDirection())) {
-							include = true;
-							break;
-						}
-					}
-				}
-				if (include)
-					result.add(object);
-			}
+			if (isVisible(context, object))
+				result.add(object);
 		}
 		// TODO: may need to get phantoms as well
 		return result.toArray(new Object[result.size()]);
+	}
+
+	/**
+	 * Return whether the given object is visible in the synchronization page
+	 * showing this content based on the diffs in the given context. Visibility
+	 * is determined by obtaining the diffs for the object from the context by
+	 * calling {@link #getTraversals(ISynchronizationContext, Object)} to get
+	 * the traversals, then obtaining the diffs from the context's diff tree and
+	 * then calling {@link #isVisible(IDiff)} for each diff.
+	 * 
+	 * @param context
+	 *            the synchronization context
+	 * @param object
+	 *            the object
+	 * @return whether the given object is visible in the synchronization page
+	 *         showing this content
+	 */
+	protected boolean isVisible(ISynchronizationContext context, Object object) {
+		ResourceTraversal[] traversals = getTraversals(context, object);
+		IDiff[] deltas = context.getDiffTree().getDiffs(traversals);
+		boolean visible = false;
+		if (isVisible(deltas)) {
+			visible = true;
+		}
+		return visible;
+	}
+
+	private boolean isVisible(IDiff[] diffs) {
+		if (diffs.length > 0) {
+			for (int j = 0; j < diffs.length; j++) {
+				IDiff diff = diffs[j];
+				if (isVisible(diff)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Return whether the given diff should be visible based on the
+	 * configuration of the synchronization page showing this content. An
+	 * {@link IThreeWayDiff} is visible if the direction of the change matches
+	 * the mode of the synchronization page. An {@link ITwoWayDiff} is visible
+	 * if it has a kind that represents a change.
+	 * 
+	 * @param diff
+	 *            the diff
+	 * @return whether the diff should be visible
+	 */
+	protected boolean isVisible(IDiff diff) {
+		if (diff instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) diff;
+			if (includeDirection(twd.getDirection())) {
+				return true;
+			}
+			return false;
+		}
+		return diff.getKind() != IDiff.NO_CHANGE;
 	}
 
 	/**
