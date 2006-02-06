@@ -81,4 +81,11 @@ public class TextStorageMerger implements IStorageMerger {
 		return Status.OK_STATUS;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IStorageMerger#canMergeWithoutAncestor()
+	 */
+	public boolean canMergeWithoutAncestor() {
+		return false;
+	}
+
 }

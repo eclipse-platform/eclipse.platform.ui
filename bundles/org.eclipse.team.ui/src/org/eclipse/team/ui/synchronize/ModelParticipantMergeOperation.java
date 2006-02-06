@@ -137,7 +137,7 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 				try {
 					Platform.getJobManager().join(participant.getContext(), monitor);
 				} catch (InterruptedException e) {
-					throw new OperationCanceledException();
+					// Ignore
 				}
 		}
 	}

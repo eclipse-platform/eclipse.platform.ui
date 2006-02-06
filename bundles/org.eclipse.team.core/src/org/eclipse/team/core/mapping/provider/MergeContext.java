@@ -133,13 +133,11 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     		}
 			// type == SyncInfo.CHANGE
 			IResourceDiff remoteChange = (IResourceDiff)twDelta.getRemoteChange();
-			IFileRevision base = null;
 			IFileRevision remote = null;
         	if (remoteChange != null) {
-				base = remoteChange.getBeforeState();
 	        	remote = remoteChange.getAfterState();
         	}
-			if (base == null || remote == null || !getLocalFile(diff).exists()) {
+			if (remote == null || !getLocalFile(diff).exists()) {
 				// Nothing we can do so return a conflict status
 				// TODO: Should we handle the case where the local and remote have the same contents for a conflicting addition?
 				return new MergeStatus(TeamPlugin.ID, NLS.bind(Messages.MergeContext_1, new String[] { diff.getPath().toString() }), new IFile[] { getLocalFile(diff) });
@@ -156,7 +154,10 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	/**
 	 * Perform a three-way merge on the given thee-way diff that contains a content conflict.
 	 * By default, ths method makes use of {@link IStorageMerger} instances registered
-	 * with the <code>storageMergers</code> extension point.
+	 * with the <code>storageMergers</code> extension point. Note that the ancestor
+	 * of the given diff may be missing. Some {@link IStorageMerger} instances
+	 * can still merge without an ancestor so we need to consult the
+	 * appropriate merger to find out.
 	 * @param diff the diff
 	 * @param monitor a progress monitor
 	 * @return a status indicating the results of the merge
@@ -172,7 +173,11 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				String osEncoding = file.getCharset();
 				IFileRevision ancestorState = localDiff.getBeforeState();
 				IFileRevision remoteState = remoteDiff.getAfterState();
-				IStorage ancestorStorage = ancestorState.getStorage(Policy.subMonitorFor(monitor, 30));
+				IStorage ancestorStorage;
+				if (ancestorState != null)
+					ancestorStorage = ancestorState.getStorage(Policy.subMonitorFor(monitor, 30));
+				else 
+					ancestorStorage = null;
 				IStorage remoteStorage = remoteState.getStorage(Policy.subMonitorFor(monitor, 30));
 				OutputStream os = getTempOutputStream(file);
 				try {

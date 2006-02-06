@@ -260,6 +260,9 @@ public class EclipseTest extends ResourceTest {
 	        	protected void handleValidationFailure(IStatus status) {
 	        		// Do nothing
 	        	}
+	        	protected void handleMergeFailure(IStatus status) {
+	        		// Do nothing
+	        	}
 	        });
         } else {
         	executeHeadless(new UpdateOperation(null, mappings, options, null));

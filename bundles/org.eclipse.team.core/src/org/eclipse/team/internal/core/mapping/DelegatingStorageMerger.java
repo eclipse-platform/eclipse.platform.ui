@@ -81,6 +81,10 @@ public class DelegatingStorageMerger implements IStorageMerger {
 		if (merger == null)
 			return new Status(IStatus.WARNING, TeamPlugin.ID, CONFLICT,
 					Messages.DelegatingStorageMerger_0, null);
+		if (ancestor == null && !merger.canMergeWithoutAncestor()) {
+			return new Status(IStatus.WARNING, TeamPlugin.ID, CONFLICT,
+					NLS.bind(Messages.MergeContext_1, new String[] { target.getFullPath().toString() }), null);
+		}
 		return merger.merge(output, outputEncoding, ancestor, target, other, monitor);
 	}
 
@@ -195,6 +199,13 @@ public class DelegatingStorageMerger implements IStorageMerger {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IStorageMerger#canMergeWithoutAncestor()
+	 */
+	public boolean canMergeWithoutAncestor() {
+		return false;
 	}
 
 }

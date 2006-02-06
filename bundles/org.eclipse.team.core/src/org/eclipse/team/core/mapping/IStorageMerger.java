@@ -54,7 +54,10 @@ public interface IStorageMerger {
     * If the merge operation cannot deal with conflicts, the code of the error status has the value <code>IStreamMerger.CONFLICT</code>.
     * For text oriented mergers the encoding for the input and output is honored if they implement
     * {@link IEncodedStorage}.
-    * It is the responsibility of callers to close the output stream. 
+    * It is the responsibility of callers to close the output stream.
+    * <p>
+    * The provided ancestor may be <code>null</code> if this merger
+    * returns <code>true</code> from {@link #canMergeWithoutAncestor()}.
     * 
     * @param output the byte stream to which the merge result is written; the merger will not close the stream
     * @param outputEncoding the encoding to use when writing to the output stream
@@ -68,5 +71,15 @@ public interface IStorageMerger {
 	IStatus merge(OutputStream output, String outputEncoding,
 			IStorage ancestor, IStorage target, IStorage other,
 			IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Return whether this merger can merge the two contributors
+	 * without an ancestor. Thsi is typically not possible but may be
+	 * for some file types (for instances, files that contain a
+	 * timestamp based list of events).
+	 * @return whether this merger can merge the two contributors
+	 * without an ancestor
+	 */
+	boolean canMergeWithoutAncestor();
    
 }
