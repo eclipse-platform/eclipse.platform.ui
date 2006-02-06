@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -424,7 +425,7 @@ public class TabbedPropertySheetPage
 	 *            the contributor id.
 	 */
 	private void disposeContributor(String contributorId) {
-        assert contributor.getContributorId().equals(contributorId);
+        Assert.isTrue(contributor.getContributorId().equals(contributorId));
 		/**
 		 * If the current tab is about to be disposed we have to call
 		 * aboutToBeHidden
