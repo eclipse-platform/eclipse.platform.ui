@@ -306,6 +306,9 @@ public interface IRefactoringHistoryService {
 	 * @param flags
 	 *            the flags which must be present in order to be written to the
 	 *            output stream, or <code>RefactoringDescriptor#NONE</code>
+	 * @param time
+	 *            <code>true</code> to write time information associated with
+	 *            the refactorings, <code>false</code> otherwise
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @throws CoreException
@@ -325,7 +328,7 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int flags, IProgressMonitor monitor) throws CoreException;
+	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int flags, boolean time, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Writes the specified refactoring session descriptor to the output stream.
@@ -334,6 +337,9 @@ public interface IRefactoringHistoryService {
 	 *            the refactoring session descriptor
 	 * @param stream
 	 *            the output stream
+	 * @param time
+	 *            <code>true</code> to write time information associated with
+	 *            the refactorings, <code>false</code> otherwise
 	 * @throws CoreException
 	 *             if an error occurs while writing to the output stream.
 	 *             Reasons include:
@@ -351,5 +357,5 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void writeRefactoringSession(RefactoringSessionDescriptor descriptor, OutputStream stream) throws CoreException;
+	public void writeRefactoringSession(RefactoringSessionDescriptor descriptor, OutputStream stream, boolean time) throws CoreException;
 }

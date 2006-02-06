@@ -489,11 +489,14 @@ public final class RefactoringHistoryManager {
 	 *            the output stream where to write to
 	 * @param descriptors
 	 *            the refactoring descriptors to write
+	 * @param stamps
+	 *            <code>true</code> to write time stamps as well,
+	 *            <code>false</code> otherwise
 	 * @throws CoreException
 	 *             if an error occurs while writing the descriptors
 	 */
-	public static void writeRefactoringDescriptors(final OutputStream stream, final RefactoringDescriptor[] descriptors) throws CoreException {
-		writeRefactoringSession(stream, new RefactoringSessionDescriptor(descriptors, IRefactoringSerializationConstants.CURRENT_VERSION, null));
+	public static void writeRefactoringDescriptors(final OutputStream stream, final RefactoringDescriptor[] descriptors, final boolean stamps) throws CoreException {
+		writeRefactoringSession(stream, new RefactoringSessionDescriptor(descriptors, IRefactoringSerializationConstants.CURRENT_VERSION, null), stamps);
 	}
 
 	/**
@@ -501,22 +504,27 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param stream
 	 *            the output stream where to write to
-	 * @param sess
+	 * @param descriptor
 	 *            the refactoring session descriptors to write
+	 * @param stamps
+	 *            <code>true</code> to write time stamps as well,
+	 *            <code>false</code> otherwise
 	 * @throws CoreException
-	 *             if an error occurs while writing the descriptor
+	 *             if an error occurs while writing the refactoring session
+	 *             descriptor
 	 */
-	public static void writeRefactoringSession(final OutputStream stream, final RefactoringSessionDescriptor sess) throws CoreException {
+	public static void writeRefactoringSession(final OutputStream stream, final RefactoringSessionDescriptor descriptor, final boolean stamps) throws CoreException {
 		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer();
-		final RefactoringDescriptor[] descriptors= sess.getRefactorings();
+		final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 		try {
-			transformer.beginSession(sess.getComment());
+			transformer.beginSession(descriptor.getComment());
 			for (int index= 0; index < descriptors.length; index++) {
-				final RefactoringDescriptor descriptor= descriptors[index];
-				if (descriptor != null) {
+				final RefactoringDescriptor current= descriptors[index];
+				if (current != null) {
 					try {
-						transformer.beginRefactoring(descriptor.getID(), -1, descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
-						for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
+						long stamp= stamps ? current.getTimeStamp() : -1;
+						transformer.beginRefactoring(current.getID(), stamp, current.getProject(), current.getDescription(), current.getComment(), current.getFlags());
+						for (final Iterator iterator= current.getArguments().entrySet().iterator(); iterator.hasNext();) {
 							final Map.Entry entry= (Entry) iterator.next();
 							transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
 						}

@@ -1184,7 +1184,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int flags, IProgressMonitor monitor) throws CoreException {
+	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int flags, final boolean time, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
 		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
@@ -1204,7 +1204,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			}
 			final RefactoringDescriptor[] descriptors= new RefactoringDescriptor[list.size()];
 			list.toArray(descriptors);
-			RefactoringHistoryManager.writeRefactoringDescriptors(stream, descriptors);
+			RefactoringHistoryManager.writeRefactoringDescriptors(stream, descriptors, time);
 		} finally {
 			disconnect();
 		}
@@ -1213,9 +1213,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public void writeRefactoringSession(final RefactoringSessionDescriptor descriptor, final OutputStream stream) throws CoreException {
+	public void writeRefactoringSession(final RefactoringSessionDescriptor descriptor, final OutputStream stream, final boolean time) throws CoreException {
 		Assert.isNotNull(descriptor);
 		Assert.isNotNull(stream);
-		RefactoringHistoryManager.writeRefactoringSession(stream, descriptor);
+		RefactoringHistoryManager.writeRefactoringSession(stream, descriptor, time);
 	}
 }
