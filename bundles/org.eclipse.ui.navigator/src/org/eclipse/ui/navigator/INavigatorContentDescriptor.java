@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.navigator;
+
+import java.util.Set;
+
+import org.eclipse.ui.navigator.internal.extensions.OverridePolicy;
 
 
 /**
@@ -44,14 +48,14 @@ public interface INavigatorContentDescriptor {
 	 * 
 	 * @return the navgiator content extension id
 	 */
-	public abstract String getId();
+	String getId();
 
 	/**
 	 * Returns the name of this navigator extension
 	 * 
 	 * @return the name of this navigator extension
 	 */
-	public abstract String getName();
+	String getName();
 
 	/**
 	 * Returns the priority of the navigator content extension.
@@ -59,18 +63,8 @@ public interface INavigatorContentDescriptor {
 	 * @return the priority of the navigator content extension. Returns 0 (zero)
 	 *         if no priority was specified.
 	 */
-	public abstract int getPriority();
-
-	/**
-	 * Returns whether the receiver is a root navigator content extension.
-	 * Navigator content extensions are root extensions if they are referenced
-	 * in a navigator view extension.
-	 * 
-	 * @return true if the receiver is a root navigator extension false if the
-	 *         receiver is not a root navigator extension
-	 */
-	public abstract boolean isRoot();
-
+	int getPriority();
+ 
 	/**
 	 * The enabledByDefault attribute specifies whether an extension should be
 	 * activated in the context of a viewer automatically. Users may override
@@ -78,14 +72,17 @@ public interface INavigatorContentDescriptor {
 	 * 
 	 * @return true if the extension is enabled by default.
 	 */
-	public abstract boolean isActiveByDefault();
-
+	boolean isActiveByDefault(); 
+ 
 	/**
+	 * Determine if this content extension is enabled for the given element.
 	 * 
-	 * @return True if the loading of this configuration element has failed.
+	 * @param anElement
+	 *            The element that should be used for the evaluation.
+	 * @return True if and only if the extension is enabled for the element.
 	 */
-	public abstract boolean hasLoadingFailed();
-
+	boolean isTriggerPoint(Object anElement);
+	
 	/**
 	 * Determine if this content extension could provide the given element as a
 	 * child.
@@ -100,15 +97,38 @@ public interface INavigatorContentDescriptor {
 	 * @return True if and only if the extension might provide an object of this
 	 *         type as a child.
 	 */
-	public boolean isPossibleChild(Object anElement);
- 
+	boolean isPossibleChild(Object anElement);
+	
 	/**
-	 * Determine if this content extension is enabled for the given element.
-	 * 
-	 * @param anElement
-	 *            The element that should be used for the evaluation.
-	 * @return True if and only if the extension is enabled for the element.
+	 * @return Returns the suppressedExtensionId or null if none specified.
 	 */
-	public boolean isTriggerPoint(Object anElement);
+	String getSuppressedExtensionId();
+
+	/**
+	 * @return Returns the overridePolicy or null if this extension does not
+	 *         override another extension.
+	 */
+	OverridePolicy getOverridePolicy();
+	
+	/**
+	 * @return The descriptor of the <code>suppressedExtensionId</code> if non-null.
+	 */
+	INavigatorContentDescriptor getOverriddenDescriptor();
+	
+	/**
+	 * 
+	 * Does not force the creation of the set of overriding extensions.
+	 * 
+	 * @return True if this extension has overridding extensions.
+	 */
+	boolean hasOverridingExtensions();
+	
+
+	/**
+	 * @return The set of overridding extensions (of type
+	 *         {@link INavigatorContentDescriptor}
+	 */
+	Set getOverriddingExtensions();
+	
 
 }

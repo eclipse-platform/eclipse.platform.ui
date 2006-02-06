@@ -258,5 +258,11 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 		properties.setProperty(aPropertyName, aPropertyValue);
 	}
  
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "ViewerDescriptor["+viewerId+"]"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 }

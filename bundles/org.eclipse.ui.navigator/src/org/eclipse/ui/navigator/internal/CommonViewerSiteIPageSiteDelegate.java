@@ -17,19 +17,22 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
+import org.eclipse.ui.navigator.ICommonViewerSite;
 import org.eclipse.ui.part.IPageSite;
 
 /**
  * @since 3.2
- *
+ * 
  */
-public class CommonViewerSiteIPageSiteDelegate implements ICommonViewerWorkbenchSite {
+public class CommonViewerSiteIPageSiteDelegate implements
+		ICommonViewerSite {
 
 	private IPageSite pageSite;
+
 	private String viewerId;
 
-	public CommonViewerSiteIPageSiteDelegate(String aViewerId, IPageSite aPageSite) {
+	public CommonViewerSiteIPageSiteDelegate(String aViewerId,
+			IPageSite aPageSite) {
 		viewerId = aViewerId;
 		pageSite = aPageSite;
 	}
@@ -70,4 +73,5 @@ public class CommonViewerSiteIPageSiteDelegate implements ICommonViewerWorkbench
 			ISelectionProvider selectionProvider) {
 		pageSite.registerContextMenu(menuId, menuManager, selectionProvider);
 	}
+ 
 }

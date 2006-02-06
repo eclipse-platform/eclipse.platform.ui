@@ -61,32 +61,6 @@ public class CommonViewer extends TreeViewer {
 
 	/**
 	 * <p>
-	 * Constructs the Tree Viewer for the Common Navigator and the corresponding
-	 * NavigatorContentService. The NavigatorContentService will provide the
-	 * Content Provider and Label Provider -- these need not be supplied by
-	 * clients.
-	 * <p>
-	 * For the valid bits to supply in the style mask (aStyle), see
-	 * documentation provided by {@link TreeViewer}.
-	 * </p>
-	 * 
-	 * @param aViewerId
-	 *            An id tied to the extensions that is used to focus specific
-	 *            content to a particular instance of the Common Navigator
-	 * @param aParent
-	 *            A Composite parent to contain the actual SWT widget
-	 * @param aStyle
-	 *            A style mask that will be used to create the TreeViewer
-	 *            Composite.
-	 */
-	public CommonViewer(String aViewerId, Composite aParent, int aStyle) {
-		super(aParent, aStyle);
-		contentService = new NavigatorContentService(aViewerId, this);
-		init();
-	}
-
-	/**
-	 * <p>
 	 * Initializes the content provider, label provider, and drag and drop
 	 * support. Should not be called by clients -- this method is invoked when
 	 * the constructor is invoked.
@@ -102,48 +76,6 @@ public class CommonViewer extends TreeViewer {
 		setLabelProvider(decoratingProvider);
 		initDragAndDrop();
 
-	}
-
-	/**
-	 * <p>
-	 * Disposes of the NavigatorContentService, which will dispose the Content
-	 * and Label providers.
-	 * </p>
-	 */
-	public void dispose() {
-
-		if (contentService != null)
-			contentService.dispose();
-
-	}
-
-	/**
-	 * <p>
-	 * The {@link INavigatorContentService}provides the hook into the framework
-	 * to provide content from the various extensions.
-	 * </p>
-	 * 
-	 * @return The {@link INavigatorContentService}that was created when the
-	 *         viewer was created.
-	 */
-	public INavigatorContentService getNavigatorContentService() {
-		return contentService;
-	}
-
-	/**
-	 * <p>
-	 * Removals are handled by refreshing the parents of each of the given
-	 * elements. The parents are determined via calls ot the contentProvider.
-	 * </p>
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
-	 */
-	public void remove(Object[] elements) {
-		super.remove(elements);
-		ITreeContentProvider contentProvider = (ITreeContentProvider) getContentProvider();
-		for (int i = 0; i < elements.length; i++) {
-			super.internalRefresh(contentProvider.getParent(elements[i]));
-		}
 	}
 
 	protected void removeWithoutRefresh(Object[] elements) {
@@ -171,25 +103,6 @@ public class CommonViewer extends TreeViewer {
 		}
 		return result;
 	}
-
-	/**
-	 * Sets this viewer's sorter and triggers refiltering and resorting of this
-	 * viewer's element. Passing <code>null</code> turns sorting off.
-	 * 
-	 * @param sorter
-	 *            a viewer sorter, or <code>null</code> if none
-	 */
-	public void setSorter(ViewerSorter sorter) {
-		if (sorter != null && sorter instanceof CommonViewerSorter)
-			((CommonViewerSorter) sorter).setContentService(contentService);
-
-		if (sorter == null || sorter instanceof TreeViewerSorter)
-			super.setSorter(sorter);
-		else /* we wrap the sorter for convenience (now we can always cast to TreeViewerSorter) */
-			super.setSorter(new DelegateTreeViewerSorter(sorter));
-	}
-
-	// Had to pull down the following code to tap into the sorting
 
 	/**
 	 * Adds the given child elements to this viewer as children of the given
@@ -498,9 +411,141 @@ public class CommonViewer extends TreeViewer {
 		// }
 	}
 
+	/**
+	 * <p>
+	 * Constructs the Tree Viewer for the Common Navigator and the corresponding
+	 * NavigatorContentService. The NavigatorContentService will provide the
+	 * Content Provider and Label Provider -- these need not be supplied by
+	 * clients.
+	 * <p>
+	 * For the valid bits to supply in the style mask (aStyle), see
+	 * documentation provided by {@link TreeViewer}.
+	 * </p>
+	 * 
+	 * @param aViewerId
+	 *            An id tied to the extensions that is used to focus specific
+	 *            content to a particular instance of the Common Navigator
+	 * @param aParent
+	 *            A Composite parent to contain the actual SWT widget
+	 * @param aStyle
+	 *            A style mask that will be used to create the TreeViewer
+	 *            Composite.
+	 */
+	public CommonViewer(String aViewerId, Composite aParent, int aStyle) {
+		super(aParent, aStyle);
+		contentService = new NavigatorContentService(aViewerId, this);
+		init();
+	}
+
 	public boolean isExpandable(Object element) {
 
 		return getFilteredChildren(element).length != 0;
 	}
 
+	/**
+	 * <p>
+	 * Disposes of the NavigatorContentService, which will dispose the Content
+	 * and Label providers.
+	 * </p>
+	 */
+	public void dispose() {
+	
+		if (contentService != null)
+			contentService.dispose();
+	
+	}
+
+	/**
+	 * Sets this viewer's sorter and triggers refiltering and resorting of this
+	 * viewer's element. Passing <code>null</code> turns sorting off.
+	 * 
+	 * @param sorter
+	 *            a viewer sorter, or <code>null</code> if none
+	 */
+	public void setSorter(ViewerSorter sorter) {
+		if (sorter != null && sorter instanceof CommonViewerSorter)
+			((CommonViewerSorter) sorter).setContentService(contentService);
+	
+		if (sorter == null || sorter instanceof TreeViewerSorter)
+			super.setSorter(sorter);
+		else /* we wrap the sorter for convenience (now we can always cast to TreeViewerSorter) */
+			super.setSorter(new DelegateTreeViewerSorter(sorter));
+	}
+
+	/**
+	 * <p>
+	 * The {@link INavigatorContentService}provides the hook into the framework
+	 * to provide content from the various extensions.
+	 * </p>
+	 * 
+	 * @return The {@link INavigatorContentService}that was created when the
+	 *         viewer was created.
+	 */
+	public INavigatorContentService getNavigatorContentService() {
+		return contentService;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object[])
+	 */
+	public void add(Object parentElement, Object[] childElements) {
+		// TODO Auto-generated method stub
+		super.add(parentElement, childElements);
+	}
+
+	/**
+	 * <p>
+	 * Removals are handled by refreshing the parents of each of the given
+	 * elements. The parents are determined via calls ot the contentProvider.
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
+	 */
+	public void remove(Object[] elements) {
+		super.remove(elements);
+		ITreeContentProvider contentProvider = (ITreeContentProvider) getContentProvider();
+		for (int i = 0; i < elements.length; i++) {
+			super.internalRefresh(contentProvider.getParent(elements[i]));
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(boolean)
+	 */
+	public void refresh(boolean updateLabels) {
+		// TODO Auto-generated method stub
+		super.refresh(updateLabels);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object, boolean)
+	 */
+	public void refresh(Object element, boolean updateLabels) {
+		// TODO Auto-generated method stub
+		super.refresh(element, updateLabels);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object)
+	 */
+	public void refresh(Object element) {
+		// TODO Auto-generated method stub
+		super.refresh(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object, java.lang.String[])
+	 */
+	public void update(Object element, String[] properties) {
+		// TODO Auto-generated method stub
+		super.update(element, properties);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return contentService.getViewerId();
+	}
+	
 }

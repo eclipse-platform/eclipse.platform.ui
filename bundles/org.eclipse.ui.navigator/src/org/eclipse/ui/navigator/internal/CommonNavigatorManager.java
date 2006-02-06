@@ -86,8 +86,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		contentService = commonNavigator.getNavigatorContentService();
 		statusLineManager = commonNavigator.getViewSite().getActionBars()
 				.getStatusLineManager();
-		commonDescriptionProvider = new NavigatorContentServiceDescriptionProvider(
-				contentService);
+		commonDescriptionProvider = contentService.createCommonDescriptionProvider();
 		labelProvider = (ILabelProvider) commonNavigator.getCommonViewer()
 				.getLabelProvider();
 		init();

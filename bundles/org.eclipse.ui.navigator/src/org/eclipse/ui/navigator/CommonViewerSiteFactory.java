@@ -80,7 +80,7 @@ public final class CommonViewerSiteFactory {
 	 *            contract of ICommonViewerSite.
 	 * @return An ICommonViewerSite that delegates to the given parameter.
 	 */
-	public static ICommonViewerWorkbenchSite createCommonViewerSite(String anId,
+	public static ICommonViewerSite createCommonViewerSite(String anId,
 			IPageSite aPageSite) {
 		return new CommonViewerSiteIPageSiteDelegate(anId, aPageSite);
 	}

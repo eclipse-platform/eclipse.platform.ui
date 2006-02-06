@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
@@ -23,12 +25,28 @@ import org.eclipse.ui.navigator.NavigatorActivationService;
 /**
  * 
  */
-public class VisibilityAssistant {
+public class VisibilityAssistant implements IExtensionActivationListener {
 
 	private final INavigatorViewerDescriptor viewerDescriptor;
 
 	private final Set programmaticVisibilityBindings = new HashSet();
+
 	private final Set programmaticRootBindings = new HashSet();
+
+	private final ListenerList listeners = new ListenerList();
+
+	/**
+	 * Notifies clients of changes in extension visibility or activation.
+	 * 
+	 */
+	public interface VisibilityListener {
+
+		/**
+		 * Respond to the change in visibility or activation.
+		 * 
+		 */
+		void onVisibilityOrActivationChange();
+	}
 
 	/**
 	 * Create a visibility assistant for the given viewer descriptor.
@@ -39,13 +57,19 @@ public class VisibilityAssistant {
 	public VisibilityAssistant(INavigatorViewerDescriptor aViewerDescriptor) {
 		Assert.isNotNull(aViewerDescriptor);
 		viewerDescriptor = aViewerDescriptor;
+		
+		NavigatorActivationService.getInstance().addExtensionActivationListener(viewerDescriptor.getViewerId(), this);
+	}
+	
+	public void dispose() {
+		NavigatorActivationService.getInstance().removeExtensionActivationListener(viewerDescriptor.getViewerId(), this);
 	}
 
 	/**
 	 * 
 	 * @param theExtensions
 	 *            The extensions that should be made visible to the viewer.
-	 * @param isRoot 
+	 * @param isRoot
 	 */
 	public void bindExtensions(String[] theExtensions, boolean isRoot) {
 		if (theExtensions == null)
@@ -55,6 +79,25 @@ public class VisibilityAssistant {
 			if (isRoot) {
 				programmaticRootBindings.add(theExtensions[i]);
 			}
+		}
+		notifyClients();
+	}
+
+	public void addListener(VisibilityListener aListener) {
+		listeners.add(aListener);
+	}
+
+	public void removeListener(VisibilityListener aListener) {
+		listeners.remove(aListener);
+	}
+
+	/**
+	 * 
+	 */
+	private void notifyClients() {
+		Object[] clients = listeners.getListeners();
+		for (int i = 0; i < clients.length; i++) {
+			((VisibilityListener) clients[i]).onVisibilityOrActivationChange();
 		}
 	}
 
@@ -68,10 +111,10 @@ public class VisibilityAssistant {
 	 *         <i>visible</i> for the viewer descriptor and enabled for the
 	 *         given element.
 	 */
-	public boolean isVisibleAndActive(INavigatorContentDescriptor aContentDescriptor) {
+	public boolean isVisibleAndActive(
+			INavigatorContentDescriptor aContentDescriptor) {
 		return isActive(aContentDescriptor) && isVisible(aContentDescriptor);
 	}
- 
 
 	/**
 	 * 
@@ -139,13 +182,27 @@ public class VisibilityAssistant {
 
 	/**
 	 * Return whether the given content extension is a root extension.
-	 * @param aContentExtensionId the id of the content extension.
+	 * 
+	 * @param aContentExtensionId
+	 *            the id of the content extension.
 	 * @return whether the given content extension is a root extension
 	 */
 	public boolean isRootExtension(String aContentExtensionId) {
 		return programmaticRootBindings.contains(aContentExtensionId)
-			|| viewerDescriptor
-				.isRootExtension(aContentExtensionId);
-	} 
- 
+				|| viewerDescriptor.isRootExtension(aContentExtensionId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.IExtensionActivationListener#onExtensionActivation(java.lang.String,
+	 *      java.lang.String[], boolean)
+	 */
+	public void onExtensionActivation(String aViewerId,
+			String[] theNavigatorExtensionIds, boolean isActive) {
+		if (aViewerId.equals(viewerDescriptor.getViewerId()))
+			notifyClients();
+
+	}
+
 }

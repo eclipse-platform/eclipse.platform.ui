@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
-import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * 
@@ -33,9 +32,9 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 public final class NavigatorContentServiceDescriptionProvider implements
 		IDescriptionProvider { 
 	
-	private final INavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
-	public NavigatorContentServiceDescriptionProvider(INavigatorContentService aContentService) { 
+	public NavigatorContentServiceDescriptionProvider(NavigatorContentService aContentService) { 
 		Assert.isNotNull(aContentService); 
 		contentService = aContentService;		
 	}	

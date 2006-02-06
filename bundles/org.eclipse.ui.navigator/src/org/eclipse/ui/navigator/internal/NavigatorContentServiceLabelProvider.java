@@ -53,7 +53,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		implements ILabelProvider {
 
 	private final ILabelDecorator decorator;
-	private final INavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
 
   
@@ -65,7 +65,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @param aContentService
 	 *            The associated NavigatorContentService that should be used to acquire information.
 	 */
-	public NavigatorContentServiceLabelProvider(INavigatorContentService aContentService) {
+	public NavigatorContentServiceLabelProvider(NavigatorContentService aContentService) {
 		contentService = aContentService;
 		decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
 		isContentServiceSelfManaged = false;

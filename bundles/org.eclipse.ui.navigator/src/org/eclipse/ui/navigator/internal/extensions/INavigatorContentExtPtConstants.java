@@ -32,6 +32,9 @@ public interface INavigatorContentExtPtConstants {
 
 	/** */
 	String TAG_COMMON_SORTER = "commonSorter"; //$NON-NLS-1$
+	
+	/** */
+	String TAG_OVERRIDE = "override"; //$NON-NLS-1$	
 
 	/** */
 	String TAG_FILTER_EXPRESSION = "filterExpression"; //$NON-NLS-1$
@@ -49,10 +52,7 @@ public interface INavigatorContentExtPtConstants {
 	String ATT_DESCRIPTION = "description"; //$NON-NLS-1$	  
 
 	/** */
-	String ATT_CLASS = "class"; //$NON-NLS-1$
-
-	/** */
-	String ATT_ROOT_LABEL = "rootLabel"; //$NON-NLS-1$	 
+	String ATT_CLASS = "class"; //$NON-NLS-1$ 
 
 	/** */
 	String ATT_PRIORITY = "priority"; //$NON-NLS-1$
@@ -73,12 +73,16 @@ public interface INavigatorContentExtPtConstants {
 	String ATT_VIEWER_FILTER = "viewerFilter"; //$NON-NLS-1$
 
 	/** */
-	String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$ 
+	String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$  
 
 	/** */
-	String ATT_SORTER = "sorter"; //$NON-NLS-1$
-
+	String ATT_DEPENDS_ON = "dependsOn"; //$NON-NLS-1$	
+	
 	/** */
-	String ATT_DEPENDS_ON = "dependsOn"; //$NON-NLS-1$  
+	String ATT_POLICY = "policy"; //$NON-NLS-1$
+	
+	/** */
+	String ATT_SUPPRESSED_EXT_ID = "suppressedExtensionId"; //$NON-NLS-1$  
+
 
 }

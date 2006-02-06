@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
+import java.util.Set;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
+import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
+import org.eclipse.ui.navigator.PipelinedShapeModification;
+import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
@@ -27,7 +32,7 @@ import org.eclipse.ui.navigator.internal.NavigatorContentService;
  * 
  * @since 3.2
  */
-public class NavigatorContentProvider implements ICommonContentProvider {
+public class NavigatorContentProvider implements IPipelinedTreeContentProvider {
 
 	private final ITreeContentProvider contentProvider;
 	private NavigatorContentService contentService;
@@ -143,4 +148,64 @@ public class NavigatorContentProvider implements ICommonContentProvider {
 			((ICommonContentProvider)contentProvider).init(aStateModel, aMemento);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
+	 */
+	public Set getPipelinedChildren(Object aParent, Set theCurrentChildren) {
+		if(contentProvider instanceof IPipelinedTreeContentProvider)
+			return ((IPipelinedTreeContentProvider)contentProvider).getPipelinedChildren(aParent, theCurrentChildren);
+		return theCurrentChildren;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
+	 */
+	public Set getPipelinedElements(Object anInput, Set theCurrentElements) {
+		if(contentProvider instanceof IPipelinedTreeContentProvider)
+			return ((IPipelinedTreeContentProvider)contentProvider).getPipelinedElements(anInput, theCurrentElements);
+		return theCurrentElements;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedParent(java.lang.Object, java.lang.Object)
+	 */
+	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
+		if(contentProvider instanceof IPipelinedTreeContentProvider)
+			return ((IPipelinedTreeContentProvider)contentProvider).getPipelinedParent(anObject, aSuggestedParent);
+		return anObject;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org.eclipse.ui.navigator.PipelinedShapeModification)
+	 */
+	public PipelinedShapeModification interceptAdd(PipelinedShapeModification anAddModification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRemove(org.eclipse.ui.navigator.PipelinedShapeModification)
+	 */
+	public PipelinedShapeModification interceptRemove(PipelinedShapeModification aRemoveModification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRefresh(org.eclipse.ui.navigator.PipelinedViewerUpdate)
+	 */
+	public PipelinedViewerUpdate interceptRefresh(PipelinedViewerUpdate aRefreshSynchronization) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptUpdate(org.eclipse.ui.navigator.PipelinedViewerUpdate)
+	 */
+	public PipelinedViewerUpdate interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	 
 }

@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
-import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
@@ -36,7 +37,10 @@ import org.eclipse.ui.navigator.internal.NavigatorContentService;
  * 
  * @since 3.2
  */
-public class NavigatorContentExtension implements IMementoAware, INavigatorContentExtension {
+public class NavigatorContentExtension implements IMementoAware,
+		INavigatorContentExtension {
+
+	private static final NavigatorContentExtension[] NO_EXTENSIONS = new NavigatorContentExtension[0];
 
 	private NavigatorContentService contentService;
 
@@ -50,29 +54,27 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 
 	private IExtensionStateModel stateModel;
 
-	private Comparator comparator;
-
 	private boolean labelProviderInitializationFailed = false;
 
-	private boolean contentProviderInitializationFailed = false; 
-
-	private boolean comparatorInitializationFailed = false;
+	private boolean contentProviderInitializationFailed = false;
 
 	private boolean isDisposed = false;
 
 	private IMemento appliedMemento;
 
-	private StructuredViewerManager viewerManager;
-
-	private ViewerFilter[] viewerFilters;
+	private StructuredViewerManager viewerManager; 
 
 	/**
-	 * Create an object to manage the instantiated 
-	 * elements from the extension.
+	 * Create an object to manage the instantiated elements from the extension.
 	 * 
-	 * @param aDescriptor The descriptor that knows how to create elements and knows the id of the extension
-	 * @param aContentService The content service that will manage this extension
-	 * @param aViewerManager The viewer manager that knows how to initialize the content provider created by this extension.
+	 * @param aDescriptor
+	 *            The descriptor that knows how to create elements and knows the
+	 *            id of the extension
+	 * @param aContentService
+	 *            The content service that will manage this extension
+	 * @param aViewerManager
+	 *            The viewer manager that knows how to initialize the content
+	 *            provider created by this extension.
 	 */
 	public NavigatorContentExtension(NavigatorContentDescriptor aDescriptor,
 			NavigatorContentService aContentService,
@@ -86,22 +88,27 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		viewerManager = aViewerManager;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#getId()
 	 */
 	public String getId() {
 		return descriptor.getId();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#getDescriptor()
 	 */
 	public INavigatorContentDescriptor getDescriptor() {
 		return descriptor;
 	}
 
- 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#getContentProvider()
 	 */
 	public ITreeContentProvider getContentProvider() {
@@ -133,8 +140,9 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		return contentProvider;
 	}
 
- 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#getLabelProvider()
 	 */
 	public ICommonLabelProvider getLabelProvider() {
@@ -177,18 +185,10 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		return labelProvider;
 	}
  
-	public ViewerFilter[] getDuplicateContentFilters() {
-		if (viewerFilters != null)
-			return viewerFilters;
- 
-		synchronized (this) {
-			if (viewerFilters == null)
-				viewerFilters = descriptor.createDuplicateContentFilters();
-		}
-		return viewerFilters;
-	}
-
- 
+	/**
+	 * Dispose of any resources acquired during the lifecycle of the extension.
+	 * 
+	 */
 	public void dispose() {
 		try {
 			synchronized (this) {
@@ -196,33 +196,11 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 				if (contentProvider != null)
 					contentProvider.dispose();
 				if (labelProvider != null)
-					labelProvider.dispose(); 
+					labelProvider.dispose();
 			}
 		} finally {
 			isDisposed = true;
 		}
-	}
-
-	// M4 Revisit the sorting strategy [CommonNavigator:SORTING]
-	public Comparator getComparator() {
-		if (comparator != null || comparatorInitializationFailed)
-			return comparator;
-		synchronized (this) {
-			try {
-				if (comparator == null)
-					comparator = descriptor.createComparator();
-
-			} catch (CoreException e) {
-				comparatorInitializationFailed = true;
-				e.printStackTrace();
-			} catch (RuntimeException e) {
-				comparatorInitializationFailed = true;
-				e.printStackTrace();
-			}
-			if (comparatorInitializationFailed || comparator == null)
-				comparator = IdentityComparator.INSTANCE;
-		}
-		return comparator;
 	}
 
 	/*
@@ -230,7 +208,9 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
@@ -251,11 +231,17 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		return labelProviderInitializationFailed;
 	}
 
+	/**
+	 * 
+	 * @return True if the loading of the content provider has failed.
+	 */
 	public boolean hasLoadingFailed() {
 		return contentProviderInitializationFailed;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#isLoaded()
 	 */
 	public boolean isLoaded() {
@@ -266,7 +252,7 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 		synchronized (this) {
 			appliedMemento = aMemento;
 			applyMemento(contentProvider);
-			applyMemento(labelProvider); 
+			applyMemento(labelProvider);
 
 		}
 	}
@@ -284,18 +270,84 @@ public class NavigatorContentExtension implements IMementoAware, INavigatorConte
 
 	protected final void complainDisposedIfNecessary() {
 		if (isDisposed)
-			throw new IllegalStateException(
-							"INavigatorContentExtension " //$NON-NLS-1$
-							+ descriptor.getId()
-							+ " is disposed!"); //$NON-NLS-1$
+			throw new IllegalStateException("INavigatorContentExtension " //$NON-NLS-1$
+					+ descriptor.getId() + " is disposed!"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentExtension#getStateModel()
 	 */
 	public IExtensionStateModel getStateModel() {
 		if (stateModel == null)
 			stateModel = new ExtensionStateModel(descriptor.getId(), viewerId);
 		return stateModel;
+	}
+
+	/**
+	 * @return Returns the overridingExtensions.
+	 */
+	public NavigatorContentExtension[] getOverridingExtensionsForTriggerPoint(
+			Object anElement) {
+		if (!descriptor.hasOverridingExtensions())
+			return NO_EXTENSIONS;
+
+		NavigatorContentDescriptor overriddingDescriptor;
+		Set overridingExtensions = new HashSet();
+		for (Iterator contentDescriptorsItr = descriptor
+				.getOverriddingExtensions().iterator(); contentDescriptorsItr
+				.hasNext();) {
+			overriddingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+					.next();
+
+			if (contentService.isActive(overriddingDescriptor.getId())
+					&& contentService.isVisible(overriddingDescriptor.getId())
+					&& overriddingDescriptor.isTriggerPoint(anElement)) {
+				overridingExtensions.add(contentService
+						.getExtension(overriddingDescriptor));
+			}
+		}
+		if (overridingExtensions.size() == 0)
+			return NO_EXTENSIONS;
+		return (NavigatorContentExtension[]) overridingExtensions
+				.toArray(new NavigatorContentExtension[overridingExtensions
+						.size()]);
+	}
+
+	/**
+	 * @return Returns the overridingExtensions.
+	 */
+	public NavigatorContentExtension[] getOverridingExtensionsForPossibleChild(
+			Object anElement) {
+		if (!descriptor.hasOverridingExtensions())
+			return NO_EXTENSIONS;
+
+		Set overridingExtensions = new HashSet();
+		for (Iterator contentDescriptorsItr = descriptor
+				.getOverriddingExtensions().iterator(); contentDescriptorsItr
+				.hasNext();) {
+			descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+					.next();
+
+			if (contentService.isActive(descriptor.getId())
+					&& contentService.isVisible(descriptor.getId())
+					&& descriptor.isPossibleChild(anElement)) {
+				overridingExtensions.add(contentService
+						.getExtension(descriptor));
+			}
+		}
+		if (overridingExtensions.size() == 0)
+			return NO_EXTENSIONS;
+		return (NavigatorContentExtension[]) overridingExtensions
+				.toArray(new NavigatorContentExtension[overridingExtensions
+						.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return descriptor.toString() + " Instance"; //$NON-NLS-1$
 	}
 }

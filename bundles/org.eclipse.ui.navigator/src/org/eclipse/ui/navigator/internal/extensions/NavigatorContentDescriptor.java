@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationContext;
@@ -24,7 +23,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.WorkbenchException;
@@ -50,38 +48,32 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
  */
 public final class NavigatorContentDescriptor implements
 		INavigatorContentDescriptor, INavigatorContentExtPtConstants {
-
-	private static final ViewerFilter[] NO_VIEWER_FILTERS = new ViewerFilter[0];
-
-	private static final IConfigurationElement[] NO_DUPLICATE_CONTENT_FILTERS = new IConfigurationElement[0];
-
+ 
 	private String id;
 
 	private String name;
 
 	private IConfigurationElement configElement;
 
-	private String rootLabel;
-
-	private int priority = Integer.MAX_VALUE;
+	private int priority = Priority.NORMAL_PRIORITY_VALUE;
 
 	private Expression enablement;
 
 	private Expression possibleChildren;
 
-	private boolean root;
-
 	private String icon;
-
-	private String declaringPluginId;
 
 	private boolean activeByDefault;
 
 	private IPluginContribution contribution;
 
-	private boolean hasLoadingFailed;
+	private Set overridingExtensions;
 
-	private IConfigurationElement[] duplicateContentFilterElements;
+	private OverridePolicy overridePolicy;
+
+	private String suppressedExtensionId;
+	
+	private INavigatorContentDescriptor overriddenDescriptor;
 
 	/**
 	 * Creates a new content descriptor from a configuration element.
@@ -101,62 +93,7 @@ public final class NavigatorContentDescriptor implements
 			throws WorkbenchException {
 		super();
 		this.configElement = configElement;
-		readConfigElement();
-	}
-
-	/**
-	 * Determine if this content extension would be able to provide children for
-	 * the given element.
-	 * 
-	 * @param anElement
-	 *            The element that should be used for the evaluation.
-	 * @return True if and only if the extension is enabled for the element.
-	 */
-	public boolean isTriggerPoint(Object anElement) {
-
-		if (enablement == null || anElement == null)
-			return false;
-
-		try {
-			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
-		return false;
-	}
- 
-
-	/**
-	 * Determine if this content extension could provide the given element as a
-	 * child.
-	 * 
-	 * <p>
-	 * This method is used to determine what the parent of an element could be
-	 * for Link with Editor support.
-	 * </p>
-	 * 
-	 * @param anElement
-	 *            The element that should be used for the evaluation.
-	 * @return True if and only if the extension might provide an object of this
-	 *         type as a child.
-	 */
-	public boolean isPossibleChild(Object anElement) {
-
-		if ((enablement == null && possibleChildren == null)
-				|| anElement == null)
-			return false;
-
-		try {
-			if (possibleChildren != null)
-				return (possibleChildren.evaluate(new EvaluationContext(null,
-						anElement)) == EvaluationResult.TRUE);
-			else if (enablement != null)
-				return (enablement.evaluate(new EvaluationContext(null,
-						anElement)) == EvaluationResult.TRUE);
-		} catch (CoreException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
-		}
-		return false;
+		init();
 	}
 
 	/*
@@ -186,24 +123,6 @@ public final class NavigatorContentDescriptor implements
 		return priority;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#isRoot()
-	 */
-	public boolean isRoot() {
-		return root;
-	}
-
-	/**
-	 * @return a label to be used to delay the loading -- used for a content
-	 *         extension that contributes a single root element
-	 * 
-	 */
-	protected String getRootLabel() {
-		return rootLabel;
-	}
-
 	/**
 	 * Parses the configuration element.
 	 * 
@@ -215,15 +134,12 @@ public final class NavigatorContentDescriptor implements
 	 *             <li>More elements are define than is allowed.</li>
 	 *             </ul>
 	 */
-	void readConfigElement() throws WorkbenchException {
+	private void init() throws WorkbenchException {
 		id = configElement.getAttribute(ATT_ID);
 		name = configElement.getAttribute(ATT_NAME);
 		String priorityString = configElement.getAttribute(ATT_PRIORITY);
 		icon = configElement.getAttribute(ATT_ICON);
-		rootLabel = configElement.getAttribute(ATT_ROOT_LABEL);
 
-		declaringPluginId = configElement.getDeclaringExtension()
-				.getNamespace();
 		String activeByDefaultString = configElement
 				.getAttribute(ATT_ACTIVE_BY_DEFAULT);
 		activeByDefault = (activeByDefaultString != null && activeByDefaultString
@@ -235,9 +151,9 @@ public final class NavigatorContentDescriptor implements
 			try {
 				Priority p = Priority.get(priorityString);
 				priority = p != null ? p.getValue()
-						: Priority.LOW_PRIORITY_VALUE;
+						: Priority.NORMAL_PRIORITY_VALUE;
 			} catch (NumberFormatException exception) {
-				priority = Priority.LOW_PRIORITY_VALUE;
+				priority = Priority.NORMAL_PRIORITY_VALUE;
 			}
 		}
 		if (id == null) {
@@ -303,31 +219,22 @@ public final class NavigatorContentDescriptor implements
 		contribution = new IPluginContribution() {
 
 			public String getLocalId() {
-				return configElement.getDeclaringExtension()
-						.getSimpleIdentifier();
+				return getId();
 			}
 
 			public String getPluginId() {
-				return configElement.getDeclaringExtension()
-						.getUniqueIdentifier();
+				return configElement.getDeclaringExtension().getNamespace();
 			}
 
-		};
+		}; 
 
-		children = configElement.getChildren(TAG_DUPLICATE_CONTENT_FILTER);
-		duplicateContentFilterElements = children != null ? children
-				: NO_DUPLICATE_CONTENT_FILTERS;
-	}
-
-	/**
-	 * Set whether or not the receiver is a root navigator extension
-	 * 
-	 * @param root
-	 *            true if the receiver is a root navigator extension. false if
-	 *            the receiver is not a root navigator extension.
-	 */
-	void setRoot(boolean root) {
-		this.root = root;
+		children = configElement.getChildren(TAG_OVERRIDE); 
+		if (children.length == 1) {
+			suppressedExtensionId = children[0]
+					.getAttribute(ATT_SUPPRESSED_EXT_ID);
+			overridePolicy = OverridePolicy.get(children[0]
+					.getAttribute(ATT_POLICY));
+		}
 	}
 
 	/**
@@ -338,19 +245,18 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
-	 * @return Returns the declaringPluginId.
+	 * @return Returns the suppressedExtensionId or null if none specified.
 	 */
-	public String getDeclaringPluginId() {
-		return declaringPluginId;
+	public String getSuppressedExtensionId() {
+		return suppressedExtensionId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#isEnabledByDefault()
+	/**
+	 * @return Returns the overridePolicy or null if this extension does not
+	 *         override another extension.
 	 */
-	public boolean isActiveByDefault() {
-		return activeByDefault;
+	public OverridePolicy getOverridePolicy() {
+		return overridePolicy;
 	}
 
 	/**
@@ -359,46 +265,7 @@ public final class NavigatorContentDescriptor implements
 	public IPluginContribution getContribution() {
 		return contribution;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#hasLoadingFailed()
-	 */
-	public boolean hasLoadingFailed() {
-		return hasLoadingFailed;
-	}
-
-	protected IConfigurationElement[] getDuplicateContentFilterElements() {
-		return duplicateContentFilterElements;
-	}
-
-	/**
-	 * 
-	 * @return The duplicate content filters associated with this descriptor.
-	 */
-	public ViewerFilter[] createDuplicateContentFilters() {
-
-		List viewerFiltersList = new ArrayList();
-		IConfigurationElement[] dupeFilters = getDuplicateContentFilterElements();
-		ViewerFilter vFilter = null;
-		for (int i = 0; i < dupeFilters.length; i++) {
-			try {
-
-				vFilter = (ViewerFilter) dupeFilters[i]
-						.createExecutableExtension(ATT_VIEWER_FILTER);
-				viewerFiltersList.add(vFilter);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			} catch (RuntimeException e) {
-				e.printStackTrace();
-			}
-
-		}
-		return (ViewerFilter[]) (viewerFiltersList.size() > 0 ? viewerFiltersList
-				.toArray(new ViewerFilter[viewerFiltersList.size()])
-				: NO_VIEWER_FILTERS);
-	}
+ 
 
 	/**
 	 * The content provider could be an instance of
@@ -432,20 +299,111 @@ public final class NavigatorContentDescriptor implements
 				.createExecutableExtension(ATT_LABEL_PROVIDER);
 	}
 
-	/**
-	 * Extensions may or may not define a comparator. Without a comparator,
-	 * items are sorted in the same order they are returned from the content
-	 * provider.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return An instance of the Comparator defined for this extension
-	 * @throws CoreException
-	 *             if an instance of the executable extension could not be
-	 *             created for any reason
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#isEnabledByDefault()
 	 */
-	public Comparator createComparator() throws CoreException {
-		if (configElement.getAttribute(ATT_SORTER) != null)
-			return (Comparator) configElement
-					.createExecutableExtension(ATT_SORTER);
-		return null;
+	public boolean isActiveByDefault() {
+		return activeByDefault;
 	}
+
+	/**
+	 * Determine if this content extension would be able to provide children for
+	 * the given element.
+	 * 
+	 * @param anElement
+	 *            The element that should be used for the evaluation.
+	 * @return True if and only if the extension is enabled for the element.
+	 */
+	public boolean isTriggerPoint(Object anElement) {
+
+		if (enablement == null || anElement == null)
+			return false;
+
+		try {
+			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
+		} catch (CoreException e) {
+			NavigatorPlugin.logError(0, e.getMessage(), e);
+		}
+		return false;
+	}
+
+	/**
+	 * Determine if this content extension could provide the given element as a
+	 * child.
+	 * 
+	 * <p>
+	 * This method is used to determine what the parent of an element could be
+	 * for Link with Editor support.
+	 * </p>
+	 * 
+	 * @param anElement
+	 *            The element that should be used for the evaluation.
+	 * @return True if and only if the extension might provide an object of this
+	 *         type as a child.
+	 */
+	public boolean isPossibleChild(Object anElement) {
+
+		if ((enablement == null && possibleChildren == null)
+				|| anElement == null)
+			return false;
+
+		try {
+			if (possibleChildren != null)
+				return (possibleChildren.evaluate(new EvaluationContext(null,
+						anElement)) == EvaluationResult.TRUE);
+			else if (enablement != null)
+				return (enablement.evaluate(new EvaluationContext(null,
+						anElement)) == EvaluationResult.TRUE);
+		} catch (CoreException e) {
+			NavigatorPlugin.logError(0, e.getMessage(), e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * Does not force the creation of the set of overriding extensions.
+	 * 
+	 * @return True if this extension has overridding extensions.
+	 */
+	public boolean hasOverridingExtensions() {
+		return overridingExtensions != null && overridingExtensions.size() > 0;
+	}
+
+	/**
+	 * @return The set of overridding extensions (of type
+	 *         {@link INavigatorContentDescriptor}
+	 */
+	public Set getOverriddingExtensions() {
+		if (overridingExtensions == null)
+			overridingExtensions = new HashSet();
+		return overridingExtensions;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "Content[" + id + ", \"" + name + "\"]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+	}
+
+	/**
+	 * @return The descriptor of the <code>suppressedExtensionId</code> if non-null.
+	 */
+	public INavigatorContentDescriptor getOverriddenDescriptor() {
+		return overriddenDescriptor;
+	}
+
+	/**
+	 * @param overriddenDescriptor The overriddenDescriptor to set.
+	 */
+	/* package*/void setOverriddenDescriptor(
+			INavigatorContentDescriptor theOverriddenDescriptor) {
+		overriddenDescriptor = theOverriddenDescriptor;
+	}
+
 }

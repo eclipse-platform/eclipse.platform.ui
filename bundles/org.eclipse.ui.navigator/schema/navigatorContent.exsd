@@ -70,9 +70,8 @@ consulting with the Platform/UI team.
          </appInfo>
          <documentation>
             A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression and also to provide a parent whenever an element matches the &lt;b&gt;possibleChildren&lt;/b&gt; expression. 
-&lt;p&gt;
-Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
-&lt;/p&gt;
+&lt;br&gt;&lt;br&gt;
+Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension. 
          </documentation>
       </annotation>
       <complexType>
@@ -86,7 +85,7 @@ Optionally, clients may also provide an action provider which can provide menu c
             </choice>
             <element ref="actionProvider" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="commonSorter" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="duplicateContentFilter" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="override" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -134,7 +133,7 @@ Optionally, clients may also provide an action provider which can provide menu c
             <annotation>
                <documentation>
                   Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt; or &lt;code&gt;org.eclipse.ui.navigator.ICommonContentProvider&lt;/code&gt;.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 The content provider will be consulted when addeding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt; clause to indicate what kinds of content should trigger a request to your content provider or label provider.
                </documentation>
                <appInfo>
@@ -160,7 +159,7 @@ The content provider will be consulted when addeding children to the tree. Use t
             <annotation>
                <documentation>
                   Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ILabelProvider&lt;/code&gt; or for more advanced functionality, the &lt;code&gt;org.eclipse.ui.navigator.ICommonLabelProvider&lt;/code&gt;.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 Clients may also implement &lt;code&gt;org.eclipse.ui.navigator.IDescriptionProvider&lt;/code&gt; in order to add text to the status bar at the bottom of the Eclipse workbench based on the selection in the viewer.
                </documentation>
                <appInfo>
@@ -175,7 +174,7 @@ Clients may also implement &lt;code&gt;org.eclipse.ui.navigator.IDescriptionProv
       <annotation>
          <documentation>
             The enablement expression allows clients to specify the same expression for both &lt;b&gt;triggerPoints&lt;/b&gt; and &lt;b&gt;possibleChildren&lt;/b&gt;.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an expression that will indicate to the framework when their &lt;code&gt;org.eclipse.ui.navigator.CommonActionProvider&lt;/code&gt; should be invoked. Because of contributions to the IActionBars, clients must be invoked whenever an object they are interested in is selected. Therefore, clients should use discretion in deciding when their extension should be enabled.
          </documentation>
       </annotation>
@@ -245,26 +244,6 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
       </complexType>
    </element>
 
-   <element name="duplicateContentFilter">
-      <annotation>
-         <documentation>
-            For extensions that which to augment or enhance the content provided by another existing extension (e.g. Resources), a client may specify a &lt;b&gt;duplicateContentFilter&lt;/b&gt; which will be turned on and off with their extensions. Users will not have the capability to turn this special viewer filter on and off.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="viewerFilter" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A subclass of &lt;code&gt;org.eclipse.ui.jface.ViewerFilter&lt;/code&gt;.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerFilter"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="actionProvider">
       <annotation>
          <appInfo>
@@ -272,12 +251,12 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
          </appInfo>
          <documentation>
             Supplies the name of a class that implements &lt;code&gt;org.eclipse.ui.navigator.CommonActionProvider&lt;/code&gt;. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 A top level &lt;b&gt;actionProvider&lt;/b&gt; is &lt;i&gt;visible&lt;/i&gt; to an abstract viewer if there is a &lt;b&gt;viewerActionBinding&lt;/b&gt; for that &lt;b&gt;actionProvider&lt;/b&gt;. For actionProviders that are nested under a &lt;b&gt;navigatorContent&lt;/b&gt; element, the visibility will be controlled by the id of the navigatorContent extension id. Child action providers will automatically
 be picked up by matching &lt;b&gt;viewerContentBinding&lt;/b&gt;s. See &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information on visibility bindings.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 Clients may provide &lt;b&gt;actionProvider&lt;/b&gt;(s) under the root &lt;b&gt;extention&lt;/b&gt; element (peer to other &lt;b&gt;navigatorContent&lt;/b&gt;) in order to better control their enablement and viewer binding (see &lt;b&gt;veiwerActionBinding&lt;/b&gt;).
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider&quot;. For these &lt;b&gt;actionProvider&lt;/b&gt;s to be given the opportunity to contribute the menus or action bars of a viewer, a &lt;b&gt;viewerActionBinding&lt;/b&gt; must be defined (as part of the &lt;b&gt;org.eclipse.ui.navigator.viewer extension point&lt;/b&gt;) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider&quot;). See the documentation for &lt;b&gt;viewerActionBinding&lt;/b&gt; under the schema documentation of &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information.
          </documentation>
       </annotation>
@@ -306,12 +285,10 @@ For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot
             <annotation>
                <documentation>
                   Specifies the ID of an action provider that configures some menu or submenu that must be prepared before this action provider is applied. 
-&lt;p&gt;
-Specifying a dependency on another action provider does not guarantee that this action provider will be invoked whereever the required action provider is invoked. The downstream action provider must be bound to the particular viewer to be invoked. 
-&lt;/p&gt;
-&lt;p&gt;
-If the required action provider is disabled or unbound to the current viewer, then this action provider will not be applied. If a cycle exists, the framework will try to continue, but there are no guarantees as to what menu items or action bar contributions will be available.
-&lt;/p&gt;
+&lt;br&gt;&lt;br&gt;
+Specifying a dependency on another action provider does not guarantee that this action provider will be invoked whereever the required action provider is invoked. The downstream action provider must be bound to the particular viewer to be invoked.  
+&lt;br&gt;&lt;br&gt;
+If the required action provider is disabled or unbound to the current viewer, then this action provider will not be applied. If a cycle exists, the framework will try to continue, but there are no guarantees as to what menu items or action bar contributions will be available. 
                </documentation>
             </annotation>
          </attribute>
@@ -419,12 +396,10 @@ If the required action provider is disabled or unbound to the current viewer, th
       <annotation>
          <documentation>
             An optional Eclipse Core Expression that defines what the filter should hide from a particular view. 
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 For instance, clients may decide to hide all resources that have a particular pattern in their name (like &quot;*.acme&quot;). When the filter is active (turned on by default or by the user), then all resources that end in &quot;acme&quot; would be hidden from the view of the user. 
-&lt;/p&gt;
-&lt;p&gt;
-Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&quot; attribute, but not both.
-&lt;/p&gt;
+&lt;br&gt;&lt;br&gt;
+Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&quot; attribute, but not both. 
          </documentation>
       </annotation>
       <complexType>
@@ -496,6 +471,45 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
             <element ref="adapt"/>
             <element ref="iterate"/>
          </sequence>
+      </complexType>
+   </element>
+
+   <element name="override">
+      <annotation>
+         <documentation>
+            When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked, but its suppressed extension will not. Clients that specify an &lt;b&gt;override&lt;/b&gt; element must also provide a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, which provides methods to intercept requests for children, parents, and direct updates to the viewer.
+&lt;br&gt;&lt;br&gt;
+When clients provide their content through the pipeline, the contribution memory does not track who contributed what elements. Clients who take advantage of this capability are required to maintain accurate triggerPoints and possibleChildren expressions as part of their extension.
+
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="suppressedExtensionId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of an extension should be suppressed when this extension is &lt;i&gt;visible&lt;/i&gt; and &lt;i&gt;active&lt;/i&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="policy" use="default" value="InvokeAlwaysRegardlessOfSuppressedExt">
+            <annotation>
+               <documentation>
+                  The policy declares how the extension should be invoked by the framework. If the policy is left unspecified, then it defaults to &lt;i&gt;InvokeAlwaysRegardlessOfSuppressedExt&lt;/i&gt;. The available policies are as follows:&lt;br&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;i&gt;InvokeOnlyIfSuppressedExtAlsoVisibleAndActive&lt;/i&gt;: This extension is expressly an overriding extension; unless its suppressed extension is &lt;i&gt;visible&lt;/i&gt; and &lt;i&gt;active&lt;/i&gt; to the viewer, this extension should not be given opportunities to contribute. When using this policy, this extension will only be invoked when the &lt;b&gt;triggerPoints&lt;/b&gt; expression of its suppressed extension and the &lt;b&gt;triggerPoints&lt;/b&gt; expression of this extension are &lt;i&gt;enabled&lt;/i&gt; for a given element. Therefore, the &lt;b&gt;triggerPoints&lt;/b&gt; and &lt;b&gt;possibleChildren&lt;/b&gt; expressions of this extension should be a subset of the &lt;b&gt;triggerPoints&lt;/b&gt; and &lt;b&gt;possibleChildren&lt;/b&gt; expressions respectively of its suppressed extension.&lt;/li&gt;
+  &lt;li&gt;&lt;i&gt;InvokeAlwaysRegardlessOfSuppressedExt&lt;/i&gt; (default): Indicates that this extension is a first class extension; it should be given opportunities to contribute content regardless if its &lt;i&gt;suppressedExtensionId&lt;/i&gt; is &lt;i&gt;visible&lt;/i&gt; or &lt;i&gt;active&lt;/i&gt; to the viewer. Thus, the extension is a first-class extension and an overriding extension. It will be invoked whenever its &lt;b&gt;triggerPoints&lt;/b&gt; expression is matched. When the suppressed extension and its &lt;b&gt;triggerPoints&lt;/b&gt; extension is matched, it will be invoked with the contributed items from its suppressed extension; the suppressed extension will not be given an opportunity to directly contribute.&lt;/li&gt;
+&lt;/ul&gt;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive">
+                  </enumeration>
+                  <enumeration value="InvokeAlwaysRegardlessOfSuppressedExt">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

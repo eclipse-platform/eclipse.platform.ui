@@ -24,12 +24,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
-import org.eclipse.ui.navigator.IExtensionActivationListener;
-import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorFilterService;
-import org.eclipse.ui.navigator.NavigatorActivationService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.internal.filters.CommonFilterDescriptor;
 import org.eclipse.ui.navigator.internal.filters.CommonFilterDescriptorManager;
 import org.eclipse.ui.navigator.internal.filters.SkeletonViewerFilter;
@@ -38,8 +33,7 @@ import org.eclipse.ui.navigator.internal.filters.SkeletonViewerFilter;
  * @since 3.2
  * 
  */
-public class NavigatorFilterService implements INavigatorFilterService,
-		IExtensionActivationListener {
+public class NavigatorFilterService implements INavigatorFilterService  {
 
 	private static final ViewerFilter[] NO_FILTERS = new ViewerFilter[0];
 
@@ -60,17 +54,11 @@ public class NavigatorFilterService implements INavigatorFilterService,
 
 	/**
 	 * @param aContentService
-	 *            The corresponding content service
-	 * @param anAssistant
-	 *            An assistant to help determine visibility
+	 *            The corresponding content service 
 	 */
 	public NavigatorFilterService(NavigatorContentService aContentService) {
 		contentService = aContentService;
-		restoreFilterActivation();
-		updateDuplicateContentFilters();
-		NavigatorActivationService.getInstance()
-				.addExtensionActivationListener(contentService.getViewerId(),
-						this);
+		restoreFilterActivation();  
 	}
  
 	private synchronized void restoreFilterActivation() {
@@ -99,38 +87,7 @@ public class NavigatorFilterService implements INavigatorFilterService,
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
 
-	}
-
-	/**
-	 * Update the set of ViewerFilters returned for duplicate content from
-	 * visible content extensions.
-	 * 
-	 */
-	public void updateDuplicateContentFilters() {
-
-		synchronized (enforcedViewerFilters) {
-			enforcedViewerFilters.clear();
-			INavigatorContentDescriptor[] visibleExtensions = contentService
-					.getVisibleExtensions();
-
-			for (int i = 0; i < visibleExtensions.length; i++) {
-				if (contentService.isActive(visibleExtensions[i].getId())) {
-					NavigatorContentExtension extension = contentService
-							.getExtension(
-									(NavigatorContentDescriptor) visibleExtensions[i],
-									false);
-					if(extension != null) {
-						ViewerFilter[] enforcedFilters = extension
-								.getDuplicateContentFilters();
-						for (int j = 0; j < enforcedFilters.length; j++)
-							enforcedViewerFilters.add(enforcedFilters[j]);
-					}
-				}
-
-			}
-		}
-
-	}
+	} 
 
 	/*
 	 * (non-Javadoc)
@@ -253,16 +210,5 @@ public class NavigatorFilterService implements INavigatorFilterService,
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.IExtensionActivationListener#onExtensionActivation(java.lang.String,
-	 *      java.lang.String[], boolean)
-	 */
-	public void onExtensionActivation(String aViewerId,
-			String[] theNavigatorExtensionIds, boolean isActive) {
-		updateDuplicateContentFilters();
-
-	}
-
+ 
 }

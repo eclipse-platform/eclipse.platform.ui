@@ -58,7 +58,7 @@ import org.eclipse.ui.IMemento;
  * Clients should use {@link #createCommonContentProvider()} and
  * {@link #createCommonLabelProvider()} for the viewer. Each content service
  * tracks the viewer it is attached to. Clients may create the content service
- * with a viewer using ({@link NavigatorContentServiceFactory#createContentService(String, org.eclipse.jface.viewers.StructuredViewer)}).
+ * with a viewer using ({@link NavigatorContentServiceFactory#createContentService(String)}).
  * Alternatively, when the content provider is created and set on a viewer,
  * {@link IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, Object, Object)}
  * will be called and the content provider will update the viewer used by its
@@ -162,6 +162,12 @@ public interface INavigatorContentService {
 	 *         drive labels in the viewer.
 	 */
 	ILabelProvider createCommonLabelProvider();
+	
+	/**
+	 * 
+	 * @return The description provider for this content service.
+	 */
+	IDescriptionProvider createCommonDescriptionProvider();
 
 	/**
 	 * The state model stores properties associated with the extension. Each
@@ -175,77 +181,7 @@ public interface INavigatorContentService {
 	 *            extension.
 	 * @return The state model for the given extension id.
 	 */
-	IExtensionStateModel findStateModel(String anExtensionId);
-
-	/**
-	 * Return a set of content providers that could provide a parent for the
-	 * given element. These content extensions are determined by consulting the
-	 * <b>possibleChildren</b> expression in the <b>navigatorContent</b>
-	 * extension.
-	 * 
-	 * <p>
-	 * Clients that wish to tap into the link with editor support must describe
-	 * all of their possible children in their <b>possibleChildren</b>
-	 * expressions.
-	 * </p>
-	 * 
-	 * @param anElement
-	 *            An element from the tree (generally from a setSelection()
-	 *            method).
-	 * @return The set of content providers that may be able to provide a
-	 *         parent.
-	 */
-	ITreeContentProvider[] findParentContentProviders(Object anElement);
-
-	/**
-	 * <p>
-	 * Return all of the content providers that are relevant for the viewer. The
-	 * viewer is determined by the ID used to create the
-	 * INavigatorContentService ({@link #getViewerId() }). See
-	 * {@link #createCommonContentProvider() } for more information about how
-	 * content providers are located for the root of the viewer. The root
-	 * content providers are calculated once. If a new element is supplied, a
-	 * client must call {@link #update() } prior in order to reset the
-	 * calculated root providers.
-	 * </p>
-	 * 
-	 * @param anElement
-	 *            An element from the tree (generally the input of the viewer)
-	 * @return The set of content providers that can provide root elements for a
-	 *         viewer.
-	 */
-	ITreeContentProvider[] findRootContentProviders(Object anElement);
-
-	/**
-	 * Return all of the content providers that are enabled for the given
-	 * element. An 'enabled' content provider is either the (1) source of the
-	 * element (the element was returned as a child of its parent by the content
-	 * provider) or (2) a content extension which describes the element in its
-	 * <b>triggerPoints</b> expression.
-	 * 
-	 * @param anElement
-	 *            An element from the tree (generally the element expanded by
-	 *            the user)
-	 * @return The set of content providers that can provide valid children for
-	 *         the element.
-	 */
-	ITreeContentProvider[] findRelevantContentProviders(Object anElement);
-
-	/**
-	 * 
-	 * Return all of the label providers that are enabled for the given element.
-	 * A label provider is 'enabled' if its corresponding content provider
-	 * returned the element, or the element is described in the content
-	 * extension's <b>triggerPoints</b> expression.
-	 * 
-	 * @param anElement
-	 *            An element from the tree (any element contributed to the
-	 *            tree).
-	 * @return The set of label providers that may be able to provide a valid
-	 *         (non-null) label.
-	 */
-
-	ILabelProvider[] findRelevantLabelProviders(Object anElement);
+	IExtensionStateModel findStateModel(String anExtensionId); 
 
 	/**
 	 * The viewer id is used to locate matching <b>viewerContentBindings</b>.
@@ -401,8 +337,7 @@ public interface INavigatorContentService {
 	void removeListener(INavigatorContentServiceListener aListener);
 
 	/**
-	 * The root content providers are calculated once in
-	 * {@link #findRootContentProviders(Object) } and reset by this method. The
+	 * The root content providers are recalculated by this method. The
 	 * attached viewer is also refreshed as a result of this method.
 	 * 
 	 */

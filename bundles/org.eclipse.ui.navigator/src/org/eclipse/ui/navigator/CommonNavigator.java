@@ -301,8 +301,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * {@link #init(IViewSite, IMemento)}&nbsp;has been called by the
 	 * Workbench.
 	 * </p>
-	 * 
-	 * @see CommonNavigator#createCommonViewer(Composite)
+	 *  
 	 * @return The (already created) instance of Common Viewer.
 	 */
 	public CommonViewer getCommonViewer() {

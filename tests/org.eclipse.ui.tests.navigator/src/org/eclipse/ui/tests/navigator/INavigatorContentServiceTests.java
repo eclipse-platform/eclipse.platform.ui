@@ -29,6 +29,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
@@ -98,14 +99,14 @@ public class INavigatorContentServiceTests extends TestCase {
 		ILabelProvider contentServiceLabelProvider = contentService
 				.createCommonLabelProvider();
 
-		ITreeContentProvider[] rootContentProviders = contentService
+		ITreeContentProvider[] rootContentProviders = ((NavigatorContentService) contentService)
 				.findRootContentProviders(ResourcesPlugin.getWorkspace()
 						.getRoot());
 
 		assertEquals("Ensure there is only one root content provider.", 1,
 				rootContentProviders.length);
 
-		ITreeContentProvider[] projectContentProviders = contentService
+		ITreeContentProvider[] projectContentProviders = ((NavigatorContentService) contentService)
 				.findRelevantContentProviders(project);
 
 		assertEquals("Ensure there are two content providers for an IProject.",
@@ -149,14 +150,14 @@ public class INavigatorContentServiceTests extends TestCase {
 		ILabelProvider contentServiceLabelProvider = contentService
 				.createCommonLabelProvider();
 
-		ITreeContentProvider[] rootContentProviders = contentService
+		ITreeContentProvider[] rootContentProviders = ((NavigatorContentService) contentService)
 				.findRootContentProviders(ResourcesPlugin.getWorkspace()
 						.getRoot());
 
 		assertEquals("Ensure there is only one root content provider.", 1,
 				rootContentProviders.length);
 
-		ITreeContentProvider[] projectContentProviders = contentService
+		ITreeContentProvider[] projectContentProviders = ((NavigatorContentService) contentService)
 				.findRelevantContentProviders(project);
 
 		assertEquals("Ensure there is one content provider for an IProject.",

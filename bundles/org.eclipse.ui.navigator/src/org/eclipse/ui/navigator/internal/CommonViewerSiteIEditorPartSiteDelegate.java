@@ -7,16 +7,18 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 public class CommonViewerSiteIEditorPartSiteDelegate implements
 		ICommonViewerWorkbenchSite {
 
-	private IEditorSite editorSite;
+	private IEditorSite editorSite;  
 
 	public CommonViewerSiteIEditorPartSiteDelegate(IEditorSite anEditorSite) {
-		editorSite = anEditorSite;
+		editorSite = anEditorSite; 
 	}
 
 	public String getId() {
@@ -58,6 +60,20 @@ public class CommonViewerSiteIEditorPartSiteDelegate implements
 	public void registerContextMenu(String menuId, MenuManager menuManager,
 			ISelectionProvider selectionProvider) {
 		editorSite.registerContextMenu(menuId, menuManager, selectionProvider);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.ICommonViewerWorkbenchSite#getViewPart()
+	 */
+	public IWorkbenchPart getPart() { 
+		return editorSite.getPart();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.ICommonViewerWorkbenchSite#getSite()
+	 */
+	public IWorkbenchPartSite getSite() {
+		return editorSite;
 	}
 
 }
