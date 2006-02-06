@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -37,8 +36,6 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -84,7 +81,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
+	public void runWithProjectRule(IProject project, SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		try {
 			monitor.beginTask(null, 100);
 			
@@ -93,7 +90,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 			
 			// Run the update on the remaining nodes in the set
 			// The update will fail for conflicts that turn out to be non-automergable
-			safeUpdate(syncSet, Policy.subMonitorFor(monitor, 100));
+			safeUpdate(project, syncSet, Policy.subMonitorFor(monitor, 100));
 			
 			// Remove all failed conflicts from the original sync set
 			syncSet.rejectNodes(new FastSyncInfoFilter() {
@@ -154,7 +151,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	 * @param syncSet the set containing the resources to be updated
 	 * @param monitor
 	 */
-	protected void safeUpdate(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
+	protected void safeUpdate(IProject project, SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		SyncInfo[] changed = syncSet.getSyncInfos();
 		if (changed.length == 0) return;
 		
@@ -232,7 +229,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]), Policy.subMonitorFor(monitor, 25));				
 			}
 			if (updateShallow.size() > 0) {
-				runSafeUpdate((SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), Policy.subMonitorFor(monitor, 50));
+				runSafeUpdate(project, (SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), Policy.subMonitorFor(monitor, 50));
 			}
 		} finally {
 			monitor.done();
@@ -360,15 +357,16 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	 * This method is invoked for all resources in the sync set that are incoming changes
 	 * (but not deletions: @see runUpdateDeletions) or conflicting changes.
 	 * This method should only update those conflicting resources that are automergable.
+	 * @param project the project containing the nodes
 	 * @param nodes the incoming or conflicting SyncInfo nodes
 	 * @param monitor
 	 * @throws TeamException
 	 */
-	protected abstract void runSafeUpdate(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException;
+	protected abstract void runSafeUpdate(IProject project, SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException;
 	
-	protected void safeUpdate(IResource[] resources, LocalOption[] localOptions, IProgressMonitor monitor) throws TeamException {
+	protected void safeUpdate(IProject project, IResource[] resources, LocalOption[] localOptions, IProgressMonitor monitor) throws TeamException {
 		try {
-			UpdateOnlyMergableOperation operation = new UpdateOnlyMergableOperation(getPart(), resources, localOptions);
+			UpdateOnlyMergableOperation operation = new UpdateOnlyMergableOperation(getPart(), project, resources, localOptions);
 			operation.run(monitor);
 			addSkippedFiles(operation.getSkippedFiles());
 		} catch (InvocationTargetException e) {

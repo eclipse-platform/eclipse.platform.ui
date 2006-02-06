@@ -61,34 +61,48 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 		monitor.beginTask(null, projectSyncInfos.size() * 100);
 		for (Iterator iter = projectSyncInfos.keySet().iterator(); iter.hasNext(); ) {
 			final IProject project = (IProject) iter.next();
-			try {
-				// Pass the scheduling rule to the synchronizer so that sync change events
-				// and cache commits to disk are batched
-				EclipseSynchronizer.getInstance().run(
-					project,
-					new ICVSRunnable() {
-						public void run(IProgressMonitor monitor) throws CVSException {
-							try {
-								CVSSubscriberOperation.this.run((SyncInfoSet)projectSyncInfos.get(project), monitor);
-							} catch (TeamException e) {
-								throw CVSException.wrapException(e);
-							}
-						}
-					}, Policy.subMonitorFor(monitor, 100));
-			} catch (TeamException e) {
-				throw new InvocationTargetException(e);
-			}
+			run(projectSyncInfos, project, monitor);
 		}
 		monitor.done();
 	}
 
 	/**
+	 * Run the operation for the sync infos from the given project. By default, a lock
+	 * is acquired on the project.
+	 * @param projectSyncInfos the project syncInfos
+	 * @param project the project
+	 * @param monitor a progress monitor
+	 * @throws InvocationTargetException
+	 */
+	protected void run(final Map projectSyncInfos, final IProject project, IProgressMonitor monitor) throws InvocationTargetException {
+		try {
+			// Pass the scheduling rule to the synchronizer so that sync change events
+			// and cache commits to disk are batched
+			EclipseSynchronizer.getInstance().run(
+				project,
+				new ICVSRunnable() {
+					public void run(IProgressMonitor monitor) throws CVSException {
+						try {
+							CVSSubscriberOperation.this.runWithProjectRule(project, (SyncInfoSet)projectSyncInfos.get(project), monitor);
+						} catch (TeamException e) {
+							throw CVSException.wrapException(e);
+						}
+					}
+				}, Policy.subMonitorFor(monitor, 100));
+		} catch (TeamException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
+
+	/**
 	 * Run the operation on the sync info in the given set. The sync info will be all
-	 * from the same project.
+	 * from the same project. Also, a scheduling rule on the project will be
+	 * held when this method is invoked.
+	 * @param project the project that contaisn the sync info.
 	 * @param set the sync info set
 	 * @param monitor a progress monitor
 	 */
-	protected abstract void run(SyncInfoSet set, IProgressMonitor monitor) throws TeamException;
+	protected abstract void runWithProjectRule(IProject project, SyncInfoSet set, IProgressMonitor monitor) throws TeamException;
 
 	/*
 	 * Indicate that the resource is out of sync if the sync state is not IN_SYNC

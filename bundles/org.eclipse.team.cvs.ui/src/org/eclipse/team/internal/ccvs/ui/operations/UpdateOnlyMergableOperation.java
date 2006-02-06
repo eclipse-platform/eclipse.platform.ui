@@ -12,8 +12,8 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
@@ -30,9 +30,11 @@ import org.eclipse.ui.IWorkbenchPart;
 public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 
 	List skippedFiles = new ArrayList();
+	private final IProject project;
 	
-	public UpdateOnlyMergableOperation(IWorkbenchPart part, IResource[] resources, LocalOption[] localOptions) {
+	public UpdateOnlyMergableOperation(IWorkbenchPart part, IProject project, IResource[] resources, LocalOption[] localOptions) {
 		super(part, asResourceMappers(resources), localOptions);
+		this.project = project;
 	}
 
 	/* (non-Javadoc)
@@ -74,5 +76,12 @@ public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 	
 	public IFile[] getSkippedFiles() {
 		return (IFile[]) skippedFiles.toArray(new IFile[skippedFiles.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation#getResourceMappingContext()
+	 */
+	protected ResourceMappingContext getResourceMappingContext() {
+		return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
 	}
 }

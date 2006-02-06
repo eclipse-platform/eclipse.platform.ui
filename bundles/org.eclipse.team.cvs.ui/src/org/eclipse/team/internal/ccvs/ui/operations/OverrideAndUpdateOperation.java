@@ -12,7 +12,9 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.*;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -23,9 +25,11 @@ import org.eclipse.ui.IWorkbenchPart;
 public class OverrideAndUpdateOperation extends ReplaceOperation {
 
 	private IResource[] conflictingAdditions;
+	private final IProject project;
 
-	public OverrideAndUpdateOperation(IWorkbenchPart part, IResource[] allResources, IResource[] conflictingAdditions, CVSTag tag, boolean recurse) {
+	public OverrideAndUpdateOperation(IWorkbenchPart part, IProject project, IResource[] allResources, IResource[] conflictingAdditions, CVSTag tag, boolean recurse) {
 		super(part, allResources, tag, recurse);
+		this.project = project;
 		this.conflictingAdditions = conflictingAdditions;
 	}
 
@@ -39,6 +43,13 @@ public class OverrideAndUpdateOperation extends ReplaceOperation {
 		update.addAll(Arrays.asList(conflicts));
 		update.addAll(Arrays.asList(super.getResourcesToUpdate(resources)));
 		return (ICVSResource[]) update.toArray(new ICVSResource[update.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation#getResourceMappingContext()
+	 */
+	protected ResourceMappingContext getResourceMappingContext() {
+		return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
 	}
 
 }

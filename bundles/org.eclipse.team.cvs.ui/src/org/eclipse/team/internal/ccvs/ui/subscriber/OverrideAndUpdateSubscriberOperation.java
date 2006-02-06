@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -42,7 +43,7 @@ public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void run(SyncInfoSet set, IProgressMonitor monitor) throws TeamException {
+	protected void runWithProjectRule(IProject project, SyncInfoSet set, IProgressMonitor monitor) throws TeamException {
 		try {
 			SyncInfo[] conflicts = set.getNodes(getConflictingAdditionFilter());
 			List conflictingResources = new ArrayList();
@@ -50,7 +51,7 @@ public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation
 				SyncInfo info = conflicts[i];
 				conflictingResources.add(info.getLocal());
 			}
-			new OverrideAndUpdateOperation(getPart(), set.getResources(), (IResource[]) conflictingResources.toArray(new IResource[conflictingResources.size()]), null /* tag */, false /* recurse */).run(monitor);
+			new OverrideAndUpdateOperation(getPart(), project, set.getResources(), (IResource[]) conflictingResources.toArray(new IResource[conflictingResources.size()]), null /* tag */, false /* recurse */).run(monitor);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {

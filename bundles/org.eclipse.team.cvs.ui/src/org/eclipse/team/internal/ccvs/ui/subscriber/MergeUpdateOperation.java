@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -95,7 +94,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateOperation#runSafeUpdate(org.eclipse.team.core.synchronize.SyncInfo[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void runSafeUpdate(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
+	protected void runSafeUpdate(IProject project, SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
 		if(nodes.length > 0) {
 			setSubscriber(nodes[0]);
 			CVSTag startTag = ((CVSMergeSubscriber)currentSubcriber).getStartTag();
@@ -118,6 +117,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 				monitor.beginTask(null, (additions.size() + changes.size()) * 100);
 				if (!additions.isEmpty()) {
 					safeUpdate(
+						project, 
 						getIResourcesFrom((SyncInfo[]) additions.toArray(new SyncInfo[additions.size()])), 
 						new Command.LocalOption[] {
 							Command.DO_NOT_RECURSE,
@@ -127,6 +127,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 				}
 				if (!changes.isEmpty()) {
 					safeUpdate(
+						project, 
 						getIResourcesFrom((SyncInfo[]) changes.toArray(new SyncInfo[changes.size()])), 
 						new Command.LocalOption[] {
 							Command.DO_NOT_RECURSE,

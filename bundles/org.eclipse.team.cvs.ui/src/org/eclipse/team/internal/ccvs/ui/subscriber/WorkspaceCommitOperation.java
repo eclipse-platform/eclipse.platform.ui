@@ -14,7 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -28,11 +30,8 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
-import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
@@ -125,7 +124,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
+	public void runWithProjectRule(IProject project, SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		
 		final SyncInfo[] changed = syncSet.getSyncInfos();
 		if (changed.length == 0) return;
@@ -207,13 +206,18 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 		if (additions.size() != 0) {
 			add((IResource[])additions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, 50));
 		}
-		commit((IResource[])commits.toArray(new IResource[commits.size()]), Policy.subMonitorFor(monitor, 100));		
+		commit(project, (IResource[])commits.toArray(new IResource[commits.size()]), Policy.subMonitorFor(monitor, 100));		
 	}	
 	
-	private void commit(IResource[] commits, IProgressMonitor monitor) throws TeamException {
+	private void commit(final IProject project, IResource[] commits, IProgressMonitor monitor) throws TeamException {
 		try {
-			new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(commits),
-					new Command.LocalOption[0], comment)
+			CommitOperation commitOperation = new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(commits),
+					new Command.LocalOption[0], comment) {
+				protected ResourceMappingContext getResourceMappingContext() {
+					return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
+				}
+			};
+			commitOperation
 						.run(monitor);
 		} catch (InvocationTargetException e) {
 			throw TeamException.asTeamException(e);

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -44,7 +45,7 @@ public class CompareRevertOperation extends CVSSubscriberOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.core.subscribers.MutableSyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
+	protected void runWithProjectRule(IProject project, SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		SyncInfo[] changed = syncSet.getSyncInfos();
 		if (changed.length == 0) return;
 		

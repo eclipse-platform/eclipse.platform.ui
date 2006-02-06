@@ -44,11 +44,10 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void run(SyncInfoSet set, IProgressMonitor monitor) throws TeamException {
+	protected void runWithProjectRule(IProject project, SyncInfoSet set, IProgressMonitor monitor) throws TeamException {
 		final SyncInfo[] infos = set.getSyncInfos();
 		if (infos.length == 0) return;
         monitor.beginTask(null, 200);
-		IProject project = infos[0].getLocal().getProject();
         ensureBaseContentsCached(project, infos, Policy.subMonitorFor(monitor, 100));
         performCleanTimestamps(project, infos, monitor);
         monitor.done();
