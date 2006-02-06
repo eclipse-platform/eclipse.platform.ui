@@ -6,6 +6,5 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.equinox.registry
 Bundle-Localization: fragment
-Require-Bundle: system.bundle
 Eclipse-PatchFragment: true
 Bundle-ClassPath: runtime_registry_compatibility.jar
