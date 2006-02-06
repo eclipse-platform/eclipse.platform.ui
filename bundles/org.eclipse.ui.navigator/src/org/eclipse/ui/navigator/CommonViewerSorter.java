@@ -80,7 +80,7 @@ public final class CommonViewerSorter extends TreeViewerSorter {
 		NavigatorContentDescriptor source = contentService
 				.getSourceOfContribution(element);
 		return source != null ? source.getPriority()
-				: Priority.LOW_PRIORITY_VALUE;
+				: Priority.NORMAL_PRIORITY_VALUE;
 	}
 
 	public void sort(final Viewer viewer, final Object parent, Object[] elements) {

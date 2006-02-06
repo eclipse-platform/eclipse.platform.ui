@@ -11,7 +11,6 @@
 package org.eclipse.ui.navigator.internal.extensions;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -78,19 +77,8 @@ public class NavigatorContentDescriptorManager {
 	private final Map cachedTriggerPointEvaluations = new WeakHashMap();
 	
 	/* Map of (VisibilityAssistant, EvaluationCache)-pairs */
-	private final Map cachedPossibleChildrenEvaluations = new WeakHashMap();
-
-	private static final Comparator EXTENSION_COMPARATOR = new Comparator() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Object lvalue, Object rvalue) {
-			return ((INavigatorContentDescriptor) lvalue).getPriority()
-					- ((INavigatorContentDescriptor) rvalue).getPriority();
-		}
-	};
+	private final Map cachedPossibleChildrenEvaluations = new WeakHashMap(); 
+ 
 
 	private ImageRegistry imageRegistry;
 
@@ -125,7 +113,7 @@ public class NavigatorContentDescriptorManager {
 		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[firstClassDescriptors
 				.size()];
 		allDescriptors.values().toArray(finalDescriptors);
-		Arrays.sort(finalDescriptors, EXTENSION_COMPARATOR);
+		Arrays.sort(finalDescriptors, ExtensionPriorityComparator.INSTANCE);
 		return finalDescriptors;
 	}
 

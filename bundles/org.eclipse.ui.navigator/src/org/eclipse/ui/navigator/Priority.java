@@ -30,37 +30,37 @@ public final class Priority {
 	/**
 	 * Indicates Highest priority as an int.
 	 */
-	public static final int HIGHEST_PRIORITY_VALUE = 7;
+	public static final int HIGHEST_PRIORITY_VALUE = 0;
 
 	/**
 	 * Indicates Higher priority as an int.
 	 */
-	public static final int HIGHER_PRIORITY_VALUE = 6;
+	public static final int HIGHER_PRIORITY_VALUE = 1;
 
 	/**
 	 * Indicates High priority as an int.
 	 */
-	public static final int HIGH_PRIORITY_VALUE = 5;
+	public static final int HIGH_PRIORITY_VALUE = 2;
 
 	/**
 	 * Indicates Normal priority as an int.
 	 */
-	public static final int NORMAL_PRIORITY_VALUE = 4;
+	public static final int NORMAL_PRIORITY_VALUE = 3;
 
 	/**
 	 * Indicates Low priority as an int.
 	 */
-	public static final int LOW_PRIORITY_VALUE = 3;
+	public static final int LOW_PRIORITY_VALUE = 4;
 
 	/**
 	 * Indicates Lower priority as an int.
 	 */
-	public static final int LOWER_PRIORITY_VALUE = 2;
+	public static final int LOWER_PRIORITY_VALUE = 5;
 
 	/**
 	 * Indicates Lowest priority as an int.
 	 */
-	public static final int LOWEST_PRIORITY_VALUE = 1;
+	public static final int LOWEST_PRIORITY_VALUE = 6;
 
 	/**
 	 * Indicates Highest priority as a String.

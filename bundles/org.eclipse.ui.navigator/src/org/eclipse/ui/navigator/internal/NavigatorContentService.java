@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +42,7 @@ import org.eclipse.ui.navigator.INavigatorFilterService;
 import org.eclipse.ui.navigator.INavigatorSorterService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.NavigatorActivationService;
+import org.eclipse.ui.navigator.internal.extensions.ExtensionPriorityComparator;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
@@ -726,7 +726,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	protected final Set findRootContentExtensions(Object anElement,
 			boolean toRespectViewerRoots) {
 
-		SortedSet rootExtensions = new TreeSet(EXTENSION_COMPARATOR);
+		SortedSet rootExtensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		if (toRespectViewerRoots
 				&& viewerDescriptor.hasOverriddenRootExtensions()) {
 
@@ -845,7 +845,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			boolean toLoadAllIfNecessary) {
 		if (theDescriptors.size() == 0)
 			return Collections.EMPTY_SET;
-		Set resultInstances = new TreeSet(EXTENSION_COMPARATOR);
+		Set resultInstances = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		for (Iterator descriptorIter = theDescriptors.iterator(); descriptorIter
 				.hasNext();) {
 			NavigatorContentExtension extension = getExtension(
@@ -869,18 +869,5 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return (ILabelProvider[]) resultProvidersList
 				.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}
-
-	private static final Comparator EXTENSION_COMPARATOR = new Comparator() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Object lvalue, Object rvalue) {
-			return ((NavigatorContentExtension) lvalue).getDescriptor()
-					.getPriority()
-					- ((NavigatorContentExtension) rvalue).getDescriptor()
-							.getPriority();
-		}
-	};
+ 
 }
