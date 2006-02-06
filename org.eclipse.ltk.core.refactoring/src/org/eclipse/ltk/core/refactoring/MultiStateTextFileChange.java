@@ -654,14 +654,10 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 							} else if (length == 0) {
 								position.offset= offset;
-								if (text != null && !text.equals("")) { //$NON-NLS-1$
-									// Undo is an insert, create final delete
-									// edit
-									position.setText(""); //$NON-NLS-1$
-									position.length= text.length();
-								} else
-									RefactoringCorePlugin.logErrorMessage("Dubious undo edit found: " + undo.toString()); //$NON-NLS-1$
-
+								// Undo is an insert, create final delete
+								// edit
+								position.setText(""); //$NON-NLS-1$
+								position.length= text.length();
 							} else {
 								// Undo is a replace, create final replace edit
 								position.offset= offset;
@@ -778,7 +774,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		} finally {
 			if (document != null) {
 				try {
-					if (session != null)
+					if (session != null && result != null)
 						((IDocumentExtension4) result).stopRewriteSession(session);
 				} finally {
 					releaseDocument(document, new SubProgressMonitor(monitor, 1));
