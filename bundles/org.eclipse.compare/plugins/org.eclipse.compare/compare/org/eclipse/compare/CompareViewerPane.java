@@ -80,6 +80,7 @@ public class CompareViewerPane extends ViewForm {
 			public void widgetDisposed(DisposeEvent e) {
 				if (fToolBarManager != null) {
 					fToolBarManager.removeAll();
+					fToolBarManager.dispose();
 					fToolBarManager= null;
 				}
 			}
