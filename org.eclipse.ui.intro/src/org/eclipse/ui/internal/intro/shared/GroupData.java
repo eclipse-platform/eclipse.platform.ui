@@ -14,8 +14,8 @@ public class GroupData {
 	private String path;
 	private ArrayList extensions = new ArrayList();
 	
-	public GroupData(String path) {
-		fDefault = true;
+	public GroupData(String path, boolean defaultGroup) {
+		fDefault = defaultGroup;
 		this.path = path;
 	}
 
@@ -36,6 +36,10 @@ public class GroupData {
 			fDefault = true;
 	}
 	
+	public boolean isHidden() {
+		return (path.equals(ISharedIntroConstants.HIDDEN));
+	}
+	
 	public boolean isDefault() {
 		return fDefault;
 	}
@@ -48,6 +52,13 @@ public class GroupData {
 			anchor.setAttribute("id", id); //$NON-NLS-1$
 			result.add(anchor);
 		}
+	}
+	
+	public void add(ExtensionData ed) {
+		extensions.add(ed);
+	}
+	public void remove(ExtensionData ed) {
+		extensions.remove(ed);
 	}
 	
 	public void addImplicitExtension(String id, String name) {
@@ -82,6 +93,30 @@ public class GroupData {
 				return ed;
 		}
 		return null;
+	}
+	
+	public boolean canMoveUp(ExtensionData ed) {
+		int index = extensions.indexOf(ed);
+		return (index>0);
+	}
+	
+	public boolean canMoveDown(ExtensionData ed) {
+		int index = extensions.indexOf(ed);
+		return (index!= -1 && index < extensions.size()-1);
+	}
+	
+	public void moveUp(ExtensionData ed) {
+		int index = extensions.indexOf(ed);
+		ExtensionData swapped = (ExtensionData)extensions.get(index-1);
+		extensions.set(index, swapped);
+		extensions.set(index-1, ed);
+	}
+
+	public void moveDown(ExtensionData ed) {
+		int index = extensions.indexOf(ed);
+		ExtensionData swapped = (ExtensionData)extensions.get(index+1);
+		extensions.set(index, swapped);
+		extensions.set(index+1, ed);		
 	}
 	
 	public void write(PrintWriter writer, String indent) {

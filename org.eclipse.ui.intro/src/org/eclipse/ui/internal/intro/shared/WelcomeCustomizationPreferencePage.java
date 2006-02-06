@@ -1,3 +1,11 @@
+/***************************************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.ui.internal.intro.shared;
 
 import java.io.PrintWriter;
@@ -13,17 +21,23 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -289,6 +303,8 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		available = new TableViewer(pageContainer, SWT.BORDER);
 		available.setContentProvider(contentProvider);
 		available.setLabelProvider(labelProvider);
+		available.setData("id", "hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+		createPopupMenu(available);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 		gd.verticalSpan = 3;
 		gd.horizontalSpan = 2;
@@ -297,11 +313,15 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		left = new TableViewer(pageContainer, SWT.BORDER);
 		left.setContentProvider(contentProvider);
 		left.setLabelProvider(labelProvider);
+		left.setData("id", "left"); //$NON-NLS-1$ //$NON-NLS-2$
+		createPopupMenu(left);
 		gd = new GridData(GridData.FILL_BOTH);
 		left.getControl().setLayoutData(gd);
 		right = new TableViewer(pageContainer, SWT.BORDER);
 		right.setContentProvider(contentProvider);
 		right.setLabelProvider(labelProvider);
+		right.setData("id", "right"); //$NON-NLS-1$ //$NON-NLS-2$
+		createPopupMenu(right);
 		gd = new GridData(GridData.FILL_BOTH);
 		right.getControl().setLayoutData(gd);
 
@@ -310,6 +330,8 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		bottom = new TableViewer(pageContainer, SWT.BORDER);
 		bottom.setContentProvider(contentProvider);
 		bottom.setLabelProvider(labelProvider);
+		bottom.setData("id", "bottom"); //$NON-NLS-1$ //$NON-NLS-2$
+		createPopupMenu(bottom);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 2;
 		bottom.getControl().setLayoutData(gd);
@@ -318,10 +340,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private void updatePageContainer(String pageId, PageData pd) {
 		if (pageId == null || pd == null)
 			return;
-		left.setInput(pd.findGroup("left")); //$NON-NLS-1$
-		right.setInput(pd.findGroup("right")); //$NON-NLS-1$
-		bottom.setInput(pd.findGroup("bottom")); //$NON-NLS-1$
-		available.setInput(pd.findGroup("hidden")); //$NON-NLS-1$
+		left.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_LEFT));
+		right.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_RIGHT));
+		bottom.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_BOTTOM));
+		available.setInput(pd.findGroup(ISharedIntroConstants.HIDDEN));
 	}
 
 	private void onTabChange(TabItem item) {
@@ -359,7 +381,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			key = INTRO_BACKGROUND_IMAGE;
 			value = fromDefault ? prefs.getDefaultString(key) : prefs.getString(key);
 		}
-		if (value.length()>0)
+		if (value.length() > 0)
 			introBackground = value;
 		// 3. Intro data
 		key = pid + "_" + INTRO_DATA; //$NON-NLS-1$
@@ -387,6 +409,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			bgImage.dispose();
 		if (introBackground != null) {
 			BusyIndicator.showWhile(bgPreview.getDisplay(), new Runnable() {
+
 				public void run() {
 					IProduct product = Platform.getProduct();
 					Bundle bundle = product.getDefiningBundle();
@@ -422,6 +445,8 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	protected void performDefaults() {
 		loadData(true);
 		updateWidgetsFromData();
+		TabItem [] items = tabFolder.getItems();
+		onTabChange(items[0]);
 		super.performDefaults();
 	}
 
@@ -481,8 +506,9 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		gd.heightHint = 120;
 		bgPreview.setLayoutData(gd);
 		bgPreview.addPaintListener(new PaintListener() {
+
 			public void paintControl(PaintEvent e) {
-				if (bgImage==null)
+				if (bgImage == null)
 					return;
 				Rectangle carea = bgPreview.getClientArea();
 				Rectangle ibounds = bgImage.getBounds();
@@ -564,5 +590,102 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 			throws CoreException {
+	}
+
+	private void createPopupMenu(final Viewer viewer) {
+		MenuManager manager = new MenuManager();
+		manager.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(manager.getMenu());
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
+
+			public void menuAboutToShow(IMenuManager manager) {
+				fillPopupMenu(manager, viewer);
+			}
+		});
+	}
+
+	private void fillPopupMenu(IMenuManager manager, final Viewer viewer) {
+		StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
+
+		if (ssel.size() == 1) {
+			Action upAction = new Action(Messages.WelcomeCustomizationPreferencePage_up) {
+
+				public void run() {
+					doMove(viewer, true);
+				}
+			};
+			Action downAction = new Action(Messages.WelcomeCustomizationPreferencePage_down) {
+
+				public void run() {
+					doMove(viewer, false);
+				}
+			};
+			ExtensionData ed = (ExtensionData) ssel.getFirstElement();
+			GroupData gd = (GroupData) viewer.getInput();
+			upAction.setEnabled(gd.canMoveUp(ed));
+			downAction.setEnabled(gd.canMoveDown(ed));
+			manager.add(upAction);
+			manager.add(downAction);
+		}
+		if (ssel.size() > 0) {
+			manager.add(new Separator());
+			MenuManager menu = new MenuManager(Messages.WelcomeCustomizationPreferencePage_moveTo);
+			addMoveToAction(menu, available, viewer, Messages.WelcomeCustomizationPreferencePage_menu_available);
+			addMoveToAction(menu, left, viewer, Messages.WelcomeCustomizationPreferencePage_menu_left);
+			addMoveToAction(menu, right, viewer, Messages.WelcomeCustomizationPreferencePage_menu_right);
+			addMoveToAction(menu, bottom, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom);
+			manager.add(menu);
+		}
+	}
+
+	private void addMoveToAction(MenuManager menu, final Viewer target, final Viewer source, String name) {
+		if (source == target)
+			return;
+		Action action = new Action(name) {
+			public void run() {
+				doMoveTo(source, target);
+			}
+		};
+		menu.add(action);
+	}
+
+	private void doMove(Viewer viewer, boolean up) {
+		Object obj = ((StructuredSelection) viewer.getSelection()).getFirstElement();
+		GroupData gd = (GroupData) viewer.getInput();
+		if (up)
+			gd.moveUp((ExtensionData) obj);
+		else
+			gd.moveDown((ExtensionData) obj);
+		viewer.refresh();
+	}
+
+	private void doMoveTo(Viewer source, Viewer target) {
+		Object[] selObjs = ((StructuredSelection) source.getSelection()).toArray();
+		GroupData sourceGd = (GroupData) source.getInput();
+		GroupData targetGd = (GroupData) target.getInput();
+		if (targetGd == null) {
+			if (target == left)
+				targetGd = new GroupData(PageData.P_LEFT, false);
+			else if (target == right)
+				targetGd = new GroupData(PageData.P_RIGHT, false);
+			else if (target == bottom)
+				targetGd = new GroupData(PageData.P_BOTTOM, false);
+			else if (target == available)
+				targetGd = new GroupData(ISharedIntroConstants.HIDDEN, false);
+			TabItem [] items = tabFolder.getSelection();
+			PageData pd = (PageData)items[0].getData("pageData"); //$NON-NLS-1$
+			pd.add(targetGd);
+		}
+		for (int i = 0; i < selObjs.length; i++) {
+			ExtensionData ed = (ExtensionData) selObjs[i];
+			sourceGd.remove(ed);
+			targetGd.add(ed);
+		}
+		source.refresh();
+		if (target.getInput()!=null)
+			target.refresh();
+		else
+			target.setInput(targetGd);
 	}
 }

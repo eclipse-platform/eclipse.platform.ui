@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.intro.impl;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources"; //$NON-NLS-1$
+    private static final String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.Messages"; //$NON-NLS-1$
 
     static {
         initializeMessages(INTRO_RESOURCE_BUNDLE, Messages.class);
@@ -103,6 +103,13 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_serialize;
 	public static String WelcomeCustomizationPreferencePage_serializeTitle;
 	public static String WelcomeCustomizationPreferencePage_serializeMessage;
+	public static String WelcomeCustomizationPreferencePage_up;
+	public static String WelcomeCustomizationPreferencePage_down;
+	public static String WelcomeCustomizationPreferencePage_moveTo;
+	public static String WelcomeCustomizationPreferencePage_menu_available;
+	public static String WelcomeCustomizationPreferencePage_menu_left;
+	public static String WelcomeCustomizationPreferencePage_menu_right;
+	public static String WelcomeCustomizationPreferencePage_menu_bottom;
 
 
 

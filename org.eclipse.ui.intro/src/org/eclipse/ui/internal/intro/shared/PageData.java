@@ -10,6 +10,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class PageData {
+	public static final String P_LEFT = "page-content/left"; //$NON-NLS-1$
+	public static final String P_RIGHT = "page-content/right"; //$NON-NLS-1$
+	public static final String P_BOTTOM = "page-content/bottom"; //$NON-NLS-1$
+
 	private String id;
 	private ArrayList groups = new ArrayList();
 	private GroupData hidden=null;
@@ -33,6 +37,13 @@ public class PageData {
 				}
 			}
 		}
+	}
+	
+	public void add(GroupData gd) {
+		if (gd.isHidden())
+			hidden = gd;
+		else
+			groups.add(gd);
 	}
 
 	public void addAnchors(ArrayList result, String groupId) {
@@ -67,6 +78,8 @@ public class PageData {
 	}
 	
 	public GroupData findGroup(String groupId) {
+		if (groupId.equals(ISharedIntroConstants.HIDDEN))
+			return hidden;
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gdata = (GroupData)groups.get(i);
 			IPath path = new Path(gdata.getPath());
@@ -92,7 +105,7 @@ public class PageData {
 		GroupData gd = findDefaultGroup();
 		if (gd==null && groups.size()==0) {
 			// add bottom as the default group
-			gd = new GroupData("page-content/bottom"); //$NON-NLS-1$
+			gd = new GroupData("page-content/bottom", true); //$NON-NLS-1$
 			groups.add(gd);
 		}
 		gd.addImplicitExtension(extensionId, name);
@@ -143,11 +156,14 @@ public class PageData {
 	
 	public void write(PrintWriter writer, String indent) {
 		writer.print(indent);
+		String indent2 = indent+"   "; //$NON-NLS-1$
 		writer.println("<page id=\""+id+"\">");  //$NON-NLS-1$//$NON-NLS-2$
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gd = (GroupData)groups.get(i);
-			gd.write(writer, indent+"   "); //$NON-NLS-1$
+			gd.write(writer, indent2);
 		}
+		if (hidden!=null)
+			hidden.write(writer, indent2);
 		writer.print(indent);
 		writer.println("</page>"); //$NON-NLS-1$
 	}
