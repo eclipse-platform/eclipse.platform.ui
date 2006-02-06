@@ -1,0 +1,42 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.model.viewers;
+
+import org.eclipse.debug.internal.ui.viewers.TreePath;
+
+
+
+/**
+ * Request to remove an item from a tree.
+ * 
+ * @since 3.2
+ */
+class ModelRemoveRequestMonitor extends AbstractAddRemoveRequestMonitor {
+
+	/**
+	 * Removes the given node from the given model.
+	 * 
+	 * @param node
+	 * @param path path to the element to remove
+	 * @param model
+	 */
+	ModelRemoveRequestMonitor(ModelNode node, TreePath path, AsynchronousModel model) {
+		super(node, path, model);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelRequestMonitor#performUpdate()
+	 */
+	protected void performUpdate() {
+		((AsynchronousTreeModel)getModel()).remove(getNode());
+	}
+
+}

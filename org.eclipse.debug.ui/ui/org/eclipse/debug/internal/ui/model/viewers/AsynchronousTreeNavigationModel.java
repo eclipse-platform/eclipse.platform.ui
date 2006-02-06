@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers;
+package org.eclipse.debug.internal.ui.model.viewers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.TreeItem;
 public class AsynchronousTreeNavigationModel extends LabelProvider {
 	
 	private Map fElementsToItems = new HashMap();
-	private AsynchronousTreeViewer fViewer = null;
+	private AsynchronousTreeModelViewer fViewer = null;
 	
-	public AsynchronousTreeNavigationModel(AsynchronousTreeViewer viewer) {
+	public AsynchronousTreeNavigationModel(AsynchronousTreeModelViewer viewer) {
 		init(viewer);
 	}
 
@@ -37,7 +37,7 @@ public class AsynchronousTreeNavigationModel extends LabelProvider {
 	 * initialize cache of 
 	 * @param viewer
 	 */
-	private void init(AsynchronousTreeViewer viewer) {
+	private void init(AsynchronousTreeModelViewer viewer) {
 		fViewer = viewer;
 		TreeItem[] items = viewer.getTree().getItems();
 		traverse(items);
@@ -100,7 +100,7 @@ public class AsynchronousTreeNavigationModel extends LabelProvider {
 	 * 
 	 * @return
 	 */
-	AsynchronousTreeViewer getViewer() {
+	AsynchronousTreeModelViewer getViewer() {
 		return fViewer;
 	}
 

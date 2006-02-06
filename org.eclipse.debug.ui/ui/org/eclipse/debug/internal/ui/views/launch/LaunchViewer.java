@@ -9,8 +9,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.IUpdatePolicy;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
+import org.eclipse.debug.internal.ui.model.viewers.IModelUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
@@ -21,7 +21,7 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 import org.osgi.framework.Bundle;
 
-public class LaunchViewer extends AsynchronousTreeViewer {
+public class LaunchViewer extends AsynchronousTreeModelViewer {
 	
 	private LaunchView fView;
 
@@ -179,10 +179,10 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#createUpdatePolicy()
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#createUpdatePolicy()
 	 */
-	public IUpdatePolicy createUpdatePolicy() {
-		IUpdatePolicy policy = new LaunchViewUpdatePolicy(fView);
+	public IModelUpdatePolicy createUpdatePolicy() {
+		IModelUpdatePolicy policy = new LaunchViewUpdatePolicy(fView);
 		policy.init(this);
 		return policy;
 	}

@@ -1,0 +1,196 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.model.viewers;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.debug.internal.ui.viewers.TreePath;
+import org.eclipse.swt.widgets.Widget;
+
+/**
+ * A node in an asynchronous model.
+ * 
+ * @since 3.2
+ */
+public class ModelNode {
+
+	private Object fElement; // model element
+	private boolean fIsContainer; // whether this element may have children
+	private ModelNode fParent; // parent node or null for root
+	private ModelNode[] fChildren; // child nodes, possibly null
+	private Widget fWidget; // corresponding widget or item for this node or null
+	private boolean fDisposed; // whether this node has been disposed
+	
+	public ModelNode(ModelNode parent, Object element) {
+		fParent = parent;
+		fElement = element;
+	}
+	
+	public synchronized Object getElement() {
+		return fElement;
+	}
+    
+    public synchronized void remap(Object element) {
+        fElement = element;
+    }
+	
+	public ModelNode getParentNode() {
+		return fParent;
+	}
+	
+	public synchronized boolean isContainer() {
+		return fIsContainer;
+	}
+	
+	public synchronized ModelNode[] getChildrenNodes() {
+		return fChildren;
+	}
+	
+	public synchronized Widget getWidget() {
+		return fWidget;
+	}
+	
+	public synchronized void setWidget(Widget widget) {
+		fWidget = widget;
+	}
+	
+	public synchronized boolean isDisposed() {
+		return fDisposed; 
+	}
+	
+	public synchronized void dispose() {
+		fDisposed = true;
+	}
+	
+	/**
+	 * Returns whether this node corresponds to the given path
+	 * 
+	 * @param path tree path
+	 */
+	public synchronized boolean correspondsTo(TreePath path) {
+		int index = path.getSegmentCount() - 1;
+		ModelNode node = this;
+		while (index >= 0 && node != null) {
+			Object pathElement = path.getSegment(index);
+			if (pathElement.equals(node.getElement())) {
+				index--;
+				node = node.getParentNode();
+			} else {
+				return false;
+			}
+		}
+		return index == -1;
+	}
+	
+	/**
+	 * Returns a tree path corresponding to this node.
+	 * 
+	 * @return
+	 */
+	public TreePath getTreePath() {
+		List path = new ArrayList();
+		ModelNode node = this;
+		while (node != null) {
+			path.add(0, node.getElement());
+			node = node.getParentNode();
+		}
+		return new TreePath(path.toArray());
+	}
+	
+	/**
+	 * Adds the given child to this node.
+	 * 
+	 * @param child
+	 */
+	public synchronized void addChild(ModelNode child) {
+		if (fChildren == null) {
+			fChildren = new ModelNode[] {child};
+		} else {
+			ModelNode[] kids = new ModelNode[fChildren.length + 1];
+			System.arraycopy(fChildren, 0, kids, 0, fChildren.length);
+			kids[fChildren.length] = child;
+			fChildren = kids;
+		}
+	}
+    
+    /**
+     * Removes the given child from this node.
+     * 
+     * @param child
+     */
+    public synchronized void removeChild(ModelNode child) {
+        if (fChildren != null) {
+            for (int i = 0; i < fChildren.length; i++) {
+                ModelNode kid = fChildren[i];
+                if (child == kid) {
+                    ModelNode[] newNodes= new ModelNode[fChildren.length - 1];
+                    System.arraycopy(fChildren, 0, newNodes, 0, i);
+                    if (i < newNodes.length) {
+                        System.arraycopy(fChildren, i + 1, newNodes, i, newNodes.length - i);
+                    }
+                    fChildren = newNodes;
+                    return;
+                }
+            }
+        }
+    }    
+	
+	/**
+	 * Sets the children for this node
+	 * 
+	 * @param children
+	 */
+	public synchronized void setChildren(ModelNode[] children) {
+		fChildren = children;
+	}
+	
+	/**
+	 * Returns the number of children for this node.
+	 * 
+	 * @return
+	 */
+	public synchronized int getChildCount() {
+		if (fChildren == null) {
+            if (isContainer()) {
+                return 1;
+            }
+			return 0;
+		}
+		return fChildren.length;
+	}
+    
+    /**
+     * Returns the index of the given child in this parent, or -1
+     * 
+     * @param child
+     */
+    public synchronized int getChildIndex(ModelNode child) {
+       if (fChildren != null) {
+           for (int i = 0; i < fChildren.length; i++) {
+                if (child == fChildren[i]) {
+                    return i;
+                }
+           }
+       }
+       return -1;
+    }
+    
+    /**
+     * Sets whether this node has children.
+     * 
+     * @param container
+     */
+    public synchronized void setIsContainer(boolean container) {
+        fIsContainer = container;
+    }
+    
+}

@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
 /**
- * Provides content for elements in an <code>AsynchronousViewer</code>. Note that implementations
+ * Provides content for elements in an asynchronous viewer. Note that implementations
  * must provide content asynchronously. 
  * <p>
  * Clients may implement this interface.

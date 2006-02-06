@@ -3,7 +3,7 @@ package org.eclipse.debug.internal.ui.views.variables;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
@@ -14,7 +14,7 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.2
  *
  */
-public class VariablesViewer extends AsynchronousTreeViewer{
+public class VariablesViewer extends AsynchronousTreeModelViewer{
 
 	private VariablesView fView;
 
@@ -32,9 +32,8 @@ public class VariablesViewer extends AsynchronousTreeViewer{
 	}
 
 	protected void updateComplete(IAsynchronousRequestMonitor update) {
-		super.updateComplete(update);
-		if (fView != null) {
-			fRestoreJob.schedule(100);
+		if (fView != null && !hasPendingUpdates()) {
+			fRestoreJob.schedule();
 		}
 	}
 
@@ -49,7 +48,7 @@ public class VariablesViewer extends AsynchronousTreeViewer{
 	 * 
 	 * Also update details area if required
 	 * 
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer#internalRefresh(java.lang.Object, org.eclipse.swt.widgets.Widget)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeModelViewer#internalRefresh(java.lang.Object, org.eclipse.swt.widgets.Widget)
 	 */
 	protected void internalRefresh(Object element, Widget item) {
 		super.internalRefresh(element, item);

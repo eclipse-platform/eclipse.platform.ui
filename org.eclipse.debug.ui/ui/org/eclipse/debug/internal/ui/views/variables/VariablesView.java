@@ -47,8 +47,8 @@ import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.variables.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
@@ -397,8 +397,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		Viewer viewer = getViewer();
 		if (viewer != null) {
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
-			if (viewer instanceof AsynchronousTreeViewer) {
-				AsynchronousTreeViewer asyncTreeViewer = (AsynchronousTreeViewer) viewer;
+			if (viewer instanceof AsynchronousTreeModelViewer) {
+				AsynchronousTreeModelViewer asyncTreeViewer = (AsynchronousTreeModelViewer) viewer;
 				asyncTreeViewer.dispose();
 			}
 		}
@@ -783,7 +783,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		action = new ToggleLogicalStructureAction(this);
 		setAction("ToggleContentProviders", action); //$NON-NLS-1$
 		
-		action = new CollapseAllAction((AsynchronousTreeViewer)getViewer());
+		action = new CollapseAllAction((AsynchronousTreeModelViewer)getViewer());
 		setAction("CollapseAll", action); //$NON-NLS-1$
 
 		action = new ChangeVariableValueAction(this);
