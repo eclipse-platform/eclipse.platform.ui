@@ -344,7 +344,7 @@ public class TabDescriptor
 	 * Set the indicator to determine if the tab should be the selected tab in
 	 * the list.
 	 * 
-	 * @param indented
+	 * @param selected
 	 *            <code>true</code> if the tab should be the selected tab in
 	 *            the list.
 	 */
