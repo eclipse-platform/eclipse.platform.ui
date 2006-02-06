@@ -204,7 +204,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 		}
 
 		if (additions.size() != 0) {
-			add((IResource[])additions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, 50));
+			add(project, (IResource[])additions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, 50));
 		}
 		commit(project, (IResource[])commits.toArray(new IResource[commits.size()]), Policy.subMonitorFor(monitor, 100));		
 	}	
@@ -226,9 +226,13 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 		}
 	}
 
-	private void add(IResource[] additions, IProgressMonitor monitor) throws TeamException {
+	private void add(final IProject project, IResource[] additions, IProgressMonitor monitor) throws TeamException {
 		try {
-			new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(additions)).run(monitor);
+			new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(additions)) {
+				protected ResourceMappingContext getResourceMappingContext() {
+					return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
+				}
+			}.run(monitor);
 		} catch (InvocationTargetException e1) {
 			throw TeamException.asTeamException(e1);
 		} catch (InterruptedException e1) {
