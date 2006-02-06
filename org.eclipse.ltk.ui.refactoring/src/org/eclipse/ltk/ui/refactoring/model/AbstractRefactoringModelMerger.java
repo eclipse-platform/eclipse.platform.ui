@@ -355,7 +355,7 @@ public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerg
 											InputStream stream= null;
 											try {
 												stream= storage.getContents();
-												final RefactoringDescriptorProxy[] proxies= RefactoringHistoryService.getInstance().readRefactoringDescriptorProxies(stream, RefactoringDescriptor.NONE);
+												final RefactoringDescriptorProxy[] proxies= RefactoringHistoryService.getInstance().readRefactoringDescriptorProxies(stream, RefactoringDescriptor.MULTI_CHANGE);
 												for (int offset= 0; offset < proxies.length; offset++)
 													existing.add(proxies[offset]);
 
@@ -426,7 +426,7 @@ public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerg
 			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_merge_message, 200);
-			// status= aboutToPerformMerge(context, new SubProgressMonitor(monitor, 75));
+//			status= aboutToPerformMerge(context, new SubProgressMonitor(monitor, 75));
 			if (status.getSeverity() != IStatus.ERROR) {
 				final IDiff[] diffs= getDiffs(context);
 				status= createMergeStatus(context, context.merge(diffs, false, new SubProgressMonitor(monitor, 100)));
