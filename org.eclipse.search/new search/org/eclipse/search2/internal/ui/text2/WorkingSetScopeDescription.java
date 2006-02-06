@@ -18,6 +18,7 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IAdaptable;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -55,7 +56,11 @@ public class WorkingSetScopeDescription implements IScopeDescription {
 		}
 	}
 
-	public String getLabel() {
+	public String getLabelForCombo() {
+		return fLabel;
+	}
+
+	public String getNameForDescription() {
 		return fLabel;
 	}
 
@@ -169,5 +174,9 @@ public class WorkingSetScopeDescription implements IScopeDescription {
 			}
 		}
 		return result;
+	}
+
+	public IFile[] getFiles(IWorkbenchPage page) {
+		return null;
 	}
 }

@@ -13,6 +13,8 @@ package org.eclipse.search2.internal.ui.text2;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.swt.graphics.Image;
@@ -54,17 +56,24 @@ public class RetrieverLabelProvider extends FileLabelProvider {
 		if (element instanceof int[]) {
 			int[] matchCount= (int[]) element;
 			Integer hidden= new Integer(matchCount[0] - matchCount[1]);
-			return MessageFormat.format(SearchMessages.RetrieverLabelProvider_FilterHidesMatches_label, new Object[] {hidden});
+			if (hidden.intValue() == 1) {
+				return SearchMessages.RetrieverLabelProvider_FilterHidesMatches_labelSingular;
+			}
+			return MessageFormat.format(SearchMessages.RetrieverLabelProvider_FilterHidesMatches_labelPlural, new Object[] {hidden});
 		}
 		if (fAppendContainer && element instanceof IFile) {
 			IFile file= (IFile) element;
-			StringBuffer buf= new StringBuffer();
-			buf.append(file.getName());
-			buf.append(" - "); //$NON-NLS-1$
-			buf.append(file.getParent().getFullPath().toString());
-			return buf.toString();
+			return getFileLableWithContainer(file.getFullPath());
 		}
 		return super.getText(element);
+	}
+
+	public static String getFileLableWithContainer(IPath path) {
+		StringBuffer buf= new StringBuffer();
+		buf.append(path.lastSegment());
+		buf.append(" - "); //$NON-NLS-1$
+		buf.append(path.removeFirstSegments(1).toString());
+		return buf.toString();
 	}
 
 	static String convertChars(CharSequence input) {

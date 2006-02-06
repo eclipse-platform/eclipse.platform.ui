@@ -13,6 +13,7 @@ package org.eclipse.search2.internal.ui.text2;
 
 import java.util.Properties;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -23,13 +24,15 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.search2.internal.ui.SearchMessages;
 
 public class WorkspaceScopeDescription implements IScopeDescription {
-	public static final String LABEL= SearchMessages.WorkspaceScopeDescription_label;
-
 	public WorkspaceScopeDescription() {
 	}
 
-	public String getLabel() {
-		return LABEL;
+	public String getNameForDescription() {
+		return SearchMessages.WorkspaceScopeDescription_name;
+	}
+	
+	public String getLabelForCombo() {
+		return SearchMessages.WorkspaceScopeDescription_label;
 	}
 
 	public IResource[] getRoots(IWorkbenchPage page) {
@@ -46,5 +49,9 @@ public class WorkspaceScopeDescription implements IScopeDescription {
 	}
 
 	public void restore(Properties props, String prefix) {
+	}
+
+	public IFile[] getFiles(IWorkbenchPage page) {
+		return null;
 	}
 }

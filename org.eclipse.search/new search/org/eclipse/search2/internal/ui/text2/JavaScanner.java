@@ -154,15 +154,16 @@ public class JavaScanner extends AbstractSearchMatchInformationProvider {
 	private int matchCharacterLiteral() {
 		boolean escaped= false;
 		while (true) {
-			switch (nextChar()) {
+			int c= nextChar();
+			switch (c) {
 				case -1:
+				case '\n':
+				case '\r':
 					return -1;
 				case '\\':
 					escaped= !escaped;
 					break;
 				case '\'':
-				case '\n':
-				case '\r':
 					if (!escaped) {
 						return nextChar();
 					}
@@ -175,15 +176,16 @@ public class JavaScanner extends AbstractSearchMatchInformationProvider {
 	private int matchStringLiteral() {
 		boolean escaped= false;
 		while (true) {
-			switch (nextChar()) {
+			int c= nextChar();
+			switch (c) {
 				case -1:
-					return -1;
+				case '\n':
+				case '\r':
+					return c;
 				case '\\':
 					escaped= !escaped;
 					break;
 				case '"':
-				case '\n':
-				case '\r':
 					if (!escaped) {
 						return nextChar();
 					}

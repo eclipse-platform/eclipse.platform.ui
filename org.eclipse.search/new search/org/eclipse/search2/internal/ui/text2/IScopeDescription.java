@@ -13,6 +13,7 @@ package org.eclipse.search2.internal.ui.text2;
 
 import java.util.Properties;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -24,9 +25,13 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public interface IScopeDescription {
 
-	public String getLabel();
+	public String getLabelForCombo();
+
+	public String getNameForDescription();
 
 	public IResource[] getRoots(IWorkbenchPage page);
+
+	public IFile[] getFiles(IWorkbenchPage page);
 
 	public void restore(IDialogSettings section);
 
@@ -35,5 +40,4 @@ public interface IScopeDescription {
 	public void store(IDialogSettings section);
 
 	public void store(Properties props, String keyPrefix);
-
 }

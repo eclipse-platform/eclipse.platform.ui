@@ -125,7 +125,7 @@ public final class SearchMessages extends NLS {
     public static String RetrieverReplaceTab_Preview_label;
     public static String RetrieverReplaceTab_Restore_text;
     public static String RetrieverReplaceTab_ReplaceWith_text;
-    public static String RetrieverLabelProvider_FilterHidesMatches_label;
+    public static String RetrieverLabelProvider_FilterHidesMatches_labelPlural;
     public static String RetrieverFilterTab_FunctionBody_text;
     public static String RetrieverPage_FindTab_text;
     public static String RetrieverPage_FilterTab_text;
@@ -164,13 +164,24 @@ public final class SearchMessages extends NLS {
     public static String RetrieverReplaceTab_ReplaceSelected_text;
     public static String RetrieverReplaceTab_RestoreSelected_text;
     public static String TextFileScannerRegistry_error_instanciateScanner;
-    public static String CurrentFileScopeDescription_label;
-    public static String CurrentProjectScopeDescription_label;
     public static String TextSearchGroup_submenu_text;
     public static String FindInWorkspaceActionDelegate_text;
     public static String FindInRecentScopeActionDelegate_text;
     public static String FindInProjectActionDelegate_text;
     public static String FindInWorkingSetActionDelegate_text;
     public static String FindInFileActionDelegate_text;
+	public static String RetrieverQuery_statusMessage;
+	public static String SelectedResourcesScopeDescription_label;
+	public static String SelectedResourcesScopeDescription_name;
+	public static String WindowWorkingSetScopeDescription_name;
+	public static String WorkspaceScopeDescription_name;
+	public static String SimpleResourceSelectionDialog_selectAll;
+	public static String SimpleResourceSelectionDialog_deselectAll;
+	public static String RetrieverFindTab_selectedResourcesTitle;
+	public static String RetrieverFindTab_selectedResourcesMessage;
+	public static String RetrieverResult_labelSingular;
+	public static String RetrieverPage_filterSingular;
+	public static String RetrieverPage_filterPlural;
+	public static String RetrieverLabelProvider_FilterHidesMatches_labelSingular;
 
 }

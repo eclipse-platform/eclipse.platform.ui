@@ -44,12 +44,11 @@ abstract public class RetrieverAction extends Action {
 		RetrieverPage.initializeQuery(query);
 		if (modifyQuery(query)) {
 			String searchPattern= query.getSearchText();
+			NewSearchUI.runQueryInBackground(query);
 			if (searchPattern == null || searchPattern.length() == 0) {
 				SearchView view= (SearchView) InternalSearchUI.getInstance().getSearchViewManager().activateSearchView(true);
 				view.showEmptySearchPage(RetrieverPage.ID);
-			} else {
-				NewSearchUI.runQueryInBackground(query);
-			}
+			} 
 		}
 	}
 
@@ -89,7 +88,7 @@ abstract public class RetrieverAction extends Action {
 			String text= ((ITextSelection) sel).getText();
 			if (text != null) {
 				return trimSearchString(text);
-			}
+		}
 		}
 		return null;
 	}

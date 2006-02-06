@@ -91,7 +91,7 @@
 &lt;pre&gt;
 &lt;extension id=&quot;MyEngine&quot;
       point=&quot;org.eclipse.search.textSearchEngine&quot;&gt;
-   &lt;textFileScanner
+   &lt;textSearchEngine
          id=&quot;com.windriver.textSearchEngine&quot;
          label=&quot;Wind River Search&quot;
          class=&quot;com.windriver.text.SearchEngine&quot; /&gt;

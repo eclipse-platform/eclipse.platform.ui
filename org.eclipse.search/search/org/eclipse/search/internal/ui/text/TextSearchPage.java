@@ -80,7 +80,7 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
-import org.eclipse.search2.internal.ui.text2.CurrentProjectScopeDescription;
+import org.eclipse.search2.internal.ui.text2.SelectedResourcesScopeDescription;
 import org.eclipse.search2.internal.ui.text2.IScopeDescription;
 import org.eclipse.search2.internal.ui.text2.RetrieverQuery;
 import org.eclipse.search2.internal.ui.text2.WindowWorkingSetScopeDescription;
@@ -89,7 +89,6 @@ import org.eclipse.search2.internal.ui.text2.WorkspaceScopeDescription;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
-    private static final String TMP_WORKING_SET_NAME = "tmp_for_search";
     private static final int HISTORY_SIZE= 12;
 	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
@@ -720,18 +719,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
             res[i]= root.getProject(enclosingProjectName[i]);
         }
         if (res.length == 0) {
-            return new CurrentProjectScopeDescription();
+            return new SelectedResourcesScopeDescription();
         }
         return getScopeDescription(res);
     }
     
     private IScopeDescription getScopeDescription(IResource[] res) {
-        if (res.length == 1) {
-            if (res[0].equals(CurrentProjectScopeDescription.getCurrentProject(getActivePage()))) {
-                return new CurrentProjectScopeDescription();
-            }
-        }
-        return new WorkingSetScopeDescription(createWorkingSet(res));
+    	return new SelectedResourcesScopeDescription(res, false);
     }
     
     private IScopeDescription getWorkingSetScopeDescription() {
@@ -814,20 +808,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
             }
         }
         return getScopeDescription((IResource[]) resources.toArray(new IResource[resources.size()]));
-    }
-
-    private IWorkingSet createWorkingSet(IResource[] arr) {
-        IWorkingSetManager wsm= PlatformUI.getWorkbench().getWorkingSetManager();
-        IWorkingSet ws= wsm.getWorkingSet(TMP_WORKING_SET_NAME);
-        if (ws == null) {
-            ws= wsm.createWorkingSet(TMP_WORKING_SET_NAME, arr);
-            ws.setId("org.eclipse.ui.resourceWorkingSetPage");  //$NON-NLS-1$
-            wsm.addWorkingSet(ws);
-        }
-        else {
-            ws.setElements(arr);
-        }
-        return ws;
     }
 
 

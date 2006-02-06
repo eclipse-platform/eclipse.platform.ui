@@ -114,12 +114,16 @@ class RetrieverResult extends AbstractTextSearchResult implements ISearchResult,
 
 	public String getLabel() {
 		String pattern= fQuery.getSearchText();
-		String scope= fQuery.getScopeDescription().getLabel();
+		String scope= fQuery.getScopeDescription().getNameForDescription();
 		int matchCount= getMatchCount();
 
 		if (pattern.length() == 0) {
 			return SearchMessages.RetrieverResult_noInput_label;
 		}
+		if (matchCount == 1) {
+			return MessageFormat.format(SearchMessages.RetrieverResult_labelSingular, new Object[] {pattern, scope});
+		}
+		
 		return MessageFormat.format(SearchMessages.RetrieverResult_label, new Object[] {pattern, new Integer(matchCount), scope});
 	}
 

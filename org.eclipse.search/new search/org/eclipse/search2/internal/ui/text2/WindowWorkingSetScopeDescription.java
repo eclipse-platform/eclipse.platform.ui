@@ -28,6 +28,10 @@ public class WindowWorkingSetScopeDescription extends WorkingSetScopeDescription
 		setLabel(SearchMessages.WindowWorkingSetScopeDescription_label);
 	}
 
+	public String getNameForDescription() {
+		return SearchMessages.WindowWorkingSetScopeDescription_name;
+	}
+
 	public IResource[] getRoots(IWorkbenchPage page) {
 		IWorkingSet ws= page.getAggregateWorkingSet();
 		return getRootsFromWorkingSet(ws);

@@ -11,10 +11,13 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -183,11 +186,10 @@ public class RetrieverFindTab implements IRetrieverKeys {
 
 	private void setupScopeCombo() {
 		fWorkingSetCombo.removeAll();
-		fPermanentScopeCount= 4;
+		fPermanentScopeCount= 3;
 		addScopeToCombo(new WorkspaceScopeDescription(), false);
-		addScopeToCombo(new CurrentProjectScopeDescription(), false);
-		addScopeToCombo(new CurrentFileScopeDescription(), false);
 		addScopeToCombo(new WindowWorkingSetScopeDescription(), false);
+		addScopeToCombo(new SelectedResourcesScopeDescription(), false);
 
 		String[] names= fView.restoreValue(KEY_SCOPE_HISTORY, null);
 		if (names != null) {
@@ -311,9 +313,26 @@ public class RetrieverFindTab implements IRetrieverKeys {
 
 	protected void onChooseButtonSelectWorkingSet() {
 		IScopeDescription scope= getSearchScope();
-		IScopeDescription use= WorkingSetScopeDescription.createWithDialog(fView.getSite().getPage(), scope);
-		if (use != null) {
-			addScopeToCombo(use, false);
+		if (scope instanceof SelectedResourcesScopeDescription) {
+			adjustSelectedResources((SelectedResourcesScopeDescription) scope);
+		}
+		else {
+			IScopeDescription use= WorkingSetScopeDescription.createWithDialog(fView.getSite().getPage(), scope);
+			if (use != null) {
+				addScopeToCombo(use, false);
+			}
+		}
+	}
+
+	private void adjustSelectedResources(SelectedResourcesScopeDescription scope) {
+		SimpleResourceSelectionDialog dlg= new SimpleResourceSelectionDialog(fView.getSite().getShell(), 
+				SearchMessages.RetrieverFindTab_selectedResourcesTitle, SearchMessages.RetrieverFindTab_selectedResourcesMessage);
+		dlg.setInitialSelections(scope.getRoots(null));
+		if (dlg.open() == Window.OK) {
+			Object[] selection= dlg.getResult();
+			if (selection != null) {
+				scope.setSelection((IResource[]) Arrays.asList(selection).toArray(new IResource[selection.length]));
+			}
 		}
 	}
 
@@ -403,9 +422,9 @@ public class RetrieverFindTab implements IRetrieverKeys {
 	}
 
 	private void addScopeToCombo(IScopeDescription scope, boolean moveExisting) {
-		String scopeLabel= scope.getLabel();
+		String scopeLabel= scope.getLabelForCombo();
 		fScopeMap.put(scopeLabel, scope);
-		setCombo(fWorkingSetCombo, scope.getLabel(), fPermanentScopeCount, MAX_SCOPES, moveExisting);
+		setCombo(fWorkingSetCombo, scope.getLabelForCombo(), fPermanentScopeCount, MAX_SCOPES, moveExisting);
 		RetrieverPage.sLastScope= scope;
 	}
 

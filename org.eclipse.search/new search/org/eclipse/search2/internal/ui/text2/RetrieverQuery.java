@@ -12,9 +12,7 @@
 package org.eclipse.search2.internal.ui.text2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +23,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -61,7 +58,7 @@ public class RetrieverQuery implements ISearchQuery, IRetrieverKeys {
 	private ArrayList fLinesOfCurrentFile;
 	private IWorkbenchPage fWorkbenchPage;
 	private SearchMatchInformationProvider fScanner;
-	private Comparator fSearchOrder;
+	private IFileSorter fSearchOrder;
 
 
 	public RetrieverQuery(IWorkbenchPage page) {
@@ -128,11 +125,21 @@ public class RetrieverQuery implements ISearchQuery, IRetrieverKeys {
 			fResult.setComplete(false);
 		}
 
-		TextSearchScope scope= createSearchScope(fWorkbenchPage);
-		return performSearch(monitor, scope);
+		MultiStatus resStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.RetrieverQuery_statusMessage, null);
+		IFile[] files= fScope.getFiles(fWorkbenchPage);
+		if (files == null) {
+			TextSearchScope scope= createSearchScope(fWorkbenchPage);
+			files= scope.evaluateFilesInScope(resStatus);
+		}
+		if (fSearchOrder != null) {
+			fSearchOrder.sortFiles(files);
+		}
+		IStatus status= performSearch(monitor, files);
+		resStatus.addAll(status);
+		return resStatus;
 	}
 
-	private IStatus performSearch(IProgressMonitor monitor, TextSearchScope scope) {
+	private IStatus performSearch(IProgressMonitor monitor, IFile[] scope) {
 		TextSearchEngine engine= TextSearchEngine.create();
 		TextSearchRequestor requestor= createRequestor();
 		Pattern searchPattern= createSearchPattern();
@@ -140,14 +147,7 @@ public class RetrieverQuery implements ISearchQuery, IRetrieverKeys {
 		if (fResult != null) {
 			fResult.setComplete(false);
 		}
-		MultiStatus resStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, "Problems searching the view", null);
-		IFile[] files= scope.evaluateFilesInScope(resStatus);
-		if (fSearchOrder != null) {
-			Arrays.sort(files, fSearchOrder);
-		}
-		IStatus status= engine.search(files, requestor, searchPattern, monitor);
-		resStatus.addAll(status);
-		return resStatus;
+		return engine.search(scope, requestor, searchPattern, monitor);
 	}
 
 	Pattern createSearchPattern() {
@@ -329,11 +329,10 @@ public class RetrieverQuery implements ISearchQuery, IRetrieverKeys {
 	}
 
 	public void searchAgain(Collection outdated, IProgressMonitor monitor) {
-		TextSearchScope scope= new RetrieverSearchScope((IResource[]) outdated.toArray(new IResource[outdated.size()]), new String[] {"*"}, true); //$NON-NLS-1$
-		performSearch(monitor, scope);
+		performSearch(monitor, (IFile[]) outdated.toArray(new IFile[outdated.size()]));
 	}
 
-	public void setSearchOrder(Comparator searchOrder) {
+	public void setSearchOrder(IFileSorter searchOrder) {
 		fSearchOrder= searchOrder;
 	}
 }
