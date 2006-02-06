@@ -92,7 +92,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * editor site. This value is <code>null</code> if it is not yet
 	 * initialized.
 	 */
-	private IKeyBindingService service = null;
+	private ProxyKeyBindingService service = null;
 
 	/**
 	 * The local service locator for this multi-page editor site. This value is
@@ -169,7 +169,10 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		}
 
 		// Remove myself from the list of nested key binding services.
-		service = null;
+		if (service!=null) {
+			service.dispose();
+			service = null;
+		}
 
 		if (serviceLocator != null) {
 			serviceLocator.dispose();

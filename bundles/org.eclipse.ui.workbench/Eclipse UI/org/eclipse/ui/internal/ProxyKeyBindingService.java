@@ -147,4 +147,16 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 			}
 		}
 	}
+	
+	/**
+	 * Remove any local activations, since they were put in the global
+	 * context.
+	 */
+	public void dispose() {
+		fHandlerService.deactivateHandlers(fActiveHandlers.entrySet());
+		fActiveHandlers.clear();
+		
+		fContextService.deactivateContexts(fEnabledContexts);
+		fEnabledContexts.clear();
+	}
 }

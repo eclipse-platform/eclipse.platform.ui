@@ -131,7 +131,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private SubActionBars actionBars;
 
-	private IKeyBindingService keyBindingService;
+	private ProxyKeyBindingService keyBindingService;
 
 	protected ArrayList menuExtenders;
 
@@ -201,8 +201,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			menuExtenders = null;
 		}
 
-		// if (keyBindingService != null)
-		// keyBindingService.dispose();
+		 if (keyBindingService != null) {
+			keyBindingService.dispose();
+		 }
 
 		if (progressService != null)
 			progressService.dispose();
