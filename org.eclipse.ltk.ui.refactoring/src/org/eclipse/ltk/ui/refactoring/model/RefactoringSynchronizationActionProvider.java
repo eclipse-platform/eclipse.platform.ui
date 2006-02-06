@@ -38,6 +38,7 @@ import org.eclipse.ltk.core.refactoring.model.AbstractRefactoringHistoryResource
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorProxyAdapter;
 import org.eclipse.ltk.internal.ui.refactoring.actions.AcceptRefactoringsAction;
+import org.eclipse.ltk.internal.ui.refactoring.actions.RejectRefactoringsAction;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -256,9 +257,13 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	public void fillContextMenu(final IMenuManager menu) {
 		super.fillContextMenu(menu);
 		final ISynchronizationContext syncContext= getSynchronizationContext();
-		final AcceptRefactoringsAction action= new AcceptRefactoringsAction(syncContext, getCommonConfiguration().getViewSite().getShell());
-		action.setRefactoringDescriptors(getRefactorings(syncContext, getSynchronizePageConfiguration()));
-		menu.add(action);
+		final RefactoringDescriptorProxy[] proxies= getRefactorings(syncContext, getSynchronizePageConfiguration());
+		final AcceptRefactoringsAction accept= new AcceptRefactoringsAction(syncContext, getCommonConfiguration().getViewSite().getShell());
+		accept.setRefactoringDescriptors(proxies);
+		menu.add(accept);
+		final RejectRefactoringsAction reject= new RejectRefactoringsAction(syncContext);
+		reject.setRefactoringDescriptors(proxies);
+		menu.add(reject);
 	}
 
 	/**

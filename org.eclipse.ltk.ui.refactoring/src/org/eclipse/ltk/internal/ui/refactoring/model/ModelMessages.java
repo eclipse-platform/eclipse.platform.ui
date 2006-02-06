@@ -44,6 +44,12 @@ public final class ModelMessages extends NLS {
 
 	public static String RefactoringHistoryDiff_diff_string;
 
+	public static String RejectRefactoringsAction_description;
+
+	public static String RejectRefactoringsAction_title;
+
+	public static String RejectRefactoringsAction_tool_tip;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ModelMessages.class);
