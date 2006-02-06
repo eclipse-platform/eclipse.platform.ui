@@ -2282,6 +2282,25 @@
       </command>
    </extension>
    
+   <!-- bug 102666 -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.ui.tests.commands.bug102666"
+            name="Bug 102666 Test" />
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+   	  <handler
+   	        commandId="org.eclipse.ui.tests.commands.bug102666"
+   	        class="doesntmatter">
+   	     <activeWhen>
+               <count value="1" />
+         </activeWhen>
+      </handler>      
+   </extension>
+   	  
+   
    
 	<!--malformed activity definitions -->
    <extension

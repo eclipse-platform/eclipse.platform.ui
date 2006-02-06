@@ -17,6 +17,7 @@ import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SelectionEnabler;
 
@@ -72,7 +73,8 @@ public final class LegacySelectionEnablerWrapper extends
 			return result;
 		}
 
-		final Object defaultVariable = context.getDefaultVariable();
+		final Object defaultVariable = context
+				.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		if (defaultVariable instanceof ISelection) {
 			final ISelection selection = (ISelection) defaultVariable;
 			if (enabler.isEnabledForSelection(selection)) {

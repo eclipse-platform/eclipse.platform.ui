@@ -43,6 +43,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -241,7 +242,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			final Object applicationContext = event.getApplicationContext();
 			if (applicationContext instanceof IEvaluationContext) {
 				final IEvaluationContext context = (IEvaluationContext) applicationContext;
-				final Object selectionObject = context.getDefaultVariable();
+				final Object selectionObject = context
+						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 				if (selectionObject instanceof ISelection) {
 					currentSelection = (ISelection) selectionObject;
 					delegate.selectionChanged(action, currentSelection);
