@@ -107,6 +107,8 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 
 	private ModelSynchronizeParticipant participant;
 	private boolean ownsParticipant = true;
+
+	private boolean sentToSyncView;
 	
 	/**
 	 * Create a merge participant operation for the scope of the given manager.
@@ -123,13 +125,20 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 	protected void initializeContext(IProgressMonitor monitor) throws CoreException {
 		if (participant == null) {
 			participant = createParticipant();
+			if (isPreviewRequested() && !isPreviewInDialog()) {
+				// Put the participant into the sync view right away since a preview is requested
+				handlePreviewRequest();
+				sentToSyncView = true;
+			}
 			participant.getContext().refresh(getScope().getTraversals(), 
 					RemoteResourceMappingContext.FILE_CONTENTS_REQUIRED, monitor);
-			try {
-				Platform.getJobManager().join(participant.getContext(), monitor);
-			} catch (InterruptedException e) {
-				throw new OperationCanceledException();
-			}
+			// Only wait if we are not going to preview or we are previewing in a dialog
+			if (!sentToSyncView)
+				try {
+					Platform.getJobManager().join(participant.getContext(), monitor);
+				} catch (InterruptedException e) {
+					throw new OperationCanceledException();
+				}
 		}
 	}
 	
@@ -143,6 +152,14 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 			if (ownsParticipant && participant != null)
 				participant.dispose();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ModelMergeOperation#executeMerge(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void executeMerge(IProgressMonitor monitor) throws CoreException {
+		if (!sentToSyncView)
+			super.executeMerge(monitor);
 	}
 	
 	/* (non-Javadoc)

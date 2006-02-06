@@ -112,12 +112,10 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	}
 	
 	/**
-	 * Perform a merge. First {@link #initializeContext(IProgressMonitor)} is called
-	 * to determine the set of resource changes. If there are changes, they will be validating
-	 * by calling {@link #validateMerge(IMergeContext, IProgressMonitor)}. If there
-	 * are no validation problems, {@link #performMerge(IProgressMonitor)} will
-	 * then be called to perform the merge. If there are problems encounted or
-	 * if a preview was requested, {@link #handlePreviewRequest()} is called.
+	 * Perform a merge. First {@link #initializeContext(IProgressMonitor)} is
+	 * called to determine the set of resource changes. Then the
+	 * {@link #executeMerge(IProgressMonitor)} method is invoked.
+	 * 
 	 * @parem monitor a progress monitor
 	 */
 	protected void execute(IProgressMonitor monitor)
@@ -125,25 +123,42 @@ public abstract class ModelMergeOperation extends ModelOperation {
 		try {
 			monitor.beginTask(null, 100);
 			initializeContext(Policy.subMonitorFor(monitor, 75));
-			if (!hasChangesOfInterest()) {
-				handleNoChanges();
-			} else if (isPreviewRequested()) {
-				handlePreviewRequest();
-			} else {
-				IStatus status = ModelMergeOperation.validateMerge(getMergeContext(), Policy.subMonitorFor(monitor, 5));
-				if (!status.isOK()) {
-					handleValidationFailure(status);
-				}
-				status = performMerge(Policy.subMonitorFor(monitor, 20));
-				if (!status.isOK()) {
-					handleMergeFailure(status);
-				}
-			}
+			executeMerge(Policy.subMonitorFor(monitor, 25));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Perform a merge. This method is invoked frome
+	 * {@link #execute(IProgressMonitor)} after the context has been
+	 * initialized. If there are changes in the context, they will be validating
+	 * by calling {@link #validateMerge(IMergeContext, IProgressMonitor)}. If
+	 * there are no validation problems, {@link #performMerge(IProgressMonitor)}
+	 * will then be called to perform the merge. If there are problems encounted
+	 * or if a preview was requested, {@link #handlePreviewRequest()} is called.
+	 * 
+	 * @parem monitor a progress monitor
+	 */
+	protected void executeMerge(IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(null, 100);
+		if (!hasChangesOfInterest()) {
+			handleNoChanges();
+		} else if (isPreviewRequested()) {
+			handlePreviewRequest();
+		} else {
+			IStatus status = ModelMergeOperation.validateMerge(getMergeContext(), Policy.subMonitorFor(monitor, 10));
+			if (!status.isOK()) {
+				handleValidationFailure(status);
+			}
+			status = performMerge(Policy.subMonitorFor(monitor, 90));
+			if (!status.isOK()) {
+				handleMergeFailure(status);
+			}
+		}
+		monitor.done();
 	}
 	
 	/**
