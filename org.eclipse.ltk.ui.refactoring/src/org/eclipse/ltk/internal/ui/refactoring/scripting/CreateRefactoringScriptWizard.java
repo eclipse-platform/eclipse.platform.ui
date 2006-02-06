@@ -210,7 +210,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
 					}
 				});
-				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, new NullProgressMonitor());
+				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());
 				return true;
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();

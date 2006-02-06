@@ -11,6 +11,8 @@
 
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -65,7 +67,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			if (severity >= RefactoringStatus.FATAL) {
 				setDescription(RefactoringUIMessages.ErrorWizardPage_cannot_proceed); 
 			} else if (severity >= RefactoringStatus.INFO) {
-				setDescription(Messages.format(RefactoringUIMessages.ErrorWizardPage_confirm, new String[] {IDialogConstants.NEXT_LABEL, IDialogConstants.FINISH_LABEL})); 
+				setDescription(Messages.format(RefactoringUIMessages.ErrorWizardPage_confirm, new String[] {getLabelAsText(IDialogConstants.NEXT_LABEL), getLabelAsText(IDialogConstants.FINISH_LABEL)})); 
 			} else {
 				setDescription(""); //$NON-NLS-1$
 			}
@@ -74,7 +76,18 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			setDescription(""); //$NON-NLS-1$
 		}	
 	}
-	
+
+	protected String getLabelAsText(String label) {
+		Assert.isNotNull(label);
+		StringBuffer buffer= new StringBuffer(label.length());
+		for (int index= 0; index < label.length(); index++) {
+			char character= label.charAt(index);
+			if (character != '&')
+				buffer.append(character);
+		}
+		return buffer.toString();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

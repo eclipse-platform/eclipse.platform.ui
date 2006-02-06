@@ -771,7 +771,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		} else {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH) && proxies.length > 0) {
-				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, IDialogConstants.FINISH_LABEL), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, getLabelAsText(IDialogConstants.FINISH_LABEL)), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
 			}
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
@@ -843,6 +843,22 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Converts a button label to pure text.
+	 * @param label the button label
+	 * @return the resulting text
+	 */
+	protected String getLabelAsText(final String label) {
+		Assert.isNotNull(label);
+		StringBuffer buffer= new StringBuffer(label.length());
+		for (int index= 0; index < label.length(); index++) {
+			char character= label.charAt(index);
+			if (character != '&')
+				buffer.append(character);
+		}
+		return buffer.toString();
 	}
 
 	/**

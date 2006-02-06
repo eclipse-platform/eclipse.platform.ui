@@ -53,7 +53,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	public RefactoringHistoryErrorPage() {
 		super(true);
 		setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
-		setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_description, new String[] {IDialogConstants.NEXT_LABEL, IDialogConstants.FINISH_LABEL}));
+		setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_description, new String[] {getLabelAsText(IDialogConstants.NEXT_LABEL), getLabelAsText(IDialogConstants.FINISH_LABEL)}));
 	}
 
 	/**
@@ -170,7 +170,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 			if (severity >= RefactoringStatus.FATAL)
 				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
 			else if (severity >= RefactoringStatus.INFO)
-				setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error, new String[] {IDialogConstants.NEXT_LABEL, IDialogConstants.FINISH_LABEL}));
+				setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error, new String[] {getLabelAsText(IDialogConstants.NEXT_LABEL), getLabelAsText(IDialogConstants.FINISH_LABEL)}));
 		}
 		if (fViewer != null)
 			fViewer.setStatus(status);
