@@ -59,6 +59,8 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 				.getWorkbench().getService(IContextService.class);
 		fHandlerService = (IHandlerService) fSite.getWorkbenchWindow()
 				.getWorkbench().getService(IHandlerService.class);
+//		fContextService = (IContextService) fSite.getService(IContextService.class);
+//		fHandlerService = (IHandlerService) fSite.getService(IHandlerService.class);
 	}
 
 	/*
@@ -153,10 +155,10 @@ public final class ProxyKeyBindingService implements IKeyBindingService {
 	 * context.
 	 */
 	public void dispose() {
-		fHandlerService.deactivateHandlers(fActiveHandlers.entrySet());
-		fActiveHandlers.clear();
-		
-		fContextService.deactivateContexts(fEnabledContexts);
-		fEnabledContexts.clear();
+//		fHandlerService.deactivateHandlers(fActiveHandlers.entrySet());
+//		fActiveHandlers.clear();
+//		
+//		fContextService.deactivateContexts(fEnabledContexts);
+//		fEnabledContexts.clear();
 	}
 }
