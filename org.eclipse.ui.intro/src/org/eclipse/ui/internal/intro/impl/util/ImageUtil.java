@@ -46,6 +46,8 @@ public final class ImageUtil {
     public static final String INTRO_MODEL_LEAF = "leaf"; //$NON-NLS-1$
     public static final String INTRO_MODEL_CONTAINER = "container"; //$NON-NLS-1$
     public static final String OPEN_ITNRO_VIEW = "introView"; //$NON-NLS-1$
+    
+    public static final String CONFIG_EXTENSION = "configExtension";//$NON-NLS-1$
 
     // Image location
     public static final String ICONS_PATH = "$nl$/icons/"; //$NON-NLS-1$

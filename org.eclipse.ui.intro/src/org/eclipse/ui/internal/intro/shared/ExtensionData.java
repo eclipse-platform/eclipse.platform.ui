@@ -2,8 +2,6 @@ package org.eclipse.ui.internal.intro.shared;
 
 import java.io.PrintWriter;
 
-import org.eclipse.ui.internal.intro.impl.Messages;
-
 
 public class ExtensionData {
 
@@ -82,5 +80,9 @@ public class ExtensionData {
 
 	private String getImportanceAttributeValue() {
 		return IMPORTANCE_TABLE[fImportance];
+	}
+	
+	public String toString() {
+		return name!=null?name:id;
 	}
 }

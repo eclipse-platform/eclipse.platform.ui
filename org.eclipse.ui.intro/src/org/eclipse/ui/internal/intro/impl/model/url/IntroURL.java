@@ -399,7 +399,7 @@ public class IntroURL implements IIntroURL {
             url = ModelUtil.resolveURL(url, pluginId);
             BrowserIntroPartImplementation impl = (BrowserIntroPartImplementation) IntroPlugin
                 .getDefault().getIntroModelRoot().getPresentation()
-                .getIntroParttImplementation();
+                .getIntroPartImplementation();
             Browser browser = impl.getBrowser();
             return browser.setUrl(url);
         }

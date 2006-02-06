@@ -133,7 +133,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         return implementationKind;
     }
 
-    public AbstractIntroPartImplementation getIntroParttImplementation() {
+    public AbstractIntroPartImplementation getIntroPartImplementation() {
         return implementation;
     }
 

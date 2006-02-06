@@ -30,10 +30,10 @@ public class PageData {
 			if (child.getNodeType()==Node.ELEMENT_NODE) {
 				Element element = (Element)child;
 				if (element.getNodeName().equals("group")) { //$NON-NLS-1$
-					addGroup(element);
+					addGroup(element, false);
 				}
 				else if (element.getNodeName().equals(ISharedIntroConstants.HIDDEN)) {
-					addGroup(element);
+					addGroup(element, true);
 				}
 			}
 		}
@@ -89,9 +89,11 @@ public class PageData {
 		return null;
 	}
 
-	private void addGroup(Element element) {
+	private void addGroup(Element element, boolean hide) {
 		GroupData gd = new GroupData(element);
-		groups.add(gd);
+		if (hide) hidden = gd;
+		else
+			groups.add(gd);
 	}
 	
 	public void addImplicitExtension(String extensionId, String name) {

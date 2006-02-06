@@ -53,7 +53,7 @@ public class ShowHelpURLHandler {
             // Embedded is true and we have HTML presentation, show href
             // embedded, either in full page, or in div.
             BrowserIntroPartImplementation impl = (BrowserIntroPartImplementation) presentation
-                .getIntroParttImplementation();
+                .getIntroPartImplementation();
             // INTRO: maybe add support for navigation
             href = PlatformUI.getWorkbench().getHelpSystem()
                 .resolve(href, true).toExternalForm();
