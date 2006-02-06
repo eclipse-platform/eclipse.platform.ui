@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.*;
  * 
  * @since 3.0
  */
-class MonitorManager implements ILifecycleListener, IPathVariableChangeListener {
+class MonitorManager implements ILifecycleListener, IPathVariableChangeListener, IResourceChangeListener, IResourceDeltaVisitor {
 	/**
 	 * The PollingMonitor in charge of doing file-system polls.
 	 */
@@ -111,10 +111,6 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 
 	public void handleEvent(LifecycleEvent event) {
 		switch (event.kind) {
-			case LifecycleEvent.PRE_LINK_CREATE:
-			case LifecycleEvent.PRE_PROJECT_OPEN:
-				monitor(event.resource);
-				break;
 			case LifecycleEvent.PRE_LINK_DELETE:
 			case LifecycleEvent.PRE_PROJECT_CLOSE:
 			case LifecycleEvent.PRE_PROJECT_DELETE:
@@ -267,6 +263,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 		for (Iterator i = getResourcesToMonitor().iterator(); i.hasNext();)
 			refreshNeeded |= !monitor((IResource) i.next());
 		workspace.getPathVariableManager().addChangeListener(this);
+		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		//adding the lifecycle listener twice does no harm
 		((Workspace)workspace).addLifecycleListener(this);
 		if (RefreshManager.DEBUG)
@@ -281,6 +278,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 	 * Stop the monitoring of resources by all monitors.
 	 */
 	public void stop() {
+		workspace.removeResourceChangeListener(this);
 		workspace.getPathVariableManager().removeChangeListener(this);
 		// synchronized: protect the collection during iteration
 		synchronized (registeredMonitors) {
@@ -326,5 +324,30 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 			for (int i = 0; i < children.length; i++)
 				if (children[i].isLinked())
 					unmonitor(children[i]);
+	}
+
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta = event.getDelta();
+		if (delta == null)
+			return;
+		try {
+			delta.accept(this);
+		} catch (CoreException e) {
+			//cannot happen as our visitor doesn't throw exceptions
+		}
+	}
+
+	public boolean visit(IResourceDelta delta) {
+		if (delta.getKind () == IResourceDelta.ADDED) {
+			IResource resource = delta.getResource();
+			if (resource.isLinked())
+				monitor(resource);
+		}
+		if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
+			IProject project = (IProject) delta.getResource();
+			if (project.isAccessible())
+				monitor(project);
+		}
+		return true;
 	}
 }

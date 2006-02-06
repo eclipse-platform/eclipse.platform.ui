@@ -21,14 +21,14 @@ import org.osgi.framework.Bundle;
 
 /**
  * The <code>PollingMonitor</code> is an <code>IRefreshMonitor</code> that
- * polls the filesystem rather than registering natively for callbacks.
+ * polls the file system rather than registering natively for call-backs.
  * 
  * The polling monitor operates in iterations that span multiple invocations
  * of the job's run method.  At the beginning of an iteration, a set of 
  * all resource roots is collected.  Each time the job runs, it removes items
  * from the set and searches for changes for a fixed period of time.
  * This ensures that the refresh job is broken into very small discrete
- * operations that do not interrupt the user's mainline activity.
+ * operations that do not interrupt the user's main-line activity.
  * 
  * @since 3.0
  */
@@ -63,7 +63,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 */
 	private long hotRootTime;
 
-	private final RefreshManager manager;
+	private final RefreshManager refreshManager;
 	/**
 	 * True if this job has never been run. False otherwise.
 	 */
@@ -74,7 +74,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 */
 	public PollingMonitor(RefreshManager manager) {
 		super(Messages.refresh_pollJob);
-		this.manager = manager;
+		this.refreshManager = manager;
 		setPriority(Job.DECORATE);
 		setSystem(true);
 		resourceRoots = new ArrayList();
@@ -90,7 +90,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	}
 
 	/**
-	 * Polls the filesystem under the root containers for changes.
+	 * Polls the file system under the root containers for changes.
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		//sleep until resources plugin has finished starting
@@ -173,7 +173,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		if (resource.isLinked() && !((Resource)resource).getStore().fetchInfo().exists())
 			return;
 		//submit refresh request
-		manager.refresh(resource);
+		refreshManager.refresh(resource);
 		hotRoot = resource;
 		hotRootTime = System.currentTimeMillis();
 		if (RefreshManager.DEBUG)
