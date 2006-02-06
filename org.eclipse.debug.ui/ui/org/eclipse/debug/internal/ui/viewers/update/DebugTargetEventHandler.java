@@ -44,7 +44,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleCreate(DebugEvent event) {
-		// do nothing - launch change notification handles this
+        fireDelta((IDebugTarget) event.getSource(), IModelDelta.EXPAND);
 	}
 
 	protected void handleResume(DebugEvent event) {

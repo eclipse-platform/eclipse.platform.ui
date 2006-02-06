@@ -79,7 +79,7 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 						if (frame != null) {
 							ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
 							ModelDelta node = delta.addNode(target.getLaunch(), IModelDelta.NO_CHANGE);
-							node = node.addNode(target, IModelDelta.NO_CHANGE | IModelDelta.EXPAND);
+							node = node.addNode(target, IModelDelta.NO_CHANGE);
 							node = node.addNode(thread, IModelDelta.NO_CHANGE | IModelDelta.EXPAND);
 							node = node.addNode(frame, IModelDelta.NO_CHANGE | IModelDelta.SELECT);
 							fireModelChanged(delta);
