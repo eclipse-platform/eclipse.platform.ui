@@ -263,6 +263,33 @@
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+
+   	  <!-- Command+SPACE is spot light on panther, so use Ctrl+SPACE everywhere -->
+	  <key
+	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="CTRL+SPACE"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+M2+SPACE"/>
+      <key
+            locale="zh"
+            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+/"/>
+      <key
+            locale="zh"
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+?"/>
+      <key
+            locale="zh"
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+?"/>
       <key
             commandId="org.eclipse.ui.file.close"
             sequence="CTRL+X K"
@@ -344,6 +371,19 @@
             commandId="org.eclipse.ui.edit.findReplace"
             sequence="ESC R"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="ALT+/"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            sequence="ALT+?"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            sequence="ALT+SHIFT+?"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.window.openEditorDropDown"
             sequence="CTRL+X B"
@@ -520,6 +560,18 @@
             description="%command.delete.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.delete" />
+      <command
+            name="%command.contentAssistProposals.name"
+            description="%command.contentAssistProposals.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.contentAssist.proposals">
+      </command>
+      <command
+            name="%command.contentAssistContextInformation.name"
+            description="%command.contentAssistContextInformation.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
+      </command>
       <command
             name="%command.move.name"
             description="%command.move.description"
