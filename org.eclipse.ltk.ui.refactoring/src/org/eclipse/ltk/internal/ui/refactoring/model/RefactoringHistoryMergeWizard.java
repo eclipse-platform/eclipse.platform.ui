@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -70,17 +69,19 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 
 						public final boolean visit(final IResourceDelta current) throws CoreException {
 							final IResource resource= current.getResource();
-							if (resource instanceof IFile) {
-								switch (delta.getKind()) {
-									case IResourceDelta.ADDED:
-										fAddedFiles.add(resource);
-										break;
-									case IResourceDelta.REMOVED:
-										fRemovedFiles.add(resource);
-										break;
-									case IResourceDelta.CHANGED:
-										fChangedFiles.add(resource);
-										break;
+							if (!resource.isDerived()) {
+								if (resource.getType() == IResource.FILE) {
+									switch (delta.getKind()) {
+										case IResourceDelta.ADDED:
+											fAddedFiles.add(resource);
+											break;
+										case IResourceDelta.REMOVED:
+											fRemovedFiles.add(resource);
+											break;
+										case IResourceDelta.CHANGED:
+											fChangedFiles.add(resource);
+											break;
+									}
 								}
 							}
 							return true;
@@ -174,9 +175,6 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	protected RefactoringStatus historyPerformed(final IProgressMonitor monitor) {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
 		RefactoringHistoryService.getInstance().setOverrideTimeStamp(-1);
-		fAddedFiles.clear();
-		fRemovedFiles.clear();
-		fChangedFiles.clear();
 		return super.historyPerformed(monitor);
 	}
 
@@ -198,6 +196,28 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	public void resolveConflicts(final IMergeContext context) {
 		Assert.isNotNull(context);
 		for (final Iterator iterator= fChangedFiles.iterator(); iterator.hasNext();) {
+			final IResource resource= (IResource) iterator.next();
+			final IDiff diff= context.getDiffTree().getDiff(resource);
+			if (diff != null) {
+				try {
+					context.markAsMerged(diff, true, new NullProgressMonitor());
+				} catch (CoreException exception) {
+					RefactoringUIPlugin.log(exception);
+				}
+			}
+		}
+		for (final Iterator iterator= fAddedFiles.iterator(); iterator.hasNext();) {
+			final IResource resource= (IResource) iterator.next();
+			final IDiff diff= context.getDiffTree().getDiff(resource);
+			if (diff != null) {
+				try {
+					context.markAsMerged(diff, true, new NullProgressMonitor());
+				} catch (CoreException exception) {
+					RefactoringUIPlugin.log(exception);
+				}
+			}
+		}
+		for (final Iterator iterator= fRemovedFiles.iterator(); iterator.hasNext();) {
 			final IResource resource= (IResource) iterator.next();
 			final IDiff diff= context.getDiffTree().getDiff(resource);
 			if (diff != null) {
