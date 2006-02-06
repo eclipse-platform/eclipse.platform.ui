@@ -40,6 +40,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -68,6 +69,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -252,12 +254,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private IAction fDoubleClickAction;
 
-	/**
-	 * the toolbar for the viewer
-	 * @since 3.2
-	 */
-	private ToolBar fToolbar;
-	
 	/**
 	 * the label for the viewer about items filtered
 	 * @since 3.2
@@ -573,44 +569,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		});
 		return (Composite)getTabViewer().getControl();
 	}
-		
-	/**
-	 * Creates the toolbar and actions for the New, Delete and Filter actions
-	 * @param parent the parent to add the toolbar to 
-	 * @return a new composite with the toolbar attached
-	 * 
-	 * @since 3.2
-	 */
-	protected Composite createToolbarArea(Composite parent) {
-		Font font = parent.getFont();
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		Composite toolbarcomp = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, true);
-		layout.horizontalSpacing = 0;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		toolbarcomp.setLayout(layout);
-		toolbarcomp.setLayoutData(gd);
-		toolbarcomp.setFont(font);
-		
-		fToolbar = new ToolBar(toolbarcomp, SWT.FLAT);
-		layout = new GridLayout(1, true);
-		layout.horizontalSpacing = 0;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		fToolbar.setLayout(layout);
-		fToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fToolbar.setFont(font);		
-		return toolbarcomp;
-	}
-	
+    
 	/**
 	 * Creates all of the actions for the toolbar
 	 * @param toolbar
 	 * @since 3.2
 	 */
-	protected void createToolbarActions() {
-		ToolBarManager tmanager = new ToolBarManager(fToolbar);
+	protected void createToolbarActions(ToolBarManager tmanager) {
 		tmanager.add(getNewAction());
 		tmanager.add(getDuplicateAction());
 		tmanager.add(getDeleteAction());
@@ -619,7 +584,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
-	
+    
 	/**
 	 * Creates the launch configuration selection area of the dialog.
 	 * This area displays a tree of launch configurations that the user
@@ -629,25 +594,27 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return the composite used for launch configuration selection area
 	 */ 
 	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
-		Font font = parent.getFont();
-		Composite comp = new Composite(parent, SWT.NONE);
-		//comp.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1);
-		setSelectionArea(comp);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.numColumns = 1;
-		comp.setLayout(layout);
-		comp.setFont(font);
+        Composite comp = new Composite(parent, SWT.FLAT);
+        GridLayout gridLayout = new GridLayout(1, false);
+        gridLayout.marginHeight = 0;
+        gridLayout.marginWidth = 0;
+        comp.setLayout(gridLayout);
+        comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
+        ToolBar tb= new ToolBar(viewForm, SWT.FLAT);
+        viewForm.setTopLeft(tb);
+        ToolBarManager toolBarManager= new ToolBarManager(tb);
+                
+		setSelectionArea(viewForm);
+        viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-	//	create the toolbar area
-		createToolbarArea(comp);
-
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
-		fLaunchConfigurationView.createLaunchDialogControl(comp);
+		fLaunchConfigurationView.createLaunchDialogControl(viewForm);
 		
 	//create toolbar actions, we reuse the actions form the view so we wait until after
 	//the view is created to add them to the toolbar
-		createToolbarActions();
+		createToolbarActions(toolBarManager);
 		
 		fDoubleClickAction = new Action() {
 			public void run() {
@@ -687,11 +654,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Control control = viewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
-		control.setFont(font);
+        viewForm.setContent(control);
 		
 		fFilteringLabel = new Label(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fFilteringLabel.setFont(font);
+		gd.horizontalIndent = 5;
 		fFilteringLabel.setLayoutData(gd);
 		refreshFilteringLabel();
 		
@@ -713,6 +680,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 			}
 		});
+        
+        Dialog.applyDialogFont(comp);
 		return comp;
 	}	
 	
