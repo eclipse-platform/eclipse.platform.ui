@@ -19,10 +19,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.menus.MenuElement;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
-import org.eclipse.ui.menus.IMenuContribution;
 
 /**
  * <p>
@@ -33,10 +31,8 @@ import org.eclipse.ui.menus.IMenuContribution;
  * currently visible.
  * </p>
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
+ * This class is not intended for use outside of the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
  * 
  * @since 3.2

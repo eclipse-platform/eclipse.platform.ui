@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Tests whether the "org.eclipse.ui.contexts" extension point can be added and
@@ -48,7 +48,7 @@ public final class ContextsExtensionDynamicTest extends DynamicTestCase {
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	protected final String getExtensionPoint() {
-		return IWorkbenchConstants.PL_CONTEXTS;
+		return IWorkbenchRegistryConstants.PL_CONTEXTS;
 	}
 
 	/**

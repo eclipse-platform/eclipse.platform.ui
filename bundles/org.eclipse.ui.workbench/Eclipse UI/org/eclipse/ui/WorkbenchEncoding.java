@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -97,7 +96,7 @@ public class WorkbenchEncoding {
 		EncodingsRegistryReader reader = new EncodingsRegistryReader(definedEncodings);
 
 		reader.readRegistry(Platform.getExtensionRegistry(), PlatformUI.PLUGIN_ID,
-				IWorkbenchConstants.PL_ENCODINGS);
+				IWorkbenchRegistryConstants.PL_ENCODINGS);
 
 		//Make it an array in case of concurrency issues with Iterators
 		String[] encodings = new String[definedEncodings.size()];

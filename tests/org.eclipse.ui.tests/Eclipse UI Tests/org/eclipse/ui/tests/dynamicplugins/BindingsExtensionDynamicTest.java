@@ -17,7 +17,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.contexts.IContextIds;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -53,7 +53,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	protected final String getExtensionPoint() {
-		return IWorkbenchConstants.PL_BINDINGS;
+		return IWorkbenchRegistryConstants.PL_BINDINGS;
 	}
 
 	/**

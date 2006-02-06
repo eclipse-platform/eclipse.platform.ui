@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.wizards;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Registry that contains wizards contributed via the <code>exportWizards</code>
@@ -46,7 +46,7 @@ public class ExportWizardRegistry extends AbstractExtensionWizardRegistry {
 	 * @see org.eclipse.ui.internal.wizards.AbstractExtensionWizardRegistry#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_EXPORT;
+		return IWorkbenchRegistryConstants.PL_EXPORT;
 	}
 
 	/* (non-Javadoc)

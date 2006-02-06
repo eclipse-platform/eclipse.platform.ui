@@ -47,7 +47,6 @@ import org.eclipse.ui.activities.ITriggerPointAdvisor;
 import org.eclipse.ui.activities.ITriggerPointManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -460,7 +459,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
      */
 	private IExtensionPoint getActivitySupportExtensionPoint() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
-				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
 	}
 
 	/* (non-Javadoc)

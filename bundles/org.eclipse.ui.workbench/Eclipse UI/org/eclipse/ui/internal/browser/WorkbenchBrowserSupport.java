@@ -25,7 +25,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
@@ -142,7 +141,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
                 IConfigurationElement[] elements = Platform
                         .getExtensionRegistry().getConfigurationElementsFor(
                                 PlatformUI.PLUGIN_ID,
-                                IWorkbenchConstants.PL_BROWSER_SUPPORT);
+                                IWorkbenchRegistryConstants.PL_BROWSER_SUPPORT);
 				IConfigurationElement elementToUse = null;
                 
                 if (desiredBrowserSupportId != null)
@@ -171,7 +170,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
             private IExtensionPoint getExtensionPoint() {
                 return Platform.getExtensionRegistry()
-						.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_BROWSER_SUPPORT);
+						.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_BROWSER_SUPPORT);
             }
 
 			private IConfigurationElement getElementToUse(

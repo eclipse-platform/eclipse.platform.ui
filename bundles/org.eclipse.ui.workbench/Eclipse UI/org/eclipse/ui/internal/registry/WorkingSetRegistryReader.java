@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -73,6 +72,6 @@ public class WorkingSetRegistryReader extends RegistryReader {
     public void readWorkingSets(IExtensionRegistry in, WorkingSetRegistry out) {
         registry = out;
         readRegistry(in, PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_WORKINGSETS);
+                IWorkbenchRegistryConstants.PL_WORKINGSETS);
     }
 }

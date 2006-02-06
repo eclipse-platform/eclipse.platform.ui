@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Displays system information about the eclipse application.  The content of
@@ -173,7 +174,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
         IConfigurationElement[] configElements = Platform
                 .getExtensionRegistry().getConfigurationElementsFor(
                         PlatformUI.PLUGIN_ID,
-                        IWorkbenchConstants.PL_SYSTEM_SUMMARY_SECTIONS);
+                        IWorkbenchRegistryConstants.PL_SYSTEM_SUMMARY_SECTIONS);
 
         Arrays.sort(configElements, new Comparator() {
             Collator collator = Collator.getInstance(Locale.getDefault());

@@ -413,7 +413,7 @@ public class PopupMenuExtender implements IMenuListener2,
 			if (extensionPoint.getNamespace().equals(
 					WorkbenchPlugin.PI_WORKBENCH)
 					&& extensionPoint.getSimpleIdentifier().equals(
-							IWorkbenchConstants.PL_POPUP_MENU)) {
+							IWorkbenchRegistryConstants.PL_POPUP_MENU)) {
 
 				boolean clearPopups = false;
 				IConfigurationElement [] elements = delta.getExtension().getConfigurationElements();

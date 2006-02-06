@@ -18,6 +18,7 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This class reads the registry for extensions that plug into
@@ -55,7 +56,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
             IEditorDescriptor desc) {
         ExternalContributor ext = null;
         readContributions(desc.getId(), TAG_CONTRIBUTION_TYPE,
-                IWorkbenchConstants.PL_EDITOR_ACTIONS);
+                IWorkbenchRegistryConstants.PL_EDITOR_ACTIONS);
         if (cache != null) {
             ext = new ExternalContributor(cache);
             cache = null;

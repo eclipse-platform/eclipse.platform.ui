@@ -37,35 +37,23 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.commands.CommandImageManager;
 import org.eclipse.jface.commands.RadioState;
 import org.eclipse.jface.commands.ToggleState;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.jface.menus.IWidget;
-import org.eclipse.jface.menus.LeafLocationElement;
-import org.eclipse.jface.menus.LocationElement;
-import org.eclipse.jface.menus.SActionSet;
-import org.eclipse.jface.menus.SBar;
-import org.eclipse.jface.menus.SGroup;
-import org.eclipse.jface.menus.SItem;
-import org.eclipse.jface.menus.SLocation;
-import org.eclipse.jface.menus.SMenu;
-import org.eclipse.jface.menus.SReference;
-import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.ActionExpression;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.commands.CommandImageManager;
+import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.expressions.LegacyActionExpressionWrapper;
 import org.eclipse.ui.internal.expressions.LegacyEditorContributionExpression;
 import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.menus.IMenuContribution;
-import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
@@ -76,12 +64,6 @@ import org.eclipse.ui.menus.IMenuService;
  * <p>
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
  * </p>
  * 
  * @since 3.2
@@ -176,7 +158,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement parentElement, final String parentId,
 			final List warningsToLog) {
 		final IConfigurationElement[] visibilityElements = parentElement
-				.getChildren(ELEMENT_VISIBILITY);
+				.getChildren(TAG_VISIBILITY);
 		if ((visibilityElements == null) || (visibilityElements.length == 0)) {
 			return null;
 		}
@@ -293,9 +275,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element,
 			final ParameterizedCommand command) {
 		// Figure out which accelerator text to use.
-		String acceleratorText = readOptional(element, ATTRIBUTE_ACCELERATOR);
+		String acceleratorText = readOptional(element, ATT_ACCELERATOR);
 		if (acceleratorText == null) {
-			final String label = readOptional(element, ATTRIBUTE_LABEL);
+			final String label = readOptional(element, ATT_LABEL);
 			if (label != null) {
 				acceleratorText = LegacyActionTools
 						.extractAcceleratorText(label);
@@ -349,7 +331,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final ParameterizedCommand convertActionToCommand(
 			final IConfigurationElement element, final String primaryId,
 			final String secondaryId, final List warningsToLog) {
-		String commandId = readOptional(element, ATTRIBUTE_DEFINITION_ID);
+		String commandId = readOptional(element, ATT_DEFINITION_ID);
 		Command command = null;
 		if (commandId != null) {
 			command = commandService.getCommand(commandId);
@@ -363,7 +345,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 
 			// Read the label attribute.
-			label = readRequired(element, ATTRIBUTE_LABEL, warningsToLog,
+			label = readRequired(element, ATT_LABEL, warningsToLog,
 					"Actions require a non-empty label or definitionId", //$NON-NLS-1$
 					commandId);
 			if (label == null) {
@@ -374,7 +356,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 * Read the tooltip attribute. The tooltip is really the description
 			 * of the command.
 			 */
-			final String tooltip = readOptional(element, ATTRIBUTE_TOOLTIP);
+			final String tooltip = readOptional(element, ATT_TOOLTIP);
 
 			// Define the command.
 			command = commandService.getCommand(commandId);
@@ -384,19 +366,17 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			command.define(name, tooltip, category, null);
 
 			// TODO Decide the command state.
-			final String style = readOptional(element, ATTRIBUTE_STYLE);
+			final String style = readOptional(element, ATT_STYLE);
 			if (STYLE_RADIO.equals(style)) {
 				final State state = new RadioState();
 				// TODO How to set the id?
-				final boolean checked = readBoolean(element, ATTRIBUTE_STATE,
-						false);
+				final boolean checked = readBoolean(element, ATT_STATE, false);
 				state.setValue((checked) ? Boolean.TRUE : Boolean.FALSE);
 				command.addState(IMenuStateIds.STYLE, state);
 
 			} else if (STYLE_TOGGLE.equals(style)) {
 				final State state = new ToggleState();
-				final boolean checked = readBoolean(element, ATTRIBUTE_STATE,
-						false);
+				final boolean checked = readBoolean(element, ATT_STATE, false);
 				state.setValue((checked) ? Boolean.TRUE : Boolean.FALSE);
 				command.addState(IMenuStateIds.STYLE, state);
 			}
@@ -424,10 +404,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		final String commandId = command.getId();
 
 		// Read the icon attributes.
-		final String icon = readOptional(element, ATTRIBUTE_ICON);
-		final String disabledIcon = readOptional(element,
-				ATTRIBUTE_DISABLED_ICON);
-		final String hoverIcon = readOptional(element, ATTRIBUTE_HOVER_ICON);
+		final String icon = readOptional(element, ATT_ICON);
+		final String disabledIcon = readOptional(element, ATT_DISABLEDICON);
+		final String hoverIcon = readOptional(element, ATT_HOVERICON);
 
 		// Check if at least one is defined.
 		if ((icon == null) && (disabledIcon == null) && (hoverIcon == null)) {
@@ -493,19 +472,19 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		final String commandId = command.getId();
 
 		// Read the id attribute.
-		final String id = readRequired(element, ATTRIBUTE_ID, warningsToLog,
+		final String id = readRequired(element, ATT_ID, warningsToLog,
 				"Actions require an id", commandId); //$NON-NLS-1$
 		if (id == null) {
 			return;
 		}
 
 		// Figure out the mnemonic, if any.
-		final String label = readOptional(element, ATTRIBUTE_LABEL);
+		final String label = readOptional(element, ATT_LABEL);
 		final char mnemonic = LegacyActionTools.extractMnemonic(label);
 
 		// Count how many locations there will be.
-		final String menubarPath = readOptional(element, ATTRIBUTE_MENUBAR_PATH);
-		final String toolbarPath = readOptional(element, ATTRIBUTE_TOOLBAR_PATH);
+		final String menubarPath = readOptional(element, ATT_MENUBAR_PATH);
+		final String toolbarPath = readOptional(element, ATT_TOOLBAR_PATH);
 		int locationCount = 0;
 		if (menubarPath != null) {
 			locationCount++;
@@ -539,7 +518,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		if (isPulldown(element)) {
 			final SWidget widget = menuService.getWidget(id);
 			final IWidget proxy = new PulldownDelegateWidgetProxy(element,
-					ATTRIBUTE_CLASS);
+					ATT_CLASS);
 			widget.define(proxy, locations);
 			/*
 			 * TODO Cannot duplicate the class instance between handler and item
@@ -561,13 +540,13 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		return !((event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-				IWorkbenchConstants.PL_ACTION_SETS).length == 0)
+				IWorkbenchRegistryConstants.PL_ACTION_SETS).length == 0)
 				&& (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_EDITOR_ACTIONS).length == 0)
+						IWorkbenchRegistryConstants.PL_EDITOR_ACTIONS).length == 0)
 				&& (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_POPUP_MENU).length == 0) && (event
+						IWorkbenchRegistryConstants.PL_POPUP_MENU).length == 0) && (event
 				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_VIEW_ACTIONS).length == 0));
+						IWorkbenchRegistryConstants.PL_VIEW_ACTIONS).length == 0));
 	}
 
 	public final void dispose() {
@@ -606,7 +585,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		for (int i = 0; i < actionSetsExtensionPoint.length; i++) {
 			final IConfigurationElement element = actionSetsExtensionPoint[i];
 			final String name = element.getName();
-			if (ELEMENT_ACTION_SET.equals(name)) {
+			if (TAG_ACTION_SET.equals(name)) {
 				addElementToIndexedArray(element, indexedConfigurationElements,
 						INDEX_ACTION_SETS, actionSetCount++);
 			}
@@ -618,7 +597,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		for (int i = 0; i < editorActionsExtensionPoint.length; i++) {
 			final IConfigurationElement element = editorActionsExtensionPoint[i];
 			final String name = element.getName();
-			if (ELEMENT_EDITOR_CONTRIBUTION.equals(name)) {
+			if (TAG_EDITOR_CONTRIBUTION.equals(name)) {
 				addElementToIndexedArray(element, indexedConfigurationElements,
 						INDEX_EDITOR_CONTRIBUTIONS, editorContributionCount++);
 			}
@@ -630,10 +609,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		for (int i = 0; i < popupMenusExtensionPoint.length; i++) {
 			final IConfigurationElement element = popupMenusExtensionPoint[i];
 			final String name = element.getName();
-			if (ELEMENT_OBJECT_CONTRIBUTION.equals(name)) {
+			if (TAG_OBJECT_CONTRIBUTION.equals(name)) {
 				addElementToIndexedArray(element, indexedConfigurationElements,
 						INDEX_OBJECT_CONTRIBUTIONS, objectContributionCount++);
-			} else if (ELEMENT_VIEWER_CONTRIBUTION.equals(name)) {
+			} else if (TAG_VIEWER_CONTRIBUTION.equals(name)) {
 				addElementToIndexedArray(element, indexedConfigurationElements,
 						INDEX_VIEWER_CONTRIBUTIONS, viewerContributionCount++);
 			}
@@ -645,7 +624,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		for (int i = 0; i < viewActionsExtensionPoint.length; i++) {
 			final IConfigurationElement element = viewActionsExtensionPoint[i];
 			final String name = element.getName();
-			if (ELEMENT_VIEW_CONTRIBUTION.equals(name)) {
+			if (TAG_VIEW_CONTRIBUTION.equals(name)) {
 				addElementToIndexedArray(element, indexedConfigurationElements,
 						INDEX_VIEW_CONTRIBUTIONS, viewContributionCount++);
 			}
@@ -707,8 +686,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 * We might need the identifier to generate the command, so we'll
 			 * read it out now.
 			 */
-			final String id = readRequired(element, ATTRIBUTE_ID,
-					warningsToLog, "Actions require an id"); //$NON-NLS-1$
+			final String id = readRequired(element, ATT_ID, warningsToLog,
+					"Actions require an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
@@ -767,13 +746,13 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final Expression visibleWhenExpression) {
 		// Read its child elements.
 		final IConfigurationElement[] actionElements = element
-				.getChildren(ELEMENT_ACTION);
+				.getChildren(TAG_ACTION);
 		final SReference[] itemReferences = readActions(id, actionElements,
 				warningsToLog, locationInfo, visibleWhenExpression);
 
 		// Read out the menus and groups, if any.
 		final IConfigurationElement[] menuElements = element
-				.getChildren(ELEMENT_MENU);
+				.getChildren(TAG_MENU);
 		if ((menuElements != null) && (menuElements.length > 0)) {
 			final SReference[] menuAndGroupReferences = readMenusAndGroups(
 					menuElements, id, warningsToLog, locationInfo,
@@ -816,25 +795,23 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element = configurationElements[i];
 
 			// Read the action set identifier.
-			final String id = readRequired(element, ATTRIBUTE_ID,
-					warningsToLog, "Action sets need an id"); //$NON-NLS-1$
+			final String id = readRequired(element, ATT_ID, warningsToLog,
+					"Action sets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the label.
-			final String label = readRequired(element, ATTRIBUTE_LABEL,
+			final String label = readRequired(element, ATT_LABEL,
 					warningsToLog, "Actions set need a label", //$NON-NLS-1$
 					id);
 			if (label == null)
 				continue;
 
 			// Read the description.
-			final String description = readOptional(element,
-					ATTRIBUTE_DESCRIPTION);
+			final String description = readOptional(element, ATT_DESCRIPTION);
 
 			// Read whether the action set should be visible by default.
-			final boolean visible = readBoolean(element, ATTRIBUTE_VISIBLE,
-					false);
+			final boolean visible = readBoolean(element, ATT_VISIBLE, false);
 
 			// Read all of the child elements.
 			final SReference[] references = readActionsAndMenus(element, id,
@@ -873,8 +850,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element = configurationElements[i];
 
 			// Read the editor contribution identifier.
-			final String id = readRequired(element, ATTRIBUTE_ID,
-					warningsToLog, "Editor contributions need an id"); //$NON-NLS-1$
+			final String id = readRequired(element, ATT_ID, warningsToLog,
+					"Editor contributions need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
@@ -882,7 +859,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 * Read the target id. This is the identifier of the editor with
 			 * which these contributions are associated.
 			 */
-			final String targetId = readRequired(element, ATTRIBUTE_TARGET_ID,
+			final String targetId = readRequired(element, ATT_TARGET_ID,
 					warningsToLog, "Editor contributions need a target id", id); //$NON-NLS-1$
 			if (targetId == null)
 				continue;
@@ -935,8 +912,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element = elements[i];
 
 			// Read the name attribute.
-			final String name = readRequired(element, ATTRIBUTE_NAME,
-					warningsToLog, "Groups require a name"); //$NON-NLS-1$
+			final String name = readRequired(element, ATT_NAME, warningsToLog,
+					"Groups require a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
@@ -1017,15 +994,15 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement menuElement = menuElements[i];
 
 			// Read the id attribute.
-			final String menuId = readRequired(menuElement, ATTRIBUTE_ID,
+			final String menuId = readRequired(menuElement, ATT_ID,
 					warningsToLog, "Menus require an id", contributionId); //$NON-NLS-1$
 			if (menuId == null) {
 				continue;
 			}
 
 			// Read the label attribute, and extract the mnemonic.
-			String label = readRequired(menuElement, ATTRIBUTE_LABEL,
-					warningsToLog, "Menus require a label", menuId); //$NON-NLS-1$
+			String label = readRequired(menuElement, ATT_LABEL, warningsToLog,
+					"Menus require a label", menuId); //$NON-NLS-1$
 			if (label == null) {
 				continue;
 			}
@@ -1033,7 +1010,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			label = LegacyActionTools.removeMnemonics(label);
 
 			// Read the path attribute.
-			final String path = readOptional(menuElement, ATTRIBUTE_PATH);
+			final String path = readOptional(menuElement, ATT_PATH);
 			final String subpath;
 			if (path == null) {
 				subpath = menuId;
@@ -1043,7 +1020,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read the separator elements. There must be at least one.
 			final IConfigurationElement[] separatorElements = menuElement
-					.getChildren(ELEMENT_SEPARATOR);
+					.getChildren(TAG_SEPARATOR);
 			final SReference[] separatorReferences = readGroups(
 					separatorElements, warningsToLog, subpath, locationInfo,
 					visibleWhenExpression, true);
@@ -1053,7 +1030,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read the group elements.
 			final IConfigurationElement[] groupElements = menuElement
-					.getChildren(ELEMENT_GROUP);
+					.getChildren(TAG_GROUP_MARKER);
 			final SReference[] groupReferences = readGroups(groupElements,
 					warningsToLog, subpath, locationInfo,
 					visibleWhenExpression, false);
@@ -1097,25 +1074,25 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element = configurationElements[i];
 
 			// Read the object contribution identifier.
-			final String id = readRequired(element, ATTRIBUTE_ID,
-					warningsToLog, "Object contributions need an id"); //$NON-NLS-1$
+			final String id = readRequired(element, ATT_ID, warningsToLog,
+					"Object contributions need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the object class. This influences the visibility.
-			final String objectClass = readRequired(element,
-					ATTRIBUTE_OBJECT_CLASS, warningsToLog,
+			final String objectClass = readRequired(element, ATT_OBJECTCLASS,
+					warningsToLog,
 					"Object contributions need an object class", id); //$NON-NLS-1$
 			if (objectClass == null)
 				continue;
 
 			// TODO Read the name filter. This influences the visibility.
 			// final String nameFilter = readOptional(element,
-			// ATTRIBUTE_NAME_FILTER);
+			// ATT_NAME_FILTER);
 
 			// TODO Read the object class. This influences the visibility.
 			// final boolean adaptable = readBoolean(element,
-			// ATTRIBUTE_ADAPTABLE,
+			// ATT_ADAPTABLE,
 			// false);
 
 			final LegacyLocationInfo locationInfo = new LegacyLocationInfo();
@@ -1158,8 +1135,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element = configurationElements[i];
 
 			// Read the view contribution identifier.
-			final String id = readRequired(element, ATTRIBUTE_ID,
-					warningsToLog, "View contributions need an id"); //$NON-NLS-1$
+			final String id = readRequired(element, ATT_ID, warningsToLog,
+					"View contributions need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
@@ -1167,7 +1144,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 * Read the target id. This is the identifier of the view with which
 			 * these contributions are associated.
 			 */
-			final String targetId = readRequired(element, ATTRIBUTE_TARGET_ID,
+			final String targetId = readRequired(element, ATT_TARGET_ID,
 					warningsToLog, "View contributions need a target id", id); //$NON-NLS-1$
 			if (targetId == null)
 				continue;
@@ -1206,8 +1183,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element = configurationElements[i];
 
 			// Read the viewer contribution identifier.
-			final String id = readRequired(element, ATTRIBUTE_ID,
-					warningsToLog, "Viewer contributions need an id"); //$NON-NLS-1$
+			final String id = readRequired(element, ATT_ID, warningsToLog,
+					"Viewer contributions need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
@@ -1215,7 +1192,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 * Read the target id. This is the identifier of the view with which
 			 * these contributions are associated.
 			 */
-			final String targetId = readRequired(element, ATTRIBUTE_TARGET_ID,
+			final String targetId = readRequired(element, ATT_TARGET_ID,
 					warningsToLog, "Viewer contributions need a target id", id); //$NON-NLS-1$
 			if (targetId == null)
 				continue;

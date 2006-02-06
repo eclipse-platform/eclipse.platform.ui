@@ -41,10 +41,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * the proxy to instantiate the proxied delegate.
  * </p>
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
+ * This class is not intended for use outside of the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
  * 
  * @since 3.2
@@ -214,7 +212,7 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	}
 
 	public void fill(CoolBar parent, int index) {
-		// Does nothing.  Not supported.
+		// Does nothing. Not supported.
 	}
 
 	private final DisposeListener disposeListener = new DisposeListener() {
@@ -252,11 +250,11 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 		}
 
 		menuItem.addDisposeListener(disposeListener);
-		
+
 		// TODO Needs a way to be linked to a command.
-		//menuItem.addListener(SWT.Selection, getMenuItemListener());
-		//if (action.getHelpListener() != null)
-		//	menuItem.addHelpListener(action.getHelpListener());
+		// menuItem.addListener(SWT.Selection, getMenuItemListener());
+		// if (action.getHelpListener() != null)
+		// menuItem.addHelpListener(action.getHelpListener());
 
 		// TODO Needs a way of updating itself
 		// update(null);
@@ -271,14 +269,14 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 			toolItem = new ToolItem(parent, SWT.DROP_DOWN);
 		widget = toolItem;
 		toolItem.setData(this);
-		
+
 		toolItem.addDisposeListener(disposeListener);
-		
+
 		// TODO Needs a way to be linked to a command.
 		// TODO The menu is created on selection.
-		//menuItem.addListener(SWT.Selection, getMenuItemListener());
-		//if (action.getHelpListener() != null)
-		//	menuItem.addHelpListener(action.getHelpListener());
+		// menuItem.addListener(SWT.Selection, getMenuItemListener());
+		// if (action.getHelpListener() != null)
+		// menuItem.addHelpListener(action.getHelpListener());
 
 		// TODO Needs a way of updating itself
 		// update(null);

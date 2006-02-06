@@ -23,7 +23,7 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -59,7 +59,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	protected final String getExtensionPoint() {
-		return IWorkbenchConstants.PL_COMMANDS;
+		return IWorkbenchRegistryConstants.PL_COMMANDS;
 	}
 
 	/**

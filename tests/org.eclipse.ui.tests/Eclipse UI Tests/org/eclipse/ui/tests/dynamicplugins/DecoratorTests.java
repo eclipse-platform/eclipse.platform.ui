@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.1
@@ -66,7 +66,7 @@ public class DecoratorTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_DECORATORS;
+		return IWorkbenchRegistryConstants.PL_DECORATORS;
 	}
 
 	/* (non-Javadoc)

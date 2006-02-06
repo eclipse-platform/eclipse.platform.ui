@@ -56,6 +56,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
@@ -583,7 +584,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		// update the sorted list of factories
 		presentationFactories = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_PRESENTATION_FACTORIES);
+						IWorkbenchRegistryConstants.PL_PRESENTATION_FACTORIES);
 
 		// sort the array by name
 		Arrays.sort(presentationFactories, new Comparator() {

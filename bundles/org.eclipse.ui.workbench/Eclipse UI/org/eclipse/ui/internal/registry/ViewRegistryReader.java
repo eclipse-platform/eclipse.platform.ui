@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -104,6 +103,6 @@ public class ViewRegistryReader extends RegistryReader {
     public void readViews(IExtensionRegistry in, ViewRegistry out) {
         // this does not seem to really ever be throwing an the exception
         viewRegistry = out;
-        readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
+        readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_VIEWS);
     }
 }

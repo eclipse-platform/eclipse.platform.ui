@@ -53,9 +53,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.PreferencePersistence;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -371,11 +371,11 @@ final class BindingPersistence extends PreferencePersistence {
 		// A legacy preference XML memento.
 		if (preferences != null) {
 			final IMemento[] preferenceMementos = preferences
-					.getChildren(ELEMENT_ACTIVE_KEY_CONFIGURATION);
+					.getChildren(TAG_ACTIVE_KEY_CONFIGURATION);
 			int preferenceMementoCount = preferenceMementos.length;
 			for (int i = preferenceMementoCount - 1; i >= 0; i--) {
 				final IMemento memento = preferenceMementos[i];
-				String id = memento.getString(ATTRIBUTE_KEY_CONFIGURATION_ID);
+				String id = memento.getString(ATT_KEY_CONFIGURATION_ID);
 				if (id != null) {
 					try {
 						bindingManager.setActiveScheme(bindingManager
@@ -406,7 +406,7 @@ final class BindingPersistence extends PreferencePersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			String id = configurationElement
-					.getAttribute(ATTRIBUTE_KEY_CONFIGURATION_ID);
+					.getAttribute(ATT_KEY_CONFIGURATION_ID);
 			if (id != null) {
 				try {
 					bindingManager
@@ -417,7 +417,7 @@ final class BindingPersistence extends PreferencePersistence {
 				}
 			}
 
-			id = configurationElement.getAttribute(ATTRIBUTE_VALUE);
+			id = configurationElement.getAttribute(ATT_VALUE);
 			if (id != null) {
 				try {
 					bindingManager
@@ -460,15 +460,15 @@ final class BindingPersistence extends PreferencePersistence {
 
 		if (preferences != null) {
 			final IMemento[] preferenceMementos = preferences
-					.getChildren(ELEMENT_KEY_BINDING);
+					.getChildren(TAG_KEY_BINDING);
 			int preferenceMementoCount = preferenceMementos.length;
 			for (int i = preferenceMementoCount - 1; i >= 0; i--) {
 				final IMemento memento = preferenceMementos[i];
 
 				// Read out the command id.
-				String commandId = readOptional(memento, ATTRIBUTE_COMMAND_ID);
+				String commandId = readOptional(memento, ATT_COMMAND_ID);
 				if (commandId == null) {
-					commandId = readOptional(memento, ATTRIBUTE_COMMAND);
+					commandId = readOptional(memento, ATT_COMMAND);
 				}
 				final Command command;
 				if (commandId != null) {
@@ -479,9 +479,9 @@ final class BindingPersistence extends PreferencePersistence {
 
 				// Read out the scheme id.
 				String schemeId = readOptional(memento,
-						ATTRIBUTE_KEY_CONFIGURATION_ID);
+						ATT_KEY_CONFIGURATION_ID);
 				if (schemeId == null) {
-					schemeId = readRequired(memento, ATTRIBUTE_CONFIGURATION,
+					schemeId = readRequired(memento, ATT_CONFIGURATION,
 							warningsToLog,
 							"Key bindings need a scheme or key configuration"); //$NON-NLS-1$
 					if (schemeId == null) {
@@ -490,9 +490,9 @@ final class BindingPersistence extends PreferencePersistence {
 				}
 
 				// Read out the context id.
-				String contextId = readOptional(memento, ATTRIBUTE_CONTEXT_ID);
+				String contextId = readOptional(memento, ATT_CONTEXT_ID);
 				if (contextId == null) {
-					contextId = readOptional(memento, ATTRIBUTE_SCOPE);
+					contextId = readOptional(memento, ATT_SCOPE);
 				}
 				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 					contextId = null;
@@ -502,11 +502,10 @@ final class BindingPersistence extends PreferencePersistence {
 				}
 
 				// Read out the key sequence.
-				String keySequenceText = readOptional(memento,
-						ATTRIBUTE_KEY_SEQUENCE);
+				String keySequenceText = readOptional(memento, ATT_KEY_SEQUENCE);
 				KeySequence keySequence = null;
 				if (keySequenceText == null) {
-					keySequenceText = readRequired(memento, ATTRIBUTE_STRING,
+					keySequenceText = readRequired(memento, ATT_STRING,
 							warningsToLog,
 							"Key bindings need a key sequence or string"); //$NON-NLS-1$
 					if (keySequenceText == null) {
@@ -537,9 +536,8 @@ final class BindingPersistence extends PreferencePersistence {
 				}
 
 				// Read out the locale and platform.
-				final String locale = readOptional(memento, ATTRIBUTE_LOCALE);
-				final String platform = readOptional(memento,
-						ATTRIBUTE_PLATFORM);
+				final String locale = readOptional(memento, ATT_LOCALE);
+				final String platform = readOptional(memento, ATT_PLATFORM);
 
 				// Read out the parameters
 				final ParameterizedCommand parameterizedCommand;
@@ -596,10 +594,9 @@ final class BindingPersistence extends PreferencePersistence {
 			 * errors.
 			 */
 			String commandId = configurationElement
-					.getAttribute(ATTRIBUTE_COMMAND_ID);
+					.getAttribute(ATT_COMMAND_ID);
 			if ((commandId == null) || (commandId.length() == 0)) {
-				commandId = configurationElement
-						.getAttribute(ATTRIBUTE_COMMAND);
+				commandId = configurationElement.getAttribute(ATT_COMMAND);
 			}
 			if ((commandId != null) && (commandId.length() == 0)) {
 				commandId = null;
@@ -619,14 +616,13 @@ final class BindingPersistence extends PreferencePersistence {
 			}
 
 			// Read out the scheme id.
-			String schemeId = configurationElement
-					.getAttribute(ATTRIBUTE_SCHEME_ID);
+			String schemeId = configurationElement.getAttribute(ATT_SCHEME_ID);
 			if ((schemeId == null) || (schemeId.length() == 0)) {
 				schemeId = configurationElement
-						.getAttribute(ATTRIBUTE_KEY_CONFIGURATION_ID);
+						.getAttribute(ATT_KEY_CONFIGURATION_ID);
 				if ((schemeId == null) || (schemeId.length() == 0)) {
 					schemeId = configurationElement
-							.getAttribute(ATTRIBUTE_CONFIGURATION);
+							.getAttribute(ATT_CONFIGURATION);
 					if ((schemeId == null) || (schemeId.length() == 0)) {
 						// The scheme id should never be null. This is invalid.
 						addWarning(warningsToLog, "Key bindings need a scheme", //$NON-NLS-1$
@@ -638,11 +634,11 @@ final class BindingPersistence extends PreferencePersistence {
 
 			// Read out the context id.
 			String contextId = configurationElement
-					.getAttribute(ATTRIBUTE_CONTEXT_ID);
+					.getAttribute(ATT_CONTEXT_ID);
 			if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 				contextId = null;
 			} else if ((contextId == null) || (contextId.length() == 0)) {
-				contextId = configurationElement.getAttribute(ATTRIBUTE_SCOPE);
+				contextId = configurationElement.getAttribute(ATT_SCOPE);
 				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 					contextId = null;
 				}
@@ -654,14 +650,13 @@ final class BindingPersistence extends PreferencePersistence {
 			// Read out the key sequence.
 			KeySequence keySequence = null;
 			String keySequenceText = configurationElement
-					.getAttribute(ATTRIBUTE_SEQUENCE);
+					.getAttribute(ATT_SEQUENCE);
 			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
 				keySequenceText = configurationElement
-						.getAttribute(ATTRIBUTE_KEY_SEQUENCE);
+						.getAttribute(ATT_KEY_SEQUENCE);
 			}
 			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
-				keySequenceText = configurationElement
-						.getAttribute(ATTRIBUTE_STRING);
+				keySequenceText = configurationElement.getAttribute(ATT_STRING);
 				if ((keySequenceText == null)
 						|| (keySequenceText.length() == 0)) {
 					// The key sequence should never be null. This is pointless
@@ -704,12 +699,11 @@ final class BindingPersistence extends PreferencePersistence {
 			}
 
 			// Read out the locale and platform.
-			String locale = configurationElement.getAttribute(ATTRIBUTE_LOCALE);
+			String locale = configurationElement.getAttribute(ATT_LOCALE);
 			if ((locale != null) && (locale.length() == 0)) {
 				locale = null;
 			}
-			String platform = configurationElement
-					.getAttribute(ATTRIBUTE_PLATFORM);
+			String platform = configurationElement.getAttribute(ATT_PLATFORM);
 			if ((platform != null) && (platform.length() == 0)) {
 				platform = null;
 			}
@@ -769,23 +763,22 @@ final class BindingPersistence extends PreferencePersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the attributes.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Schemes need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
-			final String name = readRequired(configurationElement,
-					ATTRIBUTE_NAME, warningsToLog, "A scheme needs a name", id); //$NON-NLS-1$
+			final String name = readRequired(configurationElement, ATT_NAME,
+					warningsToLog, "A scheme needs a name", id); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
 			final String description = readOptional(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+					ATT_DESCRIPTION);
 
-			String parentId = configurationElement
-					.getAttribute(ATTRIBUTE_PARENT_ID);
+			String parentId = configurationElement.getAttribute(ATT_PARENT_ID);
 			if ((parentId != null) && (parentId.length() == 0)) {
-				parentId = configurationElement.getAttribute(ATTRIBUTE_PARENT);
+				parentId = configurationElement.getAttribute(ATT_PARENT);
 				if ((parentId != null) && (parentId.length() == 0)) {
 					parentId = null;
 				}
@@ -898,8 +891,9 @@ final class BindingPersistence extends PreferencePersistence {
 				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
 		if ((defaultSchemeId == null) ? (schemeId != null) : (!defaultSchemeId
 				.equals(schemeId))) {
-			final IMemento child = memento.createChild(ELEMENT_ACTIVE_SCHEME);
-			child.putString(ATTRIBUTE_KEY_CONFIGURATION_ID, schemeId);
+			final IMemento child = memento
+					.createChild(TAG_ACTIVE_KEY_CONFIGURATION);
+			child.putString(ATT_KEY_CONFIGURATION_ID, schemeId);
 		}
 	}
 
@@ -915,20 +909,18 @@ final class BindingPersistence extends PreferencePersistence {
 	 */
 	private static final void writeBindingToPreferences(final IMemento parent,
 			final Binding binding) {
-		final IMemento element = parent.createChild(ELEMENT_BINDING);
-		element.putString(ATTRIBUTE_CONTEXT_ID, binding.getContextId());
+		final IMemento element = parent.createChild(TAG_KEY_BINDING);
+		element.putString(ATT_CONTEXT_ID, binding.getContextId());
 		final ParameterizedCommand parameterizedCommand = binding
 				.getParameterizedCommand();
 		final String commandId = (parameterizedCommand == null) ? null
 				: parameterizedCommand.getId();
-		element.putString(ATTRIBUTE_COMMAND_ID, commandId);
-		element
-				.putString(ATTRIBUTE_KEY_CONFIGURATION_ID, binding
-						.getSchemeId());
-		element.putString(ATTRIBUTE_KEY_SEQUENCE, binding.getTriggerSequence()
+		element.putString(ATT_COMMAND_ID, commandId);
+		element.putString(ATT_KEY_CONFIGURATION_ID, binding.getSchemeId());
+		element.putString(ATT_KEY_SEQUENCE, binding.getTriggerSequence()
 				.toString());
-		element.putString(ATTRIBUTE_LOCALE, binding.getLocale());
-		element.putString(ATTRIBUTE_PLATFORM, binding.getPlatform());
+		element.putString(ATT_LOCALE, binding.getLocale());
+		element.putString(ATT_PLATFORM, binding.getPlatform());
 		if (parameterizedCommand != null) {
 			final Map parameterizations = parameterizedCommand
 					.getParameterMap();
@@ -939,9 +931,9 @@ final class BindingPersistence extends PreferencePersistence {
 				final String id = (String) entry.getKey();
 				final String value = (String) entry.getValue();
 				final IMemento parameterElement = element
-						.createChild(ELEMENT_PARAMETER);
-				parameterElement.putString(ATTRIBUTE_ID, id);
-				parameterElement.putString(ATTRIBUTE_VALUE, value);
+						.createChild(TAG_PARAMETER);
+				parameterElement.putString(ATT_ID, id);
+				parameterElement.putString(ATT_VALUE, value);
 			}
 		}
 	}
@@ -976,28 +968,31 @@ final class BindingPersistence extends PreferencePersistence {
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] acceleratorConfigurationDeltas = event
-				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
+				.getExtensionDeltas(
+						PlatformUI.PLUGIN_ID,
+						IWorkbenchRegistryConstants.PL_ACCELERATOR_CONFIGURATIONS);
 		if (acceleratorConfigurationDeltas.length == 0) {
 			final IExtensionDelta[] bindingDeltas = event.getExtensionDeltas(
-					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_BINDINGS);
+					PlatformUI.PLUGIN_ID,
+					IWorkbenchRegistryConstants.PL_BINDINGS);
 			if (bindingDeltas.length == 0) {
 				final IExtensionDelta[] commandDeltas = event
 						.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-								IWorkbenchConstants.PL_COMMANDS);
+								IWorkbenchRegistryConstants.PL_COMMANDS);
 				if (commandDeltas.length == 0) {
 					final IExtensionDelta[] acceleratorScopeDeltas = event
-							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-									IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+							.getExtensionDeltas(
+									PlatformUI.PLUGIN_ID,
+									IWorkbenchRegistryConstants.PL_ACCELERATOR_SCOPES);
 					if (acceleratorScopeDeltas.length == 0) {
 						final IExtensionDelta[] contextDeltas = event
 								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-										IWorkbenchConstants.PL_CONTEXTS);
+										IWorkbenchRegistryConstants.PL_CONTEXTS);
 						if (contextDeltas.length == 0) {
 							final IExtensionDelta[] actionDefinitionDeltas = event
 									.getExtensionDeltas(
 											PlatformUI.PLUGIN_ID,
-											IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+											IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS);
 							if (actionDefinitionDeltas.length == 0) {
 								return false;
 							}
@@ -1036,13 +1031,13 @@ final class BindingPersistence extends PreferencePersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
-			if (ELEMENT_KEY.equals(name)) {
+			if (TAG_KEY.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
 			} else
 			// Check to see if it is a scheme definition.
-			if (ELEMENT_SCHEME.equals(name)) {
+			if (TAG_SCHEME.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
 						schemeDefinitionCount++);
@@ -1058,19 +1053,19 @@ final class BindingPersistence extends PreferencePersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
-			if (ELEMENT_KEY_BINDING.equals(name)) {
+			if (TAG_KEY_BINDING.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
 
 				// Check if it is a scheme defintion.
-			} else if (ELEMENT_KEY_CONFIGURATION.equals(name)) {
+			} else if (TAG_KEY_CONFIGURATION.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
 						schemeDefinitionCount++);
 
 				// Check if it is an active scheme identifier.
-			} else if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
+			} else if (TAG_ACTIVE_KEY_CONFIGURATION.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
 						activeSchemeElementCount++);
@@ -1088,7 +1083,7 @@ final class BindingPersistence extends PreferencePersistence {
 			final String name = configurationElement.getName();
 
 			// Check if the name matches the accelerator configuration element
-			if (ELEMENT_ACCELERATOR_CONFIGURATION.equals(name)) {
+			if (TAG_ACCELERATOR_CONFIGURATION.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
 						schemeDefinitionCount++);

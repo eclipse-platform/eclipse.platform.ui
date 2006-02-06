@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This class reads the registry for extensions that plug into
@@ -71,7 +72,7 @@ public class ViewActionBuilder extends PluginActionBuilder {
     public void readActionExtensions(IViewPart viewPart) {
         targetPart = viewPart;
         readContributions(viewPart.getSite().getId(), TAG_CONTRIBUTION_TYPE,
-                IWorkbenchConstants.PL_VIEW_ACTIONS);
+                IWorkbenchRegistryConstants.PL_VIEW_ACTIONS);
         contributeToPart(targetPart);
     }
 }

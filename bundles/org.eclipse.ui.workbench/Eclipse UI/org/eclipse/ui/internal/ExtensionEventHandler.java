@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 import org.eclipse.ui.internal.themes.ColorDefinition;
@@ -75,21 +76,21 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             for (int i = 0; i < delta.length; i++) {
                 id = delta[i].getExtensionPoint().getSimpleIdentifier();
                 if (delta[i].getKind() == IExtensionDelta.ADDED) {
-                    if (id.equals(IWorkbenchConstants.PL_ACTION_SETS))
+                    if (id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS))
                         appearList.add(0, delta[i]);
-                    else if (!id.equals(IWorkbenchConstants.PL_PERSPECTIVES)
-                            && !id.equals(IWorkbenchConstants.PL_VIEWS)
-                            && !id.equals(IWorkbenchConstants.PL_ACTION_SETS))
+                    else if (!id.equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES)
+                            && !id.equals(IWorkbenchRegistryConstants.PL_VIEWS)
+                            && !id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS))
                         appearList.add(appearList.size() - numPerspectives,
                                 delta[i]);
                 } else {
                     if (delta[i].getKind() == IExtensionDelta.REMOVED) {
                         if (id
-                                .equals(IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS)) {
+                                .equals(IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS)) {
                             revokeList.add(0, delta[i]);
                             numActionSetPartAssoc++;
                         } else if (id
-                                .equals(IWorkbenchConstants.PL_PERSPECTIVES))
+                                .equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES))
                             revokeList.add(numActionSetPartAssoc, delta[i]);
                         else
                             revokeList.add(delta[i]);
@@ -133,15 +134,15 @@ class ExtensionEventHandler implements IRegistryChangeListener {
     
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_WORKINGSETS)) {
+        if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_WORKINGSETS)) {
             loadWorkingSets(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_FONT_DEFINITIONS)) {
+        if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_FONT_DEFINITIONS)) {
             loadFontDefinitions(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_THEMES)) {
+        if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_THEMES)) {
             loadThemes(ext);
             return;
         }

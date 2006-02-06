@@ -40,8 +40,8 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.help.AbstractHelpUI;
 import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This class represents a refactoring of the functionality previously contained
@@ -61,7 +61,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	/**
 	 * Id of extension point where the help UI is contributed.
 	 */
-	private static final String HELP_SYSTEM_EXTENSION_ID = PlatformUI.PLUGIN_ID + '.' + IWorkbenchConstants.PL_HELPSUPPORT;
+	private static final String HELP_SYSTEM_EXTENSION_ID = PlatformUI.PLUGIN_ID + '.' + IWorkbenchRegistryConstants.PL_HELPSUPPORT;
 
 	/**
 	 * Attribute id for class attribute of help UI extension point.

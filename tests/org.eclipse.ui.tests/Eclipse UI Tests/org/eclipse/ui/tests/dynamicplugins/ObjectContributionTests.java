@@ -25,9 +25,9 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.1
@@ -60,7 +60,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_POPUP_MENU;
+		return IWorkbenchRegistryConstants.PL_POPUP_MENU;
 	}
 
 	/* (non-Javadoc)

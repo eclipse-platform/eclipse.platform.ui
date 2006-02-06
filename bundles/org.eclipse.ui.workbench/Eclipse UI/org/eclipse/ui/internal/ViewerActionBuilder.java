@@ -103,7 +103,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
         provider = prov;
         this.part = part;
         readContributions(id, IWorkbenchRegistryConstants.TAG_VIEWER_CONTRIBUTION,
-                IWorkbenchConstants.PL_POPUP_MENU);
+                IWorkbenchRegistryConstants.PL_POPUP_MENU);
         return (cache != null);
     }
 

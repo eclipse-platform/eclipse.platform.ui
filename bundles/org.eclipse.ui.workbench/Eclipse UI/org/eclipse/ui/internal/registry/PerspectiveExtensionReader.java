@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.DirtyPerspectiveMarker;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PageLayout;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -78,7 +77,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
     	targetID = id;
         pageLayout = out;
         readRegistry(Platform.getExtensionRegistry(), PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
+                IWorkbenchRegistryConstants.PL_PERSPECTIVE_EXTENSIONS);
     }
 
     /**

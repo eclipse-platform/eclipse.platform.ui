@@ -22,8 +22,8 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Adapter for adding handling of the <code>PluginTransfer</code> drag and drop
@@ -93,7 +93,7 @@ public class PluginDropAdapter extends ViewerDropAdapter {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
         String adapterName = data.getExtensionId();
         IExtensionPoint xpt = registry.getExtensionPoint(PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_DROP_ACTIONS);
+                IWorkbenchRegistryConstants.PL_DROP_ACTIONS);
         IExtension[] extensions = xpt.getExtensions();
         for (int i = 0; i < extensions.length; i++) {
             IConfigurationElement[] configs = extensions[i]

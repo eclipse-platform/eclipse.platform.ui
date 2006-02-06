@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -50,7 +50,7 @@ public final class AcceleratorConfigurationsExtensionDynamicTest extends
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	protected final String getExtensionPoint() {
-		return IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS;
+		return IWorkbenchRegistryConstants.PL_ACCELERATOR_CONFIGURATIONS;
 	}
 
 	/**

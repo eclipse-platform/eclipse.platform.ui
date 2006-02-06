@@ -17,7 +17,6 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
@@ -96,7 +95,7 @@ public class DecoratorRegistryReader extends RegistryReader {
         values.clear();
         ids.clear();
         readRegistry(in, PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_DECORATORS);
+                IWorkbenchRegistryConstants.PL_DECORATORS);
         return values;
     }
 

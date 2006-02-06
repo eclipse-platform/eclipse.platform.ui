@@ -258,7 +258,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private String aggregateWorkingSetId;
 
 	private IExtensionPoint getPerspectiveExtensionPoint() {
-		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PERSPECTIVE_EXTENSIONS);
 	}
 
     /**

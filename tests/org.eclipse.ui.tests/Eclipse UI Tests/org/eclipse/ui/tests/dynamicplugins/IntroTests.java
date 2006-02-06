@@ -15,12 +15,12 @@ import java.lang.ref.WeakReference;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.intro.IIntroDescriptor;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.leaks.LeakTests;
 
@@ -116,7 +116,7 @@ public class IntroTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_INTRO;
+		return IWorkbenchRegistryConstants.PL_INTRO;
 	}
 
 	/* (non-Javadoc)

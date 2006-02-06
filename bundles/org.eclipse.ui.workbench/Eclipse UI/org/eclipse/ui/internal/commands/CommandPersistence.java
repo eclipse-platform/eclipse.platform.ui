@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -102,14 +102,14 @@ final class CommandPersistence extends RegistryPersistence {
 
 			// Read out the category identifier.
 			final String categoryId = readRequired(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Categories need an id"); //$NON-NLS-1$
+					ATT_ID, warningsToLog, "Categories need an id"); //$NON-NLS-1$
 			if (categoryId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(configurationElement,
-					ATTRIBUTE_NAME, warningsToLog, "Categories need a name", //$NON-NLS-1$
+			final String name = readRequired(configurationElement, ATT_NAME,
+					warningsToLog, "Categories need a name", //$NON-NLS-1$
 					categoryId);
 			if (name == null) {
 				continue;
@@ -117,7 +117,7 @@ final class CommandPersistence extends RegistryPersistence {
 
 			// Read out the description.
 			final String description = readOptional(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+					ATT_DESCRIPTION);
 
 			final Category category = commandService.getCategory(categoryId);
 			category.define(name, description);
@@ -161,29 +161,28 @@ final class CommandPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Commands need an id"); //$NON-NLS-1$
+			final String commandId = readRequired(configurationElement, ATT_ID,
+					warningsToLog, "Commands need an id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(configurationElement,
-					ATTRIBUTE_NAME, warningsToLog, "Commands need a name"); //$NON-NLS-1$
+			final String name = readRequired(configurationElement, ATT_NAME,
+					warningsToLog, "Commands need a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
 
 			// Read out the description.
 			final String description = readOptional(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+					ATT_DESCRIPTION);
 
 			// Read out the category id.
 			String categoryId = configurationElement
-					.getAttribute(ATTRIBUTE_CATEGORY_ID);
+					.getAttribute(ATT_CATEGORY_ID);
 			if ((categoryId == null) || (categoryId.length() == 0)) {
-				categoryId = configurationElement
-						.getAttribute(ATTRIBUTE_CATEGORY);
+				categoryId = configurationElement.getAttribute(ATT_CATEGORY);
 				if ((categoryId != null) && (categoryId.length() == 0)) {
 					categoryId = null;
 				}
@@ -195,7 +194,7 @@ final class CommandPersistence extends RegistryPersistence {
 
 			// Read out the returnTypeId.
 			final String returnTypeId = readOptional(configurationElement,
-					ATTRIBUTE_RETURN_TYPE_ID);
+					ATT_RETURN_TYPE_ID);
 
 			final Command command = commandService.getCommand(commandId);
 			final Category category = commandService.getCategory(categoryId);
@@ -247,7 +246,7 @@ final class CommandPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement,
 			final List warningsToLog, final ICommandService commandService) {
 		final IConfigurationElement[] parameterElements = configurationElement
-				.getChildren(ELEMENT_COMMAND_PARAMETER);
+				.getChildren(TAG_COMMAND_PARAMETER);
 		if ((parameterElements == null) || (parameterElements.length == 0)) {
 			return null;
 		}
@@ -257,14 +256,14 @@ final class CommandPersistence extends RegistryPersistence {
 		for (int i = 0; i < parameterElements.length; i++) {
 			final IConfigurationElement parameterElement = parameterElements[i];
 			// Read out the id
-			final String id = readRequired(parameterElement, ATTRIBUTE_ID,
+			final String id = readRequired(parameterElement, ATT_ID,
 					warningsToLog, "Parameters need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(parameterElement, ATTRIBUTE_NAME,
+			final String name = readRequired(parameterElement, ATT_NAME,
 					warningsToLog, "Parameters need a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
@@ -276,12 +275,11 @@ final class CommandPersistence extends RegistryPersistence {
 			 */
 
 			// Read out the typeId attribute, if present.
-			final String typeId = readOptional(parameterElement,
-					ATTRIBUTE_TYPE_ID);
+			final String typeId = readOptional(parameterElement, ATT_TYPE_ID);
 
 			// Read out the optional attribute, if present.
 			final boolean optional = readBoolean(parameterElement,
-					ATTRIBUTE_OPTIONAL, true);
+					ATT_OPTIONAL, true);
 
 			final ParameterType type;
 			if (typeId == null) {
@@ -341,19 +339,17 @@ final class CommandPersistence extends RegistryPersistence {
 
 			// Read out the commandParameterType identifier.
 			final String parameterTypeId = readRequired(configurationElement,
-					ATTRIBUTE_ID, warningsToLog,
-					"Command parameter types need an id"); //$NON-NLS-1$
+					ATT_ID, warningsToLog, "Command parameter types need an id"); //$NON-NLS-1$
 			if (parameterTypeId == null) {
 				continue;
 			}
 
 			// Read out the type.
-			final String type = readOptional(configurationElement,
-					ATTRIBUTE_TYPE);
+			final String type = readOptional(configurationElement, ATT_TYPE);
 
 			// Read out the converter.
 			final String converter = readOptional(configurationElement,
-					ATTRIBUTE_CONVERTER);
+					ATT_CONVERTER);
 
 			/*
 			 * if the converter attribute was given, create a proxy
@@ -396,7 +392,7 @@ final class CommandPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement,
 			final List warningsToLog, final Command command) {
 		final IConfigurationElement[] stateElements = configurationElement
-				.getChildren(ELEMENT_STATE);
+				.getChildren(TAG_STATE);
 		if ((stateElements == null) || (stateElements.length == 0)) {
 			return;
 		}
@@ -404,8 +400,8 @@ final class CommandPersistence extends RegistryPersistence {
 		for (int i = 0; i < stateElements.length; i++) {
 			final IConfigurationElement stateElement = stateElements[i];
 
-			final String id = readRequired(stateElement, ATTRIBUTE_ID,
-					warningsToLog, "State needs an id"); //$NON-NLS-1$
+			final String id = readRequired(stateElement, ATT_ID, warningsToLog,
+					"State needs an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
@@ -413,7 +409,7 @@ final class CommandPersistence extends RegistryPersistence {
 			if (checkClass(stateElement, warningsToLog,
 					"State must have an associated class", id)) { //$NON-NLS-1$
 				final State state = new CommandStateProxy(stateElement,
-						ATTRIBUTE_CLASS, PrefUtil.getInternalPreferenceStore(),
+						ATT_CLASS, PrefUtil.getInternalPreferenceStore(),
 						CommandService.createPreferenceKey(command, id));
 				command.addState(id, state);
 			}
@@ -442,11 +438,11 @@ final class CommandPersistence extends RegistryPersistence {
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(
-				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_COMMANDS);
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_COMMANDS);
 		if (commandDeltas.length == 0) {
 			final IExtensionDelta[] actionDefinitionDeltas = event
 					.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-							IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+							IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS);
 			if (actionDefinitionDeltas.length == 0) {
 				return false;
 			}
@@ -480,15 +476,15 @@ final class CommandPersistence extends RegistryPersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
-			if (ELEMENT_COMMAND.equals(name)) {
+			if (TAG_COMMAND.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_COMMAND_DEFINITIONS, commandDefinitionCount++);
-			} else if (ELEMENT_CATEGORY.equals(name)) {
+			} else if (TAG_CATEGORY.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_CATEGORY_DEFINITIONS, categoryDefinitionCount++);
-			} else if (ELEMENT_COMMAND_PARAMETER_TYPE.equals(name)) {
+			} else if (TAG_COMMAND_PARAMETER_TYPE.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_PARAMETER_TYPE_DEFINITIONS,
@@ -502,7 +498,7 @@ final class CommandPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = actionDefinitionsExtensionPoint[i];
 			final String name = configurationElement.getName();
 
-			if (ELEMENT_ACTION_DEFINITION.equals(name)) {
+			if (TAG_ACTION_DEFINITION.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_COMMAND_DEFINITIONS, commandDefinitionCount++);

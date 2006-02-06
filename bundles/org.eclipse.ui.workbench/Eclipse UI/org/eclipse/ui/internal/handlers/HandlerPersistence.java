@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 
 /**
@@ -103,22 +103,20 @@ final class HandlerPersistence extends RegistryPersistence {
 			 * <code>CommandPersistence</code>, so we'll just ignore any
 			 * problems here.
 			 */
-			final String commandId = readOptional(configurationElement,
-					ATTRIBUTE_ID);
+			final String commandId = readOptional(configurationElement, ATT_ID);
 			if (commandId == null) {
 				continue;
 			}
 
 			// Check to see if we have a default handler of any kind.
-			if ((configurationElement.getAttribute(ATTRIBUTE_DEFAULT_HANDLER) == null)
-					&& (configurationElement
-							.getChildren(ELEMENT_DEFAULT_HANDLER).length == 0)) {
+			if ((configurationElement.getAttribute(ATT_DEFAULT_HANDLER) == null)
+					&& (configurationElement.getChildren(TAG_DEFAULT_HANDLER).length == 0)) {
 				continue;
 			}
 
-			handlerActivations.add(handlerService.activateHandler(commandId,
-					new HandlerProxy(configurationElement,
-							ATTRIBUTE_DEFAULT_HANDLER)));
+			handlerActivations.add(handlerService
+					.activateHandler(commandId, new HandlerProxy(
+							configurationElement, ATT_DEFAULT_HANDLER)));
 		}
 	}
 
@@ -146,8 +144,7 @@ final class HandlerPersistence extends RegistryPersistence {
 
 			// Read out the command identifier.
 			final String commandId = readRequired(configurationElement,
-					ATTRIBUTE_COMMAND_ID, warningsToLog,
-					"Handlers need a command id"); //$NON-NLS-1$
+					ATT_COMMAND_ID, warningsToLog, "Handlers need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
@@ -160,20 +157,20 @@ final class HandlerPersistence extends RegistryPersistence {
 
 			// Get the activeWhen and enabledWhen expressions.
 			final Expression activeWhenExpression = readWhenElement(
-					configurationElement, ELEMENT_ACTIVE_WHEN, commandId,
+					configurationElement, TAG_ACTIVE_WHEN, commandId,
 					warningsToLog);
 			if (activeWhenExpression == ERROR_EXPRESSION) {
 				continue;
 			}
 			final Expression enabledWhenExpression = readWhenElement(
-					configurationElement, ELEMENT_ENABLED_WHEN, commandId,
+					configurationElement, TAG_ENABLED_WHEN, commandId,
 					warningsToLog);
 			if (enabledWhenExpression == ERROR_EXPRESSION) {
 				continue;
 			}
 
 			handlerActivations.add(handlerService.activateHandler(commandId,
-					new HandlerProxy(configurationElement, ATTRIBUTE_CLASS,
+					new HandlerProxy(configurationElement, ATT_CLASS,
 							enabledWhenExpression, handlerService),
 					activeWhenExpression));
 		}
@@ -207,7 +204,7 @@ final class HandlerPersistence extends RegistryPersistence {
 
 			// Read out the command identifier.
 			final String commandId = readRequired(configurationElement,
-					ATTRIBUTE_COMMAND_ID, warningsToLog,
+					ATT_COMMAND_ID, warningsToLog,
 					"Handler submissions need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
@@ -248,14 +245,16 @@ final class HandlerPersistence extends RegistryPersistence {
 		 * the command extensions change (i.e., action definitions).
 		 */
 		final IExtensionDelta[] handlerDeltas = event.getExtensionDeltas(
-				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_HANDLERS);
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_HANDLERS);
 		if (handlerDeltas.length == 0) {
 			final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(
-					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_COMMANDS);
+					PlatformUI.PLUGIN_ID,
+					IWorkbenchRegistryConstants.PL_COMMANDS);
 			if (commandDeltas.length == 0) {
 				final IExtensionDelta[] actionDefinitionDeltas = event
-						.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-								IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+						.getExtensionDeltas(
+								PlatformUI.PLUGIN_ID,
+								IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS);
 				if (actionDefinitionDeltas.length == 0) {
 					return false;
 				}
@@ -290,11 +289,11 @@ final class HandlerPersistence extends RegistryPersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a handler submission or a command definition.
-			if (ELEMENT_HANDLER_SUBMISSION.equals(name)) {
+			if (TAG_HANDLER_SUBMISSION.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_HANDLER_SUBMISSIONS, handlerSubmissionCount++);
-			} else if (ELEMENT_COMMAND.equals(name)) {
+			} else if (TAG_COMMAND.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_COMMAND_DEFINITIONS, commandDefinitionCount++);
@@ -309,7 +308,7 @@ final class HandlerPersistence extends RegistryPersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a handler submission or a command definition.
-			if (ELEMENT_HANDLER.equals(name)) {
+			if (TAG_HANDLER.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_HANDLER_DEFINITIONS, handlerDefinitionCount++);

@@ -15,7 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Tests whether the "org.eclipse.ui.handlers" extension point can be added and
@@ -50,7 +50,7 @@ public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	protected final String getExtensionPoint() {
-		return IWorkbenchConstants.PL_HANDLERS;
+		return IWorkbenchRegistryConstants.PL_HANDLERS;
 	}
 
 	/**

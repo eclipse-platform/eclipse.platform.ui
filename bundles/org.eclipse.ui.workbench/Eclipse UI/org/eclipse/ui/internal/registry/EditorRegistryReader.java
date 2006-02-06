@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * This class is used to read resource editor registry descriptors from
@@ -41,7 +40,7 @@ public class EditorRegistryReader extends RegistryReader {
         IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
         this.editorRegistry = registry;
         readRegistry(extensionRegistry, PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_EDITOR);
+                IWorkbenchRegistryConstants.PL_EDITOR);
     }
 
     /**

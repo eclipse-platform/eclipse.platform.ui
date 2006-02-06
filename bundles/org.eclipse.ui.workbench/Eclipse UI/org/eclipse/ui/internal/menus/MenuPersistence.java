@@ -23,30 +23,19 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.menus.IDynamicMenu;
 import org.eclipse.jface.menus.IWidget;
-import org.eclipse.jface.menus.LeafLocationElement;
-import org.eclipse.jface.menus.LocationElement;
-import org.eclipse.jface.menus.SActionSet;
-import org.eclipse.jface.menus.SBar;
-import org.eclipse.jface.menus.SGroup;
-import org.eclipse.jface.menus.SItem;
-import org.eclipse.jface.menus.SLocation;
-import org.eclipse.jface.menus.SMenu;
-import org.eclipse.jface.menus.SOrder;
-import org.eclipse.jface.menus.SPart;
-import org.eclipse.jface.menus.SPopup;
-import org.eclipse.jface.menus.SReference;
-import org.eclipse.jface.menus.SWidget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
  * A static class for accessing the registry.
+ * </p>
+ * <p>
+ * This class is not intended for use outside of the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
  * 
  * @since 3.2
@@ -139,25 +128,25 @@ final class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Action sets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the label.
 			final String label = readRequired(configurationElement,
-					ATTRIBUTE_LABEL, warningsToLog, "Action sets need a label"); //$NON-NLS-1$
+					ATT_LABEL, warningsToLog, "Action sets need a label"); //$NON-NLS-1$
 			if (label == null) {
 				continue;
 			}
 
 			// Read the description.
 			final String description = readOptional(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+					ATT_DESCRIPTION);
 
 			// Read the whether the action set is visible by default.
 			final boolean visible = readBoolean(configurationElement,
-					ATTRIBUTE_VISIBLE, false);
+					ATT_VISIBLE, false);
 
 			// Read the references.
 			final SReference[] references = readReferencesFromRegistry(
@@ -190,7 +179,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final List warningsToLog, final String id) {
 		// Check to see if we have a bar element.
 		final IConfigurationElement[] barElements = parentElement
-				.getChildren(ELEMENT_BAR);
+				.getChildren(TAG_BAR);
 		if (barElements.length > 0) {
 			// Check if we have too many bar elements.
 			if (barElements.length > 1) {
@@ -204,7 +193,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement barElement = barElements[0];
 
 			// Read the type attribute.
-			final String type = readRequired(barElement, ATTRIBUTE_TYPE,
+			final String type = readRequired(barElement, ATT_TYPE,
 					warningsToLog, "Bar elements require a type element", id); //$NON-NLS-1$
 			if (!((SBar.TYPE_MENU.equals(type)) || (SBar.TYPE_TRIM.equals(type)))) {
 				// The position was not understood.
@@ -214,7 +203,7 @@ final class MenuPersistence extends RegistryPersistence {
 			}
 
 			// Read the path attribute.
-			final String path = readOptional(barElement, ATTRIBUTE_PATH);
+			final String path = readOptional(barElement, ATT_PATH);
 
 			return new SBar(type, path);
 		}
@@ -241,7 +230,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final List warningsToLog) {
 		// Check to see if we have an element.
 		final IConfigurationElement[] dynamicMenuElements = parentElement
-				.getChildren(ELEMENT_DYNAMIC);
+				.getChildren(TAG_DYNAMIC);
 		if (dynamicMenuElements.length > 0) {
 			// Check if we have too many elements.
 			if (dynamicMenuElements.length > 1) {
@@ -260,7 +249,7 @@ final class MenuPersistence extends RegistryPersistence {
 				return null;
 			}
 
-			return new DynamicMenuProxy(dynamicMenuElement, ATTRIBUTE_CLASS);
+			return new DynamicMenuProxy(dynamicMenuElement, ATT_CLASS);
 		}
 
 		return null;
@@ -297,18 +286,18 @@ final class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Groups need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read whether the separators are visible.
 			final boolean separatorsVisible = readBoolean(configurationElement,
-					ATTRIBUTE_SEPARATORS_VISIBLE, true);
+					ATT_SEPARATORS_VISIBLE, true);
 
 			// Read out the visibleWhen expression.
 			final Expression visibleWhenExpression = readWhenElement(
-					configurationElement, ELEMENT_VISIBLE_WHEN, id,
+					configurationElement, TAG_VISIBLE_WHEN, id,
 					warningsToLog);
 			if (visibleWhenExpression == ERROR_EXPRESSION) {
 				continue;
@@ -368,7 +357,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the item identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Items need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
@@ -380,11 +369,11 @@ final class MenuPersistence extends RegistryPersistence {
 
 			// Read the menu identifier.
 			final String menuId = readOptional(configurationElement,
-					ATTRIBUTE_MENU_ID);
+					ATT_MENU_ID);
 
 			// Read out the visibleWhen expression.
 			final Expression visibleWhenExpression = readWhenElement(
-					configurationElement, ELEMENT_VISIBLE_WHEN, id,
+					configurationElement, TAG_VISIBLE_WHEN, id,
 					warningsToLog);
 			if (visibleWhenExpression == ERROR_EXPRESSION) {
 				continue;
@@ -428,7 +417,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final List warningsToLog) {
 		// Check to see if we have an activeWhen expression.
 		final IConfigurationElement[] locationElements = parentElement
-				.getChildren(ELEMENT_LOCATION);
+				.getChildren(TAG_LOCATION);
 		if (locationElements.length < 1) {
 			return null;
 		}
@@ -440,7 +429,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 			// Read the mnemonic.
 			final String mnemonic = readOptional(locationElement,
-					ATTRIBUTE_MNEMONIC);
+					ATT_MNEMONIC);
 			final char mnemonicChar;
 			if (mnemonic == null) {
 				mnemonicChar = SLocation.MNEMONIC_NONE;
@@ -455,7 +444,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 			// Read the image style.
 			final String imageStyle = readOptional(locationElement,
-					ATTRIBUTE_IMAGE_STYLE);
+					ATT_IMAGE_STYLE);
 
 			// Read the position and the relativeTo attributes.
 			final SOrder ordering = readOrderingFromRegistry(locationElement,
@@ -546,18 +535,18 @@ final class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Menus need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the label.
 			final String label = readOptional(configurationElement,
-					ATTRIBUTE_LABEL);
+					ATT_LABEL);
 
 			// Read out the visibleWhen expression.
 			final Expression visibleWhenExpression = readWhenElement(
-					configurationElement, ELEMENT_VISIBLE_WHEN, id,
+					configurationElement, TAG_VISIBLE_WHEN, id,
 					warningsToLog);
 			if (visibleWhenExpression == ERROR_EXPRESSION) {
 				continue;
@@ -602,7 +591,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final List warningsToLog) {
 		// Check to see if we have an order element.
 		final IConfigurationElement[] orderingElements = parentElement
-				.getChildren(ELEMENT_ORDER);
+				.getChildren(TAG_ORDER);
 		final int length = orderingElements.length;
 		if (length < 1) {
 			return null;
@@ -615,7 +604,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 		// Read the position attribute.
 		final String position = readRequired(orderingElement,
-				ATTRIBUTE_POSITION, warningsToLog,
+				ATT_POSITION, warningsToLog,
 				"Order elements require a position element", id); //$NON-NLS-1$
 		final int positionInteger;
 		if (POSITION_AFTER.equals(position)) {
@@ -639,14 +628,14 @@ final class MenuPersistence extends RegistryPersistence {
 				|| (positionInteger == SOrder.POSITION_BEFORE)) {
 			relativeTo = readRequired(
 					parentElement,
-					ATTRIBUTE_RELATIVE_TO,
+					ATT_RELATIVE_TO,
 					warningsToLog,
 					"A relativeTo attribute is required is the position is 'after' or 'before'", //$NON-NLS-1$
 					id);
 		} else {
 			// There should be no relativeTo attribute.
 			final String value = parentElement
-					.getAttribute(ATTRIBUTE_RELATIVE_TO);
+					.getAttribute(ATT_RELATIVE_TO);
 			if (value != null) {
 				addWarning(warningsToLog,
 						"The position was not understood", parentElement, //$NON-NLS-1$
@@ -678,7 +667,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final List warningsToLog, final String id) {
 		// Check to see if we have a part element.
 		final IConfigurationElement[] partElements = parentElement
-				.getChildren(ELEMENT_BAR);
+				.getChildren(TAG_BAR);
 		if (partElements.length > 0) {
 			// Check if we have too many part elements.
 			if (partElements.length > 1) {
@@ -706,8 +695,8 @@ final class MenuPersistence extends RegistryPersistence {
 			}
 
 			// Read the two optional attributes.
-			final String partId = readOptional(partElement, ATTRIBUTE_ID);
-			final String clazz = readOptional(partElement, ATTRIBUTE_CLASS);
+			final String partId = readOptional(partElement, ATT_ID);
+			final String clazz = readOptional(partElement, ATT_CLASS);
 			if ((partId == null) && (clazz == null)) {
 				addWarning(warningsToLog,
 						"A part id or a part class is required", parentElement, //$NON-NLS-1$
@@ -747,7 +736,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final List warningsToLog, final String id) {
 		// Check to see if we have a popup element.
 		final IConfigurationElement[] popupElements = parentElement
-				.getChildren(ELEMENT_BAR);
+				.getChildren(TAG_BAR);
 		if (popupElements.length > 0) {
 			// Check if we have too many popup elements.
 			if (popupElements.length > 1) {
@@ -759,8 +748,8 @@ final class MenuPersistence extends RegistryPersistence {
 			}
 
 			final IConfigurationElement popupElement = popupElements[0];
-			final String popupId = readOptional(popupElement, ATTRIBUTE_ID);
-			final String path = readOptional(popupElement, ATTRIBUTE_PATH);
+			final String popupId = readOptional(popupElement, ATT_ID);
+			final String path = readOptional(popupElement, ATT_PATH);
 			return new SPopup(popupId, path);
 		}
 
@@ -789,7 +778,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement parentElement, final String id,
 			final List warningsToLog) {
 		final IConfigurationElement[] referenceElements = parentElement
-				.getChildren(ELEMENT_REFERENCE);
+				.getChildren(TAG_REFERENCE);
 		if (referenceElements.length < 1) {
 			return null;
 		}
@@ -800,13 +789,13 @@ final class MenuPersistence extends RegistryPersistence {
 
 			// Read the id.
 			final String referenceId = readRequired(referenceElement,
-					ATTRIBUTE_ID, warningsToLog, "References are required", id); //$NON-NLS-1$
+					ATT_ID, warningsToLog, "References are required", id); //$NON-NLS-1$
 			if (referenceId == null) {
 				continue;
 			}
 
 			// Read the type attribute.
-			final String type = readRequired(referenceElement, ATTRIBUTE_TYPE,
+			final String type = readRequired(referenceElement, ATT_TYPE,
 					warningsToLog, "Reference elements require a type", id); //$NON-NLS-1$
 			final int typeInteger;
 			if (TYPE_ITEM.equals(type)) {
@@ -865,7 +854,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the widget identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Widgets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
@@ -876,11 +865,11 @@ final class MenuPersistence extends RegistryPersistence {
 				continue;
 			}
 			final IWidget widgetClass = new WidgetProxy(configurationElement,
-					ATTRIBUTE_CLASS);
+					ATT_CLASS);
 
 			// Read out the visibleWhen expression.
 			final Expression visibleWhenExpression = readWhenElement(
-					configurationElement, ELEMENT_VISIBLE_WHEN, id,
+					configurationElement, TAG_VISIBLE_WHEN, id,
 					warningsToLog);
 			if (visibleWhenExpression == ERROR_EXPRESSION) {
 				continue;
@@ -949,7 +938,7 @@ final class MenuPersistence extends RegistryPersistence {
 		 * extensions change (i.e., action definitions).
 		 */
 		final IExtensionDelta[] menuDeltas = event.getExtensionDeltas(
-				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MENUS);
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_MENUS);
 		if (menuDeltas.length == 0) {
 			return false;
 		}
@@ -985,21 +974,21 @@ final class MenuPersistence extends RegistryPersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a handler submission or a command definition.
-			if (ELEMENT_ITEM.equals(name)) {
+			if (TAG_ITEM.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_ITEMS, itemCount++);
-			} else if (ELEMENT_MENU.equals(name)) {
+			} else if (TAG_MENU.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_MENUS, menuCount++);
-			} else if (ELEMENT_GROUP.equals(name)) {
+			} else if (TAG_GROUP.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_GROUPS,
 						groupCount++);
-			} else if (ELEMENT_WIDGET.equals(name)) {
+			} else if (TAG_WIDGET.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_WIDGETS,
 						widgetCount++);
-			} else if (ELEMENT_ACTION_SET.equals(name)) {
+			} else if (TAG_ACTION_SET.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_ACTION_SETS,
 						actionSetCount++);

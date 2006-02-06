@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -79,7 +78,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
         return Platform
         .getExtensionRegistry().getExtensionPoint(
                 PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
+                IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
     }
 
     /**
@@ -92,7 +91,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
         return Platform
                 .getExtensionRegistry().getExtensionPoint(
                         PlatformUI.PLUGIN_ID,
-                        IWorkbenchConstants.PL_ACTION_SETS);
+                        IWorkbenchRegistryConstants.PL_ACTION_SETS);
     }
 
     /**

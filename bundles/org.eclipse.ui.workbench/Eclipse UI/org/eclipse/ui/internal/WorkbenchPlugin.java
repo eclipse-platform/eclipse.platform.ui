@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
@@ -316,11 +317,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         // Get the extension point registry.
         IExtensionPoint extensionPoint;
         extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
-                PI_WORKBENCH, IWorkbenchConstants.PL_ELEMENT_FACTORY);
+                PI_WORKBENCH, IWorkbenchRegistryConstants.PL_ELEMENT_FACTORY);
 
         if (extensionPoint == null) {
             WorkbenchPlugin
-                    .log("Unable to find element factory. Extension point: " + IWorkbenchConstants.PL_ELEMENT_FACTORY + " not found"); //$NON-NLS-2$ //$NON-NLS-1$
+                    .log("Unable to find element factory. Extension point: " + IWorkbenchRegistryConstants.PL_ELEMENT_FACTORY + " not found"); //$NON-NLS-2$ //$NON-NLS-1$
             return null;
         }
 
@@ -362,7 +363,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
     public AbstractPresentationFactory getPresentationFactory(String targetID) {
         Object o = createExtension(
-                IWorkbenchConstants.PL_PRESENTATION_FACTORIES,
+                IWorkbenchRegistryConstants.PL_PRESENTATION_FACTORIES,
                 "factory", targetID); //$NON-NLS-1$
         if (o instanceof AbstractPresentationFactory) {
             return (AbstractPresentationFactory) o;

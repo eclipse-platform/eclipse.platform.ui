@@ -12,8 +12,8 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.1
@@ -56,7 +56,7 @@ public class PreferencePageTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_PREFERENCES;
+		return IWorkbenchRegistryConstants.PL_PREFERENCES;
 	}
 
 	/* (non-Javadoc)

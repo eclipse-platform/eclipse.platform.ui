@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.ITriggerPointManager;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
@@ -151,6 +150,6 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
     private IExtensionPoint getExtensionPointFilter() {
         return Platform.getExtensionRegistry().getExtensionPoint(
-                PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
+                PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
     }
 }

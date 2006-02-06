@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -59,7 +58,7 @@ public class TriggerPointAdvisorRegistry {
 	public TriggerPointAdvisorDescriptor[] getAdvisors() {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_ACTIVITYSUPPORT);
+						IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
 		if (point == null)
 			return new TriggerPointAdvisorDescriptor[0];
 
@@ -102,7 +101,7 @@ public class TriggerPointAdvisorRegistry {
 	public TriggerPointAdvisorDescriptor getAdvisorForProduct(String productId) {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_ACTIVITYSUPPORT);
+						IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
 		if (point == null)
 			return null;
 

@@ -12,11 +12,8 @@
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.jface.menus.MenuElement;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.services.EvaluationResultCache;
-import org.eclipse.ui.menus.IMenuContribution;
-import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
@@ -27,6 +24,10 @@ import org.eclipse.ui.menus.IMenuService;
  * </p>
  * <p>
  * This caches the menu element, so that they can later be identified.
+ * </p>
+ * <p>
+ * This class is not intended for use outside of the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
  * 
  * @since 3.2

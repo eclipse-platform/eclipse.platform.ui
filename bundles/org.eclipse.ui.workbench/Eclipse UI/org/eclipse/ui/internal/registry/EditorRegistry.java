@@ -1279,7 +1279,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 	}
 
 	private IExtensionPoint getExtensionPointFilter() {
-		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_EDITOR);
 	}
 
 	/* (non-Javadoc)

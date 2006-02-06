@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -55,7 +55,7 @@ public class IntroRegistry implements IIntroRegistry {
 	public IIntroDescriptor[] getIntros() {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_INTRO);
+						IWorkbenchRegistryConstants.PL_INTRO);
 		if (point == null)
 			return new IIntroDescriptor[0];
 
@@ -94,7 +94,7 @@ public class IntroRegistry implements IIntroRegistry {
 	public IIntroDescriptor getIntroForProduct(String targetProductId) {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_INTRO);
+						IWorkbenchRegistryConstants.PL_INTRO);
 		if (point == null)
 			return null;
 

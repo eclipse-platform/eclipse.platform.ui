@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.1
@@ -55,7 +55,7 @@ public class BrowserTests extends DynamicTestCase {
      * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
      */
     protected String getExtensionPoint() {
-        return IWorkbenchConstants.PL_BROWSER_SUPPORT;
+        return IWorkbenchRegistryConstants.PL_BROWSER_SUPPORT;
     }
 
     /* (non-Javadoc)

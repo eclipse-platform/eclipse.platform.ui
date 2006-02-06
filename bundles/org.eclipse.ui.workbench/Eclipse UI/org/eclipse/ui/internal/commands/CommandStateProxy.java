@@ -34,10 +34,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * value.
  * </p>
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
+ * This class is not intended for use outside of the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
  * 
  * @since 3.2

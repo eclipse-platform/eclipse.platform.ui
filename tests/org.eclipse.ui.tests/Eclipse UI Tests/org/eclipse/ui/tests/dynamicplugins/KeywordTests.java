@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.KeywordRegistry;
 
 /**
@@ -39,7 +39,7 @@ public class KeywordTests extends DynamicTestCase {
 	}
 
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_KEYWORDS;
+		return IWorkbenchRegistryConstants.PL_KEYWORDS;
 	}
 
 	protected String getInstallLocation() {

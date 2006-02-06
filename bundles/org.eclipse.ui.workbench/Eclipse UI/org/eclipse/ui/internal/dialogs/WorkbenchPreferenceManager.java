@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 
 /**
@@ -58,7 +58,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 					 */
 					public void registryChanged(IRegistryChangeEvent event) {
 						if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-								IWorkbenchConstants.PL_KEYWORDS).length > 0) {
+								IWorkbenchRegistryConstants.PL_KEYWORDS).length > 0) {
 							for (Iterator j = getElements(
 									PreferenceManager.POST_ORDER).iterator(); j
 									.hasNext();) {
@@ -152,7 +152,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	 */
 	private IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
-				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PREFERENCES);
 	}
 
 	/* (non-Javadoc)

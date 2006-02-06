@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
@@ -69,7 +69,7 @@ public class NewWizardTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_NEW;
+		return IWorkbenchRegistryConstants.PL_NEW;
 	}
 
 	/* (non-Javadoc)

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 
@@ -149,7 +148,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	public void loadFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
 
-		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PREFERENCES);
 
 		processNodes();
 

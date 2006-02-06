@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.internal.menus.IMenuService;
 
 /**
  * <p>

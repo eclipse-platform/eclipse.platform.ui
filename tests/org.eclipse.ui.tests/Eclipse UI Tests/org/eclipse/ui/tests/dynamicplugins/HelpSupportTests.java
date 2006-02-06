@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.1
@@ -52,7 +52,7 @@ public class HelpSupportTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_HELPSUPPORT;
+		return IWorkbenchRegistryConstants.PL_HELPSUPPORT;
 	}
 
 	/* (non-Javadoc)

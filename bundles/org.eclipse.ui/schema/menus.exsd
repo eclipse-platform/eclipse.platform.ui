@@ -25,7 +25,6 @@ Every element within this extension point is given a unique identifier.  This is
             <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="actionSet" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="modification" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -109,7 +108,6 @@ A menu can only contain groups.
       <complexType>
          <sequence>
             <element ref="location" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="dynamic" minOccurs="0" maxOccurs="1"/>
             <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -143,7 +141,6 @@ A group can contain menus, items and other groups.
       <complexType>
          <sequence>
             <element ref="location" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="dynamic" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -245,7 +242,6 @@ What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or
 &lt;p&gt;
 Within the trim, the workbench defines five general groups which correspond to various positions around the window.  By positioning the trim contribution within or with respect to this groups, the position is inferred by the workbench.  The five trim group ids are: &lt;code&gt;coolbar&lt;/code&gt;, &lt;code&gt;perspective&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;leadingEdge&lt;/code&gt; and &lt;code&gt;trailingEdge&lt;/code&gt;.
 &lt;/p&gt;
-
                </documentation>
             </annotation>
             <simpleType>
@@ -285,29 +281,6 @@ Within the trim, the workbench defines five general groups which correspond to v
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="modification">
-      <annotation>
-         <documentation>
-            &lt;p&gt;
-Allows modifications to be applied to existing elements.  This has the capacity to copy an element into a new location, or to move an element into a new location.  In either case, anything that tries to refer to the element in the old location will also refer to the new location.
-&lt;/p&gt;
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="location"/>
-            <element ref="reference"/>
-         </sequence>
-         <attribute name="removeExisting" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  Whether the existing locations for the element should be removed.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -432,7 +405,7 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
    <element name="reference">
       <annotation>
          <documentation>
-            A reference to an already existing element.  This is used for action sets and modifications.
+            A reference to an already existing element.  This is used for action sets.
          </documentation>
       </annotation>
       <complexType>
@@ -461,32 +434,6 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
                   </enumeration>
                </restriction>
             </simpleType>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="dynamic">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute="class"/>
-         </appInfo>
-         <documentation>
-            Allows modification of a group or menu as its about to show.  Unfortunately, this means that if the corresponding group or menu becomes visible in the user interface, this will lead to plug-in loading.  &lt;strong&gt;Use this element with caution, as it can cause performance problems.&lt;/strong&gt;
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="class"/>
-         </sequence>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  This class is loaded to modify the appropriate group or menu when it shows.  This class must implement &lt;code&gt;IDynamicMenu&lt;/code&gt;.  It is possible to use the &lt;code&gt;class&lt;/code&gt; element instead.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
-            </annotation>
          </attribute>
       </complexType>
    </element>
@@ -627,19 +574,6 @@ In this example, the plug-in developer is contributing to all parts who subclass
 &lt;/menu&gt;
 &lt;/pre&gt;
 &lt;p&gt;
-To define a dynamic menu, the &lt;code&gt;dynamic&lt;/code&gt; element is used.  The only real difference here is that the menu defines a call-back class.  This class is notified when the menu is about to change from not showing to showing.  At this point, the class is given a chance to modify the contents of its group.
-&lt;/p&gt;
-&lt;pre&gt;
-&lt;menu
- id=&quot;com.mycompany.myplugin.DynamicMenu&quot;
- label=&quot;%DynamicMenu.label&quot;&gt;
- &lt;dynamic class=&quot;DynamicMenu&quot; /&gt;
- &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run/runGroup&quot; /&gt;
- &lt;/location&gt;
-&lt;/menu&gt;
-&lt;/pre&gt;
-&lt;p&gt;
 It is possible to associate help with a menu.
 &lt;/p&gt;
 &lt;pre&gt;
@@ -666,18 +600,6 @@ Within a menu, it is possible to define logical groups.  These logical groups ca
  separatorsVisible=&quot;false&quot; &gt;
  &lt;location&gt;
   &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
- &lt;/location&gt;
-&lt;/group&gt;
-&lt;/pre&gt;
-&lt;p&gt;
-Groups can be declared to be dynamic, in the same way as menus.
-&lt;/p&gt;
-&lt;pre&gt;
-&lt;group
- id=&quot;com.mycompany.myplugin.runHistory&quot;&gt;
- &lt;dynamic class=&quot;DynamicRunHistoryGroup&quot; /&gt;
- &lt;location&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run/runGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/group&gt;
 &lt;/pre&gt;
@@ -819,23 +741,6 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
 &lt;/widget&gt;
 &lt;/pre&gt;
 &lt;p&gt;
-The most complex contribution is probably the tool bar item with a drop-down menu, where the icon should represent the drop-down menu (and not the tool bar item&apos;s command).  In this example, the item has a menu associated with it.  This simply means that if the item is selected in a special way (e.g., clicking on the right part of a tool item drop-down), that this is the command that should be executed.  By specifying an image style attribute on the location, it is possible to select a different set of images to associate with the menu.
-&lt;/p&gt;
-&lt;pre&gt;
-&lt;item
- id=&quot;com.mycompany.myplugin.ToolBarDropDown&quot;
- commandId=&quot;com.mycompany.myplugin.ClickCommand&quot;&gt;
- &lt;location imageStyle=&quot;toolbar&quot;&gt;
-  &lt;toolbar path=&quot;launchActionSet/debug&quot; /&gt;
- &lt;/location&gt;
-&lt;/item&gt;
-&lt;menu
- id=&quot;com.mycompany.myplugin.DynamicMenuWithCommand&quot;
- label=&quot;%DynamicMenuWithCommand.label&quot;&gt;
- &lt;dynamic class=&quot;com.mycompany.myplugin.DynamicMenu&quot; /&gt;
-&lt;/menu&gt;
-&lt;/pre&gt;
-&lt;p&gt;
 It is possible to define action sets, or groups of elements with a name.  The workbench allows the user to view acton sets, and disable or enable them as desired.  It is also possible for certain action sets to be associated with particular parts or perspectives.
 &lt;/p&gt;
 &lt;pre&gt;
@@ -849,17 +754,6 @@ It is possible to define action sets, or groups of elements with a name.  The wo
  &lt;reference id=&quot;OpenProfileConfigurations&quot; type=&quot;item&quot;/&gt;
   &lt;reference id=&quot;ProfileLast&quot; type=&quot;item&quot;/&gt;
 &lt;/actionSet&gt;
-&lt;/pre&gt;
-&lt;p&gt;
-It is possible to add an existing menu element of any kind (i.e., menu, group, item) to a new location.  This allows third-party plug-in developers to include an existing definition in some new location -- perhaps in a new view or editor -- without needing to worry about things like externalized strings.  A reference inherits all of its properties from the element to which it refers.
-&lt;/p&gt;
-&lt;pre&gt;
-&lt;modification&gt;
- &lt;reference id=&quot;SomeoneElsesMenu&quot; type=&quot;menu&quot; /&gt;
- &lt;location&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
- &lt;/location&gt;
-&lt;/modification&gt;
 &lt;/pre&gt;
       </documentation>
    </annotation>

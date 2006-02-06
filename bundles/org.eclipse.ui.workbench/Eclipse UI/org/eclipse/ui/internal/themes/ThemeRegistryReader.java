@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
@@ -443,11 +442,11 @@ public class ThemeRegistryReader extends RegistryReader {
     public void readThemes(IExtensionRegistry in, ThemeRegistry out) {
         // this does not seem to really ever be throwing an the exception
         setRegistry(out);
-        readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_THEMES);
+        readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_THEMES);
 
         // support for old font definitions
         readRegistry(in, PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_FONT_DEFINITIONS);
+                IWorkbenchRegistryConstants.PL_FONT_DEFINITIONS);
     }
 
     /**

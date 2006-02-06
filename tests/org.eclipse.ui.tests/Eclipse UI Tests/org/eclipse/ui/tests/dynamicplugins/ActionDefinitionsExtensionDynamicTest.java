@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Tests whether the "org.eclipse.ui.actionDefinitions" extension point can be
@@ -50,7 +50,7 @@ public final class ActionDefinitionsExtensionDynamicTest extends
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	protected final String getExtensionPoint() {
-		return IWorkbenchConstants.PL_ACTION_DEFINITIONS;
+		return IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS;
 	}
 
 	/**

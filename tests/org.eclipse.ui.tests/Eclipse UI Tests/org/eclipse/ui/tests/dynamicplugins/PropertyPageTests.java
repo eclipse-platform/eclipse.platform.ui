@@ -12,9 +12,9 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.1
@@ -76,7 +76,7 @@ public class PropertyPageTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_PROPERTY_PAGES;
+		return IWorkbenchRegistryConstants.PL_PROPERTY_PAGES;
 	}
 
 	/* (non-Javadoc)

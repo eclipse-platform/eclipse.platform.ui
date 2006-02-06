@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * Contains extensions defined on the <code>keywords</code> extension point.
@@ -87,7 +86,7 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 
 	private IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
-				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_KEYWORDS);
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_KEYWORDS);
 	}
 	
 	/**

@@ -12,13 +12,13 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Tests to ensure the addition of new action sets with dynamic plug-ins.
@@ -99,7 +99,7 @@ public class ActionSetTests extends DynamicTestCase implements
      * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
      */
     protected String getExtensionPoint() {
-        return IWorkbenchConstants.PL_ACTION_SETS;
+        return IWorkbenchRegistryConstants.PL_ACTION_SETS;
     }
 
     /*

@@ -19,19 +19,14 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.services.INestable;
 
 /**
+ * <p>
  * A context service which delegates almost all responsibility to the parent
  * service. This service is capable of being nested inside a component that is
  * not recognized by the "source" event mechanism.
- * 
+ * </p>
  * <p>
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
  * </p>
  * 
  * @since 3.2

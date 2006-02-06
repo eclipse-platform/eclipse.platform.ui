@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.preferences;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PreferenceTransferRegistryReader;
 
 /**
@@ -26,7 +26,7 @@ public class PreferenceTransferManager {
      */
     public static PreferenceTransferElement[] getPreferenceTransfers() {
         return new PreferenceTransferRegistryReader(
-                    IWorkbenchConstants.PL_PREFERENCE_TRANSFER)
+                    IWorkbenchRegistryConstants.PL_PREFERENCE_TRANSFER)
                     .getPreferenceTransfers();
     }
 }

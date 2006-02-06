@@ -15,8 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.menus.IDynamicMenu;
-import org.eclipse.jface.menus.IMenuCollection;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -25,6 +23,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * class loading until the dynamic menu is really asked to modify a menu
  * collection. Asking a proxy for anything but the attributes defined publicly
  * in this class will cause the proxy to instantiate the proxied handler.
+ * </p>
+ * <p>
+ * This class is not intended for use outside of the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
  * 
  * @since 3.2

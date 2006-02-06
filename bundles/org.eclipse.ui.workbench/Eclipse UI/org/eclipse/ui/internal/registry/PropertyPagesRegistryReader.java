@@ -17,7 +17,6 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.RegistryPageContributor;
 
@@ -179,7 +178,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
      */
     public void registerPropertyPages(IExtensionRegistry registry) {
         readRegistry(registry, PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_PROPERTY_PAGES);
+                IWorkbenchRegistryConstants.PL_PROPERTY_PAGES);
         processNodes();
     }    
     

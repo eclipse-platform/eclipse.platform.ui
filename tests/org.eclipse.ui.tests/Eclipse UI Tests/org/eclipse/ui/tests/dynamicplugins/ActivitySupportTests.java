@@ -14,7 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.harness.util.ImageTests;
 
 public class ActivitySupportTests extends DynamicTestCase {
@@ -28,7 +28,7 @@ public class ActivitySupportTests extends DynamicTestCase {
 	}
 
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_ACTIVITYSUPPORT;
+		return IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT;
 	}
 
 	protected String getInstallLocation() {

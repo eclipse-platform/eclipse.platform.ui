@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.1
@@ -55,7 +55,7 @@ public class EncodingTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_ENCODINGS;
+		return IWorkbenchRegistryConstants.PL_ENCODINGS;
 	}
 
 	/* (non-Javadoc)

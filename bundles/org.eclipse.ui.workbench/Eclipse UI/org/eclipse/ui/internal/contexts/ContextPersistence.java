@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 
 /**
@@ -74,15 +74,15 @@ final class ContextPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String contextId = readRequired(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Contexts need an id"); //$NON-NLS-1$
+			final String contextId = readRequired(configurationElement, ATT_ID,
+					warningsToLog, "Contexts need an id"); //$NON-NLS-1$
 			if (contextId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(configurationElement,
-					ATTRIBUTE_NAME, warningsToLog, "Contexts need a name", //$NON-NLS-1$
+			final String name = readRequired(configurationElement, ATT_NAME,
+					warningsToLog, "Contexts need a name", //$NON-NLS-1$
 					contextId);
 			if (name == null) {
 				continue;
@@ -90,16 +90,15 @@ final class ContextPersistence extends RegistryPersistence {
 
 			// Read out the description.
 			final String description = readOptional(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+					ATT_DESCRIPTION);
 
 			// Read out the parent id.
-			String parentId = configurationElement
-					.getAttribute(ATTRIBUTE_PARENT_ID);
+			String parentId = configurationElement.getAttribute(ATT_PARENT_ID);
 			if ((parentId == null) || (parentId.length() == 0)) {
-				parentId = configurationElement.getAttribute(ATTRIBUTE_PARENT);
+				parentId = configurationElement.getAttribute(ATT_PARENT);
 				if ((parentId == null) || (parentId.length() == 0)) {
 					parentId = configurationElement
-							.getAttribute(ATTRIBUTE_PARENT_SCOPE);
+							.getAttribute(ATT_PARENT_SCOPE);
 				}
 			}
 			if ((parentId != null) && (parentId.length() == 0)) {
@@ -134,14 +133,15 @@ final class ContextPersistence extends RegistryPersistence {
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] acceleratorScopeDeltas = event
 				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+						IWorkbenchRegistryConstants.PL_ACCELERATOR_SCOPES);
 		if (acceleratorScopeDeltas.length == 0) {
 			final IExtensionDelta[] contextDeltas = event.getExtensionDeltas(
-					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_CONTEXTS);
+					PlatformUI.PLUGIN_ID,
+					IWorkbenchRegistryConstants.PL_CONTEXTS);
 			if (contextDeltas.length == 0) {
 				final IExtensionDelta[] commandDeltas = event
 						.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-								IWorkbenchConstants.PL_COMMANDS);
+								IWorkbenchRegistryConstants.PL_COMMANDS);
 				if (commandDeltas.length == 0) {
 					return false;
 				}
@@ -177,7 +177,7 @@ final class ContextPersistence extends RegistryPersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
-			if (ELEMENT_ACCELERATOR_SCOPE.equals(name)) {
+			if (TAG_ACCELERATOR_SCOPE.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_CONTEXT_DEFINITIONS, contextDefinitionCount++);
@@ -195,11 +195,11 @@ final class ContextPersistence extends RegistryPersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
-			if (ELEMENT_SCOPE.equals(name)) {
+			if (TAG_SCOPE.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_CONTEXT_DEFINITIONS, contextDefinitionCount++);
-			} else if (ELEMENT_CONTEXT.equals(name)) {
+			} else if (TAG_CONTEXT.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_CONTEXT_DEFINITIONS, contextDefinitionCount++);
@@ -217,7 +217,7 @@ final class ContextPersistence extends RegistryPersistence {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
-			if (ELEMENT_CONTEXT.equals(name)) {
+			if (TAG_CONTEXT.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_CONTEXT_DEFINITIONS, contextDefinitionCount++);

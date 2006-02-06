@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.osgi.framework.Bundle;
 
 /**
@@ -66,7 +66,7 @@ public class StartupTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return IWorkbenchConstants.PL_STARTUP;
+		return IWorkbenchRegistryConstants.PL_STARTUP;
 	}
 
 	/*

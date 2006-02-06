@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -60,6 +59,6 @@ public class PerspectiveRegistryReader extends RegistryReader {
      */
     public void readPerspectives(IExtensionRegistry in) {
         readRegistry(in, PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_PERSPECTIVES);
+                IWorkbenchRegistryConstants.PL_PERSPECTIVES);
     }
 }

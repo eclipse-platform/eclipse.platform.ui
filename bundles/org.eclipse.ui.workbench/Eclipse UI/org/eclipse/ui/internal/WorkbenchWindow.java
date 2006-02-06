@@ -43,8 +43,6 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.menus.ILayoutNode;
-import org.eclipse.jface.menus.SMenuLayout;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
@@ -113,7 +111,11 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
+import org.eclipse.ui.internal.menus.IActionSetsListener;
+import org.eclipse.ui.internal.menus.ILayoutNode;
+import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyMenuManager;
+import org.eclipse.ui.internal.menus.SMenuLayout;
 import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -122,11 +124,11 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.menus.IMenuService;
 
 /**
  * A window within the workbench.
@@ -346,7 +348,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	private IExtensionPoint getActionSetExtensionPoint() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
-				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
+				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_ACTION_SETS);
 	}
 
 	/**

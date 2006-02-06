@@ -20,9 +20,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.tests.performance.layout.PresentationWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
@@ -88,7 +88,7 @@ public class PresentationPerformanceTestSuite extends TestSuite {
     }
     
     private static String[] getPresentationIds() {
-        return listIds(IWorkbenchConstants.PL_PRESENTATION_FACTORIES,
+        return listIds(IWorkbenchRegistryConstants.PL_PRESENTATION_FACTORIES,
                 "factory");
     }
     

@@ -14,7 +14,7 @@ import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.services.IRegistryConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * A proxy for a parameter value converter that has been defined in the regisry.
@@ -80,7 +80,7 @@ public final class ParameterValueConverterProxy extends
 		if (parameterValueConverter == null) {
 			try {
 				parameterValueConverter = (AbstractParameterValueConverter) converterConfigurationElement
-						.createExecutableExtension(IRegistryConstants.ATTRIBUTE_CONVERTER);
+						.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CONVERTER);
 			} catch (final CoreException e) {
 				throw new ParameterValueConversionException(
 						"Problem creating parameter value converter", e); //$NON-NLS-1$

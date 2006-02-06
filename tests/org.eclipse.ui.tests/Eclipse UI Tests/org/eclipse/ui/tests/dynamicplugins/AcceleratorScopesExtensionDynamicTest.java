@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Tests whether the "org.eclipse.ui.acceleratorScopes" extension point can be
@@ -50,7 +50,7 @@ public final class AcceleratorScopesExtensionDynamicTest extends
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	protected final String getExtensionPoint() {
-		return IWorkbenchConstants.PL_ACCELERATOR_SCOPES;
+		return IWorkbenchRegistryConstants.PL_ACCELERATOR_SCOPES;
 	}
 
 	/**
