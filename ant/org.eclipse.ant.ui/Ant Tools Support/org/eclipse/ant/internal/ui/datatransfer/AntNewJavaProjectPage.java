@@ -254,11 +254,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 	 */
 	private void handleBrowseButtonPressed() {
 		
-		String lastUsedPath= null;
-		//lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTFILE);
-		if (lastUsedPath == null) {
-			lastUsedPath= ""; //$NON-NLS-1$
-		}
+		String lastUsedPath= ""; //$NON-NLS-1$
 		FileDialog dialog = new FileDialog(getShell(), SWT.SINGLE);
 		dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$;
 		dialog.setFilterPath(lastUsedPath);
