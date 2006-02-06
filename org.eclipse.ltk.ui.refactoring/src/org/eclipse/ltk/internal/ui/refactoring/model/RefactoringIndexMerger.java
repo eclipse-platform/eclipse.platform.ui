@@ -54,6 +54,13 @@ public final class RefactoringIndexMerger implements IStreamMerger, IStorageMerg
 	/**
 	 * {@inheritDoc}
 	 */
+	public boolean canMergeWithoutAncestor() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public IStatus merge(final OutputStream output, final String encoding, final InputStream ancestor, final String ancestorEncoding, final InputStream target, final String targetEncoding, final InputStream source, final String sourceEncoding, final IProgressMonitor monitor) {
 		try {
 			performMerge(output, encoding, target, source);

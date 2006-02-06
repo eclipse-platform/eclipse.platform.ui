@@ -52,6 +52,13 @@ public final class RefactoringHistoryMerger implements IStreamMerger, IStorageMe
 	/**
 	 * {@inheritDoc}
 	 */
+	public boolean canMergeWithoutAncestor() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public IStatus merge(final OutputStream output, final String outputEncoding, final InputStream ancestor, final String ancestorEncoding, final InputStream target, final String targetEncoding, final InputStream source, final String sourceEncoding, final IProgressMonitor monitor) {
 		try {
 			performMerge(output, target, source);
