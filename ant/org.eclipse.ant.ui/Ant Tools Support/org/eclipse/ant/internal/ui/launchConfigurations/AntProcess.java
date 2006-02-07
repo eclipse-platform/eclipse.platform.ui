@@ -139,7 +139,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 		fConsole = console;
 	}
 	
-	// IProgressMontior implemented to support termination.
+	// IProgressMonitor implemented to support termination.
 	
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
