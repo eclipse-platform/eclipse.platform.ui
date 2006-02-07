@@ -23,12 +23,13 @@ import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * Action that performs an optimistic merge
  */
-public class MergeIncomingChangesAction extends ModelProviderAction {
+public class MergeIncomingChangesAction extends ModelParticipantAction {
 
 	public MergeIncomingChangesAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
@@ -39,7 +40,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 	 */
 	public void run() {
 		try {
-			handleBufferChange();
+			handleModelChange();
 		} catch (InvocationTargetException e) {
 			handle(e);
 			return;
@@ -104,8 +105,8 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 		};
 	}
 	
-	protected void handleBufferChange() throws InvocationTargetException, InterruptedException {
-		final ISaveableCompareModel currentBuffer = getActiveBuffer();
+	protected void handleModelChange() throws InvocationTargetException, InterruptedException {
+		final ISaveableCompareModel currentBuffer = getActiveModel();
 		if (currentBuffer != null && currentBuffer.isDirty()) {
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -118,7 +119,7 @@ public class MergeIncomingChangesAction extends ModelProviderAction {
 				}
 			});
 		}
-		setActiveBuffer(null);
+		setActiveModel(null);
 	}
 	
 }

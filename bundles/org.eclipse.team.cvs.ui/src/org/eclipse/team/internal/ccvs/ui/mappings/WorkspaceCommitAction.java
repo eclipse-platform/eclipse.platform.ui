@@ -22,14 +22,14 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
-import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 
 /**
  * A commit action that will commit all outgoing canges in the context.
  */
-public class WorkspaceCommitAction extends ModelProviderAction implements IDiffChangeListener {
+public class WorkspaceCommitAction extends ModelParticipantAction implements IDiffChangeListener {
 
 	/**
 	 * Crate the action

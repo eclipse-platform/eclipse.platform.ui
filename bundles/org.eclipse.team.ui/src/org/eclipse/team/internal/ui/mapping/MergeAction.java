@@ -21,8 +21,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -68,7 +67,7 @@ public class MergeAction extends Action {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException,
 								InterruptedException {
 							try {
-								ModelProviderAction.handleBufferChange(configuration.getSite().getShell(), target, currentBuffer, true, monitor);
+								ModelParticipantAction.handleBufferChange(configuration.getSite().getShell(), target, currentBuffer, true, monitor);
 							} catch (CoreException e) {
 								throw new InvocationTargetException(e);
 							}

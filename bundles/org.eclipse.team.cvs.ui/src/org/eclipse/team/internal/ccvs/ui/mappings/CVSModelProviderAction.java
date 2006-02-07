@@ -12,10 +12,10 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 
-public abstract class CVSModelProviderAction extends ModelProviderAction {
+public abstract class CVSModelProviderAction extends ModelParticipantAction {
 
 	public CVSModelProviderAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -27,8 +27,6 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
@@ -43,16 +41,16 @@ import org.eclipse.ui.actions.BaseSelectionListenerAction;
  * 
  * @since 3.2
  */
-public abstract class ModelProviderAction extends BaseSelectionListenerAction {
+public abstract class ModelParticipantAction extends BaseSelectionListenerAction {
 
 	private final ISynchronizePageConfiguration configuration;
 
 	/**
-	 * Create the action
-	 * @param the label of the action
+	 * Create the model participant action.
+	 * @param the label of the action or <code>null</code>
 	 * @param configuration the configuration for the page that is surfacing the action
 	 */
-	public ModelProviderAction(String text, ISynchronizePageConfiguration configuration) {
+	public ModelParticipantAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text);
 		this.configuration = configuration;
 		initialize(configuration);
@@ -62,7 +60,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 		configuration.getSite().getSelectionProvider().addSelectionChangedListener(this);
 		configuration.getPage().getViewer().getControl().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				getConfiguration().getSite().getSelectionProvider().removeSelectionChangedListener(ModelProviderAction.this);
+				getConfiguration().getSite().getSelectionProvider().removeSelectionChangedListener(ModelParticipantAction.this);
 			}
 		});
 	}
@@ -148,15 +146,15 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	}
 	
 	/**
-	 * Check to see if the target buffer differs from the currently 
-	 * active buffer. If it does, prompt to save changes in the
-	 * active buffer if it is dirty.
+	 * Check to see if the target saveable mode; differs from the currently 
+	 * active model. If it does, prompt to save changes in the
+	 * active model if it is dirty.
 	 * @throws InterruptedException 
 	 * @throws InvocationTargetException 
 	 */
-	protected void handleBufferChange() throws InvocationTargetException, InterruptedException {
-		final ISaveableCompareModel targetBuffer = getTargetBuffer();
-		final ISaveableCompareModel  currentBuffer = getActiveBuffer();
+	protected void handleModelChange() throws InvocationTargetException, InterruptedException {
+		final ISaveableCompareModel targetBuffer = getTargetModel();
+		final ISaveableCompareModel  currentBuffer = getActiveModel();
 		if (currentBuffer != null && currentBuffer.isDirty()) {
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -169,22 +167,41 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 				}
 			});
 		}
-		setActiveBuffer(targetBuffer);
+		setActiveModel(targetBuffer);
 	}
 
-	public static void handleBufferChange(Shell shell, ISaveableCompareModel targetBuffer, ISaveableCompareModel currentBuffer, boolean allowCancel, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		if (currentBuffer != null && targetBuffer != currentBuffer) {
-			if (currentBuffer.isDirty()) {
-				if (promptToSaveChanges(shell, currentBuffer, allowCancel)) {
-					currentBuffer.doSave(monitor);
+	/**
+	 * Convenience method that prompts if the currently active model is dirty
+	 * and eitehr saves or reverts the model depending on the users input.
+	 * @param shell a parent shell
+	 * @param targetModel the new model
+	 * @param activeModel the current model
+	 * @param allowCancel whether cancelling the action is an option
+	 * @param monitor a progress monitor
+	 * @throws CoreException
+	 * @throws InterruptedException
+	 */
+	public static void handleBufferChange(Shell shell, ISaveableCompareModel targetModel, ISaveableCompareModel activeModel, boolean allowCancel, IProgressMonitor monitor) throws CoreException, InterruptedException {
+		if (activeModel != null && targetModel != activeModel) {
+			if (activeModel.isDirty()) {
+				if (promptToSaveChanges(shell, activeModel, allowCancel)) {
+					activeModel.doSave(monitor);
 				} else {
-					currentBuffer.doRevert(monitor);
+					activeModel.doRevert(monitor);
 				}
 			}
 		}
 	}
 
-	public static boolean promptToSaveChanges(final Shell shell, final ISaveableCompareModel buffer, final boolean allowCancel) throws InterruptedException {
+	/**
+	 * Convenience method that prompts to save changes in the given dirty model.
+	 * @param shell a shell
+	 * @param saveableModel a dirty saveable model
+	 * @param allowCancel whether cancelling the action is an option
+	 * @return whether the usr choose to save (<code>true</code>) or revert (<code>false</code>() the model
+	 * @throws InterruptedException thrown if the user choose to cancel
+	 */
+	public static boolean promptToSaveChanges(final Shell shell, final ISaveableCompareModel saveableModel, final boolean allowCancel) throws InterruptedException {
 		final int[] result = new int[] { 0 };
 		Runnable runnable = new Runnable() {
 			public void run() {
@@ -197,7 +214,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 				MessageDialog dialog = new MessageDialog(
 						shell, 
 						"Save Changes", null, 
-						NLS.bind("{0} has unsaved changes. Do you want to save them?", buffer.getName()),
+						NLS.bind("{0} has unsaved changes. Do you want to save them?", saveableModel.getName()),
 						MessageDialog.QUESTION,
 						options,
 						result[0]);
@@ -217,7 +234,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * @return the currently active buffer (or <code>null</code> if
 	 * no buffer is active).
 	 */
-	protected ISaveableCompareModel getActiveBuffer() {
+	protected ISaveableCompareModel getActiveModel() {
 		return ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveModel();
 	}
 
@@ -227,7 +244,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * @param buffer the buffer that is now active (or <code>null</code> if
 	 * no buffer is active).
 	 */
-	protected void setActiveBuffer(ISaveableCompareModel buffer) {
+	protected void setActiveModel(ISaveableCompareModel buffer) {
 		((ModelSynchronizeParticipant)configuration.getParticipant()).setActiveModel(buffer);
 	}
 	
@@ -236,7 +253,7 @@ public abstract class ModelProviderAction extends BaseSelectionListenerAction {
 	 * By default, <code>null</code> is returned.
 	 * @return the buffer that is the target of this operation
 	 */
-	protected ISaveableCompareModel getTargetBuffer() {
+	protected ISaveableCompareModel getTargetModel() {
 		return null;
 	}
 	

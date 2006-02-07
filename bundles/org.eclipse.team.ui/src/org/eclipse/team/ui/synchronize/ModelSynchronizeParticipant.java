@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.mapping.ModelProviderAction;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
@@ -556,7 +555,7 @@ public class ModelSynchronizeParticipant extends
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
-			ModelProviderAction.handleBufferChange(shell, targetBuffer, currentBuffer, cancelAllowed, Policy.subMonitorFor(monitor, 10));
+			ModelParticipantAction.handleBufferChange(shell, targetBuffer, currentBuffer, cancelAllowed, Policy.subMonitorFor(monitor, 10));
 		} catch (InterruptedException e) {
 			return false;
 		}
