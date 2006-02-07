@@ -1055,9 +1055,6 @@
                class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
                menubarPath="editGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyToClipboard">
-            <selection
-                  class="org.eclipse.debug.core.model.IDebugElement">
-            </selection>
          </action>
       <!-- Launch Group -->
          <action
@@ -1282,12 +1279,9 @@
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
-               class="org.eclipse.debug.internal.ui.actions.variables.CopyVariablesToClipboardActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
                menubarPath="variableGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard">
-            <selection
-                  class="org.eclipse.debug.core.model.IDebugElement">
-            </selection>
          </action>
          <action
                label="%SelectAll.label"

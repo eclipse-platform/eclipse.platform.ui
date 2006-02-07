@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -57,12 +54,6 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 
 	protected String getActionId() {
 		return IDebugView.COPY_ACTION;
-	}
-	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
-	 */
-	protected boolean isEnabledFor(Object element) {
-		return getViewer() != null && element instanceof IDebugElement;
 	}
 
 	/**
@@ -168,9 +159,11 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 		return walkHierarchy(parent, elements);		
 	}
 	
+	/**
+	 * Only append children that are expanded in the tree viewer
+	 */
 	protected boolean shouldAppendChildren(TreeItem item) {
-		Object data= item.getData();
-		return data instanceof IDebugTarget || data instanceof IThread;
+		return item.getExpanded();
 	}
 			
 	protected ContentViewer getViewer() {
