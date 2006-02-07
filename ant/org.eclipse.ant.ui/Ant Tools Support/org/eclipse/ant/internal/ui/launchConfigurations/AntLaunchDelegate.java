@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -65,6 +66,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.osgi.framework.Bundle;
 
@@ -86,9 +88,16 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	
 	private String fMode;
     private boolean fUserSpecifiedLogger= false;
+    
+    public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
+		String arguments = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
+		return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(arguments);
+	}
 	
 	/**
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration,
+	 *      java.lang.String, org.eclipse.debug.core.ILaunch,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor.isCanceled()) {
@@ -141,8 +150,12 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		idProperty.append('=');
 		idProperty.append(idStamp);
 		
-		// resolve arguments
-		String[] arguments = ExternalToolsUtil.getArguments(configuration);
+		// resolve arguments	
+		String[] arguments = null;
+		if (isSeparateJRE)
+			arguments = new String[] {getProgramArguments(configuration)};
+		else 
+			arguments = ExternalToolsUtil.getArguments(configuration);
 		
 		Map userProperties= AntUtil.getProperties(configuration);
 		if (userProperties != null) {//create a copy so as to not affect the configuration with transient properties
