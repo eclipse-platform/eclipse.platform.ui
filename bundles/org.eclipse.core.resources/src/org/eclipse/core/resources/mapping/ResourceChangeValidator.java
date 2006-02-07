@@ -23,13 +23,21 @@ import org.eclipse.osgi.util.NLS;
 /**
  * The resource change validator is used to validate that changes made to
  * resources will not adversely affect the models stored in those resources.
- * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Resources team.
+ * The validator is used by first creating a resource delta describing the 
+ * proposed changes.  A delta can be generated using a {@link IResourceChangeDescriptionFactory}.
+ * The change is then validated by calling the {@link #validateChange(IResourceDelta, IProgressMonitor)}
+ * method. This example validates a change to a single file:
+ * <code>
+ *    IFile file = ..;//some file that is going to be changed
+ *    ResourceChangeValidator validator = ResourceChangeValidator.getValidator();
+ *    IResourceChangeDescriptionFactory factory = validator.createDeltaFactory();
+ *    factory.change(file);
+ *    IResourceDelta delta = factory.getDelta();
+ *    validator.validateChange(delta, null);
+ * </code>
  * </p>
+ * 
  * @since 3.2
  */
 public final class ResourceChangeValidator {
