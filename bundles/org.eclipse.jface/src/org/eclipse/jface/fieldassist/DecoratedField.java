@@ -22,6 +22,7 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FormAttachment;
@@ -124,6 +125,12 @@ public class DecoratedField {
 	 * The composite with form layout used to manage decorations.
 	 */
 	private Composite form;
+
+	/**
+	 * The boolean that indicates whether the maximum decoration width is used
+	 * when allocating space for decorations.
+	 */
+	private boolean useMaxDecorationWidth = true;
 
 	/**
 	 * The hover used for showing description text
@@ -376,7 +383,7 @@ public class DecoratedField {
 		FormData formData;
 		int i = indexForPosition(position);
 		if (decDatas[i] == null) {
-			formData = createFormDataForIndex(i);
+			formData = createFormDataForIndex(i, decoration.getImage());
 			label = new Label(form, SWT.HORIZONTAL | SWT.VERTICAL | SWT.CENTER);
 			label.addMouseTrackListener(new MouseTrackListener() {
 				public void mouseHover(MouseEvent event) {
@@ -420,34 +427,33 @@ public class DecoratedField {
 	 */
 	private void updateControlAttachments(int index, FieldDecorationData decData) {
 		FormData formData = (FormData) control.getLayoutData();
-		int maxWidth = FieldDecorationRegistry.getDefault()
-				.geMaximumDecorationWidth();
+		int newWidth = widthOf(decData.decoration.getImage());
 
 		switch (index) {
 		case LEFT_TOP:
 			if (decDatas[LEFT_BOTTOM] == null
-					|| decDatas[LEFT_BOTTOM].data.width < maxWidth) {
+					|| decDatas[LEFT_BOTTOM].data.width < newWidth) {
 				formData.left = new FormAttachment(decData.label);
 			} else
 				formData = null;
 			break;
 		case LEFT_BOTTOM:
 			if (decDatas[LEFT_TOP] == null
-					|| decDatas[LEFT_TOP].data.width < maxWidth) {
+					|| decDatas[LEFT_TOP].data.width < newWidth) {
 				formData.left = new FormAttachment(decData.label);
 			} else
 				formData = null;
 			break;
 		case RIGHT_TOP:
 			if (decDatas[RIGHT_BOTTOM] == null
-					|| decDatas[RIGHT_BOTTOM].data.width < maxWidth) {
+					|| decDatas[RIGHT_BOTTOM].data.width < newWidth) {
 				formData.right = new FormAttachment(decData.label);
 			} else
 				formData = null;
 			break;
 		case RIGHT_BOTTOM:
 			if (decDatas[RIGHT_TOP] == null
-					|| decDatas[RIGHT_TOP].data.width < maxWidth) {
+					|| decDatas[RIGHT_TOP].data.width < newWidth) {
 				formData.right = new FormAttachment(decData.label);
 			} else
 				formData = null;
@@ -570,9 +576,11 @@ public class DecoratedField {
 	 *            specified as SWT.LEFT | SWT.TOP. If an image decoration
 	 *            already exists in the specified position, it will be replaced
 	 *            by the one specified.
+	 * @param image
+	 *            the image shown in the decoration.
 	 * 
 	 */
-	private FormData createFormDataForIndex(int index) {
+	private FormData createFormDataForIndex(int index, Image image) {
 		Assert.isTrue(index >= 0 && index < DECORATION_SLOTS,
 				"Index out of range"); //$NON-NLS-1$
 
@@ -595,8 +603,7 @@ public class DecoratedField {
 			data.bottom = new FormAttachment(100, 0);
 			break;
 		}
-		data.width = FieldDecorationRegistry.getDefault()
-				.geMaximumDecorationWidth();
+		data.width = widthOf(image);
 		data.height = SWT.DEFAULT;
 
 		return data;
@@ -768,5 +775,40 @@ public class DecoratedField {
 		}
 		hover.setText(text, hoverNear, control);
 		hover.setVisible(true);
+	}
+
+	/**
+	 * Set a boolean that indicates whether the receiver should use the
+	 * decoration registry's maximum decoration width when allocating space for
+	 * decorations. The default value is <code>true</code>. Using the maximum
+	 * decoration width is useful so that decorated fields on the same dialog
+	 * that have different decoration widths will all align. This also allows
+	 * client dialogs to align non-decorated fields with decorated fields by
+	 * consulting the maximum decoration width.
+	 * </p>
+	 * <p>
+	 * Clients may wish to set this value to <code>false</code> in cases where
+	 * space usage is more important than alignment of fields.
+	 * </p>
+	 * 
+	 * @param useMaximumWidth
+	 *            <code>true</code> if the maximum decoration width should be
+	 *            used as the size for all decorations, <code>false</code> if
+	 *            only the decoration size should be used.
+	 * 
+	 * @see FieldDecorationRegistry#geMaximumDecorationWidth()
+	 */
+	public void setUseMaximumDecorationWidth(boolean useMaximumWidth) {
+		useMaxDecorationWidth = useMaximumWidth;
+	}
+
+	/*
+	 * Return the width appropriate for the specified decoration image.
+	 */
+	private int widthOf(Image image) {
+		if (image == null)
+			return 0;
+		return useMaxDecorationWidth ? FieldDecorationRegistry.getDefault()
+				.geMaximumDecorationWidth() : image.getBounds().width;
 	}
 }
