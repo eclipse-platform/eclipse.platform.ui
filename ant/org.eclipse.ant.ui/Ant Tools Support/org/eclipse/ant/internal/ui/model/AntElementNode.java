@@ -381,7 +381,7 @@ public class AntElementNode implements IAdaptable {
 		if (o1 == o2) {
 			return true;
 		}
-		if (o1 == null || o2 == null) {
+		if (o2 == null) {
 			return false;
 		}
 		if (!(o1 instanceof AntElementNode || o2 instanceof AntElementNode)) {
