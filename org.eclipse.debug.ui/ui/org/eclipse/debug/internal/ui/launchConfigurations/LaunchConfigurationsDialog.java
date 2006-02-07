@@ -48,6 +48,7 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -495,10 +496,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
+		layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setFont(font);
 		
+		// create help control if needed
+        if (isHelpAvailable() || TrayDialog.isDialogHelpAvailable()) {
+        	createHelpControl(composite);
+        }
+
 		Composite monitorComposite = new Composite(composite, SWT.NULL);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -516,7 +523,32 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getProgressMonitorPart().setFont(font);
 		monitorComposite.setVisible(false);
 
-		return super.createButtonBar(composite);
+		/*
+		 * This code is duplicated from Dialog#createButtonBar. We do not want
+		 * to call the TrayDialog implementation because it adds a help control.
+		 * Since this is a custom button bar, we explicitly added the help control
+		 * in an appropriate place above, and we use the Dialog implementation of
+		 * createButtonBar, which does not add a help control.
+		 */
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		// create a layout with spacing and margins appropriate for the font
+		// size.
+		layout = new GridLayout();
+		layout.numColumns = 0; // this is incremented by createButton
+		layout.makeColumnsEqualWidth = true;
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		buttonComposite.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
+				| GridData.VERTICAL_ALIGN_CENTER);
+		buttonComposite.setLayoutData(data);
+		buttonComposite.setFont(composite.getFont());
+		
+		// Add the buttons to the button bar.
+		createButtonsForButtonBar(buttonComposite);
+		return composite;
 	}
 
 	/**
