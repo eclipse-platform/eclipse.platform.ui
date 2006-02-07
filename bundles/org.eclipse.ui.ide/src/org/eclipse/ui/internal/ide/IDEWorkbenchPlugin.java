@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -85,12 +84,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
      */
     private MarkerImageProviderRegistry markerImageProviderRegistry = null;
 
-    /**
-     * Capability registry; lazily initialized.
-     */
-    private CapabilityRegistry capabilityRegistry;
-
-   
 	/**
 	 * Create an instance of the receiver.
 	 */
@@ -265,18 +258,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
         return markerImageProviderRegistry;
     }
 
-    /**
-     * Returns the capability registry for the workbench.
-     * 
-     * @return the capability registry
-     */
-    public CapabilityRegistry getCapabilityRegistry() {
-        if (capabilityRegistry == null) {
-            capabilityRegistry = new CapabilityRegistry();
-            capabilityRegistry.load();
-        }
-        return capabilityRegistry;
-    }
 
     /**
      * Returns the about information of all known features,
