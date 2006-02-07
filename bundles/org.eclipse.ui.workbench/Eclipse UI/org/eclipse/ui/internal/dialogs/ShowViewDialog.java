@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -155,7 +156,7 @@ public class ShowViewDialog extends Dialog implements
      * @param parent the parent <code>Composite</code>.
      */
     private void createFilteredTreeViewer(Composite parent) {
-		PatternItemFilter filter = new ViewPatternFilter(true);
+		PatternFilter filter = new ViewPatternFilter();
 		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		filteredTree = new FilteredTree(parent, styleBits, filter);
 		TreeViewer treeViewer = filteredTree.getViewer();

@@ -294,7 +294,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
         }
         composite.setLayoutData(data);
 
-        filteredTreeFilter = new WizardPatternFilter(true);
+        filteredTreeFilter = new WizardPatternFilter();
     	FilteredTree filterTree = new FilteredTree(composite, 
     			SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter);
   	

@@ -33,7 +33,7 @@ public class PreferenceBoldLabelProvider extends PreferenceLabelProvider
 	 * Using "false" to construct the filter so that this filter can filter
 	 * supernodes of a matching node
 	 */
-	PatternFilter filterForBoldElements = new PreferencePatternFilter(false);
+	PatternFilter filterForBoldElements = new PreferencePatternFilter();
 
 	public Font getFont(Object element) {
 		return FilteredTree.getBoldFont(element, filterTree,

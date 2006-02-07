@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -23,84 +22,38 @@ import org.eclipse.ui.views.IViewDescriptor;
  * @since 3.2
  *
  */
-public class ViewPatternFilter extends PatternItemFilter {
+public class ViewPatternFilter extends PatternFilter {
 
 	/**
 	 * Create a new instance of a ViewPatternFilter 
 	 * @param isMatchItem
 	 */
-	public ViewPatternFilter(boolean isMatchItem) {
-		super(isMatchItem);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		ITreeContentProvider contentProvider = (ITreeContentProvider) ((TreeViewer) viewer)
-				.getContentProvider();
-
-		String text = null;
-		Object[] children = null;
-		if (element instanceof IViewCategory) {
-			IViewCategory desc = (IViewCategory) element;
-			children = contentProvider.getChildren(desc);
-			text = desc.getLabel();
-		} else if (element instanceof IViewDescriptor) {
-			IViewDescriptor desc = (IViewDescriptor) element;
-			children = contentProvider.getChildren(desc);
-			text = desc.getLabel();
-		}
-
-		if (wordMatches(text)){
-			// make sure the category has at least one matching child 
-			// to prevent an empty caategory from appearing
-			if (element instanceof IViewCategory && children != null){
-				for (int i = 0; i < children.length; i++){
-					if (select(viewer, element, children[i]))
-						return true;
-				}
-				return false;	// no matching children
-			}
-			return true;
-		}
-
-		if (matchItem && children != null) {
-			// Will return true if any subnode of the element matches the search
-			if (filter(viewer, element, children).length > 0)
-				return true;
-		}
-
-		return false;
+	public ViewPatternFilter() {
+		super();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.internal.dialogs.PatternFilter#isElementSelectable(java.lang.Object)
 	 */
-	protected boolean isElementSelectable(Object element) {
+	public boolean isElementSelectable(Object element) {
 		return element instanceof IViewDescriptor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.PatternFilter#isElementMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.PatternFilter#isElementMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
 	 */
-	protected boolean isElementMatch(Viewer viewer, Object element) {
+	protected boolean isLeafMatch(Viewer viewer, Object element) {
+		if (element instanceof IViewCategory)
+			return false;
+
 		String text = null;
-		if (element instanceof IViewCategory) {
-			IViewCategory desc = (IViewCategory) element;
-			text = desc.getLabel();
-		} else if (element instanceof IViewDescriptor) {
+		if (element instanceof IViewDescriptor) {
 			IViewDescriptor desc = (IViewDescriptor) element;
 			text = desc.getLabel();
+			if (wordMatches(text))
+				return true;
 		}
-
-		if (wordMatches(text))
-			return true;
 
 		return false;
 	}

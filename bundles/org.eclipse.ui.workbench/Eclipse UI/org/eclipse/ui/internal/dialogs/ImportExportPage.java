@@ -109,7 +109,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 		private void createFilteredTree(Composite parent){        
 			// Create a FilteredTree for the categories and wizards
 			FilteredTree filteredTree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL
-	                | SWT.V_SCROLL | SWT.BORDER, new WizardPatternFilter(true));
+	                | SWT.V_SCROLL | SWT.BORDER, new WizardPatternFilter());
 	        viewer = filteredTree.getViewer();
 	        filteredTree.setFont(parent.getFont());
 

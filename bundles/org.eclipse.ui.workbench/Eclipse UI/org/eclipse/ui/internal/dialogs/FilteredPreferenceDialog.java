@@ -32,6 +32,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -59,16 +61,86 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
-	protected FilteredTree filteredTree;
+	protected class PreferenceFilteredTree extends FilteredTree{
+	    /**
+	     * An (optional) additional filter on the TreeViewer.
+	     */
+	    private ViewerFilter viewerFilter;
+	    
+	    /**
+	     * Initial title of dialog.  This is only used if the additional filter provided 
+	     * by the addFilter(ViewerFilter) method is utilized.
+	     */
+	    private String cachedTitle;
+	    
+	    /**
+	     * Constructor.
+	     * 
+	     * @param parent parent Composite
+	     * @param treeStyle SWT style bits for Tree
+	     * @param filter the PatternFilter to use for the TreeViewer
+	     */
+		PreferenceFilteredTree(Composite parent, int treeStyle,
+				PatternFilter filter) {
+			super(parent, treeStyle, filter);
+		}
+
+		/**
+		 * Add an additional, optional filter to the viewer.
+		 * If the filter text is cleared, this filter will be 
+		 * removed from the TreeViewer. 
+		 * 
+		 * @param filter 
+		 */
+		protected void addFilter(ViewerFilter filter) {
+			viewerFilter = filter;
+			getViewer().addFilter(filter);
+			setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
+			
+			if(filterText != null){
+				setFilterText(WorkbenchMessages.FilteredTree_FilterMessage);
+				textChanged();
+			}
+			
+			cachedTitle = getShell().getText();
+			getShell().setText(
+					NLS.bind(
+							WorkbenchMessages.FilteredTree_FilteredDialogTitle, 
+					cachedTitle));
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.ui.dialogs.FilteredTree#updateToolbar(boolean)
+		 */
+		protected void updateToolbar(boolean visible) {			
+        	if (filterToolBar != null)
+            	filterToolBar.getControl().setVisible(
+						viewerFilter != null || visible);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.dialogs.FilteredTree#clearText()
+		 */
+		protected void clearText() {
+	        setFilterText(""); //$NON-NLS-1$
+	        // remove the filter if text is cleared 
+	        if(viewerFilter != null){
+	        	getViewer().removeFilter(viewerFilter);
+	        	viewerFilter = null;
+	    		getShell().setText(cachedTitle);
+	        }
+	        textChanged();
+		}
+	}
+	
+	protected PreferenceFilteredTree filteredTree;
 
 	private Object pageData;
 	
 	IWorkingCopyManager workingCopyManager;
 	
 	private Collection updateJobs = new ArrayList();
-	
-	//Composite toolBarComposite;
-
 	
 	/**
 	 * The preference page history.
@@ -110,12 +182,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		PatternFilter filter = new PreferencePatternFilter(true); 
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = new FilteredTree(parent, styleBits, filter);
+		filteredTree = new PreferenceFilteredTree(parent, styleBits,
+				new PreferencePatternFilter());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
-		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		filteredTree.setBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
 
 		TreeViewer tree = filteredTree.getViewer();
 

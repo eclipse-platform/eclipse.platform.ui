@@ -20,10 +20,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -94,22 +91,11 @@ public class FilteredTree extends Composite {
 	 * The pattern filter for the tree. This value must not be <code>null</code>.
 	 */
     private PatternFilter patternFilter;
-    
-    /**
-     * An (optional) additional filter on the TreeViewer.
-     */
-    private ViewerFilter viewerFilter;
 
     /**
      * The text to initially show in the filter text control. 
      */
     protected String initialText = ""; //$NON-NLS-1$
-    
-    /**
-     * Initial title of dialog.  This is only used if the additional filter provided 
-     * by the addFilter(ViewerFilter) method is utilized.
-     */
-    private String cachedTitle;
     
     /**
      * The job used to refresh the tree.
@@ -197,7 +183,8 @@ public class FilteredTree extends Composite {
             filterComposite.setFont(parent.getFont());
             
         	createFilterControls(filterComposite);
-        	filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        	filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING,
+					true, false));
         }
         
         createTreeControl(this, treeStyle); 
@@ -252,7 +239,8 @@ public class FilteredTree extends Composite {
      */
     private TreeItem getFirstMatchingItem(TreeItem[] items){
 		for (int i = 0; i < items.length; i++){
-			if (patternFilter.isElementMatch(treeViewer, items[i].getData()) && patternFilter.isElementSelectable(items[i].getData())){
+			if (patternFilter.isLeafMatch(treeViewer, items[i].getData())
+					&& patternFilter.isElementSelectable(items[i].getData())) {
 				return items[i];
 			}
 			return getFirstMatchingItem(items[i].getItems());
@@ -292,16 +280,16 @@ public class FilteredTree extends Composite {
 		            TreeItem[] items = getViewer().getTree().getItems();
 		            if (items.length > 0)
 		            	treeViewer.getTree().showItem(items[0]);	// to prevent scrolling
-		            // enabled toolbar is a hint that there is text to clear
-		            // and the list is currently being filtered
-		            if (filterToolBar != null)
-		            	filterToolBar.getControl().setVisible(true);
+		            
+		            // enabled toolbar - there is text to clear
+		            // and the list is currently being filtered		
+		            updateToolbar(true);
 		        } else {
-		            // disabled toolbar is a hint that there is no text to clear
-		            // and the list is currently not filtered
-		            if (filterToolBar != null)
-		            	filterToolBar.getControl().setVisible(viewerFilter != null);
+					// disabled toolbar - there is no text to clear
+			        // and the list is currently not filtered		        	
+		        	updateToolbar(false);
 		        }
+
 		        return Status.OK_STATUS;
 			}
 			
@@ -309,6 +297,11 @@ public class FilteredTree extends Composite {
 		refreshJob.setSystem(true);
 	}
 
+	protected void updateToolbar(boolean visible){
+		if (filterToolBar != null)
+        	filterToolBar.getControl().setVisible(visible);
+	}
+	
 	/**
 	 * Create the filter text and adds listeners.
 	 * 
@@ -380,11 +373,15 @@ public class FilteredTree extends Composite {
 					} else {
 						// if the initial filter text hasn't changed, do not try to match
 						boolean hasFocus = getViewer().getTree().setFocus();
-						boolean textChanged = !getInitialText().equals(filterText.getText().trim());
-						if (hasFocus && textChanged && filterText.getText().trim().length() > 0){
-							TreeItem item = getFirstMatchingItem(getViewer().getTree().getItems());
-							if (item != null){
-								getViewer().getTree().setSelection(new TreeItem[] {item});
+						boolean textChanged = !getInitialText().equals(
+								filterText.getText().trim());
+						if (hasFocus && textChanged
+								&& filterText.getText().trim().length() > 0) {
+							TreeItem item = getFirstMatchingItem(getViewer()
+									.getTree().getItems());
+							if (item != null) {
+								getViewer().getTree().setSelection(
+										new TreeItem[] { item });
 								ISelection sel = getViewer().getSelection();
 								getViewer().setSelection(sel, true);
 							}
@@ -446,7 +443,8 @@ public class FilteredTree extends Composite {
             }
         };
 
-        clearTextAction.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
+        clearTextAction
+				.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
         clearTextAction.setImageDescriptor(JFaceResources.getImageRegistry()
                 .getDescriptor(CLEAR_ICON));
         clearTextAction.setDisabledImageDescriptor(JFaceResources
@@ -461,13 +459,6 @@ public class FilteredTree extends Composite {
      */
     protected void clearText() {
         setFilterText(""); //$NON-NLS-1$
-        
-        if(viewerFilter != null){
-        	getViewer().removeFilter(viewerFilter);
-        	viewerFilter = null;
-    		getShell().setText(cachedTitle);
-        }
-		
         textChanged();
     }
 
@@ -530,7 +521,6 @@ public class FilteredTree extends Composite {
     public void setInitialText(String text) {
         initialText = text;
     	setFilterText(initialText);
-    	
         textChanged();
     }
 
@@ -549,31 +539,6 @@ public class FilteredTree extends Composite {
 	 */
 	protected String getInitialText() {
 		return initialText;
-	}
-
-	/**
-	 * Add an additional, optional filter to the viewer.
-	 * If the filter text is cleared, this filter will be 
-	 * removed from the TreeViewer. 
-	 * 
-	 * @param filter 
-	 */
-	public void addFilter(ViewerFilter filter) {
-		viewerFilter = filter;
-		getViewer().addFilter(filter);
-		setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
-		
-		if(filterText != null){
-			setFilterText(WorkbenchMessages.FilteredTree_FilterMessage);
-			textChanged();
-		}
-		
-		cachedTitle = getShell().getText();
-		getShell().setText(
-				NLS.bind(
-						WorkbenchMessages.FilteredTree_FilteredDialogTitle, 
-				cachedTitle));
-		
 	}
 
 	/**
@@ -600,7 +565,6 @@ public class FilteredTree extends Composite {
 		// Do nothing if it's empty string
 		String initialText = tree.getInitialText();
 		if (!("".equals(filterText) || initialText.equals(filterText))) {//$NON-NLS-1$
-
 			boolean initial = initialText != null
 					&& initialText.equals(filterText);
 			if (initial) {
@@ -609,11 +573,8 @@ public class FilteredTree extends Composite {
 				filter.setPattern(filterText);
 			}
 
-			ITreeContentProvider contentProvider = (ITreeContentProvider) tree
-					.getViewer().getContentProvider();
-			Object parent = contentProvider.getParent(element);
-
-			if (filter.select(tree.getViewer(), parent, element)) {
+			if (filter.isElementVisible(tree.getViewer(), element) && 
+					filter.isLeafMatch(tree.getViewer(),element)) {
 				return JFaceResources.getFontRegistry().getBold(
 						JFaceResources.DIALOG_FONT);
 			}
