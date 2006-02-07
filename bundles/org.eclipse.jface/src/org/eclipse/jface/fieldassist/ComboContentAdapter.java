@@ -12,6 +12,7 @@ package org.eclipse.jface.fieldassist;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 
@@ -47,7 +48,8 @@ public class ComboContentAdapter implements IControlContentAdapter {
 	public void setControlContents(Control control, String text,
 			int cursorPosition) {
 		((Combo) control).setText(text);
-		((Combo) control).setSelection(new Point(cursorPosition, cursorPosition));
+		((Combo) control)
+				.setSelection(new Point(cursorPosition, cursorPosition));
 	}
 
 	/*
@@ -74,26 +76,29 @@ public class ComboContentAdapter implements IControlContentAdapter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getCursorPosition(org.eclipse.swt.widgets.Control)
 	 */
 	public int getCursorPosition(Control control) {
 		return ((Combo) control).getSelection().x;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getInsertionOffset(org.eclipse.swt.widgets.Control)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getInsertionBounds(org.eclipse.swt.widgets.Control)
 	 */
-	public int getInsertionOffset(Control control) {
+	public Rectangle getInsertionBounds(Control control) {
 		Combo combo = (Combo) control;
-		int position = combo.getSelection().x;
+		int position = combo.getSelection().y;
 		String contents = combo.getText();
 		GC gc = new GC(combo);
 		gc.setFont(combo.getFont());
-		Point extent= gc.textExtent(contents.substring(0, Math.min(position, contents.length())));
+		Point extent = gc.textExtent(contents.substring(0, Math.min(position,
+				contents.length())));
 		gc.dispose();
-		
-		return combo.getClientArea().x + extent.x;
+		return new Rectangle(combo.getClientArea().x + extent.x, combo
+				.getClientArea().y, 1, combo.getClientArea().height);
 	}
 
 }

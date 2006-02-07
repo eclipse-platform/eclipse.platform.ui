@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -79,10 +80,11 @@ public interface IControlContentAdapter {
 	public int getCursorPosition(Control control);
 
 	/**
-	 * Get the insertion offset in pixels for the control. This is the
-	 * horizontal location, in coordinates relative to the control, where the
-	 * insertion point is located. If the implementer does not have an insertion
-	 * point, it is appropriate to return <code>0</code> for this value. This
+	 * Get the bounds (in pixels) of the insertion point for the control
+	 * content. This is a rectangle, in coordinates relative to the control,
+	 * where the insertion point is displayed. If the implementer does not have
+	 * an insertion point, or cannot determine the location of the insertion
+	 * point, it is appropriate to return the bounds of the entire control. This
 	 * value may be used to position a content proposal popup.
 	 * 
 	 * @param control
@@ -90,5 +92,5 @@ public interface IControlContentAdapter {
 	 * @return the pixel width representing the distance between the edge of the
 	 *         control and the insertion point.
 	 */
-	public int getInsertionOffset(Control control);
+	public Rectangle getInsertionBounds(Control control);
 }

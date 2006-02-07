@@ -11,6 +11,7 @@
 package org.eclipse.jface.fieldassist;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
@@ -74,12 +75,16 @@ public class TextContentAdapter implements IControlContentAdapter {
 	public int getCursorPosition(Control control) {
 		return ((Text) control).getCaretPosition();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getInsertionOffset(org.eclipse.swt.widgets.Control)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getInsertionBounds(org.eclipse.swt.widgets.Control)
 	 */
-	public int getInsertionOffset(Control control) {
-		return ((Text) control).getCaretLocation().x;
+	public Rectangle getInsertionBounds(Control control) {
+		Text text = (Text) control;
+		Point caretOrigin = text.getCaretLocation();
+		return new Rectangle(caretOrigin.x, caretOrigin.y, 1, text
+				.getLineHeight());
 	}
 }
