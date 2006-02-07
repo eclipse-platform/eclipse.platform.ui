@@ -34,8 +34,12 @@ import org.eclipse.osgi.util.NLS;
  *    IResourceChangeDescriptionFactory factory = validator.createDeltaFactory();
  *    factory.change(file);
  *    IResourceDelta delta = factory.getDelta();
- *    validator.validateChange(delta, null);
+ *    IStatus result = validator.validateChange(delta, null);
  * </code>
+ * If the result status does not have severity {@link IStatus#OK}, then
+ * the changes may cause problems for models that are built on those
+ * resources.  In this case the user should be presented with the status message
+ * to determine if they want to proceed with the modification.
  * </p>
  * 
  * @since 3.2
