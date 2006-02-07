@@ -200,6 +200,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			commands = project.getDescription().getBuildSpec();
 		} catch (CoreException e) {
 			handleException(e);
+            return;
 		}
 	
 		boolean projectNeedsMigration= false;
@@ -354,7 +355,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	}
 	
 	/**
-	 * Turns autobuilding on or off in the workspace.
+	 * Turns auto-building on or off in the workspace.
 	 */
 	private void setAutobuild(boolean newState) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
