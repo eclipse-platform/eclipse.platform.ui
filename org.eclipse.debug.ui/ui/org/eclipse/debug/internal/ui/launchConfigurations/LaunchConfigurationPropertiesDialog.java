@@ -111,7 +111,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		topLayout.marginHeight = 5;
-		topLayout.marginWidth = 0;
+		topLayout.marginWidth = 5;
 		topComp.setLayout(topLayout);
 		topComp.setFont(dialogComp.getFont());
 	
@@ -128,10 +128,10 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		editAreaComp.setFont(dialogComp.getFont());
 			
 		// Build the separator line that demarcates the button bar
-		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		separator.setLayoutData(gd);
+//		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
+//		gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.horizontalSpan = 1;
+//		separator.setLayoutData(gd);
 		
 		dialogComp.layout(true);
 		applyDialogFont(dialogComp);
