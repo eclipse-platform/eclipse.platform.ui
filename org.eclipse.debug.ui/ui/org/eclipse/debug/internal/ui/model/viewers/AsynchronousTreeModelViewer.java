@@ -425,10 +425,13 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @param node
      */
     protected void nodeContainerChanged(ModelNode node) {
-        Widget widget = node.getWidget();
+         Widget widget = node.getWidget();
         if (widget != null && !widget.isDisposed()) {
             if (isVisible(widget)) {
                 boolean expanded = true;
+                if (node.isContainer() && getItemCount(widget) == 0) {
+                	setItemCount(widget, 1);
+                }
                 if (widget instanceof TreeItem) {
                     expanded = ((TreeItem)widget).getExpanded();
                 }
@@ -439,6 +442,13 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         }
         attemptExpansion();
         attemptSelection(false);
+    }
+    
+    protected int getItemCount(Widget widget) {
+    	if (widget instanceof TreeItem) {
+			return ((TreeItem) widget).getItemCount();
+		}
+    	return ((Tree) widget).getItemCount();
     }
 
     protected void doUpdateItem(Widget item, Object element, boolean fullMap) {

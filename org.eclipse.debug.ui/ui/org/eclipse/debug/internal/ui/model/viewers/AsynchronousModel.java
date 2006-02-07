@@ -110,18 +110,16 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param element element to install an update policy for
 	 */
-	public void installModelProxy(Object element) {
-		synchronized (fModelProxies) {
-			if (!fModelProxies.containsKey(element)) {
-				IModelProxyFactoryAdapter modelProxyFactory = getModelProxyFactoryAdapter(element);
-				if (modelProxyFactory != null) {
-					IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
-					if (proxy != null) {
-						proxy.init(getPresentationContext());
-						fModelProxies.put(element, proxy);
-						getViewer().modelProxyAdded(proxy);
-						proxy.installed();
-					}
+	public synchronized void installModelProxy(Object element) {
+		if (!fModelProxies.containsKey(element)) {
+			IModelProxyFactoryAdapter modelProxyFactory = getModelProxyFactoryAdapter(element);
+			if (modelProxyFactory != null) {
+				IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
+				if (proxy != null) {
+					proxy.init(getPresentationContext());
+					fModelProxies.put(element, proxy);
+					getViewer().modelProxyAdded(proxy);
+					proxy.installed();
 				}
 			}
 		}
@@ -132,13 +130,11 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param element
 	 */
-	protected void disposeModelProxy(Object element) {
-		synchronized (fModelProxies) {
-			IModelProxy proxy = (IModelProxy) fModelProxies.remove(element);
-			if (proxy != null) {
-				getViewer().modelProxyRemoved(proxy);
-				proxy.dispose();
-			}
+	protected synchronized void disposeModelProxy(Object element) {
+		IModelProxy proxy = (IModelProxy) fModelProxies.remove(element);
+		if (proxy != null) {
+			getViewer().modelProxyRemoved(proxy);
+			proxy.dispose();
 		}
 	}	
 	
@@ -209,6 +205,11 @@ public abstract class AsynchronousModel {
 		if (nodes == null) {
 			fElementToNodes.put(element, new ModelNode[] { node});
 		} else {
+			for (int i = 0; i < nodes.length; i++) {
+				if (nodes[i] == node) {
+					return;
+				}
+			}
 			ModelNode[] old = nodes;
 			ModelNode[] newNodes = new ModelNode[old.length + 1];
 			System.arraycopy(old, 0, newNodes, 0, old.length);
@@ -486,6 +487,7 @@ public abstract class AsynchronousModel {
 	 * @param kids list of model elements
 	 */
 	protected void setChildren(final ModelNode parentNode, List kids) {
+		
         final Object[] children = filter(parentNode.getElement(), kids.toArray());
         final AsynchronousModelViewer viewer = getViewer();
         ViewerSorter sorter = viewer.getSorter();
@@ -529,8 +531,8 @@ public abstract class AsynchronousModel {
     					Object nextChild = children[i];
     					if (!prevNode.getElement().equals(nextChild)) {
     						unmapNode(prevNode);
-    						mapElement(nextChild, prevNode);
     					}
+    					mapElement(nextChild, prevNode);
     				}
     			}
     			// create new children
