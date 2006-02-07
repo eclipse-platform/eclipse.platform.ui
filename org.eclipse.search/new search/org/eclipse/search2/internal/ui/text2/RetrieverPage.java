@@ -820,7 +820,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 			marker.setAttributes(attributes);
 			IDE.gotoMarker(editor, marker);
 		} catch (CoreException e) {
-			throw new PartInitException(org.eclipse.search.internal.ui.SearchMessages.FileSearchPage_error_marker, e); 
+			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e); 
 		} finally {
 			if (marker != null)
 				try {

@@ -105,6 +105,7 @@ public final class SearchMessages extends NLS {
     public static String FilePatternSelectionDialog_message;
     public static String FilePatternSelectionDialog_selectAll;
     public static String FilePatternSelectionDialog_deselectAll;
+	public static String FileSearchPage_error_marker;
     public static String WorkspaceScopeDescription_label;
     public static String RetrieverFilterTab_LocationFilter_text;
     public static String RetrieverFilterTab_Comment_text;
