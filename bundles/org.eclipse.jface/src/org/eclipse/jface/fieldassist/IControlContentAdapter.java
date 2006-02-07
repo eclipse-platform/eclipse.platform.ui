@@ -38,7 +38,8 @@ public interface IControlContentAdapter {
 	 *            the zero-based index representing the desired cursor position
 	 *            in the control's contents after the contents are set.
 	 */
-	public void setControlContents(Control control, String contents, int cursorPosition);
+	public void setControlContents(Control control, String contents,
+			int cursorPosition);
 
 	/**
 	 * Insert the specified contents into the control's current contents. Must
@@ -52,7 +53,8 @@ public interface IControlContentAdapter {
 	 *            the zero-based index representing the desired cursor position
 	 *            in the control's contents after the insertion is made.
 	 */
-	public void insertControlContents(Control control, String contents, int cursorPosition);
+	public void insertControlContents(Control control, String contents,
+			int cursorPosition);
 
 	/**
 	 * Get the text contents of the control.
@@ -75,4 +77,18 @@ public interface IControlContentAdapter {
 	 *         control's contents.
 	 */
 	public int getCursorPosition(Control control);
+
+	/**
+	 * Get the insertion offset in pixels for the control. This is the
+	 * horizontal location, in coordinates relative to the control, where the
+	 * insertion point is located. If the implementer does not have an insertion
+	 * point, it is appropriate to return <code>0</code> for this value. This
+	 * value may be used to position a content proposal popup.
+	 * 
+	 * @param control
+	 *            the control whose offset is to be retrieved.
+	 * @return the pixel width representing the distance between the edge of the
+	 *         control and the insertion point.
+	 */
+	public int getInsertionOffset(Control control);
 }

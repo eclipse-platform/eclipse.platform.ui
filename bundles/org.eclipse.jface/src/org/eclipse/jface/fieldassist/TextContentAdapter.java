@@ -74,4 +74,12 @@ public class TextContentAdapter implements IControlContentAdapter {
 	public int getCursorPosition(Control control) {
 		return ((Text) control).getCaretPosition();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getInsertionOffset(org.eclipse.swt.widgets.Control)
+	 */
+	public int getInsertionOffset(Control control) {
+		return ((Text) control).getCaretLocation().x;
+	}
 }

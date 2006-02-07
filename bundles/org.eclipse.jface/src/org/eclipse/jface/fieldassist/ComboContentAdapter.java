@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -71,7 +72,28 @@ public class ComboContentAdapter implements IControlContentAdapter {
 		combo.setSelection(selection);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getCursorPosition(org.eclipse.swt.widgets.Control)
+	 */
 	public int getCursorPosition(Control control) {
 		return ((Combo) control).getSelection().x;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getInsertionOffset(org.eclipse.swt.widgets.Control)
+	 */
+	public int getInsertionOffset(Control control) {
+		Combo combo = (Combo) control;
+		int position = combo.getSelection().x;
+		String contents = combo.getText();
+		GC gc = new GC(combo);
+		gc.setFont(combo.getFont());
+		Point extent= gc.textExtent(contents.substring(0, Math.min(position, contents.length())));
+		gc.dispose();
+		
+		return combo.getClientArea().x + extent.x;
+	}
+
 }

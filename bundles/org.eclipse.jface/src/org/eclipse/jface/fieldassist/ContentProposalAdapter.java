@@ -528,6 +528,10 @@ public class ContentProposalAdapter {
 					null, control.getLocation());
 			int initialX = location.x + POPUP_OFFSET;
 			int initialY = location.y + control.getSize().y + POPUP_OFFSET;
+			// If we are inserting content, use the cursor position to
+			// position the control.
+			if (getProposalAcceptanceStyle() == PROPOSAL_INSERT)
+				initialX += controlContentAdapter.getInsertionOffset(control);
 
 			// If there is no specified size, force it by setting
 			// up a layout on the table.
