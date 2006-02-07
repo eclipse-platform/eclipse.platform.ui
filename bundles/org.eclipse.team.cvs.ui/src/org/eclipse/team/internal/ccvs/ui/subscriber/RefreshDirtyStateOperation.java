@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.core.TeamException;
@@ -29,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.SingleProjectSubscriberContext;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -84,7 +86,7 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 		ensureBaseContentsCached(project, (IDiff[]) diffs.toArray(new IDiff[diffs.size()]), monitor);
 	}
 
-	private void ensureBaseContentsCached(IProject project, IDiff[] nodes, IProgressMonitor monitor) throws CVSException {
+	private void ensureBaseContentsCached(final IProject project, IDiff[] nodes, IProgressMonitor monitor) throws CVSException {
 		try {
 			ResourceDiffTree tree = new ResourceDiffTree();
 			for (int i = 0; i < nodes.length; i++) {
@@ -92,7 +94,11 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 				tree.add(node);
 			}
 			new CacheBaseContentsOperation(getPart(), new ResourceMapping[] { (ResourceMapping)project.getAdapter(ResourceMapping.class) },
-					tree, true).run(monitor);
+					tree, true) {
+				protected ResourceMappingContext getResourceMappingContext() {
+					return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
+				}
+			}.run(monitor);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
