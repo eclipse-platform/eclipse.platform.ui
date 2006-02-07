@@ -35,7 +35,6 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.FindElementAction;
@@ -56,8 +55,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -90,7 +87,7 @@ import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 
-public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IPropertyChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
+public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
 			
@@ -194,19 +191,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * Context provider
 	 */
 	private ContextProvider fProvider = new ContextProvider();
-	
-	/**
-	 * Context manager which automatically opens and closes views
-	 * based on debug contexts.
-	 */
-	private LaunchViewContextListener fContextListener;
-	
-	/**
-	 * Creates a launch view and an instruction pointer marker for the view
-	 */
-	public LaunchView() {
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
@@ -426,16 +410,12 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				asyncTreeViewer.dispose();
 			}
 		}
-		if (fContextListener != null) {
-			fContextListener.dispose();
-		}
 		IWorkbenchPage page = getSite().getPage();
 		page.removePartListener((IPartListener2) this);
 		IWorkbenchWindow window = getSite().getWorkbenchWindow();
 		window.removePerspectiveListener(this);
 		window.removePageListener(this);
 		
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.dispose();
 	}
 		
@@ -448,13 +428,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public void selectionChanged(SelectionChangedEvent event) {
 		fProvider.activate(event.getSelection());
 		updateObjects();
-		
-//		 TODO: replace view conetxt stuff based on debug context
-		if (isActive()) {
-			Object element = ((IStructuredSelection)event.getSelection()).getFirstElement();
-		    fContextListener.updateForSelection(element);
-		}
-		
 	}
 	
 	protected void possibleContextChange(Object element) {
@@ -484,10 +457,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
 		updateObjects();
-		fContextListener.clearLastEnabledContexts();
-		if (isActive()) {
-			fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
-		}
 	}
 
 	/* (non-Javadoc)
@@ -495,18 +464,12 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		setActive(page.findView(getSite().getId()) != null);
-		if (fContextListener != null) {
-			fContextListener.perspectiveChanged(changeId);
-		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
-		if (fContextListener != null) {
-			fContextListener.perspectiveChanged(partRef, changeId);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -516,9 +479,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		if (getSite().getPage().equals(page)) {
 			setActive(true);
 			updateObjects();
-			if (fContextListener != null) {
-				fContextListener.loadTrackViews();
-			}
 		}
 	}
 
@@ -613,22 +573,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		String property = event.getProperty();
-		if (property.equals(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES)) {
-			fContextListener.reloadAutoManagePerspectives(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
-		} else if (property.equals(LaunchViewContextListener.PREF_OPENED_VIEWS) && fContextListener != null) {
-			fContextListener.loadOpenedViews();
-		} else if (property.equals(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN) && fContextListener != null) {
-			fContextListener.reloadViewsToNotOpen(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
-		} else if (property.equals(IInternalDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
-			fContextListener.loadTrackViews();
-		}
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	public boolean show(ShowInContext context) {
@@ -705,10 +649,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partOpened(IWorkbenchPartReference partRef) {
-		IWorkbenchPart part = partRef.getPart(false);
-		if (part == this) {
-            fContextListener= new LaunchViewContextListener(LaunchView.this);
-		}
 	}
 
 	/* (non-Javadoc)

@@ -933,7 +933,9 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 					final ISelection tempSelection = oldSelection;
 					WorkbenchJob job = new WorkbenchJob("attemptSelection") { //$NON-NLS-1$
 						public IStatus runInUIThread(IProgressMonitor monitor) {
-							restoreSelection(tempSelection);
+							if (!getControl().isDisposed()) {
+								restoreSelection(tempSelection);
+							}
 							return Status.OK_STATUS;
 						}
 						

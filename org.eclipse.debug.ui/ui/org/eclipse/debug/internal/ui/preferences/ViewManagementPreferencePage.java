@@ -15,7 +15,7 @@ import java.util.Iterator;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.views.launch.LaunchViewContextListener;
+import org.eclipse.debug.internal.ui.views.ViewContextService;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -159,7 +159,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private void checkPerspectives(String perspectiveList) {
 		fPerspectiveViewer.setAllChecked(false);
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
-		Iterator perspectiveIds= LaunchViewContextListener.parseList(perspectiveList).iterator();
+		Iterator perspectiveIds= ViewContextService.parseList(perspectiveList).iterator();
 		while (perspectiveIds.hasNext()) {
 			IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId((String) perspectiveIds.next());
             if (descriptor != null) {
@@ -183,8 +183,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
         getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, trackViews);
 		if (fResetPressed || !trackViews) {
             // Reset if the user has pressed reset or chosen to no longer track views
-			getPreferenceStore().setValue(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN, ""); //$NON-NLS-1$
-			getPreferenceStore().setValue(LaunchViewContextListener.PREF_OPENED_VIEWS, ""); //$NON-NLS-1$
+			getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, ""); //$NON-NLS-1$
 		}
 		return super.performOk();
 	}
@@ -212,8 +211,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
      * Always disable if "track views" is turned off.
 	 */
 	private void updateResetButton() {
-		boolean enableReset= !"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN)) || //$NON-NLS-1$
-			!"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_OPENED_VIEWS)); //$NON-NLS-1$
+		boolean enableReset= !"".equals(getPreferenceStore().getString(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS)); //$NON-NLS-1$
         // Only enable the button if there are views to clear, the user hasn't pressed the reset
         // button, and the option to "track views" is turned on.
 		fResetViewsButton.setEnabled(enableReset && !fResetPressed && fTrackViewsButton.getSelection());

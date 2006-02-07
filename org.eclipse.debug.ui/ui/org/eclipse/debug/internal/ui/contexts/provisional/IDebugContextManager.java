@@ -96,4 +96,18 @@ public interface IDebugContextManager {
 	 * @return
 	 */
 	public ISelection getActiveContext(IWorkbenchWindow window, String partId);	
+	
+	/**
+	 * Registers for context activation notification in all windows.
+	 * 
+	 * @param listener
+	 */	
+	public void addDebugContextListener(IDebugContextListener listener);
+	
+	/**
+	 * Deregisters for context activation notification in all windows.
+	 * 
+	 * @param listener
+	 */	
+	public void removeDebugContextListener(IDebugContextListener listener);		
 }

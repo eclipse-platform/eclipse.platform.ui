@@ -286,7 +286,13 @@ public interface IInternalDebugUIConstants {
      * @since 3.0
      */
     public static final String PREF_TRACK_VIEWS= IDebugUIConstants.PLUGIN_ID + ".track_views"; //$NON-NLS-1$
-
+  
+    /**
+     * Comma separated list of view ids closed by the user, that have view context bindings.
+     * @since 3.2
+     */
+    public static final String PREF_USER_VIEW_BINDINGS = IDebugUIConstants.PLUGIN_ID + ".user_view_bindings"; //$NON-NLS-1$
+    
     /**
      * Preference storing memento for the default breakpoint working set in
      * the breakpoints view.

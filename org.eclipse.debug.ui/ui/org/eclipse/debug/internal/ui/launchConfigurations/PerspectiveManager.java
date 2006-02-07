@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -37,6 +38,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerAdapter;
 import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerListener;
+import org.eclipse.debug.internal.ui.views.ViewContextManager;
+import org.eclipse.debug.internal.ui.views.ViewContextService;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -46,9 +49,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,6 +95,12 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	private PerspectiveSwitchLock fPerspectiveSwitchLock = new PerspectiveSwitchLock();
     
     private int fNumLaunches = 0; 
+    
+    /**
+     * Maps each launch to its perspective context activation. These
+     * are disabled when a launch terminates.
+     */
+    private Map fLaunchToContextActivations = new HashMap();
 	
 	/**
 	 * Lock used to synchronize perspective switching with view activation.
@@ -153,7 +163,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public synchronized void launchRemoved(ILaunch launch) {
+	public synchronized void launchRemoved(final ILaunch launch) {
         fNumLaunches --;
         if (fNumLaunches == 0) {
             ISuspendTriggerAdapter trigger = (ISuspendTriggerAdapter) launch.getAdapter(ISuspendTriggerAdapter.class);
@@ -161,6 +171,18 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
                 trigger.removeSuspendTriggerListener(this);
             }
         }
+        Runnable r= new Runnable() {
+			public void run() {
+		        IContextActivation[] activations = (IContextActivation[]) fLaunchToContextActivations.remove(launch);
+		        if (activations != null) {
+		        	for (int i = 0; i < activations.length; i++) {
+						IContextActivation activation = activations[i];
+						activation.getContextService().deactivateContext(activation);
+					}
+		        }
+			}
+		};
+		async(r);
 	}
 	
 	/**
@@ -278,56 +300,12 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	}
 	
 	/**
-	 * Makes the debug view visible.
-	 */
-	protected void showDebugView(final IWorkbenchWindow window) {
-		if (fPrompting) {
-			// Wait until the user has dismissed the perspective
-			// switching dialog before opening the view.
-			Thread thread= new Thread(new Runnable() {
-				public void run() {
-					if (fPrompting) {
-						synchronized (PerspectiveManager.this) {
-							try {
-								PerspectiveManager.this.wait();
-							} catch (InterruptedException e) {
-							}
-						}
-					}
-					async(new Runnable() {
-						public void run() {
-							doShowDebugView(window);
-						}
-					});
-				}
-			});
-            thread.setDaemon(true);
-			thread.start();
-			return;
-		}
-		doShowDebugView(window);
-	}
-	
-	/**
-	 * Shows the debug view in the given workbench window.
-	 */
-	private void doShowDebugView(IWorkbenchWindow window) {
-		IWorkbenchPage page = window.getActivePage();
-		if (page != null) {
-			try {
-				page.showView(IDebugUIConstants.ID_DEBUG_VIEW, null, IWorkbenchPage.VIEW_VISIBLE);
-			} catch (PartInitException e) {
-				DebugUIPlugin.log(e);
-			}
-		}
-	}
-	/**
 	 * A breakpoint has been hit. Carry out perspective switching
 	 * as appropriate for the given debug event. 
 	 * 
 	 * @param event the suspend event
 	 */
-	private void handleBreakpointHit(ILaunch launch) {
+	private void handleBreakpointHit(final ILaunch launch) {
 		
 		// Must be called here to indicate that the perspective
 		// may be switching.
@@ -380,8 +358,36 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 							}
 						}
 					}
+					if (targetId != null) {
+						// enable the 'perspective contexts' for the suspended launch type
+						Object ca = fLaunchToContextActivations.get(launch);
+						if (ca == null) {
+							ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+							if (launchConfiguration != null) {
+								try {
+									String type = launchConfiguration.getType().getIdentifier();
+									ViewContextService service = ViewContextManager.getDefault().getService(window);
+									if (service != null) {
+										IContextService contextServce = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
+										String[] ids = service.getEnabledPerspectives();
+										IContextActivation[] activations = new IContextActivation[ids.length];
+										for (int i = 0; i < ids.length; i++) {
+											Context context = contextServce.getContext(type + "." + ids[i]); //$NON-NLS-1$
+											IContextActivation activation = contextServce.activateContext(context.getId());
+											activations[i] = activation;
+										}
+										fLaunchToContextActivations.put(launch, activations);
+									}
+								} catch (CoreException e) {
+									DebugUIPlugin.log(e);
+								}
+							}
+						}
+
+					}
 					if (window != null && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
-						showDebugView(window);
+						ViewContextService service = ViewContextManager.getDefault().getService(window);
+						service.showViewQuiet(IDebugUIConstants.ID_DEBUG_VIEW);
 					}
 				}
 				finally

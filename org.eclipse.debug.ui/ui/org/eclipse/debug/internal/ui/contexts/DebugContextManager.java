@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
+import org.eclipse.debug.internal.ui.views.ViewContextManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.2
@@ -27,13 +32,51 @@ public class DebugContextManager implements IDebugContextManager {
 	
 	private static DebugContextManager fgDefault;
 	private Map fServices = new HashMap();
+	private ListenerList fGlobalListeners = new ListenerList();
+	
+	private class WindowListener implements IWindowListener {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowActivated(IWorkbenchWindow window) {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowDeactivated(IWorkbenchWindow window) {			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowClosed(IWorkbenchWindow window) {
+			DebugWindowContextService service = (DebugWindowContextService) fServices.remove(window);
+			if (service != null) {
+				service.dispose();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public void windowOpened(IWorkbenchWindow window) {
+		}
+		
+	}
 	
 	private DebugContextManager() {
+		PlatformUI.getWorkbench().addWindowListener(new WindowListener());
 	}
 	
 	public static IDebugContextManager getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new DebugContextManager();
+			// create the model context bindigg manager at the same time
+			DebugModelContextBindingManager.getDefault();
+			// create view manager
+			ViewContextManager.getDefault();			
 		}
 		return fgDefault;
 	}
@@ -54,6 +97,13 @@ public class DebugContextManager implements IDebugContextManager {
 			service = new DebugWindowContextService(window);
 			fServices.put(window, service);
 			// TODO: register 'null' provider (global)
+			
+			// register global listeners
+			Object[] listeners = fGlobalListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				IDebugContextListener listener = (IDebugContextListener) listeners[i];
+				service.addDebugContextListener(listener);
+			}
 		}
 		return service;
 	}
@@ -130,6 +180,40 @@ public class DebugContextManager implements IDebugContextManager {
 			return service.getActiveContext(partId);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextManager#addDebugContextListener(org.eclipse.debug.internal.ui.contexts.IDebugContextListener)
+	 */
+	public void addDebugContextListener(IDebugContextListener listener) {
+		fGlobalListeners.add(listener);
+		DebugWindowContextService[] services = getServices();
+		for (int i = 0; i < services.length; i++) {
+			DebugWindowContextService service = services[i];
+			service.addDebugContextListener(listener);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextManager#removeDebugContextListener(org.eclipse.debug.internal.ui.contexts.IDebugContextListener)
+	 */
+	public void removeDebugContextListener(IDebugContextListener listener) {
+		fGlobalListeners.remove(listener);
+		DebugWindowContextService[] services = getServices();
+		for (int i = 0; i < services.length; i++) {
+			DebugWindowContextService service = services[i];
+			service.removeDebugContextListener(listener);
+		}
+	}
+	
+	/**
+	 * Returns the existing context services.
+	 * 
+	 * @return existing context services
+	 */
+	private DebugWindowContextService[] getServices() {
+		Collection sevices = fServices.values();
+		return (DebugWindowContextService[]) sevices.toArray(new DebugWindowContextService[sevices.size()]);
 	}
 	
 }
