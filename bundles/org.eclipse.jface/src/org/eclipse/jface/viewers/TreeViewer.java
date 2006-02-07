@@ -213,6 +213,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		ITableLabelProvider tprov = null;
 		ILabelProvider lprov = null;
 		IViewerLabelProvider vprov = null;
+		ITreePathLabelProvider pprov = null;
 		
 		if(prov instanceof ILabelProvider)
 			lprov = (ILabelProvider) prov;
@@ -225,6 +226,10 @@ public class TreeViewer extends AbstractTreeViewer {
 			tprov = (ITableLabelProvider) prov;
 		}
 		
+		if (prov instanceof ITreePathLabelProvider) {
+			pprov = (ITreePathLabelProvider) prov;
+		}
+		
 		
 		int columnCount = tree.getColumnCount();
 		if (columnCount == 0) {// If no columns were created use the label
@@ -232,12 +237,16 @@ public class TreeViewer extends AbstractTreeViewer {
 
 			ViewerLabel updateLabel = new ViewerLabel(treeItem.getText(),
 					treeItem.getImage());
-			if(vprov != null)
-				buildLabel(updateLabel,element,vprov);
-			else{
-				if(lprov != null)
-					buildLabel(updateLabel,element,lprov);
-			}
+			if (pprov != null) {
+				TreePath path = getTreePathFromItem(item);
+				buildLabel(updateLabel,path,pprov);
+			} else 
+				if(vprov != null)
+					buildLabel(updateLabel,element,vprov);
+				else{
+					if(lprov != null)
+						buildLabel(updateLabel,element,lprov);
+				}
 
 			// As it is possible for user code to run the event
 			// loop check here.
@@ -294,6 +303,27 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		}
 		getColorAndFontCollector().applyFontsAndColors(treeItem);
+	}
+	
+	/**
+	 * Override to handle tree paths.
+	 * @see org.eclipse.jface.viewers.StructuredViewer#buildLabel(org.eclipse.jface.viewers.ViewerLabel, java.lang.Object)
+	 */
+	protected void buildLabel(ViewerLabel updateLabel, Object elementOrPath) {
+		Object element;
+		if (elementOrPath instanceof TreePath) {
+			TreePath path = (TreePath) elementOrPath;
+			IBaseLabelProvider provider = getLabelProvider();
+			if (provider instanceof ITreePathLabelProvider) {
+				ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
+				buildLabel(updateLabel, path, pprov);
+				return;
+			}
+			element = path.getLastSegment();
+		} else {
+			element = elementOrPath;
+		}
+		super.buildLabel(updateLabel, element);
 	}
 
 	/**

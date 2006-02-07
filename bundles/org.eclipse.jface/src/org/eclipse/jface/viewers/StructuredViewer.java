@@ -1966,6 +1966,29 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Build a label up for the element using the supplied label provider.
 	 * @param updateLabel The ViewerLabel to collect the result in
+	 * @param elementPath The path of the element being decorated.
+	 * @param labelProvider ILabelProvider the labelProvider for the receiver.
+	 */
+	void buildLabel(ViewerLabel updateLabel, TreePath elementPath,ITreePathLabelProvider labelProvider){
+
+			labelProvider.updateLabel(updateLabel, elementPath);
+            		
+			colorAndFontCollector.setUsedDecorators();
+			
+			if(updateLabel.hasNewBackground())
+				colorAndFontCollector.setBackground(updateLabel.getBackground());
+			
+			if(updateLabel.hasNewForeground())
+				colorAndFontCollector.setForeground(updateLabel.getForeground());
+			
+			if(updateLabel.hasNewFont())
+				colorAndFontCollector.setFont(updateLabel.getFont());
+	
+	}
+	
+	/**
+	 * Build a label up for the element using the supplied label provider.
+	 * @param updateLabel The ViewerLabel to collect the result in
 	 * @param element The element being decorated.
 	 * @param labelProvider ILabelProvider the labelProvider for the receiver.
 	 */

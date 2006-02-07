@@ -23,6 +23,12 @@ import org.eclipse.jface.util.Assert;
  * @since 3.2
  */
 public final class TreePath {
+	
+	/**
+	 * Constant for representing an empty tree path.
+	 */
+	public static final TreePath EMPTY = new TreePath(new Object[0]);
+	
 	private Object[] segments;
 
 	private int hash;

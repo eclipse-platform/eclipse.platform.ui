@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
  * the nested label provider.
  */
 public class DecoratingLabelProvider extends LabelProvider implements
-        ILabelProvider, IViewerLabelProvider, IColorProvider, IFontProvider {
+        ILabelProvider, IViewerLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
 	
 	/**
 	 * The UPDATE_LABEL flag indicates that the label should 
@@ -311,5 +311,43 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	public void setDecorationContext(IDecorationContext decorationContext) {
 		Assert.isNotNull(decorationContext);
 		this.decorationContext = decorationContext;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
+	 */
+	public void updateLabel(ViewerLabel settings, TreePath elementPath) {
+        ILabelDecorator currentDecorator = getLabelDecorator();
+        String oldText = settings.getText();
+        Object element = elementPath.getLastSegment();
+        boolean decorationReady = true;
+        if (currentDecorator instanceof IDelayedLabelDecorator) {
+            IDelayedLabelDecorator delayedDecorator = (IDelayedLabelDecorator) currentDecorator;
+            if (!delayedDecorator.prepareDecoration(element, oldText)) {
+                // The decoration is not ready but has been queued for processing
+                decorationReady = false;
+            }
+        }
+        // update icon and label
+
+        if (provider instanceof ITreePathLabelProvider) {
+			ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
+			if (decorationReady || oldText == null
+	                || settings.getText().length() == 0)
+				pprov.updateLabel(settings, elementPath);
+		} else {
+	        if (decorationReady || oldText == null
+	                || settings.getText().length() == 0)
+	            settings.setText(getText(element));
+	
+	        Image oldImage = settings.getImage();
+	        if (decorationReady || oldImage == null) {
+	            settings.setImage(getImage(element));
+	        }
+	 
+	        if(decorationReady)
+	        	updateForDecorationReady(settings,element);
+		}
+
 	}
 }

@@ -110,24 +110,66 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * reflect the model. This method only affects the viewer, not the model.
      * </p>
      * 
-     * @param parentElement
+     * @param parentElementOrTreePath
      *           the parent element
      * @param childElements
      *           the child elements to add
      */
-    public void add(Object parentElement, Object[] childElements) {
-        Assert.isNotNull(parentElement);
+    public void add(Object parentElementOrTreePath, Object[] childElements) {
+        Assert.isNotNull(parentElementOrTreePath);
         assertElementsNotNull(childElements);
 
-        Widget[] widgets = findItems(parentElement);
+        Widget[] widgets = internalFindItems(parentElementOrTreePath);
         // If parent hasn't been realized yet, just ignore the add.
         if (widgets.length == 0)
             return;
 
 		for (int i = 0; i < widgets.length; i++) {
-			internalAdd(widgets[i], parentElement, childElements);
+			internalAdd(widgets[i], parentElementOrTreePath, childElements);
 		}        
     }
+
+    /**
+     * Find the items for the given element of tree path
+     * @param parentElementOrTreePath the element or tree path
+     * @return the items for that element
+     */
+	private Widget[] internalFindItems(Object parentElementOrTreePath) {
+		Widget[] widgets = findItems(parentElementOrTreePath);
+        if (parentElementOrTreePath instanceof TreePath) {
+			TreePath path = (TreePath) parentElementOrTreePath;
+			Widget w = internalFindItem(path);
+			if (w == null) {
+				widgets = new Widget[] { };
+			} else {
+				widgets = new Widget[] { w };
+			}
+		} else {
+			widgets = findItems(parentElementOrTreePath);
+		}
+		return widgets;
+	}
+
+	/**
+	 * Return the item at the given path or <code>null</code>
+	 * @param path the path
+	 * @return the item at that path
+	 * TODO could probably do better than this
+	 */
+	private Widget internalFindItem(TreePath path) {
+		Widget[] widgets = findItems(path.getLastSegment());
+		for (int i = 0; i < widgets.length; i++) {
+			Widget widget = widgets[i];
+			if (widget instanceof Item) {
+				Item item = (Item) widget;
+				TreePath p = getTreePathFromItem(item);
+				if (p.equals(path)) {
+					return widget;
+				}			
+			}
+		}
+		return null;
+	}
 
 	/**
      * Adds the given child elements to this viewer as children of the given
@@ -143,20 +185,29 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      *
      * @param widget 
      *           the widget for the parent element
-     * @param parentElement
+     * @param parentElementOrTreePath
      *           the parent element
      * @param childElements
      *           the child elements to add
      * @since 3.1
      */
-    protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
-		
+    protected void internalAdd(Widget widget, Object parentElementOrTreePath, Object[] childElements) {
+    	Object parent;
+    	TreePath path;
+    	if (parentElementOrTreePath instanceof TreePath) {
+			path = (TreePath) parentElementOrTreePath;
+			parent = path.getLastSegment();
+		} else {
+			parent = parentElementOrTreePath;
+			path = null;
+		}
+    	
 		// optimization!
         // if the widget is not expanded we just invalidate the subtree
         if (widget instanceof Item) {
             Item ti = (Item) widget;
             if (!getExpanded(ti)) {
-                boolean needDummy = isExpandable(parentElement);
+                boolean needDummy = isExpandable(ti, path, parent);
                 boolean haveDummy = false;
                 // remove all children
                 Item[] items = getItems(ti);
@@ -180,11 +231,46 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         }
 
         if (childElements.length > 0) {
-            Object[] filtered = filter(childElements);
-			if(getSorter() != null)
-				getSorter().sort(this,filtered);
+        	// TODO: Add filtering back?
+            Object[] filtered = filter(parentElementOrTreePath, childElements);
+			ViewerSorter sorter = getSorter();
+			if(sorter != null) {
+				if (sorter instanceof TreePathViewerSorter) {
+					TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
+					if (path == null)
+						path = internalGetSorterParentPath(widget, sorter);
+					tpvs.sort(this, path, filtered);
+				} else {
+					sorter.sort(this,filtered);
+				}
+			}
             createAddedElements(widget, filtered);
         }
+	}
+
+	/**
+	 * Filter the children elements.
+	 * @param parentElementOrTreePath the parent element or path
+	 * @param elements the child elements
+	 * @return the filter list of children
+	 */
+	private Object[] filter(Object parentElementOrTreePath, Object[] elements) {
+		ViewerFilter[] filters = getFilters();
+		if (filters != null) {
+			ArrayList filtered = new ArrayList(elements.length);
+			for (int i = 0; i < elements.length; i++) {
+				boolean add = true;
+				for (int j = 0; j < filters.length; j++) {
+					add = filters[j].select(this, parentElementOrTreePath, elements[i]);
+					if (!add)
+						break;
+				}
+				if (add)
+					filtered.add(elements[i]);
+			}
+			return filtered.toArray();
+		}
+		return elements;
 	}
 
 	/**
@@ -201,6 +287,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 		
 		ViewerSorter sorter = getSorter ();
+		TreePath parentPath = internalGetSorterParentPath(widget, sorter);
 		Item[] items = getChildren(widget);
 		
 		//As the items are sorted already we optimize for a 
@@ -227,12 +314,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				index = -1;
 			}
 			else{
-				lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
+				lastInsertion = insertionPosition(items,sorter,lastInsertion, element, parentPath);
 				//As we are only searching the original array we keep track of those positions only
 				if(lastInsertion == items.length)
 					index = -1;
 				else{//See if we should just refresh
-					while(lastInsertion < items.length && sorter.compare(this,element,items[lastInsertion].getData()) == 0){
+					while(lastInsertion < items.length && internalCompare(sorter,parentPath,element,items[lastInsertion].getData()) == 0){
 						//As we cannot assume the sorter is consistent with equals() - therefore we can
 						// just check against the item prior to this index (if any)
 						if (items[lastInsertion].getData().equals(element)) {
@@ -285,12 +372,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      *            themself.
      * @param element
      *            element to find position for.
+     * @param parentPath the tree path for the element's parent or <code>null</code>
+     * if the element is a root element or the sorter is not a {@link TreePathViewerSorter}
      * @return the index to use when inserting the element.
      * 
      */
 	
-	private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element) {
-	    
+	private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element, TreePath parentPath) {
+		
 		int size = items.length;
 		if (sorter == null)
 			return size;
@@ -299,7 +388,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		while (min <= max) {
             int mid = (min + max) / 2;
             Object data = items[mid].getData();
-            int compare = sorter.compare(this, data, element);
+            int compare = internalCompare(sorter, parentPath, data, element);
             if (compare == 0) {
                 return mid;//Return if we already match
             }
@@ -343,7 +432,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected int indexForElement(Widget parent, Object element) {
         ViewerSorter sorter = getSorter();
-		
+        TreePath parentPath = internalGetSorterParentPath(parent, sorter);
 		
 		Item[] items = getChildren(parent);
 		int count = items.length;
@@ -355,7 +444,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         while (min <= max) {
             int mid = (min + max) / 2;
             Object data = items[mid].getData();
-            int compare = sorter.compare(this, data, element);
+            int compare = internalCompare(sorter, parentPath, data, element);
             if (compare == 0) {
                 // find first item > element
                 while (compare == 0) {
@@ -364,7 +453,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                         break;
                     }
                     data = items[mid].getData();
-                    compare = sorter.compare(this, data, element);
+                    compare = internalCompare(sorter, parentPath, data, element);
                 }
                 return mid;
             }
@@ -376,6 +465,93 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         return min;
     }
 
+    /**
+     * Return the tree path that should be used as the parent path for the
+     * given widget and sorter. A <code>null</code> is returned if either
+     * the sorter is not a {@link TreePathViewerSorter} or if the parent
+     * widget is not an {@link Item} (i.e. is the root of the tree).
+     * 
+     * @param parent the parent widget
+     * @param sorter the sorter
+     * @return the tree path that should be used as the parent path for the
+     * given widget and sorter
+     */
+	private TreePath internalGetSorterParentPath(Widget parent, ViewerSorter sorter) {
+		TreePath path;
+		if (sorter instanceof TreePathViewerSorter && parent instanceof Item) {
+			Item item = (Item) parent;
+			path = getTreePathFromItem(item);
+		} else {
+			path = null;
+		}
+		return path;
+	}
+
+	/**
+	 * Compare the two elements using the given sorter. If the
+	 * sorter is a {@link TreePathViewerSorter}, the provided
+	 * tree path will be used. If the tree path is null and the
+	 * sorter is a tree path sorter, then the elements are root elements
+	 * @param sorter the sorter
+	 * @param parentPath the path of the elements' parent
+	 * @param e1 the first element
+	 * @param e2 the seocnd element
+	 * @return the result of comparing the two elements
+	 */
+	private int internalCompare(ViewerSorter sorter, TreePath parentPath, Object e1, Object e2) {
+		if (sorter instanceof TreePathViewerSorter) {
+			TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
+			return tpvs.compare(this, parentPath, e1, e2);
+		}
+		return sorter.compare(this, e1, e2);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#getSortedChildren(java.lang.Object)
+	 */
+	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
+		Object[] result =  getFilteredChildren(parentElementOrTreePath);
+		ViewerSorter sorter = getSorter();
+		if (sorter instanceof TreePathViewerSorter) {
+			TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
+			
+			// be sure we're not modifying the original array from the model
+			result = (Object[]) result.clone();
+			
+			TreePath path = null;
+	    	if (parentElementOrTreePath instanceof TreePath) {
+	    		path = (TreePath) parentElementOrTreePath;
+			} else {
+				Object parent = parentElementOrTreePath;
+				Widget w = internalGetWidgetToSelect(parent);
+				if (w != null) {
+					path = internalGetSorterParentPath(w, sorter);
+				}
+				if (path == null)
+					path = TreePath.EMPTY.createChildPath(parentElementOrTreePath);
+			}
+	    	tpvs.sort(this, path, result);
+		} else if (sorter != null) {
+			// be sure we're not modifying the original array from the model
+			result = (Object[]) result.clone();
+			sorter.sort(this, result);
+		}
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#getFilteredChildren(java.lang.Object)
+	 */
+	protected Object[] getFilteredChildren(Object parentElementOrTreePath) {
+		Object[] result = getRawChildren(parentElementOrTreePath);
+		ViewerFilter[] filters = getFilters();
+		for (int i = 0; i < filters.length; i++) {
+			ViewerFilter filter = filters[i];
+			result = filter.filter(this, parentElementOrTreePath, result);
+		}
+		return result;
+	}
+	
     /**
      * Adds the given child element to this viewer as a child of the given
      * parent element. If this viewer does not have a sorter, the element is
@@ -389,13 +565,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * the simultaneous addition of multiple elements.
      * </p>
      * 
-     * @param parentElement
-     *           the parent element
+     * @param parentElementOrTreePath
+     *           the parent element or path
      * @param childElement
      *           the child element
      */
-    public void add(Object parentElement, Object childElement) {
-        add(parentElement, new Object[] { childElement });
+    public void add(Object parentElementOrTreePath, Object childElement) {
+        add(parentElementOrTreePath, new Object[] { childElement });
     }
 
     /**
@@ -514,12 +690,19 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 Object d = widget.getData();
                 if (d != null) {
                     Object parentElement = d;
-                    Object[] children = getSortedChildren(parentElement);
+                    Object[] children;
+                    if (isTreePathContentProvider() && widget instanceof Item) {
+                    	TreePath path = getTreePathFromItem((Item)widget);
+                    	children = getSortedChildren(path);
+                    } else {
+                    	children = getSortedChildren(parentElement);
+                    }
                     for (int i = 0; i < children.length; i++) {
                         createTreeItem(widget, children[i], -1);
                     }
                 }
             }
+
         });
     }
 
@@ -907,16 +1090,42 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     }
 
     /* (non-Javadoc) Method declared on StructuredViewer. */
-    protected Object[] getRawChildren(Object parent) {
+    protected Object[] getRawChildren(Object parentElementOrTreePath) {
+    	Object parent;
+    	TreePath path;
+    	if (parentElementOrTreePath instanceof TreePath) {
+			path = (TreePath) parentElementOrTreePath;
+			parent = path.getLastSegment();
+		} else {
+			parent = parentElementOrTreePath;
+			path = null;
+		}
         if (parent != null) {
             if (equals(parent, getRoot()))
                 return super.getRawChildren(parent);
-            ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
-            if (cp != null) {
-                Object[] result = cp.getChildren(parent);
+            IContentProvider cp = getContentProvider();
+             if (cp instanceof ITreePathContentProvider) {
+    			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+    			if (path == null) {
+    				// A path was not provided so try and find one
+    				Widget w = findItem(parent);
+    				if (w instanceof Item) {
+    					Item item = (Item) w;
+    					path = getTreePathFromItem(item);
+    				}
+    				if (path == null) {
+    					path = new TreePath(new Object[] { parent });
+    				}
+    			}
+    			Object[] result = tpcp.getChildren(path);
                 if (result != null)
                     return result;
-            }
+    		} else if (cp instanceof ITreeContentProvider) {
+    			ITreeContentProvider tcp = (ITreeContentProvider) cp;
+                Object[] result = tcp.getChildren(parent);
+                if (result != null)
+                    return result;
+    		}
         }
         return new Object[0];
     }
@@ -1140,11 +1349,21 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     		}
 			return (treePath).getParentPath();
     	}
-        ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
-        if (cp == null) {
-            return null;
+        IContentProvider cp = getContentProvider();
+        if (cp instanceof ITreePathContentProvider) {
+			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+			TreePath[] paths = tpcp.getParents(elementOrTreePath);
+			if (paths.length > 0) {
+				if (paths[0].getSegmentCount() == 0)
+					return getInput();
+				return paths[0].getLastSegment();
+			}
+		}
+        if (cp instanceof ITreeContentProvider) {
+        	ITreeContentProvider tcp = (ITreeContentProvider) cp;
+        	return tcp.getParent(elementOrTreePath);
         }
-        return cp.getParent(elementOrTreePath);
+        return null;
 	}
 
 	/**
@@ -1362,21 +1581,22 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * multiple equal elements. 
      * </p>
      * 
-     * @param elements
-     *           the elements to remove
+     * @param elementsOrPaths
+     *           the elements or element paths to remove
      * @since 3.1
      */
-    protected void internalRemove(Object[] elements) {
+    protected void internalRemove(Object[] elementsOrPaths) {
         Object input = getInput();
         // Note: do not use the comparer here since the hashtable
         // contains SWT Items, not model elements.
         CustomHashtable parentItems = new CustomHashtable(5);
-        for (int i = 0; i < elements.length; ++i) {
-            if (equals(elements[i], input)) {
+        for (int i = 0; i < elementsOrPaths.length; ++i) {
+            Object element = elementsOrPaths[i];
+			if (equals(element, input)) {
                 setInput(null);
                 return;
             }
-            Widget[] childItems = findItems(elements[i]);
+            Widget[] childItems = internalFindItems(element);
 			for (int j = 0; j < childItems.length; j++) {
 				Widget childItem = childItems[j];
 				if (childItem instanceof Item) {
@@ -1403,7 +1623,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             	continue;
             if (!getExpanded(parentItem) && getItemCount(parentItem) == 0) {
                 // append a dummy if necessary
-                if (isExpandable(parentItem.getData())) {
+                if (isExpandable(parentItem, null, parentItem.getData())) {
                     newItem(parentItem, SWT.NULL, -1);
                 } else {
                     // XXX: Workaround (PR missing)
@@ -1521,23 +1741,73 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 
     /**
-     * Return whether the tree node representing the given element can be
-     * expanded.
+     * Return whether the tree node representing the given element or path can be
+     * expanded. Clients should query expandablity by path if the viewer's
+     * content provider is an {@link ITreePathContentProvider}.
      * <p>
      * The default implementation of this framework method calls <code>hasChildren</code>
      * on this viewer's content provider. It may be overridden if necessary.
      * </p>
      * 
-     * @param element
-     *           the element
+     * @param elementOrTreePath
+     *           the element or path
      * @return <code>true</code> if the tree node representing the given
      *         element can be expanded, or <code>false</code> if not
      */
-    public boolean isExpandable(Object element) {
-        ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
-        return cp != null && cp.hasChildren(element);
+    public boolean isExpandable(Object elementOrTreePath) {
+    	Object element;
+    	TreePath path;
+    	if (elementOrTreePath instanceof TreePath) {
+			path = (TreePath) elementOrTreePath;
+			element = path.getLastSegment();
+		} else {
+			element = elementOrTreePath;
+			path = null;
+		}
+        IContentProvider cp = getContentProvider();
+        if (cp instanceof ITreePathContentProvider) {
+			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+			if (path == null) {
+				// A path was not provided so try and find one
+				Widget w = findItem(element);
+				if (w instanceof Item) {
+					Item item = (Item) w;
+					path = getTreePathFromItem(item);
+				}
+				if (path == null) {
+					path = new TreePath(new Object[] { element });
+				}
+			}
+			return tpcp.hasChildren(path);
+		}
+        if (cp instanceof ITreeContentProvider) {
+			ITreeContentProvider tcp = (ITreeContentProvider) cp;
+			return tcp.hasChildren(element);	
+		}
+		return false;
     }
-
+    
+    /**
+     * Return whether the given element is expandable.
+     * @param item the tree item for the element
+     * @param parentPath the parent path if it is knwon or <code>null</code> if it needs to be determines
+     * @param element the element
+     * @return whether the given element is expandable
+     */
+    private boolean isExpandable(Item item, TreePath parentPath, Object element) {
+    	if (isTreePathContentProvider()) {
+    		TreePath path;
+    		if (parentPath != null) {
+    			path = parentPath.createChildPath(element);
+    		} else {
+    			path = getTreePathFromItem(item);
+    		}
+    		ITreePathContentProvider cp = (ITreePathContentProvider) getContentProvider();
+    		return cp != null && cp.hasChildren(path);
+    	}
+    	return isExpandable(element);
+    }
+    
     /* (non-Javadoc) Method declared on Viewer. */
     protected void labelProviderChanged() {
         // we have to walk the (visible) tree and update every item
@@ -1572,17 +1842,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * the model.
      * </p>
      * 
-     * @param elements
+     * @param elementsOrTreePaths
      *           the elements to remove
      */
-    public void remove(final Object[] elements) {
-        assertElementsNotNull(elements);
-        if (elements.length == 0) {
+    public void remove(final Object[] elementsOrTreePaths) {
+        assertElementsNotNull(elementsOrTreePaths);
+        if (elementsOrTreePaths.length == 0) {
         	return;
         }
         preservingSelection(new Runnable() {
             public void run() {
-                internalRemove(elements);
+                internalRemove(elementsOrTreePaths);
             }
         });
     }
@@ -1625,11 +1895,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * the simultaneous removal of multiple elements.
      * </p>
      * 
-     * @param element
+     * @param elementsOrTreePaths
      *           the element
      */
-    public void remove(Object element) {
-        remove(new Object[] { element });
+    public void remove(Object elementsOrTreePaths) {
+        remove(new Object[] { elementsOrTreePaths });
     }
 
     /**
@@ -1728,7 +1998,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     }
     
 	protected void assertContentProviderType(IContentProvider provider) {
-		Assert.isTrue(provider instanceof ITreeContentProvider);
+		Assert.isTrue(provider instanceof ITreeContentProvider || provider instanceof ITreePathContentProvider);
 	}
 
     /**
@@ -1925,7 +2195,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             if (!getExpanded(ti)) {
                 // need a dummy node if element is expandable;
                 // but try to avoid recreating the dummy node
-                boolean needDummy = isExpandable(parent);
+                boolean needDummy = isExpandable(ti, null, parent);
                 boolean haveDummy = false;
                 // remove all children
                 Item[] items = getItems(ti);
@@ -1952,7 +2222,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         // If the children weren't passed in, get them now since they're needed
         // below.
         if (elementChildren == null) {
-            elementChildren = getSortedChildren(parent);
+        	if (isTreePathContentProvider() && widget instanceof Item) {
+				TreePath path = getTreePathFromItem((Item)widget);
+				elementChildren = getSortedChildren(path);
+			} else {
+				elementChildren = getSortedChildren(parent);
+			}
         }
 
         Control tree = getControl();
@@ -2094,7 +2369,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected void updatePlus(Item item, Object element) {
         boolean hasPlus = getItemCount(item) > 0;
-        boolean needsPlus = isExpandable(element);
+        boolean needsPlus = isExpandable(item, null, element);
         boolean removeAll = false;
         boolean addDummy = false;
         Object data = item.getData();
@@ -2223,5 +2498,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         }
         return (TreePath[]) result.toArray(new TreePath[items.size()]);
     }
+    
+	private boolean isTreePathContentProvider() {
+		return getContentProvider() instanceof ITreePathContentProvider;
+	}
 
 }
