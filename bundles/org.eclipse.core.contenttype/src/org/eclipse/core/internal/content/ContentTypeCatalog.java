@@ -388,10 +388,22 @@ public final class ContentTypeCatalog {
 		int total = subset[0].length + subset[1].length;
 		if (total == 0)
 			// don't do further work if subset is empty
-			return subset[0];
-		if (!forceValidation && total == 1)
+			return NO_CONTENT_TYPES;	
+		if (!forceValidation && total == 1) {
 			// do not do validation if not forced and only one was found (caller will validate later)
-			return subset[0].length == 1 ? subset[0] : subset[1];
+			IContentType[] found = subset[0].length == 1 ? subset[0] : subset[1];
+			// bug 100032 - ignore binary content type if contents are text			
+			if (!buffer.isText())
+				// binary buffer, caller can call the describer with no risk
+				return found;
+			// text buffer, need to check describer			
+			IContentDescriber describer = ((ContentType) found[0]).getDescriber();			
+			if (describer == null || describer instanceof ITextContentDescriber)
+				// no describer or text describer, that is fine
+				return found;
+			// only eligible content type is binary and contents are text, ignore it
+			return NO_CONTENT_TYPES;			
+		}
 		return internalFindContentTypesFor(buffer, subset, validPolicy, indeterminatePolicy);
 	}
 

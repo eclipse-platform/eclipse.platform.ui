@@ -306,6 +306,16 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		description = contentTypeManager.getDescriptionFor(contents, null, IContentDescription.ALL);
 		assertNotNull("7.0", description);
 		assertEquals("7.1", sampleBinary2, description.getContentType());
+		
+		// make sure we ignore that content type when contents are text
+		// (see bug 100032)
+		// first check if our test environment is sane
+		IContentType[] selected = contentTypeManager.findContentTypesFor("test.samplebin2");
+		assertEquals("8.1", 1, selected.length);
+		assertEquals("8.2", sampleBinary2.getId(), selected[0].getId());
+		// (we used to blow up here)
+		description = contentTypeManager.getDescriptionFor(getReader(getRandomString()), "test.samplebin2", IContentDescription.ALL);
+		assertNull("8.3",description);		
 	}
 
 	public void testByteOrderMark() throws UnsupportedEncodingException, IOException {
