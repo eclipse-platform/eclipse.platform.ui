@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
-import org.eclipse.team.core.mapping.ISynchronizationScopeParticipant;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.*;
@@ -28,12 +27,12 @@ import org.eclipse.ui.*;
 public class ResourceModelScopeParticipant implements
 		ISynchronizationScopeParticipant, IResourceChangeListener, IPropertyChangeListener {
 
-	private final ISynchronizationScopeManager manager;
 	private final ModelProvider provider;
+	private final ISynchronizationScope scope;
 
-	public ResourceModelScopeParticipant(ModelProvider provider, ISynchronizationScopeManager manager) {
+	public ResourceModelScopeParticipant(ModelProvider provider, ISynchronizationScope scope) {
 		this.provider = provider;
-		this.manager = manager;
+		this.scope = scope;
 		if (hasWorkspaceMapping()) {
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		}
@@ -43,7 +42,7 @@ public class ResourceModelScopeParticipant implements
 	}
 
 	private boolean hasWorkingSetMappings() {
-		ResourceMapping[] mappings = manager.getScope().getMappings(provider.getDescriptor().getId());
+		ResourceMapping[] mappings = scope.getMappings(provider.getDescriptor().getId());
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			Object modelObject = mapping.getModelObject();
@@ -55,7 +54,7 @@ public class ResourceModelScopeParticipant implements
 	}
 
 	private boolean hasWorkspaceMapping() {
-		ResourceMapping[] mappings = manager.getScope().getMappings(provider.getDescriptor().getId());
+		ResourceMapping[] mappings = scope.getMappings(provider.getDescriptor().getId());
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			Object modelObject = mapping.getModelObject();
@@ -70,7 +69,7 @@ public class ResourceModelScopeParticipant implements
 	}
 
 	public ResourceMapping[] handleContextChange(
-			ISynchronizationScopeManager manager, IResource[] resources,
+			ISynchronizationScope scope, IResource[] resources,
 			IProject[] projects) {
 		Set result = new HashSet();
 		for (int i = 0; i < projects.length; i++) {
@@ -81,7 +80,7 @@ public class ResourceModelScopeParticipant implements
 	}
 
 	private void collectMappings(IProject project, Set result) {
-		ResourceMapping[] mappings = manager.getScope().getMappings(provider.getDescriptor().getId());
+		ResourceMapping[] mappings = scope.getMappings(provider.getDescriptor().getId());
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
 			boolean refresh = false;
@@ -154,7 +153,7 @@ public class ResourceModelScopeParticipant implements
 	}
 
 	private boolean isInContext(IResource resource) {
-		IProject[] projects = manager.getProjects();
+		IProject[] projects = scope.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			if (project.equals(resource.getProject())) {
@@ -165,13 +164,13 @@ public class ResourceModelScopeParticipant implements
 	}
 
 	private void fireChange(ResourceMapping[] mappings) {
-		manager.refresh(mappings);
+		scope.refresh(mappings);
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty() == IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE) {
 			IWorkingSet newSet = (IWorkingSet) event.getNewValue();
-			ResourceMapping[] mappings = manager.getScope().getMappings(provider.getDescriptor().getId());
+			ResourceMapping[] mappings = scope.getMappings(provider.getDescriptor().getId());
 			for (int i = 0; i < mappings.length; i++) {
 				ResourceMapping mapping = mappings[i];
 				if (newSet == mapping.getModelObject()) {

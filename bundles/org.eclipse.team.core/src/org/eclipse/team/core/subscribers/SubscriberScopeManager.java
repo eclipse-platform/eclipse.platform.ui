@@ -131,7 +131,7 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 		Object factoryObject = provider.getAdapter(ISynchronizationScopeParticipantFactory.class);
 		if (factoryObject instanceof ISynchronizationScopeParticipantFactory) {
 			ISynchronizationScopeParticipantFactory factory = (ISynchronizationScopeParticipantFactory) factoryObject;
-			return factory.createParticipant(provider, this);
+			return factory.createParticipant(provider, this.getScope());
 		}
 		return null;
 	}
@@ -159,9 +159,9 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 		ISynchronizationScopeParticipant[] handlers = (ISynchronizationScopeParticipant[]) participants.values().toArray(new ISynchronizationScopeParticipant[participants.size()]);
 		for (int i = 0; i < handlers.length; i++) {
 			final ISynchronizationScopeParticipant participant = handlers[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
-					ResourceMapping[] mappings = participant.handleContextChange(SubscriberScopeManager.this, resources, projects);
+					ResourceMapping[] mappings = participant.handleContextChange(SubscriberScopeManager.this.getScope(), resources, projects);
 					for (int j = 0; j < mappings.length; j++) {
 						ResourceMapping mapping = mappings[j];
 						result.add(mapping);

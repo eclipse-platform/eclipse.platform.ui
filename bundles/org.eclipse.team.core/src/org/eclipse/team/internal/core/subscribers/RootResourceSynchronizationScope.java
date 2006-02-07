@@ -13,9 +13,8 @@ package org.eclipse.team.internal.core.subscribers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.core.mapping.AbstractResourceMappingScope;
 
@@ -79,6 +78,18 @@ public class RootResourceSynchronizationScope extends AbstractResourceMappingSco
 
 	public boolean hasAdditonalResources() {
 		return false;
+	}
+
+	public IProject[] getProjects() {
+		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	}
+
+	public ResourceMappingContext getContext() {
+		return ResourceMappingContext.LOCAL_CONTEXT;
+	}
+
+	public void refresh(ResourceMapping[] mappings) {
+		// Not supported
 	}
 
 }

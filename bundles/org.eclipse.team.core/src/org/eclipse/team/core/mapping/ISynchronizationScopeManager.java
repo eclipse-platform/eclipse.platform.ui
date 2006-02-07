@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
@@ -47,29 +47,6 @@ public interface ISynchronizationScopeManager {
 	 * @return the scope that is managed by this manager
 	 */
 	ISynchronizationScope getScope();
-	
-	/**
-	 * Return the projects that apply to this manager.
-	 * The projects returned will depend on the type of context used
-	 * to generate this scope. If the context is a local context,
-	 * all workspace projects are returned. If it is a remote context,
-	 * the projects are the same as those returned from
-	 * {@link RemoteResourceMappingContext#getProjects()}
-	 * @return the projects that apply to this manager
-	 */
-	IProject[] getProjects();
-	
-	/**
-	 * Return the resource mapping contxt that the scope
-	 * uses to obtain traversals from resource mappings
-	 * in order to determine what resources are in the scope.
-	 * 
-	 * @see ResourceMapping#getTraversals(ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
-	 * 
-	 * @return the resource mapping contxt that the scope
-	 * uses to obtain traversals from resource mappings
-	 */
-	ResourceMappingContext getContext();
 
 	/**
 	 * Return whether the scope has been initialized.
@@ -111,14 +88,5 @@ public interface ISynchronizationScopeManager {
 	 * to dispose of it.
 	 */
 	void dispose();
-
-	/**
-	 * Refresh the given mapping asynchronously. This method
-	 * is called by {@link ISynchronizationScopeParticipant}
-	 * instances when they detect changes that require the scope
-	 * to be adjusted.
-	 * @param mappings the mappings to be refeshed.
-	 */
-	void refresh(ResourceMapping[] mappings);
 
 }

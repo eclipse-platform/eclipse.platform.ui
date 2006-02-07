@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 
 /**
@@ -95,5 +95,26 @@ public class ResourceMappingInputScope extends AbstractResourceMappingScope {
 	 */
 	public ISynchronizationScope asInputScope() {
 		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#getProjects()
+	 */
+	public IProject[] getProjects() {
+		return wrappedScope.getProjects();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#getContext()
+	 */
+	public ResourceMappingContext getContext() {
+		return wrappedScope.getContext();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#refresh(org.eclipse.core.resources.mapping.ResourceMapping[])
+	 */
+	public void refresh(ResourceMapping[] mappings) {
+		wrappedScope.refresh(mappings);
 	}
 }

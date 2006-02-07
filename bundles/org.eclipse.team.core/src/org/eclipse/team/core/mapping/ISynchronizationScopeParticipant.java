@@ -46,8 +46,8 @@ public interface ISynchronizationScopeParticipant {
 	 * scope by calling
 	 * {@link ISynchronizationScopeManager#refresh(ResourceMapping[])}.
 	 * 
-	 * @param manager
-	 *            the scope manager
+	 * @param scope
+	 *            the scope
 	 * @param resources
 	 *            the changed resources
 	 * @param projects 
@@ -55,7 +55,7 @@ public interface ISynchronizationScopeParticipant {
 	 * @return the resource mappings that need to be refreshed.
 	 */
 	ResourceMapping[] handleContextChange(
-			ISynchronizationScopeManager manager, IResource[] resources, IProject[] projects);
+			ISynchronizationScope scope, IResource[] resources, IProject[] projects);
 
 	/**
 	 * Callback from the scope manager when the scope is no longer needed.

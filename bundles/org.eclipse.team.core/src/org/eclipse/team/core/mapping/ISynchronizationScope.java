@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.mapping;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
@@ -36,6 +37,29 @@ import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
  * @since 3.2
  */
 public interface ISynchronizationScope extends IResourceMappingScope {
+	
+	/**
+	 * Return the projects that bound this scope.
+	 * The projects returned will depend on the type of context used
+	 * to generate this scope. If the context is a local context,
+	 * all workspace projects are returned. If it is a remote context,
+	 * the projects are the same as those returned from
+	 * {@link RemoteResourceMappingContext#getProjects()}
+	 * @return the projects that bound this scope
+	 */
+	IProject[] getProjects();
+	
+	/**
+	 * Return the resource mapping context that the scope
+	 * uses to obtain traversals from resource mappings
+	 * in order to determine what resources are in the scope.
+	 * 
+	 * @see ResourceMapping#getTraversals(ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
+	 * 
+	 * @return the resource mapping contxt that the scope
+	 * uses to obtain traversals from resource mappings
+	 */
+	ResourceMappingContext getContext();
 	
 	/**
 	 * Return the array of mappings that acted as the input to the scope builder
@@ -176,5 +200,14 @@ public interface ISynchronizationScope extends IResourceMappingScope {
 	 * @return the mapping for the model object that is contained in this scope
 	 */
 	public ResourceMapping getMapping(Object modelObject);
+	
+	/**
+	 * Refresh the given mapping asynchronously. This method
+	 * is called by {@link ISynchronizationScopeParticipant}
+	 * instances when they detect changes that require the scope
+	 * to be adjusted.
+	 * @param mappings the mappings to be refeshed.
+	 */
+	void refresh(ResourceMapping[] mappings);
 
 }

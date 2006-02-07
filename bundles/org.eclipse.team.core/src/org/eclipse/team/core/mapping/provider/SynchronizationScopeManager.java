@@ -354,7 +354,7 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 	 */
 	protected final ISynchronizationScope createScope(
 			ResourceMapping[] inputMappings) {
-		return new ResourceMappingScope(inputMappings);
+		return new ResourceMappingScope(inputMappings, this);
 	}
 
 	/**
@@ -438,17 +438,6 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 	 */
 	public ISynchronizationScope getScope() {
 		return scope;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#getProjects()
-	 */
-	public IProject[] getProjects() {
-		if (context instanceof RemoteResourceMappingContext) {
-			RemoteResourceMappingContext rrmc = (RemoteResourceMappingContext) context;
-			return rrmc.getProjects();
-		}
-		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
 	}
 	
 	/* (non-Javadoc)

@@ -13,9 +13,11 @@ package org.eclipse.team.internal.core.mapping;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 
 /**
  * Concrete implementation of the {@link ISynchronizationScope}
@@ -41,9 +43,11 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	private boolean hasAdditionalMappings;
 	private boolean hasAdditionalResources;
 	private final CompoundResourceTraversal compoundTraversal = new CompoundResourceTraversal();
+	private final SynchronizationScopeManager manager;
 	
-	public ResourceMappingScope(ResourceMapping[] selectedMappings) {
+	public ResourceMappingScope(ResourceMapping[] selectedMappings, SynchronizationScopeManager manager) {
 		inputMappings = selectedMappings;
+		this.manager = manager;
 	}
 	
 	/**
@@ -130,5 +134,28 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 */
 	public ISynchronizationScope asInputScope() {
 		return new ResourceMappingInputScope(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#getProjects()
+	 */
+	public IProject[] getProjects() {
+		ResourceMappingContext context = getContext();
+		if (context instanceof RemoteResourceMappingContext) {
+			RemoteResourceMappingContext rrmc = (RemoteResourceMappingContext) context;
+			return rrmc.getProjects();
+		}
+		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#getContext()
+	 */
+	public ResourceMappingContext getContext() {
+		return manager.getContext();
+	}
+
+	public void refresh(ResourceMapping[] mappings) {
+		manager.refresh(mappings);
 	}
 }

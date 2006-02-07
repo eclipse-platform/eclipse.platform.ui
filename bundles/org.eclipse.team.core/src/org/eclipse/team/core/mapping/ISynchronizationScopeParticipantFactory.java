@@ -41,9 +41,9 @@ public interface ISynchronizationScopeParticipantFactory {
 	/**
 	 * Create a participant in the scope management process for the given model provider.
 	 * @param provider the model provider
-	 * @param manager the scope manager
+	 * @param scope the scope
 	 * @return a participant in the scope management process
 	 */
-	ISynchronizationScopeParticipant createParticipant(ModelProvider provider, ISynchronizationScopeManager manager);
+	ISynchronizationScopeParticipant createParticipant(ModelProvider provider, ISynchronizationScope scope);
 
 }
