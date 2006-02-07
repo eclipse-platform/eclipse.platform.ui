@@ -65,7 +65,7 @@ public class WorkspaceCommitAction extends ModelProviderAction implements IDiffC
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IDiffChangeListener#diffChanged(org.eclipse.team.core.diff.IDiffChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 		updateEnablement();
 	}
 

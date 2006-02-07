@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.ITeamStatus;
+import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.internal.core.Messages;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * A subscriber event handler whose output is a diff tree
@@ -224,6 +225,22 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 */
 	public void setJobFamily(Object family) {
 		this.family = family;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.SubscriberEventHandler#handleException(org.eclipse.core.runtime.CoreException, org.eclipse.core.resources.IResource, int, java.lang.String)
+	 */
+	protected void handleException(CoreException e, IResource resource, int code, String message) {
+		super.handleException(e, resource, code, message);
+		tree.reportError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, code, message, e, resource));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.SubscriberEventHandler#handleCancel(org.eclipse.core.runtime.OperationCanceledException)
+	 */
+	protected void handleCancel(OperationCanceledException e) {
+		super.handleCancel(e);
+		tree.reportError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Messages.SubscriberEventHandler_12, e, ResourcesPlugin.getWorkspace().getRoot()));
 	}
 
 }

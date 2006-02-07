@@ -56,7 +56,7 @@ public class DiffTreeStatusLineContributionGroup extends
 		return (int)getSynchronizationContext().getDiffTree().countFor(state, IThreeWayDiff.DIRECTION_MASK);
 	}
 
-	public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 		updateCounts();
 	}
 	

@@ -10,27 +10,22 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
-import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.diff.provider.*;
+import org.eclipse.team.core.diff.provider.ThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
-import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.ResourceDiff;
-import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
- * Covert a SyncInfoSet into a SyncDeltaTree
+ * Covert a SyncInfo into a IDiff
  */
-public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
+public class SyncInfoToDiffConverter {
 
 	public static final class ResourceVariantFileRevision extends FileRevision {
 		private final IResourceVariant variant;
@@ -56,69 +51,6 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 
 		public IResourceVariant getVariant() {
 			return variant;
-		}
-	}
-
-	SyncInfoSet set;
-	ResourceDiffTree tree;
-	List errors = new ArrayList();
-	
-	public SyncInfoToDiffConverter(SyncInfoTree set, ResourceDiffTree tree) {
-		this.set = set;
-		this.tree = tree;
-	}
-
-	public void connect(IProgressMonitor monitor) {
-		set.connect(this, monitor);
-	}
-	
-	public void dispose() {
-		set.removeSyncSetChangedListener(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetReset(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void syncInfoSetReset(SyncInfoSet set, IProgressMonitor monitor) {
-		try {
-			tree.beginInput();
-			tree.clear();
-			SyncInfo[] infos = set.getSyncInfos();
-			for (int i = 0; i < infos.length; i++) {
-				SyncInfo info = infos[i];
-				IDiff delta = getDeltaFor(info);
-				tree.add(delta);
-			}
-		} finally {
-			tree.endInput(monitor);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoChanged(org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void syncInfoChanged(ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
-		try {
-			tree.beginInput();
-			SyncInfo[] added = event.getAddedResources();
-			for (int i = 0; i < added.length; i++) {
-				SyncInfo info = added[i];
-				IDiff delta = getDeltaFor(info);
-				tree.add(delta);
-			}
-			SyncInfo[] changed = event.getChangedResources();
-			for (int i = 0; i < changed.length; i++) {
-				SyncInfo info = changed[i];
-				IDiff delta = getDeltaFor(info);
-				tree.add(delta);
-			}
-			IResource[] removed = event.getRemovedResources();
-			for (int i = 0; i < removed.length; i++) {
-				IResource resource = removed[i];
-				tree.remove(resource.getFullPath());
-			}
-		} finally {
-			tree.endInput(monitor);
 		}
 	}
 
@@ -238,22 +170,6 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetErrors(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.team.core.ITeamStatus[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void syncInfoSetErrors(SyncInfoSet set, ITeamStatus[] errors, IProgressMonitor monitor) {
-		// TODO: How to handle errors (Bug 121121)
-		this.errors.addAll(Arrays.asList(errors));
-	}
-
-	public IResourceDiffTree getTree() {
-		return tree;
-	}
-
-	/**
-	 * @param twd
-	 * @return
-	 */
 	public static IResourceVariant getRemoteVariant(IThreeWayDiff twd) {
 		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
 		if (diff != null)
@@ -264,10 +180,6 @@ public class SyncInfoToDiffConverter implements ISyncInfoSetChangeListener {
 		return null;
 	}
 
-	/**
-	 * @param twd
-	 * @return
-	 */
 	public static IResourceVariant getBaseVariant(IThreeWayDiff twd) {
 		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
 		if (diff != null)

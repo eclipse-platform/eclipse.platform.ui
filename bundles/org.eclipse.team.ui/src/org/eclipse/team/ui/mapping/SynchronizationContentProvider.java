@@ -393,7 +393,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.delta.ISyncDeltaChangeListener#syncDeltaTreeChanged(org.eclipse.team.core.delta.ISyncDeltaChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 		refresh();
 	}
 	

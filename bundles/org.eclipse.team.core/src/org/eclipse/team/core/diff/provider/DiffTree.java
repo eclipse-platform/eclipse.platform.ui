@@ -256,7 +256,7 @@ public class DiffTree implements IDiffTree {
 					try {
 						lockedForModification = true;
 						if (!event.isEmpty() || event.isReset())
-							listener.diffChanged(event, Policy.subMonitorFor(monitor, 100));
+							listener.diffsChanged(event, Policy.subMonitorFor(monitor, 100));
 						for (Iterator iter = propertyChanges.keySet().iterator(); iter.hasNext();) {
 							Integer key = (Integer) iter.next();
 							Set paths = (Set)propertyChanges.get(key);
@@ -442,5 +442,23 @@ public class DiffTree implements IDiffTree {
 			throw e;
 		}
 		return false;
+	}
+	
+	/**
+	 * Report to any listeners that an error has occurrd while populating the
+	 * set. Listeners will be notified that an error occurred and can react
+	 * accordingly.
+	 * </p>
+	 * 
+	 * @param status
+	 *            the status that describes the error that occurred.
+	 */
+	public void reportError(IStatus status) {
+		try {
+			beginInput();
+			getChangeEvent().errorOccurred(status);
+		} finally {
+			endInput(null);
+		}
 	}
 }

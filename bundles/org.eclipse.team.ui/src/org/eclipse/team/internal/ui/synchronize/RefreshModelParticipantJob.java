@@ -31,7 +31,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 			return changes.size();
 		}
 
-		public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+		public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 			IDiff[] additions = event.getAdditions();
 			for (int i = 0; i < additions.length; i++) {
 				IDiff node = additions[i];

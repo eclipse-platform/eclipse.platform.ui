@@ -33,7 +33,7 @@ public interface IDiffChangeListener {
 	 * @param event the change event
 	 * @param monitor a progress monitor
 	 */
-	void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor);
+	void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor);
 	
 	/**
 	 * The given property has changed for the given paths.

@@ -11,6 +11,7 @@
 package org.eclipse.team.core.diff;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * A change event that describes changes that have occurred
@@ -51,4 +52,10 @@ public interface IDiffChangeEvent {
 	 * @return the delta nodes contained in the delta tree that have changed
 	 */
 	public IDiff[] getChanges();
+	
+	/**
+	 * Return any errors that occured while this change was taking place.
+	 * @return any errors that occured while this change was taking place
+	 */
+	public IStatus[] getErrors();
 }

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.core.mapping;
 import java.util.*;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.diff.*;
 
 /**
@@ -29,6 +30,8 @@ public class DiffChangeEvent implements IDiffChangeEvent {
 	private Map addedResources = new HashMap();
 	
 	private boolean reset = false;
+
+	private List errors = new ArrayList();
 
 	/**
 	 * Create a diff change event
@@ -107,6 +110,14 @@ public class DiffChangeEvent implements IDiffChangeEvent {
 	
 	public boolean isEmpty() {
 		return changedResources.isEmpty() && removedResources.isEmpty() && addedResources.isEmpty();
+	}
+
+	public void errorOccurred(IStatus status) {
+		errors .add(status);
+	}
+
+	public IStatus[] getErrors() {
+		return (IStatus[]) errors.toArray(new IStatus[errors.size()]);
 	}
 
 }

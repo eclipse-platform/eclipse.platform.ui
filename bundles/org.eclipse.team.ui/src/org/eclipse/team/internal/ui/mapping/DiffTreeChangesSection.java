@@ -146,7 +146,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		return configuration.getMode();
 	}
 
-	public void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 		calculateDescription();
 	}
 
