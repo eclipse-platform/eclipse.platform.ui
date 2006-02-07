@@ -140,7 +140,7 @@ public class Preferences {
 	 * extensions to the preference facility. A plug-in may define any number
 	 * of preference extensions.
 	 * 
-	 * @since org.eclipse.equinox.preferences 1.0
+	 * @since 3.2
 	 */
 	public static final String PT_PREFERENCES = "preferences"; //$NON-NLS-1$
 
@@ -153,7 +153,7 @@ public class Preferences {
 	 * the keys are property names and values are strings.
 	 * </p>
 	 * 
-	 * @since 3.3
+	 * @since 3.2
 	 */
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
