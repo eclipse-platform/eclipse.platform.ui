@@ -97,7 +97,6 @@ public class NewWizardAction extends Action implements
         setToolTipText(WorkbenchMessages.NewWizardAction_toolTip); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.NEW_ACTION);
-        setActionDefinitionId("org.eclipse.ui.newWizard"); //$NON-NLS-1$
     }
 
     /**

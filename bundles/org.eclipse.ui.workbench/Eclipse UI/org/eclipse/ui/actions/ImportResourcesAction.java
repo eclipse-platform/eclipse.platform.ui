@@ -95,7 +95,6 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
         }
         this.workbenchWindow = window;
         tracker = new PerspectiveTracker(window, this);
-        setActionDefinitionId("org.eclipse.ui.file.import"); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.ImportResourcesAction_toolTip);
         setId("import"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,

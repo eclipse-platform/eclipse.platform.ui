@@ -463,10 +463,17 @@
             categoryId="org.eclipse.ui.category.help"
             id="org.eclipse.ui.help.aboutAction" />
       <command
-            name="%command.newWizard.name"
-            description="%command.newWizard.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.newWizard" />
+            defaultHandler="org.eclipse.ui.internal.handlers.WizardHandler$New"
+            description="%command.newWizard.description"
+            id="org.eclipse.ui.newWizard"
+            name="%command.newWizard.name">
+         <commandParameter
+               id="newWizardId"
+               name="%command.newWizard.newWizardIdParameter.name"
+               optional="true"
+               values="org.eclipse.ui.internal.registry.WizardParameterValues$New"/>
+      </command>
       <command
             name="%command.close.name"
             description="%command.close.description"
@@ -478,15 +485,29 @@
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.closeAll" />
       <command
-            name="%command.import.name"
+            categoryId="org.eclipse.ui.category.file"
+            defaultHandler="org.eclipse.ui.internal.handlers.WizardHandler$Import"
             description="%command.import.description"
-            categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.import" />
+            id="org.eclipse.ui.file.import"
+            name="%command.import.name">
+         <commandParameter
+               id="importWizardId"
+               name="%command.import.importWizardIdParameter.name"
+               optional="true"
+               values="org.eclipse.ui.internal.registry.WizardParameterValues$Import"/>
+      </command>
       <command
-            name="%command.export.name"
-            description="%command.export.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.export" />
+            defaultHandler="org.eclipse.ui.internal.handlers.WizardHandler$Export"
+            description="%command.export.description"
+            id="org.eclipse.ui.file.export"
+            name="%command.export.name">
+         <commandParameter
+               id="exportWizardId"
+               name="%command.export.exportWizardIdParameter.name"
+               optional="true"
+               values="org.eclipse.ui.internal.registry.WizardParameterValues$Export"/>
+      </command>
       <command
             name="%command.save.name"
             description="%command.save.description"

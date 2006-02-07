@@ -104,7 +104,6 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
         }
         this.workbenchWindow = window;
         tracker = new PerspectiveTracker(window, this);
-        setActionDefinitionId("org.eclipse.ui.file.export"); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.ExportResourcesAction_toolTip);
         setId("export"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,
