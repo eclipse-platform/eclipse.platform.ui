@@ -73,10 +73,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	protected TableViewer tagViewer;
 
 	/* private */CompareRevisionAction compareAction;
+	/* private */OpenRevisionAction openAction;
+	
 	private CVSHistoryFilterAction  cvsHistoryFilter;
 	private IAction toggleTextAction;
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
+	private IAction toggleCompareAction;
+	private IAction toggleOpenAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
@@ -102,7 +106,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	boolean localFilteredOut = false;
 	
 	private HistoryResourceListener resourceListener;
-
+	
 	// preferences
 	public final static String PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS = "pref_generichistory_show_comments"; //$NON-NLS-1$
 
@@ -110,6 +114,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	public final static String PREF_GENERIC_HISTORYVIEW_SHOW_TAGS = "pref_generichistory_show_tags"; //$NON-NLS-1$
 
+	//toggle constants for default click action
+	public final static int COMPARE_CLICK = 0;
+	public final static int OPEN_CLICK = 1;
+	private int clickAction = OPEN_CLICK;
+	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
 	}
@@ -229,14 +238,21 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		// Click Compare action
 		compareAction = new CompareRevisionAction();
+		openAction = new OpenRevisionAction();
+		
 		OpenStrategy handler = new OpenStrategy(tableViewer.getTable());
 		handler.addOpenListener(new IOpenEventListener() {
 		public void handleOpen(SelectionEvent e) {
-				
 				Object tableSelection = ((StructuredSelection) tableViewer.getSelection()).getFirstElement();
-				StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableSelection});
-				compareAction.selectionChanged(null, sel);
-				compareAction.run(null);
+				if (clickAction == COMPARE_CLICK){
+					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableSelection});
+					compareAction.selectionChanged(null, sel);
+					compareAction.run(null);
+				} else if (clickAction == OPEN_CLICK){
+					StructuredSelection sel = new StructuredSelection(new Object[] {tableSelection});
+					openAction.selectionChanged(null, sel);
+					openAction.run(null);
+				}
 			}
 		});
 
@@ -379,6 +395,24 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		toggleListAction.setChecked(store.getBoolean(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS));
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
 
+		toggleCompareAction = new Action("Compare on selection"){
+			public void run() {
+				toggleOpenAction.setChecked(false);
+				toggleCompareAction.setChecked(true);
+				clickAction = COMPARE_CLICK;
+			}
+		};
+		toggleCompareAction.setChecked(false);
+		
+		toggleOpenAction = new Action("Open on selection"){
+			public void run() {
+				toggleCompareAction.setChecked(false);
+				toggleOpenAction.setChecked(true);
+				clickAction = OPEN_CLICK;
+			}
+		};
+		toggleOpenAction.setChecked(true);
+		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
@@ -389,12 +423,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		});
 		menuMgr.setRemoveAllWhenShown(true);
 		tableViewer.getTable().setMenu(menu);
-		parentSite.getWorkbenchPartSite().registerContextMenu(menuMgr, tableViewer);
+		//Don't add the object contribution menu items if this page is hosted in a dialog
+		if (!parentSite.isModal())
+			parentSite.getWorkbenchPartSite().registerContextMenu(menuMgr, tableViewer);
 
 		// Contribute toggle text visible to the toolbar drop-down
 		IActionBars actionBars= parentSite.getActionBars();
 		IMenuManager actionBarsMenu = actionBars.getMenuManager();
 		if (actionBarsMenu != null){
+			actionBarsMenu.add(toggleCompareAction);
+			actionBarsMenu.add(toggleOpenAction);
+			actionBarsMenu.add(new Separator());
 			actionBarsMenu.add(toggleTextWrapAction);
 			actionBarsMenu.add(new Separator());
 			actionBarsMenu.add(toggleTextAction);
@@ -440,7 +479,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private void setLocalHistoryFilteredOut(boolean flag){
 		localFilteredOut = flag;
-		refresh();
+		refreshHistory(false);
 	}
 
 	/* private */ void fillTableMenu(IMenuManager manager) {
@@ -458,15 +497,18 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						if (!(tempSelection.getFirstElement() instanceof LocalFileRevision)) {
 							manager.add(getRevisionAction);
 							manager.add(new Separator());
-							manager.add(tagWithExistingAction);
+							if (!parentSite.isModal())
+								manager.add(tagWithExistingAction);
 						}
 					}
 				}
 			}
 		}
-		manager.add(new Separator("additions")); //$NON-NLS-1$
-		manager.add(refreshAction);
-		manager.add(new Separator("additions-end")); //$NON-NLS-1$
+		if (!parentSite.isModal()){
+			manager.add(new Separator("additions")); //$NON-NLS-1$
+			manager.add(refreshAction);
+			manager.add(new Separator("additions-end")); //$NON-NLS-1$
+		}
 	}
 
 	private void fillTextMenu(IMenuManager manager) {
@@ -606,7 +648,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 * Refresh the view by refetching the log entries for the remote file
 	 */
 	public void refresh() {	
-		refreshHistory();
+		refreshHistory(true);
 	}
 
 	/**
@@ -615,6 +657,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 * Only files are supported for now.
 	 */
 	public boolean showHistory(Object object, boolean refetch) {
+		//reset default behaviour for clicks
+		clickAction = OPEN_CLICK;
 		//reset currentFileRevision
 		currentFileRevision = null;
 		ICVSFile cvsFile = getCVSFile(object);
@@ -627,20 +671,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (refreshCVSFileHistoryJob == null)
 			refreshCVSFileHistoryJob = new RefreshCVSFileHistory();
 		
-		refreshHistory();
+		refreshHistory(refetch);
 		return true;
 	}
 
-	private void refreshHistory() {
+	private void refreshHistory(boolean refetch) {
 		if (refreshCVSFileHistoryJob.getState() != Job.NONE){
 			refreshCVSFileHistoryJob.cancel();
-			/*try {
-				refreshCVSFileHistoryJob.join();
-			} catch (InterruptedException e) {
-				TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] {""}), e)); //$NON-NLS-1$
-			}*/
 		}
+		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
+		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
 		Utils.schedule(refreshCVSFileHistoryJob, /*getSite()*/parentSite.getWorkbenchPartSite());
 	}
 
@@ -679,6 +720,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	/* private */void setViewerVisibility() {
 		boolean showText = toggleTextAction.isChecked();
 		boolean showList = toggleListAction.isChecked();
+		
+		//check to see if this page is being shown in a dialog, in which case
+		//don't show the text and list panes
+		if (parentSite.isModal()){
+			showText = false;
+			showList = false;
+		}
+		
 		if (showText && showList) {
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(null);
@@ -770,6 +819,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			super(CVSUIMessages.HistoryView_fetchHistoryJob);
 		}
 		
+		public void setIncludeLocals(boolean flag) {
+			if (fileHistory != null)
+				fileHistory.includeLocalRevisions(flag);
+		}
+
+		public void setRefetchHistory(boolean refetch) {
+			if (fileHistory != null)
+				fileHistory.setRefetchRevisions(refetch);
+			
+		}
+
 		public void setFileHistory(CVSFileHistory fileHistory) {
 			this.fileHistory = fileHistory;
 		}
@@ -912,5 +972,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		}
 		return null;
+	}
+
+	public void setClickAction(int clickAction) {
+		switch (clickAction) {
+			case COMPARE_CLICK:
+			toggleCompareAction.run();
+			break;
+			
+			case OPEN_CLICK:
+			toggleOpenAction.run();
+			break;
+		}
 	}
 }

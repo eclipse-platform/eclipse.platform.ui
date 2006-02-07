@@ -105,7 +105,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 					if (tempPageSource instanceof IHistoryPageSource) {
 						IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
 						Page histPage = pageSource.createPage(tempFile);
-						DialogHistoryPageSite dialogHistorySite = new DialogHistoryPageSite(getTargetPart().getSite(), false);
+						DialogHistoryPageSite dialogHistorySite = new DialogHistoryPageSite(getTargetPart().getSite(), true);
 						((IHistoryPage)histPage).setSite(dialogHistorySite);
 						((IHistoryPage)histPage).showHistory(tempFile, true);
 						CompareConfiguration cc = new CompareConfiguration();
@@ -117,7 +117,11 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 					cd.setBlockOnOpen(true);
 					cd.open();
 				} else {
-					TeamUI.getHistoryView().showHistoryFor((IFile)getSelectedResources()[0]);
+					IHistoryPage page = TeamUI.getHistoryView().showHistoryFor((IFile)getSelectedResources()[0]);
+					if (page instanceof CVSHistoryPage){
+						CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) page;
+						cvsHistoryPage.setClickAction(CVSHistoryPage.COMPARE_CLICK);
+					}
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);

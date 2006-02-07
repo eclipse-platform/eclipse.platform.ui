@@ -24,13 +24,20 @@ import org.eclipse.team.internal.core.LocalFileRevision;
 public class CVSFileHistory extends FileHistory {
 
 	protected ICVSFile cvsFile;
+	//used to hold all revisions (changes based on filtering)
 	protected IFileRevision[] revisions;
+	//used to hold all of the remote revisions
+	protected IFileRevision[] remoteRevisions;
+	//used to hold all of the local revisions
+	protected IFileRevision[] localRevisions;
 	protected boolean includeLocalRevisions;
 	protected boolean includesExists;
+	protected boolean refetchRevisions;
 	
 	public CVSFileHistory(ICVSFile file){
 		this.cvsFile = file;
-		this.includeLocalRevisions=false;
+		this.includeLocalRevisions = false;
+		this.refetchRevisions = true;
 	}
 	
 	public IFileRevision[] getFileRevisions() {
@@ -38,33 +45,56 @@ public class CVSFileHistory extends FileHistory {
 			return new IFileRevision[0];
 		return revisions;
 	}
-
+	
 	public void refresh(IProgressMonitor monitor) throws TeamException {
-			monitor.beginTask("Refreshing CVS",300);
-			try{
-			ILogEntry[] entries = cvsFile.getLogEntries(new SubProgressMonitor(monitor, 200));
-			IFileRevision[] convertedLocalRevisions = new IFileRevision[0];
-			if (includeLocalRevisions){
-				IResource localResource = cvsFile.getIResource();
-				includesExists = false;
-				if (localResource != null &&
-					localResource instanceof IFile){
-					//get the local revisions
-					IFileState[] localRevisions =((IFile)localResource).getHistory(new SubProgressMonitor(monitor, 100));
-					convertedLocalRevisions =convertToFileRevision(localRevisions, new SubProgressMonitor(monitor, 100));
-					includesExists = (convertedLocalRevisions.length > 0);
+		if (refetchRevisions){
+				monitor.beginTask("Refreshing CVS",300);
+				try{
+				ILogEntry[] entries = cvsFile.getLogEntries(new SubProgressMonitor(monitor, 200));
+				localRevisions = new IFileRevision[0];
+				if (includeLocalRevisions){
+					IResource localResource = cvsFile.getIResource();
+					includesExists = false;
+					if (localResource != null &&
+						localResource instanceof IFile){
+						//get the local revisions
+						IFileState[] localHistoryState =((IFile)localResource).getHistory(new SubProgressMonitor(monitor, 100));
+						localRevisions =convertToFileRevision(localHistoryState, new SubProgressMonitor(monitor, 100));
+						includesExists = (localRevisions.length > 0);
+					}
+				}
+				remoteRevisions = new IFileRevision[entries.length];
+				for (int i = 0; i < entries.length; i++) {
+					remoteRevisions[i] = new CVSFileRevision(entries[i]);
+				}
+				
+				revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
+				//copy over remote revisions
+				System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
+				//copy over local revisions
+				System.arraycopy(localRevisions,0, revisions, remoteRevisions.length,localRevisions.length);
+				
+				
+			} catch (CoreException e) {
+			} finally {
+				monitor.done();
+			}
+		} else {
+			//don't refetch revisions just return revisions with local revisions as requested
+			if (revisions != null){
+				if (includeLocalRevisions && includesExists){
+					revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
+					//copy over remote revisions
+					System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
+					//copy over local revisions
+					System.arraycopy(localRevisions,0, revisions, remoteRevisions.length,localRevisions.length);
+				} else {
+					revisions = new IFileRevision[remoteRevisions.length];
+					//copy over remote revisions
+					System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
 				}
 			}
-			revisions = new IFileRevision[entries.length + convertedLocalRevisions.length];
-			for (int i = 0; i < entries.length; i++) {
-				revisions[i] = new CVSFileRevision(entries[i]);
-			}
-			System.arraycopy(convertedLocalRevisions, 0, revisions, entries.length,convertedLocalRevisions.length);
 			
-			
-		} catch (CoreException e) {
-		} finally {
-			monitor.done();
 		}
 	}
 
@@ -156,6 +186,10 @@ public class CVSFileHistory extends FileHistory {
 
 	public boolean getIncludesExists() {
 		return includesExists;
+	}
+
+	public void setRefetchRevisions(boolean refetch) {
+		this.refetchRevisions = refetch;
 	}
 
 

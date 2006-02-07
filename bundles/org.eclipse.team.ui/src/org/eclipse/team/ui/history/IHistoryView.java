@@ -36,7 +36,9 @@ public interface IHistoryView {
 	/**
 	 * Shows the history for the passed in object.
 	 * @param object
+	 * @return returns the history page that the passed in object is being shown in
+	 * or null if no appropriate page can be found.
 	 */
-	public void showHistoryFor(Object object);
+	public IHistoryPage showHistoryFor(Object object);
 	
 }

@@ -93,5 +93,10 @@ public interface IHistoryPageSite {
 	 * @param toolBarManager
 	 */
 	void setToolBarManager(ToolBarManager toolBarManager);
-
+	
+	/**
+	 * Returns whether this site is modal.
+	 * @return true if the site is modal, false otherwise
+	 */
+	boolean isModal();
 }

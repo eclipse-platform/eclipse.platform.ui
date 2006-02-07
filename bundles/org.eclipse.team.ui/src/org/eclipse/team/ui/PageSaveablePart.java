@@ -173,7 +173,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		CompareViewerPane pane = getContentPane();
 		if (pane != null && !pane.isDisposed())
 			getContentPane().setInput(input);
-		if (fStructuredComparePane != null)
+		if (fStructuredComparePane != null && !fStructuredComparePane.isDisposed())
 			fStructuredComparePane.setInput(input);
 	}
 	
@@ -314,6 +314,11 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 
 	protected CompareConfiguration getCompareConfiguration() {
 		return cc;
+	}
+
+	// TODO can we hide this
+	protected ArrayList getDirtyViewers() {
+		return fDirtyViewers;
 	}
 
 }

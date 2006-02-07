@@ -107,6 +107,9 @@ public class DialogHistoryPageSite implements IHistoryPageSite {
 			};
 		}
 	}
-	
+
+	public boolean isModal() {
+		return isModal;
+	}
 
 }

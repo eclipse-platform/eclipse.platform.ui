@@ -402,20 +402,20 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		return null;
 	}
 	
-	public void itemDropped(Object object) {
+	public IHistoryPage itemDropped(Object object) {
 
 		IResource resource = Utils.getResource(object);
 		if (resource != null) {
 			//check first to see if this view is pinned
-			if (checkForPinnedView(object, resource.getName()))
-				return;
+			IHistoryPage pinnedPage = checkForPinnedView(object, resource.getName());
+			if (pinnedPage != null)
+				return pinnedPage;
 		
 			//check to see if resource is managed
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject());
 			//couldn't find a repo provider; try showing it in a local page
 			if (teamProvider == null){
-				localItemDropped(resource);
-				return;
+				return localItemDropped(resource);
 			}
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
 			Object tempPageSource = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
@@ -432,6 +432,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 						if (((IHistoryPage) tempPageContainer.getPage()).showHistory(resource, true)){
 							setContentDescription(resource.getName());
 							showPageRec(tempPageContainer);
+							return (IHistoryPage) tempPageContainer.getPage();
 						}
 					} else {
 						showPageRec(defaultPageContainer);
@@ -444,7 +445,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			//Check to see that this object can be adapted to an IHistoryPageSource, else
 			//we don't know how to display it
 			if (historyPageSource == null)
-				return;
+				return null;
 			
 			//If a current page exists, see if it can handle the dropped item
 			if (currentPageContainer.getPage() instanceof IHistoryPage) {
@@ -454,12 +455,14 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				}
 				if (tempPageContainer != null) {
 					
-					if (checkForPinnedView(object, ((IHistoryPage) tempPageContainer.getPage()).getName()))
-						return;
+					IHistoryPage pinnedPage = checkForPinnedView(object, ((IHistoryPage) tempPageContainer.getPage()).getName());
+					if (pinnedPage != null)
+						return pinnedPage;
 					
 					if (((IHistoryPage) tempPageContainer.getPage()).showHistory(object, true)){
 						setContentDescription(((IHistoryPage) tempPageContainer.getPage()).getName());
 						showPageRec(tempPageContainer);
+						return (IHistoryPage) tempPageContainer.getPage();
 					}
 				} else {
 					showPageRec(defaultPageContainer);
@@ -467,22 +470,22 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			}
 		}
 
+		return null;
 	}
 
-	private boolean checkForPinnedView(Object object, String objectName) {
+	private IHistoryPage checkForPinnedView(Object object, String objectName) {
 		if (isViewPinned()) {
 			try {
 				//get the file name
 				IViewPart view = getSite().getPage().showView(viewId, viewId + objectName + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
 				if (view instanceof GenericHistoryView) {
 					GenericHistoryView view2 = (GenericHistoryView) view;
-					view2.itemDropped(object);
+					return view2.itemDropped(object);
 				}
-				return true;
 			} catch (PartInitException e) {
 			}
 		}
-		return false;
+		return null;
 	}
 
 	boolean isViewPinned() {
@@ -570,16 +573,20 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		HistoryManagerInstanceManager.getManager().deregister(this);*/
 	}
 
-	public void localItemDropped(IResource resource) {
+	public IHistoryPage localItemDropped(IResource resource) {
 		PageContainer container = createLocalPage(this.book);
-		if (((IHistoryPage) container.getPage()).showHistory(resource, true)){
+		IHistoryPage localPage = (IHistoryPage) container.getPage();
+		if (localPage.showHistory(resource, true)){
 			setContentDescription(resource.getName());
 			showPageRec(container);
+			return localPage;
 		}
+		
+		return null;
 	}
 
-	public void showHistoryFor(Object object) {
-		itemDropped(object);
+	public IHistoryPage showHistoryFor(Object object) {
+		 return itemDropped(object);
 	}
 
 	public IHistoryPage getHistoryPage() {
