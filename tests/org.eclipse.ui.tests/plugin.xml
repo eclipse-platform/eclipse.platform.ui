@@ -1182,6 +1182,24 @@
          </action>
       </actionSet>
    </extension>
+   
+   <!-- Bug 125011.  There's no good way to test this programmatically, so the
+   test is simply to start up Eclipse and check whether the "label" attribute
+   will affect the tooltip text. -->
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Bug 125011"
+            id="org.eclipse.ui.tests.actionSet125011"
+            visible="true">
+         <action
+               label="Monkey!"
+               toolbarPath="workingSets"
+               icon="icons/anything.gif"
+               id="org.eclipse.ui.tests.action125011"
+               class="org.eclipse.ui.tests.api.MockActionDelegate" />
+      </actionSet>
+   </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
 <!-- PopupMenuExpressionTest -->

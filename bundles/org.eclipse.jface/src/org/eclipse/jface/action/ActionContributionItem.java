@@ -699,7 +699,11 @@ public class ActionContributionItem extends ContributionItem {
 
                 if (tooltipTextChanged || textChanged) {
                     String toolTip = action.getToolTipText();
-                    // if the text is showing, then only set the tooltip if different
+					if ((toolTip == null) || (toolTip.length() == 0)) {
+						toolTip = text;
+					}
+                    // if the text is showing, then only set the tooltip if
+					// different
                     if (!showText || toolTip != null && !toolTip.equals(text)) {
                         ti.setToolTipText(toolTip);
                     } else {
