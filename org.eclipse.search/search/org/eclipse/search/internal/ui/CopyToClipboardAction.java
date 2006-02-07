@@ -18,7 +18,11 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,6 +54,33 @@ public class CopyToClipboardAction extends Action {
 		fViewer= viewer;
 	}
 
+	public void runWithEvent(Event event) {
+		// bugzilla 126062: allow combos and text fields of the view to fill 
+		// the clipboard
+		Shell shell= SearchPlugin.getActiveWorkbenchShell();
+		if (shell != null) {
+			String sel= null;
+			if (event.widget instanceof Combo) {
+				Combo combo= (Combo) event.widget;
+				sel= combo.getText();
+				Point selection= combo.getSelection();
+				sel= sel.substring(selection.x, selection.y);
+			} 
+			else if (event.widget instanceof Text) {
+				Text text= (Text) event.widget;
+				sel= text.getSelectionText();
+			}
+			if (sel != null) {
+				if (sel.length() > 0) {
+					copyToClipboard(sel, shell);
+				}
+				return;
+			}
+		}
+
+		run();
+	}
+	
 	/*
 	 * Implements method from IAction
 	 */	
@@ -70,12 +101,16 @@ public class CopyToClipboardAction extends Action {
 		}
 		
 		if (buf.length() > 0) {
-			Clipboard clipboard= new Clipboard(shell.getDisplay());
-			try {
-				copyToClipbard(clipboard, buf.toString(), shell);
-			} finally {
-				clipboard.dispose();
-			}
+			copyToClipboard(buf.toString(), shell);
+		}
+	}
+
+	private void copyToClipboard(String text, Shell shell) {
+		Clipboard clipboard= new Clipboard(shell.getDisplay());
+		try {
+			copyToClipboard(clipboard, text, shell);
+		} finally {
+			clipboard.dispose();
 		}
 	}
 
@@ -86,7 +121,7 @@ public class CopyToClipboardAction extends Action {
 		return Collections.EMPTY_LIST.iterator();
 	}
 
-	private void copyToClipbard(Clipboard clipboard, String str, Shell shell) {
+	private void copyToClipboard(Clipboard clipboard, String str, Shell shell) {
 		try {
 			clipboard.setContents(new String[] { str },	new Transfer[] { TextTransfer.getInstance() });			
 		} catch (SWTError ex) {
@@ -95,7 +130,7 @@ public class CopyToClipboardAction extends Action {
 			String title= SearchMessages.CopyToClipboardAction_error_title;  
 			String message= SearchMessages.CopyToClipboardAction_error_message; 
 			if (MessageDialog.openQuestion(shell, title, message))
-				copyToClipbard(clipboard, str, shell);
+				copyToClipboard(clipboard, str, shell);
 		}	
 	}
 }
