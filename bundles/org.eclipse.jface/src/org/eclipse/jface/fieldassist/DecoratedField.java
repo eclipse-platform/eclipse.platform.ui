@@ -537,16 +537,14 @@ public class DecoratedField {
 	 * the vertical alignment of the decoration relative to the field.
 	 * Decorations always appear on either horizontal side of the field, never
 	 * above or below it. For example, a decoration appearing on the left side
-	 * of the field, at the top, is specified as SWT.LEFT | SWT.TOP. If an image
-	 * decoration already exists in the specified position, it will be replaced
-	 * by the one specified.
+	 * of the field, at the top, is specified as SWT.LEFT | SWT.TOP. 
 	 * 
 	 * @return index the index in the array of decorations that represents the
 	 * specified SWT position. If the position is not an expected position, the
 	 * index representing the top left position will be returned.
 	 * 
 	 */
-	int indexForPosition(int position) {
+	private int indexForPosition(int position) {
 		switch (position) {
 		case SWT.LEFT | SWT.BOTTOM:
 			return LEFT_BOTTOM;
@@ -559,27 +557,14 @@ public class DecoratedField {
 		}
 	}
 
-	/**
+	/*
 	 * Create a form data that will place the decoration at the specified
 	 * position.
 	 * 
-	 * @param position
-	 *            The SWT constant indicating the position of the decoration
-	 *            relative to the field's control. The position should include
-	 *            style bits describing both the vertical and horizontal
-	 *            orientation. <code>SWT.LEFT</code> and
-	 *            <code>SWT.RIGHT</code> describe the horizontal placement of
-	 *            the decoration relative to the field, and the constants
-	 *            <code>SWT.TOP</code> and <code>SWT.BOTTOM</code> describe
-	 *            the vertical alignment of the decoration relative to the
-	 *            field. Decorations always appear on either horizontal side of
-	 *            the field, never above or below it. For example, a decoration
-	 *            appearing on the left side of the field, at the top, is
-	 *            specified as SWT.LEFT | SWT.TOP. If an image decoration
-	 *            already exists in the specified position, it will be replaced
-	 *            by the one specified.
-	 * @param image
-	 *            the image shown in the decoration.
+	 * @param index the index in the decDatas describing the position of the
+	 * decoration. 
+	 * 
+	 * @param image the image shown in the decoration.
 	 * 
 	 */
 	private FormData createFormDataForIndex(int index, Image image) {
@@ -826,7 +811,7 @@ public class DecoratedField {
 	public void setBackground(Color color) {
 		if (form == null || form.isDisposed())
 			return;
-		
+
 		form.setBackground(color);
 		// decorations must match the form, so
 		// force the color to match. We query it in case
