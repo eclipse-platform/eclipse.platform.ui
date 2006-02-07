@@ -150,7 +150,11 @@ public class ModelNode {
 	 * @param children
 	 */
 	public synchronized void setChildren(ModelNode[] children) {
-		fChildren = children;
+		if (children != null && children.length == 0) {
+			fChildren = null;
+		} else {
+			fChildren = children;
+		}
 	}
 	
 	/**

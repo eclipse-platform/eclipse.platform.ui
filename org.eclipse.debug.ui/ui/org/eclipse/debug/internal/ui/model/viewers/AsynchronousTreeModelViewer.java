@@ -359,6 +359,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      */
     synchronized protected void inputChanged(Object input, Object oldInput) {
         fPendingExpansion.clear();
+        fParentsPendingChildren.clear();
         super.inputChanged(input, oldInput);
     }
 
@@ -496,21 +497,32 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                         attemptExpansion();
                         attemptSelection(false);
                 	} else {
-                        int[] indicies = (int[]) fParentsPendingChildren.get(parentNode);
-                	    if (indicies == null) {
-                	        indicies = new int[]{index};
-                        } else {
-                            int[] next = new int[indicies.length + 1];
-                            System.arraycopy(indicies, 0, next, 0, indicies.length);
-                            next[indicies.length] = index;
-                            indicies = next;
-                        }
-                        fParentsPendingChildren.put(parentNode, indicies);
+                		addPendingChildIndex(parentNode, index);
                     }
                 }
 
 //            }
 //        });
+    }
+    
+    /**
+     * Note that the child at the specified index of the given parent node needs
+     * data mapped to its widget when the data becomes available.
+     * 
+     * @param parent
+     * @param index
+     */
+    private synchronized void addPendingChildIndex(ModelNode parent, int index) {
+        int[] indicies = (int[]) fParentsPendingChildren.get(parent);
+	    if (indicies == null) {
+	        indicies = new int[]{index};
+        } else {
+            int[] next = new int[indicies.length + 1];
+            System.arraycopy(indicies, 0, next, 0, indicies.length);
+            next[indicies.length] = index;
+            indicies = next;
+        }
+        fParentsPendingChildren.put(parent, indicies);    	
     }
 
     /**

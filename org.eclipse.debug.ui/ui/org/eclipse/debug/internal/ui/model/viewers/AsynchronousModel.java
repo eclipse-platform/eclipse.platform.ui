@@ -91,6 +91,9 @@ public abstract class AsynchronousModel {
         cancelPendingUpdates();
 		disposeAllModelProxies();
 		fPendingUpdates.clear();
+		if (getRootNode() != null) {
+			getViewer().nodeDisposed(getRootNode());
+		}
 	}
     
     /**
