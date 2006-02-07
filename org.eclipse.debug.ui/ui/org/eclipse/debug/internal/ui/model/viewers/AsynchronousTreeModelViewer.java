@@ -906,7 +906,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     protected synchronized void nodeDisposed(ModelNode node) {
     	super.nodeDisposed(node);
     	Widget widget = node.getWidget();
-    	if (widget instanceof Tree) {
+    	if (widget instanceof Tree && !widget.isDisposed()) {
     		clear(widget);
     	}
     }	
