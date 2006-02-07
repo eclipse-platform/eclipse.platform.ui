@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
-import org.eclipse.swt.widgets.Widget;
 
 
 /**
@@ -30,11 +29,9 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	 * Constructs a new empty tree model
 	 * 
 	 * @param viewer associated viewer
-	 * @param root root model element or <code>null</code>
-	 * @param widget associated widget or <code>null</code>
 	 */
-	public AsynchronousTreeModel(AsynchronousTreeModelViewer viewer, Object root, Widget widget) {
-		super(viewer, root, widget);
+	public AsynchronousTreeModel(AsynchronousTreeModelViewer viewer) {
+		super(viewer);
 	}
 	
 	/**

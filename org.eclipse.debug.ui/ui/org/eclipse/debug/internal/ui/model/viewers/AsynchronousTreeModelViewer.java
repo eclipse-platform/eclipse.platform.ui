@@ -812,10 +812,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#createModel(java.lang.Object)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#createModel()
 	 */
-	protected AsynchronousModel createModel(Object input) {
-		return new AsynchronousTreeModel(this, input, getControl());
+	protected AsynchronousModel createModel() {
+		return new AsynchronousTreeModel(this);
 	}
     
 

@@ -303,16 +303,18 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 		if (fModel != null) {
 			fModel.dispose();
 		}
-		fModel = createModel(input);
+		fModel = createModel();
+		fModel.init(input, getControl());
         refresh();		
 	}
 	
 	/**
-	 * Creaets a new model for this viewer for the given input element.
+	 * Creaets a new emptyu model for this viewer that
+	 * is *not* initialized.
 	 * 
 	 * @return a new model
 	 */
-	protected abstract AsynchronousModel createModel(Object input);
+	protected abstract AsynchronousModel createModel();
 
 	public abstract IModelUpdatePolicy createUpdatePolicy();
 

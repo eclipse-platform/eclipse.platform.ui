@@ -58,16 +58,25 @@ public abstract class AsynchronousModel {
 	 * Constructs a new empty tree model
 	 * 
 	 * @param viewer associated viewer
-	 * @param root root element or <code>null</code>
 	 */
-	public AsynchronousModel(AsynchronousModelViewer viewer, Object root, Widget widget) {
+	public AsynchronousModel(AsynchronousModelViewer viewer) {
 		fViewer = viewer;
+
+	}
+	
+	/**
+	 * Initializes this model. Called once after creation.
+	 * 
+	 * @param root root element or <code>null</code>
+	 * @param widget root widget/control
+	 */
+	public void init(Object root, Widget widget) {
 		if (root != null) {
 			fRoot = new ModelNode(null, root);
 			fRoot.setWidget(widget);
 			mapWidget(widget, fRoot);
 			mapElement(root, fRoot);
-		}
+		}		
 	}
 	
 	protected AsynchronousModelViewer getViewer() {
