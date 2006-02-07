@@ -377,11 +377,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
 			
-		// Build the separator line that demarcates the button bar
+		/*// Build the separator line that demarcates the button bar
 		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		separator.setLayoutData(gd);
+		separator.setLayoutData(gd);*/
 		
 		dialogComp.layout(true);
 		applyDialogFont(dialogComp);
