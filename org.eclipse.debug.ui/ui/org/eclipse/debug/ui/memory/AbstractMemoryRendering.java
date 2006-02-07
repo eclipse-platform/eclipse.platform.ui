@@ -11,8 +11,8 @@
 package org.eclipse.debug.ui.memory;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -337,7 +337,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		for (int i=0; i<listeners.length; i++)
 		{	
 			PropertyChangeNotifier notifier = new PropertyChangeNotifier((IPropertyChangeListener)listeners[i], event);
-			Platform.run(notifier);
+			SafeRunner.run(notifier);
 		}
 	}
 	

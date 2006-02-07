@@ -1059,7 +1059,7 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 3.2
 	 */
-	public static String ID_RENDERING_VIEW_PANE_1 = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE + ".1"; //$NON-NLS-1$
+	public static String ID_RENDERING_VIEW_PANE_1 = "org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"; //$NON-NLS-1$
 
 	/**
 	 * Memory view's rendering view pane identifier for the rendering view pane
@@ -1067,7 +1067,7 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 3.2 
 	 */
-	public static String ID_RENDERING_VIEW_PANE_2 = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE + ".2"; //$NON-NLS-1$
+	public static String ID_RENDERING_VIEW_PANE_2 = "org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"; //$NON-NLS-1$
 
 	/**
 	 * Preference color to indicate that a <code>MemoryByte</code> does not have history.

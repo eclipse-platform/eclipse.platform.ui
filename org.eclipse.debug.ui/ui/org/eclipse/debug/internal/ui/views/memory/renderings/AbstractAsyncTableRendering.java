@@ -92,10 +92,7 @@ import org.eclipse.ui.progress.UIJob;
 //TODO:  allow IMemoryBlock to contribute decorations
 //TODO:  show memory tab is busy updating
 //TODO:  pluggable update policy
-//TODO:  format sometimes not handled properly when a rendering becomes visible
-//TODO:  when the base address is changed, sync top index and load address not updated properly
 //TODO:  linux - cannot resize columns to preferred size
-//TODO:  synchonization for page up and page down, not woring quite properly
 public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering {
 
 	private class ToggleAddressColumnAction extends Action {
@@ -140,7 +137,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 
 		public void run() {
-			BigInteger address = fContentInput.getLoadAddress();
+			BigInteger address = fContentDescriptor.getLoadAddress();
 			address = address.add(BigInteger.valueOf(getPageSizeInUnits()));
 			handlePageStartAddressChanged(address);
 		}
@@ -156,7 +153,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 
 		public void run() {
-			BigInteger address = fContentInput.getLoadAddress();
+			BigInteger address = fContentDescriptor.getLoadAddress();
 			address = address.subtract(BigInteger.valueOf(getPageSizeInUnits()));
 			handlePageStartAddressChanged(address);
 		}
@@ -168,7 +165,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private Shell fToolTipShell;
 	private TableRenderingPresentationContext fPresentationContext;
 	private int fAddressableSize;
-	private TableRenderingContentInput fContentInput;
+	private TableRenderingContentDescriptor fContentDescriptor;
 	private int fBytePerLine;
 	private int fColumnSize;
 	private boolean fShowMessage = false;
@@ -191,6 +188,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private boolean fIsCreated = false;
 	private boolean fIsDisposed = false;
 	private boolean fIsShowAddressColumn = true;
+	
+	private PendingSynchronizationProperties fPendingSyncProperties;
 	
 	private ISelectionChangedListener fViewerSelectionChangedListener = new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -254,7 +253,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	public void resetRendering() throws DebugException {
-		BigInteger baseAddress = fContentInput.getContentBaseAddress();
+		BigInteger baseAddress = fContentDescriptor.getContentBaseAddress();
 		goToAddress(baseAddress);
 		fTableViewer.setTopIndex(baseAddress);
 		fTableViewer.setSelection(baseAddress);
@@ -322,18 +321,17 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						BigInteger baseAddress = finalMbBaseAddress;
 						if (baseAddress == null)
 							baseAddress = BigInteger.ZERO;
-						fContentInput = new TableRenderingContentInput(AbstractAsyncTableRendering.this, 20, 20, 20, topVisibleAddress, numberOfLines, false, baseAddress);
+						fContentDescriptor = new TableRenderingContentDescriptor(AbstractAsyncTableRendering.this, 20, 20, topVisibleAddress, numberOfLines,  baseAddress);
 						
 						if (!(getMemoryBlock() instanceof IMemoryBlockExtension) || !isDynamicLoad())
 						{		
 							// If not extended memory block, do not create any buffer
 							// no scrolling
-							fContentInput.setPreBuffer(0);
-							fContentInput.setPostBuffer(0);
-							fContentInput.setDefaultBufferSize(0);
+							fContentDescriptor.setPreBuffer(0);
+							fContentDescriptor.setPostBuffer(0);
 						} 
 						
-						fPresentationContext.setContentInput(fContentInput);
+						fPresentationContext.setContentDescriptor(fContentDescriptor);
 						
 						setupInitialFormat();
 						fTableViewer.setCellModifier(createCellModifier());
@@ -415,12 +413,14 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	{
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		addRenderingToSyncService();
+		JFaceResources.getFontRegistry().addListener(this);
 	}
 	
 	private void removeListeners()
 	{
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		removeRenderingFromSyncService();
+		JFaceResources.getFontRegistry().removeListener(this);
 	}
 	
 	private void addRenderingToSyncService()
@@ -558,13 +558,17 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
+		
+		if (!fIsCreated)
+			return;
+		
 		// if memory view table font has changed
 		if (event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME))
 		{
 			if (!fIsDisposed)
 			{			
 				Font memoryViewFont = JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME);
-				setFont(memoryViewFont);		
+				setFont(memoryViewFont);	
 			}
 			return;
 		}
@@ -582,7 +586,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 		// do not handle property change event if the rendering is not visible
 		if (!isVisible())
+		{
+			handlePropertiesChangeWhenHidden(event);
 			return;
+		}
 		
 		if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR) || 
 			event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR))
@@ -644,30 +651,109 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		{
 			handlePageStartAddressChanged((BigInteger)value);
 		}
-		
 	}	
+	
+	private void handlePropertiesChangeWhenHidden(PropertyChangeEvent event)
+	{
+		if (fPendingSyncProperties == null)
+			return;
+		
+		String propertyName = event.getProperty();
+		Object value = event.getNewValue();
+		
+		if (event.getSource() instanceof IMemoryRendering)
+		{
+			IMemoryRendering rendering = (IMemoryRendering)event.getSource();
+			if (rendering == this || rendering.getMemoryBlock() != getMemoryBlock())
+			{
+				return;
+			}
+		}
+		
+		if (propertyName.equals(AbstractTableRendering.PROPERTY_COL_SIZE) && value instanceof Integer)
+		{
+			fPendingSyncProperties.setColumnSize(((Integer)value).intValue());
+		}
+		else if (propertyName.equals(AbstractTableRendering.PROPERTY_ROW_SIZE) && value instanceof Integer)
+		{
+			fPendingSyncProperties.setRowSize(((Integer)value).intValue());
+		}
+		
+		else if (propertyName.equals(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS) && value instanceof BigInteger)
+		{
+			fPendingSyncProperties.setSelectedAddress((BigInteger)value);
+		}
+		else if (propertyName.equals(AbstractTableRendering.PROPERTY_TOP_ADDRESS) && value instanceof BigInteger)
+		{
+			fPendingSyncProperties.setTopVisibleAddress((BigInteger)value);
+		}
+		else if (propertyName.equals(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS) && value instanceof BigInteger)
+		{
+			fPendingSyncProperties.setPageStartAddress((BigInteger)value);
+		}
+	}
 	
 	private void topVisibleAddressChanged(final BigInteger address)
 	{
 		final Runnable runnable = new Runnable() {
 			public void run() {
-				if (fIsDisposed)
-					return;
-				
-				int idx = fTableViewer.indexOf(address);
-				if (idx >= 0)
-				{
-					fTableViewer.setTopIndex(address);
-					fTableViewer.topIndexChanged();
-				}
-				else
-				{
-					reloadTable(address);
-				}
-				Object selection = fTableViewer.getSelectionKey();
-				fTableViewer.setSelection(selection);
+				doTopVisibleAddressChanged(address);
 			}};
 		runOnUIThread(runnable);
+	}
+	
+	/**
+	 * @param address
+	 */
+	private void doTopVisibleAddressChanged(final BigInteger address) {
+		if (fIsDisposed)
+			return;
+		
+		if (!isDynamicLoad())
+		{
+			fTableViewer.setTopIndex(address);
+			fTableViewer.topIndexChanged();
+			Object selection = fTableViewer.getSelectionKey();
+			fTableViewer.setSelection(selection);
+			return;
+		}
+		
+		if (!isAtTopBuffer(address) && !isAtBottomBuffer(address))
+		{
+			fTableViewer.setTopIndex(address);
+			fTableViewer.topIndexChanged();
+		}
+		else
+		{
+			reloadTable(address);
+		}
+		Object selection = fTableViewer.getSelectionKey();
+		fTableViewer.setSelection(selection);
+	}
+	
+	private boolean isAtBottomBuffer(BigInteger address)
+	{
+		int idx = fTableViewer.indexOf(address);
+		if (idx < 0)
+			return true;
+		
+		int bottomIdx = idx + fTableViewer.getContentManager().getVisibleItemCount(idx);
+		int elementsCnt = fTableViewer.getContentManager().getElements().length;
+		int numLinesLeft = elementsCnt - bottomIdx;
+		
+		if (numLinesLeft <= 3)
+			return true;
+		
+		return false;
+	}
+	
+	private boolean isAtTopBuffer(BigInteger address)
+	{
+		int topIdx = fTableViewer.indexOf(address);
+		if (topIdx <= 3)
+			return true;
+		
+		return false;
 	}
 	
 	private void runOnUIThread(final Runnable runnable)
@@ -689,12 +775,25 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 	
-	private void selectedAddressChanged(BigInteger address)
+	private void selectedAddressChanged(final BigInteger address)
 	{
-		fTableViewer.setSelection(address);
+		Runnable runnable = new Runnable() {
+
+			public void run() {			
+				// call this to make the table viewer to reload when needed
+				fTableViewer.setSelection(address);
+//				
+//				if (!isDynamicLoad())
+//				{
+					int idx = fTableViewer.indexOf(address);
+					if (idx < 0) {
+						doTopVisibleAddressChanged(address);
+					}
+//				}
+			}
+		};
 		
-		// call this to make the table viewer to reload when needed
-		fTableViewer.topIndexChanged();
+		runOnUIThread(runnable);
 	}
 	
 	private void setFont(Font font)
@@ -1092,15 +1191,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
 			System.out.println("reload at: " + topAddress.toString(16)); //$NON-NLS-1$
 		
-		fContentInput.setLoadAddress(topAddress);
-		fContentInput.setNumLines(getNumLinesToLoad());
-		fTableViewer.refresh();
+		fContentDescriptor.setLoadAddress(topAddress);
+		fContentDescriptor.setNumLines(getNumLinesToLoad());
 		fTableViewer.setTopIndex(topAddress);
+		fTableViewer.refresh();
+
 	}
 	
 	private boolean isAtTopLimit()
 	{	
-		BigInteger startAddress = fContentInput.getStartAddress();
+		BigInteger startAddress = fContentDescriptor.getStartAddress();
 		startAddress = MemoryViewUtil.alignDoubleWordBoundary(startAddress);
 		if (fTableViewer.getContentManager() instanceof IVirtualContentManager)
 		{
@@ -1120,7 +1220,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private boolean isAtBottomLimit()
 	{
-		BigInteger endAddress = fContentInput.getEndAddress();
+		BigInteger endAddress = fContentDescriptor.getEndAddress();
 		endAddress = MemoryViewUtil.alignDoubleWordBoundary(endAddress);
 		
 		int numElements = fTableViewer.getContentManager().getElements().length;
@@ -1518,8 +1618,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				throw e;
 			}
 
-			BigInteger startAdd = fContentInput.getStartAddress();
-			BigInteger endAdd = fContentInput.getEndAddress();
+			BigInteger startAdd = fContentDescriptor.getStartAddress();
+			BigInteger endAdd = fContentDescriptor.getEndAddress();
 			
 			if (address.compareTo(startAdd) < 0 ||
 				address.compareTo(endAdd) > 0)
@@ -1637,16 +1737,14 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 			if (!fIsDisposed) {
 				if (isDynamicLoad()) {
-					fContentInput.setPostBuffer(20);
-					fContentInput.setPreBuffer(20);
-					fContentInput.setDefaultBufferSize(20);
-					fContentInput.setNumLines(getNumberOfVisibleLines());
+					fContentDescriptor.setPostBuffer(20);
+					fContentDescriptor.setPreBuffer(20);
+					fContentDescriptor.setNumLines(getNumberOfVisibleLines());
 	
 				} else {
-					fContentInput.setPostBuffer(0);
-					fContentInput.setPreBuffer(0);
-					fContentInput.setDefaultBufferSize(0);
-					fContentInput.setNumLines(fPageSize);
+					fContentDescriptor.setPostBuffer(0);
+					fContentDescriptor.setPreBuffer(0);
+					fContentDescriptor.setNumLines(fPageSize);
 				}	
 			}
 		}
@@ -1701,8 +1799,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if(fTableViewer.getKey(0).equals(address))
 			return;
 	
-		BigInteger start = fContentInput.getStartAddress();
-		BigInteger end = fContentInput.getEndAddress();
+		BigInteger start = fContentDescriptor.getStartAddress();
+		BigInteger end = fContentDescriptor.getEndAddress();
 		
 		// smaller than start address, load at start address
 		if (address.compareTo(start) < 0)
@@ -1722,7 +1820,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			address = end.subtract(BigInteger.valueOf(getPageSizeInUnits()));
 		}
 		
-		fContentInput.setLoadAddress(address);
+		fContentDescriptor.setLoadAddress(address);
 		Runnable runnable = new Runnable() {
 			public void run() {
 				refresh();
@@ -1758,7 +1856,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	public void becomesHidden() {
 		
 		if (!fIsCreated)
+		{
+			super.becomesHidden();
 			return;
+		}
+		
+		// creates new object for storing potential changes in sync properties
+		fPendingSyncProperties = new PendingSynchronizationProperties();
 		
 		if (isVisible() == false)
 		{
@@ -1781,7 +1885,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	public void becomesVisible() {
 		
 		if (!fIsCreated)
+		{
+			super.becomesVisible();
 			return;
+		}
 		
 		// do not do anything if already visible
 		if (isVisible() == true)
@@ -1793,17 +1900,71 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 		super.becomesVisible();
 		
-		// TODO:  format not handled properly when the rendering becomes visible
-		
-		boolean value = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM);
-		if (value != isDynamicLoad())
-			// this call will cause a reload
-			handleDyanicLoadChanged();
-		else
+		if (fPendingSyncProperties != null)
+		{
+			// deal with format
+			boolean format = false;
+			int rowSize = getBytesPerLine();
+			if (fPendingSyncProperties.getRowSize() > 0)
+			{
+				format = true;
+				rowSize = fPendingSyncProperties.getRowSize();
+			}
+			
+			int colSize = getBytesPerColumn();
+			if (fPendingSyncProperties.getColumnSize() > 0)
+			{
+				format = true;
+				colSize = fPendingSyncProperties.getColumnSize();
+			}
+			
+			if (format)
+				format(rowSize, colSize);
+			
+			BigInteger selectedAddress = fPendingSyncProperties.getSelectedAddress();
+			if (selectedAddress != null)
+				fTableViewer.setSelection(selectedAddress);
+			
+			updateDynamicLoadProperty();
+			
+			if (isDynamicLoad())
+			{
+				BigInteger topVisibleAddress = fPendingSyncProperties.getTopVisibleAddress();
+				if (topVisibleAddress != null)
+					fContentDescriptor.setLoadAddress(topVisibleAddress);
+				
+				fTableViewer.setTopIndex(topVisibleAddress);
+			}
+			else
+			{
+				BigInteger pageStartAddress = fPendingSyncProperties.getPageStartAddress();
+				if (pageStartAddress != null)
+					fContentDescriptor.setLoadAddress(pageStartAddress);
+				
+				fTableViewer.setTopIndex(pageStartAddress);
+
+			}
 			refresh();
-		
-		synchronize();
+		}
+
 		updateRenderingLabel(true);
+		
+		Job job = new Job("becomesVisible") //$NON-NLS-1$
+		{
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					fContentDescriptor.updateContentBaseAddress();
+				} catch (DebugException e) {
+					showMessage(e.getMessage());
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
+		
+		// discard these properties
+		fPendingSyncProperties = null;
 	}
 	
 	/**
@@ -1854,9 +2015,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (!isDynamicLoad())
 		{
 			BigInteger pageStart = (BigInteger)getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
-			if (pageStart != null && fContentInput != null && fContentInput.getLoadAddress() != null)
+			if (pageStart != null && fContentDescriptor != null && fContentDescriptor.getLoadAddress() != null)
 			{
-				if (!fContentInput.getLoadAddress().equals(pageStart))
+				if (!fContentDescriptor.getLoadAddress().equals(pageStart))
 					handlePageStartAddressChanged(pageStart);
 			}
 			else if (pageStart != null)
@@ -2293,7 +2454,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	{
 		try {
 			BigInteger address = getMemoryBlockBaseAddress();
-			BigInteger oldBaseAddress = fContentInput.getContentBaseAddress();
+			BigInteger oldBaseAddress = fContentDescriptor.getContentBaseAddress();
 			if (!oldBaseAddress.equals(address))
 				return true;
 		} catch (DebugException e) {

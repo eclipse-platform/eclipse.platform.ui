@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,43 +8,32 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
 
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
-import org.eclipse.debug.ui.memory.IMemoryRendering;
 
-/**
- * This is an internal class for storing information about the content
- * in the table viewer.
- */
-public class TableRenderingContentInput extends PlatformObject {
-
-	private IMemoryRendering fRendering;
+public class TableRenderingContentDescriptor{
+	private AbstractBaseTableRendering fRendering;
 	private int fPreBuffer;					// number of lines before the top visible line
 	private int fPostBuffer;				// number of lines after thes last visible line
-	private int fDefaultBufferSize;
 	private BigInteger fLoadAddress;		// Top address to load at the table
 	private int fNumLines;					// number of visible lines
-	private boolean fUpdateDelta;			// should the content provider calculate delta info
 	private BigInteger fMemoryBlockBaseAddress;		// base address of the memory block when this input is set
 	private BigInteger fStartAddress;
 	private BigInteger fEndAddress;
 	
-	public TableRenderingContentInput(IMemoryRendering rendering, int preBuffer, int postBuffer, int defaultBufferSize, BigInteger loadAddress, int numOfLines, boolean updateDelta, BigInteger contentBaseAddress)
+	public TableRenderingContentDescriptor(AbstractBaseTableRendering rendering, int preBuffer, int postBuffer, BigInteger loadAddress, int numOfLines,  BigInteger contentBaseAddress)
 	{
 		fRendering = rendering;
 		fPreBuffer = preBuffer;
 		fPostBuffer = postBuffer;
 		fLoadAddress = loadAddress;
 		fNumLines = numOfLines;
-		fDefaultBufferSize = defaultBufferSize;
-		fUpdateDelta = updateDelta;
 
 		if (contentBaseAddress == null)
 		{
@@ -78,18 +67,6 @@ public class TableRenderingContentInput extends PlatformObject {
 	}
 	public void setPreBuffer(int preBuffer) {
 		fPreBuffer = preBuffer;
-	}
-	public int getDefaultBufferSize() {
-		return fDefaultBufferSize;
-	}
-	public void setDefaultBufferSize(int defaultBufferSize) {
-		fDefaultBufferSize = defaultBufferSize;
-	}
-	public boolean isUpdateDelta() {
-		return fUpdateDelta;
-	}
-	public void setUpdateDelta(boolean updateDelta) {
-		fUpdateDelta = updateDelta;
 	}
 
 	public void setLoadAddress(BigInteger address)
@@ -195,18 +172,9 @@ public class TableRenderingContentInput extends PlatformObject {
 		fNumLines = numLines;
 	}
 	
-	public Object getAdapter(Class adapter) {
-		if (adapter == AbstractTableRendering.class)
-		{
-			if (fRendering instanceof AbstractTableRendering)
-				return fRendering;
-		}
-		if (adapter == AbstractAsyncTableRendering.class)
-		{
-			if (fRendering instanceof AbstractAsyncTableRendering)
-				return fRendering;
-		}
-		
-		return super.getAdapter(adapter);
+	public AbstractBaseTableRendering getRendering()
+	{
+		return fRendering;
 	}
+
 }

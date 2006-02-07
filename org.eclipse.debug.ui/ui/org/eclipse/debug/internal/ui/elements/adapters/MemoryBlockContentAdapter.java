@@ -28,6 +28,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdap
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
+import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentInput;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -112,23 +113,23 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	public Object[] loadContentForExtendedMemoryBlock(TableRenderingPresentationContext context) throws DebugException {
 		
 		AbstractAsyncTableRendering rendering = context.getTableRendering();
-		TableRenderingContentInput input = context.getInput();
+		TableRenderingContentDescriptor descriptor = context.getContentDescriptor();
 		// calculate top buffered address
-		BigInteger loadAddress = input.getLoadAddress();
+		BigInteger loadAddress = descriptor.getLoadAddress();
 		if (loadAddress == null)
 		{
 			loadAddress = new BigInteger("0"); //$NON-NLS-1$
 		}
 		
-		BigInteger mbStart = input.getStartAddress();
-		BigInteger mbEnd = input.getEndAddress();
+		BigInteger mbStart = descriptor.getStartAddress();
+		BigInteger mbEnd = descriptor.getEndAddress();
 		
 		// check that the load address is within range
 		if (loadAddress.compareTo(mbStart) < 0 || loadAddress.compareTo(mbEnd) > 0)
 		{
 			// default load address to memory block base address
-			loadAddress = ((IMemoryBlockExtension)input.getMemoryBlock()).getBigBaseAddress();
-			input.setLoadAddress(loadAddress);
+			loadAddress = ((IMemoryBlockExtension)descriptor.getMemoryBlock()).getBigBaseAddress();
+			descriptor.setLoadAddress(loadAddress);
 		}
 		
 		// if address is still out of range, throw an exception
@@ -138,9 +139,9 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		}
 		
 		int addressableUnitsPerLine = rendering.getAddressableUnitPerLine();
-		BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(input.getPreBuffer()*addressableUnitsPerLine));
-		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(input.getPostBuffer()*addressableUnitsPerLine));
-		bufferEnd = bufferEnd.add(BigInteger.valueOf(input.getNumLines()*addressableUnitsPerLine));
+		BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(descriptor.getPreBuffer()*addressableUnitsPerLine));
+		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(descriptor.getPostBuffer()*addressableUnitsPerLine));
+		bufferEnd = bufferEnd.add(BigInteger.valueOf(descriptor.getNumLines()*addressableUnitsPerLine));
 		
 		// TODO:  should rely on input to tell us what to load
 		// instead of having the content adapter override the setting
@@ -167,14 +168,14 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 			
 			if (bufferEnd.compareTo(mbEnd) > 0)
 			{
-				bufferStart = mbEnd.subtract(BigInteger.valueOf((input.getNumLines()-1)*addressableUnitsPerLine));
+				bufferStart = mbEnd.subtract(BigInteger.valueOf((descriptor.getNumLines()-1)*addressableUnitsPerLine));
 			}
 			
 			// buffer end must be greater than buffer start
 			if (bufferEnd.compareTo(bufferStart) <= 0)
 				throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_2, null));
 			
-			int numLines = input.getNumLines();	
+			int numLines = descriptor.getNumLines();	
 			// get stoarage to fit the memory view tab size
 			return getMemoryToFitTable(bufferStart, numLines,  context);
 		}
@@ -189,7 +190,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	 */
 	public Object[]  getMemoryToFitTable(BigInteger startAddress, long numberOfLines, TableRenderingPresentationContext context) throws DebugException
 	{
-		TableRenderingContentInput input = context.getInput();
+		TableRenderingContentDescriptor descriptor = context.getContentDescriptor();
 		AbstractAsyncTableRendering tableRendering = context.getTableRendering();	
 		if (tableRendering == null)
 		{
@@ -199,7 +200,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		
 		// do not ask for memory from memory block if the debug target
 		// is already terminated
-		IDebugTarget target = input.getMemoryBlock().getDebugTarget();
+		IDebugTarget target = descriptor.getMemoryBlock().getDebugTarget();
 		
 		if (target.isDisconnected() || target.isTerminated())
 			return new Object[0];
@@ -211,7 +212,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		String adjustedAddress = startAddress.toString(16);
 
 		// align starting address with double word boundary
-		if ( input.getMemoryBlock() instanceof IMemoryBlockExtension)
+		if ( descriptor.getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			if (!adjustedAddress.endsWith("0")) //$NON-NLS-1$
 			{
@@ -234,11 +235,11 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		try
 		{
 			
-			if (input.getMemoryBlock() instanceof IMemoryBlockExtension)
+			if (descriptor.getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
 				reqNumBytes = tableRendering.getBytesPerLine() * numberOfLines;
 				// get memory from memory block
-				extMemoryBlock = (IMemoryBlockExtension) input.getMemoryBlock();
+				extMemoryBlock = (IMemoryBlockExtension) descriptor.getMemoryBlock();
 				
 				long reqNumberOfUnits = tableRendering.getAddressableUnitPerLine() * numberOfLines;
 						
@@ -253,7 +254,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 			else 
 			{				
 				// get memory from memory block
-				byte[] memory = input.getMemoryBlock().getBytes();
+				byte[] memory = descriptor.getMemoryBlock().getBytes();
 				
 				if (memory == null)
 				{
@@ -272,7 +273,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 					prefillNumBytes = startAddress.subtract(adjustedStart).intValue();
 					startAddress = adjustedStart;
 				}
-				reqNumBytes = input.getMemoryBlock().getLength() + prefillNumBytes;
+				reqNumBytes = descriptor.getMemoryBlock().getLength() + prefillNumBytes;
 				
 				// figure out number of dummy bytes to append
 				while (reqNumBytes % tableRendering.getBytesPerLine() != 0)
@@ -367,9 +368,9 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		// If change information is not managed by the memory block
 		// The view tab will manage it and calculate delta information
 		// for its content cache.
-		if (input.getMemoryBlock() instanceof IMemoryBlockExtension)
+		if (descriptor.getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
-			manageDelta = !((IMemoryBlockExtension)input.getMemoryBlock()).supportsChangeManagement();
+			manageDelta = !((IMemoryBlockExtension)descriptor.getMemoryBlock()).supportsChangeManagement();
 		}
 			
 		if (error){

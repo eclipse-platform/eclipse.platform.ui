@@ -12,6 +12,9 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -19,6 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewerContentManag
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultTableUpdatePolicy;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * This update policy updates immediately after a model changed event.  The update policy will
@@ -36,13 +40,12 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 		if (contentManager instanceof IContentChangeComputer)
 			computer = (IContentChangeComputer)contentManager;
 		
-		if (shouldClearCache(node))
-		{
-			clearCache(computer);
-		}
+		clearCache(computer);
 		
-		if (!shouldHandleChange(node))
+		if (!shouldHandleEvent(node))
+		{
 			return;
+		}
 		
 		if (node.getElement() instanceof IMemoryBlock && (node.getFlags() & IModelDelta.CONTENT) != 0)
 		{
@@ -56,15 +59,16 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 				}
 			}
 			
+			// override handling of content node
+			// let the super class deals with the rest of the changes
 			if (node.getElement() instanceof IMemoryBlock)
 			{
 				// update policy figured out what's changed in the memory block
-				// update content input if the base address is changed
-
-				// if there is an error in the handling of this, do not notify rendering that
-				// something is changed
-				if (handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node))
-					notifyRendering(node);
+				// and will tell rendering to update accordinly.
+				// Updating the rendering indirectly update the table viewer
+				notifyRendering(node);
+				handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
+				return;
 			}
 		}
 		
@@ -88,30 +92,47 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 		}
 	}
 	
-	protected boolean handleMemoryBlockChanged(IMemoryBlock mb, IModelDelta delta)
+	protected void handleMemoryBlockChanged(IMemoryBlock mb, IModelDelta delta)
 	{
 		try {
 			if (getViewer().getPresentationContext() instanceof TableRenderingPresentationContext)
 			{
-				TableRenderingContentInput input = ((TableRenderingPresentationContext)getViewer().getPresentationContext()).getInput();
-				BigInteger address = getMemoryBlockBaseAddress(mb);
-				if (!address.equals(input.getContentBaseAddress()))
+				TableRenderingPresentationContext context = (TableRenderingPresentationContext)getViewer().getPresentationContext();
+				TableRenderingContentDescriptor descriptor = context.getContentDescriptor();
+
+				final AbstractAsyncTableRendering rendering = context.getTableRendering();
+				
+				if (rendering != null)
 				{
-					// load at the new base address
-					input.setLoadAddress(address);
-					input.updateContentBaseAddress();
-					getTableViewer().setTopIndex(address);
-					getTableViewer().setSelection(address);
+					final BigInteger address = getMemoryBlockBaseAddress(mb);
+					if (!address.equals(descriptor.getContentBaseAddress()))
+					{
+						descriptor.updateContentBaseAddress();
+						UIJob job = new UIJob("go to address"){ //$NON-NLS-1$
+	
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								try {
+									rendering.goToAddress(address);
+								} catch (DebugException e) {
+									if (getTableViewer() != null)
+										getTableViewer().handlePresentationFailure(null, e.getStatus());
+								}
+								return Status.OK_STATUS;
+							}};
+						job.setSystem(true);
+						job.schedule();
+					}
+					else
+					{
+						rendering.refresh();
+					}
 				}
-				return true;
 			}
 		} catch (DebugException e) {
 			// TODO:  hack to get the rendering to be notified of error
 			if (getTableViewer() != null)
 				getTableViewer().handlePresentationFailure(null, e.getStatus());
-			return false;
 		}
-		return true;
 	}
 	
 	private BigInteger getMemoryBlockBaseAddress(IMemoryBlock mb) throws DebugException
@@ -129,7 +150,7 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 		return null;
 	}
 	
-	protected boolean shouldHandleChange(IModelDelta delta)
+	private boolean shouldHandleEvent(IModelDelta delta)
 	{
 		if (getViewer().getPresentationContext() instanceof TableRenderingPresentationContext)
 		{
@@ -141,11 +162,6 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 					return false;
 			}
 		}
-		return true;
-	}
-	
-	protected boolean shouldClearCache(IModelDelta delta)
-	{
 		return true;
 	}
 }

@@ -82,6 +82,8 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private FocusAdapter fEditorFocusListener;
 	private KeyAdapter fEditorKeyListener;
 	
+
+	
 	public AsyncTableRenderingViewer(AbstractAsyncTableRendering rendering, Composite parent, int style) {
 		super(parent, style);
 		fRendering = rendering;
@@ -460,7 +462,11 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					setSelection(oldSelectionKey);
 				}
 				
-				if (oldTopIndexKey != null)
+				if (getPendingSetTopIndexKey() != null)
+				{
+					setTopIndex(getPendingSetTopIndexKey());
+				}
+				else if (oldTopIndexKey != null)
 				{
 					setTopIndex(oldTopIndexKey);
 					
@@ -967,5 +973,4 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	public void handlePresentationFailure(IAsynchronousRequestMonitor monitor, IStatus status) {
 		super.handlePresentationFailure(monitor, status);
 	}
-	
 }

@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -39,6 +40,8 @@ public class MemoryViewSynchronizationService implements
 	
 	private IMemoryRendering fLastChangedRendering;
 	private IMemoryRendering fSyncServiceProvider;
+
+	private static final boolean DEBUG_SYNC_SERVICE = false;
 	
 	public MemoryViewSynchronizationService()
 	{
@@ -229,7 +232,7 @@ public class MemoryViewSynchronizationService implements
 						// if it's a valid property - valid means that it's listed in the property filters
 						if (listener.isValidProperty(propertyId)){
 							PropertyChangeNotifier notifier = new PropertyChangeNotifier(origListener, evt);
-							Platform.run(notifier);	
+							SafeRunner.run(notifier);	
 						}
 					}
 				}
@@ -280,6 +283,19 @@ public class MemoryViewSynchronizationService implements
 		IMemoryBlock memoryBlock = rendering.getMemoryBlock();
 		String propertyId = event.getProperty();
 		Object value = event.getNewValue();
+		
+		if (DEBUG_SYNC_SERVICE)
+		{
+			System.out.println("SYNC SERVICE RECEIVED CHANGED EVENT:"); //$NON-NLS-1$
+			System.out.println("Source:  " + rendering); //$NON-NLS-1$
+			System.out.println("Property:  " + propertyId); //$NON-NLS-1$
+			System.out.println("Value:  " + value); //$NON-NLS-1$
+			
+			if (value instanceof BigInteger)
+			{
+				System.out.println("Value in hex:  " + ((BigInteger)value).toString(16)); //$NON-NLS-1$
+			}
+		}
 		
 		if (memoryBlock == null)
 			return;
@@ -371,6 +387,10 @@ public class MemoryViewSynchronizationService implements
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#setSynchronizationProvider(org.eclipse.debug.ui.memory.IMemoryRendering)
 	 */
 	public void setSynchronizationProvider(IMemoryRendering rendering) {
+		
+		if (DEBUG_SYNC_SERVICE)
+			System.out.println("SYNCHRONIZATION PROVIDER: " + rendering); //$NON-NLS-1$
+		
 		if (fSyncServiceProvider != null)
 			fSyncServiceProvider.removePropertyChangeListener(this);
 		

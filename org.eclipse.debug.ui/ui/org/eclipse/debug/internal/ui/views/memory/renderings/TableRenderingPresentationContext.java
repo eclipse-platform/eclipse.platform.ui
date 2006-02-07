@@ -16,21 +16,21 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class TableRenderingPresentationContext extends MemoryViewPresentationContext{
 
-	private TableRenderingContentInput fInput;
+	private TableRenderingContentDescriptor fContentDescriptor;
 	private boolean fIsDynamicLoad;
 	
 	public TableRenderingPresentationContext(IWorkbenchPart part) {
 		super(part);
 	}
 	
-	public void setContentInput(TableRenderingContentInput input)
+	public void setContentDescriptor(TableRenderingContentDescriptor input)
 	{
-		fInput = input;
+		fContentDescriptor = input;
 	}
 	
-	public TableRenderingContentInput getInput()
+	public TableRenderingContentDescriptor getContentDescriptor()
 	{
-		return fInput;
+		return fContentDescriptor;
 	}
 	
 	public boolean isDynamicLoad()

@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ErrorRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -101,7 +101,7 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 				fRendering.addPropertyChangeListener(getInstance());
 			}};
 			
-		Platform.run(safeRunnable);
+		SafeRunner.run(safeRunnable);
 		return fControl;
 	}
 	

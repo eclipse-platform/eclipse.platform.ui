@@ -12,7 +12,7 @@ package org.eclipse.debug.ui.memory;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**
@@ -66,7 +66,7 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 					public void run() throws Exception {
 						listener.memoryRenderingBindingsChanged();
 					}};
-				Platform.run(runnable);
+				SafeRunner.run(runnable);
 			}
 		}
 	}

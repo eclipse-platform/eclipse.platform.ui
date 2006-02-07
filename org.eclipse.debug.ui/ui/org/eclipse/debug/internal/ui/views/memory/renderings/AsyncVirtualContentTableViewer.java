@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
@@ -48,7 +48,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 	private ListenerList fPresentationErrorListeners;
 	private Object fTopIndexKey;
 	private IVirtualContentManager fVirtualContentManager;
-	public static boolean DEBUG_DYNAMIC_LOADING;
+	public static boolean DEBUG_DYNAMIC_LOADING = false;
 	
 	public AsyncVirtualContentTableViewer(Composite parent, int style) {
 		super(parent, style);
@@ -178,7 +178,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 						// remove the top index key from queue when it is processed
 						removeKeyFromQueue(topIndexKey);
 						int idx = getVirtualContentManager().indexOf(topIndexKey);
-						if (idx > 0)
+						if (idx >= 0)
 						{
 							if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
 								System.out.println("actual set top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
@@ -239,7 +239,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
 			if (topIdx <= listener.getThreshold())
 			{
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {	
 						listener.handledAtBufferStart();
 					}
@@ -263,7 +263,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
 			if (numLinesLeft <= listener.getThreshold())
 			{
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
 						listener.handleAtBufferEnd();
 					}
@@ -347,7 +347,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 			if (listeners[i] instanceof IPresentationErrorListener)
 			{
 				final IPresentationErrorListener listener = (IPresentationErrorListener)listeners[i];
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
 						listener.handlePresentationFailure(monitor, status);
 					}
