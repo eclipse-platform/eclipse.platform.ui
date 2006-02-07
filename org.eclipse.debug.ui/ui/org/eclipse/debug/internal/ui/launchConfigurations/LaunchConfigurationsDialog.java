@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -610,7 +610,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
-        viewFormContents.setLayout(new GridLayout(1, false));
+        gridLayout = new GridLayout();
+        gridLayout.marginHeight = 0;
+        gridLayout.marginWidth = 0;
+        viewFormContents.setLayout(gridLayout);
+        
 		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
@@ -660,8 +664,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         viewForm.setContent(viewFormContents);
 		
 		fFilteringLabel = new Label(viewFormContents, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL | SWT.BEGINNING);
 		gd.horizontalIndent = 5;
+		gd.heightHint = 15;
 		fFilteringLabel.setLayoutData(gd);
 		refreshFilteringLabel();
 		
@@ -752,7 +757,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         Object[] listeners = changeListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final IPageChangedListener l = (IPageChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() {
                     l.pageChanged(event);
                 }
