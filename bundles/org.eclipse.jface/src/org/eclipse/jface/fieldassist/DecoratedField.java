@@ -21,6 +21,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -385,6 +386,7 @@ public class DecoratedField {
 		if (decDatas[i] == null) {
 			formData = createFormDataForIndex(i, decoration.getImage());
 			label = new Label(form, SWT.HORIZONTAL | SWT.VERTICAL | SWT.CENTER);
+			label.setBackground(form.getBackground());
 			label.addMouseTrackListener(new MouseTrackListener() {
 				public void mouseHover(MouseEvent event) {
 					FieldDecorationData decData = (FieldDecorationData) event.widget
@@ -810,5 +812,33 @@ public class DecoratedField {
 			return 0;
 		return useMaxDecorationWidth ? FieldDecorationRegistry.getDefault()
 				.geMaximumDecorationWidth() : image.getBounds().width;
+	}
+
+	/**
+	 * Sets the receiver's background color to the color specified by the
+	 * argument, or to the default system color for the control if the argument
+	 * is null.
+	 * 
+	 * @param color
+	 *            the new color (or null)
+	 * 
+	 */
+	public void setBackground(Color color) {
+		if (form == null || form.isDisposed())
+			return;
+		
+		form.setBackground(color);
+		// decorations must match the form, so
+		// force the color to match. We query it in case
+		// the client specified the default color using null
+		Color formColor = form.getBackground();
+		for (int i = 0; i < DECORATION_SLOTS; i++) {
+			FieldDecorationData data = decDatas[i];
+			if (data != null && data.label != null) {
+				data.label.setBackground(formColor);
+			}
+		}
+		control.setBackground(color);
+
 	}
 }
