@@ -760,12 +760,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     		return;
     	}
         
-        StyledText textWidget= null;
         ISourceViewer sourceViewer= getSourceViewer();
-        if (sourceViewer != null) {
-            textWidget= sourceViewer.getTextWidget();
+        if (sourceViewer == null) {
+            return;
         }
-        
+        StyledText textWidget= sourceViewer.getTextWidget();
         if (textWidget == null) {
             return;
         }
