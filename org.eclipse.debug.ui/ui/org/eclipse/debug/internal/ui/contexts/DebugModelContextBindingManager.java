@@ -413,10 +413,12 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 						}
 					}
 				}
-				if (!ids.isEmpty() && activities == null) {
-					activities = new HashSet();
+				if (!ids.isEmpty()) {
+					if (activities == null) {
+						activities = new HashSet();
+					}
+					activities.addAll(ids);
 				}
-				activities.addAll(ids);
 				fModelsEnabledForActivities.add(id);
 			}
 		}
