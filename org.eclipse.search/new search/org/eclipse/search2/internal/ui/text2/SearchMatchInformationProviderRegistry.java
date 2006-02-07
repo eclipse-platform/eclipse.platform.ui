@@ -46,7 +46,9 @@ public class SearchMatchInformationProviderRegistry {
 	private static final String ATTRIBUTE_PREPROCESSOR_SUPPORT= "supportsPreprocessor"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FUNCTION_SUPPORT= "supportsFunctions"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS= "class"; //$NON-NLS-1$
-	private static final String NODE_NAME= "textSearchMatchInformationProvider"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_FILE_PATTERNS= "filePatterns";  //$NON-NLS-1$
+	private static final String NODE_SCANNER= "textSearchMatchInformationProvider"; //$NON-NLS-1$
+	private static final String NODE_FILE_EXTENSIONS= "textSearchDefaultFilePatterns"; //$NON-NLS-1$
 	private static final ScannerProxyChain NULL_CHAIN= new ScannerProxyChain();
 
 	private static class ScannerProxyChain {
@@ -139,6 +141,7 @@ public class SearchMatchInformationProviderRegistry {
 	private HashMap fExtensionsMap= new HashMap();
 	private SearchMatchInformationProvider fLineNumberScanner= new LineNumberScanner();
 	private int fAvailableLocations;
+	private ArrayList fFilePatterns= new ArrayList();
 
 	public SearchMatchInformationProviderRegistry() {
 		registerExtensions();
@@ -149,7 +152,7 @@ public class SearchMatchInformationProviderRegistry {
 		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
 		for (int i= 0; i < extensions.length; i++) {
 			IConfigurationElement elem= extensions[i];
-			if (NODE_NAME.equals(elem.getName())) {
+			if (NODE_SCANNER.equals(elem.getName())) {
 				String contentTypeIDs= elem.getAttribute(ATTRIBUTE_CONTENT_TYPE_IDS);
 				String fileExtensions= elem.getAttribute(ATTRIBUTE_FILE_EXTENSIONS);
 				int locationSupport= getLocationSupport(elem);
@@ -157,6 +160,12 @@ public class SearchMatchInformationProviderRegistry {
 				ScannerProxy proxy= new ScannerProxy(elem, locationSupport);
 				registerProxy(contentTypeIDs, proxy, fContentTypeMap);
 				registerProxy(fileExtensions, proxy, fExtensionsMap);
+			}
+			else if (NODE_FILE_EXTENSIONS.equals(elem.getName())) {
+				String patterns= elem.getAttribute(ATTRIBUTE_FILE_PATTERNS);
+				if (patterns != null) {
+					fFilePatterns.add(patterns);
+				}
 			}
 		}
 		sortProxyChains(fContentTypeMap.values());
@@ -278,5 +287,20 @@ public class SearchMatchInformationProviderRegistry {
 
 	public boolean hasFunctionSupport() {
 		return supportsLocation(fAvailableLocations, SearchMatchInformationProvider.LOCATION_FUNCTION);
+	}
+	
+	public boolean hasAnyLocationSupport() {
+		return fAvailableLocations != 0;
+	}
+	
+	/**
+	 * Returns an array of comma-separated file-pattern lists that can be used
+	 * as default in a combo-box. The result will contain at least on such list.
+	 */
+	public String[] getDefaultFilePatterns() {
+		if (fFilePatterns.size() == 0) {
+			fFilePatterns.add("*"); //$NON-NLS-1$
+		}
+		return (String[]) fFilePatterns.toArray(new String[fFilePatterns.size()]);
 	}
 }

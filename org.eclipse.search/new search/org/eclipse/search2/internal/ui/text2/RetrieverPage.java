@@ -31,6 +31,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.ViewForm;
@@ -38,6 +40,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,8 +49,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -108,7 +109,7 @@ import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryListener, IRetrieverKeys {
 	
 	public static final String ID= "org.eclipse.search.text.RetrieverPage"; //$NON-NLS-1$
-	private static final String QUERY_EXTENSION = ".query";  //$NON-NLS-1$
+	private static final String QUERY_EXTENSION = ".txtSearch";  //$NON-NLS-1$
 	
 	private static final Collator COLLATOR= Collator.getInstance();
 	
@@ -132,7 +133,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	private SashForm fSplitter;
 	private ViewForm fResultForm;
 	private ViewForm fInputForm;
-	private TabFolder fTabFolder;
+	private CTabFolder fTabFolder;
 
 	private SetLayoutAction fFlatAction;
 	private SetLayoutAction fHierarchicalAction;
@@ -181,11 +182,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		fSplitter.setWeights(new int[] {60, 40});
 		
 
-		createListeners();
-					
-//	  IWorkbenchHelpSystem help= PlatformUI.getWorkbench().getHelpSystem();
-//		help.setHelp(fSplitter, ISYContextIDs.VIEW_textSearch); 
-		
+		createListeners();		
 		restoreValues();
 	}
 	
@@ -270,16 +267,18 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	
 
 	private Control createInputControl(Composite parent) {
-		fTabFolder = new TabFolder(parent, SWT.NONE);
+		Display display= getSite().getShell().getDisplay();
+		Color background= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		fTabFolder = new CTabFolder(parent, SWT.BORDER);
 		fTabFolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fTabFolder.setLayout(new GridLayout(1, false));
-
+		fTabFolder.setSelectionBackground(background);
+	
 		// search tab
 		ScrolledComposite sc = createScrolledComposite(fTabFolder);
 		fSearchControl.createControl((Composite) sc.getContent());
 		setMinSize(sc);
 		createTabItem(fTabFolder, sc, SearchMessages.RetrieverPage_FindTab_text);
-
+	
 		// filter tab
 		sc= createScrolledComposite(fTabFolder);
 		fFilterControl.createControl((Composite) sc.getContent());
@@ -291,7 +290,8 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		fReplaceControl.createControl((Composite) sc.getContent());
 		setMinSize(sc);
 		createTabItem(fTabFolder, sc, SearchMessages.RetrieverPage_ReplaceTab_text);
-
+	
+		fTabFolder.setSelection(0);
 		return fTabFolder;
 	}
 
@@ -299,8 +299,8 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		sc.setMinSize(sc.getContent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	private void createTabItem(TabFolder folder, Control content, String text) {
-		TabItem tabItem = new TabItem(folder, SWT.NONE);
+	private void createTabItem(CTabFolder folder, Control content, String text) {
+		CTabItem tabItem = new CTabItem(folder, SWT.NONE);
 		tabItem.setText(text); 
 		tabItem.setControl(content);
 	}
@@ -926,7 +926,6 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 				result.restore(ds);
 				return result;
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 		return new WorkspaceScopeDescription();

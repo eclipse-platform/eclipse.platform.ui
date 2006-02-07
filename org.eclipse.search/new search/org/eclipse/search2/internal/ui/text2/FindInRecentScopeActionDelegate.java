@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.text2;
 
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -49,11 +53,7 @@ public class FindInRecentScopeActionDelegate extends RetrieverAction implements 
 
 	// IEditorActionDelegate
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (targetEditor instanceof ITextEditor) {
-			fWindow= targetEditor.getSite().getWorkbenchWindow();
-		} else {
-			fWindow= null;
-		}
+		fWindow= targetEditor.getSite().getWorkbenchWindow();
 	}
 
 	// IActionDelegate
@@ -75,14 +75,34 @@ public class FindInRecentScopeActionDelegate extends RetrieverAction implements 
 
 	protected boolean modifyQuery(RetrieverQuery query) {
 		IWorkbenchPage page= getWorkbenchPage();
-		String searchFor= null;
-		if (page != null) {
-			searchFor= extractSearchTextFromSelection(page.getSelection());
+		if (page == null) {
+			return false;
 		}
+		String searchFor= extractSearchTextFromSelection(page.getSelection());
 		if (searchFor == null || searchFor.length() == 0) {
 			searchFor= extractSearchTextFromEditor(page.getActiveEditor());
 		}
 		query.setSearchString(searchFor);
 		return true;
 	}
+	
+	protected Object extractObject(Class clazz, ISelection sel) {
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ssel= (IStructuredSelection) sel;
+			for (Iterator iter= ssel.iterator(); iter.hasNext();) {
+				Object cand= iter.next();
+				if (clazz.isAssignableFrom(cand.getClass())) {
+					return cand;
+				}
+				if (cand instanceof IAdaptable) {
+					cand= ((IAdaptable) cand).getAdapter(clazz);
+					if (cand != null) {
+						return cand;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 }

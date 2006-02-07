@@ -14,6 +14,8 @@ package org.eclipse.search2.internal.ui.text2;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.jface.viewers.ISelection;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -30,17 +32,26 @@ public class FindInProjectActionDelegate extends FindInRecentScopeActionDelegate
 	protected boolean modifyQuery(RetrieverQuery query) {
 		if (super.modifyQuery(query)) {
 			IWorkbenchPage page= getWorkbenchPage();
-			IEditorPart editor= page.getActiveEditor();
-			if (editor != null) {
-				IEditorInput ei= editor.getEditorInput();
-				if (ei instanceof IFileEditorInput) {
-					IFileEditorInput fi= (IFileEditorInput) ei;
-					IProject proj= fi.getFile().getProject();
-					query.setSearchScope(new SelectedResourcesScopeDescription(new IResource[] {proj}, false));
-					return true;
+			if (page != null) {
+				ISelection sel= page.getSelection();
+				IResource res= (IResource) extractObject(IResource.class, sel);
+				if (res == null) {
+					IEditorPart editor= page.getActiveEditor();
+					if (editor != null) {
+						IEditorInput ei= editor.getEditorInput();
+						if (ei instanceof IFileEditorInput) {
+							res= ((IFileEditorInput) ei).getFile();
+						}
+					}
 				}
+				if (res != null) {
+					IProject proj= res.getProject();
+					if (proj != null) {
+						query.setSearchScope(new SelectedResourcesScopeDescription(new IResource[] {proj}, false));
+					}
+				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}

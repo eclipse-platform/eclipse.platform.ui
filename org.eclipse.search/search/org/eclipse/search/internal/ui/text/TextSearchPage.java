@@ -80,9 +80,10 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
-import org.eclipse.search2.internal.ui.text2.SelectedResourcesScopeDescription;
 import org.eclipse.search2.internal.ui.text2.IScopeDescription;
 import org.eclipse.search2.internal.ui.text2.RetrieverQuery;
+import org.eclipse.search2.internal.ui.text2.SearchMatchInformationProviderRegistry;
+import org.eclipse.search2.internal.ui.text2.SelectedResourcesScopeDescription;
 import org.eclipse.search2.internal.ui.text2.WindowWorkingSetScopeDescription;
 import org.eclipse.search2.internal.ui.text2.WorkingSetScopeDescription;
 import org.eclipse.search2.internal.ui.text2.WorkspaceScopeDescription;
@@ -399,6 +400,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				// Set item and text here to prevent page from resizing
 				fPattern.setItems(getPreviousSearchPatterns());
 				fExtensions.setItems(getPreviousExtensions());
+				if (fExtensions.getItemCount() == 0) {
+					loadFilePatternDefaults();
+				}
 				if (!initializePatternControl()) {
 					fPattern.select(0);
 					fExtensions.setText("*"); //$NON-NLS-1$
@@ -569,6 +573,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return false;
 	}
 	
+	private void loadFilePatternDefaults() {
+		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
+		String[] defaults= registry.getDefaultFilePatterns();
+		fExtensions.setItems(defaults);
+		fExtensions.setText(defaults[0]);
+	}
+
 	private String insertEscapeChars(String text) {
 		if (text == null || text.equals("")) //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
@@ -737,16 +748,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
             if (wss[0].equals(getActivePage().getAggregateWorkingSet())) {
                 return new WindowWorkingSetScopeDescription();
             }
-            return new WorkingSetScopeDescription(wss[0]);
         }
-        IWorkingSetManager wm= PlatformUI.getWorkbench().getWorkingSetManager();
-        StringBuffer id = new StringBuffer();
-        id.append("Aggregate:"); //$NON-NLS-1$
-        for (int i = 0; i < wss.length; i++) {
-            id.append(wss[i].getName()).append(':');
-        }
-        return new WorkingSetScopeDescription(wm.createAggregateWorkingSet(
-                id.toString(), "Multiple Working Sets", wss)); //$NON-NLS-1$
+        return new WorkingSetScopeDescription(wss);
     }
 
 	private FileNamePatternSearchScope getSelectedResourcesScope() {

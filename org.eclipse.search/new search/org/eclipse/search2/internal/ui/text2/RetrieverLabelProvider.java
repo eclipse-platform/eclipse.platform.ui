@@ -72,7 +72,7 @@ public class RetrieverLabelProvider extends FileLabelProvider {
 		StringBuffer buf= new StringBuffer();
 		buf.append(path.lastSegment());
 		buf.append(" - "); //$NON-NLS-1$
-		buf.append(path.removeFirstSegments(1).toString());
+		buf.append(path.removeLastSegments(1).toString());
 		return buf.toString();
 	}
 

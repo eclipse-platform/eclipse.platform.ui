@@ -11,6 +11,7 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,29 +32,32 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 public class WorkingSetScopeDescription implements IScopeDescription {
-	private static final String KEY_WORKING_SET_NAME= "workingset-name"; //$NON-NLS-1$
+	private static final String KEY_WORKING_SET_NAME= "workingset-names"; //$NON-NLS-1$
 	private static final String KEY_LABEL= "workingset-label"; //$NON-NLS-1$
 	private static final IResource[] EMPTY_ARRAY= new IResource[0];
-	private String fWorkingSetName;
+	private String[] fWorkingSetNames;
 	private String fLabel;
 
 	public WorkingSetScopeDescription() {
 	}
 
-	public WorkingSetScopeDescription(IWorkingSet set) {
-		fWorkingSetName= set.getName();
-		fLabel= set.getLabel();
-		// try to change the label
-		if (set.isAggregateWorkingSet()) {
-			computeLabel();
+	public WorkingSetScopeDescription(IWorkingSet[] set) {
+		fWorkingSetNames= new String[set.length];
+		for (int i= 0; i < set.length; i++) {
+			fWorkingSetNames[i]= set[i].getName();
 		}
+		fLabel= computeLabel();
 	}
 
-	private void computeLabel() {
-		if (fWorkingSetName.startsWith("Aggregate:") && //$NON-NLS-1$
-				fWorkingSetName.charAt(fWorkingSetName.length() - 1) == ':') {
-			fLabel= fWorkingSetName.substring(10, fWorkingSetName.length() - 1).replace(':', '+');
-		}
+	private String computeLabel() {
+		StringBuffer label= new StringBuffer();
+        for (int i = 0; i < fWorkingSetNames.length; i++) {
+            if (i>0){
+            	label.append('+');
+            }
+            label.append(fWorkingSetNames[i]);
+        }
+        return label.toString();
 	}
 
 	public String getLabelForCombo() {
@@ -69,19 +73,18 @@ public class WorkingSetScopeDescription implements IScopeDescription {
 	}
 
 	public IResource[] getRoots(IWorkbenchPage page) {
-		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSet ws= workingSetManager.getWorkingSet(fWorkingSetName);
-
-		return getRootsFromWorkingSet(ws);
+		return getRootsFromWorkingSets(getWorkingSets());
 	}
 
-	protected IResource[] getRootsFromWorkingSet(IWorkingSet ws) {
+	protected IResource[] getRootsFromWorkingSets(IWorkingSet[] ws) {
 		if (ws == null) {
 			return EMPTY_ARRAY;
 		}
 
 		HashSet resources= new HashSet();
-		getResources(ws.getElements(), resources);
+		for (int i= 0; i < ws.length; i++) {
+			getResources(ws[i].getElements(), resources);			
+		}
 
 		// remove duplicates
 		for (Iterator iter= resources.iterator(); iter.hasNext();) {
@@ -99,10 +102,6 @@ public class WorkingSetScopeDescription implements IScopeDescription {
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}
 
-	public String getWorkingSetName() {
-		return fWorkingSetName;
-	}
-
 	private void getResources(IAdaptable[] elements, Collection target) {
 		for (int i= 0; i < elements.length; i++) {
 			IAdaptable adaptable= elements[i];
@@ -114,28 +113,31 @@ public class WorkingSetScopeDescription implements IScopeDescription {
 	}
 
 	public void restore(IDialogSettings section) {
-		fWorkingSetName= section.get(KEY_WORKING_SET_NAME);
+		fWorkingSetNames= section.getArray(KEY_WORKING_SET_NAME);
+		if (fWorkingSetNames == null) {
+			throw new IllegalArgumentException();
+		}
 		fLabel= section.get(KEY_LABEL);
 		if (fLabel == null) {
-			fLabel= fWorkingSetName;
+			fLabel= computeLabel();
 		}
 	}
 
 	public void store(IDialogSettings section) {
-		section.put(KEY_WORKING_SET_NAME, fWorkingSetName);
+		section.put(KEY_WORKING_SET_NAME, fWorkingSetNames);
 		section.put(KEY_LABEL, fLabel);
 	}
 
 	public void store(Properties props, String prefix) {
-		props.put(prefix + KEY_WORKING_SET_NAME, fWorkingSetName);
+		props.put(prefix + KEY_WORKING_SET_NAME, fWorkingSetNames);
 		props.put(prefix + KEY_LABEL, fLabel);
 	}
 
 	public void restore(Properties props, String prefix) {
-		fWorkingSetName= (String) props.get(prefix + KEY_WORKING_SET_NAME);
+		fWorkingSetNames= (String[]) props.get(prefix + KEY_WORKING_SET_NAME);
 		fLabel= (String) props.get(prefix + KEY_LABEL);
 		if (fLabel == null) {
-			fLabel= fWorkingSetName;
+			fLabel= computeLabel();
 		}
 	}
 
@@ -144,7 +146,7 @@ public class WorkingSetScopeDescription implements IScopeDescription {
 			return null;
 		}
 		IWorkingSetManager manager= PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dialog= manager.createWorkingSetSelectionDialog(page.getWorkbenchWindow().getShell(), false);
+		IWorkingSetSelectionDialog dialog= manager.createWorkingSetSelectionDialog(page.getWorkbenchWindow().getShell(), true);
 
 		IScopeDescription result= null;
 		if (scope instanceof WindowWorkingSetScopeDescription) {
@@ -152,28 +154,38 @@ public class WorkingSetScopeDescription implements IScopeDescription {
 		} else
 			if (scope instanceof WorkingSetScopeDescription) {
 				WorkingSetScopeDescription wsetscope= (WorkingSetScopeDescription) scope;
-				String name= wsetscope.getWorkingSetName();
-				IWorkingSet ws= manager.getWorkingSet(name);
-				if (ws != null) {
-					dialog.setSelection(new IWorkingSet[] {ws});
-				}
+				dialog.setSelection(wsetscope.getWorkingSets());
 			}
 
 		if (dialog.open() == Window.OK) {
 			IWorkingSet[] wsarray= dialog.getSelection();
 			if (wsarray != null && wsarray.length > 0) {
-				IWorkingSet ws= wsarray[0];
-				if (ws == page.getAggregateWorkingSet()) {
+				if (wsarray.length == 1 && wsarray[0] == page.getAggregateWorkingSet()) {
 					result= new WindowWorkingSetScopeDescription();
-				} else {
-					result= new WorkingSetScopeDescription(ws);
-					manager.addRecentWorkingSet(ws);
+				} 
+				else if (wsarray.length > 0) {
+					result= new WorkingSetScopeDescription(wsarray);
+					if (wsarray.length == 0) {
+						manager.addRecentWorkingSet(wsarray[0]);
+					}
 				}
 			} else {
 				result= new WorkspaceScopeDescription();
 			}
 		}
 		return result;
+	}
+
+	private IWorkingSet[] getWorkingSets() {
+		IWorkingSetManager manager= PlatformUI.getWorkbench().getWorkingSetManager();
+		ArrayList workingSets= new ArrayList();
+		for (int i= 0; i < fWorkingSetNames.length; i++) {
+			IWorkingSet ws= manager.getWorkingSet(fWorkingSetNames[i]);
+			if (ws != null) {
+				workingSets.add(ws);
+			}
+		}
+		return (IWorkingSet[]) workingSets.toArray(new IWorkingSet[workingSets.size()]);
 	}
 
 	public IFile[] getFiles(IWorkbenchPage page) {

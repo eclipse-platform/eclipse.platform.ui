@@ -11,6 +11,7 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -90,19 +91,60 @@ public class SelectedResourcesScopeDescription implements IScopeDescription {
 		}
 	}
 
+	public String getLabelDetail() {
+		switch (fSelectedResources.length) {
+			case 1:
+				return fSelectedResources[0].getName();
+			default:
+				return fSelectedResources[0].getName() + ", ..."; //$NON-NLS-1$
+		}
+	}
+	
 	public String getLabelForCombo() {
-		return SearchMessages.SelectedResourcesScopeDescription_label;
+		return getLabel(SearchMessages.SelectedResourcesScopeDescription_label, SearchMessages.SelectedResourcesScopeDescription_projectLabel, SearchMessages.SelectedResourcesScopeDescription_multiProjectLabel);
 	}
 
 	public String getNameForDescription() {
-		return SearchMessages.SelectedResourcesScopeDescription_name;
+		return getLabel(SearchMessages.SelectedResourcesScopeDescription_name, SearchMessages.SelectedResourcesScopeDescription_projectName, SearchMessages.SelectedResourcesScopeDescription_multiProjectName);
+	}
+	
+	private String getLabel(String emptyLabel, String singleProject, String multipleProjects) {
+		if (fSelectedResources == null || fSelectedResources.length == 0) {
+			return emptyLabel;
+		}
+		
+		String base;
+		if (consistsOfProjects()) {
+			if (fSelectedResources.length == 1) {
+				base= singleProject;
+			}
+			else {
+				base= multipleProjects;
+			}
+		}
+		else {
+			if (fSelectedResources.length == 1) {
+				return RetrieverLabelProvider.getFileLableWithContainer(fSelectedResources[0].getFullPath());
+			}
+			base= emptyLabel;
+		}
+		return MessageFormat.format("{0} {1}", new Object[] {base, getLabelDetail()}); //$NON-NLS-1$
+	}
+			
+	private boolean consistsOfProjects() {
+		if (fSelectedResources == null || fSelectedResources.length == 0) {
+			return false;
+		}
+		for (int i= 0; i < fSelectedResources.length; i++) {
+			IResource res= fSelectedResources[i];
+			if (res.getType() != IResource.PROJECT) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public IFile[] getFiles(IWorkbenchPage page) {
 		return null;
-	}
-
-	public void setSelection(IResource[] resources) {
-		fSelectedResources= resources;
 	}
 }

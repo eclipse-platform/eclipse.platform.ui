@@ -184,5 +184,11 @@ public final class SearchMessages extends NLS {
 	public static String RetrieverPage_filterSingular;
 	public static String RetrieverPage_filterPlural;
 	public static String RetrieverLabelProvider_FilterHidesMatches_labelSingular;
+	public static String SelectSearchScopeDialog_selectWorkingSets;
+	public static String SelectedResourcesScopeDescription_projectLabel;
+	public static String SelectedResourcesScopeDescription_multiProjectLabel;
+	public static String SelectedResourcesScopeDescription_projectName;
+	public static String SelectedResourcesScopeDescription_multiProjectName;
+	public static String RetrieverFindTab_choosePatterns;
 
 }

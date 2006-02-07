@@ -34,7 +34,7 @@ public class WindowWorkingSetScopeDescription extends WorkingSetScopeDescription
 
 	public IResource[] getRoots(IWorkbenchPage page) {
 		IWorkingSet ws= page.getAggregateWorkingSet();
-		return getRootsFromWorkingSet(ws);
+		return getRootsFromWorkingSets(new IWorkingSet[]{ws});
 	}
 
 	public void store(IDialogSettings section) {

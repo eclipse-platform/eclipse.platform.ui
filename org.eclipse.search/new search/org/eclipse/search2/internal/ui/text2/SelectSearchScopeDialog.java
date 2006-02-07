@@ -45,6 +45,7 @@ import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -54,16 +55,19 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
-public class SimpleResourceSelectionDialog extends SelectionDialog {
+public class SelectSearchScopeDialog extends SelectionDialog {
     private final static int SIZING_SELECTION_WIDGET_WIDTH = 400;
 
     private final static int SIZING_SELECTION_WIDGET_HEIGHT = 300;
 
 	private String fMessage;
+	private IScopeDescription fScope;
 
 	private CheckboxTreeViewer fTree;
 
-	protected SimpleResourceSelectionDialog(Shell parentShell, String title, String message) {
+	private IScopeDescription fInitialScope;
+
+	protected SelectSearchScopeDialog(Shell parentShell, String title, String message) {
 		super(parentShell);
 		setTitle(title);
 		fMessage= message;
@@ -123,7 +127,7 @@ public class SimpleResourceSelectionDialog extends SelectionDialog {
 
 		// Add select / deselect all buttons for bug 46669
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout(2, false));
+		buttonComposite.setLayout(new GridLayout(3, false));
 		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
@@ -150,6 +154,15 @@ public class SimpleResourceSelectionDialog extends SelectionDialog {
 		deselectAllButton.setFont(font);
 		setButtonLayoutData(deselectAllButton);
 		
+		Button selectWorkingSets= new Button(buttonComposite, SWT.PUSH);
+		selectWorkingSets.setText(SearchMessages.SelectSearchScopeDialog_selectWorkingSets);
+		selectWorkingSets.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				close();
+				fScope= WorkingSetScopeDescription.createWithDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), fInitialScope);
+			}
+		});
+
 		initializeCheckedState();
 		return composite;
     }
@@ -293,6 +306,21 @@ public class SimpleResourceSelectionDialog extends SelectionDialog {
 		}
 		setResult(result);
 		super.okPressed();
+	}
+
+	public IScopeDescription getScopeDescription() {
+		if (fScope == null) {
+			Object[] selection= getResult();
+			if (selection != null) {
+				fScope= new SelectedResourcesScopeDescription((IResource[]) Arrays.asList(selection).toArray(new IResource[selection.length]), false);
+			}
+		}
+		return fScope;
+	}
+
+	public void setInitialScope(IScopeDescription scope, IWorkbenchPage page) {
+		fInitialScope= scope;
+		setInitialSelections(scope.getRoots(page));
 	}
 
 }

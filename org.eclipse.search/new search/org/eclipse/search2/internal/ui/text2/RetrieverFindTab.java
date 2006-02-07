@@ -11,13 +11,10 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
-
-import org.eclipse.core.resources.IResource;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -37,6 +34,7 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.search.ui.NewSearchUI;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
@@ -68,69 +66,69 @@ public class RetrieverFindTab implements IRetrieverKeys {
 		GridLayout gl;
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		group.setLayout(new GridLayout(3, false));
-
+	
 		fSearchString= new Combo(group, SWT.NONE);
 		fSearchString.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		fSearchString.setVisibleItemCount(VISIBLE_ITEMS_IN_COMBO);
 		gd.horizontalSpan= 2;
 		gd.widthHint= 20; // spr 112201
-
+	
 		fSearchButton= new Button(group, SWT.PUSH);
 		fSearchButton.setText(SearchMessages.RetrieverFindTab_search);
 		fSearchButton.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		gd.horizontalSpan= 1;
 		SWTUtil.setButtonDimensionHint(fSearchButton);
-
+	
 		Composite comp= new Composite(group, SWT.NONE);
 		comp.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		gd.horizontalSpan= 3;
 		comp.setLayout(gl= new GridLayout(3, false));
 		gl.marginHeight= gl.marginWidth= 0;
-
+	
 		fCaseSensitive= new Button(comp, SWT.CHECK);
 		fCaseSensitive.setText(SearchMessages.RetrieverFindTab_caseSensitive);
-
+	
 		fRegularExpression= new Button(comp, SWT.CHECK);
 		fRegularExpression.setText(SearchMessages.RetrieverFindTab_regularExpression);
-
+	
 		fWholeWord= new Button(comp, SWT.CHECK);
 		fWholeWord.setText(SearchMessages.RetrieverFindTab_wholeWord);
-
+	
 		Label separator= new Label(group, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		gd.horizontalSpan= 3;
 		new Label(group, SWT.NONE).setLayoutData(gd= new GridData());
 		gd.horizontalSpan= 3;
 		gd.heightHint= 0;
-
+	
 		Label scopeLabel= new Label(group, SWT.NONE);
 		scopeLabel.setText(SearchMessages.RetrieverFindTab_searchScope);
-
+	
 		fWorkingSetCombo= new Combo(group, SWT.BORDER | SWT.READ_ONLY);
 		fWorkingSetCombo.setVisibleItemCount(VISIBLE_ITEMS_IN_COMBO);
 		fWorkingSetCombo.setLayoutData(gd= new GridData(GridData.FILL_HORIZONTAL));
 		gd.widthHint= 20;
-
+	
 		fChooseWorkingSetButton= new Button(group, SWT.PUSH);
 		fChooseWorkingSetButton.setText(SearchMessages.RetrieverFindTab_choose);
 		fChooseWorkingSetButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(fChooseWorkingSetButton);
-
+	
 		Label filePatternLabel= new Label(group, SWT.NONE);
 		filePatternLabel.setText(SearchMessages.RetrieverFindTab_filePatterns);
-
+	
 		fFilePatterns= new Combo(group, SWT.NONE);
 		fFilePatterns.setVisibleItemCount(VISIBLE_ITEMS_IN_COMBO);
 		fFilePatterns.setLayoutData(gd= new GridData(GridData.FILL_HORIZONTAL));
 		gd.widthHint= 20;
-
+	
 		fFilePatternButton= new Button(group, SWT.PUSH);
-		fFilePatternButton.setText(SearchMessages.RetrieverFindTab_choose);
+		fFilePatternButton.setText(SearchMessages.RetrieverFindTab_choosePatterns);
 		fFilePatternButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(fFilePatternButton);
-
+	
 		fEnableDisable= new Control[] {fSearchString, fSearchButton, fCaseSensitive, fRegularExpression, fWholeWord, scopeLabel, fWorkingSetCombo, fChooseWorkingSetButton, filePatternLabel, fFilePatterns, fFilePatternButton};
-
+	
 		setupScopeCombo();
 	}
 
@@ -175,13 +173,23 @@ public class RetrieverFindTab implements IRetrieverKeys {
 	}
 
 	void restoreValues() {
-		fView.restoreCombo(fFilePatterns, KEY_FILE_PATTERNS, "*.c,*.ci,*.h,*.java"); //$NON-NLS-1$
+		fView.restoreCombo(fFilePatterns, KEY_FILE_PATTERNS, null); 
+		if (fFilePatterns.getItemCount() == 0) {
+			loadFilePatternDefaults();
+		}
 		fView.restoreCombo(fSearchString, KEY_SEARCH_STRINGS, null);
 		fView.restoreButton(fCaseSensitive, KEY_CASE_SENSITIVE_SEARCH, true);
 		fView.restoreButton(fRegularExpression, KEY_REGULAR_EXPRESSION_SEARCH, false);
 		fView.restoreButton(fWholeWord, KEY_WHOLE_WORD, true);
 		fFilePatterns.clearSelection();
 		setupScopeCombo();
+	}
+
+	private void loadFilePatternDefaults() {
+		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
+		String[] defaults= registry.getDefaultFilePatterns();
+		fFilePatterns.setItems(defaults);
+		fFilePatterns.setText(defaults[0]);
 	}
 
 	private void setupScopeCombo() {
@@ -313,26 +321,15 @@ public class RetrieverFindTab implements IRetrieverKeys {
 
 	protected void onChooseButtonSelectWorkingSet() {
 		IScopeDescription scope= getSearchScope();
-		if (scope instanceof SelectedResourcesScopeDescription) {
-			adjustSelectedResources((SelectedResourcesScopeDescription) scope);
-		}
-		else {
-			IScopeDescription use= WorkingSetScopeDescription.createWithDialog(fView.getSite().getPage(), scope);
-			if (use != null) {
-				addScopeToCombo(use, false);
-			}
-		}
-	}
-
-	private void adjustSelectedResources(SelectedResourcesScopeDescription scope) {
-		SimpleResourceSelectionDialog dlg= new SimpleResourceSelectionDialog(fView.getSite().getShell(), 
+		SelectSearchScopeDialog dlg= new SelectSearchScopeDialog(fView.getSite().getShell(), 
 				SearchMessages.RetrieverFindTab_selectedResourcesTitle, SearchMessages.RetrieverFindTab_selectedResourcesMessage);
-		dlg.setInitialSelections(scope.getRoots(null));
+		dlg.setInitialScope(scope, fView.getSite().getPage());
+		IScopeDescription newScope= null;
 		if (dlg.open() == Window.OK) {
-			Object[] selection= dlg.getResult();
-			if (selection != null) {
-				scope.setSelection((IResource[]) Arrays.asList(selection).toArray(new IResource[selection.length]));
-			}
+			newScope= dlg.getScopeDescription();
+		}
+		if (newScope != null) {
+			addScopeToCombo(newScope, false);
 		}
 	}
 

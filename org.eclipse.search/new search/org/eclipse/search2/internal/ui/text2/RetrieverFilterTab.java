@@ -79,52 +79,55 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 		gl.marginHeight= gl.marginWidth= 0;
 		gl.verticalSpacing= 2;
 
-		fUseLocationFilter= new Button(outer, SWT.CHECK);
-		fUseLocationFilter.setText(SearchMessages.RetrieverFilterTab_LocationFilter_text);
-		fUseLocationFilter.setLayoutData(new GridData());
 
 		// location group
-		Composite locationGroup= new Composite(outer, SWT.NONE);
-		locationGroup.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		gd.horizontalIndent= indent;
-
-		locationGroup.setLayout(gl= new GridLayout(3, false));
-		gl.marginWidth= 0;
-		gl.marginHeight= 0;
-		gl.verticalSpacing= 0;
-
-		// line 3, 4
-		fCommentFilter= new Button(locationGroup, SWT.CHECK);
-		fCommentFilter.setText(SearchMessages.RetrieverFilterTab_Comment_text);
-
-		fIncludeFilter= new Button(locationGroup, SWT.CHECK);
-		fIncludeFilter.setText(SearchMessages.RetrieverFilterTab_Import_text);
-
 		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
-		if (registry.hasPreprocessorSupport()) {
-			fPrepFilter= new Button(locationGroup, SWT.CHECK);
-			fPrepFilter.setText(SearchMessages.RetrieverFilterTab_Preprocessor_text);
-		} else {
-			new Label(locationGroup, SWT.NONE);
+		if (registry.hasAnyLocationSupport()) {
+			fUseLocationFilter= new Button(outer, SWT.CHECK);
+			fUseLocationFilter.setText(SearchMessages.RetrieverFilterTab_LocationFilter_text);
+			fUseLocationFilter.setLayoutData(new GridData());
+
+			Composite locationGroup= new Composite(outer, SWT.NONE);
+			locationGroup.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+			gd.horizontalIndent= indent;
+			
+			locationGroup.setLayout(gl= new GridLayout(3, false));
+			gl.marginWidth= 0;
+			gl.marginHeight= 0;
+			gl.verticalSpacing= 0;
+			
+			// line 3, 4
+			fCommentFilter= new Button(locationGroup, SWT.CHECK);
+			fCommentFilter.setText(SearchMessages.RetrieverFilterTab_Comment_text);
+			
+			fIncludeFilter= new Button(locationGroup, SWT.CHECK);
+			fIncludeFilter.setText(SearchMessages.RetrieverFilterTab_Import_text);
+			
+			if (registry.hasPreprocessorSupport()) {
+				fPrepFilter= new Button(locationGroup, SWT.CHECK);
+				fPrepFilter.setText(SearchMessages.RetrieverFilterTab_Preprocessor_text);
+			} else {
+				new Label(locationGroup, SWT.NONE);
+			}
+			
+			fStringFilter= new Button(locationGroup, SWT.CHECK);
+			fStringFilter.setText(SearchMessages.RetrieverFilterTab_String_text);
+			
+			if (registry.hasFunctionSupport()) {
+				fFunctionFilter= new Button(locationGroup, SWT.CHECK);
+				fFunctionFilter.setText(SearchMessages.RetrieverFilterTab_FunctionBody_text);
+			}
+			
+			fOtherFilter= new Button(locationGroup, SWT.CHECK);
+			fOtherFilter.setText(SearchMessages.RetrieverFilterTab_OtherLocation_text);
+			
+			// a bit of space before next line
+			Label separator2= new Label(outer, SWT.SEPARATOR | SWT.HORIZONTAL);
+			separator2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+			new Label(outer, SWT.NONE).setLayoutData(gd= new GridData());
+			gd.heightHint= 5;
 		}
-
-		fStringFilter= new Button(locationGroup, SWT.CHECK);
-		fStringFilter.setText(SearchMessages.RetrieverFilterTab_String_text);
-
-		if (registry.hasFunctionSupport()) {
-			fFunctionFilter= new Button(locationGroup, SWT.CHECK);
-			fFunctionFilter.setText(SearchMessages.RetrieverFilterTab_FunctionBody_text);
-		}
-
-		fOtherFilter= new Button(locationGroup, SWT.CHECK);
-		fOtherFilter.setText(SearchMessages.RetrieverFilterTab_OtherLocation_text);
-
-		// a bit of space before next line
-		Label separator2= new Label(outer, SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		new Label(outer, SWT.NONE).setLayoutData(gd= new GridData());
-		gd.heightHint= 5;
-
+		
 		// text filter
 		Composite indepAlign= new Composite(outer, SWT.NONE);
 		indepAlign.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -160,7 +163,6 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 				onEnableFilter();
 			}
 		};
-		fUseLocationFilter.addSelectionListener(s);
 		fUseStringFilter.addSelectionListener(s);
 		fFilterString.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
@@ -189,20 +191,32 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 		};
 		fHideMatching.addSelectionListener(onFilter);
 		fRegularExpressionFilter.addSelectionListener(onFilter);
-		fStringFilter.addSelectionListener(onFilter);
-		fCommentFilter.addSelectionListener(onFilter);
-		fIncludeFilter.addSelectionListener(onFilter);
+		
+		if (fUseLocationFilter != null) {
+			fUseLocationFilter.addSelectionListener(s);
+		}
+		if (fStringFilter != null) {
+			fStringFilter.addSelectionListener(onFilter);
+		}
+		if (fCommentFilter != null) {
+			fCommentFilter.addSelectionListener(onFilter);
+		}
+		if (fIncludeFilter != null) {
+			fIncludeFilter.addSelectionListener(onFilter);
+		}
 		if (fPrepFilter != null) {
 			fPrepFilter.addSelectionListener(onFilter);
 		}
 		if (fFunctionFilter != null) {
 			fFunctionFilter.addSelectionListener(onFilter);
 		}
-		fOtherFilter.addSelectionListener(onFilter);
+		if (fOtherFilter != null) {
+			fOtherFilter.addSelectionListener(onFilter);
+		}
 	}
 
 	protected void onEnableFilter() {
-		boolean el= fUseLocationFilter.getSelection();
+		boolean el= fUseLocationFilter != null && fUseLocationFilter.getSelection();
 		boolean es= fUseStringFilter.getSelection();
 		fEnable= el || es;
 		if (fEnable) {
@@ -227,15 +241,15 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 
 	private int getAcceptedLocations() {
 		int acceptLocations= ALL_LOCATIONS;
-		if (fUseLocationFilter.getSelection()) {
+		if (fUseLocationFilter != null && fUseLocationFilter.getSelection()) {
 			acceptLocations= 0;
-			if (fStringFilter.getSelection()) {
+			if (fStringFilter == null || fStringFilter.getSelection()) {
 				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_STRING_LITERAL);
 			}
-			if (fCommentFilter.getSelection()) {
+			if (fCommentFilter == null || fCommentFilter.getSelection()) {
 				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_COMMENT);
 			}
-			if (fIncludeFilter.getSelection()) {
+			if (fIncludeFilter == null || fIncludeFilter.getSelection()) {
 				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_IMPORT_OR_INCLUDE_STATEMENT);
 			}
 			if (fPrepFilter == null || fPrepFilter.getSelection()) {
@@ -244,7 +258,7 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 			if (fFunctionFilter == null || fFunctionFilter.getSelection()) {
 				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_FUNCTION);
 			}
-			if (fOtherFilter.getSelection()) {
+			if (fOtherFilter == null || fOtherFilter.getSelection()) {
 				acceptLocations|= (1 << SearchMatchInformationProvider.LOCATION_OTHER);
 			}
 		}
@@ -275,9 +289,11 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 	 */
 	void restoreValues(boolean filterEnabled) {
 		fEnable= filterEnabled;
-		fEnableLocation= fView.restoreValue(KEY_ENABLE_LOCATION_FILTER, true);
+		fEnableLocation= fUseLocationFilter != null && fView.restoreValue(KEY_ENABLE_LOCATION_FILTER, true);
 		fEnableString= fView.restoreValue(KEY_ENABLE_TEXT_FILTER, false);
-		fUseLocationFilter.setSelection(fEnable && fEnableLocation);
+		if (fUseLocationFilter != null) {
+			fUseLocationFilter.setSelection(fEnable && fEnableLocation);
+		}
 		fUseStringFilter.setSelection(fEnable && fEnableString);
 		fView.restoreCombo(fFilterString, KEY_FILTER_PATTERNS, ""); //$NON-NLS-1$
 		fView.restoreButton(fHideMatching, KEY_INVERT_FILTER, false);
@@ -307,7 +323,9 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 
 	public void onEnableToolbarFilter(boolean enable) {
 		fEnable= enable;
-		fUseLocationFilter.setSelection(fEnable && fEnableLocation);
+		if (fUseLocationFilter != null) {
+			fUseLocationFilter.setSelection(fEnable && fEnableLocation);
+		}
 		fUseStringFilter.setSelection(fEnable && fEnableString);
 		updateEnablement();
 		selectStringFilter();
@@ -391,7 +409,7 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 		}
 		int loc= filter.getAcceptedLocations();
 		Pattern pattern= filter.getPattern();
-		boolean el= (loc != ALL_LOCATIONS);
+		boolean el= fUseLocationFilter != null && (loc != ALL_LOCATIONS);
 		boolean es= (pattern != null);
 
 		fEnable= el || es;
@@ -402,7 +420,9 @@ public class RetrieverFilterTab implements IRetrieverKeys {
 			el= es= false;
 		}
 
-		fUseLocationFilter.setSelection(el);
+		if (fUseLocationFilter != null) {
+			fUseLocationFilter.setSelection(el);
+		}
 		fUseStringFilter.setSelection(es);
 
 		if (el) {
