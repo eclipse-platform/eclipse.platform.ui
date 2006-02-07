@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,26 +23,19 @@ import org.eclipse.ui.views.markers.internal.Util;
  *
  */
 public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
-
-	/**
-	 * Return an updated WorkbenchMarkerResolution for the receiver.
-	 * This is called after another WorkbenchMarkerResolution has been
-	 * applied in changes are required.
-	 * @return WorkbenchMarkerResolution
-	 * @see #findOtherMarkers(IMarker[])
-	 */
-	public WorkbenchMarkerResolution getUpdatedResolution(){
-		return this;
-	}
 	
 	/**
 	 * Iterate through the list of supplied markers. Return any that can also have
 	 * the receiver applied to them.
 	 * @param markers
 	 * @return IMarker[]
+	 * <strong>NOTE:</strong> This method will become abstract for
+	 * 3.2 M5.
 	 * 	 
-	 */
-	public abstract IMarker[] findOtherMarkers(IMarker[] markers);
+	 * */
+	public IMarker[] findOtherMarkers(IMarker[] markers){
+		return new IMarker[0];
+	}
 
     /**
      * Runs this resolution. Resolve all <code>markers</code>.
