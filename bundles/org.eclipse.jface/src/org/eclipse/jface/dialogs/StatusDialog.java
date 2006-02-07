@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @since 3.1
  */
-public abstract class StatusDialog extends Dialog {
+public abstract class StatusDialog extends TrayDialog {
 
 	private Button fOkButton;
 
