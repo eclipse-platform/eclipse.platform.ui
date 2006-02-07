@@ -48,9 +48,7 @@ public class SaveAsAction extends BaseSaveAction {
         }
         /* **********************************************************************************
          * The code below was added to track the view with focus
-         * in order to support save actions from a view. Remove this
-         * experimental code if the decision is to not allow views to 
-         * participate in save actions (see bug 10234) 
+         * in order to support save actions from a view (see bug 10234). 
          */
         ISaveablePart saveView = getSaveableView();
         if (saveView != null) {
@@ -71,9 +69,7 @@ public class SaveAsAction extends BaseSaveAction {
     protected void updateState() {
         /* **********************************************************************************
          * The code below was added to track the view with focus
-         * in order to support save actions from a view. Remove this
-         * experimental code if the decision is to not allow views to 
-         * participate in save actions (see bug 10234) 
+         * in order to support save actions from a view (see bug 10234). 
          */
         ISaveablePart saveView = getSaveableView();
         if (saveView != null) {
