@@ -12,6 +12,63 @@
 <h1>Eclipse Platform Build Notes (3.2)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (February 7, 2006, 8:00 a.m.)</p>
+  <p>Problem reports fixed</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=29840">Bug 29840</a>. [WorkbenchParts] Need API to get the zoomed state of a workbench page<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=40348">Bug 40348</a>. [ViewMgmt] PageBook does not support IPostSelectionProvider (was: JavaDoc &amp; Declaration view and fast selection changes)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=70117">Bug 70117</a>. [Progress] Help Context<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=85350">Bug 85350</a>. [Markers] [Progress] NoClassDefFoundError from job running during shutdown<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=102666">Bug 102666</a>. [Commands] registry: ISourceProvider for selection and context change is not implemented<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=105928">Bug 105928</a>. [Progress] Blocked jobs dialog showing empty message<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=108509">Bug 108509</a>. [Dialogs] Help button support<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=112000">Bug 112000</a>. [Viewers] TreeViewer SWT.VIRTUAL support.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=113178">Bug 113178</a>. [IDE] Open Dependant Projects<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=113455">Bug 113455</a>. [Markers] Some error markers do not appear<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=115858">Bug 115858</a>. [Model API] ResourceMapping#getModelProviderId() should be abstract<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=120379">Bug 120379</a>. [CommonNavigator] Comparator vs. ViewerSorter<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=120392">Bug 120392</a>. [CommonNavigator] CommonViewer doesn't use CommonSorter<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=120457">Bug 120457</a>. [Field Assist] - popup shell not dismissing correctly<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=120587">Bug 120587</a>. [Common Navigator] Manifest.MF appears twice in Java content<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=122749">Bug 122749</a>. [Dialogs] Store size and position of ElementList/TreeSelectionDialog<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=122756">Bug 122756</a>. [Viewers] Support for TreePath based content providers<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123789">Bug 123789</a>. [WorkbenchParts] 'Maximize' state should be view, not folder-bound<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123800">Bug 123800</a>. [Progress] InterruptedExceptions being logged many times<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124128">Bug 124128</a>. [CommonNavigator] Internal navigator package names don't follow conventions<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124200">Bug 124200</a>. [WorkbenchParts] hideView does not work on perspective deactivate callback<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124393">Bug 124393</a>. Deprecate IKeyBindingService<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124395">Bug 124395</a>. Make sure all slave and nested services clean up all resources<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124520">Bug 124520</a>. [FieldAssist] API - Applications should be able to install a reserved decoration size and commonly used decorations<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124883">Bug 124883</a>. problems view: automatically disable marker limits when in group mode<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125526">Bug 125526</a>. [IDE] BuildUtilities.java's extractProjects() method does not consider ResourceMapping cases<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125540">Bug 125540</a>. Add IBindingService to all of the sites<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125541">Bug 125541</a>. Add ICommandService to all of the sites<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125600">Bug 125600</a>. [Field Assist] - popup shell should be resizable with size retained<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125654">Bug 125654</a>. Project &quot;expose&quot; would be cool for removing unrelated projects<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125808">Bug 125808</a>. [Field Assist] assist hint hover should use tool tip caption<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125943">Bug 125943</a>. [CommonNavigator] No need to include schema folder in binary build<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125952">Bug 125952</a>. [Field Assist] - cumulative filtering can be confusing<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125955">Bug 125955</a>. [Field Assist] - StringIndexOutOfBoundsException when backspacing out of a filter<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126027">Bug 126027</a>. [CommonNavigator] Support sorting based on different parents<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126044">Bug 126044</a>. [Contexts] Latest key binding changes break Quick view key bindings<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126071">Bug 126071</a>. [CommonNavigator][arch] Should common sorters be associated with a content extension?<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126079">Bug 126079</a>. [Commands] request: add commands to open/show resource with path parameter<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126233">Bug 126233</a>. [FieldAssist] DecoratedField should not automatically reserve space on field ends<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126258">Bug 126258</a>. [Commands] handlers: Inspect doesn't work<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126264">Bug 126264</a>. [Progress] ProgressMonitorJobsDialog and BlockedJobsDialog needs to migrate to new progress viewer<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126404">Bug 126404</a>. [Commands] handlers: Key binding availability dependant on view focus<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126461">Bug 126461</a>. [Common Navigator] Priority should default to normal<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126462">Bug 126462</a>. setBatch() not refreshing XML model.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126506">Bug 126506</a>. [Viewers] TreePath based sorting<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126508">Bug 126508</a>. [CommonNavigator] Support overriding an existing extension<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126527">Bug 126527</a>. [Field Assist] - API - Field Decoration alignment issues are different for cell editors<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126553">Bug 126553</a>. [Field Assist] light bulb image looks ugly on white background<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126555">Bug 126555</a>. [Field Assist] assist not opened at caret location<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126566">Bug 126566</a>. [Workbench] test failure in StartupTest.testStartup<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126570">Bug 126570</a>. [Common Navigator] NavigatorContentService EXTENSION_COMPARATOR problem<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126578">Bug 126578</a>. [Commands] handlers: Each opened Text and Java editor is leaked due to ProxyKeyBindingService<br>
+  </p>
+
 <p>Integration Build (January 31, 2006, 12:00 p.m.)</p>
   <p>Problem reports fixed</p>
   <p>
