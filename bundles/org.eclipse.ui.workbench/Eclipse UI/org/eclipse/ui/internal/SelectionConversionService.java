@@ -20,25 +20,19 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
- * The SelectionConversionService is the service that converts the selection
- * to IResources.
- * @since 3.2
+ * <p>
+ * The SelectionConversionService is the service that converts the selection to
+ * IResources.
+ * </p>
+ * <p>
+ * This interface is only intended for use within the
+ * <code>org.eclipse.ui.workbench</code> and <code>org.eclipse.ui.ide</code>
+ * plug-ins.
+ * </p>
  * 
+ * @since 3.2
  */
-public class SelectionConversionService {
-	
-	/**
-	 * The SERVICE_KEY is the Object used to reference the service in the 
-	 * workbench.
-	 */
-	public static Object SERVICE_KEY = new Object();
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public SelectionConversionService() {
-		super();
-	}
+public class SelectionConversionService implements ISelectionConversionService {
 
 	/**
 	 * Attempt to convert the elements in the passed selection into resources by

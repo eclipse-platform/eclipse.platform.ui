@@ -509,11 +509,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		return progressService;
 	}
 
-	public final Object getService(final Object key) {
+	public final Object getService(final Class key) {
 		return serviceLocator.getService(key);
 	}
 
-	public final boolean hasService(final Object key) {
+	public final boolean hasService(final Class key) {
 		return serviceLocator.hasService(key);
 	}
 

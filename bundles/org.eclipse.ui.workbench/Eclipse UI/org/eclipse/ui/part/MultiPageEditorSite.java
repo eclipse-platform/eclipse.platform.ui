@@ -369,7 +369,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		return selectionProvider;
 	}
 
-	public final Object getService(final Object key) {
+	public final Object getService(final Class key) {
 		return serviceLocator.getService(key);
 	}
 
@@ -438,7 +438,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		}
 	}
 
-	public final boolean hasService(final Object key) {
+	public final boolean hasService(final Class key) {
 		return serviceLocator.hasService(key);
 	}
 

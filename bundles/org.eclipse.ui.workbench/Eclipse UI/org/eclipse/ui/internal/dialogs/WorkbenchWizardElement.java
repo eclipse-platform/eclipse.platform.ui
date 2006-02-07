@@ -21,7 +21,7 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SelectionEnabler;
-import org.eclipse.ui.internal.SelectionConversionService;
+import org.eclipse.ui.internal.ISelectionConversionService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
@@ -200,17 +200,21 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * @param originalSelection the original selection
      * @return the converted selection or an empty selection
      */
-    private IStructuredSelection convertToResources(
-            IStructuredSelection originalSelection) {
-    	Object selectionService = PlatformUI.getWorkbench().getService(SelectionConversionService.SERVICE_KEY);
-    	if(selectionService == null)
-    		return StructuredSelection.EMPTY;
-    	return ((SelectionConversionService) selectionService).convertToResources(originalSelection);
+	private IStructuredSelection convertToResources(
+			IStructuredSelection originalSelection) {
+		Object selectionService = PlatformUI.getWorkbench().getService(
+				ISelectionConversionService.class);
+		if (selectionService == null)
+			return StructuredSelection.EMPTY;
+		return ((ISelectionConversionService) selectionService)
+				.convertToResources(originalSelection);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
     public String getLocalId() {
         return getId();
     }

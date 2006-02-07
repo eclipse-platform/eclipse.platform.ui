@@ -26,23 +26,16 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.internal.SelectionConversionService;
+import org.eclipse.ui.internal.ISelectionConversionService;
 
 /**
  * The IDESelectionConversionService is the selection service that uses the
  * resource support available to the IDE.
  * 
  * @since 3.2
- * 
  */
-public class IDESelectionConversionService extends SelectionConversionService {
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public IDESelectionConversionService() {
-		super();
-	}
+public class IDESelectionConversionService implements
+		ISelectionConversionService {
 
 	/*
 	 * (non-Javadoc)

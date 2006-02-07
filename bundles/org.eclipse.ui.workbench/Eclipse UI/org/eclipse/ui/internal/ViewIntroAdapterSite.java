@@ -85,7 +85,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
         return viewSite.getSelectionProvider();
     }
     
-    public final Object getService(final Object key) {
+    public final Object getService(final Class key) {
     		return viewSite.getService(key);
     }
 
@@ -103,7 +103,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
         return viewSite.getWorkbenchWindow();
     }
 
-	public final boolean hasService(final Object key) {
+	public final boolean hasService(final Class key) {
 		return viewSite.hasService(key);
 	}
 

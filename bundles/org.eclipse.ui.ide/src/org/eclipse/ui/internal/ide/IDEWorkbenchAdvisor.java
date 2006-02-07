@@ -48,7 +48,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.SelectionConversionService;
+import org.eclipse.ui.internal.ISelectionConversionService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
@@ -200,7 +200,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
             refreshFromLocal();
             checkUpdates();
             ((Workbench) PlatformUI.getWorkbench()).registerService(
-    				SelectionConversionService.SERVICE_KEY,
+    				ISelectionConversionService.class,
     				new IDESelectionConversionService());
         } finally {//Resume background jobs after we startup
             Platform.getJobManager().resume();

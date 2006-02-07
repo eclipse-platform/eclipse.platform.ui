@@ -151,6 +151,7 @@ import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -1230,7 +1231,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		addWindowListener(windowListener);
 		bindingManager.addBindingManagerListener(bindingManagerListener);
 
-		serviceLocator.registerService(SelectionConversionService.SERVICE_KEY,
+		serviceLocator.registerService(ISelectionConversionService.class,
 				new SelectionConversionService());
 	}
 
@@ -2789,7 +2790,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Object)
 	 */
-	public final Object getService(final Object key) {
+	public final Object getService(final Class key) {
 		return serviceLocator.getService(key);
 	}
 
@@ -2798,18 +2799,24 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Object)
 	 */
-	public final boolean hasService(final Object key) {
+	public final boolean hasService(final Class key) {
 		return serviceLocator.hasService(key);
 	}
 
 	/**
-	 * Register the service referred to by key with value service.
+	 * Registers a service with this locator. If there is an existing service
+	 * matching the same <code>api</code> and it implements
+	 * {@link IDisposable}, it will be disposed.
 	 * 
-	 * @param key
+	 * @param api
+	 *            This is the interface that the service implements. Must not be
+	 *            <code>null</code>.
 	 * @param service
+	 *            The service to register. This must be some implementation of
+	 *            <code>api</code>. This value must not be <code>null</code>.
 	 */
-	public final void registerService(final Object key, final Object service) {
-		serviceLocator.registerService(key, service);
+	public final void registerService(final Class api, final Object service) {
+		serviceLocator.registerService(api, service);
 	}
 
 	/**
