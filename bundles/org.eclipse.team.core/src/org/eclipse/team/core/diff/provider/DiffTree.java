@@ -80,17 +80,20 @@ public class DiffTree implements IDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.synchronize.ISyncDeltaTree#accept(org.eclipse.core.runtime.IPath, org.eclipse.team.core.synchronize.ISyncDeltaVisitor)
 	 */
-	public void accept(IPath path, IDiffVisitor visitor, int depth)
-			throws CoreException {
+	public void accept(IPath path, IDiffVisitor visitor, int depth) {
 		IDiff delta = getDiff(path);
-		if (delta == null || visitor.visit(delta)) {
-			if (depth == IResource.DEPTH_ZERO)
-				return;
-			IPath[] children = getChildren(path);
-			for (int i = 0; i < children.length; i++) {
-				IPath child = children[i];
-				accept(child, visitor, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE);
+		try {
+			if (delta == null || visitor.visit(delta)) {
+				if (depth == IResource.DEPTH_ZERO)
+					return;
+				IPath[] children = getChildren(path);
+				for (int i = 0; i < children.length; i++) {
+					IPath child = children[i];
+					accept(child, visitor, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE);
+				}
 			}
+		} catch (CoreException e) {
+			// TODO Ignore for now and remove by M5
 		}
 	}
 
@@ -416,5 +419,28 @@ public class DiffTree implements IDiffTree {
 		} finally {
 			endInput(monitor);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffTree#hasDiffsMatching(org.eclipse.core.runtime.IPath, org.eclipse.team.core.diff.FastDiffFilter)
+	 */
+	public boolean hasMatchingDiffs(IPath path, final FastDiffFilter filter) {
+		final RuntimeException found = new RuntimeException();
+		try {
+			accept(path, new IDiffVisitor() {
+				public boolean visit(IDiff delta) {
+					if (filter.select(delta)) {
+						throw found;
+					}
+					return false;
+				}
+			
+			}, IResource.DEPTH_INFINITE);
+		} catch (RuntimeException e) {
+			if (e == found)
+				return true;
+			throw e;
+		}
+		return false;
 	}
 }

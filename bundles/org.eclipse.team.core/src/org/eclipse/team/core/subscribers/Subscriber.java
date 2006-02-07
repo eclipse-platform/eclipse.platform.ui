@@ -492,7 +492,7 @@ abstract public class Subscriber {
 		final int[] direction = new int[] { 0 };
 		final int[] kind = new int[] { 0 };
 		accept(traversals, new IDiffVisitor() {
-			public boolean visit(IDiff diff) throws CoreException {
+			public boolean visit(IDiff diff) {
 				if (diff instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) diff;
 					direction[0] |= twd.getDirection();

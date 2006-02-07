@@ -20,7 +20,6 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.provider.DiffTree;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
-import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * Implementation of {@link IResourceDiffTree}.
@@ -96,21 +95,17 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 
 	public IDiff[] getDiffs(final ResourceTraversal[] traversals) {
 		final Set result = new HashSet();
-		try {
-			accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiff delta) throws CoreException {
-					for (int i = 0; i < traversals.length; i++) {
-						ResourceTraversal traversal = traversals[i];
-						if (traversal.contains(getResource(delta))) {
-							result.add(delta);
-						}
+		accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+			public boolean visit(IDiff delta) {
+				for (int i = 0; i < traversals.length; i++) {
+					ResourceTraversal traversal = traversals[i];
+					if (traversal.contains(getResource(delta))) {
+						result.add(delta);
 					}
-					return true;
 				}
-			}, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			TeamPlugin.log(e);
-		}
+				return true;
+			}
+		}, IResource.DEPTH_INFINITE);
 		return (IDiff[]) result.toArray(new IDiff[result.size()]);
 	}
 	

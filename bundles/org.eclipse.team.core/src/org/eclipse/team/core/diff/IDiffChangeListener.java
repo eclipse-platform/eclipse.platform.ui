@@ -35,6 +35,11 @@ public interface IDiffChangeListener {
 	 */
 	void diffChanged(IDiffChangeEvent event, IProgressMonitor monitor);
 	
+	/**
+	 * The given property has changed for the given paths.
+	 * @param property the property
+	 * @param paths the paths
+	 */
 	void propertyChanged(int property, IPath[] paths);
 
 }

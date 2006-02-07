@@ -137,7 +137,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		ResourceTraversal[] traversals = new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, depth, IResource.NONE) };
 		try {
 			getSubscriber().accept(traversals, new IDiffVisitor() {
-				public boolean visit(IDiff node) throws CoreException {
+				public boolean visit(IDiff node) {
 					// Queue up any found diffs for inclusion into the output tree
 					queueDispatchEvent(
 							new SubscriberDiffChangedEvent(tree.getResource(node), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, node));

@@ -404,7 +404,7 @@ public class ResourceMapperTests extends EclipseTest {
     private IResourceDiffTree getAllDiffs(IProject[] projects) throws CoreException {
         final ResourceDiffTree tree = new ResourceDiffTree();
         CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().accept(projects, IResource.DEPTH_INFINITE, new IDiffVisitor() {
-			public boolean visit(IDiff delta) throws CoreException {
+			public boolean visit(IDiff delta) {
 				tree.add(delta);
 				return true;
 			}

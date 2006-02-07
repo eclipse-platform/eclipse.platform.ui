@@ -334,23 +334,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * @return whether the given diff tree contains any deltas that match the given filter
 	 */
 	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffFilter filter) {
-		final CoreException found = new CoreException(Status.OK_STATUS);
-		try {
-			tree.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiff delta) throws CoreException {
-					if (filter.select(delta)) {
-						throw found;
-					}
-					return false;
-				}
-			
-			}, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			if (e == found)
-				return true;
-			TeamUIPlugin.log(e);
-		}
-		return false;
+		return tree.hasMatchingDiffs(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), filter);
 	}
 	
 	private boolean hasIncomingChanges(IDiffTree tree) {

@@ -51,7 +51,7 @@ public class CreatePatchAction extends CVSModelProviderAction {
 				ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
 				final IResourceDiffTree diffTree = getSynchronizationContext().getDiffTree();
 				diffTree.accept(new IDiffVisitor() {
-					public boolean visit(IDiff delta) throws CoreException {
+					public boolean visit(IDiff delta) {
 						IResource resource = diffTree.getResource(delta);
 						if (resource.getType() == IResource.FILE && delta instanceof IThreeWayDiff) {
 							IThreeWayDiff twd = (IThreeWayDiff) delta;

@@ -69,11 +69,9 @@ public interface IDiffTree {
 	 * @param path the path to start the visit in the tree
 	 * @param visitor the visitor
 	 * @param depth the depth to visit
-	 * @exception CoreException if the visitor failed with this exception.
 	 * @see IDiffVisitor#visit(IDiff)
 	 */
-	public void accept(IPath path, IDiffVisitor visitor, int depth)
-			throws CoreException;
+	public void accept(IPath path, IDiffVisitor visitor, int depth) throws CoreException;
 
 	/**
 	 * Returns the delta identified by the given path,
@@ -153,5 +151,15 @@ public interface IDiffTree {
 	 * is not required
 	 */
 	public void clearBusy(IProgressMonitor monitor);
+	
+	/**
+	 * Return whether the this diff tree contains any diffs that match the given filter
+	 * at of below the given path.
+	 * @param path the path
+	 * @param filter the diff node filter
+	 * @return whether the given diff tree contains any deltas that match the given filter
+	 * @throws CoreException 
+	 */
+	public boolean hasMatchingDiffs(IPath path, final FastDiffFilter filter);
 
 }
