@@ -180,14 +180,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		final IContextService contextService = new SlaveContextService(
 				parentContextService, defaultExpression);
 		serviceLocator.registerService(IContextService.class, contextService);
-		
 
 		final ICommandService parentCommandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
 		final ICommandService commandService = new SlaveCommandService(
 				parentCommandService);
 		serviceLocator.registerService(ICommandService.class, commandService);
-		
 	}
 
 	/**
