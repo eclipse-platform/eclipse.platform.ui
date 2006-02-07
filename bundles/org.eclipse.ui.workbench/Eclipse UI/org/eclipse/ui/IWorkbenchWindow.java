@@ -17,6 +17,9 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -24,10 +27,24 @@ import org.eclipse.ui.services.IServiceLocator;
  * workbench window has a menubar, a toolbar, a status bar, and a main area for
  * displaying a single page consisting of a collection of views and editors.
  * <p>
- * Each workbench window has a collection of 0 or more pages; the active page
- * is the one that is being presented to the end user; at most one page is
- * active in a window at a time.
+ * Each workbench window has a collection of 0 or more pages; the active page is
+ * the one that is being presented to the end user; at most one page is active
+ * in a window at a time.
  * </p>
+ * <p>
+ * The workbench window supports a few {@link IServiceLocator services} by
+ * default. If these services are used to allocate resources, it is important to
+ * remember to clean up those resources after you are done with them. Otherwise,
+ * the resources will exist until the workbench window is closed. The supported
+ * services are:
+ * </p>
+ * <ul>
+ * <li>{@link ICommandService}</li>
+ * <li>{@link IContextService}</li>
+ * <li>{@link IHandlerService}</li>
+ * <li>{@link IBindingService}. Resources allocated through this service will
+ * not be cleaned up until the workbench shuts down.</li>
+ * </ul>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>

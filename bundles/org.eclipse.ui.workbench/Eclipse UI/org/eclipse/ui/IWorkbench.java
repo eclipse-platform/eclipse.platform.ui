@@ -17,8 +17,11 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
@@ -54,6 +57,19 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * there is only one workbench instance. Due to its singular nature, it is
  * commonly referred to as <it>the</it> workbench.
  * </p>
+ * <p>
+ * The workbench supports a few {@link IServiceLocator services} by default. If
+ * these services are used to allocate resources, it is important to remember to
+ * clean up those resources after you are done with them. Otherwise, the
+ * resources will exist until the workbench shuts down. The supported services
+ * are:
+ * </p>
+ * <ul>
+ * <li>{@link IBindingService}</li>
+ * <li>{@link ICommandService}</li>
+ * <li>{@link IContextService}</li>
+ * <li>{@link IHandlerService}</li>
+ * </ul>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -435,9 +451,9 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return an interface to manage commands at the workbench level.
 	 *         Guaranteed not to be <code>null</code>.
 	 * @since 3.0
-	 * @deprecated Please use <code>getAdapter(ICommandService.class)</code>
-	 *             instead.
-	 * @see org.eclipse.ui.commands.ICommandService
+	 * @deprecated Please use {@link IServiceLocator#getService(Class)} instead.
+	 * @see ICommandService
+	 * @see IHandlerService
 	 */
 	IWorkbenchCommandSupport getCommandSupport();
 
@@ -447,9 +463,8 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return an interface to manage contexts at the workbench level.
 	 *         Guaranteed not to be <code>null</code>.
 	 * @since 3.0
-	 * @deprecated Please use <code>getAdapter(IContextService.class)</code>
-	 *             instead.
-	 * @see org.eclipse.ui.contexts.IContextService
+	 * @deprecated Please use {@link IServiceLocator#getService(Class)} instead.
+	 * @see IContextService
 	 */
 	IWorkbenchContextSupport getContextSupport();
 

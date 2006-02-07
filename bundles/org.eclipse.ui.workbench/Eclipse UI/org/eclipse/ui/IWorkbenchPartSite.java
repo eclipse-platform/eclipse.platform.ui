@@ -12,6 +12,9 @@ package org.eclipse.ui;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * The primary interface between a workbench part and the workbench.
@@ -106,17 +109,18 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
             ISelectionProvider selectionProvider);
 
     /**
-     * Returns the key binding service in use.
-     * <p>
-     * The part will access this service to register
-     * all of its actions, to set the active scope.
-     * </p>
-     * 
-     * @return the key binding service in use
-     * @since 2.1
-     * @deprecated Use IServiceLocator#getService(*) to retrieve
-     * IContextService and IHandlerService instead.
-     */
+	 * Returns the key binding service in use.
+	 * <p>
+	 * The part will access this service to register all of its actions, to set
+	 * the active scope.
+	 * </p>
+	 * 
+	 * @return the key binding service in use
+	 * @since 2.1
+	 * @deprecated Use {@link IServiceLocator#getService(Class)} instead.
+	 * @see IContextService
+	 * @see IHandlerService
+	 */
     public IKeyBindingService getKeyBindingService();
     
     /**

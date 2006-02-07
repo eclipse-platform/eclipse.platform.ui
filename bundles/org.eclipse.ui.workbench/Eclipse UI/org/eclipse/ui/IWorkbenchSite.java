@@ -14,11 +14,28 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * The common interface between the workbench and its parts, including pages
  * within parts.
+ * <p>
+ * The workbench site supports a few {@link IServiceLocator services} by
+ * default. If these services are used to allocate resources, it is important to
+ * remember to clean up those resources after you are done with them. Otherwise,
+ * the resources will exist until the workbench site is disposed. The supported
+ * services are:
+ * </p>
+ * <ul>
+ * <li>{@link ICommandService}</li>
+ * <li>{@link IContextService}</li>
+ * <li>{@link IHandlerService}</li>
+ * <li>{@link IBindingService}. Resources allocated through this service will
+ * not be cleaned up until the workbench shuts down.</li>
+ * </ul>
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
