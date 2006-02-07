@@ -326,19 +326,9 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	protected boolean hasChangesOfInterest() {
 		return !getContext().getDiffTree().isEmpty() && hasIncomingChanges(getContext().getDiffTree());
 	}
-
-	/**
-	 * Return whether the given diff tree contains any deltas that match the given filter.
-	 * @param tree the diff tree
-	 * @param filter the diff node filter
-	 * @return whether the given diff tree contains any deltas that match the given filter
-	 */
-	protected boolean hasChangesMatching(IDiffTree tree, final FastDiffFilter filter) {
-		return tree.hasMatchingDiffs(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), filter);
-	}
 	
 	private boolean hasIncomingChanges(IDiffTree tree) {
-		return hasChangesMatching(tree, new FastDiffFilter() {
+		return tree.hasMatchingDiffs(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new FastDiffFilter() {
 			public boolean select(IDiff node) {
 				if (node instanceof IThreeWayDiff) {
 					IThreeWayDiff twd = (IThreeWayDiff) node;
