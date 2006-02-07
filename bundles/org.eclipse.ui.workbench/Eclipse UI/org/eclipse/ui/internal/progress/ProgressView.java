@@ -51,7 +51,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new DetailedProgressViewer(parent, SWT.MULTI);
-		viewer.setUseHashlookup(false);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 
 		viewer.getControl().setLayoutData(

@@ -293,7 +293,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	void showJobDetails(Composite parent) {
 		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER);
-		viewer.setUseHashlookup(true);
 		viewer.setSorter(new ViewerSorter() {
 			/*
 			 * (non-Javadoc)
