@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,8 +19,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SelectionEnabler;
-import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.SelectionConversionService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
@@ -205,32 +202,10 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     private IStructuredSelection convertToResources(
             IStructuredSelection originalSelection) {
-        //	@issue resource-specific code should be pushed into IDE
-        Class resourceClass = LegacyResourceSupport.getResourceClass();
-        if (resourceClass == null) {
-            return originalSelection;
-        }
-
-        List result = new ArrayList();
-        Iterator elements = originalSelection.iterator();
-
-        while (elements.hasNext()) {
-            Object currentElement = elements.next();
-            if (resourceClass.isInstance(currentElement)) { // already a resource
-                result.add(currentElement);
-            } else if (currentElement instanceof IAdaptable){
-                Object adapter = ((IAdaptable) currentElement)
-                        .getAdapter(resourceClass);
-                if (resourceClass.isInstance(adapter)) 
-                	result.add(adapter); // add the converted resource
-                
-            }
-        }
-
-        // all that can be converted are done, answer new selection
-        if (result.isEmpty())
-        	return StructuredSelection.EMPTY;
-        return new StructuredSelection(result.toArray());
+    	Object selectionService = PlatformUI.getWorkbench().getService(SelectionConversionService.SERVICE_KEY);
+    	if(selectionService == null)
+    		return StructuredSelection.EMPTY;
+    	return ((SelectionConversionService) selectionService).convertToResources(originalSelection);
     }
 
     /* (non-Javadoc)

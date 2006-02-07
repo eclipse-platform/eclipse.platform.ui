@@ -21,7 +21,7 @@ Export-Package: org.eclipse.ui,
  org.eclipse.ui.fieldassist,
  org.eclipse.ui.handlers,
  org.eclipse.ui.help,
- org.eclipse.ui.internal;x-friends:="org.eclipse.ui,org.eclipse.ui.intro,org.eclipse.ui.presentations.r21",
+ org.eclipse.ui.internal;x-friends:="org.eclipse.ui,org.eclipse.ui.intro,org.eclipse.ui.ide,org.eclipse.ui.presentations.r21",
  org.eclipse.ui.internal.about;x-internal:=true,
  org.eclipse.ui.internal.actions;x-internal:=true,
  org.eclipse.ui.internal.activities;x-internal:=true,
@@ -74,5 +74,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.help,
  org.eclipse.jface,
  org.eclipse.swt,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.core.resources
 Eclipse-LazyStart: true

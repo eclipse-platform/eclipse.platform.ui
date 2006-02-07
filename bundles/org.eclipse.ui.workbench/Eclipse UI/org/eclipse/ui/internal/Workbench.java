@@ -172,16 +172,19 @@ import org.osgi.framework.SynchronousBundleListener;
  * </p>
  */
 public final class Workbench extends EventManager implements IWorkbench {
-	
-	private final class StartupProgressBundleListener implements SynchronousBundleListener {
+
+	private final class StartupProgressBundleListener implements
+			SynchronousBundleListener {
 
 		private final IProgressMonitor progressMonitor;
+
 		private final int maximumProgressCount;
 
 		// stack of names of bundles currently starting
 		private final List starting;
 
-		StartupProgressBundleListener(IProgressMonitor progressMonitor, int maximumProgressCount) {
+		StartupProgressBundleListener(IProgressMonitor progressMonitor,
+				int maximumProgressCount) {
 			super();
 			this.progressMonitor = progressMonitor;
 			this.maximumProgressCount = maximumProgressCount;
@@ -194,17 +197,20 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			synchronized (this) {
 				if (eventType == BundleEvent.STARTING) {
-					starting.add(bundleName = event.getBundle().getSymbolicName());
+					starting.add(bundleName = event.getBundle()
+							.getSymbolicName());
 				} else if (eventType == BundleEvent.STARTED) {
 					progressCount++;
 					if (progressCount <= maximumProgressCount)
 						progressMonitor.worked(1);
-					int index = starting.lastIndexOf(event.getBundle().getSymbolicName());
+					int index = starting.lastIndexOf(event.getBundle()
+							.getSymbolicName());
 					if (index >= 0)
 						starting.remove(index);
 					if (index != starting.size())
 						return; // not currently displayed
-					bundleName = index == 0 ? null : (String) starting.get(index - 1);
+					bundleName = index == 0 ? null : (String) starting
+							.get(index - 1);
 				} else {
 					return; // uninteresting event
 				}
@@ -215,7 +221,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			if (bundleName == null)
 				taskName = WorkbenchMessages.Startup_Loading_Workbench;
 			else
-				taskName = NLS.bind(WorkbenchMessages.Startup_Loading, bundleName);
+				taskName = NLS.bind(WorkbenchMessages.Startup_Loading,
+						bundleName);
 
 			progressMonitor.subTask(taskName);
 		}
@@ -303,16 +310,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * initialized during workbench during the <code>init</code> method.
 	 */
 	private final ServiceLocator serviceLocator = new ServiceLocator();
-	
+
 	/**
-	 * A count of how many plug-ins were loaded while restoring the
-	 * workbench state. Initially -1 for unknown number.
+	 * A count of how many plug-ins were loaded while restoring the workbench
+	 * state. Initially -1 for unknown number.
 	 */
 	private int progressCount = -1;
-	
+
 	/**
-	 * A field to hold the workbench windows that have been restored.  In the
-	 * event that not all windows have been restored, this field allows the 
+	 * A field to hold the workbench windows that have been restored. In the
+	 * event that not all windows have been restored, this field allows the
 	 * openWindowsAfterRestore method to open some windows.
 	 */
 	private WorkbenchWindow[] createdWindows;
@@ -438,7 +445,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
 
 		initializeImages();
-		
+
 		return newDisplay;
 	}
 
@@ -570,8 +577,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return false;
 		}
 
-		boolean closeEditors = PrefUtil.getAPIPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
+		boolean closeEditors = PrefUtil.getAPIPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
 			Platform.run(new SafeRunnable() {
 				public void run() {
@@ -654,34 +661,34 @@ public final class Workbench extends EventManager implements IWorkbench {
 					IWorkbenchPage pages[] = windows[i].getPages();
 					for (int j = 0; j < pages.length; j++) {
 						WorkbenchPage page = (WorkbenchPage) pages[j];
-						
-                        ISaveablePart[] parts = page.getDirtyParts();
-                        
-                        for (int k = 0; k < parts.length; k++) {
-                            ISaveablePart part = parts[k];
-                            
-                            if (part.isSaveOnCloseNeeded()) {
-                                if (part instanceof IEditorPart) {
-                                    IEditorPart editor = (IEditorPart)part;
-                                    if (!dirtyEditorsInput.contains(editor
-                                            .getEditorInput())) {
-                                        dirtyParts.add(editor);
-                                        dirtyEditorsInput.add(editor
-                                                .getEditorInput());
-                                    }
-                                } else {
-                                    dirtyParts.add(part);
-                                }
-                            }
-                        }
-   					}
+
+						ISaveablePart[] parts = page.getDirtyParts();
+
+						for (int k = 0; k < parts.length; k++) {
+							ISaveablePart part = parts[k];
+
+							if (part.isSaveOnCloseNeeded()) {
+								if (part instanceof IEditorPart) {
+									IEditorPart editor = (IEditorPart) part;
+									if (!dirtyEditorsInput.contains(editor
+											.getEditorInput())) {
+										dirtyParts.add(editor);
+										dirtyEditorsInput.add(editor
+												.getEditorInput());
+									}
+								} else {
+									dirtyParts.add(part);
+								}
+							}
+						}
+					}
 				}
 				if (dirtyParts.size() > 0) {
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
 					if (w == null)
 						w = windows[0];
-					result[0] = EditorManager.saveAll(dirtyParts,
-							finalConfirm, false, w);
+					result[0] = EditorManager.saveAll(dirtyParts, finalConfirm,
+							false, w);
 				}
 			}
 		});
@@ -945,9 +952,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			ModalContext.setDebugMode(true);
 		}
 
-		//Set up the JFace preference store
+		// Set up the JFace preference store
 		JFaceUtil.initializeJFacePreferences();
-				
+
 		// create workbench window manager
 		windowManager = new WindowManager();
 
@@ -976,8 +983,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		advisor.internalBasicInitialize(getWorkbenchConfigurer());
 
 		// configure use of color icons in toolbars
-		boolean useColorIcons = PrefUtil.getInternalPreferenceStore().getBoolean(
-				IPreferenceConstants.COLOR_ICONS);
+		boolean useColorIcons = PrefUtil.getInternalPreferenceStore()
+				.getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
 
 		// initialize workbench single-click vs double-click behavior
@@ -1028,8 +1035,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		ColorDefinition[] colorDefinitions = WorkbenchPlugin.getDefault()
 				.getThemeRegistry().getColors();
 		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
-				IThemeManager.DEFAULT_THEME), colorDefinitions,
-				PrefUtil.getInternalPreferenceStore());
+				IThemeManager.DEFAULT_THEME), colorDefinitions, PrefUtil
+				.getInternalPreferenceStore());
 	}
 
 	private void initializeSingleClickOption() {
@@ -1059,8 +1066,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		FontDefinition[] fontDefinitions = WorkbenchPlugin.getDefault()
 				.getThemeRegistry().getFonts();
 		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
-				IThemeManager.DEFAULT_THEME), fontDefinitions,
-				PrefUtil.getInternalPreferenceStore());
+				IThemeManager.DEFAULT_THEME), fontDefinitions, PrefUtil
+				.getInternalPreferenceStore());
 	}
 
 	/*
@@ -1111,7 +1118,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public boolean isClosing() {
 		return isClosing;
 	}
-	
+
 	/**
 	 * Initializes all of the default command-based services for the workbench.
 	 * This also parses the registry and hooks up all the required listeners.
@@ -1127,33 +1134,33 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final CommandService commandService = new CommandService(commandManager);
 		commandService.readRegistry();
 		serviceLocator.registerService(ICommandService.class, commandService);
-		
+
 		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
 		contextManager = new ContextManager();
 		final IContextService contextService = new ContextService(
 				contextManager);
 		contextService.readRegistry();
 		serviceLocator.registerService(IContextService.class, contextService);
-		
+
 		final IHandlerService handlerService = new HandlerService(
 				commandService);
 		handlerService.readRegistry();
 		serviceLocator.registerService(IHandlerService.class, handlerService);
-		
+
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager, commandManager);
 		final IBindingService bindingService = new BindingService(
 				bindingManager, commandService, this);
 		bindingService.readRegistryAndPreferences(commandService);
 		serviceLocator.registerService(IBindingService.class, bindingService);
-		
+
 		final CommandImageManager commandImageManager = new CommandImageManager();
 		final CommandImageService commandImageService = new CommandImageService(
 				commandImageManager, commandService);
 		commandImageService.readRegistry();
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
-		
+
 		final SMenuManager menuManager = new SMenuManager();
 		final IMenuService menuService = new WorkbenchMenuService(menuManager,
 				commandService);
@@ -1213,21 +1220,25 @@ public final class Workbench extends EventManager implements IWorkbench {
 				menuService);
 		serviceLocator.registerService(LegacyActionPersistence.class,
 				deprecatedSupport);
-		deprecatedSupport.read();		
+		deprecatedSupport.read();
 		workbenchContextSupport = new WorkbenchContextSupport(this,
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,
 				commandManager, contextManager, handlerService);
 		initializeCommandResolver();
 
-		addWindowListener(windowListener); 
+		addWindowListener(windowListener);
 		bindingManager.addBindingManagerListener(bindingManagerListener);
+
+		serviceLocator.registerService(SelectionConversionService.SERVICE_KEY,
+				new SelectionConversionService());
 	}
 
 	/**
 	 * Returns true if the Workbench is in the process of starting.
-	 * @return <code>true</code> if the Workbench is starting, but not yet running
-	 * the event loop.
+	 * 
+	 * @return <code>true</code> if the Workbench is starting, but not yet
+	 *         running the event loop.
 	 */
 	public boolean isStarting() {
 		return isStarting;
@@ -1286,14 +1297,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * Opens the initial workbench window.
 	 */
 	/* package */void openFirstTimeWindow() {
-		final boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
-		
-		if(!showProgress) {
+		final boolean showProgress = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(
+						IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
+
+		if (!showProgress) {
 			doOpenFirstTimeWindow();
 		} else {
 			// We don't know how many plug-ins will be loaded,
 			// assume we are loading a tenth of the installed plug-ins.
-			// (The Eclipse SDK loads 7 of 86 plug-ins at startup as of 2005-5-20)
+			// (The Eclipse SDK loads 7 of 86 plug-ins at startup as of
+			// 2005-5-20)
 			final int expectedProgressCount = Math.max(1, WorkbenchPlugin
 					.getDefault().getBundleCount() / 10);
 
@@ -1492,11 +1506,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 					WorkbenchMessages.Abnormal_Workbench_Conditi);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbench#restoreWorkbenchWindow(org.eclipse.ui.IMemento)
 	 */
-	IWorkbenchWindow restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
+	IWorkbenchWindow restoreWorkbenchWindow(IMemento memento)
+			throws WorkbenchException {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create();
 
@@ -1517,7 +1534,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		return newWindow;
 	}
-	
+
 	/*
 	 * Record the workbench UI in a document
 	 */
@@ -1548,29 +1565,38 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private IStatus restoreState(final IMemento memento) {
 
-		final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-				WorkbenchMessages.Workbench_problemsRestoring, null);
-		
-		final boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
-		
+		final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
+				IStatus.OK, WorkbenchMessages.Workbench_problemsRestoring, null);
+
+		final boolean showProgress = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(
+						IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
+
 		try {
 			/*
-			 * Restored windows will be set in the createdWindows field to be used by the openWindowsAfterRestore() method 
+			 * Restored windows will be set in the createdWindows field to be
+			 * used by the openWindowsAfterRestore() method
 			 */
-			if(!showProgress) {
+			if (!showProgress) {
 				doRestoreState(memento, result);
 			} else {
-				// Retrieve how many plug-ins were loaded while restoring the workbench
-				Integer lastProgressCount = memento.getInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT);
-				
+				// Retrieve how many plug-ins were loaded while restoring the
+				// workbench
+				Integer lastProgressCount = memento
+						.getInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT);
+
 				// If we don't know how many plug-ins were loaded last time,
 				// assume we are loading half of the installed plug-ins.
-				final int expectedProgressCount = Math.max(1, lastProgressCount==null ? WorkbenchPlugin.getDefault().getBundleCount() / 2 : lastProgressCount.intValue());
+				final int expectedProgressCount = Math.max(1,
+						lastProgressCount == null ? WorkbenchPlugin
+								.getDefault().getBundleCount() / 2
+								: lastProgressCount.intValue());
 
 				runStartupWithProgress(expectedProgressCount, new Runnable() {
 					public void run() {
 						doRestoreState(memento, result);
-					}});
+					}
+				});
 			}
 		} finally {
 			openWindowsAfterRestore();
@@ -1600,16 +1626,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	/**
-	 * Returns the ids of the early activated plug-ins that have been disabled by the user.
+	 * Returns the ids of the early activated plug-ins that have been disabled
+	 * by the user.
 	 * 
-	 * @return the ids of the early activated plug-ins that have been disabled by the user
+	 * @return the ids of the early activated plug-ins that have been disabled
+	 *         by the user
 	 */
 	public String[] getDisabledEarlyActivatedPlugins() {
 		String pref = PrefUtil.getInternalPreferenceStore().getString(
 				IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 		return Util.getArrayFromList(pref, ";"); //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * Starts all plugins that extend the <code> org.eclipse.ui.startup </code>
 	 * extension point, and that the user has not disabled via the preference
@@ -1629,9 +1657,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return;
 		}
 		Job job = new Job("Workbench early startup") { //$NON-NLS-1$
-			protected IStatus run(IProgressMonitor monitor) { 
-		        HashSet disabledPlugins = new HashSet(Arrays.asList(getDisabledEarlyActivatedPlugins()));
-				monitor.beginTask(WorkbenchMessages.Workbench_startingPlugins, extensions.length);
+			protected IStatus run(IProgressMonitor monitor) {
+				HashSet disabledPlugins = new HashSet(Arrays
+						.asList(getDisabledEarlyActivatedPlugins()));
+				monitor.beginTask(WorkbenchMessages.Workbench_startingPlugins,
+						extensions.length);
 				for (int i = 0; i < extensions.length; ++i) {
 					if (monitor.isCanceled() || !isRunning()) {
 						return Status.CANCEL_STATUS;
@@ -1649,7 +1679,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				monitor.done();
 				return Status.OK_STATUS;
 			}
-			
+
 			public boolean belongsTo(Object family) {
 				return EARLY_STARTUP_FAMILY.equals(family);
 			}
@@ -1686,26 +1716,32 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (avoidDeadlock) {
 			UILockListener uiLockListener = new UILockListener(display);
 			Platform.getJobManager().setLockListener(uiLockListener);
-			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
+			display
+					.setSynchronizer(new UISynchronizer(display, uiLockListener));
 		}
-		
-		// ModalContext should not spin the event loop (there is no UI yet to block)
+
+		// ModalContext should not spin the event loop (there is no UI yet to
+		// block)
 		ModalContext.setAllowReadAndDispatch(false);
-		
-		// if the -debug command line argument is used and the event loop is being
+
+		// if the -debug command line argument is used and the event loop is
+		// being
 		// run while starting the Workbench, log a warning.
-        if (WorkbenchPlugin.DEBUG) {
-			display.asyncExec(new Runnable(){
+		if (WorkbenchPlugin.DEBUG) {
+			display.asyncExec(new Runnable() {
 				public void run() {
-					if(isStarting()) {
-						WorkbenchPlugin.log(StatusUtil.newStatus(
-								IStatus.WARNING, 
-								"Event loop should not be run while the Workbench is starting.",  //$NON-NLS-1$
-								new RuntimeException()));
+					if (isStarting()) {
+						WorkbenchPlugin
+								.log(StatusUtil
+										.newStatus(
+												IStatus.WARNING,
+												"Event loop should not be run while the Workbench is starting.", //$NON-NLS-1$
+												new RuntimeException()));
 					}
-				}});
-        }
-		
+				}
+			});
+		}
+
 		Listener closeListener = new Listener() {
 			public void handleEvent(Event event) {
 				event.doit = close();
@@ -1738,8 +1774,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 				startPlugins();
 				addStartupRegistryListener();
 
-			//	WWinPluginAction.refreshActionList();
-				
+				// WWinPluginAction.refreshActionList();
+
 				display.asyncExec(new Runnable() {
 					public void run() {
 						UIStats.end(UIStats.START_WORKBENCH, this, "Workbench"); //$NON-NLS-1$
@@ -1808,10 +1844,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
-		
-        // Save how many plug-ins were loaded while restoring the workbench
-        if (progressCount != -1)
-            memento.putInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT, progressCount);
+
+		// Save how many plug-ins were loaded while restoring the workbench
+		if (progressCount != -1)
+			memento.putInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT,
+					progressCount);
 
 		// Save the advisor state.
 		IMemento advisorState = memento
@@ -2091,19 +2128,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 		advisor.postShutdown();
 
 		cancelEarlyStartup();
-		
+
 		// for dynamic UI
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
 				extensionEventHandler);
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
-		
+
 		// Bring down all of the services.
 		serviceLocator.dispose();
-		
+
 		workbenchActivitySupport.dispose();
 		WorkbenchHelpSystem.disposeIfNecessary();
-		
+
 		// shutdown the rest of the workbench
 		WorkbenchColors.shutdown();
 		activityHelper.shutdown();
@@ -2123,9 +2160,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private void cancelEarlyStartup() {
 		Platform.getJobManager().cancel(EARLY_STARTUP_FAMILY);
-		// We do not currently wait for any plug-in currently being started to complete
-		// (e.g. by doing a join on EARLY_STARTUP_FAMILY), since they may do a syncExec,
-		// which would hang.  See bug 94537 for rationale.
+		// We do not currently wait for any plug-in currently being started to
+		// complete
+		// (e.g. by doing a join on EARLY_STARTUP_FAMILY), since they may do a
+		// syncExec,
+		// which would hang. See bug 94537 for rationale.
 	}
 
 	/*
@@ -2323,14 +2362,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		}
 	};
-	
+
 	/**
 	 * The source provider that tracks the activation of action sets within the
 	 * workbench. This source provider is <code>null</code> until
 	 * {@link #initializeDefaultServices()} is called.
 	 */
 	private ActionSetSourceProvider actionSetSourceProvider;
-	
+
 	private WorkbenchWindow activeWorkbenchWindow = null;
 
 	private void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {
@@ -2447,7 +2486,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 */
 		public void registryChanged(IRegistryChangeEvent event) {
 			final IExtensionDelta[] deltas = event.getExtensionDeltas(
-					PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_STARTUP);
+					PlatformUI.PLUGIN_ID,
+					IWorkbenchRegistryConstants.PL_STARTUP);
 			if (deltas.length == 0)
 				return;
 			final String disabledPlugins = PrefUtil
@@ -2503,7 +2543,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (factoryID != null) {
 			return factoryID;
 		}
-		
+
 		factoryID = PrefUtil.getAPIPreferenceStore().getString(
 				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
 
@@ -2658,33 +2698,33 @@ public final class Workbench extends EventManager implements IWorkbench {
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
 			IMemento mruMemento = memento
-			.getChild(IWorkbenchConstants.TAG_MRU_LIST);
+					.getChild(IWorkbenchConstants.TAG_MRU_LIST);
 			if (mruMemento != null) {
 				status.add(getEditorHistory().restoreState(mruMemento));
 			}
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
 		}
-		
+
 		// Restore advisor state.
 		IMemento advisorState = memento
-		.getChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
+				.getChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
 		if (advisorState != null)
 			status.add(getAdvisor().restoreState(advisorState));
-		
+
 		// Get the child windows.
 		IMemento[] children = memento
-		.getChildren(IWorkbenchConstants.TAG_WINDOW);
-		
+				.getChildren(IWorkbenchConstants.TAG_WINDOW);
+
 		createdWindows = new WorkbenchWindow[children.length];
-		
+
 		// Read the workbench windows.
 		for (int i = 0; i < children.length; i++) {
 			childMem = children[i];
 			WorkbenchWindow newWindow = newWorkbenchWindow();
 			createdWindows[i] = newWindow;
 			newWindow.create();
-			
+
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective
 			// String initialPerspectiveId =
@@ -2697,7 +2737,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			// add the window so that any work done in newWindow.restoreState
 			// that relies on Workbench methods has windows to work with
 			windowManager.add(newWindow);
-			
+
 			// now that we've added it to the window manager we need to listen
 			// for any exception that might hose us before we get a chance to
 			// open it. If one occurs, remove the new window from the manager.
@@ -2714,7 +2754,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 				restored = true;
 			} finally {
 				if (!restored) {
-					// null the window in newWindowHolder so that it won't be opened later on
+					// null the window in newWindowHolder so that it won't be
+					// opened later on
 					createdWindows[i] = null;
 					newWindow.close();
 				}
@@ -2725,15 +2766,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private void openWindowsAfterRestore() {
 		if (createdWindows == null)
 			return;
-		// now open the windows (except the ones that were nulled because we closed them above)
-		for(int i=0; i<createdWindows.length; i++) {
-			if(createdWindows[i]!=null) {
+		// now open the windows (except the ones that were nulled because we
+		// closed them above)
+		for (int i = 0; i < createdWindows.length; i++) {
+			if (createdWindows[i] != null) {
 				boolean opened = false;
 				try {
 					createdWindows[i].open();
 					opened = true;
 				} finally {
-					if(!opened) {
+					if (!opened) {
 						createdWindows[i].close();
 					}
 				}
@@ -2742,21 +2784,41 @@ public final class Workbench extends EventManager implements IWorkbench {
 		createdWindows = null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Object)
+	 */
 	public final Object getService(final Object key) {
 		return serviceLocator.getService(key);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Object)
+	 */
 	public final boolean hasService(final Object key) {
 		return serviceLocator.hasService(key);
 	}
-	
+
+	/**
+	 * Register the service referred to by key with value service.
+	 * 
+	 * @param key
+	 * @param service
+	 */
+	public final void registerService(final Object key, final Object service) {
+		serviceLocator.registerService(key, service);
+	}
+
 	/**
 	 * The source provider that tracks which context menus (i.e., menus with
 	 * target identifiers) are now showing. This value is <code>null</code>
 	 * until {@link #initializeDefaultServices()} is called.
 	 */
 	private MenuSourceProvider menuSourceProvider;
-	
+
 	/**
 	 * Adds the ids of a menu that is now showing to the menu source provider.
 	 * This is used for legacy action-based handlers which need to become active
@@ -2769,7 +2831,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public final void addShowingMenus(final Set menuIds) {
 		menuSourceProvider.addShowingMenus(menuIds);
 	}
-	
+
 	/**
 	 * Removes the ids of a menu that is now hidden from the menu source
 	 * provider. This is used for legacy action-based handlers which need to
@@ -2782,12 +2844,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public final void removeShowingMenus(final Set menuIds) {
 		menuSourceProvider.removeShowingMenus(menuIds);
 	}
-	
+
 	/*
-	 * Initialize any common workbench field decorations.
-	 * The decorations are placed in the JFace FieldDecorationRegistry.
-	 * Image management is performed by WorkbenchImages and its registry, so
-	 * there are no life cycle issues here.
+	 * Initialize any common workbench field decorations. The decorations are
+	 * placed in the JFace FieldDecorationRegistry. Image management is
+	 * performed by WorkbenchImages and its registry, so there are no life cycle
+	 * issues here.
 	 * 
 	 * @since 3.2
 	 */
