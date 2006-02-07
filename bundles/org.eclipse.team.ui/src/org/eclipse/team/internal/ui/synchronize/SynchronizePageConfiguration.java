@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.CommonViewerAdvisor;
-import org.eclipse.team.internal.ui.synchronize.actions.DefaultSynchronizePageActions;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
@@ -121,7 +120,6 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 		setProperty(P_TOOLBAR_MENU, DEFAULT_TOOLBAR_MENU);
 		setProperty(P_VIEW_MENU, DEFAULT_VIEW_MENU);
 		setProperty(P_COMPARISON_TYPE, THREE_WAY);
-		addActionContribution(new DefaultSynchronizePageActions());
 	}
 	
 	/* (non-Javadoc)

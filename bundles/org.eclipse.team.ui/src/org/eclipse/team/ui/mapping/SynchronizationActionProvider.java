@@ -13,11 +13,14 @@ package org.eclipse.team.ui.mapping;
 import java.util.*;
 
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.mapping.CommonMenuManager;
+import org.eclipse.team.internal.ui.synchronize.actions.OpenWithActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.*;
 
 /**
@@ -66,6 +69,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 
 	private CommonActionProviderConfig config;
 	private Map handlers = new HashMap();
+	private OpenWithActionGroup openWithActions;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.CommonActionProviderConfig)
@@ -85,7 +89,28 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * @see MergeActionHandler
 	 */
 	protected void initialize() {
-		// By deault, do nothing
+		initializeOpenActions();
+	}
+
+	/**
+	 * Method called from {@link #initialize()} to initialize the Open/Open With
+	 * actions. This method will add an Open item and Open With menu for single
+	 * selections that adapt to IResource. Subclasses may override. They may
+	 * still call this method, in which case they only need to handle providing
+	 * open for non-files. Otherwise, if they do not call this method, they must
+	 * provide all non-compare related open items.
+	 * 
+	 */
+	protected void initializeOpenActions() {
+		ICommonViewerSite cvs = getCommonConfiguration().getViewSite();
+		ISynchronizePageConfiguration configuration = getSynchronizePageConfiguration();
+		if (cvs instanceof ICommonViewerWorkbenchSite && configuration != null) {
+			ICommonViewerWorkbenchSite cvws = (ICommonViewerWorkbenchSite) cvs;
+			final IWorkbenchPartSite wps = cvws.getSite();
+			if (wps instanceof IViewSite) {
+				openWithActions = new OpenWithActionGroup(configuration.getSite(), configuration.getParticipant(), false);
+			}
+		}
 	}
 
 	/**
@@ -149,6 +174,10 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 				manager.registerHandler(actionId, (IHandler)handlers.get(actionId));
 			}
 		}
+        final IContributionItem fileGroup = menu.find(ISynchronizePageConfiguration.FILE_GROUP);
+		if (openWithActions != null && fileGroup != null) {
+			openWithActions.fillContextMenu(menu, fileGroup.getId());
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -156,13 +185,25 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
-		// TODO: Register the handlers
+		if (openWithActions != null) openWithActions.fillActionBars(actionBars);
+	}
+	
+	public void updateActionBars() {
+		super.updateActionBars();
+		if (openWithActions != null) openWithActions.updateActionBars();
+	}
+	
+	public void setContext(ActionContext context) {
+		super.setContext(context);
+		if (openWithActions != null) openWithActions.setContext(context);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
 	public void dispose() {
+		super.dispose();
+		if (openWithActions != null) openWithActions.dispose();
 		for (Iterator iter = handlers.values().iterator(); iter.hasNext();) {
 			IHandler handler = (IHandler) iter.next();
 			if (handler instanceof MergeActionHandler) {
@@ -170,7 +211,6 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 				mah.dispose();
 			}
 		}
-		super.dispose();
 	}
 
 }

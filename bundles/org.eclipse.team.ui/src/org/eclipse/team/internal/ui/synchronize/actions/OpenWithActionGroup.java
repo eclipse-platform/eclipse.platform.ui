@@ -32,10 +32,12 @@ public class OpenWithActionGroup extends ActionGroup {
 	private OpenInCompareAction openInCompareAction;
 	private ISynchronizePageSite site;
     private final ISynchronizeParticipant participant;
+	private final boolean includeOpenInCompare;
 
-	public OpenWithActionGroup(ISynchronizePageSite site, ISynchronizeParticipant participant) {
+	public OpenWithActionGroup(ISynchronizePageSite site, ISynchronizeParticipant participant, boolean includeOpenInCompare) {
 		this.participant = participant;
 		this.site = site;
+		this.includeOpenInCompare = includeOpenInCompare;
 		makeActions();
 	}
 
@@ -43,7 +45,8 @@ public class OpenWithActionGroup extends ActionGroup {
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws != null) {
 			openFileAction = new OpenFileInSystemEditorAction(ws.getPage());
-			openInCompareAction = new OpenInCompareAction(site, participant);
+			if (includeOpenInCompare)
+				openInCompareAction = new OpenInCompareAction(site, participant);
 		}
 	}
 
@@ -67,7 +70,7 @@ public class OpenWithActionGroup extends ActionGroup {
             return;
         Object[] elements = selection.toArray();
         IResource resources[] = Utils.getResources(elements);       
-        if(resources.length == 0) {
+        if(resources.length == 0 && openInCompareAction != null) {
         	// We can still show the compare editor open if the element has a compare input
         	if (elements.length == 1) {
         		if (participant instanceof ModelSynchronizeParticipant) {
@@ -88,7 +91,7 @@ public class OpenWithActionGroup extends ActionGroup {
             }
         }       
         
-        if (resources.length == 1) {
+        if (resources.length == 1 && openInCompareAction != null) {
             // Only supported if exactly one file is selected.
             menu.appendToGroup(groupId, openInCompareAction);
         }
@@ -118,6 +121,7 @@ public class OpenWithActionGroup extends ActionGroup {
     }
 
 	public void openInCompareEditor() {
-		openInCompareAction.run();		
+		if (openInCompareAction != null)
+			openInCompareAction.run();		
 	}
 }

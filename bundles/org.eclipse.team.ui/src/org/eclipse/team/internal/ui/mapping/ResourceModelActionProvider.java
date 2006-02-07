@@ -10,15 +10,24 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.team.internal.ui.synchronize.actions.RefactorActionGroup;
 import org.eclipse.team.ui.mapping.ISynchronizationConstants;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.navigator.ICommonViewerSite;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 /**
  * This is the synchronization action handler for the resources model
  */
 public class ResourceModelActionProvider extends SynchronizationActionProvider {
 
+	private RefactorActionGroup refactorActions;
+	
 	public ResourceModelActionProvider() {
 	}
 
@@ -39,5 +48,58 @@ public class ResourceModelActionProvider extends SynchronizationActionProvider {
 		ResourceMarkAsMergedHandler markAsMergedHandler = new ResourceMarkAsMergedHandler(
 				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION));
 		registerHandler(MARK_AS_MERGE_ACTION_ID, markAsMergedHandler);
+		
+		ICommonViewerSite cvs = getCommonConfiguration().getViewSite();
+		ISynchronizePageConfiguration configuration = getSynchronizePageConfiguration();
+		if (cvs instanceof ICommonViewerWorkbenchSite && configuration != null) {
+			ICommonViewerWorkbenchSite cvws = (ICommonViewerWorkbenchSite) cvs;
+			final IWorkbenchPartSite wps = cvws.getSite();
+			if (wps instanceof IViewSite) {
+				refactorActions = new RefactorActionGroup(configuration.getSite());
+			}
+		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationActionProvider#fillActionBars(org.eclipse.ui.IActionBars)
+	 */
+	public void fillActionBars(IActionBars actionBars) {
+		super.fillActionBars(actionBars);
+		if (refactorActions != null) refactorActions.fillActionBars(actionBars);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationActionProvider#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public void fillContextMenu(IMenuManager menu) {
+		super.fillContextMenu(menu);
+		IContributionItem editGroup = menu.find(ISynchronizePageConfiguration.EDIT_GROUP);
+		if (refactorActions != null && editGroup != null) {
+			refactorActions.fillContextMenu(menu, editGroup.getId());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
+	 */
+	public void updateActionBars() {
+		super.updateActionBars();
+		 if (refactorActions != null) refactorActions.updateActionBars();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (refactorActions != null) refactorActions.dispose();
+	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
+     */
+    public void setContext(ActionContext context) {
+        super.setContext(context);
+        if (refactorActions != null) refactorActions.setContext(context);
+    }
 }

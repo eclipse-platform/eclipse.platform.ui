@@ -16,6 +16,7 @@ import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.core.subscribers.WorkingSetFilteredSyncInfoCollector;
+import org.eclipse.team.internal.ui.synchronize.actions.DefaultSynchronizePageActions;
 import org.eclipse.team.internal.ui.synchronize.actions.SubscriberActionContribution;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
@@ -54,6 +55,7 @@ public final class SubscriberParticipantPage extends AbstractSynchronizePage imp
 		configuration.setComparisonType(isThreeWay() 
 						? ISynchronizePageConfiguration.THREE_WAY 
 						: ISynchronizePageConfiguration.TWO_WAY);
+		configuration.addActionContribution(new DefaultSynchronizePageActions());
 		configuration.addActionContribution(new SubscriberActionContribution());
 		initializeCollector(configuration, subscriberCollector);
 	}

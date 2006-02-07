@@ -13,10 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
@@ -46,24 +46,22 @@ public class CreatePatchAction extends CVSModelProviderAction {
     	final Set resources = new HashSet();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object element = iter.next();
-			ResourceMapping mapping = Utils.getResourceMapping(element);
-			if (mapping != null) {
-				ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-				final IResourceDiffTree diffTree = getSynchronizationContext().getDiffTree();
-				diffTree.accept(new IDiffVisitor() {
-					public boolean visit(IDiff delta) {
-						IResource resource = diffTree.getResource(delta);
-						if (resource.getType() == IResource.FILE && delta instanceof IThreeWayDiff) {
-							IThreeWayDiff twd = (IThreeWayDiff) delta;
-							IDiff local = twd.getLocalChange();
-							if (local != null && local.getKind() != IDiff.NO_CHANGE) {
-								resources.add(resource);
-							}
-						}
-						return true;
+			// Only enable if all elements map directly to a resource
+			IResource resource = Utils.getResource(element);
+			if (resource == null)
+			return new IResource[0];
+			final IResourceDiffTree diffTree = getSynchronizationContext().getDiffTree();
+			IDiff[] diffs = diffTree.getDiffs(resource, IResource.DEPTH_INFINITE);
+			for (int i = 0; i < diffs.length; i++) {
+				IDiff diff = diffs[i];
+				IResource child = diffTree.getResource(diff);
+				if (child.getType() == IResource.FILE && diff instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) diff;
+					IDiff local = twd.getLocalChange();
+					if (local != null && local.getKind() != IDiff.NO_CHANGE) {
+						resources.add(child);
 					}
-				
-				}, traversals);
+				}
 			}
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);

@@ -52,7 +52,6 @@ import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IContributorResourceAdapter2;
-import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class Utils {
@@ -489,7 +488,7 @@ public class Utils {
 	 * @param elements
 	 * @return the list of resources contained in the given elements.
 	 */
-	private static IResource[] getResources(Object[] elements, List nonResources, boolean isContributed) {
+	private static IResource[] getResources(Object[] elements, List nonResources, boolean isContributed, boolean includeMappingResources) {
 		List resources = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
@@ -504,12 +503,14 @@ public class Utils {
                     isResource = true;
                 }
             } else if (element instanceof ResourceMapping) {
-                isResource = true;
-                getResources((ResourceMapping)element, resources);
+            	if (includeMappingResources) {
+	                isResource = true;
+	                getResources((ResourceMapping)element, resources);
+            	}
 			} else if (element != null) {
                 Object adapted;
                 if (isContributed) {
-                    adapted = LegacyResourceSupport.getAdaptedResource(element);
+                    adapted = getResource(element);
                 } else {
                     adapted = getAdapter(element, IResource.class);
                 }
@@ -521,11 +522,11 @@ public class Utils {
                     }
                 } else {
                     if (isContributed) {
-                        adapted = LegacyResourceSupport.getAdaptedContributorResourceMapping(element);
+                        adapted = getResourceMapping(element);
                     } else {
                         adapted = getAdapter(element, ResourceMapping.class);
                     }
-                    if (adapted instanceof ResourceMapping) {
+                    if (adapted instanceof ResourceMapping && includeMappingResources) {
                         isResource = true;
                         getResources((ResourceMapping) adapted, resources);
                     }
@@ -557,16 +558,16 @@ public class Utils {
 	
 	public static Object[] getNonResources(Object[] elements) {
 		List nonResources = new ArrayList();
-		getResources(elements, nonResources, false);
+		getResources(elements, nonResources, false, false);
 		return nonResources.toArray();
 	}
 	
 	public static IResource[] getResources(Object[] element) {
-		return getResources(element, null, false);
+		return getResources(element, null, false /* isContributed */, false /* includeMappingResources */);
 	}
     
     public static IResource[] getContributedResources(Object[] elements) {
-        return getResources(elements, null, true);
+        return getResources(elements, null, true /* isContributed */, true /* isIncudeMappings */);
     }
 	
 	public static Object getAdapter(Object element, Class adapterType) {

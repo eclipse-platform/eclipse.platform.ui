@@ -1,11 +1,15 @@
 package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.*;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.internal.ui.synchronize.actions.*;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
+import org.eclipse.ui.*;
 
 /**
  * Action group that contributes the merge actions to the model
@@ -56,8 +60,9 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 	}
 
 	private MergeIncomingChangesAction updateToolbarAction;
-
 	private ModelSelectionDropDownAction modelPicker;
+	private SyncViewerShowPreferencesAction showPreferences;
+	private OpenInCompareAction openInCompareAction;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -80,6 +85,25 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU,
 				ISynchronizePageConfiguration.NAVIGATE_GROUP,
 				modelPicker);
+		ISynchronizePageSite site = configuration.getSite();
+		IWorkbenchSite ws = site.getWorkbenchSite();
+		if (ws instanceof IViewSite) {
+			showPreferences = new SyncViewerShowPreferencesAction(configuration);
+			openInCompareAction = new OpenInCompareAction(site, participant);
+			configuration.setProperty(SynchronizePageConfiguration.P_OPEN_ACTION, new Action() {
+				public void run() {
+					openInCompareAction.run();
+				}
+			});
+		}
+	}
+	
+	public void fillActionBars(IActionBars actionBars) {
+		super.fillActionBars(actionBars);
+        if (actionBars != null && showPreferences != null) {
+        	IMenuManager menu = actionBars.getMenuManager();
+        	appendToGroup(menu, ISynchronizePageConfiguration.PREFERENCES_GROUP, showPreferences);
+        }
 	}
 	
 	/* (non-Javadoc)
@@ -91,6 +115,18 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 			CommonMenuManager cmm = (CommonMenuManager) menu;
 			addMergeActions(cmm);
 		}
+		Object[] elements = ((IStructuredSelection)getContext().getSelection()).toArray();
+    	if (elements.length == 1) {
+    		IContributionItem fileGroup = findGroup(menu, ISynchronizePageConfiguration.FILE_GROUP);
+    		if (fileGroup != null) {
+	    		ModelSynchronizeParticipant participant = ((ModelSynchronizeParticipant)getConfiguration().getParticipant());
+				ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+				// TODO: This is inefficient
+				if (msp.hasCompareInputFor(elements[0])) {
+					menu.appendToGroup(fileGroup.getId(), openInCompareAction);
+				}
+    		}
+    	}
 	}
 	
 	/*
