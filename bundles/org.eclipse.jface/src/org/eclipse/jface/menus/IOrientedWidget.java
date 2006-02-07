@@ -38,7 +38,9 @@ public interface IOrientedWidget extends IWidget {
 	 * The client is expected to take the appropriate action to format their widget based
 	 * on the given orientation. Note that in order to avoid having to re-create the widget conrol
 	 * if it's of a class (i.e. <code>ToolBar</code>) that supports orientation in its style bits
-	 * it is recommended that such controls be placed in a Composite.  
+	 * it is recommended that such controls be placed in a Composite. We pass the SWT 'side' to
+	 * cover any cases where a control may be rendered differently on the bottom versus the top
+	 * (even though they're both horizontal.  
 	 * <p>
 	 * The orientation can be one of:
 	 * <ul>
@@ -48,8 +50,8 @@ public interface IOrientedWidget extends IWidget {
 	 * <li><code>SWT.RIGHT</code></li>
 	 * </ul>
 	 * </p><p>
-	 * @param oldOrientation
-	 * @param newOrientation
+	 * @param oldOrientation The previous orientation
+	 * @param newOrientation The current orientation
 	 * </p>
 	 * @since 3.2
 	 */
