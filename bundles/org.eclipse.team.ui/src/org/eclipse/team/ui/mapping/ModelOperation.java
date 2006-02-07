@@ -443,7 +443,7 @@ public abstract class ModelOperation extends TeamOperation {
 	 * Return the scope manager for this operation.
 	 * @return the scope manager for this operation.
 	 */
-	public ISynchronizationScopeManager getScopeManager() {
+	protected ISynchronizationScopeManager getScopeManager() {
 		return manager;
 	}
 	

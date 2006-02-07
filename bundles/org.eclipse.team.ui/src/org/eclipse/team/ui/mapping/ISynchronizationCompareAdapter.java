@@ -53,7 +53,7 @@ public interface ISynchronizationCompareAdapter {
 	 * any compare inputs from the adapter. A <code>null</code> should be
 	 * returned if the model object is in-sync or otherwise cannot be compared.
 	 * <p>
-	 * Model paroviders can choose to return an instance of {@link IModelCompareInput}
+	 * Model providers can choose to return an instance of {@link IModelCompareInput}
 	 * if they wish to tailor the compare editor used to show the compare input
 	 * of provide an {@link ISaveableCompareModel} in order to have more contol
 	 * over the save lifecycle during a merge.

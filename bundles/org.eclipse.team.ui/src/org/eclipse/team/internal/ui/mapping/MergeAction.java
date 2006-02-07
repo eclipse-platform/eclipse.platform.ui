@@ -60,7 +60,7 @@ public class MergeAction extends Action {
 				ISaveableCompareModel targetBuffer = null;
 				if (handler instanceof MergeActionHandler) {
 					MergeActionHandler mah = (MergeActionHandler) handler;
-					targetBuffer = mah.getTargetBuffer();
+					targetBuffer = mah.getSaveableModel();
 				}
 				final ISaveableCompareModel target = targetBuffer;
 				try {

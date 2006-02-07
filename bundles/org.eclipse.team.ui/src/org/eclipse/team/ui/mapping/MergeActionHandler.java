@@ -159,11 +159,11 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	protected abstract SynchronizationOperation getOperation();
 	
 	/**
-	 * Return the buffer that is the target of this handler.
+	 * Return the saveable model that is the target of this handler.
 	 * By default, <code>null</code> is returned.
-	 * @return the buffer that is the target of this operation
+	 * @return the saveable model that is the target of this operation
 	 */
-	public ISaveableCompareModel getTargetBuffer() {
-		return getOperation().getTargetBuffer();
+	public ISaveableCompareModel getSaveableModel() {
+		return getOperation().getSaveableModel();
 	}
 }

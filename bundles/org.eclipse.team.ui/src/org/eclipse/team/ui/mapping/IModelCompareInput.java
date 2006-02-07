@@ -41,7 +41,7 @@ public interface IModelCompareInput extends ICompareInput {
 	 * compare editor input is changed or the compare editor is closed.
 	 * @return the saveable compare model for this compare input
 	 */
-	ISaveableCompareModel getCompareModel();
+	ISaveableCompareModel getSaveableModel();
 	
 	/**
 	 * Prepare the compare input associated with a model element for display using 

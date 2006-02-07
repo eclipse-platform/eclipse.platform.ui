@@ -552,7 +552,7 @@ public class ModelSynchronizeParticipant extends
 	 */
 	public boolean checkForBufferChange(Shell shell, IModelCompareInput input, boolean cancelAllowed, IProgressMonitor monitor) throws CoreException {
 		ISaveableCompareModel currentBuffer = getActiveModel();
-		ISaveableCompareModel targetBuffer = input.getCompareModel();
+		ISaveableCompareModel targetBuffer = input.getSaveableModel();
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {

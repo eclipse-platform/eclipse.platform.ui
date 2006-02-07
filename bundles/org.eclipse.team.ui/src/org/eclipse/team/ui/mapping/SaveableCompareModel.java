@@ -14,9 +14,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IPropertyListener;
 
 /**
- * A model buffer is used to buffer changes made when comparing
+ * A saveable model is used to buffer changes made when comparing
  * or merging a model. A buffer can be shared between multiple
- * typed elements within a comparison. The buffer is used by the comparison
+ * typed elements within a comparison. The saveable model is used by the comparison
  * container in order to determine when a save is required.
  * <p>
  * Clients may subclass this class.

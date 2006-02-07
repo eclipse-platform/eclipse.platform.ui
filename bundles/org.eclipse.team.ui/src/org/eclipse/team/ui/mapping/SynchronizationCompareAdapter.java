@@ -37,6 +37,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * are no-ops except for the {@link #asCompareInput(ISynchronizationContext, Object) }
  * which will convert file objects to an appropriate compare input.
  * <p>
+ * Clients may subclass this class.
+ * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
@@ -137,7 +139,7 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#getCompareModel()
 		 */
-		public ISaveableCompareModel getCompareModel() {
+		public ISaveableCompareModel getSaveableModel() {
 			return null;
 		}
 
@@ -167,7 +169,10 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 		
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Default implementaton that is capable of returning a compare input for objects
+	 * that adapt to {@link IFile}. Subclasses shoudl override if compare inputs are
+	 * availabel for other types of model elements.
 	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#asCompareInput(org.eclipse.team.ui.mapping.ISynchronizationContext, java.lang.Object)
 	 */
 	public ICompareInput asCompareInput(ISynchronizationContext context, Object o) {

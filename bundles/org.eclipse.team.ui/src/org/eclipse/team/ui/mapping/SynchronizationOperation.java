@@ -105,14 +105,14 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	}
 	
 	/**
-	 * Return the buffer that this operation will write its results
+	 * Return the saveable model that this operation will write its results
 	 * to or <code>null</code> if the operation does not buffer
 	 * its results. By default, <code>null</code> is returned but 
 	 * subclasses may override.
-	 * @return the buffer that this operation will write its results
+	 * @return the saveable model  that this operation will write its results
 	 * to or <code>null</code>
 	 */
-	public ISaveableCompareModel getTargetBuffer() {
+	public ISaveableCompareModel getSaveableModel() {
 		return null;
 	}
 	

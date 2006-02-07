@@ -48,7 +48,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	private ISaveableModel asSaveableModel(ICompareInput input) {
 		if (input instanceof IModelCompareInput) {
 			IModelCompareInput mci = (IModelCompareInput) input;
-			ISaveableCompareModel compareModel = mci.getCompareModel();
+			ISaveableCompareModel compareModel = mci.getSaveableModel();
 			if (compareModel != null)
 				return compareModel;
 		}
