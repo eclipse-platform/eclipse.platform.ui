@@ -102,7 +102,6 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	public static final String TEAM_NAVIGATOR_CONTENT = "org.eclipse.team.ui.navigatorViewer"; //$NON-NLS-1$
 	
 	private Set extensions = new HashSet();
-	private Map properties = new HashMap();
 	
 	private NavigatorActionService actionService;
 
@@ -192,14 +191,6 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE, context.getScope());
 		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION, getConfiguration());
 		anExtension.getStateModel().setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT, context);
-		for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
-			String element = (String) iter.next();
-			Object value = properties.get(element);
-			if (value instanceof Integer) {
-				Integer integer = (Integer) value;
-				anExtension.getStateModel().setIntProperty(element, integer.intValue());
-			}
-		}
 	}
 
 	private ModelSynchronizeParticipant getParticipant() {
