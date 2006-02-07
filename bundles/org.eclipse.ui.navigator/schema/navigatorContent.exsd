@@ -71,7 +71,7 @@ consulting with the Platform/UI team.
          <documentation>
             A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression and also to provide a parent whenever an element matches the &lt;b&gt;possibleChildren&lt;/b&gt; expression. 
 &lt;br&gt;&lt;br&gt;
-Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension. 
+Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
          </documentation>
       </annotation>
       <complexType>
@@ -134,7 +134,9 @@ Optionally, clients may also provide an action provider which can provide menu c
                <documentation>
                   Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt; or &lt;code&gt;org.eclipse.ui.navigator.ICommonContentProvider&lt;/code&gt;.
 &lt;br&gt;&lt;br&gt;
-The content provider will be consulted when addeding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt; clause to indicate what kinds of content should trigger a request to your content provider or label provider.
+The content provider will be consulted when addeding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt; or &lt;b&gt;triggerPoints&lt;/b&gt; clause to indicate what kinds of content should trigger a request to your content provider.
+&lt;br&gt;&lt;br&gt; 
+Elements contributed from the content provider are not guaranteed to appear in the tree in the same order. Clients should take advantage of the sorting extension (&lt;b&gt;commonSorter&lt;/b&gt;) to ensure proper ordering of their elements. 
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
@@ -288,7 +290,7 @@ For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot
 &lt;br&gt;&lt;br&gt;
 Specifying a dependency on another action provider does not guarantee that this action provider will be invoked whereever the required action provider is invoked. The downstream action provider must be bound to the particular viewer to be invoked.  
 &lt;br&gt;&lt;br&gt;
-If the required action provider is disabled or unbound to the current viewer, then this action provider will not be applied. If a cycle exists, the framework will try to continue, but there are no guarantees as to what menu items or action bar contributions will be available. 
+If the required action provider is disabled or unbound to the current viewer, then this action provider will not be applied. If a cycle exists, the framework will try to continue, but there are no guarantees as to what menu items or action bar contributions will be available.
                </documentation>
             </annotation>
          </attribute>
@@ -399,7 +401,7 @@ If the required action provider is disabled or unbound to the current viewer, th
 &lt;br&gt;&lt;br&gt;
 For instance, clients may decide to hide all resources that have a particular pattern in their name (like &quot;*.acme&quot;). When the filter is active (turned on by default or by the user), then all resources that end in &quot;acme&quot; would be hidden from the view of the user. 
 &lt;br&gt;&lt;br&gt;
-Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&quot; attribute, but not both. 
+Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&quot; attribute, but not both.
          </documentation>
       </annotation>
       <complexType>
@@ -480,7 +482,6 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
             When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked, but its suppressed extension will not. Clients that specify an &lt;b&gt;override&lt;/b&gt; element must also provide a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, which provides methods to intercept requests for children, parents, and direct updates to the viewer.
 &lt;br&gt;&lt;br&gt;
 When clients provide their content through the pipeline, the contribution memory does not track who contributed what elements. Clients who take advantage of this capability are required to maintain accurate triggerPoints and possibleChildren expressions as part of their extension.
-
          </documentation>
       </annotation>
       <complexType>
