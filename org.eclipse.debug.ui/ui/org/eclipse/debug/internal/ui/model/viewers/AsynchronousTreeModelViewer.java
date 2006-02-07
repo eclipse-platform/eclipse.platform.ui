@@ -897,5 +897,18 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
 	public IModelUpdatePolicy createUpdatePolicy() {
 		return new TreeUpdatePolicy();
 	}
+	
+    /**
+     * A node has been disposed from the model.
+     * 
+     * @param node
+     */
+    protected synchronized void nodeDisposed(ModelNode node) {
+    	super.nodeDisposed(node);
+    	Widget widget = node.getWidget();
+    	if (widget instanceof Tree) {
+    		clear(widget);
+    	}
+    }	
 
 }
