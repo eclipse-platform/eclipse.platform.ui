@@ -171,7 +171,11 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 
 	private void clearCrossReferenceCache(IWorkbenchPart part, ISynchronizeParticipant participant) {
 		participant.removePropertyChangeListener(this);
-		((SynchronizeViewWorkbenchPart)part).getConfiguration().removePropertyChangeListener(this);
+		if (part == null)
+			return;	
+		ISynchronizePageConfiguration configuration = ((SynchronizeViewWorkbenchPart)part).getConfiguration();
+		if (configuration != null)
+			configuration.removePropertyChangeListener(this);
 		fPartToParticipant.remove(part);
 		fParticipantToPart.remove(participant);
 	}
