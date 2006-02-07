@@ -156,7 +156,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 				final IResourceDiffTree tree= context.getDiffTree();
 				tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
 
-					public final boolean visit(final IDiff diff) throws CoreException {
+					public final boolean visit(final IDiff diff) {
 						if (diff instanceof IThreeWayDiff) {
 							final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
 							final IResource resource= tree.getResource(diff);
