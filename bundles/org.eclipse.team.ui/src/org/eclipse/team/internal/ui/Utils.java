@@ -506,7 +506,7 @@ public class Utils {
             } else if (element instanceof ResourceMapping) {
                 isResource = true;
                 getResources((ResourceMapping)element, resources);
-			} else {
+			} else if (element != null) {
                 Object adapted;
                 if (isContributed) {
                     adapted = LegacyResourceSupport.getAdaptedResource(element);
