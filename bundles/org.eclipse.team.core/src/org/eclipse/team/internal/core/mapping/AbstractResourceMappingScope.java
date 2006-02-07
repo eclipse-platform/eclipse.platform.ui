@@ -13,8 +13,7 @@ package org.eclipse.team.internal.core.mapping;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.core.subscribers.AbstractSynchronizationScope;
 
@@ -50,6 +49,19 @@ public abstract class AbstractResourceMappingScope extends AbstractSynchronizati
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.ISynchronizationScope#getTraversals(java.lang.String)
+	 */
+	public ResourceTraversal[] getTraversals(String modelProviderId) {
+		ResourceMapping[] mappings = getMappings(modelProviderId);
+		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			traversal.addTraversals(getTraversals(mapping));
+		}
+		return traversal.asTraversals();
 	}
 
 	/* (non-Javadoc)

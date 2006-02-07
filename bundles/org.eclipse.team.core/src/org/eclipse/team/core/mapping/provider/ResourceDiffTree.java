@@ -85,11 +85,15 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#accept(org.eclipse.team.core.diff.IDiffVisitor, org.eclipse.core.resources.mapping.ResourceTraversal[])
 	 */
-	public void accept(IDiffVisitor visitor, ResourceTraversal[] traversals) throws CoreException {
+	public void accept(ResourceTraversal[] traversals, IDiffVisitor visitor) {
 		IDiff[] diffs = getDiffs(traversals);
 		for (int i = 0; i < diffs.length; i++) {
 			IDiff node = diffs[i];
-			visitor.visit(node);
+			try {
+				visitor.visit(node);
+			} catch (CoreException e) {
+				// Ignore: to be removed
+			}
 		}
 	}
 
@@ -168,5 +172,25 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 */
 	public void remove(IResource resource) {
 		remove(resource.getFullPath());
+	}
+
+	public boolean hasMatchingDiffs(ResourceTraversal[] traversals, final FastDiffFilter filter) {
+		final RuntimeException found = new RuntimeException();
+		try {
+			accept(traversals, new IDiffVisitor() {
+				public boolean visit(IDiff delta) {
+					if (filter.select(delta)) {
+						throw found;
+					}
+					return false;
+				}
+			
+			});
+		} catch (RuntimeException e) {
+			if (e == found)
+				return true;
+			throw e;
+		}
+		return false;
 	}	
 }

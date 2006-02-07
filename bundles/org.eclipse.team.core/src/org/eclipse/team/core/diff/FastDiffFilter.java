@@ -11,6 +11,7 @@
 package org.eclipse.team.core.diff;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.diff.provider.Diff;
 
 /**
  * A specialized <code>DiffNodeFilter</code> that does not require a progress monitor.
@@ -23,6 +24,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.2
  */
 public abstract class FastDiffFilter extends DiffFilter {
+	
+	public static final FastDiffFilter getStateFilter(final int[] states, final int mask) {
+		return new FastDiffFilter() {
+			public boolean select(IDiff node) {
+				int status = ((Diff)node).getStatus();
+				for (int i = 0; i < states.length; i++) {
+					int state = states[i];
+					if ((status & mask) == state) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.DiffNodeFilter#select(org.eclipse.team.core.diff.IDiffNode, org.eclipse.core.runtime.IProgressMonitor)

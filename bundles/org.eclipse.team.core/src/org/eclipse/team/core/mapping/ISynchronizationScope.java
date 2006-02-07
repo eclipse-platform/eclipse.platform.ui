@@ -159,6 +159,15 @@ public interface ISynchronizationScope extends IResourceMappingScope {
 	public ResourceMapping[] getMappings(String modelProviderId);
 
 	/**
+	 * Return the set of traversals that cover the mappings for
+	 * the given model provider.
+	 * @param modelProviderId the model provider id
+	 * @return the set of traversals that cover the mappings for
+	 * the given model provider
+	 */
+	public ResourceTraversal[] getTraversals(String modelProviderId);
+	
+	/**
 	 * Return the resource mapping in the scope associated with the given model
 	 * object or <code>null</code> if there isn't one. This method has no knowledge
 	 * of hierarchical models so it only matches directly against the mappings

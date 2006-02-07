@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
-import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -80,28 +79,23 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		return numChanges;
 	}
 	
-	protected long getChangesInMode(ISynchronizationCompareAdapter adapter, int candidateMode) {
-		long numChanges;
-		long numConflicts = adapter.countFor(context, IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK);
+	protected boolean hasChangesInMode(String id, ISynchronizationCompareAdapter adapter, int candidateMode) {
 		switch (candidateMode) {
 		case ISynchronizePageConfiguration.CONFLICTING_MODE:
-			numChanges = numConflicts;
-			break;
+			return hasChangesFor(id, adapter, context, new int[] { IThreeWayDiff.CONFLICTING }, IThreeWayDiff.DIRECTION_MASK);
 		case ISynchronizePageConfiguration.OUTGOING_MODE:
-			numChanges = numConflicts + adapter.countFor(context, IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
-			break;
+			return hasChangesFor(id, adapter, context, new int[] { IThreeWayDiff.CONFLICTING, IThreeWayDiff.OUTGOING }, IThreeWayDiff.DIRECTION_MASK);
 		case ISynchronizePageConfiguration.INCOMING_MODE:
-			numChanges = numConflicts + adapter.countFor(context, IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK);
-			break;
+			return hasChangesFor(id, adapter, context, new int[] { IThreeWayDiff.CONFLICTING, IThreeWayDiff.INCOMING }, IThreeWayDiff.DIRECTION_MASK);
 		case ISynchronizePageConfiguration.BOTH_MODE:
-			numChanges = numConflicts + adapter.countFor(context, IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK) 
-				+ adapter.countFor(context, IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
-			break;
-		default:
-			numChanges = 0;
-			break;
+			return hasChangesFor(id, adapter, context, new int[] { IThreeWayDiff.CONFLICTING, IThreeWayDiff.INCOMING, IThreeWayDiff.OUTGOING }, IThreeWayDiff.DIRECTION_MASK);
 		}
-		return numChanges;
+		return false;
+	}
+
+	private boolean hasChangesFor(String id, ISynchronizationCompareAdapter adapter, ISynchronizationContext context, int[] states, int mask) {
+		ResourceTraversal[] traversals = context.getScope().getTraversals(id);
+		return context.getDiffTree().hasMatchingDiffs(traversals, FastDiffFilter.getStateFilter(states, mask));
 	}
 
 	protected long getVisibleChangesCount() {
@@ -113,12 +107,13 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
 				ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(desc.getModelProvider());
 				if (adapter != null) {
-					return getChangesInMode(adapter, getConfiguration().getMode());
+					return hasChangesInMode(desc.getId(), adapter, getConfiguration().getMode()) ? -1 : 0;
 				}
 			} catch (CoreException e) {
 				TeamUIPlugin.log(e);
 			}
-			// TODO: Fallback to querying the view
+			// Use the view state to indicate whether there are visible changes
+			return isViewerEmpty() ? 0 : -1;
 		}
 		return getChangesInMode(currentMode);
 	}
@@ -176,9 +171,9 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 				ModelProvider provider = providers[i];
 				ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
 				if (adapter != null) {
-					long count = getChangesInMode(adapter, getConfiguration().getMode());
-					if (count > 0 && !provider.getDescriptor().getId().equals(id)) {
-						return getPointerToModel(parent, provider, count, id);
+					boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
+					if (hasChanges && !provider.getDescriptor().getId().equals(id)) {
+						return getPointerToModel(parent, provider, id);
 					}
 				}
 			}
@@ -187,7 +182,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		return super.getEmptyChangesComposite(parent);
 	}
 
-	private Composite getPointerToModel(Composite parent, final ModelProvider provider, long count, String oldId) {
+	private Composite getPointerToModel(Composite parent, final ModelProvider provider, String oldId) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(getBackgroundColor());
 		GridLayout layout = new GridLayout();
@@ -200,16 +195,9 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		IModelProviderDescriptor oldDesc = ModelProvider.getModelProviderDescriptor(oldId);
 		String message;
 		String modeToString = Utils.modeToString(getConfiguration().getMode());
-		if(count > 1) {
-            message = NLS.bind("However {0} has {1} changes in {2} mode.", new String[] { 
+        message = NLS.bind("However {0} has changes in {1} mode.", new String[] {
             		provider.getDescriptor().getLabel(), 
-            		Long.toString(count), 
             		modeToString });
-		} else {
-            message = NLS.bind("However {0} has {1} change in {2} mode.", new String[] { 
-            		provider.getDescriptor().getLabel(), 
-            		Long.toString(count), 
-            		modeToString });		}
 		message = NLS.bind("There are no more {0} changes for {1}. {2}", new String[] { modeToString, oldDesc.getLabel(), message });
 		
 		Label warning = new Label(composite, SWT.NONE);

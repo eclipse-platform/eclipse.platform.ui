@@ -87,7 +87,7 @@ public abstract class AbstractSynchronizationScope implements ISynchronizationSc
 		Object[] allListeners = listeners.getListeners();
 		for (int i = 0; i < allListeners.length; i++) {
 			final Object listener = allListeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					((ISynchronizationScopeChangeListener)listener).scopeChanged(AbstractSynchronizationScope.this, newMappings, newTraversals);
 				}

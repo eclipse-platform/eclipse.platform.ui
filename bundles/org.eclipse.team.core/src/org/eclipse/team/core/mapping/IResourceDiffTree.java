@@ -55,13 +55,12 @@ public interface IResourceDiffTree extends IDiffTree {
 
 	/**
 	 * Visit all diffs in this tree that are covered by the given traversals.
-	 * 
-	 * @param visitor a diff visitor
 	 * @param traversals the set of traversals whose diffs are to be visited
+	 * @param visitor a diff visitor
+	 * 
 	 * @throws CoreException
 	 */
-	void accept(IDiffVisitor visitor, ResourceTraversal[] traversals)
-			throws CoreException;
+	void accept(ResourceTraversal[] traversals, IDiffVisitor visitor);
 
 	/**
 	 * Return all the diffs in the tree that are contained in the given
@@ -101,5 +100,15 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * diff tree
 	 */
 	IResource[] getAffectedResources();
+	
+	/**
+	 * Return whether the this diff tree contains any diffs that match the given filter
+	 * within the given traversals.
+	 * @param traversals the traversals
+	 * @param filter the diff node filter
+	 * @return whether the given diff tree contains any deltas that match the given filter
+	 * @throws CoreException 
+	 */
+	public boolean hasMatchingDiffs(ResourceTraversal[] traversals, final FastDiffFilter filter);
 
 }

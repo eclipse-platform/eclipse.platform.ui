@@ -17,11 +17,9 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -192,13 +190,6 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 	 */
 	public boolean hasCompareInput(ISynchronizationContext context, Object object) {
 		return asCompareInput(context, object) != null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#countFor(org.eclipse.team.core.mapping.ISynchronizationContext, int, int)
-	 */
-	public long countFor(ISynchronizationContext context, int state, int mask) {
-		return context.getDiffTree().countFor(state, mask);
 	}
 
 	/* (non-Javadoc)
