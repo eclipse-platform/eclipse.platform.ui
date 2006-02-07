@@ -167,14 +167,14 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 		page = participant.createPage(pageConfiguration);
 		site = new DialogSynchronizePageSite(getShell(), true);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(site);
-		ToolBarManager tbm = CompareViewerPane.getToolBarManager(getEditionPane());
+		ToolBarManager tbm = CompareViewerPane.getToolBarManager(getPagePane());
 		site.createActionBars(tbm);
 		try {
 			((ISynchronizePage)page).init(pageConfiguration.getSite());
 		} catch (PartInitException e1) {
 		}
 
-		page.createControl(getEditionPane());
+		page.createControl(getPagePane());
 		
 		if(page instanceof ISynchronizePage) {
 			((ISynchronizePage)page).getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
@@ -188,7 +188,7 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 		}
 		
 		page.setActionBars(site.getActionBars());
-		getEditionPane().setContent(page.getControl());
+		getPagePane().setContent(page.getControl());
 		tbm.update(true);
 		if(page instanceof ISynchronizePage) {
 			viewer = ((ISynchronizePage)page).getViewer();
@@ -200,24 +200,8 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	private void updateDescription() {
 		String description = (String)pageConfiguration.getProperty(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION);
 		if (description != null) {
-			getEditionPane().setText(description);
+			getPagePane().setText(description);
 		}
-	}
-	
-	/**
-	 * This method should not be called from clients.
-	 * TODO: using internal compare classes to support page navigation. This is required because
-	 * we are building our own compare editor input that includes a participant page instead of a
-	 * viewer.
-	 */
-	public void setNavigator(ISynchronizePageConfiguration configuration) {
-			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new PartNavigator(
-				new Object[] {
-					configuration.getProperty(SynchronizePageConfiguration.P_ADVISOR),
-					getStructuredComparePane(),
-					getContentPane()
-				}
-			));
 	}
 	
 	/**
@@ -259,15 +243,13 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 				final SyncInfoModelElement node = (SyncInfoModelElement) input;
 				IResource resource = node.getResource();
 				if (resource != null && resource.getType() == IResource.FILE) {
-					participant.prepareCompareInput(node, getCompareConfiguration(), monitor);
-					hookContentChangeListener(input);
+					participant.prepareCompareInput(node, configuration, monitor);
 				}
 			} else {
 				IModelCompareInput adapter = asModelCompareInput(input);
 				if (adapter != null) {
-					adapter.prepareInput(getCompareConfiguration(), Policy.subMonitorFor(monitor, 90));
+					adapter.prepareInput(configuration, Policy.subMonitorFor(monitor, 90));
 				}
-				hookContentChangeListener(input);
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
@@ -332,14 +314,8 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 		return participant;
 	}
 
-	/*
-	 * Return a compare input that represents the selection.
-	 * This input is used to feed the structure and content
-	 * viewers. By default, a compare input is returned if the selection is
-	 * of size 1 and the selected element implements <code>ICompareInput</code>
-	 * @param selection the selection
-	 * @return a compare input representing the selection
-	 * TODO move to compare adapter
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.PageSaveablePart#getCompareInput(org.eclipse.jface.viewers.ISelection)
 	 */
 	protected ICompareInput getCompareInput(ISelection selection) {
 		ICompareInput compareInput = super.getCompareInput(selection);

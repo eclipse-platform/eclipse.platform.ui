@@ -12,12 +12,13 @@ package org.eclipse.team.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -31,6 +32,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.PartNavigator;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -53,9 +57,14 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	// Configuration options
 	private boolean showContentPanes = true;
 	
-	public PageSaveablePart(Shell shell, CompareConfiguration cc){
+	/**
+	 * Create a saveable part.
+	 * @param shell the shell for the part
+	 * @param compareConfiguration the compare econfiguration
+	 */
+	protected PageSaveablePart(Shell shell, CompareConfiguration compareConfiguration){
 		this.shell = shell;
-		this.cc = cc;
+		this.cc = compareConfiguration;
 		
 		fDirtyStateListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -143,7 +152,11 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		}
 
 	}
-	// TODO need to figure out save lifecycle
+	
+	/**
+	 * Set the saveable part's dirty state to the given state.
+	 * @param dirty the dirty state
+	 */
 	protected void setDirty(boolean dirty) {
 		boolean confirmSave= true;
 		Object o= cc.getProperty(CompareEditor.CONFIRM_SAVE_PROPERTY);
@@ -165,14 +178,14 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 			fDirtyViewers.remove(source);
 	}	
 	
-	/*
-	 * Feeds input from the participant page into the content and structured viewers.
-	 * TODO can we hide this
+	/**
+	 * Feeds input from the page into the content and structured viewers.
+	 * @param input the input
 	 */
 	protected void setInput(Object input) {
-		CompareViewerPane pane = getContentPane();
+		CompareViewerPane pane = fContentPane;
 		if (pane != null && !pane.isDisposed())
-			getContentPane().setInput(input);
+			fContentPane.setInput(input);
 		if (fStructuredComparePane != null && !fStructuredComparePane.isDisposed())
 			fStructuredComparePane.setInput(input);
 	}
@@ -187,8 +200,12 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 			fContentPane.setInput(input);
 	}
 	
-	// TODO can we hide this usign a compare adpater?
-	/* package */protected void prepareCompareInput(final ICompareInput input) {
+	/**
+	 * Convenience method that calls {@link #prepareInput(ICompareInput, CompareConfiguration, IProgressMonitor)}
+	 * with a progress monitor and cancellation.
+	 * @param input the compare input to be prepared
+	 */
+	protected void prepareCompareInput(final ICompareInput input) {
 		// TODO Merge operations would need to do this check as well
 		// TODO Where should this check live
 		// TODO What about the left vs. right side changes (perhaps a buffer that wraps three buffers)
@@ -196,10 +213,11 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 			return;
 		IProgressService manager = PlatformUI.getWorkbench().getProgressService();
 		try {
-			// TODO: we need a better progress story here
+			// TODO: we need a better progress story here (i.e. support for cancellation
 			manager.busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			        prepareInput(input, getCompareConfiguration(), monitor);
+			        hookContentChangeListener(input);
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -209,10 +227,18 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		}
 	}
 	
+	/**
+	 * Prepare the compare input for display in a content viewer. This method is
+	 * called from {@link #prepareCompareInput(ICompareInput)} and may be called
+	 * from a non-UI thread. This method should not be called by others.
+	 * @param input the input
+	 * @param configuration the compare configuration
+	 * @param monitor a progress monitor
+	 * @throws InvocationTargetException
+	 */
 	protected abstract void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws InvocationTargetException;
 
-	//	 TODO can we hide this usign a compare adpater?
-	protected void hookContentChangeListener(ICompareInput node) {
+	private void hookContentChangeListener(ICompareInput node) {
 		// TODO: there is no unhook which may lead to a leak
 		ITypedElement left = node.getLeft();
 		if(left instanceof IContentChangeNotifier) {
@@ -232,17 +258,24 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		return shell;
 	}
 
-//	 TODO can we hide
-	protected CompareViewerPane getEditionPane() {
+	protected CompareViewerPane getPagePane() {
 		return fEditionPane;
 	}
-//	 TODO can we hide
-	protected CompareViewerSwitchingPane getStructuredComparePane() {
-		return fStructuredComparePane;
-	}
-//	 TODO can we hide
-	protected CompareViewerSwitchingPane getContentPane() {
-		return fContentPane;
+	
+	/**
+	 * This method should not be called from clients.
+	 * TODO: using internal compare classes to support page navigation. This is required because
+	 * we are building our own compare editor input that includes a participant page instead of a
+	 * viewer.
+	 */
+	public void setNavigator(ISynchronizePageConfiguration configuration) {
+			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new PartNavigator(
+				new Object[] {
+					configuration.getProperty(SynchronizePageConfiguration.P_ADVISOR),
+					fStructuredComparePane,
+					fContentPane
+				}
+			));
 	}
 	
 	/*
@@ -271,14 +304,14 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		return CompareUI.findContentViewer(oldViewer, input, parent, cc);
 	}
 	
-	/*
+	/**
 	 * Return a compare input that represents the selection.
 	 * This input is used to feed the structure and content
 	 * viewers. By default, a compare input is returned if the selection is
-	 * of size 1 and the selected element implements <code>ICompareInput</code>
+	 * of size 1 and the selected element implements <code>ICompareInput</code>.
+	 * subclasses may override
 	 * @param selection the selection
 	 * @return a compare input representing the selection
-	 * TODO can we hide
 	 */
 	protected ICompareInput getCompareInput(ISelection selection) {
 		if (selection != null && selection instanceof IStructuredSelection) {
@@ -312,13 +345,26 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		return control;
 	}
 
-	protected CompareConfiguration getCompareConfiguration() {
+	/**
+	 * Return the compare configuration.
+	 * @return the compare configuration
+	 */
+	private CompareConfiguration getCompareConfiguration() {
 		return cc;
 	}
 
-	// TODO can we hide this
-	protected ArrayList getDirtyViewers() {
-		return fDirtyViewers;
+	protected void flushViewers(IProgressMonitor monitor) {
+		Iterator iter = fDirtyViewers.iterator();
+		
+		for (int i=0; i<fDirtyViewers.size(); i++){
+			Object element = iter.next();
+			if (element instanceof ContentMergeViewer){
+				try {
+					((ContentMergeViewer)element).save(monitor);
+				} catch (CoreException e) {
+				}
+			}
+		}
 	}
 
 }

@@ -12,10 +12,9 @@ package org.eclipse.team.ui.history;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Date;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IStorage;
@@ -60,12 +59,12 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 
 		super.createPartControl(parent2);
 		IHistoryPageSite pageSite = historyPage.getHistoryPageSite();
-		pageSite.setToolBarManager(CompareViewerPane.getToolBarManager(getEditionPane()));
+		pageSite.setToolBarManager(CompareViewerPane.getToolBarManager(getPagePane()));
 
 		setShowContentPanes(false);
-		((Page) historyPage).createControl(getEditionPane());
+		((Page) historyPage).createControl(getPagePane());
 		
-		getEditionPane().setContent(((Page) historyPage).getControl());
+		getPagePane().setContent(((Page) historyPage).getControl());
 
 		
 		historyPage.getHistoryPageSite().getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
@@ -85,29 +84,27 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 	 * @see org.eclipse.team.ui.PageSaveablePart#prepareInput(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws InvocationTargetException {
-		initLabels(input);
-		hookContentChangeListener(input);
+		initLabels(input,configuration);
 	}
 
-	private void initLabels(ICompareInput input) {
-		CompareConfiguration cc = getCompareConfiguration();
+	private void initLabels(ICompareInput input, CompareConfiguration cc) {
 		cc.setLeftEditable(false);
 		cc.setRightEditable(false);
-		String leftLabel = getFileRevisionLabel(input.getLeft());
+		String leftLabel = getFileRevisionLabel(input.getLeft(), cc);
 		cc.setLeftLabel(leftLabel);
-		String rightLabel = getFileRevisionLabel(input.getRight());
+		String rightLabel = getFileRevisionLabel(input.getRight(), cc);
 		cc.setRightLabel(rightLabel);
 	}
 
 	
-	private String getFileRevisionLabel(ITypedElement element) {
+	private String getFileRevisionLabel(ITypedElement element, CompareConfiguration cc) {
 		String label = null;
 
 		if (element instanceof TypedBufferedContent) {
 			//current revision
 			Date dateFromLong = new Date(((TypedBufferedContent) element).getModificationDate());
 			label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ element.getName(), DateFormat.getDateTimeInstance().format(dateFromLong)});
-			getCompareConfiguration().setLeftEditable(true);
+			cc.setLeftEditable(true);
 			return label;
 
 		} else if (element instanceof FileRevisionTypedElement) {
@@ -133,18 +130,7 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		ArrayList viewers = getDirtyViewers();
-		Iterator iter = viewers.iterator();
-		
-		for (int i=0; i<viewers.size(); i++){
-			Object element = iter.next();
-			if (element instanceof ContentMergeViewer){
-				try {
-					((ContentMergeViewer)element).save(monitor);
-				} catch (CoreException e) {
-				}
-			}
-		}
+		flushViewers(monitor);
 	}
 	
 }
