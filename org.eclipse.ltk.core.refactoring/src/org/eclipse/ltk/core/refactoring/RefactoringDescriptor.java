@@ -51,8 +51,8 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * {@link java.util#Calendar}).
  * </p>
  * <p>
- * Note: this class is not indented to be subclassed outside the refactoring
- * framework.
+ * Note: this class is indented to be subclassed to provide specialized
+ * descriptor for particular refactorings.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -365,7 +365,7 @@ public class RefactoringDescriptor implements Comparable {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final String toString() {
+	public String toString() {
 
 		final StringBuffer buffer= new StringBuffer(128);
 

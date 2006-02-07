@@ -116,10 +116,6 @@ public abstract class RefactoringDescriptorProxy extends PlatformObject implemen
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
 	 * </p>
-	 * <p>
-	 * This method is not intended to be overridden outside the refactoring
-	 * framework.
-	 * </p>
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
