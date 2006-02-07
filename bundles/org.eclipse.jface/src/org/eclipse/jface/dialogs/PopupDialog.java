@@ -65,10 +65,6 @@ import org.eclipse.swt.widgets.Tracker;
  * as the dialog menu, separator styles, and fonts, is kept private so that all
  * popup dialogs will have a similar appearance.
  * 
- * Note: This API is considered experimental. It is still evolving during 3.2
- * and is subject to change. It is being released to obtain feedback from early
- * adopters.
- * 
  * @since 3.2
  */
 public class PopupDialog extends Window {
