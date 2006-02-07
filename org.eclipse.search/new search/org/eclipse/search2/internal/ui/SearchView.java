@@ -100,6 +100,26 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 	}
+	
+	/**
+	 * Creates the groups and separators for the search view's context menu
+	 * 
+	 * @param menu the context menu
+	 */
+	private static void createViewMenuGroups(IMenuManager menu) {
+		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
+		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
+		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+	}
 
 	/**
 	 * Creates the groups and separators for the search view's 
@@ -455,7 +475,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		createContextMenuGroups(site.getActionBars().getMenuManager());
+		createViewMenuGroups(site.getActionBars().getMenuManager());
 		fPageState= memento;
 		IWorkbenchSiteProgressService progressService= getProgressService();
 		if (progressService != null)
