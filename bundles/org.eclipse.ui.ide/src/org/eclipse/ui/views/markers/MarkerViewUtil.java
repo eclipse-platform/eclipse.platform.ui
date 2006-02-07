@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,6 @@ public class MarkerViewUtil {
 	 * using the path of the underlying resource.
 	 * @see IMarker#getAttribute(java.lang.String)
 	 * @since 3.2
-	 * <strong>NOTE:</strong>This API is experimental and subject to
-	 * change in the 3.2 stream.
 	 */
 	public static final String PATH_ATTRIBUTE = "org.eclipse.ui.views.markers.path";//$NON-NLS-1$
 	
@@ -41,8 +39,6 @@ public class MarkerViewUtil {
 	 * using the name of the underlying resource.
 	 * @see IMarker#getAttribute(java.lang.String)
 	 * @since 3.2
-	 * <strong>NOTE:</strong>This API is experimental and subject to
-	 * change in the 3.2 stream.
 	 */
 	public static final String NAME_ATTRIBUTE = "org.eclipse.ui.views.markers.name";//$NON-NLS-1$
 
