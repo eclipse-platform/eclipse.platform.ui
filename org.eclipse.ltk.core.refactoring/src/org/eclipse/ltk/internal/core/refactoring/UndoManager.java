@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -88,7 +88,7 @@ public class UndoManager implements IUndoManager {
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.aboutToPerformChange(UndoManager.this, change);
 				}
@@ -105,7 +105,7 @@ public class UndoManager implements IUndoManager {
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.changePerformed(UndoManager.this, change);
 				}
@@ -377,7 +377,7 @@ public class UndoManager implements IUndoManager {
 					RefactoringCorePlugin.log(exception);
 				}
 			};
-			Platform.run(r);
+			SafeRunner.run(r);
 		}
 	}
 	

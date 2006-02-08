@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -27,6 +25,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
+
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.wizard.IWizardContainer;
 
 public class UIPerformChangeOperation extends PerformChangeOperation {
@@ -79,7 +81,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			};
 			Runnable r= new Runnable() {
 				public void run() {
-					Platform.run(safeRunnable);
+					SafeRunner.run(safeRunnable);
 				}
 			};
 			Platform.getJobManager().transferRule(rule, fDisplay.getThread());

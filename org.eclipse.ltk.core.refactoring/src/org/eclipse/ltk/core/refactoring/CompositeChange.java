@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -298,7 +298,7 @@ public class CompositeChange extends Change {
 				// Make sure we dispose the change since it will now longer be
 				// in the list of children when call CompositeChange#dispose()
 				final Change changeToDispose= change;
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
 						changeToDispose.dispose();
 					}
@@ -407,7 +407,7 @@ public class CompositeChange extends Change {
 	public void dispose() {
 		for (Iterator iter= fChanges.iterator(); iter.hasNext(); ) {
 			final Change change= (Change)iter.next();
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					change.dispose();
 				}

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -266,7 +266,7 @@ public class UndoManager2 implements IUndoManager {
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.aboutToPerformChange(UndoManager2.this, change);
 				}
@@ -283,7 +283,7 @@ public class UndoManager2 implements IUndoManager {
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.changePerformed(UndoManager2.this, change);
 				}
@@ -300,7 +300,7 @@ public class UndoManager2 implements IUndoManager {
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.undoStackChanged(UndoManager2.this);
 				}
@@ -317,7 +317,7 @@ public class UndoManager2 implements IUndoManager {
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.redoStackChanged(UndoManager2.this);
 				}
