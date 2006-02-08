@@ -134,6 +134,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * Title area fields
 	 */
 	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image"; //$NON-NLS-1$
+
+	protected static final int FAILED = 2;
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class,
@@ -859,14 +861,17 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					handleException(e);
 				} finally {
 					//Don't bother closing if the OK failed
-					if(hasFailedOK)
+					if(hasFailedOK){
+						setReturnCode(FAILED);
+						getButton(IDialogConstants.OK_ID).setEnabled(true);
 						return;
+					}
 					
 					if (!errorOccurred)
 						 //Give subclasses the choice to save the state of the
 					    //preference pages.
 						handleSave();
-					
+					setReturnCode(OK);
 					close();
 				}
 			}

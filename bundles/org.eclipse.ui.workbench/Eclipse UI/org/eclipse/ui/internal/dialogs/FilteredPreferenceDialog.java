@@ -368,6 +368,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 */
 	protected void okPressed() {
 		super.okPressed();
+		
+		if(getReturnCode() == FAILED)
+			return;
+		
 		if (workingCopyManager != null)
 			try {
 				workingCopyManager.applyChanges();
