@@ -164,6 +164,13 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 			}
 			return null;
 		}
+
+		public String getFullPath() {
+			final IResource resource = ResourceDiffTree.getResourceFor(node);
+			if (resource != null)
+				return resource.getFullPath().toString();
+			return getName();
+		}
 		
 	}
 

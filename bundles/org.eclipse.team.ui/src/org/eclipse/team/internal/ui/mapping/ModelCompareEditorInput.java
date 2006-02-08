@@ -19,8 +19,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.*;
@@ -177,6 +180,61 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			}
 		}
 		return super.getAdapter(adapter);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getTitleImage()
+	 */
+	public Image getTitleImage() {
+		if (input != null) {
+			Image image = input.getImage();
+			if (image != null)
+				return image;
+		} 
+		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
+		Image image = reg.get(ITeamUIImages.IMG_SYNC_VIEW);
+		if (image == null) {
+			image = getImageDescriptor().createImage();
+			reg.put(ITeamUIImages.IMG_SYNC_VIEW, image);
+		}
+		return image;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
+	 */
+	public String getTitle() {
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { input.getName() }); 
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		if (input != null) {
+			Image image = input.getImage();
+			if (image != null)
+				return ImageDescriptor.createFromImage(image);
+		} 
+		return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
+	 */
+	public String getToolTipText() {
+		String fullPath;
+		IModelCompareInput adapter = asModelCompareInput(input);
+		if (adapter != null) {
+			fullPath = adapter.getFullPath();
+		} else {
+			fullPath = getName();
+		}
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, participant.getName()), fullPath });
 	}
 
 }

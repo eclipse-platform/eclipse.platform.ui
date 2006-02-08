@@ -50,5 +50,12 @@ public interface IModelCompareInput extends ICompareInput {
 	 * @param monitor a progress monitor
 	 */
 	void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Return a human readable path for the compare input that can be
+	 * used in a tooltip or other displays that can show more detailed infornation.
+	 * @return a human readable path for the compare input
+	 */
+	String getFullPath();
 
 }
