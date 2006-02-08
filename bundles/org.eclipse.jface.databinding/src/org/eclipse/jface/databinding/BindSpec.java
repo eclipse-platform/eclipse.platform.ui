@@ -11,6 +11,7 @@
 package org.eclipse.jface.databinding;
 
 import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IDomainValidator;
 import org.eclipse.jface.databinding.validator.IValidator;
 
 /**
@@ -38,21 +39,25 @@ public class BindSpec implements IBindSpec {
 
 	private final Integer targetUpdatePolicy;
 
+	private IDomainValidator domainValidator;
+
 	/**
 	 * Creates a bind spec with the given converter, validator, and update
 	 * policies.
 	 * 
 	 * @param converter
 	 * @param validator
+	 * @param domainValidator 
 	 * @param modelUpdatePolicy
 	 * @param validatePolicy
 	 * @param targetUpdatePolicy
 	 */
-	public BindSpec(IConverter converter, IValidator validator,
+	public BindSpec(IConverter converter, IValidator validator, IDomainValidator domainValidator,
 			Integer modelUpdatePolicy, Integer validatePolicy,
 			Integer targetUpdatePolicy) {
 		this.converter = converter;
 		this.validator = validator;
+		this.domainValidator = domainValidator;
 		this.modelUpdatePolicy = modelUpdatePolicy;
 		this.validatePolicy = validatePolicy;
 		this.targetUpdatePolicy = targetUpdatePolicy;
@@ -66,35 +71,84 @@ public class BindSpec implements IBindSpec {
 	 * @param validator
 	 */
 	public BindSpec(IConverter converter, IValidator validator) {
-		this(converter, validator, null, null, null);
+		this(converter, validator, null, null, null, null);
+	}
+	
+	/**
+	 * Creates a bind spec with the given converter and validators. The update
+	 * policies are set to <code>IBindSpec.POLICY_CONTEXT</code>.
+	 * 
+	 * @param converter
+	 * @param validator
+	 * @param domainValidator 
+	 */
+	public BindSpec(IConverter converter, IValidator validator, IDomainValidator domainValidator) {
+		this(converter, validator, domainValidator, null, null, null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSpec#getConverter()
+	 */
 	public IConverter getConverter() {
 		return converter;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSpec#getModelUpdatePolicy()
+	 */
 	public Integer getModelUpdatePolicy() {
 		return modelUpdatePolicy;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSpec#getTargetUpdatePolicy()
+	 */
 	public Integer getTargetUpdatePolicy() {
 		return targetUpdatePolicy;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSpec#getValidatePolicy()
+	 */
 	public Integer getValidatePolicy() {
 		return validatePolicy;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSpec#getValidator()
+	 */
 	public IValidator getValidator() {
 		return validator;
 	}
 
+	/** (non-api)
+	 * Set the validator
+	 * @param validator 
+	 */
 	public void setValidator(IValidator validator) {
 		this.validator = validator;
 	}
 
+	/** (non-api)
+	 * Set the converter
+	 * @param converter 
+	 */
 	public void setConverter(IConverter converter) {
 		this.converter = converter;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSpec#getDomainValidator()
+	 */
+	public IDomainValidator getDomainValidator() {
+		return domainValidator;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSpec#setDomainValidator(org.eclipse.jface.databinding.validator.IDomainValidator)
+	 */
+	public void setDomainValidator(IDomainValidator domainValidator) {
+		this.domainValidator = domainValidator;
 	}
 
 }

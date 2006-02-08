@@ -11,9 +11,12 @@
 package org.eclipse.jface.databinding.validator;
 
 /**
- * A validator.  This validator is responsible for telling clients if its associated
- * conversion function will succeed or fail.  For example, a String2IntValidator would
- * only accept source Strings that can successfully be converted to an integer value.
+ * A validator for domain model values.  If this validator is associated with
+ * a binding (via an IBindSpec), then it will be applied immediately before
+ * a value is stored in the model object.  This validator operates in the
+ * model's data type (after the conversion function object has been applied,
+ * if applicable) and is responsible for applying range checks, special
+ * formatting requirements, and so on.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -24,22 +27,10 @@ package org.eclipse.jface.databinding.validator;
  * @since 3.2
  *
  */
-public interface IValidator {
+public interface IDomainValidator {
 
 	/**
-	 * Determines if the given value is partially valid. This method is used to
-	 * determine, for example, if keystrokes can still be applied to the value.
-	 * 
-	 * @param value
-	 *            the value to validate
-	 * @return the error message, or </code>null</code> if the value is
-	 *         partially valid.
-	 */
-	public String isPartiallyValid(Object value);
-
-	/**
-	 * Determines if the given value is valid, that is if it can successfully
-	 * be converted to the target data type.
+	 * Determines if the given value is valid.
 	 * 
 	 * @param value
 	 *            the value to validate

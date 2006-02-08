@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import org.eclipse.jface.databinding.IBindSupportFactory;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IDomainValidator;
 import org.eclipse.jface.databinding.validator.IValidator;
 
 /**
@@ -39,6 +40,34 @@ public class BeanBindSupportFactory implements IBindSupportFactory {
 			
 			try {
 				IValidator result = (IValidator) getValidator.invoke(property.getObject(), new Object[] {fromType});
+				return result;
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindSupportFactory#createDomainValidator(java.lang.Class, java.lang.Object)
+	 */
+	public IDomainValidator createDomainValidator(Class modelType, Object modelDescription) {
+		if (modelDescription instanceof Property) {
+			Property property = (Property) modelDescription;
+			String propertyName = (String) property.getPropertyID();
+			String getValidatorMethodName = "get" + upperCaseFirstLetter(propertyName) + "DomainValidator"; //$NON-NLS-1$ //$NON-NLS-2$
+			
+			Class objectClass = property.getObject().getClass();
+			
+			Method getValidator;
+			try {
+				getValidator = objectClass.getMethod(getValidatorMethodName, new Class[] {});
+			} catch (Exception e) {
+				return null;
+			}
+			
+			try {
+				IDomainValidator result = (IDomainValidator) getValidator.invoke(property.getObject(), new Object[] {});
 				return result;
 			} catch (Exception e) {
 				return null;

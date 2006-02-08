@@ -11,6 +11,7 @@
 package org.eclipse.jface.databinding;
 
 import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IDomainValidator;
 import org.eclipse.jface.databinding.validator.IValidator;
 
 /**
@@ -41,6 +42,22 @@ public interface IBindSpec {
 	 * @return the validator, or <code>null</code>
 	 */
 	public IValidator getValidator();
+
+	/**
+	 * Returns the IDomainValidator for the binding.
+	 * 
+	 * @return IDomainValidator the current IDomainValidator or <code>null</code> if none 
+	 * has been specified.
+	 */
+	public IDomainValidator getDomainValidator();
+
+	/**
+	 * Sets the IDomainValidator for the binding.
+	 * 
+	 * @param domainValidator The IDomainValidator to use for this binding or 
+	 * <code>null</code> to remove the existing one.
+	 */
+	public void setDomainValidator(IDomainValidator domainValidator);
 	
 	/**
 	 * Returns the update policy to be used for updating the model when the target has changed

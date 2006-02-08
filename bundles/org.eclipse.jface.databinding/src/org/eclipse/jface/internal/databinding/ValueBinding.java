@@ -17,6 +17,7 @@ import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IDomainValidator;
 import org.eclipse.jface.databinding.validator.IValidator;
 
 /**
@@ -32,6 +33,8 @@ public class ValueBinding extends Binding {
 	private IValidator validator;
 
 	private IConverter converter;
+
+	private IDomainValidator domainValidator;
 
 	private boolean updating = false;
 
@@ -62,6 +65,7 @@ public class ValueBinding extends Binding {
 		if (validator == null) {
 			throw new BindingException("Missing validator"); //$NON-NLS-1$
 		}
+		domainValidator = bindSpec.getDomainValidator();
 		target.addChangeListener(targetChangeListener);
 		model.addChangeListener(modelChangeListener);
 	}
@@ -115,7 +119,6 @@ public class ValueBinding extends Binding {
 		
 		String validationError = doValidate(e.originalValue);
 		if (validationError != null) {
-			context.updatePartialValidationError(targetChangeListener, validationError);
 			return;
 		}
 		e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
@@ -132,7 +135,10 @@ public class ValueBinding extends Binding {
 				return;
 			}
 			
-			// FIXME: Need to add business validation
+			validationError = doDomainValidation(e.convertedValue);
+			if (validationError != null) {
+				return;
+			}
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_BUSINESS_VALIDATE;
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
@@ -147,6 +153,18 @@ public class ValueBinding extends Binding {
 		} finally {
 			updating = false;
 		}
+	}
+
+	/**
+	 * @param convertedValue
+	 * @return String
+	 */
+	private String doDomainValidation(Object convertedValue) {
+		if (domainValidator == null) {
+			return null;
+		}
+		String validationError = domainValidator.isValid(convertedValue);
+		return errMsg(validationError);
 	}
 
 	private String doValidate(Object value) {

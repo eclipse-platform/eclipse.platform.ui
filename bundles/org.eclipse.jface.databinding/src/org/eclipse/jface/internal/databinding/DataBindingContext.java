@@ -35,6 +35,7 @@ import org.eclipse.jface.databinding.converterfunction.ConversionFunctionRegistr
 import org.eclipse.jface.databinding.converters.FunctionalConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
 import org.eclipse.jface.databinding.updatables.SettableValue;
+import org.eclipse.jface.databinding.validator.IDomainValidator;
 import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.databinding.validator.ValidatorRegistry;
 import org.eclipse.jface.util.Assert;
@@ -180,6 +181,14 @@ public class DataBindingContext implements IDataBindingContext {
 					return new IdentityConverter(fromType, toType);
 				}
 				return null;
+			}
+
+			public IDomainValidator createDomainValidator(Class modelType, Object modelDescription) {
+				return new IDomainValidator() {
+					public String isValid(Object value) {
+						return null;
+					}
+				};
 			}
 		});
 	}
