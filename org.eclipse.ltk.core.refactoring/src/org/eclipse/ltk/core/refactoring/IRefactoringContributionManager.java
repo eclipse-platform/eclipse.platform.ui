@@ -17,14 +17,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
- * Interface for refactoring contribution objects which are capable of creating
- * a specific refactoring instance and associated refactoring descriptors or
- * arguments. Refactoring contributions are stateless objects. They are
- * instantiated on demand by the refactoring framework. It is not guaranteed
- * that the same refactoring contribution object will be used to create the
- * arguments for a refactoring and to create the refactoring itself.
+ * Interface for a refactoring contribution manager. This class provides a
+ * facade to the
+ * <code>org.eclipse.ltk.core.refactoring.refactoringContributions</code>
+ * extension point.
  * <p>
- * Note: this interface is intended to be implemented by clients.
+ * Note: this interface is not intended to be implemented by clients.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -106,5 +104,5 @@ public interface IRefactoringContributionManager {
 	 *            the unique id of the refactoring
 	 * @return the refactoring contribution, or <code>null</code>
 	 */
-	public IRefactoringContribution getRefactoringContribution(String id);
+	public RefactoringContribution getRefactoringContribution(String id);
 }

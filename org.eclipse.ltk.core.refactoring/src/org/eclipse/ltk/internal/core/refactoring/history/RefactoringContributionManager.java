@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.ltk.core.refactoring.IRefactoringContribution;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.IRefactoringContributionManager;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
@@ -64,7 +64,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 
 	/**
 	 * The refactoring contribution cache (element type: &lt;String,
-	 * <code>IRefactoringContribution&gt;</code>)
+	 * <code>RefactoringContribution&gt;</code>)
 	 */
 	private Map fContributionCache= null;
 
@@ -89,7 +89,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		Assert.isNotNull(descriptor);
 		final String id= descriptor.getID();
 		if (id != null) {
-			final IRefactoringContribution contribution= getRefactoringContribution(id);
+			final RefactoringContribution contribution= getRefactoringContribution(id);
 			if (contribution != null)
 				return contribution.createArguments(descriptor);
 		}
@@ -104,7 +104,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		Assert.isNotNull(description);
 		Assert.isNotNull(arguments);
 		Assert.isLegal(flags >= RefactoringDescriptor.NONE);
-		final IRefactoringContribution contribution= getRefactoringContribution(id);
+		final RefactoringContribution contribution= getRefactoringContribution(id);
 		if (contribution != null)
 			return contribution.createDescriptor(id, project, description, comment, arguments, flags);
 		return null;
@@ -117,7 +117,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		Assert.isNotNull(descriptor);
 		final String id= descriptor.getID();
 		if (id != null) {
-			final IRefactoringContribution contribution= getRefactoringContribution(id);
+			final RefactoringContribution contribution= getRefactoringContribution(id);
 			if (contribution != null)
 				return contribution.createRefactoring(descriptor);
 		}
@@ -134,7 +134,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	/**
 	 * {@inheritDoc}
 	 */
-	public IRefactoringContribution getRefactoringContribution(final String id) {
+	public RefactoringContribution getRefactoringContribution(final String id) {
 		Assert.isNotNull(id);
 		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
 		if (fContributionCache == null) {
@@ -149,7 +149,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 					if (className != null && !"".equals(className)) { //$NON-NLS-1$
 						try {
 							final Object implementation= element.createExecutableExtension(ATTRIBUTE_CLASS);
-							if (implementation instanceof IRefactoringContribution) {
+							if (implementation instanceof RefactoringContribution) {
 								if (fContributionCache.get(attributeId) != null)
 									RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_duplicate_warning, new String[] { attributeId, point}));
 								fContributionCache.put(attributeId, implementation);
@@ -164,7 +164,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 					RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_missing_attribute, new String[] { point, ATTRIBUTE_ID}));
 			}
 		}
-		return (IRefactoringContribution) fContributionCache.get(id);
+		return (RefactoringContribution) fContributionCache.get(id);
 	}
 
 	/**

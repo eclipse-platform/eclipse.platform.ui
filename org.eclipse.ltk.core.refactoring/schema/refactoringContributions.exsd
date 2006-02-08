@@ -51,10 +51,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a refactoring contribution implementation which implements &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringContribution&lt;/code&gt;.
+                  The fully qualified name of a refactoring contribution implementation which extends &lt;code&gt;org.eclipse.ltk.core.refactoring.RefactoringContribution&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.core.refactoring.IRefactoringContribution"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.core.refactoring.RefactoringContribution"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -93,7 +93,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringContribution&lt;/code&gt;
+         The contributed implementation class must extend &lt;code&gt;org.eclipse.ltk.core.refactoring.RefactoringContribution&lt;/code&gt;
       </documentation>
    </annotation>
 

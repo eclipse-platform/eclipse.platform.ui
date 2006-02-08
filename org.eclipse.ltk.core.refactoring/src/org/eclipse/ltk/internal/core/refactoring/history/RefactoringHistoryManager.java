@@ -57,7 +57,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
-import org.eclipse.ltk.core.refactoring.IRefactoringContribution;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -447,7 +447,7 @@ public final class RefactoringHistoryManager {
 			try {
 				final String id= descriptor.getID();
 				transformer.beginRefactoring(id, descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
-				final IRefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
+				final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
 				if (contribution != null) {
 					final Map arguments= contribution.getArguments(descriptor);
 					if (arguments != null) {
@@ -536,7 +536,7 @@ public final class RefactoringHistoryManager {
 						long stamp= stamps ? current.getTimeStamp() : -1;
 						final String id= current.getID();
 						transformer.beginRefactoring(id, stamp, current.getProject(), current.getDescription(), current.getComment(), current.getFlags());
-						final IRefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
+						final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
 						if (contribution != null) {
 							final Map arguments= contribution.getArguments(current);
 							if (arguments != null) {

@@ -17,22 +17,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
- * Interface for refactoring contribution objects which are capable of creating
- * a specific refactoring instance and associated refactoring descriptors or
- * arguments. Refactoring contributions are stateless objects. They are
- * instantiated on demand by the refactoring framework. It is not guaranteed
- * that the same refactoring contribution object will be used to create the
- * arguments for a refactoring and to create the refactoring itself.
- * <p>
- * Note: this interface is intended to be implemented by clients.
- * </p>
+ * Partial implementation of refactoring contribution objects which are capable
+ * of creating a specific refactoring instance and associated refactoring
+ * descriptors or arguments. Refactoring contributions are stateless objects.
+ * They are instantiated on demand by the refactoring framework. It is not
+ * guaranteed that the same refactoring contribution object will be used to
+ * create the arguments for a refactoring and to create the refactoring itself.
  * <p>
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
  * @since 3.2
  */
-public interface IRefactoringContribution {
+public abstract class RefactoringContribution {
 
 	/**
 	 * Creates the a refactoring arguments for the specified refactoring
@@ -49,7 +46,7 @@ public interface IRefactoringContribution {
 	 *            the refactoring descriptor
 	 * @return the refactoring arguments, or <code>null</code>
 	 */
-	public RefactoringArguments createArguments(RefactoringDescriptor descriptor);
+	public abstract RefactoringArguments createArguments(RefactoringDescriptor descriptor);
 
 	/**
 	 * Creates a new refactoring descriptor for the specified input data.
@@ -79,7 +76,7 @@ public interface IRefactoringContribution {
 	 *            the flags of the refactoring descriptor
 	 * @return the refactoring descriptor, or <code>null</code>
 	 */
-	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags);
+	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags);
 
 	/**
 	 * Creates the a refactoring instance for the specified refactoring
@@ -96,7 +93,7 @@ public interface IRefactoringContribution {
 	 * @throws CoreException
 	 *             if the refactoring could not be created from the descriptor
 	 */
-	public Refactoring createRefactoring(RefactoringDescriptor descriptor) throws CoreException;
+	public abstract Refactoring createRefactoring(RefactoringDescriptor descriptor) throws CoreException;
 
 	/**
 	 * Returns the argument map of the specified refactoring descriptor.
@@ -111,5 +108,5 @@ public interface IRefactoringContribution {
 	 * 
 	 * @see #createDescriptor(String, String, String, String, Map, int)
 	 */
-	public Map getArguments(RefactoringDescriptor descriptor);
+	public abstract Map getArguments(RefactoringDescriptor descriptor);
 }
