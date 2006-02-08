@@ -791,11 +791,50 @@ public class PageLayout implements IPageLayout {
         rec.isStandalone = true;
         rec.showTitle = showTitle;
     }
-
+    
     /* (non-Javadoc)
-     * @see org.eclipse.ui.IPageLayout#getViewLayout(java.lang.String)
-     * @since 3.0
+     * @see org.eclipse.ui.IPageLayout#addStandaloneViewPlaceholder(java.lang.String, int, float, java.lang.String, boolean)
      */
+    public void addStandaloneViewPlaceholder(String viewId, int relationship,
+			float ratio, String refId, boolean showTitle) {
+
+		String stackId = viewId + ".standalonefolder"; //$NON-NLS-1$
+
+		// Check to see if the view is already in the layout
+		if (!checkValidPlaceholderId(viewId)) {
+			return;
+		}
+
+		// Create the folder.
+		ContainerPlaceholder folder = new ContainerPlaceholder(null);
+		folder.setContainer(rootLayoutContainer);
+		int appearance = PresentationFactoryUtil.ROLE_STANDALONE;
+		if (!showTitle)
+			appearance = PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE;
+		folder.setRealContainer(new ViewStack(rootLayoutContainer.page, true,
+				appearance, null));
+		folder.setID(stackId);
+		addPart(folder, stackId, relationship, ratio, refId);
+
+		// Create a wrapper.
+		PlaceholderFolderLayout placeHolder = new PlaceholderFolderLayout(this,
+				folder);
+
+		// Add the standalone view immediately
+		placeHolder.addPlaceholder(viewId);
+
+		ViewLayoutRec rec = getViewLayoutRec(viewId, true);
+		rec.isStandalone = true;
+		rec.showTitle = showTitle;
+	}
+
+
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IPageLayout#getViewLayout(java.lang.String)
+	 * @since 3.0
+	 */
     public IViewLayout getViewLayout(String viewId) {
         ViewLayoutRec rec = getViewLayoutRec(viewId, true);
         if (rec == null) {

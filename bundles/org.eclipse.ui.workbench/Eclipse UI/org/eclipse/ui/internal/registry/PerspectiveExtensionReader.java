@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Dan Rubel <dan_rubel@instantiations.com>
  *     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml
+ *     Chris Gross <schtoo@schtoo.com> 
+ *     - Fix for 99155 - allow standalone view placeholders
  *******************************************************************************/
 
 package org.eclipse.ui.internal.registry;
@@ -257,8 +259,15 @@ public class PerspectiveExtensionReader extends RegistryReader {
                     pageLayout.addView(id, intRelation, ratio, relative);
                 }
             } else {
-                pageLayout.addPlaceholder(id, intRelation, ratio, relative);
-            }
+				// Fix for 99155, CGross (schtoo@schtoo.com)
+				// Adding standalone placeholder for standalone views
+				if (VAL_TRUE.equals(standalone)) {
+					pageLayout.addStandaloneViewPlaceholder(id, intRelation,
+							ratio, relative, !VAL_FALSE.equals(showTitle));
+				} else {
+					pageLayout.addPlaceholder(id, intRelation, ratio, relative);
+				}
+			}
         }
         if (closeable != null) {
             pageLayout.getViewLayout(id).setCloseable(
