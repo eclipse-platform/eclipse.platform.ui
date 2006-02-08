@@ -58,4 +58,12 @@ public interface IModelCompareInput extends ICompareInput {
 	 */
 	String getFullPath();
 
+	/**
+	 * Return whether this compare input matches the given object for the
+	 * purpose of chaneg navigation.
+	 * @param object the object
+	 * @return whether
+	 */
+	boolean isCompareInputFor(Object object);
+
 }

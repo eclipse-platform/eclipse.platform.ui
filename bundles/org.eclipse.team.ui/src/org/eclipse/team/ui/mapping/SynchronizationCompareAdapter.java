@@ -12,21 +12,17 @@ package org.eclipse.team.ui.mapping;
 
 import java.util.*;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.core.mapping.IResourceDiff;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.mapping.FileStateTypedElement;
-import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.internal.ui.mapping.ResourceSaveableCompareModel.ResourceDiffCompareInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -46,133 +42,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @since 3.2
  */
 public class SynchronizationCompareAdapter implements ISynchronizationCompareAdapter {
-
-	private static class ResourceDiffCompareInput extends DiffNode implements IModelCompareInput, IAdaptable {
-
-		private final IDiff node;
-
-		public ResourceDiffCompareInput(IDiff node) {
-			super(getCompareKind(node), getAncestor(node), getLeftContributor(node), getRightContributor(node));
-			this.node = node;
-		}
-		
-		private static int getCompareKind(IDiff node) {
-			switch (node.getKind()) {
-			case IDiff.CHANGE:
-				return Differencer.CHANGE;
-			case IDiff.ADD:
-				return Differencer.ADDITION;
-			case IDiff.REMOVE:
-				return Differencer.DELETION;
-			}
-			return 0;
-		}
-		
-		private static ITypedElement getRightContributor(IDiff node) {
-			// For a resource diff, use the after state
-			if (node instanceof IResourceDiff) {
-				IResourceDiff rd = (IResourceDiff) node;
-				return asTypedElement(rd.getAfterState());
-			}
-			if (node instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) node;
-				IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
-				// If there is a remote change, use the after state
-				if (diff != null)
-					return getRightContributor(diff);
-				// There's no remote change so use the before state of the local
-				diff = (IResourceDiff)twd.getLocalChange();
-				return asTypedElement(diff.getBeforeState());
-				
-			}
-			return null;
-		}
-
-		private static ITypedElement getLeftContributor(final IDiff node) {
-			// The left contributor is always the local resource
-			final IResource resource = ResourceDiffTree.getResourceFor(node);
-			return new LocalResourceTypedElement(resource) {
-				public boolean isEditable() {
-					if(! resource.exists() && isOutgoingDeletion(node)) {
-						return false;
-					}
-					return super.isEditable();
-				}
-
-				private boolean isOutgoingDeletion(IDiff node) {
-					if (node instanceof IThreeWayDiff) {
-						IThreeWayDiff twd = (IThreeWayDiff) node;
-						return twd.getKind() == IDiff.REMOVE && twd.getDirection() == IThreeWayDiff.OUTGOING;
-					}
-					return false;
-				}
-			};
-		}
-
-		private static ITypedElement getAncestor(IDiff node) {
-			if (node instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) node;
-				IResourceDiff diff = (IResourceDiff)twd.getLocalChange();
-				if (diff == null)
-					diff = (IResourceDiff)twd.getRemoteChange();
-				return asTypedElement(diff.getBeforeState());
-				
-			}
-			return null;
-		}
-
-		private static ITypedElement asTypedElement(IFileRevision state) {
-			if (state == null)
-				return null;
-			return new FileStateTypedElement(state);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#prepareInput(org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
-		 */
-		public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-			Utils.updateLabels(node, configuration);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#getCompareModel()
-		 */
-		public ISaveableCompareModel getSaveableModel() {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-		 */
-		public Object getAdapter(Class adapter) {
-			if (adapter == IFile.class || adapter == IResource.class) {
-				if (node instanceof IResourceDiff) {
-					IResourceDiff rd = (IResourceDiff) node;
-					return (IFile)rd.getResource();
-				}
-				if (node instanceof IThreeWayDiff) {
-					IThreeWayDiff twd = (IThreeWayDiff) node;
-					IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
-					// If there is a remote change, use the after state
-					if (diff != null)
-						return (IFile)diff.getResource();
-					// There's no remote change so use the before state of the local
-					diff = (IResourceDiff)twd.getLocalChange();
-					return (IFile)diff.getResource();
-					
-				}
-			}
-			return null;
-		}
-
-		public String getFullPath() {
-			final IResource resource = ResourceDiffTree.getResourceFor(node);
-			if (resource != null)
-				return resource.getFullPath().toString();
-			return getName();
-		}
-		
-	}
 
 	/**
 	 * Default implementaton that is capable of returning a compare input for objects
@@ -224,7 +93,7 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.IResourceMappingPersistenceAdapter#getFullPath(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */
-	public IPath getFullPath(ResourceMapping mapping) {
+	public String getPathString(ResourceMapping mapping) {
 		Object object = mapping.getModelObject();
 		IWorkbenchAdapter adapter = (IWorkbenchAdapter) Utils.getAdapter(
 				object, IWorkbenchAdapter.class);
@@ -243,10 +112,10 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 					String segment = (String) iter.next();
 					path = path.append(segment);
 				}
-				return path;
+				return path.toString();
 			}
 		}
-		return new Path(getName(mapping));
+		return getName(mapping);
 	}
 
 	/* (non-Javadoc)

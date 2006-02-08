@@ -876,7 +876,7 @@ public class Utils {
 		ISynchronizationCompareAdapter adapter = getCompareAdapter(provider);
 		if (adapter == null)
 			return "";
-		return adapter.getFullPath(mapping).toString();
+		return adapter.getPathString(mapping).toString();
 	}
 
 	public static String getScopeDescription(ISynchronizationScope scope) {

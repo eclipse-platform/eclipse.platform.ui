@@ -12,14 +12,15 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.IModelCompareInput;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.*;
 
@@ -55,28 +57,8 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			if (compareModel != null)
 				return compareModel;
 		}
-		return new ISaveableModel() {
-			public boolean isDirty() {
-				return isSaveNeeded();
-			}
-			public void doSave(IProgressMonitor monitor) {
-				try {
-					saveChanges(monitor);
-				} catch (CoreException e) {
-					// TODO See bug 126082
-					e.printStackTrace();
-				}
-			}
-			public ImageDescriptor getImageDescriptor() {
-				return ImageDescriptor.createFromImage(getTitleImage());
-			}
-			public String getToolTipText() {
-				return ModelCompareEditorInput.this.getToolTipText();
-			}
-			public String getName() {
-				return ModelCompareEditorInput.this.getTitle();
-			}
-		};
+		// TODO: Shoudl fail if the input is the wroong type
+		return new ResourceSaveableCompareModel(input, participant, this);
 	}
 	
 	/* (non-Javadoc)
@@ -96,6 +78,9 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		return control;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#prepareInput(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected Object prepareInput(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
 		// update the title now that the remote revision number as been fetched
@@ -124,27 +109,14 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 * Return whether the compare input of this editor input matches the
 	 * given object.
 	 * @param object the object
+	 * @param participant the participant associatd with the given object
 	 * @return whether the compare input of this editor input matches the
 	 * given object
 	 */
-	public boolean matches(Object object) {
-		// TODO it would be faster to ask the input it it matched the given object
-		// but this would require additional API
-		ICompareInput input = participant.asCompareInput(object);
-		if (input != null)
-			return input.equals(this.input);
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		if (other == this)
-			return true;
-		if (other instanceof ModelCompareEditorInput) {
-			ModelCompareEditorInput otherInput = (ModelCompareEditorInput) other;
-			return input.equals(otherInput.input);
+	public boolean matches(Object object, ISynchronizeParticipant participant) {
+		if (participant == this.participant && input instanceof IModelCompareInput) {
+			IModelCompareInput mci = (IModelCompareInput) input;
+			return mci.isCompareInputFor(object);
 		}
 		return false;
 	}
@@ -168,10 +140,14 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 */
 	public void propertyChanged(Object source, int propId) {
 		if (propId == ISaveableCompareModel.PROP_DIRTY) {
+			// TODO I think this is equivalent to a no-op
 			setDirty(model.isDirty());
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getAdapter(java.lang.Class)
+	 */
 	public Object getAdapter(Class adapter) {
 		if (IFile.class.equals(adapter)) {
 			IResource resource = Utils.getResource(input);
@@ -235,6 +211,29 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			fullPath = getName();
 		}
 		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, participant.getName()), fullPath });
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#findContentViewer(org.eclipse.jface.viewers.Viewer, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.swt.widgets.Composite)
+	 */
+	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
+		Viewer newViewer = super.findContentViewer(oldViewer, input, parent);
+		boolean isNewViewer= newViewer != oldViewer;
+		if (isNewViewer && newViewer instanceof IPropertyChangeNotifier && model instanceof IPropertyChangeListener) {
+			// Register the model for change events if appropriate
+			final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) newViewer;
+			final IPropertyChangeListener pcl = (IPropertyChangeListener) model;
+			dsp.addPropertyChangeListener(pcl);
+			Control c= newViewer.getControl();
+			c.addDisposeListener(
+				new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						dsp.removePropertyChangeListener(pcl);
+					}
+				}
+			);
+		}
+		return newViewer;
 	}
 
 }

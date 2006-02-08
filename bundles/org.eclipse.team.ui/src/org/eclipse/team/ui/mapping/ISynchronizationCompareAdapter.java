@@ -12,7 +12,6 @@ package org.eclipse.team.ui.mapping;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.ui.IMemento;
@@ -80,7 +79,7 @@ public interface ISynchronizationCompareAdapter {
 	 * @param mapping the mapping
 	 * @return the path of the model object of the mapping
 	 */
-	public IPath getFullPath(ResourceMapping mapping);
+	public String getPathString(ResourceMapping mapping);
 	
 	/**
 	 * Save the given resource mappings from this adapters 

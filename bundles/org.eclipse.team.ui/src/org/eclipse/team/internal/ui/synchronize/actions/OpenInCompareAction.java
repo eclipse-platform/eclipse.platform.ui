@@ -202,9 +202,10 @@ public class OpenInCompareAction extends Action {
 	 * the given object.
 	 * @param site the view site in which to search for editors
 	 * @param object the object to use to find the compare editor
+	 * @param participant 
 	 * @return an editor handle if found and <code>null</code> otherwise
 	 */
-	public static IEditorPart findOpenCompareEditor(IWorkbenchPartSite site, Object object) {
+	public static IEditorPart findOpenCompareEditor(IWorkbenchPartSite site, Object object, ISynchronizeParticipant participant) {
 		if (object instanceof SyncInfoModelElement) {
 			SyncInfoModelElement element = (SyncInfoModelElement) object;
 			SyncInfo info = element.getSyncInfo();
@@ -217,7 +218,7 @@ public class OpenInCompareAction extends Action {
 			if(part != null) {
 				IEditorInput input = part.getEditorInput();
 				if(input instanceof ModelCompareEditorInput) {
-					if(((ModelCompareEditorInput)input).matches(object)) {
+					if(((ModelCompareEditorInput)input).matches(object, participant)) {
 						return part;
 					}
 				}

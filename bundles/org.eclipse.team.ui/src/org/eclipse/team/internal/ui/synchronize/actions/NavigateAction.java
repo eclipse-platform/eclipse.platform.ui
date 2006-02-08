@@ -95,7 +95,7 @@ public class NavigateAction extends Action {
 		
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws instanceof IWorkbenchPartSite) {
-			IEditorPart editor = OpenInCompareAction.findOpenCompareEditor((IWorkbenchPartSite)ws, selectedObject);
+			IEditorPart editor = OpenInCompareAction.findOpenCompareEditor((IWorkbenchPartSite)ws, selectedObject, participant);
 			if(editor != null) {
 				// if an existing editor is open on the current selection, use it			 
 				CompareEditorInput input = (CompareEditorInput)editor.getEditorInput();
