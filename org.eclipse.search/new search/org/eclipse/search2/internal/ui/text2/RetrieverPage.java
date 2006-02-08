@@ -38,9 +38,12 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -54,6 +57,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -110,6 +115,10 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	
 	public static final String ID= "org.eclipse.search.text.RetrieverPage"; //$NON-NLS-1$
 	private static final String QUERY_EXTENSION = ".txtSearch";  //$NON-NLS-1$
+	private static final int ORIENTATION_AUTOMATIC = 0;
+	private static final int ORIENTATION_HORIZONTAL = 1;
+	private static final int ORIENTATION_VERTICAL = 2;
+	private static final int ORIENTATION_SINGLE = 3;
 	
 	private static final Collator COLLATOR= Collator.getInstance();
 	
@@ -151,10 +160,17 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	private RetrieverViewerSorter fSorter;
 
 	private boolean fUseFlatLayout;
+	private int fRequestedViewOrientation= 0;
+	private int fCurrentViewOrientation= -1;
 
 	private RetrieverLabelProvider fLabelProvider;
 	private ISearchResultViewPart fViewPart;
 	private RetrieverFilter fRecentFilter;
+	private boolean fInComputeOrientation;
+	private Action fHorizontalOrientation;
+	private Action fVerticalOrientation;
+	private Action fAutomaticOrientation;
+	private Action fSingleOrientation;
 	
 	public RetrieverPage() {
 		super(FLAG_LAYOUT_TREE);
@@ -181,7 +197,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 
 		fSplitter.setWeights(new int[] {60, 40});
 		
-
+		restoreCurrentOrientation();
 		createListeners();		
 		restoreValues();
 	}
@@ -204,6 +220,16 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		mm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fConsiderDerivedResources);
 		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fFlatAction);
 		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fHierarchicalAction);
+		
+		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, new Separator());
+		
+		MenuManager submenu= new MenuManager(SearchMessages.RetrieverPage_ViewOrientation);
+		submenu.add(fHorizontalOrientation);
+		submenu.add(fVerticalOrientation);
+		submenu.add(fAutomaticOrientation);
+		submenu.add(fSingleOrientation);
+
+		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, submenu);
 
 		actionBars.updateActionBars();
 	}
@@ -320,6 +346,14 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	}
 
 	private void createListeners() {
+		fSplitter.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+			}
+			public void controlResized(ControlEvent e) {
+				computeOrientation();
+			}
+		});
+
 		fTabFolder.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				onTabChanged();
@@ -387,6 +421,42 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 			}			
 		};
 		fConsiderDerivedResources.setText(SearchMessages.RetrieverPage_ConsiderDerived_text);
+		
+		fHorizontalOrientation= new Action(SearchMessages.RetrieverPage_Horizontal, IAction.AS_RADIO_BUTTON) {
+			public void run() {
+				onViewOrientationChanged(ORIENTATION_HORIZONTAL);
+			}
+		};
+		SearchPluginImages.setImageDescriptors(fHorizontalOrientation, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HORIZONTAL_ORIENTATION);
+
+		fVerticalOrientation= new Action(SearchMessages.RetrieverPage_Vertical, IAction.AS_RADIO_BUTTON) {
+			public void run() {
+				onViewOrientationChanged(ORIENTATION_VERTICAL);
+			}
+		};
+		SearchPluginImages.setImageDescriptors(fVerticalOrientation, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_VERTICAL_ORIENTATION);
+
+		fAutomaticOrientation= new Action(SearchMessages.RetrieverPage_Automatic, IAction.AS_RADIO_BUTTON) {
+			public void run() {
+				onViewOrientationChanged(ORIENTATION_AUTOMATIC);
+			}
+		};
+		SearchPluginImages.setImageDescriptors(fAutomaticOrientation, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_AUTOMATIC_ORIENTATION);
+
+		fSingleOrientation= new Action(SearchMessages.RetrieverPage_ResultsViewOnly, IAction.AS_RADIO_BUTTON) {
+			public void run() {
+				onViewOrientationChanged(ORIENTATION_SINGLE);
+			}
+		};
+		SearchPluginImages.setImageDescriptors(fSingleOrientation, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_SINGLE_ORIENTATION);
+	}
+	
+	protected void onViewOrientationChanged(int orientation) {
+		if (fRequestedViewOrientation != orientation) {
+			fRequestedViewOrientation= orientation;
+			fDialogSettings.put(KEY_VIEW_ORIENTATION, orientation);
+			computeOrientation();
+		}
 	}
 
 	protected void onConsiderDerivedResources() {
@@ -567,7 +637,74 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 			fUseFlatLayout= fDialogSettings.getBoolean(KEY_USE_FLAT_LAYOUT);
 		}
 	}
-	
+
+	private void restoreCurrentOrientation() {
+		if (fDialogSettings.get(KEY_VIEW_ORIENTATION) == null) {
+			fRequestedViewOrientation= ORIENTATION_AUTOMATIC;
+		} else {
+			fRequestedViewOrientation= fDialogSettings.getInt(KEY_VIEW_ORIENTATION);
+		}
+		computeOrientation();
+		switch(fRequestedViewOrientation) {
+			case ORIENTATION_HORIZONTAL:
+				fHorizontalOrientation.setChecked(true);
+				break;
+			case ORIENTATION_VERTICAL:
+				fVerticalOrientation.setChecked(true);
+				break;
+			case ORIENTATION_SINGLE:
+				fSingleOrientation.setChecked(true);
+				break;
+			default:
+				fRequestedViewOrientation= ORIENTATION_AUTOMATIC;
+				fAutomaticOrientation.setChecked(true);
+				break;
+		}
+	}
+
+	public void setOrientation(int orientation) {
+		if (fCurrentViewOrientation != orientation) {
+			if (fInputForm != null && !fInputForm.isDisposed() &&
+					fSplitter != null && !fSplitter.isDisposed()) {
+				if (orientation == ORIENTATION_SINGLE) {
+					fInputForm.setVisible(false);
+				} else {
+					if (fCurrentViewOrientation == ORIENTATION_SINGLE) {
+						fInputForm.setVisible(true);
+					}
+					boolean horizontal= orientation == ORIENTATION_HORIZONTAL;
+					fSplitter.setOrientation(horizontal ? SWT.HORIZONTAL : SWT.VERTICAL);
+				}
+				fSplitter.layout();
+			}
+			fCurrentViewOrientation= orientation;
+		}
+	}
+
+	void computeOrientation() {
+		// avoid recursive calls of compute orientation 
+		if (fInComputeOrientation) {
+			return;
+		}
+		fInComputeOrientation= true;
+		try {
+			if (fRequestedViewOrientation != ORIENTATION_AUTOMATIC) {
+				setOrientation(fRequestedViewOrientation);
+			}
+			else {
+				Point size= fSplitter.getSize();
+				if (size.x != 0 && size.y != 0) {
+					if (2*size.x > 3*size.y) 
+						setOrientation(ORIENTATION_HORIZONTAL);
+					else 
+						setOrientation(ORIENTATION_VERTICAL);
+				}
+			}
+		} finally {
+			fInComputeOrientation= false;
+		}
+	}
+
 	private void restoreValues() {
 		int[] weights= new int[] {0,0};
 		try {
@@ -760,6 +897,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 			}
 		}
 		super.setInput(result, viewState);
+		fCreateWSAction.setEnabled(getInput() != null);
 		updateEnablementOnTabs();
 		setFocus();
 	}

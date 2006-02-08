@@ -20,6 +20,7 @@ interface IRetrieverKeys {
 	final String KEY_SPLITTER_W2= "splitter.w2"; //$NON-NLS-1$
 
 	final String KEY_USE_FLAT_LAYOUT= "flat-layout"; //$NON-NLS-1$
+	final String KEY_VIEW_ORIENTATION= "view-orientation"; //$NON-NLS-1$
 
 	final String KEY_CASE_SENSITIVE_SEARCH= "case-sensitive"; //$NON-NLS-1$
 	final String KEY_REGULAR_EXPRESSION_SEARCH= "regular-expression"; //$NON-NLS-1$

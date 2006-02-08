@@ -58,6 +58,10 @@ public class SearchPluginImages {
 	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_FLAT_LAYOUT= NAME_PREFIX + "flatLayout.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT= NAME_PREFIX + "hierarchicalLayout.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_HORIZONTAL_ORIENTATION= NAME_PREFIX + "horizontalOrientation.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_VERTICAL_ORIENTATION= NAME_PREFIX + "verticalOrientation.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_AUTOMATIC_ORIENTATION= NAME_PREFIX + "automaticOrientation.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_SINGLE_ORIENTATION= NAME_PREFIX + "singleOrientation.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_CANCEL= NAME_PREFIX + "stop.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_COLLAPSE_ALL= NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SEARCH_EXPAND_ALL= NAME_PREFIX + "expandall.gif"; //$NON-NLS-1$
