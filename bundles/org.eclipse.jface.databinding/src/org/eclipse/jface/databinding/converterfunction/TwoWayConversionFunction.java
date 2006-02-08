@@ -1,4 +1,13 @@
-// TODO djo: copyright
+/*******************************************************************************
+ * Copyright (c) 2005, 2006 Coconut Palm Software, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Coconut Palm Software, Inc. - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jface.databinding.converterfunction;
 
 
@@ -15,7 +24,7 @@ public class TwoWayConversionFunction {
 	
 	/**
 	 * Constructs a Converter that looks up its target to model and model to target methods
-	 * in the ConvertsionFunctionRegistry.
+	 * in the ConversionFunctionRegistry.
 	 * 
 	 * @param targetType The target type Class
 	 * @param modelType The model type Class
