@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.presentations.ActionBarPresentation;
+import org.eclipse.ui.internal.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -109,8 +109,8 @@ public class ViewPane extends PartPane {
      */
     public ViewPane(IViewReference ref, WorkbenchPage page) {
         super(ref, page);
-        ActionBarPresentation actionBarPresentation = ((WorkbenchWindow) page
-				.getWorkbenchWindow()).getActionBarPresentation();
+        IActionBarPresentationFactory actionBarPresentation = ((WorkbenchWindow) page
+				.getWorkbenchWindow()).getActionBarPresentationFactory();
         
         isvToolBarMgr = actionBarPresentation.createViewToolBarManager();
     }

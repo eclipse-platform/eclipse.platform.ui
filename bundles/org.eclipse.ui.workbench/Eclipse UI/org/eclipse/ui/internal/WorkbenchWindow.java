@@ -122,8 +122,8 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.presentations.ActionBarPresentation;
-import org.eclipse.ui.internal.presentations.InternalPresentationFactory;
+import org.eclipse.ui.internal.presentations.DefaultActionBarPresentationFactory;
+import org.eclipse.ui.internal.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -1729,7 +1729,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 							if (oldItem != null) {
 								newItem = oldItem;
 							} else {
-								ActionBarPresentation actionBarPresentation = getActionBarPresentation();
+								IActionBarPresentationFactory actionBarPresentation = getActionBarPresentationFactory();
 								newItem = actionBarPresentation.createToolBarContributionItem(
 										actionBarPresentation.createToolBarManager(), id);
 								if (type
@@ -2048,7 +2048,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				if (oldItem instanceof IToolBarContributionItem) {
 					newItem = oldItem;
 				} else {
-					ActionBarPresentation actionBarPresentaiton = getActionBarPresentation();
+					IActionBarPresentationFactory actionBarPresentaiton = getActionBarPresentationFactory();
 					newItem = actionBarPresentaiton.createToolBarContributionItem(
 									actionBarPresentaiton.createToolBarManager(), id);
 					// make it invisible by default
@@ -3226,17 +3226,16 @@ public class WorkbenchWindow extends ApplicationWindow implements
         return actionPresentation;
     }
     
-    /*package*/ ActionBarPresentation getActionBarPresentation() {
+    /*package*/ IActionBarPresentationFactory getActionBarPresentationFactory() {
     	// allow replacement of the actionbar presentation
-    	ActionBarPresentation actionBarPresentation;        	
+    	IActionBarPresentationFactory actionBarPresentation;        	
     	AbstractPresentationFactory presentationFactory = 
     		getWindowConfigurer().getPresentationFactory();
-    	if (presentationFactory instanceof InternalPresentationFactory) {
-        	actionBarPresentation = ((InternalPresentationFactory) presentationFactory)
-					.createActionBarPresentation(this);
+    	if (presentationFactory instanceof IActionBarPresentationFactory) {
+        	actionBarPresentation = ((IActionBarPresentationFactory) presentationFactory);
     	}
     	else 
-    		actionBarPresentation = new ActionBarPresentation();      
+    		actionBarPresentation = new DefaultActionBarPresentationFactory();      
     	
     	return actionBarPresentation;        	
     }
@@ -3260,7 +3259,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected ICoolBarManager createCoolBarManager2(int style) {
-        return getActionBarPresentation().createCoolBarManager();
+        return getActionBarPresentationFactory().createCoolBarManager();
     }
     
     /**
@@ -3273,7 +3272,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected Control createCoolBarControl(Composite parent) {
-        return getActionBarPresentation().createCoolBarControl(getCoolBarManager2(), parent);
+        return getActionBarPresentationFactory().createCoolBarControl(getCoolBarManager2(), parent);
     }
 
     /**
@@ -3285,7 +3284,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected IToolBarManager2 createToolBarManager2(int style) {
-        return getActionBarPresentation().createToolBarManager();
+        return getActionBarPresentationFactory().createToolBarManager();
     }
 
     /**
@@ -3297,7 +3296,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected Control createToolBarControl(Composite parent) {
-        return getActionBarPresentation().createToolBarControl(getToolBarManager2(), parent);
+        return getActionBarPresentationFactory().createToolBarControl(getToolBarManager2(), parent);
     }
     
     /**

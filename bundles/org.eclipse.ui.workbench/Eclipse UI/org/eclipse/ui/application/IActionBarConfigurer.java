@@ -11,10 +11,10 @@
 package org.eclipse.ui.application;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 
 /**
@@ -81,10 +81,10 @@ public interface IActionBarConfigurer {
 	 * 
      * @param toolBarManager a tool bar manager for the workbench window's tool bar
      * @param id the id of the contribution
-     * @return the contribution item
+     * @return the tool bar contribution item
 	 * @since 3.2
      */
-    public IContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id);
+    public IToolBarContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id);
 
     /**
      * Register the action as a global action with a workbench

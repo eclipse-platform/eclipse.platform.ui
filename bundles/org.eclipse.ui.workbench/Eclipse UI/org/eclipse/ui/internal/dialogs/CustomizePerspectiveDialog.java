@@ -485,7 +485,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarContributionItem(org.eclipse.jface.action.IToolBarManager, java.lang.String)
 		 */
-		public IContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
+		public IToolBarContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
 			return new ToolBarContributionItem(toolBarManager, id);
 		}
 

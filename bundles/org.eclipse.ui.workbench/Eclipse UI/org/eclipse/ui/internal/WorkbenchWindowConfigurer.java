@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -38,7 +39,7 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.internal.presentations.ActionBarPresentation;
+import org.eclipse.ui.internal.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
@@ -220,9 +221,9 @@ public final class WorkbenchWindowConfigurer implements
             window.registerGlobalAction(action);
         }
 
-		private ActionBarPresentation getActionBarPresentation() {
+		private IActionBarPresentationFactory getActionBarPresentationFactory() {
 			WorkbenchWindow window = (WorkbenchWindow)getWindowConfigurer().getWindow();
-			return window.getActionBarPresentation();
+			return window.getActionBarPresentationFactory();
 		}
 
 		/* (non-Javadoc)
@@ -232,17 +233,17 @@ public final class WorkbenchWindowConfigurer implements
 			if (proxy != null) {
 				return proxy.createToolBarManager();
 			}
-			return getActionBarPresentation().createToolBarManager();
+			return getActionBarPresentationFactory().createToolBarManager();
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarContributionItem(org.eclipse.jface.action.IToolBarManager, java.lang.String)
 		 */
-		public IContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
+		public IToolBarContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
 			if (proxy != null) {
 				return proxy.createToolBarContributionItem(toolBarManager, id);
 			}
-			return getActionBarPresentation().createToolBarContributionItem(toolBarManager, id);
+			return getActionBarPresentationFactory().createToolBarContributionItem(toolBarManager, id);
 		}
     }
 
@@ -613,7 +614,7 @@ public final class WorkbenchWindowConfigurer implements
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Control createCoolBarControl(Composite parent) {
-        return actionBarConfigurer.getActionBarPresentation().createCoolBarControl(
+        return actionBarConfigurer.getActionBarPresentationFactory().createCoolBarControl(
         		window.getCoolBarManager2(), parent);
     }
 

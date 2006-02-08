@@ -32,7 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SubActionBars2;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.presentations.ActionBarPresentation;
+import org.eclipse.ui.internal.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -86,7 +86,7 @@ public class EditorActionBars extends SubActionBars2 {
 
 	private String type;
 	
-	private ActionBarPresentation actionBarPresentation;
+	private IActionBarPresentationFactory actionBarPresentation;
 
 	/**
 	 * Constructs the EditorActionBars for an editor.
@@ -96,7 +96,7 @@ public class EditorActionBars extends SubActionBars2 {
 		super((IActionBars2)page.getActionBars(), serviceLocator);
 		this.type = type;
 		this.actionBarPresentation = ((WorkbenchWindow) page
-				.getWorkbenchWindow()).getActionBarPresentation();
+				.getWorkbenchWindow()).getActionBarPresentationFactory();
 	}
 
 	/**
