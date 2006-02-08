@@ -84,10 +84,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	 * advisor will provide a presentation model based on the given sync info set. The model is disposed
 	 * when the viewer is disposed.
 	 * 
-	 * @param targetID the targetID defined in the viewer contributions in a plugin.xml file.
-	 * @param site the workbench site with which to register the menuId. Can be <code>null</code> in which
-	 * case a site will be found using the default workbench page.
-	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
+	 * @param configuration
 	 */
 	public StructuredViewerAdvisor(ISynchronizePageConfiguration configuration) {
 		super(configuration);

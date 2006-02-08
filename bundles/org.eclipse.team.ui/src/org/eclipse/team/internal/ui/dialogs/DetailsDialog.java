@@ -67,10 +67,6 @@ abstract public class DetailsDialog extends Dialog {
 	 *
 	 * @param parentShell the shell under which to create this dialog
 	 * @param dialogTitle the title to use for this dialog
-	 * @param message the message to show in this dialog
-	 * @param status the error to show to the user
-	 * @param displayMask the mask to use to filter the displaying of child items,
-	 *   as per <code>IStatus.matches</code>
 	 * @see org.eclipse.core.runtime.IStatus#matches
 	 */
 	public DetailsDialog(Shell parentShell, String dialogTitle) {

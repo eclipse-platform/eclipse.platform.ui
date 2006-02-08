@@ -22,10 +22,8 @@ import org.eclipse.ui.actions.ActionGroup;
 
 /**
  * This action group provides radio buttons for each possible direction of synchronization information. The
- * modes created by this action group can be configured. The actions directly set the mode of a
- * {@link SubscriberParticipant}.
- *
- * @see SubscriberParticipant
+ * modes created by this action group can be configured. The actions directly set the mode of an
+ * {@link ISynchronizePageConfiguration}.
  * @since 3.0 
  */
 public class DirectionFilterActionGroup extends ActionGroup implements IPropertyChangeListener {
@@ -64,17 +62,10 @@ public class DirectionFilterActionGroup extends ActionGroup implements IProperty
 	
 	/**
 	 * Creates a direction filter group with the given supported modes. The
-	 * possible values for modes are defined by the {@link SubscriberParticipant}
-	 * class.
+	 * possible values for modes are defined by the {@link ISynchronizePageConfiguration}
+	 * interface.
 	 * 
-	 * @see SubscriberParticipant#BOTH_MODE
-	 * @see SubscriberParticipant#OUTGOING_MODE
-	 * @see SubscriberParticipant#INCOMING_MODE
-	 * @see SubscriberParticipant#CONFLICTING_MODE
-	 * @see SubscriberParticipant#ALL_MODES
-	 * 
-	 * @param participant the participant showing this group 
-	 * @param supportedModes the modes to be shown
+	 * @param configuration the page configuration
 	 */
 	public DirectionFilterActionGroup(ISynchronizePageConfiguration configuration) {		
 		this.configuration = configuration;
@@ -123,7 +114,7 @@ public class DirectionFilterActionGroup extends ActionGroup implements IProperty
 	
 	/**
 	 * @param supportedModes
-	 * @return
+	 * @return the support mode
 	 */
 	private int getSupportedMode(int supportedModes) {
 		if((supportedModes & ISynchronizePageConfiguration.INCOMING_MODE) != 0) {

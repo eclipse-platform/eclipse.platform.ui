@@ -89,8 +89,8 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 		/**
 		 * Notifies listeners of the property change
 		 * 
-		 * @param property
-		 *            the property that has changed
+		 * @param event
+		 *            the property change event
 		 */
 		public void notify(PropertyChangeEvent event) {
 			if (fListeners == null) {

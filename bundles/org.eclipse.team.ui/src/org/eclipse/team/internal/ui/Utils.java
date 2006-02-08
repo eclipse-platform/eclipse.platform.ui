@@ -127,14 +127,14 @@ public class Utils {
 	
 	/**
 	 * Shows the given errors to the user.
-	 * @param Exception
+	 * @param shell
+	 *            the shell to open the error dialog in
+	 * @param exception
 	 *            the exception containing the error
 	 * @param title
 	 *            the title of the error dialog
 	 * @param message
 	 *            the message for the error dialog
-	 * @param shell
-	 *            the shell to open the error dialog in
 	 */
 	public static void handleError(Shell shell, Exception exception, String title, String message) {
 		IStatus status = null;

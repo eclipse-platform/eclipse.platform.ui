@@ -49,7 +49,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		/**
 		 * @param newText
-		 * @return
+		 * @return the text
 		 */
 		public String strip(String newText) {
 			newText= newText.trim();

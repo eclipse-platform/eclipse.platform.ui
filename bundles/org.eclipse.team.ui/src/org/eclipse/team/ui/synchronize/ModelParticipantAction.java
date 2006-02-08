@@ -47,7 +47,7 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 
 	/**
 	 * Create the model participant action.
-	 * @param the label of the action or <code>null</code>
+	 * @param text the label of the action or <code>null</code>
 	 * @param configuration the configuration for the page that is surfacing the action
 	 */
 	public ModelParticipantAction(String text, ISynchronizePageConfiguration configuration) {

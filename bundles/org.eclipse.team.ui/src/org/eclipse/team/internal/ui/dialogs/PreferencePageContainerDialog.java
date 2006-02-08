@@ -308,7 +308,6 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 *
 	 * @param size the page size encoded as
 	 *   <code>new Point(width,height)</code>
-	 * @see #setMinimumPageSize(int,int)
 	 */
 	public void setMinimumPageSize(Point size) {
 		fMinimumPageSize.x = size.x;

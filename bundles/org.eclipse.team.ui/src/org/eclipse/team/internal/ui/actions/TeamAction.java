@@ -71,7 +71,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * 
 	 * @param selection
 	 * @param c
-	 * @return
+	 * @return the selected adaptables
 	 */
 	public static Object[] getSelectedAdaptables(ISelection selection, Class c) {
 		ArrayList result = null;
@@ -96,7 +96,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * the provided class. Null is returned if the given object does not adapt
 	 * to the given class
 	 * 
-	 * @param selection
+	 * @param adaptable
 	 * @param c
 	 * @return Object
 	 */
@@ -138,7 +138,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * are adapted from objects contained in the selection.
 	 * 
 	 * @param c
-	 * @return
+	 * @return the selection adapted to the given class
 	 */
 	protected Object[] getAdaptedSelection(Class c) {
 		return getSelectedAdaptables(selection, c);

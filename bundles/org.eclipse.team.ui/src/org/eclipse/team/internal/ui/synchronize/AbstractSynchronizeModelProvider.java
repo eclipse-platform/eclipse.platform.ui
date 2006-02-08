@@ -364,7 +364,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	/**
 	 * For each node create children based on the contents of
 	 * @param node
-	 * @return
+	 * @return the diff elements
 	 */
 	protected abstract IDiffElement[] buildModelObjects(ISynchronizeModelElement node);
 	
@@ -671,7 +671,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	/**
 	 * Return whether the given model element represets a conflict.
 	 * @param element the element being tested
-	 * @return
+	 * @return whether the element is a conflict
 	 */
 	protected boolean isConflicting(ISynchronizeModelElement element) {
 		return (element.getKind() & SyncInfo.DIRECTION_MASK) == SyncInfo.CONFLICTING;
@@ -1033,7 +1033,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		final PropertyChangeEvent event = new PropertyChangeEvent(this, key, oldValue, newValue);
 		for (int i = 0; i < allListeners.length; i++) {
 			final IPropertyChangeListener listener = (IPropertyChangeListener)allListeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Error is logged by platform
 				}

@@ -469,7 +469,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 
 	/**
 	 * @param group
-	 * @return
+	 * @return the group id
 	 */
 	public String getGroupId(String group) {
 		String id = getParticipant().getId();
@@ -532,7 +532,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	}
 
 	/**
-	 * @return
+	 * @return the viewer style
 	 */
 	public int getViewerStyle() {
 		Object o = getProperty(P_VIEWER_STYLE);

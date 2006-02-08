@@ -16,6 +16,7 @@ import org.eclipse.compare.internal.IOpenable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
 
 /**
  * A navigator that coordinates navigation between several navigable
@@ -24,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * This navigator can be used as input to the {@link NavigateAction}
  * actions and should be passed to the actions via the 
- * {@link SynchronizePageConfiguration.P_NAVIGATOR}.
+ * {@link SynchronizePageConfiguration#P_NAVIGATOR}.
  * </p>
  * @since 3.0
  */

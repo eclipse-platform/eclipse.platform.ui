@@ -54,7 +54,7 @@ public class MultipleYesNoPrompter {
 	/**
 	 * Return whether the given resource should be included in the
 	 * target set.
-	 * @param resource the resource to test
+	 * @param message the message
 	 * @return whether the resource should be included
 	 * @throws InterruptedException if the user choose to cancel
 	 */

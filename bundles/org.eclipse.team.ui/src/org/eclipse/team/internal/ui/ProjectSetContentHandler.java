@@ -28,9 +28,6 @@ public class ProjectSetContentHandler extends DefaultHandler {
 	List references;
 	boolean isVersionOne = false;
 	
-	/**
-	 * @see ContentHandler#startElement(String, String, String, Attributes)
-	 */
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		String elementName = getElementName(namespaceURI, localName, qName);
 		if (elementName.equals("psf")) { //$NON-NLS-1$ 
@@ -57,9 +54,6 @@ public class ProjectSetContentHandler extends DefaultHandler {
 		}
 	}
 
-	/**
-	 * @see ContentHandler#endElement(String, String, String)
-	 */
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 		String elementName = getElementName(namespaceURI, localName, qName);
 		if (elementName.equals("psf")) { //$NON-NLS-1$ 

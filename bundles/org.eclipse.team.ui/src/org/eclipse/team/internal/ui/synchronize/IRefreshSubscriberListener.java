@@ -14,12 +14,11 @@ import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Callback interface for clients interested in being notified about the lifecycle of 
- * a {@link Subscriber#refresh(IResource[], int, IProgressMonitor)} operation.
+ * a subscriber refresh operation.
  * <p>
  * Clients may implement this interface.
  * </p>
  * @see IRefreshEvent 
- * @see Subscriber
  * @since 3.0
  */
 public interface IRefreshSubscriberListener {

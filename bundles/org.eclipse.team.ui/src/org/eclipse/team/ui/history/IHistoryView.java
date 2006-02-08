@@ -29,7 +29,7 @@ public interface IHistoryView {
 	 * Returns the history page that is currently being displayed by the
 	 * history view.
 	 * TODO: Need to explain what page this is. Is it the visible page?
-	 * @return
+	 * @return the history page
 	 */
 	public IHistoryPage getHistoryPage();
 	

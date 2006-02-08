@@ -178,7 +178,7 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 	 * Default implementaton that is capable of returning a compare input for objects
 	 * that adapt to {@link IFile}. Subclasses shoudl override if compare inputs are
 	 * availabel for other types of model elements.
-	 * @see org.eclipse.team.ui.mapping.ICompareAdapter#asCompareInput(org.eclipse.team.ui.mapping.ISynchronizationContext, java.lang.Object)
+	 * @see ISynchronizationCompareAdapter#asCompareInput(ISynchronizationContext, Object)
 	 */
 	public ICompareInput asCompareInput(ISynchronizationContext context, Object o) {
 		IResource resource = Utils.getResource(o);

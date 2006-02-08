@@ -167,8 +167,6 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * 
 	 * @param context
 	 *            the context
-	 * @return whether the content provider has been initialized and is ready to
-	 *         provide content in he given context.
 	 */
 	protected void requestInitialization(ISynchronizationContext context) {
 		// Do nothing by default

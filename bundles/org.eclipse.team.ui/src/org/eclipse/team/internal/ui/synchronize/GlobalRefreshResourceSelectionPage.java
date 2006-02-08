@@ -35,7 +35,6 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  * resource list. By default, the resources in the current selection are checked, otherwise
  * all resources are checked.
  * 
- * @see SubscriberRefreshWizard
  * @since 3.0
  */
 public class GlobalRefreshResourceSelectionPage extends GlobalRefreshElementSelectionPage {
@@ -78,7 +77,7 @@ public class GlobalRefreshResourceSelectionPage extends GlobalRefreshElementSele
 	/**
 	 * Create a new page for the given participant. The scope hint will determine the initial selection.
 	 * 
-	 * @param participant the participant to synchronize
+	 * @param resources the resources to synchronize
 	 */
 	public GlobalRefreshResourceSelectionPage(IResource[] resources) {
 		super(TeamUIMessages.GlobalRefreshResourceSelectionPage_1); 

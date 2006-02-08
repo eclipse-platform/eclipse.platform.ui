@@ -86,7 +86,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	/**
 	 * Return the list of supported model providers for this advisor.
 	 * @param viewer
-	 * @return
+	 * @return the supported models
 	 */
 	protected abstract ISynchronizeModelProviderDescriptor[] getSupportedModelProviders();
 	

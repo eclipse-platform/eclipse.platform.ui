@@ -125,8 +125,6 @@ public class JobRunnableContext implements ITeamRunnableContext {
 	
 	/**
 	 * Return whether this job context is user initiated. Subclasses may override.
-	 * @param boolean <code>true</code> if the job is a result of a user initiated actions
-	 * and <code>false</code> otherwise.
 	 */
 	protected boolean isUser() {
 		return true;

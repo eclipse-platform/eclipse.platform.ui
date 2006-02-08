@@ -49,7 +49,7 @@ public interface ISynchronizeModelProvider {
 	/**
 	 * Return the <code>AbstractTreeViewer</code> asociated with this content
 	 * provider or <code>null</code> if the viewer is not of the proper type.
-	 * @return
+	 * @return the viewer
 	 */
 	public abstract StructuredViewer getViewer();
 
@@ -67,7 +67,7 @@ public interface ISynchronizeModelProvider {
 	/**
 	 * Returns the input created by this controller or <code>null</code> if 
 	 * {@link #prepareInput(IProgressMonitor)} hasn't been called on this object yet.
-	 * @return
+	 * @return the model element
 	 */
 	public abstract ISynchronizeModelElement getModelRoot();
 

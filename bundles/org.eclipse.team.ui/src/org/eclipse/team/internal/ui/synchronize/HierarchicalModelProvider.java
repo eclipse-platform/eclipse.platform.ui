@@ -22,8 +22,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * An input that can be used with both {@link } and 
- * {@link }. The
+ * The
  * job of this input is to create the logical model of the contents of the
  * sync set for displaying to the user. The created logical model must diff
  * nodes.
@@ -90,7 +89,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	 * the childen of the given node. This method can be overriden
 	 * by subclasses but subclasses should inv
 	 * @param container
-	 * @return
+	 * @return the diff elements
 	 */
 	protected IDiffElement[] createModelObjects(ISynchronizeModelElement container) {
 		IResource resource = null;

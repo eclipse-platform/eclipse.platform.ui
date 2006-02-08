@@ -26,7 +26,7 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 	
 	/**
 	 * Interface used to implement navigation for tree viewers. This interface is used by
-	 * {@link TreeViewerAdvisor#navigate(TreeViewer, boolean, boolean, boolean) to open 
+	 * {@link TreeViewerAdvisor#navigate(TreeViewer, boolean, boolean, boolean) to open} 
 	 * selections and navigate.
 	 */
 	public interface ITreeViewerAccessor {

@@ -161,7 +161,7 @@ public abstract class RefreshParticipantJob extends Job {
 		}
 		public void run(IRefreshSubscriberListener listener) {
 			this.listener = listener;
-			Platform.run(this);
+			SafeRunner.run(this);
 		}
 		public void run() throws Exception {
 			notify(listener);
@@ -217,9 +217,9 @@ public abstract class RefreshParticipantJob extends Job {
 	 * Create a job to refresh the specified resources with the subscriber.
 	 * 
 	 * @param participant the subscriber participant 
-	 * @param name
-	 * @param resources
-	 * @param subscriber
+	 * @param jobName
+	 * @param taskName
+	 * @param listener
 	 */
 	public RefreshParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, IRefreshSubscriberListener listener) {
 		super(taskName);

@@ -47,7 +47,7 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 	/**
 	 * Returns an IStorage for the element.
 	 * @param monitor
-	 * @return
+	 * @return a storage
 	 * @throws TeamException
 	 */
 	abstract protected IStorage getElementStorage(IProgressMonitor monitor) throws CoreException;

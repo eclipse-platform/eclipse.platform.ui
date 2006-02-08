@@ -44,7 +44,7 @@ public class ShowSynchronizeParticipantAction extends Action implements IPropert
 	 * synchronize view.
 	 * 
 	 * @param view the synchronize view in which the given page is contained
-	 * @param participant the participant to show
+	 * @param ref the participant to show
 	 */
 	public ShowSynchronizeParticipantAction(ISynchronizeView view, ISynchronizeParticipantReference ref) {
 		super(Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, ref.getDisplayName()), IAction.AS_RADIO_BUTTON);

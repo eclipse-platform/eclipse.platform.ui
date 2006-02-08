@@ -40,8 +40,8 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	/**
 	 * Construct a <code>SyncInfoModelElement</code> for the given resource.
 	 * 
-	 * @param set The set associated with the diff tree veiwer
-	 * @param resource The resource for the node
+	 * @param parent 
+	 * @param info 
 	 */
 	public SyncInfoModelElement(IDiffContainer parent, SyncInfo info) {
 		super(parent);

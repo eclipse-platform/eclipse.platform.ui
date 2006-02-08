@@ -116,10 +116,8 @@ public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
 	 * advisor will provide a presentation model based on the given sync info set. Note that it's important
 	 * to call {@link #dispose()} when finished with an advisor.
 	 * 
-	 * @param targetID the targetID defined in the viewer contributions in a plugin.xml file.
-	 * @param site the workbench site with which to register the menuId. Can be <code>null</code> in which
-	 * case a site will be found using the default workbench page.
-	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
+	 * @param parent
+	 * @param configuration
 	 */
 	public TreeViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
 		super(configuration);
@@ -216,7 +214,7 @@ public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
 	 * Called to set the input to a viewer. The input to a viewer is always the model created
 	 * by the model provider.
 	 * 
-	 * @param viewer the viewer to set the input.
+	 * @param modelProvider
 	 */
 	public final void setInput(final ISynchronizeModelProvider modelProvider) {
 		final ISynchronizeModelElement modelRoot = modelProvider.getModelRoot();

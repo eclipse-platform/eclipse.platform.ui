@@ -47,8 +47,8 @@ public interface ISynchronizationCompareAdapter {
 	/**
 	 * Return a compare input for the given model object. Creation of the input
 	 * should be fast. Synchronization information calculations that are longer
-	 * running should be performed up front in the
-	 * {@link #prepareContext(ISynchronizationContext, IProgressMonitor)}
+	 * running should be performed in the
+	 * {@link IModelCompareInput#prepareInput(org.eclipse.compare.CompareConfiguration, IProgressMonitor)}
 	 * method. Clients should call this method once per context before obtaining
 	 * any compare inputs from the adapter. A <code>null</code> should be
 	 * returned if the model object is in-sync or otherwise cannot be compared.
