@@ -14,9 +14,6 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 import java.math.BigInteger;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -27,6 +24,7 @@ import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
+import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
@@ -52,7 +50,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			if (tableRenderingContext.getTableRendering() != null)
 			{
 				AbstractAsyncTableRendering tableRendering = tableRenderingContext.getTableRendering();
-				String addressStr = getColumnText(element, 0, tableRendering);
+				String addressStr = getColumnText(element, 0, tableRendering, tableRenderingContext.getContentDescriptor());
 				int numColumns = tableRendering.getAddressableUnitPerLine() / tableRendering.getAddressableUnitPerColumn();
 				
 				String[] labels = new String[numColumns+2];
@@ -60,7 +58,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 				
 				for (int i=0; i<=numColumns; i++)
 				{
-					labels[i+1] = getColumnText(element, i+1, tableRendering);
+					labels[i+1] = getColumnText(element, i+1, tableRendering, tableRenderingContext.getContentDescriptor());
 				}
 				
 				labels[labels.length - 1 ] = ""; //$NON-NLS-1$
@@ -70,7 +68,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 		return new String[0];
 	}
 	
-	private String getColumnText(Object element, int columnIndex, AbstractAsyncTableRendering tableRendering) {
+	private String getColumnText(Object element, int columnIndex, AbstractAsyncTableRendering tableRendering, TableRenderingContentDescriptor descriptor) {
 		String columnLabel = null;
 
 		if (columnIndex == 0)
@@ -84,7 +82,8 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			}
 			
 			columnLabel = ((MemorySegment)element).getAddress().toString(16).toUpperCase();
-			int addressSize = getAddressSize(((MemorySegment)element).getAddress(), tableRendering.getMemoryBlock());
+			
+			int addressSize = descriptor.getAddressSize();
 			int prefillLength = addressSize * 2 - columnLabel.length();
 			StringBuffer buf = new StringBuffer();
 			if (prefillLength > 0)
@@ -377,47 +376,6 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 		}
 
 		return new RGB[0];
-	}
-
-	/**
-	 * Calculate address size of the given address
-	 * @param address
-	 * @return size of address from the debuggee
-	 */
-	private int getAddressSize(BigInteger address, IMemoryBlock memoryBlock) 
-	{
-		int addressSize = 0;
-		try {
-			 if (memoryBlock instanceof IMemoryBlockExtension)
-			 {
-				 addressSize = ((IMemoryBlockExtension)memoryBlock).getAddressSize();
-			 }
-			
-			 // handle IMemoryBlock and invalid address size returned by IMemoryBlockExtension
-			 if (addressSize <= 0)
-			 {
-				addressSize = getDefaultAddressSize(address);
-			 }
-		} catch (DebugException e) {
-			DebugUIPlugin.log(e);
-			addressSize = getDefaultAddressSize(address);			
-		}		
-		 
-		 return addressSize;
-	}
-
-	private int getDefaultAddressSize(BigInteger address) {
-		int addressSize;
-		String adjustedAddress = address.toString(16);
-		 if (adjustedAddress.length() > 8)
-		 {
-			 addressSize = 8;
-		 }
-		 else
-		 {
-			 addressSize = 4;
-		 }
-		return addressSize;
 	}
 	
 	/**

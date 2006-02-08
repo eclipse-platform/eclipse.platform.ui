@@ -251,4 +251,6 @@ public class DebugUIMessages extends NLS {
 	public static String AbstractAsyncTableRendering_0;
 
 	public static String AbstractAsyncTableRendering_1;
+
+	public static String CreateRendering_2;
 }

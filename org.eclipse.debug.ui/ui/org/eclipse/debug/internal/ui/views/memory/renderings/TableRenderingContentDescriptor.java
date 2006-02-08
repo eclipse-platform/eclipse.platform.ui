@@ -27,25 +27,12 @@ public class TableRenderingContentDescriptor{
 	private BigInteger fStartAddress;
 	private BigInteger fEndAddress;
 	
-	public TableRenderingContentDescriptor(AbstractBaseTableRendering rendering, int preBuffer, int postBuffer, BigInteger loadAddress, int numOfLines,  BigInteger contentBaseAddress)
+	private int fAddressSize = -1;
+	private int fAddressableSize = -1;
+	
+	public TableRenderingContentDescriptor(AbstractBaseTableRendering rendering)
 	{
 		fRendering = rendering;
-		fPreBuffer = preBuffer;
-		fPostBuffer = postBuffer;
-		fLoadAddress = loadAddress;
-		fNumLines = numOfLines;
-
-		if (contentBaseAddress == null)
-		{
-			try {
-				updateContentBaseAddress();
-			} catch (DebugException e) {
-			}
-		}
-		else
-		{
-			fMemoryBlockBaseAddress = contentBaseAddress;
-		}
 	}
 
 	public int getPostBuffer() {
@@ -175,6 +162,22 @@ public class TableRenderingContentDescriptor{
 	public AbstractBaseTableRendering getRendering()
 	{
 		return fRendering;
+	}
+
+	public int getAddressableSize() {
+		return fAddressableSize;
+	}
+
+	public void setAddressableSize(int addressableSize) {
+		fAddressableSize = addressableSize;
+	}
+
+	public int getAddressSize() {
+		return fAddressSize;
+	}
+
+	public void setAddressSize(int addressSize) {
+		fAddressSize = addressSize;
 	}
 
 }

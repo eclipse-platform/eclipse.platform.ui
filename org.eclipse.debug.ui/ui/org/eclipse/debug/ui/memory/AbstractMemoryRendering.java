@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -57,6 +61,22 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	private MenuManager fPopupMenuMgr;
 	private String fRenderingId;
 	
+	private class ConnectionJob extends Job
+	{
+		Runnable fRunnable;
+		ConnectionJob(Runnable runnable)
+		{
+			super("Connect/Disconnect MemoryBlock"); //$NON-NLS-1$
+			fRunnable = runnable;
+			setSystem(true);
+		}
+
+		protected IStatus run(IProgressMonitor monitor) {
+			fRunnable.run();
+			return Status.OK_STATUS;
+		}
+	}
+	
 	/**
 	 * Cient may provide a label decorator adapter from its memory block
 	 * to decorate the label of a rendering.
@@ -92,7 +112,11 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		// disconnect from memory block when rendering is disposed
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			((IMemoryBlockExtension)fMemoryBlock).disconnect(this);
+			Runnable runnable = new Runnable(){
+				public void run() {
+					((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
+				}};
+			new ConnectionJob(runnable).schedule();
 		}
 		
 		if (fPropertyListeners != null)
@@ -123,9 +147,14 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 */
 	public void becomesVisible() {
 		fVisible = true;
+		
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			((IMemoryBlockExtension)fMemoryBlock).connect(this);
+			Runnable runnable = new Runnable(){
+				public void run() {
+					((IMemoryBlockExtension)fMemoryBlock).connect(this);		
+				}};
+			new ConnectionJob(runnable).schedule();
 		}
 	}
 
@@ -136,7 +165,11 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		fVisible = false;
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			((IMemoryBlockExtension)fMemoryBlock).disconnect(this);
+			Runnable runnable = new Runnable(){
+				public void run() {
+					((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
+				}};
+			new ConnectionJob(runnable).schedule();
 		}
 	}
 

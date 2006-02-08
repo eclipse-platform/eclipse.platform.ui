@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -53,22 +57,45 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Dialog allowing user to add a memory rendering
  */
 public class AddMemoryRenderingDialog extends SelectionDialog {
 	
-	IMemoryBlock[] fMemoryBlocks;
-	Combo memoryBlock;
-	ListViewer fViewer;
-	IMemoryBlock fSelectedMemoryBlock;
-	Button addNew;
+	private IMemoryBlock[] fMemoryBlocks;
+	private Combo memoryBlock;
+	private ListViewer fViewer;
+	private IMemoryBlock fSelectedMemoryBlock;
+	private Button addNew;
 	
-	ISelectionChangedListener fSelectionChangedListener;
-	MouseListener fMouseListener;
-	SelectionListener fSelectionListener;
+	private ISelectionChangedListener fSelectionChangedListener;
+	private MouseListener fMouseListener;
+	private SelectionListener fSelectionListener;
 	private IMemoryRenderingSite fSite;
+	
+	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener(){
+		
+		public void memoryBlocksAdded(final IMemoryBlock[] memory)
+		{
+			if (memory.length > 0)
+			{
+				WorkbenchJob job = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
+
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						populateDialog(memoryBlock, fViewer, memory[0]);
+						return Status.OK_STATUS;
+					}};
+				job.setSystem(true);
+				job.schedule();
+			}
+		}
+		
+		public void memoryBlocksRemoved(IMemoryBlock[] memory)
+		{
+		}
+	};
 
 	class MemoryRenderingLabelProvider implements ILabelProvider
 	{
@@ -153,6 +180,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		fViewer.removeSelectionChangedListener(fSelectionChangedListener);
 		memoryBlock.removeSelectionListener(fSelectionListener);
 		addNew.removeMouseListener(fMouseListener);
+		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fMemoryBlockListener);
 		
 		return super.close();
 	}
@@ -250,46 +278,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		
 		fMouseListener =new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				IMemoryBlock[] oldBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks();
-				
 				RetargetAddMemoryBlockAction action = new RetargetAddMemoryBlockAction(fSite, false);
 				action.run();
-				
-				IMemoryBlock[] newBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks();
-				
-				IMemoryBlock mb = action.getLastMemoryBlock();
-				if (mb == null)
-				{
-					mb = findNewMemoryBlock(oldBlocks, newBlocks);
-				}
-				
-				populateDialog(memoryBlock, fViewer, mb);
 				action.dispose();
-			}
-			
-			private IMemoryBlock findNewMemoryBlock(IMemoryBlock[] oldBlocks, IMemoryBlock[] newBlocks)
-			{
-				if (oldBlocks.length == newBlocks.length)
-					return newBlocks[newBlocks.length - 1];
-				
-				if (newBlocks.length > oldBlocks.length)
-				{
-					// search from the back as new memory blocks should be at the
-					// end of the list
-					for (int i=newBlocks.length - 1; i>=0; i++)
-					{
-						boolean found = false;
-						for (int j=0; j<oldBlocks.length; j++)
-						{
-							if (newBlocks[i] == oldBlocks[j])
-								found = true;
-						}
-						if (!found)
-							return newBlocks[i];
-					}
-				}	
-				
-				return newBlocks[newBlocks.length - 1];
 			}
 		}; 
 		
@@ -357,6 +348,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			}};
 		
 		fViewer.addSelectionChangedListener(fSelectionChangedListener);
+		
+		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fMemoryBlockListener);
+		
 		return composite;
 	}
 

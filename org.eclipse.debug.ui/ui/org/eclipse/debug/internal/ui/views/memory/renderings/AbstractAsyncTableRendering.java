@@ -300,7 +300,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				
 				final BigInteger finalMbBaseAddress = mbBaseAddress;
 				final BigInteger initialSelectedAddress = getInitialSelectedAddress();
-		
+				
+				createContentDescriptor(topVisibleAddress);
+				
 				// batch update on UI thread
 				UIJob uiJob = new UIJob("Create Table Viewer UI Job"){ //$NON-NLS-1$
 
@@ -317,11 +319,12 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						getPageSizeFromPreference();
 						
 						int numberOfLines = getNumLinesToLoad();
+						fContentDescriptor.setNumLines(numberOfLines);
 						
 						BigInteger baseAddress = finalMbBaseAddress;
 						if (baseAddress == null)
 							baseAddress = BigInteger.ZERO;
-						fContentDescriptor = new TableRenderingContentDescriptor(AbstractAsyncTableRendering.this, 20, 20, topVisibleAddress, numberOfLines,  baseAddress);
+						
 						
 						if (!(getMemoryBlock() instanceof IMemoryBlockExtension) || !isDynamicLoad())
 						{		
@@ -1938,9 +1941,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			{
 				BigInteger topVisibleAddress = fPendingSyncProperties.getTopVisibleAddress();
 				if (topVisibleAddress != null)
+				{
 					fContentDescriptor.setLoadAddress(topVisibleAddress);
-				
-				fTableViewer.setTopIndex(topVisibleAddress);
+					fTableViewer.setTopIndex(topVisibleAddress);
+				}
+			}
+			else if (!(getMemoryBlock() instanceof IMemoryBlockExtension))
+			{
+				BigInteger topVisibleAddress = fPendingSyncProperties.getTopVisibleAddress();
+				if (topVisibleAddress != null)
+					fTableViewer.setTopIndex(topVisibleAddress);
 			}
 			else
 			{
@@ -2449,4 +2459,45 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @return the bytes converted from a string
 	 */
 	abstract public byte[] getBytes(String renderingTypeId, BigInteger address, MemoryByte[] currentValues, String newValue);
+
+	/**
+	 * @param topVisibleAddress
+	 */
+	private void createContentDescriptor(final BigInteger topVisibleAddress) {
+		fContentDescriptor = new TableRenderingContentDescriptor(AbstractAsyncTableRendering.this);
+		fContentDescriptor.setPostBuffer(20);
+		fContentDescriptor.setPreBuffer(20);
+		fContentDescriptor.setLoadAddress(topVisibleAddress);
+		try {
+			fContentDescriptor.updateContentBaseAddress();
+			
+		} catch (DebugException e) {
+			showMessage(e.getMessage());
+		}
+		
+		fContentDescriptor.setAddressableSize(getAddressableSize());
+			
+		try {
+			int addressSize = 4;
+			if (getMemoryBlock() instanceof IMemoryBlockExtension)
+			{
+				IMemoryBlockExtension extMb = (IMemoryBlockExtension)getMemoryBlock();
+				addressSize = extMb.getAddressSize();
+				
+				if (addressSize <= 0)
+				{
+					DebugUIPlugin.logErrorMessage("Invalid address Size: " + addressSize); //$NON-NLS-1$
+					addressSize = 4;
+				}
+				fContentDescriptor.setAddressSize(addressSize);
+			}
+			fContentDescriptor.setAddressSize(addressSize);
+		} catch (DebugException e) {
+			showMessage(e.getMessage());
+		} finally {
+			if (fContentDescriptor.getAddressSize() <= 0)
+				fContentDescriptor.setAddressSize(4);
+		}
+		
+	}
 }

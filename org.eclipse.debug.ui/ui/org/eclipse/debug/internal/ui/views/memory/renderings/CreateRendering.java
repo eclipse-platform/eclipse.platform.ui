@@ -11,8 +11,10 @@
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -27,7 +29,9 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -46,6 +50,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The rendering to allow users to create a rendering.
@@ -57,6 +62,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	private Label fMemoryBlockLabel;
 	private IMemoryRenderingContainer fContainer; 
 	private Composite fCanvas;
+	private String fLabel;
 	
 	public CreateRendering(IMemoryRenderingContainer container)
 	{
@@ -295,4 +301,41 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 			fViewer.refresh();
 	}
 
+	public String getLabel() {
+		// TODO Auto-generated method stub	public String getLabel() {
+		
+		if (fLabel == null)
+		{
+			fLabel = DebugUIMessages.CreateRendering_2;
+			updateRenderingLabel();
+		}
+		
+		return fLabel;
+	}
+	
+	protected void updateRenderingLabel()
+	{
+		Job job = new Job("Update Rendering Label"){ //$NON-NLS-1$
+
+			protected IStatus run(IProgressMonitor monitor) {
+				fLabel = CreateRendering.super.getLabel();
+				firePropertyChangedEvent(new PropertyChangeEvent(CreateRendering.this, IBasicPropertyConstants.P_TEXT, null, fLabel));
+				
+				WorkbenchJob wbJob = new WorkbenchJob("Create Rendering Update Label"){ //$NON-NLS-1$
+
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						if (fMemoryBlockLabel != null)
+						{
+							fMemoryBlockLabel.setText("  " + DebugUIMessages.CreateRenderingTab_Memory_monitor + fLabel + "  ");  //$NON-NLS-1$//$NON-NLS-2$
+							fMemoryBlockLabel.getParent().layout();
+						}
+						return Status.OK_STATUS;
+					}};
+				wbJob.setSystem(true);
+				wbJob.schedule();
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
+	}
 }

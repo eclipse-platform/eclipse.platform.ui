@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -82,11 +83,33 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private FocusAdapter fEditorFocusListener;
 	private KeyAdapter fEditorKeyListener;
 	
+	private boolean fMBSupportsChangeManagement;
+	
+	class SupportsChangeMgmtJob extends Job {
+		
+		SupportsChangeMgmtJob()
+		{
+			super("Support Change Management"); //$NON-NLS-1$
+			setSystem(true);
+		}
 
+		protected IStatus run(IProgressMonitor monitor) {
+			IMemoryBlock mb = fRendering.getMemoryBlock();
+			if (mb instanceof IMemoryBlockExtension)
+			{
+				IMemoryBlockExtension mbExt = (IMemoryBlockExtension)mb;
+				fMBSupportsChangeManagement = mbExt.supportsChangeManagement();
+			}
+			return Status.OK_STATUS;
+		}
+		
+	}
 	
 	public AsyncTableRenderingViewer(AbstractAsyncTableRendering rendering, Composite parent, int style) {
 		super(parent, style);
 		fRendering = rendering;
+		
+		new SupportsChangeMgmtJob().schedule();
 		
 		getTable().addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
@@ -147,12 +170,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		if (computer.isEmpty())
 			return newContent.toArray();
 		
-		IMemoryBlock mb = fRendering.getMemoryBlock();
-		if (mb instanceof IMemoryBlockExtension)
+		if (isChangesManagedByMemoryBlock())
 		{
-			IMemoryBlockExtension mbExt = (IMemoryBlockExtension)mb;
-			if (mbExt.supportsChangeManagement())
-				return newContent.toArray();
+			return newContent.toArray();
 		}
 		
 		Object[] content = computer.compare(newContent.toArray());
@@ -975,5 +995,10 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 
 	public void handlePresentationFailure(IAsynchronousRequestMonitor monitor, IStatus status) {
 		super.handlePresentationFailure(monitor, status);
+	}
+	
+	private boolean isChangesManagedByMemoryBlock()
+	{
+		return fMBSupportsChangeManagement;
 	}
 }
