@@ -70,7 +70,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_ENABLE_MODEL_SYNC, 
-		        "Work in progess: Enable model sync", 
+		        "Enable model based synchronization", 
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
         
