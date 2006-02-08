@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.mapping.ISynchronizationConstants;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.ModelOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
@@ -35,7 +35,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		this.configuration = configuration;
 		listener = new org.eclipse.jface.util.IPropertyChangeListener() {
 					public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
-						if (event.getProperty() == ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER) {
+						if (event.getProperty() == ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER) {
 							update();
 						}
 					}
@@ -47,8 +47,8 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 				Viewer v = ModelSelectionDropDownAction.this.configuration.getPage().getViewer();
 				v.setInput(getSynchronizationContext());
 				ModelSelectionDropDownAction.this.configuration.setProperty(
-						ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER,
-						ISynchronizationConstants.ALL_MODEL_PROVIDERS_ACTIVE);
+						ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER,
+						ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_ACTIVE);
 				ModelSelectionDropDownAction.this.configuration.setProperty(
 						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
 						ModelSelectionDropDownAction.this.configuration.getParticipant().getName());
@@ -61,7 +61,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 	}
 
 	private ISynchronizationContext getSynchronizationContext() {
-		return (ISynchronizationContext)configuration.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
+		return (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 	}
 
 	public void dispose() {
@@ -102,9 +102,9 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 	}
 
 	private String getActiveProviderId() {
-		String id = (String)configuration.getProperty(ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER);
+		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER);
 		if (id == null)
-			id = ISynchronizationConstants.ALL_MODEL_PROVIDERS_ACTIVE;
+			id = ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_ACTIVE;
 		return id;
 	}
 

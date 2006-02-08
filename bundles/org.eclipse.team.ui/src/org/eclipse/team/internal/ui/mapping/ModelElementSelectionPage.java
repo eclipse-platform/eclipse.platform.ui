@@ -37,7 +37,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 	private INavigatorContentService service;
 	private ISynchronizationScopeManager manager;
 
-	protected ModelElementSelectionPage(IResource[] roots) {
+	public ModelElementSelectionPage(IResource[] roots) {
 		super("elementSelection"); //$NON-NLS-1$
 		setDescription(TeamUIMessages.GlobalRefreshResourceSelectionPage_2); 
 		setTitle(TeamUIMessages.GlobalRefreshResourceSelectionPage_3);

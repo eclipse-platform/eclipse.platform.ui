@@ -92,6 +92,21 @@ public class ModelSynchronizeParticipant extends
 	};
 
 	/**
+	 * Constant used with the <code>P_ACTIVE_MODEL_PROVIDER</code> property to indicate
+	 * that all model providers are active.
+	 */
+	public static final String ALL_MODEL_PROVIDERS_ACTIVE = "org.eclipse.team.ui.activeModelProvider"; //$NON-NLS-1$
+
+	/**
+	 * Property constant used to store and retrieve the id of the active
+	 * {@link ModelProvider} from an {@link ISynchronizePageConfiguration}. The
+	 * active model provider will be the only one visible in the page. If
+	 * <code>null</code> or <code>ALL_MODEL_PROVIDERS_ACTIVE</code> is
+	 * returned, all model providers are considered active and are visible.
+	 */
+	public static final String P_ACTIVE_MODEL_PROVIDER = "org.eclipse.team.ui.activeModelProvider"; //$NON-NLS-1$
+
+	/**
 	 * Create a participant for the given context
 	 * @param context the synchronization context
 	 * @param name the name of the participant
@@ -165,8 +180,8 @@ public class ModelSynchronizeParticipant extends
 		}
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
-		configuration.setProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT, getContext());
-		configuration.setProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE, getContext().getScope());
+		configuration.setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT, getContext());
+		configuration.setProperty(ITeamContentProviderManager.P_RESOURCE_MAPPING_SCOPE, getContext().getScope());
 	}
 
 	/**

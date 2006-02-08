@@ -17,7 +17,7 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
-import org.eclipse.team.ui.mapping.ISynchronizationConstants;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class DiffTreeStatusLineContributionGroup extends
@@ -38,7 +38,7 @@ public class DiffTreeStatusLineContributionGroup extends
 	}
 
 	private ISynchronizationContext getSynchronizationContext() {
-		return (ISynchronizationContext)getConfiguration().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
+		return (ISynchronizationContext)getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 	}
 
 	protected int countFor(int state) {

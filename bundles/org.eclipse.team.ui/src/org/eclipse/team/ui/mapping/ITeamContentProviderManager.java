@@ -12,6 +12,8 @@ package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizePage;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * The team content provider manager provides access to the content
@@ -25,6 +27,30 @@ import org.eclipse.team.ui.TeamUI;
  * @since 3.2
  */
 public interface ITeamContentProviderManager {
+
+	/**
+	 * Property constant used to store and retrieve the synchronization page
+	 * configuration from the
+	 * {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common
+	 * Navigator framework.
+	 */
+	public static final String P_SYNCHRONIZATION_PAGE_CONFIGURATION = "org.eclipse.team.ui.synchronizationPageConfiguration"; //$NON-NLS-1$
+	/**
+	 * Property constant used to store and retrieve the synchronization context
+	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by
+	 * the Common Navigator framework. It is also used to associate a context
+	 * with an {@link ISynchronizePageConfiguration} when models are being
+	 * shown in an {@link ISynchronizePage}.
+	 */
+	public static final String P_SYNCHRONIZATION_CONTEXT = "org.eclipse.team.ui.synchronizationContext"; //$NON-NLS-1$
+	/**
+	 * Property constant used to store and retrieve the resource mapping scope
+	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by
+	 * the Common Navigator framework. It is also used to associate a scope
+	 * with an {@link ISynchronizePageConfiguration} when models are being
+	 * shown in an {@link ISynchronizePage}.
+	 */
+	public static final String P_RESOURCE_MAPPING_SCOPE = "org.eclipse.team.ui.resourceMappingScope"; //$NON-NLS-1$
 
 	/**
 	 * Return descriptors for all the registered content extensions.

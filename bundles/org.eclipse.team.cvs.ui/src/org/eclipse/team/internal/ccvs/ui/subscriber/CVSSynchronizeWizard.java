@@ -15,7 +15,6 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard;
-import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantWizard;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -32,7 +31,7 @@ public class CVSSynchronizeWizard extends SubscriberParticipantWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.synchronize.SubscriberParticipantWizard#getName()
 	 */
-	protected String getName() {
+	protected String getPageTitle() {
 		ISynchronizeParticipantDescriptor desc = TeamUI.getSynchronizeManager().getParticipantDescriptor(WorkspaceSynchronizeParticipant.ID);
 		if(desc != null) {
 			return desc.getName();

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.synchronize;
+package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.*;
@@ -18,14 +18,27 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.TeamImages;
 
 /**
- * This is the class registered with the org.eclipse.team.ui.synchronizeWizard
+ * This is a convenience class for creating wizards for use with the
+ * <code>org.eclipse.team.ui.synchronizeWizard</code> extension point.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public abstract class ParticipantSynchronizeWizard extends Wizard {
 
 	private WizardPage selectionPage;
 	private IWizard importWizard;
 	
-	public ParticipantSynchronizeWizard() {
+	/**
+	 * Create the wizard.
+	 */
+	protected ParticipantSynchronizeWizard() {
 		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE));
 		setNeedsProgressMonitor(false);
 	}
@@ -47,12 +60,12 @@ public abstract class ParticipantSynchronizeWizard extends Wizard {
 			importWizard.addPages();
 			IWizardPage startingPage = importWizard.getStartingPage();
 			if (startingPage != null) {
-				startingPage.setTitle(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_0, new String[] { getName() })); 
+				startingPage.setTitle(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_0, new String[] { getPageTitle() })); 
 				startingPage.setDescription(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_1, new String[] { importWizard.getWindowTitle() })); 
 			}
 		} else {
 			selectionPage = createScopeSelectionPage();
-			selectionPage.setTitle(NLS.bind(TeamUIMessages.GlobalRefreshSubscriberPage_1, new String[] { getName() })); 
+			selectionPage.setTitle(NLS.bind(TeamUIMessages.GlobalRefreshSubscriberPage_1, new String[] { getPageTitle() })); 
 			selectionPage.setMessage(TeamUIMessages.GlobalRefreshSubscriberPage_2); 
 			addPage(selectionPage);
 		}
@@ -110,13 +123,40 @@ public abstract class ParticipantSynchronizeWizard extends Wizard {
 		return super.getStartingPage();
 	}
 
-	protected abstract String getName();
+	/**
+	 * Return the page title for the page used by this wizard.
+	 * @return the page title for the page used by this wizard
+	 */
+	protected abstract String getPageTitle();
 	
+	/**
+	 * Return a wizard that can be used to populate the workspace
+	 * if there are no resources returned from {@link #getRootResources()}.
+	 * @return a wizard that can be used to populate the workspace
+	 */
 	protected abstract IWizard getImportWizard();
 	
+	/**
+	 * Return the resources that are the roots of the resource
+	 * trees that can be considered for inclusion.
+	 * @return the resources that are the roots of the resource
+	 * trees that can be considered for inclusion
+	 */
 	protected abstract IResource[] getRootResources();
 	
+	/**
+	 * Create the page which allows the user to select the scope
+	 * for the operation.
+	 * @return the page which allows the user to select the scope
+	 * for the operation
+	 */
+	protected abstract WizardPage createScopeSelectionPage();
+	
+	/**
+	 * Method called from {@link #performFinish()} to create
+	 * a participant. This participant will be added to the
+	 * Synchronize view.
+	 */
 	protected abstract void createParticipant();
 	
-	protected abstract WizardPage createScopeSelectionPage();
 }

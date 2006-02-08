@@ -8,23 +8,43 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.synchronize;
+package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.team.internal.ui.synchronize.GlobalRefreshResourceSelectionPage;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
 
+/**
+ * This is a convenience class for creating wizards for use with the
+ * <code>org.eclipse.team.ui.synchronizeWizard</code> extension point
+ * that create a {@link SubscriberParticipant}.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
+ */
 public abstract class SubscriberParticipantWizard extends ParticipantSynchronizeWizard {
 
 	private GlobalRefreshResourceSelectionPage selectionPage;
 	
-	protected WizardPage createScopeSelectionPage() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ParticipantSynchronizeWizard#createScopeSelectionPage()
+	 */
+	protected final WizardPage createScopeSelectionPage() {
 		selectionPage = new GlobalRefreshResourceSelectionPage(getRootResources());
 		return selectionPage;
 	}
 	
-	protected void createParticipant() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ParticipantSynchronizeWizard#createParticipant()
+	 */
+	protected final void createParticipant() {
 		IResource[] resources = selectionPage.getRootResources();
 		if (resources != null && resources.length > 0) {
 			SubscriberParticipant participant = createParticipant(selectionPage.getSynchronizeScope());
@@ -34,6 +54,14 @@ public abstract class SubscriberParticipantWizard extends ParticipantSynchronize
 		}
 	}
 	
+	/**
+	 * Method called from {@link #createParticipant()} to create a
+	 * {@link SubscriberParticipant} for the given scope.
+	 * 
+	 * @param scope the selected scope
+	 * @return a synchronize participant that will be added to the Synchronize
+	 *         view
+	 */
 	protected abstract SubscriberParticipant createParticipant(ISynchronizeScope scope);
 
 }

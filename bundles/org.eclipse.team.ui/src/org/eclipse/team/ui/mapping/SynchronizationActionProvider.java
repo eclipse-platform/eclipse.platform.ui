@@ -128,7 +128,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * the common viewer
 	 */
 	protected final ISynchronizePageConfiguration getSynchronizePageConfiguration() {
-		return (ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
+		return (ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * apply
 	 */
 	protected final ISynchronizationContext getSynchronizationContext() {
-		return (ISynchronizationContext)getExtensionStateModel().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
+		return (ISynchronizationContext)getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 	}
 	
 	/**

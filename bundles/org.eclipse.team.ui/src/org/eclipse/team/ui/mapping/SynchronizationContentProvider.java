@@ -287,8 +287,8 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration != null)
 			configuration.addPropertyChangeListener(this);
-		scope = (ISynchronizationScope)aStateModel.getProperty(ISynchronizationConstants.P_RESOURCE_MAPPING_SCOPE);
-		context = (ISynchronizationContext)aStateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
+		scope = (ISynchronizationScope)aStateModel.getProperty(ITeamContentProviderManager.P_RESOURCE_MAPPING_SCOPE);
+		context = (ISynchronizationContext)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		ITreeContentProvider provider = getDelegateContentProvider();
 		if (provider instanceof ICommonContentProvider) {
 			((ICommonContentProvider) provider).init(aStateModel, aMemento);	
@@ -367,7 +367,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return the synchronization page configuration or <code>null</code>
 	 */
 	protected ISynchronizePageConfiguration getConfiguration() {
-		return (ISynchronizePageConfiguration)stateModel.getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
+		return (ISynchronizePageConfiguration)stateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
 	}
 	
 	/* (non-Javadoc)

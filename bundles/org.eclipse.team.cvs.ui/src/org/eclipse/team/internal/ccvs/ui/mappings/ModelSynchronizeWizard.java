@@ -19,10 +19,8 @@ import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard;
-import org.eclipse.team.internal.ui.mapping.ModelParticipantWizard;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
+import org.eclipse.team.ui.synchronize.*;
 
 public class ModelSynchronizeWizard extends ModelParticipantWizard {
 
@@ -38,7 +36,7 @@ public class ModelSynchronizeWizard extends ModelParticipantWizard {
 		return p;
 	}
 
-	protected String getName() {
+	protected String getPageTitle() {
 		ISynchronizeParticipantDescriptor desc = TeamUI.getSynchronizeManager().getParticipantDescriptor(WorkspaceModelParticipant.ID);
 		if(desc != null) {
 			return desc.getName();

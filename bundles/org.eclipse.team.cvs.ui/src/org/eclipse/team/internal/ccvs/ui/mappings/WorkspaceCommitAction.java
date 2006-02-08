@@ -22,7 +22,7 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
-import org.eclipse.team.ui.mapping.ISynchronizationConstants;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 
@@ -49,7 +49,7 @@ public class WorkspaceCommitAction extends ModelParticipantAction implements IDi
 	}
 
 	private IDiffTree getDiffTree() {
-		ISynchronizationContext context = (ISynchronizationContext)getConfiguration().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
+		ISynchronizationContext context = (ISynchronizationContext)getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		IDiffTree tree = context.getDiffTree();
 		return tree;
 	}
@@ -83,7 +83,7 @@ public class WorkspaceCommitAction extends ModelParticipantAction implements IDi
 	}
 	
 	public void run() {
-		ISynchronizationContext context = (ISynchronizationContext)getConfiguration().getProperty(ISynchronizationConstants.P_SYNCHRONIZATION_CONTEXT);
+		ISynchronizationContext context = (ISynchronizationContext)getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		ResourceMapping[] mappings = context.getScope().getMappings();
         Shell shell= getConfiguration().getSite().getShell();
         try {
