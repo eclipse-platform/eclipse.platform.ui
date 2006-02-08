@@ -30,7 +30,7 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 	/**
 	 * see <code>org.eclipse.team.core.IFileHistoryProvider</code>
 	 */
-	public IFileHistory getFileHistoryFor(IResource resource, boolean singleLine, IProgressMonitor monitor){
+	public IFileHistory getFileHistoryFor(IResource resource, int flags, IProgressMonitor monitor){
 		ICVSRemoteResource remoteResource;
 		try {
 			monitor.beginTask(null, 100);
