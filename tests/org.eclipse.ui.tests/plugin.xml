@@ -1193,7 +1193,7 @@
             id="org.eclipse.ui.tests.actionSet125011"
             visible="true">
          <action
-               label="Monkey!"
+               label="TestBug125011"
                toolbarPath="workingSets"
                icon="icons/anything.gif"
                id="org.eclipse.ui.tests.action125011"
