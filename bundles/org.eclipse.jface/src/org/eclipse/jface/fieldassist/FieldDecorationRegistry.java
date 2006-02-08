@@ -150,7 +150,7 @@ public class FieldDecorationRegistry {
 	 * @return decorationWidth the maximum width in pixels of any accessed
 	 *         decoration
 	 */
-	public int geMaximumDecorationWidth() {
+	public int getMaximumDecorationWidth() {
 		return maxDecorationWidth;
 	}
 

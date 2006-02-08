@@ -783,7 +783,7 @@ public class DecoratedField {
 	 *            used as the size for all decorations, <code>false</code> if
 	 *            only the decoration size should be used.
 	 * 
-	 * @see FieldDecorationRegistry#geMaximumDecorationWidth()
+	 * @see FieldDecorationRegistry#getMaximumDecorationWidth()
 	 */
 	public void setUseMaximumDecorationWidth(boolean useMaximumWidth) {
 		useMaxDecorationWidth = useMaximumWidth;
@@ -796,7 +796,7 @@ public class DecoratedField {
 		if (image == null)
 			return 0;
 		return useMaxDecorationWidth ? FieldDecorationRegistry.getDefault()
-				.geMaximumDecorationWidth() : image.getBounds().width;
+				.getMaximumDecorationWidth() : image.getBounds().width;
 	}
 
 	/**
