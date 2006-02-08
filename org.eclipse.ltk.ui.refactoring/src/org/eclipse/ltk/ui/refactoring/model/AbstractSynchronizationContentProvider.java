@@ -46,6 +46,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImple
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff;
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 
 /**
@@ -192,6 +193,11 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 				if (!remote.contains(proxy))
 					remote.add(proxy);
 				else
+					remote.remove(proxy);
+			}
+			for (final Iterator iterator= remote.iterator(); iterator.hasNext();) {
+				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) iterator.next();
+				if (!isVisible(new RefactoringDescriptorDiff(proxy, IDiff.CHANGE, proxy.getDirection())))
 					remote.remove(proxy);
 			}
 			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[remote.size()];
