@@ -24,7 +24,6 @@ Every element within this extension point is given a unique identifier.  This is
             <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="actionSet" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -317,58 +316,6 @@ Within the trim, the workbench defines five general groups which correspond to v
       </complexType>
    </element>
 
-   <element name="actionSet">
-      <annotation>
-         <documentation>
-            &lt;p&gt;
-A named group of elements.  The workbench allows the user to view action sets, and disable or enable them as desired.  It is also possible for certain action sets to be associated with particular parts or perspectives.
-&lt;/p&gt;
-&lt;p&gt;
-An action set has a name and a unique identifier.  It is also possible to specify whether the action set should be visible by default.  Within the action set is simply a list of references to menus, groups, items and widgets that have been declared elsewhere.
-&lt;/p&gt;
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="reference" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A unique identifier for this action set.  It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.  For example, an action set contributed by &lt;code&gt;org.eclipse.ui&lt;/code&gt; might be called &lt;code&gt;org.eclipse.ui.actionSet1&lt;/code&gt;.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The human-readable text to associate with this action set.  This text will appear in the &quot;Customize Perspective&quot; dialog.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  A longer human-readable description of the action set.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="visible" type="string" use="default" value="false">
-            <annotation>
-               <documentation>
-                  Whether the action set should be visible by default.  If an action set is not visible, then the associated elements will not be visible.  If an action set is visible, then the &lt;code&gt;visibleWhen&lt;/code&gt; criteria for the associated elements will be evaluated as normal.  By default, action sets are not visible.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="part">
       <annotation>
          <documentation>
@@ -383,7 +330,7 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
       <complexType>
          <choice>
             <element ref="popup"/>
-            <element ref="part"/>
+            <element ref="bar"/>
          </choice>
          <attribute name="id" type="string">
             <annotation>
@@ -398,42 +345,6 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
                   The class of the part.  This can be a superclass, interface or superinterface of the part, and it will still match.
                </documentation>
             </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="reference">
-      <annotation>
-         <documentation>
-            A reference to an already existing element.  This is used for action sets.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The identifier of the element to which this reference refers.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="type" use="required">
-            <annotation>
-               <documentation>
-                  The type of element to which this reference refers.  This is only required if there are elements of different types with the same id.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="menu">
-                  </enumeration>
-                  <enumeration value="group">
-                  </enumeration>
-                  <enumeration value="item">
-                  </enumeration>
-                  <enumeration value="widget">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>
