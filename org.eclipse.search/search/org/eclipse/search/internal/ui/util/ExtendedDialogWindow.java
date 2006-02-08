@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -41,7 +41,7 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 
-public abstract class ExtendedDialogWindow extends Dialog implements IRunnableContext {
+public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnableContext {
 	
 	private Control fContents;
 	private Button fCancelButton;
@@ -78,7 +78,7 @@ public abstract class ExtendedDialogWindow extends Dialog implements IRunnableCo
 	 * Hook called when the user has pressed the button to perform
 	 * the dialog's action. If the method returns <code>false</code>
 	 * the dialog stays open. Otherwise the dialog is going to be closed.
-	 * @param buttonId Id of the botton activated
+	 * @param buttonId Id of the button activated
 	 * @return If the method returns <code>false</code>
 	 * the dialog stays open.
 	 */
@@ -200,7 +200,7 @@ public abstract class ExtendedDialogWindow extends Dialog implements IRunnableCo
 	}
 	
 	/**
-	 * About to start a long running operation tiggered through
+	 * About to start a long running operation triggered through
 	 * the wizard. So show the progress monitor and disable
 	 * the wizard.
 	 * @param enableCancelButton The cancel button enable state

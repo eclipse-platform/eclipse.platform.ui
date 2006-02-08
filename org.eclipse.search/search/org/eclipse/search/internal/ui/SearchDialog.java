@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -55,6 +55,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
@@ -424,6 +425,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
+		// create help control if needed
+        if (isHelpAvailable() || TrayDialog.isDialogHelpAvailable()) {
+        	createHelpControl(composite);
+        }
 		fCustomizeButton= createButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true); 
 		
 		Label filler= new Label(composite, SWT.NONE);
@@ -647,7 +652,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
 						// create page and control
 						ISearchPage page= descriptor.createObject(SearchDialog.this);
@@ -757,7 +762,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			Object[] listeners= fPageChangeListeners.getListeners();
 			for (int i= 0; i < listeners.length; ++i) {
 				final IPageChangedListener l= (IPageChangedListener) listeners[i];
-				Platform.run(new SafeRunnable() {
+				SafeRunner.run(new SafeRunnable() {
 					public void run() {
 						l.pageChanged(event);
 					}
