@@ -54,8 +54,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * A simple control that provides a text widget and a tree viewer. The contents
  * of the text widget are used to drive a PatternFilter that is on the viewer.
  * 
- * Note: this API is experimental and may change before 3.2 M5 
- * 
  * @see org.eclipse.ui.dialogs.PatternFilter
  * @since 3.2
  */

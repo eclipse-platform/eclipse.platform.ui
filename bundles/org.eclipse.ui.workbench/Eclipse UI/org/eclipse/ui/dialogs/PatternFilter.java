@@ -29,8 +29,6 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * determine if a node should be filtered it uses the content provider of the 
  * tree to do pattern matching on its children.  This causes the entire tree
  * structure to be realized.
- * 
- * Note: this API is experimental and may change before 3.2 M5 
  *  
  * @see org.eclipse.ui.dialogs.FilteredTree  
  * @since 3.2
