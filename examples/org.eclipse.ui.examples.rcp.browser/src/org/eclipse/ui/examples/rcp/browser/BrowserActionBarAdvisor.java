@@ -156,7 +156,8 @@ public class BrowserActionBarAdvisor extends ActionBarAdvisor {
 
 	protected void fillCoolBar(ICoolBarManager coolBar) {
 		IToolBarManager toolBar = getActionBarConfigurer().createToolBarManager();
-		coolBar.add(toolBar); //$NON-NLS-1$
+		coolBar.add(getActionBarConfigurer().createToolBarContributionItem(
+				toolBar, "standard")); //$NON-NLS-1$
 		
 		// For the Back and Forward actions, force their text to be shown on the toolbar,
 		// not just their image.  For the remaining actions, the ActionContributionItem
