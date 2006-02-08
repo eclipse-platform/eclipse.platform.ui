@@ -16,8 +16,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * <p>
- * An abstract implementation of {@link IPersistableState}. This is a state
- * that might (or might not) be persisted.
+ * This is a state that can be made persistent. A state is persisted to a
+ * preference store.
  * </p>
  * <p>
  * Clients may extend this class.
@@ -35,7 +35,7 @@ public abstract class PersistentState extends State {
 	/**
 	 * Loads this state from the preference store, given the location at which
 	 * to look. This method must be symmetric with a call to
-	 * {@link IPersistableState#save(IPreferenceStore, String)}.
+	 * {@link #save(IPreferenceStore, String)}.
 	 * 
 	 * @param store
 	 *            The store from which to read; must not be <code>null</code>.
@@ -49,7 +49,7 @@ public abstract class PersistentState extends State {
 	/**
 	 * Saves this state to the preference store, given the location at which to
 	 * write. This method must be symmetric with a call to
-	 * {@link IPersistableState#load(IPreferenceStore, String)}.
+	 * {@link #load(IPreferenceStore, String)}.
 	 * 
 	 * @param store
 	 *            The store to which the state should be written; must not be
