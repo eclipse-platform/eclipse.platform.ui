@@ -24,7 +24,6 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -165,8 +164,7 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
 		if (getWindow() != null) {
 			IViewPart view = getView();
 			if (view != null) {
-				String partId = view.getSite().getId();
-				DebugContextManager.getDefault().removeDebugContextListener(this, window, partId);
+				DebugContextManager.getDefault().removeDebugContextListener(this, window, view.getSite().getId());
 			} else {
 				DebugContextManager.getDefault().removeDebugContextListener(this, window);
 			}
@@ -255,7 +253,7 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
 		setView(view);
 		setWindow(view.getSite().getWorkbenchWindow());
 		fProgressService = (IWorkbenchSiteProgressService) view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
-		DebugContextManager.getDefault().addDebugContextListener(this, getWindow(), IDebugUIConstants.ID_DEBUG_VIEW);
+		DebugContextManager.getDefault().addDebugContextListener(this, getWindow(), view.getSite().getId());
 	}
 
 	/**
