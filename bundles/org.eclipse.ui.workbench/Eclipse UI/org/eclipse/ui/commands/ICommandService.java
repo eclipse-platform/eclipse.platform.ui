@@ -16,6 +16,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
@@ -190,6 +191,42 @@ public interface ICommandService extends IDisposable {
 	public ParameterType[] getDefinedParameterTypes();
 
 	/**
+	 * Gets the help context identifier for a particular command. The command's
+	 * handler is first checked for a help context identifier. If the handler
+	 * does not have a help context identifier, then the help context identifier
+	 * for the command is returned. If neither has a help context identifier,
+	 * then <code>null</code> is returned.
+	 * 
+	 * @param command
+	 *            The command for which the help context should be retrieved;
+	 *            must not be <code>null</code>.
+	 * @return The help context identifier to use for the given command; may be
+	 *         <code>null</code>.
+	 * @throws NotDefinedException
+	 *             If the given command is not defined.
+	 * @since 3.2
+	 */
+	public String getHelpContextId(Command command) throws NotDefinedException;
+
+	/**
+	 * Gets the help context identifier for a particular command. The command's
+	 * handler is first checked for a help context identifier. If the handler
+	 * does not have a help context identifier, then the help context identifier
+	 * for the command is returned. If neither has a help context identifier,
+	 * then <code>null</code> is returned.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command for which the help context
+	 *            should be retrieved; must not be <code>null</code>.
+	 * @return The help context identifier to use for the given command; may be
+	 *         <code>null</code>.
+	 * @throws NotDefinedException
+	 *             If the command with the given identifier is not defined.
+	 * @since 3.2
+	 */
+	public String getHelpContextId(String commandId) throws NotDefinedException;
+
+	/**
 	 * Retrieves the command parameter type with the given identifier. If no
 	 * such parameter type exists, then an undefined parameter type with the
 	 * given id is created.
@@ -220,4 +257,18 @@ public interface ICommandService extends IDisposable {
 	 *            The listener to remove; must not be <code>null</code>.
 	 */
 	public void removeExecutionListener(IExecutionListener listener);
+
+	/**
+	 * Sets the help context identifier to associate with a particular handler.
+	 * 
+	 * @param handler
+	 *            The handler with which to register a help context identifier;
+	 *            must not be <code>null</code>.
+	 * @param helpContextId
+	 *            The help context identifier to register; may be
+	 *            <code>null</code> if the help context identifier should be
+	 *            removed.
+	 * @since 3.2
+	 */
+	public void setHelpContextId(IHandler handler, String helpContextId);
 }

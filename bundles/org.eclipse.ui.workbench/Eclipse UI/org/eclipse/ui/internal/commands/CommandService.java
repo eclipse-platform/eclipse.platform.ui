@@ -16,6 +16,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
@@ -157,6 +158,17 @@ public final class CommandService implements ICommandService {
 		return commandManager.getDefinedParameterTypes();
 	}
 
+	public final String getHelpContextId(final Command command)
+			throws NotDefinedException {
+		return commandManager.getHelpContextId(command);
+	}
+
+	public final String getHelpContextId(final String commandId)
+			throws NotDefinedException {
+		final Command command = getCommand(commandId);
+		return commandManager.getHelpContextId(command);
+	}
+
 	public ParameterType getParameterType(final String parameterTypeId) {
 		return commandManager.getParameterType(parameterTypeId);
 	}
@@ -167,5 +179,10 @@ public final class CommandService implements ICommandService {
 
 	public final void removeExecutionListener(final IExecutionListener listener) {
 		commandManager.removeExecutionListener(listener);
+	}
+
+	public final void setHelpContextId(final IHandler handler,
+			final String helpContextId) {
+		commandManager.setHelpContextId(handler, helpContextId);
 	}
 }

@@ -80,6 +80,16 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;
+The identifier of the help context that relates to this specific handler.  While a command can provide a general description of a command&apos;s behaviour, it is sometimes appropriate for a handler to provide help more specific to their implementation.
+&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Since: 3.2&lt;/em&gt;&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

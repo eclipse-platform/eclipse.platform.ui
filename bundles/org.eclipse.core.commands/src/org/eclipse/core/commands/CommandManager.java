@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.commands.common.HandleObjectManager;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -258,6 +259,15 @@ public final class CommandManager extends HandleObjectManager implements
 	 * <code>null</code> if there are no listeners.
 	 */
 	private ListenerList executionListeners = null;
+
+	/**
+	 * The help context identifiers ({@link String}) for a handler ({@link IHandler}).
+	 * This map may be empty, but it is never <code>null</code>. Entries are
+	 * removed if all strong references to the handler are removed.
+	 * 
+	 * @since 3.2
+	 */
+	private final Map helpContextIdsByHandler = new WeakHashMap();
 
 	/**
 	 * The map of parameter type identifiers (<code>String</code>) to
@@ -620,6 +630,43 @@ public final class CommandManager extends HandleObjectManager implements
 	}
 
 	/**
+	 * Gets the help context identifier for a particular command. The command's
+	 * handler is first checked for a help context identifier. If the handler
+	 * does not have a help context identifier, then the help context identifier
+	 * for the command is returned. If neither has a help context identifier,
+	 * then <code>null</code> is returned.
+	 * 
+	 * @param command
+	 *            The command for which the help context should be retrieved;
+	 *            must not be <code>null</code>.
+	 * @return The help context identifier to use for the given command; may be
+	 *         <code>null</code>.
+	 * @throws NotDefinedException
+	 *             If the given command is not defined.
+	 * @since 3.2
+	 */
+	public final String getHelpContextId(final Command command)
+			throws NotDefinedException {
+		// Check if the command is defined.
+		if (!command.isDefined()) {
+			throw new NotDefinedException("The command is not defined"); //$NON-NLS-1$
+		}
+
+		// Check the handler.
+		final IHandler handler = command.getHandler();
+		if (handler != null) {
+			final String helpContextId = (String) helpContextIdsByHandler
+					.get(handler);
+			if (helpContextId != null) {
+				return helpContextId;
+			}
+		}
+
+		// Simply return whatever the command has as a help context identifier.
+		return command.getHelpContextId();
+	}
+
+	/**
 	 * Returns an array of parameterizations for the provided command by
 	 * deriving the parameter ids and values from the provided
 	 * <code>serializedParameters</code> string.
@@ -820,6 +867,30 @@ public final class CommandManager extends HandleObjectManager implements
 			} else {
 				command.setHandler(null);
 			}
+		}
+	}
+
+	/**
+	 * Sets the help context identifier to associate with a particular handler.
+	 * 
+	 * @param handler
+	 *            The handler with which to register a help context identifier;
+	 *            must not be <code>null</code>.
+	 * @param helpContextId
+	 *            The help context identifier to register; may be
+	 *            <code>null</code> if the help context identifier should be
+	 *            removed.
+	 * @since 3.2
+	 */
+	public final void setHelpContextId(final IHandler handler,
+			final String helpContextId) {
+		if (handler == null) {
+			throw new NullPointerException("The handler cannot be null"); //$NON-NLS-1$
+		}
+		if (helpContextId == null) {
+			helpContextIdsByHandler.remove(handler);
+		} else {
+			helpContextIdsByHandler.put(handler, helpContextId);
 		}
 	}
 

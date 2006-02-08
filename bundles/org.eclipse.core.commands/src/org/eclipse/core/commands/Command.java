@@ -85,6 +85,15 @@ public final class Command extends NamedHandleObjectWithState implements
 	private transient IHandler handler = null;
 
 	/**
+	 * The help context identifier for this command. This can be
+	 * <code>null</code> if there is no help currently associated with the
+	 * command.
+	 * 
+	 * @since 3.2
+	 */
+	private String helpContextId;
+
+	/**
 	 * The ordered array of parameters understood by this command. This value
 	 * may be <code>null</code> if there are no parameters, or if the command
 	 * is undefined. It may also be empty.
@@ -222,6 +231,28 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *            The description for this command; may be <code>null</code>.
 	 * @param category
 	 *            The category for this command; must not be <code>null</code>.
+	 * @since 3.2
+	 */
+	public final void define(final String name, final String description,
+			final Category category) {
+		define(name, description, category, null);
+	}
+
+	/**
+	 * <p>
+	 * Defines this command by giving it a name, and possibly a description as
+	 * well. The defined property automatically becomes <code>true</code>.
+	 * </p>
+	 * <p>
+	 * Notification is sent to all listeners that something has changed.
+	 * </p>
+	 * 
+	 * @param name
+	 *            The name of this command; must not be <code>null</code>.
+	 * @param description
+	 *            The description for this command; may be <code>null</code>.
+	 * @param category
+	 *            The category for this command; must not be <code>null</code>.
 	 * @param parameters
 	 *            The parameters understood by this command. This value may be
 	 *            either <code>null</code> or empty if the command does not
@@ -260,6 +291,41 @@ public final class Command extends NamedHandleObjectWithState implements
 	public final void define(final String name, final String description,
 			final Category category, final IParameter[] parameters,
 			ParameterType returnType) {
+		define(name, description, category, parameters, returnType, null);
+	}
+
+	/**
+	 * <p>
+	 * Defines this command by giving it a name, and possibly a description as
+	 * well. The defined property automatically becomes <code>true</code>.
+	 * </p>
+	 * <p>
+	 * Notification is sent to all listeners that something has changed.
+	 * </p>
+	 * 
+	 * @param name
+	 *            The name of this command; must not be <code>null</code>.
+	 * @param description
+	 *            The description for this command; may be <code>null</code>.
+	 * @param category
+	 *            The category for this command; must not be <code>null</code>.
+	 * @param parameters
+	 *            The parameters understood by this command. This value may be
+	 *            either <code>null</code> or empty if the command does not
+	 *            accept parameters.
+	 * @param returnType
+	 *            The type of value returned by this command. This value may be
+	 *            <code>null</code> if the command does not declare a return
+	 *            type.
+	 * @param helpContextId
+	 *            The identifier of the help context to associate with this
+	 *            command; may be <code>null</code> if this command does not
+	 *            have any help associated with it.
+	 * @since 3.2
+	 */
+	public final void define(final String name, final String description,
+			final Category category, final IParameter[] parameters,
+			ParameterType returnType, final String helpContextId) {
 		if (name == null) {
 			throw new NullPointerException(
 					"The name of a command cannot be null"); //$NON-NLS-1$
@@ -291,9 +357,13 @@ public final class Command extends NamedHandleObjectWithState implements
 				returnType);
 		this.returnType = returnType;
 
+		final boolean helpContextIdChanged = !Util.equals(this.helpContextId,
+				helpContextId);
+		this.helpContextId = helpContextId;
+
 		fireCommandChanged(new CommandEvent(this, categoryChanged,
 				definedChanged, descriptionChanged, false, nameChanged,
-				parametersChanged, returnTypeChanged));
+				parametersChanged, returnTypeChanged, helpContextIdChanged));
 	}
 
 	/**
@@ -586,6 +656,30 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 
 		return category;
+	}
+
+	/**
+	 * Returns the current handler for this command. This is used by the command
+	 * manager for determining the appropriate help context identifiers.
+	 * 
+	 * @return The current handler for this command; may be <code>null</code>.
+	 * @since 3.2
+	 */
+	final IHandler getHandler() {
+		return handler;
+	}
+
+	/**
+	 * Returns the help context identifier associated with this command. This
+	 * method should not be called by clients. Clients should use
+	 * {@link CommandManager#getHelpContextId(String)} instead.
+	 * 
+	 * @return The help context identifier for this command; may be
+	 *         <code>null</code> if there is none.
+	 * @since 3.2
+	 */
+	final String getHelpContextId() {
+		return helpContextId;
 	}
 
 	/**

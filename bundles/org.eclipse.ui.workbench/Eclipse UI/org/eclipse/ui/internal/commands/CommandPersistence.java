@@ -196,6 +196,10 @@ final class CommandPersistence extends RegistryPersistence {
 			final String returnTypeId = readOptional(configurationElement,
 					ATT_RETURN_TYPE_ID);
 
+			// Read out the help context identifier.
+			final String helpContextId = readOptional(configurationElement,
+					ATT_HELP_CONTEXT_ID);
+
 			final Command command = commandService.getCommand(commandId);
 			final Category category = commandService.getCategory(categoryId);
 			if (!category.isDefined()) {
@@ -213,7 +217,8 @@ final class CommandPersistence extends RegistryPersistence {
 				returnType = commandService.getParameterType(returnTypeId);
 			}
 
-			command.define(name, description, category, parameters, returnType);
+			command.define(name, description, category, parameters, returnType,
+					helpContextId);
 			readState(configurationElement, warningsToLog, command);
 		}
 

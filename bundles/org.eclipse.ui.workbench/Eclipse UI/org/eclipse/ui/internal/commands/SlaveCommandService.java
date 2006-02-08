@@ -17,6 +17,7 @@ import java.util.Collection;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
@@ -35,9 +36,9 @@ import org.eclipse.ui.commands.ICommandService;
  */
 public class SlaveCommandService implements ICommandService {
 
-	private ICommandService fParentService;
-
 	private Collection fExecutionListeners = new ArrayList();
+
+	private ICommandService fParentService;
 
 	/**
 	 * Build the slave service.
@@ -84,6 +85,21 @@ public class SlaveCommandService implements ICommandService {
 			String serializedParameterizedCommand) throws NotDefinedException,
 			SerializationException {
 		return fParentService.deserialize(serializedParameterizedCommand);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.services.IDisposable#dispose()
+	 */
+	public void dispose() {
+		if (!fExecutionListeners.isEmpty()) {
+			Object[] array = fExecutionListeners.toArray();
+			for (int i = 0; i < array.length; i++) {
+				removeExecutionListener((IExecutionListener) array[i]);
+			}
+			fExecutionListeners.clear();
+		}
 	}
 
 	/*
@@ -158,6 +174,16 @@ public class SlaveCommandService implements ICommandService {
 		return fParentService.getDefinedParameterTypes();
 	}
 
+	public final String getHelpContextId(final Command command)
+			throws NotDefinedException {
+		return fParentService.getHelpContextId(command);
+	}
+
+	public final String getHelpContextId(final String commandId)
+			throws NotDefinedException {
+		return fParentService.getHelpContextId(commandId);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -186,18 +212,8 @@ public class SlaveCommandService implements ICommandService {
 		fParentService.removeExecutionListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
-	public void dispose() {
-		if (!fExecutionListeners.isEmpty()) {
-			Object[] array = fExecutionListeners.toArray();
-			for (int i = 0; i < array.length; i++) {
-				removeExecutionListener((IExecutionListener) array[i]);
-			}
-			fExecutionListeners.clear();
-		}
+	public final void setHelpContextId(final IHandler handler,
+			final String helpContextId) {
+		fParentService.setHelpContextId(handler, helpContextId);
 	}
 }

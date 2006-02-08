@@ -181,6 +181,11 @@ public final class HandlerService implements IHandlerService {
 		handlerAuthority.removeSourceProvider(provider);
 	}
 
+	public final void setHelpContextId(final IHandler handler,
+			final String helpContextId) {
+		commandService.setHelpContextId(handler, helpContextId);
+	}
+
 	/**
 	 * <p>
 	 * Bug 95792. A mechanism by which the key binding architecture can force an

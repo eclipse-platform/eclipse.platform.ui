@@ -135,6 +135,16 @@ The id of a &lt;code&gt;commandParameterType&lt;/code&gt; indicating the type of
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;
+The identifier of the help context that relates to this command in general.  Handlers can override this context identifier to provide help that is more specific to their particular behaviours.
+&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Since: 3.2&lt;/em&gt;&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

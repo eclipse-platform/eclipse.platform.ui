@@ -38,13 +38,22 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	 * The bit used to represent whether the command has changed its parameters.
 	 */
 	private static final int CHANGED_PARAMETERS = LAST_USED_BIT << 3;
-	
+
 	/**
-	 * The bit used to represent whether the command has changed its return type.
+	 * The bit used to represent whether the command has changed its return
+	 * type.
 	 * 
 	 * @since 3.2
 	 */
 	private static final int CHANGED_RETURN_TYPE = LAST_USED_BIT << 4;
+
+	/**
+	 * The bit used to represent whether the command has changed its help
+	 * context identifier.
+	 * 
+	 * @since 3.2
+	 */
+	private static final int CHANGED_HELP_CONTEXT_ID = LAST_USED_BIT << 5;
 
 	/**
 	 * The command that has changed; this value is never <code>null</code>.
@@ -77,7 +86,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 		this(command, categoryChanged, definedChanged, descriptionChanged,
 				handledChanged, nameChanged, parametersChanged, false);
 	}
-	
+
 	/**
 	 * Creates a new instance of this class.
 	 * 
@@ -105,6 +114,42 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 			final boolean definedChanged, final boolean descriptionChanged,
 			final boolean handledChanged, final boolean nameChanged,
 			final boolean parametersChanged, final boolean returnTypeChanged) {
+		this(command, categoryChanged, definedChanged, descriptionChanged,
+				handledChanged, nameChanged, parametersChanged,
+				returnTypeChanged, false);
+	}
+
+	/**
+	 * Creates a new instance of this class.
+	 * 
+	 * @param command
+	 *            the instance of the interface that changed.
+	 * @param categoryChanged
+	 *            <code>true</code>, iff the category property changed.
+	 * @param definedChanged
+	 *            <code>true</code>, iff the defined property changed.
+	 * @param descriptionChanged
+	 *            <code>true</code>, iff the description property changed.
+	 * @param handledChanged
+	 *            <code>true</code>, iff the handled property changed.
+	 * @param nameChanged
+	 *            <code>true</code>, iff the name property changed.
+	 * @param parametersChanged
+	 *            <code>true</code> if the parameters have changed;
+	 *            <code>false</code> otherwise.
+	 * @param returnTypeChanged
+	 *            <code>true</code> iff the return type property changed;
+	 *            <code>false</code> otherwise.
+	 * @param helpContextIdChanged
+	 *            <code>true</code> iff the help context identifier changed;
+	 *            <code>false</code> otherwise.
+	 * @since 3.2
+	 */
+	public CommandEvent(final Command command, final boolean categoryChanged,
+			final boolean definedChanged, final boolean descriptionChanged,
+			final boolean handledChanged, final boolean nameChanged,
+			final boolean parametersChanged, final boolean returnTypeChanged,
+			final boolean helpContextIdChanged) {
 		super(definedChanged, descriptionChanged, nameChanged);
 
 		if (command == null)
@@ -122,6 +167,9 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 		}
 		if (returnTypeChanged) {
 			changedValues |= CHANGED_RETURN_TYPE;
+		}
+		if (helpContextIdChanged) {
+			changedValues |= CHANGED_HELP_CONTEXT_ID;
 		}
 	}
 
@@ -154,6 +202,16 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	}
 
 	/**
+	 * Returns whether or not the help context identifier changed.
+	 * 
+	 * @return <code>true</code>, iff the help context identifier changed.
+	 * @since 3.2
+	 */
+	public final boolean isHelpContextIdChanged() {
+		return ((changedValues & CHANGED_HELP_CONTEXT_ID) != 0);
+	}
+
+	/**
 	 * Returns whether or not the parameters have changed.
 	 * 
 	 * @return <code>true</code>, iff the parameters property changed.
@@ -161,7 +219,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	public final boolean isParametersChanged() {
 		return ((changedValues & CHANGED_PARAMETERS) != 0);
 	}
-	
+
 	/**
 	 * Returns whether or not the return type property changed.
 	 * 
