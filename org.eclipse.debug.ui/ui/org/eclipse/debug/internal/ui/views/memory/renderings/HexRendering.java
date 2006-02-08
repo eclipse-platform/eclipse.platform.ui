@@ -16,12 +16,11 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 
 /**
  * @since 3.1
  */
-public class HexRendering extends AbstractTableRendering {
+public class HexRendering extends AbstractAsyncTableRendering {
 	
 	public HexRendering(String renderingId)
 	{

@@ -29,7 +29,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
-import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentInput;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 
@@ -208,7 +207,6 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		boolean error = false;
 		DebugException dbgEvt = null;
 		
-		// calculate address size
 		String adjustedAddress = startAddress.toString(16);
 
 		// align starting address with double word boundary

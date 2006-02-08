@@ -966,8 +966,11 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	private void fireSelectionChanged(Object selectionKey)
 	{
-		SelectionChangedEvent evt = new SelectionChangedEvent(this, new StructuredSelection(selectionKey));
-		fireSelectionChanged(evt);	
+		if (selectionKey != null)
+		{
+			SelectionChangedEvent evt = new SelectionChangedEvent(this, new StructuredSelection(selectionKey));
+			fireSelectionChanged(evt);
+		}
 	}
 
 	public void handlePresentationFailure(IAsynchronousRequestMonitor monitor, IStatus status) {

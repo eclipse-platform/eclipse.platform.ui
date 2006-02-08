@@ -189,7 +189,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private boolean fIsDisposed = false;
 	private boolean fIsShowAddressColumn = true;
 	
-	private PendingSynchronizationProperties fPendingSyncProperties;
+	private PendingPropertyChanges fPendingSyncProperties;
 	
 	private ISelectionChangedListener fViewerSelectionChangedListener = new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -369,13 +369,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						
 						createToolTip();
 						
+						// now the rendering is successfully created
+						fIsCreated = true;
+						
 						return Status.OK_STATUS;
 					}};
 				uiJob.setSystem(true);
 				uiJob.schedule();
-				
-				// now the rendering is successfully created
-				fIsCreated = true;
 					
 				return Status.OK_STATUS;
 
@@ -581,15 +581,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 		
 		// do not handle event if the rendering is displaying an error
-		if (isDisplayingError())
-			return;
-		
-		// do not handle property change event if the rendering is not visible
-		if (!isVisible())
+		// or if it's not visible
+		if (isDisplayingError() || !isVisible())
 		{
 			handlePropertiesChangeWhenHidden(event);
 			return;
 		}
+		
 		
 		if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR) || 
 			event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR))
@@ -609,8 +607,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE)) {
 			if (!isDynamicLoad())
 			{
-				// only refresh if in non-autoload mode
-				refresh();
+				int pageSize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE);
+				handlePageSizeChanged(pageSize);
 			}
 			return;
 		}
@@ -651,6 +649,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		{
 			handlePageStartAddressChanged((BigInteger)value);
 		}
+	}
+
+	/**
+	 * 
+	 */
+	private void handlePageSizeChanged(int pageSize) {
+		fPageSize = pageSize;
+		// only refresh if in non-autoload mode
+		fContentDescriptor.setNumLines(pageSize);
+		refresh();
 	}	
 	
 	private void handlePropertiesChangeWhenHidden(PropertyChangeEvent event)
@@ -690,6 +698,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		else if (propertyName.equals(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS) && value instanceof BigInteger)
 		{
 			fPendingSyncProperties.setPageStartAddress((BigInteger)value);
+		}
+		else if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE)) {
+			int pageSize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE);
+			fPendingSyncProperties.setPageSize(pageSize);
 		}
 	}
 	
@@ -782,14 +794,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			public void run() {			
 				// call this to make the table viewer to reload when needed
 				fTableViewer.setSelection(address);
-//				
-//				if (!isDynamicLoad())
-//				{
-					int idx = fTableViewer.indexOf(address);
-					if (idx < 0) {
-						doTopVisibleAddressChanged(address);
-					}
-//				}
+				int idx = fTableViewer.indexOf(address);
+				if (idx < 0) {
+					doTopVisibleAddressChanged(address);
+				}
 			}
 		};
 		
@@ -1821,10 +1829,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 		
 		fContentDescriptor.setLoadAddress(address);
+		final BigInteger finaladdress = address;
 		Runnable runnable = new Runnable() {
 			public void run() {
+				fTableViewer.setTopIndex(finaladdress);
 				refresh();
-				fTableViewer.getTable().setTopIndex(0);
 			}};
 		
 		runOnUIThread(runnable);
@@ -1836,33 +1845,31 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 		// if currently in dynamic load mode, update page
 		// start address
-		updateSyncPageStartAddress(getTopVisibleAddress());
+		BigInteger pageStart = getTopVisibleAddress();
+		updateSyncPageStartAddress(pageStart);
 		
 		updateDynamicLoadProperty();
 		if (isDynamicLoad())
 		{
 			refresh();
-			fTableViewer.setTopIndex(getTopVisibleAddress());
+			fTableViewer.setTopIndex(pageStart);
 		}
 		else
 		{
-			BigInteger pageStart = (BigInteger)getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
-			if (pageStart == null)
-				pageStart = getTopVisibleAddress();
 			handlePageStartAddressChanged(pageStart);
 		}
 	}
 	
 	public void becomesHidden() {
+		 
+		// creates new object for storing potential changes in sync properties
+		fPendingSyncProperties = new PendingPropertyChanges();
 		
 		if (!fIsCreated)
 		{
 			super.becomesHidden();
 			return;
 		}
-		
-		// creates new object for storing potential changes in sync properties
-		fPendingSyncProperties = new PendingSynchronizationProperties();
 		
 		if (isVisible() == false)
 		{
@@ -1937,12 +1944,17 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			}
 			else
 			{
+				if (fPendingSyncProperties.getPageSize() > 0)
+				{
+					fPageSize = fPendingSyncProperties.getPageSize();
+					fContentDescriptor.setNumLines(fPageSize);
+				}
+				
 				BigInteger pageStartAddress = fPendingSyncProperties.getPageStartAddress();
 				if (pageStartAddress != null)
 					fContentDescriptor.setLoadAddress(pageStartAddress);
 				
 				fTableViewer.setTopIndex(pageStartAddress);
-
 			}
 			refresh();
 		}
@@ -2005,61 +2017,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				format(size, getBytesPerColumn());
 			}
 		});		
-	}
-	
-	/**
-	 * Get properties from synchronizer and synchronize settings
-	 */
-	private void synchronize()
-	{			
-		if (!isDynamicLoad())
-		{
-			BigInteger pageStart = (BigInteger)getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
-			if (pageStart != null && fContentDescriptor != null && fContentDescriptor.getLoadAddress() != null)
-			{
-				if (!fContentDescriptor.getLoadAddress().equals(pageStart))
-					handlePageStartAddressChanged(pageStart);
-			}
-			else if (pageStart != null)
-			{
-				handlePageStartAddressChanged(pageStart);
-			}
-		}
-		
-		Integer rowSize = (Integer) getSynchronizedProperty(AbstractTableRendering.PROPERTY_ROW_SIZE);
-		Integer columnSize = (Integer) getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
-		BigInteger selectedAddress = (BigInteger)getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
-		BigInteger topAddress = (BigInteger)getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
-		
-		if (rowSize != null)
-		{
-			int rSize = rowSize.intValue();
-			if (rSize > 0 && rSize != fBytePerLine) {
-				rowSizeChanged(rSize);
-			}
-		}
-		
-		if (columnSize != null) {
-			int colSize = columnSize.intValue();
-			if (colSize > 0 && colSize != fColumnSize) {
-				columnSizeChanged(colSize);
-			}
-		}
-		if (topAddress != null) {
-			if (!topAddress.equals(getTopVisibleAddress())) {
-				if (selectedAddress != null) {
-					if (!getSelectedAddress().equals(selectedAddress)) {
-						selectedAddressChanged(selectedAddress);
-					}
-				}
-				topVisibleAddressChanged(topAddress);
-			}
-		}
-		if (selectedAddress != null) {
-			if (selectedAddress.compareTo(getSelectedAddress()) != 0) {
-				selectedAddressChanged(selectedAddress);
-			}
-		}
 	}
 	
 	/**

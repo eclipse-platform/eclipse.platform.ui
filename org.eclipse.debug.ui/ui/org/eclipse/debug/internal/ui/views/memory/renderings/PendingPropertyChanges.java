@@ -13,17 +13,18 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import java.math.BigInteger;
 
 /**
- * Stores changes in sync properties when the rendering is hidden.
+ * Stores changes in properties when the rendering is hidden.
  * These data will be used to sync up the rendering when it becomes visible again.
  *
  */
-class PendingSynchronizationProperties
+class PendingPropertyChanges
 {
 	BigInteger fTopVisibleAddress;
 	BigInteger fSelectedAddress;
 	BigInteger fPageStartAddress;
 	int fColumnSize = -1;
 	int fRowSize = -1;
+	int fPageSize = -1;
 
 	public int getColumnSize() {
 		return fColumnSize;
@@ -63,6 +64,16 @@ class PendingSynchronizationProperties
 
 	public void setTopVisibleAddress(BigInteger topVisibleAddress) {
 		fTopVisibleAddress = topVisibleAddress;
+	}
+	
+	public void setPageSize(int pageSize)
+	{
+		fPageSize = pageSize;
+	}
+	
+	public int getPageSize()
+	{
+		return fPageSize;
 	}
 	
 }

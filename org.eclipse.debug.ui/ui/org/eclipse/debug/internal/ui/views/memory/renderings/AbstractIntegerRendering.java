@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
  * @since 3.1
  *
  */
-public abstract class AbstractIntegerRendering extends AbstractTableRendering {
+public abstract class AbstractIntegerRendering extends AbstractAsyncTableRendering {
 	
 	private int fDisplayEndianess = RenderingsUtil.ENDIANESS_UNKNOWN;
 	

@@ -15,7 +15,6 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.memory.AbstractTextRendering;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 
@@ -25,7 +24,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * Convert bytes into ASCII string and vice versa
  * @since 3.1
  */
-public class ASCIIRendering extends AbstractTextRendering{
+public class ASCIIRendering extends AbstractAsyncTextRendering{
 	
 	private final int numCharsPerByte = 1;
 	
