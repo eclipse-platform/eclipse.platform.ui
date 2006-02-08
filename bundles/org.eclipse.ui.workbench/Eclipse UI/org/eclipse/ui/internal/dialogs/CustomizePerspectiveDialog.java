@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,12 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -299,8 +301,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         public void fillToolsFor(String actionSetId, CoolBarManager mgr) {
             IContributionItem[] items = mgr.getItems();
             for (int i = 0; i < items.length; i++) {
-                if (items[i] instanceof ToolBarContributionItem) {
-                    ToolBarContributionItem cbItem = (ToolBarContributionItem) items[i];
+                if (items[i] instanceof IToolBarContributionItem) {
+                	IToolBarContributionItem cbItem = (IToolBarContributionItem) items[i];
                     IContributionItem[] subItems = cbItem.getToolBarManager()
                             .getItems();
                     for (int j = 0; j < subItems.length; j++) {
@@ -478,6 +480,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		public final IServiceLocator getServiceLocator() {
 			return configurer.getWindow();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarContributionItem(org.eclipse.jface.action.IToolBarManager, java.lang.String)
+		 */
+		public IContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
+			return new ToolBarContributionItem(toolBarManager, id);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarManager(int)
+		 */
+		public IToolBarManager createToolBarManager() {
+			return new ToolBarManager();
 		}
     }
 
@@ -942,7 +958,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
     private void buildMenusAndToolbarsFor(CustomizeActionBars customizeActionBars, ActionSetDescriptor actionSetDesc) {
         String id = actionSetDesc.getId();
         ActionSetActionBars bars = new ActionSetActionBars(
-        		customizeActionBars, window, id);
+        		customizeActionBars, window, customizeActionBars, id);
         PluginActionSetBuilder builder = new PluginActionSetBuilder();
         PluginActionSet actionSet = null;
         try {

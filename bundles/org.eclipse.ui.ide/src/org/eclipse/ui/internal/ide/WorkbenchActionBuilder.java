@@ -26,11 +26,10 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -217,8 +216,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction openProjectAction;
 
     private IWorkbenchAction closeProjectAction;
-    
-    private IWorkbenchAction closeUnrelatedProjectsAction;
 
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -358,6 +355,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      */
     protected void fillCoolBar(ICoolBarManager coolBar) {
 
+    	IActionBarConfigurer actionBarConfigurer = getActionBarConfigurer();
         { // Set up the context Menu
             IMenuManager popUpMenu = new MenuManager();
             popUpMenu.add(new ActionContributionItem(lockToolBarAction));
@@ -366,8 +364,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         }
         coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_FILE));
         { // File Group
-            IToolBarManager fileToolBar = new ToolBarManager(coolBar
-                    .getStyle());
+            IToolBarManager fileToolBar = actionBarConfigurer.createToolBarManager();
             fileToolBar.add(new Separator(IWorkbenchActionConstants.NEW_GROUP));
             fileToolBar.add(newWizardDropDownAction);
             fileToolBar.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
@@ -388,7 +385,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                     IWorkbenchActionConstants.MB_ADDITIONS));
 
             // Add to the cool bar manager
-            coolBar.add(new ToolBarContributionItem(fileToolBar,
+            coolBar.add(actionBarConfigurer.createToolBarContributionItem(fileToolBar,
                     IWorkbenchActionConstants.TOOLBAR_FILE));
         }
 
@@ -396,8 +393,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_NAV));
         { // Navigate group
-            IToolBarManager navToolBar = new ToolBarManager(coolBar
-                    .getStyle());
+            IToolBarManager navToolBar = actionBarConfigurer.createToolBarManager();
             navToolBar.add(new Separator(
                     IWorkbenchActionConstants.HISTORY_GROUP));
             navToolBar
@@ -408,7 +404,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             navToolBar.add(pinEditorContributionItem);
 
             // Add to the cool bar manager
-            coolBar.add(new ToolBarContributionItem(navToolBar,
+            coolBar.add(actionBarConfigurer.createToolBarContributionItem(navToolBar,
                     IWorkbenchActionConstants.TOOLBAR_NAVIGATE));
         }
 
@@ -417,14 +413,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         coolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_HELP));
         
         { // Help group
-            IToolBarManager helpToolBar = new ToolBarManager(coolBar
-                    .getStyle());
+            IToolBarManager helpToolBar = actionBarConfigurer.createToolBarManager();
             helpToolBar.add(new Separator(IWorkbenchActionConstants.GROUP_HELP));
 //            helpToolBar.add(searchComboItem);
               // Add the group for applications to contribute
             helpToolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));              
             // Add to the cool bar manager
-            coolBar.add(new ToolBarContributionItem(helpToolBar,
+            coolBar.add(actionBarConfigurer.createToolBarContributionItem(helpToolBar,
                     IWorkbenchActionConstants.TOOLBAR_HELP));
         }        
 
@@ -611,7 +606,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         menu.add(openProjectAction);
         menu.add(closeProjectAction);
-        menu.add(closeUnrelatedProjectsAction);
         menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
         menu.add(new Separator());
         menu.add(buildAllAction);
@@ -1120,7 +1114,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         buildProjectAction = null;
         openProjectAction = null;
         closeProjectAction = null;
-        closeUnrelatedProjectsAction = null;
         newWizardMenu = null;
         pinEditorContributionItem = null;
 //        searchComboItem = null;
@@ -1402,9 +1395,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(window);
         register(closeProjectAction);
 
-        closeUnrelatedProjectsAction = IDEActionFactory.CLOSE_UNRELATED_PROJECTS.create(window);
-        register(closeUnrelatedProjectsAction);
-
         openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE
                 .create(window);
         register(openWorkspaceAction);
@@ -1567,12 +1557,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		                .getCoolBarManager();
 		        IContributionItem cbItem = coolBarManager
 		                .find(IWorkbenchActionConstants.TOOLBAR_FILE);
-		        if (!(cbItem instanceof ToolBarContributionItem)) {
+		        if (!(cbItem instanceof IToolBarContributionItem)) {
 		            // This should not happen
 		            IDEWorkbenchPlugin.log("File toolbar contribution item is missing"); //$NON-NLS-1$
 		            return;
 		        }
-		        ToolBarContributionItem toolBarItem = (ToolBarContributionItem) cbItem;
+		        IToolBarContributionItem toolBarItem = (IToolBarContributionItem) cbItem;
 		        IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
 		        if (toolBarManager == null) {
 		            // error if this happens, file toolbar assumed to always exist
@@ -1615,13 +1605,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 .getCoolBarManager();
         IContributionItem cbItem = coolBarManager
                 .find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
-        if (!(cbItem instanceof ToolBarContributionItem)) {
+        if (!(cbItem instanceof IToolBarContributionItem)) {
             // This should not happen
             IDEWorkbenchPlugin
                     .log("Navigation toolbar contribution item is missing"); //$NON-NLS-1$
             return;
         }
-        ToolBarContributionItem toolBarItem = (ToolBarContributionItem) cbItem;
+        IToolBarContributionItem toolBarItem = (IToolBarContributionItem) cbItem;
         IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
         if (toolBarManager == null) {
             // error if this happens, navigation toolbar assumed to always exist

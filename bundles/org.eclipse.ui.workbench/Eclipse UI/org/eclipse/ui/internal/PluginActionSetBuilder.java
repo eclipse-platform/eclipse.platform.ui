@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,9 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -375,7 +374,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             }
 
             PluginAction action = ad.getAction();
-            PluginActionCoolBarContributionItem actionContribution = new PluginActionCoolBarContributionItem(
+            ActionContributionItem actionContribution = new PluginActionCoolBarContributionItem(
                     action);
 
             bars.addAdjunctContribution(actionContribution);
@@ -430,7 +429,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
             // Create the action
             PluginAction action = ad.getAction();
-            PluginActionCoolBarContributionItem actionContribution = new PluginActionCoolBarContributionItem(
+            ActionContributionItem actionContribution = new PluginActionCoolBarContributionItem(
                     action);
 
             // retreive the toolbar from the action bars.
@@ -562,7 +561,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             //			if (menuMgr != null) 
             //				revokeActionSetFromMenu(menuMgr, id);
 
-            revokeActionSetFromCoolbar(window.getCoolBarManager(), id);
+            revokeActionSetFromCoolbar(window.getCoolBarManager2(), id);
             //			IToolBarManager toolBarMgr = bars.getToolBarManager();
             //			if (toolBarMgr != null && toolBarMgr instanceof CoolItemToolBarManager) 
             //				revokeActionSetFromToolbar(toolBarMgr, id);
@@ -646,11 +645,11 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                     itemsToRemove.add(items[i]);
                     continue;
                 }
-                if (items[i] instanceof ToolBarManager) {
+                if (items[i] instanceof IToolBarManager) {
                     revokeActionSetFromToolbar((IToolBarManager) items[i],
                             actionsetId);
-                } else if (items[i] instanceof ToolBarContributionItem) {
-                    id = ((ToolBarContributionItem) items[i]).getId();
+                } else if (items[i] instanceof IToolBarContributionItem) {
+                    id = ((IToolBarContributionItem) items[i]).getId();
                     if (actionsetId.equals(id))
                         itemsToRemove.add(items[i]);
                 } else if (items[i] instanceof GroupMarker) {

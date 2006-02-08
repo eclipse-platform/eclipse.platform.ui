@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,20 +18,22 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubToolBarManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.SubActionBars2;
+import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * This class represents the action bars for an action set.
  */
 public class ActionSetActionBars extends SubActionBars2 {
+	
+	private IActionBarConfigurer actionBarConfigurer = null;
 
 	private String actionSetId;
 
@@ -39,16 +41,16 @@ public class ActionSetActionBars extends SubActionBars2 {
 
 	private IToolBarManager coolItemToolBarMgr = null;
 
-	private ToolBarContributionItem toolBarContributionItem = null;
+	private IToolBarContributionItem toolBarContributionItem = null;
 
 	/**
-	 * Constructs a new action bars object
-	 */
-	public ActionSetActionBars(IActionBars2 parent,
-			final IServiceLocator serviceLocator, String actionSetId) {
-		super(parent, serviceLocator);
-		this.actionSetId = actionSetId;
-	}
+     * Constructs a new action bars object
+     */
+    public ActionSetActionBars(IActionBars2 parent, IServiceLocator serviceLocator, IActionBarConfigurer actionBarConfigurer, String actionSetId) {
+    	super(parent, serviceLocator);
+		this.actionSetId = actionSetId;		
+        this.actionBarConfigurer = actionBarConfigurer;
+    }
 
 	/**
 	 * Adds to the list all the actions that are part of this action set but
@@ -107,7 +109,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 		for (int i = 0; i < adjunctContributions.size(); i++) {
 			ContributionItem item = (ContributionItem) adjunctContributions
 					.get(i);
-			ToolBarManager parent = (ToolBarManager) item.getParent();
+			IContributionManager parent = item.getParent();
 			if (parent != null) {
 				parent.remove(item);
 				item.dispose();
@@ -181,7 +183,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 		if (coolBarManager == null) {
 			return null;
 		}
-		return new ToolBarManager(coolBarManager.getStyle());
+        return actionBarConfigurer.createToolBarManager();
 	}
 
 	/**
@@ -221,9 +223,9 @@ public class ActionSetActionBars extends SubActionBars2 {
 		// tool bar
 		// id then create one. Otherwise retrieve the tool bar contribution
 		// item
-		if (cbItem instanceof ToolBarContributionItem) {
+		if (cbItem instanceof IToolBarContributionItem) {
 
-			ToolBarContributionItem tbcbItem = (ToolBarContributionItem) cbItem;
+			IToolBarContributionItem tbcbItem = (IToolBarContributionItem) cbItem;
 			coolItemToolBarMgr = tbcbItem.getToolBarManager();
 			// If this not an adjuct type then we can cashe the tool bar
 			// contribution type
@@ -231,15 +233,18 @@ public class ActionSetActionBars extends SubActionBars2 {
 				toolBarContributionItem = tbcbItem;
 			}
 		} else {
-
-			coolItemToolBarMgr = new ToolBarManager(coolBarManager.getStyle());
+			
+			coolItemToolBarMgr = actionBarConfigurer.createToolBarManager();
+           
 			// If this is not an adjunct type then create a tool bar
 			// contribution item
 			// we don't create one for an adjunct type because another action
 			// set action bars contains one
+            
+            IContributionItem toolBarContributionItem = actionBarConfigurer
+					.createToolBarContributionItem(coolItemToolBarMgr,
+							toolBarId);
 
-			toolBarContributionItem = new ToolBarContributionItem(
-					coolItemToolBarMgr, toolBarId);
 			toolBarContributionItem.setParent(coolItemToolBarMgr);
 			toolBarContributionItem.setVisible(getActive());
 			coolItemToolBarMgr.markDirty();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -2539,7 +2539,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Run op in busy cursor.
         // Use set redraw to eliminate the "flash" that can occur in the
         // coolbar as the perspective is reset.
-        CoolBarManager mgr = window.getCoolBarManager();
+        ICoolBarManager mgr = window.getCoolBarManager2();
         try {
             mgr.getControl().setRedraw(false);
             BusyIndicator.showWhile(null, new Runnable() {
@@ -3148,9 +3148,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Going from multiple to single rows can make the coolbar
         // and its adjacent views appear jumpy as perspectives are
         // switched. Turn off redraw to help with this.
-        CoolBarManager mgr = window.getCoolBarManager();
+        ICoolBarManager mgr = window.getCoolBarManager2();
         try {
-            mgr.getControl().setRedraw(false);
+            mgr.getControl2().setRedraw(false);
             getClientComposite().setRedraw(false);
             // Run op in busy cursor.
             BusyIndicator.showWhile(null, new Runnable() {
@@ -3160,7 +3160,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             });
         } finally {
             getClientComposite().setRedraw(true);
-            mgr.getControl().setRedraw(true);
+            mgr.getControl2().setRedraw(true);
             IWorkbenchPart part = getActivePart();
             if (part != null)
                 part.setFocus();
@@ -3180,7 +3180,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Restore the toolbar layout for the active perspective.
      */
     protected void resetToolBarLayout() {
-        window.getCoolBarManager().resetItemOrder();
+        window.getCoolBarManager2().resetItemOrder();
     }
 
     /**

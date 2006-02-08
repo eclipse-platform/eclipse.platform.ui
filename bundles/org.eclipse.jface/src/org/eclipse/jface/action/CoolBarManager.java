@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,6 +245,26 @@ public class CoolBarManager extends ContributionManager implements
         }
         return coolBar;
     }
+    
+    /**
+     * Creates and returns this manager's cool bar control. Does not create a
+     * new control if one already exists.
+     * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * @param parent
+     *            the parent control
+     * @return the cool bar control
+	 * @since 3.2
+     */
+    public Control createControl2(Composite parent) {
+        return createControl(parent);
+    }
 
     /**
      * Disposes of this cool bar manager and frees all allocated SWT resources.
@@ -380,6 +400,23 @@ public class CoolBarManager extends ContributionManager implements
      * @return the cool bar control, or <code>null</code> if none
      */
     public CoolBar getControl() {
+        return coolBar;
+    }
+    
+    /**
+     * Returns the control for this manager.
+     * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * @return the control, or <code>null</code> if none
+	 * @since 3.2
+     */
+    public Control getControl2() {
         return coolBar;
     }
 

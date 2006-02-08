@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
@@ -65,34 +64,13 @@ final class PlaceholderContributionItem implements IContributionItem {
      * @param item
      *            The item to be replaced; must not be <code>null</code>.
      */
-    PlaceholderContributionItem(final ToolBarContributionItem item) {
+    PlaceholderContributionItem(final IToolBarContributionItem item) {
         item.saveWidgetState();
         id = item.getId();
         storedHeight = item.getCurrentHeight();
         storedWidth = item.getCurrentWidth();
         storedMinimumItems = item.getMinimumItemsToShow();
         storedUseChevron = item.getUseChevron();
-    }
-
-    /**
-     * Creates a new tool bar contribution item on the given manager -- using
-     * the stored data to initialize some of its properties.
-     * 
-     * @param manager
-     *            The manager for which the contribution item should be
-     *            created; must not be <code>null</code>
-     * @return A new tool bar contribution item equivalent to the contribution
-     *         item this placeholder was intended to replace; never <code>null</code>.
-     */
-    ToolBarContributionItem createToolBarContributionItem(
-            final ToolBarManager manager) {
-        ToolBarContributionItem toolBarContributionItem = new ToolBarContributionItem(
-                manager, id);
-        toolBarContributionItem.setCurrentHeight(storedHeight);
-        toolBarContributionItem.setCurrentWidth(storedWidth);
-        toolBarContributionItem.setMinimumItemsToShow(storedMinimumItems);
-        toolBarContributionItem.setUseChevron(storedUseChevron);
-        return toolBarContributionItem;
     }
 
     /*
@@ -171,6 +149,29 @@ final class PlaceholderContributionItem implements IContributionItem {
      */
     int getWidth() {
         return storedWidth;
+    }
+    
+    /**
+     * Returns the minimum number of tool items to show in the cool item.
+     * 
+     * @return the minimum number of tool items to show, or <code>SHOW_ALL_ITEMS</code>
+     *         if a value was not set
+     * @see #setMinimumItemsToShow(int)
+	 * @since 3.2
+     */
+    int getMinimumItemsToShow() {
+    	return storedMinimumItems;
+    }
+    
+    /**
+     * Returns whether chevron support is enabled.
+     * 
+     * @return <code>true</code> if chevron support is enabled, <code>false</code>
+     *         otherwise
+	 * @since 3.2
+     */
+    boolean getUseChevron() {
+        return storedUseChevron;
     }
 
     /*

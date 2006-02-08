@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,10 @@
 package org.eclipse.ui.internal;
 
 
+import org.eclipse.jface.action.IToolBarManager2;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.presentations.ActionBarPresentation;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -41,8 +44,7 @@ public class ViewPane extends PartPane {
 
     // create initially toolbarless bar manager so that actions may be added in the 
     // init method of the view.
-    private ToolBarManager isvToolBarMgr = new PaneToolBarManager(SWT.FLAT
-            | SWT.WRAP);
+    private IToolBarManager2 isvToolBarMgr = null;
 
     private MenuManager isvMenuMgr;
 
@@ -56,16 +58,31 @@ public class ViewPane extends PartPane {
     /**
      * Toolbar manager for the ISV toolbar.
      */
-    class PaneToolBarManager extends ToolBarManager {
-        public PaneToolBarManager(int style) {
-            super(style);
-        }
-
-        protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
-            toolBarResized(toolBar, newCount);
-
-            toolBar.layout();
-        }
+    private class ISVPropListener implements IPropertyChangeListener {    	
+    	private Control toolBar;    	
+    	
+    	/**
+    	 * Constructor
+    	 * @param toolBar
+    	 */
+    	public ISVPropListener (Control toolBar) {
+    		this.toolBar = toolBar;
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+    	 */
+    	public void propertyChange(PropertyChangeEvent event) {    		
+    		String property = event.getProperty();
+    		Integer newValue = (Integer)event.getNewValue();
+	       	if (IToolBarManager2.PROP_LAYOUT.equals(property)) {
+	       		toolBarResized(toolBar, newValue != null ? newValue.intValue() : 0);	
+	       		if (toolBar instanceof Composite)
+	       			((Composite)toolBar).layout();
+	       		else
+	       			toolBar.getParent().layout();
+	       	}
+	    }
     }
 
     /**
@@ -92,6 +109,10 @@ public class ViewPane extends PartPane {
      */
     public ViewPane(IViewReference ref, WorkbenchPage page) {
         super(ref, page);
+        ActionBarPresentation actionBarPresentation = ((WorkbenchWindow) page
+				.getWorkbenchWindow()).getActionBarPresentation();
+        
+        isvToolBarMgr = actionBarPresentation.createViewToolBarManager();
     }
 
     /**
@@ -123,9 +144,9 @@ public class ViewPane extends PartPane {
 
     }
 
-    private void toolBarResized(ToolBar toolBar, int newSize) {
+    private void toolBarResized(Control toolBar, int newSize) {
         
-        Control toolbar = isvToolBarMgr.getControl();
+        Control toolbar = isvToolBarMgr.getControl2();
         if (toolbar != null) {
             Control ctrl = getControl();
 
@@ -146,7 +167,9 @@ public class ViewPane extends PartPane {
         
         // ISV toolbar.
         //			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-        final ToolBar isvToolBar = isvToolBarMgr.createControl(parentControl.getParent());
+        final Control isvToolBar = isvToolBarMgr.createControl2(parentControl.getParent());
+        
+        isvToolBarMgr.addPropertyChangeListener(new ISVPropListener(isvToolBar));
         
         isvToolBar.addMouseListener(new MouseAdapter() {
             public void mouseDoubleClick(MouseEvent event) {
@@ -301,7 +324,7 @@ public class ViewPane extends PartPane {
     /**
      * @see ViewActionBars
      */
-    public ToolBarManager getToolBarManager() {
+    public IToolBarManager2 getToolBarManager() {
         return isvToolBarMgr;
     }
 
@@ -463,7 +486,7 @@ public class ViewPane extends PartPane {
         super.reparent(newParent);
 
         if (isvToolBarMgr != null) {
-            ToolBar bar = isvToolBarMgr.getControl();
+            Control bar = isvToolBarMgr.getControl2();
             if (bar != null) {
                 bar.setParent(newParent);
                 bar.moveAbove(control);
@@ -499,19 +522,19 @@ public class ViewPane extends PartPane {
     }
 
     public boolean toolbarIsVisible() {
-        ToolBarManager toolbarManager = getToolBarManager();
+        IToolBarManager2 toolbarManager = getToolBarManager();
 
         if (toolbarManager == null) {
             return false;
         }
 
-        ToolBar control = toolbarManager.getControl();
+        Control control = toolbarManager.getControl2();
 
         if (control == null || control.isDisposed()) {
             return false;
         }
 
-        return control.getItemCount() > 0;
+        return toolbarManager.getItemCount() > 0;
     }
 
     /*
@@ -559,12 +582,12 @@ public class ViewPane extends PartPane {
         return internalGetToolbar();
     }
     
-    private ToolBar internalGetToolbar() {
+    private Control internalGetToolbar() {
         if (isvToolBarMgr == null) {
             return null;
         }
         
-        return isvToolBarMgr.getControl();        
+        return isvToolBarMgr.getControl2();        
     }
 
     /* (non-Javadoc)

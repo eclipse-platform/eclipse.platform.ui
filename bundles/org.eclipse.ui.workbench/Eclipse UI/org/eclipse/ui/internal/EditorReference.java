@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -401,8 +400,7 @@ public class EditorReference extends WorkbenchPartReference implements
             
             EditorSite site = new EditorSite(this, part, manager.page, descr);
             
-            site.setActionBars(new EditorActionBars((IActionBars2) manager.page
-					.getActionBars(), site, getId()));
+            site.setActionBars(new EditorActionBars(manager.page, site, getId()));
             try {
                 part.init(site, input);
             } catch (PartInitException e) {

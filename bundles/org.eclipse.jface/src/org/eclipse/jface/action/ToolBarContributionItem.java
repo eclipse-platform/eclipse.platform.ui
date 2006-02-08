@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * 
  * @since 3.0
  */
-public class ToolBarContributionItem extends ContributionItem {
+public class ToolBarContributionItem extends ContributionItem implements IToolBarContributionItem {
 
     /**
      * A constant used by <code>setMinimumItemsToShow</code> and <code>getMinimumItemsToShow</code>

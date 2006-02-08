@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IToolBarManager2;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -77,7 +79,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      *
      * @see #addToolBar
      */
-    private ToolBarManager toolBarManager = null;
+    private IToolBarManager2 toolBarManager = null;
 
     /**
      * Status line manager, or <code>null</code> if none (default).
@@ -92,7 +94,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @see #addCoolBar
      * @since 3.0
      */
-    private CoolBarManager coolBarManager = null;
+    private ICoolBarManager coolBarManager = null;
 
     /**
      * The seperator between the menu bar and the rest of the window.
@@ -255,7 +257,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     protected void addToolBar(int style) {
         if ((getShell() == null) && (toolBarManager == null)
                 && (coolBarManager == null)) {
-            toolBarManager = createToolBarManager(style);
+            toolBarManager = createToolBarManager2(style);
         }
     }
 
@@ -270,8 +272,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     protected void addCoolBar(int style) {
         if ((getShell() == null) && (toolBarManager == null)
                 && (coolBarManager == null)) {
-            coolBarManager = createCoolBarManager(style);
-        }
+            coolBarManager = createCoolBarManager2(style);
+        }	
     }
 
     /* (non-Javadoc)
@@ -404,6 +406,28 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     protected ToolBarManager createToolBarManager(int style) {
         return new ToolBarManager(style);
     }
+    
+    /**
+     * Returns a new tool bar manager for the window. 
+     * <p> 
+     * By default this method calls <code>createToolBarManager</code>.  Subclasses
+     * may override this method to provide an alternative implementation for the
+     * tool bar manager.
+     * </p>
+     * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * @return a tool bar manager
+     * @since 3.2
+     */
+    protected IToolBarManager2 createToolBarManager2(int style) {
+        return createToolBarManager(style);
+    }
 
     /**
      * Returns a new cool bar manager for the window.
@@ -417,6 +441,28 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     protected CoolBarManager createCoolBarManager(int style) {
         return new CoolBarManager(style);
     }
+    
+    /**
+     * Returns a new cool bar manager for the window.
+     * <p>
+     * By default this method calls <code>createCoolBarManager</code>.  Subclasses
+     * may override this method to provide an alternative implementation for the
+     * cool bar manager.
+     * </p>
+     * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * @return a cool bar manager
+     * @since 3.2
+     */
+    protected ICoolBarManager createCoolBarManager2(int style) {
+        return createCoolBarManager(style);
+    }
 
     /**
      * Creates the control for the tool bar manager.
@@ -427,7 +473,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control createToolBarControl(Composite parent) {
         if (toolBarManager != null) {
-            return toolBarManager.createControl(parent);
+            return toolBarManager.createControl2(parent);
         }
         return null;
     }
@@ -443,7 +489,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control createCoolBarControl(Composite composite) {
         if (coolBarManager != null) {
-            return coolBarManager.createControl(composite);
+            return coolBarManager.createControl2(composite);
         }
         return null;
     }
@@ -510,6 +556,27 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @see #addToolBar(int)
      */
     public ToolBarManager getToolBarManager() {
+    	if (toolBarManager instanceof ToolBarManager)
+        	return (ToolBarManager)toolBarManager;
+        return null;
+    }
+    
+    /**
+     * Returns the tool bar manager for this window (if it has one).
+     * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * @return the tool bar manager, or <code>null</code> if
+     *   this window does not have a tool bar
+     * @see #addToolBar(int)
+	 * @since 3.2
+     */
+    public IToolBarManager2 getToolBarManager2() {
         return toolBarManager;
     }
 
@@ -522,6 +589,27 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @since 3.0
      */
     public CoolBarManager getCoolBarManager() {
+    	if (coolBarManager instanceof CoolBarManager)
+        	return (CoolBarManager)coolBarManager;
+        return null;
+    }
+    
+    /**
+     * Returns the cool bar manager for this window.
+     * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * @return the cool bar manager, or <code>null</code> if
+     *   this window does not have a cool bar
+     * @see #addCoolBar(int)
+     * @since 3.2
+     */
+    public ICoolBarManager getCoolBarManager2() {
         return coolBarManager;
     }
 

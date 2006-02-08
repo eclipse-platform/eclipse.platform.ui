@@ -12,9 +12,18 @@ package org.eclipse.ui.tests.api;
 
 import junit.framework.Assert;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
@@ -62,6 +71,16 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     	}
     };
     
+    private class DummyAction extends Action {
+    	public DummyAction() {
+    		setText("Monkey");
+			setImageDescriptor(getViewSite().getWorkbenchWindow()
+					.getWorkbench().getSharedImages()
+					.getImageDescriptor(
+							ISharedImages.IMG_TOOL_DELETE));
+		};    	
+    }
+    
     public MockViewPart() {
         super();
     }
@@ -94,6 +113,42 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     }
     
     /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.api.MockWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+     */
+    public void createPartControl(Composite parent) {
+    	super.createPartControl(parent);
+    	
+        Button addAction = new Button(parent, SWT.PUSH);
+        addAction.setText("Add Action to Tool Bar");
+        addAction.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IActionBars bars = getViewSite().getActionBars();
+				bars.getToolBarManager().add(new DummyAction());
+				bars.updateActionBars();
+			}
+		});
+
+        Button removeAction = new Button(parent, SWT.PUSH);
+        removeAction.setText("Remove Action from Tool Bar");
+        removeAction.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IActionBars bars = getViewSite().getActionBars();
+				IToolBarManager tbm = bars.getToolBarManager();
+				IContributionItem[] items = tbm.getItems();
+				if (items.length > 0) {
+					IContributionItem item = items[items.length-1];
+					if (item instanceof ActionContributionItem) {
+						if (((ActionContributionItem) item).getAction() instanceof DummyAction) {
+							tbm.remove(item);
+							bars.updateActionBars();
+						}
+					}
+				}
+			}
+		});
+    }
+    
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.api.MockPart#dispose()
 	 */
 	public void dispose() {
@@ -123,6 +178,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
      * @see IViewPart#saveState(IMemento)
      */
     public void saveState(IMemento memento) {
+    	// do nothing
     }
 
     /* (non-Javadoc)

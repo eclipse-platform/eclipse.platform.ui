@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -31,7 +30,6 @@ public class MockViewPartMult extends MockViewPart {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		
-		parent.setLayout(new GridLayout());
 		Button button = new Button(parent, SWT.NONE);
 		button.setText("Open Another");
 		button.addSelectionListener(new SelectionAdapter() {

@@ -11,8 +11,6 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart;
 
 /**
@@ -34,12 +32,6 @@ public class UserSaveableSharedViewPart extends MockViewPart implements
 	
 	private SharedModel fSharedModel = new SharedModel();
 	
-	public void createPartControl(Composite parent) {
-		parent.setLayout(new GridLayout());
-
-		super.createPartControl(parent);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

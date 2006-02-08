@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart;
@@ -37,8 +36,6 @@ public class SaveableMockViewPart extends MockViewPart implements
     private boolean saveNeeded = true;
 
     public void createPartControl(Composite parent) {
-        parent.setLayout(new GridLayout());
-        
         super.createPartControl(parent);
 
         final Button dirtyToggle = new Button(parent, SWT.CHECK);

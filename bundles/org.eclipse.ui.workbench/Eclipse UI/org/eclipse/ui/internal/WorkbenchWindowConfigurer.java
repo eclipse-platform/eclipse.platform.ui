@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
@@ -37,6 +38,7 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.internal.presentations.ActionBarPresentation;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
@@ -205,7 +207,7 @@ public final class WorkbenchWindowConfigurer implements
             if (proxy != null) {
                 return proxy.getCoolBarManager();
             }
-            return window.getCoolBarManager();
+            return window.getCoolBarManager2();
         }
 
         /* (non-Javadoc)
@@ -217,6 +219,31 @@ public final class WorkbenchWindowConfigurer implements
             }
             window.registerGlobalAction(action);
         }
+
+		private ActionBarPresentation getActionBarPresentation() {
+			WorkbenchWindow window = (WorkbenchWindow)getWindowConfigurer().getWindow();
+			return window.getActionBarPresentation();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarManager()
+		 */
+		public IToolBarManager createToolBarManager() {
+			if (proxy != null) {
+				return proxy.createToolBarManager();
+			}
+			return getActionBarPresentation().createToolBarManager();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarContributionItem(org.eclipse.jface.action.IToolBarManager, java.lang.String)
+		 */
+		public IContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
+			if (proxy != null) {
+				return proxy.createToolBarContributionItem(toolBarManager, id);
+			}
+			return getActionBarPresentation().createToolBarContributionItem(toolBarManager, id);
+		}
     }
 
     /**
@@ -272,10 +299,8 @@ public final class WorkbenchWindowConfigurer implements
         if (shell != null) {
             // update the cached title
             windowTitle = shell.getText();
-            return windowTitle;
-        } else {
-            return windowTitle;
         }
+        return windowTitle;
     }
 
     /* (non-javadoc)
@@ -588,7 +613,8 @@ public final class WorkbenchWindowConfigurer implements
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Control createCoolBarControl(Composite parent) {
-        return window.getCoolBarManager().createControl(parent);
+        return actionBarConfigurer.getActionBarPresentation().createCoolBarControl(
+        		window.getCoolBarManager2(), parent);
     }
 
     /* (non-Javadoc)
@@ -609,7 +635,7 @@ public final class WorkbenchWindowConfigurer implements
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#saveState(org.eclipse.ui.IMemento)
 	 */
 	public IStatus saveState(IMemento memento) {
-		return ((WorkbenchWindow) window).saveState(memento);
+		return window.saveState(memento);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,6 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
-import org.eclipse.ui.ISaveableModel;
-import org.eclipse.ui.ISaveableModelSource;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -67,6 +65,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISaveableModel;
+import org.eclipse.ui.ISaveableModelSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewPart;
@@ -296,8 +296,7 @@ public class EditorManager implements IExtensionChangeHandler {
 		}
 
 		// Create a new action bar set.
-		actionBars = new EditorActionBars(
-				(WWinActionBars) page.getActionBars(), site, type);
+		actionBars = new EditorActionBars(page, site, type);
 		actionBars.addRef();
 		actionCache.put(type, actionBars);
 
@@ -329,8 +328,7 @@ public class EditorManager implements IExtensionChangeHandler {
 
 		// Create a new action bar set.
 		// Note: It is an empty set.
-		EditorActionBars actionBars = new EditorActionBars(
-				(WWinActionBars) page.getActionBars(), site, type);
+		EditorActionBars actionBars = new EditorActionBars(page, site, type);
 		actionBars.addRef();
 		actionCache.put(type, actionBars);
 
@@ -347,8 +345,8 @@ public class EditorManager implements IExtensionChangeHandler {
 			String type = actionBars.getEditorType();
 			actionCache.remove(type);
 			// refresh the cool bar manager before disposing of a cool item
-			if (window.getCoolBarManager() != null) {
-				window.getCoolBarManager().refresh();
+            if (window.getCoolBarManager2() != null) {
+                window.getCoolBarManager2().refresh();
 			}
 			actionBars.dispose();
 		}

@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
@@ -39,8 +40,9 @@ public abstract class MockWorkbenchPart extends MockPart implements
      * @see org.eclipse.ui.tests.api.MockPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent) {
-        // TODO Auto-generated method stub
         super.createPartControl(parent);
+		parent.setLayout(new GridLayout());
+		
         Label label = new Label(parent, SWT.NONE);
         label.setText(title);
     }

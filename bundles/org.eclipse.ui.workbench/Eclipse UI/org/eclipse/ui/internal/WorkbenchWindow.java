@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,12 +36,13 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarContributionItem;
+import org.eclipse.jface.action.IToolBarManager2;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
@@ -121,6 +122,8 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.presentations.ActionBarPresentation;
+import org.eclipse.ui.internal.presentations.InternalPresentationFactory;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -129,6 +132,7 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 /**
  * A window within the workbench.
@@ -319,10 +323,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		// Add contribution managers that are exposed to other plugins.
 		addMenuBar();
-		addCoolBar(SWT.FLAT);
+		addCoolBar(SWT.NONE);  // style is unused
 		addStatusLine();
-
-		actionPresentation = new ActionPresentation(this);
 
 		// register with the tracker
 		getExtensionTracker()
@@ -704,7 +706,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * Return whether or not the coolbar layout is locked.
 	 */
 	protected boolean isCoolBarLocked() {
-		CoolBarManager cbm = getCoolBarManager();
+        ICoolBarManager cbm = getCoolBarManager2(); 
 		return cbm != null && cbm.getLockLayout();
 	}
 
@@ -1427,7 +1429,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		boolean result;
 		try {
 			// Clear the action sets, fix for bug 27416.
-			actionPresentation.clearActionSets();
+            getActionPresentation().clearActionSets();
 
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
@@ -1492,7 +1494,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	/* package */
 	void lockCoolBar(boolean lock) {
-		getCoolBarManager().setLockLayout(lock);
+        getCoolBarManager2().setLockLayout(lock);
 	}
 
 	/**
@@ -1658,8 +1660,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// This needs to be done before pages are created to ensure proper
 		// canonical creation
 		// of cool items
-		if (getCoolBarManager() != null) {
-			CoolBarManager coolBarMgr = getCoolBarManager();
+		ICoolBarManager coolBarMgr = getCoolBarManager2();
+        if (coolBarMgr != null) {
 			IMemento coolBarMem = memento
 					.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
 			if (coolBarMem != null) {
@@ -1727,12 +1729,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 							if (oldItem != null) {
 								newItem = oldItem;
 							} else {
-								newItem = new ToolBarContributionItem(
-										new ToolBarManager(coolBarMgr
-												.getStyle()), id);
+								ActionBarPresentation actionBarPresentation = getActionBarPresentation();
+								newItem = actionBarPresentation.createToolBarContributionItem(
+										actionBarPresentation.createToolBarManager(), id);
 								if (type
 										.equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
-									ToolBarContributionItem newToolBarItem = (ToolBarContributionItem) newItem;
+									IToolBarContributionItem newToolBarItem = (IToolBarContributionItem) newItem;
 									if (height != null) {
 										newToolBarItem.setCurrentHeight(height
 												.intValue());
@@ -1760,13 +1762,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 							}
 							// Set the current height and width
 							if ((width != null)
-									&& (newItem instanceof ToolBarContributionItem)) {
-								((ToolBarContributionItem) newItem)
+									&& (newItem instanceof IToolBarContributionItem)) {
+								((IToolBarContributionItem) newItem)
 										.setCurrentWidth(width.intValue());
 							}
 							if ((height != null)
-									&& (newItem instanceof ToolBarContributionItem)) {
-								((ToolBarContributionItem) newItem)
+									&& (newItem instanceof IToolBarContributionItem)) {
+								((IToolBarContributionItem) newItem)
 										.setCurrentHeight(height.intValue());
 							}
 						}
@@ -1951,7 +1953,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (coolbarMem == null) {
 			return false;
 		}
-		CoolBarManager coolBarMgr = getCoolBarManager();
+        ICoolBarManager coolBarMgr = getCoolBarManager2();
 		// Check to see if layout is locked
 		Integer locked = coolbarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
 		boolean state = (locked != null) && (locked.intValue() == 1);
@@ -2043,11 +2045,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				}
 				// If a tool bar contribution item already exists for this id
 				// then use the old object
-				if (oldItem instanceof ToolBarContributionItem) {
+				if (oldItem instanceof IToolBarContributionItem) {
 					newItem = oldItem;
 				} else {
-					newItem = new ToolBarContributionItem(new ToolBarManager(
-							coolBarMgr.getStyle()), id);
+					ActionBarPresentation actionBarPresentaiton = getActionBarPresentation();
+					newItem = actionBarPresentaiton.createToolBarContributionItem(
+									actionBarPresentaiton.createToolBarManager(), id);
 					// make it invisible by default
 					newItem.setVisible(false);
 					// Need to add the item to the cool bar manager so that its
@@ -2283,16 +2286,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		// / Save the order of the cool bar contribution items
-		if (getCoolBarManager() != null) {
-			getCoolBarManager().refresh();
+        ICoolBarManager coolBarMgr = getCoolBarManager2();
+        if (coolBarMgr != null) {
+        	coolBarMgr.refresh();
 			IMemento coolBarMem = memento
 					.createChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
-			if (getCoolBarManager().getLockLayout() == true) {
+            if (coolBarMgr.getLockLayout() == true) {
 				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 1);
 			} else {
 				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 0);
 			}
-			IContributionItem[] items = getCoolBarManager().getItems();
+            IContributionItem[] items = coolBarMgr.getItems();
 			for (int i = 0; i < items.length; i++) {
 				IMemento coolItemMem = coolBarMem
 						.createChild(IWorkbenchConstants.TAG_COOLITEM);
@@ -2328,8 +2332,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					 */
 					final int height;
 					final int width;
-					if (item instanceof ToolBarContributionItem) {
-						ToolBarContributionItem toolBarItem = (ToolBarContributionItem) item;
+					if (item instanceof IToolBarContributionItem) {
+						IToolBarContributionItem toolBarItem = (IToolBarContributionItem) item;
 						toolBarItem.saveWidgetState();
 						height = toolBarItem.getCurrentHeight();
 						width = toolBarItem.getCurrentWidth();
@@ -2635,7 +2639,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		// updateAll required in order to enable accelerators on pull-down menus
 		getMenuBarManager().updateAll(false);
-		getCoolBarManager().update(false);
+        getCoolBarManager2().update(false);
 		getStatusLineManager().update(false);
 	}
 
@@ -2699,12 +2703,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		WorkbenchPage currentPage = getActiveWorkbenchPage();
 		if (currentPage == null)
-			actionPresentation.clearActionSets();
+			getActionPresentation().clearActionSets();
 		else {
-			if (getCoolBarManager() != null) {
-				getCoolBarManager().refresh();
+			if (getCoolBarManager2() != null) {
+				getCoolBarManager2().refresh();
 			}
-			actionPresentation.setActionSets(currentPage.getActionSets());
+			getActionPresentation().setActionSets(currentPage.getActionSets());
 		}
 		fireActionSetsChanged();
 		updateActionBars();
@@ -3211,11 +3215,32 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				.getPerspectiveBar();
 	}
 
-	// for dynamic UI
-	public ActionPresentation getActionPresentation() {
-		return actionPresentation;
-	}
-
+    /**
+     * Returns the action presentation for dynamic UI
+     * @return action presentation
+     */
+    public ActionPresentation getActionPresentation() {
+        if (actionPresentation == null) {
+        	actionPresentation = new ActionPresentation(this);
+        }
+        return actionPresentation;
+    }
+    
+    /*package*/ ActionBarPresentation getActionBarPresentation() {
+    	// allow replacement of the actionbar presentation
+    	ActionBarPresentation actionBarPresentation;        	
+    	AbstractPresentationFactory presentationFactory = 
+    		getWindowConfigurer().getPresentationFactory();
+    	if (presentationFactory instanceof InternalPresentationFactory) {
+        	actionBarPresentation = ((InternalPresentationFactory) presentationFactory)
+					.createActionBarPresentation(this);
+    	}
+    	else 
+    		actionBarPresentation = new ActionBarPresentation();      
+    	
+    	return actionBarPresentation;        	
+    }
+    
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -3226,6 +3251,56 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	}
 
 	/**
+     * Returns a new cool bar manager for the window.
+     * <p>
+     * Subclasses may override this method to customize the cool bar manager.
+     * </p>
+     * 
+     * @return a cool bar manager
+	 * @since 3.2
+     */
+    protected ICoolBarManager createCoolBarManager2(int style) {
+        return getActionBarPresentation().createCoolBarManager();
+    }
+    
+    /**
+     * Creates the control for the cool bar manager.
+     * <p>
+     * Subclasses may override this method to customize the cool bar manager.
+     * </p>
+     * 
+     * @return an instance of <code>CoolBar</code>\
+	 * @since 3.2
+     */
+    protected Control createCoolBarControl(Composite parent) {
+        return getActionBarPresentation().createCoolBarControl(getCoolBarManager2(), parent);
+    }
+
+    /**
+     * Returns a new tool bar manager for the window.
+     * <p>
+     * Subclasses may override this method to customize the tool bar manager.
+     * </p>
+     * @return a tool bar manager
+	 * @since 3.2
+     */
+    protected IToolBarManager2 createToolBarManager2(int style) {
+        return getActionBarPresentation().createToolBarManager();
+    }
+
+    /**
+     * Creates the control for the tool bar manager.
+     * <p>
+     * Subclasses may override this method to customize the tool bar manager.
+     * </p>
+     * @return a Control
+	 * @since 3.2
+     */
+    protected Control createToolBarControl(Composite parent) {
+        return getActionBarPresentation().createToolBarControl(getToolBarManager2(), parent);
+    }
+    
+    /**
 	 * Delegate to the presentation factory.
 	 * 
 	 * @see org.eclipse.jface.window.ApplicationWindow#createStatusLineManager

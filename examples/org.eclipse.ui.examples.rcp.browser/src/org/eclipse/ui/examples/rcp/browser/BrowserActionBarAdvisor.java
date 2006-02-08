@@ -18,9 +18,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -158,8 +155,8 @@ public class BrowserActionBarAdvisor extends ActionBarAdvisor {
 	}
 
 	protected void fillCoolBar(ICoolBarManager coolBar) {
-		IToolBarManager toolBar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-		coolBar.add(new ToolBarContributionItem(toolBar, "standard")); //$NON-NLS-1$
+		IToolBarManager toolBar = getActionBarConfigurer().createToolBarManager();
+		coolBar.add(toolBar); //$NON-NLS-1$
 		
 		// For the Back and Forward actions, force their text to be shown on the toolbar,
 		// not just their image.  For the remaining actions, the ActionContributionItem
@@ -172,7 +169,7 @@ public class BrowserActionBarAdvisor extends ActionBarAdvisor {
 		forwardCI.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		toolBar.add(forwardCI);
 
-        toolBar.add(stopAction);
-        toolBar.add(refreshAction);
+		toolBar.add(stopAction);
+		toolBar.add(refreshAction);
 	}
 }

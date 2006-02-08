@@ -11,8 +11,6 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
 
 /**
@@ -32,12 +30,6 @@ public class UserSaveableMockViewPart extends MockViewPart implements
 
 	private boolean saveNeeded = true;
 
-    public void createPartControl(Composite parent) {
-        parent.setLayout(new GridLayout());
-        
-        super.createPartControl(parent);
-    }
-    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
