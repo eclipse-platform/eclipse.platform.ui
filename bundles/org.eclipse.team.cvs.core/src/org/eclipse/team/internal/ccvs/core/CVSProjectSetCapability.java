@@ -13,41 +13,19 @@
 package org.eclipse.team.internal.ccvs.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.net.URI;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.team.core.ProjectSetCapability;
-import org.eclipse.team.core.ProjectSetSerializationContext;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.client.Checkout;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Request;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
+import org.eclipse.team.internal.ccvs.core.filesystem.CVSURI;
+import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 
@@ -513,6 +491,30 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			}
 		}
 		resource.delete();
+	}
+	
+	public String getProject(String referenceString) {
+		// TODO Auto-generated method stub
+		return super.getProject(referenceString);
+	}
+	
+	public URI getURI(String referenceString) {
+	
+		//team provider, cvs folder, project name
+		StringTokenizer tokenizer = new StringTokenizer(referenceString, ",");
+		String version = tokenizer.nextToken();
+		// If this is a newer version, then ignore it
+		if (!version.equals("1.0")) //$NON-NLS-1$
+			return super.getURI(referenceString);
+		
+		try {
+			LoadInfo info = new LoadInfo(tokenizer);
+			CVSURI cvsURI = new CVSURI(info.repositoryLocation,new Path(info.module),info.tag);
+			return cvsURI.toURI();
+		} catch (CVSException e) {	
+		}
+		
+		return super.getURI(referenceString);
 	}
 
 }

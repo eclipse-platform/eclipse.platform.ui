@@ -11,16 +11,14 @@
 
 package org.eclipse.team.internal.ccvs.core.filehistory;
 
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.history.IFileHistory;
-import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.history.*;
 import org.eclipse.team.core.history.provider.FileHistoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
+import org.eclipse.team.internal.ccvs.core.filesystem.CVSFileStore;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -30,22 +28,33 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 	/**
 	 * see <code>org.eclipse.team.core.IFileHistoryProvider</code>
 	 */
-	public IFileHistory getFileHistoryFor(IResource resource, int flags, IProgressMonitor monitor){
+	public IFileHistory getFileHistoryFor(IResource resource, int flags, IProgressMonitor monitor) {
 		ICVSRemoteResource remoteResource;
 		try {
 			monitor.beginTask(null, 100);
-			remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(resource);
-			monitor.worked(40);
-			CVSFileHistory remoteFile = null;
-			if (remoteResource instanceof ICVSFile){
-				remoteFile = new CVSFileHistory((ICVSFile) remoteResource);
+			if ((flags == IFileHistoryProvider.SINGLE_REVISION) || ((flags == IFileHistoryProvider.SINGLE_LINE_OF_DESCENT))) {
+				remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(resource);
+				monitor.worked(40);
+				CVSFileHistory remoteFile = null;
+				if (remoteResource instanceof ICVSFile) {
+					remoteFile = new CVSFileHistory((ICVSFile) remoteResource, flags);
+				}
+				return remoteFile;
+			} else {
+				// TODO need to complete the revision
+				remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(resource);
+				monitor.worked(40);
+				CVSFileHistory remoteFile = null;
+				if (remoteResource instanceof ICVSFile) {
+					remoteFile = new CVSFileHistory((ICVSFile) remoteResource);
+				}
+				return remoteFile;
 			}
-			return remoteFile;
-		} catch (CVSException e) {	
+		} catch (CVSException e) {
 		} finally {
 			monitor.done();
 		}
-		
+
 		return null;
 	}
 
@@ -63,6 +72,20 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 		} catch (CVSException e) {
 		}
 		
+		return null;
+	}
+
+	public IFileHistory getFileHistoryFor(IFileStore store, int flags, IProgressMonitor monitor) {
+		if (store instanceof CVSFileStore) {
+			
+			CVSFileStore fileStore = (CVSFileStore) store;
+			ICVSRemoteFile file = fileStore.getCVSURI().toFile();
+			
+			CVSFileHistory fileHistory = new CVSFileHistory(file);
+			
+			return fileHistory;
+			
+		}
 		return null;
 	}
 

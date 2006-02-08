@@ -156,5 +156,9 @@ public class CVSFileStore extends FileStore {
 	public URI toURI() {
 		return uri.toURI();
 	}
+	
+	public CVSURI getCVSURI() {
+		return uri;
+	}
 
 }

@@ -11,6 +11,7 @@
 
 package org.eclipse.team.core.history;
 
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.provider.FileHistoryProvider;
@@ -54,12 +55,12 @@ public interface IFileHistoryProvider {
 	 * {@link IFileHistory#getTargets(IFileRevision)} should either return zero
 	 * or one revision.
 	 */
-	public static final int SINGLE_LINE_OF_DESCENT = 1;
+	public static final int SINGLE_LINE_OF_DESCENT = 2;
 
 	/**
 	 * Returns the file history for the given in resource. If the flags contains
 	 * {@link #SINGLE_REVISION} then only the revision corresponding to the base
-	 * corresponding to the locla resource is fetched. If the flags contains
+	 * corresponding to the local resource is fetched. If the flags contains
 	 * {@link #SINGLE_LINE_OF_DESCENT} the resulting history will be restricted
 	 * to a single line-of-descent (e.g. a single branch). In this mode, the
 	 * {@link IFileHistory#getContributors(IFileRevision)} and
@@ -79,12 +80,20 @@ public interface IFileHistoryProvider {
 	
 
 	/**
-	 * Returns the file revision of the passed in resourrce or null if that file revision cannot be
+	 * Returns the file revision of the passed in resource or null if that file revision cannot be
 	 * determined
 	 * 
 	 * @param resource the resource
 	 * @return the file revision belonging to the passed in resource or null
 	 */
 	public abstract IFileRevision getWorkspaceFileRevision(IResource resource);
-
+	
+	/**
+	 * Returns an {@link IFileHistory} for the specified {@link IFileStore}.
+	 * @param store an IFileStore
+	 * @param monitor  a progress monitor
+	 * @return the history for the IFileStore
+	 */
+	public abstract IFileHistory getFileHistoryFor(IFileStore store, int flags, IProgressMonitor monitor);
+	
 }

@@ -136,7 +136,7 @@
             allowMultiple="true"
             category="org.eclipse.team.ui"
             class="org.eclipse.team.internal.ui.history.GenericHistoryView"
-            icon="icons/full/obj/changeset_obj.gif"
+            icon="icons/full/eview16/history_view.gif"
             id="org.eclipse.team.ui.GenericHistoryView"
             name="%HistoryView"/>
     <!--  <view

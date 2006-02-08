@@ -83,7 +83,7 @@ public interface IFileRevision {
 	 * @return the <em>unique</em> identifier for this file revision 
 	 * or <code>null</code>
 	 */
-	public abstract String getContentIdentifier();
+	public String getContentIdentifier();
 
 	/**
 	 *  Returns the author of this revision or <code>null</code> if
@@ -91,7 +91,7 @@ public interface IFileRevision {
 	 *  
 	 *  @return the author of this revision or <code>null</code>
 	 */
-	public abstract String getAuthor();
+	public String getAuthor();
 
 	/**
 	 * Returns the comment for this file revision or <code>null</code> if
@@ -99,7 +99,7 @@ public interface IFileRevision {
 	 * 
 	 * @return the comment for this file revision or <code>null</code>
 	 */
-	public abstract String getComment();
+	public String getComment();
 
 	/**
 	 * Returns the set of tags available for this file revision.
@@ -107,5 +107,21 @@ public interface IFileRevision {
 	 * @return an array of ITag's if ITags exist for this revision or an empty ITag array
 	 * if no tags exist
 	 */
-	public abstract ITag[] getTags();
+	public ITag[] getTags();
+	
+	/**
+	 * Returns whether this particular file revision is complete - i.e. if it can return
+	 * info for all fields.
+	 * 
+	 * @return true if this file revision can return info for all fields, false otherwise.
+	 */
+	public boolean isComplete();
+	
+	/**
+	 * Returns a complete version of this IFileRevision or null if a complete version cannot
+	 * be found.
+	 * @param monitor	a monitor
+	 * @return a complete version of this file revision or null
+	 */
+	public IFileRevision asComplete(IProgressMonitor monitor);
 }

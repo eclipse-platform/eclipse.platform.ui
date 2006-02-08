@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileHistory;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.core.LocalFileRevision;
 
 public class CVSFileHistory extends FileHistory {
@@ -34,12 +36,21 @@ public class CVSFileHistory extends FileHistory {
 	protected boolean includesExists;
 	protected boolean refetchRevisions;
 	
+	private int flag;
+	
 	public CVSFileHistory(ICVSFile file){
 		this.cvsFile = file;
 		this.includeLocalRevisions = false;
 		this.refetchRevisions = true;
+		this.flag = 0;
 	}
 	
+	public CVSFileHistory(ICVSFile file, int flag){
+		this.cvsFile = file;
+		this.includeLocalRevisions = false;
+		this.refetchRevisions = true;
+		this.flag = flag;
+	}
 	public IFileRevision[] getFileRevisions() {
 		if (revisions == null)
 			return new IFileRevision[0];
@@ -51,30 +62,60 @@ public class CVSFileHistory extends FileHistory {
 				monitor.beginTask("Refreshing CVS",300);
 				try{
 				ILogEntry[] entries = cvsFile.getLogEntries(new SubProgressMonitor(monitor, 200));
-				localRevisions = new IFileRevision[0];
-				if (includeLocalRevisions){
-					IResource localResource = cvsFile.getIResource();
-					includesExists = false;
-					if (localResource != null &&
-						localResource instanceof IFile){
-						//get the local revisions
-						IFileState[] localHistoryState =((IFile)localResource).getHistory(new SubProgressMonitor(monitor, 100));
-						localRevisions =convertToFileRevision(localHistoryState, new SubProgressMonitor(monitor, 100));
-						includesExists = (localRevisions.length > 0);
+				if (flag == IFileHistoryProvider.SINGLE_REVISION){
+					String revisionNumber = cvsFile.getSyncInfo().getRevision();
+					for (int i = 0; i < entries.length; i++) {
+						if (entries[i].getRevision().equals(revisionNumber)){
+							remoteRevisions = new IFileRevision[]{new CVSFileRevision(entries[i])};
+							revisions = new IFileRevision[1];
+							//copy over remote revisions
+							System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
+							break;
+						}
 					}
+		
+				} else if (flag == IFileHistoryProvider.SINGLE_LINE_OF_DESCENT){ 
+					ResourceSyncInfo infox = cvsFile.getSyncInfo();
+					CVSTag tempTag = cvsFile.getSyncInfo().getTag();
+					int x;
+					/*CVSTag cvsTag = cvsFile.getSyncInfo().
+					for (int i = 0; i < entries.length; i++) {
+						CVSTag[] tags = entries[i].getTags();
+						for (int j = 0; j < tags.length; j++) {
+							
+						}
+						if (entries[i]..equals(revisionNumber)){
+							remoteRevisions = new IFileRevision[]{new CVSFileRevision(entries[i])};
+							revisions = new IFileRevision[1];
+							//copy over remote revisions
+							System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
+							break;
+						}
+					}*/
+				} else {
+					localRevisions = new IFileRevision[0];
+					if (includeLocalRevisions){
+						IResource localResource = cvsFile.getIResource();
+						includesExists = false;
+						if (localResource != null &&
+							localResource instanceof IFile){
+							//get the local revisions
+							IFileState[] localHistoryState =((IFile)localResource).getHistory(new SubProgressMonitor(monitor, 100));
+							localRevisions =convertToFileRevision(localHistoryState, new SubProgressMonitor(monitor, 100));
+							includesExists = (localRevisions.length > 0);
+						}
+					}
+					remoteRevisions = new IFileRevision[entries.length];
+					for (int i = 0; i < entries.length; i++) {
+						remoteRevisions[i] = new CVSFileRevision(entries[i]);
+					}
+					
+					revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
+					//copy over remote revisions
+					System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
+					//copy over local revisions
+					System.arraycopy(localRevisions,0, revisions, remoteRevisions.length,localRevisions.length);
 				}
-				remoteRevisions = new IFileRevision[entries.length];
-				for (int i = 0; i < entries.length; i++) {
-					remoteRevisions[i] = new CVSFileRevision(entries[i]);
-				}
-				
-				revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
-				//copy over remote revisions
-				System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
-				//copy over local revisions
-				System.arraycopy(localRevisions,0, revisions, remoteRevisions.length,localRevisions.length);
-				
-				
 			} catch (CoreException e) {
 			} finally {
 				monitor.done();

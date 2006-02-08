@@ -33,6 +33,10 @@ import org.eclipse.team.core.history.ITag;
  * 
  * @since 3.2
  */
+/**
+ * @author bgheorgh
+ *
+ */
 public abstract class FileRevision implements IFileRevision {
 
 	/**
@@ -109,6 +113,19 @@ public abstract class FileRevision implements IFileRevision {
 		return new ITag[0];
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.history.IFileRevision#isComplete()
+	 */
+	public boolean isComplete() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.history.IFileRevision#asComplete(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IFileRevision asComplete(IProgressMonitor monitor) {
+		return null;
+	}
 	
 	
 }

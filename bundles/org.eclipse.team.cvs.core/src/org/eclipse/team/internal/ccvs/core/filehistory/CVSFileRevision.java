@@ -81,4 +81,23 @@ public class CVSFileRevision extends FileRevision {
 	public ICVSRemoteFile getCVSRemoteFile(){
 		return entry.getRemoteFile();
 	}
+	
+	public boolean isComplete() {
+		//If we have an aothor and a comment then we consider this revision complete
+		if (entry.getAuthor() != null &&
+			entry.getComment() != null)
+			return true;
+		
+		return false;
+	}
+	
+	
+	public IFileRevision asComplete(IProgressMonitor monitor) {
+		try {
+			return new CVSFileRevision(getCVSRemoteFile().getLogEntry(monitor));
+		} catch (TeamException e) {
+		}
+		
+		return null;
+	}
 }

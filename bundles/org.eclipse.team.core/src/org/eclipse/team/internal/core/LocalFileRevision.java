@@ -129,5 +129,13 @@ public class LocalFileRevision extends FileRevision {
 	public void setBaseRevision(IFileRevision baseRevision) {
 		this.baseRevision = baseRevision;
 	}
+	
+	public boolean isComplete() {
+		return true;
+	}
 
+	
+	public IFileRevision asComplete(IProgressMonitor monitor) {
+		return this;
+	}
 }
