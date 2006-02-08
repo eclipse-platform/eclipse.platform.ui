@@ -29,13 +29,9 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	 * the receiver applied to them.
 	 * @param markers
 	 * @return IMarker[]
-	 * <strong>NOTE:</strong> This method will become abstract for
-	 * 3.2 M5.
 	 * 	 
 	 * */
-	public IMarker[] findOtherMarkers(IMarker[] markers){
-		return new IMarker[0];
-	}
+	public abstract IMarker[] findOtherMarkers(IMarker[] markers);
 
     /**
      * Runs this resolution. Resolve all <code>markers</code>.
