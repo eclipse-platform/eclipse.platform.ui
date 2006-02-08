@@ -12,6 +12,8 @@ package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
 /**
@@ -87,6 +89,22 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * </p>
 	 */
 	public static final int STRUCTURAL_CHANGE= 1 << 1;
+
+	/**
+	 * The unknown refactoring id (value:
+	 * org.eclipse.ltk.core.refactoring.unknown)
+	 * <p>
+	 * This id is reserved by the refactoring framework to signal that a
+	 * refactoring has been performed which did not deliver a refactoring
+	 * descriptor via its {@link Change#getRefactoringDescriptor()} method. The
+	 * refactoring history service never returns unknown refactorings. For
+	 * consistency reasons, they are reported for
+	 * {@link IRefactoringExecutionListener} or
+	 * {@link IRefactoringHistoryListener} in order to keep the refactoring
+	 * operation history intact.
+	 * </p>
+	 */
+	public static final String ID_UNKNOWN= "org.eclipse.ltk.core.refactoring.unknown"; //$NON-NLS-1$
 
 	/**
 	 * Constant describing the user flag (value: 256)
