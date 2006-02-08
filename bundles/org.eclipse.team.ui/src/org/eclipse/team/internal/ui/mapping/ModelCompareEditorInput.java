@@ -140,7 +140,6 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 */
 	public void propertyChanged(Object source, int propId) {
 		if (propId == ISaveableCompareModel.PROP_DIRTY) {
-			// TODO I think this is equivalent to a no-op
 			setDirty(model.isDirty());
 		}
 	}

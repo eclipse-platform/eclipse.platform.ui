@@ -138,6 +138,17 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 		 */
 		public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 			Utils.updateLabels(node, configuration);
+			// We need to cache contents here as well
+			Object ancestor = getAncestor();
+			if (ancestor instanceof FileStateTypedElement) {
+				FileStateTypedElement fste = (FileStateTypedElement) ancestor;
+				fste.cacheContents(monitor);
+			}
+			Object right = getRight();
+			if (right instanceof FileStateTypedElement) {
+				FileStateTypedElement fste = (FileStateTypedElement) right;
+				fste.cacheContents(monitor);
+			}
 		}
 
 		/* (non-Javadoc)
