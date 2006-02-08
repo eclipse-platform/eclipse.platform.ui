@@ -449,7 +449,7 @@ public final class RefactoringHistoryManager {
 				transformer.beginRefactoring(id, descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
 				final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
 				if (contribution != null) {
-					final Map arguments= contribution.getArguments(descriptor);
+					final Map arguments= contribution.retrieveArguments(descriptor);
 					if (arguments != null) {
 						for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
 							final Map.Entry entry= (Entry) iterator.next();
@@ -538,7 +538,7 @@ public final class RefactoringHistoryManager {
 						transformer.beginRefactoring(id, stamp, current.getProject(), current.getDescription(), current.getComment(), current.getFlags());
 						final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
 						if (contribution != null) {
-							final Map arguments= contribution.getArguments(current);
+							final Map arguments= contribution.retrieveArguments(current);
 							if (arguments != null) {
 								for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
 									final Map.Entry entry= (Entry) iterator.next();

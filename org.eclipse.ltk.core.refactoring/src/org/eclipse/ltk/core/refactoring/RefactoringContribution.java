@@ -40,20 +40,22 @@ public abstract class RefactoringContribution {
 	 * descriptor. The result of this method is used as argument to initialize a
 	 * refactoring using
 	 * {@link IInitializableRefactoringComponent#initialize(RefactoringArguments)}.
+	 * Implementations of this method must never return <code>null</code>.
 	 * </p>
 	 * 
 	 * @param descriptor
-	 *            the refactoring descriptor
-	 * @return the refactoring arguments, or <code>null</code>
+	 *            the refactoring descriptor to create refactoring arguments for
+	 * @return the refactoring arguments
 	 */
 	public abstract RefactoringArguments createArguments(RefactoringDescriptor descriptor);
 
 	/**
-	 * Creates a new refactoring descriptor for the specified input data.
+	 * Creates a new refactoring descriptor.
 	 * <p>
 	 * This method is used by the refactoring framework to create a
 	 * language-specific refactoring descriptor representing the refactoring
-	 * instance corresponding to the input arguments.
+	 * instance corresponding to the argument map. Implementations of this
+	 * method must never return <code>null</code>.
 	 * </p>
 	 * 
 	 * @param id
@@ -74,7 +76,7 @@ public abstract class RefactoringContribution {
 	 *            strings
 	 * @param flags
 	 *            the flags of the refactoring descriptor
-	 * @return the refactoring descriptor, or <code>null</code>
+	 * @return the refactoring descriptor
 	 */
 	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags);
 
@@ -88,25 +90,28 @@ public abstract class RefactoringContribution {
 	 * </p>
 	 * 
 	 * @param descriptor
-	 *            the refactoring descriptor
-	 * @return the refactoring, or <code>null</code>
+	 *            the refactoring descriptor to create a refactoring from
+	 * @return the refactoring, or <code>null</code> if no refactoring
+	 *         contribution is available to create a refactoring from this
+	 *         descriptor
 	 * @throws CoreException
-	 *             if the refactoring could not be created from the descriptor
+	 *             if the refactoring could not be created from the descriptor.
 	 */
 	public abstract Refactoring createRefactoring(RefactoringDescriptor descriptor) throws CoreException;
 
 	/**
-	 * Returns the argument map of the specified refactoring descriptor.
+	 * Retrieves the argument map of the specified refactoring descriptor.
 	 * <p>
 	 * This method is used by the refactoring framework to obtain
 	 * refactoring-specific arguments provided by the refactoring descriptor.
+	 * Implementations of this method must never return <code>null</code>.
 	 * </p>
 	 * 
 	 * @param descriptor
-	 *            the refactoring descriptor
+	 *            the refactoring descriptor to retrieve its argument map
 	 * @return the argument map of the specified refactoring descriptor
 	 * 
 	 * @see #createDescriptor(String, String, String, String, Map, int)
 	 */
-	public abstract Map getArguments(RefactoringDescriptor descriptor);
+	public abstract Map retrieveArguments(RefactoringDescriptor descriptor);
 }
