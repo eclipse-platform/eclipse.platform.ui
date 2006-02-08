@@ -124,7 +124,8 @@ public interface IRefactoringHistoryService {
 	 * @param project
 	 *            the project, which must exist
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @return the project refactoring history
 	 */
 	public RefactoringHistory getProjectHistory(IProject project, IProgressMonitor monitor);
@@ -155,7 +156,8 @@ public interface IRefactoringHistoryService {
 	 *            order to be returned in the refactoring history object, or
 	 *            <code>RefactoringDescriptor#NONE</code>
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @return the project refactoring history
 	 */
 	public RefactoringHistory getProjectHistory(IProject project, long start, long end, int flags, IProgressMonitor monitor);
@@ -170,7 +172,8 @@ public interface IRefactoringHistoryService {
 	 * @param projects
 	 *            the projects, which must exist
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @return the combined refactoring history
 	 */
 	public RefactoringHistory getRefactoringHistory(IProject[] projects, IProgressMonitor monitor);
@@ -201,7 +204,8 @@ public interface IRefactoringHistoryService {
 	 *            order to be returned in the refactoring history object, or
 	 *            <code>RefactoringDescriptor#NONE</code>
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @return the combined refactoring history
 	 */
 	public RefactoringHistory getRefactoringHistory(IProject[] projects, long start, long end, int flags, IProgressMonitor monitor);
@@ -214,7 +218,8 @@ public interface IRefactoringHistoryService {
 	 * </p>
 	 * 
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @return the workspace refactoring history
 	 */
 	public RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor);
@@ -231,7 +236,8 @@ public interface IRefactoringHistoryService {
 	 * @param end
 	 *            the end time stamp, inclusive
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @return the workspace refactoring history
 	 */
 	public RefactoringHistory getWorkspaceHistory(long start, long end, IProgressMonitor monitor);
@@ -310,7 +316,8 @@ public interface IRefactoringHistoryService {
 	 *            <code>true</code> to write time information associated with
 	 *            the refactorings, <code>false</code> otherwise
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @throws CoreException
 	 *             if an error occurs while writing to the output stream.
 	 *             Reasons include:

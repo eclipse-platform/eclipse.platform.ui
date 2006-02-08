@@ -45,7 +45,7 @@ public interface IRefactoringContributionManager {
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor
-	 * @return the refactoring arguments, or <code>null</code>
+	 * @return the refactoring arguments
 	 */
 	public RefactoringArguments createArguments(RefactoringDescriptor descriptor);
 
@@ -61,7 +61,8 @@ public interface IRefactoringContributionManager {
 	 *            the unique id of the refactoring
 	 * @param project
 	 *            the non-empty name of the project associated with this
-	 *            refactoring, or <code>null</code>
+	 *            refactoring, or <code>null</code> for a workspace
+	 *            refactoring
 	 * @param description
 	 *            a non-empty human-readable description of the particular
 	 *            refactoring instance
@@ -75,7 +76,7 @@ public interface IRefactoringContributionManager {
 	 *            strings
 	 * @param flags
 	 *            the flags of the refactoring descriptor
-	 * @return the refactoring descriptor, or <code>null</code>
+	 * @return the refactoring descriptor
 	 */
 	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags);
 
@@ -90,7 +91,9 @@ public interface IRefactoringContributionManager {
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor
-	 * @return the refactoring, or <code>null</code>
+	 * @return the refactoring, or <code>null</code> if no refactoring
+	 *         contribution is available to create a refactoring from this
+	 *         descriptor
 	 * @throws CoreException
 	 *             if the refactoring could not be created from the descriptor
 	 */
@@ -102,7 +105,9 @@ public interface IRefactoringContributionManager {
 	 * 
 	 * @param id
 	 *            the unique id of the refactoring
-	 * @return the refactoring contribution, or <code>null</code>
+	 * @return the refactoring contribution, or <code>null</code> if no
+	 *         refactoring contribution has been registered with the specified
+	 *         id
 	 */
 	public RefactoringContribution getRefactoringContribution(String id);
 }

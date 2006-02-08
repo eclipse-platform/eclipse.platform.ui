@@ -32,10 +32,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * Clients which create specific refactoring descriptors during change
  * generation should choose an informative description of the particular
  * refactoring instance and pass appropriate descriptor flags to the
- * constructor. In particular, if a refactoring descriptor represents a
- * refactoring which renames a project resource, the descriptor should have the
- * flag {@link #PROJECT_CHANGE} set and return a non-null new name for the
- * project being renamed.
+ * constructor.
  * </p>
  * <p>
  * All time stamps are measured in UTC milliseconds from the epoch (see
@@ -82,18 +79,6 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public static final int NONE= 0;
 
 	/**
-	 * Constant describing the project rename change flag (value: 8)
-	 * <p>
-	 * Clients should set this flag to indicate that the represented refactoring
-	 * renames a project resource in the workspace. If this flag is set for a
-	 * particular descriptor, the refactoring history service assumes that the
-	 * method {@link #getNewName()} denotes the non-empty new name of the
-	 * project being refactored.
-	 * </p>
-	 */
-	public static final int PROJECT_CHANGE= 1 << 3;
-
-	/**
 	 * Constant describing the structural change flag (value: 2)
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
@@ -113,7 +98,10 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	public static final int USER_CHANGE= 1 << 8;
 
-	/** The comment associated with this refactoring, or <code>null</code> */
+	/**
+	 * The comment associated with this refactoring, or <code>null</code> for
+	 * no comment
+	 */
 	private String fComment;
 
 	/** A human-readable description of the particular refactoring instance */
@@ -144,7 +132,8 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 *            the unique id of the refactoring
 	 * @param project
 	 *            the non-empty name of the project associated with this
-	 *            refactoring, or <code>null</code>
+	 *            refactoring, or <code>null</code> for a workspace
+	 *            refactoring
 	 * @param description
 	 *            a non-empty human-readable description of the particular
 	 *            refactoring instance
@@ -223,19 +212,6 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public final String getID() {
 		return fID;
 	}
-
-	/**
-	 * Returns the new name of the element being refactored.
-	 * <p>
-	 * This method is used in particular to determine the new name of a project
-	 * which is being renamed. The refactoring history service assumes that this
-	 * method returns a non-null result if the project change flag
-	 * {@link #PROJECT_CHANGE} is set on a descriptor.
-	 * </p>
-	 * 
-	 * @return the non-empty new name of the element, or <code>null</code>
-	 */
-	public abstract String getNewName();
 
 	/**
 	 * Returns the name of the associated project.

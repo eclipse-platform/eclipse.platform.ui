@@ -62,7 +62,8 @@ public abstract class RefactoringContribution {
 	 *            the unique id of the refactoring
 	 * @param project
 	 *            the non-empty name of the project associated with this
-	 *            refactoring, or <code>null</code>
+	 *            refactoring, or <code>null</code> for a workspace
+	 *            refactoring
 	 * @param description
 	 *            a non-empty human-readable description of the particular
 	 *            refactoring instance

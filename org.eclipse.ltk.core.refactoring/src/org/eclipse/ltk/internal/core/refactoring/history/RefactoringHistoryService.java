@@ -407,13 +407,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		private UnknownRefactoringDescriptor() {
 			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, RefactoringDescriptor.NONE);
 		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public String getNewName() {
-			return null;
-		}
 	}
 
 	/** Workspace resource change listener */

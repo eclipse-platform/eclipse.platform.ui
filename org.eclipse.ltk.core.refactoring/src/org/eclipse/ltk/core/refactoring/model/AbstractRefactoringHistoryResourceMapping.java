@@ -107,7 +107,10 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 	 * refactorings of a single project.
 	 * </p>
 	 * 
-	 * @return the associated resource, or <code>null</code>
+	 * @return the associated resource, or <code>null</code> if the
+	 *         refactoring history contains workspace refactoring descriptors
+	 *         only, or if it contains refactoring descriptors from multiple
+	 *         projects.
 	 */
 	public final IResource getResource() {
 		try {

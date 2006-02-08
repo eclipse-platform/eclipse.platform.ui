@@ -89,14 +89,15 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 	public final IProject[] getProjects() {
 		final String project= fDescriptor.getProject();
 		if (project != null && !"".equals(project)) //$NON-NLS-1$
-			return new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(project) };
+			return new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(project)};
 		return new IProject[] {};
 	}
 
 	/**
 	 * Returns the associated resource.
 	 * 
-	 * @return the associated resource, or <code>null</code>
+	 * @return the associated resource, or <code>null</code> if the descriptor
+	 *         contains no timestamp or project information
 	 */
 	public final IResource getResource() {
 		try {
@@ -125,7 +126,7 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 					final IProject[] projects= getProjects();
 					if (projects != null && projects.length == 1 && projects[0] != null) {
 						final IFolder folder= projects[0].getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFolder(path);
-						fResourceTraversals= new ResourceTraversal[] { new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_HISTORY_FILE) }, IResource.DEPTH_ZERO, IResource.NONE), new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_INDEX_FILE) }, IResource.DEPTH_ZERO, IResource.NONE) };
+						fResourceTraversals= new ResourceTraversal[] { new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_HISTORY_FILE)}, IResource.DEPTH_ZERO, IResource.NONE), new ResourceTraversal(new IResource[] { folder.getFile(RefactoringHistoryService.NAME_INDEX_FILE)}, IResource.DEPTH_ZERO, IResource.NONE)};
 					}
 				}
 			}
