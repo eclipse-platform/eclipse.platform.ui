@@ -405,7 +405,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * Creates a new unknown refactoring descriptor.
 		 */
 		private UnknownRefactoringDescriptor() {
-			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, RefactoringDescriptor.NONE);
+			super(ID_UNKNOWN, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, RefactoringDescriptor.NONE);
 		}
 	}
 
@@ -491,9 +491,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 
 	/** The no history constant */
 	private static final NullRefactoringHistory NO_HISTORY= new NullRefactoringHistory();
-
-	/** The unknown refactoring id */
-	private static final String UNKNOWN_REFACTORING_ID= "org.eclipse.ltk.core.refactoring.unknown.refactoring"; //$NON-NLS-1$
 
 	/**
 	 * Returns the singleton instance of the refactoring history.

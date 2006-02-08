@@ -261,19 +261,6 @@ public abstract class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Returns whether this descriptor describes an unknown refactoring.
-	 * <p>
-	 * The default implementation returns <code>false</code>.
-	 * </p>
-	 * 
-	 * @return <code>true</code> if the descriptor describes an unknown
-	 *         refactoring, <code>false</code> otherwise
-	 */
-	public boolean isUnknown() {
-		return false;
-	}
-
-	/**
 	 * Sets the comment of this refactoring.
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
@@ -309,7 +296,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 		final StringBuffer buffer= new StringBuffer(128);
 
 		buffer.append(getClass().getName());
-		if (isUnknown())
+		if (fID.equals(ID_UNKNOWN))
 			buffer.append("[unknown refactoring]"); //$NON-NLS-1$
 		else {
 			buffer.append("[timeStamp="); //$NON-NLS-1$
