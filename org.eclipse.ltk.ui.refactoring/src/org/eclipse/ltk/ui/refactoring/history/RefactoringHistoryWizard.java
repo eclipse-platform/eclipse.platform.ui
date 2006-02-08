@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -33,7 +33,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent;
-import org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator;
+import org.eclipse.ltk.core.refactoring.IRefactoringContributionManager;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringHistoryOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -262,7 +262,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringStatus status= new RefactoringStatus();
 		if (refactoring instanceof IInitializableRefactoringComponent) {
 			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-			final RefactoringArguments arguments= RefactoringCore.getRefactoringInstanceCreator().createArguments(descriptor);
+			final RefactoringArguments arguments= RefactoringCore.getRefactoringContributionManager().createArguments(descriptor);
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
@@ -379,7 +379,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
-		Platform.run(new ISafeRunnable() {
+		SafeRunner.run(new ISafeRunnable() {
 
 			public void handleException(final Throwable exception) {
 				RefactoringUIPlugin.log(exception);
@@ -406,8 +406,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	private RefactoringStatus fireAboutToPerformHistory(final IProgressMonitor monitor) {
 		final RefactoringStatus status= new RefactoringStatus();
-
-		Platform.run(new ISafeRunnable() {
+		SafeRunner.run(new ISafeRunnable() {
 
 			public void handleException(final Throwable exception) {
 				RefactoringUIPlugin.log(exception);
@@ -418,7 +417,6 @@ public class RefactoringHistoryWizard extends Wizard {
 				status.merge(aboutToPerformHistory(monitor));
 			}
 		});
-
 		return status;
 	}
 
@@ -450,8 +448,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *             if an error occurs while creating the refactoring
 	 */
 	private Refactoring getCurrentRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
-		final IRefactoringInstanceCreator factory= RefactoringCore.getRefactoringInstanceCreator();
-		final Refactoring refactoring= factory.createRefactoring(descriptor);
+		final IRefactoringContributionManager manager= RefactoringCore.getRefactoringContributionManager();
+		final Refactoring refactoring= manager.createRefactoring(descriptor);
 		if (refactoring != null) {
 			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
 			if (!status.hasFatalError())
@@ -468,6 +466,24 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	public final IErrorWizardPage getErrorPage() {
 		return fErrorPage;
+	}
+
+	/**
+	 * Converts a button label to pure text.
+	 * 
+	 * @param label
+	 *            the button label
+	 * @return the resulting text
+	 */
+	protected String getLabelAsText(final String label) {
+		Assert.isNotNull(label);
+		StringBuffer buffer= new StringBuffer(label.length());
+		for (int index= 0; index < label.length(); index++) {
+			char character= label.charAt(index);
+			if (character != '&')
+				buffer.append(character);
+		}
+		return buffer.toString();
 	}
 
 	/**
@@ -778,7 +794,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 				protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 					final RefactoringStatus[] result= { new RefactoringStatus()};
-					Platform.run(new ISafeRunnable() {
+					SafeRunner.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
 							RefactoringUIPlugin.log(exception);
@@ -792,7 +808,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 
 				protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
-					Platform.run(new ISafeRunnable() {
+					SafeRunner.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
 							RefactoringUIPlugin.log(exception);
@@ -843,22 +859,6 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Converts a button label to pure text.
-	 * @param label the button label
-	 * @return the resulting text
-	 */
-	protected String getLabelAsText(final String label) {
-		Assert.isNotNull(label);
-		StringBuffer buffer= new StringBuffer(label.length());
-		for (int index= 0; index < label.length(); index++) {
-			char character= label.charAt(index);
-			if (character != '&')
-				buffer.append(character);
-		}
-		return buffer.toString();
 	}
 
 	/**

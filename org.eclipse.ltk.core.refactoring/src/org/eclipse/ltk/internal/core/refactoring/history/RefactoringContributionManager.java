@@ -20,7 +20,8 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator;
+import org.eclipse.ltk.core.refactoring.IRefactoringContribution;
+import org.eclipse.ltk.core.refactoring.IRefactoringContributionManager;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -32,11 +33,11 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
- * Factory class to create refactoring instances from refactoring descriptors.
+ * Contribution manager for refactorings.
  * 
  * @since 3.2
  */
-public final class RefactoringInstanceFactory implements IRegistryChangeListener, IRefactoringInstanceCreator {
+public final class RefactoringContributionManager implements IRegistryChangeListener, IRefactoringContributionManager {
 
 	/** The class attribute */
 	private static final String ATTRIBUTE_CLASS= "class"; //$NON-NLS-1$
@@ -45,37 +46,37 @@ public final class RefactoringInstanceFactory implements IRegistryChangeListener
 	private static final String ATTRIBUTE_ID= "id"; //$NON-NLS-1$
 
 	/** The singleton instance */
-	private static RefactoringInstanceFactory fInstance= null;
+	private static RefactoringContributionManager fInstance= null;
 
-	/** The refactoring creators extension point */
-	private static final String REFACTORING_CREATORS_EXTENSION_POINT= "refactoringCreators"; //$NON-NLS-1$
+	/** The refactoring contributions extension point */
+	private static final String REFACTORING_CONTRIBUTIONS_EXTENSION_POINT= "refactoringContributions"; //$NON-NLS-1$
 
 	/**
-	 * Returns the singleton instance of the refactoring instance factory.
+	 * Returns the singleton instance of the refactoring contribution manager.
 	 * 
 	 * @return the singleton instance
 	 */
-	public static RefactoringInstanceFactory getInstance() {
+	public static RefactoringContributionManager getInstance() {
 		if (fInstance == null)
-			fInstance= new RefactoringInstanceFactory();
+			fInstance= new RefactoringContributionManager();
 		return fInstance;
 	}
 
 	/**
-	 * The refactoring creator cache (element type: &lt;String,
-	 * <code>IRefactoringInstanceCreator&gt;</code>)
+	 * The refactoring contribution cache (element type: &lt;String,
+	 * <code>IRefactoringContribution&gt;</code>)
 	 */
-	private Map fCreatorCache= null;
+	private Map fContributionCache= null;
 
 	/**
-	 * Creates a new refactoring instance factory.
+	 * Creates a new refactoring contribution manager.
 	 */
-	private RefactoringInstanceFactory() {
+	private RefactoringContributionManager() {
 		// Not instantiatable
 	}
 
 	/**
-	 * Connects this factory to the platform's extension registry.
+	 * Connects this manager to the platform's extension registry.
 	 */
 	public void connect() {
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, RefactoringCore.ID_PLUGIN);
@@ -88,10 +89,24 @@ public final class RefactoringInstanceFactory implements IRegistryChangeListener
 		Assert.isNotNull(descriptor);
 		final String id= descriptor.getID();
 		if (id != null) {
-			final IRefactoringInstanceCreator creator= createRefactoringCreator(id);
-			if (creator != null)
-				return creator.createArguments(descriptor);
+			final IRefactoringContribution contribution= getRefactoringContribution(id);
+			if (contribution != null)
+				return contribution.createArguments(descriptor);
 		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringDescriptor createDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) {
+		Assert.isNotNull(id);
+		Assert.isNotNull(description);
+		Assert.isNotNull(arguments);
+		Assert.isLegal(flags >= RefactoringDescriptor.NONE);
+		final IRefactoringContribution contribution= getRefactoringContribution(id);
+		if (contribution != null)
+			return contribution.createDescriptor(id, project, description, comment, arguments, flags);
 		return null;
 	}
 
@@ -102,39 +117,42 @@ public final class RefactoringInstanceFactory implements IRegistryChangeListener
 		Assert.isNotNull(descriptor);
 		final String id= descriptor.getID();
 		if (id != null) {
-			final IRefactoringInstanceCreator creator= createRefactoringCreator(id);
-			if (creator != null)
-				return creator.createRefactoring(descriptor);
+			final IRefactoringContribution contribution= getRefactoringContribution(id);
+			if (contribution != null)
+				return contribution.createRefactoring(descriptor);
 		}
 		return null;
 	}
 
 	/**
-	 * Creates a refactoring instance creator for the specified id.
-	 * 
-	 * @param id
-	 *            the refactoring id
-	 * @return the refactoring instance creator, or <code>null</code>
+	 * Disconnects this manager from the platform's extension registry.
 	 */
-	private IRefactoringInstanceCreator createRefactoringCreator(final String id) {
+	public void disconnect() {
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IRefactoringContribution getRefactoringContribution(final String id) {
 		Assert.isNotNull(id);
 		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
-		if (fCreatorCache == null) {
-			fCreatorCache= new HashMap();
-			final IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(RefactoringCore.ID_PLUGIN, REFACTORING_CREATORS_EXTENSION_POINT);
+		if (fContributionCache == null) {
+			fContributionCache= new HashMap();
+			final IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(RefactoringCore.ID_PLUGIN, REFACTORING_CONTRIBUTIONS_EXTENSION_POINT);
 			for (int index= 0; index < elements.length; index++) {
 				final IConfigurationElement element= elements[index];
 				final String attributeId= element.getAttribute(ATTRIBUTE_ID);
-				final String point= RefactoringCore.ID_PLUGIN + "." + REFACTORING_CREATORS_EXTENSION_POINT; //$NON-NLS-1$
+				final String point= RefactoringCore.ID_PLUGIN + "." + REFACTORING_CONTRIBUTIONS_EXTENSION_POINT; //$NON-NLS-1$
 				if (attributeId != null && !"".equals(attributeId)) { //$NON-NLS-1$
 					final String className= element.getAttribute(ATTRIBUTE_CLASS);
 					if (className != null && !"".equals(className)) { //$NON-NLS-1$
 						try {
 							final Object implementation= element.createExecutableExtension(ATTRIBUTE_CLASS);
-							if (implementation instanceof IRefactoringInstanceCreator) {
-								if (fCreatorCache.get(attributeId) != null)
+							if (implementation instanceof IRefactoringContribution) {
+								if (fContributionCache.get(attributeId) != null)
 									RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_duplicate_warning, new String[] { attributeId, point}));
-								fCreatorCache.put(attributeId, implementation);
+								fContributionCache.put(attributeId, implementation);
 							} else
 								RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_creation_error, new String[] { point, attributeId}));
 						} catch (CoreException exception) {
@@ -146,20 +164,13 @@ public final class RefactoringInstanceFactory implements IRegistryChangeListener
 					RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_missing_attribute, new String[] { point, ATTRIBUTE_ID}));
 			}
 		}
-		return (IRefactoringInstanceCreator) fCreatorCache.get(id);
-	}
-
-	/**
-	 * Disconnects this factory from the platform's extensionr registry.
-	 */
-	public void disconnect() {
-		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+		return (IRefactoringContribution) fContributionCache.get(id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void registryChanged(final IRegistryChangeEvent event) {
-		fCreatorCache= null;
+		fContributionCache= null;
 	}
 }

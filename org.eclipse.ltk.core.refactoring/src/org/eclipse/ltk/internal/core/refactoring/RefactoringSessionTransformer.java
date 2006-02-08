@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.core.refactoring.history;
+package org.eclipse.ltk.internal.core.refactoring;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -35,7 +34,7 @@ import org.w3c.dom.Node;
  * 
  * @since 3.2
  */
-final class RefactoringSessionTransformer {
+public final class RefactoringSessionTransformer {
 
 	/** The current document, or <code>null</code> */
 	private Document fDocument= null;

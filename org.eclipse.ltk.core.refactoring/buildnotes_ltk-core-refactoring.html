@@ -24,8 +24,8 @@ RefactoringParticipant#checkFinalConditions method (analog to the olde ValidateE
 <h4>Implementation Changes</h4>
 The refactoring framework has been extended by scripting facilities. Refactorings which support scripting can now be exported
 from the refactoring history and saved in a refactoring script. These scripts can then be reapplied on a remote workspace.<p>
-There is a new extension point <code>org.eclipse.ltk.core.refactoring.refactoringCreators</code> which allows refactoring implementors
-to contribute a refactoring instance creator, in order to make their refactorings scriptable. Refactorings contributed
+There is a new extension point <code>org.eclipse.ltk.core.refactoring.refactoringContributions</code> which allows refactoring implementors
+to contribute a refactoring contribution, in order to make their refactorings scriptable. Refactorings contributed
 by this extension point appear in the platform refactoring history and are exportable in refactoring scripts.<p>
 Please consult the documentation of the extension point for further information.
 <h3>3.2 M4, December 7, 2005</h3>

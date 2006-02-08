@@ -26,7 +26,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 
 /**
  * Operation that, when run, executes a series of refactoring sequentially.
@@ -87,7 +87,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 		final RefactoringStatus status= new RefactoringStatus();
 		if (refactoring instanceof IInitializableRefactoringComponent) {
 			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-			final RefactoringArguments arguments= RefactoringInstanceFactory.getInstance().createArguments(descriptor);
+			final RefactoringArguments arguments= RefactoringContributionManager.getInstance().createArguments(descriptor);
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
@@ -126,14 +126,14 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringHistoryOperation_perform_refactorings, 160 * proxies.length);
-		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
+		final RefactoringContributionManager manager= RefactoringContributionManager.getInstance();
 		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
 		try {
 			service.connect();
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null && !descriptor.isUnknown()) {
-					final Refactoring refactoring= factory.createRefactoring(descriptor);
+					final Refactoring refactoring= manager.createRefactoring(descriptor);
 					if (refactoring != null) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 						try {

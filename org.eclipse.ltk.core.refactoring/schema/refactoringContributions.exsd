@@ -3,17 +3,17 @@
 <schema targetNamespace="org.eclipse.ltk.core.refactoring">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="refactoringCreators" name="Refactoring Creators"/>
+         <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="refactoringContributions" name="Refactoring Contributions"/>
       </appInfo>
       <documentation>
-         The extension point is used to define refactoring instance creators. Refactoring instance creators provide a means to dynamically construct a ready-to-execute refactoring instance based on a &lt;code&gt;RefactoringDescriptor&lt;/code&gt;.
+         The extension point is used to define refactoring contributions. Refactoring contributions provide a means to dynamically construct a ready-to-execute refactoring instance based on a &lt;code&gt;RefactoringDescriptor&lt;/code&gt;.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="creator" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contribution" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,7 +39,7 @@
       </complexType>
    </element>
 
-   <element name="creator">
+   <element name="contribution">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -51,10 +51,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a refactoring instance creator implementation which implements &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator&lt;/code&gt;.
+                  The fully qualified name of a refactoring contribution implementation which implements &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringContribution&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.core.refactoring.IRefactoringContribution"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -75,13 +75,13 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The example below defines a refactoring instance creator implemented by class &lt;code&gt;RenameResourceRefactoringInstanceCreator&lt;/code&gt; for the rename resource refactoring with unique id &lt;code&gt;org.eclipse.ltk.core.rename.resource&lt;/code&gt;:
+         The example below defines a refactoring contribution implemented by class &lt;code&gt;RenameResourceRefactoringContribution&lt;/code&gt; for the rename resource refactoring with unique id &lt;code&gt;org.eclipse.ltk.core.rename.resource&lt;/code&gt;:
 
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.ltk.core.refactoring.refactoringCreators&quot;&gt;
-      &lt;creator
-            class=&quot;org.eclipse.ltk.core.refactoring.scripting.RenameResourceRefactoringInstanceCreator&quot;
+         point=&quot;org.eclipse.ltk.core.refactoring.refactoringContributions&quot;&gt;
+      &lt;contribution
+            class=&quot;org.eclipse.ltk.core.refactoring.RenameResourceRefactoringContribution&quot;
             id=&quot;org.eclipse.ltk.core.rename.resource&quot;/&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
@@ -93,7 +93,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringInstanceCreator&lt;/code&gt;
+         The contributed class must implement &lt;code&gt;org.eclipse.ltk.core.refactoring.IRefactoringContribution&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -102,7 +102,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         This plugin offers a partial implementation &lt;code&gt;RefactoringInstanceCreator&lt;/code&gt; of the interface &lt;code&gt;IRefactoringInstanceCreator&lt;/code&gt;, which converts arguments from refactoring descriptors to generic refactoring arguments (class &lt;code&gt;GenericRefactoringArguments&lt;/code&gt;).
+         
       </documentation>
    </annotation>
 

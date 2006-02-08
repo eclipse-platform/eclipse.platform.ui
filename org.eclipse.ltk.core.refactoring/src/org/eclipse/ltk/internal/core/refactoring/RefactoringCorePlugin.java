@@ -28,7 +28,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistorySerializer;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 
 import org.osgi.framework.BundleContext;
 
@@ -111,7 +111,7 @@ public class RefactoringCorePlugin extends Plugin {
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		RefactoringInstanceFactory.getInstance().connect();
+		RefactoringContributionManager.getInstance().connect();
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		service.connect();
 		fRefactoringHistoryListener= new RefactoringHistorySerializer();
@@ -131,7 +131,7 @@ public class RefactoringCorePlugin extends Plugin {
 		service.disconnect();
 		if (fRefactoringHistoryListener != null)
 			service.removeHistoryListener(fRefactoringHistoryListener);
-		RefactoringInstanceFactory.getInstance().disconnect();
+		RefactoringContributionManager.getInstance().disconnect();
 		super.stop(context);
 	}
 	

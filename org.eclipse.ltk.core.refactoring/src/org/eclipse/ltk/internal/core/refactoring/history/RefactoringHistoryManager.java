@@ -57,6 +57,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.ltk.core.refactoring.IRefactoringContribution;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -64,8 +65,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionReader;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionTransformer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -441,10 +445,17 @@ public final class RefactoringHistoryManager {
 		try {
 			transformer.beginSession(null);
 			try {
-				transformer.beginRefactoring(descriptor.getID(), descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
-				for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
-					final Map.Entry entry= (Entry) iterator.next();
-					transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
+				final String id= descriptor.getID();
+				transformer.beginRefactoring(id, descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
+				final IRefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
+				if (contribution != null) {
+					final Map arguments= contribution.getArguments(descriptor);
+					if (arguments != null) {
+						for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
+							final Map.Entry entry= (Entry) iterator.next();
+							transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
+						}
+					}
 				}
 			} finally {
 				transformer.endRefactoring();
@@ -523,10 +534,17 @@ public final class RefactoringHistoryManager {
 				if (current != null) {
 					try {
 						long stamp= stamps ? current.getTimeStamp() : -1;
-						transformer.beginRefactoring(current.getID(), stamp, current.getProject(), current.getDescription(), current.getComment(), current.getFlags());
-						for (final Iterator iterator= current.getArguments().entrySet().iterator(); iterator.hasNext();) {
-							final Map.Entry entry= (Entry) iterator.next();
-							transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
+						final String id= current.getID();
+						transformer.beginRefactoring(id, stamp, current.getProject(), current.getDescription(), current.getComment(), current.getFlags());
+						final IRefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
+						if (contribution != null) {
+							final Map arguments= contribution.getArguments(current);
+							if (arguments != null) {
+								for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
+									final Map.Entry entry= (Entry) iterator.next();
+									transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
+								}
+							}
 						}
 					} finally {
 						transformer.endRefactoring();

@@ -16,8 +16,8 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
 
 /**
  * Central access point to access resources managed by the refactoring
@@ -84,18 +84,18 @@ public class RefactoringCore {
 	}
 
 	/**
-	 * Returns the singleton refactoring instance creator.
+	 * Returns the singleton refactoring contribution manager.
 	 * <p>
 	 * Note: This API is considered experimental and may change in the near
 	 * future.
 	 * </p>
 	 * 
-	 * @return the refactoring instance creator
+	 * @return the refactoring contribution manager
 	 * 
 	 * @since 3.2
 	 */
-	public static IRefactoringInstanceCreator getRefactoringInstanceCreator() {
-		return RefactoringInstanceFactory.getInstance();
+	public static IRefactoringContributionManager getRefactoringContributionManager() {
+		return RefactoringContributionManager.getInstance();
 	}
 
 	/**

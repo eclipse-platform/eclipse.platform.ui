@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
@@ -38,13 +34,8 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * refactoring instance and pass appropriate descriptor flags to the
  * constructor. In particular, if a refactoring descriptor represents a
  * refactoring which renames a project resource, the descriptor should have the
- * flag {@link #PROJECT_CHANGE} set and a valid argument {@link #NAME}. The
- * arguments {@link #INPUT} or {@link #ELEMENT} are reserved to specify the
- * input arguments of a particular refactoring. The format of the values of
- * these arguments is langugage-dependent, but should be standardized for a
- * particular programming language. These arguments may be preprocessed by
- * language-specific tools such as wizards to import refactoring information
- * into the local workspace.
+ * flag {@link #PROJECT_CHANGE} set and return a non-null new name for the
+ * project being renamed.
  * </p>
  * <p>
  * All time stamps are measured in UTC milliseconds from the epoch (see
@@ -63,7 +54,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * 
  * @since 3.2
  */
-public class RefactoringDescriptor implements Comparable {
+public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Constant describing the API change flag (value: 1)
@@ -77,35 +68,6 @@ public class RefactoringDescriptor implements Comparable {
 	public static final int BREAKING_CHANGE= 1 << 0;
 
 	/**
-	 * Predefined argument called <code>element&lt;Number&gt;</code>.
-	 * <p>
-	 * This argument should be used to describe the elements being refactored.
-	 * The value of this argument does not necessarily have to uniquely identify
-	 * the elements. However, it must be possible to uniquely identify the
-	 * elements using the value of this argument in conjunction with the values
-	 * of the other user-defined attributes.
-	 * </p>
-	 * <p>
-	 * The element arguments are simply distinguished by appending a number to
-	 * the argument name, eg. element1. The indices of this argument are non
-	 * zero-based.
-	 * </p>
-	 */
-	public static final String ELEMENT= "element"; //$NON-NLS-1$
-
-	/**
-	 * Predefined argument called <code>input</code>.
-	 * <p>
-	 * This argument should be used to describe the element being refactored.
-	 * The value of this argument does not necessarily have to uniquely identify
-	 * the input element. However, it must be possible to uniquely identify the
-	 * input element using the value of this argument in conjunction with the
-	 * values of the other user-defined attributes.
-	 * </p>
-	 */
-	public static final String INPUT= "input"; //$NON-NLS-1$
-
-	/**
 	 * Constant describing the multi change flag (value: 4)
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
@@ -116,16 +78,6 @@ public class RefactoringDescriptor implements Comparable {
 	 */
 	public static final int MULTI_CHANGE= 1 << 2;
 
-	/**
-	 * Predefined argument called <code>name</code>.
-	 * <p>
-	 * This argument should be used to describe the name of the element being
-	 * refactored. The value of this argument may be displayed in the user
-	 * interface.
-	 * </p>
-	 */
-	public static final String NAME= "name"; //$NON-NLS-1$
-
 	/** Constant describing the absence of any flags (value: 0) */
 	public static final int NONE= 0;
 
@@ -135,8 +87,8 @@ public class RefactoringDescriptor implements Comparable {
 	 * Clients should set this flag to indicate that the represented refactoring
 	 * renames a project resource in the workspace. If this flag is set for a
 	 * particular descriptor, the refactoring history service assumes that the
-	 * argument {@link #NAME} of the refactoring descriptor denotes the new name
-	 * of the project being renamed.
+	 * method {@link #getNewName()} denotes the non-empty new name of the
+	 * project being refactored.
 	 * </p>
 	 */
 	public static final int PROJECT_CHANGE= 1 << 3;
@@ -160,9 +112,6 @@ public class RefactoringDescriptor implements Comparable {
 	 * </p>
 	 */
 	public static final int USER_CHANGE= 1 << 8;
-
-	/** The map of arguments (element type: &lt;String, String&gt;) */
-	private final Map fArguments;
 
 	/** The comment associated with this refactoring, or <code>null</code> */
 	private String fComment;
@@ -202,25 +151,18 @@ public class RefactoringDescriptor implements Comparable {
 	 * @param comment
 	 *            the comment associated with the refactoring, or
 	 *            <code>null</code> for no commment
-	 * @param arguments
-	 *            the argument map (element type: &lt;String, String&gt;). The
-	 *            keys of the arguments are required to be non-empty strings
-	 *            which must not contain spaces. The values must be non-empty
-	 *            strings
 	 * @param flags
 	 *            the flags of the refactoring descriptor
 	 */
-	public RefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) {
+	protected RefactoringDescriptor(final String id, final String project, final String description, final String comment, final int flags) {
 		Assert.isTrue(id != null && !"".equals(id)); //$NON-NLS-1$
 		Assert.isTrue(description != null && !"".equals(description)); //$NON-NLS-1$
 		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
-		Assert.isNotNull(arguments);
 		Assert.isTrue(flags >= NONE);
 		fID= id;
 		fProject= project;
 		fDescription= description;
 		fComment= comment;
-		fArguments= Collections.unmodifiableMap(new HashMap(arguments));
 		fFlags= flags;
 	}
 
@@ -244,16 +186,6 @@ public class RefactoringDescriptor implements Comparable {
 			return fTimeStamp == descriptor.fTimeStamp && fDescription.equals(descriptor.fDescription);
 		}
 		return false;
-	}
-
-	/**
-	 * Returns the arguments describing the refactoring, in no particular order.
-	 * 
-	 * @return the argument map (element type: &lt;String, String&gt;). The
-	 *         resulting map cannot be modified.
-	 */
-	public final Map getArguments() {
-		return fArguments;
 	}
 
 	/**
@@ -291,6 +223,19 @@ public class RefactoringDescriptor implements Comparable {
 	public final String getID() {
 		return fID;
 	}
+
+	/**
+	 * Returns the new name of the element being refactored.
+	 * <p>
+	 * This method is used in particular to determine the new name of a project
+	 * which is being renamed. The refactoring history service assumes that this
+	 * method returns a non-null result if the project change flag
+	 * {@link #PROJECT_CHANGE} is set on a descriptor.
+	 * </p>
+	 * 
+	 * @return the non-empty new name of the element, or <code>null</code>
+	 */
+	public abstract String getNewName();
 
 	/**
 	 * Returns the name of the associated project.
@@ -381,8 +326,6 @@ public class RefactoringDescriptor implements Comparable {
 			buffer.append(fDescription);
 			buffer.append(",project="); //$NON-NLS-1$
 			buffer.append(fProject);
-			buffer.append(",arguments="); //$NON-NLS-1$
-			buffer.append(fArguments);
 			buffer.append(",comment="); //$NON-NLS-1$
 			buffer.append(fComment);
 			buffer.append(",flags="); //$NON-NLS-1$

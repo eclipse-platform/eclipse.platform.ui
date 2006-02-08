@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,6 +33,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -69,6 +69,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionReader;
 import org.eclipse.ltk.internal.core.refactoring.UndoableOperation2ChangeAdapter;
 
 import org.xml.sax.InputSource;
@@ -178,7 +179,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				throw new EmptyStackException();
 			for (int index= 0; index < fHistoryListeners.size(); index++) {
 				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 
 					public void handleException(final Throwable throwable) {
 						RefactoringCorePlugin.log(throwable);
@@ -205,7 +206,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				fImplementation.removeLast();
 			for (int index= 0; index < fHistoryListeners.size(); index++) {
 				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 
 					public void handleException(final Throwable throwable) {
 						RefactoringCorePlugin.log(throwable);
@@ -404,7 +405,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * Creates a new unknown refactoring descriptor.
 		 */
 		private UnknownRefactoringDescriptor() {
-			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, Collections.EMPTY_MAP, RefactoringDescriptor.NONE);
+			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, RefactoringDescriptor.NONE);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public String getNewName() {
+			return null;
 		}
 	}
 
@@ -695,7 +703,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public final void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
@@ -718,7 +726,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
@@ -741,7 +749,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
@@ -764,7 +772,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(proxy);
 		for (int index= 0; index < fHistoryListeners.size(); index++) {
 			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
@@ -787,7 +795,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
@@ -810,7 +818,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
@@ -833,7 +841,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(proxy);
 		for (int index= 0; index < fExecutionListeners.size(); index++) {
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);

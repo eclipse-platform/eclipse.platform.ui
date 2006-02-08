@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.core.refactoring.history;
+package org.eclipse.ltk.internal.core.refactoring;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +28,7 @@ import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -44,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.2
  */
-final class RefactoringSessionReader extends DefaultHandler {
+public final class RefactoringSessionReader extends DefaultHandler {
 
 	/** The comment of the refactoring session, or <code>null</code> */
 	private String fComment= null;
@@ -156,18 +155,21 @@ final class RefactoringSessionReader extends DefaultHandler {
 			int flag= 0;
 			try {
 				flag= Integer.parseInt(flags);
-			} catch (NumberFormatException exception1) {
-				// Do nothing
-			}
-			final RefactoringDescriptor descriptor= new RefactoringDescriptor(id, project, description, comment, map, flag);
-			try {
-				descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
 			} catch (NumberFormatException exception) {
 				// Do nothing
 			}
-			if (fRefactoringDescriptors == null)
-				fRefactoringDescriptors= new ArrayList();
-			fRefactoringDescriptors.add(descriptor);
+
+			final RefactoringDescriptor descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
+			if (descriptor != null) {
+				try {
+					descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
+				} catch (NumberFormatException exception) {
+					// Do nothing
+				}
+				if (fRefactoringDescriptors == null)
+					fRefactoringDescriptors= new ArrayList();
+				fRefactoringDescriptors.add(descriptor);
+			}
 		} else if (IRefactoringSerializationConstants.ELEMENT_SESSION.equals(qualifiedName)) {
 			final String version= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
 			if (version != null && !"".equals(version)) //$NON-NLS-1$
