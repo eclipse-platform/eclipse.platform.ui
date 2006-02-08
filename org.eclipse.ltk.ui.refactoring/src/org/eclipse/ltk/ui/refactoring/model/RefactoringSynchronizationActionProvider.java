@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.team.core.mapping.IResourceMappingScope;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
@@ -105,13 +105,13 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 * Gets the refactoring represented by the specified proxy.
 	 * 
 	 * @param scope
-	 *            the resource mapping scope
+	 *            the synchronization scope
 	 * @param proxy
 	 *            the refactoring descriptor proxy
 	 * @param set
 	 *            the set of refactoring descriptor proxies
 	 */
-	private static void getRefactoring(final IResourceMappingScope scope, final RefactoringDescriptorProxy proxy, final Set set) {
+	private static void getRefactoring(final ISynchronizationScope scope, final RefactoringDescriptorProxy proxy, final Set set) {
 		final ResourceMapping mapping= (ResourceMapping) proxy.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringDescriptorResourceMapping) {
 			final AbstractRefactoringDescriptorResourceMapping extended= (AbstractRefactoringDescriptorResourceMapping) mapping;
@@ -125,13 +125,13 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 * Gets the refactorings represented by the specified history.
 	 * 
 	 * @param scope
-	 *            the resource mapping scope
+	 *            the synchronization scope
 	 * @param history
 	 *            the refactoring history
 	 * @param set
 	 *            the set of refactoring descriptor proxies
 	 */
-	private static void getRefactorings(final IResourceMappingScope scope, final RefactoringHistory history, final Set set) {
+	private static void getRefactorings(final ISynchronizationScope scope, final RefactoringHistory history, final Set set) {
 		final ResourceMapping mapping= (ResourceMapping) history.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringHistoryResourceMapping) {
 			final AbstractRefactoringHistoryResourceMapping extended= (AbstractRefactoringHistoryResourceMapping) mapping;
@@ -159,7 +159,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 			final IStructuredSelection structured= (IStructuredSelection) selection;
 			if (!structured.isEmpty()) {
 				final Object[] elements= structured.toArray();
-				final IResourceMappingScope scope= context.getScope();
+				final ISynchronizationScope scope= context.getScope();
 				for (int index= 0; index < elements.length; index++) {
 					if (elements[index] instanceof RefactoringHistory) {
 						getRefactorings(scope, (RefactoringHistory) elements[index], set);
@@ -178,13 +178,13 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 * Is the specified refactoring in the scope?
 	 * 
 	 * @param scope
-	 *            the resource mapping scope
+	 *            the synchronization scope
 	 * @param proxy
 	 *            the refactoring descriptor proxy
 	 * @return <code>true</code> if the refactoring is in the scope,
 	 *         <code>false</code> otherwise
 	 */
-	private static boolean hasRefactoring(final IResourceMappingScope scope, final RefactoringDescriptorProxy proxy) {
+	private static boolean hasRefactoring(final ISynchronizationScope scope, final RefactoringDescriptorProxy proxy) {
 		final ResourceMapping mapping= (ResourceMapping) proxy.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringDescriptorResourceMapping) {
 			final AbstractRefactoringDescriptorResourceMapping extended= (AbstractRefactoringDescriptorResourceMapping) mapping;
@@ -200,13 +200,13 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 * scope?
 	 * 
 	 * @param scope
-	 *            the resource mapping scope
+	 *            the synchronization scope
 	 * @param history
 	 *            the refactoring history
 	 * @return <code>true</code> if any refactorings are in the scope,
 	 *         <code>false</code> otherwise
 	 */
-	private static boolean hasRefactorings(final IResourceMappingScope scope, final RefactoringHistory history) {
+	private static boolean hasRefactorings(final ISynchronizationScope scope, final RefactoringHistory history) {
 		final ResourceMapping mapping= (ResourceMapping) history.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringHistoryResourceMapping) {
 			final AbstractRefactoringHistoryResourceMapping extended= (AbstractRefactoringHistoryResourceMapping) mapping;
@@ -236,7 +236,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 			final IStructuredSelection structured= (IStructuredSelection) selection;
 			if (!structured.isEmpty()) {
 				final Object[] elements= structured.toArray();
-				final IResourceMappingScope scope= context.getScope();
+				final ISynchronizationScope scope= context.getScope();
 				for (int index= 0; index < elements.length; index++) {
 					if (elements[index] instanceof RefactoringHistory) {
 						return hasRefactorings(scope, (RefactoringHistory) elements[index]);

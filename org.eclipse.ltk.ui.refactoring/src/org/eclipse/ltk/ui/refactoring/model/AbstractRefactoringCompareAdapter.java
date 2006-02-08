@@ -12,7 +12,7 @@ package org.eclipse.ltk.ui.refactoring.model;
 
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.ui.mapping.AbstractCompareAdapter;
+import org.eclipse.team.ui.mapping.SynchronizationCompareAdapter;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
@@ -38,11 +38,11 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
- * @see org.eclipse.team.ui.mapping.AbstractCompareAdapter
+ * @see SynchronizationCompareAdapter
  * 
  * @since 3.2
  */
-public abstract class AbstractRefactoringCompareAdapter extends AbstractCompareAdapter {
+public abstract class AbstractRefactoringCompareAdapter extends SynchronizationCompareAdapter {
 
 	/**
 	 * {@inheritDoc}
