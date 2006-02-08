@@ -31,23 +31,51 @@ import org.eclipse.team.core.history.provider.FileHistoryProvider;
  *
  */
 public interface IFileHistoryProvider {
+	
+	/**
+	 * Constant flag used with
+	 * {@link #getFileHistoryFor(IResource, int, IProgressMonitor)} to indicate
+	 * no flags.
+	 */
+	public static final int NONE = 0;
+	
+	/**
+	 * Constant flag used with {@link #getFileHistoryFor(IResource, int, IProgressMonitor)}
+	 * to indicate that only a single revision is desired.
+	 */
+	public static final int SINGLE_REVISION = 1;
+	
+	/**
+	 * Constant flag used with
+	 * {@link #getFileHistoryFor(IResource, int, IProgressMonitor)} to indicate
+	 * that the resulting history will be restricted to a single line-of-descent
+	 * (e.g. a single branch). In this mode, the
+	 * {@link IFileHistory#getContributors(IFileRevision)} and
+	 * {@link IFileHistory#getTargets(IFileRevision)} should either return zero
+	 * or one revision.
+	 */
+	public static final int SINGLE_LINE_OF_DESCENT = 1;
 
 	/**
-	 * Returns the file history for the given in resource.
-	 * If <code>singleLine</code> is <code>true</code> then the
-	 * resulting history will be restricted to a single line-of-descent
-	 * (e.g. a single branch). In this mode, the 
+	 * Returns the file history for the given in resource. If the flags contains
+	 * {@link #SINGLE_REVISION} then only the revision corresponding to the base
+	 * corresponding to the locla resource is fetched. If the flags contains
+	 * {@link #SINGLE_LINE_OF_DESCENT} the resulting history will be restricted
+	 * to a single line-of-descent (e.g. a single branch). In this mode, the
 	 * {@link IFileHistory#getContributors(IFileRevision)} and
-	 * {@link IFileHistory#getTargets(IFileRevision)} should either
-	 * return zero or one revision.
+	 * {@link IFileHistory#getTargets(IFileRevision)} should either return zero
+	 * or one revision. If both flags are present, {@link #SINGLE_REVISION}
+	 * should take precedence.
 	 * 
-	 * 
-	 * @param resource the resource
-	 * @param singleLine whether the returned history should be restricted to a single line of descent
-	 * @param monitor  a progress monitor
+	 * @param resource
+	 *            the resource
+	 * @param flags
+	 *            to indicate what revisions should be included in the history
+	 * @param monitor
+	 *            a progress monitor
 	 * @return the history of the file
 	 */
-	public abstract IFileHistory getFileHistoryFor(IResource resource, boolean singleLine, IProgressMonitor monitor);
+	public abstract IFileHistory getFileHistoryFor(IResource resource, int flags, IProgressMonitor monitor);
 	
 
 	/**
