@@ -110,6 +110,7 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_menu_left;
 	public static String WelcomeCustomizationPreferencePage_menu_right;
 	public static String WelcomeCustomizationPreferencePage_menu_bottom;
+	public static String WelcomeCustomizationPreferencePage_browse;
 
 
 

@@ -242,11 +242,11 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		}
 		public IntroBackground(String fullName) {
 			this.fullName = fullName;
-			if (fullName.startsWith("intro:")) {
+			if (fullName.startsWith("intro:")) { //$NON-NLS-1$
 				kind= INTRO;
 				path = fullName.substring(6);
 			}
-			else if (fullName.startsWith("product:")) {
+			else if (fullName.startsWith("product:")) { //$NON-NLS-1$
 				kind = PRODUCT;
 				path = fullName.substring(8);
 			}
@@ -270,7 +270,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 							asLocal = BundleUtil.getResolvedResourceLocation(path, bundle);
 						}
 						else
-							asLocal = "file:" + path;
+							asLocal = "file:" + path; //$NON-NLS-1$
 						try {
 							ImageDescriptor desc = ImageDescriptor.createFromURL(new URL(asLocal));
 							image = desc.createImage();
@@ -466,7 +466,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		// 2. Background images
 		key = INTRO_BACKGROUND_IMAGE_LIST;
 		String value = fromDefault ? prefs.getDefaultString(key) : prefs.getString(key);
-		StringTokenizer stok = new StringTokenizer(value, ",");
+		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			backgroundImageList.add(new IntroBackground(stok.nextToken()));
 		}
@@ -554,7 +554,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		// Dispose all the root page tabs 
 		TabItem[] items = tabFolder.getItems();
 		for (int i=0; i<items.length; i++) {
-			if (items[i].getData("pageData")!=null)
+			if (items[i].getData("pageData")!=null) //$NON-NLS-1$
 				items[i].dispose();
 		}
 		// Add them back in based on the checked state
@@ -627,7 +627,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			}
 		});
 		Button browse = new Button(container, SWT.PUSH);
-		browse.setText("Browse...");
+		browse.setText(Messages.WelcomeCustomizationPreferencePage_browse);
 		browse.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
