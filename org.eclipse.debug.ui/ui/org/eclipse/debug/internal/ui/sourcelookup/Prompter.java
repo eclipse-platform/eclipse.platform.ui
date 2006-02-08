@@ -61,13 +61,7 @@ public class Prompter implements IStatusHandler {
 				}
 			}
 		};
-		synchronized (lock) {
-			DebugUIPlugin.getStandardDisplay().asyncExec(r);
-			try {
-				lock.wait();
-			} catch (InterruptedException e) {
-			}
-		}
+		DebugUIPlugin.getStandardDisplay().syncExec(r);
 		
 		if (exception[0] != null ) {
 			throw exception[0];
