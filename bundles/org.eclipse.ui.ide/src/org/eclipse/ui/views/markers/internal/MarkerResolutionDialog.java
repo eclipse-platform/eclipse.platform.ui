@@ -95,6 +95,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	public MarkerResolutionDialog(Shell shell, IMarker marker,
 			IMarkerResolution[] newResolutions, MarkerView view) {
 		super(shell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		initializeResolutionsSorter();
 		resolutionsSorter.sort(view.getViewer(), newResolutions);
 		resolutions = newResolutions;
@@ -111,6 +112,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		super.configureShell(newShell);
 		newShell.setText(MarkerMessages.resolveMarkerAction_dialogTitle);
 	}
+	
 
 	/*
 	 * (non-Javadoc)
