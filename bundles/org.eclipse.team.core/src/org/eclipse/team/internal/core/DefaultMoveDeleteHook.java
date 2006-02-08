@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Internal class which provides the default behavior for resource deletions and moves.
  * 
- * @see org.eclipse.team.core.ResourceProvider#getMoveDeleteHook()
  */
 
 public class DefaultMoveDeleteHook implements IMoveDeleteHook {

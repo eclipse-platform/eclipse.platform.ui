@@ -44,7 +44,7 @@ public interface ISynchronizationScopeParticipant {
 	 * more resources changes w.r.t. the context. It is the responsibility of the
 	 * participant to react to local changes that affect the resources in the
 	 * scope by calling
-	 * {@link ISynchronizationScopeManager#refresh(ResourceMapping[])}.
+	 * {@link ISynchronizationScope#refresh(ResourceMapping[])}.
 	 * 
 	 * @param scope
 	 *            the scope

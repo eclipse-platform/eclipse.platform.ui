@@ -158,7 +158,6 @@ public interface IDiffTree {
 	 * @param path the path
 	 * @param filter the diff node filter
 	 * @return whether the given diff tree contains any deltas that match the given filter
-	 * @throws CoreException 
 	 */
 	public boolean hasMatchingDiffs(IPath path, final FastDiffFilter filter);
 

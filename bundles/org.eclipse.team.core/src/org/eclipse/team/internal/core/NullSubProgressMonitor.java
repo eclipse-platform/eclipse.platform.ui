@@ -20,14 +20,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * This implementation supports cancelation. The default implementations of the 
  * other methods do nothing.
  * </p>
- * @see NullProgressMonitor
  * @see SubProgressMonitor
  */
 public class NullSubProgressMonitor extends SubProgressMonitor {
 	/**
 	 * Constructor for InfiniteSubProgressMonitor.
 	 * @param monitor
-	 * @param ticks
 	 */
 	public NullSubProgressMonitor(IProgressMonitor monitor) {
 		super(monitor, 0, 0);

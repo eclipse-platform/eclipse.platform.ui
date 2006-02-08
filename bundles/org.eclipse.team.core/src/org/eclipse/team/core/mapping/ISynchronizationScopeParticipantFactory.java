@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IAdapterManager;
  * @see IAdapterManager
  * @see ISynchronizationScopeManager
  * @see ISynchronizationScopeParticipant
- * @see ResourceMappingScopeParticipant
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will

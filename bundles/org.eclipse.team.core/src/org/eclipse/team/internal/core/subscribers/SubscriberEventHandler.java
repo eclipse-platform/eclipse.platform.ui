@@ -108,7 +108,8 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	/**
 	 * Create a handler. This will initialize all resources for the subscriber associated with
 	 * the set.
-	 * @param set the subscriber set to feed changes into
+	 * @param subscriber the subscriber
+	 * @param scope the scope
 	 */
 	public SubscriberEventHandler(Subscriber subscriber, ISynchronizationScope scope) {
 		super(
@@ -283,7 +284,6 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	 * @param resources the resources to check
 	 * @param depth the depth
 	 * @param monitor
-	 * @return Event[] the change events
 	 * @throws TeamException
 	 */
 	protected abstract void collectAll(

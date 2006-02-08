@@ -46,7 +46,6 @@ public class ResourceVariantCache {
 	 * A good candidate for this ID is the plugin ID of the plugin peforming the caching.
 	 * 
 	 * @param cacheId the unique Id of the cache being enabled
-	 * @throws TeamException if the cache area on disk could not be properly initialized
 	 */
 	public static synchronized void enableCaching(String cacheId) {
 		if (isCachingEnabled(cacheId)) return;
@@ -71,7 +70,6 @@ public class ResourceVariantCache {
 	 * Disable the cache, dispoing of any file contents in the cache.
 	 * 
 	 * @param cacheId the unique Id of the cache
-	 * @throws TeamException if the cached contents could not be deleted from disk
 	 */
 	public static void disableCache(String cacheId) {
 		ResourceVariantCache cache = getCache(cacheId);
@@ -86,7 +84,7 @@ public class ResourceVariantCache {
 	/**
 	 * Return the cache for the given id or null if caching is not enabled for the given id.
 	 * @param cacheId
-	 * @return
+	 * @return the cache
 	 */
 	public static synchronized ResourceVariantCache getCache(String cacheId) {
 		return (ResourceVariantCache)caches.get(cacheId);
@@ -222,7 +220,7 @@ public class ResourceVariantCache {
 	
 	/**
 	 * @param id the id that uniquely identifes the remote resource that is cached.
-	 * @return
+	 * @return the cache entry
 	 */
 	public ResourceVariantCacheEntry getCacheEntry(String id) {
 		return internalGetCacheEntry(id);

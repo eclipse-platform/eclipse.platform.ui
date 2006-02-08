@@ -37,7 +37,7 @@ public class PollingOutputStream extends FilterOutputStream {
 	
 	/**
 	 * Creates a new polling output stream.
-	 * @param in the underlying output stream
+	 * @param out the underlying output stream
 	 * @param numAttempts the number of attempts before issuing an InterruptedIOException,
 	 *           if 0, retries indefinitely until canceled
 	 * @param monitor the progress monitor to be polled for cancellation

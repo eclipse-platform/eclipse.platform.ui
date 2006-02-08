@@ -22,11 +22,12 @@ public class SyncByteConverter {
 	protected static final byte SEPARATOR_BYTE = (byte)'/';
 
 	/**
-	 * Method setSlot.
-	 * @param syncBytes
-	 * @param i
-	 * @param b
-	 * @return byte[]
+	 * Change the slot to the given bytes
+	 * @param syncBytes the sync bytes
+	 * @param slot the slot location
+	 * @param newBytes the bytes to be put in the slot
+	 * @return the new sync bytes
+	 * @throws TeamException
 	 */
 	public static byte[] setSlot(byte[] syncBytes, int slot, byte[] newBytes) throws TeamException {
 		int start = startOfSlot(syncBytes, slot);
@@ -86,12 +87,11 @@ public class SyncByteConverter {
 	}
 	
 	/**
-	 * Method getBytesForSlot.
-	 * @param syncBytes
-	 * @param SEPARATOR_BYTE
-	 * @param i
-	 * @param b
-	 * @return byte[]
+	 * Get the bytes in the given slot.
+	 * @param bytes the sync bytes
+	 * @param index the slot location
+	 * @param includeRest whether to include the rest
+	 * @return the bytes in the given slot
 	 */
 	public static byte[] getSlot(byte[] bytes, int index, boolean includeRest) {
 		// Find the starting index

@@ -95,7 +95,7 @@ public class BatchingLock {
 		 * or if the top-most non-null scheduling rule was popped as a result
 		 * of this operation.
 		 * @param monitor
-		 * @throws CVSException
+		 * @throws TeamException
 		 */
 		public void popRule(ISchedulingRule rule, IProgressMonitor monitor) throws TeamException {
 			try {
@@ -152,7 +152,7 @@ public class BatchingLock {
 		 * Return <code>true</code> if we are still nested in
 		 * an acquire for this thread.
 		 * 
-		 * @return
+		 * @return whether there are still rules on the stack
 		 */
 		public boolean isNested() {
 			return !rules.isEmpty();

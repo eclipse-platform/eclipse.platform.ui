@@ -12,7 +12,6 @@ package org.eclipse.team.core.mapping;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.diff.*;
 
 /**
@@ -58,7 +57,6 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @param traversals the set of traversals whose diffs are to be visited
 	 * @param visitor a diff visitor
 	 * 
-	 * @throws CoreException
 	 */
 	void accept(ResourceTraversal[] traversals, IDiffVisitor visitor);
 
@@ -107,7 +105,6 @@ public interface IResourceDiffTree extends IDiffTree {
 	 * @param traversals the traversals
 	 * @param filter the diff node filter
 	 * @return whether the given diff tree contains any deltas that match the given filter
-	 * @throws CoreException 
 	 */
 	public boolean hasMatchingDiffs(ResourceTraversal[] traversals, final FastDiffFilter filter);
 

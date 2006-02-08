@@ -121,7 +121,7 @@ public class PathTree {
 	/**
 	 * Return whether the given path has children in the tree
 	 * @param path
-	 * @return
+	 * @return whether there are children for the given path
 	 */
 	public synchronized boolean hasChildren(IPath path) {
 		if (path.isEmpty()) return !objects.isEmpty();
@@ -292,7 +292,7 @@ public class PathTree {
 	 * already exists in the tree.
 	 * @param path the path
 	 * @param property the property bit to set
-	 * @param whether the bit should be on or off
+	 * @param value whether the bit should be on or off
 	 * @return the paths whose bit changed
 	 */
 	public synchronized IPath[] setPropogatedProperty(IPath path, int property, boolean value) {

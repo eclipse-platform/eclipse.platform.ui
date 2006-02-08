@@ -76,7 +76,7 @@ public class SubscriberSyncInfoEventHandler extends SubscriberEventHandler {
 	
 	/**
 	 * Return the sync set input that was created by this event handler
-	 * @return
+	 * @return the sync set input
 	 */
 	public SyncSetInputFromSubscriber getSyncSetInput() {
 		return syncSetInput;

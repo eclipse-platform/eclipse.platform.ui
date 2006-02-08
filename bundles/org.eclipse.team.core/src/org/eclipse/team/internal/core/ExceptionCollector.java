@@ -39,7 +39,6 @@ public class ExceptionCollector {
 	 * @param pluginId the unique identifier of the relevant plug-in
 	 * @param severity the severity; one of <code>OK</code>,
 	 *   <code>ERROR</code>, <code>INFO</code>, or <code>WARNING</code>
-	 * @param code the plug-in-specific status code, or <code>OK</code>
 	 * @param log the log to output the exceptions to, or <code>null</code> if
 	 *   exceptions should not be logged.
 	 */
@@ -85,15 +84,15 @@ public class ExceptionCollector {
 	 * 
 	 * @param exception the exception to collect
 	 */
-	public void handleException(CoreException e) {
+	public void handleException(CoreException exception) {
         // log the exception if we have a log
         if(log != null) {
-            log.log(new Status(severity, pluginId, 0, message, e));
+            log.log(new Status(severity, pluginId, 0, message, exception));
         }
         // Record each status individually to flatten the resulting multi-status
-        IStatus exceptionStatus = e.getStatus();
+        IStatus exceptionStatus = exception.getStatus();
         // Wrap the exception so the stack trace is not lost.
-        IStatus status = new Status(exceptionStatus.getSeverity(), exceptionStatus.getPlugin(), exceptionStatus.getCode(), exceptionStatus.getMessage(), e);
+        IStatus status = new Status(exceptionStatus.getSeverity(), exceptionStatus.getPlugin(), exceptionStatus.getCode(), exceptionStatus.getMessage(), exception);
         recordStatus(status);
 		IStatus[] children = status.getChildren();
 		for (int i = 0; i < children.length; i++) {

@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.content.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IStorageMerger;
 import org.eclipse.team.internal.core.*;
 
@@ -50,13 +49,13 @@ public class DelegatingStorageMerger implements IStorageMerger {
 	}
 
 	/**
-	 * Set the file merger that is used by the {@link #performThreeWayMerge(IThreeWayDiff, IProgressMonitor) }
+	 * Set the file merger that is used by the {@link #merge(OutputStream, String, IStorage, IStorage, IStorage, IProgressMonitor)}
 	 * method. It is the responsibility of subclasses to provide a merger.
 	 * If a merger is not provided, subclasses must override <code>performThreeWayMerge</code>.
 	 * @param merger the merger used to merge files
 	 */
-	public static void setMergerDelegate(IStreamMergerDelegate aMerger) {
-		mergerDelegate = aMerger;
+	public static void setMergerDelegate(IStreamMergerDelegate merger) {
+		mergerDelegate = merger;
 	}
 	
 	public static IStorageMerger getInstance() {

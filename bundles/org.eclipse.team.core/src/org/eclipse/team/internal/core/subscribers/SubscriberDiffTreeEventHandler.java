@@ -82,7 +82,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	/**
 	 * Create the handler
 	 * @param subscriber the subscriber for the handler
-	 * @param scope the scope of the handler
+	 * @param manager the scope of the handler
 	 * @param tree the tree to be populated by this handler
 	 */
 	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScopeManager manager, ResourceDiffTree tree) {

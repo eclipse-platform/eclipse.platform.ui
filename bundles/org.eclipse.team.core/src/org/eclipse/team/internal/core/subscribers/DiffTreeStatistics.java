@@ -22,7 +22,7 @@ public class DiffTreeStatistics {
 
 	/**
 	 * Count this sync state.
-	 * @param info the state
+	 * @param state the state
 	 */
 	public void add(int state) {
 		// update statistics
@@ -35,7 +35,7 @@ public class DiffTreeStatistics {
 	
 	/**
 	 * Remove this sync kind.
-	 * @param info the info type to remove 
+	 * @param state the info type to remove 
 	 */	
 	public void remove(int state) {
 		// update stats
@@ -60,7 +60,7 @@ public class DiffTreeStatistics {
 	 * To return the number of outgoing changes:
 	 * 	long outgoingChanges = stats.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
 	 *  
-	 * @param kind the sync kind for which to return the count
+	 * @param state the sync kind for which to return the count
 	 * @param mask the mask applied to the stored sync kind
 	 * @return the number of sync info types added for the specific kind
 	 */

@@ -30,7 +30,7 @@ public interface ICacheListener {
 
 	/**
 	 * The given cache has been disposed.
-	 * @param context the context that was disposed
+	 * @param cache the cache that was disposed
 	 */
 	void cacheDisposed(ICache cache);
 }

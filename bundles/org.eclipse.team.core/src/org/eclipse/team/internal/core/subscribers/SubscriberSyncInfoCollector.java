@@ -92,7 +92,7 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 	 * Clears this collector's sync info sets and causes them to be recreated from the
 	 * associated <code>Subscriber</code>. The reset will occur in the background. If the
 	 * caller wishes to wait for the reset to complete, they should call 
-	 * {@link waitForCollector(IProgressMonitor)}.
+	 * waitForCollector(IProgressMonitor).
 	 */
 	public void reset() {	
 		eventHandler.reset(getRoots());
@@ -115,8 +115,8 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 	/**
 	 * Return the roots that are being considered by this collector.
 	 * By default, the collector is interested in the roots of its
-	 * subscriber. However, the set can be reduced using {@link setRoots(IResource)).
-	 * @return
+	 * subscriber. However, the set can be reduced using {@link #setRoots(IResource[])}.
+	 * @return the roots
 	 */
 	public IResource[] getRoots() {
 		if (roots == null) {
@@ -165,7 +165,6 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 	/**
 	 * Set the filter for this collector. Only elements that match the filter will
 	 * be in the out sync info set.
-	 * @see getSyncInfoSet()
 	 * @param filter the sync info filter
 	 */
 	public void setFilter(SyncInfoFilter filter) {
