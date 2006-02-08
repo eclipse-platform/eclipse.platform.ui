@@ -101,7 +101,7 @@ public class FileLabelProvider extends LabelProvider {
 
 	public Image getImage(Object element) {
 		if (!(element instanceof ISearchResultViewEntry))
-			return null; //$NON-NLS-1$
+			return null;
 
 		IResource resource= ((ISearchResultViewEntry) element).getResource();
 		Image image= fLabelProvider.getImage(resource);
