@@ -275,7 +275,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @return whether the expansion was completed
      */
     synchronized boolean attemptExpansion(TreePath path) {
-        boolean tryAgain = false;
         int segmentCount = path.getSegmentCount();
         for (int j = segmentCount - 1; j >= 0; j--) {
             Object element = path.getSegment(j);
@@ -309,7 +308,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                                     getModel().mapWidget(items[childIndex], child);
                                     widget = child.getWidget();
                                     treePath = child.getTreePath();
-                                    tryAgain = true;
                                 } else {
                                     return false;
                                 }
@@ -325,9 +323,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                                     if (path.getSegmentCount() == treePath.getSegmentCount()) {
                                         return true;
                                     }
-                                    if (tryAgain) {
-                                        return attemptExpansion(path);
-                                    }
                                     return false;
                                 }
                             }
@@ -335,9 +330,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     }
                 }
             }
-        }
-        if (tryAgain) {
-            return attemptExpansion(path);
         }
         return false;
     }
