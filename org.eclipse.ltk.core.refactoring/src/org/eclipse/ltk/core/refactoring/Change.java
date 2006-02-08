@@ -105,11 +105,19 @@ public abstract class Change implements IAdaptable {
 	 * <p>
 	 * Subclasses of changes created by
 	 * {@link Refactoring#createChange(IProgressMonitor)} may override this
-	 * method to return an appropriate descriptor object.
+	 * method to return an appropriate descriptor object. A change tree created
+	 * by a particular refactoring is supposed to contain at most one change
+	 * which returns a refactoring descriptor. Refactorings usually return an
+	 * instance of {@link CompositeChange} in their
+	 * {@link Refactoring#createChange(IProgressMonitor)} method which
+	 * implements this method. The refactoring framework searches the change
+	 * tree top-down until a refactoring descriptor is found.
 	 * </p>
 	 * 
 	 * @return a refactoring descriptor representing the refactoring which
-	 *         created this change object, or <code>null</code>
+	 *         created this change object, or <code>null</code> to indicate
+	 *         that this refactoring should not participate in the refactoring
+	 *         history and any related facilities
 	 * 
 	 * @since 3.2
 	 */
