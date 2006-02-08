@@ -147,7 +147,8 @@ public interface IRefactoringHistoryControl {
 	 * Sets the refactoring history of this control.
 	 * 
 	 * @param history
-	 *            the refactoring history, or <code>null</code>
+	 *            the refactoring history, or <code>null</code> to clear the
+	 *            viewer input
 	 */
 	public void setInput(RefactoringHistory history);
 

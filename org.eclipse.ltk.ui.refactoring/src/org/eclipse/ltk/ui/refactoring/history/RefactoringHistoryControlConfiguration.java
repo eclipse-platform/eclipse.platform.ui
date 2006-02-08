@@ -40,7 +40,7 @@ public class RefactoringHistoryControlConfiguration {
 	/** Should the refactorings be checkable? */
 	protected final boolean fCheckable;
 
-	/** The project, or <code>null</code> */
+	/** The project, or <code>null</code> for the workspace */
 	protected final IProject fProject;
 
 	/** Should time information be displayed? */
@@ -50,7 +50,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * Creates a new refactoring history control configuration.
 	 * 
 	 * @param project
-	 *            the project, or <code>null</code>
+	 *            the project, or <code>null</code> for the workspace
 	 * @param time
 	 *            <code>true</code> to display time information,
 	 *            <code>false</code> otherwise
@@ -164,7 +164,7 @@ public class RefactoringHistoryControlConfiguration {
 	/**
 	 * Returns the project of the refactoring history being displayed.
 	 * 
-	 * @return the project, or <code>null</code>
+	 * @return the project, or <code>null</code> for the workspace
 	 */
 	public final IProject getProject() {
 		return fProject;

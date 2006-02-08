@@ -140,7 +140,8 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 	 * @param project
 	 *            the project to compute its refactorings
 	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
+	 *            the progress monitor to use, or <code>null</code> if no
+	 *            progress monitoring or cancellation is desired
 	 * @return the refactoring history representing the refactorings
 	 */
 	protected RefactoringHistory getRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {
