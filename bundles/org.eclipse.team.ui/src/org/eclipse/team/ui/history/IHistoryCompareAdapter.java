@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.ui.history;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Used to display the contents of an IHistoryPage in a dialog
@@ -26,5 +28,7 @@ public interface IHistoryCompareAdapter {
 	 * @return returns an ICompareInput
 	 */
 	public ICompareInput getCompareInput(Object object);
+	
+	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor);
 	
 }

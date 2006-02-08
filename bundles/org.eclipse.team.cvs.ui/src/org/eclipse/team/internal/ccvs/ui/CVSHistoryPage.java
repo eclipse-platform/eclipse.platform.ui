@@ -13,9 +13,11 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.text.DateFormat;
+import java.util.*;
 
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
@@ -30,6 +32,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
@@ -984,5 +987,48 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			toggleOpenAction.run();
 			break;
 		}
+	}
+
+	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) {
+		initLabels(input, configuration);
+		// TODO: pre-fetch contents
+	}
+	
+	private void initLabels(ICompareInput input, CompareConfiguration cc) {
+		cc.setLeftEditable(false);
+		cc.setRightEditable(false);
+		String leftLabel = getFileRevisionLabel(input.getLeft(), cc);
+		cc.setLeftLabel(leftLabel);
+		String rightLabel = getFileRevisionLabel(input.getRight(), cc);
+		cc.setRightLabel(rightLabel);
+	}
+
+	private String getFileRevisionLabel(ITypedElement element, CompareConfiguration cc) {
+		String label = null;
+
+		if (element instanceof TypedBufferedContent) {
+			//current revision
+			Date dateFromLong = new Date(((TypedBufferedContent) element).getModificationDate());
+			label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ element.getName(), DateFormat.getDateTimeInstance().format(dateFromLong)});
+			cc.setLeftEditable(true);
+			return label;
+
+		} else if (element instanceof FileRevisionTypedElement) {
+			Object fileObject = ((FileRevisionTypedElement) element).getFileRevision();
+
+			if (fileObject instanceof LocalFileRevision) {
+				try {
+					IStorage storage = ((LocalFileRevision) fileObject).getStorage(new NullProgressMonitor());
+					if (Utils.getAdapter(storage, IFileState.class) != null) {
+						//local revision
+						label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_localRevision, new Object[]{element.getName(), ((FileRevisionTypedElement) element).getTimestamp()});
+					}
+				} catch (CoreException e) {
+				}
+			} else {
+				label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repository, new Object[]{ element.getName(), ((FileRevisionTypedElement) element).getContentIdentifier()});
+			}
+		}
+		return label;
 	}
 }

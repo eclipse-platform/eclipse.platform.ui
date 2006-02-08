@@ -34,10 +34,13 @@ public interface IHistoryView {
 	public IHistoryPage getHistoryPage();
 	
 	/**
-	 * Shows the history for the passed in object.
+	 * Shows the history for the passed in object. If the object is being shown
+	 * in another instance of a history view in the same page as this view, that
+	 * view will be given focus.
+	 * 
 	 * @param object
-	 * @return returns the history page that the passed in object is being shown in
-	 * or null if no appropriate page can be found.
+	 * @return returns the history page that the passed in object is being shown
+	 *         in or null if no appropriate page can be found.
 	 */
 	public IHistoryPage showHistoryFor(Object object);
 	
