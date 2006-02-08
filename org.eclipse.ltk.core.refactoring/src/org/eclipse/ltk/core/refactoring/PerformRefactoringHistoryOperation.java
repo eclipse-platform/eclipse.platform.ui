@@ -36,8 +36,8 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
  * <p>
- * Note: this class is not intended to be instantiated or extended outside of the refactoring
- * framework.
+ * Note: this class is not intended to be instantiated or extended outside of
+ * the refactoring framework.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -132,7 +132,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 			service.connect();
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-				if (descriptor != null && !descriptor.isUnknown()) {
+				if (descriptor != null) {
 					final Refactoring refactoring= manager.createRefactoring(descriptor);
 					if (refactoring != null) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);

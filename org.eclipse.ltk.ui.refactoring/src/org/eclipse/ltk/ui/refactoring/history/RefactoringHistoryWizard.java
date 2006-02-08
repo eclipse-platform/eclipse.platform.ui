@@ -645,7 +645,7 @@ public class RefactoringHistoryWizard extends Wizard {
 						try {
 							service.connect();
 							final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							if (descriptor != null && !descriptor.isUnknown()) {
+							if (descriptor != null) {
 								final Refactoring refactoring= getCurrentRefactoring(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 								if (refactoring != null && status.isOK()) {
 									fPreviewPage.setRefactoring(refactoring);

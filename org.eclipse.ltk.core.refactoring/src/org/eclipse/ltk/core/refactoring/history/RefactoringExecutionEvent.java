@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring.history;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
@@ -83,6 +84,12 @@ public final class RefactoringExecutionEvent {
 
 	/**
 	 * Returns the refactoring descriptor proxy.
+	 * <p>
+	 * Depending on the event, this proxy may not exist and cannot be resolved
+	 * to a refactoring descriptor. Clients should also be prepared to receive
+	 * notifications for unknown refactorings, which are discriminated by their
+	 * special id {@link RefactoringDescriptor#ID_UNKNOWN};
+	 * </p>
 	 * 
 	 * @return the refactoring descriptor proxy
 	 */
