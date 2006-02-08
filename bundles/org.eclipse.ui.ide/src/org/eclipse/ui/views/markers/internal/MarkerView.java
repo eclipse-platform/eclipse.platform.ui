@@ -497,7 +497,7 @@ public abstract class MarkerView extends TableView {
 		try {
 			restoreFilters(XMLMemento.createReadRoot(reader));
 		} catch (WorkbenchException e) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(),e);
 		}
 
 	}
@@ -1051,7 +1051,7 @@ public abstract class MarkerView extends TableView {
 				}
 			}
 		} catch (CoreException e) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			Util.log(e);
 			return;
 		}
 
@@ -1446,7 +1446,7 @@ public abstract class MarkerView extends TableView {
 		try {
 			totalMarkers = MarkerList.compute(getMarkerTypes()).length;
 		} catch (CoreException e) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			Util.log(e);
 			return;
 		}
 

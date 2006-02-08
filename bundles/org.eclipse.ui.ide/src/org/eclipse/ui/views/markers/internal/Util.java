@@ -148,7 +148,7 @@ public final class Util {
 	 * @param exception
 	 */
 	public static void log(CoreException exception) {
-		IDEWorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
+		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(),exception);
 	}
 
 	/**
@@ -345,7 +345,7 @@ public final class Util {
 			MarkerType type = MarkerTypesModel.getInstance().getType(typeId);
 			return type.getLabel();
 		} catch (CoreException e) {
-			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e.getStatus());
+			log(e);
 			return null;
 		}
 	}

@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * @since 3.2
@@ -104,7 +103,7 @@ public class FieldMarkerGroup implements IField {
 			try {
 				value = marker.getMarker().getAttribute(attribute);
 			} catch (CoreException e) {
-				IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e.getStatus());
+				Util.log(e);
 				return null;
 			}
 			
