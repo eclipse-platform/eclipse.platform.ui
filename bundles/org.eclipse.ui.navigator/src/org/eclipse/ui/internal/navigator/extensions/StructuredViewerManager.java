@@ -22,68 +22,87 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * <p>
- * Provides a consistent mechanism to interact with StructuredViewers over time. The Common
- * Navigator framework attempts to defer the loading of extensions, which also means defering the
- * loading of Content Providers. To follow the contracts already in place by
- * {@link org.eclipse.jface.viewers.ITreeContentProvider}, the Viewer, Old Input, and New Input
- * parameters for
+ * Provides a consistent mechanism to interact with StructuredViewers over time.
+ * The Common Navigator framework attempts to defer the loading of extensions,
+ * which also means defering the loading of Content Providers. To follow the
+ * contracts already in place by
+ * {@link org.eclipse.jface.viewers.ITreeContentProvider}, the Viewer, Old
+ * Input, and New Input parameters for
  * {@link org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)}
  * are cached for content providers that have not been loaded yet.
  * </p>
  * <p>
- * <b>WARNING: </b> The following class is not inherently thread-safe. Appropriate measures should
- * be taken to ensure that {@link #inputChanged(Object, Object)}and
- * {@link #inputChanged(Viewer, Object, Object)}are not called concurrently with
- * {@link #initialize(IStructuredContentProvider)}.
+ * <b>WARNING: </b> The following class is not inherently thread-safe.
+ * Appropriate measures should be taken to ensure that
+ * {@link #inputChanged(Object, Object)}and
+ * {@link #inputChanged(Viewer, Object, Object)}are not called concurrently
+ * with {@link #initialize(IStructuredContentProvider)}.
  * 
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  */
 public class StructuredViewerManager {
 
 	private Viewer viewer;
+
 	private Object cachedOldInput;
+
 	private Object cachedNewInput;
 
 	/**
 	 * 
+	 * @param aViewer
 	 */
 	public StructuredViewerManager(Viewer aViewer) {
 		super();
-		viewer= aViewer;
+		viewer = aViewer;
 	}
 
+	/**
+	 * 
+	 * @return The real viewer.
+	 */
 	public Viewer getViewer() {
 		return viewer;
 	}
 
-
+	/**
+	 * 
+	 * @param anOldInput
+	 * @param aNewInput
+	 */
 	public void inputChanged(Object anOldInput, Object aNewInput) {
-		cachedOldInput= anOldInput;
-		cachedNewInput= aNewInput;
+		cachedOldInput = anOldInput;
+		cachedNewInput = aNewInput;
 	}
 
+	/**
+	 * 
+	 * @param aViewer
+	 * @param anOldInput
+	 * @param aNewInput
+	 */
 	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
-		viewer= aViewer;
-		cachedOldInput= anOldInput;
-		cachedNewInput= aNewInput;
+		viewer = aViewer;
+		cachedOldInput = anOldInput;
+		cachedNewInput = aNewInput;
 	}
 
- 
+	/**
+	 * 
+	 * @param aContentProvider
+	 * @return True if all is well.
+	 */
 	public boolean initialize(IStructuredContentProvider aContentProvider) {
-		boolean result= true;
+		boolean result = true;
 		try {
 			if (aContentProvider != null)
-				aContentProvider.inputChanged(viewer, cachedOldInput, cachedNewInput);
+				aContentProvider.inputChanged(viewer, cachedOldInput,
+						cachedNewInput);
 		} catch (RuntimeException e) {
-			NavigatorPlugin.log(e.toString(), new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, e.toString(), e));
-			result= false;
+			NavigatorPlugin.logError(0, e.toString(), e);
+			result = false;
 		}
 		return result;
 	}
@@ -92,22 +111,22 @@ public class StructuredViewerManager {
 	 * 
 	 */
 	public void safeRefresh() {
-		UIJob refreshJob= new UIJob(CommonNavigatorMessages.StructuredViewerManager_0) {
+		UIJob refreshJob = new UIJob(
+				CommonNavigatorMessages.StructuredViewerManager_0) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
-					if(viewer.getControl().isDisposed())
-						return Status.OK_STATUS;					
+					if (viewer.getControl().isDisposed())
+						return Status.OK_STATUS;
 					Display display = viewer.getControl().getDisplay();
 					if (!display.isDisposed() && viewer != null)
 						viewer.refresh();
 				} catch (RuntimeException e) {
-					NavigatorPlugin.log(e.toString(), new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, e.toString(), e));
+					NavigatorPlugin.logError(0, e.toString(), e);
 				}
 				return Status.OK_STATUS;
 			}
 		};
 		refreshJob.schedule();
-
 
 	}
 

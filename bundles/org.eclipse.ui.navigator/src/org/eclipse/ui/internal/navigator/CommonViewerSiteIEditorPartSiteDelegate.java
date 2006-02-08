@@ -5,18 +5,26 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
+/**
+ * Provides a delegate implementation of {@link ICommonViewerWorkbenchSite}.
+ * @since 3.2
+ *
+ */
 public class CommonViewerSiteIEditorPartSiteDelegate implements
 		ICommonViewerWorkbenchSite {
 
 	private IEditorSite editorSite;  
 
+	/**
+	 * 
+	 * @param anEditorSite
+	 */
 	public CommonViewerSiteIEditorPartSiteDelegate(IEditorSite anEditorSite) {
 		editorSite = anEditorSite; 
 	}
@@ -31,11 +39,7 @@ public class CommonViewerSiteIEditorPartSiteDelegate implements
 
 	public Object getAdapter(Class adapter) {
 		return editorSite.getAdapter(adapter);
-	}
-
-	public IKeyBindingService getKeyBindingService() {
-		return editorSite.getKeyBindingService();
-	}
+	} 
 
 	public IWorkbenchPage getPage() {
 		return editorSite.getPage();

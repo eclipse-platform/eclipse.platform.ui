@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator.resources.internal.plugin;
+package org.eclipse.ui.internal.navigator.resources.plugin;
 
 import java.net.MalformedURLException;
 import java.net.URL;

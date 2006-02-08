@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.navigator.extensions;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.CommonActionProvider;
@@ -23,12 +23,7 @@ import org.eclipse.ui.navigator.NavigatorActionService;
 
 /**
  * Encapsulates the <code>org.eclipse.ui.navigator.viewer</code> extension.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ * <p> 
  * 
  * @since 3.2
  */
@@ -92,11 +87,11 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 		if (newPopupMenuId != null) {
 			if (popupMenuId != null)
 				NavigatorPlugin
-						.log(NLS
+						.log(IStatus.WARNING, 0, NLS
 								.bind(
 										CommonNavigatorMessages.NavigatorViewerDescriptor_Popup_Menu_Overridden,
 										new Object[] { getViewerId(),
-												popupMenuId, newPopupMenuId }));
+												popupMenuId, newPopupMenuId }), null);
 			popupMenuId = newPopupMenuId;
 		}
 	}
@@ -115,12 +110,9 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	 * 
 	 * @param element
 	 *            The IConfigurationElement containing a viewerActionBinding
-	 *            element.
-	 * @throws WorkbenchException
-	 *             If something goes horribly wrong.
+	 *            element. 
 	 */
-	public void consumeActionBinding(IConfigurationElement element)
-			throws WorkbenchException {
+	public void consumeActionBinding(IConfigurationElement element) {
 		consumeBinding(element, false);
 	}
 
@@ -129,12 +121,9 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	 * 
 	 * @param element
 	 *            The IConfigurationElement containing a viewerContentBinding
-	 *            element.
-	 * @throws WorkbenchException
-	 *             If something goes horribly wrong.
+	 *            element. 
 	 */
-	public void consumeContentBinding(IConfigurationElement element)
-			throws WorkbenchException {
+	public void consumeContentBinding(IConfigurationElement element) {
 		consumeBinding(element, true);
 	}
 
@@ -158,8 +147,7 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 		return contentBinding.hasOverriddenRootExtensions();
 	}
 
-	private void consumeBinding(IConfigurationElement element, boolean isContent)
-			throws WorkbenchException {
+	private void consumeBinding(IConfigurationElement element, boolean isContent) {
 		IConfigurationElement[] includesElement = element
 				.getChildren(TAG_INCLUDES);
 

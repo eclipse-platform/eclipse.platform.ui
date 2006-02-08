@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.ILinkHelper;
-import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
@@ -57,12 +57,12 @@ public class LinkHelperRegistry extends RegistryReader {
 		if (aSelection.isEmpty())
 			return NO_LINK_HELPERS;
 
-		Set contentDescriptors = contentService.findEnabledContentDescriptors(aSelection.getFirstElement());
+		Set contentDescriptors = contentService.findContentExtensionsWithPossibleChild(aSelection.getFirstElement());
 		if (contentDescriptors.isEmpty())
 			return NO_LINK_HELPERS;
 
 		/* Use the first Navigator Content LinkHelperDescriptor for now */
-		INavigatorContentDescriptor contentDescriptor = (INavigatorContentDescriptor) contentDescriptors
+		INavigatorContentExtension contentExtension = (INavigatorContentExtension) contentDescriptors
 				.iterator().next();
 
 		List helpersList = new ArrayList();
@@ -70,7 +70,7 @@ public class LinkHelperRegistry extends RegistryReader {
 		LinkHelperDescriptor descriptor = null;
 		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
 			descriptor = (LinkHelperDescriptor) itr.next();
-			if (descriptor.isEnabledFor(contentDescriptor.getId()))
+			if (descriptor.isEnabledFor(contentExtension.getId()))
 				helpersList.add(descriptor.getLinkHelper());
 			else if (descriptor.isEnabledFor(aSelection))
 				helpersList.add(descriptor.getLinkHelper());

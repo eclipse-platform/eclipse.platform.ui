@@ -107,6 +107,8 @@ public class TestContentProvider implements ITreeContentProvider,
 			} catch (IOException e) {
 			} catch (CoreException e) {
 			}
+		} else {
+			rootElements.remove(modelFile);
 		}
 		return null;
 
@@ -155,8 +157,7 @@ public class TestContentProvider implements ITreeContentProvider,
 		IResourceDelta delta = event.getDelta();
 		try {
 			delta.accept(this);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
+		} catch (CoreException e) { 
 			e.printStackTrace();
 		}
 

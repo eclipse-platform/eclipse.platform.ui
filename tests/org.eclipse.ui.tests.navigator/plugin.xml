@@ -143,6 +143,14 @@
             <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/> 
          </includes>
       </viewerContentBinding>
+      
+      <!-- For testing -->
+      <viewerContentBinding viewerId="org.eclipse.ui.navigator.resourceContent">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/> 
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
+         </includes>
+      </viewerContentBinding>
       <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
          <includes>
             <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>

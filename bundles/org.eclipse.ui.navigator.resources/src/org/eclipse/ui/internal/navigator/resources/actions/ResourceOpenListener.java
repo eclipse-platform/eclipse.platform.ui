@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
  
-package org.eclipse.ui.navigator.resources.internal.actions;
+package org.eclipse.ui.internal.navigator.resources.actions;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IOpenListener;

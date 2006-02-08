@@ -69,7 +69,7 @@ public class CommonFilterDescriptorManager {
 	}
 
 	/**
-	 * @param descriptor
+	 * @param aDescriptor
 	 *            A non-null descriptor
 	 */
 	private void addCommonFilter(CommonFilterDescriptor aDescriptor) {

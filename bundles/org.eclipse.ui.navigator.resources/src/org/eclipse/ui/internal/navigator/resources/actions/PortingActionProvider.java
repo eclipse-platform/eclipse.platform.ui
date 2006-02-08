@@ -10,7 +10,7 @@
  *  	Sebastian Davids <sdavids@gmx.de> - Collapse all action
  *      Sebastian Davids <sdavids@gmx.de> - Images for menu items
  *******************************************************************************/
-package org.eclipse.ui.navigator.resources.internal.actions;
+package org.eclipse.ui.internal.navigator.resources.actions;
 
 import java.net.URL;
 
@@ -28,13 +28,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.ImportResourcesAction;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.navigator.WizardActionGroup;
-import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
-import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlugin;
 
 /**
  * Adds actions for Import/Export wizards. The group is smart, in that it will

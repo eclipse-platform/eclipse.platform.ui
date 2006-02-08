@@ -14,26 +14,22 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * <p>
  * Provides utilities for working with adaptable and non-adaptable objects.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ * 
  * @since 3.2
  */
 public class AdaptabilityUtility {
 
-
 	/**
 	 * <p>
 	 * Returns an adapter of the requested type (anAdapterType)
-	 * @param anElement The element to adapt, which may or may not implement {@link IAdaptable}
-	 * @param anAdapterType The class type to return 
-	 * @return
+	 * 
+	 * @param anElement
+	 *            The element to adapt, which may or may not implement
+	 *            {@link IAdaptable}
+	 * @param anAdapterType
+	 *            The class type to return
+	 * @return An adapter of the requested type or null
 	 */
 	public static Object getAdapter(Object anElement, Class anAdapterType) {
 		if (anElement == null)
@@ -41,7 +37,8 @@ public class AdaptabilityUtility {
 		else if (anElement instanceof IAdaptable)
 			return ((IAdaptable) anElement).getAdapter(anAdapterType);
 		else
-			return Platform.getAdapterManager().getAdapter(anElement, anAdapterType);
+			return Platform.getAdapterManager().getAdapter(anElement,
+					anAdapterType);
 	}
 
 }

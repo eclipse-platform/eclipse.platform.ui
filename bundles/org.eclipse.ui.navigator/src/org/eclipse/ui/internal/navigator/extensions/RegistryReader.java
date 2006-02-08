@@ -80,7 +80,7 @@ public abstract class RegistryReader {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text);//$NON-NLS-1$
-		NavigatorPlugin.log(buf.toString());
+		NavigatorPlugin.logError(0, buf.toString(), null);
 	}
 
 	/**

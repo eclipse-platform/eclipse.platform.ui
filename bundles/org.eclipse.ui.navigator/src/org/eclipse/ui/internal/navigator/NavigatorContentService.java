@@ -44,9 +44,11 @@ import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.INavigatorFilterService;
+import org.eclipse.ui.navigator.INavigatorPipelineService;
 import org.eclipse.ui.navigator.INavigatorSorterService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.NavigatorActivationService;
@@ -108,10 +110,14 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private INavigatorSorterService navigatorSorterService;
 
+	private INavigatorPipelineService navigatorPipelineService;
+
 	private IDescriptionProvider descriptionProvider;
 
 	/**
-	 * 
+	 * @param aViewerId
+	 *            The viewer id for this content service; normally from the
+	 *            <b>org.eclipse.ui.views</b> extension.
 	 */
 	public NavigatorContentService(String aViewerId) {
 		super();
@@ -125,7 +131,11 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
-	 * 
+	 * @param aViewerId
+	 *            The viewer id for this content service; normally from the
+	 *            <b>org.eclipse.ui.views</b> extension.
+	 * @param aViewer
+	 *            The viewer that this content service will be associated with.
 	 */
 	public NavigatorContentService(String aViewerId, StructuredViewer aViewer) {
 		this(aViewerId);
@@ -359,15 +369,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorContentService#findEnabledContentDescriptors(java.lang.Object)
-	 */
-	public Set findEnabledContentDescriptors(Object anElement) {
-		return findDescriptorsByTriggerPoint(anElement);
-	}
-
 	public IExtensionStateModel findStateModel(String anExtensionId) {
 		return getExtension(
 				CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(anExtensionId))
@@ -393,7 +394,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         parent.
 	 */
 	public ITreeContentProvider[] findParentContentProviders(Object anElement) {
-		return extractContentProviders(findContentExtensionsByTriggerPoint(anElement));
+		return extractContentProviders(findContentExtensionsWithPossibleChild(anElement));
 	}
 
 	/**
@@ -426,23 +427,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
-	 * Return all of the content providers that are enabled for the given
-	 * element. An 'enabled' content provider is either the (1) source of the
-	 * element (the element was returned as a child of its parent by the content
-	 * provider) or (2) a content extension which describes the element in its
-	 * <b>triggerPoints</b> expression.
-	 * 
-	 * @param anElement
-	 *            An element from the tree (generally the element expanded by
-	 *            the user)
-	 * @return The set of content providers that can provide valid children for
-	 *         the element.
-	 */
-	public ITreeContentProvider[] findRelevantContentProviders(Object anElement) {
-		return extractContentProviders(findContentExtensionsByTriggerPoint(anElement));
-	}
-
-	/**
 	 * 
 	 * Return all of the label providers that are enabled for the given element.
 	 * A label provider is 'enabled' if its corresponding content provider
@@ -461,24 +445,116 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>triggerPoints</b> expression.
 	 * 
 	 * @param anElement
-	 *            The element from the viewer or to be added to the viewer
-	 * @return An array of content extensions that describe the object in their
-	 *         <b>triggerPoints</b> expression.
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         either declared through a
+	 *         <b>org.eclipse.ui.navigator.viewer/viewerContentBinding</b> to
+	 *         be a root element or have a <b>triggerPoints</b> expression that
+	 *         is <i>enabled</i> for the given element.
+	 */
+	public Set findRootContentExtensions(Object anElement) {
+		return findRootContentExtensions(anElement, true);
+	}
+
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>triggerPoints</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @param toRespectViewerRoots
+	 *            True respect the <b>viewerContentBinding</b>s, False will
+	 *            look only for matching <b>triggerPoints</b> expressions.
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         either declared through a
+	 *         <b>org.eclipse.ui.navigator.viewer/viewerContentBinding</b> to
+	 *         be a root element or have a <b>triggerPoints</b> expression that
+	 *         is <i>enabled</i> for the given element.
+	 */
+	public Set findRootContentExtensions(Object anElement,
+			boolean toRespectViewerRoots) {
+
+		SortedSet rootExtensions = new TreeSet(
+				ExtensionPriorityComparator.INSTANCE);
+		if (toRespectViewerRoots
+				&& viewerDescriptor.hasOverriddenRootExtensions()) {
+
+			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+					.getAllContentDescriptors();
+
+			NavigatorContentExtension extension = null;
+			for (int i = 0; i < descriptors.length; i++) {
+				if (isActive(descriptors[i].getId())
+						&& isRootExtension(descriptors[i].getId())) {
+					extension = getExtension(descriptors[i]);
+					if (!extension.hasLoadingFailed())
+						rootExtensions.add(extension);
+				}
+			}
+		}
+		if (rootExtensions.isEmpty())
+			return findContentExtensionsByTriggerPoint(anElement);
+		return rootExtensions;
+	}
+
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>possibleChildren</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
+	 *         for the given element.
+	 */
+	public Set findOverrideableContentExtensionsForPossibleChild(
+			Object anElement) {
+		Set overrideableExtensions = new TreeSet(
+				ExtensionPriorityComparator.INSTANCE);
+		Set descriptors = findDescriptorsWithPossibleChild(anElement);
+		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
+			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) iter
+					.next();
+			if (descriptor.hasOverridingExtensions())
+				overrideableExtensions.add(getExtension(descriptor));
+		}
+		return overrideableExtensions;
+	}
+
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>triggerPoints</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i>
+	 *         for the given element.
 	 */
 	public Set findContentExtensionsByTriggerPoint(Object anElement) {
 		return findContentExtensionsByTriggerPoint(anElement, true);
 	}
 
 	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>triggerPoints</b> expression.
 	 * 
 	 * @param anElement
-	 *            The element from the viewer or to be added to the viewer
+	 *            The element to use in the query
 	 * @param toLoadIfNecessary
 	 *            True will force the load of the extension, False will not
-	 * @return An array of content extensions that describe the object in their
-	 *         <b>triggerPoints</b> expression.
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i>
+	 *         for the given element.
 	 */
 	public Set findContentExtensionsByTriggerPoint(Object anElement,
 			boolean toLoadIfNecessary) {
@@ -487,24 +563,32 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>possibleChildren</b> expression.
 	 * 
 	 * @param anElement
-	 *            The element from the viewer or to be added to the viewer *
-	 * @return An array of content extensions that describe the object in their
-	 *         <b>possibleChildren</b> expression.
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
+	 *         for the given element.
 	 */
 	public Set findContentExtensionsWithPossibleChild(Object anElement) {
 		return findContentExtensionsWithPossibleChild(anElement, true);
 	}
 
 	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>possibleChildren</b> expression.
 	 * 
 	 * @param anElement
-	 *            The element from the viewer or to be added to the viewer
+	 *            The element to use in the query
 	 * @param toLoadIfNecessary
 	 *            True will force the load of the extension, False will not
-	 * @return An array of content extensions that describe the object in their
-	 *         <b>possibleChildren</b> expression.
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
+	 *         for the given element.
 	 */
 	public Set findContentExtensionsWithPossibleChild(Object anElement,
 			boolean toLoadIfNecessary) {
@@ -570,6 +654,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return contributionMemory;
 	}
 
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>triggerPoints</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentDescriptor}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i>
+	 *         for the given element.
+	 */
 	public Set findDescriptorsByTriggerPoint(Object anElement) {
 
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
@@ -581,7 +676,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return result;
 	}
 
-	// update registry to use possibleChildren expression
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>possibleChildren</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentDescriptor}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
+	 *         for the given element.
+	 */
 	public Set findDescriptorsWithPossibleChild(Object anElement) {
 
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
@@ -635,6 +740,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return getExtension(aDescriptorKey, true);
 	}
 
+	/**
+	 * 
+	 * @param aDescriptorKey
+	 * @param toLoadIfNecessary
+	 *            True if the extension should be loaded if it is not already.
+	 * @return The instance of the extension for the given descriptor key.
+	 */
 	public final NavigatorContentExtension getExtension(
 			INavigatorContentDescriptor aDescriptorKey,
 			boolean toLoadIfNecessary) {
@@ -719,35 +831,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 	}
 
-	protected final Set findRootContentExtensions(Object anElement) {
-		return findRootContentExtensions(anElement, true);
-	}
-
-	protected final Set findRootContentExtensions(Object anElement,
-			boolean toRespectViewerRoots) {
-
-		SortedSet rootExtensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
-		if (toRespectViewerRoots
-				&& viewerDescriptor.hasOverriddenRootExtensions()) {
-
-			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
-					.getAllContentDescriptors();
-
-			NavigatorContentExtension extension = null;
-			for (int i = 0; i < descriptors.length; i++) {
-				if (isActive(descriptors[i].getId())
-						&& isRootExtension(descriptors[i].getId())) {
-					extension = getExtension(descriptors[i]);
-					if (!extension.hasLoadingFailed())
-						rootExtensions.add(extension);
-				}
-			}
-		}
-		if (rootExtensions.isEmpty())
-			return findContentExtensionsByTriggerPoint(anElement);
-		return rootExtensions;
-	}
-
 	public boolean isActive(String anExtensionId) {
 		return assistant.isActive(anExtensionId);
 	}
@@ -793,6 +876,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return navigatorSorterService;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
+	 */
+	public INavigatorPipelineService getPipelineService() {
+		if (navigatorPipelineService == null)
+			navigatorPipelineService = new NavigatorPipelineService(this);
+		return navigatorPipelineService;
+	}
+
 	protected boolean isRootExtension(String anExtensionId) {
 		return assistant.isRootExtension(anExtensionId);
 	}
@@ -804,6 +898,15 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void removeListener(INavigatorContentServiceListener aListener) {
 		listeners.remove(aListener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "ContentService[" + viewerDescriptor.getViewerId() + "]"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private void notifyListeners(NavigatorContentExtension aDescriptorInstance) {
@@ -869,5 +972,5 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return (ILabelProvider[]) resultProvidersList
 				.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}
- 
+
 }

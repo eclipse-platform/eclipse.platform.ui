@@ -60,10 +60,7 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 	}
 
 	/**
-	 * This action has been invoked by the user
-	 * 
-	 * @param context
-	 *            Window
+	 * This action has been invoked by the user 
 	 */
 	public void run() {
 		// create instance of target wizard

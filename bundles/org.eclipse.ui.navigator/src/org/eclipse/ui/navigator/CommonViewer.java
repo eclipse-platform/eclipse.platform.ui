@@ -11,6 +11,7 @@
 package org.eclipse.ui.navigator;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -507,30 +508,33 @@ public class CommonViewer extends TreeViewer {
 		for (int i = 0; i < elements.length; i++) {
 			super.internalRefresh(contentProvider.getParent(elements[i]));
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(boolean)
-	 */
-	public void refresh(boolean updateLabels) {
-		// TODO Auto-generated method stub
-		super.refresh(updateLabels);
-	}
+	} 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object, boolean)
 	 */
 	public void refresh(Object element, boolean updateLabels) {
-		// TODO Auto-generated method stub
-		super.refresh(element, updateLabels);
+		
+		INavigatorPipelineService pipeDream = contentService.getPipelineService();
+		
+		PipelinedViewerUpdate update = new PipelinedViewerUpdate();
+		update.getRefreshTargets().add(element);
+		update.setUpdateLabels(updateLabels);
+		/* if the update is modified */
+		if(pipeDream.interceptRefresh(update)) {
+			/* intercept and apply the update */
+			boolean toUpdateLabels = update.isUpdateLabels();
+			for (Iterator iter = update.getRefreshTargets().iterator(); iter.hasNext();) 
+				super.refresh(iter.next(), toUpdateLabels);  
+		} else 	
+			super.refresh(element, updateLabels);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object)
 	 */
 	public void refresh(Object element) {
-		// TODO Auto-generated method stub
-		super.refresh(element);
+		refresh(element, true);
 	}
 
 	/* (non-Javadoc)
@@ -545,7 +549,7 @@ public class CommonViewer extends TreeViewer {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return contentService.getViewerId();
+		return contentService.toString() + " Viewer"; //$NON-NLS-1$
 	}
 	
 }

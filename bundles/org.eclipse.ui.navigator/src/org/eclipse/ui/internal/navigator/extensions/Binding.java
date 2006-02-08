@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
@@ -42,7 +41,7 @@ class Binding {
 	 * 
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#isVisibleExtension(java.lang.String)
 	 */
-	public boolean isVisibleExtension(String anExtensionId) {
+	boolean isVisibleExtension(String anExtensionId) {
 		Pattern pattern = null;
 		for (Iterator itr = includePatterns.iterator(); itr.hasNext();) {
 			pattern = (Pattern) itr.next();
@@ -63,7 +62,7 @@ class Binding {
 	 * 
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#isRootExtension(java.lang.String)
 	 */
-	public boolean isRootExtension(String anExtensionId) {
+	boolean isRootExtension(String anExtensionId) {
 		if (rootPatterns.size() == 0)
 			return false;
 		Pattern pattern = null;
@@ -80,14 +79,14 @@ class Binding {
 	 * 
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#hasOverriddenRootExtensions()
 	 */
-	public boolean hasOverriddenRootExtensions() {
+	boolean hasOverriddenRootExtensions() {
 		return rootPatterns.size() > 0;
 	}
 
-	public void consumeIncludes(IConfigurationElement element,
-			boolean toRespectRoots) throws WorkbenchException {
+	void consumeIncludes(IConfigurationElement element, boolean toRespectRoots) {
 
-		Assert.isTrue(NavigatorViewerDescriptor.TAG_INCLUDES.equals(element.getName()));
+		Assert.isTrue(NavigatorViewerDescriptor.TAG_INCLUDES.equals(element
+				.getName()));
 		IConfigurationElement[] contentExtensionPatterns = element
 				.getChildren(TAG_EXTENSION);
 		String isRootString = null;
@@ -105,14 +104,21 @@ class Binding {
 			patternString = contentExtensionPatterns[i]
 					.getAttribute(NavigatorViewerDescriptor.ATT_PATTERN);
 			if (patternString == null)
-				NavigatorPlugin.logError(0, NLS.bind(
-						CommonNavigatorMessages.Attribute_Missing_Warning,
-						new Object[] {
-								NavigatorViewerDescriptor.ATT_PATTERN,
-								element.getDeclaringExtension()
-										.getUniqueIdentifier(),
-								element.getDeclaringExtension()
-										.getNamespace() }), null);
+				NavigatorPlugin
+						.logError(
+								0,
+								NLS
+										.bind(
+												CommonNavigatorMessages.Attribute_Missing_Warning,
+												new Object[] {
+														NavigatorViewerDescriptor.ATT_PATTERN,
+														element
+																.getDeclaringExtension()
+																.getUniqueIdentifier(),
+														element
+																.getDeclaringExtension()
+																.getNamespace() }),
+								null);
 			else {
 				compiledPattern = Pattern.compile(patternString);
 				includePatterns.add(compiledPattern);
@@ -123,9 +129,9 @@ class Binding {
 
 	}
 
-	public void consumeExcludes(IConfigurationElement element)
-			throws WorkbenchException {
-		Assert.isTrue(NavigatorViewerDescriptor.TAG_EXCLUDES.equals(element.getName()));
+	void consumeExcludes(IConfigurationElement element) {
+		Assert.isTrue(NavigatorViewerDescriptor.TAG_EXCLUDES.equals(element
+				.getName()));
 		IConfigurationElement[] contentExtensionPatterns = element
 				.getChildren(TAG_EXTENSION);
 		String patternString = null;
@@ -135,14 +141,21 @@ class Binding {
 			patternString = contentExtensionPatterns[i]
 					.getAttribute(NavigatorViewerDescriptor.ATT_PATTERN);
 			if (patternString == null)
-				NavigatorPlugin.logError(0, NLS.bind(
-						CommonNavigatorMessages.Attribute_Missing_Warning,
-						new Object[] {
-								NavigatorViewerDescriptor.ATT_PATTERN,
-								element.getDeclaringExtension()
-										.getUniqueIdentifier(),
-								element.getDeclaringExtension()
-										.getNamespace() }), null);
+				NavigatorPlugin
+						.logError(
+								0,
+								NLS
+										.bind(
+												CommonNavigatorMessages.Attribute_Missing_Warning,
+												new Object[] {
+														NavigatorViewerDescriptor.ATT_PATTERN,
+														element
+																.getDeclaringExtension()
+																.getUniqueIdentifier(),
+														element
+																.getDeclaringExtension()
+																.getNamespace() }),
+								null);
 			else {
 				compiledPattern = Pattern.compile(patternString);
 				excludePatterns.add(compiledPattern);

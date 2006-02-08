@@ -1,4 +1,4 @@
-package org.eclipse.ui.navigator.resources.internal.actions;
+package org.eclipse.ui.internal.navigator.resources.actions;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -12,12 +12,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.internal.navigator.AdaptabilityUtility;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProviderConfig;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
-import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 
 /**
  * Provides the open and open with menus for IResources.

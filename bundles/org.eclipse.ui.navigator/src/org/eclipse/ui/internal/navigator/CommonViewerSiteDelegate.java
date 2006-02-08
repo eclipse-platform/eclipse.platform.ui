@@ -6,6 +6,12 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.navigator.ICommonViewerSite;
 
+/**
+ * Provides a delegate implementation of {@link ICommonViewerSite}.
+ * 
+ * @since 3.2
+ *
+ */
 public class CommonViewerSiteDelegate implements ICommonViewerSite {
 	
 	
@@ -13,6 +19,12 @@ public class CommonViewerSiteDelegate implements ICommonViewerSite {
 	private ISelectionProvider selectionProvider; 
 	private Shell shell;
 
+	/**
+	 * 
+	 * @param anId
+	 * @param aSelectionProvider
+	 * @param aShell
+	 */
 	public CommonViewerSiteDelegate(String anId,  ISelectionProvider aSelectionProvider, Shell aShell) {
 		Assert.isNotNull(anId);
 		Assert.isNotNull(aSelectionProvider);

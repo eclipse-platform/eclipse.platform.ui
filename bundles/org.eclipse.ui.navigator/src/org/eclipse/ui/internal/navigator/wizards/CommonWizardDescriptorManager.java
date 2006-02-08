@@ -157,8 +157,7 @@ public class CommonWizardDescriptorManager {
 				} catch (WorkbenchException e) {
 					// log an error since its not safe to open a dialog here
 					NavigatorPlugin
-							.log(
-									"Unable to create common wizard descriptor.", e.getStatus());//$NON-NLS-1$
+							.logError(0, e.getMessage(), e);
 				}
 			}
 			return super.readElement(anElement);

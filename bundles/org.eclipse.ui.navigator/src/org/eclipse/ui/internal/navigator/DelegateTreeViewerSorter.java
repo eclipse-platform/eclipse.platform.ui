@@ -19,13 +19,20 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.navigator.TreeViewerSorter;
 
 /**
+ * Turns a viewer sorter into a TreeViewerSorter.
+ * 
  * @since 3.2
- *
+ * 
  */
 public class DelegateTreeViewerSorter extends TreeViewerSorter {
- 
+
 	private ViewerSorter delegateSorter;
 
+	/**
+	 * Constructs a basic delegate viewer sorter.
+	 * 
+	 * @param aSorter
+	 */
 	public DelegateTreeViewerSorter(ViewerSorter aSorter) {
 		super();
 		Assert.isNotNull(aSorter);

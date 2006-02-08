@@ -60,8 +60,8 @@
             priority="low"
             icon="icons/full/eview16/resource_persp.gif"
             activeByDefault="true"
-			            contentProvider="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionContentProvider"
-            			labelProvider="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionLabelProvider"			
+			            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            			labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"			
             id="org.eclipse.ui.navigator.resourceContent">         
          <enablement>
 		         <or>         
@@ -79,7 +79,7 @@
          </enablement>
          
         <commonSorter
-              class="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionSorter"
+              class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionSorter"
               id="org.eclipse.ui.navigator.resources.sorters.defaultSorter">
            <parentExpression>
            		  <or>         
@@ -101,7 +101,7 @@
       <!-- Action Providers -->
       <actionProvider 
       			id="org.eclipse.ui.navigator.resources.OpenActions"
-				class="org.eclipse.ui.navigator.resources.internal.actions.OpenActionProvider">
+				class="org.eclipse.ui.internal.navigator.resources.actions.OpenActionProvider">
 			<enablement>
 				<or>
 					<adapt type="org.eclipse.core.resources.IFile" /> 	
@@ -110,7 +110,7 @@
 		</actionProvider> 
 		<actionProvider 
         		id="org.eclipse.ui.navigator.resources.PortingActions"
-				class="org.eclipse.ui.navigator.resources.internal.actions.PortingActionProvider">
+				class="org.eclipse.ui.internal.navigator.resources.actions.PortingActionProvider">
 			<enablement>
 				<or> 	
 					<adapt type="org.eclipse.core.resources.IFolder" />
@@ -120,7 +120,7 @@
 			</enablement>
 		</actionProvider>
         <actionProvider
-            	class="org.eclipse.ui.navigator.resources.internal.actions.NewActionProvider"
+            	class="org.eclipse.ui.internal.navigator.resources.actions.NewActionProvider"
             	id="org.eclipse.ui.navigator.resources.NewActions"> 
         	<enablement>
 				<or>
@@ -204,7 +204,7 @@
          id="resourceDropHandler"
          point="org.eclipse.ui.navigator.dropHandler">
       <dropHandler
-            class="org.eclipse.ui.navigator.resources.internal.workbench.ResourceDropAction"
+            class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceDropAction"
             id="org.eclipse.navigator.resources.dropHandler"
             name="%moveCopy.name"
             description="%moveCopy.desc">

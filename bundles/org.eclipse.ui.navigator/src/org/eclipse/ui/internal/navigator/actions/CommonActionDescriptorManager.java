@@ -92,21 +92,20 @@ public class CommonActionDescriptorManager {
 		dependentDescriptors.clear();
 
 		if (!unresolvedDependentDescriptors.isEmpty()) {
-			StringBuffer errorMessage = new StringBuffer("There were unresolved dependencies for action provider extensions to a Common Navigator.\n" + //$NON-NLS-1$
-					"Verify that the \"dependsOn\" attribute for each <actionProvider /> element is valid."); //$NON-NLS-1$
+			StringBuffer errorMessage = new StringBuffer(
+					"There were unresolved dependencies for action provider extensions to a Common Navigator.\n" + //$NON-NLS-1$
+							"Verify that the \"dependsOn\" attribute for each <actionProvider /> element is valid."); //$NON-NLS-1$
 
 			CommonActionProviderDescriptor[] unresolvedDescriptors = (CommonActionProviderDescriptor[]) unresolvedDependentDescriptors
 					.toArray(new CommonActionProviderDescriptor[unresolvedDependentDescriptors
 							.size()]);
-			for (int i = 0; i < unresolvedDescriptors.length; i++) 
-				errorMessage.append("\nUnresolved dependency specified for actionProvider: ").append(unresolvedDescriptors[i].getId()); //$NON-NLS-1$
-			
-			NavigatorPlugin
-			.log(
-					IStatus.WARNING,
-					0,
-					errorMessage.toString(),
-					null); 
+			for (int i = 0; i < unresolvedDescriptors.length; i++)
+				errorMessage
+						.append(
+								"\nUnresolved dependency specified for actionProvider: ").append(unresolvedDescriptors[i].getId()); //$NON-NLS-1$
+
+			NavigatorPlugin.log(IStatus.WARNING, 0, errorMessage.toString(),
+					null);
 
 		}
 		unresolvedDependentDescriptors.clear();
@@ -115,8 +114,8 @@ public class CommonActionDescriptorManager {
 
 	/**
 	 * 
-	 * @param aViewerDescriptor
-	 *            The viewer descriptor to use when filtering action providers;
+	 * @param aContentService
+	 *            The content service to use when filtering action providers;
 	 *            only action providers bound directly or indirectly will be
 	 *            returned.
 	 * @param aContext
@@ -151,7 +150,7 @@ public class CommonActionDescriptorManager {
 	}
 
 	/**
-	 * @param aViewerDescriptor
+	 * @param aContentService
 	 * @param structuredSelection
 	 * @param actionDescriptor
 	 * @param providers
@@ -166,8 +165,7 @@ public class CommonActionDescriptorManager {
 			if (actionDescriptor.hasDependentDescriptors())
 				for (Iterator iter = actionDescriptor.dependentDescriptors(); iter
 						.hasNext();)
-					addProviderIfRelevant(aContentService,
-							structuredSelection,
+					addProviderIfRelevant(aContentService, structuredSelection,
 							(CommonActionProviderDescriptor) iter.next(),
 							providers);
 		}
@@ -179,7 +177,8 @@ public class CommonActionDescriptorManager {
 			return aContentService.isActive(descriptor.getId())
 					&& aContentService.isVisible(descriptor.getId());
 		}
-		return aContentService.getViewerDescriptor().isVisibleActionExtension(descriptor.getId());
+		return aContentService.getViewerDescriptor().isVisibleActionExtension(
+				descriptor.getId());
 	}
 
 	private class ActionProviderRegistry extends NavigatorContentRegistryReader {

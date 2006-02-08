@@ -63,7 +63,7 @@ public class CommonNavigatorDragAdapter extends DragSourceAdapter {
 			LocalSelectionTransfer.getInstance().setSelection(selection);
 
 		} catch (RuntimeException e) {
-			NavigatorPlugin.log("CommonNavigatorDragAdapter.dragStart():" + e.toString()); //$NON-NLS-1$
+			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
 		// System.out.println(getClass().getName()+".dragStart(DragSourceEvent event=\""+event+"\");
 		// widget = " + event.widget);

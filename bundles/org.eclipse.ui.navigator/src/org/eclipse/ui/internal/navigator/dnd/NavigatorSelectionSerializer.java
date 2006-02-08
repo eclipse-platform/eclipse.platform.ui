@@ -22,18 +22,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
  * @since 3.2
- *  
+ * 
  */
 public class NavigatorSelectionSerializer implements ISerializer {
 
@@ -55,7 +55,7 @@ public class NavigatorSelectionSerializer implements ISerializer {
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	public NavigatorSelectionSerializer(String aViewerId) {
 		this.viewerId = aViewerId;
@@ -68,12 +68,13 @@ public class NavigatorSelectionSerializer implements ISerializer {
 			return new byte[0];
 
 		IStructuredSelection selection = (IStructuredSelection) object;
-		//	  TODO MDE Serialize muliple elements -- getFirstElement() is just to
+		// TODO MDE Serialize muliple elements -- getFirstElement() is just to
 		// test the idea
 		byte[] result = null;
 
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+		DataOutputStream dataOutputStream = new DataOutputStream(
+				byteArrayOutputStream);
 
 		try {
 			dataOutputStream.writeUTF(viewerId);
@@ -83,22 +84,28 @@ public class NavigatorSelectionSerializer implements ISerializer {
 			SerializerDescriptor[] serializerDescriptors = null;
 			/* write the number of objects to be serialized */
 			dataOutputStream.writeInt(selection.size());
-			for (Iterator selectionIterator = selection.iterator(); selectionIterator.hasNext();) {
+			for (Iterator selectionIterator = selection.iterator(); selectionIterator
+					.hasNext();) {
 				element = selectionIterator.next();
-				serializerDescriptors = CommonDropHandlerService.getInstance(viewerId).getSerializersEnabledFor(element);
+				serializerDescriptors = CommonDropHandlerService.getInstance(
+						viewerId).getSerializersEnabledFor(element);
 
 				/* write the number of different representations to be stored */
 				ByteArrayOutputStream localRepresentationOutputStream = null;
 				int differentRepresentations = 0;
-				DataOutputStream serializedDataOutputStream = new DataOutputStream((localRepresentationOutputStream = new ByteArrayOutputStream()));
+				DataOutputStream serializedDataOutputStream = new DataOutputStream(
+						(localRepresentationOutputStream = new ByteArrayOutputStream()));
 				for (int i = 0; i < serializerDescriptors.length; i++) {
-					ISerializer serializer = serializerDescriptors[i].getSerializer();
+					ISerializer serializer = serializerDescriptors[i]
+							.getSerializer();
 					data = serializer.toByteArray(element);
 					if (data != null) {
 						/*
-						 * write the id of the serializer that marshalled the data
+						 * write the id of the serializer that marshalled the
+						 * data
 						 */
-						serializedDataOutputStream.writeUTF(serializerDescriptors[i].id);
+						serializedDataOutputStream
+								.writeUTF(serializerDescriptors[i].id);
 						/* write the amount of data */
 						serializedDataOutputStream.writeInt(data.length);
 						/* write the data */
@@ -108,21 +115,22 @@ public class NavigatorSelectionSerializer implements ISerializer {
 				}
 
 				dataOutputStream.writeInt(differentRepresentations);
-				dataOutputStream.write(localRepresentationOutputStream.toByteArray());
+				dataOutputStream.write(localRepresentationOutputStream
+						.toByteArray());
 			}
 			result = byteArrayOutputStream.toByteArray();
 		} catch (IOException e) {
-			NavigatorPlugin.log(CommonNavigatorMessages.NavigatorSelectionSerializer_1 + e.toString());  
+			NavigatorPlugin.logError(0, e.getMessage(), e);
 			result = null;
 		}
 		return result;
 	}
 
- 
 	public Object fromByteArray(byte[] data) {
 		Map results = new HashMap();
 
-		DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
+		DataInputStream dataInputStream = new DataInputStream(
+				new ByteArrayInputStream(data));
 		try {
 			int localDataLen = 0;
 			byte[] localData = null;
@@ -135,8 +143,11 @@ public class NavigatorSelectionSerializer implements ISerializer {
 				int numberOfRepresentations = dataInputStream.readInt();
 				for (int j = 0; j < numberOfRepresentations; j++) {
 					serializerId = dataInputStream.readUTF();
-					SerializerDescriptor serializerDescriptor = CommonDropHandlerService.getInstance(localViewerId).getSerializerById(serializerId);
-					ISerializer serializer = serializerDescriptor.getSerializer();
+					SerializerDescriptor serializerDescriptor = CommonDropHandlerService
+							.getInstance(localViewerId).getSerializerById(
+									serializerId);
+					ISerializer serializer = serializerDescriptor
+							.getSerializer();
 					localDataLen = dataInputStream.readInt();
 					localData = new byte[localDataLen];
 					dataInputStream.read(localData, 0, localData.length);

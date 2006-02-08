@@ -47,12 +47,6 @@ import org.eclipse.ui.navigator.NavigatorActionService;
  * <p>
  * This class is not intended to be instantiated or subclassed by clients
  * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  */
@@ -86,7 +80,8 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		contentService = commonNavigator.getNavigatorContentService();
 		statusLineManager = commonNavigator.getViewSite().getActionBars()
 				.getStatusLineManager();
-		commonDescriptionProvider = contentService.createCommonDescriptionProvider();
+		commonDescriptionProvider = contentService
+				.createCommonDescriptionProvider();
 		labelProvider = (ILabelProvider) commonNavigator.getCommonViewer()
 				.getLabelProvider();
 		init();
@@ -97,10 +92,11 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		commonViewer.addSelectionChangedListener(this);
 		updateStatusBar(commonViewer.getSelection());
 
-		ICommonViewerSite commonViewerSite = CommonViewerSiteFactory.createCommonViewerSite(commonNavigator.getViewSite());
-		actionService = new NavigatorActionService(commonViewerSite, commonViewer, commonViewer
-				.getNavigatorContentService()); 
-		
+		ICommonViewerSite commonViewerSite = CommonViewerSiteFactory
+				.createCommonViewerSite(commonNavigator.getViewSite());
+		actionService = new NavigatorActionService(commonViewerSite,
+				commonViewer, commonViewer.getNavigatorContentService());
+
 		initContextMenu();
 		initViewMenu();
 
@@ -172,8 +168,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 * 
 	 * @param aMenuManager
 	 *            A popup menu
-	 * @see NavigatorActionService#fillContextMenu(IMenuManager,
-	 *      IStructuredSelection)
+	 * @see NavigatorActionService#fillContextMenu(IMenuManager)
 	 * 
 	 */
 	protected void fillContextMenu(IMenuManager aMenuManager) {

@@ -48,12 +48,12 @@ public class NavigatorContentDescriptorManager {
 	private final Map firstClassDescriptors = new HashMap();
 
 	private final Map allDescriptors = new HashMap();
-	
-	private class EvaluationCache implements VisibilityListener {
-		 
-		private final Map evaluations = new WeakHashMap(); 
 
-		public EvaluationCache(VisibilityAssistant anAssistant) {  
+	private class EvaluationCache implements VisibilityListener {
+
+		private final Map evaluations = new WeakHashMap();
+
+		EvaluationCache(VisibilityAssistant anAssistant) {
 			anAssistant.addListener(this);
 		}
 
@@ -64,21 +64,22 @@ public class NavigatorContentDescriptorManager {
 		protected final void setDescriptors(Object anElement, Set theDescriptors) {
 			evaluations.put(anElement, theDescriptors);
 		}
-  
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener#onVisibilityOrActivationChange()
 		 */
 		public void onVisibilityOrActivationChange() {
-			evaluations.clear();		
-		} 
-	} 
-	
+			evaluations.clear();
+		}
+	}
+
 	/* Map of (VisibilityAssistant, EvaluationCache)-pairs */
 	private final Map cachedTriggerPointEvaluations = new WeakHashMap();
-	
+
 	/* Map of (VisibilityAssistant, EvaluationCache)-pairs */
-	private final Map cachedPossibleChildrenEvaluations = new WeakHashMap(); 
- 
+	private final Map cachedPossibleChildrenEvaluations = new WeakHashMap();
 
 	private ImageRegistry imageRegistry;
 
@@ -131,10 +132,11 @@ public class NavigatorContentDescriptorManager {
 	 */
 	public Set findDescriptorsForTriggerPoint(Object anElement,
 			VisibilityAssistant aVisibilityAssistant) {
-		EvaluationCache cache = getEvaluationCache(cachedTriggerPointEvaluations, aVisibilityAssistant);
-		if(cache.getDescriptors(anElement) != null)
+		EvaluationCache cache = getEvaluationCache(
+				cachedTriggerPointEvaluations, aVisibilityAssistant);
+		if (cache.getDescriptors(anElement) != null)
 			return cache.getDescriptors(anElement);
-		
+
 		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
@@ -148,19 +150,21 @@ public class NavigatorContentDescriptorManager {
 					&& descriptor.isTriggerPoint(anElement))
 				descriptors.add(descriptor);
 		}
-		
+
 		cache.setDescriptors(anElement, descriptors);
 
 		return descriptors;
 	}
 
-	
-	private EvaluationCache getEvaluationCache(Map anEvaluationMap, VisibilityAssistant aVisibilityAssistant) { 
-		EvaluationCache c = (EvaluationCache) anEvaluationMap.get(aVisibilityAssistant);
-		if(c == null)
-			anEvaluationMap.put(aVisibilityAssistant, c = new EvaluationCache(aVisibilityAssistant));
+	private EvaluationCache getEvaluationCache(Map anEvaluationMap,
+			VisibilityAssistant aVisibilityAssistant) {
+		EvaluationCache c = (EvaluationCache) anEvaluationMap
+				.get(aVisibilityAssistant);
+		if (c == null)
+			anEvaluationMap.put(aVisibilityAssistant, c = new EvaluationCache(
+					aVisibilityAssistant));
 		return c;
-		
+
 	}
 
 	/**
@@ -177,16 +181,16 @@ public class NavigatorContentDescriptorManager {
 	 */
 	public Set findDescriptorsForPossibleChild(Object anElement,
 			VisibilityAssistant aVisibilityAssistant) {
-		
 
-		EvaluationCache cache = getEvaluationCache(cachedPossibleChildrenEvaluations, aVisibilityAssistant);
-		if(cache.getDescriptors(anElement) != null)
+		EvaluationCache cache = getEvaluationCache(
+				cachedPossibleChildrenEvaluations, aVisibilityAssistant);
+		if (cache.getDescriptors(anElement) != null)
 			return cache.getDescriptors(anElement);
-		
+
 		Set descriptors = new HashSet();
 		addDescriptorsForPossibleChild(anElement, firstClassDescriptorsSet,
-				aVisibilityAssistant, descriptors); 
-		
+				aVisibilityAssistant, descriptors);
+
 		cache.setDescriptors(anElement, descriptors);
 
 		return descriptors;
@@ -210,10 +214,10 @@ public class NavigatorContentDescriptorManager {
 
 			if (descriptor.hasOverridingExtensions()) {
 
-				boolean isOverridden = addDescriptorsForPossibleChild(anElement,
-						descriptor.getOverriddingExtensions(),
+				boolean isOverridden = addDescriptorsForPossibleChild(
+						anElement, descriptor.getOverriddingExtensions(),
 						aVisibilityAssistant, theFoundDescriptors);
-				
+
 				if (!isOverridden && isApplicable)
 					theFoundDescriptors.add(descriptor);
 
@@ -381,14 +385,11 @@ public class NavigatorContentDescriptorManager {
 
 				} catch (WorkbenchException e) {
 					// log an error since its not safe to open a dialog here
-					NavigatorPlugin
-							.log(
-									"Unable to create navigator descriptor.", e.getStatus()); //$NON-NLS-1$
+					NavigatorPlugin.log(e.getStatus());
 				}
 			}
 			return super.readElement(anElement);
 		}
-
 	}
 
 }

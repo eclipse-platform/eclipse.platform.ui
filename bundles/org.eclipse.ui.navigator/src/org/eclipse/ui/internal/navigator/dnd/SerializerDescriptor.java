@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.dnd;
- 
+
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -25,13 +25,14 @@ import org.eclipse.ui.internal.navigator.dnd.SerializerCollectionDescriptor.Exte
 /**
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2 
- *
+ * @since 3.2
+ * 
  */
 public class SerializerDescriptor {
 
@@ -43,31 +44,37 @@ public class SerializerDescriptor {
 
 	private ISerializer serializer;
 
-	public SerializerDescriptor(String dropHandlerId, IConfigurationElement serializer, Expression dragEnablement) {
+	public SerializerDescriptor(String dropHandlerId,
+			IConfigurationElement serializer, Expression dragEnablement) {
 
-		Assert.isNotNull(serializer, CommonNavigatorMessages.SerializerDescriptor_0);
+		Assert.isNotNull(serializer,
+				CommonNavigatorMessages.SerializerDescriptor_0);
 
 		String localId = serializer.getAttribute(ExtensionPointElements.ATT_ID);
-		Assert.isNotNull(localId, CommonNavigatorMessages.SerializerDescriptor_1);  
+		Assert.isNotNull(localId,
+				CommonNavigatorMessages.SerializerDescriptor_1);
 
 		this.id = dropHandlerId + ":" + localId; //$NON-NLS-1$
 		this.serializerElement = serializer;
 
-		IConfigurationElement[] enablementConfigElement = this.serializerElement.getChildren(ExtensionPointElements.ENABLEMENT);
+		IConfigurationElement[] enablementConfigElement = this.serializerElement
+				.getChildren(ExtensionPointElements.ENABLEMENT);
 
 		if (enablementConfigElement.length == 0)
-			this.enablement = dragEnablement; 
-		else if (enablementConfigElement.length == 1) {			
+			this.enablement = dragEnablement;
+		else if (enablementConfigElement.length == 1) {
 			try {
 				enablement = ElementHandler.getDefault().create(
-						ExpressionConverter.getDefault(), enablementConfigElement[0]);
+						ExpressionConverter.getDefault(),
+						enablementConfigElement[0]);
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 				enablement = dragEnablement;
 			}
-		}
-		else {
-			NavigatorPlugin.log(NLS.bind(CommonNavigatorMessages.SerializerDescriptor_3, new Object[]{this.id}));
+		} else {
+			NavigatorPlugin.log(IStatus.WARNING, 0, NLS.bind(
+					CommonNavigatorMessages.SerializerDescriptor_3,
+					new Object[] { this.id }), null);
 			enablement = dragEnablement;
 		}
 	}
@@ -75,9 +82,12 @@ public class SerializerDescriptor {
 	public ISerializer getSerializer() {
 		if (serializer == null)
 			try {
-				serializer = (ISerializer) serializerElement.createExecutableExtension(ExtensionPointElements.ATT_CLASS);
+				serializer = (ISerializer) serializerElement
+						.createExecutableExtension(ExtensionPointElements.ATT_CLASS);
 			} catch (CoreException e) {
-				NavigatorPlugin.log(NLS.bind(CommonNavigatorMessages.SerializerDescriptor_5, new Object[]{id, e.toString()}));   
+				NavigatorPlugin.log(IStatus.WARNING, 0, NLS.bind(
+						CommonNavigatorMessages.SerializerDescriptor_5,
+						new Object[] { id, e.toString() }), null);
 				serializer = null;
 			}
 		return serializer;

@@ -8,17 +8,14 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.navigator;
+package org.eclipse.ui.internal.navigator.resources.plugin;
 
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
+import org.eclipse.osgi.util.NLS;
 
 /**
- * <p>
- * A placeholder for activities API. Still under construction.
- * </p>
- * <p>
- * The following class is experimental until fully documented.
- * </p>
+ * Utility class which helps managing messages
+ * 
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -27,17 +24,19 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
  * </p>
  * @since 3.2
  */
-public class CommonActivitiesUtilities {
+public class WorkbenchNavigatorMessages extends NLS { 
+	public static final String BUNDLE_NAME = "messages"; //$NON-NLS-1$
 
+	public static String ResourceExtensionFilterProvider_Hides;
+	public static String ImportResourcesMenu_text;
+	public static String ExportResourcesMenu_text;
+	
 
-	/**
-	 * <p>
-	 * Filters the supplied array of theDescriptors by the currently enabled Activities
-	 * @param theDescriptors
-	 * @return
-	 */
-	public static NavigatorContentDescriptor[] filterByActivity(NavigatorContentDescriptor[] theDescriptors) {
-		return theDescriptors;
+	public static String Workbench_new;
+	public static String OpenWithMenu_label;
+	
+	
+	static {
+		initializeMessages(BUNDLE_NAME, WorkbenchNavigatorMessages.class);
 	}
-
 }

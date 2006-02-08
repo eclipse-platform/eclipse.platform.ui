@@ -19,41 +19,39 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  */
-public class DelegateCommonLabelProvider implements ICommonLabelProvider {
+public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider {
 
 	private final ILabelProvider delegateLabelProvider;
 
 	/**
-	 * <p>
-	 * Requires a non-null label provider as the parameter.
-	 * </p>
+	 * @param aLabelProvider
+	 *            A non-null label provider.
+	 * 
 	 */
-	public DelegateCommonLabelProvider(ILabelProvider aLabelProvider) {
+	public SafeDelegateCommonLabelProvider(ILabelProvider aLabelProvider) {
 		super();
 		delegateLabelProvider = aLabelProvider;
-	} 
+	}
 
 	/**
 	 * <p>
 	 * No-op.
 	 * </p>
 	 * 
-	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#initialize(java.lang.String)
+	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(IExtensionStateModel,
+	 *      ITreeContentProvider)
 	 */
-	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
+	public void init(IExtensionStateModel aStateModel,
+			ITreeContentProvider aContentProvider) {
 	}
 
 	/**
 	 * <p>
-	 * Returns <b>null </b>, forcing the CommonNavigator to provide the default message.
+	 * Returns <b>null </b>, forcing the CommonNavigator to provide the default
+	 * message.
 	 * </p>
 	 * 
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#getDescription(java.lang.Object)
@@ -70,7 +68,7 @@ public class DelegateCommonLabelProvider implements ICommonLabelProvider {
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	public void dispose() {
 		delegateLabelProvider.dispose();
@@ -85,18 +83,10 @@ public class DelegateCommonLabelProvider implements ICommonLabelProvider {
 		return delegateLabelProvider.equals(obj);
 	}
 
-	/**
-	 * @param element
-	 * @return
-	 */
 	public Image getImage(Object element) {
 		return delegateLabelProvider.getImage(element);
 	}
 
-	/**
-	 * @param element
-	 * @return
-	 */
 	public String getText(Object element) {
 		return delegateLabelProvider.getText(element);
 	}
@@ -110,11 +100,6 @@ public class DelegateCommonLabelProvider implements ICommonLabelProvider {
 		return delegateLabelProvider.hashCode();
 	}
 
-	/**
-	 * @param element
-	 * @param property
-	 * @return
-	 */
 	public boolean isLabelProperty(Object element, String property) {
 		return delegateLabelProvider.isLabelProperty(element, property);
 	}
@@ -135,18 +120,11 @@ public class DelegateCommonLabelProvider implements ICommonLabelProvider {
 		return delegateLabelProvider.toString();
 	}
 
-	public void initialize(String aViewerId, ITreeContentProvider aContentProvider) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void restoreState(IMemento aMemento) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void saveState(IMemento aMemento) {
-		// TODO Auto-generated method stub
-		
+
 	}
 }

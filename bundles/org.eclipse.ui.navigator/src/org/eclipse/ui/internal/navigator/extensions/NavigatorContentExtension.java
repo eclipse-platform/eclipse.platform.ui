@@ -62,7 +62,7 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	private IMemento appliedMemento;
 
-	private StructuredViewerManager viewerManager; 
+	private StructuredViewerManager viewerManager;
 
 	/**
 	 * Create an object to manage the instantiated elements from the extension.
@@ -120,7 +120,7 @@ public class NavigatorContentExtension implements IMementoAware,
 					ITreeContentProvider treeContentProvider = descriptor
 							.createContentProvider();
 					if (treeContentProvider != null) {
-						contentProvider = new NavigatorContentProvider(
+						contentProvider = new SafeDelegateTreeContentProvider(
 								treeContentProvider, descriptor, contentService);
 						contentProvider.init(getStateModel(), appliedMemento);
 						viewerManager.initialize(contentProvider);
@@ -157,17 +157,17 @@ public class NavigatorContentExtension implements IMementoAware,
 
 					if (tempLabelProvider instanceof ICommonLabelProvider) {
 						labelProvider = (ICommonLabelProvider) tempLabelProvider;
-						if (getContentProvider() instanceof NavigatorContentProvider)
+						if (getContentProvider() instanceof SafeDelegateTreeContentProvider)
 							labelProvider
 									.init(
 											getStateModel(),
-											((NavigatorContentProvider) getContentProvider())
+											((SafeDelegateTreeContentProvider) getContentProvider())
 													.getDelegateContentProvider());
 						else
 							labelProvider.init(getStateModel(),
 									SkeletonTreeContentProvider.INSTANCE);
 					} else {
-						labelProvider = new DelegateCommonLabelProvider(
+						labelProvider = new SafeDelegateCommonLabelProvider(
 								tempLabelProvider);
 					}
 				}
@@ -184,7 +184,7 @@ public class NavigatorContentExtension implements IMementoAware,
 		}
 		return labelProvider;
 	}
- 
+
 	/**
 	 * Dispose of any resources acquired during the lifecycle of the extension.
 	 * 
@@ -286,6 +286,8 @@ public class NavigatorContentExtension implements IMementoAware,
 	}
 
 	/**
+	 * @param anElement
+	 *            The element for the query.
 	 * @return Returns the overridingExtensions.
 	 */
 	public NavigatorContentExtension[] getOverridingExtensionsForTriggerPoint(
@@ -316,25 +318,29 @@ public class NavigatorContentExtension implements IMementoAware,
 	}
 
 	/**
+	 * 
+	 * @param anElement
+	 *            The element for the query.
 	 * @return Returns the overridingExtensions.
 	 */
 	public NavigatorContentExtension[] getOverridingExtensionsForPossibleChild(
 			Object anElement) {
 		if (!descriptor.hasOverridingExtensions())
-			return NO_EXTENSIONS;
-
+			return NO_EXTENSIONS; 
+		
+		NavigatorContentDescriptor overriddingDescriptor;
 		Set overridingExtensions = new HashSet();
 		for (Iterator contentDescriptorsItr = descriptor
 				.getOverriddingExtensions().iterator(); contentDescriptorsItr
 				.hasNext();) {
-			descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+			overriddingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 					.next();
 
-			if (contentService.isActive(descriptor.getId())
-					&& contentService.isVisible(descriptor.getId())
-					&& descriptor.isPossibleChild(anElement)) {
+			if (contentService.isActive(overriddingDescriptor.getId())
+					&& contentService.isVisible(overriddingDescriptor.getId())
+					&& overriddingDescriptor.isPossibleChild(anElement)) {
 				overridingExtensions.add(contentService
-						.getExtension(descriptor));
+						.getExtension(overriddingDescriptor));
 			}
 		}
 		if (overridingExtensions.size() == 0)
@@ -343,8 +349,10 @@ public class NavigatorContentExtension implements IMementoAware,
 				.toArray(new NavigatorContentExtension[overridingExtensions
 						.size()]);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

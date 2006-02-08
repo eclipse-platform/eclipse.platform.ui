@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
@@ -26,6 +22,7 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 
 /**
@@ -128,26 +125,64 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public synchronized Object[] getElements(Object anInputElement) {
-		ITreeContentProvider[] delegateProviders = contentService
-				.findRootContentProviders(anInputElement);
-		if (delegateProviders.length == 0)
+		Set rootContentExtensions = contentService
+				.findRootContentExtensions(anInputElement);
+		if (rootContentExtensions.size() == 0)
 			return NO_CHILDREN;
-		List resultElements = new ArrayList();
-		Object[] delegateChildren = null;
-		for (int i = 0; i < delegateProviders.length; i++) {
+		Set finalElementsSet = new HashSet();
+
+		Object[] contributedChildren = null;
+		NavigatorContentExtension foundExtension;
+		NavigatorContentExtension[] overridingExtensions;
+		for (Iterator itr = rootContentExtensions.iterator(); itr.hasNext();) {
+			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
-				delegateChildren = delegateProviders[i]
-						.getElements(anInputElement);
-				if (delegateChildren != null && delegateChildren.length > 0)
-					resultElements.addAll(Arrays.asList(delegateChildren));
+
+				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
+						rootContentExtensions)) {
+
+					contributedChildren = foundExtension.getContentProvider()
+							.getElements(anInputElement);
+
+					overridingExtensions = foundExtension
+							.getOverridingExtensionsForTriggerPoint(anInputElement);
+
+					if (overridingExtensions.length > 0) {
+						contributedChildren = pipelineElements(anInputElement,
+								overridingExtensions,
+								new HashSet(Arrays.asList(contributedChildren)))
+								.toArray();
+					}
+
+					if (contributedChildren != null
+							&& contributedChildren.length > 0)
+						finalElementsSet.addAll(Arrays
+								.asList(contributedChildren));
+				}
 			} catch (RuntimeException re) {
-				String msg = CommonNavigatorMessages.Could_not_provide_children_for_element
-						+ delegateProviders[i].getClass();
-				NavigatorPlugin.log(msg, new Status(IStatus.ERROR,
-						NavigatorPlugin.PLUGIN_ID, 0, msg, re));
+				NavigatorPlugin
+						.logError(
+								0,
+								NLS
+										.bind(
+												CommonNavigatorMessages.Could_not_provide_children_for_element,
+												new Object[] { foundExtension
+														.getDescriptor()
+														.getId() }), re);
+			} catch (Error e) {
+				NavigatorPlugin
+						.logError(
+								0,
+								NLS
+										.bind(
+												CommonNavigatorMessages.Could_not_provide_children_for_element,
+												new Object[] { foundExtension
+														.getDescriptor()
+														.getId() }), e);
+
 			}
 		}
-		return resultElements.toArray();
+		return finalElementsSet.toArray();
 	}
 
 	/**
@@ -183,19 +218,21 @@ public class NavigatorContentServiceContentProvider implements
 		Set finalChildrenSet = new HashSet();
 
 		Object[] contributedChildren = null;
-		NavigatorContentExtension enabledExtension; 
+		NavigatorContentExtension foundExtension;
 		NavigatorContentExtension[] overridingExtensions;
 		for (Iterator itr = enabledExtensions.iterator(); itr.hasNext();) {
-			enabledExtension = (NavigatorContentExtension) itr.next();
+			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
 
-				if (!shouldDeferToOverridePath(enabledExtension.getDescriptor(),
+				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
 						enabledExtensions)) {
- 
-					contributedChildren = enabledExtension.getContentProvider()
+
+					contributedChildren = foundExtension.getContentProvider()
 							.getChildren(aParentElement);
-					overridingExtensions = enabledExtension
+
+					overridingExtensions = foundExtension
 							.getOverridingExtensionsForTriggerPoint(aParentElement);
+
 					if (overridingExtensions.length > 0) {
 						contributedChildren = pipelineChildren(aParentElement,
 								overridingExtensions,
@@ -203,8 +240,10 @@ public class NavigatorContentServiceContentProvider implements
 								.toArray();
 					}
 
-					if (contributedChildren != null && contributedChildren.length > 0)
-						finalChildrenSet.addAll(Arrays.asList(contributedChildren));
+					if (contributedChildren != null
+							&& contributedChildren.length > 0)
+						finalChildrenSet.addAll(Arrays
+								.asList(contributedChildren));
 				}
 			} catch (RuntimeException re) {
 				NavigatorPlugin
@@ -213,7 +252,7 @@ public class NavigatorContentServiceContentProvider implements
 								NLS
 										.bind(
 												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { enabledExtension
+												new Object[] { foundExtension
 														.getDescriptor()
 														.getId() }), re);
 			} catch (Error e) {
@@ -223,7 +262,7 @@ public class NavigatorContentServiceContentProvider implements
 								NLS
 										.bind(
 												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { enabledExtension
+												new Object[] { foundExtension
 														.getDescriptor()
 														.getId() }), e);
 
@@ -232,6 +271,20 @@ public class NavigatorContentServiceContentProvider implements
 		return finalChildrenSet.toArray();
 	}
 
+	/**
+	 * Query each of <code>theOverridingExtensions</code> for children, and
+	 * then pipe them through the Pipeline content provider.
+	 * 
+	 * @param aParent
+	 *            The parent element in the tree
+	 * @param theOverridingExtensions
+	 *            The set of overriding extensions that should participate in
+	 *            the pipeline chain
+	 * @param theCurrentChildren
+	 *            The current children to return to the viewer (should be
+	 *            modifiable)
+	 * @return The set of children to return to the viewer
+	 */
 	private Set pipelineChildren(Object aParent,
 			NavigatorContentExtension[] theOverridingExtensions,
 			Set theCurrentChildren) {
@@ -241,7 +294,7 @@ public class NavigatorContentServiceContentProvider implements
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
 			pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 					.getContentProvider();
-			pipelinedChildren = pipelinedContentProvider.getPipelinedChildren(
+			pipelinedContentProvider.getPipelinedChildren(
 					aParent, pipelinedChildren);
 			overridingExtensions = theOverridingExtensions[i]
 					.getOverridingExtensionsForTriggerPoint(aParent);
@@ -254,13 +307,70 @@ public class NavigatorContentServiceContentProvider implements
 
 	}
 
-	private boolean shouldDeferToOverridePath(
-			INavigatorContentDescriptor enabledDescriptor, Set enabledExtensions) {
+	/**
+	 * Query each of <code>theOverridingExtensions</code> for elements, and
+	 * then pipe them through the Pipeline content provider.
+	 * 
+	 * @param anInputElement
+	 *            The input element in the tree
+	 * @param theOverridingExtensions
+	 *            The set of overriding extensions that should participate in
+	 *            the pipeline chain
+	 * @param theCurrentElements
+	 *            The current elements to return to the viewer (should be
+	 *            modifiable)
+	 * @return The set of elements to return to the viewer
+	 */
+	private Set pipelineElements(Object anInputElement,
+			NavigatorContentExtension[] theOverridingExtensions,
+			Set theCurrentElements) {
+		IPipelinedTreeContentProvider pipelinedContentProvider;
+		NavigatorContentExtension[] overridingExtensions;
+		Set pipelinedElements = theCurrentElements;
+		for (int i = 0; i < theOverridingExtensions.length; i++) {
+			pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
+					.getContentProvider();
 
-		if (enabledDescriptor.getSuppressedExtensionId() != null
-				&& enabledDescriptor.getOverridePolicy() == OverridePolicy.InvokeAlwaysRegardlessOfSuppressedExt) {
-			if (enabledExtensions.contains(contentService
-					.getExtension(enabledDescriptor.getOverriddenDescriptor())))
+			pipelinedContentProvider.getPipelinedElements(
+					anInputElement, pipelinedElements);
+
+			overridingExtensions = theOverridingExtensions[i]
+					.getOverridingExtensionsForTriggerPoint(anInputElement);
+			if (overridingExtensions.length > 0)
+				pipelinedElements = pipelineElements(anInputElement,
+						overridingExtensions, pipelinedElements);
+		}
+		return pipelinedElements;
+	}
+
+	/**
+	 * Currently this method only checks one level deep. If the suppressed
+	 * extension of the given descriptor is contained lower in the tree, then
+	 * the extension could still be invoked twice.
+	 * 
+	 * @param aDescriptor
+	 *            The descriptor which may be overriding other extensions.
+	 * @param theEnabledExtensions
+	 *            The other available extensions.
+	 * @return True if the results should be pipelined through the downstream
+	 *         extensions.
+	 */
+	private boolean shouldDeferToOverridePath(
+			INavigatorContentDescriptor aDescriptor, Set theEnabledExtensions) {
+
+		if (aDescriptor.getSuppressedExtensionId() != null /*
+															 * The descriptor is
+															 * an override
+															 * descriptor
+															 */
+				&& aDescriptor.getOverridePolicy() == OverridePolicy.InvokeAlwaysRegardlessOfSuppressedExt) {
+			/*
+			 * if the policy is set as such, it can lead to this extension being
+			 * invoked twice; once as a first class extension, and once an
+			 * overriding extension.
+			 */
+			if (theEnabledExtensions.contains(contentService
+					.getExtension(aDescriptor.getOverriddenDescriptor())))
 				return true;
 		}
 		return false;
@@ -286,22 +396,93 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public synchronized Object getParent(Object anElement) {
-		ITreeContentProvider[] delegateProviders = contentService
-				.findParentContentProviders(anElement);
+		Set extensions = contentService
+				.findContentExtensionsWithPossibleChild(anElement);
 
-		Object parent = null;
-		for (int i = 0; i < delegateProviders.length; i++) {
+		Object parent;
+		NavigatorContentExtension foundExtension;
+		NavigatorContentExtension[] overridingExtensions;
+		for (Iterator itr = extensions.iterator(); itr.hasNext();) {
+			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
-				if ((parent = delegateProviders[i].getParent(anElement)) != null)
-					return parent;
+
+				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
+						extensions)) {
+
+					parent = foundExtension.getContentProvider().getParent(
+							anElement);
+
+					overridingExtensions = foundExtension
+							.getOverridingExtensionsForPossibleChild(anElement);
+
+					if (overridingExtensions.length > 0) {
+						parent = pipelineParent(anElement,
+								overridingExtensions, parent);
+					}
+
+					if (parent != null)
+						return parent;
+				}
 			} catch (RuntimeException re) {
-				String msg = CommonNavigatorMessages.Could_not_provide_parent_for_element
-						+ delegateProviders[i].getClass();
-				NavigatorPlugin.log(msg, new Status(IStatus.ERROR,
-						NavigatorPlugin.PLUGIN_ID, 0, msg, re));
+				NavigatorPlugin
+						.logError(
+								0,
+								NLS
+										.bind(
+												CommonNavigatorMessages.Could_not_provide_children_for_element,
+												new Object[] { foundExtension
+														.getDescriptor()
+														.getId() }), re);
+			} catch (Error e) {
+				NavigatorPlugin
+						.logError(
+								0,
+								NLS
+										.bind(
+												CommonNavigatorMessages.Could_not_provide_children_for_element,
+												new Object[] { foundExtension
+														.getDescriptor()
+														.getId() }), e);
+
 			}
 		}
+
 		return null;
+	}
+
+	/**
+	 * Query each of <code>theOverridingExtensions</code> for elements, and
+	 * then pipe them through the Pipeline content provider.
+	 * 
+	 * @param anInputElement
+	 *            The input element in the tree
+	 * @param theOverridingExtensions
+	 *            The set of overriding extensions that should participate in
+	 *            the pipeline chain
+	 * @param aSuggestedParent
+	 *            The current elements to return to the viewer (should be
+	 *            modifiable)
+	 * @return The set of elements to return to the viewer
+	 */
+	private Object pipelineParent(Object anInputElement,
+			NavigatorContentExtension[] theOverridingExtensions,
+			Object aSuggestedParent) {
+		IPipelinedTreeContentProvider pipelinedContentProvider;
+		NavigatorContentExtension[] overridingExtensions; 
+		for (int i = 0; i < theOverridingExtensions.length; i++) {
+			pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
+					.getContentProvider();
+
+			aSuggestedParent = pipelinedContentProvider.getPipelinedParent(
+					anInputElement, aSuggestedParent);
+
+			overridingExtensions = theOverridingExtensions[i]
+					.getOverridingExtensionsForTriggerPoint(anInputElement);
+			if (overridingExtensions.length > 0)
+				aSuggestedParent = pipelineParent(anInputElement,
+						overridingExtensions, aSuggestedParent);
+		}
+		return aSuggestedParent;
 	}
 
 	/**
@@ -320,9 +501,9 @@ public class NavigatorContentServiceContentProvider implements
 		Set resultInstances = contentService
 				.findContentExtensionsByTriggerPoint(anElement);
 
-		NavigatorContentExtension ext;
+		INavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
-			ext = (NavigatorContentExtension) itr.next();
+			ext = (INavigatorContentExtension) itr.next();
 			if (!ext.isLoaded())
 				return true;
 			else if (ext.getContentProvider().hasChildren(anElement))

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
  
-package org.eclipse.ui.navigator.resources.internal.workbench;
+package org.eclipse.ui.internal.navigator.resources.workbench;
 
 import java.util.Comparator;
 

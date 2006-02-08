@@ -22,6 +22,9 @@ import org.eclipse.ui.navigator.INavigatorContentExtension;
  */
 public class ExtensionPriorityComparator implements Comparator {
 
+	/**
+	 * The initialized singleton instance.
+	 */
 	public static final ExtensionPriorityComparator INSTANCE = new ExtensionPriorityComparator();
 
 	/*

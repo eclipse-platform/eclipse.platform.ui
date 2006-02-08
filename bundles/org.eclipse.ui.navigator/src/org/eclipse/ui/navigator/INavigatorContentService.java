@@ -162,7 +162,7 @@ public interface INavigatorContentService {
 	 *         drive labels in the viewer.
 	 */
 	ILabelProvider createCommonLabelProvider();
-	
+
 	/**
 	 * 
 	 * @return The description provider for this content service.
@@ -181,7 +181,7 @@ public interface INavigatorContentService {
 	 *            extension.
 	 * @return The state model for the given extension id.
 	 */
-	IExtensionStateModel findStateModel(String anExtensionId); 
+	IExtensionStateModel findStateModel(String anExtensionId);
 
 	/**
 	 * The viewer id is used to locate matching <b>viewerContentBindings</b>.
@@ -337,8 +337,8 @@ public interface INavigatorContentService {
 	void removeListener(INavigatorContentServiceListener aListener);
 
 	/**
-	 * The root content providers are recalculated by this method. The
-	 * attached viewer is also refreshed as a result of this method.
+	 * The root content providers are recalculated by this method. The attached
+	 * viewer is also refreshed as a result of this method.
 	 * 
 	 */
 	void update();
@@ -350,19 +350,50 @@ public interface INavigatorContentService {
 	void dispose();
 
 	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>triggerPoints</b> expression.
+	 * 
 	 * @param anElement
-	 *            An element from the tree (any element contributed to the
-	 *            tree).
-	 * @return A set of {@link INavigatorContentDescriptor}s that are
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentExtension}s that are
 	 *         <i>visible</i> and <i>active</i> for this content service and
-	 *         enabled for the given element.
+	 *         either declared through a
+	 *         <b>org.eclipse.ui.navigator.viewer/viewerContentBinding</b> to
+	 *         be a root element or have a <b>triggerPoints</b> expression that
+	 *         is <i>enabled</i> for the given element.
 	 */
-	Set findEnabledContentDescriptors(Object anElement);
+	Set findRootContentExtensions(Object anElement);
+
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>triggerPoints</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i>
+	 *         for the given element.
+	 */
+	Set findContentExtensionsByTriggerPoint(Object anElement);
+
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>possibleChildren</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentExtension}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
+	 *         for the given element.
+	 */
+	Set findContentExtensionsWithPossibleChild(Object anElement);
 
 	/**
 	 * 
-	 * @return An INavigatorFilterService that can provide information to a
-	 *         viewer about what filters are 'visible' and 'active'.
+	 * @return An {@link INavigatorFilterService} that can provide information
+	 *         to a viewer about what filters are <i>visible</i> and <i>active</i>.
 	 */
 	INavigatorFilterService getFilterService();
 
@@ -371,9 +402,23 @@ public interface INavigatorContentService {
 	 * elements in the tree. Clients do not need to provide their own
 	 * {@link ViewerSorter} unless they wish to override this functionality.
 	 * 
-	 * @return An INavigatorSorterService that can provide {@link ViewerSorter}
-	 *         based on the context of the parent.
+	 * @return An {@link INavigatorSorterService} that can provide
+	 *         {@link ViewerSorter} based on the context of the parent.
 	 */
 	INavigatorSorterService getSorterService();
+
+	/**
+	 * The pipeline service calculates the appropriate viewer modification or
+	 * refresh that should be applied for viewers that wish to take advantage of
+	 * the model pipelining that some extensions use to massage or reshape
+	 * contents in the viewer. Clients that use the {@link CommonViewer} do not
+	 * need to be concerned with this service as the refreshes are automatically
+	 * computed using this service.
+	 * 
+	 * 
+	 * @return The {@link INavigatorPipelineService} which can determine the
+	 *         correct updates to apply to a viewer.
+	 */
+	INavigatorPipelineService getPipelineService();
 
 }

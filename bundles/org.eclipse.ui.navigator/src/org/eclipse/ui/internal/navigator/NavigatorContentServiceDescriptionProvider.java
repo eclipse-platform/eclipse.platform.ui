@@ -14,66 +14,78 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
 /**
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2 
- *
+ * @since 3.2
+ * 
  */
 public final class NavigatorContentServiceDescriptionProvider implements
-		IDescriptionProvider { 
-	
+		IDescriptionProvider {
+
 	private final NavigatorContentService contentService;
 
-	public NavigatorContentServiceDescriptionProvider(NavigatorContentService aContentService) { 
-		Assert.isNotNull(aContentService); 
-		contentService = aContentService;		
-	}	
-	
-	public String getDescription(Object anElement) { 
-		
+	/**
+	 * Creates a description provider that targets the given service.
+	 * 
+	 * @param aContentService
+	 *            The content service associated with this provider.
+	 */
+	public NavigatorContentServiceDescriptionProvider(
+			NavigatorContentService aContentService) {
+		Assert.isNotNull(aContentService);
+		contentService = aContentService;
+	}
+
+	public String getDescription(Object anElement) {
+
 		Object target;
-		
-		if(anElement instanceof IStructuredSelection) {
+
+		if (anElement instanceof IStructuredSelection) {
 
 			IStructuredSelection structuredSelection = (IStructuredSelection) anElement;
 			if (structuredSelection.size() > 1) {
-				return getDefaultStatusBarMessage(structuredSelection.size()); 
-			} 
+				return getDefaultStatusBarMessage(structuredSelection.size());
+			}
 			target = structuredSelection.getFirstElement();
 		} else {
 			target = anElement;
 		}
 		String message = null;
-		ILabelProvider[] providers = contentService.findRelevantLabelProviders(target);
+		ILabelProvider[] providers = contentService
+				.findRelevantLabelProviders(target);
 		if (providers.length == 0)
 			return getDefaultStatusBarMessage(0);
-		for(int i=0; i<providers.length; i++) {
-			if(providers[i] instanceof ICommonLabelProvider) {
-				message =  ((ICommonLabelProvider)providers[i]).getDescription(target);
+		for (int i = 0; i < providers.length; i++) {
+			if (providers[i] instanceof ICommonLabelProvider) {
+				message = ((ICommonLabelProvider) providers[i])
+						.getDescription(target);
 				break;
-			}  
+			}
 		}
 		message = (message != null) ? message : getDefaultStatusBarMessage(1);
 		return message;
-		 
+
 	}
-	
+
 	/**
-	 * @param aStructuredSelection The current selection from the {@link CommonViewer}
+	 * @param aSize
+	 *            The number of items selected.
 	 * @return A string of the form "# items selected"
 	 */
 	protected final String getDefaultStatusBarMessage(int aSize) {
-		return NLS.bind(CommonNavigatorMessages.Navigator_statusLineMultiSelect, new Object[]{new Integer(aSize)});
+		return NLS.bind(
+				CommonNavigatorMessages.Navigator_statusLineMultiSelect,
+				new Object[] { new Integer(aSize) });
 
 	}
 

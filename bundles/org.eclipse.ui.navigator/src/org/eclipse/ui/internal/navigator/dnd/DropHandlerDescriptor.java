@@ -9,7 +9,7 @@
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.dnd;
- 
+
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -19,20 +19,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.ICommonDropActionDelegate;
 
 /**
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
  * @since 3.2
- *  
+ * 
  */
 public class DropHandlerDescriptor {
 
@@ -78,69 +77,81 @@ public class DropHandlerDescriptor {
 	private IDropValidator dropValidator;
 
 	/**
-	 *  
+	 * 
 	 */
 	public DropHandlerDescriptor(IConfigurationElement aConfigurationElement) {
 		super();
-		Assert.isLegal(ExtensionPointElements.DROP_HANDLER.equals(aConfigurationElement.getName()));
+		Assert.isLegal(ExtensionPointElements.DROP_HANDLER
+				.equals(aConfigurationElement.getName()));
 		configurationElement = aConfigurationElement;
 		init();
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	private void init() {
 		id = configurationElement.getAttribute(ExtensionPointElements.ATT_ID);
 		name = configurationElement.getAttribute(ExtensionPointElements.NAME);
-		description = configurationElement.getAttribute(ExtensionPointElements.DESCRIPTION);
+		description = configurationElement
+				.getAttribute(ExtensionPointElements.DESCRIPTION);
 
-		IConfigurationElement[] dragEnablementChildren = configurationElement.getChildren(ExtensionPointElements.DRAG_ENABLEMENT);
-		if (dragEnablementChildren.length > 0 && dragEnablementChildren[0] != null) {
+		IConfigurationElement[] dragEnablementChildren = configurationElement
+				.getChildren(ExtensionPointElements.DRAG_ENABLEMENT);
+		if (dragEnablementChildren.length > 0
+				&& dragEnablementChildren[0] != null) {
 			try {
 				dragEnablement = ElementHandler.getDefault().create(
-						ExpressionConverter.getDefault(), dragEnablementChildren[0]);
+						ExpressionConverter.getDefault(),
+						dragEnablementChildren[0]);
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 			}
-		} 
+		}
 
-		IConfigurationElement[] dropEnablementChildren = configurationElement.getChildren(ExtensionPointElements.DROP_ENABLEMENT);
-		if (dropEnablementChildren.length > 0 && dropEnablementChildren[0] != null) {
+		IConfigurationElement[] dropEnablementChildren = configurationElement
+				.getChildren(ExtensionPointElements.DROP_ENABLEMENT);
+		if (dropEnablementChildren.length > 0
+				&& dropEnablementChildren[0] != null) {
 			this.dropEnablementConfigElement = dropEnablementChildren[0];
 			try {
 				dropEnablement = ElementHandler.getDefault().create(
-						ExpressionConverter.getDefault(), dropEnablementChildren[0]);
+						ExpressionConverter.getDefault(),
+						dropEnablementChildren[0]);
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
-			}			 
+			}
 		}
 
-		IConfigurationElement[] serializersChild = configurationElement.getChildren(ExtensionPointElements.SERIALIZERS);
+		IConfigurationElement[] serializersChild = configurationElement
+				.getChildren(ExtensionPointElements.SERIALIZERS);
 		if (serializersChild.length > 0 && serializersChild[0] != null)
-			this.serializers = new SerializerCollectionDescriptor(this.id, serializersChild[0], dragEnablement);
+			this.serializers = new SerializerCollectionDescriptor(this.id,
+					serializersChild[0], dragEnablement);
 	}
 
 	public boolean isDragEnabledFor(Object anElement) {
-		
+
 		if (dragEnablement == null || anElement == null)
 			return false;
 
 		try {
-			return (dragEnablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
+			return (dragEnablement.evaluate(new EvaluationContext(null,
+					anElement)) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 		}
 		return false;
 	}
 
-	public boolean isDropEnabledFor(Object anElement) { 
-		
+	public boolean isDropEnabledFor(Object anElement) {
+
 		if (dropEnablement == null || anElement == null)
 			return false;
 
 		try {
-			return (dropEnablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
+			return (dropEnablement.evaluate(new EvaluationContext(null,
+					anElement)) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 		}
@@ -153,9 +164,11 @@ public class DropHandlerDescriptor {
 	protected IDropValidator getDropValidator() {
 		if (dropValidator == null) {
 			try {
-				String classValue = this.dropEnablementConfigElement.getAttribute(ExtensionPointElements.ATT_VALIDATOR_CLASS);
+				String classValue = this.dropEnablementConfigElement
+						.getAttribute(ExtensionPointElements.ATT_VALIDATOR_CLASS);
 				if (classValue != null && classValue.length() > 0)
-					dropValidator = (IDropValidator) this.dropEnablementConfigElement.createExecutableExtension(ExtensionPointElements.ATT_VALIDATOR_CLASS);
+					dropValidator = (IDropValidator) this.dropEnablementConfigElement
+							.createExecutableExtension(ExtensionPointElements.ATT_VALIDATOR_CLASS);
 			} catch (CoreException e) {
 			}
 		}
@@ -175,10 +188,10 @@ public class DropHandlerDescriptor {
 
 	protected ICommonDropActionDelegate createAction() {
 		try {
-			return (ICommonDropActionDelegate) this.configurationElement.createExecutableExtension(ExtensionPointElements.ATT_CLASS);
+			return (ICommonDropActionDelegate) this.configurationElement
+					.createExecutableExtension(ExtensionPointElements.ATT_CLASS);
 		} catch (CoreException e) {
-			String msg = NLS.bind(CommonNavigatorMessages.DropHandlerDescriptor_10, new Object[]{getId()}); 
-			NavigatorPlugin.log(msg, e.getStatus());
+			NavigatorPlugin.log(e.getStatus());
 		}
 		return null;
 	}

@@ -16,20 +16,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * The main plugin class for the Navigator.
- * 
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
- * </p>
- * 
+ * The main plugin class for the Navigator. 
+ *  
  * @since 3.2
  */
 public class NavigatorPlugin extends AbstractUIPlugin {
-	//The shared instance.
-	private static NavigatorPlugin plugin; 
+	// The shared instance.
+	private static NavigatorPlugin plugin;
+
+	/** The id of the orge.eclipse.ui.navigator plugin. */
 	public static String PLUGIN_ID = "org.eclipse.ui.navigator"; //$NON-NLS-1$
 
 	/**
@@ -41,63 +36,85 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the shared instance.
+	 * @return the shared instance.
 	 */
 	public static NavigatorPlugin getDefault() {
 		return plugin;
 	}
- 
-	
+
 	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * 
+	 * @param path
+	 *            the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
-  
-	/**
-	 * Logs messages.
-	 */
-	public static void log(String message) {
-		getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, message, null));
-		System.err.println(message);
-		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
-	}
-
-	/**
-	 * Logs errors.
-	 */
-	public static void log(String message, IStatus status) {
-		if (message != null) {
-			getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, message, null));
-			System.err.println(message + "\nReason:"); //$NON-NLS-1$
-		}
-		getDefault().getLog().log(status);
-		System.err.println(status.getMessage());
 	} 
-	
 
-	public static void logError(int aCode, String aMessage, Throwable anException) { 
-		getDefault().getLog().log(createErrorStatus(aCode, aMessage, anException)); 
+	/**
+	 * Record an error against this plugin's log. 
+	 * 
+	 * @param aCode
+	 * @param aMessage
+	 * @param anException
+	 */
+	public static void logError(int aCode, String aMessage,
+			Throwable anException) {
+		getDefault().getLog().log(
+				createErrorStatus(aCode, aMessage, anException));
 	}
 
-	public static void log(int severity, int aCode, String aMessage, Throwable exception) {
+	/**
+	 * 
+	 * Record a message against this plugin's log. 
+	 * 
+	 * @param severity
+	 * @param aCode
+	 * @param aMessage
+	 * @param exception
+	 */
+	public static void log(int severity, int aCode, String aMessage,
+			Throwable exception) {
 		log(createStatus(severity, aCode, aMessage, exception));
 	}
 
-	public static void log(IStatus aStatus) { 
-		getDefault().getLog().log(aStatus); 
-	} 
-	 
-	public static IStatus createStatus(int severity, int aCode, String aMessage, Throwable exception) {
-		return new Status(severity, PLUGIN_ID, aCode, aMessage != null ? aMessage : "No message.", exception); //$NON-NLS-1$
+	/**
+	 * 
+	 * Record a status against this plugin's log. 
+	 * 
+	 * @param aStatus
+	 */
+	public static void log(IStatus aStatus) {
+		getDefault().getLog().log(aStatus);
 	}
- 
-	public static IStatus createErrorStatus(int aCode, String aMessage, Throwable exception) {
+
+	/**
+	 * Create a status associated with this plugin.
+	 *  
+	 * @param severity
+	 * @param aCode
+	 * @param aMessage
+	 * @param exception
+	 * @return A status configured with this plugin's id and the given parameters.
+	 */
+	public static IStatus createStatus(int severity, int aCode,
+			String aMessage, Throwable exception) {
+		return new Status(severity, PLUGIN_ID, aCode,
+				aMessage != null ? aMessage : "No message.", exception); //$NON-NLS-1$
+	}
+
+	/**
+	 * 
+	 * @param aCode
+	 * @param aMessage
+	 * @param exception
+	 * @return A status configured with this plugin's id and the given parameters.
+	 */
+	public static IStatus createErrorStatus(int aCode, String aMessage,
+			Throwable exception) {
 		return createStatus(IStatus.ERROR, aCode, aMessage, exception);
-	} 
+	}
 }

@@ -24,32 +24,28 @@ import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
- * </p>
- * 
  * @since 3.2
  */
-public class NavigatorContentProvider implements IPipelinedTreeContentProvider {
+public class SafeDelegateTreeContentProvider implements
+		IPipelinedTreeContentProvider {
 
 	private final ITreeContentProvider contentProvider;
-	private NavigatorContentService contentService;
-	private NavigatorContentDescriptor descriptor; 
 
-	/**
-	 *  
-	 */
-	public NavigatorContentProvider(ITreeContentProvider aContentProvider, NavigatorContentDescriptor aDescriptor, NavigatorContentService theContentService) {
+	private NavigatorContentService contentService;
+
+	private NavigatorContentDescriptor descriptor;
+
+	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider,
+			NavigatorContentDescriptor aDescriptor,
+			NavigatorContentService theContentService) {
 		super();
-		contentProvider = aContentProvider; 
+		contentProvider = aContentProvider;
 		contentService = theContentService;
 		descriptor = aDescriptor;
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	public void dispose() {
 		contentProvider.dispose();
@@ -64,38 +60,22 @@ public class NavigatorContentProvider implements IPipelinedTreeContentProvider {
 		return contentProvider.equals(anObject);
 	}
 
-	/**
-	 * @param aParentElement
-	 * @return
-	 */
 	public Object[] getChildren(Object aParentElement) {
 		Object[] children = contentProvider.getChildren(aParentElement);
 		contentService.rememberContribution(descriptor, children);
 		return children;
 	}
 
-	/**
-	 * @param anInputElement
-	 * @return
-	 */
 	public Object[] getElements(Object anInputElement) {
 		Object[] elements = contentProvider.getElements(anInputElement);
 		contentService.rememberContribution(descriptor, elements);
 		return elements;
 	}
 
-	/**
-	 * @param anElement
-	 * @return
-	 */
 	public Object getParent(Object anElement) {
 		return contentProvider.getParent(anElement);
 	}
 
-	/**
-	 * @param anElement
-	 * @return
-	 */
 	public boolean hasChildren(Object anElement) {
 		return contentProvider.hasChildren(anElement);
 	}
@@ -109,11 +89,6 @@ public class NavigatorContentProvider implements IPipelinedTreeContentProvider {
 		return contentProvider.hashCode();
 	}
 
-	/**
-	 * @param aViewer
-	 * @param anOldInput
-	 * @param aNewInput
-	 */
 	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
 		contentProvider.inputChanged(aViewer, anOldInput, aNewInput);
 	}
@@ -126,86 +101,118 @@ public class NavigatorContentProvider implements IPipelinedTreeContentProvider {
 	public String toString() {
 		return contentProvider.toString();
 	}
-	
+
+	/**
+	 * 
+	 * @return The real content provider.
+	 */
 	public ITreeContentProvider getDelegateContentProvider() {
 		return contentProvider;
 	}
 
 	public void restoreState(IMemento aMemento) {
-		if(contentProvider != null && contentProvider instanceof IMementoAware)
-			((IMementoAware)contentProvider).restoreState(aMemento);
-		
+		if (contentProvider != null && contentProvider instanceof IMementoAware)
+			((IMementoAware) contentProvider).restoreState(aMemento);
+
 	}
 
-	public void saveState(IMemento aMemento) { 
-		if(contentProvider != null && contentProvider instanceof IMementoAware)
-			((IMementoAware)contentProvider).saveState(aMemento);
-		
+	public void saveState(IMemento aMemento) {
+		if (contentProvider != null && contentProvider instanceof IMementoAware)
+			((IMementoAware) contentProvider).saveState(aMemento);
+
 	}
 
 	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
-		if(contentProvider instanceof ICommonContentProvider) {
-			((ICommonContentProvider)contentProvider).init(aStateModel, aMemento);
+		if (contentProvider instanceof ICommonContentProvider) {
+			((ICommonContentProvider) contentProvider).init(aStateModel,
+					aMemento);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object,
+	 *      java.util.Set)
 	 */
-	public Set getPipelinedChildren(Object aParent, Set theCurrentChildren) {
-		if(contentProvider instanceof IPipelinedTreeContentProvider)
-			return ((IPipelinedTreeContentProvider)contentProvider).getPipelinedChildren(aParent, theCurrentChildren);
-		return theCurrentChildren;
+	public void getPipelinedChildren(Object aParent, Set theCurrentChildren) {
+		if (contentProvider instanceof IPipelinedTreeContentProvider)
+			((IPipelinedTreeContentProvider) contentProvider)
+					.getPipelinedChildren(aParent, theCurrentChildren);
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object,
+	 *      java.util.Set)
 	 */
-	public Set getPipelinedElements(Object anInput, Set theCurrentElements) {
-		if(contentProvider instanceof IPipelinedTreeContentProvider)
-			return ((IPipelinedTreeContentProvider)contentProvider).getPipelinedElements(anInput, theCurrentElements);
-		return theCurrentElements;
+	public void getPipelinedElements(Object anInput, Set theCurrentElements) {
+		if (contentProvider instanceof IPipelinedTreeContentProvider)
+			((IPipelinedTreeContentProvider) contentProvider)
+					.getPipelinedElements(anInput, theCurrentElements);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedParent(java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedParent(java.lang.Object,
+	 *      java.lang.Object)
 	 */
 	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
-		if(contentProvider instanceof IPipelinedTreeContentProvider)
-			return ((IPipelinedTreeContentProvider)contentProvider).getPipelinedParent(anObject, aSuggestedParent);
+		if (contentProvider instanceof IPipelinedTreeContentProvider)
+			return ((IPipelinedTreeContentProvider) contentProvider)
+					.getPipelinedParent(anObject, aSuggestedParent);
 		return anObject;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
-	public PipelinedShapeModification interceptAdd(PipelinedShapeModification anAddModification) {
+	public PipelinedShapeModification interceptAdd(
+			PipelinedShapeModification anAddModification) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRemove(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
-	public PipelinedShapeModification interceptRemove(PipelinedShapeModification aRemoveModification) {
+	public PipelinedShapeModification interceptRemove(
+			PipelinedShapeModification aRemoveModification) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRefresh(org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
-	public PipelinedViewerUpdate interceptRefresh(PipelinedViewerUpdate aRefreshSynchronization) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean interceptRefresh(
+			PipelinedViewerUpdate aRefreshSynchronization) {
+		if (contentProvider instanceof IPipelinedTreeContentProvider)
+			return ((IPipelinedTreeContentProvider) contentProvider)
+					.interceptRefresh(aRefreshSynchronization);
+		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptUpdate(org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
-	public PipelinedViewerUpdate interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean interceptUpdate(
+			PipelinedViewerUpdate anUpdateSynchronization) {
+		if (contentProvider instanceof IPipelinedTreeContentProvider)
+			return ((IPipelinedTreeContentProvider) contentProvider)
+					.interceptRefresh(anUpdateSynchronization);
+		return false;
 	}
-	 
+
 }

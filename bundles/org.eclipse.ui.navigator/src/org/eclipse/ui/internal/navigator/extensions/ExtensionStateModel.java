@@ -20,14 +20,9 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
- * </p>
  * 
- * @since 3.2 
- *
+ * @since 3.2
+ * @see IExtensionStateModel
  */
 public class ExtensionStateModel extends EventManager implements
 		IExtensionStateModel {
@@ -38,6 +33,15 @@ public class ExtensionStateModel extends EventManager implements
 
 	private final Map values = new HashMap();
 
+	/**
+	 * Create an extension state model for the given extension (anId) associated
+	 * with the given viewer (aViewerId).
+	 * 
+	 * @param anId
+	 *            The id of the extension this state model is used for.
+	 * @param aViewerId
+	 *            The id of the viewer this state model is associated with.
+	 */
 	public ExtensionStateModel(String anId, String aViewerId) {
 		id = anId;
 		viewerId = aViewerId;
@@ -69,30 +73,32 @@ public class ExtensionStateModel extends EventManager implements
 	public void setStringProperty(String aPropertyName, String aPropertyValue) {
 		String oldValue = (String) values.get(aPropertyName);
 		String newValue = aPropertyValue;
-		if(hasPropertyChanged(oldValue, newValue)) {
+		if (hasPropertyChanged(oldValue, newValue)) {
 			values.put(aPropertyName, newValue);
-			firePropertyChangeEvent(new PropertyChangeEvent(this, aPropertyName, oldValue, newValue));
+			firePropertyChangeEvent(new PropertyChangeEvent(this,
+					aPropertyName, oldValue, newValue));
 		}
 	}
 
 	public void setBooleanProperty(String aPropertyName, boolean aPropertyValue) {
 		Boolean oldValue = (Boolean) values.get(aPropertyName);
 		Boolean newValue = aPropertyValue ? Boolean.TRUE : Boolean.FALSE;
-		if(hasPropertyChanged(oldValue, newValue)) {
+		if (hasPropertyChanged(oldValue, newValue)) {
 
-			values
-					.put(aPropertyName, aPropertyValue ? Boolean.TRUE
-							: Boolean.FALSE); 
-			firePropertyChangeEvent(new PropertyChangeEvent(this, aPropertyName, oldValue, newValue));
-		}		
+			values.put(aPropertyName, aPropertyValue ? Boolean.TRUE
+					: Boolean.FALSE);
+			firePropertyChangeEvent(new PropertyChangeEvent(this,
+					aPropertyName, oldValue, newValue));
+		}
 	}
 
 	public void setIntProperty(String aPropertyName, int aPropertyValue) {
 		Integer oldValue = (Integer) values.get(aPropertyName);
 		Integer newValue = new Integer(aPropertyValue);
-		if(hasPropertyChanged(oldValue, newValue)) {
+		if (hasPropertyChanged(oldValue, newValue)) {
 			values.put(aPropertyName, newValue);
-			firePropertyChangeEvent(new PropertyChangeEvent(this, aPropertyName, oldValue, newValue));
+			firePropertyChangeEvent(new PropertyChangeEvent(this,
+					aPropertyName, oldValue, newValue));
 		}
 	}
 
@@ -112,17 +118,13 @@ public class ExtensionStateModel extends EventManager implements
 
 		Object oldValue = values.get(aPropertyName);
 		Object newValue = aPropertyValue;
-		if(hasPropertyChanged(oldValue, newValue)) {
+		if (hasPropertyChanged(oldValue, newValue)) {
 			values.put(aPropertyName, newValue);
-			firePropertyChangeEvent(new PropertyChangeEvent(this, aPropertyName, oldValue, newValue));
+			firePropertyChangeEvent(new PropertyChangeEvent(this,
+					aPropertyName, oldValue, newValue));
 		}
 	}
-
-	/**
-	 * @param oldValue
-	 * @param newValue
-	 * @return
-	 */
+ 
 	private boolean hasPropertyChanged(Object oldValue, Object newValue) {
 		return oldValue == null || !oldValue.equals(newValue);
 	}

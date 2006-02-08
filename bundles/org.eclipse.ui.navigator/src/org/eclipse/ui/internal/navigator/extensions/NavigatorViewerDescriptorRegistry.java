@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
@@ -79,10 +78,6 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 		return INSTANCE;
 	}
 
-	/**
-	 * @param aPluginId
-	 * @param anExtensionPoint
-	 */
 	protected NavigatorViewerDescriptorRegistry() {
 		super(NavigatorPlugin.PLUGIN_ID, TAG_VIEWER);
 	}
@@ -168,7 +163,7 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 						descriptor.setProperty(name, value);
 					}
 				}
-			} else if (options.length > 1){
+			} else if (options.length > 1) {
 				NavigatorPlugin
 						.logError(
 								0,
@@ -178,30 +173,16 @@ public class NavigatorViewerDescriptorRegistry extends RegistryReader {
 			return true;
 		}
 		if (TAG_VIEWER_CONTENT_BINDING.equals(element.getName())) {
-			try {
-				String viewerId = element.getAttribute(ATT_VIEWER_ID);
-				NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
-				descriptor.consumeContentBinding(element);
-				return true;
-			} catch (WorkbenchException e) {
-				// log an error since its not safe to open a dialog here
-				NavigatorPlugin
-						.log(
-								"Unable to create navigator view descriptor.", e.getStatus()); //$NON-NLS-1$
-			}
+			String viewerId = element.getAttribute(ATT_VIEWER_ID);
+			NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
+			descriptor.consumeContentBinding(element);
+			return true;
 		}
 		if (TAG_VIEWER_ACTION_BINDING.equals(element.getName())) {
-			try {
-				String viewerId = element.getAttribute(ATT_VIEWER_ID);
-				NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
-				descriptor.consumeActionBinding(element);
-				return true;
-			} catch (WorkbenchException e) {
-				// log an error since its not safe to open a dialog here
-				NavigatorPlugin
-						.log(
-								"Unable to create navigator view descriptor.", e.getStatus());//$NON-NLS-1$
-			}
+			String viewerId = element.getAttribute(ATT_VIEWER_ID);
+			NavigatorViewerDescriptor descriptor = getViewerDescriptor(viewerId);
+			descriptor.consumeActionBinding(element);
+			return true;
 		}
 		return false;
 	}

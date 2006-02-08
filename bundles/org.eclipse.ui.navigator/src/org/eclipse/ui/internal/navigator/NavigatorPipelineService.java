@@ -9,86 +9,36 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.internal.navigator;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
+import org.eclipse.ui.navigator.INavigatorPipelineService;
+import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
+import org.eclipse.ui.navigator.PipelinedShapeModification;
+import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
 /**
- * 
- * A pipelined content provider allows an extension to reshape the contributions
- * of an upstream content extension.
- * 
- * <p>
- * An "upstream" extension is either the extension overridden by this extension
- * using the <b>org.eclipse.ui.navigatorContent/navigatorContent/overrides</b>
- * element or another extension, which overrides the same extension this
- * extension overrides, but with higher priority than this extension. Overridden
- * extensions form a tree where the nodes of the tree represent the content
- * extensions, children represent overridding extensions, and the children are
- * sorted by priority. Pipeline contributions traverse the tree, allowing
- * children to override the contributions of their parent, giving precedence to
- * the children of highest priority.
- * </p>
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
- * <p>
- * Clients may (but are not required to) implement this interface if there is no
- * cause to do so. {@link ITreeContentProvider} is respected by the Common
- * Navigator.
- * </p>
- * 
  * @since 3.2
  * 
  */
-public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
+public class NavigatorPipelineService implements INavigatorPipelineService {
+
+	private NavigatorContentService contentService;
 
 	/**
-	 * Intercept the children that would be contributed to the viewer and
-	 * determine how to change the shape of those children. The set of children
-	 * should be modified to contain the correct children to return to the
-	 * viewer.
+	 * Create a pipeline assistnat for the given content service.
 	 * 
-	 * 
-	 * @param aParent
-	 *            A parent from the viewer
-	 * @param theCurrentChildren
-	 *            The set of children contributed thus far from upstream content
-	 *            providers.
+	 * @param aContentService
+	 *            The content service that will drive this pipeline assistant.
 	 */
-	void getPipelinedChildren(Object aParent, Set theCurrentChildren);
-
-	/**
-	 * Intercept the elements that would be contributed to the root of the
-	 * viewer and determine how to change the shape of those children. The given
-	 * set of elements should be modified to contain the correct elements to
-	 * return to the viewer.
-	 * 
-	 * @param anInput
-	 *            An input from the viewer
-	 * @param theCurrentElements
-	 *            The set of children contributed thus far from upstream content
-	 *            providers. 
-	 */
-	void getPipelinedElements(Object anInput, Set theCurrentElements);
-
-	/**
-	 * Intercept requests for a parent of the given object.
-	 * 
-	 * @param anObject
-	 *            The object being queried for a parent.
-	 * @param aSuggestedParent
-	 *            The parent already suggested from upstream extensions.
-	 * @return The intended parent from this pipelined content provider.
-	 */
-	Object getPipelinedParent(Object anObject, Object aSuggestedParent);
+	public NavigatorPipelineService(NavigatorContentService aContentService) {
+		contentService = aContentService;
+	}
 
 	/**
 	 * Intercept attempts to add elements directly to the viewer.
@@ -116,7 +66,10 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 *         return <b>null</b> from this method.
 	 */
 	PipelinedShapeModification interceptAdd(
-			PipelinedShapeModification anAddModification);
+			PipelinedShapeModification anAddModification) {
+		return null;
+
+	}
 
 	/**
 	 * Intercept attempts to remove elements directly from the viewer.
@@ -144,7 +97,9 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 *         return <b>null</b> from this method.
 	 */
 	PipelinedShapeModification interceptRemove(
-			PipelinedShapeModification aRemoveModification);
+			PipelinedShapeModification aRemoveModification) {
+		return null;
+	}
 
 	/**
 	 * Intercept calls to viewer <code>refresh()</code> methods.
@@ -163,10 +118,54 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * 
 	 * @param aRefreshSynchronization
 	 *            The (current) refresh update to execute against the viewer.
-	 * @return True if the viewer update was modified.
+	 * @return The (potentially reshaped) refresh to execute against the viewer.
 	 */
-	boolean interceptRefresh(
-			PipelinedViewerUpdate aRefreshSynchronization);
+	public boolean interceptRefresh(PipelinedViewerUpdate aRefreshSynchronization) {
+
+		Set overrideableExtensions = new HashSet();
+		for (Iterator iter = aRefreshSynchronization.getRefreshTargets()
+				.iterator(); iter.hasNext();)
+			overrideableExtensions.addAll(contentService
+					.findOverrideableContentExtensionsForPossibleChild(iter
+							.next()));
+
+		if (overrideableExtensions.isEmpty())
+			return false;
+
+		return pipelineRefresh(overrideableExtensions, aRefreshSynchronization);
+	}
+
+	private boolean pipelineRefresh(Set overrideableExtensions,
+			PipelinedViewerUpdate aRefreshSynchronization) {
+
+		boolean intercepted = false;
+		for (Iterator extensionsItr = overrideableExtensions.iterator(); extensionsItr.hasNext();) {
+			NavigatorContentExtension extension = (NavigatorContentExtension) extensionsItr
+					.next();
+
+			if (!extension.getDescriptor().hasOverridingExtensions())
+				intercepted |= ((IPipelinedTreeContentProvider) extension
+						.getContentProvider())
+						.interceptRefresh(aRefreshSynchronization);
+			else {
+				Set nextLevelOfOverrideableExtensions = new HashSet();
+				for (Iterator refreshTargetsItr = aRefreshSynchronization
+						.getRefreshTargets().iterator(); refreshTargetsItr.hasNext();)
+					nextLevelOfOverrideableExtensions
+							.addAll(Arrays
+									.asList(extension
+											.getOverridingExtensionsForPossibleChild(refreshTargetsItr
+													.next())));
+
+				if (!nextLevelOfOverrideableExtensions.isEmpty())
+					intercepted |= pipelineRefresh(
+							nextLevelOfOverrideableExtensions,
+							aRefreshSynchronization);
+			}
+		}
+
+		return intercepted;
+	}
 
 	/**
 	 * Intercept calls to viewer <code>update()</code> methods.
@@ -186,9 +185,11 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * 
 	 * @param anUpdateSynchronization
 	 *            The (current) update to execute against the viewer.
-	 * @return True if the viewer update was modified.
+	 * @return The (potentially reshaped) update to execute against the viewer.
 	 */
-	boolean interceptUpdate(
-			PipelinedViewerUpdate anUpdateSynchronization);
+	public PipelinedViewerUpdate interceptUpdate(
+			PipelinedViewerUpdate anUpdateSynchronization) {
+		return null;
+	}
 
 }

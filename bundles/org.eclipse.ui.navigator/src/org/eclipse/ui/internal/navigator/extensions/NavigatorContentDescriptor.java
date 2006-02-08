@@ -48,7 +48,7 @@ import org.eclipse.ui.navigator.Priority;
  */
 public final class NavigatorContentDescriptor implements
 		INavigatorContentDescriptor, INavigatorContentExtPtConstants {
- 
+
 	private String id;
 
 	private String name;
@@ -72,7 +72,7 @@ public final class NavigatorContentDescriptor implements
 	private OverridePolicy overridePolicy;
 
 	private String suppressedExtensionId;
-	
+
 	private INavigatorContentDescriptor overriddenDescriptor;
 
 	/**
@@ -226,9 +226,9 @@ public final class NavigatorContentDescriptor implements
 				return configElement.getDeclaringExtension().getNamespace();
 			}
 
-		}; 
+		};
 
-		children = configElement.getChildren(TAG_OVERRIDE); 
+		children = configElement.getChildren(TAG_OVERRIDE);
 		if (children.length == 1) {
 			suppressedExtensionId = children[0]
 					.getAttribute(ATT_SUPPRESSED_EXT_ID);
@@ -265,7 +265,6 @@ public final class NavigatorContentDescriptor implements
 	public IPluginContribution getContribution() {
 		return contribution;
 	}
- 
 
 	/**
 	 * The content provider could be an instance of
@@ -392,16 +391,18 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
-	 * @return The descriptor of the <code>suppressedExtensionId</code> if non-null.
+	 * @return The descriptor of the <code>suppressedExtensionId</code> if
+	 *         non-null.
 	 */
 	public INavigatorContentDescriptor getOverriddenDescriptor() {
 		return overriddenDescriptor;
 	}
 
 	/**
-	 * @param overriddenDescriptor The overriddenDescriptor to set.
+	 * @param theOverriddenDescriptor
+	 *            The overriddenDescriptor to set.
 	 */
-	/* package*/void setOverriddenDescriptor(
+	/* package */void setOverriddenDescriptor(
 			INavigatorContentDescriptor theOverriddenDescriptor) {
 		overriddenDescriptor = theOverriddenDescriptor;
 	}

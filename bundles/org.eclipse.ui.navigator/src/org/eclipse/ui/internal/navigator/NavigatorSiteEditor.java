@@ -30,14 +30,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 /**
  * A NavigatorSiteEditor is used to edit (i.e., rename) elements in a Navigator view. It displays a
  * text editor box overlay on the Navigator tree widget.
- * 
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
- * </p>
- * 
+ *  
  * @since 3.2
  */
 public class NavigatorSiteEditor implements INavigatorSiteEditor {
@@ -54,8 +47,8 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 	/**
 	 * Creates an instance of a NavigatorSiteEditor.
 	 * 
-	 * @param site
-	 *            the navigator site this editor applies to
+	 * @param aCommonViewer
+	 *            the viewer this editor applies to
 	 * @param navigatorTree
 	 *            the tree that is being edited
 	 */

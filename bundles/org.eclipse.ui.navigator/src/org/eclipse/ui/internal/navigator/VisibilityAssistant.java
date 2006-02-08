@@ -23,6 +23,7 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 
 /**
+ * Stores information about programmatic bindings and activation settings.
  * 
  */
 public class VisibilityAssistant implements IExtensionActivationListener {
@@ -57,12 +58,20 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	public VisibilityAssistant(INavigatorViewerDescriptor aViewerDescriptor) {
 		Assert.isNotNull(aViewerDescriptor);
 		viewerDescriptor = aViewerDescriptor;
-		
-		NavigatorActivationService.getInstance().addExtensionActivationListener(viewerDescriptor.getViewerId(), this);
+
+		NavigatorActivationService.getInstance()
+				.addExtensionActivationListener(viewerDescriptor.getViewerId(),
+						this);
 	}
-	
+
+	/**
+	 * Dispose of any resources held onto by this assistant.
+	 * 
+	 */
 	public void dispose() {
-		NavigatorActivationService.getInstance().removeExtensionActivationListener(viewerDescriptor.getViewerId(), this);
+		NavigatorActivationService.getInstance()
+				.removeExtensionActivationListener(
+						viewerDescriptor.getViewerId(), this);
 	}
 
 	/**
@@ -83,17 +92,31 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 		notifyClients();
 	}
 
+	/**
+	 * Add a listener to be notified when the visibility or activation state
+	 * associated with this assistant changes.
+	 * 
+	 * @param aListener
+	 *            a listener to be notified when the visibility or activation
+	 *            state associated with this assistant changes.
+	 */
 	public void addListener(VisibilityListener aListener) {
 		listeners.add(aListener);
 	}
 
+	/**
+	 * Remove a listener to be notified when the visibility or activation state
+	 * associated with this assistant changes.
+	 * 
+	 * @param aListener
+	 *            a listener to be notified when the visibility or activation
+	 *            state associated with this assistant changes.
+	 */
 	public void removeListener(VisibilityListener aListener) {
 		listeners.remove(aListener);
 	}
 
-	/**
-	 * 
-	 */
+	 
 	private void notifyClients() {
 		Object[] clients = listeners.getListeners();
 		for (int i = 0; i < clients.length; i++) {
@@ -104,9 +127,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	/**
 	 * 
 	 * @param aContentDescriptor
-	 *            The content descriptor of inquiry
-	 * @param anElement
-	 *            The element from the viewer
+	 *            The content descriptor of inquiry 
 	 * @return True if and only if the content descriptor is <i>active</i> and
 	 *         <i>visible</i> for the viewer descriptor and enabled for the
 	 *         given element.
@@ -155,7 +176,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 *            The content descriptor of inquiry
 	 * @return True if and only if the given content extension is declaratively
 	 *         or programmatically made visible to the viewer.
-	 * @see INavigatorContentService#bindExtensions(String[]) For more
+	 * @see INavigatorContentService#bindExtensions(String[], boolean) For more
 	 *      information on what <i>visible</i> means.
 	 */
 	public boolean isVisible(INavigatorContentDescriptor aContentDescriptor) {
@@ -171,7 +192,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 *            The unique id of the content extension
 	 * @return True if and only if the given content extension is declaratively
 	 *         or programmatically made visible to the viewer.
-	 * @see INavigatorContentService#bindExtensions(String[]) For more
+	 * @see INavigatorContentService#bindExtensions(String[], boolean) For more
 	 *      information on what <i>visible</i> means.
 	 */
 	public boolean isVisible(String aContentExtensionId) {

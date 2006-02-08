@@ -42,13 +42,14 @@ import org.eclipse.ui.navigator.CommonActionProvider;
  * 
  * @since 3.2
  */
-public class CommonActionProviderDescriptor implements INavigatorContentExtPtConstants { 
+public class CommonActionProviderDescriptor implements
+		INavigatorContentExtPtConstants {
 
 	private static final String DEFAULT_ID = "org.eclipse.ui.navigator.actionProvider"; //$NON-NLS-1$
-  
+
 	private final IConfigurationElement configurationElement;
 
-	private final boolean isNested; 
+	private final boolean isNested;
 
 	private Set dependentDescriptors;
 
@@ -60,16 +61,15 @@ public class CommonActionProviderDescriptor implements INavigatorContentExtPtCon
 
 	private String id;
 
-	
 	private String dependsOnId;
 
 	private String toString;
 
 	/**
 	 * @param aConfigElement
-	 *            A configuration element with the name 'actionProvider' and a
-	 *            'class' attribute conforming to the
-	 *            {@link ICommonActionProvider} interface.
+	 *            A configuration element with the name "actionProvider" and a
+	 *            "class" attribute which subclasses
+	 *            {@link CommonActionProvider}.
 	 */
 	public CommonActionProviderDescriptor(IConfigurationElement aConfigElement) {
 		super();
@@ -81,9 +81,9 @@ public class CommonActionProviderDescriptor implements INavigatorContentExtPtCon
 
 	/**
 	 * @param aConfigElement
-	 *            A configuration element with the name 'actionProvider' and a
-	 *            'class' attribute conforming to the
-	 *            {@link ICommonActionProvider} interface.
+	 *            A configuration element with the name "actionProvider" and a
+	 *            "class" attribute which subclasses
+	 *            {@link CommonActionProvider}.
 	 * @param anEnablementExpression
 	 *            A configuration element with the name 'enablement' or
 	 *            'triggerPoints' and containing an Eclipse Core Expression
@@ -91,9 +91,10 @@ public class CommonActionProviderDescriptor implements INavigatorContentExtPtCon
 	 *            A unique identifier for this descriptor. Ids can be used as a
 	 *            filtering device for activities or viewer***Bindings.
 	 * @param nestedUnderNavigatorContent
-	 *            A value of <b>true</b> indicates that this CommonActionProvider
-	 *            was declared as a nested &lt;actionProvider /&gt; element under
-	 *            a &lt;navigatorContent /&gt; element. 
+	 *            A value of <b>true</b> indicates that this
+	 *            CommonActionProvider was declared as a nested
+	 *            &lt;actionProvider /&gt; element under a &lt;navigatorContent
+	 *            /&gt; element.
 	 */
 	public CommonActionProviderDescriptor(IConfigurationElement aConfigElement,
 			IConfigurationElement anEnablementExpression, String anOverrideId,
@@ -120,7 +121,7 @@ public class CommonActionProviderDescriptor implements INavigatorContentExtPtCon
 			// if there was no id attribute, use the default id.
 			if (id == null)
 				id = DEFAULT_ID;
-			
+
 			dependsOnId = configurationElement.getAttribute(ATT_DEPENDS_ON);
 
 			IConfigurationElement[] children = configurationElement
@@ -162,23 +163,17 @@ public class CommonActionProviderDescriptor implements INavigatorContentExtPtCon
 			provider = (CommonActionProvider) configurationElement
 					.createExecutableExtension(ATT_CLASS);
 		} catch (CoreException exception) {
-			NavigatorPlugin.log("Unable to create navigator extension: " + //$NON-NLS-1$
-					getClassName(), exception.getStatus());
+			NavigatorPlugin.log(exception.getStatus());
 			hasLoadingFailed = true;
 			provider = SkeletonActionProvider.INSTANCE;
 		} catch (Exception e) {
-			NavigatorPlugin.log("Unable to create navigator extension: " + //$NON-NLS-1$
-					getClassName(), new Status(IStatus.ERROR,
+			NavigatorPlugin.log(new Status(IStatus.ERROR,
 					NavigatorPlugin.PLUGIN_ID, 0, e.getMessage(), e));
 			hasLoadingFailed = true;
 			provider = SkeletonActionProvider.INSTANCE;
 		}
 
 		return provider;
-	}
-
-	private String getClassName() {
-		return configurationElement.getAttribute(ATT_CLASS);
 	}
 
 	/**
@@ -242,7 +237,7 @@ public class CommonActionProviderDescriptor implements INavigatorContentExtPtCon
 
 	/**
 	 * 
-	 * @return True if this is a nested &lt;actionProvider /&gt; element. 
+	 * @return True if this is a nested &lt;actionProvider /&gt; element.
 	 */
 	public boolean isNested() {
 		return isNested;
@@ -250,43 +245,45 @@ public class CommonActionProviderDescriptor implements INavigatorContentExtPtCon
 
 	/**
 	 * 
-	 * @return The value specified by the 'dependsOn' attribute of the &lt;actionProvider /&gt; element.
+	 * @return The value specified by the 'dependsOn' attribute of the
+	 *         &lt;actionProvider /&gt; element.
 	 */
 	public String getDependsOnId() {
 		return dependsOnId;
 	}
-	
+
 	public boolean equals(Object obj) {
-		
-		if(obj != null && obj instanceof CommonActionProviderDescriptor) {
+
+		if (obj != null && obj instanceof CommonActionProviderDescriptor) {
 			CommonActionProviderDescriptor other = (CommonActionProviderDescriptor) obj;
 			return getId().equals(other.getId());
 		}
 		return false;
 	}
-	
+
 	public int hashCode() {
 		return getId().hashCode();
 	}
 
-	protected void addDependentDescriptor(CommonActionProviderDescriptor dependentDescriptor) {
+	protected void addDependentDescriptor(
+			CommonActionProviderDescriptor dependentDescriptor) {
 		Assert.isTrue(this != dependentDescriptor);
-		if(dependentDescriptors == null)
+		if (dependentDescriptors == null)
 			dependentDescriptors = new HashSet();
-		dependentDescriptors.add(dependentDescriptor);		
+		dependentDescriptors.add(dependentDescriptor);
 	}
 
-	protected boolean hasDependentDescriptors() { 
+	protected boolean hasDependentDescriptors() {
 		return dependentDescriptors != null && !dependentDescriptors.isEmpty();
 	}
 
-	protected Iterator dependentDescriptors() { 
+	protected Iterator dependentDescriptors() {
 		return dependentDescriptors.iterator();
 	}
-	
+
 	public String toString() {
-		if(toString == null)
-			toString = "CommonActionProviderDescriptor["+getId()+", dependsOn="+getDependsOnId()+"]";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		if (toString == null)
+			toString = "CommonActionProviderDescriptor[" + getId() + ", dependsOn=" + getDependsOnId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		return toString;
 	}
 

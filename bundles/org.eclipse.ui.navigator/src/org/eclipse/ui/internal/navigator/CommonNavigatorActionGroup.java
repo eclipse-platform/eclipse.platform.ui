@@ -24,12 +24,6 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 
 /**
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  */
@@ -46,7 +40,13 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	private CommonNavigator commonNavigator;
 
 	/**
-	 * Create a action group for Collapse All, Link with editor, and Select Filters.
+	 * Create a action group for Collapse All, Link with editor, and Select
+	 * Filters.
+	 * 
+	 * @param aNavigator
+	 *            The IViewPart for this action group
+	 * @param aViewer
+	 *            The Viewer for this action group
 	 */
 	public CommonNavigatorActionGroup(CommonNavigator aNavigator,
 			CommonViewer aViewer) {
@@ -59,7 +59,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	/**
 	 * Returns the image descriptor with the given relative path.
 	 */
-	protected final ImageDescriptor getImageDescriptor(String relativePath) { 
+	protected final ImageDescriptor getImageDescriptor(String relativePath) {
 		return NavigatorPlugin.getImageDescriptor("icons/full/" + relativePath); //$NON-NLS-1$
 
 	}
@@ -72,7 +72,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 		INavigatorViewerDescriptor viewerDescriptor = commonViewer
 				.getNavigatorContentService().getViewerDescriptor();
 		boolean hideLinkWithEditorAction = viewerDescriptor
-				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_LINK_WITH_EDITOR_ACTION); 
+				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_LINK_WITH_EDITOR_ACTION);
 		if (!hideLinkWithEditorAction) {
 			toggleLinkingAction = new LinkEditorAction(commonNavigator,
 					commonViewer);
@@ -91,7 +91,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 		}
 
 		boolean hideAvailableCustomizationsDialog = viewerDescriptor
-				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG); 
+				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG);
 		if (!hideAvailableCustomizationsDialog) {
 			selectFiltersAction = new SelectFiltersAction(commonViewer);
 			ImageDescriptor selectFiltersIcon = getImageDescriptor("elcl16/filter_ps.gif"); //$NON-NLS-1$

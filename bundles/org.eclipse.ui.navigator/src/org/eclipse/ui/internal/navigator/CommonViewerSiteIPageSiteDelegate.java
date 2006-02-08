@@ -11,26 +11,28 @@
 
 package org.eclipse.ui.internal.navigator;
 
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.navigator.ICommonViewerSite;
 import org.eclipse.ui.part.IPageSite;
 
 /**
+ * Provides a delegate implementation of {@link ICommonViewerSite}.
+ * 
  * @since 3.2
  * 
  */
-public class CommonViewerSiteIPageSiteDelegate implements
-		ICommonViewerSite {
+public class CommonViewerSiteIPageSiteDelegate implements ICommonViewerSite {
 
 	private IPageSite pageSite;
 
 	private String viewerId;
 
+	/**
+	 * 
+	 * @param aViewerId
+	 * @param aPageSite
+	 */
 	public CommonViewerSiteIPageSiteDelegate(String aViewerId,
 			IPageSite aPageSite) {
 		viewerId = aViewerId;
@@ -41,16 +43,8 @@ public class CommonViewerSiteIPageSiteDelegate implements
 		return viewerId;
 	}
 
-	public IActionBars getActionBars() {
-		return pageSite.getActionBars();
-	}
-
 	public Object getAdapter(Class adapter) {
 		return pageSite.getAdapter(adapter);
-	}
-
-	public IWorkbenchPage getPage() {
-		return pageSite.getPage();
 	}
 
 	public ISelectionProvider getSelectionProvider() {
@@ -65,13 +59,4 @@ public class CommonViewerSiteIPageSiteDelegate implements
 		return pageSite.getShell();
 	}
 
-	public IWorkbenchWindow getWorkbenchWindow() {
-		return pageSite.getWorkbenchWindow();
-	}
-
-	public void registerContextMenu(String menuId, MenuManager menuManager,
-			ISelectionProvider selectionProvider) {
-		pageSite.registerContextMenu(menuId, menuManager, selectionProvider);
-	}
- 
 }
