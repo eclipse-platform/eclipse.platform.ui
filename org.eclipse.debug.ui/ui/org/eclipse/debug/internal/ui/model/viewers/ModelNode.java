@@ -152,6 +152,7 @@ public class ModelNode {
 	public synchronized void setChildren(ModelNode[] children) {
 		if (children != null && children.length == 0) {
 			fChildren = null;
+			setIsContainer(false);
 		} else {
 			fChildren = children;
 		}
