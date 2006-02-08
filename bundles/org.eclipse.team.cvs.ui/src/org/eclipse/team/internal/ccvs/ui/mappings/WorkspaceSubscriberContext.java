@@ -159,9 +159,9 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.SubscriberMergeContext#refresh(org.eclipse.core.resources.mapping.ResourceTraversal[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
+	public void refresh(final ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 50);
-		super.refresh(traversals, flags, Policy.subMonitorFor(monitor, 25));
+		super.refresh(traversals, flags, Policy.subMonitorFor(monitor, 50));
 		// Prune any empty folders within the traversals
 		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
 			CompoundResourceTraversal ct = new CompoundResourceTraversal();
@@ -175,7 +175,12 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 				CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
 				cvsResources);
 		}
-		cacheContents(traversals, Policy.subMonitorFor(monitor, 25));
+		runInBackground(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				cacheContents(traversals, monitor);
+			}
+		});
+		
 		monitor.done();
 	}
 	

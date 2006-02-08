@@ -11,6 +11,7 @@
 package org.eclipse.team.core.subscribers;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,7 +23,8 @@ import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler
 
 /**
  * A merge context that uses a subscriber to populate the diff tree
- * used by the context.
+ * used by the context. The population of the diff tree is performed
+ * by a handler that runs in a background job.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
@@ -41,6 +43,11 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	private SubscriberDiffTreeEventHandler handler;
 	private final ISynchronizationScopeManager manager;
 	
+	/**
+	 * Create a merge context for the given sibscriber
+	 * @param subscriber the subscriber
+	 * @param manager the scope manager
+	 */
 	protected SubscriberMergeContext(Subscriber subscriber, ISynchronizationScopeManager manager) {
 		super(manager, getType(subscriber), new ResourceDiffTree());
 		this.subscriber = subscriber;
@@ -95,6 +102,16 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	 */
 	public Subscriber getSubscriber() {
 		return subscriber;
+	}
+	
+	/**
+	 * Run the given runnable when the background handler
+	 * for this context is idle. The given runnable should not lock
+	 * the workspace.
+	 * @param runnable the runnable
+	 */
+	protected void runInBackground(IWorkspaceRunnable runnable) {
+		handler.run(runnable, false);
 	}
 
 }
