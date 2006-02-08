@@ -151,13 +151,16 @@ public class AntTargetNode extends AntElementNode {
 			 	return true;
 			 }
 		}
-		String ifString= fTarget.getIf();
-		if (ifString != null && ifString.endsWith(identifier.substring(2, identifier.length() - 1))) {
-			return true;
-		}
-		String unlessString= fTarget.getUnless();
-		if (unlessString != null && unlessString.endsWith(identifier.substring(2, identifier.length() - 1))) {
-			return true;
+        //looking for properties
+		if (identifier.startsWith("${") && identifier.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
+		    String ifString= fTarget.getIf();
+		    if (ifString != null && ifString.endsWith(identifier.substring(2, identifier.length() - 1))) {
+		        return true;
+		    }
+		    String unlessString= fTarget.getUnless();
+		    if (unlessString != null && unlessString.endsWith(identifier.substring(2, identifier.length() - 1))) {
+		        return true;
+		    }
 		}
 		return false;
 	}
