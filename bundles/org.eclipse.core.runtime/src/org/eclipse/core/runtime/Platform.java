@@ -636,7 +636,7 @@ public final class Platform {
 	 * form of this location is as a URL.
 	 * </p><p>
 	 * Alternatively, instead of calling <code>getInstanceLocation</code> clients are 
-	 * able to aquire the {@link Location} service (with the type {@link Location.INSTANCE_FILTER})
+	 * able to acquire the {@link Location} service (with the type {@link Location#INSTANCE_FILTER})
 	 * and then change the resulting URL to a path. See the javadoc for <code>getInstanceLocation</code>
 	 * for more details.
 	 * </p>
