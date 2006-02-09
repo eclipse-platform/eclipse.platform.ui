@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.jface.util.SafeRunnable;
 
@@ -103,7 +104,7 @@ public class SearchPageRegistry {
 					SearchPlugin.log(e);
 				}
 			};
-			Platform.run(safeRunnable);
+			SafeRunner.run(safeRunnable);
 			if (result[0] instanceof ISearchResultPage) {
 				instance= (ISearchResultPage) result[0];
 				instance.setID(configElement.getAttribute(ATTRIB_ID));

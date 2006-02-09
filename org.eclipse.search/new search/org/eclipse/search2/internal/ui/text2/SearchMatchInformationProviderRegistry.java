@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.resources.IFile;
@@ -100,7 +101,7 @@ public class SearchMatchInformationProviderRegistry {
 					disable();
 				}
 			};
-			Platform.run(code);
+			SafeRunner.run(code);
 			return holder[0];
 		}
 

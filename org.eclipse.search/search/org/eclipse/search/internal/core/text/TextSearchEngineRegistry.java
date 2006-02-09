@@ -94,7 +94,7 @@ public class TextSearchEngineRegistry {
 				SearchPlugin.log(e);
 			}
 		};
-		Platform.run(safe);
+		SafeRunnable.run(safe);
 		return res[0];
 	}
 

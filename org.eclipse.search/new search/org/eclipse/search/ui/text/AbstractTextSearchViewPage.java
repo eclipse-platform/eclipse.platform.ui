@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
@@ -768,7 +768,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				}
 			}
 		};
-		Platform.run(runnable);
+		SafeRunner.run(runnable);
 	}
 
 	/**
