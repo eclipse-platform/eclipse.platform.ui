@@ -397,9 +397,9 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 				}
 				if (defaultAnnotation && image == null) {
 					if (top) {
-						image = DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
+						image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
 					} else {
-						image = DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);
+						image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);
 					}
 				}
 			}

@@ -13,7 +13,6 @@ package org.eclipse.debug.ui;
 
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
  
 /**
  * Constant definitions for debug UI plug-in.
@@ -1123,4 +1122,19 @@ public interface IDebugUIConstants {
 	 * @see DebugUITools
 	 */
 	public static final String PREF_CHANGED_DEBUG_ELEMENT_COLOR= "org.eclipse.debug.ui.changedDebugElement"; //$NON-NLS-1$
+
+	/**
+	 * Instruction pointer image for editor ruler for the currently executing
+	 * instruction in the top stack frame.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String IMG_OBJS_INSTRUCTION_POINTER_TOP = "IMG_OBJS_INSTRUCTION_POINTER_TOP"; //$NON-NLS-1$
+
+	/**
+	 * Instruction pointer image for editor ruler for secondary (non-top) stack frames.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String IMG_OBJS_INSTRUCTION_POINTER = "IMG_OBJS_INSTRUCTION_POINTER"; //$NON-NLS-1$
 }
