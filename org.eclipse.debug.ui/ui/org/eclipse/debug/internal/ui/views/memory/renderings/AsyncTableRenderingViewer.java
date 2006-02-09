@@ -600,7 +600,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	}
 
 	/**
-	 * Activate celll editor and prefill it with initial value.
+	 * Activate cell editor and prefill it with initial value.
 	 * If initialValue is null, use cell content as initial value
 	 * @param initialValue
 	 */
@@ -647,7 +647,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			// activate based on current cursor position
 			TextCellEditor selectedEditor = (TextCellEditor)getCellEditors()[col];
 	
-			if (cellModifier != null && selectedEditor != null && tableItem != null)
+			if (selectedEditor != null)
 			{
 				// The control that will be the editor must be a child of the Table
 				Text text = (Text)selectedEditor.getControl();
