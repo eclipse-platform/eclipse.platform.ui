@@ -89,7 +89,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * This memento allows the Ant view to save and restore state
 	 * when it is closed and opened within a session. A different
-	 * memento is supplied by the platform for persistance at
+	 * memento is supplied by the platform for persistence at
 	 * workbench shutdown.
 	 */
 	private static IMemento fgTempMemento = null;
