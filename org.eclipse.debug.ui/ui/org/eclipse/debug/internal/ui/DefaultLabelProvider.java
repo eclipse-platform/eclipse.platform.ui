@@ -287,7 +287,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		StringBuffer buffer= new StringBuffer(expression.getExpressionText());
 		String valueString= null;
 		IValue value= expression.getValue();
-		if (value != null && (valueString == null || valueString.length() < 1)) {
+		if (value != null) {
 			try {
 				valueString= value.getValueString();
 			} catch (DebugException de) {
