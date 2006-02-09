@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
@@ -105,7 +106,7 @@ public class ConsoleManager implements IConsoleManager {
                             IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
                             if (part != null && part instanceof IConsoleView) {
                                 ConsoleView view = (ConsoleView) part;
-                                if (view != null && list.contains(view.getConsole())) {
+                                if (list.contains(view.getConsole())) {
                                     Control control = view.getCurrentPage().getControl();
                                     if (!control.isDisposed()) {
                                         control.redraw();
@@ -168,7 +169,7 @@ public class ConsoleManager implements IConsoleManager {
 			Object[] copiedListeners= fListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IConsoleListener)copiedListeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}	
 			fChanged = null;
 			fListener = null;			
