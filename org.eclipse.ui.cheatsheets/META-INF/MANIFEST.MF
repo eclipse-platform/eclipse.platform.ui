@@ -7,16 +7,16 @@ Bundle-Activator: org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin
 Bundle-Vendor: %PROVIDER_NAME
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.cheatsheets,
- org.eclipse.ui.internal.cheatsheets;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.actions;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.composite.explorer;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.composite.model;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.composite.parser;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.composite.views;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.data;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.dialogs;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.registry;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.views;x-internal:=true
+ org.eclipse.ui.internal.cheatsheets;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.actions;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.composite.explorer;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.composite.model;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.composite.parser;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.composite.views;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.data;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.dialogs;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.registry;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.cheatsheets.views;x-friends:="org.eclipse.ua.tests"
 Require-Bundle: org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.forms;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.help;bundle-version="[3.1.0,4.0.0)",

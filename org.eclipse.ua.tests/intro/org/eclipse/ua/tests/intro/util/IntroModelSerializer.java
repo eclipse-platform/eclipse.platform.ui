@@ -11,7 +11,6 @@
 package org.eclipse.ua.tests.intro.util;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Set;
 

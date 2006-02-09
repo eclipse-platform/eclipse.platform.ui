@@ -106,7 +106,6 @@ public class TestCompositeParser extends TestCase {
 		CompositeCheatSheetModel model = parseTestFile("TaskDependency.xml");
 		assertNotNull(model);
 		assertTrue(parser.getStatus().isOK());
-		Dictionary params = model.getRootTask().getParameters();
 		CheatSheetTask task1 = model.getDependencies().getTask("task1");
 		CheatSheetTask task2 = model.getDependencies().getTask("task2");
 		assertTrue(task1.getRequiredTasks().length == 0);
@@ -121,7 +120,6 @@ public class TestCompositeParser extends TestCase {
 		CompositeCheatSheetModel model = parseTestFile("BackwardDependency.xml");
 		assertNotNull(model);
 		assertTrue(parser.getStatus().isOK());
-		Dictionary params = model.getRootTask().getParameters();
 		CheatSheetTask task1 = model.getDependencies().getTask("task1");
 		CheatSheetTask task2 = model.getDependencies().getTask("task2");
 		assertTrue(task1.getRequiredTasks().length == 0);

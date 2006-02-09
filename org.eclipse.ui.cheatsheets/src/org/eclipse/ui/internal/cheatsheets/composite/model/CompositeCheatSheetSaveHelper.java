@@ -52,7 +52,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 			this.savePath = savePath;
 	    } else {
 		    this.savePath = Platform
-		        .getPluginStateLocation(CheatSheetPlugin.getPlugin());
+		        .getStateLocation(CheatSheetPlugin.getPlugin().getBundle());
 	    }
 
 		Path filePath = getStateFile(model.getId());

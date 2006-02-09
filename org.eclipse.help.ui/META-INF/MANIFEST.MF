@@ -8,12 +8,12 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help.ui,
  org.eclipse.help.ui.browser,
- org.eclipse.help.ui.internal;x-internal:=true,
- org.eclipse.help.ui.internal.browser;x-internal:=true,
- org.eclipse.help.ui.internal.browser.embedded;x-internal:=true,
- org.eclipse.help.ui.internal.search;x-internal:=true,
- org.eclipse.help.ui.internal.util;x-internal:=true,
- org.eclipse.help.ui.internal.views;x-friends:="org.eclipse.ui.cheatsheets"
+ org.eclipse.help.ui.internal;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.help.ui.internal.browser;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.help.ui.internal.browser.embedded;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.help.ui.internal.search;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.help.ui.internal.util;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.help.ui.internal.views;x-friends:="org.eclipse.ui.cheatsheets,org.eclipse.ua.tests"
 Require-Bundle: org.eclipse.help.base;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.help.appserver;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",

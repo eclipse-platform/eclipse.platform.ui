@@ -110,12 +110,6 @@
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
-      <cheatsheet
-            name="Testing Non-existent File"
-            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
-            contentFile="data/cheatsheet/invalid/TestNonExistentFile.xml"
-            id="org.eclipse.ua.tests.cheatsheet.nonExistingFile">
-      </cheatsheet>
    </extension>
 
    <!-- 

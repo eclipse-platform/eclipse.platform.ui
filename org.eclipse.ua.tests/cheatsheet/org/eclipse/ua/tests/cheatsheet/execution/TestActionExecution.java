@@ -95,7 +95,7 @@ public class TestActionExecution extends TestCase {
 	}
 
 	private String getPluginId() {
-		return UserAssistanceTestPlugin.getDefault().getPluginId();
+		return UserAssistanceTestPlugin.getPluginId();
 	}
 
 }

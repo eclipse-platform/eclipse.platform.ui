@@ -12,7 +12,6 @@ package org.eclipse.ua.tests.intro.parser;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 import junit.framework.Test;

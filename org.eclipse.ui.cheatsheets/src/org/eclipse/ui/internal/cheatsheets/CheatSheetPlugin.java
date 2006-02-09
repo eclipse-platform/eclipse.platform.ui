@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -181,7 +182,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	 * Restores the state of the previously saved cheatsheet history
 	 */
 	private void restoreCheatSheetHistory() {
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new SafeRunnable() {
 			public void run() {
 				InputStreamReader reader = null;
 
@@ -227,7 +228,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	 * Saves the current cheatsheet history so it can be restored later on
 	 */
 	private void saveCheatSheetHistory() {
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new SafeRunnable() {
 			public void run() {
 				XMLMemento memento = XMLMemento.createWriteRoot(MEMENTO_TAG_CHEATSHEET);
 

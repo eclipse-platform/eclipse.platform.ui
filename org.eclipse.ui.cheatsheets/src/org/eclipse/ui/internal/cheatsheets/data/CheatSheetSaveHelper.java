@@ -40,7 +40,7 @@ public class CheatSheetSaveHelper {
 	public CheatSheetSaveHelper() {
 		super();
 		savePath = Platform
-				.getPluginStateLocation(CheatSheetPlugin.getPlugin());
+				.getStateLocation(CheatSheetPlugin.getPlugin().getBundle());
 	}
 
 	private Properties createProperties(int currentItemNum, ArrayList items,
@@ -156,7 +156,7 @@ public class CheatSheetSaveHelper {
 			this.savePath = savePath;
 	    } else {
 		    this.savePath = Platform
-		        .getPluginStateLocation(CheatSheetPlugin.getPlugin());
+		        .getStateLocation(CheatSheetPlugin.getPlugin().getBundle());
 	    }
 		Properties returnProps = null;
 		Hashtable subskipped = null;
@@ -467,7 +467,7 @@ public class CheatSheetSaveHelper {
 				Document doc = documentBuilder.newDocument();
 	
 				IPath filePath = getStateFile(csID, Platform
-						   .getPluginStateLocation(CheatSheetPlugin.getPlugin()));
+						   .getStateLocation(CheatSheetPlugin.getPlugin().getBundle()));
 	
 				// Create the root element for the document now:
 				Element root = doc.createElement(IParserTags.CHEATSHEET_STATE_REFERENCE);

@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
-import org.eclipse.ui.internal.cheatsheets.data.AbstractExecutable;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.Action;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;

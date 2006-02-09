@@ -17,7 +17,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
@@ -712,7 +712,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         Object[] array = propChangeListeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPropertyListener l = (IPropertyListener) array[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
 
                 public void run() {
                     l.propertyChanged(this, propertyId);
