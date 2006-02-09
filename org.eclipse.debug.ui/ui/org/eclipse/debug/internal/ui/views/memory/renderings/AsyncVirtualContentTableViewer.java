@@ -182,6 +182,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 						{
 							if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
 								System.out.println("actual set top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+							fPendingTopIndexKey = null;
 							setTopIndexKey(topIndexKey);
 							getTable().setTopIndex(idx);
 						}
@@ -200,7 +201,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 			
 			job.setSystem(true);
 			job.schedule();
-			return null;
+			return topIndexKey;
 		}
 		return topIndexKey;
 	}
@@ -309,22 +310,27 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 	 * TODO:  also push this to base table viewer?
 	 */
 	protected synchronized void preservingSelection(Runnable updateCode) {
+		Object oldTopIndexKey = null;
 		if (fPendingTopIndexKey == null) {
-			Object oldTopIndexKey = null;
-			try {
-				// preserve selection
-				oldTopIndexKey = getTopIndexKey();
-				// perform the update
-				updateCode.run();
-			} finally {			
-				if (oldTopIndexKey != null)
-				{
-					setTopIndex(oldTopIndexKey);
-				}
-			}
-		} else {
-			updateCode.run();
+			// preserve selection
+			oldTopIndexKey = getTopIndexKey();
 		}
+		else
+		{
+			oldTopIndexKey = fPendingTopIndexKey;
+		}
+		
+		try {
+
+			// perform the update
+			updateCode.run();
+		} finally {			
+			if (oldTopIndexKey != null)
+			{
+				setTopIndex(oldTopIndexKey);
+			}
+		}
+
 	}
 	
 	// TODO:  base asyn table viewer can use this too?

@@ -456,49 +456,50 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	
 	protected synchronized void preservingSelection(Runnable updateCode) {
+		Object oldTopIndexKey = null;
+		
 		if (getPendingSetTopIndexKey() == null) {
+			// preserve selection
+			oldTopIndexKey = getTopIndexKey();
+		}
+		else
+		{
+			oldTopIndexKey = getPendingSetTopIndexKey();
+		}
+		
+		Object oldSelectionKey = null;
+		try {
+			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+			{
+				if (oldTopIndexKey != null)
+					System.out.println(getRendering() + " preserve top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+				else
+					System.out.println("top index key is null, nothing to preserve"); //$NON-NLS-1$
+			}
+
+			oldSelectionKey = getSelectionKey();
+			// perform the update
+			updateCode.run();
 			
-			Object oldTopIndexKey = null;
-			Object oldSelectionKey = null;
-			try {
-				// preserve selection
-				oldTopIndexKey = getTopIndexKey();
+		} finally {
+			if (oldSelectionKey != null)
+			{
+				setSelection(oldSelectionKey);
+			}
+			
+			if (getPendingSetTopIndexKey() != null)
+			{
+				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+					System.out.println(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+				setTopIndex(getPendingSetTopIndexKey());
+			}
+			else if (oldTopIndexKey != null)
+			{
+				setTopIndex(oldTopIndexKey);
 				
 				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-				{
-					if (oldTopIndexKey != null)
-						System.out.println("preserve top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
-					else
-						System.out.println("top index key is null, nothing to preserve"); //$NON-NLS-1$
-				}
-
-				oldSelectionKey = getSelectionKey();
-				// perform the update
-				updateCode.run();
-				
-			} finally {
-				if (oldSelectionKey != null)
-				{
-					setSelection(oldSelectionKey);
-				}
-				
-				if (getPendingSetTopIndexKey() != null)
-				{
-					setTopIndex(getPendingSetTopIndexKey());
-				}
-				else if (oldTopIndexKey != null)
-				{
-					setTopIndex(oldTopIndexKey);
-					
-					if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-						System.out.println("finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
-				}
+					System.out.println(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
 			}
-		} else {
-			
-			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-				System.out.println("next top index should be: " + ((BigInteger)getPendingSetTopIndexKey()).toString(16)); //$NON-NLS-1$
-			updateCode.run();
 		}
 	}
 	

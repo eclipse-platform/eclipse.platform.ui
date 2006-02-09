@@ -797,10 +797,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			public void run() {			
 				// call this to make the table viewer to reload when needed
 				fTableViewer.setSelection(address);
-				int idx = fTableViewer.indexOf(address);
-				if (idx < 0) {
-					doTopVisibleAddressChanged(address);
-				}
 			}
 		};
 		
@@ -1434,7 +1430,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (fLabel == null)
 		{
 			fLabel = DebugUIMessages.AbstractAsyncTableRendering_1;
-			updateRenderingLabel(true);
+			updateRenderingLabel(isVisible());
 		}
 		
 		return fLabel;
