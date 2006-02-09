@@ -47,6 +47,16 @@ import org.eclipse.swt.widgets.Shell;
  * side. Future implementations may provide additional positioning options for
  * decorations.
  * <p>
+ * By default, DecoratedField will consult the {@link FieldDecorationRegistry}
+ * to determine how much space should be reserved for each decoration. This
+ * allows fields with decorations from different sources to align properly on
+ * the same dialog, since the registry tracks the size of all decorations
+ * registered. Therefore, it is recommended, but not required, that clients of
+ * DecoratedField register the decorations used. In cases where alignment
+ * between different fields is not a concern, clients can use
+ * <code>setUseMaximumDecorationWidth(false)</code> and need not register
+ * their decorations.
+ * <p>
  * This class is not intended to be subclassed.
  * 
  * <p>
@@ -55,6 +65,8 @@ import org.eclipse.swt.widgets.Shell;
  * adopters.
  * 
  * @since 3.2
+ * 
+ * @see FieldDecorationRegistry
  */
 public class DecoratedField {
 
