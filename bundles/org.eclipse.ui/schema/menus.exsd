@@ -655,7 +655,7 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
  id=&quot;com.mycompany.myplugin.MyComboBoxSimple&quot;
  class=&quot;com.mycompany.myplugin.MyComboBox&quot;&gt;
  &lt;location&gt;
-  &lt;toolbar path=&quot;myGroup&quot; /&gt;
+  &lt;toolbar path=&quot;myGroup&quot;&gt;
  &lt;/location&gt;
 &lt;/widget&gt;
 &lt;widget
