@@ -15,6 +15,7 @@ import java.io.IOException;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -354,7 +355,7 @@ public class ScopedPreferenceStore extends EventManager implements
 				oldValue, newValue);
 		for (int i = 0; i < list.length; i++) {
 			final IPropertyChangeListener listener = (IPropertyChangeListener) list[i];
-			Platform.run(new SafeRunnable(JFaceResources
+			SafeRunner.run(new SafeRunnable(JFaceResources
 					.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
 						public void run() {
 							listener.propertyChange(event);
