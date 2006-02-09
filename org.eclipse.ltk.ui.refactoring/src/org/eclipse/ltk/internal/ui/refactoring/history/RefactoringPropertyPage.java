@@ -217,7 +217,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 		final IProject project= getCurrentProject();
 		if (project != null) {
-			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+			final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 			try {
 				service.connect();
 				control.setInput(service.getProjectHistory(project, null));

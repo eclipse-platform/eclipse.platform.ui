@@ -15,8 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+
+import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
  * Default implementation of a refactoring descriptor.
@@ -34,21 +38,15 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 	 * @param id
 	 *            the unique id of the refactoring
 	 * @param project
-	 *            the non-empty name of the project associated with this
-	 *            refactoring, or <code>null</code>
+	 *            the project name, or <code>null</code>
 	 * @param description
-	 *            a non-empty human-readable description of the particular
-	 *            refactoring instance
+	 *            the description
 	 * @param comment
-	 *            the comment associated with the refactoring, or
-	 *            <code>null</code> for no commment
+	 *            the comment, or <code>null</code>
 	 * @param arguments
-	 *            the argument map (element type: &lt;String, String&gt;). The
-	 *            keys of the arguments are required to be non-empty strings
-	 *            which must not contain spaces. The values must be non-empty
-	 *            strings
+	 *            the argument map
 	 * @param flags
-	 *            the flags of the refactoring descriptor
+	 *            the flags
 	 */
 	public DefaultRefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) {
 		super(id, project, description, comment, flags);
@@ -57,10 +55,23 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 	}
 
 	/**
-	 * Returns the arguments describing the refactoring, in no particular order.
+	 * {@inheritDoc}
+	 */
+	public RefactoringArguments createArguments() {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Refactoring createRefactoring() throws CoreException {
+		return null;
+	}
+
+	/**
+	 * Returns the argument map
 	 * 
-	 * @return the argument map (element type: &lt;String, String&gt;). The
-	 *         resulting map cannot be modified.
+	 * @return the argument map.
 	 */
 	public final Map getArguments() {
 		return fArguments;

@@ -20,13 +20,9 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.ltk.core.refactoring.IRefactoringContributionManager;
-import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-
-import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -37,7 +33,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * 
  * @since 3.2
  */
-public final class RefactoringContributionManager implements IRegistryChangeListener, IRefactoringContributionManager {
+public final class RefactoringContributionManager implements IRegistryChangeListener {
 
 	/** The class attribute */
 	private static final String ATTRIBUTE_CLASS= "class"; //$NON-NLS-1$
@@ -83,21 +79,21 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public RefactoringArguments createArguments(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
-		final String id= descriptor.getID();
-		if (id != null) {
-			final RefactoringContribution contribution= getRefactoringContribution(id);
-			if (contribution != null)
-				return contribution.createArguments(descriptor);
-		}
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
+	 * Creates a new refactoring descriptor for the specified input data.
+	 * 
+	 * @param id
+	 *            the unique id of the refactoring
+	 * @param project
+	 *            the project name, or <code>null</code>
+	 * @param description
+	 *            a description
+	 * @param comment
+	 *            the comment, or <code>null</code>
+	 * @param arguments
+	 *            the argument map
+	 * @param flags
+	 *            the flags
+	 * @return the refactoring descriptor
 	 */
 	public RefactoringDescriptor createDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) {
 		Assert.isNotNull(id);
@@ -111,20 +107,6 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public Refactoring createRefactoring(final RefactoringDescriptor descriptor) throws CoreException {
-		Assert.isNotNull(descriptor);
-		final String id= descriptor.getID();
-		if (id != null) {
-			final RefactoringContribution contribution= getRefactoringContribution(id);
-			if (contribution != null)
-				return contribution.createRefactoring(descriptor);
-		}
-		return null;
-	}
-
-	/**
 	 * Disconnects this manager from the platform's extension registry.
 	 */
 	public void disconnect() {
@@ -132,7 +114,14 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the refactoring contribution for the refactoring with the
+	 * specified id.
+	 * 
+	 * @param id
+	 *            the unique id of the refactoring
+	 * @return the refactoring contribution, or <code>null</code> if no
+	 *         refactoring contribution has been registered with the specified
+	 *         id
 	 */
 	public RefactoringContribution getRefactoringContribution(final String id) {
 		Assert.isNotNull(id);

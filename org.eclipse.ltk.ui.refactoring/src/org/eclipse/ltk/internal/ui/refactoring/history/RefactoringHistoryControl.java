@@ -318,7 +318,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * {@inheritDoc}
 	 */
 	public void createControl() {
-		RefactoringCore.getRefactoringHistoryService().connect();
+		RefactoringCore.getHistoryService().connect();
 		fCaptionImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_COLL.createImage();
 		GridLayout layout= new GridLayout(2, false);
 		layout.marginHeight= 0;
@@ -407,7 +407,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * {@inheritDoc}
 	 */
 	public final void dispose() {
-		RefactoringCore.getRefactoringHistoryService().disconnect();
+		RefactoringCore.getHistoryService().disconnect();
 		super.dispose();
 	}
 

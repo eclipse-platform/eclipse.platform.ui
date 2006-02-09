@@ -11,10 +11,13 @@
 package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+
+import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
  * Descriptor object of a refactoring.
@@ -41,8 +44,8 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * {@link java.util#Calendar}).
  * </p>
  * <p>
- * Note: this class is indented to be subclassed to provide specialized
- * descriptor for particular refactorings.
+ * Note: this class is indented to be subclassed by clients to provide
+ * specialized refactoring descriptors for particular refactorings.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -67,6 +70,22 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public static final int BREAKING_CHANGE= 1 << 0;
 
 	/**
+	 * The unknown refactoring id (value:
+	 * org.eclipse.ltk.core.refactoring.unknown)
+	 * <p>
+	 * This id is reserved by the refactoring framework to signal that a
+	 * refactoring has been performed which did not deliver a refactoring
+	 * descriptor via its {@link Change#getRefactoringDescriptor()} method. The
+	 * refactoring history service never returns unknown refactorings. For
+	 * consistency reasons, they are reported for
+	 * {@link IRefactoringExecutionListener} or
+	 * {@link IRefactoringHistoryListener} in order to keep clients of these
+	 * listeners synchronized with the workbench's operation history.
+	 * </p>
+	 */
+	public static final String ID_UNKNOWN= "org.eclipse.ltk.core.refactoring.unknown"; //$NON-NLS-1$
+
+	/**
 	 * Constant describing the multi change flag (value: 4)
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
@@ -89,22 +108,6 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * </p>
 	 */
 	public static final int STRUCTURAL_CHANGE= 1 << 1;
-
-	/**
-	 * The unknown refactoring id (value:
-	 * org.eclipse.ltk.core.refactoring.unknown)
-	 * <p>
-	 * This id is reserved by the refactoring framework to signal that a
-	 * refactoring has been performed which did not deliver a refactoring
-	 * descriptor via its {@link Change#getRefactoringDescriptor()} method. The
-	 * refactoring history service never returns unknown refactorings. For
-	 * consistency reasons, they are reported for
-	 * {@link IRefactoringExecutionListener} or
-	 * {@link IRefactoringHistoryListener} in order to keep the refactoring
-	 * operation history intact.
-	 * </p>
-	 */
-	public static final String ID_UNKNOWN= "org.eclipse.ltk.core.refactoring.unknown"; //$NON-NLS-1$
 
 	/**
 	 * Constant describing the user flag (value: 256)
@@ -183,6 +186,40 @@ public abstract class RefactoringDescriptor implements Comparable {
 		}
 		return 0;
 	}
+
+	/**
+	 * Creates refactoring arguments for this refactoring descriptor.
+	 * <p>
+	 * This method is used by the refactoring framework to create refactoring
+	 * arguments for the refactoring instance represented by this refactoring
+	 * descriptor. The result of this method is used as argument to initialize a
+	 * refactoring by calling the method
+	 * {@link IInitializableRefactoringComponent#initialize(RefactoringArguments)}.
+	 * </p>
+	 * 
+	 * @return the refactoring arguments, or <code>null</code> if this
+	 *         refactoring descriptor represents the unknown refactoring, or if
+	 *         no refactoring contribution is available for this refactoring
+	 *         descriptor
+	 */
+	public abstract RefactoringArguments createArguments();
+
+	/**
+	 * Creates the a new refactoring instance for this refactoring descriptor.
+	 * <p>
+	 * This method is used by the refactoring framework to instantiate a
+	 * refactoring from a refactoring descriptor, in order to apply it later on
+	 * a local or remote workspace.
+	 * </p>
+	 * 
+	 * @return the refactoring, or <code>null</code> if this refactoring
+	 *         descriptor represents the unknown refactoring, or if no
+	 *         refactoring contribution is available for this refactoring
+	 *         descriptor
+	 * @throws CoreException
+	 *             if an error occurs while creating the refactoring instance
+	 */
+	public abstract Refactoring createRefactoring() throws CoreException;
 
 	/**
 	 * {@inheritDoc}

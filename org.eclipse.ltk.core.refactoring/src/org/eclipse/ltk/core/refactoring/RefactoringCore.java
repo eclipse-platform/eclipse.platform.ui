@@ -59,43 +59,35 @@ public class RefactoringCore {
 	}
 
 	/**
-	 * Returns the singleton undo manager for the refactoring undo
-	 * stack.
+	 * Returns the singleton undo manager for the refactoring undo stack.
 	 * 
 	 * @return the refactoring undo manager.
 	 */
 	public static IUndoManager getUndoManager() {
 		return RefactoringCorePlugin.getUndoManager();
 	}
-	
+
 	/**
 	 * Returns the singleton refactoring history service.
-	 * <p>
-	 * Note: This API is considered experimental and may change in the near
-	 * future.
-	 * </p>
 	 * 
 	 * @return the refactoring history service
 	 * 
 	 * @since 3.2
 	 */
-	public static IRefactoringHistoryService getRefactoringHistoryService() {
+	public static IRefactoringHistoryService getHistoryService() {
 		return RefactoringHistoryService.getInstance();
 	}
 
 	/**
-	 * Returns the singleton refactoring contribution manager.
-	 * <p>
-	 * Note: This API is considered experimental and may change in the near
-	 * future.
-	 * </p>
+	 * Returns the refactoring contribution with the specified unique id.
 	 * 
-	 * @return the refactoring contribution manager
-	 * 
-	 * @since 3.2
+	 * @param id
+	 *            the unique id of the contribution
+	 * @return the refactoring contribution, or <code>null</code> if in
+	 *         contribution is registered with for this id
 	 */
-	public static IRefactoringContributionManager getRefactoringContributionManager() {
-		return RefactoringContributionManager.getInstance();
+	public static RefactoringContribution getRefactoringContribution(String id) {
+		return RefactoringContributionManager.getInstance().getRefactoringContribution(id);
 	}
 
 	/**

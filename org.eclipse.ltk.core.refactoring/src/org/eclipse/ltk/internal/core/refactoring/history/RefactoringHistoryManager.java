@@ -450,7 +450,7 @@ public final class RefactoringHistoryManager {
 				Map arguments= null;
 				final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
 				if (contribution != null)
-					arguments= contribution.retrieveArguments(descriptor);
+					arguments= contribution.retrieveArgumentMap(descriptor);
 				else if (descriptor instanceof DefaultRefactoringDescriptor)
 					arguments= ((DefaultRefactoringDescriptor) descriptor).getArguments();
 				if (arguments != null) {
@@ -541,7 +541,7 @@ public final class RefactoringHistoryManager {
 						Map arguments= null;
 						final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
 						if (contribution != null)
-							arguments= contribution.retrieveArguments(current);
+							arguments= contribution.retrieveArgumentMap(current);
 						else if (current instanceof DefaultRefactoringDescriptor)
 							arguments= ((DefaultRefactoringDescriptor) current).getArguments();
 						if (arguments != null) {

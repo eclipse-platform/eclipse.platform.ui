@@ -33,7 +33,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent;
-import org.eclipse.ltk.core.refactoring.IRefactoringContributionManager;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringHistoryOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -126,6 +125,24 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	public static final int STATUS_CODE_INTERRUPTED= 10003;
 
+	/**
+	 * Converts a button label to pure text.
+	 * 
+	 * @param label
+	 *            the button label
+	 * @return the resulting text
+	 */
+	private static String getLabelAsText(final String label) {
+		Assert.isNotNull(label);
+		StringBuffer buffer= new StringBuffer(label.length());
+		for (int index= 0; index < label.length(); index++) {
+			char character= label.charAt(index);
+			if (character != '&')
+				buffer.append(character);
+		}
+		return buffer.toString();
+	}
+
 	/** Has the about to perform history event already been fired? */
 	private boolean fAboutToPerformFired= false;
 
@@ -195,6 +212,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *            the title of the overview page
 	 * @param description
 	 *            the description of the overview page
+	 * 
+	 * @see #setConfiguration(RefactoringHistoryControlConfiguration)
+	 * @see #setInput(RefactoringHistory)
 	 */
 	public RefactoringHistoryWizard(final String caption, final String title, final String description) {
 		Assert.isNotNull(caption);
@@ -262,7 +282,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringStatus status= new RefactoringStatus();
 		if (refactoring instanceof IInitializableRefactoringComponent) {
 			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-			final RefactoringArguments arguments= RefactoringCore.getRefactoringContributionManager().createArguments(descriptor);
+			final RefactoringArguments arguments= descriptor.createArguments();
 			if (arguments != null)
 				status.merge(component.initialize(arguments));
 			else
@@ -448,8 +468,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *             if an error occurs while creating the refactoring
 	 */
 	private Refactoring getCurrentRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
-		final IRefactoringContributionManager manager= RefactoringCore.getRefactoringContributionManager();
-		final Refactoring refactoring= manager.createRefactoring(descriptor);
+		final Refactoring refactoring= descriptor.createRefactoring();
 		if (refactoring != null) {
 			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
 			if (!status.hasFatalError())
@@ -466,24 +485,6 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	public final IErrorWizardPage getErrorPage() {
 		return fErrorPage;
-	}
-
-	/**
-	 * Converts a button label to pure text.
-	 * 
-	 * @param label
-	 *            the button label
-	 * @return the resulting text
-	 */
-	protected String getLabelAsText(final String label) {
-		Assert.isNotNull(label);
-		StringBuffer buffer= new StringBuffer(label.length());
-		for (int index= 0; index < label.length(); index++) {
-			char character= label.charAt(index);
-			if (character != '&')
-				buffer.append(character);
-		}
-		return buffer.toString();
 	}
 
 	/**
@@ -641,7 +642,7 @@ public class RefactoringHistoryWizard extends Wizard {
 					if (!status.isOK()) {
 						result[0]= fErrorPage;
 					} else if (proxy != null) {
-						final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+						final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 						try {
 							service.connect();
 							final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));

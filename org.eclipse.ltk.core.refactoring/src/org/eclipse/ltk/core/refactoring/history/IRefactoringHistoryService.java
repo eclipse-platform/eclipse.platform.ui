@@ -29,10 +29,12 @@ import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
  * provides methods to register refactoring history listeners, refactoring
  * execution listeners and facilities to query the global refactoring history
  * index for specific refactoring histories. Additionally, methods are provided
- * which read or write refactoring information.
+ * which read or write refactoring information. The refactoring history service
+ * only returns refactorings which have contributed a refactoring descriptor via
+ * their change object.
  * <p>
  * An instance of a refactoring history service may be obtained by calling
- * {@link RefactoringCore#getRefactoringHistoryService()}.
+ * {@link RefactoringCore#getHistoryService()}.
  * </p>
  * <p>
  * All time stamps are measured in UTC milliseconds from the epoch (see

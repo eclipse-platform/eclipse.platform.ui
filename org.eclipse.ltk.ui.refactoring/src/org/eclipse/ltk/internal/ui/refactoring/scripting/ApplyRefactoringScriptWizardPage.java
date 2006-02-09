@@ -193,7 +193,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			try {
 				stream= new BufferedInputStream(new FileInputStream(file));
 				fWizard.setRefactoringScript(URIUtil.toURI(path));
-				fWizard.setRefactoringHistory(RefactoringCore.getRefactoringHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
+				fWizard.setRefactoringHistory(RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
 			} catch (IOException exception) {
 				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_error_cannot_read);
 				setPageComplete(false);

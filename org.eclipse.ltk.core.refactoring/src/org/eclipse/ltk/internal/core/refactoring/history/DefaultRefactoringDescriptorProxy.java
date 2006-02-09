@@ -34,11 +34,11 @@ final class DefaultRefactoringDescriptorProxy extends RefactoringDescriptorProxy
 	 * Creates a new default refactoring descriptor proxy.
 	 * 
 	 * @param description
-	 *            a non-empty human-readable description of the refactoring
+	 *            the description
 	 * @param project
-	 *            the non-empty name of the project, or <code>null</code>
+	 *            the project name, or <code>null</code>
 	 * @param stamp
-	 *            the time stamp of the refactoring
+	 *            the time stamp
 	 */
 	public DefaultRefactoringDescriptorProxy(final String description, final String project, final long stamp) {
 		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$

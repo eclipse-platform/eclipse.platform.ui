@@ -96,7 +96,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 		}
 		if (storage != null) {
 			InputStream stream= null;
-			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+			final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 			try {
 				service.connect();
 				stream= storage.getContents();

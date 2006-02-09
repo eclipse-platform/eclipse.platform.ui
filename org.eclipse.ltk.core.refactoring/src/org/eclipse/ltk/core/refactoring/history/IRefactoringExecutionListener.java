@@ -15,7 +15,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 /**
  * Interface for refactoring execution listeners. Clients may register a
  * refactoring execution listener with the {@link IRefactoringHistoryService}
- * obtained by calling {@link RefactoringCore#getRefactoringHistoryService()} in
+ * obtained by calling {@link RefactoringCore#getHistoryService()} in
  * order to get informed about refactoring execution events.
  * <p>
  * Note: this interface is intended to be implemented by clients.

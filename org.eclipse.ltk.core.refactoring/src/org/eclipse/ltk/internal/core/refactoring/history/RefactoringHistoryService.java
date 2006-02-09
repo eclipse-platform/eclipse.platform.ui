@@ -56,6 +56,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
@@ -65,6 +66,8 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringExecutionEvent;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
+
+import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -406,6 +409,20 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 */
 		private UnknownRefactoringDescriptor() {
 			super(ID_UNKNOWN, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, RefactoringDescriptor.NONE);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public RefactoringArguments createArguments() {
+			return null;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public Refactoring createRefactoring() throws CoreException {
+			return null;
 		}
 	}
 

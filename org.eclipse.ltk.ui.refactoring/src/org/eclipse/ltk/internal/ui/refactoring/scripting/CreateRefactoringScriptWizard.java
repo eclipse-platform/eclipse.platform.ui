@@ -86,7 +86,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			setDialogSettings(section);
 		}
 		fWizardPage= new CreateRefactoringScriptWizardPage(this);
-		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+		final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 		try {
 			service.connect();
 			fRefactoringHistory= service.getWorkspaceHistory(null);
@@ -167,7 +167,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					InputStream stream= null;
 					try {
 						stream= new BufferedInputStream(new FileInputStream(file));
-						final RefactoringDescriptorProxy[] existing= RefactoringCore.getRefactoringHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE).getDescriptors();
+						final RefactoringDescriptorProxy[] existing= RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE).getDescriptors();
 						final Set set= new HashSet();
 						for (int index= 0; index < existing.length; index++)
 							set.add(existing[index]);
@@ -210,7 +210,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
 					}
 				});
-				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());
+				RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());
 				return true;
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
