@@ -43,6 +43,8 @@ public class CheatSheetMenu extends ContributionItem {
 	private static CheatSheetRegistryReader reg;
 
 	private boolean showActive = false;
+	
+	private IMenuContributor menuContributor;
 
 	private Comparator comparator = new Comparator() {
 		private Collator collator = Collator.getInstance();
@@ -130,7 +132,10 @@ public class CheatSheetMenu extends ContributionItem {
 		if (cheatsheets.size() > 0) {
 			new MenuItem(menu, SWT.SEPARATOR, index++);
 		}
-		createOtherItem(menu, index);
+		createOtherItem(menu, index++);
+		if (menuContributor != null) {
+			menuContributor.contributeToViewMenu(menu, index);
+		}
 	}
 
 	/**
@@ -300,4 +305,14 @@ public class CheatSheetMenu extends ContributionItem {
 	protected void showActive(boolean b) {
 		showActive = b;
 	}
+
+	/**
+	 * Sets the menuContributor
+	 * @param menuContributor an object which may add contributions to 
+	 * the menu.
+	 */
+	public void setMenuContributor(IMenuContributor menuContributor) {
+		this.menuContributor = menuContributor;
+	}
+
 }

@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
@@ -55,6 +56,7 @@ import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.actions.IMenuContributor;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.views.CompositeCheatSheetPage;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
@@ -66,7 +68,7 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.osgi.framework.Bundle;
 
-public class CheatSheetViewer implements ICheatSheetViewer {
+public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 	//CS Elements
 	private CheatSheetElement contentElement;
@@ -1119,6 +1121,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	public void addListener(CheatSheetListener listener) {
 		getManager().addListener(listener);		
+	}
+
+	public int contributeToViewMenu(Menu menu, int index) {
+		if (currentPage instanceof IMenuContributor) {
+			return ((IMenuContributor)currentPage).contributeToViewMenu(menu, index);
+		}
+		return index;
 	}
 
 }

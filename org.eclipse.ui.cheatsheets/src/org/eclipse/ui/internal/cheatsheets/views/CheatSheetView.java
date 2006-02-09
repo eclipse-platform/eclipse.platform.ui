@@ -68,6 +68,9 @@ public class CheatSheetView extends ViewPart {
 	
 		CheatSheetMenu cheatsheetMenuMenuItem = new CheatSheetMenu();
 		menuManager.add(cheatsheetMenuMenuItem);
+		if (viewer != null) {
+			cheatsheetMenuMenuItem.setMenuContributor(viewer);
+		}
 	}
 
 

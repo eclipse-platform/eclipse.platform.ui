@@ -289,6 +289,18 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		}
 		return (TaskExplorerNode)taskExplorers.get(id);
 	}
+	
+	/**
+	 * Get the list of explorer ids
+	 * @return an iterator for the explorer ids
+	 */
+	public String[] getExplorerIds() {
+		if (cheatsheets == null) {
+		    readCheatSheets(); // Ensure that the registry has been read
+		}
+		Set keys = taskExplorers.keySet();
+		return (String[]) keys.toArray(new String[keys.size()]);
+	}
 
 	/**
 	 * Finishes the addition of categories.  The categories are sorted and

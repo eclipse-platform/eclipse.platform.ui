@@ -124,7 +124,8 @@
             id="cheatsheet"/>
       <taskExplorer
             class="org.eclipse.ui.internal.cheatsheets.composite.explorer.TreeTaskExplorer"
-            name="Tree based explorer"
-            id="tree"/>
+            icon="icons/obj16/cheatsheet_obj.gif"
+            id="tree"
+            name="Tree"/>
    </extension>
 </plugin>

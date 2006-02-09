@@ -25,12 +25,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ITaskEditor;
 import org.eclipse.ui.cheatsheets.ITaskExplorer;
@@ -43,11 +47,14 @@ import org.eclipse.ui.forms.widgets.ScrolledFormText;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.actions.IMenuContributor;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CheatSheetTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.composite.model.SuccesorTaskFinder;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader.TaskExplorerNode;
 import org.eclipse.ui.internal.cheatsheets.views.Page;
 import org.eclipse.ui.part.PageBook;
 
@@ -55,7 +62,7 @@ import org.eclipse.ui.part.PageBook;
  * A page which represents a composite cheat sheet
  */
 
-public class CompositeCheatSheetPage extends Page implements ISelectionChangedListener {
+public class CompositeCheatSheetPage extends Page implements ISelectionChangedListener, IMenuContributor {
 
 	
 	private static final String TASK = "task"; //$NON-NLS-1$
@@ -172,12 +179,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		this.model = model;
 		mform.getForm().setText(model.getName());
 		String explorerId = model.getTaskExplorerId();
-		ITaskExplorer explorer = getTaskExplorer(explorerId);
-		if (explorer!=null) {
-			explorer.setCompositeCheatSheet(model);
-			explorer.setFocus();
-			setExplorerVisible(explorerId);
-		}
+		setCurrentExplorerFromId(explorerId);
 		model.addObserver(new Observer() {
 			public void update(Observable o, Object arg) {
 				ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)arg;
@@ -186,6 +188,15 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				updateTask(task);
 			}
 		});
+	}
+
+	private void setCurrentExplorerFromId(String explorerId) {
+		ITaskExplorer explorer = getTaskExplorer(explorerId);
+		if (explorer!=null) {
+			explorer.setCompositeCheatSheet(this.model);
+			explorer.setFocus();
+			setExplorerVisible(explorerId);
+		}
 	}
 
 	private void setExplorerVisible(String id) {
@@ -511,6 +522,38 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		saveHelper.loadCompositeState(model, null);
 		setInputModel(model);
 		model.setSaveHelper(saveHelper);	
+	}
+
+	public int contributeToViewMenu(Menu menu, int index) {
+		
+		String[] explorerIds = CheatSheetRegistryReader.getInstance().getExplorerIds();
+		if (explorerIds.length == 1) {
+			return index;  // no other explorer to chosse from
+		}
+        MenuItem menuItem = new MenuItem(menu, SWT.CASCADE, index++);
+
+        menuItem.setText(Messages.EXPLORER_PULLDOWN_MENU);
+    
+        Menu subMenu = new Menu(menu);
+        menuItem.setMenu(subMenu);
+        
+        for (int i = 0; i < explorerIds.length; i++) {
+        	final String id = explorerIds[i];
+        	TaskExplorerNode node = CheatSheetRegistryReader.getInstance().findTaskExplorer(id);
+        	boolean isCurrentExplorer = id.equals(currentExplorer.getId());
+        	int style = isCurrentExplorer ? SWT.RADIO: SWT.PUSH;
+        	MenuItem item = new MenuItem(subMenu, style);
+    		item.setText(node.getName());
+    		item.setSelection(isCurrentExplorer);
+    		item.setImage(TaskExplorerManager.getInstance().getImage(id));
+    		item.addSelectionListener(new SelectionAdapter() {
+    			public void widgetSelected(SelectionEvent e) {
+    				setCurrentExplorerFromId(id);
+    			}
+    		});
+        }
+
+		return index;
 	}
 
 }
