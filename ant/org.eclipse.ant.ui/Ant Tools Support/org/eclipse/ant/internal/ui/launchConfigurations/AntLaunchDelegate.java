@@ -707,4 +707,17 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
          }
          return breakpointManager.getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
      }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#saveBeforeLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		if (IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY.equals(
+				configuration.getType().getCategory())) {
+					// don't prompt for buiders
+					return true;
+		}
+		return super.saveBeforeLaunch(configuration, mode, monitor);
+	}
+    
 }
