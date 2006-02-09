@@ -961,7 +961,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	    	editor.getSelectionProvider().setSelection(TextSelection.emptySelection());
 	    	
 	    	ICompletionProposal[] proposals= processor.computeCompletionProposals(0);
-	    	assertTrue("Two proposals are relevant at the current position. Found: " + proposals.length, proposals.length == 2);
+	    	assertTrue("Four proposals are relevant at the current position. Found: " + proposals.length, proposals.length == 4);
 	    	assertContains("project", proposals);
 	    	assertContains("Buildfile template - simple buildfile with two targets", proposals);
             processor.dispose();

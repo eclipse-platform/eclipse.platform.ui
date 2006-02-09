@@ -2,7 +2,7 @@
 
 <!--
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,42 +29,32 @@
 	context="org.eclipse.ant.ui.templateContextType.task" 
 	description="%filesetTemplate1.description" 
 	id="org.eclipse.ant.ui.templates.fileset1" 
-	name="fileset"><![CDATA[
-<fileset dir="${dir}" id="${id}">
+	name="fileset"><![CDATA[<fileset dir="${dir}" id="${id}">
     <include name="${include}"/>
     <exclude name="${exclude}"/>
 </fileset>
-${cursor}
-]]>
-</template>
+${cursor}]]></template>
 
 <template 
     context="org.eclipse.ant.ui.templateContextType.task" 
     description="%deleteTemplate1.description" 
     id="org.eclipse.ant.ui.templates.delete1" 
-    name="delete"><![CDATA[
-<delete>
+    name="delete"><![CDATA[<delete>
 	<fileset dir="${dir}">
 	    <include name="${include}"/>
 	    <exclude name="${exclude}"/>
 	</fileset>
 </delete>
-${cursor}
-]]>
-</template>
+${cursor}]]></template>
 
 <template 
     context="org.eclipse.ant.ui.templateContextType.task" 
     description="%deleteTemplate2.description" 
     id="org.eclipse.ant.ui.templates.delete2" 
-    name="delete"><![CDATA[
-<delete>
+    name="delete"><![CDATA[<delete>
     <fileset refid="${cursor}"/>
-</delete>
-]]>
+</delete>]]>
 </template>
-
-
 
 <template 
     context="org.eclipse.ant.ui.templateContextType.task" 
@@ -80,41 +70,35 @@ ${cursor}
     name="property">&lt;property name=&quot;${name}&quot; value=&quot;${value}&quot;/&gt;
 </template>
 
-
 <template 
 	context="org.eclipse.ant.ui.templateContextType.task" 
 	description="%targetTemplate1.description" 
 	id="org.eclipse.ant.ui.templates.target1" 
-	name="target"><![CDATA[
-    <!-- ================================= 
+	name="target"><![CDATA[<!-- ================================= 
           target: ${name}              
          ================================= -->
     <target name="${name}" depends="${depends}" description="--> ${description}">
         ${cursor}
     </target>
-]]>
-</template>
+]]></template>
 
 <template 
     context="org.eclipse.ant.ui.templateContextType.task" 
     description="%targetTemplate2.description" 
     id="org.eclipse.ant.ui.templates.target2" 
-    name="target"><![CDATA[
-    <!-- - - - - - - - - - - - - - - - - - 
+    name="target"><![CDATA[<!-- - - - - - - - - - - - - - - - - - 
           target: ${name}                      
          - - - - - - - - - - - - - - - - - -->
     <target name="${name}">
             ${cursor}
     </target>
-]]>
-</template>
+]]></template>
 
 <template 
     context="org.eclipse.ant.ui.templateContextType.task" 
     description="%macrodefTemplate.description" 
     id="org.eclipse.ant.ui.templates.macrodef" 
-    name="macrodef"><![CDATA[
-    <!-- = = = = = = = = = = = = = = = = =
+    name="macrodef"><![CDATA[<!-- = = = = = = = = = = = = = = = = =
           macrodef: ${name}          
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="${name}">
@@ -123,8 +107,7 @@ ${cursor}
             ${cursor}
         </sequential>
     </macrodef>
-]]>
-</template>
+]]></template>
 
 <template 
 	context="org.eclipse.ant.ui.templateContextType.buildFile" 
@@ -158,7 +141,26 @@ ${cursor}
     </target>
 
 </project>
-]]>
-</template>
+]]></template>
+
+<template name="%antComment.name" description="%antComment.description"
+	context="org.eclipse.ant.ui.templateContextType.buildFile" 
+	id="org.eclipse.ant.ui.templates.comment1" ><![CDATA[<!-- ${word_selection}-->]]></template>
+
+<template name="%antComment.name" description="%antComment.description"
+	context="org.eclipse.ant.ui.templateContextType.task" 
+	id="org.eclipse.ant.ui.templates.comment2"><![CDATA[<!-- ${word_selection}-->]]></template>
+
+<template name="%antLineComment.name" description="%antLineComment.description"
+	context="org.eclipse.ant.ui.templateContextType.buildFile" 
+	id="org.eclipse.ant.ui.templates.comment3"><![CDATA[<!--
+${line_selection}
+-->]]></template>
+
+<template name="%antLineComment.name" description="%antLineComment.description"
+	context="org.eclipse.ant.ui.templateContextType.task"
+	id="org.eclipse.ant.ui.templates.comment4"><![CDATA[<!--
+${line_selection}
+-->]]></template>
 
 </templates>

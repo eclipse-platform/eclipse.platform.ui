@@ -18,6 +18,7 @@ import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
@@ -28,8 +29,8 @@ public class AntContext extends DocumentTemplateContext {
 	
 	private IAntModel fAntModel;
 	
-	public AntContext(TemplateContextType type, IDocument document, IAntModel model, int completionOffset, int completionLength) {
-		super(type, document, completionOffset, completionLength);
+	public AntContext(TemplateContextType type, IDocument document, IAntModel model, Position position) {
+		super(type, document, position);
 		fAntModel= model;
 	}
 	
@@ -67,7 +68,7 @@ public class AntContext extends DocumentTemplateContext {
 		if (replacementOffset > 0 && getDocument().get().charAt(replacementOffset - 1) == '<') {
 			replacementLength++;
 		}
-		return replacementLength;
+		return replacementLength + replacementOffset;
 	}
 	
 	/* (non-Javadoc)

@@ -70,6 +70,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -79,6 +80,7 @@ import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -192,7 +194,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see determineProposalMode(IDocument, int, String)
 	 */
 	protected String currentTaskString= null;
-	
+
 	public AntEditorCompletionProcessor(AntModel model) {
 		super();
 		antModel= model;
@@ -224,13 +226,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
-        this.viewer = refViewer;   
-        ICompletionProposal[] matchingProposals= determineProposals();
-        ICompletionProposal[] matchingTemplateProposals = determineTemplateProposals(refViewer, documentOffset);
-        currentPrefix= null;
-        currentProposalMode= -1;
+	    this.viewer = refViewer;   
+            ICompletionProposal[] matchingProposals= determineProposals();
+            ICompletionProposal[] matchingTemplateProposals = determineTemplateProposals(refViewer, documentOffset);
+	        currentPrefix= null;
+	        currentProposalMode= -1;
         return mergeProposals(matchingProposals, matchingTemplateProposals);
-    }
+	    }
 	
 	protected ICompletionProposal[] determineTemplateProposals(ITextViewer refViewer, int documentOffset) {
 		this.viewer= refViewer;
@@ -1640,8 +1642,16 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	protected TemplateContext createContext(ITextViewer contextViewer, IRegion region) {
 		TemplateContextType contextType= getContextType(contextViewer, region);
 		if (contextType != null) {
+            Point selection= contextViewer.getSelectedRange();
+            Position position;
+            if (selection.y > 0) {
+                position= new Position(selection.x, selection.y);    
+            } else {
+                position= new Position(region.getOffset(), region.getLength());
+            }
+            
 			IDocument document= contextViewer.getDocument();
-			return new AntContext(contextType, document, antModel, region.getOffset(), region.getLength());
+			return new AntContext(contextType, document, antModel, position);
 		}
 		return null;
 	}
@@ -1691,4 +1701,4 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		fgDtd= null;
 		TaskDescriptionProvider.reset();
 	}
-}
+        }
