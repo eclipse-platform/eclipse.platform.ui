@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
@@ -81,17 +83,17 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		{
 			if (memory.length > 0)
 			{
-				WorkbenchJob job = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
-
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						populateDialog(memoryBlock, fViewer, memory[0]);
-						return Status.OK_STATUS;
-					}};
-				job.setSystem(true);
-				job.schedule();
+				IMemoryBlock currentBlock = getMemoryBlockToSelect(memory[0]);
+				if (currentBlock == null)
+				{
+					addNew();
+				}
+				else
+				{
+					populateDialog(currentBlock);
+				}
 			}
 		}
-		
 		public void memoryBlocksRemoved(IMemoryBlock[] memory)
 		{
 		}
@@ -330,7 +332,16 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				okPressed();
 			}});
 		
-		populateDialog(memoryBlock, fViewer, null);
+		IMemoryBlock currentBlock = getMemoryBlockToSelect(null);
+		if (currentBlock == null)
+		{
+			addNew();
+		}
+		else
+		{
+			populateDialog(currentBlock);
+		}
+		
 		
 		fSelectionChangedListener = new ISelectionChangedListener() {
 
@@ -363,12 +374,25 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	}
 	
 	
-	private void populateDialog(Combo combo, ListViewer viewer, IMemoryBlock lastAdded)
+	private void doPopulateDialog(Combo combo, ListViewer viewer, String[] labels, int selectionIdx, IMemoryBlock currentBlock)
 	{	
 		// clean up
 		combo.removeAll();
 		
-		IMemoryBlock currentBlock;
+		for (int i=0; i<labels.length; i++)
+		{
+			combo.add(labels[i]);
+		}
+
+		combo.select(selectionIdx);
+		fSelectedMemoryBlock = currentBlock;
+		
+		viewer.setInput(currentBlock);
+	}
+	
+	private IMemoryBlock getMemoryBlockToSelect(IMemoryBlock lastAdded)
+	{
+		IMemoryBlock currentBlock = null;
 		
 		if (lastAdded != null)
 			currentBlock = lastAdded;
@@ -388,71 +412,57 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			if (!(element instanceof IMemoryBlock) ||(element == null))
 			{
 				
-				ISelection debugSelection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-				if (!(debugSelection instanceof IStructuredSelection))
-					return;
-	
-				//only single selection is allowed for this action
-				if (debugSelection == null || debugSelection.isEmpty() || ((IStructuredSelection)debugSelection).size() > 1)
+				IAdaptable context = DebugUITools.getDebugContext();	
+				
+				if (context != null)
 				{
-					return;
+					IDebugElement debugElement = (IDebugElement)context.getAdapter(IDebugElement.class);
+					
+					if (debugElement != null)
+					{
+						IMemoryBlock[] blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(debugElement.getDebugTarget());
+						
+						if (blocks.length > 0)
+							currentBlock = blocks[0];
+					}
 				}
-	
-				Object elem = ((IStructuredSelection)debugSelection).getFirstElement();
-	
-				// if not debug element
-				if (!(elem instanceof IDebugElement))
-					return;			
-				
-				IMemoryBlock[] blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(((IDebugElement)elem).getDebugTarget());
-				
-				if (blocks.length <= 0)
-				{
-					combo.add(DebugUIMessages.AddMemoryRenderingDialog_Add_New); 
-					combo.select(0);
-					return;
-				}
-				
-				currentBlock = blocks[0];
 			}
 			else
 			{	
 				currentBlock = (IMemoryBlock)element;
 			}
 		}
-		
-		fMemoryBlocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(currentBlock.getDebugTarget());
-		int selectionIdx = -1;
-		for (int i=0; i<fMemoryBlocks.length; i++)
+		return currentBlock;
+	}
+	
+	private String[] getLabels(IMemoryBlock[] memoryBlocks)
+	{
+		String[] labels = new String[memoryBlocks.length];
+		for (int i=0; i<memoryBlocks.length; i++)
 		{	
 			String text = ""; //$NON-NLS-1$
-			if (fMemoryBlocks[i] instanceof IMemoryBlockExtension)
+			if (memoryBlocks[i] instanceof IMemoryBlockExtension)
 			{
 				try {
-					text = ((IMemoryBlockExtension)fMemoryBlocks[i]).getExpression();
+					text = ((IMemoryBlockExtension)memoryBlocks[i]).getExpression();
 					
 					if (text == null)
 						text = DebugUIMessages.AddMemoryRenderingDialog_Unknown; 
 					
-					if (((IMemoryBlockExtension)fMemoryBlocks[i]).getBigBaseAddress() != null)
+					if (((IMemoryBlockExtension)memoryBlocks[i]).getBigBaseAddress() != null)
 					{
 						text += " : 0x"; //$NON-NLS-1$
-						text += ((IMemoryBlockExtension)fMemoryBlocks[i]).getBigBaseAddress().toString(16);
+						text += ((IMemoryBlockExtension)memoryBlocks[i]).getBigBaseAddress().toString(16);
 					}	
 				} catch (DebugException e) {
-					long address = fMemoryBlocks[i].getStartAddress();
+					long address = memoryBlocks[i].getStartAddress();
 					text = Long.toHexString(address);
 				}
 			}
 			else
 			{
-				long address = fMemoryBlocks[i].getStartAddress();
+				long address = memoryBlocks[i].getStartAddress();
 				text = Long.toHexString(address);
-			}
-
-			if (fMemoryBlocks[i] == currentBlock)
-			{
-				selectionIdx = i;
 			}
 			
 			// ask decorator to decorate to ensure consistent label
@@ -460,13 +470,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			if (decorator != null)
 				text = decorator.decorateText(text, fMemoryBlocks[i]);
 			
-			combo.add(text);
+			labels[i] = text;
 		}
-
-		combo.select(selectionIdx);
-		fSelectedMemoryBlock = currentBlock;
-		
-		viewer.setInput(currentBlock);
+		return labels;
 	}
 	
 	private IMemoryBlock getMemoryBlock(ISelection selection)
@@ -493,5 +499,56 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	public IMemoryBlock getMemoryBlock()
 	{
 		return fSelectedMemoryBlock;
+	}
+	
+	/**
+	 * @param currentBlock
+	 */
+	private void populateDialog(IMemoryBlock currentBlock) {
+		final IMemoryBlock selectMB = currentBlock;
+		Job job = new Job("Populate dialog") //$NON-NLS-1$
+		{
+			protected IStatus run(IProgressMonitor monitor) {
+				fMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(selectMB.getDebugTarget());
+				int selectionIdx = 0;
+				for (int i=0; i<fMemoryBlocks.length; i++)
+				{
+					if (fMemoryBlocks[i] == selectMB)
+					{
+						selectionIdx = i;
+						break;
+					}
+				}
+				
+				final String[] labels = getLabels(fMemoryBlocks);
+				final int idx = selectionIdx;
+				final IMemoryBlock selectedBlk = selectMB;
+				WorkbenchJob wbJob = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
+
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						doPopulateDialog(memoryBlock, fViewer, labels, idx, selectedBlk);	
+						return Status.OK_STATUS;
+					}};
+					wbJob.setSystem(true);
+					wbJob.schedule();		
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
+	}
+
+	/**
+	 * 
+	 */
+	private void addNew() {
+		WorkbenchJob job = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
+
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				memoryBlock.add(DebugUIMessages.AddMemoryRenderingDialog_Add_New);
+				memoryBlock.select(0);
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
 	}
 }
