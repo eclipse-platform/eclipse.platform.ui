@@ -11,6 +11,9 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePage;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -34,7 +37,7 @@ public interface ITeamContentProviderManager {
 	 * {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common
 	 * Navigator framework.
 	 */
-	public static final String P_SYNCHRONIZATION_PAGE_CONFIGURATION = "org.eclipse.team.ui.synchronizationPageConfiguration"; //$NON-NLS-1$
+	public static final String P_SYNCHRONIZATION_PAGE_CONFIGURATION = TeamUIPlugin.ID +  ".synchronizationPageConfiguration"; //$NON-NLS-1$
 	/**
 	 * Property constant used to store and retrieve the synchronization context
 	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by
@@ -42,7 +45,7 @@ public interface ITeamContentProviderManager {
 	 * with an {@link ISynchronizePageConfiguration} when models are being
 	 * shown in an {@link ISynchronizePage}.
 	 */
-	public static final String P_SYNCHRONIZATION_CONTEXT = "org.eclipse.team.ui.synchronizationContext"; //$NON-NLS-1$
+	public static final String P_SYNCHRONIZATION_CONTEXT = TeamUIPlugin.ID + ".synchronizationContext"; //$NON-NLS-1$
 	/**
 	 * Property constant used to store and retrieve the resource mapping scope
 	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by
@@ -50,24 +53,19 @@ public interface ITeamContentProviderManager {
 	 * with an {@link ISynchronizePageConfiguration} when models are being
 	 * shown in an {@link ISynchronizePage}.
 	 */
-	public static final String P_RESOURCE_MAPPING_SCOPE = "org.eclipse.team.ui.resourceMappingScope"; //$NON-NLS-1$
+	public static final String P_SYNCHRONIZATION_SCOPE = TeamUIPlugin.ID + ".synchronizationScope"; //$NON-NLS-1$
 
+	/**
+	 * Property constant used during property change notification to indicate
+	 * that one one or more model providers have either been enabled or disabled.
+	 */
+	public static final String PROP_ENABLED_MODEL_PROVIDERS = TeamUIPlugin.ID + ".ENABLED_MODEL_PROVIDERS"; //$NON-NLS-1$
+	
 	/**
 	 * Return descriptors for all the registered content extensions.
 	 * @return descriptors for all the registered content extensions
 	 */
-	public abstract ITeamContentProviderDescriptor[] getDescriptors();
-
-	/**
-	 * Return the ids for all the content extensions registered
-	 * with the team content providers extenstion point. Each of the
-	 * returned ids is the id of an extension registered with the
-	 * <code>org.eclipse.ui.navigator.navigatorContent</code> extension point..
-	 * 
-	 * @return the ids for all the content extensions registered
-	 * with the team content providers extenstion point
-	 */
-	public abstract String[] getContentProviderIds();
+	public ITeamContentProviderDescriptor[] getDescriptors();
 
 	/**
 	 * Return the team content provider descriptor for the
@@ -77,7 +75,30 @@ public interface ITeamContentProviderManager {
 	 * @return the team content provider descriptor for the
 	 * given model provider id or <code>null</code>
 	 */
-	public abstract ITeamContentProviderDescriptor getDescriptor(
+	public ITeamContentProviderDescriptor getDescriptor(
 			String modelProviderId);
+	
+	/**
+	 * Add a property change listener to the manager.
+	 * @param listener the listener
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Remove a property change listener from the manager.
+	 * @param listener the listener
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener);
+
+	/**
+	 * Convenience method that returns the list of all enabled content extension ids for
+	 * models that have mappings in the given scope.
+	 * 
+	 * @param scope
+	 *            the scope
+	 * @return the list of all content extension ids for models that have
+	 *         mappings in the given scope
+	 */
+	public String[] getContentProviderIds(ISynchronizationScope scope);
 
 }

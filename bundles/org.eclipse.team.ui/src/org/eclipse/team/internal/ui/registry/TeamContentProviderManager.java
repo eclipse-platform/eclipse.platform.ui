@@ -13,6 +13,8 @@ package org.eclipse.team.internal.ui.registry;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
@@ -43,17 +45,16 @@ public class TeamContentProviderManager implements ITeamContentProviderManager {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderManager#getContentProviderIds()
+	 * @see org.eclipse.team.ui.mapping.ITeamContentProviderManager#getContentProviderIds(org.eclipse.team.core.mapping.ISynchronizationScope)
 	 */
-	public String[] getContentProviderIds() {
+	public String[] getContentProviderIds(ISynchronizationScope scope) {
 		List result = new ArrayList();
 		ITeamContentProviderDescriptor[] descriptors = getDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
 			ITeamContentProviderDescriptor descriptor = descriptors[i];
-			result.add(descriptor.getContentExtensionId());
+			if (descriptor.isEnabled() && scope.getMappings(descriptor.getModelProviderId()).length > 0)
+				result.add(descriptor.getContentExtensionId());
 		}
-		// TODO: Is this still required?
-		result.add("org.eclipse.team.ui.navigatorContent"); //$NON-NLS-1$
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 	
@@ -81,5 +82,15 @@ public class TeamContentProviderManager implements ITeamContentProviderManager {
 			if (desc != null)
 				descriptors.put(desc.getModelProviderId(), desc);
 		}
+	}
+
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 }

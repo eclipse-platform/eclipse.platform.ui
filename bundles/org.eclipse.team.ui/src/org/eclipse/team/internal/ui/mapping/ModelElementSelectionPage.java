@@ -61,8 +61,8 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		GridData data;
 		ContainerCheckedTreeViewer fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
 		service = NavigatorContentServiceFactory.INSTANCE.createContentService(CommonViewerAdvisor.TEAM_NAVIGATOR_CONTENT, fViewer);
-		service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(), true);
-		service.activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(), true);
+		service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
+		service.activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
 		data = new GridData(GridData.FILL_BOTH);
 		//data.widthHint = 200;
 		data.heightHint = 100;

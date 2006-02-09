@@ -192,7 +192,7 @@ public class ModelSynchronizeParticipant extends
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
 		configuration.setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT, getContext());
-		configuration.setProperty(ITeamContentProviderManager.P_RESOURCE_MAPPING_SCOPE, getContext().getScope());
+		configuration.setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE, getContext().getScope());
 	}
 
 	/**

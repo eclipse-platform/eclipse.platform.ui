@@ -29,13 +29,13 @@ public interface ITeamContentProviderDescriptor {
 	 * @return id of the content extension registered with
 	 * the <code>org.eclipse.ui.navigator.navigatorContent</code> extension point
 	 */
-	public abstract String getContentExtensionId();
+	public String getContentExtensionId();
 
 	/**
 	 * Return the id of the model provider to which this content provider applies.
 	 * @return the id of the model provider to which this content provider applies
 	 */
-	public abstract String getModelProviderId();
+	public String getModelProviderId();
 
 	/**
 	 * Return an image descriptor that can be displayed with this content 
@@ -43,7 +43,7 @@ public interface ITeamContentProviderDescriptor {
 	 * @return an image descriptor that can be displayed with this content 
 	 * extension
 	 */
-	public abstract ImageDescriptor getImageDescriptor();
+	public ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Return a preference page that can be displayed to configure
@@ -52,6 +52,13 @@ public interface ITeamContentProviderDescriptor {
 	 * the content provider of this extension
 	 * @throws CoreException
 	 */
-	public abstract IPreferencePage createPreferencePage() throws CoreException;
+	public IPreferencePage createPreferencePage() throws CoreException;
+	
+	/**
+	 * Return whether this content provider is enabled. If it is not
+	 * enabled, it should not be included in any viewers.
+	 * @return whether this content provider is enabled
+	 */
+	public boolean isEnabled();
 
 }

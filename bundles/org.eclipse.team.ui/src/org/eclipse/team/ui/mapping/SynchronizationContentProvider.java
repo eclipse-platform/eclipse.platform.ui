@@ -285,7 +285,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration != null)
 			configuration.addPropertyChangeListener(this);
-		scope = (ISynchronizationScope)aStateModel.getProperty(ITeamContentProviderManager.P_RESOURCE_MAPPING_SCOPE);
+		scope = (ISynchronizationScope)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE);
 		context = (ISynchronizationContext)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		ITreeContentProvider provider = getDelegateContentProvider();
 		if (provider instanceof ICommonContentProvider) {

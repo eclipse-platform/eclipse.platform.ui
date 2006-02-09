@@ -57,8 +57,8 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
         
         viewer = new CommonViewer(TEAM_NAVIGATOR_CONTENT, composite, SWT.BORDER);
         viewer.setSorter(new CommonViewerSorter());
-        viewer.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(), true);
-        viewer.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(), true);
+        viewer.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
+        viewer.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 100;
         data.widthHint = 300;
@@ -96,7 +96,7 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
 	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener#onLoad(org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension)
 	 */
 	public void onLoad(INavigatorContentExtension anExtension) {
-		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_RESOURCE_MAPPING_SCOPE, scope);
+		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE, scope);
 		if (context != null) {
 			anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT, context);
 		}

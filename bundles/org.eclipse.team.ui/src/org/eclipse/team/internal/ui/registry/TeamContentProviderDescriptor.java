@@ -104,4 +104,11 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 		Object obj = RegistryReader.createExtension(configElement, ATT_PREFERENCE_PAGE);
 		return (IPreferencePage) obj;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return true;
+	}
 }

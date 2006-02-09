@@ -49,7 +49,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 */
 	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
 		contentProvider = aContentProvider;
-		init((ISynchronizationScope)aStateModel.getProperty(ITeamContentProviderManager.P_RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT));
+		init((ISynchronizationScope)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE), (ISynchronizationContext)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT));
 		ILabelProvider provider = getDelegateLabelProvider();
 		if (provider instanceof ICommonLabelProvider) {
 			if (aContentProvider instanceof SynchronizationContentProvider) {

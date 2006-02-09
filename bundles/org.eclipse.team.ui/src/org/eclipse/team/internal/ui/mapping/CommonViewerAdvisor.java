@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
@@ -115,14 +116,20 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration, IEmptyTreeListener listener) {
 		CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, listener);
 		v.setSorter(new CommonViewerSorter());
-		v.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(), true);
-		v.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(), true);
+		ISynchronizationScope scope = getScope(configuration);
+		v.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
+		v.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
 		configuration.getSite().setSelectionProvider(v);
 		return v;
 	}
 	
+	private static ISynchronizationScope getScope(ISynchronizePageConfiguration configuration) {
+		return (ISynchronizationScope)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE);
+	}
+
 	/**
 	 * Create the advisor using the given configuration
+	 * @param parent the parent
 	 * @param configuration the configuration
 	 */
 	public CommonViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
@@ -187,7 +194,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	public void onLoad(INavigatorContentExtension anExtension) {
 		extensions.add(anExtension);
 		SynchronizationContext context = getParticipant().getContext();
-		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_RESOURCE_MAPPING_SCOPE, context.getScope());
+		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE, context.getScope());
 		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION, getConfiguration());
 		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT, context);
 	}
