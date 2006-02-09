@@ -688,7 +688,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns the persepective manager.
+	 * Returns the perspective manager.
 	 * 
 	 * @return
 	 */
@@ -976,7 +976,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 
 	/**
-	 * Returns the label with any acclerators removed.
+	 * Returns the label with any accelerators removed.
 	 * 
 	 * @return label without accelerators
 	 */
@@ -1036,8 +1036,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     }
     
     /**
-	 * performs extra filtering for launch configuraitons based on the prefs set on the 
-	 * Launch Configuraitons page
+	 * Performs extra filtering for launch configurations based on the prefs set on the 
+	 * Launch Configurations page
 	 * @param config the config to filter
 	 * @return true if it should pass the filter, false otherwise
 	 * @since 3.2
