@@ -22,7 +22,6 @@ import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.mapping.ModelParticipantPageDialog;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.ModelMergeOperation;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.progress.WorkbenchJob;
 

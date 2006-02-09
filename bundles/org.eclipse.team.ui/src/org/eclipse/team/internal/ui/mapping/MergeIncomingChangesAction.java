@@ -22,8 +22,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelParticipantAction;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.PlatformUI;
 
 /**

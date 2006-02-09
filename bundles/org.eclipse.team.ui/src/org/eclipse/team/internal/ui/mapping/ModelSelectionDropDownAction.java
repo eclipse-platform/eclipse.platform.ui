@@ -19,9 +19,7 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
-import org.eclipse.team.ui.mapping.ModelOperation;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.*;
 
 public class ModelSelectionDropDownAction extends Action implements IMenuCreator, ISynchronizationScopeChangeListener {
 
