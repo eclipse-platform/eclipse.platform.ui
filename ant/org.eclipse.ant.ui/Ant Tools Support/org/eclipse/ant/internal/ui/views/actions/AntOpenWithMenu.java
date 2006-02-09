@@ -108,7 +108,7 @@ public class AntOpenWithMenu extends ContributionItem {
 		} else {
 			imageDesc = editorDesc.getImageDescriptor();
 		}
-		if (imageDesc == null) {
+		if (imageDesc == null && editorDesc != null) {
 			if (editorDesc.getId().equals(SYSTEM_EDITOR_ID)) {
 				imageDesc = getSystemEditorImageDescriptor(fNode.getIFile().getFileExtension());
 			}
