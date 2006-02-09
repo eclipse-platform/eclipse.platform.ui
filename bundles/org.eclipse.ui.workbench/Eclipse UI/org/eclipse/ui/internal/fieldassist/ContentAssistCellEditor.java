@@ -9,10 +9,9 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.fieldassist;
+package org.eclipse.ui.internal.fieldassist;
 
 import org.eclipse.jface.fieldassist.DecoratedField;
-import org.eclipse.jface.fieldassist.DecoratedTextCellEditor;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
@@ -21,6 +20,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.fieldassist.IWorkbenchFieldDecorationConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -37,7 +38,7 @@ import org.eclipse.ui.keys.IBindingService;
  * 
  * @since 3.2
  */
-public class ContentAssistCellEditor extends DecoratedTextCellEditor {
+public class ContentAssistCellEditor extends DecoratedFieldCellEditor {
 
 	private ContentAssistCommandAdapter adapter;
 

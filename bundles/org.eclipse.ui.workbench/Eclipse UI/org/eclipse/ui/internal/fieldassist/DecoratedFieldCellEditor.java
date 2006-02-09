@@ -9,10 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.fieldassist;
+package org.eclipse.ui.internal.fieldassist;
 
 import java.text.MessageFormat;
 
+import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.TextControlCreator;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
@@ -33,20 +35,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A cell editor that manages a text entry field, but creates it inside a
- * DecoratedField so that clients can install decorations. Copied from
- * TextCellEditor revision 1.17 and modified in the following ways:
+ * A cell editor that manages a control, but creates it inside a DecoratedField
+ * so that clients can install decorations. Copied from TextCellEditor revision
+ * 1.17 and modified in the following ways:
  * </p>
  * <ul>
- * <li>creates a DecoratedField with an inner text control instead of creating
- * a text control.</li>
+ * <li>creates a DecoratedField with an inner text control</li>
  * <li>makes the decorated field available via API for installing decorations</li>
- * <li>makes the text control available via API for installing a content
+ * <li>makes the control available via API for installing a content
  * proposal adapter on it.</li>
  * </ul>
  * <p>
- * Changes to the original methods are marked with // BEGIN MOD
- * and // END MOD.
+ * Changes to the original methods are marked with // BEGIN MOD and // END MOD.
  * </p>
  * 
  * This class may be instantiated; it is not intended to be subclassed.
@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @since 3.2
  */
-public class DecoratedTextCellEditor extends CellEditor {
+public class DecoratedFieldCellEditor extends CellEditor {
 
 	/**
 	 * The text control; initially <code>null</code>.
@@ -97,7 +97,7 @@ public class DecoratedTextCellEditor extends CellEditor {
 	 * @param parent
 	 *            the parent control
 	 */
-	public DecoratedTextCellEditor(Composite parent) {
+	public DecoratedFieldCellEditor(Composite parent) {
 		super(parent, defaultStyle);
 	}
 
@@ -189,7 +189,7 @@ public class DecoratedTextCellEditor extends CellEditor {
 		});
 		text.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
-				DecoratedTextCellEditor.this.focusLost();
+				DecoratedFieldCellEditor.this.focusLost();
 			}
 		});
 		text.setFont(parent.getFont());
