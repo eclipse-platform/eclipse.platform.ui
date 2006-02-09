@@ -3,6 +3,6 @@
    An extension to introContent.xml with an additional page and a contribution to an anchor.
 -->
 <introContent>
-  <extensionContent content="content/anchor2.xhtml" path="anchor/anchor.1" />
+  <extensionContent content="content/anchor2.xhtml/paragraph.2" path="anchor/anchor.2" />
   <page id="anchor2" content="content/anchor2.xhtml"/>
 </introContent>

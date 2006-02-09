@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -480,16 +480,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (targetAnchor == null)
             return false;
 
-        // get extension content node.
-        Document extensionDom = extensionContent.getDocument();
-        if (extensionDom == null)
-            return false;
-
-        Element extensionBody = ModelUtil.getBodyElement(extensionDom);
-        Element[] children = ModelUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
+        // get extension content
+        Element[] elements = extensionContent.getElements();
         // insert all children before anchor in page body.
-        for (int i = 0; i < children.length; i++) {
-            Node targetNode = pageDom.importNode(children[i], true);
+        for (int i = 0; i < elements.length; i++) {
+            Node targetNode = pageDom.importNode(elements[i], true);
             // update the src attribute of this node, if defined by w3
             // specs.
 

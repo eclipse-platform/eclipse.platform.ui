@@ -169,10 +169,6 @@
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             id="org.eclipse.ua.tests.intro.dynamicXML">
       </intro>
-      <introProductBinding
-            introId="org.eclipse.ua.tests.intro.dynamicXML"
-            productId="org.eclipse.sdk.ide">
-      </introProductBinding>
    </extension>   
    <extension
          point="org.eclipse.ui.intro.config">
@@ -209,6 +205,10 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             content="data/intro/dynamicXHTML/ext.xml"
+            configId="org.eclipse.ua.tests.intro.config.dynamicXHTML">
+      </configExtension>
+      <configExtension
+            content="data/intro/dynamicXHTML/ext2.xml"
             configId="org.eclipse.ua.tests.intro.config.dynamicXHTML">
       </configExtension>
       <configExtension

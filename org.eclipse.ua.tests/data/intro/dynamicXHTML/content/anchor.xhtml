@@ -1,22 +1,32 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<!--
-   The anchor test page. This page contains an anchor, and content is contributed into the anchor
-   from an intro extension. See ext.xml in the same folder.
--->
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>anchor.xhtml</title>
 </head>
-
 <body>
-<h2>anchor.xhtml</h2>
+
 <p>
-This page contains an anchor, where other pages can contribute content to it. In this case there should
-be one contribution from anchor2.xhtml below:
+<strong>The section below should have the entire contents of anchor2.xhtml.</strong>
 </p>
-<anchor id="my.anchor.id"/>
+
+<small>[begin anchor 1]</small>
+<hr/>
+<anchor id="anchor.1" />
+<hr/>
+<small>[end anchor 1]</small>
+
+<p>
+<strong>The section below should only have the second paragraph from anchor2.xhtml.</strong>
+</p>
+
+<small>[begin anchor 2]</small>
+<hr/>
+<anchor id="anchor.2" />
+<hr/>
+<small>[end anchor 2]</small>
+
 </body>
 </html>
+

@@ -199,13 +199,9 @@ public class UAContentMergeProcessor {
 			else
 				return false;
 		}
-		Document topicExtensionDom = topicExtension.getDocument();
-		if (topicExtensionDom == null)
-			return false;
-		Element extensionBody = DOMUtil.getBodyElement(topicExtensionDom);
-		Element[] children = DOMUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
-		for (int i = 0; i < children.length; i++) {
-			Node targetNode = document.importNode(children[i], true);
+		Element[] elements = topicExtension.getElements();
+		for (int i = 0; i < elements.length; i++) {
+			Node targetNode = document.importNode(elements[i], true);
 			anchorElement.getParentNode().insertBefore(targetNode, anchorElement);
 		}
 		return true;
@@ -265,13 +261,9 @@ public class UAContentMergeProcessor {
 			else
 				return false;
 		}
-		Document topicExtensionDom = topicReplace.getDocument();
-		if (topicExtensionDom == null)
-			return false;
-		Element extensionBody = DOMUtil.getBodyElement(topicExtensionDom);
-		Element[] children = DOMUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
-		for (int i = 0; i < children.length; i++) {
-			Node targetNode = document.importNode(children[i], true);
+		Element[] elements = topicReplace.getElements();
+		for (int i = 0; i < elements.length; i++) {
+			Node targetNode = document.importNode(elements[i], true);
 			replaceElement.getParentNode().insertBefore(targetNode, replaceElement);
 		}
 		replaceElement.getParentNode().removeChild(replaceElement);

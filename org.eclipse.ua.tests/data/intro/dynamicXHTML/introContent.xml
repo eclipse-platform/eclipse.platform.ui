@@ -10,4 +10,5 @@
     <page id="include" content="content/include.xhtml"/>
     <page id="include2" content="content/include2.xhtml"/>
     <page id="anchor" content="content/anchor.xhtml"/>
+    <page id="anchor2" content="content/anchor2.xhtml"/>
 </introContent>

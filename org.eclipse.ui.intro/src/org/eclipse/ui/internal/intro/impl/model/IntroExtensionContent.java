@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.xhtml.DOMUtil;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
@@ -43,9 +45,13 @@ public class IntroExtensionContent extends AbstractIntroElement {
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
 
+	private static final Element[] EMPTY_ELEMENT_ARRAY = new Element[0];
+
     private String path;
     private String content;
-    private String id;
+    private String contentFile;
+    private String contentId;
+    private String anchorId;
 
     private Element element;
     private String base;
@@ -57,7 +63,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
         super(element, bundle);
         path = getAttribute(element, ATT_PATH);
         content = getAttribute(element, ATT_CONTENT);
-        id = getAttribute(element, ATT_ID);
+        anchorId = getAttribute(element, ATT_ID);
         this.element = element;
         this.base = base;
 
@@ -71,7 +77,8 @@ public class IntroExtensionContent extends AbstractIntroElement {
             // the new xml file location.
             IPath subBase = ModelUtil.getParentFolderPath(content);
             String newBase = new Path(base).append(subBase).toString();
-            content = BundleUtil.getResolvedResourceLocation(base, content,
+    		extractFileAndId(bundle);
+    		contentFile = BundleUtil.getResolvedResourceLocation(base, contentFile,
                 bundle);
             this.base = newBase;
         }
@@ -79,7 +86,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
     }
     
     public String getId() {
-    	return id;
+    	return anchorId;
     }
 
 
@@ -175,20 +182,36 @@ public class IntroExtensionContent extends AbstractIntroElement {
         return content != null ? true : false;
     }
 
-    public Document getDocument() {
+	/**
+	 * Returns the elements loaded from the content attribute. This is the content
+	 * that should be inserted for the extension. If it is a file, all child elements
+	 * of body are returned. If it is a file with an id, only the element with the id
+	 * is returned.
+	 * 
+	 * @return the elements to be inserted
+	 */
+    public Element[] getElements() {
+    	// only applicable when content attribute is specified
         if (isXHTMLContent()) {
-            IntroContentParser parser = new IntroContentParser(content);
+            IntroContentParser parser = new IntroContentParser(contentFile);
             Document dom = parser.getDocument();
-            if (dom == null)
-                // bad xml. Parser would have logged fact.
-                return null;
-            // parser content should be XHTML because defining content here
-            // means that we want XHTML extension.
-            if (parser.hasXHTMLContent())
-                return dom;
-
+            if (dom != null) {
+	            // parser content should be XHTML because defining content here
+	            // means that we want XHTML extension.
+	            if (parser.hasXHTMLContent()) {
+	    			if (contentId != null) {
+	    				// id specified, only get that element
+	    				return new Element[] { dom.getElementById(contentId) };
+	    			}
+	    			else {
+	    				// no id specified, use the whole body
+	    				Element extensionBody = DOMUtil.getBodyElement(dom);
+	    				return DOMUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
+	    			}
+	            }
+            }
         }
-        return null;
+        return EMPTY_ELEMENT_ARRAY;
     }
 
     /**
@@ -217,4 +240,33 @@ public class IntroExtensionContent extends AbstractIntroElement {
     public String getBase() {
         return base;
     }
+    
+	/**
+	 * Extracts the file and id parts of the content attribute. This attribute has two modes -
+	 * if you specify a file, it will include the body of that file (minus the body element itself).
+	 * If you append an id after the file, only the element with that id will be included. However
+	 * we need to know which mode we're in.
+	 * 
+	 * @param bundle the bundle that contributed this extension
+	 */
+    private void extractFileAndId(Bundle bundle) {
+		// look for the file
+		IPath resourcePath = new Path(base + content);
+		if (Platform.find(bundle, resourcePath) != null) {
+			// found it, assume it's a file
+			contentFile = content;
+		}
+		else {
+			// didn't find the file, assume the last segment is an id
+			int lastSlashIndex = content.lastIndexOf('/');
+			if (lastSlashIndex != -1) {
+				contentFile = content.substring(0, lastSlashIndex);
+				contentId = content.substring(lastSlashIndex + 1);
+			}
+			else {
+				// there was no slash, it must be a file
+				contentFile = content;
+			}
+		}
+	}
 }
