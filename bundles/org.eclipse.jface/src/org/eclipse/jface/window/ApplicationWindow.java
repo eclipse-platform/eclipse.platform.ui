@@ -89,7 +89,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     private StatusLineManager statusLineManager = null;
 
     /**
-     * Cool bar manager, or <code>null</null> if none (default).
+     * Cool bar manager, or <code>null</code> if none (default).
      * 
      * @see #addCoolBar
      * @since 3.0
