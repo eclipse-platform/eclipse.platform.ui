@@ -271,7 +271,7 @@ public final class InternalPlatform {
 
 	public IBundleGroupProvider[] getBundleGroupProviders() {
 		if (groupProviderTracker == null) {
-			// aquire the service and get the list of services
+			// acquire the service and get the list of services
 			Filter filter = null;
 			try {
 				filter = getBundleContext().createFilter("(objectClass=" + IBundleGroupProvider.class.getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$

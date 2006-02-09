@@ -590,7 +590,7 @@ public final class Platform {
 	 * Note that individual platform runnables may be provided with different arguments
 	 * if they are being run individually rather than with <code>Platform.run()</code>.
 	 * <p>
-	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * Clients are also able to acquire the {@link EnvironmentInfo} service and query it for
 	 * the command-line arguments.
 	 * </p>
 	 * @return the command line used to start the platform
@@ -602,7 +602,7 @@ public final class Platform {
 	/**
 	 * Returns the content type manager.
 	 * <p>
-	 * Clients are also able to aquire the {@link IContentTypeManager} service.
+	 * Clients are also able to acquire the {@link IContentTypeManager} service.
 	 * </p>
 	 * @return the content type manager
 	 * @since 3.0
@@ -617,7 +617,7 @@ public final class Platform {
 	 * in the general form <i>&lt;plug-in id&gt;/&lt;option-path&gt;</i>.  
 	 * For example, <code>org.eclipse.core.runtime/debug</code>
 	 * <p>
-	 * Clients are also able to aquire the {@link DebugOptions} service
+	 * Clients are also able to acquire the {@link DebugOptions} service
 	 * and query it for debug options.
 	 * </p>
 	 * @param option the name of the option to lookup
@@ -797,7 +797,7 @@ public final class Platform {
 	 * @see #asLocalURL(URL)
 	 * @see #find(Bundle, IPath)
 	 * @see Bundle#getEntry(String)
-	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
+	 * XXX deprecate and use the new class being created from the renaming of BundleFinder.
 	 */
 	public static URL resolve(URL url) throws IOException {
 		return InternalPlatform.getDefault().resolve(url);
@@ -943,7 +943,7 @@ public final class Platform {
 	 * changes. This can be used for invalidating caches that are based on 
 	 * the set of currently installed plug-ins. (e.g. extensions)
 	 * <p>
-	 * Clients are also able to aquire the {@link PlatformAdmin} service
+	 * Clients are also able to acquire the {@link PlatformAdmin} service
 	 * and get the timestamp from its state object.
 	 * </p>
 	 * @return a number related to the set of installed plug-ins
@@ -962,7 +962,7 @@ public final class Platform {
 	 * XXX change this into a LogMgr service that would keep track of the map. See if it can be a service factory.
 	 * It would contain all the methods that are here.
 	 * Relate to RuntimeLog if appropriate.
-	 * The sytem log listener needs to be optional: turned on or off. What about a system property? :-)
+	 * The system log listener needs to be optional: turned on or off. What about a system property? :-)
 	 */
 	public static ILog getLog(Bundle bundle) {
 		return InternalPlatform.getDefault().getLog(bundle);
@@ -1065,7 +1065,7 @@ public final class Platform {
 	 * specified on the command line, otherwise it is the value 
 	 * returned by <code>java.lang.System.getProperty("os.arch")</code>.
 	 * <p>
-	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * Clients are also able to acquire the {@link EnvironmentInfo} service and query it for
 	 * the operating-system architecture.
 	 * </p>
 	 * @return the string name of the current system architecture
@@ -1079,7 +1079,7 @@ public final class Platform {
 	 * Returns the string name of the current locale for use in finding files
 	 * whose path starts with <code>$nl$</code>.
 	 * <p>
-	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * Clients are also able to acquire the {@link EnvironmentInfo} service and query it for
 	 * the NL.
 	 * </p>
 	 * @return the string name of the current locale
@@ -1097,7 +1097,7 @@ public final class Platform {
 	 * (as specified in <code>knownOSValues</code>) or a user-defined string if
 	 * the operating system name is specified on the command line.
 	 * <p>
-	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * Clients are also able to acquire the {@link EnvironmentInfo} service and query it for
 	 * the operating-system.
 	 * </p>
 	 * @return the string name of the current operating system
@@ -1112,7 +1112,7 @@ public final class Platform {
 	 * whose path starts with <code>$ws$</code>.  <code>null</code> is returned
 	 * if the window system cannot be determined.
 	 * <p>
-	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it for
+	 * Clients are also able to acquire the {@link EnvironmentInfo} service and query it for
 	 * the windowing system.
 	 * </p>
 	 * @return the string name of the current window system or <code>null</code>
@@ -1146,7 +1146,7 @@ public final class Platform {
 	 * in compatible ways from release to release, the details of 
 	 * the OSGi implementation might not. 
 	 * </p><p>
-	 * Clients can also aquire the {@link PlatformAdmin} service
+	 * Clients can also acquire the {@link PlatformAdmin} service
 	 * to retrieve this object.
 	 * </p>
 	 * @return the platform admin for this instance of Eclipse
@@ -1174,7 +1174,7 @@ public final class Platform {
 	/**
 	 * Returns the currently registered bundle group providers.
 	 * <p>
-	 * Clients are also able to aquire the {@link IBundleGroupProvider} service and query it for
+	 * Clients are also able to acquire the {@link IBundleGroupProvider} service and query it for
 	 * the registered bundle group providers.
 	 * </p>
 	 * @return the currently registered bundle group providers
@@ -1189,7 +1189,7 @@ public final class Platform {
 	 * object can be used for such operations as searching for preference 
 	 * values across multiple scopes and preference import/export.
 	 * <p>
-	 * Clients are also able to aquire the {@link IPreferencesService} service via
+	 * Clients are also able to acquire the {@link IPreferencesService} service via
 	 * OSGi mechanisms and use it for preference functions.
 	 * </p>
 	 * @return an object to interface into the preference mechanism
@@ -1291,7 +1291,7 @@ public final class Platform {
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
 	 * <p>
-	 * Clients are also able to aquire the {@link PackageAdmin} service
+	 * Clients are also able to acquire the {@link PackageAdmin} service
 	 * to query if the given bundle is a fragment by asking for the bundle type
 	 * and checking against constants on the service interface.
 	 * </p>
@@ -1308,7 +1308,7 @@ public final class Platform {
 	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
 	 * attached to the specified bundle then <tt>null</tt> is returned.
 	 * <p>
-	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * Clients are also able to acquire the {@link PackageAdmin} service and query
 	 * it for the fragments of the given bundle.
 	 * </p>
 	 * @param bundle the bundle to get the attached fragment bundles for.
@@ -1325,7 +1325,7 @@ public final class Platform {
 	 * highest version.  If no resolved bundles are installed that have the 
 	 * specified symbolic name then null is returned.
 	 * <p>
-	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * Clients are also able to acquire the {@link PackageAdmin} service and query
 	 * it for the bundle with the specified symbolic name. Clients can ask the
 	 * service for all bundles with that particular name and then determine the
 	 * one with the highest version. Note that clients may want to filter
@@ -1348,7 +1348,7 @@ public final class Platform {
 	 * specified version are returned. The returned bundles are ordered in 
 	 * descending bundle version order.
 	 * <p>
-	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * Clients are also able to acquire the {@link PackageAdmin} service and query
 	 * it for all bundle versions with the given symbolic name, after turning the
 	 * specific version into a version range. Note that clients may want to filter
 	 * the results based on the state of the bundles.
@@ -1368,7 +1368,7 @@ public final class Platform {
 	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
 	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.
 	 * <p>
-	 * Clients are also able to aquire the {@link PackageAdmin} service and query
+	 * Clients are also able to acquire the {@link PackageAdmin} service and query
 	 * it for the hosts for the given bundle.
 	 * </p>
 	 * @param bundle the bundle to get the host bundles for.
@@ -1467,7 +1467,7 @@ public final class Platform {
 	 * debug mode.  The platform is typically put in debug mode using the
 	 * "-debug" command line argument.
 	 * <p>
-	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it 
+	 * Clients are also able to acquire the {@link EnvironmentInfo} service and query it 
 	 * to see if they are in debug mode.
 	 * </p>
 	 * @return whether or not the platform is running in debug mode
@@ -1483,7 +1483,7 @@ public final class Platform {
 	 * taken when defining plug-in class paths.  The platform is typically put in 
 	 * development mode using the "-dev" command line argument.
 	 * <p>
-	 * Clients are also able to aquire the {@link EnvironmentInfo} service and query it
+	 * Clients are also able to acquire the {@link EnvironmentInfo} service and query it
 	 * to see if they are in development mode.
 	 * </p>
 	 * @return whether or not the platform is running in development mode
