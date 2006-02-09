@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.IRefactoringContributionManager;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
@@ -107,7 +107,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		final RefactoringContribution contribution= getRefactoringContribution(id);
 		if (contribution != null)
 			return contribution.createDescriptor(id, project, description, comment, arguments, flags);
-		return null;
+		return new DefaultRefactoringDescriptor(id, project, description, comment, arguments, flags);
 	}
 
 	/**

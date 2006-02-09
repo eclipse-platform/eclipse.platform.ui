@@ -57,8 +57,8 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
-import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
@@ -447,14 +447,16 @@ public final class RefactoringHistoryManager {
 			try {
 				final String id= descriptor.getID();
 				transformer.beginRefactoring(id, descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
+				Map arguments= null;
 				final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
-				if (contribution != null) {
-					final Map arguments= contribution.retrieveArguments(descriptor);
-					if (arguments != null) {
-						for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
-							final Map.Entry entry= (Entry) iterator.next();
-							transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
-						}
+				if (contribution != null)
+					arguments= contribution.retrieveArguments(descriptor);
+				else if (descriptor instanceof DefaultRefactoringDescriptor)
+					arguments= ((DefaultRefactoringDescriptor) descriptor).getArguments();
+				if (arguments != null) {
+					for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
+						final Map.Entry entry= (Entry) iterator.next();
+						transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
 					}
 				}
 			} finally {
@@ -536,14 +538,16 @@ public final class RefactoringHistoryManager {
 						long stamp= stamps ? current.getTimeStamp() : -1;
 						final String id= current.getID();
 						transformer.beginRefactoring(id, stamp, current.getProject(), current.getDescription(), current.getComment(), current.getFlags());
+						Map arguments= null;
 						final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
-						if (contribution != null) {
-							final Map arguments= contribution.retrieveArguments(current);
-							if (arguments != null) {
-								for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
-									final Map.Entry entry= (Entry) iterator.next();
-									transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
-								}
+						if (contribution != null)
+							arguments= contribution.retrieveArguments(current);
+						else if (current instanceof DefaultRefactoringDescriptor)
+							arguments= ((DefaultRefactoringDescriptor) current).getArguments();
+						if (arguments != null) {
+							for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
+								final Map.Entry entry= (Entry) iterator.next();
+								transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
 							}
 						}
 					} finally {

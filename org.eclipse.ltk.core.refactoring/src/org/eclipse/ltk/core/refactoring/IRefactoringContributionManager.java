@@ -56,6 +56,13 @@ public interface IRefactoringContributionManager {
 	 * language-specific refactoring descriptor representing the refactoring
 	 * instance corresponding to the input arguments.
 	 * </p>
+	 * <p>
+	 * If no refactoring contribution is available which is able to create a
+	 * refactoring descriptor, a default refactoring descriptor is returned by
+	 * the refactoring framework. The returned refactoring descriptor can be
+	 * persisted and displayed in the user interface, but the creation of
+	 * refactoring instances is not possible.
+	 * </p>
 	 * 
 	 * @param id
 	 *            the unique id of the refactoring

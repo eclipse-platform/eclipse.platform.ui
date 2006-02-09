@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
+import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
+
 /**
  * Partial implementation of refactoring contribution objects which are capable
  * of creating a specific refactoring instance and associated refactoring
@@ -105,7 +107,12 @@ public abstract class RefactoringContribution {
 	 * <p>
 	 * This method is used by the refactoring framework to obtain
 	 * refactoring-specific arguments provided by the refactoring descriptor.
-	 * Implementations of this method must never return <code>null</code>.
+	 * Implementations of this method in subclasses must never return
+	 * <code>null</code>.
+	 * </p>
+	 * <p>
+	 * Subclasses may provide more specific implementations to retrieve the
+	 * argument map from language-specific refactoring descriptors.
 	 * </p>
 	 * 
 	 * @param descriptor
@@ -114,5 +121,11 @@ public abstract class RefactoringContribution {
 	 * 
 	 * @see #createDescriptor(String, String, String, String, Map, int)
 	 */
-	public abstract Map retrieveArguments(RefactoringDescriptor descriptor);
+	public Map retrieveArguments(final RefactoringDescriptor descriptor) {
+		if (descriptor instanceof DefaultRefactoringDescriptor) {
+			final DefaultRefactoringDescriptor extended= (DefaultRefactoringDescriptor) descriptor;
+			return extended.getArguments();
+		}
+		return null;
+	}
 }
