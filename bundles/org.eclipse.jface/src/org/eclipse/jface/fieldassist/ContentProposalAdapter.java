@@ -148,22 +148,27 @@ public class ContentProposalAdapter {
 
 			// Remove installed listeners
 			void removeListeners() {
-				proposalTable.removeListener(SWT.FocusOut, this);
-				ScrollBar scrollbar = proposalTable.getVerticalBar();
-				if (scrollbar != null)
-					scrollbar.removeListener(SWT.Selection, this);
+				if (isValid()) {
+					proposalTable.removeListener(SWT.FocusOut, this);
+					ScrollBar scrollbar = proposalTable.getVerticalBar();
+					if (scrollbar != null)
+						scrollbar.removeListener(SWT.Selection, this);
 
-				getShell().removeListener(SWT.Deactivate, this);
-				getShell().removeListener(SWT.Close, this);
+					getShell().removeListener(SWT.Deactivate, this);
+					getShell().removeListener(SWT.Close, this);
+				}
+				
+				if (control != null && !control.isDisposed()) {
 
-				control.removeListener(SWT.MouseDoubleClick, this);
-				control.removeListener(SWT.MouseDown, this);
-				control.removeListener(SWT.Dispose, this);
-				control.removeListener(SWT.FocusOut, this);
+					control.removeListener(SWT.MouseDoubleClick, this);
+					control.removeListener(SWT.MouseDown, this);
+					control.removeListener(SWT.Dispose, this);
+					control.removeListener(SWT.FocusOut, this);
 
-				Shell controlShell = control.getShell();
-				controlShell.removeListener(SWT.Move, this);
-				controlShell.removeListener(SWT.Resize, this);
+					Shell controlShell = control.getShell();
+					controlShell.removeListener(SWT.Move, this);
+					controlShell.removeListener(SWT.Resize, this);
+				}
 			}
 		}
 
@@ -370,11 +375,15 @@ public class ContentProposalAdapter {
 					// that fits the best
 					if (leftProposedBounds.intersects(parentBounds)) {
 						if (rightProposedBounds.x - parentBounds.x >= parentBounds.x
-								- leftProposedBounds.x ) {
-							rightProposedBounds.x = parentBounds.x + parentBounds.width + PopupDialog.POPUP_HORIZONTALSPACING;
+								- leftProposedBounds.x) {
+							rightProposedBounds.x = parentBounds.x
+									+ parentBounds.width
+									+ PopupDialog.POPUP_HORIZONTALSPACING;
 							proposedBounds = rightProposedBounds;
 						} else {
-							leftProposedBounds.width = parentBounds.x - POPUP_HORIZONTALSPACING - leftProposedBounds.x;
+							leftProposedBounds.width = parentBounds.x
+									- POPUP_HORIZONTALSPACING
+									- leftProposedBounds.x;
 							proposedBounds = leftProposedBounds;
 						}
 					} else {
@@ -531,9 +540,11 @@ public class ContentProposalAdapter {
 			// If we are inserting content, use the cursor position to
 			// position the control.
 			if (getProposalAcceptanceStyle() == PROPOSAL_INSERT) {
-				Rectangle insertionBounds = controlContentAdapter.getInsertionBounds(control);
+				Rectangle insertionBounds = controlContentAdapter
+						.getInsertionBounds(control);
 				initialX = initialX + insertionBounds.x;
-				initialY = location.y + insertionBounds.y + insertionBounds.height;
+				initialY = location.y + insertionBounds.y
+						+ insertionBounds.height;
 			}
 
 			// If there is no specified size, force it by setting
