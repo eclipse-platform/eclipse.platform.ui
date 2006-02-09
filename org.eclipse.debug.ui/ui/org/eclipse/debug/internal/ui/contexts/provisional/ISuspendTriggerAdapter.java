@@ -15,6 +15,13 @@ package org.eclipse.debug.internal.ui.contexts.provisional;
  * listeners when it suspends at a context where debugging should
  * be initiated by the user. For example, when a breakpoint is encountered.
  * <p>
+ * It is important that the same instance of a suspend trigger adapter is
+ * returned each time it is asked for the same object, such that listeners
+ * can be added and removed from the same instance. When a listener is removed
+ * and no more listeners are registered, this trigger can be disposed or replaced
+ * with a new adapter the next time one is requested. 
+ * </p>
+ * <p>
  * Clients may implement this interface.
  * </p>
  * @since 3.2

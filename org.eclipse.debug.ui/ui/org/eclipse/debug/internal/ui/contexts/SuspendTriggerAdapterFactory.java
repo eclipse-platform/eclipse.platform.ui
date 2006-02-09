@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerAdapter;
@@ -19,15 +22,20 @@ import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerAdapter
  */
 public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	
-	private static ISuspendTriggerAdapter fgTrigger = new LaunchSuspendTrigger();
+	private Map fSuspendTriggers = new HashMap(); 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public synchronized Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType.equals(ISuspendTriggerAdapter.class)) {
 			if (adaptableObject instanceof ILaunch) {
-				return fgTrigger;
+				Object trigger = fSuspendTriggers.get(adaptableObject);
+				if (trigger == null) {
+					trigger = new LaunchSuspendTrigger(this);
+					fSuspendTriggers.put(adaptableObject, trigger);
+				}
+				return trigger;
 			}
 		}
 		return null;
@@ -38,6 +46,10 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	 */
 	public Class[] getAdapterList() {
 		return new Class[]{ISuspendTriggerAdapter.class};
+	}
+	
+	public synchronized void dispose(LaunchSuspendTrigger trigger) {
+		fSuspendTriggers.remove(trigger);
 	}
 
 }

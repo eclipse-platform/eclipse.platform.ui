@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.contexts;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -31,13 +31,16 @@ import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerListene
 public class LaunchSuspendTrigger implements ISuspendTriggerAdapter, IDebugEventSetListener {
 
 	private ListenerList fListeners = new ListenerList();
+	private SuspendTriggerAdapterFactory fFactory = null;
 	
-	public LaunchSuspendTrigger() {
+	public LaunchSuspendTrigger(SuspendTriggerAdapterFactory factory) {
+		fFactory = factory;
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	
 	protected void dispose() {
 		fListeners = null;
+		fFactory.dispose(this);
 	}
 
 	/* (non-Javadoc)
@@ -55,6 +58,9 @@ public class LaunchSuspendTrigger implements ISuspendTriggerAdapter, IDebugEvent
 	public void removeSuspendTriggerListener(ISuspendTriggerListener listener) { 
         if (fListeners != null) {
             fListeners.remove(listener);
+        }
+        if (fListeners.size() == 0) {
+        	dispose();
         }
 	}
 
@@ -95,7 +101,7 @@ public class LaunchSuspendTrigger implements ISuspendTriggerAdapter, IDebugEvent
                 Object[] listeners = list.getListeners();
         		for (int i = 0; i < listeners.length; i++) {
         			final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
-        			Platform.run(new ISafeRunnable() {
+        			SafeRunner.run(new ISafeRunnable() {
         				public void run() throws Exception {
         					listener.suspended(launch, temp);
         				}
