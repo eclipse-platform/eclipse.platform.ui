@@ -74,9 +74,9 @@ public abstract class FilterableUAElement {
         NodeList list = element.getChildNodes();
         for (int i=0;i<list.getLength();++i) {
         	Node node = list.item(i);
-        	if (node.getNodeType() == Node.ELEMENT_NODE && "filter".equals(node.getNodeName())) {
+        	if (node.getNodeType() == Node.ELEMENT_NODE && "filter".equals(node.getNodeName())) { //$NON-NLS-1$
         		Element elementNode = (Element)node;
-        		addFilter(elementNode.getAttribute("name"), elementNode.getAttribute("value"));
+        		addFilter(elementNode.getAttribute("name"), elementNode.getAttribute("value")); //$NON-NLS-1$ //$NON-NLS-2$
         	}
         }
     }

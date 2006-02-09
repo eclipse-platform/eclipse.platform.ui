@@ -8,6 +8,8 @@
  **************************************************************************************************/
 package org.eclipse.ui.internal.intro.shared;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -28,11 +30,8 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -58,17 +57,25 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
+import org.eclipse.ui.intro.config.IIntroURL;
+import org.eclipse.ui.intro.config.IntroURLFactory;
 import org.osgi.framework.Bundle;
 
 
@@ -142,31 +149,6 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		}
 	}
 
-	class SerializeDialog extends Dialog {
-
-		public SerializeDialog(Shell parentShell) {
-			super(parentShell);
-			setShellStyle(getShellStyle() | SWT.RESIZE);
-		}
-
-		protected Control createDialogArea(Composite parent) {
-			Composite composite = (Composite) super.createDialogArea(parent);
-			Text text = new Text(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI);
-			text.setLayoutData(new GridData(GridData.FILL_BOTH));
-			text.setFont(JFaceResources.getTextFont());
-			StringWriter writer = new StringWriter();
-			PrintWriter pwriter = new PrintWriter(writer);
-			introData.write(pwriter);
-			pwriter.close();
-			text.setText(writer.toString());
-			return composite;
-		}
-
-		protected void createButtonsForButtonBar(Composite parent) {
-			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		}
-	}
-
 	class TableContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
@@ -202,7 +184,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 				return ed.getId();
 			}
 			if (obj instanceof IntroBackground) {
-				IntroBackground bg = (IntroBackground)obj;
+				IntroBackground bg = (IntroBackground) obj;
 				return bg.getName();
 			}
 			return super.getText(obj);
@@ -216,60 +198,61 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			return null;
 		}
 	}
-	
+
 	class IntroBackground {
-		static final int ABSOLUTE=0;
-		static final int INTRO=1;
-		static final int PRODUCT=2;
-		int kind=ABSOLUTE;
+
+		static final int ABSOLUTE = 0;
+		static final int INTRO = 1;
+		static final int PRODUCT = 2;
+		int kind = ABSOLUTE;
 		String fullName;
 		String path;
 		Image image;
-		
+
 		public void dispose() {
-			if (image!=null) {
+			if (image != null) {
 				image.dispose();
 				image = null;
 			}
 		}
+
 		public String getFullName() {
 			return fullName;
 		}
-		
+
 		public String getName() {
 			IPath ipath = new Path(path);
 			return ipath.lastSegment();
 		}
+
 		public IntroBackground(String fullName) {
 			this.fullName = fullName;
 			if (fullName.startsWith("intro:")) { //$NON-NLS-1$
-				kind= INTRO;
+				kind = INTRO;
 				path = fullName.substring(6);
-			}
-			else if (fullName.startsWith("product:")) { //$NON-NLS-1$
+			} else if (fullName.startsWith("product:")) { //$NON-NLS-1$
 				kind = PRODUCT;
 				path = fullName.substring(8);
-			}
-			else
+			} else
 				path = fullName;
 		}
+
 		public Image getImage() {
-			if (image==null) {
+			if (image == null) {
 				BusyIndicator.showWhile(bgPreview.getDisplay(), new Runnable() {
+
 					public void run() {
-						String asLocal=null;
-						if (kind!=ABSOLUTE) {
-							Bundle bundle=null;
-							if (kind==PRODUCT) {
+						String asLocal = null;
+						if (kind != ABSOLUTE) {
+							Bundle bundle = null;
+							if (kind == PRODUCT) {
 								IProduct product = Platform.getProduct();
 								bundle = product.getDefiningBundle();
-							}
-							else {
+							} else {
 								bundle = IntroPlugin.getDefault().getBundle();
 							}
 							asLocal = BundleUtil.getResolvedResourceLocation(path, bundle);
-						}
-						else
+						} else
 							asLocal = "file:" + path; //$NON-NLS-1$
 						try {
 							ImageDescriptor desc = ImageDescriptor.createFromURL(new URL(asLocal));
@@ -277,7 +260,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 						} catch (MalformedURLException e) {
 						}
 					}
-				});				
+				});
 			}
 			return image;
 		}
@@ -335,11 +318,20 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	}
 
 	private void doSerializeState() {
-		SerializeDialog sd = new SerializeDialog(getShell());
-		sd.create();
-		sd.getShell().setSize(600, 600);
-		sd.getShell().setText(Messages.WelcomeCustomizationPreferencePage_serializeTitle);
-		sd.open();
+		FileDialog fd = new FileDialog(getShell(), SWT.SAVE);
+		fd.setText(Messages.WelcomeCustomizationPreferencePage_serializeTitle);
+		String fileName = fd.open();
+		if (fileName != null) {
+			try {
+				FileWriter writer = new FileWriter(fileName);
+				PrintWriter pwriter = new PrintWriter(writer);
+				introData.write(pwriter);
+				pwriter.close();
+			} catch (IOException e) {
+				// show an error dialog in addition
+				Log.error("Error while saving the intro data file", e); //$NON-NLS-1$
+			}
+		}
 	}
 
 	private boolean isCustomizationMode() {
@@ -464,11 +456,17 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			}
 		}
 		// 2. Background images
-		key = INTRO_BACKGROUND_IMAGE_LIST;
+		key = pid + "_" + INTRO_BACKGROUND_IMAGE_LIST; //$NON-NLS-1$
 		String value = fromDefault ? prefs.getDefaultString(key) : prefs.getString(key);
-		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
-		while (stok.hasMoreTokens()) {
-			backgroundImageList.add(new IntroBackground(stok.nextToken()));
+		if (value.length() == 0) {
+			key = INTRO_BACKGROUND_IMAGE_LIST;
+			value = fromDefault ? prefs.getDefaultString(key) : prefs.getString(key);
+		}
+		if (value.length() > 0) {
+			StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
+			while (stok.hasMoreTokens()) {
+				backgroundImageList.add(new IntroBackground(stok.nextToken()));
+			}
 		}
 		// 3. Background image
 		key = pid + "_" + INTRO_BACKGROUND_IMAGE; //$NON-NLS-1$
@@ -494,46 +492,45 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	}
 
 	public void dispose() {
-		for (int i=0; i<backgroundImageList.size(); i++)
-			((IntroBackground)backgroundImageList.get(i)).dispose();
+		for (int i = 0; i < backgroundImageList.size(); i++)
+			((IntroBackground) backgroundImageList.get(i)).dispose();
 		backgroundImageList.clear();
 		if (extensionImage != null) {
 			extensionImage.dispose();
 			extensionImage = null;
 		}
-		if (bgImage !=null) {
+		if (bgImage != null) {
 			bgImage.dispose();
-			bgImage=null;
+			bgImage = null;
 		}
 		super.dispose();
 	}
 
 	private void updateIntroBackgroundFromData() {
-		IntroBackground newBg=null;
+		IntroBackground newBg = null;
 		if (introBackgroundName != null) {
-			for (int i=0; i<backgroundImageList.size(); i++) {
-				IntroBackground bg = (IntroBackground)backgroundImageList.get(i);
+			for (int i = 0; i < backgroundImageList.size(); i++) {
+				IntroBackground bg = (IntroBackground) backgroundImageList.get(i);
 				if (bg.getFullName().equals(introBackgroundName)) {
 					newBg = bg;
 					break;
 				}
 			}
-			if (newBg==null) {
+			if (newBg == null) {
 				// not on the list - make it
 				newBg = new IntroBackground(introBackgroundName);
 				backgroundImageList.add(newBg);
 			}
 			introBackground = newBg;
+			updateBackground();
 		}
 	}
 
 	private void updateWidgetsFromData() {
 		// sync up intro background part
 		updateIntroBackgroundFromData();
-		backgrounds.setInput(backgrounds);
-		backgrounds.setSelection(new StructuredSelection(introBackground), true);
-		bgPreview.redraw();
-		// sync up the root page checklist 
+		updateBackground();
+		// sync up the root page checklist
 		rootPages.setInput(ROOT_PAGE_TABLE);
 		ArrayList selected = new ArrayList();
 		for (int i = 0; i < ROOT_PAGE_TABLE.length; i++) {
@@ -544,17 +541,54 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		rootPages.setCheckedElements(selected.toArray());
 	}
 
+	private void updateBackground() {
+		backgrounds.setInput(backgrounds);
+		backgrounds.setSelection(new StructuredSelection(introBackground), true);
+		bgPreview.redraw();
+	}
+
 	public boolean performOk() {
 		saveData();
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				restartIntro();
+			}
+		});
 		return true;
+	}
+
+	/**
+	 * Remember the current page, close intro, reopen it
+	 * and show the saved page.
+	 *
+	 */
+	private void restartIntro() {
+		IIntroManager manager = PlatformUI.getWorkbench().getIntroManager();
+		IIntroPart part = manager.getIntro();
+		if (part != null && part instanceof CustomizableIntroPart) {
+	        IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
+	        String currentPageId = modelRoot.getCurrentPageId();			
+			IWorkbenchWindow window = part.getIntroSite().getWorkbenchWindow();
+			boolean standby = manager.isIntroStandby(part);
+			PlatformUI.getWorkbench().getIntroManager().closeIntro(part);
+			part = PlatformUI.getWorkbench().getIntroManager().showIntro(window, standby);
+			if (part!=null) {
+				StringBuffer url = new StringBuffer();
+				url.append("http://org.eclipse.ui.intro/showPage?id="); //$NON-NLS-1$
+				url.append(currentPageId);
+				IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
+				if (introURL != null)
+					introURL.execute();
+			}
+		}
 	}
 
 	protected void performDefaults() {
 		loadData(true);
-		// Dispose all the root page tabs 
+		// Dispose all the root page tabs
 		TabItem[] items = tabFolder.getItems();
-		for (int i=0; i<items.length; i++) {
-			if (items[i].getData("pageData")!=null) //$NON-NLS-1$
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getData("pageData") != null) //$NON-NLS-1$
 				items[i].dispose();
 		}
 		// Add them back in based on the checked state
@@ -598,6 +632,26 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			key = INTRO_DATA;
 			prefs.setValue(key, value);
 		}
+		if (backgroundImageList.size() > 0) {
+			sbuf = new StringBuffer();
+			key = pid + "_" + INTRO_BACKGROUND_IMAGE_LIST; //$NON-NLS-1$
+			for (int i = 0; i < backgroundImageList.size(); i++) {
+				if (i > 0)
+					sbuf.append(","); //$NON-NLS-1$
+				sbuf.append(((IntroBackground) backgroundImageList.get(i)).getFullName());
+			}
+			value = sbuf.toString();
+			prefs.setValue(key, value);
+			if (toAll) {
+				key = INTRO_BACKGROUND_IMAGE_LIST;
+				prefs.setValue(key, value);
+			}
+		}
+		if (introBackground != null) {
+			key = pid + "_" + INTRO_BACKGROUND_IMAGE; //$NON-NLS-1$
+			value = introBackground.getFullName();
+			prefs.setValue(key, value);
+		}
 		IntroPlugin.getDefault().savePluginPreferences();
 	}
 
@@ -620,13 +674,16 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		backgrounds.setContentProvider(contentProvider);
 		backgrounds.setLabelProvider(labelProvider);
 		backgrounds.addSelectionChangedListener(new ISelectionChangedListener() {
+
 			public void selectionChanged(SelectionChangedEvent e) {
-				Object sel = ((StructuredSelection)e.getSelection()).getFirstElement();
-				introBackground = (IntroBackground)sel;
+				Object sel = ((StructuredSelection) e.getSelection()).getFirstElement();
+				introBackground = (IntroBackground) sel;
 				bgPreview.redraw();
 			}
 		});
 		Button browse = new Button(container, SWT.PUSH);
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		browse.setLayoutData(gd);
 		browse.setText(Messages.WelcomeCustomizationPreferencePage_browse);
 		browse.addSelectionListener(new SelectionAdapter() {
 
@@ -645,7 +702,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 				if (introBackground == null)
 					return;
 				Image bgImage = introBackground.getImage();
-				if (bgImage==null)
+				if (bgImage == null)
 					return;
 				Rectangle carea = bgPreview.getClientArea();
 				Rectangle ibounds = bgImage.getBounds();
@@ -778,7 +835,29 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	}
 
 	private void doBrowseBackground() {
+		FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
+		fd.setText(Messages.WelcomeCustomizationPreferencePage_browseTitle);
+		String fullPath = fd.open();
+		if (fullPath != null) {
+			IPath filePath = new Path(fullPath);
+			IntroBackground found = null;
+			for (int i = 0; i < backgroundImageList.size(); i++) {
+				IntroBackground bg = (IntroBackground) backgroundImageList.get(i);
+				if (bg.kind == IntroBackground.ABSOLUTE) {
+					IPath bgPath = new Path(bg.getFullName());
 
+					if (bgPath.equals(filePath)) {
+						found = bg;
+					}
+				}
+			}
+			if (found == null) {
+				found = new IntroBackground(fullPath);
+				backgroundImageList.add(found);
+				introBackground = found;
+			}
+			updateBackground();
+		}
 	}
 
 	private void addMoveToAction(MenuManager menu, final Viewer target, final Viewer source, String name) {
@@ -830,5 +909,17 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			target.refresh();
 		else
 			target.setInput(targetGd);
+	}
+	
+	public void setCurrentPage(String pageId) {
+		TabItem [] items = tabFolder.getItems();
+		for (int i=0; i<items.length; i++) {
+			TabItem item = items[i];
+			PageData pd = (PageData)item.getData("pageData"); //$NON-NLS-1$
+			if (pd!=null && pd.getId().equals(pageId)) {
+				tabFolder.setSelection(i);
+				return;
+			}
+		}
 	}
 }

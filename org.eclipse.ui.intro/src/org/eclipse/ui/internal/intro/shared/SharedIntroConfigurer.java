@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.intro.config.IntroConfigurer;
 import org.eclipse.ui.intro.config.IntroElement;
@@ -34,7 +36,7 @@ import org.osgi.framework.Bundle;
 
 public class SharedIntroConfigurer extends IntroConfigurer implements ISharedIntroConstants {
 
-	private ArrayList introData=new ArrayList();
+	private ArrayList introData = new ArrayList();
 
 	public SharedIntroConfigurer() {
 		initialize();
@@ -43,10 +45,26 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 	public String getVariable(String variableName) {
 		IProduct product = Platform.getProduct();
 		if (product != null) {
+			// try product property first
 			String value = getProductProperty(product, variableName);
 			if (value != null) {
 				value = resolveVariable(product.getDefiningBundle(), value);
+				return value;
 			}
+			// nothing - try preferences
+			Preferences prefs = IntroPlugin.getDefault().getPluginPreferences();
+			// try to prefix with a preduct id first
+			String key = product.getId() + "_" + variableName; //$NON-NLS-1$
+			value = prefs.getString(key);
+			if (value.length() == 0) {
+				// try direct variable name
+				key = variableName;
+				value = prefs.getString(key);
+			}
+			if (value.length() > 0)
+				value = resolveVariable(product.getDefiningBundle(), value);
+			else
+				value = null;
 			return value;
 		}
 		return null;
@@ -54,26 +72,31 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 
 	private String resolveVariable(Bundle bundle, String value) {
 		if (value != null) {
-			if (value.startsWith("bundle:")) { //$NON-NLS-1$
-				try {
-					String path = value.substring(7);
-					URL url = bundle.getEntry(path);
-					if (url!=null) {
-						URL localURL = Platform.asLocalURL(url);
-						return localURL.toString();
-					}
-				} catch (IOException e) {
-					// just use the value as-is
-					return value;
+			String path = null;
+			if (value.startsWith("intro:")) { //$NON-NLS-1$
+				bundle = IntroPlugin.getDefault().getBundle();
+				path = value.substring(6);
+			} else if (value.startsWith("product:")) { //$NON-NLS-1$
+				path = value.substring(8);
+			} else
+				return value;
+			try {
+				URL url = bundle.getEntry(path);
+				if (url != null) {
+					URL localURL = Platform.asLocalURL(url);
+					return localURL.toString();
 				}
+			} catch (IOException e) {
+				// just use the value as-is
+				return value;
 			}
 		}
-		return value;
+		return null;
 	}
-	
+
 	private String getProductProperty(IProduct product, String variableName) {
 		String value = product.getProperty(variableName);
-		if (value==null) {
+		if (value == null) {
 			// return default values
 			if (variableName.equals(VAR_INTRO_BACKGROUND_IMAGE))
 				return "css/graphics/root/welcomebckgrd.jpg"; //$NON-NLS-1$
@@ -88,12 +111,14 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		} else if (pageId.equals(ID_STANDBY)) {
 			if (groupId.equals(DIV_PAGE_LINKS))
 				return getRootPageLinks(true);
-		}
-		else {
+		} else {
 			// other pages
 			if (groupId.equals(DIV_PAGE_LINKS))
 				return getNavLinks(pageId);
-			if (groupId.equals(DIV_LAYOUT_LEFT) || groupId.equals(DIV_LAYOUT_RIGHT) || groupId.equals(DIV_LAYOUT_BOTTOM))
+			if (groupId.equals(DIV_CUSTOMIZE))
+				return getCustomizeContent(pageId);
+			if (groupId.equals(DIV_LAYOUT_LEFT) || groupId.equals(DIV_LAYOUT_RIGHT)
+					|| groupId.equals(DIV_LAYOUT_BOTTOM))
 				return getContent(pageId, groupId);
 		}
 		return new IntroElement[0];
@@ -129,51 +154,89 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
 	}
 
+	private IntroElement[] getCustomizeContent(String pageId) {
+		IntroElement clink = new IntroElement("link"); //$NON-NLS-1$
+		clink
+				.setAttribute(
+						"url", "http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.ui.intro&class=org.eclipse.ui.intro.shared.CustomizeCommand&pageId=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$
+		clink.setAttribute("label", Messages.SharedIntroConfigurer_customize_label); //$NON-NLS-1$
+		clink.setAttribute("id", "customize"); //$NON-NLS-1$ //$NON-NLS-2$
+		IntroElement text = new IntroElement("text"); //$NON-NLS-1$
+		text.setValue(Messages.SharedIntroConfigurer_customize_text);
+		clink.addChild(text);
+		return new IntroElement[] { clink };
+	}
+
 	private IntroElement createRootPageLink(String id) {
 		if (id.equals(ID_OVERVIEW))
-			return createRootLink(Messages.SharedIntroConfigurer_overview_name, "http://org.eclipse.ui.intro/showPage?id=overview", id,  //$NON-NLS-1$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_overview_name,
+					"http://org.eclipse.ui.intro/showPage?id=overview", id, //$NON-NLS-1$
 					"overview_img", "css/graphics/root/overview.png", Messages.SharedIntroConfigurer_overview_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_overview_tooltip);
 		if (id.equals(ID_FIRSTSTEPS))
-			return createRootLink(Messages.SharedIntroConfigurer_firststeps_name, "http://org.eclipse.ui.intro/showPage?id=firststeps",  //$NON-NLS-1$
-					id, "firststeps_img", "css/graphics/root/firststeps.png", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_firststeps_name,
+					"http://org.eclipse.ui.intro/showPage?id=firststeps", //$NON-NLS-1$
+					id,
+					"firststeps_img", "css/graphics/root/firststeps.png", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_firststeps_tooltip);
 		if (id.equals(ID_TUTORIALS))
-			return createRootLink(Messages.SharedIntroConfigurer_tutorials_name, "http://org.eclipse.ui.intro/showPage?id=tutorials",  //$NON-NLS-1$
-					id, "tutorials_img", "css/graphics/root/tutorials.png", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_tutorials_name,
+					"http://org.eclipse.ui.intro/showPage?id=tutorials", //$NON-NLS-1$
+					id,
+					"tutorials_img", "css/graphics/root/tutorials.png", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_tutorials_tooltip);
 		if (id.equals(ID_SAMPLES))
-			return createRootLink(Messages.SharedIntroConfigurer_samples_name, "http://org.eclipse.ui.intro/showPage?id=samples", id,  //$NON-NLS-1$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_samples_name,
+					"http://org.eclipse.ui.intro/showPage?id=samples", id, //$NON-NLS-1$
 					"samples_img", "css/graphics/root/samples.png", Messages.SharedIntroConfigurer_samples_alt, Messages.SharedIntroConfigurer_samples_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
 		if (id.equals(ID_WHATSNEW))
-			return createRootLink(Messages.SharedIntroConfigurer_whatsnew_name, "http://org.eclipse.ui.intro/showPage?id=whatsnew",  //$NON-NLS-1$
-					id, "whatsnew_img", "css/graphics/root/whatsnew.png", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_whatsnew_name,
+					"http://org.eclipse.ui.intro/showPage?id=whatsnew", //$NON-NLS-1$
+					id,
+					"whatsnew_img", "css/graphics/root/whatsnew.png", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_whatsnew_tooltip);
 		if (id.equals(ID_MIGRATE))
-			return createRootLink(Messages.SharedIntroConfigurer_migrate_name, "http://org.eclipse.ui.intro/showPage?id=migrate", id,  //$NON-NLS-1$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_migrate_name,
+					"http://org.eclipse.ui.intro/showPage?id=migrate", id, //$NON-NLS-1$
 					"migrate_img", "css/graphics/root/migrate.png", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
 		if (id.equals(ID_WEBRESOURCES))
-			return createRootLink(Messages.SharedIntroConfigurer_webresources_name, "http://org.eclipse.ui.intro/showPage?id=webresources",  //$NON-NLS-1$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_webresources_name,
+					"http://org.eclipse.ui.intro/showPage?id=webresources", //$NON-NLS-1$
 					id, "webresources_img", "css/graphics/root/webresources.png", //$NON-NLS-1$ //$NON-NLS-2$
-					Messages.SharedIntroConfigurer_webresources_alt, Messages.SharedIntroConfigurer_webresources_tooltip);
+					Messages.SharedIntroConfigurer_webresources_alt,
+					Messages.SharedIntroConfigurer_webresources_tooltip);
 		return null;
 	}
 
 	private IntroElement createNavLink(String id, String pageId) {
 		if (id.equals(ID_OVERVIEW))
-			return createNavLink(Messages.SharedIntroConfigurer_overview_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+			return createNavLink(Messages.SharedIntroConfigurer_overview_nav,
+					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
 		if (id.equals(ID_FIRSTSTEPS))
-			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav,
+					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
 		if (id.equals(ID_TUTORIALS))
-			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav,
+					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
 		if (id.equals(ID_SAMPLES))
-			return createNavLink(Messages.SharedIntroConfigurer_samples_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+			return createNavLink(Messages.SharedIntroConfigurer_samples_nav,
+					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
 		if (id.equals(ID_WHATSNEW))
-			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav,
+					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
 		if (id.equals(ID_MIGRATE))
-			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav,
+					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
 		if (id.equals(ID_WEBRESOURCES))
-			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav, "http://org.eclipse.ui.intro/showPage?id=" + id, id, "left");  //$NON-NLS-1$//$NON-NLS-2$ 
+			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav,
+					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
 		return null;
 	}
 
@@ -240,14 +303,14 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		}
 	}
 
-	private IntroElement [] getContent(String pageId, String groupId) {
+	private IntroElement[] getContent(String pageId, String groupId) {
 		ArrayList result = new ArrayList();
-		if (introData.size()>0) {
-			//TODO getting the active product one only
-			//Eventually we should consult the data from all the products
-			IntroData idata = (IntroData)introData.get(0);
+		if (introData.size() > 0) {
+			// TODO getting the active product one only
+			// Eventually we should consult the data from all the products
+			IntroData idata = (IntroData) introData.get(0);
 			PageData pdata = idata.getPage(pageId);
-			if (pdata!=null) {
+			if (pdata != null) {
 				pdata.addAnchors(result, groupId);
 			}
 		}
@@ -255,18 +318,18 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
 		fallback.setAttribute("id", ID_FALLBACK_ANCHOR); //$NON-NLS-1$
 		result.add(fallback);
-		return (IntroElement[]) result.toArray(new IntroElement[result.size()]);		
+		return (IntroElement[]) result.toArray(new IntroElement[result.size()]);
 	}
 
 	public String resolvePath(String extensionId, String path) {
 		IPath ipath = new Path(path);
 		String pageId = ipath.segment(0);
-		if (introData.size()>0) {
-			//TODO getting the active product one only
-			//Eventually we should consult the data from all the products
-			IntroData idata = (IntroData)introData.get(0);
+		if (introData.size() > 0) {
+			// TODO getting the active product one only
+			// Eventually we should consult the data from all the products
+			IntroData idata = (IntroData) introData.get(0);
 			PageData pdata = idata.getPage(pageId);
-			if (pdata!=null) {
+			if (pdata != null) {
 				return pdata.resolvePath(extensionId);
 			}
 		}

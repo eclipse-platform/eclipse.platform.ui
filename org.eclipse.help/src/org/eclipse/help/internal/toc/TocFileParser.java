@@ -123,8 +123,8 @@ class TocFileParser extends DefaultHandler {
 				Object parent = elementStack.peek();
 				if (parent instanceof FilterableUAElement && atts != null) {
 					FilterableUAElement filterableNode = (FilterableUAElement)parent;
-					String name = atts.getValue("name");
-					String value = atts.getValue("value");
+					String name = atts.getValue("name"); //$NON-NLS-1$
+					String value = atts.getValue("value"); //$NON-NLS-1$
 					if (name != null && value != null) {
 						filterableNode.addFilter(name, value);
 					}

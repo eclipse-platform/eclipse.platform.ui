@@ -650,6 +650,8 @@ public class IntroURL implements IIntroURL {
             .getActiveWorkbenchWindow();
         IntroLaunchBarElement launchBarElement = modelRoot.getPresentation()
             .getLaunchBarElement();
+        if (launchBarElement==null)
+        	return true;
         IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement
             .getOrientation(), pageId, launchBarElement);
         launchBar.createInActiveWindow();

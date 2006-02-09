@@ -102,7 +102,6 @@ public class Messages extends NLS {
 	public static String ExtensionData_new;
 	public static String WelcomeCustomizationPreferencePage_serialize;
 	public static String WelcomeCustomizationPreferencePage_serializeTitle;
-	public static String WelcomeCustomizationPreferencePage_serializeMessage;
 	public static String WelcomeCustomizationPreferencePage_up;
 	public static String WelcomeCustomizationPreferencePage_down;
 	public static String WelcomeCustomizationPreferencePage_moveTo;
@@ -111,6 +110,9 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_menu_right;
 	public static String WelcomeCustomizationPreferencePage_menu_bottom;
 	public static String WelcomeCustomizationPreferencePage_browse;
+	public static String WelcomeCustomizationPreferencePage_browseTitle;
+	public static String SharedIntroConfigurer_customize_label;
+	public static String SharedIntroConfigurer_customize_text;
 
 
 

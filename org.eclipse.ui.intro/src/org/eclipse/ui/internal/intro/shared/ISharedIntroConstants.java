@@ -25,12 +25,13 @@ public interface ISharedIntroConstants {
 	String DIV_LAYOUT_LEFT = "left";  //$NON-NLS-1$
 	String DIV_LAYOUT_RIGHT = "right"; //$NON-NLS-1$
 	String DIV_LAYOUT_BOTTOM = "bottom"; //$NON-NLS-1$
+	String DIV_CUSTOMIZE = "customize"; //$NON-NLS-1$
 	
 	// Other ids
 	String ID_FALLBACK_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
 	
 	// Product intro variables 
-	String VAR_INTRO_BACKGROUND_IMAGE = "introBackgroundImage"; //$NON-NLS-1$
-	String VAR_INTRO_ROOT_PAGES = "introRootPages"; //$NON-NLS-1$
-	String VAR_INTRO_DATA = "introData";  //$NON-NLS-1$
+	String VAR_INTRO_BACKGROUND_IMAGE = "INTRO_BACKGROUND_IMAGE"; //$NON-NLS-1$
+	String VAR_INTRO_ROOT_PAGES = "INTRO_ROOT_PAGES"; //$NON-NLS-1$
+	String VAR_INTRO_DATA = "INTRO_DATA";  //$NON-NLS-1$
 }
