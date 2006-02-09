@@ -40,27 +40,23 @@ public class ToggleLogicalStructureAction extends Action {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.VARIABLES_CONTENT_PROVIDERS_ACTION);
 	}
 
-	/**
-	 * @see Action#run()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		valueChanged(isChecked());
-	}
-
-	private void valueChanged(boolean on) {
 		if (!getView().isAvailable()) {
 			return;
 		}
-		getView().setShowLogicalStructure(on);	
+		getView().setShowLogicalStructure(isChecked());	
 		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
 			public void run() {
 				getView().getViewer().refresh();					
 			}
-		});			
+		});		
 	}
-
-	/**
-	 * @see Action#setChecked(boolean)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#setChecked(boolean)
 	 */
 	public void setChecked(boolean value) {
 		super.setChecked(value);
