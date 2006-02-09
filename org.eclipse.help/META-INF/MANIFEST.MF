@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.help.internal.HelpPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help,
- org.eclipse.help.internal;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ui.intro",
  org.eclipse.help.internal.context;x-friends:="org.eclipse.help.base,org.eclipse.help.ui",
  org.eclipse.help.internal.index;x-friends:="org.eclipse.help.webapp",
  org.eclipse.help.internal.model;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",

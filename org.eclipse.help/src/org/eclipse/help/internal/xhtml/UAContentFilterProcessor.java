@@ -9,8 +9,12 @@
 
 package org.eclipse.help.internal.xhtml;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.FilterableUAElement;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,11 +113,12 @@ public class UAContentFilterProcessor {
 
 
 	/**
-	 * FIltering capabilities. Can be overiden by subclasses to add more filtering capabilities.
+	 * Returns whether or not the object with the given filter should be filtered out.
+	 * Can be overriden to provide additional filtering.
 	 * 
-	 * @param filter
-	 * @param value
-	 * @return
+	 * @param filter the filter name (e.g. "os")
+	 * @param value the filter value (e.g. "win32")
+	 * @return whether or not to filter the element
 	 */
 	public boolean isFilteredIn(String filter, String value) {
 		boolean filtered_in = false;
@@ -133,6 +138,29 @@ public class UAContentFilterProcessor {
 		return filtered_in;
 	}
 
+	/**
+	 * Returns whether or not the given object should be filtered out.
+	 * Can be overriden to provide additional filtering.
+	 * 
+	 * @param element the element to check
+	 * @return whether or not to filter the element
+	 */
+	public boolean isFilteredIn(FilterableUAElement element) {
+		if (element != null) {
+			Map filters = ((FilterableUAElement)element).getFilters();
+			if (filters != null) {
+				Iterator iter = filters.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry)iter.next();
+					if (!isFilteredIn((String)entry.getKey(), (String)entry.getValue())) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * evaluates WS filter.
 	 */

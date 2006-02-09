@@ -136,5 +136,20 @@ public class TestCommandExecution extends TestCase {
 		IStatus status = new CommandRunner().executeCommand(command, csm);
 		assertFalse(status.isOK());		
 	}
-
+	
+	private static final String NEGATE_INTEGER_COMMAND_ID = "org.eclipse.ui.cheatsheets.tests.NegateIntegerCommand(number=123)";
+	private static final String INT_RETURN_STORE = "intData";
+	
+	public void testCommandWithIntegerValues() {
+		CheatSheetCommand command = new CheatSheetCommand();
+		ICheatSheetManager csm = new MockCheatSheetManager();
+		command.setSerialization(NEGATE_INTEGER_COMMAND_ID);
+		command.setReturns(INT_RETURN_STORE);
+		
+		IStatus status = new CommandRunner().executeCommand(command, csm);
+		assertTrue(status.isOK());
+		String result = csm.getData(INT_RETURN_STORE);
+		assertNotNull(result);
+		assertEquals("-123", result);
+	}
 }

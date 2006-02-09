@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,10 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.help.internal.xhtml.XHTMLSupport;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
@@ -359,34 +358,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     	Iterator iter = unfiltered.iterator();
     	while (iter.hasNext()) {
     		Object element = iter.next();
-    		if (!filterElement(element)) {
+    		if (!UAContentFilter.isFiltered(element)) {
         		filtered.add(element);
     		}
     	}
     	return filtered;
-    }
-    
-    /**
-     * Returns whether or not the given element should be filtered in. This is true only if all
-     * the filters on the element pass.
-     * 
-     * @param element the element to decide whether to filter
-     * @return whether or not the given element should be filtered in
-     */
-    private boolean filterElement(Object element) {
-    	if (element instanceof AbstractIntroIdElement) {
-    		Map filters = ((AbstractIntroIdElement)element).getFilters();
-    		if (filters != null) {
-    			Iterator iter = filters.entrySet().iterator();
-    			while (iter.hasNext()) {
-    				Map.Entry entry = (Map.Entry)iter.next();
-        			if (!XHTMLSupport.getFilterProcessor().isFilteredIn((String)entry.getKey(), (String)entry.getValue())) {
-        				return true;
-        			}
-    			}
-    		}
-    	}
-		return false;
     }
     
     /**

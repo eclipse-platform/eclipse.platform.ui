@@ -149,6 +149,17 @@
                optional="true"
                />
       </command>
+      <command
+            defaultHandler="org.eclipse.ua.tests.cheatsheet.execution.NegateIntegerHandler"
+            id="org.eclipse.ui.cheatsheets.tests.NegateIntegerCommand"
+            name="Test Command with Integer Values"
+            returnTypeId="org.eclipse.ui.dialogs.Integer">
+         <commandParameter
+               id="number"
+               name="Number"
+               optional="false"
+               typeId="org.eclipse.ui.dialogs.Integer"/>
+      </command>
    </extension>
 
    <!--

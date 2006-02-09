@@ -26,12 +26,6 @@ public class CommandHandler extends AbstractHandler {
     
 	public static final String RESULT_TO_STRING = "RESULT_TO_STRING";
 	
-	public class CommandResult {
-		public String toString() {
-			return RESULT_TO_STRING;
-		}
-	}
-	
 	private static Map params;
 	private static int timesCompleted;
 	private static boolean throwException;
@@ -53,7 +47,7 @@ public class CommandHandler extends AbstractHandler {
 		
 		timesCompleted++;
 		
-		return new CommandResult();
+		return RESULT_TO_STRING;
 	}
 	
 	public static Map getParams() {

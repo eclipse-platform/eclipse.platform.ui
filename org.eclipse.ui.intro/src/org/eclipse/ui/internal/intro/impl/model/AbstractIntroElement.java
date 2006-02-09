@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.help.internal.FilterableUAElement;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
@@ -36,7 +37,7 @@ import org.w3c.dom.Element;
  * Clients are not expected to implement or subclass this class, or any of its
  * subclasses.
  */
-public abstract class AbstractIntroElement implements Cloneable {
+public abstract class AbstractIntroElement extends FilterableUAElement implements Cloneable {
 
     /**
      * Type constant which identifies an IntroModelRoot element.

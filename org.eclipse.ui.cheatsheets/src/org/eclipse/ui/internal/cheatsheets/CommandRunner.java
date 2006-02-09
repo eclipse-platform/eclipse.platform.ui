@@ -11,11 +11,9 @@
 
 package org.eclipse.ui.internal.cheatsheets;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.SerializationException;
+import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -69,30 +67,30 @@ public class CommandRunner {
 			    (rawSerialization, csm);
 			selectedCommand = service.deserialize(substitutedSerialization);
 			result = selectedCommand.executeWithChecks(null, null);
+			
+			String returnsAttribute = command.getReturns();
+			if ((returnsAttribute != null) && (result != null)) {
+				ParameterType returnType = selectedCommand.getCommand().getReturnType();
+				if ((returnType != null && (returnType.getValueConverter() != null))) {
+					String resultString = returnType.getValueConverter().convertToString(result);
+					csm.setData(returnsAttribute, resultString);
+				}
+				else {
+					if (result instanceof String) {
+						csm.setData(returnsAttribute, (String)result);
+					}
+				}
+			}
+			
 		} catch (NotDefinedException e) {
 			String message = NLS.bind(Messages.ERROR_COMMAND_ID_NOT_FOUND, (new Object[] {rawSerialization}));
 			return new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);		
-		} catch (SerializationException e) {
-			return commandFailureStatus(e);
-		} catch (ExecutionException e) {
-			return commandFailureStatus(e);
-		} catch (NotEnabledException e) {
-			return commandFailureStatus(e);
-		} catch (NotHandledException e) {
+		} catch (CommandException e) {
 			return commandFailureStatus(e);
 		} catch (Exception e) {
 			return commandFailureStatus(e);
 		}
 		
-		if (command.getReturns() != null) {
-			String returnValue;
-			if (result == null) {
-				returnValue = "";  //$NON-NLS-1$
-			} else {
-				returnValue = result.toString();
-			}
-			csm.setData(command.getReturns(),  returnValue);
-		}
 		return Status.OK_STATUS;
 	}
 	
