@@ -991,15 +991,6 @@
       </triggerPoint>
    </extension>
   
-   
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            class="org.eclipse.ui.internal.ide.model.ModelProviderAdapterFactory"
-            adaptableType="org.eclipse.core.internal.resources.mapping.ResourceModelProvider">
-         <adapter type="org.eclipse.ui.internal.provisional.ide.IEditorOpenStrategy"/>
-      </factory>
-   </extension>
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerGrouping
