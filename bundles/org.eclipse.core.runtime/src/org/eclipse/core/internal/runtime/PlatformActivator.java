@@ -72,17 +72,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		ParameterizedRunnable work = new ParameterizedRunnable() {
 			public Object run(Object arg) throws Exception {
 				IPlatformRunnable application = null;
-				String applicationId = System.getProperty(PROP_ECLIPSE_APPLICATION);
-				if (applicationId == null) {
-					//Derive the application from the product information
-					IProduct product = InternalPlatform.getDefault().getProduct();
-					if (product != null) {
-						applicationId = product.getApplication();
-						if (applicationId != null)
-							// use the long way to set the property to compile against eeminimum
-							System.getProperties().setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
-					}
-				}
+				String applicationId = InternalPlatform.getDefault().getApplicationId();
 				if (applicationId == null)
 					throw new RuntimeException(Messages.application_noIdFound);
 				IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();

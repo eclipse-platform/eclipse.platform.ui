@@ -126,6 +126,8 @@ public final class InternalPlatform {
 	private boolean missingProductReported = false;
 	private IProduct product;
 	private AdapterManagerListener adapterManagerListener = null;
+	private String applicationId;
+	private Properties commandLineProperties = new Properties();
 
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
 
@@ -220,6 +222,28 @@ public final class InternalPlatform {
 
 	public String[] getApplicationArgs() {
 		return appArgs;
+	}
+
+	public String getApplicationId() {
+		if (applicationId != null)
+			return applicationId;
+
+		// try commandLineProperties
+		applicationId = commandLineProperties.getProperty(PROP_APPLICATION);
+		if (applicationId != null)
+			return applicationId;
+
+		// try bundleContext properties
+		applicationId = context.getProperty(PROP_APPLICATION);
+		if (applicationId != null)
+			return applicationId;
+
+		//Derive the application from the product information
+		IProduct eclipseProduct = getProduct();
+		if (eclipseProduct != null) {
+			applicationId = eclipseProduct.getApplication();
+		}
+		return applicationId;
 	}
 
 	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
@@ -574,9 +598,16 @@ public final class InternalPlatform {
 	public IProduct getProduct() {
 		if (product != null)
 			return product;
-		String productId = System.getProperty(InternalPlatform.PROP_PRODUCT);
-		if (productId == null)
-			return null;
+
+		// try commandLineProperties
+		String productId = commandLineProperties.getProperty(PROP_PRODUCT);
+
+		if (productId == null) {
+			// try bundleContext properties
+			productId = context.getProperty(InternalPlatform.PROP_PRODUCT);
+			if (productId == null)
+				return null;
+		}
 		IConfigurationElement[] entries = InternalPlatform.getDefault().getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT, productId);
 		if (entries.length > 0) {
 			// There should only be one product with the given id so just take the first element
@@ -875,14 +906,14 @@ public final class InternalPlatform {
 			// treat -feature as a synonym for -product for compatibility.
 			if (args[i - 1].equalsIgnoreCase(PRODUCT) || args[i - 1].equalsIgnoreCase(FEATURE)) {
 				// use the long way to set the property to compile against eeminimum
-				System.getProperties().setProperty(PROP_PRODUCT, arg);
+				commandLineProperties.setProperty(PROP_PRODUCT, arg);
 				found = true;
 			}
 
 			// look for the application to run.  
 			if (args[i - 1].equalsIgnoreCase(APPLICATION)) {
 				// use the long way to set the property to compile against eeminimum
-				System.getProperties().setProperty(PROP_APPLICATION, arg);
+				commandLineProperties.setProperty(PROP_APPLICATION, arg);
 				found = true;
 			}
 

@@ -463,6 +463,7 @@ public final class Platform {
 	 * @param listener the listener to register
 	 * @see ILog#addLogListener(ILogListener)
 	 * @see #removeLogListener(ILogListener)
+	 * XXX Use the LogMgr service.
 	 */
 	public static void addLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().addLogListener(listener);
@@ -1474,7 +1475,7 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static boolean inDebugMode() {
-		return System.getProperty("osgi.debug") != null; //$NON-NLS-1$
+		return PlatformActivator.getContext().getProperty("osgi.debug") != null; //$NON-NLS-1$
 	}
 
 	/**
@@ -1490,6 +1491,6 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static boolean inDevelopmentMode() {
-		return System.getProperty("osgi.dev") != null; //$NON-NLS-1$
+		return PlatformActivator.getContext().getProperty("osgi.dev") != null; //$NON-NLS-1$
 	}
 }
