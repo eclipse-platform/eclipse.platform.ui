@@ -286,12 +286,14 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 	
 	public void topIndexChanged()
 	{
-		MemorySegment a = (MemorySegment)getTable().getItem(getTable().getTopIndex()).getData();
+		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+		{
+			MemorySegment a = (MemorySegment)getTable().getItem(getTable().getTopIndex()).getData();
+			System.out.println(Thread.currentThread().getName() + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$
+		}
+
 		setTopIndexKey(getVirtualContentManager().getKey(getTable().getTopIndex()));
 
-		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-			System.out.println(Thread.currentThread().getName() + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$
-		
 		notifyListenersAtBufferStart();
 		notifyListenersAtBufferEnd();
 	}
