@@ -58,7 +58,7 @@ public interface IDialogPage {
 
     /**
      * Returns the current error message for this dialog page.
-     * May be <code>null</null> to indicate no error message.
+     * May be <code>null</code> to indicate no error message.
      * <p>
      * An error message should describe some error state,
      * as opposed to a message which may simply provide instruction

@@ -551,7 +551,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Copy action, or <code>null</null> if not interested.
+     *    Copy action, or <code>null</code> if not interested.
      */
     public void setCopyAction(IAction action) {
         if (copyAction == action)
@@ -574,7 +574,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Cut action, or <code>null</null> if not interested.
+     *    Cut action, or <code>null</code> if not interested.
      */
     public void setCutAction(IAction action) {
         if (cutAction == action)
@@ -597,7 +597,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Delete action, or <code>null</null> if not interested.
+     *    Delete action, or <code>null</code> if not interested.
      */
     public void setDeleteAction(IAction action) {
         if (deleteAction == action)
@@ -620,7 +620,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Find action, or <code>null</null> if not interested.
+     *    Find action, or <code>null</code> if not interested.
      */
     public void setFindAction(IAction action) {
         if (findAction == action)
@@ -643,7 +643,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Paste action, or <code>null</null> if not interested.
+     *    Paste action, or <code>null</code> if not interested.
      */
     public void setPasteAction(IAction action) {
         if (pasteAction == action)
@@ -666,7 +666,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Redo action, or <code>null</null> if not interested.
+     *    Redo action, or <code>null</code> if not interested.
      */
     public void setRedoAction(IAction action) {
         if (redoAction == action)
@@ -689,7 +689,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Select All action, or <code>null</null> if not interested.
+     *    Select All action, or <code>null</code> if not interested.
      */
     public void setSelectAllAction(IAction action) {
         if (selectAllAction == action)
@@ -713,7 +713,7 @@ public class CellEditorActionHandler {
      * cell editor control.
      *
      * @param action the <code>IAction</code> to run for the
-     *    Undo action, or <code>null</null> if not interested.
+     *    Undo action, or <code>null</code> if not interested.
      */
     public void setUndoAction(IAction action) {
         if (undoAction == action)
