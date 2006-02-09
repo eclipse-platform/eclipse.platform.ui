@@ -18,7 +18,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
 /**
  * @since 3.2
  */
-public class SkeletonTreeContentProvider implements ICommonContentProvider {
+public final class SkeletonTreeContentProvider implements ICommonContentProvider {
 
 	/**
 	 * The initialized singleton instance.
@@ -27,7 +27,7 @@ public class SkeletonTreeContentProvider implements ICommonContentProvider {
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
-	SkeletonTreeContentProvider() {
+	private SkeletonTreeContentProvider() {
 		super();
 	}
 

@@ -34,6 +34,15 @@ public interface INavigatorContentExtPtConstants {
 	String TAG_COMMON_SORTER = "commonSorter"; //$NON-NLS-1$
 	
 	/** */
+	String TAG_COMMON_DROP_ADAPTER = "commonDropAdapter"; //$NON-NLS-1$	
+	
+	/** */
+	String TAG_DRAG_EXPRESSION = "dragExpression"; //$NON-NLS-1$	 
+	
+	/** */
+	String TAG_DROP_EXPRESSION = "dropExpression"; //$NON-NLS-1$	 
+	
+	/** */
 	String TAG_OVERRIDE = "override"; //$NON-NLS-1$	
 
 	/** */

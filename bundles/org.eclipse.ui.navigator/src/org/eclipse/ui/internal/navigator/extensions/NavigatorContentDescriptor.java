@@ -89,7 +89,7 @@ public final class NavigatorContentDescriptor implements
 	 *             <li>More elements are define than is allowed.</li>
 	 *             </ul>
 	 */
-	public NavigatorContentDescriptor(IConfigurationElement configElement)
+	/* package */ NavigatorContentDescriptor(IConfigurationElement configElement)
 			throws WorkbenchException {
 		super();
 		this.configElement = configElement;

@@ -66,10 +66,7 @@ public class CommonNavigatorMessages extends NLS {
 
 	/** */
 	public static String Delete;
-
-	/** */
-	public static String LocalSelectionTransfer_errorMessage;
-
+ 
 	/** */
 	public static String PropertyDialog_messageTitle;
 

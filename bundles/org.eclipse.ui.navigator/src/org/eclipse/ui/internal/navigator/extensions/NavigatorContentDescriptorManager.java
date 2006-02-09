@@ -42,9 +42,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class NavigatorContentDescriptorManager {
 
 	private static final NavigatorContentDescriptorManager INSTANCE = new NavigatorContentDescriptorManager();
-
-	private static boolean isInitialized = false;
-
+ 
 	private final Map firstClassDescriptors = new HashMap();
 
 	private final Map allDescriptors = new HashMap();
@@ -88,21 +86,13 @@ public class NavigatorContentDescriptorManager {
 	private final Set firstClassDescriptorsSet = new HashSet();
 
 	/**
-	 * @return the singleton instance of the registry
+	 * @return the singleton instance of the manager
 	 */
 	public static NavigatorContentDescriptorManager getInstance() {
-		if (isInitialized)
-			return INSTANCE;
-		synchronized (INSTANCE) {
-			if (!isInitialized) {
-				INSTANCE.init();
-				isInitialized = true;
-			}
-		}
 		return INSTANCE;
 	}
 
-	private void init() {
+	private NavigatorContentDescriptorManager() {
 		new NavigatorContentDescriptorRegistry().readRegistry();
 	}
 
@@ -354,10 +344,7 @@ public class NavigatorContentDescriptorManager {
 			}
 		}
 	}
-
-	// TODO MDE Should be moved or optimized in someway to minimize the amount
-	// of time that image
-	// resources are held onto
+ 
 	private ImageRegistry getImageRegistry() {
 		if (imageRegistry == null)
 			imageRegistry = new ImageRegistry();

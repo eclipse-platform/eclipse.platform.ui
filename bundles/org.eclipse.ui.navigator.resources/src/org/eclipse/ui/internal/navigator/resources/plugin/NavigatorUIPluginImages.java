@@ -13,12 +13,12 @@ package org.eclipse.ui.internal.navigator.resources.plugin;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
-
 
 /**
  * Handles all images and icons for the ui.
@@ -29,24 +29,22 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
+ * 
  * @since 3.2
  */
 public class NavigatorUIPluginImages {
 
 	private static URL fgIconLocation;
 
+	// Create image registry
+	private final static ImageRegistry NAVIGATORUIPLUGIN_REGISTRY = NavigatorPlugin
+			.getDefault().getImageRegistry();
 
-	//Create image registry
-	private final static ImageRegistry NAVIGATORUIPLUGIN_REGISTRY = NavigatorPlugin.getDefault().getImageRegistry();
-
-	//Create the icon location
+	// Create the icon location
 	static {
-		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-		try {
-			fgIconLocation = new URL(NavigatorPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
-		} catch (MalformedURLException ex) {
-			//Ignore
-		}
+		String pathSuffix = "icons/full/"; //$NON-NLS-1$ 
+		fgIconLocation = NavigatorPlugin.getDefault()
+				.find(new Path(pathSuffix));
 	}
 
 	/**
@@ -59,7 +57,6 @@ public class NavigatorUIPluginImages {
 	public static Image get(String key) {
 		return NAVIGATORUIPLUGIN_REGISTRY.get(key);
 	}
-
 
 	/**
 	 * Create and returns a image descriptor.
@@ -95,8 +92,8 @@ public class NavigatorUIPluginImages {
 	}
 
 	/**
-	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
-	 * are retrieved from the *lcl16 folders.
+	 * Sets the three image descriptors for enabled, disabled, and hovered to an
+	 * action. The actions are retrieved from the *lcl16 folders.
 	 * 
 	 * @param action
 	 *            the action
@@ -117,12 +114,14 @@ public class NavigatorUIPluginImages {
 	 * @param String
 	 *            relPath - The relative path of the icon.
 	 */
-	public static void setImageDescriptors(IAction action, String type, String relPath) {
-		//		/*relPath= relPath.substring(NAVIGATORUI_NAME_PREFIX_LENGTH);*/
-		//		action.setDisabledImageDescriptor(create("d" + type, relPath)); //$NON-NLS-1$
-		//		action.setHoverImageDescriptor(create("c" + type, relPath)); //$NON-NLS-1$
+	public static void setImageDescriptors(IAction action, String type,
+			String relPath) {
+		// /*relPath= relPath.substring(NAVIGATORUI_NAME_PREFIX_LENGTH);*/
+		// action.setDisabledImageDescriptor(create("d" + type, relPath));
+		// //$NON-NLS-1$
+		// action.setHoverImageDescriptor(create("c" + type, relPath));
+		// //$NON-NLS-1$
 		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 	}
-
 
 }

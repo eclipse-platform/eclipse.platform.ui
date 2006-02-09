@@ -20,6 +20,10 @@ package org.eclipse.ui.navigator;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see INavigatorContentService#getPipelineService()
+ * @see PipelinedShapeModification
+ * @see PipelinedViewerUpdate
+ * @see IPipelinedTreeContentProvider
  * @since 3.2
  */
 public interface INavigatorPipelineService {

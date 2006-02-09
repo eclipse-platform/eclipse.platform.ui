@@ -86,6 +86,7 @@ Optionally, clients may also provide an action provider which can provide menu c
             <element ref="actionProvider" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="commonSorter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="override" minOccurs="0" maxOccurs="1"/>
+            <element ref="commonDropAdapter" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -136,7 +137,7 @@ Optionally, clients may also provide an action provider which can provide menu c
 &lt;br&gt;&lt;br&gt;
 The content provider will be consulted when addeding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt; or &lt;b&gt;triggerPoints&lt;/b&gt; clause to indicate what kinds of content should trigger a request to your content provider.
 &lt;br&gt;&lt;br&gt; 
-Elements contributed from the content provider are not guaranteed to appear in the tree in the same order. Clients should take advantage of the sorting extension (&lt;b&gt;commonSorter&lt;/b&gt;) to ensure proper ordering of their elements. 
+Elements contributed from the content provider are not guaranteed to appear in the tree in the same order. Clients should take advantage of the sorting extension (&lt;b&gt;commonSorter&lt;/b&gt;) to ensure proper ordering of their elements.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
@@ -510,6 +511,33 @@ When clients provide their content through the pipeline, the contribution memory
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="commonDropAdapter">
+      <annotation>
+         <documentation>
+            Provides a subclass of &lt;code&gt;org.eclipse.ui.navigator.CommonDropAdapterAssistant&lt;/code&gt; which can provide programatic validation for a drop operation, request additional transfer types, and handle the drop.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonDragAdapterAssistant"/>
+               </appInfo>
+            </annotation>
          </attribute>
       </complexType>
    </element>

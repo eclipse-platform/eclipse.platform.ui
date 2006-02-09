@@ -31,12 +31,13 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptorRegistry;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptorManager;
 import org.eclipse.ui.internal.navigator.extensions.StructuredViewerManager;
 import org.eclipse.ui.internal.navigator.sorters.NavigatorSorterService;
 import org.eclipse.ui.navigator.IDescriptionProvider;
@@ -47,6 +48,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.INavigatorDnDService;
 import org.eclipse.ui.navigator.INavigatorFilterService;
 import org.eclipse.ui.navigator.INavigatorPipelineService;
 import org.eclipse.ui.navigator.INavigatorSorterService;
@@ -73,7 +75,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
 			.getInstance();
 
-	private static final NavigatorViewerDescriptorRegistry VIEWER_DESCRIPTOR_REGISTRY = NavigatorViewerDescriptorRegistry
+	private static final NavigatorViewerDescriptorManager VIEWER_DESCRIPTOR_REGISTRY = NavigatorViewerDescriptorManager
 			.getInstance();
 
 	private static final ITreeContentProvider[] NO_CONTENT_PROVIDERS = new ITreeContentProvider[0];
@@ -111,8 +113,14 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private INavigatorSorterService navigatorSorterService;
 
 	private INavigatorPipelineService navigatorPipelineService;
+	
+	private INavigatorDnDService navigatorDnDService;
 
 	private IDescriptionProvider descriptionProvider;
+
+	private boolean contentProviderInitialized;
+
+	private boolean labelProviderInitialized;	
 
 	/**
 	 * @param aViewerId
@@ -291,12 +299,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.internal.navigator.INavigatorContentService#createCommonContentProvider()
 	 */
 	public ITreeContentProvider createCommonContentProvider() {
-		if (contentProvider != null)
+		if (contentProviderInitialized)
 			return contentProvider;
 		synchronized (this) {
 			if (contentProvider == null)
 				contentProvider = new NavigatorContentServiceContentProvider(
 						this);
+			contentProviderInitialized = true;
 		}
 		return contentProvider;
 	}
@@ -307,11 +316,12 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.internal.navigator.INavigatorContentService#createCommonLabelProvider()
 	 */
 	public ILabelProvider createCommonLabelProvider() {
-		if (labelProvider != null)
+		if (labelProviderInitialized)
 			return labelProvider;
 		synchronized (this) {
 			if (labelProvider == null)
 				labelProvider = new NavigatorContentServiceLabelProvider(this);
+			labelProviderInitialized = true;
 		}
 		return labelProvider;
 	}
@@ -885,6 +895,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		if (navigatorPipelineService == null)
 			navigatorPipelineService = new NavigatorPipelineService(this);
 		return navigatorPipelineService;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.INavigatorContentService#getDnDService()
+	 */
+	public INavigatorDnDService getDnDService() {
+		if (navigatorDnDService == null)
+			navigatorDnDService = new NavigatorDnDService(this);
+		return navigatorDnDService;
 	}
 
 	protected boolean isRootExtension(String anExtensionId) {

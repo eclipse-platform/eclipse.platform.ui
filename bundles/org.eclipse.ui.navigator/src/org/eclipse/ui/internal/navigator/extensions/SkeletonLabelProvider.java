@@ -21,7 +21,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * 
  * @since 3.2
  */
-public class SkeletonLabelProvider implements ICommonLabelProvider {
+public final class SkeletonLabelProvider implements ICommonLabelProvider {
 
 	/**
 	 * The initialized singleton instance.
@@ -31,7 +31,7 @@ public class SkeletonLabelProvider implements ICommonLabelProvider {
 	/**
 	 *  
 	 */
-	SkeletonLabelProvider() {
+	private SkeletonLabelProvider() {
 		super();
 	}
 

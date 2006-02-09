@@ -21,15 +21,21 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * of an upstream content extension.
  * 
  * <p>
- * An "upstream" extension is either the extension overridden by this extension
- * using the <b>org.eclipse.ui.navigatorContent/navigatorContent/overrides</b>
- * element or another extension, which overrides the same extension this
- * extension overrides, but with higher priority than this extension. Overridden
- * extensions form a tree where the nodes of the tree represent the content
- * extensions, children represent overridding extensions, and the children are
- * sorted by priority. Pipeline contributions traverse the tree, allowing
- * children to override the contributions of their parent, giving precedence to
- * the children of highest priority.
+ * An "upstream" extension is either:
+ * <ul>
+ * <li> the extension overridden by this extension using the
+ * <b>org.eclipse.ui.navigatorContent/navigatorContent/override</b> element, or
+ * </li>
+ * <li>another extension that overrides the same extension this extension
+ * overrides, but with higher priority than this extension. </li>
+ * </ul>
+ * </p>
+ * <p>
+ * Overridden extensions form a tree where the nodes of the tree represent the
+ * content extensions, children represent overridding extensions, and the
+ * children are sorted by priority. Pipeline contributions traverse the tree,
+ * allowing children to override the contributions of their parent, giving
+ * precedence to the children of highest priority.
  * </p>
  * 
  * <p>
@@ -45,6 +51,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * Navigator.
  * </p>
  * 
+ * @see INavigatorPipelineService
+ * @see INavigatorContentService#getPipelineService()
  * @since 3.2
  * 
  */
@@ -75,7 +83,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 *            An input from the viewer
 	 * @param theCurrentElements
 	 *            The set of children contributed thus far from upstream content
-	 *            providers. 
+	 *            providers.
 	 */
 	void getPipelinedElements(Object anInput, Set theCurrentElements);
 
@@ -165,8 +173,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 *            The (current) refresh update to execute against the viewer.
 	 * @return True if the viewer update was modified.
 	 */
-	boolean interceptRefresh(
-			PipelinedViewerUpdate aRefreshSynchronization);
+	boolean interceptRefresh(PipelinedViewerUpdate aRefreshSynchronization);
 
 	/**
 	 * Intercept calls to viewer <code>update()</code> methods.
@@ -188,7 +195,6 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 *            The (current) update to execute against the viewer.
 	 * @return True if the viewer update was modified.
 	 */
-	boolean interceptUpdate(
-			PipelinedViewerUpdate anUpdateSynchronization);
+	boolean interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization);
 
 }

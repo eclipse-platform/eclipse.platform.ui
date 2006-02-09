@@ -25,7 +25,6 @@ import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
@@ -44,7 +43,7 @@ public class CommonSorterDescriptorManager {
 	/**
 	 * 
 	 * @return An initialized singleton instance of the
-	 *         CommonFilterDescriptorManager.
+	 *         CommonSorterDescriptorManager.
 	 */
 	public static CommonSorterDescriptorManager getInstance() {
 		return INSTANCE;
@@ -87,7 +86,7 @@ public class CommonSorterDescriptorManager {
 	/**
 	 * 
 	 * @param aContentService
-	 *            A content service to filter the visible filters. 
+	 *            A content service to filter the visible filters.
 	 * @param theSource
 	 *            The source of each *value.
 	 * @param aParent
@@ -122,8 +121,8 @@ public class CommonSorterDescriptorManager {
 	private class CommonSorterDescriptorRegistry extends
 			NavigatorContentRegistryReader {
 
-		NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_MANAGER = NavigatorContentDescriptorManager
-				.getInstance();
+		private CommonSorterDescriptorRegistry() {
+		}
 
 		/*
 		 * (non-Javadoc)

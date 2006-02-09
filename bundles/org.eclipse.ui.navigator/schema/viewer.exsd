@@ -34,6 +34,7 @@ consulting with the Platform/UI team.
             <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="viewerContentBinding" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="viewerActionBinding" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dragAssistant"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -361,6 +362,37 @@ If the &lt;b&gt;popupMenu&lt;/b&gt; element is specified and contains NO &lt;b&g
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="dragAssistant">
+      <annotation>
+         <documentation>
+            A Drag and Drop assistant provides lightweight hook to supply extra transfer types and logic to set the drag data. This element is not required as the basic &lt;b&gt;org.eclipse.ui.navigator.CommonViewer&lt;/b&gt; provides a &lt;b&gt;org.eclipse.ui.jface.util.LocalSelectionTransfer&lt;/b&gt; type. 
+&lt;br&gt;&lt;br&gt;
+&lt;b&gt;
+Clients should only define this extension in lightweight plugins with shallow dependency trees. The drag assistants must be loaded up front when the viewer is created, which will force the load of affected plugins. 
+&lt;/b&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Provide an implementation of IDragAssistant.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="viewerId" type="string">
+            <annotation>
+               <documentation>
+                  Associate this drag assistant with a particular viewer id.
                </documentation>
             </annotation>
          </attribute>

@@ -2,7 +2,7 @@ package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.ui.internal.navigator.extensions.InsertionPoint;
+import org.eclipse.ui.internal.navigator.extensions.MenuInsertionPoint;
 
 /**
  * Provides a basic metadata about the abstract viewer for a particular content
@@ -139,7 +139,7 @@ public interface INavigatorViewerDescriptor {
 	 *         should be used. An empty list indicates there are no declarative
 	 *         insertion points.
 	 */
-	InsertionPoint[] getCustomInsertionPoints();
+	MenuInsertionPoint[] getCustomInsertionPoints();
 
 	/**
 	 * @param aPropertyName
@@ -158,5 +158,6 @@ public interface INavigatorViewerDescriptor {
 	 *         possible return value).
 	 */
 	boolean getBooleanConfigProperty(String aPropertyName);
-
+	 
+	
 }

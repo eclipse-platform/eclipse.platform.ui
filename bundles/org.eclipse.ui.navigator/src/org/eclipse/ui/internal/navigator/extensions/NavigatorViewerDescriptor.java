@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -23,11 +25,12 @@ import org.eclipse.ui.navigator.NavigatorActionService;
 
 /**
  * Encapsulates the <code>org.eclipse.ui.navigator.viewer</code> extension.
- * <p> 
+ * <p>
  * 
  * @since 3.2
  */
-public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
+public final class NavigatorViewerDescriptor implements
+		INavigatorViewerDescriptor {
 
 	static final String TAG_INCLUDES = "includes"; //$NON-NLS-1$
 
@@ -49,11 +52,13 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 
 	private Binding contentBinding = new Binding(TAG_CONTENT_EXTENSION);
 
-	private InsertionPoint[] customInsertionPoints = null;
+	private MenuInsertionPoint[] customInsertionPoints = null;
 
 	private boolean allowsPlatformContributions = true;
-	
+
 	private final Properties properties = new Properties();
+
+	private Set dragAssistants;
 
 	/**
 	 * Creates a new content descriptor from a configuration element.
@@ -61,7 +66,7 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	 * @param aViewerId
 	 *            The identifier for this descriptor.
 	 */
-	public NavigatorViewerDescriptor(String aViewerId) {
+	/* package */NavigatorViewerDescriptor(String aViewerId) {
 		super();
 		this.viewerId = aViewerId;
 	}
@@ -73,27 +78,6 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	 */
 	public String getViewerId() {
 		return viewerId;
-	}
-
-	/**
-	 * Update the popupMenuId. If a value is already set, then a warning message
-	 * will be logged.
-	 * 
-	 * @param newPopupMenuId
-	 *            The new popup menu id.
-	 */
-	public void setPopupMenuId(String newPopupMenuId) {
-
-		if (newPopupMenuId != null) {
-			if (popupMenuId != null)
-				NavigatorPlugin
-						.log(IStatus.WARNING, 0, NLS
-								.bind(
-										CommonNavigatorMessages.NavigatorViewerDescriptor_Popup_Menu_Overridden,
-										new Object[] { getViewerId(),
-												popupMenuId, newPopupMenuId }), null);
-			popupMenuId = newPopupMenuId;
-		}
 	}
 
 	/*
@@ -110,7 +94,7 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	 * 
 	 * @param element
 	 *            The IConfigurationElement containing a viewerActionBinding
-	 *            element. 
+	 *            element.
 	 */
 	public void consumeActionBinding(IConfigurationElement element) {
 		consumeBinding(element, false);
@@ -121,7 +105,7 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 	 * 
 	 * @param element
 	 *            The IConfigurationElement containing a viewerContentBinding
-	 *            element. 
+	 *            element.
 	 */
 	public void consumeContentBinding(IConfigurationElement element) {
 		consumeBinding(element, true);
@@ -145,6 +129,121 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 
 	public boolean hasOverriddenRootExtensions() {
 		return contentBinding.hasOverriddenRootExtensions();
+	}
+
+	public MenuInsertionPoint[] getCustomInsertionPoints() {
+		return customInsertionPoints;
+	}
+
+	/**
+	 * 
+	 * @param newCustomInsertionPoints
+	 *            The set of custom insertion points, if any. A null list
+	 *            indicates the default set (as defined by
+	 *            {@link NavigatorActionService}) should be used. An empty list
+	 *            indicates there are no declarative insertion points.
+	 */
+	public void setCustomInsertionPoints(
+			MenuInsertionPoint[] newCustomInsertionPoints) {
+		if (customInsertionPoints != null) {
+			NavigatorPlugin
+					.logError(
+							0,
+							"Attempt to override custom insertion points denied. Verify there are no colliding org.eclipse.ui.navigator.viewer extension points.", null); //$NON-NLS-1$
+			return; // do not let them override the insertion points.
+		}
+		customInsertionPoints = newCustomInsertionPoints;
+	}
+
+	/**
+	 * 
+	 * @param toAllowPlatformContributions
+	 *            A value of 'true' enables object/viewer contributions. 'false'
+	 *            will only allow programmatic contributions from
+	 *            {@link CommonActionProvider}s.
+	 */
+	public void setAllowsPlatformContributions(
+			boolean toAllowPlatformContributions) {
+		allowsPlatformContributions = toAllowPlatformContributions;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getStringConfigProperty(java.lang.String)
+	 */
+	public String getStringConfigProperty(String aPropertyName) {
+		return properties.getProperty(aPropertyName);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getBooleanConfigProperty(java.lang.String)
+	 */
+	public boolean getBooleanConfigProperty(String aPropertyName) {
+		String propValue = properties.getProperty(aPropertyName);
+		if (propValue == null)
+			return false;
+		return Boolean.valueOf(propValue).booleanValue();
+	}
+
+	/* package */void setProperty(String aPropertyName, String aPropertyValue) {
+		properties.setProperty(aPropertyName, aPropertyValue);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "ViewerDescriptor[" + viewerId + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Update the popupMenuId. If a value is already set, then a warning message
+	 * will be logged.
+	 * 
+	 * @param newPopupMenuId
+	 *            The new popup menu id.
+	 */
+	/* package */void setPopupMenuId(String newPopupMenuId) {
+
+		if (newPopupMenuId != null) {
+			if (popupMenuId != null)
+				NavigatorPlugin
+						.log(
+								IStatus.WARNING,
+								0,
+								NLS
+										.bind(
+												CommonNavigatorMessages.NavigatorViewerDescriptor_Popup_Menu_Overridden,
+												new Object[] { getViewerId(),
+														popupMenuId,
+														newPopupMenuId }), null);
+			popupMenuId = newPopupMenuId;
+		}
+	}
+
+	/**
+	 * @param descriptor
+	 *            A non-null descriptor to add
+	 */
+	void addDragAssistant(CommonDragAssistantDescriptor descriptor) {
+		getDragAssistants().add(descriptor);
+
+	}
+
+	/**
+	 * 
+	 * @return The set of {@link CommonDragAssistantDescriptor}s for this
+	 *         viewer.
+	 */
+	public Set getDragAssistants() {
+		if (dragAssistants == null)
+			dragAssistants = new HashSet();
+		return dragAssistants;
 	}
 
 	private void consumeBinding(IConfigurationElement element, boolean isContent) {
@@ -186,71 +285,6 @@ public class NavigatorViewerDescriptor implements INavigatorViewerDescriptor {
 							element.getDeclaringExtension().getNamespace() }),
 					null);
 		}
-	}
-
-	public InsertionPoint[] getCustomInsertionPoints() {
-		return customInsertionPoints;
-	}
-
-	/**
-	 * 
-	 * @param newCustomInsertionPoints
-	 *            The set of custom insertion points, if any. A null list
-	 *            indicates the default set (as defined by
-	 *            {@link NavigatorActionService}) should be used. An empty list
-	 *            indicates there are no declarative insertion points.
-	 */
-	public void setCustomInsertionPoints(
-			InsertionPoint[] newCustomInsertionPoints) {
-		if (customInsertionPoints != null) {
-			NavigatorPlugin
-					.logError(
-							0,
-							"Attempt to override custom insertion points denied. Verify there are no colliding org.eclipse.ui.navigator.viewer extension points.", null); //$NON-NLS-1$
-			return; // do not let them override the insertion points.
-		}
-		customInsertionPoints = newCustomInsertionPoints;
-	}
-
-	/**
-	 * 
-	 * @param toAllowPlatformContributions
-	 *            A value of 'true' enables object/viewer contributions. 'false'
-	 *            will only allow programmatic contributions from
-	 *            {@link CommonActionProvider}s.
-	 */
-	public void setAllowsPlatformContributions(
-			boolean toAllowPlatformContributions) {
-		allowsPlatformContributions = toAllowPlatformContributions;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getStringConfigProperty(java.lang.String)
-	 */
-	public String getStringConfigProperty(String aPropertyName) {
-		return properties.getProperty(aPropertyName);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getBooleanConfigProperty(java.lang.String)
-	 */
-	public boolean getBooleanConfigProperty(String aPropertyName) {
-		String propValue = properties.getProperty(aPropertyName);
-		if(propValue == null)
-			return false;
-		return Boolean.valueOf(propValue).booleanValue();
-	}
-	
-	protected void setProperty(String aPropertyName, String aPropertyValue) {
-		properties.setProperty(aPropertyName, aPropertyValue);
-	}
- 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return "ViewerDescriptor["+viewerId+"]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

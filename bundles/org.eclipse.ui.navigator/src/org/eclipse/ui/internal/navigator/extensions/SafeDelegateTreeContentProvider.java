@@ -173,8 +173,7 @@ public class SafeDelegateTreeContentProvider implements
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
 	public PipelinedShapeModification interceptAdd(
-			PipelinedShapeModification anAddModification) {
-		// TODO Auto-generated method stub
+			PipelinedShapeModification anAddModification) { 
 		return null;
 	}
 
@@ -184,8 +183,7 @@ public class SafeDelegateTreeContentProvider implements
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRemove(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
 	public PipelinedShapeModification interceptRemove(
-			PipelinedShapeModification aRemoveModification) {
-		// TODO Auto-generated method stub
+			PipelinedShapeModification aRemoveModification) { 
 		return null;
 	}
 

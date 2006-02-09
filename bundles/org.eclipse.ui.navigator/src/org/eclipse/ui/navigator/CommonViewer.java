@@ -21,9 +21,6 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -31,9 +28,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.DelegateTreeViewerSorter;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.internal.navigator.dnd.CommonNavigatorDragAdapter;
-import org.eclipse.ui.internal.navigator.dnd.CommonNavigatorDropAdapter;
-import org.eclipse.ui.part.PluginTransfer;
 
 /**
  * 
@@ -316,23 +310,39 @@ public class CommonViewer extends TreeViewer {
 	 * </ul>
 	 * </p>
 	 * 
-	 * @see CommonNavigatorDragAdapter
-	 * @see CommonNavigatorDropAdapter
+	 * @see CommonDragAdapter
+	 * @see CommonDropAdapter
 	 */
 	protected void initDragAndDrop() {
-		/* Handle Drag and Drop */
-		int operations = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] {
-		// TODO Removed LocalSelectTransfer and ResourceTransfer to break
-				// dependency on ide and resources plugins.
-				// LocalSelectionTransfer.getInstance(),
-				PluginTransfer.getInstance(), FileTransfer.getInstance(),
-		// ResourceTransfer.getInstance()
-		};
-		addDragSupport(operations, transfers, new CommonNavigatorDragAdapter(
-				this));
-		addDropSupport(operations, transfers, new CommonNavigatorDropAdapter(
-				this));
+		
+		// TODO initDragAndDrop is in progress.
+		
+//		/* Handle Drag and Drop */
+//		int operations = DND.DROP_COPY | DND.DROP_MOVE;
+//
+//		CommonDragAdapterAssistant[] assistants = contentService
+//				.getDnDService().getCommonDragAssistants();
+//
+//		Set supportedTypes = new HashSet();
+//		supportedTypes.add(PluginTransfer.getInstance());
+//		supportedTypes.add(LocalSelectionTransfer.getInstance());
+//		Transfer[] transferTypes = null;
+//		for (int i = 0; i < assistants.length; i++) {
+//			transferTypes = assistants[i].getSupportedTransferTypes();
+//			for (int j = 0; j < transferTypes.length; j++) {
+//				if (transferTypes[j] != null)
+//					supportedTypes.add(transferTypes[j]);
+//			}
+//		}
+//
+//		Transfer[] transfers = (Transfer[]) supportedTypes
+//				.toArray(new Transfer[supportedTypes.size()]);
+//
+//		addDragSupport(operations, transfers, new CommonDragAdapter(
+//				contentService, this));
+//		// TODO Should the Transfers be the same here?
+//		addDropSupport(operations, transfers, new CommonDropAdapter(
+//				contentService, this));
 
 	}
 
@@ -363,13 +373,7 @@ public class CommonViewer extends TreeViewer {
 			ArrayList others = new ArrayList();
 			for (int i = 0; i < changed.length; i++) {
 				Object curr = changed[i];
-				// TODO Resource Mapper removed. Perhaps this would be a good
-				// chance to use ResourceMapping?
-				// if (curr instanceof IResource) {
-				// fResourceToItemsMapper.resourceChanged((IResource) curr);
-				// } else {
 				others.add(curr);
-				// }
 			}
 			if (others.isEmpty()) {
 				return;
@@ -450,10 +454,10 @@ public class CommonViewer extends TreeViewer {
 	 * </p>
 	 */
 	public void dispose() {
-	
+
 		if (contentService != null)
 			contentService.dispose();
-	
+
 	}
 
 	/**
@@ -466,10 +470,14 @@ public class CommonViewer extends TreeViewer {
 	public void setSorter(ViewerSorter sorter) {
 		if (sorter != null && sorter instanceof CommonViewerSorter)
 			((CommonViewerSorter) sorter).setContentService(contentService);
-	
+
 		if (sorter == null || sorter instanceof TreeViewerSorter)
 			super.setSorter(sorter);
-		else /* we wrap the sorter for convenience (now we can always cast to TreeViewerSorter) */
+		else
+			/*
+			 * we wrap the sorter for convenience (now we can always cast to
+			 * TreeViewerSorter)
+			 */
 			super.setSorter(new DelegateTreeViewerSorter(sorter));
 	}
 
@@ -486,11 +494,14 @@ public class CommonViewer extends TreeViewer {
 		return contentService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object,
+	 *      java.lang.Object[])
 	 */
 	public void add(Object parentElement, Object[] childElements) {
-		// TODO Auto-generated method stub
+		// TODO Intercept ADD for the pipeline service.
 		super.add(parentElement, childElements);
 	}
 
@@ -503,53 +514,68 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
 	public void remove(Object[] elements) {
+
+		// TODO Intercept REMOVE for the pipeline service.
+
 		super.remove(elements);
 		ITreeContentProvider contentProvider = (ITreeContentProvider) getContentProvider();
 		for (int i = 0; i < elements.length; i++) {
 			super.internalRefresh(contentProvider.getParent(elements[i]));
 		}
-	} 
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object,
+	 *      boolean)
 	 */
 	public void refresh(Object element, boolean updateLabels) {
-		
-		INavigatorPipelineService pipeDream = contentService.getPipelineService();
-		
+
+		INavigatorPipelineService pipeDream = contentService
+				.getPipelineService();
+
 		PipelinedViewerUpdate update = new PipelinedViewerUpdate();
 		update.getRefreshTargets().add(element);
 		update.setUpdateLabels(updateLabels);
 		/* if the update is modified */
-		if(pipeDream.interceptRefresh(update)) {
+		if (pipeDream.interceptRefresh(update)) {
 			/* intercept and apply the update */
 			boolean toUpdateLabels = update.isUpdateLabels();
-			for (Iterator iter = update.getRefreshTargets().iterator(); iter.hasNext();) 
-				super.refresh(iter.next(), toUpdateLabels);  
-		} else 	
+			for (Iterator iter = update.getRefreshTargets().iterator(); iter
+					.hasNext();)
+				super.refresh(iter.next(), toUpdateLabels);
+		} else
 			super.refresh(element, updateLabels);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object)
 	 */
 	public void refresh(Object element) {
 		refresh(element, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object,
+	 *      java.lang.String[])
 	 */
 	public void update(Object element, String[] properties) {
-		// TODO Auto-generated method stub
+		// TODO Intercept UPDATE for the pipeline service.
 		super.update(element, properties);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		return contentService.toString() + " Viewer"; //$NON-NLS-1$
 	}
-	
+
 }

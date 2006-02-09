@@ -49,6 +49,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see INavigatorContentService#getFilterService()
+ * @see ViewerFilter
  * @since 3.2
  * 
  */
@@ -97,8 +99,7 @@ public interface INavigatorFilterService {
 	 */
 	void setActiveFilterIds(String[] theFilterIds);
 
-	/**
-	 * 
+	/** 
 	 * Persist the current activation state for visible filters.
 	 */
 	void persistFilterActivationState();

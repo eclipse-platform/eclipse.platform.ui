@@ -10,7 +10,7 @@
    <extension
          point="org.eclipse.ui.dropActions">
       <action
-            class="org.eclipse.ui.internal.navigator.dnd.PluginDropAction"
+            class="org.eclipse.ui.internal.navigator.dnd.NavigatorPluginDropAction"
             id="org.eclipse.ui.navigator.internal.dnd.PluginDropAction">
       </action>
    </extension>

@@ -421,4 +421,14 @@ public interface INavigatorContentService {
 	 */
 	INavigatorPipelineService getPipelineService();
 
+	/**
+	 * The DND Service provides instances of {@link CommonDragAdapterAssistant}
+	 * and {@link CommonDropAdapterAssistant} for this content service.
+	 * 
+	 * @return The {@link INavigatorDnDService} which can add additional
+	 *         TransferTypes for the DragAdapter and setup the data correctly
+	 *         for those extended Transfer Types.
+	 */
+	INavigatorDnDService getDnDService();
+
 }

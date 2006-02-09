@@ -41,7 +41,7 @@ import org.eclipse.ui.actions.ActionGroup;
  * </p>
  * 
  * <p>
- * Clients may subclass this class.
+ * Clients may extend this class.
  * </p>
  * 
  * @since 3.2

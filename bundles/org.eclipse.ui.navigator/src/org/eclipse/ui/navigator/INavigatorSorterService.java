@@ -29,6 +29,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * This interface is not intended to be implemented by clients.
  * </p> 
  * 
+ * @see INavigatorContentService#getSorterService()
+ * @see ViewerSorter
  * @since 3.2 
  */
 public interface INavigatorSorterService {

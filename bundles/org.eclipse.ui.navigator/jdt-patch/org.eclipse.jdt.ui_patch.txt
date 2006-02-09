@@ -6,7 +6,7 @@ RCS file: /home/eclipse/org.eclipse.jdt.ui/ui/org/eclipse/jdt/internal/ui/workin
 retrieving revision 1.9
 diff -u -r1.9 ConfigureWorkingSetAction.java
 --- ui/org/eclipse/jdt/internal/ui/workingsets/ConfigureWorkingSetAction.java	18 Nov 2005 14:45:35 -0000	1.9
-+++ ui/org/eclipse/jdt/internal/ui/workingsets/ConfigureWorkingSetAction.java	6 Feb 2006 01:41:21 -0000
++++ ui/org/eclipse/jdt/internal/ui/workingsets/ConfigureWorkingSetAction.java	8 Feb 2006 00:46:03 -0000
 @@ -14,6 +14,8 @@
  import java.util.Arrays;
  import java.util.List;
@@ -56,7 +56,7 @@ RCS file: /home/eclipse/org.eclipse.jdt.ui/ui/org/eclipse/jdt/internal/ui/workin
 retrieving revision 1.8
 diff -u -r1.8 ViewActionGroup.java
 --- ui/org/eclipse/jdt/internal/ui/workingsets/ViewActionGroup.java	13 Apr 2005 17:35:11 -0000	1.8
-+++ ui/org/eclipse/jdt/internal/ui/workingsets/ViewActionGroup.java	6 Feb 2006 01:41:21 -0000
++++ ui/org/eclipse/jdt/internal/ui/workingsets/ViewActionGroup.java	8 Feb 2006 00:46:03 -0000
 @@ -45,7 +45,12 @@
  
  	public ViewActionGroup(int mode, IPropertyChangeListener changeListener, IWorkbenchPartSite site) {
@@ -117,7 +117,7 @@ RCS file: /home/eclipse/org.eclipse.jdt.ui/ui/org/eclipse/jdt/internal/ui/workin
 retrieving revision 1.14
 diff -u -r1.14 WorkingSetModel.java
 --- ui/org/eclipse/jdt/internal/ui/workingsets/WorkingSetModel.java	26 Jan 2006 14:54:03 -0000	1.14
-+++ ui/org/eclipse/jdt/internal/ui/workingsets/WorkingSetModel.java	6 Feb 2006 01:41:21 -0000
++++ ui/org/eclipse/jdt/internal/ui/workingsets/WorkingSetModel.java	8 Feb 2006 00:46:03 -0000
 @@ -1,13 +1,11 @@
 -/*******************************************************************************
 - * Copyright (c) 2000, 2005 IBM Corporation and others.
@@ -689,7 +689,7 @@ RCS file: /home/eclipse/org.eclipse.jdt.ui/ui/org/eclipse/jdt/internal/ui/packag
 retrieving revision 1.50
 diff -u -r1.50 PackageExplorerContentProvider.java
 --- ui/org/eclipse/jdt/internal/ui/packageview/PackageExplorerContentProvider.java	11 Jan 2006 15:49:15 -0000	1.50
-+++ ui/org/eclipse/jdt/internal/ui/packageview/PackageExplorerContentProvider.java	6 Feb 2006 01:41:21 -0000
++++ ui/org/eclipse/jdt/internal/ui/packageview/PackageExplorerContentProvider.java	8 Feb 2006 00:46:03 -0000
 @@ -76,14 +76,22 @@
  	private PackageFragmentProvider fPackageFragmentProvider= new PackageFragmentProvider();
  	
@@ -715,6 +715,15 @@ diff -u -r1.50 PackageExplorerContentProvider.java
  	}
  	
  	/* package */ PackageFragmentProvider getPackageFragmentProvider() {
+@@ -620,7 +628,7 @@
+ 		});
+ 	}
+ 
+-	private void postAdd(final Object parent, final Object element) {
++	/* package */ void postAdd(final Object parent, final Object element) {
+ 		postRunnable(new Runnable() {
+ 			public void run() {
+ 				Control ctrl= fViewer.getControl();
 @@ -647,7 +655,14 @@
  	private void postProjectStateChanged(final Object root) {
  		postRunnable(new Runnable() {
@@ -737,8 +746,8 @@ RCS file: /home/eclipse/org.eclipse.jdt.ui/plugin.xml,v
 retrieving revision 1.617
 diff -u -r1.617 plugin.xml
 --- plugin.xml	5 Feb 2006 18:11:23 -0000	1.617
-+++ plugin.xml	6 Feb 2006 01:41:20 -0000
-@@ -5047,4 +5047,71 @@
++++ plugin.xml	8 Feb 2006 00:46:02 -0000
+@@ -5047,4 +5047,97 @@
        </objectContribution>
     </extension>
  
@@ -765,14 +774,21 @@ diff -u -r1.617 plugin.xml
 +             labelProvider="org.eclipse.jdt.internal.ui.packageview.PreferenceAwareLabelProvider"
 +             name="Java Elements"
 +             priority="high">
-+          <enablement> 
++          <triggerPoints> 
 +	         <or>           
-+	               <adapt 
++               <adapt 
 +	                     type="org.eclipse.core.resources.IProject" > 
 +		                  <test
 +		                     property="org.eclipse.core.resources.projectNature"
 +		                     value="org.eclipse.jdt.core.javanature" />
-+	               </adapt>  
++               </adapt>             
++	           <instanceof 
++	                 value="org.eclipse.core.resources.IWorkspaceRoot" /> 
++	                 
++	           <instanceof
++	                 value="org.eclipse.core.resources.IFolder" /> 
++	           <instanceof
++	                value="org.eclipse.core.resources.IFile" /> 
 +	           <instanceof 
 +	                 value="org.eclipse.jdt.core.IJavaProject" /> 
 +	           <instanceof 
@@ -783,23 +799,42 @@ diff -u -r1.617 plugin.xml
 +	                 value="org.eclipse.jdt.core.IClassFile" /> 
 +	           <instanceof
 +	                 value="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer" /> 
-+	           <instanceof
-+	                 value="org.eclipse.core.resources.IFolder" /> 
-+	           <instanceof
-+	                value="org.eclipse.core.resources.IFile" /> 
 +	            <!--
 +				<instanceof 
 + 					value="org.eclipse.jdt.internal.ui.workingsets.WorkingSetModel" /> 
 + 					-->
 +	         </or>
-+          </enablement>
-+	          <actionProvider 
++          </triggerPoints>
++          <possibleChildren> 
++	         <or>           
++               <adapt 
++					type="org.eclipse.core.resources.IProject" >  
++               </adapt>             
++	           <instanceof 
++	                 value="org.eclipse.core.resources.IWorkspaceRoot" /> 	                 
++	           <instanceof
++	                 value="org.eclipse.core.resources.IFolder" /> 
++	           <instanceof
++	                value="org.eclipse.core.resources.IFile" /> 
++	           <instanceof 
++	                 value="org.eclipse.jdt.core.IJavaProject" /> 
++	           <instanceof 
++	                 value="org.eclipse.jdt.core.IJavaElement" /> 
++	           <instanceof
++	                 value="org.eclipse.jdt.internal.core.JarEntryFile" /> 
++	           <instanceof
++	                 value="org.eclipse.jdt.core.IClassFile" /> 
++	           <instanceof
++	                 value="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer" />  
++	         </or>
++          </possibleChildren>          
++          <actionProvider 
 +	               class="org.eclipse.jdt.internal.ui.packageview.PackageExplorerActionProvider">
 +	               <enablement>	               
 +	               <adapt 
 +	                     type="org.eclipse.jdt.core.IJavaElement" /> 
 +	               </enablement>
-+	          </actionProvider>
++          </actionProvider>
 +          <override
 +                policy="InvokeAlwaysRegardlessOfSuppressedExt"
 +                suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
@@ -817,7 +852,7 @@ RCS file: /home/eclipse/org.eclipse.jdt.ui/ui/org/eclipse/jdt/internal/ui/action
 retrieving revision 1.7
 diff -u -r1.7 MultiActionGroup.java
 --- ui/org/eclipse/jdt/internal/ui/actions/MultiActionGroup.java	17 Jun 2005 15:51:51 -0000	1.7
-+++ ui/org/eclipse/jdt/internal/ui/actions/MultiActionGroup.java	6 Feb 2006 01:41:20 -0000
++++ ui/org/eclipse/jdt/internal/ui/actions/MultiActionGroup.java	8 Feb 2006 00:46:02 -0000
 @@ -37,6 +37,8 @@
   */
  public class MultiActionGroup extends ActionGroup {
@@ -1004,7 +1039,7 @@ RCS file: ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareContentProvi
 diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareContentProvider.java
 --- /dev/null	1 Jan 1970 00:00:00 -0000
 +++ ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareContentProvider.java	1 Jan 1970 00:00:00 -0000
-@@ -0,0 +1,239 @@
+@@ -0,0 +1,174 @@
 +/***************************************************************************************************
 + * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved. This program and the
 + * accompanying materials are made available under the terms of the Eclipse Public License v1.0
@@ -1017,10 +1052,10 @@ diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareContentProvide
 +
 +import java.util.Arrays;
 +import java.util.HashSet;
++import java.util.Iterator;
 +import java.util.Set;
 +
-+import org.eclipse.core.resources.IContainer;
-+import org.eclipse.core.resources.IProject;
++import org.eclipse.core.resources.IResource;
 +import org.eclipse.core.resources.IWorkspaceRoot;
 +
 +import org.eclipse.jface.preference.IPreferenceStore;
@@ -1035,53 +1070,34 @@ diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareContentProvide
 +import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 +
 +import org.eclipse.jdt.core.IJavaElement;
-+import org.eclipse.jdt.core.IJavaProject;
++import org.eclipse.jdt.core.IJavaModel;
 +import org.eclipse.jdt.core.JavaCore;
 +
 +import org.eclipse.jdt.ui.PreferenceConstants;
 +
-+import org.eclipse.jdt.internal.ui.JavaPlugin;
 +import org.eclipse.jdt.internal.ui.packageview.IExtensionStateConstants.Values;
 +
-+public class PreferenceAwareContentProvider implements
-+		IPipelinedTreeContentProvider {
++public class PreferenceAwareContentProvider extends
++		PackageExplorerContentProvider implements IPipelinedTreeContentProvider {
 +
-+	public static final String JDT_EXTENSION_ID = "org.eclipse.jdt.ui.javaContent"; //$NON-NLS-1$
++	public PreferenceAwareContentProvider() {
++		super(false);
++	}
 +
-+	private static final Object[] NO_CHILDREN = new Object[0];
++	public PreferenceAwareContentProvider(boolean provideMembers) {
++		super(provideMembers);
++	}
 +
-+	private PackageExplorerContentProvider fDelegateContentProvider; 
-+
-+	private IMemento fMemento;
++	public static final String JDT_EXTENSION_ID = "org.eclipse.jdt.ui.javaContent"; //$NON-NLS-1$ 
 +
 +	private IExtensionStateModel fStateModel;
 +
-+	private final Cache fCache = new Cache();
-+ 
-+
-+	class Cache {
-+		public Viewer fViewer;
-+
-+		public Object fOldInput;
-+
-+		public Object fNewInput;
-+
-+		public void setValues(Viewer viewer, Object oldInput, Object newInput) {
-+			fViewer = viewer;
-+			fOldInput = oldInput;
-+			fNewInput = newInput;
-+		}
-+
-+	}
-+
-+	public PreferenceAwareContentProvider() {
-+	}
-+
 +	public void init(IExtensionStateModel stateModel, IMemento memento) {
 +		fStateModel = stateModel;
-+//		fManager = new WorkingSetModelManager(fStateModel, this);
++		// fManager = new WorkingSetModelManager(fStateModel, this);
 +		// expose the manager for the action provider
-+//		fStateModel.setProperty(WorkingSetModelManager.INSTANCE_KEY, fManager);
++		// fStateModel.setProperty(WorkingSetModelManager.INSTANCE_KEY,
++		// fManager);
 +		restoreState(memento);
 +		fStateModel.addPropertyChangeListener(new IPropertyChangeListener() {
 +			public void propertyChange(PropertyChangeEvent event) {
@@ -1089,130 +1105,61 @@ diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareContentProvide
 +					if (event.getNewValue() != null) {
 +						boolean newValue = ((Boolean) event.getNewValue())
 +								.booleanValue() ? true : false;
-+						fDelegateContentProvider.setIsFlatLayout(newValue);
++						setIsFlatLayout(newValue);
 +					}
 +				}
 +
 +			}
 +		});
-+		setProviders();
-+	}
 +
-+	public void setProviders() {
-+		fDelegateContentProvider = createContentProvider();
-+		fDelegateContentProvider.inputChanged(fCache.fViewer, fCache.fOldInput,
-+				fCache.fNewInput);
-+		fDelegateContentProvider.setIsFlatLayout(fStateModel
-+				.getBooleanProperty(Values.IS_LAYOUT_FLAT));
-+
-+	}
-+
-+	public void dispose() {
-+		fDelegateContentProvider.dispose();
++		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
++		boolean showCUChildren = store
++				.getBoolean(PreferenceConstants.SHOW_CU_CHILDREN);
++		setProvideMembers(showCUChildren);
 +	}
 +
 +	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-+		//fCache.setValues(viewer, oldInput, newInput);
-+		fDelegateContentProvider.inputChanged(viewer, oldInput,
-+				findInputElement(newInput));
-+		//fManager.setViewer((StructuredViewer) viewer);
++		super.inputChanged(viewer, oldInput, findInputElement(newInput));
 +	}
 +
 +	public Object[] getElements(Object inputElement) {
-+
-+		if (inputElement instanceof IWorkspaceRoot) {
-+			Object root = null;
-+//			if (fManager.showProjects())
-+				root = JavaCore.create((IWorkspaceRoot) inputElement);
-+//			else
-+//				root = fManager.getWorkingSetModel();
-+			return fDelegateContentProvider.getElements(root);
-+
-+		} else if (inputElement instanceof IContainer) {
-+			IJavaElement element = JavaCore.create((IContainer) inputElement);
-+			if (element != null && element.exists())
-+				return fDelegateContentProvider.getElements(inputElement);
-+			return NO_CHILDREN;
-+		}
-+
-+		return fDelegateContentProvider.getElements(inputElement);
-+	}
-+
-+	public Object[] getChildren(Object parentElement) {
-+		if (parentElement instanceof IProject)
-+			return fDelegateContentProvider.getChildren(JavaCore
-+					.create((IProject) parentElement));
-+		return fDelegateContentProvider.getChildren(parentElement);
-+	}
-+
-+	public Object getParent(Object element) {
-+		Object parent = fDelegateContentProvider.getParent(element);
-+		if (parent instanceof IJavaProject)
-+			return ((IJavaProject) parent).getProject();
-+		return parent;
-+	}
-+
-+	public boolean hasChildren(Object element) {
-+		return fDelegateContentProvider.hasChildren(element);
-+	}
-+
-+	/**
-+	 * This method should only be called inside this class and from test cases.
-+	 */
-+	public PackageExplorerContentProvider createContentProvider() {
-+		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
-+		boolean showCUChildren = store
-+				.getBoolean(PreferenceConstants.SHOW_CU_CHILDREN); 
-+		return new PackageExplorerContentProvider( showCUChildren);
-+	}
-+
-+	/* package */PackageFragmentProvider getPackageFragmentProvider() {
-+		return fDelegateContentProvider.getPackageFragmentProvider();
++		if (inputElement instanceof IWorkspaceRoot)
++			return super.getElements(JavaCore
++					.create((IWorkspaceRoot) inputElement));
++		return super.getElements(inputElement);
 +	}
 +
 +	private Object findInputElement(Object newInput) {
-+//		if (fManager.showWorkingSets()) {
-+//			return fManager.getWorkingSetModel();
-+//		} else {
-+			if (newInput instanceof IWorkspaceRoot) {
-+				return JavaCore.create((IWorkspaceRoot) newInput);
-+			} else if (newInput instanceof IContainer) {
-+				IJavaElement element = JavaCore.create((IContainer) newInput);
-+				if (element != null && element.exists())
-+					return element;
-+				return newInput;
-+			}
-+			// 1GERPRT: ITPJUI:ALL - Packages View is empty when shown in Type
-+			// Hierarchy Perspective
-+			// we can't handle the input
-+			// fall back to show the workspace
-+			return JavaCore.create(JavaPlugin.getWorkspace().getRoot());
-+//		}
++		if (newInput instanceof IWorkspaceRoot) {
++			return JavaCore.create((IWorkspaceRoot) newInput);
++		}
++		return newInput;
 +	}
 +
 +	public void restoreState(IMemento memento) {
-+		fMemento = memento; 
 +
 +	}
 +
 +	public void saveState(IMemento memento) {
 +
-+		
-+
 +	}
 +
-+	public PackageExplorerContentProvider getDelegateContentProvider() {
-+		return fDelegateContentProvider;
-+	}
-+
-+	public Set getPipelinedChildren(Object parent, Set currentChildren) {
++	public void getPipelinedChildren(Object parent, Set currentChildren) {
 +		Object[] children = getChildren(parent);
-+		return new HashSet(Arrays.asList(children));		
++		for (Iterator iter = currentChildren.iterator(); iter.hasNext();)
++			if (iter.next() instanceof IResource)
++				iter.remove();
++		currentChildren.addAll(Arrays.asList(children));
 +	}
 +
-+	public Set getPipelinedElements(Object input, Set currentElements) {
++	public void getPipelinedElements(Object input, Set currentElements) {
 +		Object[] children = getElements(input);
-+		return new HashSet(Arrays.asList(children));
++
++		for (Iterator iter = currentElements.iterator(); iter.hasNext();)
++			if (iter.next() instanceof IResource)
++				iter.remove();
++
++		currentElements.addAll(Arrays.asList(children));
 +	}
 +
 +	public Object getPipelinedParent(Object object, Object suggestedParent) {
@@ -1231,16 +1178,39 @@ diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareContentProvide
 +		return null;
 +	}
 +
-+	public PipelinedViewerUpdate interceptRefresh(
++	public boolean interceptRefresh(
 +			PipelinedViewerUpdate aRefreshSynchronization) {
-+		// TODO Auto-generated method stub
-+		return null;
++		IJavaElement javaElement;
++		Set interceptedElements = new HashSet();
++		for (Iterator iter = aRefreshSynchronization.getRefreshTargets()
++				.iterator(); iter.hasNext();) {
++			Object element = iter.next();
++			if (element instanceof IResource) {
++				if ((javaElement = JavaCore.create((IResource) element)) != null && javaElement.exists()) {
++					iter.remove();
++					interceptedElements.add(javaElement);
++				}
++			}
++		}
++		if (interceptedElements.size() > 0) {
++			aRefreshSynchronization.getRefreshTargets().addAll(
++					interceptedElements);
++			return true;
++		}
++		return false;
++
 +	}
 +
-+	public PipelinedViewerUpdate interceptUpdate(
-+			PipelinedViewerUpdate anUpdateSynchronization) {
++	public boolean interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization) {
 +		// TODO Auto-generated method stub
-+		return null;
++		return false;
++	}
++
++	/* package */void postAdd(final Object parent, final Object element) {
++		if (parent instanceof IJavaModel)
++			super.postAdd(((IJavaModel) parent).getWorkspace(), element);
++		else
++			super.postAdd(parent, element);
 +	}
 +
 +}
@@ -1383,7 +1353,7 @@ RCS file: ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareLabelProvide
 diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareLabelProvider.java
 --- /dev/null	1 Jan 1970 00:00:00 -0000
 +++ ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareLabelProvider.java	1 Jan 1970 00:00:00 -0000
-@@ -0,0 +1,192 @@
+@@ -0,0 +1,191 @@
 +/***************************************************************************************************
 + * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved. This program and the
 + * accompanying materials are made available under the terms of the Eclipse Public License v1.0
@@ -1452,9 +1422,8 @@ diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareLabelProvider.
 +	public void init(IExtensionStateModel aStateModel,
 +			ITreeContentProvider contentProvider) {
 +		fStateModel = aStateModel;
-+ 
-+		fContentProvider = ((PreferenceAwareContentProvider) contentProvider)
-+				.getDelegateContentProvider();
++
++		fContentProvider = (PackageExplorerContentProvider) contentProvider;
 +		delegeteLabelProvider = createLabelProvider();
 +
 +		delegeteLabelProvider.setIsFlatLayout(fStateModel
@@ -1475,7 +1444,7 @@ diff -N ui/org/eclipse/jdt/internal/ui/packageview/PreferenceAwareLabelProvider.
 +
 +	public String getDescription(Object anElement) {
 +		return formatMessage(anElement);
-+	} 
++	}
 +
 +	private PackageExplorerLabelProvider createLabelProvider() {
 +

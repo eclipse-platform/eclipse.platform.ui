@@ -19,7 +19,7 @@ package org.eclipse.ui.internal.navigator.extensions;
  * @since 3.2
  * 
  */
-public class InsertionPoint {
+public class MenuInsertionPoint {
 	private String name;
 
 	private boolean isSeparator;
@@ -37,7 +37,7 @@ public class InsertionPoint {
 	 *            false will cause the point to be rendered as a
 	 *            org.eclipse.jface.action.GroupMarker.
 	 */
-	public InsertionPoint(String aName, boolean toMakeASeparator) {
+	public MenuInsertionPoint(String aName, boolean toMakeASeparator) {
 		name = aName;
 		isSeparator = toMakeASeparator;
 	}
@@ -64,7 +64,7 @@ public class InsertionPoint {
 
 	public String toString() { 
 		if(toString == null)
-			toString = "InsertionPoint[name=\""+name+"\", isSeparator="+isSeparator+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			toString = "MenuInsertionPoint[name=\""+name+"\", isSeparator="+isSeparator+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return toString;
 	}
 }

@@ -18,17 +18,11 @@ import org.eclipse.ui.navigator.CommonActionProviderConfig;
  * A skeleton action provider is used as a shortcut to avoid a bunch of null
  * checks. Instead, if a client fails to provide a valid Action Provider or
  * there is some problem instantiating the class, a skeleton (no-op singleton)
- * is used in its place.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ * is used in its place. 
  * 
  * @since 3.2
  */
-public class SkeletonActionProvider extends CommonActionProvider {
+public final  class SkeletonActionProvider extends CommonActionProvider {
 
 	/**
 	 * A skeleton action provider is used as a shortcut to avoid a bunch of null
@@ -37,10 +31,7 @@ public class SkeletonActionProvider extends CommonActionProvider {
 	 * singleton) is used in its place.
 	 */
 	public static final CommonActionProvider INSTANCE = new SkeletonActionProvider();
-
-	/**
-	 * 
-	 */
+ 
 	private SkeletonActionProvider() {
 		super();
 	}

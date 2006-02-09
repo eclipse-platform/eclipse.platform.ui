@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.actions.CommonActionDescriptorManager;
 import org.eclipse.ui.internal.navigator.actions.CommonActionProviderDescriptor;
-import org.eclipse.ui.internal.navigator.extensions.InsertionPoint;
+import org.eclipse.ui.internal.navigator.extensions.MenuInsertionPoint;
 import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
 
 /**
@@ -201,7 +201,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	}
 
 	private void createMenuGroups() {
-		InsertionPoint[] customPoints = viewerDescriptor
+		MenuInsertionPoint[] customPoints = viewerDescriptor
 				.getCustomInsertionPoints();
 
 		if (customPoints == null)
