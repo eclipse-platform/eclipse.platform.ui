@@ -18,13 +18,22 @@
           <property
                 name="startupProgressRect"
                 value="0,280,455,15"/> 
+          <property
+          		name="introTitle"
+          		value="%productIntroTitle"/>
+          <property
+          		name="introBrandingImage"
+          		value="product:intro-eclipse.png"/>
+          <property
+          		name="introBrandingImageText"
+          		value="%productItroBrandingText"/>
       </product> 
     </extension> 
 
     <extension  
          point="org.eclipse.ui.intro">
       <introProductBinding
-            introId="org.eclipse.platform.intro"
+            introId="org.eclipse.ui.intro.shared"
             productId="org.eclipse.sdk.ide">
       </introProductBinding>
     </extension>
