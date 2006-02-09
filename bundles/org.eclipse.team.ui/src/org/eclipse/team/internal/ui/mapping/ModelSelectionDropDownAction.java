@@ -35,7 +35,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		this.configuration = configuration;
 		listener = new org.eclipse.jface.util.IPropertyChangeListener() {
 					public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
-						if (event.getProperty() == ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER) {
+						if (event.getProperty() == ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER) {
 							update();
 						}
 					}
@@ -47,8 +47,8 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 				Viewer v = ModelSelectionDropDownAction.this.configuration.getPage().getViewer();
 				v.setInput(getSynchronizationContext());
 				ModelSelectionDropDownAction.this.configuration.setProperty(
-						ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER,
-						ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_ACTIVE);
+						ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER,
+						ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE);
 				ModelSelectionDropDownAction.this.configuration.setProperty(
 						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
 						ModelSelectionDropDownAction.this.configuration.getParticipant().getName());
@@ -79,7 +79,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 			menuManager = new MenuManager();
 			fMenu = menuManager.createContextMenu(parent);
 			menuManager.add(showAllAction);
-			ModelProvider[] modelProviders = ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveModelProviders();
+			ModelProvider[] modelProviders = ((ModelSynchronizeParticipant)configuration.getParticipant()).getEnabledModelProviders();
 			if (modelProviders.length > 0)
 				menuManager.add(new Separator());
 			addModelsToMenu(modelProviders);
@@ -102,9 +102,9 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 	}
 
 	private String getActiveProviderId() {
-		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER);
+		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
 		if (id == null)
-			id = ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_ACTIVE;
+			id = ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE;
 		return id;
 	}
 

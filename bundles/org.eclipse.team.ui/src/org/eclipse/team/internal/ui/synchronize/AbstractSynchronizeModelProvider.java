@@ -1048,6 +1048,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      * Wait until the provider is done processing any events and
      * the page conent are up-to-date.
      * This method is for testing purposes only.
+     * @param monitor 
      */
     public void waitUntilDone(IProgressMonitor monitor) {
 		monitor.worked(1);
@@ -1086,6 +1087,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      * which esults in the view being updated.
      * @param runnable the runnable which updates the model.
      * @param preserveExpansion whether the expansion of the view should be preserver
+     * @param runInUIThread 
      */
     public void performUpdate(IWorkspaceRunnable runnable, boolean preserveExpansion, boolean runInUIThread) {
         updateHandler.performUpdate(runnable, preserveExpansion, runInUIThread); 

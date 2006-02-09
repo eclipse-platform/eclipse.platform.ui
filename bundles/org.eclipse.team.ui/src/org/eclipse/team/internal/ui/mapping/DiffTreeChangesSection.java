@@ -102,8 +102,8 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	protected long getVisibleChangesCount() {
 		int currentMode =  getConfiguration().getMode();
 		ISynchronizePageConfiguration configuration = getConfiguration();
-		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER);
-		if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_ACTIVE)) {
+		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+		if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
 			try {
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
 				ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(desc.getModelProvider());
@@ -155,15 +155,15 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(ISynchronizePageConfiguration.P_MODE)
-				|| event.getProperty().equals(ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER)) {
+				|| event.getProperty().equals(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER)) {
 			calculateDescription();
 		}
 	}
 	
 	protected Composite getEmptyChangesComposite(Composite parent) {
 		ISynchronizePageConfiguration configuration = getConfiguration();
-		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER);
-		if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_ACTIVE)) {
+		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+		if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
 			// A particular model is active so we need to look for a model that has changes in this
 			// same mode before offering to change modes.
 			ModelProvider[] providers =context.getScope().getModelProviders();

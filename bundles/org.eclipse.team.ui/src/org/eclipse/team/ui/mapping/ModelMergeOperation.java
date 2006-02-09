@@ -116,7 +116,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * called to determine the set of resource changes. Then the
 	 * {@link #executeMerge(IProgressMonitor)} method is invoked.
 	 * 
-	 * @parem monitor a progress monitor
+	 * @param monitor a progress monitor
 	 */
 	protected void execute(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
@@ -140,7 +140,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * will then be called to perform the merge. If there are problems encounted
 	 * or if a preview was requested, {@link #handlePreviewRequest()} is called.
 	 * 
-	 * @parem monitor a progress monitor
+	 * @param monitor a progress monitor
 	 */
 	protected void executeMerge(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);

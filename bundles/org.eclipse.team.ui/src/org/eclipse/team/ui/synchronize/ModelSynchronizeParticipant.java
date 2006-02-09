@@ -46,11 +46,36 @@ public class ModelSynchronizeParticipant extends
 		AbstractSynchronizeParticipant implements ISaveableModelSource {
 	
 	/**
+	 * Property constant used to store and retrieve the id of the active
+	 * {@link ModelProvider} from an {@link ISynchronizePageConfiguration}. The
+	 * active model provider will be the only one visible in the page. If
+	 * <code>null</code> or <code>ALL_MODEL_PROVIDERS_ACTIVE</code> is
+	 * returned, all model providers are considered active and are visible.
+	 */
+	public static final String P_VISIBLE_MODEL_PROVIDER = TeamUIPlugin.ID + ".activeModelProvider"; //$NON-NLS-1$
+	
+	/**
+	 * Constant used with the <code>P_ACTIVE_MODEL_PROVIDER</code> property to indicate
+	 * that all rnabled model providers are active.
+	 */
+	public static final String ALL_MODEL_PROVIDERS_VISIBLE = TeamUIPlugin.ID + ".activeModelProvider"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant used during property change notification to indicate
+	 * that the enabled model providers for this participanbt have changed.
+	 */
+	public static final String PROP_ENABLED_MODEL_PROVIDERS = TeamUIPlugin.ID + ".ENABLED_MODEL_PROVIDERS"; //$NON-NLS-1$
+	
+	/**
 	 * Property constant used during property change notification to indicate
 	 * that the active model of this participant has changed.
 	 */
 	public static final String PROP_ACTIVE_SAVEABLE_MODEL = TeamUIPlugin.ID + ".ACTIVE_SAVEABLE_MODEL"; //$NON-NLS-1$
 	
+	/**
+	 * Property constant used during property change notification to indicate
+	 * that the dirty state for the active saveable model of this participant has changed.
+	 */
 	public static final String PROP_DIRTY = TeamUIPlugin.ID + ".DIRTY"; //$NON-NLS-1$
 	
 	/*
@@ -92,24 +117,10 @@ public class ModelSynchronizeParticipant extends
 	};
 
 	/**
-	 * Constant used with the <code>P_ACTIVE_MODEL_PROVIDER</code> property to indicate
-	 * that all model providers are active.
-	 */
-	public static final String ALL_MODEL_PROVIDERS_ACTIVE = "org.eclipse.team.ui.activeModelProvider"; //$NON-NLS-1$
-
-	/**
-	 * Property constant used to store and retrieve the id of the active
-	 * {@link ModelProvider} from an {@link ISynchronizePageConfiguration}. The
-	 * active model provider will be the only one visible in the page. If
-	 * <code>null</code> or <code>ALL_MODEL_PROVIDERS_ACTIVE</code> is
-	 * returned, all model providers are considered active and are visible.
-	 */
-	public static final String P_ACTIVE_MODEL_PROVIDER = "org.eclipse.team.ui.activeModelProvider"; //$NON-NLS-1$
-
-	/**
 	 * Create a participant for the given context
 	 * @param context the synchronization context
 	 * @param name the name of the participant
+	 * @return a participant for the given context
 	 */
 	public static ModelSynchronizeParticipant createParticipant(SynchronizationContext context, String name) {
 		return new ModelSynchronizeParticipant(context, name);
@@ -579,12 +590,12 @@ public class ModelSynchronizeParticipant extends
 	}
 	
 	/**
-	 * Return the list of model providers that are active for the participant.
+	 * Return the list of model providers that are enabled for the participant.
 	 * By default, the list is those model providers that contain mappings
 	 * in the scope. Subclasses may override to add additional model providers.
 	 * @return the list of model providers that are active for the participant
 	 */
-	public ModelProvider[] getActiveModelProviders() {
+	public ModelProvider[] getEnabledModelProviders() {
 		return getContext().getScope().getModelProviders();
 	}
 	

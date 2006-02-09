@@ -126,8 +126,11 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 	 * If there is no current selection the first (last) node in the tree is selected.
 	 * Wraps around at end or beginning.
 	 * Clients may not override. 
+	 * @param viewer 
 	 *
 	 * @param next if <code>true</code> the next node is selected, otherwise the previous node
+	 * @param fireOpen 
+	 * @param expandOnly 
 	 * @return <code>true</code> if at end (or beginning)
 	 */
 	public static boolean navigate(TreeViewer viewer, boolean next, boolean fireOpen, boolean expandOnly) {

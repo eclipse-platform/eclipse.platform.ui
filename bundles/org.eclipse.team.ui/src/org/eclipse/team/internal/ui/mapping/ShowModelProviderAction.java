@@ -33,7 +33,7 @@ public class ShowModelProviderAction extends Action {
 		Viewer v = configuration.getPage().getViewer();
 		v.setInput(provider);
 		configuration.setProperty(
-				ModelSynchronizeParticipant.P_ACTIVE_MODEL_PROVIDER,
+				ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER,
 				provider.getDescriptor().getId());
 		configuration.setProperty(
 				ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
