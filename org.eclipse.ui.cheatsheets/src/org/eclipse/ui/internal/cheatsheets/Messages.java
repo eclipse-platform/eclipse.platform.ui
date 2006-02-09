@@ -119,7 +119,11 @@ public final class Messages extends NLS {
 	public static String COMPOSITE_PAGE_BLOCKED;
 	public static String COMPOSITE_PAGE_TASK_NOT_COMPLETE;
 	public static String EXPLORER_PULLDOWN_MENU;
-
+	public static String COMPOSITE_RESTART_DIALOG_TITLE;
+	public static String COMPOSITE_RESTART_CONFIRM_MESSAGE;
+	public static String RESTART_ALL_MENU;
+	public static String RESTART_MENU;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

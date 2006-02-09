@@ -13,6 +13,7 @@ package org.eclipse.ui.cheatsheets;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
@@ -24,23 +25,36 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 
 public interface ITaskEditor {
-/**
- * Creates the widget
- * @param parent
- * @param toolkit
- */
+
+	/**
+	 * Creates the widget
+	 * @param parent
+	 * @param toolkit
+	 */
 	public void createControl(Composite parent, FormToolkit toolkit);
-	
-/**
- * @return the Control created by a previous call to CreateControl()
- */
+
+	/**
+	 * @return the Control created by a previous call to CreateControl()
+	 */
 	public Control getControl();
-	
-/**
- * Starts editing the provided task. The editor is responsible
- * for setting the 'percentage complete' state of the task and 
- * saving its state. createControl() will always be called before start().
- * @param task
- */
-	public void start(ICompositeCheatSheetTask task);
+
+	/**
+	 * Starts editing the provided task. The editor is responsible
+	 * for setting the 'percentage complete' state of the task and 
+	 * saving its state. createControl() will always be called before setInput().
+	 * The memento will be <b>null</b> if the task has not been previously started
+	 * or if it is being restarted. If the editor is being restored from a previous
+	 * session the memento will contain the last saved state.
+	 * @param task The task associated with this editor
+	 * @param memento The state of this task saved from a previous invocation, may be null. 
+	 */
+	public void setInput(ICompositeCheatSheetTask task, IMemento memento);
+
+	/**
+	 * Saves the object state within a memento.
+	 *
+	 * @param memento a memento to receive the object state
+	 */
+	public void saveState(IMemento memento);
+
 }

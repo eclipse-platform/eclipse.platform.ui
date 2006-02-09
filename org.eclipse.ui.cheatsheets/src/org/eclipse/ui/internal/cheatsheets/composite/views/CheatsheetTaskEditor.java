@@ -17,6 +17,7 @@ import java.util.Dictionary;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.CheatSheetViewerFactory;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
@@ -40,12 +41,12 @@ public class CheatsheetTaskEditor implements ITaskEditor {
 		return viewer.getControl();
 	}
 
-	public void start(ICompositeCheatSheetTask task) {
-		this.task = task;
+
+	public void setInput(ICompositeCheatSheetTask task, IMemento memento) {
+		this.task = task;	
 		Dictionary params = task.getParameters();
 		String id = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
 		String path = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_PATH);
-		((CheatSheetViewer)viewer).setNextSavePath(task.getStateLocation());
 		if (path != null) {
 			URL url;
 			try {
@@ -56,8 +57,12 @@ public class CheatsheetTaskEditor implements ITaskEditor {
 			}
 		} else {
 		    viewer.setInput(id);
+			CheatSheetViewer cheatSheetViewer = (CheatSheetViewer)viewer;
+			cheatSheetViewer.addListener(new TaskListener());
+			if (memento == null) {
+				cheatSheetViewer.restart();
+			}
 		}
-		((CheatSheetViewer)viewer).addListener(new TaskListener());
 	}
 	
 	/*
@@ -68,9 +73,11 @@ public class CheatsheetTaskEditor implements ITaskEditor {
 		public void cheatSheetEvent(ICheatSheetEvent event) {
 			if (event.getEventType() == ICheatSheetEvent.CHEATSHEET_COMPLETED) {
 				task.advanceState();
-			}
-			
-		}
-		
+			}	
+		}	
+	}
+
+	public void saveState(IMemento memento) {
+		// TODO Implement state save
 	}
 }

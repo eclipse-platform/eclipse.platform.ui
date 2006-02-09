@@ -22,6 +22,7 @@ public class AllCompositeTests {
 		//$JUnit-BEGIN$
 		suite.addTestSuite(TestCompositeParser.class);
 		suite.addTestSuite(TestEventing.class);
+		suite.addTestSuite(TestPersistence.class);
 		//$JUnit-END$
 		return suite;
 	}

@@ -10,36 +10,34 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.cheatsheets.ITaskEditor;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
-import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
-import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
+
+/**
+ * Class to save and restore composite cheatsheet state using a memento
+ * There is a child memento for each task which contains keys for the
+ * state and percentage complete. There is also a grandchild memento for 
+ * each task that has been started.
+ */
 
 public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
+	private static final String DOT_XML = ".xml"; //$NON-NLS-1$
+	private Map taskMementoMap;
+
 	/**
 	 * Constructor 
 	 */
@@ -47,135 +45,125 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 		super();
 	}
 
-	public IStatus loadCompositeState(CompositeCheatSheetModel model, IPath savePath) {
-		if (savePath != null) {
-			this.savePath = savePath;
-	    } else {
-		    this.savePath = Platform
-		        .getStateLocation(CheatSheetPlugin.getPlugin().getBundle());
-	    }
-
-		Path filePath = getStateFile(model.getId());
-		Document doc = null;
-		URL readURL = null;
-
-		try {
-			readURL = filePath.toFile().toURL();
-			doc = readXMLFile(readURL);
-		} catch (MalformedURLException mue) {
-			String message = NLS.bind(Messages.ERROR_CREATING_STATEFILE_URL,
-					(new Object[] { readURL }));
-			IStatus status = new Status(IStatus.ERROR,
-					ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK,
-					message, mue);
-			return status;
-		}
-
-		if (doc == null) { 
+	public IStatus loadCompositeState(CompositeCheatSheetModel model) {
+		XMLMemento readMemento = CheatSheetPlugin.getPlugin().readMemento(model.getId() + DOT_XML);
+		if (readMemento == null) {
 			return Status.OK_STATUS;
-		}
-		Node rootnode = doc.getDocumentElement();
-		NamedNodeMap rootatts = rootnode.getAttributes();
-		if (isReference(doc)) {
-			String path = getAttributeWithName(rootatts, IParserTags.PATH);
-			return loadCompositeState(model,  new Path(path));
-		}
-		
-		// The root node should be of type compositeCheatSheetState
-		
-		if (rootnode.getNodeName() != ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE) {
-			String message = NLS.bind(Messages.ERROR_PARSING_ROOT_NODE_TYPE, 
-					(new Object[] {ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE}));			
-			IStatus status = new Status(IStatus.ERROR,
-					ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK,
-					message, null);
-			return status;
-		}
-		
-		NodeList children = rootnode.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			String nodeName = children.item(i).getNodeName();
-			if (ICompositeCheatsheetTags.TASK.equals(nodeName)) {
-				return loadTaskState((CheatSheetTask)model.getRootTask(), children.item(i));
-			}
-		}  	
-		return  new Status(IStatus.ERROR,
-				ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK,
-				Messages.ERROR_PARSING_NO_ROOT, null);
+		}	
+        taskMementoMap = createTaskMap(readMemento);
+        loadTaskState(taskMementoMap, (CheatSheetTask)model.getRootTask());
+        loadCheatsheetManagerData(readMemento, model.getCheatSheetManager());
+        return Status.OK_STATUS;
 	}
 
-	private IStatus loadTaskState(CheatSheetTask task, Node taskNode) {
-		NamedNodeMap attributes = taskNode.getAttributes();
-		Node state = attributes.getNamedItem(ICompositeCheatsheetTags.STATE);
-		Node percentage = attributes.getNamedItem(ICompositeCheatsheetTags.PERCENTAGE_COMPLETE);
-		if (state != null) {
-			task.setState(Integer.parseInt(state.getNodeValue()));
-		}
-		if (percentage != null) {
-			task.setPercentageComplete(Integer.parseInt(percentage.getNodeValue()));
-		}
-		
-		NodeList children = taskNode.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			if (i < task.getSubtasks().length) {
-				loadTaskState((CheatSheetTask)task.getSubtasks()[i], children.item(i));
+	private Map createTaskMap(XMLMemento readMemento) {
+		Map map = new HashMap();
+		IMemento[] tasks = readMemento.getChildren(ICompositeCheatsheetTags.TASK);
+		for (int i = 0; i < tasks.length; i++) {
+			String taskId = tasks[i].getString(ICompositeCheatsheetTags.TASK_ID);
+			if (taskId != null) {
+			    map.put(taskId, tasks[i]);
 			}
 		}
-		// TODO detect bad state
-		return Status.OK_STATUS;
+		return map;
+	}
+
+	private void loadTaskState(Map taskMap, CheatSheetTask task) {
+		ICompositeCheatSheetTask[] children = task.getSubtasks();
+		IMemento memento = (IMemento)taskMap.get(task.getId());
+		if (memento != null) {
+			String state = memento.getString(ICompositeCheatsheetTags.STATE);
+			if (state != null) {
+				task.setState(Integer.parseInt(state));
+			}
+			String percentage = memento.getString(ICompositeCheatsheetTags.PERCENTAGE_COMPLETE);
+			if (percentage != null) {
+				task.setPercentageComplete(Integer.parseInt(percentage));
+			}
+		}
+		for (int i = 0; i < children.length; i++) {		
+			loadTaskState(taskMap, (CheatSheetTask) children[i]);
+		}
 	}
 	
+	private void loadCheatsheetManagerData(XMLMemento readMemento, ICheatSheetManager manager) {
+		if (manager == null) {
+			return;
+		}
+		IMemento[] children = readMemento.getChildren(ICompositeCheatsheetTags.CHEAT_SHEET_MANAGER);
+		for (int i = 0; i < children.length; i++) {
+			IMemento childMemento = children[i];
+			String key = childMemento.getString(ICompositeCheatsheetTags.KEY);
+			String value = childMemento.getString(ICompositeCheatsheetTags.VALUE);
+			manager.setData(key, value);
+		}
+	}
+
 	/**
 	 * Save the state of a composite cheat sheet model
 	 * @param model
 	 * @return
 	 */
 	public IStatus saveCompositeState(CompositeCheatSheetModel model) {
-
-		try {
-			DocumentBuilder documentBuilder = DocumentBuilderFactory
-					.newInstance().newDocumentBuilder();
-
-			Document doc = documentBuilder.newDocument();
-			Element root = doc.createElement(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE);
-
-			Path filePath = getStateFile(model.getId());
-			
-			root.setAttribute(IParserTags.ID, model.getId());
-			doc.appendChild(root);
-			
-            saveTaskState(doc, root, (CheatSheetTask)model.getRootTask());
-
-			StreamResult streamResult = new StreamResult(filePath.toFile());
-
-			DOMSource domSource = new DOMSource(doc);
-			Transformer transformer = TransformerFactory.newInstance()
-					.newTransformer();
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-			transformer.transform(domSource, streamResult);
-		} catch (Exception e) {
-			String message = NLS.bind(Messages.ERROR_SAVING_STATEFILE_URL,
-					(new Object[] { model.getId() }));
-			IStatus status = new Status(IStatus.ERROR,
-					ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK,
-					message, e);
-			return status;
-		}
-		return Status.OK_STATUS;
+		XMLMemento writeMemento = XMLMemento.createWriteRoot(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE);
+		writeMemento.putString(IParserTags.ID, model.getId());		
+        saveTaskState(writeMemento, (CheatSheetTask)model.getRootTask());
+        saveCheatSheetManagerData(writeMemento, model.getCheatSheetManager());
+		taskMementoMap = createTaskMap(writeMemento);
+		return CheatSheetPlugin.getPlugin().saveMemento(writeMemento, model.getId() + DOT_XML);
 	}
 
-	private void saveTaskState(Document doc, Element parent, CheatSheetTask task) {
-		Element taskElement = doc.createElement(ICompositeCheatsheetTags.TASK);
-		taskElement.setAttribute(ICompositeCheatsheetTags.STATE, Integer.toString(task.getState())); 
-		taskElement.setAttribute(ICompositeCheatsheetTags.PERCENTAGE_COMPLETE, Integer.toString(task.getPercentageComplete())); 
-		if (task.getId() != null) {
-			taskElement.setAttribute(IParserTags.ID, task.getId());
+	private void saveCheatSheetManagerData(XMLMemento writeMemento, ICheatSheetManager manager) {
+		if (!(manager instanceof CheatSheetManager)) {
+			return;
+		}		
+		Map data = ((CheatSheetManager)manager).getData();
+		for (Iterator iter = data.keySet().iterator(); iter.hasNext();) {
+			String key = (String)iter.next();
+			String value = manager.getData(key);
+			IMemento childMemento = writeMemento.createChild(ICompositeCheatsheetTags.CHEAT_SHEET_MANAGER);
+			childMemento.putString(ICompositeCheatsheetTags.KEY, key);
+			childMemento.putString(ICompositeCheatsheetTags.VALUE, value);		
 		}
+	}
+
+	private void saveTaskState(IMemento writeMemento, CheatSheetTask task) {
+		IMemento childMemento = writeMemento.createChild(ICompositeCheatsheetTags.TASK);
+		childMemento.putString(ICompositeCheatsheetTags.TASK_ID, task.getId());
+		childMemento.putString(ICompositeCheatsheetTags.STATE, Integer.toString(task.getState())); 
+		childMemento.putString(ICompositeCheatsheetTags.PERCENTAGE_COMPLETE, Integer.toString(task.getPercentageComplete())); 
+
 		ICompositeCheatSheetTask[] subtasks = task.getSubtasks();
-		parent.appendChild(taskElement);
-		for (int i = 0; i < subtasks.length; i++) {
-			saveTaskState(doc, taskElement, (CheatSheetTask)subtasks[i]);
+		ITaskEditor editor = task.getEditor();
+		if (editor != null) {
+			IMemento taskDataMemento = childMemento.createChild(ICompositeCheatsheetTags.TASK_DATA);
+			editor.saveState(taskDataMemento);
+		} else {
+			// The task has not been started so save its previous state
+			IMemento taskData = getTaskMemento(task.getId());
+			if (taskData != null) {
+				IMemento previousDataMemento = childMemento.createChild(ICompositeCheatsheetTags.TASK_DATA);
+				previousDataMemento.putMemento(taskData);
+			}
 		}
+		for (int i = 0; i < subtasks.length; i++) {
+			saveTaskState(writeMemento, (CheatSheetTask)subtasks[i]);
+		}
+	}
+
+	public IMemento getTaskMemento(String id) {
+		if (taskMementoMap == null) {
+			return null;
+		}
+	    IMemento childMemento = (IMemento)taskMementoMap.get(id);
+	    if (childMemento == null) {
+	    	return  null;
+	    }
+	    return childMemento.getChild(ICompositeCheatsheetTags.TASK_DATA);
+	}
+
+	public void clearTaskMementos() {
+		taskMementoMap = null;
 	}
 
 }

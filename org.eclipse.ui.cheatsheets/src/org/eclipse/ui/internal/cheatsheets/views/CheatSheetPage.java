@@ -10,18 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.data.*;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.actions.IMenuContributor;
+import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 
-public class CheatSheetPage extends Page {
+public class CheatSheetPage extends Page implements IMenuContributor {
 	// Colors
 	private Color introColor;
 	private Color activeColor;
@@ -219,5 +229,21 @@ public class CheatSheetPage extends Page {
 
 	public FormToolkit getToolkit() {
 		return toolkit;
+	}
+	
+	private int contributeRestartItem(Menu menu, int index) {
+		MenuItem item = new MenuItem(menu, SWT.PUSH, index++);
+		item.setText(Messages.RESTART_MENU);
+		// TODO set the image 
+		item.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				viewer.restart();
+			}
+		});
+		return index;
+	}
+
+	public int contributeToViewMenu(Menu menu, int index) {
+		return contributeRestartItem(menu, index);
 	}
 }

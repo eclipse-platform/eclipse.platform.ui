@@ -14,10 +14,13 @@ package org.eclipse.ui.internal.cheatsheets.composite.model;
 import java.net.URL;
 import java.util.Observable;
 
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
+import org.eclipse.ui.cheatsheets.ITaskEditor;
 import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 
 public class CompositeCheatSheetModel extends Observable implements ICompositeCheatSheet, ICheatSheet{
@@ -30,6 +33,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	private String id;
 	private CompositeCheatSheetSaveHelper saveHelper;
 	private URL contentURL;
+	private CheatSheetManager manager;
 	
 	public void setRootTask(ICompositeCheatSheetTask task) {
 		rootTask = task;
@@ -40,6 +44,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	    this.description = description;
 	    this.explorerId = explorerId;
 	    this.dependencies = new TaskDependencies();
+	    // TODO initialize the CheatSheetManager
 	}
 	
 	public String getName() {
@@ -81,10 +86,6 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	public String getId() {
 		return id;
 	}
-	
-	public IPath getStateLocation() {
-		return saveHelper.getSavePath();
-	}
 
 	public void setSaveHelper(CompositeCheatSheetSaveHelper saveHelper) {
 		this.saveHelper = saveHelper;
@@ -93,6 +94,45 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	void notifyStateChanged(ICompositeCheatSheetTask task) {
 		setChanged();
 		notifyObservers(task);
+	}
+	
+	public IMemento getTaskMemento(String id) {
+		 return saveHelper.getTaskMemento(id);
+	}
+
+	public ICheatSheetManager getCheatSheetManager() {
+		return manager;
+	}
+	
+	public void setCheatSheetManager(CheatSheetManager manager) {
+		this.manager = manager;	
+	}
+
+	public void loadState() {
+		saveHelper.loadCompositeState(this);	
+	}
+	
+	/*
+	 * Reset the state of a task and it's children
+	 */
+	private void resetTask(ICompositeCheatSheetTask task) {
+		CheatSheetTask csTask = (CheatSheetTask)task;
+		csTask.setState(0);
+		csTask.setPercentageComplete(0);
+		ITaskEditor editor = csTask.getEditor();
+	    if (editor != null) {
+	    	editor.setInput(task, null);
+	    }
+		ICompositeCheatSheetTask[] subtasks = csTask.getSubtasks();
+		for (int i = 0; i < subtasks.length; i++) {
+			resetTask(subtasks[i]);
+		}
+	}
+
+	public void resetAllTasks() {
+	    resetTask(getRootTask());
+        saveHelper.clearTaskMementos();
+		
 	}
 
 }

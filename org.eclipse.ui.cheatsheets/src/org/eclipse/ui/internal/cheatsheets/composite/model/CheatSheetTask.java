@@ -11,18 +11,19 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.cheatsheets.ITaskEditor;
 
 /**
- * A task that represents a single cheatsheet within a composite cheatsheet.
+ * A single task within a composite cheatsheet.
  */
 
 public class CheatSheetTask implements ICompositeCheatSheetTask {
@@ -47,6 +48,8 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 	private ArrayList successorTasks;
 	
 	private int percentageComplete;
+	
+	private ITaskEditor editor;
 
 	private static final ICompositeCheatSheetTask[] EMPTY = new ICompositeCheatSheetTask[0];
 
@@ -191,26 +194,19 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 		model.notifyStateChanged(this);
 	}
 
-	public IPath getStateLocation() {
-		if (model != null) {
-			IPath statePath = model.getStateLocation().append(getId());
-			File statePathAsFile = statePath.toFile();
-			// Create directory if necessary
-			if (!statePathAsFile.exists()) {
-				statePathAsFile.mkdirs();
-			}
-			if (statePathAsFile.exists()) {
-				return statePath;
-			}
-		}
-		return null;
-	}
-
 	public URL getInputUrl(String path) throws MalformedURLException {
 		return new URL(model.getContentUrl(), path);
 	}
 
-	public CompositeCheatSheetModel getModel() {
+	public void setEditor(ITaskEditor editor) {
+		this.editor = editor;
+	}
+
+	public ITaskEditor getEditor() {
+		return editor;
+	}
+
+	public ICompositeCheatSheet getCompositeCheatSheet() {
 		return model;
 	}
 }

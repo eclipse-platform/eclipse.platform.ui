@@ -41,7 +41,7 @@ public class SuccesorTaskFinder {
     	bestSuccessor = null;
     	bestPredecessor = null;
     	seenThisTask = false;
-		searchRunnableChildren(csTask.getModel().getRootTask());
+		searchRunnableChildren(csTask.getCompositeCheatSheet().getRootTask());
 		// If there is a task which is found later in the tree return
 		// that, otherwise an earlier task.
 		if (bestSuccessor != null) {

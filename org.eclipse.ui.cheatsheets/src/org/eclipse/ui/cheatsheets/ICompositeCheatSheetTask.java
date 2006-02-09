@@ -15,8 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Dictionary;
 
-import org.eclipse.core.runtime.IPath;
-
 /**
  * A task within a composite cheat sheet.
  * <p>
@@ -30,15 +28,15 @@ public interface ICompositeCheatSheetTask {
 	 * The constant that indicates that the task has not been
 	 * processed yet.
 	 */
-	int NOT_STARTED = 0;
+	public static final int NOT_STARTED = 0;
 	/**
 	 * The constant that indicates that the task is in progress.
 	 */
-	int IN_PROGRESS = 1;
+	public static final int IN_PROGRESS = 1;
 	/**
 	 * The constant that indicates that the task has been completed.
 	 */
-	int COMPLETED = 2;
+	public static final int COMPLETED = 2;
 	/**
 	 * @return the unique identifier of this task.
 	 */
@@ -128,14 +126,6 @@ public interface ICompositeCheatSheetTask {
 	public boolean isStartable();
 	
 	/**
-	 * Gets a location where the state for this task can be saved.
-	 * @return the path of a writeable directory on file system where this 
-	 * task can save its state. This will always be a subdirectory of the 
-	 * directory in which the state is stored for the parent composite cheat sheet.
-	 */
-	public IPath getStateLocation();
-	
-	/**
 	 * Gets a URL which can be used to open the content file for this 
 	 * task if the content file can be specified by a path relative to
 	 * the content file for the composite cheat sheet which contains it.
@@ -145,4 +135,10 @@ public interface ICompositeCheatSheetTask {
 	 * location of the content file for the composite cheat sheet.
 	 */
 	public URL getInputUrl(String path) throws MalformedURLException;
+	
+	/**
+	 * Get the enclosing composite cheat sheet
+	 * @return the composite cheat sheet which contains this task
+	 */
+	public ICompositeCheatSheet getCompositeCheatSheet();
 }

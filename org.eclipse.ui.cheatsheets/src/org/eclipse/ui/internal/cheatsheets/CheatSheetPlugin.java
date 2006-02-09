@@ -54,7 +54,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	private CheatSheetHistory history = null;
 	private DocumentBuilder documentBuilder = null;
 	
-	private static final String DEFAULT_CHEATSHEET_STATE_FILENAME = "cheatsheet.xml"; //$NON-NLS-1$
+	private static final String HISTORY_FILENAME = "history.xml"; //$NON-NLS-1$
 	private static final String MEMENTO_TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 	private static final String MEMENTO_TAG_VERSION = "version"; //$NON-NLS-1$
 	private static final String VERSION_STRING[] = { "0.0", "3.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -94,8 +94,6 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		return image;
 	}
 
-
-
 	/**
 	 * Returns the CheatSheetHistory
 	 */
@@ -108,11 +106,11 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Answer the workbench state file.
+	 * Get a file from the state folder.
 	 */
-	private File getCheatSheetStateFile() {
+	private File getCheatSheetStateFile(String filename) {
 		IPath path = CheatSheetPlugin.getPlugin().getStateLocation();
-		path = path.append(DEFAULT_CHEATSHEET_STATE_FILENAME);
+		path = path.append(filename);
 		return path.toFile();
 	}
 
@@ -184,35 +182,12 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	private void restoreCheatSheetHistory() {
 		SafeRunner.run(new SafeRunnable() {
 			public void run() {
-				InputStreamReader reader = null;
-
-				try {
-					// Read the cheatsheet state file.
-					final File stateFile = getCheatSheetStateFile();
-
-					FileInputStream input = new FileInputStream(stateFile);
-					reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
-					IMemento memento = XMLMemento.createReadRoot(reader);
-
+				IMemento memento;				
+				memento = readMemento(HISTORY_FILENAME);
+				if (memento != null) {
 					IMemento childMem = memento.getChild(MEMENTO_TAG_CHEATSHEET_HISTORY);
 					if (childMem != null) {
 						history.restoreState(childMem);
-					}
-				} catch (FileNotFoundException e) {
-					// Do nothing, the file will not exist the first time the workbench in used.
-				} catch (Exception e) {
-					String message = Messages.ERROR_READING_STATE_FILE;
-					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-					CheatSheetPlugin.getPlugin().getLog().log(status);
-				} finally {
-					try {
-						if (reader != null)
-							reader.close();
-					} catch (IOException e) {
-						// Not much to do, just catch the exception and keep going.
-						String message = Messages.ERROR_READING_STATE_FILE;
-						IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-						CheatSheetPlugin.getPlugin().getLog().log(status);
 					}
 				}
 			}
@@ -222,6 +197,46 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 			}
 		});
+	}
+	
+	/**
+	 * Read a memento from the state directory for the cheatsheets plugin
+	 * @param filename A simple filename 
+	 * @return A memento read from the state directory or null if the memento could not be read
+	 */
+	public XMLMemento readMemento(String filename) {
+		XMLMemento memento;
+		InputStreamReader reader = null;
+
+		try {
+			// Read the cheatsheet state file.
+			final File stateFile = getCheatSheetStateFile(filename);
+
+			FileInputStream input = new FileInputStream(stateFile);
+			reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
+			memento = XMLMemento.createReadRoot(reader);
+
+			
+		} catch (FileNotFoundException e) {
+			memento = null;
+			// Do nothing, the file will not exist the first time the workbench in used.
+		} catch (Exception e) {
+			String message = Messages.ERROR_READING_STATE_FILE;
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+			memento = null;
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+			} catch (IOException e) {
+				// Not much to do, just catch the exception and keep going.
+				String message = Messages.ERROR_READING_STATE_FILE;
+				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+				CheatSheetPlugin.getPlugin().getLog().log(status);
+			}
+		}
+		return memento;
 	}
 
 	/**
@@ -238,27 +253,9 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 				// Save perspective history.
 				getCheatSheetHistory().saveState(memento.createChild(MEMENTO_TAG_CHEATSHEET_HISTORY));
 
-				// Save the IMemento to a file.
-				File stateFile = getCheatSheetStateFile();
-				OutputStreamWriter writer = null;
-				try {
-					FileOutputStream stream = new FileOutputStream(stateFile);
-					writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
-					memento.save(writer);
-				} catch (IOException e) {
-					stateFile.delete();
-					String message = Messages.ERROR_WRITING_STATE_FILE;
-					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+				IStatus status = saveMemento(memento, HISTORY_FILENAME);
+				if (!status.isOK()) {
 					CheatSheetPlugin.getPlugin().getLog().log(status);
-				} finally {
-					try {
-						if (writer != null)
-							writer.close();
-					} catch (IOException e) {
-						String message = Messages.ERROR_WRITING_STATE_FILE;
-						IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-						CheatSheetPlugin.getPlugin().getLog().log(status);
-					}
 				}
 			}
 			public void handleException(Throwable e) {
@@ -267,6 +264,39 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 			}
 		});
+	}
+	
+	/**
+	 * Save the memento to a file in this plugins state area
+	 * @param memento The memento to save
+	 * @param filename A simple filename
+	 * @return OK_Status if the memento was saved without error, otherwise an error
+	 * status
+	 */
+	public IStatus saveMemento(XMLMemento memento, String filename) {
+		// Save the IMemento to a file.
+		File stateFile = getCheatSheetStateFile(filename);
+		OutputStreamWriter writer = null;
+		try {
+			FileOutputStream stream = new FileOutputStream(stateFile);
+			writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+			memento.save(writer);
+			return Status.OK_STATUS;
+		} catch (IOException e) {
+			stateFile.delete();
+			String message = Messages.ERROR_WRITING_STATE_FILE;
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+			return status;
+		} finally {
+			try {
+				if (writer != null)
+					writer.close();
+			} catch (IOException e) {
+				String message = Messages.ERROR_WRITING_STATE_FILE;
+				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+				CheatSheetPlugin.getPlugin().getLog().log(status);
+			}
+		}
 	}
 
 	/* (non-Javadoc)

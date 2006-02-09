@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.cheatsheets;
 
-
-
 /**
  * Interface representing a composite cheatsheet. 
  * A composite cheat sheet has a single root task, each task may have 
@@ -38,4 +36,10 @@ public interface ICompositeCheatSheet {
 	 * @return the root task object
 	 */
 	ICompositeCheatSheetTask getRootTask();
+	
+	/**
+	 * Get the manager which allows data to be shared between tasks.
+	 * @return the CheatSheetManager for this composite cheat cheet. May not be null.
+	 */
+	ICheatSheetManager getCheatSheetManager();
 }
