@@ -84,9 +84,9 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 					}
 				}
 			}, true /* cancelable */, PROGRESS_DIALOG);
+			if (entries[0] == null) return;
 		}
 		
-		if (entries[0] == null) return;
 		
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {

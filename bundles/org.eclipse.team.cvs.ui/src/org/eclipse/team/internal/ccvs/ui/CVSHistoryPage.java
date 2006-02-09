@@ -698,7 +698,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
 		IHistoryPageSite parentSite = getHistoryPageSite();
-		Utils.schedule(refreshCVSFileHistoryJob, parentSite.getWorkbenchPageSite());
+		Utils.schedule(refreshCVSFileHistoryJob, getWorkbenchSite(parentSite));
+	}
+
+	private IWorkbenchPartSite getWorkbenchSite(IHistoryPageSite parentSite) {
+		IWorkbenchPart part = parentSite.getPart();
+		if (part != null)
+			return part.getSite();
+		return null;
 	}
 
 	/**
