@@ -388,7 +388,7 @@ public class AntClasspathBlock {
 		boolean first= !notEmpty;
 		boolean last= !notEmpty;
 		boolean canRemove= true;
-		boolean canAdd= true;
+		boolean canAdd= notEmpty;
         boolean canMove= true;
         if (!resolveCurrentParent(selection)) {
             //selection contains elements from multiple parents
