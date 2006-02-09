@@ -43,6 +43,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_TOCS_KEY = "ignoredTOCS"; //$NON-NLS-1$
+	public final static String IGNORED_INDEXES_KEY = "ignoredIndexes"; //$NON-NLS-1$
 
 	protected TocManager tocManager;
 	protected static Object tocManagerCreateLock = new Object();
@@ -158,6 +159,10 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 			for (Iterator it = tocsChangedListeners.iterator(); it.hasNext();) {
 				((ITocsChangedListener) it.next()).tocsChanged();
 			}
+		}
+		deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID, IndexManager.INDEX_XP_NAME);
+		if (deltas.length > 0) {
+			indexManager = null;
 		}
 	}
 

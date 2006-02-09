@@ -72,6 +72,8 @@ function getSelection() {
 function setTypeinValue(anchor) {
 	if (!typeinFrame) return;
 
+	if (!anchor) return;
+
 	var value = anchor.getAttribute("id");
 	if (value) {
 		typeinFrame.currentId = value;

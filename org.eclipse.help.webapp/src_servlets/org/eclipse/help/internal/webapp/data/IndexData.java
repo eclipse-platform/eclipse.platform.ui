@@ -20,17 +20,16 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.index.IIndex;
-import org.eclipse.help.internal.index.IIndexEntry;
+import org.eclipse.help.internal.index.Index;
+import org.eclipse.help.internal.index.IndexEntry;
 import org.eclipse.help.internal.index.IIndexTopic;
 
 /**
  * Helper class for Index view initialization
  */
 public class IndexData extends ActivitiesData {
-	private IIndex index;
+	private Index index;
 
 	// images directory
 	private String imagesDirectory;
@@ -72,22 +71,22 @@ public class IndexData extends ActivitiesData {
 	 * Loads help index
 	 */
 	private void loadIndex() {
-		index = HelpPlugin.getIndexManager().getIndex(Platform.getNL());
+		index = HelpPlugin.getIndexManager().getIndex(getLocale());
 	}
 
 	/*
 	 * TO DO:
 	 * method to be removed
 	 */
-	public IIndexEntry getIndexEntry(String [] path) {
-		Map entries = index.getEntries();
-		IIndexEntry result = null;
+	public IndexEntry getIndexEntry(String [] path) {
+		Map entries = index.getEntryMap();
+		IndexEntry result = null;
 		for(int i = 0; i < path.length; i++) {
-			result = (IIndexEntry) entries.get(path[i]);
+			result = (IndexEntry)entries.get(path[i]);
 			if(result == null)
 				return null;
 			else
-				entries = result.getEntries();
+				entries = result.getEntryMap();
 		}
 		return result;
 	}
@@ -102,14 +101,19 @@ public class IndexData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	public void generateIds(Writer out) throws IOException {
-		Iterator iter = index.getEntries().values().iterator();
+		boolean first = true;
+		Iterator iter = index.getEntryMap().values().iterator();
 		while (iter.hasNext()) {
-			IIndexEntry entry = (IIndexEntry)iter.next();
-			out.write("\""); //$NON-NLS-1$
-			out.write(entry.getKeyword());
-			out.write("\""); //$NON-NLS-1$
-			if (iter.hasNext()) {
-				out.write(",\n"); //$NON-NLS-1$
+			IndexEntry entry = (IndexEntry)iter.next();
+			if (entry != null) {
+				if (first) {
+					first = false;
+				} else {
+					out.write(",\n"); //$NON-NLS-1$
+				}
+				out.write("\""); //$NON-NLS-1$
+				out.write(entry.getKeyword());
+				out.write("\""); //$NON-NLS-1$
 			}
 		}
 	}
@@ -123,9 +127,9 @@ public class IndexData extends ActivitiesData {
 	public void generateIndex(Writer out) throws IOException {
 		this.out = out;
 
-		Iterator iter = index.getEntries().values().iterator();
+		Iterator iter = index.getEntryMap().values().iterator();
 		while(iter.hasNext()) {
-			IIndexEntry entry = (IIndexEntry) iter.next();
+			IndexEntry entry = (IndexEntry)iter.next();
 			generateEntry(entry, 0);
 		}
 	}
@@ -143,8 +147,8 @@ public class IndexData extends ActivitiesData {
 	 * [<ul>nested entries</ul>]
 	 * </li>
 	 */
-	private void generateEntry(IIndexEntry entry, int level) throws IOException {
-		List topics = entry.getTopics();
+	private void generateEntry(IndexEntry entry, int level) throws IOException {
+		List topics = entry.getTopicList();
 		int topicCount = topics.size();
 		boolean multipleTopics = topicCount > 1;
 		boolean singleTopic = topicCount == 1;
@@ -153,7 +157,7 @@ public class IndexData extends ActivitiesData {
 		if (usePlusMinus) generatePlusImage(multipleTopics);
 		generateAnchor(singleTopic, entry, level);
 		if (multipleTopics) generateTopicList(entry);
-		generateSubEntries(entry, level + 1);
+		generateSubentries(entry, level + 1);
 		out.write("</li>\n"); //$NON-NLS-1$
 	}
 
@@ -196,9 +200,9 @@ public class IndexData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	/*
-	 * <a id="..." [ class="nolink" ] href="...">
+	 * <a id="..." [ class="nolink" ] href="...">...</a>
 	 */
-	private void generateAnchor(boolean singleTopic, IIndexEntry entry, int level) throws IOException {
+	private void generateAnchor(boolean singleTopic, IndexEntry entry, int level) throws IOException {
 		out.write("<a "); //$NON-NLS-1$
 		if (level == 0) {
 			out.write("id=\""); //$NON-NLS-1$
@@ -207,7 +211,7 @@ public class IndexData extends ActivitiesData {
 		}
 		if (singleTopic) {
 			out.write("href=\""); //$NON-NLS-1$
-			out.write(UrlUtil.getHelpURL(((IIndexTopic)entry.getTopics().get(0)).getHref()));
+			out.write(UrlUtil.getHelpURL(((IIndexTopic)entry.getTopicList().get(0)).getHref()));
 			out.write("\">"); //$NON-NLS-1$
 		} else {
 			out.write("class=\"nolink\" href=\"about:blank\">"); //$NON-NLS-1$
@@ -228,8 +232,8 @@ public class IndexData extends ActivitiesData {
 	 * <li>...
 	 * </ul>
 	 */
-	private void generateTopicList(IIndexEntry entry) throws IOException {
-		List topics = entry.getTopics();
+	private void generateTopicList(IndexEntry entry) throws IOException {
+		List topics = entry.getTopicList();
 		int size = topics.size();
 
 		out.write("\n<ul class=\""); //$NON-NLS-1$
@@ -268,12 +272,12 @@ public class IndexData extends ActivitiesData {
 	 * entries...
 	 * </ul>
 	 */
-	private void generateSubEntries(IIndex entry, int level) throws IOException {
-		Iterator iter = entry.getEntries().values().iterator();
+	private void generateSubentries(IndexEntry entry, int level) throws IOException {
+		Iterator iter = entry.getEntryMap().values().iterator();
 		if (iter.hasNext()) {
 			out.write("<ul class=\"expanded\">\n"); //$NON-NLS-1$
 			do {
-				IIndexEntry childEntry = (IIndexEntry)iter.next();
+				IndexEntry childEntry = (IndexEntry)iter.next();
 				generateEntry(childEntry, level);
 			} while (iter.hasNext());
 			out.write("</ul>\n"); //$NON-NLS-1$

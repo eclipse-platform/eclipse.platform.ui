@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.eclipse.help.IIndex;
+import org.eclipse.help.IIndexEntry;
 
 
 /**
@@ -21,7 +25,7 @@ import java.util.TreeMap;
  */
 public class Index implements IIndex {
     
-    Map entries;
+    protected Map entries;
     
     public static final class IgnoreCaseComparator implements Comparator {
 
@@ -29,6 +33,7 @@ public class Index implements IIndex {
             return ((String)left).compareToIgnoreCase((String) right);
         }
     }	
+
     public Index() {
         entries = new TreeMap(new IgnoreCaseComparator());
     }
@@ -44,8 +49,18 @@ public class Index implements IIndex {
         }
 		return oldEntry;
     }
-	
-	public Map getEntries() {
+
+	public Map getEntryMap() {
 		return entries;
+	}
+
+	public IIndexEntry[] getEntries() {
+		if (entries == null)
+			return new IIndexEntry[0];
+
+		Collection entryCollection = entries.values(); 
+		IIndexEntry[] entryArray = new IIndexEntry[entryCollection.size()];
+		entryCollection.toArray(entryArray);
+		return entryArray;
 	}
 }

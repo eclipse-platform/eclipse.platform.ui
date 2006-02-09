@@ -15,11 +15,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.IIndex;
 import org.eclipse.help.internal.HelpPlugin;
 
 
@@ -30,7 +33,8 @@ import org.eclipse.help.internal.HelpPlugin;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class IndexManager {
-    
+	public static final String INDEX_XP_NAME = "index"; //$NON-NLS-1$
+
     private Collection contributingPlugins;
     private Map indexesByLang;
 
@@ -39,7 +43,6 @@ public class IndexManager {
      */
     public IndexManager() {
         indexesByLang = new HashMap();
-        build(Platform.getNL());
     }
     
     /**
@@ -51,7 +54,7 @@ public class IndexManager {
         IndexBuilder builder = new IndexBuilder();
         builder.build(contributedIndexFiles);
         IIndex index = builder.getBuiltIndex();
-        indexesByLang.put(Platform.getNL(), index);
+        indexesByLang.put(locale, index);
     }
     
     /**
@@ -62,8 +65,9 @@ public class IndexManager {
     private Collection getContributedIndexFiles(String locale) {
         contributingPlugins = new HashSet();
         Collection contributedIndexFiles = new ArrayList();
-        
-        IExtensionPoint xpt = Platform.getExtensionRegistry().getExtensionPoint(HelpPlugin.PLUGIN_ID, "index"); //$NON-NLS-1$
+        Collection ignored = getIgnoredIndexes();
+
+        IExtensionPoint xpt = Platform.getExtensionRegistry().getExtensionPoint(HelpPlugin.PLUGIN_ID, INDEX_XP_NAME);
         if (xpt == null)
              return contributedIndexFiles;
         
@@ -75,9 +79,11 @@ public class IndexManager {
                 if (configElements[j].getName().equals("index")) { //$NON-NLS-1$
                     String pluginId = configElements[j].getDeclaringExtension().getNamespace();
                     String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
-                    if (href != null) {
-                        contributedIndexFiles.add(new IndexFile(pluginId, href, Platform.getNL()));
+                    if (href == null
+                    		|| ignored.contains("/" + pluginId + "/" + href)) { //$NON-NLS-1$ //$NON-NLS-2$)
+                    	continue;
                     }
+                    contributedIndexFiles.add(new IndexFile(pluginId, href, locale));
                 }
             }
         }
@@ -91,24 +97,43 @@ public class IndexManager {
         return contributingPlugins;
     }
     
-    public IIndex getIndex(String locale) {
+    public Index getIndex(String locale) {
         if (locale == null)
             return new Index();
-        
-        IIndex index = (IIndex) indexesByLang.get(locale);
+
+        Index index = (Index) indexesByLang.get(locale);
         if (index == null) {
             synchronized(this) {
                 if (index == null) {
                     build(locale);
                 }
             }
-            index = (IIndex) indexesByLang.get(locale);
+            index = (Index) indexesByLang.get(locale);
             if (index == null)
                 index = new Index();
         }
-        
+
         return index;
             
     }
-    
+
+    private Collection getIgnoredIndexes() {
+    	HashSet ignored = new HashSet();
+		try {
+			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+			String ignoredIndexes = pref.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+			if (ignoredIndexes != null) {
+				StringTokenizer tokens = new StringTokenizer(
+						ignoredIndexes, " ;,"); //$NON-NLS-1$
+
+				while (tokens.hasMoreTokens()) {
+					ignored.add(tokens.nextToken());
+				}
+			}
+		} catch (Exception e) {
+			HelpPlugin.logError(
+					"Problems occurred reading plug-in preferences.", e); //$NON-NLS-1$
+		}
+    	return ignored;
+    }
 }

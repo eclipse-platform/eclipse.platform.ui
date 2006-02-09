@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation.
+ * Copyright (c) 2005, 2006 Intel Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,19 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.index;
-
-import java.util.Map;
+package org.eclipse.help;
 
 /**
- * @author sturmash
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * IIndex represents metaphor of the book index. It contains index entries,
+ * each of them is a keyword with references into related content. 
+ * 
+ * @since 3.2
  */
 public interface IIndex {
-    
-    /**
-     * Returns assosiation between keywords and IIndexEntry
-     * @return Map of IIndexEntry
-     */
-	
-    Map getEntries();
+	/**
+	 * Obtains the index entries contained in the index.
+	 * 
+	 * @return Array of IIndexEntry
+	 */
+	IIndexEntry[] getEntries();
 }

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IIndex;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.model.ITocElement;

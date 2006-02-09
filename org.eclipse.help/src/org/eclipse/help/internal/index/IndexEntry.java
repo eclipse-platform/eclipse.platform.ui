@@ -12,13 +12,17 @@ package org.eclipse.help.internal.index;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IIndexEntry;
 
 /**
  * @author sturmash
  *
  * An internal implementation of index entry
  */
-class IndexEntry extends Index implements IIndexEntry {
+public class IndexEntry extends Index implements IIndexEntry {
     String keyword;
     List topics;
     
@@ -29,6 +33,12 @@ class IndexEntry extends Index implements IIndexEntry {
 	public IndexEntry(String keyword, List topics) {
         this.keyword = keyword;
         this.topics = topics;
+    }
+
+	public IndexEntry(String keyword, List topics, Map subentries) {
+        this.keyword = keyword;
+        this.topics = topics;
+        this.entries = subentries;
     }
 
 	public void addTopic(String label, String href, String location) {
@@ -44,8 +54,20 @@ class IndexEntry extends Index implements IIndexEntry {
     /* (non-Javadoc)
      * @see org.eclipse.help.internal.index.IIndexEntry#getTopics()
      */
-    public List getTopics() {
+    public List getTopicList() {
         return topics;
     }
 
+    public IHelpResource[] getTopics() {
+    	if (topics == null)
+    		return new IHelpResource[0];
+
+    	IHelpResource topicArray[] = new IHelpResource[topics.size()];
+    	topics.toArray(topicArray);
+    	return topicArray;
+    }
+
+	public IIndexEntry[] getSubentries() {
+		return getEntries();
+	}
 }

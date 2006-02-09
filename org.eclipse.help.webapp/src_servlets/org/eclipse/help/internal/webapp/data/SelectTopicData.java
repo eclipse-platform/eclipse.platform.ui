@@ -18,7 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.internal.index.IIndexEntry;
+import org.eclipse.help.internal.index.IndexEntry;
 import org.eclipse.help.internal.index.IIndexTopic;
 
 /**
@@ -26,7 +26,7 @@ import org.eclipse.help.internal.index.IIndexTopic;
  */
 public class SelectTopicData extends IndexData {
 
-	private IIndexEntry entry;
+	private IndexEntry entry;
 	public SelectTopicData( ServletContext context,
 							HttpServletRequest request, 
 							HttpServletResponse response) {
@@ -36,7 +36,7 @@ public class SelectTopicData extends IndexData {
 	}
 	
 	public void generateTopics(Writer out) throws IOException {
-		List topics = entry.getTopics();
+		List topics = entry.getTopicList();
 		for(int i = 0; i< topics.size(); i++) {
 			IIndexTopic topic = (IIndexTopic) topics.get(i); 
 			out.write("<tr><td class=\"c0\"><input type=\"radio\" name=\"hrefs\" value=\""); //$NON-NLS-1$

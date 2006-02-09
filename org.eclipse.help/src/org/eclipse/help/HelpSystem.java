@@ -61,6 +61,16 @@ public final class HelpSystem {
 	}
 
 	/**
+	 * Returns the keyword index available in the help system.
+	 *
+	 * @return the keyword index
+	 * @since 3.2
+	 */
+	public static IIndex getIndex() {
+		return HelpPlugin.getIndexManager().getIndex(Platform.getNL());
+	}
+
+	/**
 	 * Returns an open input stream on the contents of the specified help
 	 * resource. The client is responsible for closing the stream when finished.
 	 * 

@@ -117,10 +117,16 @@ function showAll(){
 		window.frames.toc.tocToolbarFrame.setButtonState("show_all", true);
 	}catch(ex) {}
 	try{
+		window.frames.index.indexToolbarFrame.setButtonState("show_all", true);
+	}catch(ex) {}
+	try{
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
 	}catch(ex) {}
 	try{
 		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam);
+	}catch(ex) {}
+	try{
+		window.frames.index.indexViewFrame.location.replace(window.frames.index.indexViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam);
 	}catch(ex) {}
 	try{
 		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(regExp, "")+"&showAll=on");
@@ -133,10 +139,16 @@ function dontShowAll(){
 		window.frames.toc.tocToolbarFrame.setButtonState("show_all", false);
 	}catch(ex) {}
 	try{
+		window.frames.index.indexToolbarFrame.setButtonState("show_all", false);
+	}catch(ex) {}
+	try{
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
 	}catch(ex) {}
 	try{
 		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=off");
+	}catch(ex) {}
+	try{
+		window.frames.index.indexViewFrame.location.replace(window.frames.index.indexViewFrame.location.href.replace(regExp, "")+"&showAll=off");
 	}catch(ex) {}
 	try{
 		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(regExp, "")+"&showAll=off");
