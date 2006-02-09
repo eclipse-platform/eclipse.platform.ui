@@ -407,6 +407,12 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
        if (widget != null && !widget.isDisposed()) {
            int childCount = parentNode.getChildCount();
            setItemCount(widget, childCount);
+           if (childCount == 0) { 
+               clear(widget);
+               if (isVisible(widget)) {
+                   internalRefresh(parentNode.getElement(), widget);
+               }
+           }
            attemptExpansion();
            attemptSelection(false);
        }
@@ -852,9 +858,9 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      */
     protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
         int[] indicies = (int[]) fParentsPendingChildren.remove(parent);
-        if (indicies != null) {
-            Widget widget = parent.getWidget();
-            if (widget != null && !widget.isDisposed()) {
+        Widget widget = parent.getWidget();
+        if (widget != null && !widget.isDisposed()) {
+            if (indicies != null) {
                 for (int i = 0; i < indicies.length; i++) {
                     int index = indicies[i];
                     TreeItem item = null;
@@ -880,6 +886,8 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                 attemptExpansion();
                 attemptSelection(false);
             }
+        } else {
+            setItemCount(widget, children.length);
         }
     }
 

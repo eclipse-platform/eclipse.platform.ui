@@ -586,11 +586,7 @@ public abstract class AsynchronousModel {
                             viewer.nodeChanged(kid);
                         }
                     }
-//                    if (children.length == 0) {
-//                    	viewer.nodeChanged(parentNode);
-//                    } else {
-                    	viewer.nodeChildrenChanged(parentNode);
-//                    }
+                    viewer.nodeChildrenChanged(parentNode);
                 }
             });
 
