@@ -41,6 +41,13 @@ import org.eclipse.swt.widgets.Shell;
  * the field. Decorations may be assigned descriptions, which are shown when the
  * user hovers over the decoration. Clients can decorate any kind of control by
  * supplying a {@link IControlCreator} to create the control that is decorated.
+ * <p>
+ * Decorations always appear on either horizontal side of the field, never above
+ * or below it. Decorations can be positioned at the top or bottom of either
+ * side. Future implementations may provide additional positioning options for
+ * decorations.
+ * <p>
+ * This class is not intended to be subclassed.
  * 
  * <p>
  * This API is considered experimental. It is still evolving during 3.2 and is
@@ -537,7 +544,7 @@ public class DecoratedField {
 	 * the vertical alignment of the decoration relative to the field.
 	 * Decorations always appear on either horizontal side of the field, never
 	 * above or below it. For example, a decoration appearing on the left side
-	 * of the field, at the top, is specified as SWT.LEFT | SWT.TOP. 
+	 * of the field, at the top, is specified as SWT.LEFT | SWT.TOP.
 	 * 
 	 * @return index the index in the array of decorations that represents the
 	 * specified SWT position. If the position is not an expected position, the
@@ -562,7 +569,7 @@ public class DecoratedField {
 	 * position.
 	 * 
 	 * @param index the index in the decDatas describing the position of the
-	 * decoration. 
+	 * decoration.
 	 * 
 	 * @param image the image shown in the decoration.
 	 * 
