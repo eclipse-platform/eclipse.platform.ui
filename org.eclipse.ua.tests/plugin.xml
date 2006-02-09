@@ -217,4 +217,13 @@
       </configExtension>
    </extension>
    
+   <!--
+      TOC test content
+   -->
+   <extension point="org.eclipse.help.toc">
+       <toc file="data/help/toc/filteredToc/toc.xml" primary="true" />
+       <toc file="data/help/toc/filteredToc/filter.xml" />
+       <toc file="data/help/toc/filteredToc/simple_toc.xml" />
+   </extension>
+
 </plugin>

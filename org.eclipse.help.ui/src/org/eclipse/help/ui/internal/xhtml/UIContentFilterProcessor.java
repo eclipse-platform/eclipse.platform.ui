@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,9 @@
 
 package org.eclipse.help.ui.internal.xhtml;
 
+import org.eclipse.help.internal.FilterableHelpElement;
+import org.eclipse.help.internal.FilterableUAElement;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.xhtml.UAContentFilterProcessor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
@@ -21,6 +24,11 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public class UIContentFilterProcessor extends UAContentFilterProcessor {
 
+	/**
+	 * Overrides to add category and activity filtering.
+	 *  
+	 * @see org.eclipse.help.internal.xhtml.UAContentFilterProcessor#isFilteredIn(java.lang.String, java.lang.String)
+	 */
 	public boolean isFilteredIn(String filter, String value) {
 		boolean filtered_in = false;
 		if (filter.equals("category")) { //$NON-NLS-1$
@@ -33,6 +41,19 @@ public class UIContentFilterProcessor extends UAContentFilterProcessor {
 		return filtered_in;
 	}
 
+	/**
+	 * Overrides to turn off filtering when it's specifically a help element
+	 * and the user has requested to show all content.
+	 * 
+	 * @see org.eclipse.help.internal.xhtml.UAContentFilterProcessor#isFilteredIn(org.eclipse.help.internal.FilterableUAElement)
+	 */
+	public boolean isFilteredIn(FilterableUAElement element) {
+		// don't filter help elements if user requested show all content
+		if (element instanceof FilterableHelpElement && !HelpBasePlugin.getActivitySupport().isFilteringEnabled()) {
+			return true;
+		}
+		return super.isFilteredIn(element);
+	}
 
 	/**
 	 * evaluates Role (aka category) filter.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
-import java.util.*;
 
-import org.eclipse.help.*;
-import org.eclipse.help.internal.model.*;
-import org.xml.sax.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.model.ITocElement;
+import org.xml.sax.Attributes;
+
 /**
  * Root of navigation TocFile Can be linked with other Toc objects.
  */
@@ -67,6 +75,7 @@ public class Toc extends TocNode implements IToc, ITocElement {
 
 		childrenTocs = new ArrayList();
 		directoryToc = new DirectoryToc(tocFile);
+		addFilters(attrs);
 	}
 	/**
 	 * Implements abstract method.

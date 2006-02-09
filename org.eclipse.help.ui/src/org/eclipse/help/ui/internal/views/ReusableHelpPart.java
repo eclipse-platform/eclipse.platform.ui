@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.help.IContextProvider;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
@@ -117,6 +118,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private static final int STATE_LT_BR = 4;
 
 	private RoleFilter roleFilter;
+
+	private UAFilter uaFilter;
 
 	private ManagedForm mform;
 
@@ -619,6 +622,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			return HelpBasePlugin.getActivitySupport().isEnabled(href);
 		}
 	}
+	
+	class UAFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			return !UAContentFilter.isFiltered(element);
+		}
+	}
 
 	public ReusableHelpPart(IRunnableContext runnableContext) {
 		this(runnableContext, CONTEXT_HELP | SEARCH | ALL_TOPICS | BOOKMARKS);
@@ -806,6 +816,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		if (actionBars != null && actionBars.getMenuManager() != null)
 			contributeToDropDownMenu(actionBars.getMenuManager());
 		roleFilter = new RoleFilter();
+		uaFilter = new UAFilter();
 		if (HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering()) {
 			showAllAction = new Action() {
 				public void run() {
@@ -830,6 +841,10 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	ViewerFilter getRoleFilter() {
 		return roleFilter;
+	}
+
+	ViewerFilter getUAFilter() {
+		return uaFilter;
 	}
 
 	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {

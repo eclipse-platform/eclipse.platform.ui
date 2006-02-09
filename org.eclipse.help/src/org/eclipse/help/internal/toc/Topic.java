@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
-import java.util.*;
 
-import org.eclipse.help.*;
-import org.eclipse.help.internal.model.*;
-import org.xml.sax.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.model.ITopicElement;
+import org.xml.sax.Attributes;
+
 /**
  * Topic. Visible navigation element. Labeled, contains linik to a document. Can
  * also act as a container for other documents.
@@ -36,6 +42,7 @@ public class Topic extends TocNode implements ITopic, ITopicElement {
 			throw new RuntimeException("topic label==null"); //$NON-NLS-1$
 		}
 		tocFile.getToc().registerTopic(this);
+		addFilters(attrs);
 	}
 	/**
 	 * Implements abstract method.

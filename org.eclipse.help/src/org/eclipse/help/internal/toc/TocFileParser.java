@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,6 +118,19 @@ class TocFileParser extends DefaultHandler {
 			node = new Link(tocFile, atts);
 		} else if (qName.equals("anchor")) { //$NON-NLS-1$
 			node = new Anchor(tocFile, atts);
+		} else if (qName.equals("filter")) { //$NON-NLS-1$
+			if (!elementStack.empty()) {
+				Object parent = elementStack.peek();
+				if (parent instanceof FilterableUAElement && atts != null) {
+					FilterableUAElement filterableNode = (FilterableUAElement)parent;
+					String name = atts.getValue("name");
+					String value = atts.getValue("value");
+					if (name != null && value != null) {
+						filterableNode.addFilter(name, value);
+					}
+				}
+			}
+			return;
 		} else
 			return; // perhaps throw some exception
 		if (!elementStack.empty())
@@ -132,7 +145,9 @@ class TocFileParser extends DefaultHandler {
 	 */
 	public final void endElement(String namespaceURI, String localName,
 			String qName) throws SAXException {
-		elementStack.pop();
+		if (!qName.equals("filter")) { //$NON-NLS-1$
+			elementStack.pop();
+		}
 	}
 
 	/**

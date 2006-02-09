@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,17 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.model.*;
-import org.eclipse.help.internal.toc.*;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.model.INavigationElement;
+import org.eclipse.help.internal.model.ITocElement;
+import org.eclipse.help.internal.model.ITopicElement;
+import org.eclipse.help.internal.toc.Toc;
 
 /**
  * Helper class for tocView.jsp initialization
@@ -163,7 +172,7 @@ public class TocData extends ActivitiesData {
 	}
 
 	/**
-	 * Check if given TOC is visible (belongs to an enabled activity)
+	 * Check if given TOC is visible
 	 * 
 	 * @param toc
 	 * @return true if TOC should be visible
@@ -176,7 +185,7 @@ public class TocData extends ActivitiesData {
 		return (getEnabledSubtopicList(tocs[toc]).size() > 0);
 	}
 	/**
-	 * Check if given TOC is visible (belongs to an enabled activity)
+	 * Check if given TOC is visible
 	 * 
 	 * @param toc
 	 * @return true if TOC should be visible
@@ -186,7 +195,8 @@ public class TocData extends ActivitiesData {
 			// activities never filtered for basic browsers
 			return true;
 		}
-		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref());
+		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref()) &&
+			!UAContentFilter.isFiltered(toc);
 	}
 
 	private void loadTocs() {
@@ -520,9 +530,9 @@ public class TocData extends ActivitiesData {
 			if ((c instanceof ITopicElement)) {
 				// add topic only if it will not end up being an empty
 				// container
-				if ((((ITopicElement) c).getHref() != null && ((ITopicElement) c)
-						.getHref().length() > 0)
-						|| getEnabledSubtopicList(c).size() > 0) {
+				if (((((ITopicElement) c).getHref() != null && ((ITopicElement) c)
+						.getHref().length() > 0) || getEnabledSubtopicList(c).size() > 0) &&
+						!UAContentFilter.isFiltered(c)) {
 					childTopics.add(c);
 				}
 			} else {

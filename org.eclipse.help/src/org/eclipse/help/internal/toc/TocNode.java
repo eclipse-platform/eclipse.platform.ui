@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.help.internal.FilterableHelpElement;
 
 /**
  * Navigation Element. Common for all objects definable in toc.xml
  */
-abstract class TocNode implements ITocNode {
+abstract class TocNode extends FilterableHelpElement implements ITocNode {
 	protected List children;
 	protected List parents;
 
