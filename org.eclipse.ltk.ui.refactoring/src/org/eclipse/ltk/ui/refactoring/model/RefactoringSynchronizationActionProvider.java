@@ -55,9 +55,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * </p>
  * <p>
  * Note: this class is intended to be extended by clients who need refactoring
- * support in a team synchronization viewer. It is intended to be be registered
- * with the <code>org.eclipse.ui.navigator.navigatorContent</code> or
- * <code>org.eclipse.ui.navigator.viewer</code> extension points.
+ * support in a team synchronization viewer. It needs to be be registered with
+ * the <code>org.eclipse.ui.navigator.navigatorContent</code> or
+ * <code>org.eclipse.ui.navigator.viewer</code> extension points in order to
+ * participate in the team synchronization viewers.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.

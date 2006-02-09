@@ -19,8 +19,8 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 /**
  * Configuration object for a refactoring history control.
  * <p>
- * Note: this class is intended to be subclassed outside the refactoring
- * framework.
+ * Note: this class is intended to be subclassed by clients wishing to control
+ * the configuration behavior of their refactoring history control.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.

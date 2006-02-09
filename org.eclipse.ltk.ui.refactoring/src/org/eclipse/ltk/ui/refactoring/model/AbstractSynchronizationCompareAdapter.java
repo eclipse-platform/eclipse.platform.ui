@@ -42,7 +42,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  * 
  * @since 3.2
  */
-public abstract class AbstractRefactoringCompareAdapter extends SynchronizationCompareAdapter {
+public abstract class AbstractSynchronizationCompareAdapter extends SynchronizationCompareAdapter {
 
 	/**
 	 * {@inheritDoc}

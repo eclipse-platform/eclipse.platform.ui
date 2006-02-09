@@ -69,7 +69,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
 /**
  * Partial implementation of a refactoring-aware resource mapping merger.
  * <p>
- * This class provides support to determine incoming refactorings during model
+ * This class provides support to determine pending refactorings during model
  * merging and model update, and displays a refactoring wizard to apply the
  * refactorings to the local workspace.
  * </p>
@@ -87,7 +87,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  * 
  * @since 3.2
  */
-public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerger {
+public abstract class AbstractResourceMappingMerger extends ResourceMappingMerger {
 
 	/** Refactoring history model merge configuration */
 	private static final class RefactoringHistoryModelMergeConfiguration extends RefactoringHistoryControlConfiguration {
@@ -192,7 +192,7 @@ public abstract class AbstractRefactoringModelMerger extends ResourceMappingMerg
 	 * @param provider
 	 *            the model provider
 	 */
-	protected AbstractRefactoringModelMerger(final ModelProvider provider) {
+	protected AbstractResourceMappingMerger(final ModelProvider provider) {
 		Assert.isNotNull(provider);
 		fModelProvider= provider;
 	}
