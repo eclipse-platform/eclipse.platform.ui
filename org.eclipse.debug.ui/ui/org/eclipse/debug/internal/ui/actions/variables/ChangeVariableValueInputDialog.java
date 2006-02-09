@@ -12,10 +12,10 @@ package org.eclipse.debug.internal.ui.actions.variables;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
  * or further subclassed as required.
  * </p>
  */
-public class ChangeVariableValueInputDialog extends Dialog {
+public class ChangeVariableValueInputDialog extends TrayDialog {
 	
 	
 	/**
@@ -180,8 +180,6 @@ public class ChangeVariableValueInputDialog extends Dialog {
 				GridData.GRAB_HORIZONTAL |
 				GridData.HORIZONTAL_ALIGN_FILL));
 		errorMessageLabel.setFont(font);
-		
-		
 		return composite;
 	}
 	/**
