@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.DebugUITools;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The import breakpoints wizard page.
@@ -65,7 +67,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 */
 	public WizardImportBreakpointsPage(String pageName) {
 		super(pageName, ImportExportMessages.WizardImportBreakpointsPage_0, null);
-	}// end constructor
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
@@ -76,7 +78,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			handleBrowseForFileButtonPressed();
 		}
 		setPageComplete(detectPageComplete());
-	}// end handleEvent
+	}
 
 	/**
 	 * This method handles the fBrowseForFileButton being pressed.
@@ -87,8 +89,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		String file = dialog.open();
 		if(file != null) {
 			fFileNameField.setText(file);
-		}// end if
-	}//end handleBrowseForFileButtonPressed
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -104,7 +106,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		setControl(composite);
 		restoreWidgetState();
 		setPageComplete(detectPageComplete());
-	}// end createControl
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.IMPORT_BREAKPOINTS_WIZARD_PAGE);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
@@ -129,11 +132,11 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		if (!file.exists() || file.isDirectory()) {
 			setMessage(MessageFormat.format(ImportExportMessages.WizardImportBreakpointsPage_1, new String[]{fileName}), ERROR);
 			return false;
-		}//end if
+		}
 		
 		setMessage(ImportExportMessages.WizardImportBreakpointsPage_2); 
 		return true;
-	}//end detectPageComplete
+	}
 
 	/**
 	 * Create the options specification widgets.
@@ -155,7 +158,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		fAutoCreateWorkingSets = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
 		fAutoCreateWorkingSets.setText(ImportExportMessages.WizardImportBreakpointsPage_5);
 		fAutoCreateWorkingSets.setFont(font);
-	}// end createOptionsGroup
+	}
 	
 	/**
 	 * Create the export destination specification widgets
@@ -184,7 +187,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		// destination browse button
 		fBrowseForFileButton = SWTUtil.createPushButton(destinationSelectionGroup, ImportExportMessages.WizardBreakpointsPage_8, null);
 		fBrowseForFileButton.addListener(SWT.Selection, this);
-	}// end createDestinationGroup
+	}
 	
 	/**
 	 * Save the state of the widgets select, for successive invocations of the wizard
@@ -195,8 +198,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			settings.put(REMOVE_DUPS, fAutoRemoveDuplicates.getSelection());
 			settings.put(CREATE_WORKING_SETS, fAutoCreateWorkingSets.getSelection());
 			settings.put(SOURCE_FILE_NAME, fFileNameField.getText().trim());
-		}//end if
-	}//end save state
+		}
+	}
 	
 	/**
 	 * Restores the state of the wizard from previous invocations
@@ -210,8 +213,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			if (fileName != null) {
 				fFileNameField.setText(fileName);
 			}
-		}//end if
-	}//end restore state
+		}
+	}
 	
 	/**
 	 * <p>
@@ -225,16 +228,16 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		try {
 			saveWidgetState();
 			getContainer().run(true, true, new ImportBreakpointsOperation(fFileNameField.getText().trim(), fAutoRemoveDuplicates.getSelection(), fAutoCreateWorkingSets.getSelection()));
-		}// end try
+		}
 		catch (InterruptedException e) {
 			DebugPlugin.log(e);
 			return false;
-		}// end catch
+		}
 		catch (InvocationTargetException e) {
 			DebugPlugin.log(e);
 			return false;
-		}//end catch
+		}
 		return true;
-	}// end finish
+	}
 	
-}//end class
+}

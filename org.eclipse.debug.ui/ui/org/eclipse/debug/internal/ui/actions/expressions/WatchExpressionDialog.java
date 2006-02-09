@@ -43,7 +43,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	 * The detail formatter to edit.
 	 */
 	private IWatchExpression fWatchExpression;
-
+	
 	// widgets
 	private SourceViewer fSnippetViewer;
 	private Button fCheckBox;
@@ -86,12 +86,8 @@ public class WatchExpressionDialog extends StatusDialog {
 		
 		fSnippetViewer= new SourceViewer(container, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fSnippetViewer.setInput(this);
-
 		
 		IDocument document= new Document();
-		//IDocumentPartitioner partitioner= new RuleBasedPartitioner(...);
-		//document.setDocumentPartitioner(partitioner);
-		//partitioner.connect(document);
 		fSnippetViewer.configure(new SourceViewerConfiguration());
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(document);

@@ -84,9 +84,8 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		fPanel = new SourceLookupPanel();
 		fPanel.createControl(composite);
 		fPanel.initializeFrom(fDirector);
-		
 		Dialog.applyDialogFont(composite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),  IDebugHelpContextIds.EDIT_SOURCELOOKUP_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,  IDebugHelpContextIds.EDIT_SOURCELOOKUP_DIALOG);
 		
 		return composite;
 	}

@@ -377,12 +377,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setEditArea(editAreaComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
-			
-		/*// Build the separator line that demarcates the button bar
-		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		separator.setLayoutData(gd);*/
 		
 		dialogComp.layout(true);
 		applyDialogFont(dialogComp);
@@ -471,7 +465,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(getShellTitle());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, getHelpContextId());
 	}
 	
 	/* (non-Javadoc)
@@ -571,6 +564,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		initializeContent();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), getHelpContextId());
 		return contents;
 	}
 	

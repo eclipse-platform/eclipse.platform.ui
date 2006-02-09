@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
@@ -46,6 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * <p>
@@ -92,7 +94,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	public WizardExportBreakpointsPage(String pageName, IStructuredSelection selection) {
 		super(pageName, ImportExportMessages.WizardExportBreakpoints_0, null);
 		fSelection = selection;
-	}// end constructor
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
@@ -101,17 +103,17 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		Widget source = event.widget;
 		if (source == fDestinationBrowseButton) {
 			handleDestinationBrowseButtonPressed();
-		}// end if
+		}
 		else if (source == fDestinationNameField) {
 			handlePathTextModifiedEvent();
-		}// end if
+		}
 		else if(source == fSelectAll) {
 			handleSelectAllPressed();
-		}//end if
+		}
 		else if(source == fDeselectAll) {
 			handleDeselectAllPressed();
-		}//end if
-	}// end handleEvent
+		}
+	}
 	
 	/**
 	 * Handles the select all button pressed
@@ -124,7 +126,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		viewer.setGrayedElements(new Object[] {});
 		viewer.getTree().deselectAll();
 		setPageComplete(detectPageComplete());
-	}//end handleSelectAllPressed
+	}
 	
 	/**
 	 * Handles the deselect all button pressed
@@ -135,14 +137,14 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		viewer.setCheckedElements(new Object[] {});
 		viewer.setGrayedElements(new Object[] {});
 		setPageComplete(detectPageComplete());
-	}//end handleDeselectAllPressed
+	}
 	
 	/**
 	 * This method handles the modified event fomr the path combobox.
 	 */
 	protected void handlePathTextModifiedEvent() {
 		setPageComplete(detectPageComplete());
-	}// end handlePathComboModifiedEvent
+	}
 
 	/**
 	 * Open the SaveAsDialog so the user can save the listing of selected breakpoints
@@ -158,14 +160,14 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 				setErrorMessage(null);
 				if(fPath.getFileExtension() == null) {
 					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION);  
-				}//end if
+				}
 				else if(!fPath.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
 					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION); 
-				}//end elseif
+				}
 				fDestinationNameField.setText(fPath.toString());
-			}// end if
-		}//end if
-	}// end handleDestinationBrowseButtonPressed
+			}
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -190,7 +192,8 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		setControl(composite); 
 		setPageComplete(detectPageComplete());
 		restoreWidgetState();
-	}// end createControl
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.EXPORT_BREAKPOINTS_WIZARD_PAGE);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
@@ -239,7 +242,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		}
 		setMessage(ImportExportMessages.WizardBreakpointsPage_4);
 		return true;
-	}//end detectPageComplete
+	}
 
 	/**
 	 * Create the Options specification widgets.
@@ -258,7 +261,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		fOverwriteExistingFilesCheckbox = new Button(OptionsGroup, SWT.CHECK | SWT.LEFT);
 		fOverwriteExistingFilesCheckbox.setText(ImportExportMessages.WizardBreakpointsPage_6);
 		fOverwriteExistingFilesCheckbox.setFont(font);
-	}// end createOptionsGroup
+	}
 
 	/**
 	 * Create the export destination specification widgets
@@ -287,7 +290,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		fDestinationBrowseButton.addListener(SWT.Selection, this);
 		fDestinationBrowseButton.setFont(font);
 		setButtonLayoutData(fDestinationBrowseButton);
-	}// end createDestinationGroup
+	}
 
 	/**
 	 * Save the state of the widgets select, for successive invocations of the wizard
@@ -297,8 +300,8 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		if(settings != null) {
 			settings.put(OVERWRITE_ALL_STATE, fOverwriteExistingFilesCheckbox.getSelection());
 			settings.put(DESTINATION_FILE_NAME, fDestinationNameField.getText().trim());
-		}//end if
-	}//end save state
+		}
+	}
 	
 	/**
 	 * Restores the state of the wizard from previous invocations
@@ -311,8 +314,8 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			if (filename != null) {
 				fDestinationNameField.setText(filename);
 			}
-		}//end if
-	}//end restore state
+		}
+	}
 	
 	/**
 	 * The Finish button is clicked on the main wizard
@@ -328,11 +331,11 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 				fPath = new Path(fDestinationNameField.getText().trim());
 				if(fPath.getFileExtension() == null) {
 					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION);  
-				}//end if
+				}
 				else if(!fPath.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
 					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION); 
-				}//end elseif
-			}//end if
+				}
+			}
 			saveWidgetState();
 			if(fPath.toFile().exists() && !fOverwriteExistingFilesCheckbox.getSelection()) {
 				if (!MessageDialog.openQuestion(null, ImportExportMessages.WizardBreakpointsPage_12, MessageFormat.format(ImportExportMessages.ImportExportOperations_0, new String[] {fPath.toPortableString()}))) {
@@ -349,15 +352,15 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 				}
 			}
 			getContainer().run(true, true, new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), fPath.toOSString()));
-		}// end try
+		}
 		catch (InterruptedException e) {
 			DebugPlugin.log(e);
 			return false;
-		}// end catch
+		}
 		catch (InvocationTargetException e) {
 			DebugPlugin.log(e);
 			return false;
-		}//end catch
+		}
 		return true;
-	}// end finish
-}// end class
+	}
+}

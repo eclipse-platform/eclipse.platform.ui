@@ -36,12 +36,9 @@ public interface IDebugHelpContextIds {
 	public static final String VARIABLES_CONTENT_PROVIDERS_ACTION = PREFIX + "variables_content_providers_action_context"; //$NON-NLS-1$
 	public static final String VARIABLES_SELECT_LOGICAL_STRUCTURE = PREFIX + "variables_select_logical_structure"; //$NON-NLS-1$
 	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_context"; //$NON-NLS-1$			
-
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_context"; //$NON-NLS-1$
 	public static final String EDIT_LAUNCH_CONFIGURATION_ACTION = PREFIX + "edit_launch_configuration_action_context"; //$NON-NLS-1$
 	public static final String OPEN_LAUNCH_CONFIGURATION_ACTION = PREFIX + "open_launch_configuration_action_context"; //$NON-NLS-1$
-	public static final String ADD_WATCH_EXPRESSION_DIALOG= PREFIX + "add_watch_expression_dialog_context"; //$NON-NLS-1$
-	public static final String EDIT_WATCH_EXPRESSION_DIALOG= PREFIX + "edit_watch_expression_dialog_context"; //$NON-NLS-1$
 	public static final String LINK_BREAKPOINTS_WITH_DEBUG_ACTION= PREFIX + "link_breakpoints_with_debug_context"; //$NON-NLS-1$
 	public static final String EDIT_SOURCELOOKUP_ACTION = PREFIX + "edit_source_lookup_path_context";//$NON-NLS-1$
 	public static final String LOOKUP_SOURCE_ACTION = PREFIX + "lookup_source_context";//$NON-NLS-1$
@@ -85,6 +82,11 @@ public interface IDebugHelpContextIds {
 	public static final String ADD_FOLDER_CONTAINER_DIALOG = PREFIX + "folder_source_container_dialog";//$NON-NLS-1$
 	public static final String ADD_ARCHIVE_CONTAINER_DIALOG = PREFIX + "archive_source_container_dialog";//$NON-NLS-1$
 	public static final String MULTIPLE_SOURCE_DIALOG = PREFIX + "multiple_source_selection_dialog";//$NON-NLS-1$
+	public static final String FIND_EXPRESSION_DIALOG = PREFIX + "find_expressions_dialog_context"; //$NON-NLS-1$
+	public static final String FIND_VARIABLES_DIALOG = PREFIX + "find_variables_dialog_context"; //$NON-NLS-1$
+	public static final String ADD_WATCH_EXPRESSION_DIALOG= PREFIX + "add_watch_expression_dialog_context"; //$NON-NLS-1$
+	public static final String EDIT_WATCH_EXPRESSION_DIALOG = PREFIX + "edit_watch_expression_dialog_context"; //$NON-NLS-1$
+	public static final String FIND_ELEMENT_DIALOG = PREFIX + "find_element_dialog_context"; //$NON-NLS-1$
 	
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$
@@ -98,7 +100,9 @@ public interface IDebugHelpContextIds {
 	// Working set page
 	public static final String WORKING_SET_PAGE = PREFIX + "working_set_page_context"; //$NON-NLS-1$			
 	
-	
+	//Wizards
+	public static final String IMPORT_BREAKPOINTS_WIZARD_PAGE = PREFIX + "import_breakpoints_wizard_page_context"; //$NON-NLS-1$
+	public static final String EXPORT_BREAKPOINTS_WIZARD_PAGE = PREFIX + "export_breakpoints_wizard_page_context"; //$NON-NLS-1$
 	
 	//Editor	
 	public static final String NO_SOURCE_EDITOR = PREFIX + "debugger_editor_no_source_common";//$NON-NLS-1$

@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.viewers;
 
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.TreeSelection;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
@@ -41,6 +45,15 @@ public class AsynchronousTreeNavigationDialog extends ElementListSelectionDialog
 		setMultipleSelection(false);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.ElementListSelectionDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createDialogArea(Composite parent) {
+		Control comp = super.createDialogArea(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.FIND_ELEMENT_DIALOG);
+		return comp;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
 	 */
