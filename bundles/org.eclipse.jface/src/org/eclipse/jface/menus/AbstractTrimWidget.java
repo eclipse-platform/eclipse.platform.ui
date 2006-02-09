@@ -13,17 +13,21 @@ package org.eclipse.jface.menus;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 
 /**
  * This extension to the {@link IWidget} interface allows clients adding
  * elements to the trim to receive notifications if the User moves the widget to
  * another trim area.
- * 
+ * <p>
+ * This class is intended to be the base for any trim contributions.
+ * </p>
  * @since 3.2
  * 
  */
-public interface ITrimWidget extends IWidget {
+public abstract class AbstractTrimWidget implements IWidget {
 	/**
 	 * This method is called to initially construct the widget and is also
 	 * called whenever the widget's composite has been moved to a trim area on a
@@ -54,5 +58,35 @@ public interface ITrimWidget extends IWidget {
 	 * @param newSide
 	 *            The current side
 	 */
-	public void fill(Composite parent, int oldSide, int newSide);
+	public abstract void fill(Composite parent, int oldSide, int newSide);
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.menus.IWidget#dispose()
+	 */
+	public void dispose() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.Composite)
+	 */
+	public void fill(Composite parent) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.Menu, int)
+	 */
+	public void fill(Menu parent, int index) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.ToolBar, int)
+	 */
+	public void fill(ToolBar parent, int index) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.CoolBar, int)
+	 */
+	public void fill(CoolBar parent, int index) {
+	}
 }
