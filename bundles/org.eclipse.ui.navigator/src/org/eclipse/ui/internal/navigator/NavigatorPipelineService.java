@@ -120,7 +120,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	 *            The (current) refresh update to execute against the viewer.
 	 * @return The (potentially reshaped) refresh to execute against the viewer.
 	 */
-	public boolean interceptRefresh(PipelinedViewerUpdate aRefreshSynchronization) {
+	public boolean interceptRefresh(
+			PipelinedViewerUpdate aRefreshSynchronization) {
 
 		Set overrideableExtensions = new HashSet();
 		for (Iterator iter = aRefreshSynchronization.getRefreshTargets()
@@ -139,28 +140,32 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			PipelinedViewerUpdate aRefreshSynchronization) {
 
 		boolean intercepted = false;
-		for (Iterator extensionsItr = overrideableExtensions.iterator(); extensionsItr.hasNext();) {
+		for (Iterator extensionsItr = overrideableExtensions.iterator(); extensionsItr
+				.hasNext();) {
 			NavigatorContentExtension extension = (NavigatorContentExtension) extensionsItr
 					.next();
 
-			if (!extension.getDescriptor().hasOverridingExtensions())
-				intercepted |= ((IPipelinedTreeContentProvider) extension
-						.getContentProvider())
-						.interceptRefresh(aRefreshSynchronization);
-			else {
-				Set nextLevelOfOverrideableExtensions = new HashSet();
-				for (Iterator refreshTargetsItr = aRefreshSynchronization
-						.getRefreshTargets().iterator(); refreshTargetsItr.hasNext();)
-					nextLevelOfOverrideableExtensions
-							.addAll(Arrays
-									.asList(extension
-											.getOverridingExtensionsForPossibleChild(refreshTargetsItr
-													.next())));
+			if (extension.getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				if (!extension.getDescriptor().hasOverridingExtensions())
+					intercepted |= ((IPipelinedTreeContentProvider) extension
+							.getContentProvider())
+							.interceptRefresh(aRefreshSynchronization);
+				else {
+					Set nextLevelOfOverrideableExtensions = new HashSet();
+					for (Iterator refreshTargetsItr = aRefreshSynchronization
+							.getRefreshTargets().iterator(); refreshTargetsItr
+							.hasNext();)
+						nextLevelOfOverrideableExtensions
+								.addAll(Arrays
+										.asList(extension
+												.getOverridingExtensionsForPossibleChild(refreshTargetsItr
+														.next())));
 
-				if (!nextLevelOfOverrideableExtensions.isEmpty())
-					intercepted |= pipelineRefresh(
-							nextLevelOfOverrideableExtensions,
-							aRefreshSynchronization);
+					if (!nextLevelOfOverrideableExtensions.isEmpty())
+						intercepted |= pipelineRefresh(
+								nextLevelOfOverrideableExtensions,
+								aRefreshSynchronization);
+				}
 			}
 		}
 

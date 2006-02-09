@@ -11,52 +11,42 @@
 package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
- * <p>
- * A custom interface for Common Navigator extensions that either (1) require
- * more information about the specific
- * {@link org.eclipse.ui.navigator.CommonViewer}&nbsp;they are
- * associated with, or (2) would like to return a custom description for use in
- * the Status Bar. Clients may choose to implement this interface for the
- * <i>labelProvider</i> attribute of the
- * <b>org.eclipse.ui.navigator.navigatorContent </b> extension
- * point.
- * </p>
+ * 
+ * The {@link ICommonLabelProvider} allows extensions to vary their behavior
+ * based on properties in the extension model and the given memento.
+ * 
  * <p>
  * Clients need not implement this interface if there is no cause to do so.
  * {@link org.eclipse.jface.viewers.ILabelProvider}&nbsp;is respected by the
  * Common Navigator.
- * </p> 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
  * </p>
- *<p>
+ * <p>
+ * Clients should refer to the <b>org.eclipse.ui.navigator.navigatorContent</b>
+ * extension point for more information on building a content extension.
+ * </p>
+ * 
+ * <p>
  * Clients may implement this interface.
- *</p> 
+ * </p>
+ * 
+ * 
  * @since 3.2
  */
 public interface ICommonLabelProvider extends ILabelProvider, IMementoAware,
 		IDescriptionProvider {
 
 	/**
-	 * <p>
-	 * Provides the state model for any initialization. 
-	 * </p>
+	 * Initialize the label provider with the given configuration.
 	 * 
-	 * @param aStateModel
-	 * 	The state model associated with this logical extension.
-	 * @param aContentProvider 
-	 * 	The associated content provider for this label provider.
+	 * @param aConfig
+	 *            The extension site provides information that some extensions
+	 *            will find useful to configure themselves properly in a
+	 *            particular viewer.
 	 * 
 	 * @see ICommonContentProvider
-	 *
 	 */
-	void init(IExtensionStateModel aStateModel,
-			ITreeContentProvider aContentProvider);
+	void init(ICommonContentExtensionSite aConfig);
 
 }

@@ -15,13 +15,13 @@ import junit.framework.Assert;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.navigator.CommonActionProvider;
-import org.eclipse.ui.navigator.CommonActionProviderConfig;
+import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 public class DependentActionProvider extends CommonActionProvider {
 
 	private IAction action = null;
 	
-	public void init(CommonActionProviderConfig aConfig) {
+	public void init(ICommonActionExtensionSite aConfig) {
 		 action = new DependentAction(aConfig.getViewSite().getShell(), aConfig.getExtensionId());
 	}
 	

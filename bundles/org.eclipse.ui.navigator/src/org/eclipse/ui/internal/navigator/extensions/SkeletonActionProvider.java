@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.navigator.extensions;
 
 import org.eclipse.ui.navigator.CommonActionProvider;
-import org.eclipse.ui.navigator.CommonActionProviderConfig;
+import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 /**
  * 
@@ -36,7 +36,7 @@ public final  class SkeletonActionProvider extends CommonActionProvider {
 		super();
 	}
 
-	public void init(CommonActionProviderConfig aConfig) {
+	public void init(ICommonActionExtensionSite aConfig) {
 
 	}
 }

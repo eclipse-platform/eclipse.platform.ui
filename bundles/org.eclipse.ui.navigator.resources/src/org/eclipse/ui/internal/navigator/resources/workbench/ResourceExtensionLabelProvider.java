@@ -11,11 +11,10 @@
 package org.eclipse.ui.internal.navigator.resources.workbench;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * <p>
@@ -29,7 +28,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
 public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider implements ICommonLabelProvider {
  
  
-	public void init(IExtensionStateModel aModel, ITreeContentProvider aContentProvider) {
+	public void init(ICommonContentExtensionSite aConfig) {
 		//init
 	}
 

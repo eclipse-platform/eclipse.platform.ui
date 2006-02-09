@@ -16,8 +16,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
@@ -122,10 +122,9 @@ public class SafeDelegateTreeContentProvider implements
 
 	}
 
-	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
+	public void init(ICommonContentExtensionSite aConfig) {
 		if (contentProvider instanceof ICommonContentProvider) {
-			((ICommonContentProvider) contentProvider).init(aStateModel,
-					aMemento);
+			((ICommonContentProvider) contentProvider).init(aConfig);
 		}
 	}
 

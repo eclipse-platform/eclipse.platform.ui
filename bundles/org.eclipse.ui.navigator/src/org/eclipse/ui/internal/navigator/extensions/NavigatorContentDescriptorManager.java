@@ -129,7 +129,7 @@ public class NavigatorContentDescriptorManager {
 
 		Set descriptors = new HashSet();
 
-		/* Find other ContentProviders which enable for this object */
+	 	/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = firstClassDescriptors.values()
 				.iterator(); contentDescriptorsItr.hasNext();) {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr

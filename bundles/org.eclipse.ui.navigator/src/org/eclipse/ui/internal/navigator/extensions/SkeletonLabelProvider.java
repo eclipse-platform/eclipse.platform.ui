@@ -11,11 +11,10 @@
 package org.eclipse.ui.internal.navigator.extensions;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /** 
  * 
@@ -91,7 +90,7 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	}
 
  
-	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
+	public void init(ICommonContentExtensionSite aConfig) {
 
 	}
 

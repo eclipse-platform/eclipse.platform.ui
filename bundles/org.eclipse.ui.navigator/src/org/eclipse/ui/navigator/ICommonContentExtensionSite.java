@@ -35,7 +35,7 @@ import org.eclipse.ui.IMemento;
  * @see ICommonContentProvider
  * 
  */
-public interface ICommonExtensionSite {
+public interface ICommonContentExtensionSite {
 
 	/**
 	 * The extension state model allows an extension to isolate all of the

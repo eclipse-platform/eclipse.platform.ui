@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.navigator.extension;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.navigator.CommonActionProvider;
-import org.eclipse.ui.navigator.CommonActionProviderConfig;
+import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 public class TestNestedActionProvider extends CommonActionProvider {
@@ -24,7 +24,7 @@ public class TestNestedActionProvider extends CommonActionProvider {
 	
 	private IAction action = null;
 	
-	public void init(CommonActionProviderConfig aConfig) {
+	public void init(ICommonActionExtensionSite aConfig) {
 		 action = new TestAction(aConfig.getViewSite().getShell(), "Nested action (only visible if test ext active)");
 	}
 	

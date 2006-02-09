@@ -27,7 +27,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.internal.navigator.extensions.SafeDelegateTreeContentProvider;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
@@ -90,7 +89,7 @@ public class INavigatorContentServiceTests extends TestCase {
 		super.tearDown();
 	}
 
-	public void testFindValidExtensions() {
+public void testFindValidExtensions() {
 
 		contentService.activateExtensions(new String[] { TEST_EXTENSION_ID,
 				RESOURCE_EXTENSION_ID }, true);
@@ -108,20 +107,19 @@ public class INavigatorContentServiceTests extends TestCase {
 		assertEquals("Ensure there is only one root content provider.", 1,
 				rootContentProviders.length);
 
-		Set projectContentExtensions = contentService.findContentExtensionsByTriggerPoint(project);
+		Set projectContentExtensions = contentService
+				.findContentExtensionsByTriggerPoint(project);
 
 		assertEquals("Ensure there are two content providers for an IProject.",
 				2, projectContentExtensions.size());
 
 		boolean found = false;
 		INavigatorContentExtension ext;
-		for (Iterator i = projectContentExtensions.iterator(); i.hasNext(); ) {
+		for (Iterator i = projectContentExtensions.iterator(); i.hasNext();) {
 			ext = (INavigatorContentExtension) i.next();
-			if (((SafeDelegateTreeContentProvider) ext.getContentProvider())
-					.getDelegateContentProvider() instanceof TestContentProvider) {
+			if (ext.getContentProvider() instanceof TestContentProvider) {
 
-				TestContentProvider testContentProvider = (TestContentProvider) ((SafeDelegateTreeContentProvider) ext.getContentProvider())
-						.getDelegateContentProvider();
+				TestContentProvider testContentProvider = (TestContentProvider) ext.getContentProvider();
 				Object[] projectChildren = testContentProvider
 						.getChildren(project);
 				assertEquals(
@@ -140,9 +138,7 @@ public class INavigatorContentServiceTests extends TestCase {
 
 		assertTrue("The test content provider was not found.", found);
 
-	}
-
-	public void testDeactivateTestExtension() {
+	}	public void testDeactivateTestExtension() {
 
 		contentService.activateExtensions(
 				new String[] { RESOURCE_EXTENSION_ID }, true);
@@ -153,13 +149,15 @@ public class INavigatorContentServiceTests extends TestCase {
 		ILabelProvider contentServiceLabelProvider = contentService
 				.createCommonLabelProvider();
 
-		Set rootContentProviders =  contentService.findRootContentExtensions(ResourcesPlugin.getWorkspace()
-				.getRoot());
+		Set rootContentProviders = contentService
+				.findRootContentExtensions(ResourcesPlugin.getWorkspace()
+						.getRoot());
 
 		assertEquals("Ensure there is only one root content provider.", 1,
 				rootContentProviders.size());
 
-		Set projectContentExtensions = contentService.findContentExtensionsByTriggerPoint(project);
+		Set projectContentExtensions = contentService
+				.findContentExtensionsByTriggerPoint(project);
 
 		assertEquals("Ensure there is one content provider for an IProject.",
 				1, projectContentExtensions.size());
@@ -172,8 +170,9 @@ public class INavigatorContentServiceTests extends TestCase {
 				.createContentService(COMMON_NAVIGATOR_INSTANCE_ID);
 		INavigatorContentDescriptor[] boundDescriptors = contentServiceWithProgrammaticBindings
 				.bindExtensions(new String[] { TEST_EXTENSION_2_ID }, false);
-		contentServiceWithProgrammaticBindings.activateExtensions(new String[] {RESOURCE_EXTENSION_ID, TEST_EXTENSION_ID, TEST_EXTENSION_2_ID}, false);
-
+		contentServiceWithProgrammaticBindings.activateExtensions(
+				new String[] { RESOURCE_EXTENSION_ID, TEST_EXTENSION_ID,
+						TEST_EXTENSION_2_ID }, false);
 
 		assertEquals("One descriptor should have been returned.", 1,
 				boundDescriptors.length);
@@ -189,11 +188,14 @@ public class INavigatorContentServiceTests extends TestCase {
 		for (int i = 0; i < visibleDescriptors.length; i++)
 			if (TEST_EXTENSION_2_ID.equals(visibleDescriptors[i].getId()))
 				found = true;
-		assertTrue("The programmatically bound extension should be bound.", found);
-		
-		Set enabledDescriptors = contentServiceWithProgrammaticBindings.findContentExtensionsByTriggerPoint(project);
-		
-		assertEquals("There should be a three extensions.", 3, enabledDescriptors.size());
+		assertTrue("The programmatically bound extension should be bound.",
+				found);
+
+		Set enabledDescriptors = contentServiceWithProgrammaticBindings
+				.findContentExtensionsByTriggerPoint(project);
+
+		assertEquals("There should be a three extensions.", 3,
+				enabledDescriptors.size());
 
 	}
 

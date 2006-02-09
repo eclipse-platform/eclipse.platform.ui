@@ -113,14 +113,14 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private INavigatorSorterService navigatorSorterService;
 
 	private INavigatorPipelineService navigatorPipelineService;
-	
+
 	private INavigatorDnDService navigatorDnDService;
 
 	private IDescriptionProvider descriptionProvider;
 
 	private boolean contentProviderInitialized;
 
-	private boolean labelProviderInitialized;	
+	private boolean labelProviderInitialized;
 
 	/**
 	 * @param aViewerId
@@ -380,9 +380,16 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	public IExtensionStateModel findStateModel(String anExtensionId) {
-		return getExtension(
-				CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(anExtensionId))
-				.getStateModel();
+		if (anExtensionId == null)
+			return null;
+		INavigatorContentDescriptor desc = CONTENT_DESCRIPTOR_REGISTRY
+				.getContentDescriptor(anExtensionId);
+		if (desc == null)
+			return null;
+		INavigatorContentExtension ext = getExtension(desc);
+		if (ext == null)
+			return null;
+		return ext.getStateModel();
 	}
 
 	/**
@@ -896,7 +903,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			navigatorPipelineService = new NavigatorPipelineService(this);
 		return navigatorPipelineService;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -960,7 +967,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		List resultProvidersList = new ArrayList();
 		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();)
 			resultProvidersList.add(((NavigatorContentExtension) itr.next())
-					.getContentProvider());
+					.internalGetContentProvider());
 		return (ITreeContentProvider[]) resultProvidersList
 				.toArray(new ITreeContentProvider[resultProvidersList.size()]);
 	}

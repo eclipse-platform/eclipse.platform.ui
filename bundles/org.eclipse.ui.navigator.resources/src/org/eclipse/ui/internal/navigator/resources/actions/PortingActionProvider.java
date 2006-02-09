@@ -31,7 +31,7 @@ import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.navigator.CommonActionProvider;
-import org.eclipse.ui.navigator.CommonActionProviderConfig;
+import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.navigator.WizardActionGroup;
@@ -70,7 +70,7 @@ public class PortingActionProvider extends CommonActionProvider {
 
 	private boolean contribute= false;
 
-	public void init(CommonActionProviderConfig aConfig) {
+	public void init(ICommonActionExtensionSite aConfig) {
 
 		Assert.isTrue(!disposed);
 

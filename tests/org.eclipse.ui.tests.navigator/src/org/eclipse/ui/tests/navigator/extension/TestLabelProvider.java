@@ -10,21 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.extension;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 
 public class TestLabelProvider extends LabelProvider implements
 		ICommonLabelProvider, IDescriptionProvider {
 
-	public void init(IExtensionStateModel aStateModel,
-			ITreeContentProvider aContentProvider) {
+	public void init(ICommonContentExtensionSite aConfig) {
 
 	}
 

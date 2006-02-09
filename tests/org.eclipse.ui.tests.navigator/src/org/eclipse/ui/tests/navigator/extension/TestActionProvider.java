@@ -15,7 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.navigator.CommonActionProvider;
-import org.eclipse.ui.navigator.CommonActionProviderConfig;
+import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 public class TestActionProvider extends CommonActionProvider {
@@ -26,7 +26,7 @@ public class TestActionProvider extends CommonActionProvider {
 	
 	private IAction action = null;
 	
-	public void init(CommonActionProviderConfig aConfig) {
+	public void init(ICommonActionExtensionSite aConfig) {
 		 action = new TestAction(aConfig.getViewSite().getShell());
 	}
 	

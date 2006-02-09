@@ -62,7 +62,7 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 *            The configuration information for the instantiated Common
 	 *            Action Provider.
 	 */
-	public abstract void init(CommonActionProviderConfig aConfig);
+	public abstract void init(ICommonActionExtensionSite aConfig);
 
 	/**
 	 * <p>

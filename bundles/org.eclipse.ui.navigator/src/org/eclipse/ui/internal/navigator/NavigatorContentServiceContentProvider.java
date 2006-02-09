@@ -22,7 +22,6 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
-import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 
 /**
@@ -141,7 +140,7 @@ public class NavigatorContentServiceContentProvider implements
 				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
 						rootContentExtensions)) {
 
-					contributedChildren = foundExtension.getContentProvider()
+					contributedChildren = foundExtension.internalGetContentProvider()
 							.getElements(anInputElement);
 
 					overridingExtensions = foundExtension
@@ -227,7 +226,7 @@ public class NavigatorContentServiceContentProvider implements
 				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
 						enabledExtensions)) {
 
-					contributedChildren = foundExtension.getContentProvider()
+					contributedChildren = foundExtension.internalGetContentProvider()
 							.getChildren(aParentElement);
 
 					overridingExtensions = foundExtension
@@ -292,15 +291,18 @@ public class NavigatorContentServiceContentProvider implements
 		NavigatorContentExtension[] overridingExtensions;
 		Set pipelinedChildren = theCurrentChildren;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
-			pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
-					.getContentProvider();
-			pipelinedContentProvider.getPipelinedChildren(
-					aParent, pipelinedChildren);
-			overridingExtensions = theOverridingExtensions[i]
-					.getOverridingExtensionsForTriggerPoint(aParent);
-			if (overridingExtensions.length > 0)
-				pipelinedChildren = pipelineChildren(aParent,
-						overridingExtensions, pipelinedChildren);
+
+			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
+						.getContentProvider();
+				pipelinedContentProvider.getPipelinedChildren(aParent,
+						pipelinedChildren);
+				overridingExtensions = theOverridingExtensions[i]
+						.getOverridingExtensionsForTriggerPoint(aParent);
+				if (overridingExtensions.length > 0)
+					pipelinedChildren = pipelineChildren(aParent,
+							overridingExtensions, pipelinedChildren);
+			}
 		}
 
 		return pipelinedChildren;
@@ -328,17 +330,20 @@ public class NavigatorContentServiceContentProvider implements
 		NavigatorContentExtension[] overridingExtensions;
 		Set pipelinedElements = theCurrentElements;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
-			pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
-					.getContentProvider();
 
-			pipelinedContentProvider.getPipelinedElements(
-					anInputElement, pipelinedElements);
+			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
+						.getContentProvider();
 
-			overridingExtensions = theOverridingExtensions[i]
-					.getOverridingExtensionsForTriggerPoint(anInputElement);
-			if (overridingExtensions.length > 0)
-				pipelinedElements = pipelineElements(anInputElement,
-						overridingExtensions, pipelinedElements);
+				pipelinedContentProvider.getPipelinedElements(anInputElement,
+						pipelinedElements);
+
+				overridingExtensions = theOverridingExtensions[i]
+						.getOverridingExtensionsForTriggerPoint(anInputElement);
+				if (overridingExtensions.length > 0)
+					pipelinedElements = pipelineElements(anInputElement,
+							overridingExtensions, pipelinedElements);
+			}
 		}
 		return pipelinedElements;
 	}
@@ -409,7 +414,7 @@ public class NavigatorContentServiceContentProvider implements
 				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
 						extensions)) {
 
-					parent = foundExtension.getContentProvider().getParent(
+					parent = foundExtension.internalGetContentProvider().getParent(
 							anElement);
 
 					overridingExtensions = foundExtension
@@ -468,19 +473,22 @@ public class NavigatorContentServiceContentProvider implements
 			NavigatorContentExtension[] theOverridingExtensions,
 			Object aSuggestedParent) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
-		NavigatorContentExtension[] overridingExtensions; 
+		NavigatorContentExtension[] overridingExtensions;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
-			pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
-					.getContentProvider();
 
-			aSuggestedParent = pipelinedContentProvider.getPipelinedParent(
-					anInputElement, aSuggestedParent);
+			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
+						.getContentProvider();
 
-			overridingExtensions = theOverridingExtensions[i]
-					.getOverridingExtensionsForTriggerPoint(anInputElement);
-			if (overridingExtensions.length > 0)
-				aSuggestedParent = pipelineParent(anInputElement,
-						overridingExtensions, aSuggestedParent);
+				aSuggestedParent = pipelinedContentProvider.getPipelinedParent(
+						anInputElement, aSuggestedParent);
+
+				overridingExtensions = theOverridingExtensions[i]
+						.getOverridingExtensionsForTriggerPoint(anInputElement);
+				if (overridingExtensions.length > 0)
+					aSuggestedParent = pipelineParent(anInputElement,
+							overridingExtensions, aSuggestedParent);
+			}
 		}
 		return aSuggestedParent;
 	}
@@ -501,12 +509,12 @@ public class NavigatorContentServiceContentProvider implements
 		Set resultInstances = contentService
 				.findContentExtensionsByTriggerPoint(anElement);
 
-		INavigatorContentExtension ext;
+		NavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
-			ext = (INavigatorContentExtension) itr.next();
+			ext = (NavigatorContentExtension) itr.next();
 			if (!ext.isLoaded())
 				return true;
-			else if (ext.getContentProvider().hasChildren(anElement))
+			else if (ext.internalGetContentProvider().hasChildren(anElement))
 				return true;
 		}
 

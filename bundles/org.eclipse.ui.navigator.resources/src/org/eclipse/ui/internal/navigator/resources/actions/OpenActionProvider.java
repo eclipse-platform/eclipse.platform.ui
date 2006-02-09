@@ -14,7 +14,7 @@ import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.internal.navigator.AdaptabilityUtility;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
-import org.eclipse.ui.navigator.CommonActionProviderConfig;
+import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
@@ -33,7 +33,7 @@ public class OpenActionProvider extends CommonActionProvider {
 
 	private boolean contribute = false;
 
-	public void init(CommonActionProviderConfig aConfig) {
+	public void init(ICommonActionExtensionSite aConfig) {
 		if (aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
 			viewSite = (ICommonViewerWorkbenchSite) aConfig.getViewSite();
 			openFileAction = new OpenFileAction(viewSite.getPage());

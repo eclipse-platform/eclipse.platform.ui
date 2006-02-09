@@ -109,9 +109,23 @@ public class NavigatorContentExtension implements IMementoAware,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getContentProvider()
+	 * @see org.eclipse.ui.navigator.INavigatorContentExtension#getContentProvider()
 	 */
 	public ITreeContentProvider getContentProvider() {
+
+		ITreeContentProvider provider = internalGetContentProvider();
+		if (provider != SkeletonTreeContentProvider.INSTANCE)
+			return ((SafeDelegateTreeContentProvider) provider)
+					.getDelegateContentProvider();
+		return provider;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getContentProvider()
+	 */
+	public ITreeContentProvider internalGetContentProvider() {
 		if (contentProvider != null || contentProviderInitializationFailed)
 			return contentProvider;
 		synchronized (this) {
@@ -122,7 +136,8 @@ public class NavigatorContentExtension implements IMementoAware,
 					if (treeContentProvider != null) {
 						contentProvider = new SafeDelegateTreeContentProvider(
 								treeContentProvider, descriptor, contentService);
-						contentProvider.init(getStateModel(), appliedMemento);
+						contentProvider.init(new CommonContentExtensionSite(
+								getId(), contentService, appliedMemento));
 						viewerManager.initialize(contentProvider);
 					} else
 						contentProvider = SkeletonTreeContentProvider.INSTANCE;
@@ -157,15 +172,12 @@ public class NavigatorContentExtension implements IMementoAware,
 
 					if (tempLabelProvider instanceof ICommonLabelProvider) {
 						labelProvider = (ICommonLabelProvider) tempLabelProvider;
-						if (getContentProvider() instanceof SafeDelegateTreeContentProvider)
-							labelProvider
-									.init(
-											getStateModel(),
-											((SafeDelegateTreeContentProvider) getContentProvider())
-													.getDelegateContentProvider());
+						if (internalGetContentProvider() instanceof SafeDelegateTreeContentProvider)
+							labelProvider.init(new CommonContentExtensionSite(
+									getId(), contentService, appliedMemento));
 						else
-							labelProvider.init(getStateModel(),
-									SkeletonTreeContentProvider.INSTANCE);
+							labelProvider.init(new CommonContentExtensionSite(
+									getId(), contentService, appliedMemento));
 					} else {
 						labelProvider = new SafeDelegateCommonLabelProvider(
 								tempLabelProvider);
@@ -326,8 +338,8 @@ public class NavigatorContentExtension implements IMementoAware,
 	public NavigatorContentExtension[] getOverridingExtensionsForPossibleChild(
 			Object anElement) {
 		if (!descriptor.hasOverridingExtensions())
-			return NO_EXTENSIONS; 
-		
+			return NO_EXTENSIONS;
+
 		NavigatorContentDescriptor overriddingDescriptor;
 		Set overridingExtensions = new HashSet();
 		for (Iterator contentDescriptorsItr = descriptor

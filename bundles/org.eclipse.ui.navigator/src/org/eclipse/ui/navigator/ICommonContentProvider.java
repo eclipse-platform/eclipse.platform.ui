@@ -11,24 +11,22 @@
 package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.IMemento;
 
 /**
  * 
- * The Common content provider allows extensions to vary their behavior based on
- * properties in the extension model and the given memento. The state model
- * should be initialized from values in the memento if necessary.
+ * The {@link ICommonContentProvider} allows extensions to vary their behavior
+ * based on properties in the extension model and the given memento. The state
+ * model should be initialized from values in the memento if necessary.
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
+ * Clients may (but are not required to) implement this interface if there is no
+ * cause to do so. {@link ITreeContentProvider} is respected by the Common
+ * Navigator.
  * </p>
  * 
  * <p>
- * Clients may (but are not required to) implement this interface if there is no cause to
- * do so. {@link ITreeContentProvider} is respected by the Common Navigator.
+ * Clients should refer to the <b>org.eclipse.ui.navigator.navigatorContent</b>
+ * extension point for more information on building a content extension.
  * </p>
  * 
  * @since 3.2
@@ -38,18 +36,15 @@ public interface ICommonContentProvider extends ITreeContentProvider,
 		IMementoAware {
 
 	/**
-	 * Initialize the content provider with the given extension model and
-	 * memento.
+	 * Initialize the content provider with the given configuration.
 	 * 
-	 * @param aStateModel
-	 *            The state model associated with this logical extension.
-	 * @param aMemento
-	 *            The associated memento for the given viewer. Clients should
-	 *            ensure that the memento keys are unique; perhaps using the id
-	 *            of the content extension as a prefix.
+	 * @param aConfig
+	 *            The extension site provides information that some extensions
+	 *            will find useful to configure themselves properly in a
+	 *            particular viewer.
 	 * 
 	 * @see ICommonLabelProvider
 	 */
-	void init(IExtensionStateModel aStateModel, IMemento aMemento);
+	void init(ICommonContentExtensionSite aConfig);
 
 }

@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.navigator.extensions;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * @since 3.2
@@ -95,7 +95,7 @@ public final class SkeletonTreeContentProvider implements ICommonContentProvider
 
 	}
 
-	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
+	public void init(ICommonContentExtensionSite aConfig) {
 
 	}
 
