@@ -13,9 +13,6 @@ package org.eclipse.jface.action;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -36,7 +33,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * </p>
  */
 public class ToolBarManager extends ContributionManager implements
-		IToolBarManager2 {
+		IToolBarManager {
 
 	/**
 	 * The tool bar items style; <code>SWT.NONE</code> by default.
@@ -56,12 +53,6 @@ public class ToolBarManager extends ContributionManager implements
 	 */
 	private MenuManager contextMenuManager = null;
 
-	/**
-	 * A collection of objects listening to changes to this manager. This
-	 * collection is <code>null</code> if there are no listeners.
-	 */
-	private transient ListenerList listenerList = null;
-	
 	/**
 	 * Creates a new tool bar manager with the default SWT button style. Use the
 	 * <code>createControl</code> method to create the tool bar control.
@@ -191,7 +182,6 @@ public class ToolBarManager extends ContributionManager implements
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
 		if ((oldCount == 0) != (newCount == 0))
 			layoutBar.getParent().layout();
-		firePropertyChange(PROP_LAYOUT, new Integer(oldCount), new Integer(newCount));
 	}
 
 	/**
@@ -403,92 +393,6 @@ public class ToolBarManager extends ContributionManager implements
 		this.contextMenuManager = contextMenuManager;
 		if (toolBar != null) {
 			toolBar.setMenu(getContextMenuControl());
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IToolBarManager2#createControl2(org.eclipse.swt.widgets.Composite)
-	 */
-	public Control createControl2(Composite parent) {
-		return createControl(parent);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IToolBarManager2#getControl2()
-	 */
-	public Control getControl2() {
-		return getControl();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IToolBarManager2#getItemCount()
-	 */
-	public int getItemCount() {
-		if (!toolBarExist())
-			return 0;
-		return toolBar.getItemCount();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IToolBarManager2#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		if (listenerList == null) {
-			listenerList = new ListenerList(ListenerList.IDENTITY);
-		}
-
-		listenerList.add(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IToolBarManager2#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		if (listenerList != null) {
-			listenerList.remove(listener);
-
-			if (listenerList.isEmpty()) {
-				listenerList = null;
-			}
-		}
-	}
-	
-	/*
-	 * Returns the listeners attached to this event manager.
-	 * The listeners currently attached; may be empty, but never
-	 * null.
-	 */
-	protected final Object[] getListeners() {
-		final ListenerList list = listenerList;
-		if (list == null) {
-			return new Object[0];
-		}
-
-		return list.getListeners();
-	}
-
-	/*
-	 * Notifies any property change listeners that a property has changed. Only
-	 * listeners registered at the time this method is called are notified.
-	 */
-	private void firePropertyChange(final PropertyChangeEvent event) {
-		final Object[] list = getListeners();
-		for (int i = 0; i < list.length; ++i) {
-			((IPropertyChangeListener) list[i]).propertyChange(event);
-		}
-	}
-
-	/*
-	 * Notifies any property change listeners that a property has changed. Only
-	 * listeners registered at the time this method is called are notified. This
-	 * method avoids creating an event object if there are no listeners
-	 * registered, but calls firePropertyChange(PropertyChangeEvent) if there are.
-	 */
-	private void firePropertyChange(final String propertyName,
-			final Object oldValue, final Object newValue) {
-		if (listenerList != null) {
-			firePropertyChange(new PropertyChangeEvent(this, propertyName,
-					oldValue, newValue));
 		}
 	}
 
