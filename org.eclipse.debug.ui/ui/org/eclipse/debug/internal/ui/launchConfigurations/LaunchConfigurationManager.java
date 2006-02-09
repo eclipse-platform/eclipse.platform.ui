@@ -164,7 +164,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns whether the given launch configuraiton should be visible in the
+	 * Returns whether the given launch configuration should be visible in the
 	 * debug ui. If the config is marked as private, or belongs to a different
 	 * category (i.e. non-null), then this configuration should not be displayed
 	 * in the debug ui.
@@ -387,7 +387,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		try {
 			// Parse the history file
 			stream = new FileInputStream(file);
-			rootHistoryElement = null;
 			try {
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				parser.setErrorHandler(new DefaultHandler());
@@ -433,7 +432,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	
 	/**
 	 * Construct a launch configuration corresponding to the specified XML
-	 * element, and place it in the approriate history.
+	 * element, and place it in the appropriate history.
 	 */
 	private void createHistoryElement(Element entry, LaunchHistory[] histories) {
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
@@ -455,7 +454,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	
 	/**
 	 * Construct a launch configuration corresponding to the specified XML
-	 * element, and place it in the approriate history's recent launch
+	 * element, and place it in the appropriate history's recent launch
 	 */
 	private void createRecentElement(Element entry, LaunchHistory[] histories) {
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
