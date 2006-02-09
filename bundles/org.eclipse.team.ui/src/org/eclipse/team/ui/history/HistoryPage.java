@@ -14,11 +14,29 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.part.Page;
 
 /**
- * Abstract HistoryPage class.
+ * Abstract HistoryPage class that keeps track of the history page site.
+ * <p>
+ * Clients may subclass this class.
  * @see IHistoryPage
  * @since 3.2
  */
 public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptable {
+	
+	private IHistoryPageSite site;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryPage#setSite(org.eclipse.team.ui.history.IHistoryPageSite)
+	 */
+	public void setSite(IHistoryPageSite site) {
+		this.site = site;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryPage#getHistoryPageSite()
+	 */
+	public IHistoryPageSite getHistoryPageSite() {
+		return site;
+	}
 
 
 }

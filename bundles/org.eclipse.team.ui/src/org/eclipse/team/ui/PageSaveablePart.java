@@ -163,7 +163,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 			hsplitter.setMaximizedControl(fEditionPane);
 		}
 		
-		getPageSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
+		getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ICompareInput input = getCompareInput(event.getSelection());
 				if (input != null)
@@ -174,10 +174,12 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	}
 	
 	/**
-	 * Return the selection provider for the page.
+	 * Return the selection provider for the page. This method is
+	 * called after the page is created in order to register a
+	 * selection listener on the page.
 	 * @return the selection provider for the page
 	 */
-	protected abstract ISelectionProvider getPageSelectionProvider();
+	protected abstract ISelectionProvider getSelectionProvider();
 
 	/**
 	 * Create the page for this part and return the top level control 
@@ -193,7 +195,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	 * will appear in the header of the pane containing the page.
 	 * @param title the page's title
 	 */
-	protected void setPageTitle(String title) {
+	protected void setPageDescription(String title) {
 		fEditionPane.setText(title);
 	}
 	

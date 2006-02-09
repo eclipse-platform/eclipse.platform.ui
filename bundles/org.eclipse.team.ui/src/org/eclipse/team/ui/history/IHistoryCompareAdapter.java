@@ -15,13 +15,15 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Used to display the contents of an IHistoryPage in a dialog
+ * An adaptation for a history page for displaying comparisons
+ * triggered by history page selections.
  * 
  * @since 3.2
  * @see HistoryPageSaveablePart
  * @see IHistoryPage
  */
 public interface IHistoryCompareAdapter {
+	
 	/**
 	 * Returns an ICompareInput for the passed in object
 	 * @param object
@@ -29,6 +31,14 @@ public interface IHistoryCompareAdapter {
 	 */
 	public ICompareInput getCompareInput(Object object);
 	
+	/**
+	 * Prepare the compare inpur for display. Clients can perform
+	 * any long running preparations and assign labels to the
+	 * compare configuration.
+	 * @param input the compare input
+	 * @param configuration the compare configuration
+	 * @param monitor a progress monitor
+	 */
 	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor);
 	
 }

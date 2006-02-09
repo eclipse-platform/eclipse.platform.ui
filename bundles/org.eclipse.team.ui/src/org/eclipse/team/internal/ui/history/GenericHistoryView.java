@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -279,6 +278,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 	/**
 	 * Enabled linking to the active editor
+	 * @param enabled 
 	 */
 	public void setLinkingEnabled(boolean enabled) {
 		this.linkingEnabled = enabled;
@@ -418,7 +418,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				return localItemDropped(resource);
 			}
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
-			Object tempPageSource = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
+			Object tempPageSource = Utils.getAdapter(fileHistory, IHistoryPageSource.class);
 			if (tempPageSource instanceof IHistoryPageSource) {
 				IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
 

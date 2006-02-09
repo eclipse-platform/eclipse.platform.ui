@@ -23,7 +23,7 @@ import org.eclipse.ui.part.Page;
  *  
  * <p>
  * This interface is not intended to be implemented by clients.
- * Clients can instead subclass {@link HistoryPage}.
+ * Clients can instead subclass {@link HistoryPageSource}.
  *  
  * @see IFileHistoryProvider
  * @since 3.2
@@ -31,9 +31,16 @@ import org.eclipse.ui.part.Page;
 public interface IHistoryPageSource {
 	
 	/**
+	 * Returns true if this history page source can show a history for the given object, false if it cannot
+	 * @param object the object that is to have history shown
+	 * @return boolean 
+	 */
+	public boolean canShowHistoryFor(Object object);
+	
+	/**
 	 * Called by the historyview to create the page for this IFileHistoryProvider. The
 	 * page must implement {@link IHistoryPage}.
-	 * @param object TODO
+	 * @param object the object whose history is to be shown
 	 * 
 	 * @see IHistoryPage
 	 * @return a Page that implements IHistoryPage (should return either an IPage, IPageBookViewPage or an IHistoryPage

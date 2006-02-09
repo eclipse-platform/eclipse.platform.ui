@@ -184,14 +184,14 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.PageSaveablePart#getPageSelectionProvider()
 	 */
-	protected ISelectionProvider getPageSelectionProvider() {
+	protected final ISelectionProvider getSelectionProvider() {
 		return ((ISynchronizePage)page).getViewer();
 	}
 	
 	private void updateDescription() {
 		String description = (String)pageConfiguration.getProperty(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION);
 		if (description != null) {
-			setPageTitle(description);
+			setPageDescription(description);
 		}
 	}
 	

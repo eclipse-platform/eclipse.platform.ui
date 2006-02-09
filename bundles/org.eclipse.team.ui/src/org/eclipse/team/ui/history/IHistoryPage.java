@@ -11,21 +11,27 @@
 
 package org.eclipse.team.ui.history;
 
+import org.eclipse.team.ui.TeamUI;
+
 
 /**
- * TODO: provide a comment and an abstract class
+ * Interface for pages that appear in the team history view.
  * <p>
  * This interface is not intended to be implemented by clients.
  * Clients can instead subclass {@link HistoryPage}.
  * 
+ * @see TeamUI#getHistoryView()
  * @since 3.2
  */
 public interface IHistoryPage {
+	
 	/**
 	 * Fetches and populates the history page for the given Object. Clients
 	 * should provide an implementation for their individual pages.
 	 * 
-	 * @param object	the object for which history is being requested for
+	 * @param object the object for which history is being requested for
+	 * @param refetch whether the history should be refecthed if the page is already showing the 
+	 * history for the given object
 	 * @return true if the page was able to display the history for the object, false otherwise
 	 */
 	public boolean showHistory(Object object, boolean refetch);
@@ -39,7 +45,6 @@ public interface IHistoryPage {
 
 	/**
 	 * Requests a refresh of the information presented by the history page.
-	 *
 	 */
 	public void refresh();
 
@@ -48,18 +53,28 @@ public interface IHistoryPage {
 	 * @return String containing the name of the object 
 	 */
 	public String getName();
+	
+	/**
+	 * Returns a one line description of the object whose history is
+	 * being displayed. For example, for files, this may be the 
+	 * workspace path of the file. The discription may be displayed to
+	 * the user as tooltip text or by some other means.
+	 * @return a one line description of the object whose history is
+	 * being displayed or <code>null</code>
+	 */
+	public String getDescription();
 
 	/**
 	 * Set the site for the page - this needs to be replaced with a proper
-	 * IHistoryPageSite in order to allow history pages to be displayed in 
-	 * both views and dialogs
-	 * @param viewSite
+	 * {@link IHistoryPageSite} in order to allow history pages to be displayed in 
+	 * both views and dialogs.
+	 * @param site the history page site
 	 */
-	public void setSite(IHistoryPageSite viewSite);
+	public void setSite(IHistoryPageSite site);
 	
 	/**
-	 * Returns the IHistoryPageSite set for this page.
-	 * @return an IHistoryPageSite
+	 * Returns the {@link IHistoryPageSite} set for this page.
+	 * @return the history page site for this page
 	 */
 	public IHistoryPageSite getHistoryPageSite();
 }

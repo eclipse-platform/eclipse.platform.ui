@@ -15,13 +15,17 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.history.DialogHistoryPageSite;
 import org.eclipse.team.ui.PageSaveablePart;
+import org.eclipse.team.ui.SaveablePartDialog;
 import org.eclipse.ui.part.Page;
 
 /**
@@ -32,17 +36,49 @@ import org.eclipse.ui.part.Page;
  */
 public class HistoryPageSaveablePart extends PageSaveablePart {
 
-	IHistoryPage historyPage;
+	private IHistoryPage historyPage;
+	private DialogHistoryPageSite site;
+	private final Object object;
+	private final IHistoryPageSource pageSource;
 	
 	/**
-	 * Create a history page part for the given page.
+	 * Show the history for the object in a dialog. The history will only be
+	 * shown if an {@link IHistoryPageSource} can be found for the object.
+	 * @param shell the parent sell
+	 * @param object the object
+	 * @return whether the object had an {@link IHistoryPageSource} availabel or not
+	 */
+	public static boolean showHistoryInDialog(Shell shell, Object object) {
+		IHistoryPageSource pageSource = HistoryPageSource.getHistoryPageSource(object);
+		if (pageSource != null && pageSource.canShowHistoryFor(object)) {
+			CompareConfiguration cc = new CompareConfiguration();
+			cc.setLeftEditable(isFile(object));
+			cc.setRightEditable(false);
+			HistoryPageSaveablePart input = new HistoryPageSaveablePart(shell, cc, pageSource, object);
+			SaveablePartDialog cd = new SaveablePartDialog(shell, input);
+			cd.setBlockOnOpen(true);
+			cd.open();
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean isFile(Object object) {
+		IResource resource = Utils.getResource(object);
+		return (resource != null && resource.getType() == IResource.FILE);
+	}
+	
+	/**
+	 * Create a history page part for the given page and object.
 	 * @param shell the parent shell
 	 * @param configuration the compare configuration
-	 * @param page the page
+	 * @param pageSource the page source
+	 * @param object the object whose history is to be displayed
 	 */
-	public HistoryPageSaveablePart(Shell shell, CompareConfiguration configuration, IHistoryPage page) {
+	public HistoryPageSaveablePart(Shell shell, CompareConfiguration configuration, IHistoryPageSource pageSource, Object object) {
 		super(shell,configuration);
-		this.historyPage = page;
+		this.pageSource = pageSource;
+		this.object = object;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.PageSaveablePart#getTitle()
@@ -68,19 +104,24 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 	 * @see org.eclipse.team.ui.PageSaveablePart#createPage(org.eclipse.swt.widgets.Composite, org.eclipse.jface.action.ToolBarManager)
 	 */
 	protected Control createPage(Composite parent, ToolBarManager toolBarManager) {
-		IHistoryPageSite pageSite = historyPage.getHistoryPageSite();
-		pageSite.setToolBarManager(toolBarManager);
+		site = new DialogHistoryPageSite(getShell());
+		historyPage = (IHistoryPage)pageSource.createPage(object);
+		historyPage.setSite(site);
+		site.setToolBarManager(toolBarManager);
 		((Page) historyPage).createControl(parent);
-		historyPage.refresh();	
-		setPageTitle(historyPage.getName());
+		historyPage.showHistory(object, true);
+		String description = historyPage.getDescription();
+		if (description == null)
+			description = ""; //$NON-NLS-1$
+		setPageDescription(description);
 		return ((Page) historyPage).getControl();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.PageSaveablePart#getPageSelectionProvider()
 	 */
-	protected ISelectionProvider getPageSelectionProvider() {
-		return historyPage.getHistoryPageSite().getSelectionProvider();
+	protected final ISelectionProvider getSelectionProvider() {
+		return site.getSelectionProvider();
 	}
 	
 	/* (non-Javadoc)

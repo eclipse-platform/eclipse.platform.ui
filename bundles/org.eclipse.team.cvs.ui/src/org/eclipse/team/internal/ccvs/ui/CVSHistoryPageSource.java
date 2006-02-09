@@ -11,6 +11,7 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.team.ui.history.HistoryPageSource;
 import org.eclipse.ui.part.Page;
 
@@ -19,6 +20,10 @@ public class CVSHistoryPageSource extends HistoryPageSource {
 	public Page createPage(Object object) {
 		CVSHistoryPage page = new CVSHistoryPage(object);
 		return page;
+	}
+
+	public boolean canShowHistoryFor(Object object) {
+		return (object instanceof IResource && ((IResource) object).getType() == IResource.FILE);
 	}
 
 }

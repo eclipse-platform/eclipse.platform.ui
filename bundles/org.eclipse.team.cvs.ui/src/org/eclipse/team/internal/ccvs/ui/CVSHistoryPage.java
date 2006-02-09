@@ -57,6 +57,7 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryCompareAdapter {
@@ -102,8 +103,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	protected RefreshCVSFileHistory  refreshCVSFileHistoryJob;
 
-	private IHistoryPageSite parentSite;
-
 	/* private */boolean shutdown = false;
 
 	boolean localFilteredOut = false;
@@ -143,6 +142,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 		setViewerVisibility();
 		
+		IHistoryPageSite parentSite = getHistoryPageSite();
 		if (parentSite != null && parentSite instanceof DialogHistoryPageSite && tableViewer != null)
 			parentSite.setSelectionProvider(tableViewer);
 		
@@ -427,42 +427,51 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		menuMgr.setRemoveAllWhenShown(true);
 		tableViewer.getTable().setMenu(menu);
 		//Don't add the object contribution menu items if this page is hosted in a dialog
-		if (!parentSite.isModal())
-			parentSite.getWorkbenchPartSite().registerContextMenu(menuMgr, tableViewer);
-
-		// Contribute toggle text visible to the toolbar drop-down
-		IActionBars actionBars= parentSite.getActionBars();
-		IMenuManager actionBarsMenu = actionBars.getMenuManager();
-		if (actionBarsMenu != null){
-			actionBarsMenu.add(toggleCompareAction);
-			actionBarsMenu.add(toggleOpenAction);
-			actionBarsMenu.add(new Separator());
-			actionBarsMenu.add(toggleTextWrapAction);
-			actionBarsMenu.add(new Separator());
-			actionBarsMenu.add(toggleTextAction);
-			actionBarsMenu.add(toggleListAction);
+		IHistoryPageSite parentSite = getHistoryPageSite();
+		if (!parentSite.isModal()) {
+			IWorkbenchPart part = parentSite.getPart();
+			if (part != null) {
+				IWorkbenchPartSite workbenchPartSite = part.getSite();
+				workbenchPartSite.registerContextMenu(menuMgr, tableViewer);
+			}
+			IPageSite pageSite = parentSite.getWorkbenchPageSite();
+			if (pageSite != null) {
+				IActionBars actionBars = pageSite.getActionBars();
+				// Contribute toggle text visible to the toolbar drop-down
+				IMenuManager actionBarsMenu = actionBars.getMenuManager();
+				if (actionBarsMenu != null){
+					actionBarsMenu.add(toggleCompareAction);
+					actionBarsMenu.add(toggleOpenAction);
+					actionBarsMenu.add(new Separator());
+					actionBarsMenu.add(toggleTextWrapAction);
+					actionBarsMenu.add(new Separator());
+					actionBarsMenu.add(toggleTextAction);
+					actionBarsMenu.add(toggleListAction);
+				}
+				// Create actions for the text editor
+				copyAction = new TextViewerAction(textViewer, ITextOperationTarget.COPY);
+				copyAction.setText(CVSUIMessages.HistoryView_copy); 
+				actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
+				
+				selectAllAction = new TextViewerAction(textViewer, ITextOperationTarget.SELECT_ALL);
+				selectAllAction.setText(CVSUIMessages.HistoryView_selectAll); 
+				actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
+				
+				actionBars.updateActionBars();
+			}
 		}
 		
 		cvsHistoryFilter = new CVSHistoryFilterAction(this);
 		cvsHistoryFilter.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
 		cvsHistoryFilter.init(tableViewer);
 		//Create the local tool bar
-		IToolBarManager tbm = actionBars.getToolBarManager();
-		//Take out history support for now
-		tbm.add(localHistoryFilterAction);
-		tbm.add(cvsHistoryFilter);
-		tbm.update(false);
-		
-		// Create actions for the text editor
-		copyAction = new TextViewerAction(textViewer, ITextOperationTarget.COPY);
-		copyAction.setText(CVSUIMessages.HistoryView_copy); 
-		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
-		
-		selectAllAction = new TextViewerAction(textViewer, ITextOperationTarget.SELECT_ALL);
-		selectAllAction.setText(CVSUIMessages.HistoryView_selectAll); 
-		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
-
-		actionBars.updateActionBars();
+		IToolBarManager tbm = parentSite.getToolBarManager();
+		if (tbm != null) {
+			//Take out history support for now
+			tbm.add(localHistoryFilterAction);
+			tbm.add(cvsHistoryFilter);
+			tbm.update(false);
+		}
 
 		menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
@@ -487,6 +496,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	/* private */ void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
+		IHistoryPageSite parentSite = getHistoryPageSite();
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 		if (file != null &&
 		  !(file instanceof RemoteFile)) {
@@ -607,6 +617,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						}
 					}							
 				} catch (InvocationTargetException e) {
+					IHistoryPageSite parentSite = getHistoryPageSite();
 					CVSUIPlugin.openError(parentSite.getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
 				} catch (InterruptedException e) {
 					// Do nothing
@@ -629,6 +640,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if(file.isModified(null)) {
 					String title = CVSUIMessages.HistoryView_overwriteTitle; 
 					String msg = CVSUIMessages.HistoryView_overwriteMsg; 
+					IHistoryPageSite parentSite = getHistoryPageSite();
 					final MessageDialog dialog = new MessageDialog(parentSite.getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
 					final int[] result = new int[1];
 					parentSite.getShell().getDisplay().syncExec(new Runnable() {
@@ -685,7 +697,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
-		Utils.schedule(refreshCVSFileHistoryJob, /*getSite()*/parentSite.getWorkbenchPartSite());
+		IHistoryPageSite parentSite = getHistoryPageSite();
+		Utils.schedule(refreshCVSFileHistoryJob, parentSite.getWorkbenchPageSite());
 	}
 
 	/**
@@ -726,6 +739,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		//check to see if this page is being shown in a dialog, in which case
 		//don't show the text and list panes
+		IHistoryPageSite parentSite = getHistoryPageSite();
 		if (parentSite.isModal()){
 			showText = false;
 			showList = false;
@@ -934,10 +948,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return "";
 	}
 
-	public void setSite(IHistoryPageSite historySite) {
-		this.parentSite = historySite;
-	}
-
 	/*
 	 * Used to reset sorting in CVSHistoryTableProvider for
 	 * changes to local revisions displays. Local revisions don't
@@ -946,10 +956,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 */
 	public void setSorter(boolean localDisplayed) {
 		historyTableProvider.setLocalRevisionsDisplayed(localDisplayed);
-	}
-
-	public IHistoryPageSite getHistoryPageSite() {
-		return parentSite;
 	}
 
 	public Object getAdapter(Class adapter) {
@@ -1030,5 +1036,15 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		}
 		return label;
+	}
+
+	public String getDescription() {
+		try {
+			if (file != null)
+				return file.getRepositoryRelativePath();
+		} catch (CVSException e) {
+			// Ignore
+		}
+		return null;
 	}
 }

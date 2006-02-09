@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ui.history.IHistoryPageSite;
@@ -27,8 +27,8 @@ public class WorkbenchHistoryPageSite implements IHistoryPageSite {
 		this.site = site;
 	}
 	
-	public IWorkbenchPartSite getWorkbenchPartSite() {
-		return part.getSite();
+	public IPageSite getWorkbenchPageSite() {
+		return site;
 	}
 
 	public IWorkbenchPart getPart() {
@@ -36,7 +36,7 @@ public class WorkbenchHistoryPageSite implements IHistoryPageSite {
 	}
 
 	public Shell getShell() {
-		return part.getSite().getShell();
+		return site.getShell();
 	}
 
 	public ISelectionProvider getSelectionProvider() {
@@ -45,30 +45,18 @@ public class WorkbenchHistoryPageSite implements IHistoryPageSite {
 
 	public void setSelectionProvider(ISelectionProvider provider) {
 		site.setSelectionProvider(provider);
-
-	}
-
-	public IKeyBindingService getKeyBindingService() {
-		return part.getSite().getKeyBindingService();
 	}
 
 	public void setFocus() {
 		part.getSite().getPage().activate(part);
 	}
-
-	public IActionBars getActionBars() {
-		return site.getActionBars();
-	}
 	
-
 	public boolean isModal() {
 		return false;
 	}
 
-	public void setToolBarManager(ToolBarManager toolBarManager) {
-		//not needed
-
+	public IToolBarManager getToolBarManager() {
+		return site.getActionBars().getToolBarManager();
 	}
-
 
 }

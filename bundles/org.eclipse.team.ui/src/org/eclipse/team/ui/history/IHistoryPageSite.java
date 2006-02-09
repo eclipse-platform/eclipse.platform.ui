@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.ui.history;
 
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.IPageSite;
 
 /**
  * A site which provides access to the context in which this page
@@ -33,18 +34,21 @@ import org.eclipse.ui.*;
  * @since 3.2
  */
 public interface IHistoryPageSite {
-	/**
-	 * Return the workbench part site for the page
-	 * or <code>null</code> if a workbench part site is not available (e.g. if
-	 * the page is being shown in a dialog). 
-	 * @return the workbench part site for the page or <code>null</code>
-	 */
-	IWorkbenchPartSite getWorkbenchPartSite();
 	
 	/**
-	 * Return the workbench part for the page
-	 * or <code>null</code> if a workbench part is not available (e.g. if
-	 * the page is being shown in a dialog). 
+	 * Return the workbench page site for the page or <code>null</code> if a
+	 * workbench page site is not available (e.g. if the page is being shown in
+	 * a dialog).
+	 * 
+	 * @return the workbench page site for the page or <code>null</code>
+	 */
+	IPageSite getWorkbenchPageSite();
+	
+	/**
+	 * Return the workbench part for the page or <code>null</code> if a
+	 * workbench part is not available (e.g. if the page is being shown in a
+	 * dialog).
+	 * 
 	 * @return the workbench part for the page or <code>null</code>
 	 */
 	IWorkbenchPart getPart();
@@ -69,30 +73,19 @@ public interface IHistoryPageSite {
 	void setSelectionProvider(ISelectionProvider provider);
 
 	/**
-	 * Get the keybinding service for the site or <code>null</code>
-	 * if one is not available.
-	 * @return the keybinding service for the site or <code>null</code>
-	 * if one is not available
-	 */
-	IKeyBindingService getKeyBindingService();
-
-	/**
 	 * Give the page focus.
 	 */
 	void setFocus();
 	
 	/**
-	 * Returns the action bars for this history page site.
+	 * Returns the toolbar manager for this site or <code>null</code>
+	 * it there is no toolbar. For sites which have a corresponding
+	 * workbench site, the toolbar manager will come from the action
+	 * bars.
 	 *
-	 * @return the action bars
+	 * @return toolbar manager
 	 */
-	IActionBars getActionBars();
-
-	/**
-	 * Sets the Toolbar Manager for this history page site.
-	 * @param toolBarManager
-	 */
-	void setToolBarManager(ToolBarManager toolBarManager);
+	IToolBarManager getToolBarManager();
 	
 	/**
 	 * Returns whether this site is modal.

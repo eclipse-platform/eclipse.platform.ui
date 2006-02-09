@@ -17,7 +17,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.ui.history.HistoryPage;
-import org.eclipse.team.ui.history.IHistoryPageSite;
 
 public class GenericHistoryViewDefaultPage extends HistoryPage {
 
@@ -54,15 +53,11 @@ public class GenericHistoryViewDefaultPage extends HistoryPage {
 		return ""; //$NON-NLS-1$
 	}
 
-	public void setSite(IHistoryPageSite  viewSite) {
-		//nothing to set
-	}
-
-	public IHistoryPageSite getHistoryPageSite() {
+	public Object getAdapter(Class adapter) {
 		return null;
 	}
 
-	public Object getAdapter(Class adapter) {
+	public String getDescription() {
 		return null;
 	}
 
