@@ -91,7 +91,7 @@
          </menu>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
             id="org.eclipse.team.ui.ProjectContributions">
          <action
