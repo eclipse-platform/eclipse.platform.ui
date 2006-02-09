@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
@@ -147,7 +148,7 @@ public class ActionPresentation {
                         IActionSet set = desc.createActionSet();
                         SubActionBars bars = new ActionSetActionBars(window
 								.getActionBars(), window,
-								window.getWindowConfigurer()
+								(IActionBarConfigurer2) window.getWindowConfigurer()
 										.getActionBarConfigurer(), desc.getId());
                         rec = new SetRec(desc, set, bars);
                         set.init(window, bars);

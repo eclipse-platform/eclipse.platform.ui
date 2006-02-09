@@ -26,13 +26,13 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -86,7 +86,6 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.application.ActionBarAdvisor;
-import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ActionSetActionBars;
 import org.eclipse.ui.internal.ActionSetContributionItem;
@@ -102,6 +101,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -386,7 +386,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
      * window's hardwired menus and toolbars in order to display their
      * structure properly in the preview panes.
      */
-    public class CustomizeActionBars implements IActionBarConfigurer,
+    public class CustomizeActionBars implements IActionBarConfigurer2,
 			IActionBars2 {
         
         IWorkbenchWindowConfigurer configurer;
@@ -486,7 +486,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarContributionItem(org.eclipse.jface.action.IToolBarManager, java.lang.String)
 		 */
 		public IToolBarContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
-			return new ToolBarContributionItem(toolBarManager, id);
+			return new ToolBarContributionItem2(toolBarManager, id);
 		}
 
 		/* (non-Javadoc)

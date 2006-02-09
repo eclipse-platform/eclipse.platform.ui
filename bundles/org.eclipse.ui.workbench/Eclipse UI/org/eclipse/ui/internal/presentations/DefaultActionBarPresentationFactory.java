@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.IToolBarManager2;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
+import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
+import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 
 /**
  * The intention of this class is to allow for replacing the implementation of
@@ -38,14 +39,14 @@ public class DefaultActionBarPresentationFactory implements IActionBarPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createCoolBarManager()
 	 */
-	public ICoolBarManager createCoolBarManager() {
-		return new CoolBarManager(SWT.FLAT);
+	public ICoolBarManager2 createCoolBarManager() {
+		return new CoolBarManager2(SWT.FLAT);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createCoolBarControl(org.eclipse.jface.action.ICoolBarManager, org.eclipse.swt.widgets.Composite)
 	 */
-	public Control createCoolBarControl(ICoolBarManager coolBarManager,
+	public Control createCoolBarControl(ICoolBarManager2 coolBarManager,
 			Composite parent) {
 		return coolBarManager.createControl2(parent);
 	}
@@ -54,7 +55,7 @@ public class DefaultActionBarPresentationFactory implements IActionBarPresentati
 	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createToolBarManager()
 	 */
 	public IToolBarManager2 createToolBarManager() {
-		return new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+		return new ToolBarManager2(SWT.FLAT | SWT.RIGHT);
 	}
 
 	/* (non-Javadoc)
@@ -69,7 +70,7 @@ public class DefaultActionBarPresentationFactory implements IActionBarPresentati
 	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createViewToolBarManager()
 	 */
 	public IToolBarManager2 createViewToolBarManager() {
-		return new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+		return new ToolBarManager2(SWT.FLAT | SWT.RIGHT);
 	}
 
 	/* (non-Javadoc)
@@ -85,6 +86,6 @@ public class DefaultActionBarPresentationFactory implements IActionBarPresentati
 	 */
 	public IToolBarContributionItem createToolBarContributionItem(
 			IToolBarManager toolBarManager, String id) {
-		return new ToolBarContributionItem(toolBarManager, id);
+		return new ToolBarContributionItem2(toolBarManager, id);
 	}
 }

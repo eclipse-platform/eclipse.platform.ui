@@ -20,8 +20,9 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
@@ -39,7 +40,8 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.internal.presentations.IActionBarPresentationFactory;
+import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
+import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
@@ -143,16 +145,16 @@ public final class WorkbenchWindowConfigurer implements
      * Action bar configurer that changes this workbench window.
      * This implementation keeps track of of cool bar items
      */
-    class WindowActionBarConfigurer implements IActionBarConfigurer {
+    class WindowActionBarConfigurer implements IActionBarConfigurer2 {
 
-        private IActionBarConfigurer proxy;
+        private IActionBarConfigurer2 proxy;
         
         /**
          * Sets the proxy to use, or <code>null</code> for none.
          * 
          * @param proxy the proxy
          */
-        public void setProxy(IActionBarConfigurer proxy) {
+        public void setProxy(IActionBarConfigurer2 proxy) {
             this.proxy = proxy;
         }
         
@@ -615,7 +617,7 @@ public final class WorkbenchWindowConfigurer implements
      */
     public Control createCoolBarControl(Composite parent) {
         return actionBarConfigurer.getActionBarPresentationFactory().createCoolBarControl(
-        		window.getCoolBarManager2(), parent);
+        		(ICoolBarManager2) window.getCoolBarManager2(), parent);
     }
 
     /* (non-Javadoc)

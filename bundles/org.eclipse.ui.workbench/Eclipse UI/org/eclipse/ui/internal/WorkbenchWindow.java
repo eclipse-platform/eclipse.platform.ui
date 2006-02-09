@@ -38,12 +38,14 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarContributionItem;
-import org.eclipse.jface.action.IToolBarManager2;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
@@ -90,7 +92,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
-import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.commands.ICommandService;
@@ -123,8 +124,9 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentations.DefaultActionBarPresentationFactory;
-import org.eclipse.ui.internal.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.progress.ProgressRegion;
+import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
+import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -1660,7 +1662,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// This needs to be done before pages are created to ensure proper
 		// canonical creation
 		// of cool items
-		ICoolBarManager coolBarMgr = getCoolBarManager2();
+		ICoolBarManager2 coolBarMgr = (ICoolBarManager2) getCoolBarManager2();
         if (coolBarMgr != null) {
 			IMemento coolBarMem = memento
 					.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
@@ -1953,7 +1955,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (coolbarMem == null) {
 			return false;
 		}
-        ICoolBarManager coolBarMgr = getCoolBarManager2();
+        ICoolBarManager2 coolBarMgr = (ICoolBarManager2) getCoolBarManager2();
 		// Check to see if layout is locked
 		Integer locked = coolbarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
 		boolean state = (locked != null) && (locked.intValue() == 1);
@@ -2286,7 +2288,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		// / Save the order of the cool bar contribution items
-        ICoolBarManager coolBarMgr = getCoolBarManager2();
+        ICoolBarManager2 coolBarMgr = (ICoolBarManager2) getCoolBarManager2();
         if (coolBarMgr != null) {
         	coolBarMgr.refresh();
 			IMemento coolBarMem = memento
@@ -2705,8 +2707,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (currentPage == null)
 			getActionPresentation().clearActionSets();
 		else {
-			if (getCoolBarManager2() != null) {
-				getCoolBarManager2().refresh();
+			ICoolBarManager2 coolBarManager = (ICoolBarManager2) getCoolBarManager2();
+			if (coolBarManager != null) {
+				coolBarManager.refresh();
 			}
 			getActionPresentation().setActionSets(currentPage.getActionSets());
 		}
@@ -2962,7 +2965,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @param flags
 	 *            indicate which bars to fill
 	 */
-	public void fillActionBars(IActionBarConfigurer proxyBars, int flags) {
+	public void fillActionBars(IActionBarConfigurer2 proxyBars, int flags) {
 		Assert.isNotNull(proxyBars);
 		WorkbenchWindowConfigurer.WindowActionBarConfigurer wab = (WorkbenchWindowConfigurer.WindowActionBarConfigurer) getWindowConfigurer()
 				.getActionBarConfigurer();
@@ -3272,7 +3275,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected Control createCoolBarControl(Composite parent) {
-        return getActionBarPresentationFactory().createCoolBarControl(getCoolBarManager2(), parent);
+        return getActionBarPresentationFactory().createCoolBarControl((ICoolBarManager2) getCoolBarManager2(), parent);
     }
 
     /**
@@ -3283,7 +3286,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * @return a tool bar manager
 	 * @since 3.2
      */
-    protected IToolBarManager2 createToolBarManager2(int style) {
+    protected IToolBarManager createToolBarManager2(int style) {
         return getActionBarPresentationFactory().createToolBarManager();
     }
 
@@ -3296,7 +3299,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected Control createToolBarControl(Composite parent) {
-        return getActionBarPresentationFactory().createToolBarControl(getToolBarManager2(), parent);
+        return getActionBarPresentationFactory().createToolBarControl((IToolBarManager2) getToolBarManager2(), parent);
     }
     
     /**

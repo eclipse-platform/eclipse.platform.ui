@@ -37,10 +37,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
@@ -2539,16 +2539,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Run op in busy cursor.
         // Use set redraw to eliminate the "flash" that can occur in the
         // coolbar as the perspective is reset.
-        ICoolBarManager mgr = window.getCoolBarManager2();
+        ICoolBarManager2 mgr = (ICoolBarManager2) window.getCoolBarManager2();
         try {
-            mgr.getControl().setRedraw(false);
+            mgr.getControl2().setRedraw(false);
             BusyIndicator.showWhile(null, new Runnable() {
                 public void run() {
                     busyResetPerspective();
                 }
             });
         } finally {
-            mgr.getControl().setRedraw(true);
+            mgr.getControl2().setRedraw(true);
         }
     }
 
@@ -3148,7 +3148,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Going from multiple to single rows can make the coolbar
         // and its adjacent views appear jumpy as perspectives are
         // switched. Turn off redraw to help with this.
-        ICoolBarManager mgr = window.getCoolBarManager2();
+        ICoolBarManager2 mgr = (ICoolBarManager2) window.getCoolBarManager2();
         try {
             mgr.getControl2().setRedraw(false);
             getClientComposite().setRedraw(false);
@@ -3180,7 +3180,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Restore the toolbar layout for the active perspective.
      */
     protected void resetToolBarLayout() {
-        window.getCoolBarManager2().resetItemOrder();
+    	ICoolBarManager2 mgr = (ICoolBarManager2) window.getCoolBarManager2();
+    	mgr.resetItemOrder();
     }
 
     /**

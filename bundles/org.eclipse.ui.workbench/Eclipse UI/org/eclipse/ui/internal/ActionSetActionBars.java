@@ -18,14 +18,14 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubToolBarManager;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.SubActionBars2;
-import org.eclipse.ui.application.IActionBarConfigurer;
+import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -33,7 +33,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class ActionSetActionBars extends SubActionBars2 {
 	
-	private IActionBarConfigurer actionBarConfigurer = null;
+	private IActionBarConfigurer2 actionBarConfigurer = null;
 
 	private String actionSetId;
 
@@ -46,7 +46,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 	/**
      * Constructs a new action bars object
      */
-    public ActionSetActionBars(IActionBars2 parent, IServiceLocator serviceLocator, IActionBarConfigurer actionBarConfigurer, String actionSetId) {
+    public ActionSetActionBars(IActionBars2 parent, IServiceLocator serviceLocator, IActionBarConfigurer2 actionBarConfigurer, String actionSetId) {
     	super(parent, serviceLocator);
 		this.actionSetId = actionSetId;		
         this.actionBarConfigurer = actionBarConfigurer;

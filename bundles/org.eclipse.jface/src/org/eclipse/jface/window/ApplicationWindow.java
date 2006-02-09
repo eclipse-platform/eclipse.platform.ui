@@ -16,10 +16,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.action.IToolBarManager2;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -79,7 +81,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      *
      * @see #addToolBar
      */
-    private IToolBarManager2 toolBarManager = null;
+    private IToolBarManager toolBarManager = null;
 
     /**
      * Status line manager, or <code>null</code> if none (default).
@@ -296,7 +298,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 menuBarManager = null;
             }
             if (toolBarManager != null) {
-                toolBarManager.dispose();
+            	if (toolBarManager instanceof IToolBarManager2) 
+            		((IToolBarManager2) toolBarManager).dispose();
+            	else if (toolBarManager instanceof ToolBarManager)
+            		((ToolBarManager) toolBarManager).dispose();
                 toolBarManager = null;
             }
             if (statusLineManager != null) {
@@ -304,7 +309,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 statusLineManager = null;
             }
             if (coolBarManager != null) {
-                coolBarManager.dispose();
+            	if (coolBarManager instanceof ICoolBarManager2)
+            		((ICoolBarManager2) coolBarManager).dispose();
+            	else if (coolBarManager instanceof CoolBarManager)
+            		((CoolBarManager) coolBarManager).dispose();
                 coolBarManager = null;
             }
             return true;
@@ -416,7 +424,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * </p>
      * 
 	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
@@ -425,7 +433,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @return a tool bar manager
      * @since 3.2
      */
-    protected IToolBarManager2 createToolBarManager2(int style) {
+    protected IToolBarManager createToolBarManager2(int style) {
         return createToolBarManager(style);
     }
 
@@ -451,7 +459,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * </p>
      * 
 	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
@@ -473,7 +481,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control createToolBarControl(Composite parent) {
         if (toolBarManager != null) {
-            return toolBarManager.createControl2(parent);
+        	if (toolBarManager instanceof IToolBarManager2) 
+        		return ((IToolBarManager2) toolBarManager).createControl2(parent);
+        	if (toolBarManager instanceof ToolBarManager) 
+        		return ((ToolBarManager) toolBarManager).createControl(parent);
         }
         return null;
     }
@@ -489,7 +500,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control createCoolBarControl(Composite composite) {
         if (coolBarManager != null) {
-            return coolBarManager.createControl2(composite);
+        	if (coolBarManager instanceof ICoolBarManager2) 
+        		return ((ICoolBarManager2) coolBarManager).createControl2(composite);
+        	if (coolBarManager instanceof CoolBarManager) 
+        		return ((CoolBarManager) coolBarManager).createControl(composite);
         }
         return null;
     }
@@ -576,7 +590,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @see #addToolBar(int)
 	 * @since 3.2
      */
-    public IToolBarManager2 getToolBarManager2() {
+    public IToolBarManager getToolBarManager2() {
         return toolBarManager;
     }
 
@@ -622,7 +636,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control getToolBarControl() {
         if (toolBarManager != null) {
-            return toolBarManager.getControl();
+        	if (toolBarManager instanceof IToolBarManager2)
+        		return ((IToolBarManager2) toolBarManager).getControl2();
+        	if (toolBarManager instanceof ToolBarManager)
+        		return ((ToolBarManager) toolBarManager).getControl();
         }
         return null;
     }
@@ -638,7 +655,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control getCoolBarControl() {
         if (coolBarManager != null) {
-            return coolBarManager.getControl();
+        	if (coolBarManager instanceof ICoolBarManager2)
+        		return ((ICoolBarManager2) coolBarManager).getControl2();
+        	if (coolBarManager instanceof CoolBarManager)
+        		return ((CoolBarManager) coolBarManager).getControl();
         }
         return null;
     }

@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -345,8 +346,9 @@ public class EditorManager implements IExtensionChangeHandler {
 			String type = actionBars.getEditorType();
 			actionCache.remove(type);
 			// refresh the cool bar manager before disposing of a cool item
-            if (window.getCoolBarManager2() != null) {
-                window.getCoolBarManager2().refresh();
+			ICoolBarManager2 coolBar = (ICoolBarManager2) window.getCoolBarManager2();
+            if (coolBar != null) {
+            	coolBar.refresh();
 			}
 			actionBars.dispose();
 		}

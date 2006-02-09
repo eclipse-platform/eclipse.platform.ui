@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.presentations;
+package org.eclipse.ui.internal.provisional.presentations;
 
-import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.action.IToolBarContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.IToolBarManager2;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -37,7 +37,7 @@ public interface IActionBarPresentationFactory {
 	 * 
 	 * @return the cool bar manager
 	 */
-	public ICoolBarManager createCoolBarManager();
+	public ICoolBarManager2 createCoolBarManager();
 
 	/**
 	 * Creates the control for the window's cool bar. Subclasses may override.
@@ -48,7 +48,7 @@ public interface IActionBarPresentationFactory {
 	 *            the parent composite
 	 * @return the window's cool bar control
 	 */
-	public Control createCoolBarControl(ICoolBarManager coolBarManager,
+	public Control createCoolBarControl(ICoolBarManager2 coolBarManager,
 			Composite parent);
 
 	/**

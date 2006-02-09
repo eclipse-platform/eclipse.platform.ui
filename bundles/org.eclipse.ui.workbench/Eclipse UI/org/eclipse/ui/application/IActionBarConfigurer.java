@@ -14,8 +14,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarContributionItem;
-import org.eclipse.jface.action.IToolBarManager;
 
 /**
  * Interface providing special access for configuring the action bars
@@ -64,28 +62,6 @@ public interface IActionBarConfigurer {
      */
     public ICoolBarManager getCoolBarManager();
     
-    /**
-     * Creates a tool bar manager for the workbench window's tool bar.
-     * The action bar advisor should use this factory method rather than
-     * creating a <code>ToolBarManager</code> directly. 
-	 *
-     * @return the tool bar manager
-     * @since 3.2
-     */
-    public IToolBarManager createToolBarManager();
-        
-    /**
-     * Creates a toolbar contribution item for the window's tool bar.
-     * The action bar advisor should use this factory method rather than
-     * creating a <code>ToolBarContributionItem</code> directly. 
-	 * 
-     * @param toolBarManager a tool bar manager for the workbench window's tool bar
-     * @param id the id of the contribution
-     * @return the tool bar contribution item
-	 * @since 3.2
-     */
-    public IToolBarContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id);
-
     /**
      * Register the action as a global action with a workbench
      * window.

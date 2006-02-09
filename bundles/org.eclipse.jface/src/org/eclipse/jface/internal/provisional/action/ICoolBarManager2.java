@@ -19,6 +19,13 @@ import org.eclipse.swt.widgets.Control;
  * Extends <code>ICoolBarManager</code> to allow clients to be decoupled
  * from the actual kind of control used.
  * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * 
  * @since 3.2
  */
 public interface ICoolBarManager2 extends ICoolBarManager {
@@ -27,12 +34,6 @@ public interface ICoolBarManager2 extends ICoolBarManager {
      * Creates and returns this manager's control. Does not create a
      * new control if one already exists.
      * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
      * 
      * @param parent
      *            the parent control
