@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IProcess;
@@ -744,18 +745,14 @@ public class DebugPlugin extends Plugin {
 	public static Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
 		Process p= null;
 		try {
-
 			if (workingDirectory == null) {
 				p= Runtime.getRuntime().exec(cmdLine, envp);
 			} else {
 				p= Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
-				if (p != null) {
-					p.destroy();
-				}
-				Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_Exception_occurred_executing_command_line__1, e); 
-				throw new CoreException(status);
+		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_Exception_occurred_executing_command_line__1, e); 
+		    throw new CoreException(status);
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory			
 			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERR_WORKING_DIRECTORY_NOT_SUPPORTED, DebugCoreMessages.DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2, e); 
@@ -1104,7 +1101,7 @@ public class DebugPlugin extends Plugin {
 					Object[] filters = fEventFilters.getListeners();
 					for (int i = 0; i < filters.length; i++) {
 						fFilter = (IDebugEventFilter)filters[i];
-						Platform.run(this);
+                        SafeRunner.run(this);
 						if (fEvents == null || fEvents.length == 0) {
 							return;
 						}
@@ -1115,7 +1112,7 @@ public class DebugPlugin extends Plugin {
 				Object[] listeners= getEventListeners();
 				for (int i= 0; i < listeners.length; i++) {
 					fListener = (IDebugEventSetListener)listeners[i]; 
-					Platform.run(this);
+                    SafeRunner.run(this);
 				}
 				
 			} finally {
@@ -1190,7 +1187,9 @@ public class DebugPlugin extends Plugin {
 			abort(SourceLookupMessages.SourceLookupUtils_9, e); 
 		} finally { 
 			try{
-				stream.close();
+                if (stream != null) {
+                    stream.close();
+                }
 			} catch(IOException e) {
 				abort(SourceLookupMessages.SourceLookupUtils_10, e); 
 			}
