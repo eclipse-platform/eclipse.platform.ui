@@ -63,7 +63,10 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -71,8 +74,12 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.contentassist.ContentAssistEvent;
+import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistantExtension2;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.Template;
@@ -84,8 +91,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -93,7 +103,7 @@ import org.w3c.dom.NodeList;
 /**
  * The completion processor for the Ant Editor.
  */
-public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor implements IContentAssistProcessor  {       
+public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor implements IContentAssistProcessor, ICompletionListener  {       
  
  	private Comparator proposalComparator= new Comparator() {
 		public int compare(Object o1, Object o2) {
@@ -195,6 +205,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 */
 	protected String currentTaskString= null;
 
+    private boolean fTemplatesOnly= false;
+    protected IContentAssistantExtension2 fContentAssistant;
+	
 	public AntEditorCompletionProcessor(AntModel model) {
 		super();
 		antModel= model;
@@ -227,12 +240,25 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
 	    this.viewer = refViewer;   
+	    try {
+            if (fTemplatesOnly) {
+                fContentAssistant.setStatusMessage(getIterationGestureMessage(AntEditorMessages.getString("AntEditorCompletionProcessor.0"))); //$NON-NLS-1$
+                fContentAssistant.setEmptyMessage(AntEditorMessages.getString("AntEditorCompletionProcessor.60")); //$NON-NLS-1$
+                ICompletionProposal[] templates= determineTemplateProposals(refViewer, documentOffset);
+                Arrays.sort(templates, proposalComparator);
+                return templates;
+	        }
+            fContentAssistant.setStatusMessage(getIterationGestureMessage(AntEditorMessages.getString("AntEditorCompletionProcessor.61"))); //$NON-NLS-1$
+            fContentAssistant.setEmptyMessage(AntEditorMessages.getString("AntEditorCompletionProcessor.62")); //$NON-NLS-1$
             ICompletionProposal[] matchingProposals= determineProposals();
             ICompletionProposal[] matchingTemplateProposals = determineTemplateProposals(refViewer, documentOffset);
+            return mergeProposals(matchingProposals, matchingTemplateProposals);
+	    } finally {
 	        currentPrefix= null;
 	        currentProposalMode= -1;
-        return mergeProposals(matchingProposals, matchingTemplateProposals);
+            fTemplatesOnly= !fTemplatesOnly;
 	    }
+    }
 	
 	protected ICompletionProposal[] determineTemplateProposals(ITextViewer refViewer, int documentOffset) {
 		this.viewer= refViewer;
@@ -1701,4 +1727,47 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		fgDtd= null;
 		TaskDescriptionProvider.reset();
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionStarted(org.eclipse.jface.text.contentassist.ContentAssistEvent)
+     */
+    public void assistSessionStarted(ContentAssistEvent event) {
+        IContentAssistant assistant= event.assistant;
+        if (assistant instanceof IContentAssistantExtension2) {
+            fContentAssistant= (IContentAssistantExtension2) assistant;
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionEnded(org.eclipse.jface.text.contentassist.ContentAssistEvent)
+     */
+    public void assistSessionEnded(ContentAssistEvent event) {
+        fContentAssistant= null;
+        fTemplatesOnly= false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.contentassist.ICompletionListener#selectionChanged(org.eclipse.jface.text.contentassist.ICompletionProposal, boolean)
+     */
+    public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
+    }
+    
+    private String getIterationGestureMessage(String showMessage) {
+        final IBindingService bindingSvc= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+        TriggerSequence[] triggers= bindingSvc.getActiveBindingsFor(getContentAssistCommand());
+        String message;
+        if (triggers.length > 0) { 
+            message= MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.63"), new Object[] { triggers[0].format(), showMessage }); //$NON-NLS-1$
+        } else {
+            message= MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.64"), new String[] {showMessage}); //$NON-NLS-1$
+        }
+        return message;
+    }
+
+    private ParameterizedCommand getContentAssistCommand() {
+        final ICommandService commandSvc= (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+        final Command command= commandSvc.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+        ParameterizedCommand pCmd= new ParameterizedCommand(command, null);
+        return pCmd;
+    }
+}

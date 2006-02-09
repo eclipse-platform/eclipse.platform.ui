@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -112,6 +112,10 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
         IInformationControlCreator creator = getInformationControlCreator(true);
 		fContentAssistant.setInformationControlCreator(creator);
 
+		fContentAssistant.setRepeatedInvocationMode(true);
+		fContentAssistant.setStatusLineVisible(true);
+		fContentAssistant.setShowEmptyList(true);
+		fContentAssistant.addCompletionListener(processor);
         return fContentAssistant;
     }
 

@@ -21,7 +21,9 @@ import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContentAssistantExtension2;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.w3c.dom.Element;
 
@@ -38,19 +40,44 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	private File fEditedFile;
 	private ISourceViewer fViewer;
     private boolean fNeedsToDispose= true;
+    
+    
 
 	public TestTextCompletionProcessor(AntModel model) {
 		super(model);
+        fContentAssistant= new IContentAssistantExtension2() {
+            public void setEmptyMessage(String message) {
+            }
+        
+            public void setStatusMessage(String message) {
+            }
+        
+            public void setStatusLineVisible(boolean show) {
+            }
+        
+            public void setShowEmptyList(boolean showEmpty) {
+            }
+        
+            public void setRepeatedInvocationMode(boolean cycling) {
+            }
+        
+            public void removeCompletionListener(ICompletionListener listener) {
+            }
+        
+            public void addCompletionListener(ICompletionListener listener) {
+        
+            }        
+        };
 	}
 	
 	public TestTextCompletionProcessor(AntEditor editor) {
-		super(editor.getAntModel());
+		this(editor.getAntModel());
 		fViewer= editor.getViewer();
         fNeedsToDispose= false;
 	}
 	
 	public TestTextCompletionProcessor() {
-		super(null);
+		this((AntModel)null);
 	}
 	
     public ICompletionProposal[] getAttributeProposals(String taskName, String prefix) {
