@@ -54,6 +54,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
@@ -72,6 +73,8 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.TreeAdapter;
+import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
@@ -99,6 +102,7 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.preferences.ViewPreferencesAction;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.views.markers.internal.MarkerAdapter.MarkerCategory;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
@@ -137,7 +141,7 @@ public abstract class MarkerView extends TableView {
 		}
 
 		boolean buildDone = true;
-		
+
 		private Collection refreshes = new ArrayList();
 
 		private Collection adds = new ArrayList();
@@ -152,7 +156,7 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			synchronized (updateKey) {				
+			synchronized (updateKey) {
 				updateJob.refreshAll();
 				updateForContentsRefresh(monitor);
 				return Status.OK_STATUS;
@@ -167,7 +171,6 @@ public abstract class MarkerView extends TableView {
 		public boolean shouldRun() {
 			return buildDone && PlatformUI.isWorkbenchRunning();
 		}
-
 
 		/**
 		 * Refresh all of the contents of changed.
@@ -221,6 +224,8 @@ public abstract class MarkerView extends TableView {
 				.synchronizedSet(new HashSet());
 
 		boolean refreshAll = false;
+
+		private Collection categoriesToExpand = new HashSet();
 
 		UpdateJob() {
 			super(MarkerMessages.MarkerView_queueing_updates);
@@ -277,8 +282,42 @@ public abstract class MarkerView extends TableView {
 				// Expand all if the list is small
 				if (getCurrentMarkers().getSize() < 20)
 					getViewer().expandAll();
+				else {// Reexpand the old categories
+					MarkerCategory[] categories = getMarkerAdapter()
+							.getCategories();
+					if (categories != null) {
+						for (int i = 0; i < categories.length; i++) {
+							MarkerCategory category = categories[i];
+							if (categoriesToExpand.contains(category.getName()))
+								getViewer().expandToLevel(category,
+										AbstractTreeViewer.ALL_LEVELS);
+						}
+					}
+					categoriesToExpand.clear();
+				}
 			}
+
 			return Status.OK_STATUS;
+		}
+
+		/**
+		 * Add the category to the list of expanded categories.
+		 * 
+		 * @param category
+		 */
+		public void addExpandedCategory(MarkerCategory category) {
+			categoriesToExpand.add(category.getName());
+
+		}
+
+		/**
+		 * Remove the category from the list of expanded ones.
+		 * 
+		 * @param category
+		 */
+		public void removeExpandedCategory(MarkerCategory category) {
+			categoriesToExpand.remove(category.getName());
+
 		}
 
 	}
@@ -497,7 +536,7 @@ public abstract class MarkerView extends TableView {
 		try {
 			restoreFilters(XMLMemento.createReadRoot(reader));
 		} catch (WorkbenchException e) {
-			IDEWorkbenchPlugin.log(e.getLocalizedMessage(),e);
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
 		}
 
 	}
@@ -606,7 +645,7 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		
+
 		clipboard = new Clipboard(parent.getDisplay());
 		super.createPartControl(parent);
 
@@ -631,8 +670,7 @@ public abstract class MarkerView extends TableView {
 				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 			}
 		});
-		
-		
+
 	}
 
 	/*
@@ -871,8 +909,8 @@ public abstract class MarkerView extends TableView {
 		manager.add(copyAction);
 		pasteAction.updateEnablement();
 		manager.add(pasteAction);
-		
-		if(canBeEditable())
+
+		if (canBeEditable())
 			manager.add(deleteAction);
 		manager.add(selectAllAction);
 		fillContextMenuAdditions(manager);
@@ -882,10 +920,10 @@ public abstract class MarkerView extends TableView {
 	}
 
 	/**
-	 * Return whether or not any of the types in the 
-	 * receiver can be editable.
-	 * @return <code>true</code> if it is possible to have
-	 * an editable marker in this view.
+	 * Return whether or not any of the types in the receiver can be editable.
+	 * 
+	 * @return <code>true</code> if it is possible to have an editable marker
+	 *         in this view.
 	 */
 	boolean canBeEditable() {
 		return true;
@@ -1542,6 +1580,38 @@ public abstract class MarkerView extends TableView {
 	void scheduleMarkerUpdate() {
 		updateJob.refreshAll();
 		getProgressService().schedule(markerProcessJob, 100);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#createTree(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Tree createTree(Composite parent) {
+		Tree tree = super.createTree(parent);
+		tree.addTreeListener(new TreeAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.TreeAdapter#treeCollapsed(org.eclipse.swt.events.TreeEvent)
+			 */
+			public void treeCollapsed(TreeEvent e) {
+				updateJob.removeExpandedCategory((MarkerCategory) e.item
+						.getData());
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.TreeAdapter#treeExpanded(org.eclipse.swt.events.TreeEvent)
+			 */
+			public void treeExpanded(TreeEvent e) {
+				updateJob
+						.addExpandedCategory((MarkerCategory) e.item.getData());
+			}
+		});
+
+		return tree;
 	}
 
 }

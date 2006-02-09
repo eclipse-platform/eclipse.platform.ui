@@ -37,8 +37,6 @@ public class MarkerAdapter {
 
 		int end;
 
-		int fieldIndex = 0;
-
 		private ConcreteMarker[] children;
 
 		private String name;
@@ -147,6 +145,14 @@ public class MarkerAdapter {
 		 */
 		public ConcreteMarker getConcreteRepresentative() {
 			return markerAdapter.lastMarkers.getMarker(start);
+		}
+
+		/**
+		 * Return the name of the receiver.
+		 * @return String
+		 */
+		public String getName() {
+			return name;
 		}
 	}
 
@@ -371,6 +377,15 @@ public class MarkerAdapter {
 	 */
 	public boolean hasNoMarkers() {
 		return lastMarkers == null;
+	}
+
+	/**
+	 * Return the categories for the receiver.
+	 * @return MarkerCategory[] or <code>null</code>
+	 * if there are no categories.
+	 */
+	public MarkerCategory[] getCategories() {
+		return categories;
 	}
 
 }
