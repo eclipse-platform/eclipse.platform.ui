@@ -469,13 +469,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		} catch (TransformerException te) {
 			e= te;
 		}
-		if (e != null) {
-			IStatus status = newStatus(DebugCoreMessages.LaunchConfiguration_Exception_occurred_creating_launch_configuration_memento_9, DebugException.INTERNAL_ERROR,  e); 
-			throw new CoreException(status);
-		}
-		//execution will never reach here
-		return null;
-		
+		IStatus status = newStatus(DebugCoreMessages.LaunchConfiguration_Exception_occurred_creating_launch_configuration_memento_9, DebugException.INTERNAL_ERROR,  e); 
+		throw new CoreException(status);
 	}
 
 	/* (non-Javadoc)
