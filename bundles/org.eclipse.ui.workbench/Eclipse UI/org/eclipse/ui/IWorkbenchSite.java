@@ -33,8 +33,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * <li>{@link ICommandService}</li>
  * <li>{@link IContextService}</li>
  * <li>{@link IHandlerService}</li>
- * <li>{@link IBindingService}. Resources allocated through this service will
- * not be cleaned up until the workbench shuts down.</li>
  * </ul>
  * <p>
  * This interface is not intended to be implemented or extended by clients.

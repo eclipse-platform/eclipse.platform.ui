@@ -65,7 +65,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * are:
  * </p>
  * <ul>
- * <li>{@link IBindingService}</li>
  * <li>{@link ICommandService}</li>
  * <li>{@link IContextService}</li>
  * <li>{@link IHandlerService}</li>
