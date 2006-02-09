@@ -26,14 +26,14 @@ public class StackTests extends AbstractAntDebugTest {
         antCallStack(false);
     }
     
-    public void ttestStackForAntCallVM() throws Exception {
+    public void testStackForAntCallVM() throws Exception {
         antCallStack(true);
     }
     
     private void antCallStack(boolean sepVM) throws CoreException {
         String fileName = "85769";
         IFile file= getIFile(fileName + ".xml");
-        ILineBreakpoint bp = createLineBreakpoint(13, file);
+        ILineBreakpoint bp = createLineBreakpoint(18, file);
         AntThread thread = null;
         try {
             if (sepVM) {

@@ -68,6 +68,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
             createLaunchConfigurationForBoth("debugAntCall");
             createLaunchConfigurationForBoth("96022");
             createLaunchConfigurationForBoth("macrodef");
+            createLaunchConfigurationForBoth("85769");
 			
 			createLaunchConfiguration("big", ProjectHelper.PROJECT_NAME + "/buildfiles/performance/build.xml");
 			
