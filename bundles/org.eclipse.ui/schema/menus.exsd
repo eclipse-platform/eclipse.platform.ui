@@ -169,6 +169,7 @@ A group can contain menus, items and other groups.
             <element ref="location" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="class" minOccurs="0" maxOccurs="1"/>
             <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
+            <element ref="layout" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -185,6 +186,31 @@ A group can contain menus, items and other groups.
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="layout">
+      <annotation>
+         <documentation>
+            This element can be used to specify various layout options for &lt;code&gt;trim&lt;/code&gt; elements.
+
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="fill" type="boolean">
+            <annotation>
+               <documentation>
+                  The widget will stretch to use up any additional space available in the trim area it&apos;s located in. Default is &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="maximizeSize" type="boolean">
+            <annotation>
+               <documentation>
+                  The widget will match its &apos;height&apos; to that of the tallest widget in its trim area. Default is &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
