@@ -258,6 +258,10 @@ public abstract class AsynchronousModel {
                 }
             }
         }
+        Widget widget = node.getWidget();
+        if (widget != null) {
+            fWidgetToNode.remove(widget);
+        }
     }
 	
 	/**
@@ -524,7 +528,7 @@ public abstract class AsynchronousModel {
             preservingSelection(new Runnable() {
                 public void run() {
                 	if (newKids.length == 0) {
-                		viewer.nodeChanged(parentNode);
+                		viewer.nodeChildrenChanged(parentNode);
                 	} else {
 //                  the tree could have asked for data before it was ready...
                 		viewer.nodeChildrenSet(parentNode, newKids);
@@ -582,11 +586,11 @@ public abstract class AsynchronousModel {
                             viewer.nodeChanged(kid);
                         }
                     }
-                    if (children.length == 0) {
-                    	viewer.nodeChanged(parentNode);
-                    } else {
+//                    if (children.length == 0) {
+//                    	viewer.nodeChanged(parentNode);
+//                    } else {
                     	viewer.nodeChildrenChanged(parentNode);
-                    }
+//                    }
                 }
             });
 
