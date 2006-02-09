@@ -60,6 +60,9 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,7 +76,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.2
  */
-public class PerspectivePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
+public class PerspectivePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants, IActivityManagerListener {
 
 	// constants
 	private static final String DEBUG_LAUNCH_GROUP = "org.eclipse.debug.ui.launchGroup.debug"; //$NON-NLS-1$
@@ -205,7 +208,9 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 				fPmanager.setLaunchPerspective(typekey, modekey, perspective);
 			}// end for
 		}// end for
-		store.setValue(LAST_SELECTED_CONFIGTYPE, fCurrentType.getName());
+		if(fCurrentType != null) {
+			store.setValue(LAST_SELECTED_CONFIGTYPE, fCurrentType.getName());
+		}
 		DebugUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}// end performOK
@@ -268,7 +273,9 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 			fTree.setSelection(new TreeItem[] { item });
 		}// end if
 		else {
-			fTree.setSelection(new TreeItem[] { fTree.getItem(0) });
+			if(fTree.getItemCount() > 0) {
+				fTree.setSelection(new TreeItem[] { fTree.getItem(0) });
+			}
 		}// end else
 		fCurrentType = (ILaunchConfigurationType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 		buildComboBoxes(fCurrentType);
@@ -330,38 +337,40 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		for(Iterator iter = launchmodes.keySet().iterator(); iter.hasNext();) {
-			String modekey = (String)iter.next();
-			String persp = (String)launchmodes.get(modekey);
-       // build label
-			label = new Label(fComboPlaceHolder, SWT.NONE);
-			label.setFont(font);
-			gd = new GridData(GridData.BEGINNING);
-			label.setLayoutData(gd);
-			ILaunchMode mode = fLManager.getLaunchMode(modekey);
-			String clabel = mode.getLabel();
-			//resolve conflict with Default and Debug mneumonics bug 122882
-			if(clabel.equals(DebugPreferencesMessages.PerspectivePreferencePage_7)) {
-				clabel = DebugPreferencesMessages.PerspectivePreferencePage_8;
-			}
-			label.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_3, new String[] { clabel }));
-		// build combobox
-			Combo combo = new Combo(fComboPlaceHolder, SWT.READ_ONLY);
-			combo.setFont(font);
-			combo.setItems(fPerspectiveLabels);
-			combo.setData(modekey);
-			gd = new GridData(GridData.BEGINNING);
-			combo.setLayoutData(gd);
-			if(persp.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
-				persp = DebugPreferencesMessages.PerspectivePreferencePage_4;
-			}//end if
-			else {
-				IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(persp);
-				persp = (desc != null ? desc.getLabel() : DebugPreferencesMessages.PerspectivePreferencePage_4);
-			}//end else
-			combo.setText(persp);
-			combo.addSelectionListener(fSelectionAdapter);
-		}//end for
+		if(launchmodes != null) {
+			for(Iterator iter = launchmodes.keySet().iterator(); iter.hasNext();) {
+				String modekey = (String)iter.next();
+				String persp = (String)launchmodes.get(modekey);
+	       // build label
+				label = new Label(fComboPlaceHolder, SWT.NONE);
+				label.setFont(font);
+				gd = new GridData(GridData.BEGINNING);
+				label.setLayoutData(gd);
+				ILaunchMode mode = fLManager.getLaunchMode(modekey);
+				String clabel = mode.getLabel();
+				//resolve conflict with Default and Debug mneumonics bug 122882
+				if(clabel.equals(DebugPreferencesMessages.PerspectivePreferencePage_7)) {
+					clabel = DebugPreferencesMessages.PerspectivePreferencePage_8;
+				}
+				label.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_3, new String[] { clabel }));
+			// build combobox
+				Combo combo = new Combo(fComboPlaceHolder, SWT.READ_ONLY);
+				combo.setFont(font);
+				combo.setItems(fPerspectiveLabels);
+				combo.setData(modekey);
+				gd = new GridData(GridData.BEGINNING);
+				combo.setLayoutData(gd);
+				if(persp.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
+					persp = DebugPreferencesMessages.PerspectivePreferencePage_4;
+				}//end if
+				else {
+					IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(persp);
+					persp = (desc != null ? desc.getLabel() : DebugPreferencesMessages.PerspectivePreferencePage_4);
+				}//end else
+				combo.setText(persp);
+				combo.addSelectionListener(fSelectionAdapter);
+			}//end for
+		}
 		fPerspectiveComp.layout();
 	}// buildComboBoxes
 
@@ -374,10 +383,12 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 	private void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
 		// handle prompting and saving before moving on.
 		ILaunchConfigurationType type = (ILaunchConfigurationType) ((IStructuredSelection) event.getSelection()).getFirstElement();
-		if(!type.equals(fCurrentType)) {
-			//if they are the same do nothing
-			fCurrentType = type;
-			buildComboBoxes(fCurrentType);
+		if(type != null) {
+			if(!type.equals(fCurrentType)) {
+				//if they are the same do nothing
+				fCurrentType = type;
+				buildComboBoxes(fCurrentType);
+			}
 		}
 	}// end handleLaunchConfigurationSelectionChanged
 
@@ -388,7 +399,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 	 */
 	private void getPerspectiveLabels() {
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
+		IPerspectiveDescriptor[] descriptors = filterIds(registry.getPerspectives());
 		fPerspectiveLabels = new String[descriptors.length + 1];
 		fPerspectiveLabels[0] = DebugPreferencesMessages.PerspectivePreferencePage_4;
 		fPerspectiveIds = new HashMap();
@@ -398,6 +409,21 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		}// end for
 	}// end getPerspectiveLabels
 
+	/**
+	 * filters the list of labels based on capabilities
+	 * @param ids ther ids we want to filter
+	 * @return the filtered list of ids based on capabilities
+	 */
+	private IPerspectiveDescriptor[] filterIds(IPerspectiveDescriptor[] ids) {
+		ArrayList list = new ArrayList();
+		for(int i = 0; i < ids.length; i++) {
+			if(!WorkbenchActivityHelper.filterItem(ids[i])) {
+				list.add(ids[i]);
+			}
+		}
+		return (IPerspectiveDescriptor[])list.toArray(new IPerspectiveDescriptor[list.size()]);
+	}
+	
 	/**
 	 * Simple method to create a spacer in the page
 	 * 
@@ -507,8 +533,29 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		// restore from preference store
 		restoreState();
         
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager().addActivityManagerListener(this);
+		
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}// end createControl
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
+	 */
+	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+		if(!fTree.isDisposed()) {
+			fViewer.refresh();
+			getPerspectiveLabels();
+			restoreState();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	public void dispose() {
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager().removeActivityManagerListener(this);
+		super.dispose();
+	}
 
 }// end class
