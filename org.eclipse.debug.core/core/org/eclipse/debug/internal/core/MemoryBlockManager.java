@@ -14,7 +14,7 @@ package org.eclipse.debug.internal.core;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -88,7 +88,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 				for (int i= 0; i < copiedListeners.length; i++) {
 					fListener = (IMemoryBlockListener)copiedListeners[i];
 					fMemoryBlocks = memBlocks;
-					Platform.run(this);
+                    SafeRunner.run(this);
 				}			
 			}
 			fListener = null;

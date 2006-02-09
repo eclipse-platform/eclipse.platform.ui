@@ -13,7 +13,7 @@ package org.eclipse.debug.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
@@ -110,7 +110,7 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
                     listener.propertyChange(event);
                 }
             };
-            Platform.run(runnable);
+            SafeRunner.run(runnable);
         }
     }
     

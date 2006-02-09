@@ -70,6 +70,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -181,7 +182,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				Object[] listeners = fLaunchConfigurationListeners.getListeners();
 				for (int i = 0; i < listeners.length; i++) {
 					fListener = (ILaunchConfigurationListener)listeners[i];
-					Platform.run(this);
+                    SafeRunner.run(this);
 				}
 			}
 			fConfiguration = null;
@@ -238,7 +239,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			Object[] copiedListeners= fLaunchesListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (ILaunchesListener)copiedListeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}	
 			fNotifierLaunches = null;
 			fRegistered = null;
@@ -423,7 +424,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			Object[] copiedListeners= fListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (ILaunchListener)copiedListeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}	
 			fLaunch = null;
 			fListener = null;		

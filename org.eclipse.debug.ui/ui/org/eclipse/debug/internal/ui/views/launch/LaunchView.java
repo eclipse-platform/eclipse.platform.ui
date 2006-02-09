@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
@@ -152,7 +152,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			Object[] listeners = fListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
 				final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-				Platform.run(new ISafeRunnable() {
+                SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
 						listener.contextActivated(fContext, ContextProvider.this.getPart());
 					}
@@ -171,7 +171,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 					Object[] listeners = fListeners.getListeners();
 					for (int i = 0; i < listeners.length; i++) {
 						final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-						Platform.run(new ISafeRunnable() {
+                        SafeRunner.run(new ISafeRunnable() {
 							public void run() throws Exception {
 								listener.contextChanged(fContext, ContextProvider.this.getPart());
 							}

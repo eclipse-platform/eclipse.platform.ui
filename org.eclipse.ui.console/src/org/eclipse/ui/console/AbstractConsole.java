@@ -13,7 +13,7 @@ package org.eclipse.ui.console;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -117,7 +117,7 @@ public abstract class AbstractConsole implements IConsole {
 			Object[] copiedListeners= fListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IPropertyChangeListener)copiedListeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}	
 			fListener = null;			
 		}
@@ -147,7 +147,7 @@ public abstract class AbstractConsole implements IConsole {
 	 * @param autoLifecycle whether this console's lifecycle methods should be called
 	 *  automatically when it is added (<code>initialize()</code>) and removed
 	 *  (<code>destroy()</code>) from the console manager. When <code>false</code>,
-	 *  clients are responsible for calling the lifecycle methdods.
+	 *  clients are responsible for calling the lifecycle methods.
 	 * @since 3.1
 	 */
 	public AbstractConsole(String name, String type, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
@@ -273,7 +273,7 @@ public abstract class AbstractConsole implements IConsole {
 	 * Disposes this console. This method should only be called by clients managing a
 	 * console's lifecycle, otherwise this method will be called automatically when this
 	 * console is removed from the console manager. The method is called once to dispose
-	 * this console, afterwhich this console will no longer be used. 
+	 * this console, after which this console will no longer be used. 
 	 * 
 	 * @since 3.1
 	 */

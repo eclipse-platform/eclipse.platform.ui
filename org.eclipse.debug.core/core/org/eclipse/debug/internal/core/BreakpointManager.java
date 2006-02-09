@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
@@ -174,7 +175,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * the workspace state has already been saved. See bug 7683.
 	 * 
 	 * Since the <code>TRANSIENT</code> marker attribute/feature has been added,
-	 * we no longer have to manully delete non-persisted markers - the platform
+	 * we no longer have to manually delete non-persisted markers - the platform
 	 * does this for us (at shutdown, transient markers are not saved). However,
 	 * the code is still present to delete non-persisted markers from old
 	 * workspaces.
@@ -574,8 +575,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 		
 		/**
-		 * Performs updates on accumlated changes, and fires change notification after
-		 * a traversal. Accumlated updates are reset.
+		 * Performs updates on accumulated changes, and fires change notification after
+		 * a traversal. Accumulated updates are reset.
 		 */
 		public void update() {
 			if (!fMoved.isEmpty()) {
@@ -817,7 +818,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				for (int j = 0; j < breakpoints.length; j++) {
 					fBreakpoint = breakpoints[j];
 					fDelta = deltas[j];
-					Platform.run(this);				
+                    SafeRunner.run(this);				
 				}
 			}
 			fListener = null;
@@ -880,7 +881,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			Object[] copiedListeners = fBreakpointsListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IBreakpointsListener)copiedListeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}
 			fDeltas = null;
 			fNotifierBreakpoints = null;
@@ -971,7 +972,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			Object[] copiedListeners = fBreakpointManagerListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IBreakpointManagerListener)copiedListeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}
 			fListener = null;
 		}

@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -143,7 +144,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
     }
     
 	/**
-	 * Loads any persisted watch expresions from the preferences.
+	 * Loads any persisted watch expressions from the preferences.
 	 * NOTE: It's important that no setter methods are called on
 	 * 		the watchpoints which will fire change events as this
 	 * 		will cause an infinite loop (see Bug 27281).
@@ -513,7 +514,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 					fListener = (IExpressionListener)copiedListeners[i];
 					for (int j = 0; j < expressions.length; j++) {
 						fExpression = expressions[j];
-						Platform.run(this);
+                        SafeRunner.run(this);
 					}
 				}			
 			}
@@ -574,7 +575,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				Object[] copiedListeners = fExpressionsListeners.getListeners();
 				for (int i= 0; i < copiedListeners.length; i++) {
 					fListener = (IExpressionsListener)copiedListeners[i];
-					Platform.run(this);
+                    SafeRunner.run(this);
 				}
 			}	
 			fNotifierExpressions = null;

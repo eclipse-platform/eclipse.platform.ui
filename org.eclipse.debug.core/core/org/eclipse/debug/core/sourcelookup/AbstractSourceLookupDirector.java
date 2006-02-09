@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
  * of changes in the source containers (i.e. when the set of source
  * containers changes).
  * <p>
- * When a source director is intilaized, it adds it self as a launch listener,
+ * When a source director is initialized, it adds it self as a launch listener,
  * and automatically disposes itself when its associated launch is removed
  * from the launch manager. If a source director is instantiated by a client
  * that is not part of a launch, that client is responsible for disposing
@@ -68,7 +68,7 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractSourceLookupDirector implements ISourceLookupDirector, ILaunchConfigurationListener, ILaunchListener {
 	
-	// source locator type identifire
+	// source locator type identifier
 	protected String fId;
 	//ISourceLocatorParticipants that are listening for container changes
 	protected ArrayList fParticipants = new ArrayList();
@@ -262,10 +262,10 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	
 	/**
 	 * Registers the given source lookup participant. Has no effect if an identical
-	 * participant is already registered. Paticipants receive notification
+	 * participant is already registered. Participants receive notification
 	 * when the source containers associated with this source director change. 
 	 * 
-	 * @param participant the particiapant to register
+	 * @param participant the participant to register
 	 */
 	private synchronized void addSourceLookupParticipant(ISourceLookupParticipant participant) {
 		if (!fParticipants.contains(participant)) {
@@ -301,7 +301,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}	
 	
 	/**
-	 * Removes the given participant from the list of registered partipants.
+	 * Removes the given participant from the list of registered participants.
 	 * Has no effect if an identical participant is not already registered.
 	 * 
 	 * @param participant the participant to remove
@@ -321,7 +321,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	
 	/* (non-Javadoc)
 	 * 
-	 * Updates source containers in repsonse to changes in underlying launch
+	 * Updates source containers in response to changes in underlying launch
 	 * configuration. Only responds to changes in non-working copies.
 	 * 
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
@@ -392,7 +392,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @param memento source locator memento
 	 * @param dispose whether to dispose any current source containers and participants
 	 *  before initializing
-	 * @throws CoreException if an exception occurrs during initialization
+	 * @throws CoreException if an exception occurs during initialization
 	 * @since 3.1
 	 */
 	protected void doInitializeFromMemento(String memento, boolean dispose) throws CoreException {
@@ -469,7 +469,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	protected List doSourceLookup(Object element) {
 		SourceLookupQuery query = new SourceLookupQuery(element);
-		Platform.run(query);
+		SafeRunner.run(query);
 		List sources = query.getSourceElements();
 		query.dispose();
 		return sources;
@@ -559,7 +559,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * Sets the launch configuration associated with this source lookup
 	 * director. If the given configuration is a working copy, this director
 	 * will respond to changes the working copy. If the given configuration
-	 * is a persisted launch configration, this director will respond to changes
+	 * is a persisted launch configuration, this director will respond to changes
 	 * in the persisted launch configuration.
 	 * 
 	 * @param configuration launch configuration to associate with this
@@ -607,7 +607,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * Caches the resolved source element to use when one of the following
 	 * duplicates is found.
 	 * 
-	 * @param duplicates duplicates source elemnets
+	 * @param duplicates duplicates source elements
 	 * @param sourceElement chosen source element to use in place of the
 	 *  duplicates
 	 */
@@ -710,7 +710,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	public Object[] findSourceElements(Object object) throws CoreException {
 		SourceLookupQuery query = new SourceLookupQuery(object);
-		Platform.run(query);
+		SafeRunner.run(query);
 		List sources = query.getSourceElements();
 		Throwable exception = query.getException();
 		query.dispose();

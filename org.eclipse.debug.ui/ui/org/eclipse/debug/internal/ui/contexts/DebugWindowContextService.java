@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
@@ -124,7 +124,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			Object[] listeners = list.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
 				final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
 						if (type == ACTIVATED) {
 							listener.contextActivated(context, part);

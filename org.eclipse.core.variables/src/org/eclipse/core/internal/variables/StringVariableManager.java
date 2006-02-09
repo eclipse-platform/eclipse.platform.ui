@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
@@ -154,7 +155,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			Object[] copiedListeners= fListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IValueVariableListener)copiedListeners[i];
-				Platform.run(this);
+				SafeRunner.run(this);
 			}	
 			fVariables = null;
 			fListener = null;

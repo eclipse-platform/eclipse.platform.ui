@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.viewers.provisional;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**
@@ -71,7 +71,7 @@ public abstract class AbstractModelProxy implements IModelProxy {
 				}
 
 			};
-			Platform.run(safeRunnable);
+            SafeRunner.run(safeRunnable);
 		}
 	}
 
