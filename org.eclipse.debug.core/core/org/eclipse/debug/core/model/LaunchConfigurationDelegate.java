@@ -186,24 +186,14 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * if there are any breakpoints in the workspace, and ask the user if they'd
 	 * rather launch in debug mode.
 	 * <p>
-	 * This check also performs the scoped saving of resources according to the status handler 
-	 * provided to perform the saving. In the general case the default status handler only considers
-	 * resources that are contained within the projects which are part of the build path for the launch
-	 * being launched
+	 * Since 3.2, this check also performs saving of resources before launching.
 	 * </p>
-	 * @since 3.2 -- Changes to saving applied
 	 * 
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		IStatusHandler prompter = null;
-		prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-		if(prompter != null) {
-			//do save here and remove saving from DebugUIPlugin to avoid it 'trumping' this save
-			IProject[] buildOrder = getBuildOrder(configuration, mode);
-			if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, new Object[]{configuration, buildOrder})).booleanValue()) {
-				return false;
-			}
+		if (!saveBeforeLaunch(configuration, mode, monitor)) {
+			return false;
 		}
 		if (mode.equals(ILaunchManager.RUN_MODE) && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
 			IBreakpoint[] breakpoints= getBreakpoints(configuration);
@@ -212,7 +202,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
             }
 			for (int i = 0; i < breakpoints.length; i++) {
 				if (breakpoints[i].isEnabled()) {
-					prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
 						boolean launchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
 						if (launchInDebugModeInstead) { 
@@ -225,6 +215,33 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			}
 		}	
 		// no enabled breakpoints... continue launch
+		return true;
+	}
+	
+	/**
+	 * Performs the scoped saving of resources before launching and returns whether
+	 * the launch should continue. By default, only resources contained within the projects
+	 * which are part of the build scope are considered.
+	 * <p>
+	 * Subclasses may override this method if required.
+	 * </p>
+	 * 
+	 * @param configuration the configuration being launched
+	 * @param mode the launch mode
+	 * @param monitor progess monitor
+	 * @return whether the launch should continue
+	 * @throws CoreException if an exception occurrs during the save
+	 * @since 3.2
+	 */
+	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+		if(prompter != null) {
+			//do save here and remove saving from DebugUIPlugin to avoid it 'trumping' this save
+			IProject[] buildOrder = getBuildOrder(configuration, mode);
+			if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, new Object[]{configuration, buildOrder})).booleanValue()) {
+				return false;
+			}
+		}	
 		return true;
 	}
 
