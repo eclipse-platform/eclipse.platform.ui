@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2006 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ function confirmed(){
 
 <body dir="<%=direction%>" onload="onloadHandler()">
 <form onsubmit="confirmed();return false;">
-<div style="overflow:auto;height:220px;width:100%;">
+<div style="overflow:auto;height:160px;width:100%;">
 	<div style="padding:10px;">
 	<span style="font-weight:bold;"><%=ServletResources.getString(request.getParameter("header"), request)%></span>
 	<br><br>
