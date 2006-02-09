@@ -15,6 +15,7 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
@@ -62,6 +63,12 @@ public abstract class FileRevision implements IFileRevision {
 			}
 			public URI getURI() {
 				return file.getLocationURI();
+			}
+			public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
+				return this;
+			}
+			public boolean isPropertyMissing() {
+				return false;
 			}
 		};
 	}
@@ -112,20 +119,5 @@ public abstract class FileRevision implements IFileRevision {
 	public ITag[] getTags() {
 		return new ITag[0];
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.history.IFileRevision#isComplete()
-	 */
-	public boolean isComplete() {
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.history.IFileRevision#asComplete(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IFileRevision asComplete(IProgressMonitor monitor) {
-		return null;
-	}
-	
 	
 }

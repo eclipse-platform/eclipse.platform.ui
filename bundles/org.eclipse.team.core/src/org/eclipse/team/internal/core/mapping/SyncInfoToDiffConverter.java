@@ -52,6 +52,14 @@ public class SyncInfoToDiffConverter {
 		public IResourceVariant getVariant() {
 			return variant;
 		}
+
+		public boolean isPropertyMissing() {
+			return false;
+		}
+
+		public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
+			return this;
+		}
 	}
 
 	public static int asDiffFlags(int syncInfoFlags) {

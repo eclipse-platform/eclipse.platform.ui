@@ -130,12 +130,12 @@ public class LocalFileRevision extends FileRevision {
 		this.baseRevision = baseRevision;
 	}
 	
-	public boolean isComplete() {
+	public boolean isPropertyMissing() {
 		return true;
 	}
 
 	
-	public IFileRevision asComplete(IProgressMonitor monitor) {
+	public IFileRevision withAllProperties(IProgressMonitor monitor) {
 		return this;
 	}
 }

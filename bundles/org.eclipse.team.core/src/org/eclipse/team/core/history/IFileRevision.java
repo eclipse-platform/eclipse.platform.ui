@@ -110,18 +110,20 @@ public interface IFileRevision {
 	public ITag[] getTags();
 	
 	/**
-	 * Returns whether this particular file revision is complete - i.e. if it can return
-	 * info for all fields.
+	 * Returns whether this particular file revision has at least one supported property 
+	 * missing. If the revision is missing some queries
+	 * clients can use {@link #withAllProperties(IProgressMonitor)}.
 	 * 
-	 * @return true if this file revision can return info for all fields, false otherwise.
+	 * @return whether this particular file revision has at least one supported property 
+	 * missing
 	 */
-	public boolean isComplete();
+	public boolean isPropertyMissing();
 	
 	/**
-	 * Returns a complete version of this IFileRevision or null if a complete version cannot
-	 * be found.
-	 * @param monitor	a monitor
+	 * Returns an {@link IFileRevision} with all supported properties present.
+	 * @param monitor a monitor
 	 * @return a complete version of this file revision or null
+	 * @throws CoreException
 	 */
-	public IFileRevision asComplete(IProgressMonitor monitor);
+	public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException;
 }

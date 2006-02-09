@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.filehistory;
 import java.net.URI;
 
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
@@ -82,22 +83,16 @@ public class CVSFileRevision extends FileRevision {
 		return entry.getRemoteFile();
 	}
 	
-	public boolean isComplete() {
+	public boolean isPropertyMissing() {
 		//If we have an aothor and a comment then we consider this revision complete
-		if (entry.getAuthor() != null &&
-			entry.getComment() != null)
+		if (entry.getAuthor() == null)
 			return true;
 		
 		return false;
 	}
 	
 	
-	public IFileRevision asComplete(IProgressMonitor monitor) {
-		try {
-			return new CVSFileRevision(getCVSRemoteFile().getLogEntry(monitor));
-		} catch (TeamException e) {
-		}
-		
-		return null;
+	public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
+		return new CVSFileRevision(getCVSRemoteFile().getLogEntry(monitor));
 	}
 }
