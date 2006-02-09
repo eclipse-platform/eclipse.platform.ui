@@ -21,8 +21,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.PageSaveablePart;
@@ -131,7 +130,7 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	 */
 	public void doSave(IProgressMonitor pm) {
 		// TODO needs to work for models
-		//super.saveChanges(pm);
+		super.doSave(pm);
 		Object input = viewer.getInput();
 		if (input instanceof ISynchronizeModelElement) {
 			ISynchronizeModelElement root = (ISynchronizeModelElement)input;
@@ -148,12 +147,9 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.team.ui.PageSaveablePart#createPage(org.eclipse.swt.widgets.Composite, org.eclipse.jface.action.ToolBarManager)
 	 */
-	public void createPartControl(Composite parent2) {
-		
-		super.createPartControl(parent2);
-		
+	protected Control createPage(Composite parent, ToolBarManager toolBarManager) {
 		listener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION)) {
@@ -167,40 +163,35 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 		page = participant.createPage(pageConfiguration);
 		site = new DialogSynchronizePageSite(getShell(), true);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(site);
-		ToolBarManager tbm = CompareViewerPane.getToolBarManager(getPagePane());
-		site.createActionBars(tbm);
+		site.createActionBars(toolBarManager);
 		try {
 			((ISynchronizePage)page).init(pageConfiguration.getSite());
 		} catch (PartInitException e1) {
 		}
 
-		page.createControl(getPagePane());
+		page.createControl(parent);
 		
-		if(page instanceof ISynchronizePage) {
-			((ISynchronizePage)page).getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					ICompareInput input = getCompareInput(event.getSelection());
-					prepareCompareInput(input);
-					setInput(input);
-				}
-			});
-			initializeDiffViewer(((ISynchronizePage)page).getViewer());
-		}
+		initializeDiffViewer(((ISynchronizePage)page).getViewer());
 		
 		page.setActionBars(site.getActionBars());
-		getPagePane().setContent(page.getControl());
-		tbm.update(true);
-		if(page instanceof ISynchronizePage) {
-			viewer = ((ISynchronizePage)page).getViewer();
-		}
+		toolBarManager.update(true);
+		viewer = ((ISynchronizePage)page).getViewer();
 		
 		setNavigator(pageConfiguration);
+		return page.getControl();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.PageSaveablePart#getPageSelectionProvider()
+	 */
+	protected ISelectionProvider getPageSelectionProvider() {
+		return ((ISynchronizePage)page).getViewer();
+	}
+	
 	private void updateDescription() {
 		String description = (String)pageConfiguration.getProperty(ISynchronizePageConfiguration.P_PAGE_DESCRIPTION);
 		if (description != null) {
-			getPagePane().setText(description);
+			setPageTitle(description);
 		}
 	}
 	

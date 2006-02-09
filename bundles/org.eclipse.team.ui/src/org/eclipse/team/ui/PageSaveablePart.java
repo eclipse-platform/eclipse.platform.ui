@@ -19,6 +19,7 @@ import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,7 +27,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -38,12 +38,20 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+/**
+ * Abstract class for hosting a page based structure input view for the purposes
+ * of feeding compare viewers.
+ * <p>
+ * This class is not intended to be subclassed by clients outside of the Team framework.
+ * 
+ * @since 3.2
+ */
 public abstract class PageSaveablePart extends SaveablePartAdapter implements IContentChangeListener{
 	
 	private CompareConfiguration cc;
 	Shell shell;
 	
-//	 Tracking of dirty state
+	// Tracking of dirty state
 	private boolean fDirty= false;
 	private ArrayList fDirtyViewers= new ArrayList();
 	private IPropertyChangeListener fDirtyStateListener;
@@ -90,20 +98,20 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
-	public void createPartControl(Composite parent2) {
-		Composite parent = new Composite(parent2, SWT.NULL);
+	public void createPartControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 0;
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
-		parent.setLayout(layout);
-		parent.setLayoutData(data);
+		composite.setLayout(layout);
+		composite.setLayoutData(data);
 		
-		shell = parent2.getShell();
+		shell = parent.getShell();
 		
-		Splitter vsplitter = new Splitter(parent, SWT.VERTICAL);
+		Splitter vsplitter = new Splitter(composite, SWT.VERTICAL);
 		vsplitter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
 		// we need two panes: the left for the elements, the right one for the structured diff
 		Splitter hsplitter = new Splitter(vsplitter, SWT.HORIZONTAL);
@@ -145,12 +153,48 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		};
 		vsplitter.setWeights(new int[]{30, 70});
 		
-		control = parent;
+		control = composite;
 		
+		ToolBarManager toolBarManager = CompareViewerPane.getToolBarManager(fEditionPane);
+		Control c = createPage(fEditionPane, toolBarManager);
+		fEditionPane.setContent(c);
+
 		if(! showContentPanes) {
 			hsplitter.setMaximizedControl(fEditionPane);
 		}
+		
+		getPageSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				ICompareInput input = getCompareInput(event.getSelection());
+				if (input != null)
+					prepareCompareInput(input);
+				setInput(input);
+			}
+		});
+	}
+	
+	/**
+	 * Return the selection provider for the page.
+	 * @return the selection provider for the page
+	 */
+	protected abstract ISelectionProvider getPageSelectionProvider();
 
+	/**
+	 * Create the page for this part and return the top level control 
+	 * for the page.
+	 * @param parent the parent composite
+	 * @param toolBarManager the toolbar manager for the page
+	 * @return the top-level control for the page
+	 */
+	protected abstract Control createPage(Composite parent, ToolBarManager toolBarManager);
+	
+	/**
+	 * Set the title of the page's page to the given text. The title
+	 * will appear in the header of the pane containing the page.
+	 * @param title the page's title
+	 */
+	protected void setPageTitle(String title) {
+		fEditionPane.setText(title);
 	}
 	
 	/**
@@ -182,7 +226,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	 * Feeds input from the page into the content and structured viewers.
 	 * @param input the input
 	 */
-	protected void setInput(Object input) {
+	private void setInput(Object input) {
 		CompareViewerPane pane = fContentPane;
 		if (pane != null && !pane.isDisposed())
 			fContentPane.setInput(input);
@@ -202,18 +246,15 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	
 	/**
 	 * Convenience method that calls {@link #prepareInput(ICompareInput, CompareConfiguration, IProgressMonitor)}
-	 * with a progress monitor and cancellation.
+	 * with a progress monitor.
 	 * @param input the compare input to be prepared
 	 */
 	protected void prepareCompareInput(final ICompareInput input) {
-		// TODO Merge operations would need to do this check as well
-		// TODO Where should this check live
-		// TODO What about the left vs. right side changes (perhaps a buffer that wraps three buffers)
 		if (input == null)
 			return;
 		IProgressService manager = PlatformUI.getWorkbench().getProgressService();
 		try {
-			// TODO: we need a better progress story here (i.e. support for cancellation
+			// TODO: we need a better progress story here (i.e. support for cancellation) bug 127075
 			manager.busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			        prepareInput(input, getCompareConfiguration(), monitor);
@@ -250,25 +291,19 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		}
 	}
 	
-	abstract public String getTitle();
-
-	abstract public Image getTitleImage();
-	
+	/**
+	 * Return the parent shell of this part.
+	 * @return the parent shell of this part
+	 */
 	protected Shell getShell() {
 		return shell;
 	}
-
-	protected CompareViewerPane getPagePane() {
-		return fEditionPane;
-	}
 	
 	/**
-	 * This method should not be called from clients.
-	 * TODO: using internal compare classes to support page navigation. This is required because
-	 * we are building our own compare editor input that includes a participant page instead of a
-	 * viewer.
+	 * This method is internal to the framework and should not be called by clients
+	 * outside of the framework.
 	 */
-	public void setNavigator(ISynchronizePageConfiguration configuration) {
+	protected void setNavigator(ISynchronizePageConfiguration configuration) {
 			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new PartNavigator(
 				new Object[] {
 					configuration.getProperty(SynchronizePageConfiguration.P_ADVISOR),
@@ -309,7 +344,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	 * This input is used to feed the structure and content
 	 * viewers. By default, a compare input is returned if the selection is
 	 * of size 1 and the selected element implements <code>ICompareInput</code>.
-	 * subclasses may override
+	 * Subclasses may override.
 	 * @param selection the selection
 	 * @return a compare input representing the selection
 	 */
@@ -328,7 +363,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 
     /**
      * Set whether the file contents panes should be shown. If they are not,
-     * only the resource tree will be shown.
+     * only the page will be shown.
      * 
      * @param showContentPanes whether to show contents pane
      */
@@ -353,7 +388,19 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		return cc;
 	}
 
-	protected void flushViewers(IProgressMonitor monitor) {
+	/**
+	 * This method flushes the content in any viewers. Subclasses should
+	 * override if they need to perform additional processing when a save is
+	 * performed.
+	 * 
+	 * @param monitor
+	 *            a progress monitor
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		flushViewers(monitor);
+	}
+	
+	private void flushViewers(IProgressMonitor monitor) {
 		Iterator iter = fDirtyViewers.iterator();
 		
 		for (int i=0; i<fDirtyViewers.size(); i++){
