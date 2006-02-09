@@ -153,15 +153,13 @@ public class TextViewer extends Viewer implements
 		}
 	}
 
+	
 	/**
 	 * Connects a text double click strategy to this viewer's text widget.
 	 * Calls the double click strategy when the mouse has been double clicked
 	 * inside the text editor.
 	 */
 	class TextDoubleClickStrategyConnector extends MouseAdapter {
-
-		/** Internal flag to remember that a double clicked occurred. */
-		private boolean fDoubleClicked= false;
 
 		/**
 		 * Creates a new text double click strategy adapter.
@@ -173,27 +171,18 @@ public class TextViewer extends Viewer implements
 		 * @see MouseListener#mouseDoubleClick(MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-			fDoubleClicked= true;
-		}
-
-		/*
-		 * @see MouseListener#mouseUp(MouseEvent)
-		 */
-		public void mouseUp(MouseEvent e) {
-			if (fDoubleClicked) {
-				fDoubleClicked= false;
-				ITextDoubleClickStrategy s= (ITextDoubleClickStrategy) selectContentTypePlugin(getSelectedRange().x, fDoubleClickStrategies);
-				if (s != null) {
-					StyledText textWidget= getTextWidget();
-					Point oldSelection= textWidget.getSelection();
-					s.doubleClicked(TextViewer.this);
-					Point newSelection= textWidget.getSelection();
-					if (newSelection.y > 0 && !oldSelection.equals(newSelection))
-						textWidget.copy(DND.SELECTION_CLIPBOARD);
-				}
+			ITextDoubleClickStrategy s= (ITextDoubleClickStrategy) selectContentTypePlugin(getSelectedRange().x, fDoubleClickStrategies);
+			if (s != null) {
+				StyledText textWidget= getTextWidget();
+				Point oldSelection= textWidget.getSelection();
+				s.doubleClicked(TextViewer.this);
+				Point newSelection= textWidget.getSelection();
+				if (newSelection.y > 0 && !oldSelection.equals(newSelection))
+					textWidget.copy(DND.SELECTION_CLIPBOARD);
 			}
 		}
 	}
+	
 
 	/**
 	 * Monitors the area of the viewer's document that is visible in the viewer.
