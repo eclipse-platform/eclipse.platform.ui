@@ -2724,7 +2724,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		TextCellEditor selectedEditor = (TextCellEditor)fTableViewer.getCellEditors()[col];
 
 		
-		if (fTableViewer != null && cellModifier != null && selectedEditor != null && tableItem != null)
+		if (fTableViewer != null && selectedEditor != null)
 		{
 			// The control that will be the editor must be a child of the Table
 			Text text = (Text)selectedEditor.getControl();
