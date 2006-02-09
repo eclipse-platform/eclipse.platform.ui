@@ -248,6 +248,9 @@ public interface IRefactoringHistoryService {
 	 * The resulting refactoring history contains resolved refactoring
 	 * descriptors and should not be held on to.
 	 * </p>
+	 * <p>
+	 * It is the responsability of the caller to close the input stream.
+	 * </p>
 	 * 
 	 * @param stream
 	 *            the input stream
@@ -304,6 +307,9 @@ public interface IRefactoringHistoryService {
 	 * Writes the specified refactoring descriptor proxies to the output stream.
 	 * Refactoring descriptor proxies which cannot be resolved are automatically
 	 * skipped.
+	 * <p>
+	 * It is the responsability of the caller to close the output stream.
+	 * </p>
 	 * 
 	 * @param proxies
 	 *            the refactoring descriptor proxies
@@ -339,6 +345,9 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Writes the specified refactoring session descriptor to the output stream.
+	 * <p>
+	 * It is the responsability of the caller to close the output stream.
+	 * </p>
 	 * 
 	 * @param descriptor
 	 *            the refactoring session descriptor
