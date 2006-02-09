@@ -63,15 +63,15 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         }
         try {
             int docLine = document.getLineOfOffset(eventOffset);
-            int docLineStart = document.getLineOffset(docLine);
-            int textLine = getLineAtOffset(docLineStart);
+            int docLineOffset = document.getLineOffset(docLine);
+            int widgetLine = getLineAtOffset(docLineOffset);
             
-            for (int i=regionCount-1; i>=textLine; i--) {
+            for (int i=regionCount-1; i>=widgetLine; i--) {
                 regionCount--;
             }
             
             int numLinesInDoc = document.getNumberOfLines();
-            String line = null;
+
             int nextOffset =  document.getLineOffset(docLine);
             for (int i = docLine; i<numLinesInDoc; i++) {
                 int offset = nextOffset;
@@ -102,10 +102,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                     }
                 }
             }
-            if (line != null && lineEndsWithDelimeter(line)) {
-                addRegion(nextOffset, 0);
-            }
-            
         } catch (BadLocationException e) {
         }
         
