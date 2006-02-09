@@ -782,7 +782,9 @@ public class DecoratedField {
 	 * </p>
 	 * <p>
 	 * Clients may wish to set this value to <code>false</code> in cases where
-	 * space usage is more important than alignment of fields.
+	 * space usage is more important than alignment of fields. This value must
+	 * be set before the decorations are added in order to ensure proper
+	 * alignment.
 	 * </p>
 	 * 
 	 * @param useMaximumWidth
