@@ -120,11 +120,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private ContentAssistHandler fReplaceContentAssistHandler;
     
-    // mstodo remove before release
-    private Button fUseNewTextUICheckbox;
-    private boolean fUseNewTextUI;
-    private static final String STORE_USE_NEW_TEXT_UI = "use-new-text-ui";
-
 	private static class SearchPatternData {
 		public final boolean isCaseSensitive;
 		public final boolean isRegExSearch;
@@ -194,13 +189,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	//---- Action Handling ------------------------------------------------
 	
 	public boolean performAction() {
-        if (fUseNewTextUI) {
-            NewSearchUI.runQueryInBackground(getNewSearchQuery());
-        }
-        else {
-            NewSearchUI.runQueryInBackground(getSearchQuery());
-        }
-		return true;
+		NewSearchUI.runQueryInBackground(getNewSearchQuery());
+//            NewSearchUI.runQueryInBackground(getSearchQuery());
+ 		return true;
 	}
 	
 	/* (non-Javadoc)
@@ -665,19 +656,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		});
 		fSearchDerivedCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		fSearchDerivedCheckbox.setFont(group.getFont());
-        
-        fUseNewTextUICheckbox= new Button(group, SWT.CHECK);
-        fUseNewTextUICheckbox.setText("Work in progress: show search results in new Text Search UI"); 
-        fUseNewTextUICheckbox.setSelection(fUseNewTextUI);
-        fUseNewTextUICheckbox.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                fUseNewTextUI= fUseNewTextUICheckbox.getSelection();
-                writeConfiguration();
-            }
-        });
-        fUseNewTextUICheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-        fUseNewTextUICheckbox.setFont(group.getFont());
-	}
+  	}
 
 	/**
 	 * Sets the search page's container.
@@ -842,7 +821,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsCaseSensitive= s.getBoolean(STORE_CASE_SENSITIVE);
 		fIsRegExSearch= s.getBoolean(STORE_IS_REG_EX_SEARCH);
 		fSearchDerived= s.getBoolean(STORE_SEARCH_DERIVED);
-        fUseNewTextUI= s.getBoolean(STORE_USE_NEW_TEXT_UI);
 		
 		try {
 			int historySize= s.getInt(STORE_HISTORY_SIZE);
@@ -868,7 +846,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		s.put(STORE_CASE_SENSITIVE, fIsCaseSensitive);
 		s.put(STORE_IS_REG_EX_SEARCH, fIsRegExSearch);
 		s.put(STORE_SEARCH_DERIVED, fSearchDerived);
-        s.put(STORE_USE_NEW_TEXT_UI, fUseNewTextUI);
 		
 		int historySize= Math.min(fPreviousSearchPatterns.size(), HISTORY_SIZE);
 		s.put(STORE_HISTORY_SIZE, historySize);
