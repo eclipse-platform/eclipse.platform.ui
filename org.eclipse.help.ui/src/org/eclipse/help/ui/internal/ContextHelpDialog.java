@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,7 +303,9 @@ public class ContextHelpDialog {
 		label.setLayoutData(data);
 		// Create related links
 		for (int i = 0; i < relatedTopics.length; i++) {
-			createLink(composite, relatedTopics[i]);
+			if (!UAContentFilter.isFiltered(relatedTopics[i])) {
+				createLink(composite, relatedTopics[i]);
+			}
 		}
 
 		// create dynamic help link if current context allows dynamic help

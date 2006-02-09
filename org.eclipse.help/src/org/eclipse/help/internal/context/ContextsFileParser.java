@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class ContextsFileParser extends DefaultHandler {
 			stack.pop();
 			if (!(stack.peek()).equals(ContextsNode.BOLD_TAG))
 				buffer.append(ContextsNode.BOLD_CLOSE_TAG);
-		} else {
+		} else if (!qName.equals("filter")) { //$NON-NLS-1$
 			ContextsNode node = (ContextsNode) stack.pop();
 			node.build(builder);
 		}
@@ -132,6 +132,19 @@ public class ContextsFileParser extends DefaultHandler {
 				e = new Context(atts);
 			} else if (qName.equals(ContextsNode.RELATED_ELEM)) {
 				e = new RelatedTopic(atts);
+			} else if (qName.equals("filter")) { //$NON-NLS-1$
+				if (!stack.empty()) {
+					Object parent = stack.peek();
+					if (parent instanceof FilterableUAElement && atts != null) {
+						FilterableUAElement filterableNode = (FilterableUAElement)parent;
+						String name = atts.getValue("name"); //$NON-NLS-1$
+						String value = atts.getValue("value"); //$NON-NLS-1$
+						if (name != null && value != null) {
+							filterableNode.addFilter(name, value);
+						}
+					}
+				}
+				return;
 			} else
 				return;
 			if (!stack.empty())

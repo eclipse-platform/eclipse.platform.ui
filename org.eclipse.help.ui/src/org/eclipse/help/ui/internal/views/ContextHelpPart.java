@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,20 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.*;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContext2;
+import org.eclipse.help.IContextProvider;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.resource.JFaceResources;
@@ -25,13 +35,29 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.SectionPart;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
@@ -415,29 +441,31 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				addCategory(sbuf, null);
 			for (int i = 0; i < links.length; i++) {
 				IHelpResource link = links[i];
-				if (context2 != null) {
-					String cat = context2.getCategory(link);
-					if (cat == null && category != null || cat != null
-							&& category == null || cat != null
-							&& category != null && !cat.equals(category)) {
-						addCategory(sbuf, cat);
+				if (!UAContentFilter.isFiltered(link)) {
+					if (context2 != null) {
+						String cat = context2.getCategory(link);
+						if (cat == null && category != null || cat != null
+								&& category == null || cat != null
+								&& category != null && !cat.equals(category)) {
+							addCategory(sbuf, cat);
+						}
+						category = cat;
 					}
-					category = cat;
+					sbuf.append("<li style=\"image\" value=\""); //$NON-NLS-1$
+					sbuf.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
+					sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
+					sbuf.append("<a href=\""); //$NON-NLS-1$
+					sbuf.append(link.getHref());
+					String tcat = getTopicCategory(link.getHref(), locale);
+					if (tcat != null && !Platform.getWS().equals(Platform.WS_GTK)) {
+						sbuf.append("\" alt=\""); //$NON-NLS-1$
+						sbuf.append(tcat);
+					}
+					sbuf.append("\">"); //$NON-NLS-1$	 		
+					sbuf.append(parent.escapeSpecialChars(link.getLabel()));
+					sbuf.append("</a>"); //$NON-NLS-1$
+					sbuf.append("</li>"); //$NON-NLS-1$
 				}
-				sbuf.append("<li style=\"image\" value=\""); //$NON-NLS-1$
-				sbuf.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
-				sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
-				sbuf.append("<a href=\""); //$NON-NLS-1$
-				sbuf.append(link.getHref());
-				String tcat = getTopicCategory(link.getHref(), locale);
-				if (tcat != null && !Platform.getWS().equals(Platform.WS_GTK)) {
-					sbuf.append("\" alt=\""); //$NON-NLS-1$
-					sbuf.append(tcat);
-				}
-				sbuf.append("\">"); //$NON-NLS-1$	 		
-				sbuf.append(parent.escapeSpecialChars(link.getLabel()));
-				sbuf.append("</a>"); //$NON-NLS-1$
-				sbuf.append("</li>"); //$NON-NLS-1$
 			}
 		}
 		sbuf.append("</form>"); //$NON-NLS-1$

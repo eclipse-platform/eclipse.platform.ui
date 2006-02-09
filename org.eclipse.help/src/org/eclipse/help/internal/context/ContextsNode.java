@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,12 @@
 package org.eclipse.help.internal.context;
 import java.util.*;
 
+import org.eclipse.help.internal.FilterableUAElement;
 import org.xml.sax.*;
 /**
  * Object in hierarchy of context contributions
  */
-public abstract class ContextsNode {
+public abstract class ContextsNode extends FilterableUAElement {
 	public static final String CONTEXTS_ELEM = "contexts"; //$NON-NLS-1$
 	public static final String CONTEXT_ELEM = "context"; //$NON-NLS-1$
 	public static final String DESC_ELEM = "description"; //$NON-NLS-1$
@@ -41,6 +42,7 @@ public abstract class ContextsNode {
 	 * ContextsNode constructor.
 	 */
 	public ContextsNode(Attributes attrs) {
+		addFilters(attrs);
 	}
 	/**
 	 * Adds a child

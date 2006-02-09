@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class ContextManager implements IRegistryChangeListener {
 	 * Loads context.xml with context for a specified plugin, creates context
 	 * nodes and adds to pluginContext map.
 	 */
-	private synchronized PluginContexts loadPluginContexts(String plugin) {
+	public synchronized PluginContexts loadPluginContexts(String plugin) {
 		PluginContexts contexts = pluginsContexts.get(plugin);
 		if (contexts == null) {
 			contexts = new PluginContexts();

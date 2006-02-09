@@ -216,6 +216,17 @@
             configId="org.eclipse.ua.tests.intro.config.dynamicXML">
       </configExtension>
    </extension>
+
+   <!--
+      Context help test content
+   -->
+   <extension
+         point="org.eclipse.help.contexts"
+         id="contextTest">
+      <contexts
+            file="data/help/context/contexts.xml">
+      </contexts>
+   </extension>
    
    <!--
       TOC test content

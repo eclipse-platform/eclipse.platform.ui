@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<contexts>
+   <context id="test.id">
+      <description>This is a test context.<description>
+      <topic
+            label="This topic should always appear"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="Your OS is macosx"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="Your WS is carbon"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="Your ARCH is ppc"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="Your OS is macosx AND your WS is carbon"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="The plugin org.eclipse.help is installed"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="The product org.eclipse.sdk.ide is running"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="The category org.eclipse.categories.developmentCategory is enabled"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="The activity org.eclipse.javaDevelopment is enabled"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+   </context>
+</contexts>

@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
@@ -28,7 +29,11 @@ public class FileUtil {
 	 * as a String (file must be encoded as UTF-8).
 	 */
 	public static String getContents(Bundle bundle, String relativePath) throws IOException {
-		return readString(bundle.getEntry(relativePath).openStream());
+		URL url = bundle.getEntry(relativePath);
+		if (url != null) {
+			return readString(url.openStream());
+		}
+		return null;
 	}
 
 	/**

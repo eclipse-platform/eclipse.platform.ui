@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ public class ContextsFile {
 	/**
 	 * Contexts File Constructor
 	 */
-	protected ContextsFile(String definingPlugin, String href, String plugin) {
+	public ContextsFile(String definingPlugin, String href, String plugin) {
 		this.href = href;
 		this.definingPluginID = definingPlugin;
 		this.pluginID = plugin;
@@ -31,7 +31,7 @@ public class ContextsFile {
 	 * 
 	 * @return Returns a String
 	 */
-	protected String getHref() {
+	public String getHref() {
 		return href;
 	}
 	protected InputStream getInputStream() {
