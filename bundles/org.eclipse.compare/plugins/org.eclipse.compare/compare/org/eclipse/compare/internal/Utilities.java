@@ -23,6 +23,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
@@ -118,21 +122,31 @@ public class Utilities {
 	}
 	
 	private static ArrayList internalGetResources(ISelection selection, Class type) {
-		
 		ArrayList tmp= new ArrayList();
-
 		if (selection instanceof IStructuredSelection) {
-		
 			Object[] s= ((IStructuredSelection)selection).toArray();
 				
 			for (int i= 0; i < s.length; i++) {
-				
 				IResource resource= null;
-				
 				Object o= s[i];
 				if (type.isInstance(o)) {
 					resource= (IResource) o;
 						
+				} else if (o instanceof ResourceMapping) {
+					try {
+						ResourceTraversal[] travs= ((ResourceMapping)o).getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
+						if (travs != null) {
+							for (int k= 0; k < travs.length; k++) {
+								IResource[] resources= travs[k].getResources();
+								for (int j= 0; j < resources.length; j++) {
+									if (type.isInstance(resources[j]) && resources[j].isAccessible())
+										tmp.add(resources[j]);
+								}
+							}
+						}
+					} catch (CoreException ex) {
+						CompareUIPlugin.log(ex);
+					}
 				} else if (o instanceof IAdaptable) {
 					IAdaptable a= (IAdaptable) o;
 					Object adapter= a.getAdapter(IResource.class);
@@ -144,9 +158,9 @@ public class Utilities {
 					tmp.add(resource);
 			}
 		}
-		
 		return tmp;
 	}
+
 	
 	/*
 	 * Convenience method: extract all accessible <code>IResources</code> from given selection.
@@ -274,7 +288,7 @@ public class Utilities {
 			try {
 				return bundle.getString(key);
 			} catch (MissingResourceException x) {
-				// NeedWork
+				// fall through
 			}
 		}
 		return dfltValue;
@@ -286,17 +300,17 @@ public class Utilities {
 			try {
 				return MessageFormat.format(bundle.getString(key), new String[] { arg });
 			} catch (MissingResourceException x) {
-				// NeedWork
+				CompareUIPlugin.log(x);
 			}
 		}
-		return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		return "!" + key + "!";	//$NON-NLS-2$ //$NON-NLS-1$
 	}
 	
 	public static String getString(String key) {
 		try {
 			return CompareUI.getResourceBundle().getString(key);
 		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+			return "!" + key + "!";	//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
 	
@@ -304,7 +318,7 @@ public class Utilities {
 		try {
 			return MessageFormat.format(CompareUI.getResourceBundle().getString(key), new String[] { arg });
 		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+			return "!" + key + "!";	//$NON-NLS-2$ //$NON-NLS-1$
 		}	
 	}
 
@@ -328,9 +342,9 @@ public class Utilities {
 				if (s != null)
 					return Integer.parseInt(s);
 			} catch (NumberFormatException x) {
-				// NeedWork
+				CompareUIPlugin.log(x);
 			} catch (MissingResourceException x) {
-				// NeedWork
+				CompareUIPlugin.log(x);
 			}
 		}
 		return dfltValue;
@@ -539,7 +553,7 @@ public class Utilities {
 			return buffer.toString();
 			
 		} catch (IOException ex) {
-			// NeedWork
+			CompareUIPlugin.log(ex);
 		} finally {
 			if (reader != null) {
 				try {
@@ -557,7 +571,7 @@ public class Utilities {
 			try {
 				return ((IEncodedStorage)resource).getCharset();
 			} catch (CoreException ex) {
-				// fall  through
+				CompareUIPlugin.log(ex);
 			}
 		}
 		return ResourcesPlugin.getEncoding();
