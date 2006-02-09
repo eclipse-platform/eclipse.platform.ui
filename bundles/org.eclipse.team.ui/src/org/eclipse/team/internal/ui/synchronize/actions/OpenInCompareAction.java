@@ -26,7 +26,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.mapping.IModelCompareInput;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 
@@ -82,7 +82,7 @@ public class OpenInCompareAction extends Action {
 	}
 	
 	private static boolean isOkToOpen(final ISynchronizePageSite site, final ISynchronizeParticipant participant, final ICompareInput input) {
-		if (participant instanceof ModelSynchronizeParticipant && input instanceof IModelCompareInput) {
+		if (participant instanceof ModelSynchronizeParticipant && input instanceof ISynchronizationCompareInput) {
 			final ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
 			final boolean[] result = new boolean[] { false };
 			try {
@@ -90,7 +90,7 @@ public class OpenInCompareAction extends Action {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException,
 							InterruptedException {
 						try {
-							result[0] = msp.checkForBufferChange(site.getShell(), (IModelCompareInput)input, true, monitor);
+							result[0] = msp.checkForBufferChange(site.getShell(), (ISynchronizationCompareInput)input, true, monitor);
 						} catch (CoreException e) {
 							throw new InvocationTargetException(e);
 						}

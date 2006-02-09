@@ -575,7 +575,7 @@ public class ModelSynchronizeParticipant extends
 	 * @return whether the user choose to continue with the display of the given compare input
 	 * @throws CoreException
 	 */
-	public boolean checkForBufferChange(Shell shell, IModelCompareInput input, boolean cancelAllowed, IProgressMonitor monitor) throws CoreException {
+	public boolean checkForBufferChange(Shell shell, ISynchronizationCompareInput input, boolean cancelAllowed, IProgressMonitor monitor) throws CoreException {
 		ISaveableCompareModel currentBuffer = getActiveModel();
 		ISaveableCompareModel targetBuffer = input.getSaveableModel();
 		if (monitor == null)

@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.mapping.IModelCompareInput;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
@@ -51,8 +51,8 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	}
 
 	private ISaveableModel asSaveableModel(ICompareInput input) {
-		if (input instanceof IModelCompareInput) {
-			IModelCompareInput mci = (IModelCompareInput) input;
+		if (input instanceof ISynchronizationCompareInput) {
+			ISynchronizationCompareInput mci = (ISynchronizationCompareInput) input;
 			ISaveableCompareModel compareModel = mci.getSaveableModel();
 			if (compareModel != null)
 				return compareModel;
@@ -89,7 +89,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
         monitor.beginTask(TeamUIMessages.SyncInfoCompareInput_3, 100);
         monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
 		try {
-			IModelCompareInput adapter = asModelCompareInput(input);
+			ISynchronizationCompareInput adapter = asModelCompareInput(input);
 			if (adapter != null) {
 				adapter.prepareInput(getCompareConfiguration(), Policy.subMonitorFor(monitor, 100));
 			}
@@ -101,8 +101,8 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		return input;
 	}
 
-	private IModelCompareInput asModelCompareInput(ICompareInput input) {
-		return (IModelCompareInput)Utils.getAdapter(input, IModelCompareInput.class);
+	private ISynchronizationCompareInput asModelCompareInput(ICompareInput input) {
+		return (ISynchronizationCompareInput)Utils.getAdapter(input, ISynchronizationCompareInput.class);
 	}
 
 	/**
@@ -114,8 +114,8 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 * given object
 	 */
 	public boolean matches(Object object, ISynchronizeParticipant participant) {
-		if (participant == this.participant && input instanceof IModelCompareInput) {
-			IModelCompareInput mci = (IModelCompareInput) input;
+		if (participant == this.participant && input instanceof ISynchronizationCompareInput) {
+			ISynchronizationCompareInput mci = (ISynchronizationCompareInput) input;
 			return mci.isCompareInputFor(object);
 		}
 		return false;
@@ -203,7 +203,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 */
 	public String getToolTipText() {
 		String fullPath;
-		IModelCompareInput adapter = asModelCompareInput(input);
+		ISynchronizationCompareInput adapter = asModelCompareInput(input);
 		if (adapter != null) {
 			fullPath = adapter.getFullPath();
 		} else {

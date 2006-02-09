@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @since 3.2
  */
-public interface IModelCompareInput extends ICompareInput {
+public interface ISynchronizationCompareInput extends ICompareInput {
 	
 	/**
 	 * Return the saveable compare model for this compare input or
@@ -48,6 +48,7 @@ public interface IModelCompareInput extends ICompareInput {
 	 * the compare configuration. 
 	 * @param configuration the compare configuration for the editor that will display the input
 	 * @param monitor a progress monitor
+	 * @throws CoreException 
 	 */
 	void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException;
 	

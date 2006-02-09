@@ -45,7 +45,7 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 	private final CompareEditorInput editorInput;
 	private boolean isSaving;
 	
-	public static class ResourceDiffCompareInput extends DiffNode implements IModelCompareInput, IAdaptable {
+	public static class ResourceDiffCompareInput extends DiffNode implements ISynchronizationCompareInput, IAdaptable {
 
 		private final IDiff node;
 
@@ -289,8 +289,8 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 	 */
 	public String getToolTipText() {
 		String fullPath;
-		if (input instanceof IModelCompareInput) {
-			IModelCompareInput mci = (IModelCompareInput) input;
+		if (input instanceof ISynchronizationCompareInput) {
+			ISynchronizationCompareInput mci = (ISynchronizationCompareInput) input;
 			fullPath = mci.getFullPath();
 		} else {
 			fullPath = getName();

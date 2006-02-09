@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.PageSaveablePart;
-import org.eclipse.team.ui.mapping.IModelCompareInput;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -237,7 +237,7 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 					participant.prepareCompareInput(node, configuration, monitor);
 				}
 			} else {
-				IModelCompareInput adapter = asModelCompareInput(input);
+				ISynchronizationCompareInput adapter = asModelCompareInput(input);
 				if (adapter != null) {
 					adapter.prepareInput(configuration, Policy.subMonitorFor(monitor, 90));
 				}
@@ -253,15 +253,15 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 		ISynchronizeParticipant participant = pageConfiguration.getParticipant();
 		if (participant instanceof ModelSynchronizeParticipant) {
 			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
-			if (input instanceof IModelCompareInput) {
-				IModelCompareInput mci = (IModelCompareInput) input;
+			if (input instanceof ISynchronizationCompareInput) {
+				ISynchronizationCompareInput mci = (ISynchronizationCompareInput) input;
 				msp.checkForBufferChange(shell, mci, cancelAllowed, monitor);
 			}
 		}
 	}
 
-	private IModelCompareInput asModelCompareInput(ICompareInput input) {
-		return (IModelCompareInput)Utils.getAdapter(input, IModelCompareInput.class);
+	private ISynchronizationCompareInput asModelCompareInput(ICompareInput input) {
+		return (ISynchronizationCompareInput)Utils.getAdapter(input, ISynchronizationCompareInput.class);
 	}
 	
 	private SyncInfoModelElement getElement(ISelection selection) {
