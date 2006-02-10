@@ -21,9 +21,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
-
-import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
@@ -83,17 +80,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		Assert.isNotNull(refactoring);
 		Assert.isNotNull(descriptor);
-		final RefactoringStatus status= new RefactoringStatus();
-		if (refactoring instanceof IInitializableRefactoringComponent) {
-			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-			final RefactoringArguments arguments= descriptor.createArguments();
-			if (arguments != null)
-				status.merge(component.initialize(arguments));
-			else
-				status.addFatalError(Messages.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
-		} else
-			status.addFatalError(Messages.format(RefactoringCoreMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
-		return status;
+		return descriptor.initialize(refactoring);
 	}
 
 	/**

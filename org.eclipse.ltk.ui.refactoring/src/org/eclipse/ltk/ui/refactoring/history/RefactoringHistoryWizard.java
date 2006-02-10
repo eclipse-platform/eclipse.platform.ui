@@ -32,7 +32,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringHistoryOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -43,7 +42,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
@@ -279,17 +277,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		Assert.isNotNull(refactoring);
 		Assert.isNotNull(descriptor);
-		final RefactoringStatus status= new RefactoringStatus();
-		if (refactoring instanceof IInitializableRefactoringComponent) {
-			final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-			final RefactoringArguments arguments= descriptor.createArguments();
-			if (arguments != null)
-				status.merge(component.initialize(arguments));
-			else
-				status.addFatalError(Messages.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
-		} else
-			status.addFatalError(Messages.format(RefactoringUIMessages.PerformRefactoringHistoryOperation_init_error, new String[] { descriptor.getDescription()}));
-		return status;
+		return descriptor.initialize(refactoring);
 	}
 
 	/**

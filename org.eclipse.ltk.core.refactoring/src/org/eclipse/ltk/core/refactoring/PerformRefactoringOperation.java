@@ -96,20 +96,20 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		monitor.beginTask("", 10); //$NON-NLS-1$
-		CreateChangeOperation create= new CreateChangeOperation(
-			new CheckConditionsOperation(fRefactoring, fStyle),
-			RefactoringStatus.FATAL);
+		final CreateChangeOperation create= new CreateChangeOperation(new CheckConditionsOperation(fRefactoring, fStyle), RefactoringStatus.FATAL);
 		create.run(new SubProgressMonitor(monitor, 6));
 		fPreconditionStatus= create.getConditionCheckingStatus();
 		if (fPreconditionStatus.hasFatalError()) {
 			monitor.done();
 			return;
 		}
-		Change change= create.getChange();
-		PerformChangeOperation perform= new PerformChangeOperation(change);
-		perform.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
-		perform.run(new SubProgressMonitor(monitor, 2));
-		fValidationStatus= perform.getValidationStatus();
-		fUndo= perform.getUndoChange();
+		final Change change= create.getChange();
+		if (change != null) {
+			final PerformChangeOperation perform= new PerformChangeOperation(change);
+			perform.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
+			perform.run(new SubProgressMonitor(monitor, 2));
+			fValidationStatus= perform.getValidationStatus();
+			fUndo= perform.getUndoChange();
+		}
 	}
 }

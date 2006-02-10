@@ -17,8 +17,6 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
-import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
-
 /**
  * Descriptor object of a refactoring.
  * <p>
@@ -178,23 +176,6 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 	}
 
 	/**
-	 * Creates refactoring arguments for this refactoring descriptor.
-	 * <p>
-	 * This method is used by the refactoring framework to create refactoring
-	 * arguments for the refactoring instance represented by this refactoring
-	 * descriptor. The result of this method is used as argument to initialize a
-	 * refactoring by calling the method
-	 * {@link IInitializableRefactoringComponent#initialize(RefactoringArguments)}.
-	 * </p>
-	 * 
-	 * @return the refactoring arguments, or <code>null</code> if this
-	 *         refactoring descriptor represents the unknown refactoring, or if
-	 *         no refactoring contribution is available for this refactoring
-	 *         descriptor
-	 */
-	public abstract RefactoringArguments createArguments();
-
-	/**
 	 * Creates the a new refactoring instance for this refactoring descriptor.
 	 * <p>
 	 * This method is used by the refactoring framework to instantiate a
@@ -267,6 +248,26 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 		if (fTimeStamp >= 0)
 			code+= (17 * fTimeStamp);
 		return code;
+	}
+
+	/**
+	 * Initializes a refactoring with the input specified in this refactoring
+	 * descriptor.
+	 * <p>
+	 * This method is used by the refactoring framework to initialize a
+	 * refactoring with the input of this refactoring descriptor.
+	 * </p>
+	 * <p>
+	 * Note: This method is internal API. It must not be used outside the
+	 * refactoring framework.
+	 * </p>
+	 * 
+	 * @param refactoring
+	 *            the refactoring to initialize
+	 * @return a refactoring status describing the outcome of the initialization
+	 */
+	public RefactoringStatus initialize(Refactoring refactoring) {
+		return new RefactoringStatus();
 	}
 
 	/**

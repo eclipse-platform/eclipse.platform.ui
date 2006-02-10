@@ -154,41 +154,37 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 			final IProgressMonitor finalMonitor= monitor;
 			final Set remote= new HashSet();
 			final Set local= new HashSet();
-			try {
-				final IResourceDiffTree tree= context.getDiffTree();
-				tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
+			final IResourceDiffTree tree= context.getDiffTree();
+			tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
 
-					public final boolean visit(final IDiff diff) {
-						if (diff instanceof IThreeWayDiff) {
-							final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
-							final IResource resource= tree.getResource(diff);
-							if (resource.getName().equals(RefactoringHistoryService.NAME_HISTORY_FILE) && resource.getType() == IResource.FILE) {
-								final ITwoWayDiff remoteDiff= threeWay.getRemoteChange();
-								if (remoteDiff instanceof IResourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
-									final IFileRevision afterRevision= ((IResourceDiff) remoteDiff).getAfterState();
-									if (afterRevision != null)
-										getRefactorings(afterRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
-									final IFileRevision beforeRevision= ((IResourceDiff) remoteDiff).getBeforeState();
-									if (beforeRevision != null)
-										getRefactorings(beforeRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
-								}
-								final ITwoWayDiff localDiff= threeWay.getLocalChange();
-								if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
-									final IFileRevision beforeRevision= ((IResourceDiff) localDiff).getBeforeState();
-									if (beforeRevision != null)
-										getRefactorings(beforeRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
-									final IFileRevision afterRevision= ((IResourceDiff) localDiff).getAfterState();
-									if (afterRevision != null)
-										getRefactorings(afterRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
-								}
+				public final boolean visit(final IDiff diff) {
+					if (diff instanceof IThreeWayDiff) {
+						final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
+						final IResource resource= tree.getResource(diff);
+						if (resource.getName().equals(RefactoringHistoryService.NAME_HISTORY_FILE) && resource.getType() == IResource.FILE) {
+							final ITwoWayDiff remoteDiff= threeWay.getRemoteChange();
+							if (remoteDiff instanceof IResourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
+								final IFileRevision afterRevision= ((IResourceDiff) remoteDiff).getAfterState();
+								if (afterRevision != null)
+									getRefactorings(afterRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
+								final IFileRevision beforeRevision= ((IResourceDiff) remoteDiff).getBeforeState();
+								if (beforeRevision != null)
+									getRefactorings(beforeRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
+							}
+							final ITwoWayDiff localDiff= threeWay.getLocalChange();
+							if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
+								final IFileRevision beforeRevision= ((IResourceDiff) localDiff).getBeforeState();
+								if (beforeRevision != null)
+									getRefactorings(beforeRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
+								final IFileRevision afterRevision= ((IResourceDiff) localDiff).getAfterState();
+								if (afterRevision != null)
+									getRefactorings(afterRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
 							}
 						}
-						return true;
 					}
-				}, IResource.DEPTH_INFINITE);
-			} catch (CoreException exception) {
-				RefactoringUIPlugin.log(exception);
-			}
+					return true;
+				}
+			}, IResource.DEPTH_INFINITE);
 			for (final Iterator iterator= local.iterator(); iterator.hasNext();) {
 				final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) iterator.next();
 				if (!remote.contains(proxy))

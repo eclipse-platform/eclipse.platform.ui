@@ -57,7 +57,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
-import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
@@ -67,8 +66,6 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringExecutionEvent;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
-
-import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -365,26 +362,23 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						fDescriptor= null;
 						final ChangeDescriptor descriptor= change.getDescriptor();
 						if (descriptor instanceof RefactoringDescriptor) {
-							if (descriptor.getID().equals(RefactoringDescriptor.ID_UNKNOWN))
-								fireAboutToPerformEvent(fUnknownProxy);
-							else {
-								fDescriptor= (RefactoringDescriptor) descriptor;
-								fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
-							}
+							final RefactoringDescriptor extended= (RefactoringDescriptor) descriptor;
+							if (!extended.getID().equals(RefactoringDescriptor.ID_UNKNOWN))
+								fDescriptor= extended;
+							fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(extended));
 						}
 						break;
 					case OperationHistoryEvent.DONE:
 						if (fDescriptor != null) {
-							if (fOverrideTimeStamp >= 0)
-								fDescriptor.setTimeStamp(fOverrideTimeStamp);
-							else
-								fDescriptor.setTimeStamp(System.currentTimeMillis());
+							if (!fDescriptor.getID().equals(RefactoringDescriptor.ID_UNKNOWN)) {
+								if (fOverrideTimeStamp >= 0)
+									fDescriptor.setTimeStamp(fOverrideTimeStamp);
+								else
+									fDescriptor.setTimeStamp(System.currentTimeMillis());
+							}
 							fUndoStack.push(fDescriptor);
 							fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
 							fDescriptor= null;
-						} else {
-							fUndoStack.push(fUnknownDescriptor);
-							fireRefactoringPerformedEvent(fUnknownProxy);
 						}
 						break;
 					case OperationHistoryEvent.ABOUT_TO_UNDO:
@@ -404,31 +398,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						break;
 				}
 			}
-		}
-	}
-
-	/** Refactoring descriptor for changes which do not return a descriptor */
-	private static final class UnknownRefactoringDescriptor extends RefactoringDescriptor {
-
-		/**
-		 * Creates a new unknown refactoring descriptor.
-		 */
-		private UnknownRefactoringDescriptor() {
-			super(ID_UNKNOWN, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, RefactoringDescriptor.NONE);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public RefactoringArguments createArguments() {
-			return null;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public Refactoring createRefactoring() throws CoreException {
-			return null;
 		}
 	}
 
@@ -550,17 +519,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/** The undo refactoring descriptor stack, or <code>null</code> */
 	private RefactoringDescriptorStack fUndoStack= null;
 
-	/** The unknown refactoring descriptor */
-	private final RefactoringDescriptor fUnknownDescriptor= new UnknownRefactoringDescriptor();
-
-	/** The unknown refactoring descriptor proxy */
-	private final RefactoringDescriptorProxy fUnknownProxy;
-
 	/**
 	 * Creates a new refactoring history.
 	 */
 	private RefactoringHistoryService() {
-		fUnknownProxy= new RefactoringDescriptorProxyAdapter(fUnknownDescriptor);
+		// Do nothing
 	}
 
 	/**

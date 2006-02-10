@@ -64,8 +64,6 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String ManageRefactoringHistoryControl_edit_label;
 
-	public static String PerformRefactoringHistoryOperation_init_error;
-
 	public static String PreviewWizardPage_changeElementLabelProvider_textFormat;
 
 	public static String PreviewWizardPage_changes;
