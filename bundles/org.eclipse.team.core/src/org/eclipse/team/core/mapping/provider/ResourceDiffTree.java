@@ -80,10 +80,13 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 * @see org.eclipse.team.core.diff.IResourceDiffTree#accept(org.eclipse.team.core.diff.IDiffVisitor, org.eclipse.core.resources.mapping.ResourceTraversal[])
 	 */
 	public void accept(ResourceTraversal[] traversals, IDiffVisitor visitor) {
-		IDiff[] diffs = getDiffs(traversals);
-		for (int i = 0; i < diffs.length; i++) {
-			IDiff node = diffs[i];
-			visitor.visit(node);
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			IResource[] resources = traversal.getResources();
+			for (int j = 0; j < resources.length; j++) {
+				IResource resource = resources[j];
+				accept(resource.getFullPath(), visitor, traversal.getDepth());
+			}
 		}
 	}
 
