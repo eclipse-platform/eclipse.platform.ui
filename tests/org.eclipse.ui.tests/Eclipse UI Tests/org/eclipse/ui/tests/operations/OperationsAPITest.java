@@ -257,15 +257,34 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Operation should not have been added", op == null);
 	}
 
+	/*
+	 * Test updated for 3.2 in light of 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=123316
+	 * The expected behavior has changed.
+	 */
 	public void test94400() throws ExecutionException {
 		UnredoableTestOperation op = new UnredoableTestOperation("troubled op");
 		op.addContext(contextA);
 		history.execute(op, null, null);
 		assertTrue("Operation should be undoable", history.canUndo(contextA));
 		history.undo(contextA, null, null);
-		assertFalse("Operation should not be in redo history", history.getRedoOperation(contextA) == op);
+		assertTrue("Operation should still be in redo history", history.getRedoOperation(contextA) == op);
+		assertFalse("Operation should not be disposed", op.disposed);
+	}
+	
+	/*
+	 * Similar to the test above, except that we are going to change the
+	 * operation history limit and check that we disposed the operation properly.
+	 */
+	public void test123316() throws ExecutionException {
+		UnredoableTestOperation op = new UnredoableTestOperation("troubled op");
+		op.addContext(contextA);
+		history.setLimit(contextA, 0);
+		history.execute(op, null, null);
+		assertFalse("Should be nothing to undo", history.canUndo(contextA));
 		assertTrue("Operation should be disposed", op.disposed);
 	}
+	
 	
 	public void testUnsuccessfulOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts

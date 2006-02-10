@@ -462,10 +462,12 @@ public interface IOperationHistory {
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
-	 * severity indicates that the redo operation was successful. The operation
-	 * will be placed on the undo history, provided it can be undone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canUndo()}). Listeners
-	 * will receive the <code>REDONE</code> notification.
+	 * severity indicates that the redo operation was successful and (since
+	 * release 3.2), that the operation will be placed in the undo history.
+	 * (Prior to 3.2, a successfully redone operation would not be placed on the
+	 * undo history if it could not be undone. Since 3.2, this is relaxed, and
+	 * all successfully redone operations are placed in the undo history.)
+	 * Listeners will receive the <code>REDONE</code> notification.
 	 * </p>
 	 * <p>
 	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
@@ -509,10 +511,12 @@ public interface IOperationHistory {
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
-	 * severity indicates that the redo operation was successful. The operation
-	 * will be placed on the undo history, provided it can be undone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canUndo()}). Listeners
-	 * will receive the <code>REDONE</code> notification.
+	 * severity indicates that the redo operation was successful, and (since
+	 * release 3.2), that the operation will be placed in the undo history.
+	 * (Prior to 3.2, a successfully redone operation would not be placed on the
+	 * undo history if it could not be undone. Since 3.2, this is relaxed, and
+	 * all successfully redone operations are placed in the undo history.)
+	 * Listeners will receive the <code>REDONE</code> notification.
 	 * </p>
 	 * <p>
 	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
@@ -616,10 +620,12 @@ public interface IOperationHistory {
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
-	 * severity indicates that the undo operation was successful. The operation
-	 * will be placed on the redo history, provided it can be redone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canRedo()}). Listeners
-	 * will receive the <code>UNDONE</code> notification.
+	 * severity indicates that the undo operation was successful, and (since
+	 * release 3.2), that the operation will be placed on the redo history.
+	 * (Prior to 3.2, a successfully undone operation would not be placed on the
+	 * redo history if it could not be redone. Since 3.2, this is relaxed, and
+	 * all successfully undone operations are placed in the redo history.)
+	 * Listeners will receive the <code>UNDONE</code> notification.
 	 * </p>
 	 * <p>
 	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
@@ -663,10 +669,12 @@ public interface IOperationHistory {
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
-	 * severity indicates that the undo operation was successful. The operation
-	 * will be placed on the redo history, provided it can be redone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canRedo()}). Listeners
-	 * will receive the <code>UNDONE</code> notification.
+	 * severity indicates that the undo operation was successful, and (since
+	 * release 3.2), that the operation will be placed on the redo history.
+	 * (Prior to 3.2, a successfully undone operation would not be placed on the
+	 * redo history if it could not be redone. Since 3.2, this is relaxed, and
+	 * all successfully undone operations are placed in the redo history.)
+	 * Listeners will receive the <code>UNDONE</code> notification.
 	 * </p>
 	 * <p>
 	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,

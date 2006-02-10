@@ -192,6 +192,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			for (int i = 0; i < contexts.length; i++) {
 				flushRedo(contexts[i]);
 			}
+		} else {
+			// Dispose the operation since we will not have a reference to it.
+			operation.dispose();
 		}
 	}
 
@@ -317,7 +320,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// used again.
 		if (flushContext) {
 			if (DEBUG_OPERATION_HISTORY_DISPOSE) {
-				Tracing.printTrace("OPERATIONHISTORY", "Flushing context "  //$NON-NLS-1$//$NON-NLS-2$
+				Tracing.printTrace("OPERATIONHISTORY", "Flushing context " //$NON-NLS-1$//$NON-NLS-2$
 						+ context);
 			}
 			flushUndo(context);
@@ -369,26 +372,21 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// if successful, the operation is removed from the redo history and
 		// placed back in the undo history.
 		if (status.isOK()) {
-			// We will only add the operation to the undo stack if it can indeed
-			// be undone. This conservatism is added to support the integration
-			// of existing frameworks (such as Refactoring) that produce
-			// undo and redo behavior on the fly and cannot guarantee that a
-			// successful redo means a successful undo will be available.
-			// We check this condition outside of the synchronized block.
-			// See bug #84444
-			boolean addToUndoStack = operation.canUndo();
+			boolean addedToUndo = true;
 			synchronized (undoRedoHistoryLock) {
 				redoList.remove(operation);
-				if (addToUndoStack && checkUndoLimit(operation)) {
+				if (checkUndoLimit(operation)) {
 					undoList.add(operation);
+				} else {
+					addedToUndo = false;
 				}
 			}
-			if (!addToUndoStack) {
-				// dispose the operation since we did not add it to the stack
-				// and will no longer have a reference to it.
-				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=94400
+			// dispose the operation since we could not add it to the
+			// stack and will no longer have a reference to it.
+			if (!addedToUndo) {
 				operation.dispose();
 			}
+
 			// notify listeners must happen after history is updated
 			notifyRedone(operation);
 		} else {
@@ -433,24 +431,18 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// if successful, the operation is removed from the undo history and
 		// placed in the redo history.
 		if (status.isOK()) {
-			// Only add the operation to the redo stack if it can indeed be
-			// redone. This conservatism is added to support the integration
-			// of existing frameworks (such as Refactoring) that produce
-			// undo and redo behavior on the fly and cannot guarantee that
-			// a successful undo means a successful redo will be available.
-			// We check this outside of the synchronized block.
-			// See bug #84444
-			boolean addToRedoStack = operation.canRedo();
+			boolean addedToRedo = true;
 			synchronized (undoRedoHistoryLock) {
 				undoList.remove(operation);
-				if (addToRedoStack && checkRedoLimit(operation)) {
+				if (checkRedoLimit(operation)) {
 					redoList.add(operation);
+				} else {
+					addedToRedo = false;
 				}
 			}
-			if (!addToRedoStack) {
-				// dispose the operation since we did not add it to the stack
-				// and will no longer have a reference to it.
-				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=94400
+			// dispose the operation since we could not add it to the
+			// stack and will no longer have a reference to it.
+			if (!addedToRedo) {
 				operation.dispose();
 			}
 			// notification occurs after the undo and redo histories are
@@ -478,11 +470,11 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		if (!operation.canExecute()) {
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
-		
+
 		// check with the operation approvers
 		IStatus status = getExecuteApproval(operation, info);
 		if (!status.isOK()) {
-			// not approved.  No notifications are sent, just return the status.
+			// not approved. No notifications are sent, just return the status.
 			return status;
 		}
 
@@ -528,21 +520,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		if (!merging) {
 			if (status.isOK()) {
 				notifyDone(operation);
-				// Only add the operation to the history if it can indeed be
-				// undone. This conservatism is added to support the
-				// integration of existing frameworks (such as Refactoring)
-				// that may be using a history to execute
-				// all operations, even those that are not undoable.
-				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=84444
-				if (operation.canUndo()) {
-					add(operation);
-				} else {
-					// dispose the operation since we did not add it to the
-					// stack
-					// and will no longer have a reference to it.
-					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=94400
-					operation.dispose();
-				}
+				add(operation);
 			} else {
 				notifyNotOK(operation, status);
 				// dispose the operation since we did not add it to the stack
@@ -740,11 +718,11 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private IStatus getRedoApproval(IUndoableOperation operation,
 			IAdaptable info) {
-		
+
 		final Object[] approverArray = approvers.getListeners();
 
 		for (int i = 0; i < approverArray.length; i++) {
-			IOperationApprover approver = (IOperationApprover)approverArray[i];
+			IOperationApprover approver = (IOperationApprover) approverArray[i];
 			IStatus approval = approver.proceedRedoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -798,7 +776,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		final Object[] approverArray = approvers.getListeners();
 
 		for (int i = 0; i < approverArray.length; i++) {
-			IOperationApprover approver = (IOperationApprover)approverArray[i];
+			IOperationApprover approver = (IOperationApprover) approverArray[i];
 			IStatus approval = approver.proceedUndoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -841,10 +819,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 		return null;
 	}
-	
+
 	/*
-	 * Consult the IOperationApprovers to see if the proposed execution
-	 * should be allowed.
+	 * Consult the IOperationApprovers to see if the proposed execution should
+	 * be allowed.
 	 * 
 	 * @since 3.2
 	 */
@@ -855,8 +833,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		for (int i = 0; i < approverArray.length; i++) {
 			if (approverArray[i] instanceof IOperationApprover2) {
-				IOperationApprover2 approver = (IOperationApprover2)approverArray[i];
-				IStatus approval = approver.proceedExecuting(operation, this, info);
+				IOperationApprover2 approver = (IOperationApprover2) approverArray[i];
+				IStatus approval = approver.proceedExecuting(operation, this,
+						info);
 				if (!approval.isOK()) {
 					if (DEBUG_OPERATION_HISTORY_APPROVAL) {
 						Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
@@ -893,7 +872,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		for (int i = 0; i < listenerArray.length; i++)
 			try {
-				((IOperationHistoryListener)listenerArray[i]).historyNotification(event);
+				((IOperationHistoryListener) listenerArray[i])
+						.historyNotification(event);
 			} catch (Exception e) {
 				handleNotificationException(e);
 			}
@@ -914,9 +894,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAboutToRedo(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing
-					.printTrace("OPERATIONHISTORY", "ABOUT_TO_REDO " //$NON-NLS-1$ //$NON-NLS-2$
-							+ operation);
+			Tracing.printTrace("OPERATIONHISTORY", "ABOUT_TO_REDO " //$NON-NLS-1$ //$NON-NLS-2$
+					+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -928,9 +907,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAboutToUndo(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing
-					.printTrace("OPERATIONHISTORY", "ABOUT_TO_UNDO " //$NON-NLS-1$ //$NON-NLS-2$
-							+ operation);
+			Tracing.printTrace("OPERATIONHISTORY", "ABOUT_TO_UNDO " //$NON-NLS-1$ //$NON-NLS-2$
+					+ operation);
 		}
 
 		notifyListeners(new OperationHistoryEvent(
@@ -954,8 +932,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation is done executing.
 	 */
 	private void notifyDone(IUndoableOperation operation) {
-		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {Tracing
-			.printTrace("OPERATIONHISTORY", "DONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			Tracing.printTrace("OPERATIONHISTORY", "DONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.DONE,
@@ -1029,7 +1007,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyChanged(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_CHANGED "  //$NON-NLS-1$//$NON-NLS-2$
+			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_CHANGED " //$NON-NLS-1$//$NON-NLS-2$
 					+ operation);
 		}
 
