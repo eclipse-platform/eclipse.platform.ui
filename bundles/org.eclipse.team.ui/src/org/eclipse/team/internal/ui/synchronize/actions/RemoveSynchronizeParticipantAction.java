@@ -131,11 +131,11 @@ public class RemoveSynchronizeParticipantAction extends Action {
 	private boolean promptToSave(List dirtyModels) {
         if (dirtyModels.size() == 1) {
         	ISaveableModel model = (ISaveableModel) dirtyModels.get(0);
-			String message = NLS.bind("{0} contains unsaved changes. Would you like to save them?", model.getName()); 
+			String message = NLS.bind(TeamUIMessages.RemoveSynchronizeParticipantAction_2, model.getName()); 
 			// Show a dialog.
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
 			MessageDialog d = new MessageDialog(
-					view.getSite().getShell(), "Save Changes",
+					view.getSite().getShell(), TeamUIMessages.RemoveSynchronizeParticipantAction_3,
 				null, message, MessageDialog.QUESTION, buttons, 0);
 			
 			int choice = choice = d.open();
@@ -156,9 +156,9 @@ public class RemoveSynchronizeParticipantAction extends Action {
             ListSelectionDialog dlg = new ListSelectionDialog(
                     view.getSite().getShell(), dirtyModels,
                     new ArrayContentProvider(),
-                    new WorkbenchPartLabelProvider(), "There are unsaved changes.");
+                    new WorkbenchPartLabelProvider(), TeamUIMessages.RemoveSynchronizeParticipantAction_4);
             dlg.setInitialSelections(dirtyModels.toArray());
-            dlg.setTitle("Save Changes");
+            dlg.setTitle(TeamUIMessages.RemoveSynchronizeParticipantAction_5);
 
         	int result = dlg.open();
             //Just return false to prevent the operation continuing

@@ -24,8 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.mapping.*;
@@ -198,15 +197,15 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		IModelProviderDescriptor oldDesc = ModelProvider.getModelProviderDescriptor(oldId);
 		String message;
 		String modeToString = Utils.modeToString(getConfiguration().getMode());
-        message = NLS.bind("However {0} has changes in {1} mode.", new String[] {
+        message = NLS.bind(TeamUIMessages.DiffTreeChangesSection_0, new String[] {
             		provider.getDescriptor().getLabel(), 
             		modeToString });
-		message = NLS.bind("There are no more {0} changes for {1}. {2}", new String[] { modeToString, oldDesc.getLabel(), message });
+		message = NLS.bind(TeamUIMessages.DiffTreeChangesSection_1, new String[] { modeToString, oldDesc.getLabel(), message });
 		
 		Label warning = new Label(composite, SWT.NONE);
 		warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
 		
-		Hyperlink link = getForms().createHyperlink(composite, NLS.bind("Change to {0}.", new String[] { provider.getDescriptor().getLabel() }), SWT.WRAP); 
+		Hyperlink link = getForms().createHyperlink(composite, NLS.bind(TeamUIMessages.DiffTreeChangesSection_2, new String[] { provider.getDescriptor().getLabel() }), SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				//getConfiguration().setProperty(ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER, provider.getDescriptor().getId() );

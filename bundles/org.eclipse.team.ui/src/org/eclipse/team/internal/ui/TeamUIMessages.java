@@ -377,4 +377,44 @@ public class TeamUIMessages extends NLS {
 	public static String CompareFileRevisionEditorInput_repository;
 	public static String CompareFileRevisionEditorInput_workspace;
 	public static String CompareFileRevisionEditorInput_localRevision;
+
+	public static String ShowLocalHistory_1;
+
+	public static String DiffTreeChangesSection_0;
+
+	public static String DiffTreeChangesSection_1;
+
+	public static String DiffTreeChangesSection_2;
+
+	public static String ModelParticipantPageDialog_0;
+
+	public static String ModelElementSelectionPage_0;
+
+	public static String ModelSelectionDropDownAction_0;
+
+	public static String ModelSelectionDropDownAction_1;
+
+	public static String RemoveSynchronizeParticipantAction_2;
+
+	public static String RemoveSynchronizeParticipantAction_3;
+
+	public static String RemoveSynchronizeParticipantAction_4;
+
+	public static String RemoveSynchronizeParticipantAction_5;
+
+	public static String SynchronizationLabelProvider_0;
+
+	public static String ModelMergeOperation_0;
+
+	public static String ModelMergeOperation_1;
+
+	public static String ModelMergeOperation_2;
+
+	public static String ModelSynchronizeParticipant_0;
+
+	public static String ModelSynchronizeParticipant_1;
+
+	public static String ModelParticipantAction_0;
+
+	public static String ModelParticipantAction_1;
 }

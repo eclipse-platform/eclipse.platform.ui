@@ -16,8 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -40,7 +39,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 				};
 		this.configuration.addPropertyChangeListener(listener);
 		getSynchronizationContext().getScope().addScopeChangeListener(this);
-		showAllAction = new Action("Show All") { 
+		showAllAction = new Action(TeamUIMessages.ModelSelectionDropDownAction_0) { 
 			public void run() {
 				Viewer v = ModelSelectionDropDownAction.this.configuration.getPage().getViewer();
 				v.setInput(getSynchronizationContext());
@@ -131,7 +130,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 
 	public void update() {
 		ModelProvider next = getNextProvider();
-		String text = NLS.bind("Show {0}", next.getDescriptor().getLabel()); 
+		String text = NLS.bind(TeamUIMessages.ModelSelectionDropDownAction_1, next.getDescriptor().getLabel()); 
 		setToolTipText(text);
 		setText(text);
 		if (menuManager != null) {

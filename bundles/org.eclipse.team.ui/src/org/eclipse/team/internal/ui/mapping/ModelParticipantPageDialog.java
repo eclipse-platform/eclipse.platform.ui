@@ -72,7 +72,7 @@ public final class ModelParticipantPageDialog extends ParticipantPageDialog {
 		boolean isReplace = isReplace();
 		isReplace = false; // TODO: Disbled for now
 		if (isReplace) {
-			replaceButton = createButton(parent, REPLACE_ID, "&Replace", true); 
+			replaceButton = createButton(parent, REPLACE_ID, TeamUIMessages.ModelParticipantPageDialog_0, true); 
 			replaceButton.setEnabled(true); 
 		}
 		doneButton = createButton(parent, DONE_ID, TeamUIMessages.ResourceMappingMergeOperation_2, !isReplace); 

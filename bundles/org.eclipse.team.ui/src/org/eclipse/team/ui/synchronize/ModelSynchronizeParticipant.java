@@ -432,7 +432,7 @@ public class ModelSynchronizeParticipant extends
 			IMemento settings = memento.getChild(CTX_PARTICIPANT_SETTINGS);
 			ResourceMapping[] mappings = loadMappings(settings);
 			if (mappings.length == 0)
-				throw new PartInitException(NLS.bind("{0} failed to initialize due to missing data during restore.", getId()));
+				throw new PartInitException(NLS.bind(TeamUIMessages.ModelSynchronizeParticipant_0, getId()));
 			initializeContext(mappings);
 			if(settings != null) {
 				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_REFRESH_SCHEDULE_SETTINGS), createRefreshable());
@@ -488,7 +488,7 @@ public class ModelSynchronizeParticipant extends
 	 * @throws CoreException
 	 */
 	protected MergeContext restoreContext(ISynchronizationScopeManager manager) throws CoreException {
-		throw new PartInitException(NLS.bind("Participant {0} is not capable of restoring its context", getId()));
+		throw new PartInitException(NLS.bind(TeamUIMessages.ModelSynchronizeParticipant_1, getId()));
 	}
 
 	/**
@@ -502,7 +502,7 @@ public class ModelSynchronizeParticipant extends
 	 * participant when it is restored after a restart
 	 */
 	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
-		return new SynchronizationScopeManager(mappings, ResourceMappingContext.LOCAL_CONTEXT, true);
+		return new SynchronizationScopeManager(super.getName(), mappings, ResourceMappingContext.LOCAL_CONTEXT, true);
 	}
 	
 	/* private */ void setRefreshSchedule(SubscriberRefreshSchedule schedule) {

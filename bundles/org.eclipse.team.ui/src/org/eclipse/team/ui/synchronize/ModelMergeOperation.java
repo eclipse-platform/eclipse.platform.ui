@@ -17,7 +17,8 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
@@ -189,13 +190,36 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * Subclasses may override.
 	 * @param status the status returned from the mergers that reported the validation failures
 	 */
-	protected void handleValidationFailure(IStatus status) {
-		Display.getDefault().syncExec(new Runnable() {
+	protected void handleValidationFailure(final IStatus status) {
+    	final boolean[] result = new boolean[] { false };
+    	Runnable runnable = new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(getShell(), "Validation Failure", "Better message to come.");
-			};
-		});
-		handlePreviewRequest();
+				ErrorDialog dialog = new ErrorDialog(getShell(), TeamUIMessages.ModelMergeOperation_0, TeamUIMessages.ModelMergeOperation_1, status, IStatus.ERROR | IStatus.WARNING | IStatus.INFO) {
+					protected void createButtonsForButtonBar(Composite parent) {
+				        createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL,
+				                false);
+						createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL,
+								true);
+				        createDetailsButton(parent);
+					}
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.dialogs.ErrorDialog#buttonPressed(int)
+					 */
+					protected void buttonPressed(int id) {
+						if (id == IDialogConstants.YES_ID)
+							super.buttonPressed(IDialogConstants.OK_ID);
+						else if (id == IDialogConstants.NO_ID)
+							super.buttonPressed(IDialogConstants.CANCEL_ID);
+						super.buttonPressed(id);
+					}
+				};
+				int code = dialog.open();
+				result[0] = code == 0;
+			}
+		};
+		getShell().getDisplay().syncExec(runnable);
+		if (result[0])
+			handlePreviewRequest();
 	}
 
 	/**
@@ -314,7 +338,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	}
 	
 	private IStatus noMergeContextAvailable() {
-		throw new IllegalStateException("Merges should only be attemped for operations that have a merge context");
+		throw new IllegalStateException(TeamUIMessages.ModelMergeOperation_2);
 	}
 	
 	/**

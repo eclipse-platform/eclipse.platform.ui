@@ -15,6 +15,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ui.Messages;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 
@@ -37,7 +38,7 @@ public class ShowModelProviderAction extends Action {
 				provider.getDescriptor().getId());
 		configuration.setProperty(
 				ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
-				NLS.bind("{0} for {1}", new String[] {provider.getDescriptor().getLabel(), configuration.getParticipant().getName()}));
+				NLS.bind(Messages.getString("ShowModelProviderAction.0"), new String[] {provider.getDescriptor().getLabel(), configuration.getParticipant().getName()})); //$NON-NLS-1$
 	}
 
 	public String getProviderId() {

@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -39,7 +40,7 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
 						public void run() {try {
-							IViewPart view = targetPart.getSite().getPage().showView("org.eclipse.team.ui.GenericHistoryView");
+							IViewPart view = targetPart.getSite().getPage().showView("org.eclipse.team.ui.GenericHistoryView"); //$NON-NLS-1$
 							if (view instanceof GenericHistoryView){
 								GenericHistoryView historyView =(GenericHistoryView) view;
 								historyView.localItemDropped(resource);
@@ -50,7 +51,7 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 				}
 			});
 		} catch (InvocationTargetException exception) {
-			ErrorDialog.openError(shell, null, null, new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID, IStatus.ERROR, "Problem showing Local History", exception.getTargetException()));
+			ErrorDialog.openError(shell, null, null, new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID, IStatus.ERROR, TeamUIMessages.ShowLocalHistory_1, exception.getTargetException()));
 		} catch (InterruptedException exception) {
 		}
 	}

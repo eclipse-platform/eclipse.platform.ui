@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.*;
@@ -143,7 +144,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 			SynchronizationContentProvider scp = (SynchronizationContentProvider) contentProvider;
 			ISynchronizationContext context = getContext();
 			if (context != null && !scp.isInitialized(context)) {
-				return NLS.bind("{0} Initializing", text);
+				return NLS.bind(TeamUIMessages.SynchronizationLabelProvider_0, text);
 			}
 		}
 		return text;

@@ -874,7 +874,7 @@ public class Utils {
 		ModelProvider provider = mapping.getModelProvider();
 		ISynchronizationCompareAdapter adapter = getCompareAdapter(provider);
 		if (adapter == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return adapter.getPathString(mapping).toString();
 	}
 

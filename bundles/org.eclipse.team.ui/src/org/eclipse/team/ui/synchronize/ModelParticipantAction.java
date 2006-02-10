@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.mapping.ISaveableCompareModel;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.ui.PlatformUI;
@@ -213,8 +214,8 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 				}
 				MessageDialog dialog = new MessageDialog(
 						shell, 
-						"Save Changes", null, 
-						NLS.bind("{0} has unsaved changes. Do you want to save them?", saveableModel.getName()),
+						TeamUIMessages.ModelParticipantAction_0, null, 
+						NLS.bind(TeamUIMessages.ModelParticipantAction_1, saveableModel.getName()),
 						MessageDialog.QUESTION,
 						options,
 						result[0]);

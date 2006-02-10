@@ -46,7 +46,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 			IResource resource = roots[i];
 			result.add(Utils.getResourceMapping(resource));
 		}
-		manager = new SynchronizationScopeManager((ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]), 
+		manager = new SynchronizationScopeManager(TeamUIMessages.ModelElementSelectionPage_0, (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]), 
 						ResourceMappingContext.LOCAL_CONTEXT, true);
 		try {
 			// TODO
