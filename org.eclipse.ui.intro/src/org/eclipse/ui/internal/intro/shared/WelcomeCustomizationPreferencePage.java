@@ -336,12 +336,15 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	}
 
 	private boolean isCustomizationMode() {
+		/*
 		String[] args = Platform.getApplicationArgs();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-welcomeCustomization")) //$NON-NLS-1$
 				return true;
 		}
 		return false;
+		*/
+		return true;
 	}
 
 	public void init(IWorkbench workbench) {

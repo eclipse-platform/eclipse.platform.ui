@@ -119,6 +119,14 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="bgImage" type="string">
+            <annotation>
+               <documentation>
+                  an optional URL of the image to use as a background for this group
+
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -175,10 +183,17 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="dynamic" type="boolean" use="default" value="false">
+         <attribute name="computed" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
                   if &lt;code&gt;true&lt;/code&gt;, the children of this group will be provided by the intro configurer at run time. It is advised not to define any children statically in this case.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="bgImage" type="string">
+            <annotation>
+               <documentation>
+                  an optional URL of the image to use as a background for this group
                </documentation>
             </annotation>
          </attribute>
@@ -647,6 +662,21 @@ Since 3.1, styles can also be a comma separated list of styles. These styles wil
             <annotation>
                <documentation>
                   if content is defined, it is assumed that the extension content is defined in an external XHTML file. In that case the resource pointed to by this content attribute is loaded and the path attribute is now resolved in this external file. since 3.1
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  (since 3.2) a unique identifier of this extension required when used in conjunction with intro configurer. 
+
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  (since 3.2) a translatable name of this extension required when used in conjunction with intro configurer
                </documentation>
             </annotation>
          </attribute>

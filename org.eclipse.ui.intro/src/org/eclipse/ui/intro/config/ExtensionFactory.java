@@ -29,6 +29,8 @@ import org.eclipse.ui.internal.intro.shared.WelcomeCustomizationPreferencePage;
  * <li>welcomeCustomization - a preference page that allows user customization of the shared
  * Welcome.</li>
  * </ul>
+ * <p>This class should be referenced in extensions but not subclassed
+ * or instantiated programmatically.
  * 
  * @since 3.2
  */

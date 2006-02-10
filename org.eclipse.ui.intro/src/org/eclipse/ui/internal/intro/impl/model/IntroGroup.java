@@ -25,7 +25,7 @@ public class IntroGroup extends AbstractIntroContainer {
 
     protected static final String TAG_GROUP = "group"; //$NON-NLS-1$
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
-    private static final String ATT_DYNAMIC = "dynamic"; //$NON-NLS-1$
+    private static final String ATT_COMPUTED = "computed"; //$NON-NLS-1$
     private String label;
     /**
      * @param element
@@ -52,7 +52,7 @@ public class IntroGroup extends AbstractIntroContainer {
     }
     
     protected void loadChildren() {
-    	String value = getAttribute(element, ATT_DYNAMIC);
+    	String value = getAttribute(element, ATT_COMPUTED);
     	if (value!=null && value.equalsIgnoreCase("true")) //$NON-NLS-1$
     		loadDynamicNodes();
     	super.loadChildren();

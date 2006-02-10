@@ -163,10 +163,10 @@ public class IntroLaunchBarElement extends AbstractIntroElement {
         IntroModelRoot model = getModelRoot();
         IntroConfigurer configurer = model!=null?model.getConfigurer():null;
         
-        String dvalue = getCfgElement().getAttribute("dynamic"); //$NON-NLS-1$
-        boolean dynamic = dvalue!=null && dvalue.equalsIgnoreCase("true"); //$NON-NLS-1$
+        String cvalue = getCfgElement().getAttribute("computed"); //$NON-NLS-1$
+        boolean computed = cvalue!=null && cvalue.equalsIgnoreCase("true"); //$NON-NLS-1$
         
-        if (dynamic && configurer!=null) {
+        if (computed && configurer!=null) {
         	IntroElement [] children = configurer.getLaunchBarShortcuts();
         	for (int i=0; i<children.length; i++) {
         		IntroLaunchBarShortcut shortcut = new IntroLaunchBarShortcut(getCfgElement(), children[i]);

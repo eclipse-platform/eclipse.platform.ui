@@ -60,7 +60,7 @@
             <launchBar
                	location="fastview" 
             	bg="#c6c3e8"
-            	dynamic="true">
+            	computed="true">
             </launchBar>
          </presentation>
       </config>

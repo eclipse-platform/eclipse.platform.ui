@@ -35,7 +35,7 @@ public abstract class IntroConfigurer {
 	public abstract String getVariable(String variableName);
 
 	/**
-	 * Returns the children of dynamic groups. Groups marked as dynamic will be completed at run
+	 * Returns the children of computed groups. Groups marked as computed will be completed at run
 	 * time when the group is asked to provide children.
 	 * 
 	 * @param pageId
@@ -50,7 +50,7 @@ public abstract class IntroConfigurer {
 
 	/**
 	 * Returns an array of elements that will be used to build launch bar short cut links. Override
-	 * this method if the intro launch bar has been marked as dynamic.
+	 * this method if the intro launch bar has been marked as computed.
 	 * 
 	 * @return an array of elements that will be used to dynamically build shortcut links.
 	 */

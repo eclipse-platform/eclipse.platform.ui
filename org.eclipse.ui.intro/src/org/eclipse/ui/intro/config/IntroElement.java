@@ -14,9 +14,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
- * Used to provide children of the dynamic gruops while constructing intro content. Clients provide
+ * Used to provide children of the computed gruops while constructing intro content. Clients provide
  * instances of this class from <code>IntroConfigurer</code> to dynamically complete the intro
- * content. Attribute and element names, as well as content model must match the intro content
+ * content. Attribute and element names, as well as content model must match the intro
  * schema.
  * 
  * @since 3.2
@@ -60,12 +60,13 @@ public class IntroElement {
 	public String getAttribute(String name) {
 		return (String) atts.get(name);
 	}
-	
+
 	/**
 	 * Returns the names of all the attributes defined in this element.
+	 * 
 	 * @return an enumeration of all the element names
 	 */
-	
+
 	public Enumeration getAttributes() {
 		return atts.keys();
 	}
