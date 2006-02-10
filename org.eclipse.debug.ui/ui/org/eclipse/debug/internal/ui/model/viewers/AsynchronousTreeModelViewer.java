@@ -472,35 +472,30 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
 
     public void handleEvent(final Event event) {
-    	// TODO: workaround for bug 125499: don't preserve selection when item is revealed
-//        preservingSelection(new Runnable() {
-//            public void run() {
-                TreeItem item = (TreeItem) event.item;
-                Widget parentItem = item.getParentItem();
-                int index = 0;
-                if (parentItem != null) {
-                    index = ((TreeItem) parentItem).indexOf(item);
-                } else {
-                    parentItem = fTree;
-                    index = fTree.indexOf(item);
-                }
+    	// don't preserve selection when item is revealed: see bug 125499
+        TreeItem item = (TreeItem) event.item;
+        Widget parentItem = item.getParentItem();
+        int index = 0;
+        if (parentItem != null) {
+            index = ((TreeItem) parentItem).indexOf(item);
+        } else {
+            parentItem = fTree;
+            index = fTree.indexOf(item);
+        }
 
-                ModelNode parentNode = getModel().getModelNode(parentItem);
-                if (parentNode != null) {
-                	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
-                	if (childrenNodes != null && index < childrenNodes.length) {
-                		ModelNode child = childrenNodes[index];
-                		getModel().mapWidget(item, child);
-                		internalRefresh(child.getElement(), item);
-                        attemptExpansion();
-                        attemptSelection(false);
-                	} else {
-                		addPendingChildIndex(parentNode, index);
-                    }
-                }
-
-//            }
-//        });
+        ModelNode parentNode = getModel().getModelNode(parentItem);
+        if (parentNode != null) {
+        	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+        	if (childrenNodes != null && index < childrenNodes.length) {
+        		ModelNode child = childrenNodes[index];
+        		getModel().mapWidget(item, child);
+        		internalRefresh(child.getElement(), item);
+                attemptExpansion();
+                attemptSelection(false);
+        	} else {
+        		addPendingChildIndex(parentNode, index);
+            }
+        }
     }
     
     /**
