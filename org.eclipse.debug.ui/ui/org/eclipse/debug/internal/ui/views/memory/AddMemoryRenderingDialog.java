@@ -409,7 +409,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			
 			IDebugElement element = getMemoryBlock(selection);
 			
-			if (!(element instanceof IMemoryBlock) ||(element == null))
+			if (!(element instanceof IMemoryBlock))
 			{
 				
 				IAdaptable context = DebugUITools.getDebugContext();	
