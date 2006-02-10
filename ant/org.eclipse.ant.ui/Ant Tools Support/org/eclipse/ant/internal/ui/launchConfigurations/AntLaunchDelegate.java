@@ -89,7 +89,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private String fMode;
     private boolean fUserSpecifiedLogger= false;
     
-    public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
+    private String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		String arguments = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
 		return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(arguments);
 	}
@@ -152,10 +152,11 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		// resolve arguments	
 		String[] arguments = null;
-		if (isSeparateJRE)
+		if (isSeparateJRE) {
 			arguments = new String[] {getProgramArguments(configuration)};
-		else 
+        } else { 
 			arguments = ExternalToolsUtil.getArguments(configuration);
+        }
 		
 		Map userProperties= AntUtil.getProperties(configuration);
 		if (userProperties != null) {//create a copy so as to not affect the configuration with transient properties
@@ -714,10 +715,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if (IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY.equals(
 				configuration.getType().getCategory())) {
-					// don't prompt for buiders
+					// don't prompt for builders
 					return true;
 		}
 		return super.saveBeforeLaunch(configuration, mode, monitor);
 	}
-    
 }
