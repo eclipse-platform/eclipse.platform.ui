@@ -366,7 +366,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					if (isDisposed())
 						return Status.OK_STATUS;
 					
-					if (selection == null || selection.isEmpty())
+					if (selection.isEmpty())
 					{
 						// if the event comes from Memory View
 						// pick empty tab folder as the memory view is no longer displaying anything
@@ -1164,7 +1164,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			return null;
 
 		//only single selection of PICLDebugElements is allowed for this action
-		if (selection == null || selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
+		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
 		{
 			return null;
 		}

@@ -196,7 +196,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 			return;
 
 		//only single selection of PICLDebugElements is allowed for this action
-		if (selection == null || selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
+		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
 		{
 			return;
 		}

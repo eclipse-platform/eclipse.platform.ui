@@ -87,7 +87,7 @@ public class MemoryViewUtil {
 			return false;
 	
 		//only single selection is allowed for this action
-		if (selection == null || selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
+		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
 		{
 			return false;
 		}

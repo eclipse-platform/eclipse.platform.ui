@@ -101,7 +101,7 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 			return null;
 
 		//only single selection of PICLDebugElements is allowed for this action
-		if (selection == null || selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
+		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
 		{
 			return null;
 		}
