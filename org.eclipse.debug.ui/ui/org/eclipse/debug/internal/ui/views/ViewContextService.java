@@ -608,14 +608,16 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 		if (!fIgnoreChanges && page.getWorkbenchWindow().equals(fWindow)) {
-            ViewBinding info = (ViewBinding) fViewBindings.get(partRef.getId());
-            if (info != null) {
-                if (IWorkbenchPage.CHANGE_VIEW_SHOW == changeId) {
-                    info.userOpened();
-                } else if (IWorkbenchPage.CHANGE_VIEW_HIDE == changeId) {
-                    info.userClosed();
-                }
-            }
+			if(partRef != null) {
+	            ViewBinding info = (ViewBinding) fViewBindings.get(partRef.getId());
+	            if (info != null) {
+	                if (IWorkbenchPage.CHANGE_VIEW_SHOW == changeId) {
+	                    info.userOpened();
+	                } else if (IWorkbenchPage.CHANGE_VIEW_HIDE == changeId) {
+	                    info.userClosed();
+	                }
+	            }
+			}
         }	
 	}
 
