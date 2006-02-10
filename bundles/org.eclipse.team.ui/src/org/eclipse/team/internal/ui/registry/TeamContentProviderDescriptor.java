@@ -101,6 +101,8 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 	 * @see org.eclipse.team.internal.ui.registry.ITeamContentProviderDescriptor#createPreferencePage()
 	 */
 	public IPreferencePage createPreferencePage() throws CoreException {
+		if (configElement.getAttribute(ATT_PREFERENCE_PAGE) == null)
+			return null;
 		Object obj = RegistryReader.createExtension(configElement, ATT_PREFERENCE_PAGE);
 		return (IPreferencePage) obj;
 	}

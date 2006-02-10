@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
@@ -591,6 +592,44 @@ public class ModelSynchronizeParticipant extends
 	 */
 	public ModelProvider[] getEnabledModelProviders() {
 		return getContext().getScope().getModelProviders();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getPreferencePages()
+	 */
+	public PreferencePage[] getPreferencePages() {
+		List pages = new ArrayList();
+		PreferencePage[] preferencePages = super.getPreferencePages();
+		for (int i = 0; i < preferencePages.length; i++) {
+			PreferencePage page = preferencePages[i];
+			pages.add(page);
+		}
+		ITeamContentProviderDescriptor[] descriptors = TeamUI.getTeamContentProviderManager().getDescriptors();
+		for (int i = 0; i < descriptors.length; i++) {
+			ITeamContentProviderDescriptor descriptor = descriptors[i];
+			if (isIncluded(descriptor)) {
+				try {
+					PreferencePage page = (PreferencePage)descriptor.createPreferencePage();
+					if (page != null) {
+						pages.add(page);
+					}
+				} catch (CoreException e) {
+					TeamUIPlugin.log(e);
+				}
+			}
+		}
+		return (PreferencePage[]) pages.toArray(new PreferencePage[pages.size()]);
+	}
+
+	private boolean isIncluded(ITeamContentProviderDescriptor descriptor) {
+		ModelProvider[] providers = getEnabledModelProviders();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			if (provider.getId().equals(descriptor.getModelProviderId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

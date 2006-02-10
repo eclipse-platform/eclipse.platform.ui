@@ -13,13 +13,14 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -178,5 +179,22 @@ public class WorkspaceModelParticipant extends
 		return new SubscriberScopeManager(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), 
 				mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getPreferencePages()
+     */
+    public PreferencePage[] getPreferencePages() {
+        return addCVSPreferencePages(super.getPreferencePages());
+    }
+
+    public static PreferencePage[] addCVSPreferencePages(PreferencePage[] inheritedPages) {
+        PreferencePage[] pages = new PreferencePage[inheritedPages.length + 1];
+        for (int i = 0; i < inheritedPages.length; i++) {
+            pages[i] = inheritedPages[i];
+        }
+        pages[pages.length - 1] = new ComparePreferencePage();
+        pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); 
+        return pages;
+    }
 	
 }

@@ -11,7 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.ComparePreferencePage;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -30,4 +33,20 @@ public class ModelCompareParticipant extends ModelSynchronizeParticipant
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getPreferencePages()
+     */
+    public PreferencePage[] getPreferencePages() {
+        return addCVSPreferencePages(super.getPreferencePages());
+    }
+
+    public static PreferencePage[] addCVSPreferencePages(PreferencePage[] inheritedPages) {
+        PreferencePage[] pages = new PreferencePage[inheritedPages.length + 1];
+        for (int i = 0; i < inheritedPages.length; i++) {
+            pages[i] = inheritedPages[i];
+        }
+        pages[pages.length - 1] = new ComparePreferencePage();
+        pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); 
+        return pages;
+    }
 }
