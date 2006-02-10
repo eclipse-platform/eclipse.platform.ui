@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.history.IFileRevision;
@@ -59,7 +60,7 @@ public class CVSFileHistory extends FileHistory {
 	
 	public void refresh(IProgressMonitor monitor) throws TeamException {
 		if (refetchRevisions){
-				monitor.beginTask("Refreshing CVS",300);
+				monitor.beginTask(NLS.bind(CVSMessages.CVSFileHistory_0, cvsFile.getRepositoryRelativePath()),300);
 				try{
 				ILogEntry[] entries = cvsFile.getLogEntries(new SubProgressMonitor(monitor, 200));
 				if (flag == IFileHistoryProvider.SINGLE_REVISION){

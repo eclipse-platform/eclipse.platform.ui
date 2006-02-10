@@ -501,7 +501,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	public URI getURI(String referenceString) {
 	
 		//team provider, cvs folder, project name
-		StringTokenizer tokenizer = new StringTokenizer(referenceString, ",");
+		StringTokenizer tokenizer = new StringTokenizer(referenceString, ","); //$NON-NLS-1$
 		String version = tokenizer.nextToken();
 		// If this is a newer version, then ignore it
 		if (!version.equals("1.0")) //$NON-NLS-1$
