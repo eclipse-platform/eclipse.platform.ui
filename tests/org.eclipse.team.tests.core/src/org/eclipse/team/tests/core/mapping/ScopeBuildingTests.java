@@ -32,7 +32,7 @@ public class ScopeBuildingTests extends TeamTest {
 	private class TestResourceMappingOperation extends ModelOperation {
 
 		protected TestResourceMappingOperation(ResourceMapping[] selectedMappings, final ResourceMapping[] additionalMappings) {
-			super(null, new SynchronizationScopeManager(selectedMappings, ResourceMappingContext.LOCAL_CONTEXT, false) {	
+			super(null, new SynchronizationScopeManager("", selectedMappings, ResourceMappingContext.LOCAL_CONTEXT, false) {	
 				public void initialize(
 						IProgressMonitor monitor) throws CoreException {
 					super.initialize(monitor);
