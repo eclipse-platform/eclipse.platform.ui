@@ -1142,11 +1142,11 @@ public class InternalAntRunner {
 			return false;
 		}
 
-		if ((commands != null) && (!commands.isEmpty())) {
+		if (!commands.isEmpty()) {
 			processUnrecognizedCommands(commands);
 		}
 
-		if ((commands != null) && (!commands.isEmpty())) {
+		if (!commands.isEmpty()) {
 			processTargets(commands);
 		}
 		

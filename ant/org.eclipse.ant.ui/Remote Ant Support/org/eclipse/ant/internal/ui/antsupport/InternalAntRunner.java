@@ -815,11 +815,11 @@ public class InternalAntRunner {
 		
 		processTasksAndTypes(commands);
 		
-		if ((commands != null) && (!commands.isEmpty())) {
+		if (!commands.isEmpty()) {
 			processUnrecognizedCommands(commands);
 		}
 
-		if ((commands != null) && (!commands.isEmpty())) {
+		if (!commands.isEmpty()) {
 			processTargets(commands);
 		}
 		
