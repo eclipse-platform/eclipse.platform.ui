@@ -165,11 +165,17 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	protected boolean fContentAssistantInstalled;
 	/**
 	 * This viewer's quick assist assistant.
+	 * <p>
+	 * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
+	 * </p>
 	 * @since 3.2
 	 */
 	protected IContentAssistant fQuickAssistAssistant;
 	/**
 	 * Flag indicating whether this viewer's quick assist assistant is installed.
+	 * <p>
+	 * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
+	 * </p>
 	 * @since 3.2
 	 */
 	protected boolean fQuickAssistAssistantInstalled;
