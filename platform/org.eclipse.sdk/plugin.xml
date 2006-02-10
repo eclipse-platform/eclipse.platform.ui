@@ -26,16 +26,22 @@
           		value="product:intro-eclipse.png"/>
           <property
           		name="introBrandingImageText"
-          		value="%productItroBrandingText"/>
+          		value="%productIntroBrandingText"/>
       </product> 
     </extension> 
 
     <extension  
          point="org.eclipse.ui.intro">
+	  <introProductBinding
+            introId="org.eclipse.platform.intro"
+            productId="org.eclipse.sdk.ide">
+      </introProductBinding>
+<!--
       <introProductBinding
             introId="org.eclipse.ui.intro.shared"
             productId="org.eclipse.sdk.ide">
       </introProductBinding>
+-->
     </extension>
 
     <extension
