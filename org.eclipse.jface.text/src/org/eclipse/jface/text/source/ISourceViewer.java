@@ -58,25 +58,36 @@ public interface ISourceViewer extends ITextViewer {
 	 * Text operation code for requesting content assist to show completion
 	 * proposals for the current insert position.
 	 */
-	static final int CONTENTASSIST_PROPOSALS= ITextOperationTarget.STRIP_PREFIX + 1;
+	int CONTENTASSIST_PROPOSALS= ITextOperationTarget.STRIP_PREFIX + 1;
 
 	/**
 	 * Text operation code for requesting content assist to show
 	 * the content information for the current insert position.
 	 */
-	static final int CONTENTASSIST_CONTEXT_INFORMATION=	ITextOperationTarget.STRIP_PREFIX + 2;
+	int CONTENTASSIST_CONTEXT_INFORMATION=	ITextOperationTarget.STRIP_PREFIX + 2;
 
 	/**
 	 * Text operation code for formatting the selected text or complete document
 	 * of this viewer if the selection is empty.
 	 */
-	static final int FORMAT= ITextOperationTarget.STRIP_PREFIX + 3;
+	int FORMAT= ITextOperationTarget.STRIP_PREFIX + 3;
 
 	/**
 	 * Text operation code for requesting information at the current insertion position.
 	 * @since 2.0
 	 */
-	static final int INFORMATION= ITextOperationTarget.STRIP_PREFIX + 4;
+	int INFORMATION= ITextOperationTarget.STRIP_PREFIX + 4;
+
+	/*
+	 * XXX: Cannot continue numbering due to operation codes used in ProjectionViewer
+	 */ 
+
+	/**
+	 * Text operation code for requesting quick assist. This will normally
+	 * show quick assist and quick fix proposals for the current position.
+	 * @since 3.2
+	 */
+	int QUICK_ASSIST= ITextOperationTarget.STRIP_PREFIX + 10;
 
 	/**
 	 * Configures the source viewer using the given configuration. Prior to 3.0 this

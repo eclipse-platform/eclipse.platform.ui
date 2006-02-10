@@ -159,10 +159,20 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	/** The viewer's content assistant */
 	protected IContentAssistant fContentAssistant;
 	/**
-	 * Flag indicating whether the viewer's content assistant is installed
+	 * Flag indicating whether the viewer's content assistant is installed.
 	 * @since 2.0
 	 */
 	protected boolean fContentAssistantInstalled;
+	/**
+	 * This viewer's quick assist assistant.
+	 * @since 3.2
+	 */
+	protected IContentAssistant fQuickAssistAssistant;
+	/**
+	 * Flag indicating whether this viewer's quick assist assistant is installed.
+	 * @since 3.2
+	 */
+	protected boolean fQuickAssistAssistantInstalled;
 	/** The viewer's content formatter */
 	protected IContentFormatter fContentFormatter;
 	/** The viewer's model reconciler */
@@ -345,6 +355,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		if (fContentAssistant != null) {
 			fContentAssistant.install(this);
 			fContentAssistantInstalled= true;
+		}
+		
+		fQuickAssistAssistant= configuration.getQuickAssistAssistant(this);
+		if (fQuickAssistAssistant != null) {
+			fQuickAssistAssistant.install(this);
+			fQuickAssistAssistantInstalled= true;
 		}
 
 		fContentFormatter= configuration.getContentFormatter(this);
@@ -552,6 +568,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fContentAssistantInstalled= false;
 			fContentAssistant= null;
 		}
+		
+		if (fQuickAssistAssistant != null) {
+			fQuickAssistAssistant.uninstall();
+			fQuickAssistAssistantInstalled= false;
+			fQuickAssistAssistant= null;
+		}
 
 		fContentFormatter= null;
 
@@ -615,6 +637,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		if (operation == CONTENTASSIST_CONTEXT_INFORMATION)
 			return fContentAssistant != null && fContentAssistantInstalled && isEditable();
+		
+		if (operation == QUICK_ASSIST)
+			return fQuickAssistAssistant != null && fQuickAssistAssistantInstalled && isEditable();
 
 		if (operation == INFORMATION)
 			return fInformationPresenter != null;
@@ -733,6 +758,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				return;
 			case CONTENTASSIST_CONTEXT_INFORMATION:
 				fContentAssistant.showContextInformation();
+				return;
+			case QUICK_ASSIST:
+				String msg= fQuickAssistAssistant.showPossibleCompletions();
+				// FIXME: must find a way to post to the status line
+				// setStatusLineErrorMessage(msg);
 				return;
 			case INFORMATION:
 				fInformationPresenter.showInformation();
@@ -864,6 +894,21 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 					}
 				} else if (fContentAssistantInstalled) {
 					fContentAssistant.uninstall();
+					fContentAssistantInstalled= false;
+				}
+			}
+			case QUICK_ASSIST: {
+				
+				if (fQuickAssistAssistant == null)
+					return;
+				
+				if (enable) {
+					if (!fQuickAssistAssistantInstalled) {
+						fQuickAssistAssistant.install(this);
+						fQuickAssistAssistantInstalled= true;
+					}
+				} else if (fContentAssistantInstalled) {
+					fQuickAssistAssistant.uninstall();
 					fContentAssistantInstalled= false;
 				}
 			}

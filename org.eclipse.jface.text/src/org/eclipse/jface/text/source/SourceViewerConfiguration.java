@@ -139,6 +139,19 @@ public class SourceViewerConfiguration {
 	}
 
 	/**
+	 * Returns the quick assist assistant ready to be used with the given
+	 * source viewer.
+	 * This implementation always returns <code>null</code>.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return a quick assist assistant or <code>null</code> if quick assist should not be supported
+	 * @since 3.2
+	 */
+	public IContentAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		return null;
+	}
+
+	/**
 	 * Returns the auto indentation strategy ready to be used with the given source viewer
 	 * when manipulating text of the given content type. This implementation always
 	 * returns an new instance of <code>DefaultAutoIndentStrategy</code>.

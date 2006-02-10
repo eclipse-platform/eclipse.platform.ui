@@ -4573,7 +4573,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.HIPPIE_COMPLETION_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);
-		
+
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.QuickAssist.", this, ISourceViewer.QUICK_ASSIST); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.QUICK_ASSIST_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
+		setAction(ITextEditorActionConstants.QUICK_ASSIST, action);
+		markAsStateDependentAction(ITextEditorActionConstants.QUICK_ASSIST, true);
+
 		action= new GotoAnnotationAction(this, true);
 		setAction(ITextEditorActionConstants.NEXT, action);
 		action= new GotoAnnotationAction(this, false);
