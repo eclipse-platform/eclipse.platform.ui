@@ -569,6 +569,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 						 * fix for bug 66576 and 79709
 						 */
 						((StackLayout)fTabPlaceHolder.getLayout()).topControl = fTabComposite;
+						setButtonsVisible(true);
 						fTabPlaceHolder.layout(true);
 						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
 						setOriginal(configuration);
@@ -604,6 +605,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fTabPlaceHolder.layout(true);
 		disposeExistingTabs();	
 		updateButtons();
+		setButtonsVisible(false);
+	}
+	
+	private void setButtonsVisible(boolean visible) {
+		getApplyButton().setVisible(visible);
+		getRevertButton().setVisible(visible);
 	}
 	
     protected void setFocusOnName() {
