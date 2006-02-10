@@ -368,13 +368,10 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		
 							IMemoryRendering rendering = type.createRendering();
 							rendering.init(fViewPane, memoryBlock);
-							if (rendering != null)
+							if (!fRenderings.contains(rendering))
 							{
-								if (!fRenderings.contains(rendering))
-								{
-									fRenderings.add(rendering);
-									renderingsAdded= true;
-								}
+							    fRenderings.add(rendering);
+							    renderingsAdded= true;
 							}
 						} catch (CoreException e1) {
 							DebugUIPlugin.log(e1);
