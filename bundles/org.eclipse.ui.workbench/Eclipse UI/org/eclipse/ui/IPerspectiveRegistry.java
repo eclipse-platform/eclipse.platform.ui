@@ -31,12 +31,22 @@ public interface IPerspectiveRegistry {
      * @param label the label assigned to the cloned perspective
      * @param desc the perspective to clone
      * @return the cloned perspective descriptor
+     * @throws IllegalArgumentException if there is already a perspective with the given id 
      * 
      * @since 3.0
      */
     public IPerspectiveDescriptor clonePerspective(String id, String label,
             IPerspectiveDescriptor desc) throws IllegalArgumentException;
 
+	/**
+	 * Deletes a perspective. Has no effect if the perspective is defined in an
+	 * extension.
+	 * 
+	 * @param persp the perspective to delete
+	 * @since 3.2
+	 */
+	public void deletePerspective(IPerspectiveDescriptor persp);
+    
     /**
      * Finds and returns the registered perspective with the given perspective id.
      *
