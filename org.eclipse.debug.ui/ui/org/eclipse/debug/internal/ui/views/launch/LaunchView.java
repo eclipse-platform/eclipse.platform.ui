@@ -15,14 +15,10 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -336,29 +332,13 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		if (!isAvailable()) {
 			return;
 		}
-
-		// traverse debug model in non UI thread
-		Job initJob = new Job(DebugUIViewsMessages.LaunchView_2) { 
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			protected IStatus run(IProgressMonitor monitor) {
-				ILaunchManager launchManager = (ILaunchManager) getViewer().getInput();
-				ILaunch[] launches = launchManager.getLaunches();
-				// forces the delegates to update enablement
-				// TODO: would it be better to contribute toolbar/context actions in code?
-				if (launches.length == 0) {
-					Runnable runnable = new Runnable() {
-						public void run() {
-							getViewer().setSelection(new StructuredSelection());
-						}
-					};
-					asyncExec(runnable);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		initJob.schedule();
+		ILaunchManager launchManager = (ILaunchManager) getViewer().getInput();
+		ILaunch[] launches = launchManager.getLaunches();
+		// forces the delegates to update enablement
+		// TODO: would it be better to contribute toolbar/context actions in code?		
+		if (launches.length == 0) {
+			getViewer().setSelection(new StructuredSelection());
+		}
 	}
 
 	private void commonInit(IViewSite site) {

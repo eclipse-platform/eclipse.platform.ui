@@ -24,7 +24,6 @@ public class DebugUIViewsMessages extends NLS {
 	public static String LaunchViewer_1;
 	public static String LaunchView_0;
 	public static String LaunchView_1;
-	public static String LaunchView_2;
 	public static String LaunchView_Exception_occurred_opening_editor_for_debugger__2;
 	public static String LaunchView_Terminate_and_Remove_1;
 	public static String LaunchView_Terminate_and_remove_selected__2;
