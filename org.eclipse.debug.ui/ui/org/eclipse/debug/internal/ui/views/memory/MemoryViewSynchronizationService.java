@@ -218,21 +218,24 @@ public class MemoryViewSynchronizationService implements
 				String propertyId = evt.getProperty();
 				
 				SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(rendering.getMemoryBlock());
-				Object value = info.getProperty(propertyId);
-				if (value != null)
-				{				
-					Enumeration enumeration = fPropertyListeners.elements();
-					
-					while(enumeration.hasMoreElements())
-					{
-						PropertyListener listener = (PropertyListener)enumeration.nextElement();
+				if (info != null)
+				{
+					Object value = info.getProperty(propertyId);
+					if (value != null)
+					{				
+						Enumeration enumeration = fPropertyListeners.elements();
 						
-						IPropertyChangeListener origListener = listener.getListener();
-						
-						// if it's a valid property - valid means that it's listed in the property filters
-						if (listener.isValidProperty(propertyId)){
-							PropertyChangeNotifier notifier = new PropertyChangeNotifier(origListener, evt);
-							SafeRunner.run(notifier);	
+						while(enumeration.hasMoreElements())
+						{
+							PropertyListener listener = (PropertyListener)enumeration.nextElement();
+							
+							IPropertyChangeListener origListener = listener.getListener();
+							
+							// if it's a valid property - valid means that it's listed in the property filters
+							if (listener.isValidProperty(propertyId)){
+								PropertyChangeNotifier notifier = new PropertyChangeNotifier(origListener, evt);
+								SafeRunner.run(notifier);	
+							}
 						}
 					}
 				}
