@@ -11,7 +11,6 @@
 package org.eclipse.jface.text;
 
 
-
 /**
  * Defines the target for text operations. <code>canDoOperation</code> informs
  * the clients about the ability of the target to perform the specified
