@@ -332,7 +332,7 @@ public class CommitWizard extends ResizableWizard {
 	}
     
     public static ISynchronizationScope buildScope(IWorkbenchPart part, ResourceMapping[] mappings, IProgressMonitor monitor) throws InterruptedException, CVSException {
-		ISynchronizationScopeManager manager = new SynchronizationScopeManager(mappings, 
+		ISynchronizationScopeManager manager = new SynchronizationScopeManager(CVSUIMessages.CommitWizardCommitPage_0, mappings, 
 				SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
 				true);
 		try {

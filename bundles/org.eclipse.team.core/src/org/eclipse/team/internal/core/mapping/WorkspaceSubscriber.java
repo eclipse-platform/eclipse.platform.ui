@@ -79,7 +79,7 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 	 * @see org.eclipse.team.core.subscribers.Subscriber#getName()
 	 */
 	public String getName() {
-		return "Workspace";
+		return Messages.WorkspaceSubscriber_0;
 	}
 
 	/* (non-Javadoc)
@@ -288,7 +288,7 @@ public class WorkspaceSubscriber extends Subscriber implements ISubscriberChange
 			return;
 		if (exceptions.length == 1)
 			throw exceptions[0];
-		MultiStatus result = new MultiStatus(TeamPlugin.ID, 0, "Mulitple errors occurred", null);
+		MultiStatus result = new MultiStatus(TeamPlugin.ID, 0, Messages.WorkspaceSubscriber_1, null);
 		for (int i = 0; i < exceptions.length; i++) {
 			CoreException exception = exceptions[i];
 			IStatus status = new Status(

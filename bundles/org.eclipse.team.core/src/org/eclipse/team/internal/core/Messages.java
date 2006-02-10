@@ -102,4 +102,12 @@ public class Messages extends NLS {
 	public static String DelegatingStorageMerger_0;
 
 	public static String DelegatingStorageMerger_1;
+
+	public static String WorkspaceSubscriber_0;
+
+	public static String WorkspaceSubscriber_1;
+
+	public static String ScopeManagerEventHandler_0;
+
+	public static String ScopeManagerEventHandler_1;
 }

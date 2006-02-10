@@ -16,10 +16,12 @@ import java.util.Set;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
+import org.eclipse.team.internal.core.Messages;
 
 public class ScopeManagerEventHandler extends BackgroundEventHandler {
 
@@ -36,7 +38,7 @@ public class ScopeManagerEventHandler extends BackgroundEventHandler {
 	}
 
 	public ScopeManagerEventHandler(SynchronizationScopeManager manager) {
-		super("Reconciling Scope", "Error occurred reconsiling the scope");
+		super(NLS.bind(Messages.ScopeManagerEventHandler_0, manager.getName()), NLS.bind(Messages.ScopeManagerEventHandler_1, manager.getName()));
 		this.manager = manager;
 	}
 

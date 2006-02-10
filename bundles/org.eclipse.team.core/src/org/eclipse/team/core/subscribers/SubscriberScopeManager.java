@@ -41,8 +41,8 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 	 * @param subscriber the subscriber
 	 * @param consultModels whether models should be consulted when calculating the scope
 	 */
-	public SubscriberScopeManager(ResourceMapping[] inputMappings, Subscriber subscriber, boolean consultModels) {
-		this(inputMappings, subscriber, SubscriberResourceMappingContext.createContext(subscriber), consultModels);
+	public SubscriberScopeManager(String name, ResourceMapping[] inputMappings, Subscriber subscriber, boolean consultModels) {
+		this(name, inputMappings, subscriber, SubscriberResourceMappingContext.createContext(subscriber), consultModels);
 	}
 
 	/**
@@ -52,8 +52,8 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 	 * @param context a remote resource mapping conext for the subscriber
 	 * @param consultModels whether models should be consulted when calculating the scope
 	 */
-	public SubscriberScopeManager(ResourceMapping[] inputMappings, Subscriber subscriber, RemoteResourceMappingContext context, boolean consultModels) {
-		super(inputMappings, context, consultModels);
+	public SubscriberScopeManager(String name, ResourceMapping[] inputMappings, Subscriber subscriber, RemoteResourceMappingContext context, boolean consultModels) {
+		super(name, inputMappings, context, consultModels);
 		this.subscriber = subscriber;
 	}
 

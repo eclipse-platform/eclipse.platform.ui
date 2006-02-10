@@ -30,7 +30,7 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 	 * @param subscriber the subscriber
 	 */
 	public ModelMergeOperation(IWorkbenchPart part, ResourceMapping[] mappings, final CVSMergeSubscriber subscriber) {
-		super(part, new SubscriberScopeManager(mappings, subscriber, true){
+		super(part, new SubscriberScopeManager(subscriber.getName(), mappings, subscriber, true){
 			public void dispose() {
 				subscriber.cancel();
 				super.dispose();

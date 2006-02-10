@@ -71,6 +71,7 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 	private ISynchronizationScope scope;
 	private boolean initialized;
 	private ScopeManagerEventHandler handler;
+	private final String name;
 
 	/**
 	 * Convenience method for obtaining the set of resource
@@ -117,7 +118,8 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 	 * @param resourceMappingContext a resource mapping context
 	 * @param consultModels whether modle providers should be consulted
 	 */
-	public SynchronizationScopeManager(ResourceMapping[] inputMappings, ResourceMappingContext resourceMappingContext, boolean consultModels) {
+	public SynchronizationScopeManager(String name, ResourceMapping[] inputMappings, ResourceMappingContext resourceMappingContext, boolean consultModels) {
+		this.name = name;
 		this.context = resourceMappingContext;
 		this.consultModels = consultModels;
 		scope = createScope(inputMappings);
@@ -459,5 +461,14 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 		if (handler == null)
 			handler = new ScopeManagerEventHandler(this);
 		return handler;
+	}
+
+	/**
+	 * Returns the human readable name of this manager.  The name is never 
+	 * <code>null</code>.
+	 * @return the name associated with this scope manager
+	 */
+	public String getName() {
+		return name;
 	}
 }

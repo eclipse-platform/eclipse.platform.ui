@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	
 	public ModelUpdateOperation(IWorkbenchPart targetPart, ResourceMapping[] selectedResourceMappings, boolean consultModels) {
-		super(targetPart, new SubscriberScopeManager(selectedResourceMappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), consultModels), true);
+		super(targetPart, new SubscriberScopeManager(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), selectedResourceMappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), consultModels), true);
 	}
 	
 	public ModelUpdateOperation(IWorkbenchPart targetPart, ResourceMapping[] resourceMappings) {

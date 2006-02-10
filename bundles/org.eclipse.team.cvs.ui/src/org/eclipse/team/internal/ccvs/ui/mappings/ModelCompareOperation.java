@@ -22,7 +22,7 @@ public class ModelCompareOperation extends AbstractModelMergeOperation {
 	private final CVSCompareSubscriber subscriber;
 
 	public ModelCompareOperation(IWorkbenchPart part, ResourceMapping[] mappings, final CVSCompareSubscriber subscriber) {
-		super(part, new SubscriberScopeManager(mappings, subscriber, true){
+		super(part, new SubscriberScopeManager(subscriber.getName(), mappings, subscriber, true){
 			public void dispose() {
 				subscriber.dispose();
 				super.dispose();

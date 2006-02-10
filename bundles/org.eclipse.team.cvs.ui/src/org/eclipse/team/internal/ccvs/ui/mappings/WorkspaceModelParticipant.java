@@ -175,7 +175,8 @@ public class WorkspaceModelParticipant extends
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
 	 */
 	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
-		return new SubscriberScopeManager(mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
+		return new SubscriberScopeManager(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), 
+				mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
 	}
 	
 }

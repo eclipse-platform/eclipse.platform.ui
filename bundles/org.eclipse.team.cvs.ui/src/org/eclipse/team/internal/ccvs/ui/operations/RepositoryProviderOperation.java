@@ -219,7 +219,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 
     public ISynchronizationScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
     	if (manager == null) {
-    		manager = new SynchronizationScopeManager(selectedMappings, getResourceMappingContext(), consultModelsWhenBuildingScope && consultModelsForMappings());
+    		manager = new SynchronizationScopeManager(getJobName(), selectedMappings, getResourceMappingContext(), consultModelsWhenBuildingScope && consultModelsForMappings());
     		BuildScopeOperation op = new BuildScopeOperation(getPart(), manager);
 			try {
 				op.run(monitor);
