@@ -18,6 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.intro.config.IntroConfigurer;
+import org.eclipse.ui.intro.config.IntroElement;
 
 /**
  * An Intro Config component captures launch bar information. It can have
@@ -158,12 +160,27 @@ public class IntroLaunchBarElement extends AbstractIntroElement {
      */
     private void createShortcuts() {
         shortcuts = new ArrayList();
-        IConfigurationElement[] children = getCfgElement().getChildren(
-            IntroLaunchBarShortcut.TAG_SHORTCUT);
-        for (int i = 0; i < children.length; i++) {
-            IConfigurationElement child = children[i];
-            IntroLaunchBarShortcut shortcut = new IntroLaunchBarShortcut(child);
-            shortcuts.add(shortcut);
+        IntroModelRoot model = getModelRoot();
+        IntroConfigurer configurer = model!=null?model.getConfigurer():null;
+        
+        String dvalue = getCfgElement().getAttribute("dynamic"); //$NON-NLS-1$
+        boolean dynamic = dvalue!=null && dvalue.equalsIgnoreCase("true"); //$NON-NLS-1$
+        
+        if (dynamic && configurer!=null) {
+        	IntroElement [] children = configurer.getLaunchBarShortcuts();
+        	for (int i=0; i<children.length; i++) {
+        		IntroLaunchBarShortcut shortcut = new IntroLaunchBarShortcut(getCfgElement(), children[i]);
+        		shortcuts.add(shortcut);
+        	}
+        }
+        else {
+            IConfigurationElement[] children = getCfgElement().getChildren(
+                    IntroLaunchBarShortcut.TAG_SHORTCUT);
+        	for (int i = 0; i < children.length; i++) {
+        		IConfigurationElement child = children[i];
+        		IntroLaunchBarShortcut shortcut = new IntroLaunchBarShortcut(child);
+        		shortcuts.add(shortcut);
+        	}
         }
     }
 }

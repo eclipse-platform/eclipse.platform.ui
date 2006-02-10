@@ -50,15 +50,16 @@ public class CustomizeCommand implements IIntroAction {
 			return null;
 		String id = element.getAttribute("id"); //$NON-NLS-1$
 		String label = element.getAttribute("name"); //$NON-NLS-1$
-		String className = element.getAttribute("class"); //$NON-NLS-1$
+		String className = "org.eclipse.ui.internal.intro.shared.WelcomeCustomizationPreferencePage"; //$NON-NLS-1$
 		if (id == null || label == null || className == null)
 			return null;
 		return new PreferenceNode(id, label, null, className) {
 
 			public void createPage() {
-				super.createPage();
-				WelcomeCustomizationPreferencePage page = (WelcomeCustomizationPreferencePage) getPage();
+				WelcomeCustomizationPreferencePage page = new WelcomeCustomizationPreferencePage();
+		        page.setTitle(getLabelText());
 				page.setCurrentPage(pageId);
+				setPage(page);
 			}
 		};
 	}

@@ -124,6 +124,21 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		return new IntroElement[0];
 	}
 
+	public IntroElement[] getLaunchBarShortcuts() {
+		ArrayList links = new ArrayList();
+		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
+		if (ids != null) {
+			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
+			while (stok.hasMoreTokens()) {
+				String id = stok.nextToken().trim();
+				IntroElement page = createLaunchBarShortcut(id);
+				if (page != null)
+					links.add(page);
+			}
+		}
+		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
+	}
+
 	private IntroElement[] getRootPageLinks(boolean standby) {
 		ArrayList links = new ArrayList();
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
@@ -154,11 +169,13 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
 	}
 
+
+
 	private IntroElement[] getCustomizeContent(String pageId) {
 		IntroElement clink = new IntroElement("link"); //$NON-NLS-1$
 		clink
 				.setAttribute(
-						"url", "http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.ui.intro&class=org.eclipse.ui.intro.shared.CustomizeCommand&pageId=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$
+						"url", "http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.ui.intro&class=org.eclipse.ui.internal.intro.shared.CustomizeCommand&pageId=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$
 		clink.setAttribute("label", Messages.SharedIntroConfigurer_customize_label); //$NON-NLS-1$
 		clink.setAttribute("id", "customize"); //$NON-NLS-1$ //$NON-NLS-2$
 		IntroElement text = new IntroElement("text"); //$NON-NLS-1$
@@ -240,6 +257,38 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		return null;
 	}
 
+	private IntroElement createLaunchBarShortcut(String id) {
+		if (id.equals(ID_OVERVIEW))
+			return createShortcutLink(
+					"icons/full/obj16/overview16.png", Messages.SharedIntroConfigurer_overview_nav, //$NON-NLS-1$
+					id);
+		if (id.equals(ID_FIRSTSTEPS))
+			return createShortcutLink(
+					"icons/full/obj16/firststeps16.png", Messages.SharedIntroConfigurer_firststeps_nav, //$NON-NLS-1$
+					id);
+		if (id.equals(ID_TUTORIALS))
+			return createShortcutLink(
+					"icons/full/obj16/tutorials16.png", Messages.SharedIntroConfigurer_tutorials_nav, //$NON-NLS-1$
+					id);
+		if (id.equals(ID_SAMPLES))
+			return createShortcutLink(
+					"icons/full/obj16/samples16.png", Messages.SharedIntroConfigurer_samples_nav, //$NON-NLS-1$
+					id);
+		if (id.equals(ID_WHATSNEW))
+			return createShortcutLink(
+					"icons/full/obj16/whatsnew16.png", Messages.SharedIntroConfigurer_whatsnew_nav, //$NON-NLS-1$
+					id);
+		if (id.equals(ID_MIGRATE))
+			return createShortcutLink(
+					"icons/full/obj16/migrate16.png", Messages.SharedIntroConfigurer_migrate_nav, //$NON-NLS-1$
+					id);
+		if (id.equals(ID_WEBRESOURCES))
+			return createShortcutLink(
+					"icons/full/obj16/webresources16.png", Messages.SharedIntroConfigurer_webresources_nav, //$NON-NLS-1$
+					id);
+		return null;
+	}
+
 	private IntroElement createRootLink(String name, String url, String id, String imgId, String imgSrc,
 			String imgAlt, String imgText) {
 		IntroElement element = new IntroElement("link"); //$NON-NLS-1$
@@ -264,6 +313,14 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		element.setAttribute("url", url); //$NON-NLS-1$
 		element.setAttribute("id", "id"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("style-id", styleId); //$NON-NLS-1$
+		return element;
+	}
+
+	private IntroElement createShortcutLink(String icon, String tooltip, String id) {
+		IntroElement element = new IntroElement("shortcut"); //$NON-NLS-1$
+		element.setAttribute("icon", icon); //$NON-NLS-1$
+		element.setAttribute("tooltip", tooltip); //$NON-NLS-1$
+		element.setAttribute("url", "http://org.eclipse.ui.intro/showPage?id=" + id); //$NON-NLS-1$ //$NON-NLS-2$
 		return element;
 	}
 

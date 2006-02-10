@@ -217,6 +217,13 @@ The content file is parsed at run time by the intro framework. Based on the sett
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="dynamic" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  an optional boolean flag that indicates whether the launch bar shortcuts will be computed dynamically by the intro configurer. When set to &lt;code&gt;true&lt;/code&gt;, static &lt;code&gt;shortcut&lt;/code&gt; elements are ignored.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

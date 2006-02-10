@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.intro.config.IntroElement;
 
 /**
  * An Intro Config component that captures launch bar shortcut information.
@@ -26,7 +27,14 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
     private static final String ATT_TOOLTIP = "tooltip"; //$NON-NLS-1$
     private static final String ATT_ICON = "icon"; //$NON-NLS-1$
     private static final String ATT_URL = "url"; //$NON-NLS-1$
-
+    
+    private IntroElement ielement;
+    
+    IntroLaunchBarShortcut(IConfigurationElement element, IntroElement ielement) {
+    	super(element);
+    	this.ielement = ielement;
+    }
+    
     IntroLaunchBarShortcut(IConfigurationElement element) {
         super(element);
     }
@@ -35,6 +43,12 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
     public int getType() {
         return AbstractIntroElement.LAUNCH_BAR_SHORTCUT;
     }
+    
+    private String getAttribute(String name) {
+    	if (ielement!=null)
+    		return ielement.getAttribute(name);
+    	return getCfgElement().getAttribute(name);
+    }
 
     /**
      * Returns the URL of this shortcut.
@@ -42,7 +56,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
      * @return
      */
     public String getURL() {
-        return getCfgElement().getAttribute(ATT_URL);
+    	return getAttribute(ATT_URL);
     }
 
     /**
@@ -51,7 +65,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
      * @return
      */
     public String getToolTip() {
-        return getCfgElement().getAttribute(ATT_TOOLTIP);
+        return getAttribute(ATT_TOOLTIP);
     }
 
     /**
@@ -60,7 +74,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
      * @return
      */
     private String getIcon() {
-        return getCfgElement().getAttribute(ATT_ICON);
+        return getAttribute(ATT_ICON);
     }
 
     /**

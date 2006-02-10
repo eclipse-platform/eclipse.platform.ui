@@ -87,6 +87,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private static final String INTRO_BACKGROUND_IMAGE = "INTRO_BACKGROUND_IMAGE"; //$NON-NLS-1$
 	private static final String INTRO_BACKGROUND_IMAGE_LIST = "INTRO_BACKGROUND_IMAGE_LIST";//$NON-NLS-1$
 	private TabFolder tabFolder;
+	private String firstPageId;
 	private Composite pageContainer;
 	private TableViewer backgrounds;
 	private TableViewer available;
@@ -352,6 +353,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		createPageContainer();
 		addRootPages();
 		updateWidgetsFromData();
+		selectFirstPage();
 	}
 
 	private void addRootPages() {
@@ -910,14 +912,21 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		else
 			target.setInput(targetGd);
 	}
-	
+
 	public void setCurrentPage(String pageId) {
+		firstPageId = pageId;
+	}
+	
+	private void selectFirstPage() {
+		if (firstPageId==null)
+			return;
 		TabItem [] items = tabFolder.getItems();
 		for (int i=0; i<items.length; i++) {
 			TabItem item = items[i];
 			PageData pd = (PageData)item.getData("pageData"); //$NON-NLS-1$
-			if (pd!=null && pd.getId().equals(pageId)) {
+			if (pd!=null && pd.getId().equals(firstPageId)) {
 				tabFolder.setSelection(i);
+				onTabChange(item);
 				return;
 			}
 		}

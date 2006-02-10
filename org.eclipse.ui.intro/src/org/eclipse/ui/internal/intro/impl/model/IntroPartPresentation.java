@@ -178,6 +178,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             "launchBar"); //$NON-NLS-1$
         if (children.length > 0) {
             launchBar = new IntroLaunchBarElement(children[0]);
+            launchBar.setParent(this);
             if (children.length > 1)
                 Log
                     .warning("Mutiple Intro Launch bars defined when only one is allowed. Only first one was loaded. "); //$NON-NLS-1$

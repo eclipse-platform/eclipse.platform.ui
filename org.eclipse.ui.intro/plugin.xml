@@ -57,18 +57,12 @@
             <implementation
                   kind="swt">
             </implementation>
+            <launchBar
+               	location="fastview" 
+            	bg="#c6c3e8"
+            	dynamic="true">
+            </launchBar>
          </presentation>
       </config>
    </extension>
-   <extension
-         id="introData"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run class="org.eclipse.ui.internal.intro.shared.IntroDataApplication"/>
-      </application>
-   </extension>
-   
- 
-     
-
 </plugin>
