@@ -78,7 +78,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 
 	/**
 	 * Method called during action provider initialization.
-	 * It is invoked from the {@link #init(CommonActionProviderConfig)}
+	 * It is invoked from the {@link #init(ICommonActionExtensionSite)}
 	 * after after the configuration has been recorded. Subclasses
 	 * may override. Subclasses that want to provide there own merge actions
 	 * handlers can register them in this method.
