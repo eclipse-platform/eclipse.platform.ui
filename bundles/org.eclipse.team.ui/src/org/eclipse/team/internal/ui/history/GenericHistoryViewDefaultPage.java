@@ -36,12 +36,12 @@ public class GenericHistoryViewDefaultPage extends HistoryPage {
 		pgComp.setFocus();
 	}
 
-	public boolean showHistory(Object object, boolean refetch) {
+	public boolean setInput(Object object, boolean refetch) {
 		//no history to show
 		return false;
 	}
 
-	public boolean canShowHistoryFor(Object object) {
+	public boolean isValidInput(Object object) {
 		return false;
 	}
 
@@ -58,6 +58,10 @@ public class GenericHistoryViewDefaultPage extends HistoryPage {
 	}
 
 	public String getDescription() {
+		return null;
+	}
+
+	public Object getInput() {
 		return null;
 	}
 

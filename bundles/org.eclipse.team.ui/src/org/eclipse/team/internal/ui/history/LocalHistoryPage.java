@@ -39,7 +39,7 @@ public class LocalHistoryPage extends HistoryPage {
 	private OpenLocalFileAction openAction;
 	private IFile file;
 	
-	public boolean showHistory(Object object, boolean refetch) {
+	public boolean setInput(Object object, boolean refetch) {
 		if (object instanceof IFile) {
 			file = (IFile) object;
 			if (!refetch || object == null)
@@ -52,7 +52,7 @@ public class LocalHistoryPage extends HistoryPage {
 		return false;
 	}
 
-	public boolean canShowHistoryFor(Object object) {
+	public boolean isValidInput(Object object) {
 		//don't volunteer to use this page unless forced to do so
 		return false;
 	}
@@ -222,6 +222,10 @@ public class LocalHistoryPage extends HistoryPage {
 		if (file != null)
 			return file.getFullPath().toString();
 		return null;
+	}
+
+	public Object getInput() {
+		return file;
 	}
 
 }

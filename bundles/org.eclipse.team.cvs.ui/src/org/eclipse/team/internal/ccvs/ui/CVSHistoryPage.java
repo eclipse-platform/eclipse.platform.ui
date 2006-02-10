@@ -63,7 +63,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryCompareAdapter {
 	
 	/* private */ ICVSFile file;
-
+	/* private */ Object input;
 	/* private */ IFileRevision currentFileRevision;
 	
 	// cached for efficiency
@@ -671,7 +671,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 * 
 	 * Only files are supported for now.
 	 */
-	public boolean showHistory(Object object, boolean refetch) {
+	public boolean setInput(Object object, boolean refetch) {
+		//keep the initial input
+		input = object;
 		//reset default behaviour for clicks
 		clickAction = OPEN_CLICK;
 		//reset currentFileRevision
@@ -936,7 +938,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return sashForm;
 	}
 
-	public boolean canShowHistoryFor(Object object) {
+	public boolean isValidInput(Object object) {
 		if (object instanceof IResource){
 		RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)object).getProject());
 		if (provider instanceof CVSTeamProvider)
@@ -1053,5 +1055,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			// Ignore
 		}
 		return null;
+	}
+
+	public Object getInput() {
+		return input;
 	}
 }

@@ -34,14 +34,21 @@ public interface IHistoryPage {
 	 * history for the given object
 	 * @return true if the page was able to display the history for the object, false otherwise
 	 */
-	public boolean showHistory(Object object, boolean refetch);
+	public boolean setInput(Object object, boolean refetch);
 
+	/**
+	 * Returns the object whose history is currently being displayed in the history page. 
+	 * @return object	the object being displayed in the history page or <code>null</code> 
+	 * if no input has been set;
+	 */
+	public Object getInput();
+	
 	/**
 	 * Returns true if this history page can show a history for the given object, false if it cannot
 	 * @param object the object that is to have history shown
 	 * @return boolean 
 	 */
-	public boolean canShowHistoryFor(Object object);
+	public boolean isValidInput(Object object);
 
 	/**
 	 * Requests a refresh of the information presented by the history page.
