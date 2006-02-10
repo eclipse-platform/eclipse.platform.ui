@@ -407,12 +407,14 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
        if (widget != null && !widget.isDisposed()) {
            int childCount = parentNode.getChildCount();
            setItemCount(widget, childCount);
-           if (childCount == 0) { 
-               clear(widget);
-               if (isVisible(widget)) {
-                   internalRefresh(parentNode.getElement(), widget);
-               }
-           }
+           
+// this fix for bug 126817 causes bug 127307 (inconsistency between hasChildren/getChildren)           
+//           if (childCount == 0) { 
+//               clear(widget);
+//               if (isVisible(widget)) {
+//                   internalRefresh(parentNode.getElement(), widget);
+//               }
+//           }
            attemptExpansion();
            attemptSelection(false);
        }
