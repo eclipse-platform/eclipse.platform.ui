@@ -170,6 +170,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private Composite fGettingStarted = null;
 
+	private ViewForm fViewform;
+	
 	/**
 	 * Constructs a viewer in the given composite, contained by the given
 	 * launch configuration dialog.
@@ -210,44 +212,32 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private void createControl(Composite parent) {
 		fViewerControl = new Composite(parent, SWT.NONE);
-		GridLayout outerCompLayout = new GridLayout();
-		outerCompLayout.numColumns = 1;
-		outerCompLayout.marginHeight = 0;
-		outerCompLayout.marginWidth = 0;
-		fViewerControl.setLayout(outerCompLayout);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		fViewerControl.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fViewerControl.setLayoutData(gd);
 		
-        ViewForm container = new ViewForm(fViewerControl, SWT.FLAT|SWT.BORDER);
+        fViewform = new ViewForm(fViewerControl, SWT.FLAT | SWT.BORDER);
+        layout = new GridLayout(1, false);
+        layout.horizontalSpacing = 0;
+        layout.verticalSpacing = 0;
+        fViewform.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
-		container.setLayoutData(gd);
-		setVisibleArea(container);
+		fViewform.setLayoutData(gd);
+		setVisibleArea(fViewform);
+        fViewform.setTopLeft(null);
         
-        Composite topComp = new Composite(container, SWT.FLAT);
-        GridLayout layout = new GridLayout(2, false);
-        topComp.setLayout(layout);
-        
-		fNameLabel = new Label(topComp, SWT.HORIZONTAL | SWT.LEFT);
-		fNameLabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16); 
-        fNameLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-       
-		Text nameText = new Text(topComp, SWT.SINGLE | SWT.BORDER);
-		setNameWidget(nameText);
-        nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        
-        container.setTopLeft(topComp);
-        
-		getNameWidget().addModifyListener(
-			new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					handleNameModified();
-				}
-			}
-		);
-		
-        
-        Composite mainComp = new Composite(container, SWT.FLAT);
-        mainComp.setLayout(new GridLayout(1, false));
+        Composite mainComp = new Composite(fViewform, SWT.FLAT);
+        layout = new GridLayout(1, false);
+        layout.verticalSpacing = 0;
+        layout.horizontalSpacing = 0;
+        mainComp.setLayout(layout);
+        fViewform.setContent(mainComp);
 
 		/*
 		 * fix for bug 66576 and 79709
@@ -266,13 +256,26 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		createGettingStarted(fGettingStarted);
 		
 		fTabComposite = new Composite(fTabPlaceHolder, SWT.NONE);
-		GridLayout outerTabCompositeLayout = new GridLayout();
-		outerTabCompositeLayout.marginHeight = 0;
-		outerTabCompositeLayout.marginWidth = 0;
-		fTabComposite.setLayout(outerTabCompositeLayout);
+		layout = new GridLayout(2, false);
+		layout.verticalSpacing = 10;
+		layout.horizontalSpacing = 5;
+		fTabComposite.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
 		fTabComposite.setLayoutData(gd);
-
+        
+		fNameLabel = new Label(fTabComposite, SWT.HORIZONTAL | SWT.LEFT);
+		fNameLabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16); 
+        fNameLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+       
+		fNameWidget = new Text(fTabComposite, SWT.SINGLE | SWT.BORDER);
+        fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        getNameWidget().addModifyListener(new ModifyListener() {
+    				public void modifyText(ModifyEvent e) {
+    					handleNameModified();
+    				}
+    			}
+    		);
+    		
 		createTabFolder(fTabComposite);
 		
 		Composite buttonComp = new Composite(mainComp, SWT.NONE);
@@ -304,8 +307,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				handleRevertPressed();
 			}
 		});
-        
-        container.setContent(mainComp);
         Dialog.applyDialogFont(parent);
 	}
 	
@@ -386,6 +387,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 		fTabFolder = new TabFolder(parent, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
 		fTabFolder.setLayoutData(gd);
 		fTabFolder.setFont(parent.getFont());
 		if (size != null) {
@@ -440,13 +442,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private Text getNameWidget() {
 		return fNameWidget;
-	}
-	
-	/**
-	 * Sets the name widget
-	 */
-	private void setNameWidget(Text nameText) {
-		fNameWidget = nameText;
 	}
 	
 	/**
@@ -568,9 +563,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 						/*
 						 * fix for bug 66576 and 79709
 						 */
-						((StackLayout)fTabPlaceHolder.getLayout()).topControl = fTabComposite;
-						setButtonsVisible(true);
-						fTabPlaceHolder.layout(true);
 						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
 						setOriginal(configuration);
 						setWorkingCopy(configuration.getWorkingCopy());
@@ -599,18 +591,22 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void setNoInput() {
 		setOriginal(null);
 		setWorkingCopy(null);
-		fNameLabel.setVisible(false);
-		fNameWidget.setVisible(false);
-		((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGettingStarted;
-		fTabPlaceHolder.layout(true);
 		disposeExistingTabs();	
 		updateButtons();
-		setButtonsVisible(false);
+		updateVisibleControls(false);
 	}
 	
-	private void setButtonsVisible(boolean visible) {
+	private void updateVisibleControls(boolean visible) {
 		getApplyButton().setVisible(visible);
 		getRevertButton().setVisible(visible);
+		if(visible) {
+			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fTabComposite;
+			fTabComposite.layout();
+		}
+		else {
+			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGettingStarted;
+		}
+		fTabPlaceHolder.layout(true);
 	}
 	
     protected void setFocusOnName() {
@@ -642,8 +638,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 
 		// show the name area
-		fNameLabel.setVisible(true);
-		fNameWidget.setVisible(true);
+		updateVisibleControls(true);
 		// Update the name field before to avoid verify error
 		getNameWidget().setText(getWorkingCopy().getName());
 
