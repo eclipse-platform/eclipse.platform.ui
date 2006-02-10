@@ -20,7 +20,7 @@ import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 /**
  * Resource label provider that can decorate using sync state.
@@ -31,13 +31,15 @@ public class ResourceModelLabelProvider extends
 	private ILabelProvider provider = new ResourceMappingLabelProvider();
 	private ResourceModelContentProvider contentProvider;
 
-	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
+	public void init(ICommonContentExtensionSite site) {
+		ITreeContentProvider aContentProvider = site.getExtension().getContentProvider();
 		if (aContentProvider instanceof ResourceModelContentProvider) {
 			contentProvider = (ResourceModelContentProvider) aContentProvider;
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		}
-		super.init(aStateModel, aContentProvider);
+		super.init(site);
 	}
+	
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();

@@ -38,6 +38,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	private ISynchronizationScope scope;
 	private ISynchronizationContext context;
 	private ITreeContentProvider contentProvider;
+	private ICommonContentExtensionSite site;
 	
 	private void init(ISynchronizationScope input, ISynchronizationContext context) {
 		this.scope = input;
@@ -45,23 +46,13 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(org.eclipse.ui.navigator.IExtensionStateModel, org.eclipse.jface.viewers.ITreeContentProvider)
+	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
-	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
-		contentProvider = aContentProvider;
-		init((ISynchronizationScope)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE), (ISynchronizationContext)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT));
-		ILabelProvider provider = getDelegateLabelProvider();
-		if (provider instanceof ICommonLabelProvider) {
-			if (aContentProvider instanceof SynchronizationContentProvider) {
-				// Assume that there is a similarly wrapped content provider and that the wrapped label provider
-				// only knows about that one
-				// TODO: This is kind of dangerous to build in. We need to consider alternatives
-				SynchronizationContentProvider tacp = (SynchronizationContentProvider) aContentProvider;
-				((ICommonLabelProvider) provider).init(aStateModel, tacp.getDelegateContentProvider());
-			} else {
-				((ICommonLabelProvider) provider).init(aStateModel, aContentProvider);
-			}
-		}
+	public void init(ICommonContentExtensionSite site) {
+		this.site = site;
+		contentProvider = site.getExtension().getContentProvider();
+		init((ISynchronizationScope)site.getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE), 
+				(ISynchronizationContext)site.getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT));
 	}
 
 	/**

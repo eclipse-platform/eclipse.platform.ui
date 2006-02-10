@@ -67,15 +67,12 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 */
 	public static final String MARK_AS_MERGE_ACTION_ID = "org.eclipse.team.ui.markAsMergeAction"; //$NON-NLS-1$
 
-	private CommonActionProviderConfig config;
 	private Map handlers = new HashMap();
 	private OpenWithActionGroup openWithActions;
+	private ICommonActionExtensionSite site;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.CommonActionProviderConfig)
-	 */
-	public final void init(CommonActionProviderConfig aConfig) {
-		config = aConfig;
+	public void init(ICommonActionExtensionSite site) {
+		this.site = site;
 		initialize();
 	}
 
@@ -102,7 +99,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * 
 	 */
 	protected void initializeOpenActions() {
-		ICommonViewerSite cvs = getCommonConfiguration().getViewSite();
+		ICommonViewerSite cvs = site.getViewSite();
 		ISynchronizePageConfiguration configuration = getSynchronizePageConfiguration();
 		if (cvs instanceof ICommonViewerWorkbenchSite && configuration != null) {
 			ICommonViewerWorkbenchSite cvws = (ICommonViewerWorkbenchSite) cvs;
@@ -111,14 +108,6 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 				openWithActions = new OpenWithActionGroup(configuration.getSite(), configuration.getParticipant(), false);
 			}
 		}
-	}
-
-	/**
-	 * Return the configuration for the common viewer.
-	 * @return the configuration from the common viewer
-	 */
-	public final CommonActionProviderConfig getCommonConfiguration() {
-		return config;
 	}
 	
 	/**
@@ -138,7 +127,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * action provider
 	 */
 	protected final IExtensionStateModel getExtensionStateModel() {
-		return config.getExtensionStateModel();
+		return site.getExtensionStateModel();
 	}
 	
 	/**
@@ -211,6 +200,22 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 				mah.dispose();
 			}
 		}
+	}
+
+	/**
+	 * Return the extension site for this action provider.
+	 * @return the extension site for this action provider
+	 */
+	public ICommonActionExtensionSite getExtensionSite() {
+		return site;
+	}
+	
+	/**
+	 * @deprecated use {@link #getExtensionSite()}
+	 * @return the extension site
+	 */
+	public ICommonActionExtensionSite getCommonConfiguration() {
+		return site;
 	}
 
 }

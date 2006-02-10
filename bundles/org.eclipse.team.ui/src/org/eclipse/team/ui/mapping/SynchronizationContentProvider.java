@@ -26,8 +26,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.SynchronizationResourceMappingContext;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.navigator.ICommonContentProvider;
-import org.eclipse.ui.navigator.IExtensionStateModel;
+import org.eclipse.ui.navigator.*;
 
 /**
  * Abstract team aware content provider that delegates to another content provider
@@ -47,6 +46,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	private Viewer viewer;
 	private IExtensionStateModel stateModel;
 	private boolean empty;
+	private ICommonContentExtensionSite site;
 	
 	/* public */ boolean hasChildren(TreePath path) {
 		Object element = path.getLastSegment();
@@ -277,19 +277,20 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.internal.extensions.ICommonContentProvider#init(org.eclipse.ui.navigator.IExtensionStateModel, org.eclipse.ui.IMemento)
+	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
-	public void init(IExtensionStateModel aStateModel, IMemento aMemento) {
-		stateModel = aStateModel;
+	public void init(ICommonContentExtensionSite site) {
+		this.site = site;
+		stateModel = site.getExtensionStateModel();
 		stateModel.addPropertyChangeListener(this);
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration != null)
 			configuration.addPropertyChangeListener(this);
-		scope = (ISynchronizationScope)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE);
-		context = (ISynchronizationContext)aStateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
+		scope = (ISynchronizationScope)stateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE);
+		context = (ISynchronizationContext)stateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		ITreeContentProvider provider = getDelegateContentProvider();
 		if (provider instanceof ICommonContentProvider) {
-			((ICommonContentProvider) provider).init(aStateModel, aMemento);	
+			((ICommonContentProvider) provider).init(site);	
 		}
 		if (context != null)
 			context.getDiffTree().addDiffChangeListener(this);
