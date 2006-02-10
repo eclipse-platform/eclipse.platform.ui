@@ -216,11 +216,11 @@ public class LocalHistoryPage extends HistoryPage {
 		return file;
 	}
 
-	public boolean inputSet(boolean refetch) {
+	public boolean inputSet() {
 		Object object = getInput();
 		if (object instanceof IFile) {
 			file = (IFile) object;
-			if (!refetch || object == null)
+			if ( object == null)
 				return false;
 		
 			//historyTableProvider.setFile(fileHistory, newfile);

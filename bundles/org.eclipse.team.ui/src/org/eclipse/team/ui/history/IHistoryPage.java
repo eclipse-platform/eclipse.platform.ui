@@ -30,11 +30,9 @@ public interface IHistoryPage {
 	 * should provide an implementation for their individual pages.
 	 * 
 	 * @param object the object for which history is being requested for
-	 * @param refetch whether the history should be refecthed if the page is already showing the 
-	 * history for the given object
 	 * @return true if the page was able to display the history for the object, false otherwise
 	 */
-	public boolean setInput(Object object, boolean refetch);
+	public boolean setInput(Object object);
 
 	/**
 	 * Returns the object whose history is currently being displayed in the history page. 

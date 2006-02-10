@@ -1079,7 +1079,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return null;
 	}
 
-	public boolean inputSet(boolean refetch) {
+	public boolean inputSet() {
 		//reset default behaviour for clicks
 		clickAction = OPEN_CLICK;
 		//reset currentFileRevision
@@ -1095,7 +1095,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (refreshCVSFileHistoryJob == null)
 			refreshCVSFileHistoryJob = new RefreshCVSFileHistory();
 		
-		refreshHistory(refetch);
+		//always refresh the history if the input gets set
+		refreshHistory(true);
 		return true;
 	}
 	

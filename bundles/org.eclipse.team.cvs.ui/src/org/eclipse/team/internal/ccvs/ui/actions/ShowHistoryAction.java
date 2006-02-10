@@ -66,7 +66,7 @@ public class ShowHistoryAction extends CVSAction {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.viewId);
 				if (view != null) {
-					view.itemDropped(files[0]);
+					view.itemDropped(files[0], true);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);

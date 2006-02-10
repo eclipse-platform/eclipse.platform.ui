@@ -50,17 +50,16 @@ public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptab
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.history.IHistoryPage#setInput(java.lang.Object, boolean)
 	 */
-	public boolean setInput(Object object, boolean refetch) {
+	public boolean setInput(Object object) {
 		this.input = object;
-		return inputSet(refetch);
+		return inputSet();
 	}
 
 	/**
-	 * Called by HistoryPage after {@link #setInput(Object, boolean)}. Clients can
+	 * Called by HistoryPage after {@link #setInput(Object)}. Clients can
 	 * gain access to the input by using {@link #getInput()}.
 	 * 
-	 * @param refetchContents boolean indicating if the page should refetch contents
 	 * @return <code>true</code> if the page was able to display the contents, <code>false</code> otherwise
 	 */
-	public abstract boolean inputSet(boolean refetchContents);
+	public abstract boolean inputSet();
 }

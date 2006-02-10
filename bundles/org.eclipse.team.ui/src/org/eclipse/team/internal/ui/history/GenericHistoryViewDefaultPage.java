@@ -60,7 +60,7 @@ public class GenericHistoryViewDefaultPage extends HistoryPage {
 		return null;
 	}
 
-	public boolean inputSet(boolean refetchContents) {
+	public boolean inputSet() {
 		//no history to show
 		return false;
 	}

@@ -46,7 +46,7 @@ public class OpenRevisionAction extends TeamAction {
 
 					for (int i = 0; i < objArray.length; i++) {
 						IFileRevision revision = (IFileRevision) objArray[i];
-						if (!revision.exists()) {
+						if (revision == null || !revision.exists()) {
 							MessageDialog.openError(getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, TeamUIMessages.OpenRevisionAction_DeletedRevisionMessage);
 						} else {
 							IStorage file = revision.getStorage(monitor);

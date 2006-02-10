@@ -59,7 +59,7 @@ public class GenericHistoryDropAdapter extends PluginDropAdapter {
 			if (!(resource instanceof IFile))
 				return false;
 
-			view.itemDropped(resource);
+			view.itemDropped(resource, true);
 
 			return true;
 		}

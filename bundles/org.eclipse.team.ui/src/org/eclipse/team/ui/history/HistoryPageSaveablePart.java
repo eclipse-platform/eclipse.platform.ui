@@ -109,7 +109,7 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 		historyPage.setSite(site);
 		site.setToolBarManager(toolBarManager);
 		((Page) historyPage).createControl(parent);
-		historyPage.setInput(object, true);
+		historyPage.setInput(object);
 		String description = historyPage.getDescription();
 		if (description == null)
 			description = ""; //$NON-NLS-1$

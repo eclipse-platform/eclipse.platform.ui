@@ -33,7 +33,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 				if (resources.length != 1) return;
 				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.viewId);
 				if (view != null) {
-					view.itemDropped(resources[0]);
+					view.itemDropped(resources[0],true);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);

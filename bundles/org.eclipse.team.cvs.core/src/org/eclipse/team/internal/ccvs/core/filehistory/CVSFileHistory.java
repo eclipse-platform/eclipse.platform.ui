@@ -114,18 +114,29 @@ public class CVSFileHistory extends FileHistory {
 						}
 					}
 					
-					remoteRevisions = new IFileRevision[0];
-					if (includeRemoteRevisions){
-						remoteRevisions = new IFileRevision[entries.length];
-						for (int i = 0; i < entries.length; i++) {
-							remoteRevisions[i] = new CVSFileRevision(entries[i]);
-						}
+					//always fetch the remote revisions, just filter them out from the returned array
+					remoteRevisions = new IFileRevision[entries.length];
+					for (int i = 0; i < entries.length; i++) {
+						remoteRevisions[i] = new CVSFileRevision(entries[i]);
 					}
-					revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
-					//copy over remote revisions
-					System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
-					//copy over local revisions
-					System.arraycopy(localRevisions,0, revisions, remoteRevisions.length,localRevisions.length);
+					
+					revisions = new IFileRevision[0];
+					if (includeRemoteRevisions){
+						//Copy over both local and remote to the revisions array (locals might be 0 length if locals have
+						//not been included)
+						revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];	
+						//copy over remote revisions
+						System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
+						//copy over local revisions
+						System.arraycopy(localRevisions,0, revisions, remoteRevisions.length,localRevisions.length);
+					} else {
+						//copy over just the locals, if any exist
+						revisions = new IFileRevision[localRevisions.length];
+						//copy over remote revisions
+						System.arraycopy(localRevisions,0, revisions, 0,localRevisions.length);
+					}
+					
+					
 				}
 			} catch (CoreException e) {
 			} finally {
