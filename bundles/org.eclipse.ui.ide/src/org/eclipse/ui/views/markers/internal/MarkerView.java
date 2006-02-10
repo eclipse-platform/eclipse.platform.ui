@@ -459,12 +459,28 @@ public abstract class MarkerView extends TableView {
 
 	private MarkerAdapter adapter;
 
+	private IPropertyChangeListener preferenceListener;
+
 	/**
 	 * Create a new instance of the receiver,
 	 */
 	public MarkerView() {
 		super();
 		adapter = new MarkerAdapter(this);
+		preferenceListener = new IPropertyChangeListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(getFiltersPreferenceName())) {
+					loadFiltersPreferences();
+				}
+			}
+		};
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.addPropertyChangeListener(preferenceListener);
 	}
 
 	/**
@@ -726,6 +742,8 @@ public abstract class MarkerView extends TableView {
 				markerUpdateListener);
 		PlatformUI.getWorkbench().getWorkingSetManager()
 				.removePropertyChangeListener(workingSetListener);
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.removePropertyChangeListener(preferenceListener);
 		getSite().getPage().removeSelectionListener(focusListener);
 
 		// dispose of selection provider actions (may not have been created yet

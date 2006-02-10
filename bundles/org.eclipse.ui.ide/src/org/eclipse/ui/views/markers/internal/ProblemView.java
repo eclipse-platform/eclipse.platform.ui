@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -35,7 +34,6 @@ import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The ProblemView is the view that displays problem markers.
@@ -93,7 +91,6 @@ public class ProblemView extends MarkerView {
 				setChecked(categoryField.equals(groupingField));
 		}
 
-
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -109,7 +106,8 @@ public class ProblemView extends MarkerView {
 			problemView.getMarkerAdapter().getCategorySorter()
 					.setCategoryField(groupingField);
 			problemView.refreshViewer();
-			getMarkerAdapter().getCategorySorter().saveState(getDialogSettings());
+			getMarkerAdapter().getCategorySorter().saveState(
+					getDialogSettings());
 
 		}
 	}
@@ -142,8 +140,8 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
 	 */
 	protected IField[] getSortingFields() {
-		return new IField[] { severity, folder, resource, message,
-				lineNumber, creationTime,
+		return new IField[] { severity, folder, resource, message, lineNumber,
+				creationTime,
 				// Add the marker ID so the table sorter won't reduce
 				// errors on the same line bug 82502
 				id };
@@ -155,9 +153,8 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getDialogSettings()
 	 */
 	protected IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-				.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
+				.getDialogSettings();
 		IDialogSettings settings = workbenchSettings
 				.getSection(TAG_DIALOG_SECTION);
 
@@ -360,17 +357,22 @@ public class ProblemView extends MarkerView {
 	 */
 	void addDropDownContributions(IMenuManager menu) {
 
-		MenuManager groupByMenu = new MenuManager(MarkerMessages.ProblemView_GroupByMenu);
-		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Type, new FieldCategory(), this));
-		
-		Iterator definedGroups = MarkerSupportRegistry.getInstance().getMarkerGroups().iterator();
-		
-		while(definedGroups.hasNext()){
+		MenuManager groupByMenu = new MenuManager(
+				MarkerMessages.ProblemView_GroupByMenu);
+		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Type,
+				new FieldCategory(), this));
+
+		Iterator definedGroups = MarkerSupportRegistry.getInstance()
+				.getMarkerGroups().iterator();
+
+		while (definedGroups.hasNext()) {
 			FieldMarkerGroup group = (FieldMarkerGroup) definedGroups.next();
-			groupByMenu.add(new GroupingAction(group.getDescription(),group,this));
+			groupByMenu.add(new GroupingAction(group.getDescription(), group,
+					this));
 		}
-		
-		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_None, null, this));
+
+		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_None,
+				null, this));
 		menu.add(groupByMenu);
 
 		super.addDropDownContributions(menu);
@@ -458,7 +460,7 @@ public class ProblemView extends MarkerView {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -473,7 +475,9 @@ public class ProblemView extends MarkerView {
 		return category;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#canBeEditable()
 	 */
 	boolean canBeEditable() {

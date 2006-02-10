@@ -13,7 +13,6 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -26,8 +25,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.CellEditorActionHandler;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The BookmarkView is the marker view for bookmarks.
@@ -126,9 +125,7 @@ public class BookmarkView extends MarkerView {
 	}
 
 	protected IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-				.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings settings = workbenchSettings
 				.getSection(TAG_DIALOG_SECTION);
 

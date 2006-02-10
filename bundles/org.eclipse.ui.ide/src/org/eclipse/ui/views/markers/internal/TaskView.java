@@ -13,7 +13,6 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -31,8 +30,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.CellEditorActionHandler;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The TaskView is the view for displaying task markers.
@@ -45,17 +44,15 @@ public class TaskView extends MarkerView {
 
 	private final static String[] ROOT_TYPES = { IMarker.TASK };
 
-	private final static String[] TABLE_COLUMN_PROPERTIES = {Util.EMPTY_STRING, COMPLETION,
-			IMarker.PRIORITY, IMarker.MESSAGE, Util.EMPTY_STRING,
-			Util.EMPTY_STRING,
-			Util.EMPTY_STRING
-	};
+	private final static String[] TABLE_COLUMN_PROPERTIES = {
+			Util.EMPTY_STRING, COMPLETION, IMarker.PRIORITY, IMarker.MESSAGE,
+			Util.EMPTY_STRING, Util.EMPTY_STRING, Util.EMPTY_STRING };
 
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.task"; //$NON-NLS-1$
 
-	private final IField[] VISIBLE_FIELDS = { new FieldDummy(), new FieldDone(),
-			new FieldPriority(), new FieldMessage(), new FieldResource(),
-			new FieldFolder(), new FieldLineNumber() };
+	private final IField[] VISIBLE_FIELDS = { new FieldDummy(),
+			new FieldDone(), new FieldPriority(), new FieldMessage(),
+			new FieldResource(), new FieldFolder(), new FieldLineNumber() };
 
 	private ICellModifier cellModifier = new ICellModifier() {
 		public Object getValue(Object element, String property) {
@@ -162,10 +159,14 @@ public class TaskView extends MarkerView {
 		super.dispose();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#getDialogSettings()
+	 */
 	protected IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-				.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
+				.getDialogSettings();
 		IDialogSettings settings = workbenchSettings
 				.getSection(TAG_DIALOG_SECTION);
 
@@ -196,7 +197,9 @@ public class TaskView extends MarkerView {
 		manager.add(deleteCompletedAction);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
 	 */
 	protected IField[] getSortingFields() {
@@ -208,8 +211,10 @@ public class TaskView extends MarkerView {
 
 		return all;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getAllFields()
 	 */
 	protected IField[] getAllFields() {
