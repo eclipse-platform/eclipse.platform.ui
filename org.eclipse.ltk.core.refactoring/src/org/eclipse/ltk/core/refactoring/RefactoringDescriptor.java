@@ -56,7 +56,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
  * 
  * @since 3.2
  */
-public abstract class RefactoringDescriptor implements Comparable {
+public abstract class RefactoringDescriptor extends ChangeDescriptor implements Comparable {
 
 	/**
 	 * Constant describing the API change flag (value: 1)
@@ -75,10 +75,9 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * <p>
 	 * This id is reserved by the refactoring framework to signal that a
 	 * refactoring has been performed which did not deliver a refactoring
-	 * descriptor via its {@link Change#getRefactoringDescriptor()} method. The
-	 * refactoring history service never returns unknown refactorings. For
-	 * consistency reasons, they are reported for
-	 * {@link IRefactoringExecutionListener} or
+	 * descriptor via its {@link Change#getDescriptor()} method. The refactoring
+	 * history service never returns unknown refactorings. For consistency
+	 * reasons, they are reported for {@link IRefactoringExecutionListener} or
 	 * {@link IRefactoringHistoryListener} in order to keep clients of these
 	 * listeners synchronized with the workbench's operation history.
 	 * </p>
@@ -125,14 +124,8 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	private String fComment;
 
-	/** A human-readable description of the particular refactoring instance */
-	private final String fDescription;
-
 	/** The flags of the refactoring descriptor */
 	private final int fFlags;
-
-	/** The globally unique id of the refactoring */
-	private final String fID;
 
 	/**
 	 * The name of the project this refactoring is associated with, or
@@ -160,18 +153,15 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 *            refactoring instance
 	 * @param comment
 	 *            the comment associated with the refactoring, or
-	 *            <code>null</code> for no comment
+	 *            <code>null</code> for no commment
 	 * @param flags
 	 *            the flags of the refactoring descriptor
 	 */
 	protected RefactoringDescriptor(final String id, final String project, final String description, final String comment, final int flags) {
-		Assert.isTrue(id != null && !"".equals(id)); //$NON-NLS-1$
-		Assert.isTrue(description != null && !"".equals(description)); //$NON-NLS-1$
+		super(id, description);
 		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
 		Assert.isTrue(flags >= NONE);
-		fID= id;
 		fProject= project;
-		fDescription= description;
 		fComment= comment;
 		fFlags= flags;
 	}
@@ -227,7 +217,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public final boolean equals(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
 			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
-			return fTimeStamp == descriptor.fTimeStamp && fDescription.equals(descriptor.fDescription);
+			return fTimeStamp == descriptor.fTimeStamp && getDescription().equals(descriptor.getDescription());
 		}
 		return false;
 	}
@@ -242,30 +232,12 @@ public abstract class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Returns a human-readable description of this refactoring.
-	 * 
-	 * @return a description of this refactoring
-	 */
-	public final String getDescription() {
-		return fDescription;
-	}
-
-	/**
 	 * Returns the flags of this refactoring.
 	 * 
 	 * @return the flags of this refactoring
 	 */
 	public final int getFlags() {
 		return fFlags;
-	}
-
-	/**
-	 * Returns the unique id of this refactoring.
-	 * 
-	 * @return the unique id
-	 */
-	public final String getID() {
-		return fID;
 	}
 
 	/**
@@ -291,7 +263,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * {@inheritDoc}
 	 */
 	public final int hashCode() {
-		int code= fDescription.hashCode();
+		int code= getDescription().hashCode();
 		if (fTimeStamp >= 0)
 			code+= (17 * fTimeStamp);
 		return code;
@@ -333,15 +305,15 @@ public abstract class RefactoringDescriptor implements Comparable {
 		final StringBuffer buffer= new StringBuffer(128);
 
 		buffer.append(getClass().getName());
-		if (fID.equals(ID_UNKNOWN))
+		if (getID().equals(ID_UNKNOWN))
 			buffer.append("[unknown refactoring]"); //$NON-NLS-1$
 		else {
 			buffer.append("[timeStamp="); //$NON-NLS-1$
 			buffer.append(fTimeStamp);
 			buffer.append(",id="); //$NON-NLS-1$
-			buffer.append(fID);
+			buffer.append(getID());
 			buffer.append(",description="); //$NON-NLS-1$
-			buffer.append(fDescription);
+			buffer.append(getDescription());
 			buffer.append(",project="); //$NON-NLS-1$
 			buffer.append(fProject);
 			buffer.append(",comment="); //$NON-NLS-1$

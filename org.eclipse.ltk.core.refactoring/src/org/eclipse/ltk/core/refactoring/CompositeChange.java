@@ -475,10 +475,10 @@ public class CompositeChange extends Change {
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringDescriptor getRefactoringDescriptor() {
+	public ChangeDescriptor getDescriptor() {
 		for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {
 			final Change change= (Change) iterator.next();
-			final RefactoringDescriptor descriptor= change.getRefactoringDescriptor();
+			final ChangeDescriptor descriptor= change.getDescriptor();
 			if (descriptor != null)
 				return descriptor;
 		}

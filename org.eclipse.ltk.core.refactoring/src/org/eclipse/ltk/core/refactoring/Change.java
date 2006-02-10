@@ -121,7 +121,7 @@ public abstract class Change implements IAdaptable {
 	 * 
 	 * @since 3.2
 	 */
-	public RefactoringDescriptor getRefactoringDescriptor() {
+	public ChangeDescriptor getDescriptor() {
 		return null;
 	}
 
