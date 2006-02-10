@@ -395,4 +395,13 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.2
 	 */
 	public static final String ENABLE_DETACHED_VIEWS = "ENABLE_DETACHED_VIEWS"; //$NON-NLS-1$
+
+	/**
+	 * Lists the extra perspectives to show in the perspective bar.
+	 * The value is a comma-separated list of perspective ids.
+	 * The default is the empty string.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PERSPECTIVE_BAR_EXTRAS = "PERSPECTIVE_BAR_EXTRAS"; //$NON-NLS-1$
 }

@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -41,13 +46,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -127,10 +132,11 @@ public class PerspectiveSwitcher implements IWindowTrim {
         }
     };
 
-    private PerspectiveAdapter perspectiveAdapter = new PerspectiveAdapter() {
+    class ChangeListener extends PerspectiveAdapter implements IPageListener {
         public void perspectiveOpened(IWorkbenchPage page,
                 IPerspectiveDescriptor perspective) {
-            addPerspectiveShortcut(perspective, page);
+        	if (findPerspectiveShortcut(perspective, page) == null)
+        		addPerspectiveShortcut(perspective, page);
         }
         public void perspectiveClosed(IWorkbenchPage page,
                 IPerspectiveDescriptor perspective) {
@@ -147,7 +153,19 @@ public class PerspectiveSwitcher implements IWindowTrim {
                 IPerspectiveDescriptor newPerspective) {
             updatePerspectiveShortcut(oldPerspective, newPerspective, page);
         }
-    };
+		public void pageActivated(IWorkbenchPage page) {
+		}
+
+		public void pageClosed(IWorkbenchPage page) {
+			removeExtras(page);
+		}
+
+		public void pageOpened(IWorkbenchPage page) {
+			addExtras(page);
+		}
+    }
+    
+    private ChangeListener changeListener = new ChangeListener();
     
 	private Listener dragListener;
 
@@ -177,7 +195,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
 				dispose();
 			}
 		};
-        window.addPerspectiveListener(perspectiveAdapter);
+        window.addPerspectiveListener(changeListener);
+        window.addPageListener(changeListener);
 	}
 
 	private static int convertLocation(String preference) {
@@ -365,7 +384,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	 * Dispose resources being held by the receiver
 	 */
 	public void dispose() {
-        window.removePerspectiveListener(perspectiveAdapter);
+        window.removePerspectiveListener(changeListener);
+        window.removePageListener(changeListener);
 		if (propertyChangeListener != null) {
 			apiPreferenceStore
 					.removePropertyChangeListener(propertyChangeListener);
@@ -859,7 +879,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
         if (data == null || !(data instanceof PerspectiveBarContributionItem))
             return;
 
-        boolean selectedIsActive = selectedPerspectiveIsActive(data); 
+        PerspectiveBarContributionItem pbci = (PerspectiveBarContributionItem) data;
+        IPerspectiveDescriptor selectedPerspective = pbci.getPerspective();
 
         // The perspective bar menu is created lazily here.
         // Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
@@ -869,42 +890,12 @@ public class PerspectiveSwitcher implements IWindowTrim {
         // By hanging onto the tool item instead, these references are cleared when the
         // corresponding page or perspective is closed.
         // See bug 11282 for more details on why it is done this way.
-        if (popupMenu == null) {
-        	popupMenu = createPopup(toolBar, selectedIsActive);
+        if (popupMenu != null) {
+        	popupMenu.dispose();
+        	popupMenu = null;
         }
-        
-    	if (!selectedIsActive && popupMenu.getItemCount() > 5) {
-    		popupMenu.getItem(0).dispose();
-        	popupMenu.getItem(0).dispose(); 
-        	popupMenu.getItem(0).dispose(); 
-        } else if(selectedIsActive && popupMenu.getItemCount() <= 5){
-    		popupMenu.dispose();
-    		popupMenu = createPopup(toolBar, selectedIsActive);        		
-    	}
- 
+        popupMenu = createPopup(toolBar, selectedPerspective);
         popupMenu.setData(toolItem);
-
-        // set the state of the menu items to match the preferences
-        if(selectedIsActive){
-        popupMenu
-                .getItem(7)
-                .setSelection(
-                        PrefUtil
-                                .getAPIPreferenceStore()
-                                .getBoolean(
-                                        IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
-        updateLocationItems(popupMenu.getItem(6).getMenu(), currentLocation);
-        }
-        else{
-        	popupMenu
-            .getItem(4)
-            .setSelection(
-                    PrefUtil
-                            .getAPIPreferenceStore()
-                            .getBoolean(
-                                    IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
-    updateLocationItems(popupMenu.getItem(3).getMenu(), currentLocation);
-        }
         
         // Show popup menu.
         popupMenu.setLocation(pt.x, pt.y);
@@ -912,38 +903,41 @@ public class PerspectiveSwitcher implements IWindowTrim {
     }
 
     /**
-     * @param data
-     * @return <code>true</code> if the button whose menu has to be created represents the active perspective 
+     * @param persp the perspective
+     * @return <code>true</code> if the perspective is active in the active page 
      */
-    private boolean selectedPerspectiveIsActive(Object data) {
-        if (data == null || data instanceof PerspectiveBarNewContributionItem)
-            return false;
-        IPerspectiveDescriptor perspectiveInFocus=((PerspectiveBarContributionItem)data).getPerspective();
-        return perspectiveInFocus.equals(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getPerspective());
+    private boolean perspectiveIsActive(IPerspectiveDescriptor persp) {
+    	IWorkbenchPage page = window.getActivePage();
+        return page != null && persp.equals(page.getPerspective());
     }
 
-	/**
-	 * @param toolBar
-	 */
-	private Menu createPopup(ToolBar toolBar, boolean isActive){
+    /**
+     * @param persp the perspective
+     * @return <code>true</code> if the perspective is open in the active page 
+     */
+    private boolean perspectiveIsOpen(IPerspectiveDescriptor persp) {
+    	IWorkbenchPage page = window.getActivePage();
+    	return page != null && Arrays.asList(page.getOpenPerspectives()).contains(persp);
+    }
+
+	private Menu createPopup(ToolBar toolBar, IPerspectiveDescriptor persp){
 		Menu menu = new Menu(toolBar);
-		if(isActive){
+		if (perspectiveIsActive(persp)) {
 			addCustomizeItem(menu);
 			addSaveAsItem(menu);
 			addResetItem(menu);
-		} 
-		addCloseItems(menu);
+		}
+		if (perspectiveIsOpen(persp)) {
+			addCloseItem(menu);
+		}
+		addCloseAllItem(menu);
 		new MenuItem(menu, SWT.SEPARATOR);
 		addDockOnSubMenu(menu);
 		addShowTextItem(menu);
 		return menu;
 	}
 
-    /**
-     * @param menu
-     */
-    private void addCloseItems(Menu menu) {
+    private void addCloseItem(Menu menu) {
         MenuItem menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
         window.getWorkbench().getHelpSystem().setHelp(menuItem,
@@ -961,7 +955,10 @@ public class PerspectiveSwitcher implements IWindowTrim {
                 }
             }
         });
-        menuItem = new MenuItem(menu, SWT.NONE);
+    }
+    
+    private void addCloseAllItem(Menu menu) {
+    	MenuItem menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText(WorkbenchMessages.WorkbenchWindow_closeAll); 
         window.getWorkbench().getHelpSystem().setHelp(menuItem,
         		IWorkbenchHelpContextIds.CLOSE_ALL_PAGES_ACTION);
@@ -993,14 +990,53 @@ public class PerspectiveSwitcher implements IWindowTrim {
             // these are returned with the most recently opened one first
             IPerspectiveDescriptor[] perspectives = page
                     .getOpenPerspectives();
-            for (int i = 0; i < perspectives.length; i++)
+            for (int i = 0; i < perspectives.length; i++) {
                 barManager.insert(1, new PerspectiveBarContributionItem(
                         perspectives[i], page));
+            }
         }
 
         return barManager;
     }
 
+    /**
+     * Add buttons for PERSPECTIVE_BAR_EXTRAS (see bug 71701). 
+     */ 
+    private void addExtras(IWorkbenchPage page) {
+        String extras = PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.PERSPECTIVE_BAR_EXTRAS);
+        List descs = new ArrayList();
+		StringTokenizer tok = new StringTokenizer(extras, ", "); //$NON-NLS-1$
+		while (tok.hasMoreTokens()) {
+			String id = tok.nextToken();
+			IPerspectiveDescriptor desc = window.getWorkbench()
+					.getPerspectiveRegistry().findPerspectiveWithId(id);
+			if (desc != null && findPerspectiveShortcut(desc, page) == null) {
+				descs.add(desc);
+			}
+		}
+		// process the list in reverse order so they appear in the order in which
+		// they were declared (addPerspectiveShortcut adds to the beginning)
+		for (int i = descs.size(); --i >= 0;) {
+			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) descs.get(i);
+			addPerspectiveShortcut(desc, page);
+		}
+    }
+    
+    private void removeExtras(IWorkbenchPage page) {
+    	IContributionItem[] items = perspectiveBar.getItems();
+    	for (int i = 0; i < items.length; i++) {
+			IContributionItem item = items[i];
+			if (item instanceof PerspectiveBarContributionItem) {
+				PerspectiveBarContributionItem pbci = (PerspectiveBarContributionItem) item;
+				if (page.equals(pbci.getPage())) {
+					removePerspectiveShortcut(pbci.getPerspective(), pbci.getPage());
+				}
+			}
+		}
+    	
+    }
+    
     private void updateLocationItems(Menu parent, int newLocation) {
         MenuItem left;
         MenuItem topLeft;
@@ -1074,6 +1110,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
         menuItemTopLeft.addSelectionListener(listener);
         menuItemLeft.addSelectionListener(listener);
         item.setMenu(subMenu);
+        updateLocationItems(subMenu, currentLocation);
     }
 
     private void addShowTextItem(Menu menu) {
@@ -1095,6 +1132,11 @@ public class PerspectiveSwitcher implements IWindowTrim {
                                 preference);
             }
         });
+        showtextMenuItem.setSelection(
+                PrefUtil
+                        .getAPIPreferenceStore()
+                        .getBoolean(
+                                IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));        
     }
 
     private void addCustomizeItem(Menu menu) {
