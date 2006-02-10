@@ -24,13 +24,8 @@ import org.eclipse.team.internal.core.subscribers.DiffTreeStatistics;
 /**
  * Implementation of {@link IDiffTree}.
  * <p>
- * This class is not intended to be subclassed by clients
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
+ * This class is not intended to be subclassed by clients.
+ * Clients can instead use {@link DiffTree}.
  * 
  * @since 3.2
  */

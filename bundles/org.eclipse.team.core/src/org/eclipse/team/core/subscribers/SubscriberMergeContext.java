@@ -25,12 +25,6 @@ import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler
  * A merge context that uses a subscriber to populate the diff tree
  * used by the context. The population of the diff tree is performed
  * by a handler that runs in a background job.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
  * 
  * @see Subscriber
  * @see MergeContext

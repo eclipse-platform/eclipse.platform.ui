@@ -20,12 +20,6 @@ import org.eclipse.core.runtime.*;
  * <p>
  * This interface is not intended to be implemented by clients. Clients
  * should use {@link org.eclipse.team.core.diff.provider.DiffTree} instead.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
  * 
  * @see org.eclipse.team.core.diff.provider.DiffTree
  * @since 3.2

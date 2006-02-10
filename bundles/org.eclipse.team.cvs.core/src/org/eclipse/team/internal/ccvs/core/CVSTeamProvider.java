@@ -37,33 +37,7 @@ import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
 /**
- * This class acts as both the ITeamNature and the ITeamProvider instances
- * required by the Team core.
- * 
- * The current state of this class and it's plugin is EXPERIMENTAL.
- * As such, it is subject to change except in it's conformance to the
- * TEAM API which it implements.
- * 
- * Questions:
- * 
- * How should a project/resource rename/move effect the provider?
- * 
- * Currently we always update with -P. Is this OK?
- *  - A way to allow customizable options would be nice
- * 
- * Is the -l option valid for commit and does it work properly for update and commit?
- * 
- * Do we need an IUserInteractionProvider in the CVS core
- * 	- prompt for user info (caching could be separate)
- * 	- get release comments
- * 	- prompt for overwrite of unmanaged files
- * 
- * Need a mechanism for communicating meta-information (provided by Team?)
- * 
- * Should pass null when there are no options for a cvs command
- * 
- * We currently write the files to disk and do a refreshLocal to
- * have them appear in Eclipse. This may be changed in the future.
+ * CVS implementation of {@link RepositoryProvider}
  */
 public class CVSTeamProvider extends RepositoryProvider {
 

@@ -20,13 +20,7 @@ import org.eclipse.ui.*;
  * container in order to determine when a save is required.
  * <p>
  * This interface is not intended to be implemented by clients. Clients
- * can instead subclass {@link SaveableCompareModel}
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
+ * can instead subclass {@link SaveableCompareModel}.
  * 
  * @since 3.2
  */

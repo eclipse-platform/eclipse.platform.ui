@@ -22,13 +22,6 @@ import org.eclipse.team.core.ICacheListener;
  * properties relevant to the operation and the registering of
  * dispose listeners.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
- * 
  * @see org.eclipse.team.core.ICache
  * @since 3.2
  */

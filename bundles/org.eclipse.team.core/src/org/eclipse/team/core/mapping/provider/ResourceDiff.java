@@ -21,13 +21,6 @@ import org.eclipse.team.core.mapping.IResourceDiff;
  * <p>
  * This class may be subclassed by clients.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
- * 
  * @since 3.2
  */
 public class ResourceDiff extends TwoWayDiff implements IResourceDiff {

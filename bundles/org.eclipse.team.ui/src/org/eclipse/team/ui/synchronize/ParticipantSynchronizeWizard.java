@@ -21,13 +21,6 @@ import org.eclipse.team.ui.TeamImages;
  * This is a convenience class for creating wizards for use with the
  * <code>org.eclipse.team.ui.synchronizeWizard</code> extension point.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
- * 
  * @since 3.2
  */
 public abstract class ParticipantSynchronizeWizard extends Wizard {

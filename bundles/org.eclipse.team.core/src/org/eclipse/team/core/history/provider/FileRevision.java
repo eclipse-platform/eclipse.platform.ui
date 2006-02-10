@@ -24,12 +24,6 @@ import org.eclipse.team.core.history.ITag;
  * Abstract implementation of {@link IFileRevision} that can be implemented by 
  * clients.
  * 
- * <p> <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
- * 
  * @see IFileRevision
  * 
  * @since 3.2

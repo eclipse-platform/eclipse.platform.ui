@@ -32,13 +32,6 @@ import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
  * The ancestor context is only required for merges while the remote
  * is required for both merge and replace.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
- * 
  * @see IResourceMappingMerger
  * @since 3.2
  */

@@ -13,6 +13,7 @@ package org.eclipse.team.core.mapping;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 
 /**
  * A resource diff tree provides access to a tree of {@link IDiff} instances
@@ -23,11 +24,8 @@ import org.eclipse.team.core.diff.*;
  * resources that have changes. Resources that do not contain a change but are
  * returned from the tree will contain children in the set.
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
+ * Clients may not implement this interface but can use {@link ResourceDiffTree}
+ * instead.
  * 
  * @since 3.2
  */

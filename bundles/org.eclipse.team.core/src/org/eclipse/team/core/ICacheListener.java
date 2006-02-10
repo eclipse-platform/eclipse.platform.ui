@@ -15,14 +15,7 @@ package org.eclipse.team.core;
  * Listener that, when registered with a cache, gets invoked
  * when the cache is disposed.
  * <p>
- * Clients may implement this interface
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
+ * Clients may implement this interface.
  * 
  * @since 3.2
  */

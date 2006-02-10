@@ -28,13 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * merge operations triggered from a synchronize participant page
  * associated with a synchronization or merge context.
  * <p>
- * This class may be subclasses by clients
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
+ * This class may be subclasses by clients.
  * 
  * @see ISynchronizationContext
  * @see IMergeContext

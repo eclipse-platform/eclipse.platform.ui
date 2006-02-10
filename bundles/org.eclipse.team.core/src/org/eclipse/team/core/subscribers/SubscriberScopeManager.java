@@ -22,12 +22,6 @@ import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
  * A {@link ISynchronizationScopeManager} that uses a {@link Subscriber} to provide 
  * a {@link RemoteResourceMappingContext} and to notify participants when the
  * remote state of resources change.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
  * @since 3.2
  */
 public class SubscriberScopeManager extends SynchronizationScopeManager implements ISubscriberChangeListener {

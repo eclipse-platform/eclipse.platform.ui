@@ -53,13 +53,6 @@ import org.eclipse.team.core.mapping.provider.SynchronizationContext;
  * This interface is not intended to be implemented by clients. They should subclass
  * {@link SynchronizationContext} or one of its subclasses instead.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
- * 
  * @see SynchronizationContext
  * @see MergeContext
  * 

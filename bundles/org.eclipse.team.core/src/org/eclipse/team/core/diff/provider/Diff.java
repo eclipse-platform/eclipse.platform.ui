@@ -18,13 +18,6 @@ import org.eclipse.team.internal.core.Messages;
  * Abstract implementation of {@link IDiff} that can be subclassed by
  * clients.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
- * 
  * @see ITwoWayDiff
  * @see IThreeWayDiff
  * @since 3.2

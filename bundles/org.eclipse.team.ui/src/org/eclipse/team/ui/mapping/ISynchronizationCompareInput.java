@@ -22,12 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * method.
  * <p>
  * Clients may implement this interface.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
  * 
  * @see ISynchronizationCompareAdapter#asCompareInput(org.eclipse.team.core.mapping.ISynchronizationContext, Object)
  * 

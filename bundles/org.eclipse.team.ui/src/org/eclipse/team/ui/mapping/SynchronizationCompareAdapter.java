@@ -31,12 +31,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * which will convert file objects to an appropriate compare input.
  * <p>
  * Clients may subclass this class.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
  * 
  * @since 3.2
  */

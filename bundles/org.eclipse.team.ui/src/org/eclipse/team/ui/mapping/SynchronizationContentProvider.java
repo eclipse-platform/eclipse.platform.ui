@@ -29,13 +29,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.*;
 
 /**
- * Abstract team aware content provider that delegates to another content provider
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
+ * Abstract team aware content provider that delegates to another content provider.
  * 
  * @since 3.2
  */
