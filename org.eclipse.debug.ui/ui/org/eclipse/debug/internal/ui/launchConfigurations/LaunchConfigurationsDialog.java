@@ -1816,8 +1816,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					updateFilter(newvalue, fWorkingSetsFilter);
 				}
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST)) {
-					viewer.removeFilter(fLCTFilter);
-					viewer.addFilter(fLCTFilter);
+					if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
+						viewer.removeFilter(fLCTFilter);
+						viewer.addFilter(fLCTFilter);
+					}
 				}
 				viewer.expandAll();
 				refreshFilteringLabel();
