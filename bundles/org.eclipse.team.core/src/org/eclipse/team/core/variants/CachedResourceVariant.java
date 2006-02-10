@@ -150,6 +150,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * concurrently. For containers, this method will always return <code>false</code>.
 	 * <p>
 	 * This method is not intended to be overridden by clients.
+	 * @return whether there are contents cached for this resource variant
 	 */
 	public boolean isContentsCached() {
 		if (isContainer() || !isHandleCached()) {
@@ -206,6 +207,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * The method will return 0 if the contents have not yet been cached
 	 * locally.
 	 * For containers, this method will always return 0.
+	 * @return the size (in bytes) of the contents of this resource variant
 	 */
 	public long getSize() {
 		if (isContainer() || !isContentsCached()) return 0;

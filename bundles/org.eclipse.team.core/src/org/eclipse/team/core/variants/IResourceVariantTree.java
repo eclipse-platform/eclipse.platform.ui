@@ -83,6 +83,7 @@ public interface IResourceVariantTree {
 	 * @param resource the resource
 	 * @param depth the flush depth (one of <code>IResource.DEPTH_ZERO</code>,
 	 * <code>IResource.DEPTH_ONE</code>, or <code>IResource.DEPTH_INFINITE</code>)
+	 * @throws TeamException 
 	 */
 	public void flushVariants(IResource resource, int depth) throws TeamException;
 }

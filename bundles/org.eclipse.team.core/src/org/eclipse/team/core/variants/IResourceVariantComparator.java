@@ -56,6 +56,7 @@ public interface IResourceVariantComparator {
 	 * be considered as not supported three-way comparisons. Instead
 	 * comparisons are made between the local and remote only without
 	 * consideration for the base.
+	 * @return whether this comparator is three-way or two-way
 	 */
 	public boolean isThreeWay();
 }

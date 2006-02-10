@@ -51,9 +51,11 @@ public interface IResourceVariant {
 	 * <p>
 	 * The returned storage object may be an instance of (@link org.eclipse.core.resources.IEncodedStorage}
 	 * in which case clients can determine the character encoding of the contents.
+	 * @param monitor a progress monitor
 	 * 
 	 * @return an <code>IStorage</code> that provides access to the contents of 
 	 * the remote resource or <code>null</code> if the remote resource is a container.
+	 * @throws TeamException 
 	 */
 	public IStorage getStorage(IProgressMonitor monitor) throws TeamException;
 	

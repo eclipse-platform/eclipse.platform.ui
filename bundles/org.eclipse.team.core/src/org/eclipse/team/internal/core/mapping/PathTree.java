@@ -251,6 +251,7 @@ public class PathTree {
 
 	/**
 	 * Return all the values contained in this path tree.
+	 * @return all the values in the tree
 	 */
 	public Collection values() {
 		List result = new ArrayList();

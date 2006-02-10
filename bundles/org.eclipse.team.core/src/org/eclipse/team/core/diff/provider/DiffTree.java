@@ -210,6 +210,7 @@ public class DiffTree implements IDiffTree {
 	 * This method is used to release the lock on this set. The progress monitor is needed to allow
 	 * listeners to perform long-running operations is response to the set change. The lock is held
 	 * while the listeners are notified so listeners must be cautious in order to avoid deadlock.
+	 * @param monitor a progress monitor
 	 * @see #beginInput()
 	 */
 	public void endInput(IProgressMonitor monitor) {
@@ -239,7 +240,7 @@ public class DiffTree implements IDiffTree {
 		Object[] listeners = this.listeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			final IDiffChangeListener listener = (IDiffChangeListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// don't log the exception....it is already being logged in Platform#run
 				}
