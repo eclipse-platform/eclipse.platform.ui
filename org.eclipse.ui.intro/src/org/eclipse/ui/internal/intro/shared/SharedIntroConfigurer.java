@@ -373,7 +373,7 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		}
 		// Add the fallback anchor
 		IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
-		fallback.setAttribute("id", ID_FALLBACK_ANCHOR); //$NON-NLS-1$
+		fallback.setAttribute("id", DEFAULT_ANCHOR); //$NON-NLS-1$
 		result.add(fallback);
 		return (IntroElement[]) result.toArray(new IntroElement[result.size()]);
 	}
@@ -389,6 +389,10 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 			if (pdata != null) {
 				return pdata.resolvePath(extensionId);
 			}
+		}
+		else {
+			// use fallback anchor
+			return pageId+DEFAULT_CONTENT_PATH;
 		}
 		return null;
 	}

@@ -9,6 +9,7 @@ public interface ISharedIntroConstants {
 	String HIDDEN = "hidden"; //$NON-NLS-1$
 	String NEW = "new"; //$NON-NLS-1$
 	String DEFAULT_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
+	String DEFAULT_CONTENT_PATH = "/page-content/bottom/"+DEFAULT_ANCHOR; //$NON-NLS-1$
 	// Page ids
 	String ID_ROOT = "root"; //$NON-NLS-1$
 	String ID_STANDBY = "standby"; //$NON-NLS-1$
@@ -26,9 +27,6 @@ public interface ISharedIntroConstants {
 	String DIV_LAYOUT_RIGHT = "right"; //$NON-NLS-1$
 	String DIV_LAYOUT_BOTTOM = "bottom"; //$NON-NLS-1$
 	String DIV_CUSTOMIZE = "customize"; //$NON-NLS-1$
-	
-	// Other ids
-	String ID_FALLBACK_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
 	
 	// Product intro variables 
 	String VAR_INTRO_BACKGROUND_IMAGE = "INTRO_BACKGROUND_IMAGE"; //$NON-NLS-1$

@@ -69,7 +69,7 @@ public class PageData {
 		}
 		// resolve as default
 		IPath resolvedPath = new Path(id).append(ddata.getPath());
-		resolvedPath = resolvedPath.append(ISharedIntroConstants.ID_FALLBACK_ANCHOR);
+		resolvedPath = resolvedPath.append(ISharedIntroConstants.DEFAULT_ANCHOR);
 		return resolvedPath.toString();
 	}
 	
