@@ -47,6 +47,13 @@ public final class TextOperationAction extends TextEditorAction {
 	private boolean fRunsOnReadOnly= false;
 
 	/**
+	 * Flag to prevent running twice trough {@link #update()}
+	 * when creating this action.
+	 * @since 3.2
+	 */
+	private boolean fAllowUpdate= false;
+
+	/**
 	 * Creates and initializes the action for the given text editor and operation
 	 * code. The action configures its visual representation from the given resource
 	 * bundle. The action works by asking the text editor at the time for its
@@ -65,6 +72,7 @@ public final class TextOperationAction extends TextEditorAction {
 	public TextOperationAction(ResourceBundle bundle, String prefix, ITextEditor editor, int operationCode) {
 		super(bundle, prefix, editor);
 		fOperationCode= operationCode;
+		fAllowUpdate= true;
 		update();
 	}
 
@@ -91,6 +99,7 @@ public final class TextOperationAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 		fOperationCode= operationCode;
 		fRunsOnReadOnly= runsOnReadOnly;
+		fAllowUpdate= true;
 		update();
 	}
 
@@ -131,6 +140,9 @@ public final class TextOperationAction extends TextEditorAction {
 	 * enabled state accordingly.
 	 */
 	public void update() {
+		if (!fAllowUpdate)
+			return;
+		
 		super.update();
 
 		if (!fRunsOnReadOnly && !canModifyEditor()) {
