@@ -12,7 +12,6 @@ package org.eclipse.help.internal.index;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IIndexEntry;
@@ -35,10 +34,10 @@ public class IndexEntry extends Index implements IIndexEntry {
         this.topics = topics;
     }
 
-	public IndexEntry(String keyword, List topics, Map subentries) {
+	public IndexEntry(String keyword, List topics, List subentries) {
+		super(subentries);
         this.keyword = keyword;
         this.topics = topics;
-        this.entries = subentries;
     }
 
 	public void addTopic(String label, String href, String location) {

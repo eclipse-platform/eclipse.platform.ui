@@ -12,6 +12,7 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexEntry;
 import org.eclipse.help.internal.index.IIndexTopic;
@@ -71,7 +73,7 @@ public class IndexData extends ActivitiesData {
 	 * Loads help index
 	 */
 	private void loadIndex() {
-		index = HelpPlugin.getIndexManager().getIndex(getLocale());
+		index = extractEnabled(HelpPlugin.getIndexManager().getIndex(getLocale()));
 	}
 
 	/*
@@ -282,5 +284,57 @@ public class IndexData extends ActivitiesData {
 			} while (iter.hasNext());
 			out.write("</ul>\n"); //$NON-NLS-1$
 		}
+	}
+
+	private Index extractEnabled(Index index) {
+		List enabledEntries = new ArrayList();
+		Iterator iter = index.getEntryMap().values().iterator();
+		while (iter.hasNext()) {
+			IndexEntry entry = extractEnabled((IndexEntry)iter.next());
+			if (entry != null)
+				enabledEntries.add(entry);
+		}
+		return new Index(enabledEntries);
+	}
+
+	private IndexEntry extractEnabled(IndexEntry entry) {
+		List enabledTopics = new ArrayList();
+		List enabledSubentries = new ArrayList();
+
+		List topics = entry.getTopicList();
+		if (topics != null) {
+			Iterator iter = topics.iterator();
+			while (iter.hasNext()) {
+				IIndexTopic topic = (IIndexTopic)iter.next(); 
+				if (isEnabled(topic)) {
+					enabledTopics.add(topic);
+				}
+			}
+		}
+
+		Map subentries = entry.getEntryMap();
+		if (subentries != null) {
+			Iterator iter = subentries.values().iterator();
+			while (iter.hasNext()) {
+				IndexEntry subentry = extractEnabled((IndexEntry)iter.next()); 
+				if (subentry != null) {
+					enabledSubentries.add(subentry);
+				}
+			}
+		}
+
+		if (enabledTopics.isEmpty() && enabledSubentries.isEmpty())
+			return null;
+
+		return new IndexEntry(entry.getKeyword(),
+				enabledTopics, enabledSubentries);
+	}
+
+	private boolean isEnabled(IIndexTopic topic) {
+		if (!isAdvancedUI()) {
+			// activities never filtered for basic browsers
+			return true;
+		}
+		return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
 	}
 }

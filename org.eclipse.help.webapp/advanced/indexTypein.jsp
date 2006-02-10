@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <%
-	IndexData data = new IndexData(application, request, response);
+	RequestData data = new RequestData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 
@@ -25,7 +25,6 @@
 <%@ include file="indexTypein.css"%>
 </style>
 
-<script language="JavaScript">var ids = [<%data.generateIds(out);%>];</script>
 <script language="JavaScript" src="indexTypein.js"></script>
 
 </head>

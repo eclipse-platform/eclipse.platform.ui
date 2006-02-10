@@ -28,6 +28,7 @@
 <base target="ContentViewFrame">
 
 <script language="JavaScript">
+var ids = [<%data.generateIds(out);%>];
 minus = new Image();
 minus.src = "<%=prefs.getImagesDirectory()%>" + "/minus.gif";
 plus = new Image();

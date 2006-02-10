@@ -12,6 +12,8 @@ package org.eclipse.help.internal.index;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -37,11 +39,19 @@ public class Index implements IIndex {
     public Index() {
         entries = new TreeMap(new IgnoreCaseComparator());
     }
-    
+
+    public Index(List entries) {
+    	this();
+    	for (Iterator i = entries.iterator(); i.hasNext();) {
+    		IndexEntry entry = (IndexEntry)i.next();
+    		this.entries.put(entry.getKeyword(), entry);
+    	}
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.help.internal.index.IIndex#addEntry(java.lang.String, java.util.Collection)
      */
-    public IndexEntry addEntry(String keyword) {
+    protected IndexEntry addEntry(String keyword) {
         IndexEntry oldEntry = (IndexEntry) entries.get(keyword);
         if (oldEntry == null) {
 			oldEntry = new IndexEntry(keyword);

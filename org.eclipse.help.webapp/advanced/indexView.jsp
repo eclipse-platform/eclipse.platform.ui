@@ -11,7 +11,7 @@
 <%@ include file="fheader.jsp"%>
 
 <%
-	IndexData data = new IndexData(application, request, response);
+	RequestData data = new RequestData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

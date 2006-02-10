@@ -38,23 +38,25 @@ function compare(keyword, pattern) {
 }
 
 function searchPattern(pattern) {
+    if (!parent.listFrame) return null;
+
 	var from = 0;
-	var to = ids.length;
+	var to = parent.listFrame.ids.length;
 	var i;
 	var res;
 
 	while (to > from) {
 		i = Math.floor((to + from) / 2);
-		res = compare(ids[i], pattern);
+		res = compare(parent.listFrame.ids[i], pattern);
 		if (res == 0) {
 			while (i > 0) {
-				res = compare(ids[--i], pattern);
+				res = compare(parent.listFrame.ids[--i], pattern);
 				if (res != 0) {
 					i++;
 					break;
 				}
 			}
-			return ids[i];
+			return parent.listFrame.ids[i];
 		} else if (res < 0) {
 			from = i + 1;
 		} else {
