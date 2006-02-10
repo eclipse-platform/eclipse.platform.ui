@@ -253,6 +253,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				((IHistoryPage) currentPageContainer.getPage()).refresh();
 			}
 		};
+		refreshAction.setToolTipText("Refresh");
 
 		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) {
 			public void run() {
@@ -260,16 +261,14 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			}
 		};
 		linkWithEditorAction.setChecked(isLinkingEnabled());
-
-		//previousHistory = new GenericHistoryDropDownAction();
-
+		linkWithEditorAction.setToolTipText("Link with Editor and Selection");
+		
 		//Create the local tool bar
 		IToolBarManager tbm = actionBars.getToolBarManager();
-		//Take out history support for now
-		//tbm.add(previousHistory);
-		tbm.add(refreshAction);
-		tbm.add(linkWithEditorAction);
-		tbm.add(pinAction);
+		tbm.add(new Separator("historyView")); //$NON-NLS-1$
+		tbm.appendToGroup("historyView", refreshAction);  //$NON-NLS-1$
+		tbm.appendToGroup("historyView", linkWithEditorAction);  //$NON-NLS-1$
+		tbm.appendToGroup("historyView", pinAction);  //$NON-NLS-1$
 		tbm.update(false);
 	}
 

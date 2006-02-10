@@ -47,6 +47,10 @@ public interface ICVSUIConstants {
 	public final String IMG_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	public final String IMG_LINK_WITH_EDITOR = "elcl16/synced.gif"; //$NON-NLS-1$
 	public final String IMG_REMOVE_CONSOLE = "elcl16/console_rem.gif"; //$NON-NLS-1$
+	//TODO:replace these with real icons
+	//temporary history view icons
+	public final String IMG_LOCALMODE = "etool16/local_history.gif";  //$NON-NLS-1$
+	public final String IMG_LOCALREMOTE_MODE = "etool16/local_remote.gif";  //$NON-NLS-1$
 	
 	// toolbar (disabled)
 	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$

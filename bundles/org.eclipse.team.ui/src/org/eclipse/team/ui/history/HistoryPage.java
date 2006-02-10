@@ -23,7 +23,8 @@ import org.eclipse.ui.part.Page;
 public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptable {
 	
 	private IHistoryPageSite site;
-
+	private Object input;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.history.IHistoryPage#setSite(org.eclipse.team.ui.history.IHistoryPageSite)
 	 */
@@ -38,5 +39,28 @@ public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptab
 		return site;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryPage#getInput()
+	 */
+	public Object getInput() {
+		return input;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryPage#setInput(java.lang.Object, boolean)
+	 */
+	public boolean setInput(Object object, boolean refetch) {
+		this.input = object;
+		return inputSet(refetch);
+	}
 
+	/**
+	 * Called by HistoryPage after {@link #setInput(Object, boolean)}. Clients can
+	 * gain access to the input by using {@link #getInput()}.
+	 * 
+	 * @param refetchContents boolean indicating if the page should refetch contents
+	 * @return <code>true</code> if the page was able to display the contents, <code>false</code> otherwise
+	 */
+	public abstract boolean inputSet(boolean refetchContents);
 }

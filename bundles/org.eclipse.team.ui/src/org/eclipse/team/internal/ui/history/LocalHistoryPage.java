@@ -39,18 +39,6 @@ public class LocalHistoryPage extends HistoryPage {
 	private OpenLocalFileAction openAction;
 	private IFile file;
 	
-	public boolean setInput(Object object, boolean refetch) {
-		if (object instanceof IFile) {
-			file = (IFile) object;
-			if (!refetch || object == null)
-				return false;
-		
-			//historyTableProvider.setFile(fileHistory, newfile);
-			tableViewer.setInput(file);
-			return true;
-		}
-		return false;
-	}
 
 	public boolean isValidInput(Object object) {
 		//don't volunteer to use this page unless forced to do so
@@ -226,6 +214,20 @@ public class LocalHistoryPage extends HistoryPage {
 
 	public Object getInput() {
 		return file;
+	}
+
+	public boolean inputSet(boolean refetch) {
+		Object object = getInput();
+		if (object instanceof IFile) {
+			file = (IFile) object;
+			if (!refetch || object == null)
+				return false;
+		
+			//historyTableProvider.setFile(fileHistory, newfile);
+			tableViewer.setInput(file);
+			return true;
+		}
+		return false;
 	}
 
 }

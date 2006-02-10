@@ -21,7 +21,6 @@ import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileHistory;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.core.LocalFileRevision;
 
 public class CVSFileHistory extends FileHistory {
@@ -34,21 +33,31 @@ public class CVSFileHistory extends FileHistory {
 	//used to hold all of the local revisions
 	protected IFileRevision[] localRevisions;
 	protected boolean includeLocalRevisions;
+	protected boolean includeRemoteRevisions;
 	protected boolean includesExists;
 	protected boolean refetchRevisions;
 	
 	private int flag;
 	
+	/*
+	 * Creates a new CVSFile history that will fetch remote revisions by default.
+	 */
 	public CVSFileHistory(ICVSFile file){
 		this.cvsFile = file;
 		this.includeLocalRevisions = false;
+		this.includeRemoteRevisions = true;
 		this.refetchRevisions = true;
 		this.flag = 0;
 	}
-	
+	/*
+	 * 
+	 * Creates a new CVSFile history that will fetch remote revisions by default.
+	 * The flag passed can be IFileHistoryProvider.SINGLE_REVISION or IFileHistoryProvider.SINGLE_LINE_OF_DESCENT
+	 */
 	public CVSFileHistory(ICVSFile file, int flag){
 		this.cvsFile = file;
 		this.includeLocalRevisions = false;
+		this.includeRemoteRevisions = true;
 		this.refetchRevisions = true;
 		this.flag = flag;
 	}
@@ -76,9 +85,7 @@ public class CVSFileHistory extends FileHistory {
 					}
 		
 				} else if (flag == IFileHistoryProvider.SINGLE_LINE_OF_DESCENT){ 
-					ResourceSyncInfo infox = cvsFile.getSyncInfo();
 					CVSTag tempTag = cvsFile.getSyncInfo().getTag();
-					int x;
 					/*CVSTag cvsTag = cvsFile.getSyncInfo().
 					for (int i = 0; i < entries.length; i++) {
 						CVSTag[] tags = entries[i].getTags();
@@ -106,11 +113,14 @@ public class CVSFileHistory extends FileHistory {
 							includesExists = (localRevisions.length > 0);
 						}
 					}
-					remoteRevisions = new IFileRevision[entries.length];
-					for (int i = 0; i < entries.length; i++) {
-						remoteRevisions[i] = new CVSFileRevision(entries[i]);
-					}
 					
+					remoteRevisions = new IFileRevision[0];
+					if (includeRemoteRevisions){
+						remoteRevisions = new IFileRevision[entries.length];
+						for (int i = 0; i < entries.length; i++) {
+							remoteRevisions[i] = new CVSFileRevision(entries[i]);
+						}
+					}
 					revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
 					//copy over remote revisions
 					System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
@@ -124,17 +134,25 @@ public class CVSFileHistory extends FileHistory {
 		} else {
 			//don't refetch revisions just return revisions with local revisions as requested
 			if (revisions != null){
-				if (includeLocalRevisions && includesExists){
+				if (includeLocalRevisions && includesExists &&
+					includeRemoteRevisions){
+					//Local + Remote mode
 					revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
 					//copy over remote revisions
 					System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
 					//copy over local revisions
 					System.arraycopy(localRevisions,0, revisions, remoteRevisions.length,localRevisions.length);
-				} else {
+				} else if(includeLocalRevisions && includesExists){
+					//Local mode only
+					revisions = new IFileRevision[localRevisions.length];
+					//copy over local revisions
+					System.arraycopy(localRevisions,0, revisions, 0,localRevisions.length);
+				}else if (includeRemoteRevisions){
+					//Remote mode and fall through for Local + Remote mode where no Locals exist
 					revisions = new IFileRevision[remoteRevisions.length];
 					//copy over remote revisions
 					System.arraycopy(remoteRevisions,0, revisions, 0,remoteRevisions.length);
-				}
+				} 
 			}
 			
 		}
@@ -232,6 +250,10 @@ public class CVSFileHistory extends FileHistory {
 
 	public void setRefetchRevisions(boolean refetch) {
 		this.refetchRevisions = refetch;
+	}
+
+	public void includeRemoteRevisions(boolean flag) {
+		this.includeRemoteRevisions = flag;
 	}
 
 

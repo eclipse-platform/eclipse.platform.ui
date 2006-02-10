@@ -63,7 +63,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryCompareAdapter {
 	
 	/* private */ ICVSFile file;
-	/* private */ Object input;
 	/* private */ IFileRevision currentFileRevision;
 	
 	// cached for efficiency
@@ -90,9 +89,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private Action getContentsAction;
 	private Action getRevisionAction;
 	private Action refreshAction;
-	private Action localHistoryFilterAction;
-	private Action tagWithExistingAction;
 	
+	private Action tagWithExistingAction;
+	private Action localMode;
+	private Action remoteMode;
+	private Action remoteLocalMode;
+
 	private SashForm sashForm;
 	private SashForm innerSashForm;
 
@@ -106,6 +108,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	/* private */boolean shutdown = false;
 
 	boolean localFilteredOut = false;
+	boolean remoteFilteredOut = false;
 	
 	private HistoryResourceListener resourceListener;
 	
@@ -120,6 +123,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static int COMPARE_CLICK = 0;
 	public final static int OPEN_CLICK = 1;
 	private int clickAction = OPEN_CLICK;
+	
+	//filter constants
+	public final static int REMOTE_LOCAL_MODE = 0;
+	public final static int REMOTE_MODE = 1;
+	public final static int LOCAL_MODE = 2;
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -229,15 +237,44 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
-		localHistoryFilterAction = new Action("Local Filter", plugin.getImageDescriptor(ICVSUIConstants.IMG_CLEAR_ENABLED)) {
+		localMode =  new Action("Local Mode", plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE)) {
 			public void run() {
-				setLocalHistoryFilteredOut(isChecked());
+				if (isChecked())
+					updateFilterMode(LOCAL_MODE);
+				else
+					setChecked(true);
 			}
 		};
-		localHistoryFilterAction.setChecked(isLocalHistoryFilteredOut());
-		localHistoryFilterAction.setToolTipText(CVSUIMessages.HistoryView_refresh); 
-		localHistoryFilterAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_CLEAR_DISABLED));
-		localHistoryFilterAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_CLEAR));
+		localMode.setToolTipText("Local Revisions"); 
+		localMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
+		localMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
+		
+		remoteMode =  new Action("Remote Mode", plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY)) {
+			public void run() {
+				if (isChecked())
+					updateFilterMode(REMOTE_MODE);
+				else
+					setChecked(true);
+			}
+		};
+		remoteMode.setToolTipText("Remote Revisions"); 
+		remoteMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
+		remoteMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
+		
+		remoteLocalMode =  new Action("Remote Local Mode", plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE)) {
+			public void run() {
+				if (isChecked())
+					updateFilterMode(REMOTE_LOCAL_MODE);
+				else
+					setChecked(true);
+			}
+		};
+		remoteLocalMode.setToolTipText("Local and Remote Revisions"); 
+		remoteLocalMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
+		remoteLocalMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
+		
+		//set the inital filter to both remote and local
+		updateFilterMode(REMOTE_LOCAL_MODE);
 		
 		// Click Compare action
 		compareAction = new CompareRevisionAction();
@@ -464,12 +501,18 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		cvsHistoryFilter = new CVSHistoryFilterAction(this);
 		cvsHistoryFilter.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
 		cvsHistoryFilter.init(tableViewer);
+		cvsHistoryFilter.setToolTipText("Filter History");
+		
 		//Create the local tool bar
 		IToolBarManager tbm = parentSite.getToolBarManager();
 		if (tbm != null) {
-			//Take out history support for now
-			tbm.add(localHistoryFilterAction);
-			tbm.add(cvsHistoryFilter);
+			//Add groups
+			tbm.add(new Separator("modes"));	//$NON-NLS-1$
+			tbm.add(new Separator("filter")); //$NON-NLS-1$
+			tbm.appendToGroup("modes", remoteLocalMode); //$NON-NLS-1$
+			tbm.appendToGroup("modes", localMode); //$NON-NLS-1$
+			tbm.appendToGroup("modes", remoteMode); //$NON-NLS-1$
+			tbm.appendToGroup("filter", cvsHistoryFilter); //$NON-NLS-1$
 			tbm.update(false);
 		}
 
@@ -489,11 +532,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return localFilteredOut;
 	}
 	
-	private void setLocalHistoryFilteredOut(boolean flag){
-		localFilteredOut = flag;
-		refreshHistory(false);
+	private boolean isRemoteHistoryFilteredOut(){
+		return remoteFilteredOut;
 	}
-
+	
 	/* private */ void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
 		IHistoryPageSite parentSite = getHistoryPageSite();
@@ -666,37 +708,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshHistory(true);
 	}
 
-	/**
-	 * Shows the history for the given IResource in the view.
-	 * 
-	 * Only files are supported for now.
-	 */
-	public boolean setInput(Object object, boolean refetch) {
-		//keep the initial input
-		input = object;
-		//reset default behaviour for clicks
-		clickAction = OPEN_CLICK;
-		//reset currentFileRevision
-		currentFileRevision = null;
-		ICVSFile cvsFile = getCVSFile(object);
-		this.file = cvsFile;
-		if (cvsFile == null)
-			return false;
-		
-		cvsFileHistory = new CVSFileHistory(cvsFile);
-		cvsFileHistory.includeLocalRevisions(true);
-		if (refreshCVSFileHistoryJob == null)
-			refreshCVSFileHistoryJob = new RefreshCVSFileHistory();
-		
-		refreshHistory(refetch);
-		return true;
-	}
-
 	private void refreshHistory(boolean refetch) {
 		if (refreshCVSFileHistoryJob.getState() != Job.NONE){
 			refreshCVSFileHistoryJob.cancel();
 		}
 		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
+		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
 		IHistoryPageSite parentSite = getHistoryPageSite();
@@ -848,6 +865,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		public void setIncludeLocals(boolean flag) {
 			if (fileHistory != null)
 				fileHistory.includeLocalRevisions(flag);
+		}
+		
+		public void setIncludeRemote(boolean flag){
+			if (fileHistory != null)
+				fileHistory.includeRemoteRevisions(flag);
 		}
 
 		public void setRefetchHistory(boolean refetch) {
@@ -1057,7 +1079,56 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return null;
 	}
 
-	public Object getInput() {
-		return input;
+	public boolean inputSet(boolean refetch) {
+		//reset default behaviour for clicks
+		clickAction = OPEN_CLICK;
+		//reset currentFileRevision
+		currentFileRevision = null;
+		ICVSFile cvsFile = getCVSFile(getInput());
+		this.file = cvsFile;
+		if (cvsFile == null)
+			return false;
+		
+		cvsFileHistory = new CVSFileHistory(cvsFile);
+		//fetch both local and remote revisions the first time around
+		cvsFileHistory.includeLocalRevisions(true);
+		if (refreshCVSFileHistoryJob == null)
+			refreshCVSFileHistoryJob = new RefreshCVSFileHistory();
+		
+		refreshHistory(refetch);
+		return true;
+	}
+	
+	private void updateFilterMode(int mode) {
+		switch(mode){
+			case LOCAL_MODE:
+				localFilteredOut = false;
+				remoteFilteredOut = true;
+				localMode.setChecked(true);
+				remoteMode.setChecked(false);
+				remoteLocalMode.setChecked(false);
+				break;
+
+			case REMOTE_MODE:
+				localFilteredOut = true;
+				remoteFilteredOut = false;
+				localMode.setChecked(false);
+				remoteMode.setChecked(true);
+				remoteLocalMode.setChecked(false);
+				break;
+
+			case REMOTE_LOCAL_MODE:
+				localFilteredOut = false;
+				remoteFilteredOut = false;
+				localMode.setChecked(false);
+				remoteMode.setChecked(false);
+				remoteLocalMode.setChecked(true);
+				break;
+		}
+
+		//the refresh job gets created once the input is set
+		//don't bother trying to refresh any history until the input has been set
+		if (refreshCVSFileHistoryJob != null)
+			refreshHistory(false);
 	}
 }
