@@ -40,14 +40,18 @@ import org.eclipse.ui.*;
 public class SyncAction extends WorkspaceTraversalAction {
 	
 	public void execute(IAction action) throws InvocationTargetException {
-        IResource[] resources = getResourcesToCompare(getWorkspaceSubscriber());
-		if (resources == null || resources.length == 0) return;
-		
-		if(isSingleFile(resources)) {
-			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources[0], getTargetPage());
-		}else if (isShowModelSync()) {
+		// First, see if there is a single file selected
+		IFile file = getSelectedFile();
+		if (file != null) {
+			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), file, getTargetPage());
+			return;
+		}
+		if (isShowModelSync()) {
 			try {
-				new ModelUpdateOperation(getTargetPart(), getCVSResourceMappings()) {
+				ResourceMapping[] mappings = getCVSResourceMappings();
+				if (mappings.length == 0)
+					return;
+				new ModelUpdateOperation(getTargetPart(), mappings) {
 					protected boolean isAttemptHeadlessMerge() {
 						return false;
 					}
@@ -62,6 +66,8 @@ public class SyncAction extends WorkspaceTraversalAction {
 				// Ignore
 			}
 		} else {
+	        IResource[] resources = getResourcesToCompare(getWorkspaceSubscriber());
+			if (resources == null || resources.length == 0) return;
 			// First check if there is an existing matching participant
 			WorkspaceSynchronizeParticipant participant = (WorkspaceSynchronizeParticipant)SubscriberParticipant.getMatchingParticipant(WorkspaceSynchronizeParticipant.ID, resources);
 			// If there isn't, create one and add to the manager

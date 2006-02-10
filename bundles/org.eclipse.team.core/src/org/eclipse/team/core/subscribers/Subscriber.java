@@ -274,7 +274,7 @@ abstract public class Subscriber {
 		// Notify the listeners safely so all will receive notification
 		for (int i = 0; i < allListeners.length; i++) {
 			final ISubscriberChangeListener listener = allListeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// don't log the exception....it is already being logged in
 					// Platform#run

@@ -12,9 +12,14 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelCompareOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
@@ -31,24 +36,40 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 		if (tag == null)
 			return;
 		
-        // If the model is logical (i.e. not just IResource)
-        // determine all the resources by creating a subscriber that can be used
-        // to peek at the remote state
-        CVSCompareSubscriber compareSubscriber;
-        if (isLogicalModel(getCVSResourceMappings())) {
-            compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
-            resources = getResourcesToCompare(compareSubscriber);
-            compareSubscriber.dispose();
-        }
-        
-        // Finally, create a subscriber specifically for the resources for display to the user
-		compareSubscriber = new CVSCompareSubscriber(resources, tag);
-		if (SyncAction.isSingleFile(resources)) {
-			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, resources[0], getTargetPage());
+		IFile file = getSelectedFile();
+		if (file != null) {
+			CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(resources, tag);
+			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, file, getTargetPage());
 			compareSubscriber.dispose();
-		} else {
+			return;
+		}
+		
+        // Create a subscriber that can cover all projects invlived
+        CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
+		if (isShowModelSync()) {
 			try {
-			compareSubscriber.primeRemoteTree();
+				ResourceMapping[] mappings = getCVSResourceMappings();
+				try {
+					// TODO: Only prime the area covered by the mappings
+					compareSubscriber.primeRemoteTree();
+				} catch(CVSException e) {
+					// ignore, the compare will fail if there is a real problem.
+				}
+				new ModelCompareOperation(getTargetPart(), mappings, compareSubscriber).run();
+			} catch (InterruptedException e) {
+				// Ignore
+			}
+		} else {
+	        ResourceMapping[] resourceMappings = getCVSResourceMappings();
+			if (isLogicalModel(resourceMappings)) {
+	            compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
+	            resources = getResourcesToCompare(compareSubscriber);
+	            compareSubscriber.dispose();
+	        }
+			// create a subscriber specifically for the resources for display to the user
+			compareSubscriber = new CVSCompareSubscriber(resources, tag);
+			try {
+				compareSubscriber.primeRemoteTree();
 			} catch(CVSException e) {
 				// ignore, the compare will fail if there is a real problem.
 			}
@@ -63,6 +84,10 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 		}
 	}
 
+    private boolean isShowModelSync() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC);
+	}
+    
     protected CVSTag promptForTag(IResource[] resources) {
 		CVSTag tag = TagSelectionDialog.getTagToCompareWith(getShell(), TagSource.create(resources), TagSelectionDialog.INCLUDE_ALL_TAGS);
 		return tag;

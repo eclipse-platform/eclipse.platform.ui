@@ -67,6 +67,12 @@
             class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant"
             id="org.eclipse.team.cvs.ui.compare-participant">
       </participant>
+      <participant
+            class="org.eclipse.team.internal.ccvs.ui.mappings.ModelCompareParticipant"
+            icon="$nl$/icons/full/eview16/compare_view.gif"
+            id="org.eclipse.team.cvs.ui.modelCompareParticipant"
+            name="%CVSCompareParticipant"
+            persistent="false"/>
    </extension>
    
    <extension

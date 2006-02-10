@@ -99,8 +99,11 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	}
 
 	protected long getVisibleChangesCount() {
-		int currentMode =  getConfiguration().getMode();
 		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (configuration.getComparisonType() == ISynchronizePageConfiguration.TWO_WAY) {
+			return context.getDiffTree().size();
+		}
+		int currentMode =  configuration.getMode();
 		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
 		if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
 			try {

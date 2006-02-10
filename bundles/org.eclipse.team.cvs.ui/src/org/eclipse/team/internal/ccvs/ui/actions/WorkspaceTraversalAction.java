@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +26,7 @@ import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -123,6 +125,16 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
             }
         }
         return false;
+    }
+    
+    protected IFile getSelectedFile() {
+    	ResourceMapping[] mappings = getCVSResourceMappings();
+    	if (mappings.length == 1) {
+    		IResource resource = Utils.getResource(mappings[0].getModelObject());
+    		if (resource != null && resource.getType() == IResource.FILE)
+    			return (IFile)resource;
+    	}
+    	return null;
     }
     
 	protected boolean hasOutgoingChanges(final RepositoryProviderOperation operation) throws InvocationTargetException, InterruptedException {

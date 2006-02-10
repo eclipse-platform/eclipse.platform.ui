@@ -28,14 +28,6 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 
-/**
- * @author MValenta
- *
- */
-/**
- * @author MValenta
- *
- */
 public class WorkspaceModelParticipant extends
 		ModelSynchronizeParticipant {
 
