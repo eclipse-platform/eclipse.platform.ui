@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * A viewer sorter is used by a structured viewer to
+ * A viewer sorter is used by a {@link StructuredViewer} to
  * reorder the elements provided by its content provider.
  * <p>
  * The default <code>compare</code> method compares elements using two steps. 
@@ -103,8 +103,6 @@ public class ViewerSorter {
 
         if (cat1 != cat2)
             return cat1 - cat2;
-
-        // cat1 == cat2
 
         String name1;
         String name2;

@@ -806,10 +806,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * Returns the comparator to use for comparing elements, or
-	 * <code>null</code> if none has been set.
+	 * Returns the comparer to use for comparing elements, or
+	 * <code>null</code> if none has been set.  If specified,
+	 * the viewer uses this to compare and hash elements rather
+	 * than the elements' own equals and hashCode methods.
 	 *           
-	 * @return IElementComparer  the comparator to use for comparing elements or
+	 * @return the comparer to use for comparing elements or
 	 *            <code>null</code>
 	 */
 	public IElementComparer getComparer() {
@@ -1588,12 +1590,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * Sets the comparator to use for comparing elements, or <code>null</code>
+	 * Sets the comparer to use for comparing elements, or <code>null</code>
 	 * to use the default <code>equals</code> and <code>hashCode</code>
 	 * methods on the elements themselves.
 	 * 
 	 * @param comparer
-	 *            the comparator to use for comparing elements or
+	 *            the comparer to use for comparing elements or
 	 *            <code>null</code>
 	 */
 	public void setComparer(IElementComparer comparer) {
