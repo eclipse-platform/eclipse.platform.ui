@@ -602,13 +602,14 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param reveal whether to reveal the selection
 	 */
 	protected void attemptSelection(boolean reveal) {
-		if (fPendingSelection != null && !fPendingSelection.isEmpty()) {
+		if (fPendingSelection != null) {
 			ISelection currentSelection = null;
-
 			synchronized (this) {
 				ISelection remaining = doAttemptSelectionToWidget(fPendingSelection, reveal);
-
-				if (!fPendingSelection.equals(remaining) || (fPendingSelection.isEmpty() && fPendingSelection.equals(remaining))) {
+				if (remaining.isEmpty()) {
+					remaining = null;
+				}
+				if (!fPendingSelection.equals(remaining)) {
 					fPendingSelection = remaining;
 					currentSelection = newSelectionFromWidget();
 					if (isSuppressEqualSelections() && currentSelection.equals(fCurrentSelection)) {
