@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -86,6 +87,7 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -326,6 +328,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private WorkbenchWindow[] createdWindows;
 
 	/**
+	 * Listener list for registered IWorkbenchListeners .
+	 */
+	private ListenerList workbenchListeners = new ListenerList(ListenerList.IDENTITY);
+
+	/**
 	 * Creates a new workbench.
 	 * 
 	 * @param display
@@ -465,6 +472,62 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	/*
 	 * (non-Javadoc) Method declared on IWorkbench.
+	 * @since 3.2
+	 */
+	public void addWorkbenchListener(IWorkbenchListener listener) {
+		workbenchListeners.add(listener);
+	}
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
+	 * @since 3.2
+	 */
+	public void removeWorkbenchListener(IWorkbenchListener listener) {
+		workbenchListeners.remove(listener);
+	}
+
+	/**
+	 * Fire workbench preShutdown event, stopping at the first one to veto
+	 *
+	 * @param forced flag indicating whether the shutdown is being forced
+     * @return <code>true</code> to allow the workbench to proceed with shutdown,
+     *   <code>false</code> to veto a non-forced shutdown
+	 * @since 3.2
+	 */
+	boolean firePreShutdown(final boolean forced) {
+		Object list[] = workbenchListeners.getListeners();
+		for (int i = 0; i < list.length; i++) {
+			final IWorkbenchListener l = (IWorkbenchListener) list[i];
+			final boolean[] result = new boolean[] { false };
+			SafeRunnable.run(new SafeRunnable() {
+				public void run() {
+					result[0] = l.preShutdown(Workbench.this, forced);
+				}
+			});
+			if (!result[0])
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Fire workbench postShutdown event.
+	 * @since 3.2
+	 */
+	void firePostShutdown() {
+		Object list[] = workbenchListeners.getListeners();
+		for (int i = 0; i < list.length; i++) {
+			final IWorkbenchListener l = (IWorkbenchListener) list[i];
+			SafeRunnable.run(new SafeRunnable() {
+				public void run() {
+					l.postShutdown(Workbench.this);
+				}
+			});
+		}
+	}
+	
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public void addWindowListener(IWindowListener l) {
 		addListenerObject(l);
@@ -568,6 +631,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		// notify the advisor of preShutdown and allow it to veto if not forced
 		isClosing = advisor.preShutdown();
+		if (!force && !isClosing) {
+			return false;
+		}
+
+		// notify regular workbench clients of preShutdown and allow them to veto if not forced
+		isClosing = firePreShutdown(force);
 		if (!force && !isClosing) {
 			return false;
 		}
@@ -2127,6 +2196,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private void shutdown() {
 		// shutdown application-specific portions first
 		advisor.postShutdown();
+
+		// notify regular workbench clients of shutdown, and clear the list when done
+		firePostShutdown();
+		workbenchListeners.clear();
 
 		cancelEarlyStartup();
 

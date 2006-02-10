@@ -98,6 +98,24 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	public IProgressService getProgressService();
 
 	/**
+	 * Adds a workbench listener.
+	 * 
+	 * @param listener
+	 *            the workbench listener to add
+	 * @since 3.2
+	 */
+	public void addWorkbenchListener(IWorkbenchListener listener);
+
+	/**
+	 * Removes a workbench listener.
+	 * 
+	 * @param listener
+	 *            the workbench listener to remove
+	 * @since 3.2
+	 */
+	public void removeWorkbenchListener(IWorkbenchListener listener);
+	
+	/**
 	 * Adds a window listener.
 	 * 
 	 * @param listener
