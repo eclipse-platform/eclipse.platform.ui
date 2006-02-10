@@ -382,6 +382,11 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 				try {
 					fTableCursor.setSelection(row, col);		
 					showTableCursor(true);
+					
+					int topIndex = getTable().getTopIndex();
+					Object topKey = getVirtualContentManager().getKey(topIndex);
+					setTopIndexKey(topKey);
+					
 				} catch (RuntimeException e) {
 					// by the time this is called, the selection may no longer
 					// be valid, catch all exception and just hide cursor.

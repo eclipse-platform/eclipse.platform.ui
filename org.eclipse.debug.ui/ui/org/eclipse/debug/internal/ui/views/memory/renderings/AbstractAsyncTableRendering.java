@@ -93,6 +93,7 @@ import org.eclipse.ui.progress.UIJob;
 //TODO:  show memory tab is busy updating
 //TODO:  pluggable update policy
 //TODO:  linux - cannot resize columns to preferred size
+//TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
 public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering {
 
 	private class ToggleAddressColumnAction extends Action {
@@ -797,6 +798,12 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			public void run() {			
 				// call this to make the table viewer to reload when needed
 				fTableViewer.setSelection(address);
+				
+				int i = fTableViewer.indexOf(address);
+				if (i < 0)
+				{
+					topVisibleAddressChanged(address);
+				}
 			}
 		};
 		
