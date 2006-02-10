@@ -15,15 +15,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.actions.SimpleWildcardTester;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
@@ -157,12 +154,8 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
                         .getContentType();
                 actualValue = contentType.getId();
             }
-        } catch (final CoreException e) {
-            // Log the error.
-            final String message = "Core exception while retrieving the content description"; //$NON-NLS-1$
-            IDEWorkbenchPlugin.log(message,
-                    new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-                            IStatus.ERROR, message, e));
+        } catch (CoreException e) {
+            //ignore - this just means the file does not exist or is not accessible
         }
 
         return expectedValue == null || expectedValue.equals(actualValue);
