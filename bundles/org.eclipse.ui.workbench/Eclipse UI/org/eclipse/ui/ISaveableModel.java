@@ -11,6 +11,7 @@
 
 package org.eclipse.ui;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -72,8 +73,11 @@ public interface ISaveableModel {
 	 * 
 	 * @param monitor
 	 *            the progress monitor
+	 * @throws CoreException
+	 *             if the save fails; it is the caller's responsibility to
+	 *             report the failure to the user
 	 */
-	void doSave(IProgressMonitor monitor);
+	void doSave(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns whether the contents of this model have changed since the last

@@ -14,10 +14,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -141,7 +143,7 @@ public class SaveableHelper {
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
 	 *   was cancelled.
 	 */
-	private static boolean saveModels(ISaveableModelSource modelSource, IWorkbenchWindow window) {
+	private static boolean saveModels(ISaveableModelSource modelSource, final IWorkbenchWindow window) {
 		ISaveableModel[] selectedModels = modelSource.getActiveModels();
 		final ArrayList dirtyModels = new ArrayList();
 		for (int i = 0; i < selectedModels.length; i++) {
@@ -160,7 +162,20 @@ public class SaveableHelper {
 				monitorWrap.beginTask("", dirtyModels.size()); //$NON-NLS-1$
 				for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
 					ISaveableModel model = (ISaveableModel) i.next();
-					model.doSave(new SubProgressMonitor(monitorWrap, 1));
+					// handle case where this model got saved as a result of saving another
+					if (!model.isDirty()) {
+						monitor.worked(1);
+						continue;
+					}
+					try {
+						model.doSave(new SubProgressMonitor(monitorWrap, 1));
+					}
+					catch (CoreException e) {
+						ErrorDialog.openError(window.getShell(), WorkbenchMessages.Error, e.getMessage(), e.getStatus());
+					}
+					if (monitor.isCanceled()) {
+						break;
+					}
 				}
 				monitorWrap.done();
 			}

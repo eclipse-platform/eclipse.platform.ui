@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -1214,8 +1215,15 @@ public class EditorManager implements IExtensionChangeHandler {
 				monitorWrap.beginTask("", finalModels.size()); //$NON-NLS-1$
 				for (Iterator i = finalModels.iterator(); i.hasNext();) {
 					ISaveableModel model = (ISaveableModel) i.next();
-					if (model.isDirty()) {
+					// handle case where this model got saved as a result of saving another
+					if (!model.isDirty()) {
+						monitor.worked(1);
+						continue;
+					}
+					try {
 						model.doSave(new SubProgressMonitor(monitorWrap, 1));
+					} catch (CoreException e) {
+						ErrorDialog.openError(window.getShell(), WorkbenchMessages.Error, e.getMessage(), e.getStatus());
 					}
 					if (monitorWrap.isCanceled())
 						break;
