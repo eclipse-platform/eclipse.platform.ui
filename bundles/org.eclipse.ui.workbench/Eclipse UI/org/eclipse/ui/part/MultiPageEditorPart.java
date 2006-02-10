@@ -273,7 +273,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		// set the active page (page 0 by default), unless it has already been
 		// done
 		if (getActivePage() == -1) {
-			getTabFolder().setSelection(0);
+			setActivePage(0);
 			IEditorPart part = getEditor(0);
 			if (part!=null) {
 				final IServiceLocator serviceLocator = part.getEditorSite();
