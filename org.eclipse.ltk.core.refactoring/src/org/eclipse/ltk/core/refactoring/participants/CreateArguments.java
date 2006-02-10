@@ -27,9 +27,11 @@ public class CreateArguments extends RefactoringArguments {
 	public CreateArguments() {
 	}
     
-    /* (non-Javadoc)
-     * @see RefactoringArguments#toString()
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.2
+	 */
     public String toString() {
     	return "create"; //$NON-NLS-1$
     }

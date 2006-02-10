@@ -27,9 +27,11 @@ public class DeleteArguments extends RefactoringArguments {
 	public DeleteArguments() {
 	}
 	
-    /* (non-Javadoc)
-     * @see RefactoringArguments#toString()
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.2
+	 */
     public String toString() {
     	return "delete"; //$NON-NLS-1$
     }

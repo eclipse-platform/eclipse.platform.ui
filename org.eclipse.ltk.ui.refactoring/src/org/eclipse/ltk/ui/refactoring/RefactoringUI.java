@@ -99,6 +99,8 @@ public class RefactoringUI {
 	 *  if the dialog is a top-level dialog
 	 * @param windowTitle the dialog's window title
 	 * @return a dialog to present a refactoring status.
+	 * 
+	 * @since 3.2
 	 */
 	public static Dialog createLightWeightStatusDialog(RefactoringStatus status, Shell parent, String windowTitle) {
 		return new RefactoringStatusDialog(status, parent, windowTitle, false, true);

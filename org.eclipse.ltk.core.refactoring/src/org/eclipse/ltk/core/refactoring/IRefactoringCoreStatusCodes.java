@@ -50,24 +50,32 @@ public interface IRefactoringCoreStatusCodes {
 	/**
 	 * Status code (value 10004) indicating that a refactoring history has been
 	 * read which does not contain version information.
+	 * 
+	 * @since 3.2
 	 */
 	public static final int MISSING_REFACTORING_HISTORY_VERSION= 10004;
 
 	/**
 	 * Status code (value 10005) indicating that a refactoring history with an
 	 * unsupported version has been read.
+	 * 
+	 * @since 3.2
 	 */
 	public static final int UNSUPPORTED_REFACTORING_HISTORY_VERSION= 10005;
 
 	/**
 	 * Status code (value 10006) indicating that a general error has occured
 	 * during I/O of a refactoring history.
+	 * 
+	 * @since 3.2
 	 */
 	public static final int REFACTORING_HISTORY_IO_ERROR= 10006;
 
 	/**
 	 * Status code (value 10007) indicating that the format of a refactoring
 	 * history contains errors.
+	 * 
+	 * @since 3.2
 	 */
 	public static final int REFACTORING_HISTORY_FORMAT_ERROR= 10007;
 }

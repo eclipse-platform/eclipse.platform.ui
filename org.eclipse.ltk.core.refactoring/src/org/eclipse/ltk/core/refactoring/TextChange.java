@@ -463,6 +463,8 @@ public abstract class TextChange extends TextEditBasedChange {
 	 * @throws CoreException if an exception occurs while generating the preview
 	 * 
 	 * @see #getCurrentContent(IRegion, boolean, int, IProgressMonitor)
+	 * 
+	 * @since 3.2
 	 */
 	public String getPreviewContent(TextEditBasedChangeGroup[] changeGroups, IRegion region, boolean expandRegionToFullLine, int surroundingLines, IProgressMonitor pm) throws CoreException {
 		IRegion currentRegion= getRegion(changeGroups);

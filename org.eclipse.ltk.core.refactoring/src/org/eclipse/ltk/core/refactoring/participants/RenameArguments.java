@@ -58,8 +58,10 @@ public class RenameArguments extends RefactoringArguments {
 		return fUpdateReferences;
 	}
 
-	/* (non-Javadoc)
-	 * @see RefactoringArguments#toString()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.2
 	 */
 	public String toString() {
 		return "rename to " + fNewName //$NON-NLS-1$
