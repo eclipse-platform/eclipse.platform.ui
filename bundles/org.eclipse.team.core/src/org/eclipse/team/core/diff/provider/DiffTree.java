@@ -82,18 +82,14 @@ public class DiffTree implements IDiffTree {
 	 */
 	public void accept(IPath path, IDiffVisitor visitor, int depth) {
 		IDiff delta = getDiff(path);
-		try {
-			if (delta == null || visitor.visit(delta)) {
-				if (depth == IResource.DEPTH_ZERO)
-					return;
-				IPath[] children = getChildren(path);
-				for (int i = 0; i < children.length; i++) {
-					IPath child = children[i];
-					accept(child, visitor, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE);
-				}
+		if (delta == null || visitor.visit(delta)) {
+			if (depth == IResource.DEPTH_ZERO)
+				return;
+			IPath[] children = getChildren(path);
+			for (int i = 0; i < children.length; i++) {
+				IPath child = children[i];
+				accept(child, visitor, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE);
 			}
-		} catch (CoreException e) {
-			// TODO Ignore for now and remove by M5
 		}
 	}
 

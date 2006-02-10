@@ -209,13 +209,5 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	public ICommonActionExtensionSite getExtensionSite() {
 		return site;
 	}
-	
-	/**
-	 * @deprecated use {@link #getExtensionSite()}
-	 * @return the extension site
-	 */
-	public ICommonActionExtensionSite getCommonConfiguration() {
-		return site;
-	}
 
 }

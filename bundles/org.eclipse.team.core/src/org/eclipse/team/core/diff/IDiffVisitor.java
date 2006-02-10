@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * An objects that visits diffs in a diff tree.
@@ -57,7 +56,6 @@ public interface IDiffVisitor {
 	 * @param diff the diff being visited
 	 * @return <code>true</code> if the diff's children should
 	 *		be visited; <code>false</code> if they should be skipped.
-	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(IDiff diff) throws CoreException;
+	public boolean visit(IDiff diff);
 }

@@ -36,7 +36,7 @@ import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
  * 
  * @since 3.2
  */
-public interface ISynchronizationScope extends IResourceMappingScope {
+public interface ISynchronizationScope {
 	
 	/**
 	 * Return the projects that bound this scope.

@@ -89,11 +89,7 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 		IDiff[] diffs = getDiffs(traversals);
 		for (int i = 0; i < diffs.length; i++) {
 			IDiff node = diffs[i];
-			try {
-				visitor.visit(node);
-			} catch (CoreException e) {
-				// Ignore: to be removed
-			}
+			visitor.visit(node);
 		}
 	}
 

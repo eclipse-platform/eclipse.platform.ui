@@ -23,7 +23,6 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceSaveableCompareModel.ResourceDiffCompareInput;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -41,7 +40,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * 
  * @since 3.2
  */
-public class SynchronizationCompareAdapter implements ISynchronizationCompareAdapter {
+public abstract class SynchronizationCompareAdapter implements ISynchronizationCompareAdapter {
 
 	/**
 	 * Default implementaton that is capable of returning a compare input for objects
@@ -116,20 +115,5 @@ public class SynchronizationCompareAdapter implements ISynchronizationCompareAda
 			}
 		}
 		return getName(mapping);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#save(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.ui.IMemento)
-	 */
-	public void save(ResourceMapping[] mappings, IMemento memento) {
-		// Do nothing by default
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#restore(org.eclipse.ui.IMemento)
-	 */
-	public ResourceMapping[] restore(IMemento memento) {
-		return new ResourceMapping[0];
 	}
 }

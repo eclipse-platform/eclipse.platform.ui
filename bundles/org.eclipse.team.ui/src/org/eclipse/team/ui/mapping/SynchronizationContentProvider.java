@@ -635,7 +635,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return whether the given object is within the scope of this
 	 * content provider
 	 */
-	protected boolean isInScope(IResourceMappingScope scope, Object parent, Object element) {
+	protected boolean isInScope(ISynchronizationScope scope, Object parent, Object element) {
 		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
 			ResourceMapping[] mappings = ((ISynchronizationScope)scope).getMappings(mapping.getModelProviderId());

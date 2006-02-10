@@ -71,7 +71,7 @@ public interface IDiffTree {
 	 * @param depth the depth to visit
 	 * @see IDiffVisitor#visit(IDiff)
 	 */
-	public void accept(IPath path, IDiffVisitor visitor, int depth) throws CoreException;
+	public void accept(IPath path, IDiffVisitor visitor, int depth);
 
 	/**
 	 * Returns the delta identified by the given path,
