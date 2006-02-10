@@ -42,9 +42,7 @@ public class MultiLaunchGroupFilter extends ViewerFilter {
 			config = (ILaunchConfiguration)element;
 			try {
 				type = config.getType();
-				if (config != null) {
-					priv = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
-				}
+				priv = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
 			} 
 			catch (CoreException e) {}
 		}
