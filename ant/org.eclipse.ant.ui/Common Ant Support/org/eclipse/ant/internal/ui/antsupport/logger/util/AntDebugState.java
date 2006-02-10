@@ -254,7 +254,7 @@ public class AntDebugState {
         
         setTargetExecuting(event.getTarget());
         if (event.getTarget().equals(getTargetToExecute())) {
-            //the dependancies of the target to execute have been met
+            //the dependencies of the target to execute have been met
             //prepare for the next target
             Vector targets= (Vector) fProjectToTargetNames.get(eventProject);
             if (!targets.isEmpty()) {
@@ -361,7 +361,7 @@ public class AntDebugState {
             if (task.getProject() == projectExecuting) {
                 appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
             } else {
-                //sub build target dependancies
+                //sub build target dependencies
                 String targetName= task.getOwningTarget().getName();
                 if (targetName != null && targetName.length() != 0) { //skip for implicit target
                     Iterator itr= fTargetsToExecute.iterator();
@@ -380,7 +380,7 @@ public class AntDebugState {
             }
 		}
 
-		//target dependancy stack 
+		//target dependency stack 
 		marshalTargetDependancyStack(stackRepresentation, targetToExecute, targetExecuting);
 	}
 
