@@ -31,7 +31,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * refactoring descriptor.
  * </p>
  * <p>
- * Refactoring descriptors are potentially heavyweight objects which should not
+ * Refactoring descriptors are potentially heavy weight objects which should not
  * be held on to. Proxies which are retrieved from external sources (e.g. not
  * from the local refactoring history service) may encapsulate refactoring
  * descriptors and should not be held in memory as well.

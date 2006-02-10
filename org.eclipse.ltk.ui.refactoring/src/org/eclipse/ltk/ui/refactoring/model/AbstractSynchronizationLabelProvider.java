@@ -31,7 +31,7 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff;
  * <p>
  * Note: this class is designed to be extended by clients. Programming language
  * implementers who need refactoring support in a synchronization label provider
- * used in team syncrhonization views may use this class as a basis for
+ * used in team synchronization views may use this class as a basis for
  * refactoring-aware synchronization label providers.
  * </p>
  * <p>

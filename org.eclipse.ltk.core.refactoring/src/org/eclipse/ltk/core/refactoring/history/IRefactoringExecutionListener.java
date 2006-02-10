@@ -32,7 +32,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 public interface IRefactoringExecutionListener {
 
 	/**
-	 * Gets called if a refactoring execution event happend.
+	 * Gets called if a refactoring execution event happened.
 	 * 
 	 * @param event
 	 *            the refactoring execution event

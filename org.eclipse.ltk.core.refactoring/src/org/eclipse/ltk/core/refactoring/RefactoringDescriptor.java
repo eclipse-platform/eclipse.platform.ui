@@ -29,7 +29,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
  * {@link #getTimeStamp()}.
  * </p>
  * <p>
- * Refactoring descriptors are potentially heavyweight objects which should not
+ * Refactoring descriptors are potentially heavy weight objects which should not
  * be held on to. Use refactoring descriptor handles
  * {@link RefactoringDescriptorProxy} to store refactoring information.
  * </p>
@@ -160,7 +160,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 *            refactoring instance
 	 * @param comment
 	 *            the comment associated with the refactoring, or
-	 *            <code>null</code> for no commment
+	 *            <code>null</code> for no comment
 	 * @param flags
 	 *            the flags of the refactoring descriptor
 	 */

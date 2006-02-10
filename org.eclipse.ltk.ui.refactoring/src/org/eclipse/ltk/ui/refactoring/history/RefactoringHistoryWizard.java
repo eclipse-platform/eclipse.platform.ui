@@ -295,7 +295,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Clients must contribute their wizard pages by reimplementing
+	 * Clients must contribute their wizard pages by re-implementing
 	 * {@link #addUserDefinedPages()}.
 	 */
 	public final void addPage(final IWizardPage page) {

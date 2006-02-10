@@ -46,7 +46,7 @@ public final class RefactoringSessionTransformer {
 	private Node fSession= null;
 
 	/**
-	 * Begins the tranformation of a refactoring specified by the given
+	 * Begins the transformation of a refactoring specified by the given
 	 * arguments.
 	 * <p>
 	 * Calls to
@@ -193,7 +193,7 @@ public final class RefactoringSessionTransformer {
 	}
 
 	/**
-	 * Ends the tranformation of the current refactoring.
+	 * Ends the transformation of the current refactoring.
 	 * <p>
 	 * If no refactoring is currently processed, this call has no effect.
 	 * </p>

@@ -61,7 +61,7 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchr
  * <p>
  * Note: this class is designed to be extended by clients. Programming language
  * implementers who need refactoring support in a synchronization content
- * provider used in team syncrhonization views may use this class as a basis for
+ * provider used in team synchronization views may use this class as a basis for
  * refactoring-aware synchronization content providers.
  * </p>
  * <p>
@@ -131,7 +131,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 	 * <p>
 	 * This method fetches refactoring information for all refactorings which
 	 * are not in sync for a project (e.g. have not yet been checked into the
-	 * respository, or are pending refactorings to execute on the local
+	 * repository, or are pending refactorings to execute on the local
 	 * workspace).
 	 * </p>
 	 * 
@@ -141,7 +141,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 	 *            the project to compute its refactorings
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code> if no
-	 *            progress monitoring or cancellation is desired
+	 *            progress monitoring or cancelation is desired
 	 * @return the refactoring history representing the refactorings
 	 */
 	protected RefactoringHistory getRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {

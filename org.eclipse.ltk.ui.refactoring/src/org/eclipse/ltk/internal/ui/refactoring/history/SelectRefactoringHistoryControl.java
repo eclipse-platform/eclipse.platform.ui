@@ -34,7 +34,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
 /**
  * Control which is capable of selecting elements of a refactoring history.
  * <p>
- * This control exspects a control configuration with a checkable tree viewer.
+ * This control expects a control configuration with a checkable tree viewer.
  * </p>
  * 
  * @since 3.2

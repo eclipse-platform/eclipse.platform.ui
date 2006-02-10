@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Assert;
  * encapsulate a series of refactoring descriptors and provide additional
  * information such as version information and comments.
  * <p>
- * Refactoring session descriptors are potentially heavyweight objects which
+ * Refactoring session descriptors are potentially heavy weight objects which
  * should not be held on to. Use refactoring descriptor handles
  * {@link RefactoringDescriptorProxy} to store refactoring information.
  * </p>
@@ -57,7 +57,7 @@ public class RefactoringSessionDescriptor {
 	 *            the non-empty version tag
 	 * @param comment
 	 *            the comment associated with the refactoring session, or
-	 *            <code>null</code> for no commment
+	 *            <code>null</code> for no comment
 	 */
 	public RefactoringSessionDescriptor(final RefactoringDescriptor[] descriptors, final String version, final String comment) {
 		Assert.isNotNull(descriptors);

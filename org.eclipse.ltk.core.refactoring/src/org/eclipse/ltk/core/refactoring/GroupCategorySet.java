@@ -80,7 +80,7 @@ public class GroupCategorySet {
 	}
 	
 	/**
-	 * Creates a new list of group categories intialized
+	 * Creates a new list of group categories initialized
 	 * with the given group category.
 	 * 
 	 * @param category the first category
