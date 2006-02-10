@@ -47,7 +47,6 @@ import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
@@ -801,7 +800,7 @@ public class Utils {
 	public static ISynchronizationCompareAdapter getCompareAdapter(Object element) {
 		ModelProvider provider = getModelProvider(element);
 		if (provider != null) {
-			Object o = provider.getAdapter(ICompareAdapter.class);
+			Object o = provider.getAdapter(ISynchronizationCompareAdapter.class);
 			if (o instanceof ISynchronizationCompareAdapter) {
 				return (ISynchronizationCompareAdapter) o;
 			}
