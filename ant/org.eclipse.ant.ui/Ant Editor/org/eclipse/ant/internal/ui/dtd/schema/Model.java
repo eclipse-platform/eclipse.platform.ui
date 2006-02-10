@@ -220,18 +220,18 @@ public class Model implements IModel {
 			case SEQUENCE:
 			{
 				IModel[] contents = getContents();
-				if (contents == null || contents.length == 0)
-					nfm = null;
-				else {
-					nfm = contents[0].toNfm();
-					for (int i = 1; i < contents.length; i++) {
-						Nfm tmp = contents[i].toNfm();
-						if (fKind == SEQUENCE) {
-							nfm = Nfm.getComma(nfm, tmp);
-						} else {
-							nfm = Nfm.getOr(nfm, tmp);
-						}
-					}
+				if (contents == null || contents.length == 0) {
+					return null;
+                }
+				
+				nfm = contents[0].toNfm();
+				for (int i = 1; i < contents.length; i++) {
+				    Nfm tmp = contents[i].toNfm();
+				    if (fKind == SEQUENCE) {
+				        nfm = Nfm.getComma(nfm, tmp);
+				    } else {
+				        nfm = Nfm.getOr(nfm, tmp);
+				    }
 				}
 				break;
 			}
