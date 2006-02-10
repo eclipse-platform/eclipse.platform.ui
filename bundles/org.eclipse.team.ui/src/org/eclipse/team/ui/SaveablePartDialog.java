@@ -92,6 +92,7 @@ public class SaveablePartDialog extends ResizableDialog {
 	/**
 	 * Return the input to the dialog.
 	 * @return the input to the dialog
+	 * @since 3.2
 	 */
 	protected ISaveableWorkbenchPart getInput() {
 		return input;

@@ -48,6 +48,7 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	/**
 	 * Property key used in the property change event fired when the
 	 * participants refresh schedule changes.
+	 * @since 3.2
 	 */
 	public static final String P_SCHEDULED = "org.eclipse.team.schedule"; //$NON-NLS-1$
     

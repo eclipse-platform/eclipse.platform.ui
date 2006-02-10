@@ -450,6 +450,7 @@ abstract public class Subscriber {
 	 * @param traversals the traversals to be refreshed
 	 * @param monitor a progress monitor
 	 * @throws TeamException if errors occur
+	 * @since 3.2
 	 */
 	public void refresh(ResourceTraversal[] traversals, IProgressMonitor monitor) throws TeamException {
 		monitor.beginTask(null, 100 * traversals.length);

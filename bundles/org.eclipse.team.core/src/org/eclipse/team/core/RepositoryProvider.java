@@ -377,6 +377,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * file histories. By default, returns <code>null</code>. Subclasses may override.
 	 * @return an <code>IFileHistoryProvider</code> which can be used to access
 	 * file histories.
+	 * @since 3.2
 	 */
 	public IFileHistoryProvider getFileHistoryProvider(){
 	   return null;
@@ -810,6 +811,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * associated with a provider and is thus shared for all providers of the
 	 * same type.
 	 * @return a subscriber that provides resource synchronization state or <code>null</code>
+	 * @since 3.2
 	 */
 	public final Subscriber getSubscriber() {
 		RepositoryProviderType type = RepositoryProviderType.getProviderType(getID());

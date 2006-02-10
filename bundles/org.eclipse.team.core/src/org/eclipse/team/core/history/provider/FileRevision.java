@@ -34,10 +34,6 @@ import org.eclipse.team.core.history.ITag;
  * 
  * @since 3.2
  */
-/**
- * @author bgheorgh
- *
- */
 public abstract class FileRevision implements IFileRevision {
 
 	/**

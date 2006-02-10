@@ -236,6 +236,7 @@ public abstract class RepositoryProviderType {
 	 * provider type. By default, <code>null</code> is returned. Subclasses
 	 * may override.
 	 * @return a subscriber that provides resource synchronization state or <code>null</code>
+	 * @since 3.2
 	 */
 	public Subscriber getSubscriber() {
 		return null;
