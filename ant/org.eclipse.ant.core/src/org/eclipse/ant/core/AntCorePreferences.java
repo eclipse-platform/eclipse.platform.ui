@@ -453,7 +453,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				urls[i]= url;
 			}
 		}
-		if (extra > 0) {
+		if (entry != null) {
 			urls[i]= entry.getEntryURL();
 		}
 		return urls;
