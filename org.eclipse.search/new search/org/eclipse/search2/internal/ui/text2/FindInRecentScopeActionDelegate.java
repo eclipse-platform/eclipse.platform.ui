@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.text2;
 
-import java.util.Iterator;
-
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
@@ -80,29 +77,16 @@ public class FindInRecentScopeActionDelegate extends RetrieverAction implements 
 		}
 		String searchFor= extractSearchTextFromSelection(page.getSelection());
 		if (searchFor == null || searchFor.length() == 0) {
-			searchFor= extractSearchTextFromEditor(page.getActiveEditor());
+			if (page.getActiveEditor() == page.getActivePart()) {
+				searchFor= extractSearchTextFromEditor(page.getActiveEditor());
+			}
+			if (searchFor == null) {
+				Control focus= page.getWorkbenchWindow().getShell().getDisplay().getFocusControl();
+				if (focus != null)
+					searchFor= extractSearchTextFromWidget(focus);
+			}
 		}
 		query.setSearchString(searchFor);
 		return true;
 	}
-	
-	protected Object extractObject(Class clazz, ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection ssel= (IStructuredSelection) sel;
-			for (Iterator iter= ssel.iterator(); iter.hasNext();) {
-				Object cand= iter.next();
-				if (clazz.isAssignableFrom(cand.getClass())) {
-					return cand;
-				}
-				if (cand instanceof IAdaptable) {
-					cand= ((IAdaptable) cand).getAdapter(clazz);
-					if (cand != null) {
-						return cand;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
 }

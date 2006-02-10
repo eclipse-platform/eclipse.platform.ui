@@ -11,9 +11,24 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -23,6 +38,8 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.NewSearchUI;
@@ -88,9 +105,67 @@ abstract public class RetrieverAction extends Action {
 			String text= ((ITextSelection) sel).getText();
 			if (text != null) {
 				return trimSearchString(text);
-		}
+			}
+		} else if (sel instanceof IStructuredSelection) {
+			Object firstElement= ((IStructuredSelection) sel).getFirstElement();
+			if (firstElement instanceof IAdaptable) {
+				IWorkbenchAdapter wbAdapter= (IWorkbenchAdapter) ((IAdaptable) firstElement).getAdapter(IWorkbenchAdapter.class);
+				if (wbAdapter != null) {
+					return wbAdapter.getLabel(firstElement);
+				}
+			}
 		}
 		return null;
+	}
+
+	final protected String extractSearchTextFromWidget(Control control) {
+		String sel= null;
+		if (control instanceof Combo) {
+			Combo combo= (Combo) control;
+			sel= combo.getText();
+			Point selection= combo.getSelection();
+			sel= sel.substring(selection.x, selection.y);
+		} 
+		if (control instanceof CCombo) {
+			CCombo combo= (CCombo) control;
+			sel= combo.getText();
+			Point selection= combo.getSelection();
+			sel= sel.substring(selection.x, selection.y);
+		} 
+		else if (control instanceof Text) {
+			Text text= (Text) control;
+			sel= text.getSelectionText();
+		}
+		else if (control instanceof FormText) {
+			FormText text= (FormText) control;
+			sel= text.getSelectionText();
+		}
+		else if (control instanceof StyledText) {
+			StyledText text= (StyledText) control;
+			sel= text.getSelectionText();
+		}
+		else if (control instanceof Tree) {
+			Tree tree= (Tree) control;
+			TreeItem[] s= tree.getSelection();
+			if (s.length > 0) {
+				sel= s[0].getText();
+			}
+		}
+		else if (control instanceof Table) {
+			Table tree= (Table) control;
+			TableItem[] s= tree.getSelection();
+			if (s.length > 0) {
+				sel= s[0].getText();
+			}
+		}
+		else if (control instanceof List) {
+			List list= (List) control;
+			String[] s= list.getSelection();
+			if (s.length > 0) {
+				sel= s[0];
+			}
+		}
+		return sel;
 	}
 
 	private String trimSearchString(String text) {
