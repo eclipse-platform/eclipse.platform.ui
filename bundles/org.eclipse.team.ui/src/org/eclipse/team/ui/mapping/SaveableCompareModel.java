@@ -44,15 +44,10 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveableModel#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void doSave(IProgressMonitor monitor) {
+	public void doSave(IProgressMonitor monitor) throws CoreException {
 		if (!isDirty())
 			return;
-		try {
-			performSave(monitor);
-		} catch (CoreException e) {
-			handleException(e);
-			monitor.setCanceled(true);
-		}
+		performSave(monitor);
 		setDirty(false);
 	}
 

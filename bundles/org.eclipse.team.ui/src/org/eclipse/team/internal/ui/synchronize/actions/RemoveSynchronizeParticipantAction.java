@@ -13,11 +13,9 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.osgi.util.NLS;
@@ -180,7 +178,11 @@ public class RemoveSynchronizeParticipantAction extends Action {
 				for (Iterator i = finalModels.iterator(); i.hasNext();) {
 					ISaveableModel model = (ISaveableModel) i.next();
 					if (model.isDirty()) {
-						model.doSave(new SubProgressMonitor(monitor, 1));
+						try {
+							model.doSave(new SubProgressMonitor(monitor, 1));
+						} catch (CoreException e) {
+							ErrorDialog.openError(view.getSite().getShell(), null, e.getMessage(), e.getStatus());
+						}
 					}
 					if (monitor.isCanceled())
 						break;

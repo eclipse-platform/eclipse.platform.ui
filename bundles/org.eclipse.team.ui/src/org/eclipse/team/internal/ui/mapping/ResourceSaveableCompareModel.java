@@ -215,6 +215,7 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 							performSave(new NullProgressMonitor());
 						}
 					} catch (CoreException e) {
+						TeamUIPlugin.log(e);
 					}
 				}
 			});

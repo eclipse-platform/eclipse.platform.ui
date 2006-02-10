@@ -12,12 +12,10 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.DialogSettings;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
@@ -595,7 +593,11 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		monitor.beginTask(null, 100* models.length);
 		for (int i = 0; i < models.length; i++) {
 			ISaveableModel model = models[i];
-			model.doSave(Policy.subMonitorFor(monitor, 100));
+			try {
+				model.doSave(Policy.subMonitorFor(monitor, 100));
+			} catch (CoreException e) {
+				ErrorDialog.openError(getSite().getShell(), null, e.getMessage(), e.getStatus());
+			}
 			Policy.checkCanceled(monitor);
 		}
 		monitor.done();
