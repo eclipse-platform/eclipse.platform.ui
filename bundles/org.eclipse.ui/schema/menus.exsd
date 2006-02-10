@@ -194,21 +194,22 @@ A group can contain menus, items and other groups.
    <element name="layout">
       <annotation>
          <documentation>
-            This element can be used to specify various layout options for elements added into  &lt;code&gt;trim&lt;/code&gt; locations.
+            This element can be used to specify various layout options for &lt;code&gt;trim&lt;/code&gt; elements.
+
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="fillMajor" type="boolean">
+         <attribute name="fill" type="boolean">
             <annotation>
                <documentation>
-                  The widget will stretch to use up any additional space available along its &lt;b&gt;major&lt;/b&gt; dimension in the group&apos;s area (i.e. it will use the extra horizontal space for horizontally oriented trim areas). Default is &lt;code&gt;false&lt;/code&gt;.
+                  The widget will stretch to use up any additional space available in the trim area it&apos;s located in. Default is &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="fillMinor" type="boolean">
+         <attribute name="maximizeSize" type="boolean">
             <annotation>
                <documentation>
-                  The widget will stretch to use up any additional space available along its &lt;b&gt;minor&lt;/b&gt; dimension in the group&apos;s area (i.e. it will use the extra vertical space for horizontally oriented trim areas). Default is &lt;code&gt;false&lt;/code&gt;.
+                  The widget will match its &apos;height&apos; to that of the tallest widget in its trim area. Default is &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -260,19 +261,11 @@ A group can contain menus, items and other groups.
          <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or &lt;code&gt;trim&lt;/code&gt;.  If contributing to the menu, then the item will be parented to some widget structure.  In general, this means using widget elements does not make much sense, and an icon for an item&apos;s command is not strictly necessary.  The default value is &lt;code&gt;menu&lt;/code&gt;.
+                  &lt;p&gt;
+What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or &lt;code&gt;trim&lt;/code&gt;.  If contributing to the menu, then the item will be parented to some widget structure.  In general, this means using widget elements does not make much sense, and an icon for an item&apos;s command is not strictly necessary.  The default value is &lt;code&gt;menu&lt;/code&gt;.  If contributing to the &lt;code&gt;trim&lt;/code&gt;, then the item&apos;s command will generally require an icon, and widget elements make more sense.
 &lt;/p&gt;
-&lt;p&gt;If contributing to the &lt;code&gt;trim&lt;/code&gt;, then the item&apos;s command will generally require an icon, and widget elements make more sense.
 &lt;p&gt;
-Within the trim, the workbench defines five general groups which correspond to various positions around the window:
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;cmd1&lt;/b&gt; - This represents the (horizontal) trim area that the main toolbars are placed into.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;cmd2&lt;/b&gt; - This represents the (horizontal) trim area that the Perspective Switcher is in by default.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;vertical1&lt;/b&gt; - This represents the (vertical) trim area that is on the left side when the text direction is Left-&gt;Right and on the right side for Right-&gt;Left text.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;vertical2&lt;/b&gt; - This represents the (vertical) trim area that is on the opposite side of the workbench from &lt;code&gt;vertical1&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;status&lt;/b&gt; - This represents the (horizontal) trim area along the bottom edge of the workbench.&lt;/li&gt;
-&lt;/ul&gt;
-By positioning the trim contribution within or with respect to this groups, the position is inferred by the workbench.
+Within the trim, the workbench defines five general groups which correspond to various positions around the window.  By positioning the trim contribution within or with respect to this groups, the position is inferred by the workbench.  The five trim group ids are: &lt;code&gt;coolbar&lt;/code&gt;, &lt;code&gt;perspective&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;leadingEdge&lt;/code&gt; and &lt;code&gt;trailingEdge&lt;/code&gt;.
 &lt;/p&gt;
                </documentation>
             </annotation>
