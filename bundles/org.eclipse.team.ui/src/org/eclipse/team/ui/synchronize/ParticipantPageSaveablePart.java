@@ -221,8 +221,9 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.PageSaveablePart#prepareInput(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * {@inheritDoc}
+	 * @since 3.2
 	 */
 	protected void prepareInput(final ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) throws InvocationTargetException {
 		monitor.beginTask(TeamUIMessages.SyncInfoCompareInput_3, 100);
@@ -305,8 +306,9 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 		return participant;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.PageSaveablePart#getCompareInput(org.eclipse.jface.viewers.ISelection)
+	/**
+	 * {@inheritDoc}
+	 * @since 3.2
 	 */
 	protected ICompareInput getCompareInput(ISelection selection) {
 		ICompareInput compareInput = super.getCompareInput(selection);
