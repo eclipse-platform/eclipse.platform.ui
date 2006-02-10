@@ -1047,5 +1047,11 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryFilterDialog_showLocalRevisions;
 	public static String CVSHistoryTableProvider_base;
 	public static String CVSHistoryTableProvider_currentVersion;
+	public static String ComparePreferencePage_7;
+	public static String WorkspaceTraversalAction_0;
+	public static String OutgoingChangesDialog_0;
+	public static String OutgoingChangesDialog_1;
+	public static String SyncAction_0;
+	public static String ModelCompareOperation_0;
 
 }

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ui.SWTUtils;
@@ -96,9 +97,9 @@ public class OutgoingChangesDialog extends DetailsDialog {
 			control.setLayoutData(SWTUtils.createHVFillGridData());
 		} catch (InvocationTargetException e) {
 			CVSUIPlugin.openError(getShell(), null, null, e);
-			SWTUtils.createLabel(parent, "An error occurred creating the details section.");
+			SWTUtils.createLabel(parent, CVSUIMessages.OutgoingChangesDialog_0);
 		} catch (InterruptedException e) {
-			SWTUtils.createLabel(parent, "Cration of the details section was cancelled.");
+			SWTUtils.createLabel(parent, CVSUIMessages.OutgoingChangesDialog_1);
 		}
 		
 		return composite;

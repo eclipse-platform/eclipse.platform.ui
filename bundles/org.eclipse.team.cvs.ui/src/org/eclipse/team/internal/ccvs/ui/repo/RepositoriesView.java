@@ -108,7 +108,7 @@ public class RepositoriesView extends RemoteViewPart {
             	final Object[] array = selection.toArray();
                  for (int i = 0; i < array.length; i++) {
                      if (array[i] instanceof ICVSRemoteFile) {
-                         event.data = new PluginTransferData("org.eclipse.team.cvs.ui.cvsRemoteDrop", CVSResourceTransfer.getInstance().toByteArray((ICVSRemoteFile) array[i]));
+                         event.data = new PluginTransferData("org.eclipse.team.cvs.ui.cvsRemoteDrop", CVSResourceTransfer.getInstance().toByteArray((ICVSRemoteFile) array[i])); //$NON-NLS-1$
                          return;
                      }
                  }

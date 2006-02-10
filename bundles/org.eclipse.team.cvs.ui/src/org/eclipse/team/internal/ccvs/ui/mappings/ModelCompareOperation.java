@@ -14,6 +14,7 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -48,6 +49,6 @@ public class ModelCompareOperation extends AbstractModelMergeOperation {
 	}
 	
 	protected String getJobName() {
-		return "CVS Compare";
+		return CVSUIMessages.ModelCompareOperation_0;
 	}
 }

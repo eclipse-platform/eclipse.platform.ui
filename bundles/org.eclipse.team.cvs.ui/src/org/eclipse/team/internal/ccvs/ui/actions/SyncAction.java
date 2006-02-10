@@ -59,7 +59,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 						return false;
 					}
 					protected String getJobName() {
-						return "Synchronizing CVS";
+						return CVSUIMessages.SyncAction_0;
 					}
 				}.run();
 			} catch (InterruptedException e) {

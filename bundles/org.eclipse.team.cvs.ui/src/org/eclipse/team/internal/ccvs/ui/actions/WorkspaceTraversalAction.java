@@ -24,6 +24,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
 import org.eclipse.team.internal.ui.Utils;
@@ -143,7 +144,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException,
 					InterruptedException {
 				try {
-					monitor.beginTask("Looking for uncommitted changes", 100);
+					monitor.beginTask(CVSUIMessages.WorkspaceTraversalAction_0, 100);
 					operation.buildScope(Policy.subMonitorFor(monitor, 50));
 					hasChange[0] = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().hasLocalChanges(
 							operation.getScope().getTraversals(), 
