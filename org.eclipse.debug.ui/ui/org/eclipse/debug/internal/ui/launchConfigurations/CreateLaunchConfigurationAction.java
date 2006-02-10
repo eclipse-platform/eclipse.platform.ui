@@ -76,10 +76,8 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 			tabGroup.setDefaults(wc);
 			tabGroup.dispose();
 			wc.doSave();
-			LaunchConfigurationsDialog dialog2 =	(LaunchConfigurationsDialog)dialog;
-			if(dialog2 != null) {
-				dialog2.refreshFilteringLabel();
-			}
+			LaunchConfigurationsDialog dialog2 = (LaunchConfigurationsDialog)dialog;
+			dialog2.refreshFilteringLabel();
 		} catch (CoreException e) {
 			errorDialog(e);
 			return;
