@@ -33,7 +33,7 @@ public interface IValidator {
 	 * 
 	 * @param value
 	 *            the value to validate
-	 * @return the error message, or </code>null</code> if the value is
+	 * @return the ValidationError, or </code>null</code> if the value is
 	 *         partially valid.
 	 */
 	public ValidationError isPartiallyValid(Object value);
@@ -44,7 +44,7 @@ public interface IValidator {
 	 * 
 	 * @param value
 	 *            the value to validate
-	 * @return the error message, or </code>null</code> if the value is valid.
+	 * @return the ValidationError, or </code>null</code> if the value is valid.
 	 */
 	public ValidationError isValid(Object value);
 
