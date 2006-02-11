@@ -417,4 +417,6 @@ public class TeamUIMessages extends NLS {
 	public static String ModelParticipantAction_0;
 
 	public static String ModelParticipantAction_1;
+
+	public static String ShowModelProviderAction_0;
 }
