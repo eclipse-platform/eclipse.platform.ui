@@ -19,8 +19,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
-/**
- */
 public class LaunchConfigurationIProjectRenameParticipant extends RenameParticipant {
 
 	private IProject fProject;

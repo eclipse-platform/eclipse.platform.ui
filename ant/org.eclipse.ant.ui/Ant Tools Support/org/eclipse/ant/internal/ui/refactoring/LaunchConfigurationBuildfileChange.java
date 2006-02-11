@@ -194,7 +194,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fLaunchConfiguration.exists()) {
 			String buildFileLocation= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
-			if (buildFileLocation.endsWith(fOldBuildfileLocation)) {
+			if (buildFileLocation.endsWith(fOldBuildfileLocation + '}') || buildFileLocation.endsWith(fOldBuildfileLocation)) {
 				String projectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 				if (fOldProjectName.equals(projectName)) {
 					return new RefactoringStatus();
@@ -249,7 +249,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 		fNewLaunchConfiguration.doSave();
 
 		// create the undo change
-		return new LaunchConfigurationBuildfileChange(fNewLaunchConfiguration, fOldBuildfileLocation, fOldBuildfileLocation, oldProjectName);
+		return new LaunchConfigurationBuildfileChange(fNewLaunchConfiguration, fNewBuildfileLocation, fOldBuildfileLocation, oldProjectName);
 	}
 	
 	/* (non-Javadoc)
