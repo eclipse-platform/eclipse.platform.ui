@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.internal.databinding.api.BindSpec;
 import org.eclipse.jface.internal.databinding.api.BindingEvent;
 import org.eclipse.jface.internal.databinding.api.BindingException;
@@ -26,11 +25,14 @@ import org.eclipse.jface.internal.databinding.api.IBindingListener;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
+import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
+import org.eclipse.jface.internal.databinding.api.validation.ValidatorRegistry;
+import org.eclipse.jface.util.Assert;
 
 
 /**
@@ -134,16 +136,17 @@ public class DataBindingContext implements IDataBindingContext {
 					// }
 					return new IValidator() {
 
-						public String isPartiallyValid(Object value) {
+						public ValidationError isPartiallyValid(Object value) {
 							return null;
 						}
 
-						public String isValid(Object value) {
+						public ValidationError isValid(Object value) {
 							return null;
 						}
 					};
 				}
 
+				// FIXME: Data binding context keeps its own ValidatorRegistry now...
 				IValidator dataTypeValidator = ValidatorRegistry.getDefault()
 						.get(fromType, toType);
 				if (dataTypeValidator == null) {
@@ -200,7 +203,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @param partialValidationErrorOrNull
 	 */
 	public void updatePartialValidationError(IBinding binding,
-			String partialValidationErrorOrNull) {
+			ValidationError partialValidationErrorOrNull) {
 		removeValidationListenerAndMessage(partialValidationMessages, binding);
 		if (partialValidationErrorOrNull != null) {
 			partialValidationMessages.add(new Pair(binding,
@@ -219,7 +222,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * @param validationErrorOrNull
 	 */
 	public void updateValidationError(IBinding binding,
-			String validationErrorOrNull) {
+			ValidationError validationErrorOrNull) {
 		removeValidationListenerAndMessage(validationMessages, binding);
 		if (validationErrorOrNull != null) {
 			validationMessages.add(new Pair(binding, validationErrorOrNull));

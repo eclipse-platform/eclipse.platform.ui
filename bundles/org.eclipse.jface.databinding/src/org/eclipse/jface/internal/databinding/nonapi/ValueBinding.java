@@ -20,6 +20,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangin
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.IVetoableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 /**
  * @since 3.2
@@ -93,7 +94,7 @@ public class ValueBinding extends Binding {
 			// we are notified of a pending change, do validation
 			// and veto the change if it is not valid
 			Object value = diff.getNewValue();
-			String partialValidationError = targetValidator
+			ValidationError partialValidationError = targetValidator
 					.isPartiallyValid(value);
 			context.updatePartialValidationError(ValueBinding.this,
 					partialValidationError);
@@ -177,20 +178,20 @@ public class ValueBinding extends Binding {
 	 * @param convertedValue
 	 * @return String
 	 */
-	private String doDomainValidation(Object convertedValue) {
+	private ValidationError doDomainValidation(Object convertedValue) {
 		if (domainValidator == null) {
 			return null;
 		}
-		String validationError = domainValidator.isValid(convertedValue);
+		ValidationError validationError = domainValidator.isValid(convertedValue);
 		return errMsg(validationError);
 	}
 
-	private String doValidate(Object value) {
-		String validationError = targetValidator.isValid(value);
+	private ValidationError doValidate(Object value) {
+		ValidationError validationError = targetValidator.isValid(value);
 		return errMsg(validationError);
 	}
 
-	private String errMsg(String validationError) {
+	private ValidationError errMsg(ValidationError validationError) {
 		context.updatePartialValidationError(this, null);
 		context.updateValidationError(this, validationError);
 		return validationError;
