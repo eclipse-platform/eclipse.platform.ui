@@ -1,0 +1,197 @@
+/*******************************************************************************
+ * Licensed Materials - Property of IBM
+ * (c) Copyright IBM Corporation 2005-2006. All Rights Reserved. 
+ * 
+ * Note to U.S. Government Users Restricted Rights:  Use, 
+ * duplication or disclosure restricted by GSA ADP Schedule 
+ * Contract with IBM Corp.
+ *******************************************************************************/
+package org.eclipse.jface.internal.databinding.api.viewers;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.IStaleListener;
+import org.eclipse.jface.internal.databinding.api.observable.set.AbstractObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
+import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
+import org.eclipse.jface.viewers.AbstractListViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+
+/**
+ * @since 3.2
+ * 
+ */
+public final class ObservableSetContentProvider implements
+		IStructuredContentProvider {
+
+	private class KnownElementsSet extends AbstractObservableSet {
+
+		KnownElementsSet(Set wrappedSet) {
+			super(wrappedSet);
+		}
+
+		void doFireDiff(Set added, Set removed) {
+			fireSetChange(new SetDiff(added, removed));
+		}
+
+		void doFireStale(boolean isStale) {
+			if (isStale) {
+				fireStale();
+			} else {
+				fireChange();
+			}
+		}
+	}
+
+	private IObservableSet readableSet = new AbstractObservableSet(
+			Collections.EMPTY_SET) {
+	};
+
+	private Viewer viewer;
+
+	/**
+	 * This readableSet returns the same elements as the input readableSet.
+	 * However, it only fires events AFTER the elements have been added or
+	 * removed from the viewer.
+	 */
+	private KnownElementsSet knownElements = new KnownElementsSet(readableSet);
+
+	private ISetChangeListener listener = new ISetChangeListener() {
+
+		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+			boolean wasStale = knownElements.isStale();
+			if (isDisposed()) {
+				return;
+			}
+			doDiff(diff.getAdditions(), diff.getRemovals(), true);
+			if (!wasStale && source.isStale()) {
+				knownElements.doFireStale(true);
+			}
+		}
+	};
+
+	private IStaleListener staleListener = new IStaleListener() {
+		public void handleStale(IObservable source) {
+			knownElements.doFireStale(source.isStale());
+		}
+	};
+
+	/**
+	 * 
+	 */
+	public ObservableSetContentProvider() {
+	}
+
+	public void dispose() {
+		setInput(null);
+	}
+
+	private void doDiff(Set added, Set removed, boolean updateViewer) {
+		knownElements.doFireDiff(added, Collections.EMPTY_SET);
+
+		if (updateViewer) {
+			Object[] toAdd = added.toArray();
+			if (viewer instanceof TableViewer) {
+				TableViewer tv = (TableViewer) viewer;
+				tv.add(toAdd);
+			} else if (viewer instanceof AbstractListViewer) {
+				AbstractListViewer lv = (AbstractListViewer) viewer;
+				lv.add(toAdd);
+			}
+			Object[] toRemove = removed.toArray();
+			if (viewer instanceof TableViewer) {
+				TableViewer tv = (TableViewer) viewer;
+				tv.remove(toRemove);
+			} else if (viewer instanceof AbstractListViewer) {
+				AbstractListViewer lv = (AbstractListViewer) viewer;
+				lv.remove(toRemove);
+			}
+		}
+		knownElements.doFireDiff(Collections.EMPTY_SET, removed);
+	}
+
+	public Object[] getElements(Object inputElement) {
+		return readableSet.toArray();
+	}
+
+	/**
+	 * Returns the readableSet of elements known to this content provider. Items
+	 * are added to this readableSet before being added to the viewer, and they
+	 * are removed after being removed from the viewer. The readableSet is
+	 * always updated after the viewer. This is intended for use by label
+	 * providers, as it will always return the items that need labels.
+	 * 
+	 * @return readableSet of items that will need labels
+	 */
+	public IObservableSet getKnownElements() {
+		return knownElements;
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		this.viewer = viewer;
+
+		if (!(viewer instanceof TableViewer || viewer instanceof AbstractListViewer)) {
+			throw new IllegalArgumentException(
+					"This content provider only works with TableViewer or AbstractListViewer"); //$NON-NLS-1$
+		}
+
+		if (newInput != null && !(newInput instanceof IObservableSet)) {
+			throw new IllegalArgumentException(
+					"This content provider only works with input of type IReadableSet"); //$NON-NLS-1$
+		}
+
+		setInput((IObservableSet) newInput);
+	}
+
+	private boolean isDisposed() {
+		return viewer.getControl() == null || viewer.getControl().isDisposed();
+	}
+
+	private void setInput(IObservableSet newSet) {
+		boolean updateViewer = true;
+		if (newSet == null) {
+			newSet = new AbstractObservableSet(Collections.EMPTY_SET) {
+			};
+			// don't update the viewer - its input is null
+			updateViewer = false;
+		}
+
+		boolean wasStale = false;
+		if (readableSet != null) {
+			wasStale = readableSet.isStale();
+			readableSet.removeSetChangeListener(listener);
+			readableSet.removeStaleListener(staleListener);
+		}
+
+		HashSet additions = new HashSet();
+		HashSet removals = new HashSet();
+
+		additions.addAll(newSet);
+		additions.removeAll(readableSet);
+
+		removals.addAll(readableSet);
+		removals.removeAll(newSet);
+
+		readableSet = newSet;
+
+		doDiff(additions, removals, updateViewer);
+
+		if (readableSet != null) {
+			readableSet.addSetChangeListener(listener);
+			readableSet.addStaleListener(staleListener);
+		}
+
+		boolean isStale = (readableSet != null && readableSet.isStale());
+		if (isStale != wasStale) {
+			knownElements.doFireStale(isStale);
+		}
+	}
+
+}
