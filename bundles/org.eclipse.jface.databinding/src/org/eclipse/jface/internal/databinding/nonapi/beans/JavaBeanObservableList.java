@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.api.observable.list.AbstractObservableList;
+import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
 import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
@@ -31,7 +31,7 @@ import org.eclipse.jface.util.Assert;
  * @since 3.2
  * 
  */
-public class JavaBeanObservableList extends AbstractObservableList {
+public class JavaBeanObservableList extends ObservableList {
 
 	private final Object object;
 

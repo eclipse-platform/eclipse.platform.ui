@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class WritableList extends AbstractObservableList {
+public class WritableList extends ObservableList {
 
 	public WritableList() {
 		super(new ArrayList());

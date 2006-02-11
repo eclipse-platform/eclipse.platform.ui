@@ -27,7 +27,7 @@ import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
  * @since 3.2
  * 
  */
-public abstract class AbstractObservableSet extends AbstractObservable implements
+public abstract class ObservableSet extends AbstractObservable implements
 		IObservableSet {
 
 	protected Set wrappedSet;
@@ -36,7 +36,7 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 
 	private Object setChangeListeners;
 
-	protected AbstractObservableSet(Set wrappedSet) {
+	protected ObservableSet(Set wrappedSet) {
 		this.wrappedSet = wrappedSet;
 	}
 
@@ -155,12 +155,12 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 			}
 
 			public boolean hasNext() {
-				ObservableTracker.getterCalled(AbstractObservableSet.this);
+				ObservableTracker.getterCalled(ObservableSet.this);
 				return wrappedIterator.hasNext();
 			}
 
 			public Object next() {
-				ObservableTracker.getterCalled(AbstractObservableSet.this);
+				ObservableTracker.getterCalled(ObservableSet.this);
 				return wrappedIterator.next();
 			}
 		};

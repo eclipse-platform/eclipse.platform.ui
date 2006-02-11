@@ -14,7 +14,7 @@ import java.util.Set;
 
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.IStaleListener;
-import org.eclipse.jface.internal.databinding.api.observable.set.AbstractObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
 public final class ObservableSetContentProvider implements
 		IStructuredContentProvider {
 
-	private class KnownElementsSet extends AbstractObservableSet {
+	private class KnownElementsSet extends ObservableSet {
 
 		KnownElementsSet(Set wrappedSet) {
 			super(wrappedSet);
@@ -50,7 +50,7 @@ public final class ObservableSetContentProvider implements
 		}
 	}
 
-	private IObservableSet readableSet = new AbstractObservableSet(
+	private IObservableSet readableSet = new ObservableSet(
 			Collections.EMPTY_SET) {
 	};
 
@@ -157,7 +157,7 @@ public final class ObservableSetContentProvider implements
 	private void setInput(IObservableSet newSet) {
 		boolean updateViewer = true;
 		if (newSet == null) {
-			newSet = new AbstractObservableSet(Collections.EMPTY_SET) {
+			newSet = new ObservableSet(Collections.EMPTY_SET) {
 			};
 			// don't update the viewer - its input is null
 			updateViewer = false;

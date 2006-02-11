@@ -26,7 +26,7 @@ import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservable
  * @since 3.2
  * 
  */
-public class MappedSet extends AbstractObservableSet {
+public class MappedSet extends ObservableSet {
 
 	private final IObservableMapping wrappedMapping;
 

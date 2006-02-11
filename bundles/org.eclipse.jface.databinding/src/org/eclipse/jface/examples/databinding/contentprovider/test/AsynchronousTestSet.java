@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.eclipse.jface.internal.databinding.api.observable.set.AbstractObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.swt.widgets.Display;
 
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since 3.2
  */
-public class AsynchronousTestSet extends AbstractObservableSet {
+public class AsynchronousTestSet extends ObservableSet {
 
 	private static Random randomNumberGenerator = new Random();
 	private Display display;

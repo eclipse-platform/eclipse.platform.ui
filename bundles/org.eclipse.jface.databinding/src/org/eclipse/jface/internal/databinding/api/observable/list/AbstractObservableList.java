@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.api.observable.list;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,27 +19,35 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.jface.internal.databinding.api.observable.AbstractObservable;
+import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
+import org.eclipse.jface.internal.databinding.api.observable.IStaleListener;
 import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
 
 /**
- * 
- * Abstract implementation of {@link IObservableList}. 
+ * Subclasses should override at least get(int index) and size()
  * 
  * @since 3.2
  * 
  */
-public abstract class AbstractObservableList extends AbstractObservable implements
+public abstract class AbstractObservableList extends AbstractList implements
 		IObservableList {
-
-	protected List wrappedList;
-
-	private boolean stale = false;
 
 	private Object listChangeListeners;
 
-	protected AbstractObservableList(List wrappedList) {
-		this.wrappedList = wrappedList;
+	/**
+	 * Points to an instance of IChangeListener or a Collection of
+	 * IChangeListener
+	 */
+	private Object changeListeners = null;
+
+	/**
+	 * Points to an instance of IChangeListener or a Collection of
+	 * IChangeListener
+	 */
+	private Object staleListeners = null;
+
+	public boolean isStale() {
+		return false;
 	}
 
 	public void addListChangeListener(IListChangeListener listener) {
@@ -56,7 +65,7 @@ public abstract class AbstractObservableList extends AbstractObservable implemen
 			listenerList = (Collection) listChangeListeners;
 		} else {
 			IListChangeListener l = (IListChangeListener) listChangeListeners;
-			
+
 			listenerList = new ArrayList();
 			listenerList.add(l);
 			listChangeListeners = listenerList;
@@ -92,271 +101,351 @@ public abstract class AbstractObservableList extends AbstractObservable implemen
 		}
 	}
 
-	/**
-	 * @return
-	 */
-	protected boolean hasListeners() {
-		return super.hasListeners() || listChangeListeners!=null;
-	}
-
 	protected void fireListChange(IListDiff diff) {
 		// fire general change event first
-		super.fireChange();
+		fireChange();
 
 		if (listChangeListeners == null) {
 			return;
 		}
-		
+
 		if (listChangeListeners instanceof IListChangeListener) {
-			((IListChangeListener) listChangeListeners).handleListChange(this, diff);
+			((IListChangeListener) listChangeListeners).handleListChange(this,
+					diff);
 			return;
 		}
-		
+
 		Collection changeListenerCollection = (Collection) listChangeListeners;
-		
+
 		IListChangeListener[] listeners = (IListChangeListener[]) (changeListenerCollection)
-		.toArray(new IListChangeListener[changeListenerCollection.size()]);
+				.toArray(new IListChangeListener[changeListenerCollection
+						.size()]);
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].handleListChange(this, diff);
 		}
 	}
-	
-	public boolean contains(Object o) {
-		getterCalled();
-		return wrappedList.contains(o);
-	}
 
-	public boolean containsAll(Collection c) {
-		getterCalled();
-		return wrappedList.containsAll(c);
-	}
-
-	public boolean equals(Object o) {
-		getterCalled();
-		return wrappedList.equals(o);
-	}
-
-	public int hashCode() {
-		getterCalled();
-		return wrappedList.hashCode();
-	}
-
-	public boolean isEmpty() {
-		getterCalled();
-		return wrappedList.isEmpty();
-	}
-
-	public Iterator iterator() {
-		final Iterator wrappedIterator = wrappedList.iterator();
-		return new Iterator() {
-
-			public void remove() {
-				throw new UnsupportedOperationException();
+	public void addChangeListener(IChangeListener listener) {
+		if (changeListeners == null) {
+			boolean hadListeners = hasListeners();
+			changeListeners = listener;
+			if (!hadListeners) {
+				firstListenerAdded();
 			}
+			return;
+		}
 
-			public boolean hasNext() {
-				ObservableTracker.getterCalled(AbstractObservableList.this);
-				return wrappedIterator.hasNext();
+		Collection listenerList;
+		if (changeListeners instanceof IChangeListener) {
+			IChangeListener l = (IChangeListener) changeListeners;
+
+			listenerList = new ArrayList();
+			listenerList.add(l);
+		} else {
+			listenerList = (Collection) changeListeners;
+		}
+
+		if (listenerList.size() > 16) {
+			HashSet listenerSet = new HashSet();
+			listenerSet.addAll(listenerList);
+			changeListeners = listenerList;
+		}
+
+		listenerList.add(listener);
+	}
+
+	public void removeChangeListener(IChangeListener listener) {
+		if (changeListeners == listener) {
+			changeListeners = null;
+			if (!hasListeners()) {
+				lastListenerRemoved();
 			}
+			return;
+		}
 
-			public Object next() {
-				ObservableTracker.getterCalled(AbstractObservableList.this);
-				return wrappedIterator.next();
+		if (changeListeners instanceof Collection) {
+			Collection listenerList = (Collection) changeListeners;
+			listenerList.remove(listener);
+			if (listenerList.size() == 0) {
+				changeListeners = null;
+				if (!hasListeners()) {
+					lastListenerRemoved();
+				}
 			}
-		};
+		}
 	}
 
-	public int size() {
-		getterCalled();
-		return wrappedList.size();
-	}
-
-	public Object[] toArray() {
-		getterCalled();
-		return wrappedList.toArray();
-	}
-
-	public Object[] toArray(Object[] a) {
-		getterCalled();
-		return wrappedList.toArray(a);
-	}
-
-	public String toString() {
-		getterCalled();
-		return wrappedList.toString();
-	}
-	
-	/**
-	 * @TrackedGetter
-	 */
-    public Object get(int index) {
-    	getterCalled();
-    	return wrappedList.get(index);
-    }
-
-	/**
-	 * @TrackedGetter
-	 */
-    public int indexOf(Object o) {
-    	getterCalled();
-    	return wrappedList.indexOf(o);
-    }
-
-	/**
-	 * @TrackedGetter
-	 */
-    public int lastIndexOf(Object o) {
-    	getterCalled();
-    	return wrappedList.lastIndexOf(o);
-    }
-
-    // List Iterators
-
-	/**
-	 * @TrackedGetter
-	 */
-    public ListIterator listIterator() {
-    	return listIterator(0);
-    }
-
-	/**
-	 * @TrackedGetter
-	 */
-    public ListIterator listIterator(int index) {
-		final ListIterator wrappedIterator = wrappedList.listIterator(index);
-		return new ListIterator() {
-
-			public int nextIndex() {
-				getterCalled();
-				return wrappedIterator.nextIndex();
+	public void addStaleListener(IStaleListener listener) {
+		if (staleListeners == null) {
+			boolean hadListeners = hasListeners();
+			staleListeners = listener;
+			if (!hadListeners) {
+				firstListenerAdded();
 			}
+			return;
+		}
 
-			public int previousIndex() {
-				getterCalled();
-				return wrappedIterator.previousIndex();
+		Collection listenerList;
+		if (staleListeners instanceof IStaleListener) {
+			IStaleListener l = (IStaleListener) staleListeners;
+
+			listenerList = new ArrayList();
+			listenerList.add(l);
+		} else {
+			listenerList = (Collection) staleListeners;
+		}
+
+		if (listenerList.size() > 16) {
+			HashSet listenerSet = new HashSet();
+			listenerSet.addAll(listenerList);
+			staleListeners = listenerList;
+		}
+
+		listenerList.add(listener);
+	}
+
+	public void removeStaleListener(IStaleListener listener) {
+		if (staleListeners == listener) {
+			staleListeners = null;
+			if (!hasListeners()) {
+				lastListenerRemoved();
 			}
+			return;
+		}
 
-			public void remove() {
-				throw new UnsupportedOperationException();
+		if (staleListeners instanceof Collection) {
+			Collection listenerList = (Collection) staleListeners;
+			listenerList.remove(listener);
+			if (listenerList.size() == 0) {
+				staleListeners = null;
+				if (!hasListeners()) {
+					lastListenerRemoved();
+				}
 			}
-
-			public boolean hasNext() {
-				getterCalled();
-				return wrappedIterator.hasNext();
-			}
-
-			public boolean hasPrevious() {
-				getterCalled();
-				return wrappedIterator.hasPrevious();
-			}
-
-			public Object next() {
-				getterCalled();
-				return wrappedIterator.next();
-			}
-
-			public Object previous() {
-				getterCalled();
-				return wrappedIterator.previous();
-			}
-
-			public void add(Object o) {
-				throw new UnsupportedOperationException();
-			}
-
-			public void set(Object o) {
-				throw new UnsupportedOperationException();
-			}
-		};
-    }
-
-
-    public List subList(int fromIndex, int toIndex) {
-    	getterCalled();
-    	return wrappedList.subList(fromIndex, toIndex);
-    }
-
-	protected void getterCalled() {
-		ObservableTracker.getterCalled(this);
+		}
 	}
 
-    public Object set(int index, Object element) {
-    	throw new UnsupportedOperationException();
-    }
+	protected void fireChange() {
+		if (changeListeners == null) {
+			return;
+		}
 
-    public Object remove(int index) {
-    	throw new UnsupportedOperationException();
-    }
+		if (changeListeners instanceof IChangeListener) {
+			((IChangeListener) changeListeners).handleChange(this);
+			return;
+		}
 
-	public boolean add(Object o) {
-		throw new UnsupportedOperationException();
+		Collection changeListenerCollection = (Collection) changeListeners;
+
+		IChangeListener[] listeners = (IChangeListener[]) (changeListenerCollection)
+				.toArray(new IChangeListener[changeListenerCollection.size()]);
+		for (int i = 0; i < listeners.length; i++) {
+			listeners[i].handleChange(this);
+		}
 	}
 
-	public void add(int index, Object element) {
-		throw new UnsupportedOperationException();
-	}
-	
-	public boolean addAll(Collection c) {
-		throw new UnsupportedOperationException();
-	}
+	protected void fireStale() {
+		if (staleListeners == null) {
+			return;
+		}
 
-    public boolean addAll(int index, Collection c) {
-    	throw new UnsupportedOperationException();
-    }
+		if (staleListeners instanceof IChangeListener) {
+			((IChangeListener) staleListeners).handleChange(this);
+			return;
+		}
 
-	public boolean remove(Object o) {
-		throw new UnsupportedOperationException();
-	}
+		Collection changeListenerCollection = (Collection) staleListeners;
 
-	public boolean removeAll(Collection c) {
-		throw new UnsupportedOperationException();
-	}
-
-	public boolean retainAll(Collection c) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @return Returns the stale state.
-	 */
-	public boolean isStale() {
-		return stale;
-	}
-
-	/**
-	 * @param stale
-	 *            The stale state to list. This will fire a stale event if the
-	 *            given boolean is true and this observable list was not already
-	 *            stale.
-	 */
-	public void setStale(boolean stale) {
-		boolean wasStale = this.stale;
-		this.stale = stale;
-		if (!wasStale && stale) {
-			fireStale();
+		IChangeListener[] listeners = (IChangeListener[]) (changeListenerCollection)
+				.toArray(new IChangeListener[changeListenerCollection.size()]);
+		for (int i = 0; i < listeners.length; i++) {
+			listeners[i].handleChange(this);
 		}
 	}
 
 	/**
-	 * @param wrappedList The wrappedList to list.
+	 * @return true if this observable has listeners
 	 */
-	protected void setWrappedList(List wrappedList) {
-		this.wrappedList = wrappedList;
+	protected boolean hasListeners() {
+		return changeListeners != null || staleListeners != null
+				|| listChangeListeners != null;
 	}
 
-	protected void fireChange() {
-		throw new RuntimeException("fireChange should not be called, use fireListChange() instead"); //$NON-NLS-1$
+	/**
+	 * 
+	 */
+	protected void firstListenerAdded() {
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
+
+	/**
+	 * 
+	 */
+	protected void lastListenerRemoved() {
+	}
+
+	/**
+	 * 
 	 */
 	public void dispose() {
 		listChangeListeners = null;
-		super.dispose();
+		changeListeners = null;
+		staleListeners = null;
+		lastListenerRemoved();
 	}
+
+	public final int size() {
+		getterCalled();
+		return doGetSize();
+	}
+
+	/**
+	 * @return the size
+	 */
+	protected abstract int doGetSize();
+
+	/**
+	 * 
+	 */
+	private void getterCalled() {
+		ObservableTracker.getterCalled(this);
+	}
+
+	public boolean isEmpty() {
+		getterCalled();
+		return super.isEmpty();
+	}
+
+	public boolean contains(Object o) {
+		getterCalled();
+		return super.contains(o);
+	}
+
+	public Iterator iterator() {
+		final Iterator wrappedIterator = super.iterator();
+		return new Iterator() {
+			public void remove() {
+				wrappedIterator.remove();
+			}
+
+			public boolean hasNext() {
+				getterCalled();
+				return wrappedIterator.hasNext();
+			}
+
+			public Object next() {
+				getterCalled();
+				return wrappedIterator.next();
+			}
+		};
+	}
+
+	public Object[] toArray() {
+		getterCalled();
+		return super.toArray();
+	}
+
+	public Object[] toArray(Object a[]) {
+		getterCalled();
+		return super.toArray(a);
+	}
+
+	// Modification Operations
+
+	public boolean add(Object o) {
+		getterCalled();
+		return super.add(o);
+	}
+
+	public boolean remove(Object o) {
+		getterCalled();
+		return super.remove(o);
+	}
+
+	// Bulk Modification Operations
+
+	/**
+	 * @TrackedGetter
+	 */
+	public boolean containsAll(Collection c);
+
+	/**
+	 * @TrackedGetter
+	 */
+	public boolean addAll(Collection c);
+
+	/**
+	 * @TrackedGetter
+	 */
+	public boolean addAll(int index, Collection c);
+
+	/**
+	 * @TrackedGetter
+	 */
+	public boolean removeAll(Collection c);
+
+	/**
+	 * @TrackedGetter
+	 */
+	public boolean retainAll(Collection c);
+
+	// Comparison and hashing
+
+	/**
+	 * @TrackedGetter
+	 */
+	public boolean equals(Object o);
+
+	/**
+	 * @TrackedGetter
+	 */
+	public int hashCode();
+
+	// Positional Access Operations
+
+	/**
+	 * @TrackedGetter
+	 */
+	public Object get(int index);
+
+	/**
+	 * @TrackedGetter because of the returned object
+	 */
+	public Object set(int index, Object element);
+
+	/**
+	 * @TrackedGetter
+	 */
+	public Object remove(int index);
+
+	// Search Operations
+
+	/**
+	 * @TrackedGetter
+	 */
+	public int indexOf(Object o);
+
+	/**
+	 * @TrackedGetter
+	 */
+	public int lastIndexOf(Object o);
+
+	// List Iterators
+
+	/**
+	 * @TrackedGetter
+	 */
+	public ListIterator listIterator();
+
+	/**
+	 * @TrackedGetter
+	 */
+	public ListIterator listIterator(int index);
+
+	// View
+
+	/**
+	 * @TrackedGetter
+	 */
+	public List subList(int fromIndex, int toIndex);
+
 }

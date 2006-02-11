@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.api.observable.set.AbstractObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.util.Assert;
 
@@ -28,7 +28,7 @@ import org.eclipse.jface.util.Assert;
  * @since 3.2
  * 
  */
-public class JavaBeanObservableSet extends AbstractObservableSet {
+public class JavaBeanObservableSet extends ObservableSet {
 
 	private final Object object;
 

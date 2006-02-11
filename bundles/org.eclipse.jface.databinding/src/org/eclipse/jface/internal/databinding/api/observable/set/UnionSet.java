@@ -28,7 +28,7 @@ import org.eclipse.jface.internal.databinding.nonapi.observable.StalenessTracker
  * 
  * @since 3.2
  */
-public final class UnionSet extends AbstractObservableSet {
+public final class UnionSet extends ObservableSet {
 
 	/**
 	 * child sets
