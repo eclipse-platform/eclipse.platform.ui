@@ -766,6 +766,31 @@ M4 = Platform-specific fourth key -->
       <keyword
             label="%preferenceKeywords.template"
             id="org.eclipse.ant.ui.template"/>      
-   </extension> 
+   </extension>
+   
+   <!-- refactoring -->
+   
+   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+     <renameParticipant
+            class="org.eclipse.ant.internal.ui.refactoring.LaunchConfigurationBuildfileRenameParticipant"
+            name="%LaunchConfigurationITypeRenameParticipant.name"
+            id="org.eclipse.ant.ui.refactoring.launchConfiguration.buildfileRename"> 
+         <enablement>
+           <with variable="element">
+   	         <instanceof value="org.eclipse.core.resources.IFile"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+	 <renameParticipant
+            class="org.eclipse.ant.internal.ui.refactoring.LaunchConfigurationIProjectRenameParticipant"
+            name="Ant Launch configuration participant"
+            id="org.eclipse.ant.ui.refactoring.launchConfiguration.projectRename">
+         <enablement>
+           <with variable="element">
+   	         <instanceof value="org.eclipse.core.resources.IProject"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+   </extension>
 
 </plugin>
