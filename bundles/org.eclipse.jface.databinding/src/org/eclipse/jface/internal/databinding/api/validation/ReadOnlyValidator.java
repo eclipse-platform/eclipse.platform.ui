@@ -9,45 +9,44 @@
  * Contributors:
  *     db4objects - Initial API and implementation
  */
-package org.eclipse.jface.internal.databinding.api.validation;
 
-import java.math.BigDecimal;
+package org.eclipse.jface.internal.databinding.api.validation;
 
 import org.eclipse.jface.internal.databinding.nonapi.BindingMessages;
 
-
 /**
- * DoubleValidator.  Verify data input for Doubles
- *
- * @author djo
+ * ReadOnlyValidator.  The validator that can be used for read-only fields.
  */
-public class String2BigDecimalValidator implements IValidator {
+public class ReadOnlyValidator implements IValidator {
     
+    private static ReadOnlyValidator singleton = null;
+    
+    /**
+     * Returns the ReadOnlyValidator
+     * 
+     * @return the ReadOnlyValidator
+     */
+    public static ReadOnlyValidator getDefault() {
+        if (singleton == null) {
+            singleton = new ReadOnlyValidator();
+        }
+        return singleton;
+    }
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
 	 */
 	public ValidationError isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
-            return null;
-
-        return ValidationError.error(getHint());
+		// No changes are allowed
+		return ValidationError.error(BindingMessages.getString("Validate_NoChangeAllowed")); //$NON-NLS-1$
 	}
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ICellEditorValidator#isValid(java.lang.Object)
      */
     public ValidationError isValid(Object value) {
-        try {
-        	new BigDecimal((String)value);
-            return null;
-        } catch (Throwable t) {
-            return ValidationError.error(getHint());
-        }
+        // The current value is always valid
+        return null;
     }
-
-	private String getHint() {
-		return BindingMessages.getString("Validate_Like") +  //$NON-NLS-1$
-			BindingMessages.getString("Validate_Number_Examples"); //$NON-NLS-1$
-	}
 
 }

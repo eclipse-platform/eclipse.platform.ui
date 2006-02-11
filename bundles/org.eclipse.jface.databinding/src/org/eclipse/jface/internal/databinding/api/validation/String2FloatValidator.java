@@ -19,19 +19,19 @@ import org.eclipse.jface.internal.databinding.nonapi.BindingMessages;
  */
 public class String2FloatValidator implements IValidator {
     
-	public String isPartiallyValid(Object fragment) {
+	public ValidationError isPartiallyValid(Object fragment) {
 		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
             return null;
 
-        return getHint();
+        return ValidationError.error(getHint());
 	}
     
-    public String isValid(Object value) {
+    public ValidationError isValid(Object value) {
         try {
             Float.parseFloat((String)value);
             return null;
         } catch (Exception e) {
-            return getHint();
+            return ValidationError.error(getHint());
         }
     }
 

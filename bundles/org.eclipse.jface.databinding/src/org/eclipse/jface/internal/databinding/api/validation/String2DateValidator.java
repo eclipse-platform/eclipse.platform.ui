@@ -24,7 +24,7 @@ public class String2DateValidator extends DateConversionSupport implements IVali
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
 	 */
-	public String isPartiallyValid(Object fragment) {
+	public ValidationError isPartiallyValid(Object fragment) {
 		// TODO: Can we do any sensible (locale-independent) checking here?
 		return null;
 	}
@@ -32,8 +32,8 @@ public class String2DateValidator extends DateConversionSupport implements IVali
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
      */
-    public String isValid(Object value) {
-        return parse((String)value)!=null ? null : getHint();
+    public ValidationError isValid(Object value) {
+        return parse((String)value)!=null ? null : ValidationError.error(getHint());
     }
 
 	private String getHint() {

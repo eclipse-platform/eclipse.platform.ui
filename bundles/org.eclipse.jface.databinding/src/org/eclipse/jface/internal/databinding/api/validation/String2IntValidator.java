@@ -22,22 +22,22 @@ public class String2IntValidator implements IValidator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
 	 */
-	public String isPartiallyValid(Object fragment) {
+	public ValidationError isPartiallyValid(Object fragment) {
 		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
 		    return null;
 
-        return getHint();
+        return ValidationError.error(getHint());
 	}
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
      */
-    public String isValid(Object value) {
+    public ValidationError isValid(Object value) {
         try {
             Integer.parseInt((String)value);
             return null;
         } catch (Throwable t) {
-            return getHint();
+            return ValidationError.error(getHint());
         }
     }
 

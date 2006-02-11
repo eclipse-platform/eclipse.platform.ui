@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api.validation;
 
+
 /**
  * A validator.  This validator is responsible for telling clients if its associated
  * conversion function will succeed or fail.  For example, a String2IntValidator would
@@ -35,7 +36,7 @@ public interface IValidator {
 	 * @return the error message, or </code>null</code> if the value is
 	 *         partially valid.
 	 */
-	public String isPartiallyValid(Object value);
+	public ValidationError isPartiallyValid(Object value);
 
 	/**
 	 * Determines if the given value is valid, that is if it can successfully
@@ -45,6 +46,6 @@ public interface IValidator {
 	 *            the value to validate
 	 * @return the error message, or </code>null</code> if the value is valid.
 	 */
-	public String isValid(Object value);
+	public ValidationError isValid(Object value);
 
 }
