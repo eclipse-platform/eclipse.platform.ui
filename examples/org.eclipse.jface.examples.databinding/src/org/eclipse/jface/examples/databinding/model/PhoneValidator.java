@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.internal.databinding.api.validation.IValidator;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 public class PhoneValidator implements IValidator {
 
-	public String isPartiallyValid(Object value) {
+	public ValidationError isPartiallyValid(Object value) {
 		return isValid(value);
 	}
 
-	public String isValid(Object value) {
+	public ValidationError isValid(Object value) {
 		String rawPhoneNumber = PhoneConverter.removeFormatting((String)value);
 		if(rawPhoneNumber.length() != 10){
-			return "Phone number must be 10 characters";
+			return ValidationError.error("Phone number must be 10 characters");
 		} else {
 			return null;
 		}

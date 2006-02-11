@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.databinding.validator.IValidator;
-import org.eclipse.jface.databinding.validators.String2IntValidator;
+import org.eclipse.jface.internal.databinding.api.validation.IValidator;
+import org.eclipse.jface.internal.databinding.api.validation.String2IntValidator;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 public class Adventure extends ModelObject {
 
@@ -53,18 +54,18 @@ public class Adventure extends ModelObject {
 		if (fromType.equals(String.class))
 			return new IValidator() {
 				IValidator delegate = new String2IntValidator();
-				public String isPartiallyValid(Object value) {
+				public ValidationError isPartiallyValid(Object value) {
 					return delegate.isPartiallyValid(value);
 				}
 	
-				public String isValid(Object value) {
-					String error = delegate.isValid(value);
+				public ValidationError isValid(Object value) {
+					ValidationError error = delegate.isValid(value);
 					if (error != null) {
 						return error;
 					}
 					int intValue = Integer.valueOf((String)value).intValue();
 					if (intValue < 1 || intValue > 20) {
-						return "Max number of people must be between 1 and 20 inclusive";
+						return ValidationError.error("Max number of people must be between 1 and 20 inclusive");
 					}
 					return null;
 				}
