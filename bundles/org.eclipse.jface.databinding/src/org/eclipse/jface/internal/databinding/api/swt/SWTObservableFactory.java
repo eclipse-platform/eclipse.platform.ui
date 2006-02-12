@@ -18,17 +18,12 @@ import org.eclipse.jface.internal.databinding.nonapi.swt.ButtonObservableValue;
 import org.eclipse.jface.internal.databinding.nonapi.swt.ControlObservableValue;
 import org.eclipse.jface.internal.databinding.nonapi.swt.LabelObservableValue;
 import org.eclipse.jface.internal.databinding.nonapi.swt.SpinnerObservableValue;
-import org.eclipse.jface.internal.databinding.nonapi.swt.TableObservableValue;
 import org.eclipse.jface.internal.databinding.nonapi.swt.TextObservableValue;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -112,40 +107,40 @@ final public class SWTObservableFactory implements IObservableFactory {
 					&& SWTProperties.SELECTION.equals(attribute)) {
 				return new ButtonObservableValue((Button) object);
 			}
-			if (object instanceof Combo
-					&& (SWTProperties.TEXT.equals(attribute) || SWTProperties.SELECTION
-							.equals(attribute))) {
-				return new ComboObservableValue((Combo) object,
-						(String) attribute);
-			} else if (object instanceof Combo
-					&& SWTProperties.ITEMS.equals(attribute)) {
-				return new ComboObservableCollection((Combo) object,
-						(String) attribute);
-			}
-			if (object instanceof CCombo
-					&& (SWTProperties.TEXT.equals(attribute) || SWTProperties.SELECTION
-							.equals(attribute))) {
-				return new CComboObservableValue((CCombo) object,
-						(String) attribute);
-			} else if (object instanceof CCombo
-					&& SWTProperties.ITEMS.equals(attribute)) {
-				return new CComboObservableCollection((CCombo) object,
-						(String) attribute);
-			}
-			if (object instanceof List
-					&& SWTProperties.SELECTION.equals(attribute)) {
-				// SWT.SINGLE selection only
-				return new ListObservableValue((List) object,
-						(String) attribute);
-			} else if (object instanceof List
-					&& SWTProperties.ITEMS.equals(attribute)) {
-				return new ListObservableCollection((List) object,
-						(String) attribute);
-			}
-			if (object instanceof Table) {
-				return new TableObservableValue((Table) object,
-						(String) attribute);
-			}
+//			if (object instanceof Combo
+//					&& (SWTProperties.TEXT.equals(attribute) || SWTProperties.SELECTION
+//							.equals(attribute))) {
+//				return new ComboObservableValue((Combo) object,
+//						(String) attribute);
+//			} else if (object instanceof Combo
+//					&& SWTProperties.ITEMS.equals(attribute)) {
+//				return new ComboObservableCollection((Combo) object,
+//						(String) attribute);
+//			}
+//			if (object instanceof CCombo
+//					&& (SWTProperties.TEXT.equals(attribute) || SWTProperties.SELECTION
+//							.equals(attribute))) {
+//				return new CComboObservableValue((CCombo) object,
+//						(String) attribute);
+//			} else if (object instanceof CCombo
+//					&& SWTProperties.ITEMS.equals(attribute)) {
+//				return new CComboObservableCollection((CCombo) object,
+//						(String) attribute);
+//			}
+//			if (object instanceof List
+//					&& SWTProperties.SELECTION.equals(attribute)) {
+//				// SWT.SINGLE selection only
+//				return new ListObservableValue((List) object,
+//						(String) attribute);
+//			} else if (object instanceof List
+//					&& SWTProperties.ITEMS.equals(attribute)) {
+//				return new ListObservableCollection((List) object,
+//						(String) attribute);
+//			}
+//			if (object instanceof Table) {
+//				return new TableObservableValue((Table) object,
+//						(String) attribute);
+//			}
 		}
 		if (description instanceof Text) {
 			int updatePolicy = new int[] { SWT.Modify, SWT.FocusOut, SWT.None }[updateTime];
@@ -155,19 +150,20 @@ final public class SWTObservableFactory implements IObservableFactory {
 			return new ButtonObservableValue((Button) description);
 		} else if (description instanceof Label) {
 			return new LabelObservableValue((Label) description);
-		} else if (description instanceof Combo) {
-			return new ComboObservableCollection((Combo) description,
-					SWTProperties.ITEMS);
-		} else if (description instanceof Spinner) {
-			return new SpinnerObservableValue((Spinner) description,
-					SWTProperties.SELECTION);
-		} else if (description instanceof CCombo) {
-			return new CComboObservableCollection((CCombo) description,
-					SWTProperties.ITEMS);
-		} else if (description instanceof List) {
-			return new ListObservableCollection((List) description,
-					SWTProperties.ITEMS);
-		}
+		} 
+//		else if (description instanceof Combo) {
+//			return new ComboObservableCollection((Combo) description,
+//					SWTProperties.ITEMS);
+//		} else if (description instanceof Spinner) {
+//			return new SpinnerObservableValue((Spinner) description,
+//					SWTProperties.SELECTION);
+//		} else if (description instanceof CCombo) {
+//			return new CComboObservableCollection((CCombo) description,
+//					SWTProperties.ITEMS);
+//		} else if (description instanceof List) {
+//			return new ListObservableCollection((List) description,
+//					SWTProperties.ITEMS);
+//		}
 		return null;
 	}
 

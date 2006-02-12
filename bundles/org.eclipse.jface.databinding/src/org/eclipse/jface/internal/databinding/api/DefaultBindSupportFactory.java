@@ -21,7 +21,6 @@ import org.eclipse.jface.internal.databinding.api.conversion.IdentityConverter;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ReadOnlyValidator;
-import org.eclipse.jface.internal.databinding.api.validation.RegexStringValidator;
 import org.eclipse.jface.internal.databinding.api.validation.String2BigDecimalValidator;
 import org.eclipse.jface.internal.databinding.api.validation.String2ByteValidator;
 import org.eclipse.jface.internal.databinding.api.validation.String2DateValidator;
@@ -31,7 +30,6 @@ import org.eclipse.jface.internal.databinding.api.validation.String2IntValidator
 import org.eclipse.jface.internal.databinding.api.validation.String2LongValidator;
 import org.eclipse.jface.internal.databinding.api.validation.String2ShortValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
-import org.eclipse.jface.internal.databinding.nonapi.BindingMessages;
 import org.eclipse.jface.internal.databinding.nonapi.ClassLookupSupport;
 import org.eclipse.jface.internal.databinding.nonapi.Pair;
 
@@ -197,19 +195,19 @@ public final class DefaultBindSupportFactory implements IBindSupportFactory {
 	        associate(String.class, BigDecimal.class, new String2BigDecimalValidator());
 	        
 	        // Regex-implemented validators here...
-	        associate(String.class, Character.TYPE, new RegexStringValidator(
-	                "^.$|^$", ".", BindingMessages.getString("Validate_CharacterHelp"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	        associate(String.class, Character.class, new RegexStringValidator(
-	                "^.$|^$", ".", BindingMessages.getString("Validate_CharacterHelp"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	        associate(String.class, Boolean.TYPE, new RegexStringValidator(
-	        		BindingMessages.getString("Validate_BooleanPartialValidRegex"),  //$NON-NLS-1$
-	        		BindingMessages.getString("Validate_BooleanValidRegex"),  //$NON-NLS-1$
-	        		BindingMessages.getString("Validate_BooleanHelp"))); //$NON-NLS-1$
-	        associate(String.class, Boolean.class, new RegexStringValidator(
-	        		BindingMessages.getString("Validate_BooleanPartialValidRegex"),  //$NON-NLS-1$
-	        		BindingMessages.getString("Validate_BooleanValidRegex"),  //$NON-NLS-1$
-	        		BindingMessages.getString("Validate_BooleanHelp"))); //$NON-NLS-1$
-	        associate(String.class, String.class, new RegexStringValidator("^.*$", "^.*$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//	        associate(String.class, Character.TYPE, new RegexStringValidator(
+//	                "^.$|^$", ".", BindingMessages.getString("Validate_CharacterHelp"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//	        associate(String.class, Character.class, new RegexStringValidator(
+//	                "^.$|^$", ".", BindingMessages.getString("Validate_CharacterHelp"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//	        associate(String.class, Boolean.TYPE, new RegexStringValidator(
+//	        		BindingMessages.getString("Validate_BooleanPartialValidRegex"),  //$NON-NLS-1$
+//	        		BindingMessages.getString("Validate_BooleanValidRegex"),  //$NON-NLS-1$
+//	        		BindingMessages.getString("Validate_BooleanHelp"))); //$NON-NLS-1$
+//	        associate(String.class, Boolean.class, new RegexStringValidator(
+//	        		BindingMessages.getString("Validate_BooleanPartialValidRegex"),  //$NON-NLS-1$
+//	        		BindingMessages.getString("Validate_BooleanValidRegex"),  //$NON-NLS-1$
+//	        		BindingMessages.getString("Validate_BooleanHelp"))); //$NON-NLS-1$
+//	        associate(String.class, String.class, new RegexStringValidator("^.*$", "^.*$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    }
 	}
 

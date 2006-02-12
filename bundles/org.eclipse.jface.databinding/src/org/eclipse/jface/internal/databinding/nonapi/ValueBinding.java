@@ -56,24 +56,24 @@ public class ValueBinding extends Binding {
 		this.model = model;
 		targetToModelConverter = bindSpec.getTargetToModelConverter();
 		modelToTargetConverter = bindSpec.getModelToTargetConverter();
-		if (targetToModelConverter == null) {
-			throw new BindingException(
-					"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (modelToTargetConverter == null) {
-			throw new BindingException(
-					"Missing model to target converter from " + model.getValueType() + " to " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (!context.isAssignableFromTo(model.getValueType(),
-				modelToTargetConverter.getFromType())) {
-			throw new BindingException(
-					"Converter does not apply to model type. Expected: " + model.getValueType() + ", actual: " + modelToTargetConverter.getFromType()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (!context.isAssignableFromTo(modelToTargetConverter.getToType(),
-				target.getValueType())) {
-			throw new BindingException(
-					"Converter does not apply to target type. Expected: " + modelToTargetConverter.getToType() + ", actual: " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+//		if (targetToModelConverter == null) {
+//			throw new BindingException(
+//					"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
+//		}
+//		if (modelToTargetConverter == null) {
+//			throw new BindingException(
+//					"Missing model to target converter from " + model.getValueType() + " to " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
+//		}
+//		if (!context.isAssignableFromTo(model.getValueType(),
+//				modelToTargetConverter.getFromType())) {
+//			throw new BindingException(
+//					"Converter does not apply to model type. Expected: " + model.getValueType() + ", actual: " + modelToTargetConverter.getFromType()); //$NON-NLS-1$ //$NON-NLS-2$
+//		}
+//		if (!context.isAssignableFromTo(modelToTargetConverter.getToType(),
+//				target.getValueType())) {
+//			throw new BindingException(
+//					"Converter does not apply to target type. Expected: " + modelToTargetConverter.getToType() + ", actual: " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
+//		}
 		targetValidator = bindSpec.getTypeConversionValidator();
 		if (targetValidator == null) {
 			throw new BindingException("Missing validator"); //$NON-NLS-1$

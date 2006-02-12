@@ -165,6 +165,7 @@ public class BindingEvent {
 	 * Creates a table of constants from this class.
 	 */
 	private void createSymbolTable() {
+		eventConstants = new HashMap();
 		eventConstants.put(new Integer(0), "EVENT_COPY_TO_TARGET"); //$NON-NLS-1$
 		eventConstants.put(new Integer(1), "EVENT_COPY_TO_MODEL"); //$NON-NLS-1$
 		eventConstants.put(new Integer(2), "EVENT_PARTIAL_VALIDATE"); //$NON-NLS-1$
