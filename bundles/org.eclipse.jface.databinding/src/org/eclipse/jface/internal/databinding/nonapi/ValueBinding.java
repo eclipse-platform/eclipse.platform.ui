@@ -19,6 +19,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeL
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangingListener;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.IVetoableValue;
+import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
@@ -38,7 +39,7 @@ public class ValueBinding extends Binding {
 
 	private IConverter modelToTargetConverter;
 
-	private IValidator domainValidator;
+	private IDomainValidator domainValidator;
 
 	private boolean updating = false;
 
@@ -73,11 +74,11 @@ public class ValueBinding extends Binding {
 			throw new BindingException(
 					"Converter does not apply to target type. Expected: " + modelToTargetConverter.getToType() + ", actual: " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		targetValidator = bindSpec.getTargetValidator();
+		targetValidator = bindSpec.getTypeConversionValidator();
 		if (targetValidator == null) {
 			throw new BindingException("Missing validator"); //$NON-NLS-1$
 		}
-		domainValidator = bindSpec.getModelValidator();
+		domainValidator = bindSpec.getDomainValidator();
 		target.addValueChangeListener(targetChangeListener);
 		if (target instanceof IVetoableValue) {
 			((IVetoableValue) target)
@@ -136,7 +137,7 @@ public class ValueBinding extends Binding {
 			return;
 		}
 
-		String validationError = doValidate(e.originalValue);
+		ValidationError validationError = doValidate(e.originalValue);
 		if (validationError != null) {
 			return;
 		}
@@ -167,8 +168,8 @@ public class ValueBinding extends Binding {
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 			fireBindingEvent(e);
 		} catch (Exception ex) {
-			context.updateValidationError(this, BindingMessages
-					.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
+			context.updateValidationError(this, ValidationError.error(BindingMessages
+					.getString("ValueBinding_ErrorWhileSettingValue"))); //$NON-NLS-1$
 		} finally {
 			updating = false;
 		}
@@ -197,7 +198,7 @@ public class ValueBinding extends Binding {
 		return validationError;
 	}
 
-	private boolean failure(String errorMessage) {
+	private boolean failure(ValidationError errorMessage) {
 		if (errorMessage != null) {
 			return true;
 		}

@@ -37,7 +37,7 @@ public class ValidatorRegistry {
      * @param toClass The Class to convert to
      * @param validator The IValidator
      */
-    public void associate(Class fromClass, Class toClass, IValidator validator) {
+    public void associate(Object fromClass, Object toClass, IValidator validator) {
         validators.put(new Pair(fromClass, toClass), validator);
     }
     
@@ -48,7 +48,7 @@ public class ValidatorRegistry {
      * @param toClass The Class to convert to
      * @return An appropriate IValidator
      */
-    public IValidator get(Class fromClass, Class toClass) {
+    public IValidator get(Object fromClass, Object toClass) {
         IValidator result = (IValidator) validators.get(new Pair(fromClass, toClass));
         if (result == null) {
             return ReadOnlyValidator.getDefault();
@@ -57,6 +57,8 @@ public class ValidatorRegistry {
     }
     
     /**
+     * @deprecated not sure this should be API in this class
+     * 
      * Adds the system-provided validators to the current validator registry.  This is done
      * automatically for the validator registry singleton.
      */

@@ -58,6 +58,8 @@ public class DataBindingContext implements IDataBindingContext {
 
 	private List bindSupportFactories = new ArrayList();
 
+	private ValidatorRegistry validatorRegistry;
+	
 	protected int validationTime;
 
 	protected int updateTime;
@@ -121,7 +123,7 @@ public class DataBindingContext implements IDataBindingContext {
 		// Add the default bind support factory
 		addBindSupportFactory(new IBindSupportFactory() {
 
-			public IValidator createValidator(Class fromType, Class toType,
+			public IValidator createValidator(Object fromType, Object toType,
 					Object modelDescription) {
 				if (fromType == null || toType == null) {
 					// System.err.println("FIXME: Boris, is this a bug? In
@@ -146,8 +148,7 @@ public class DataBindingContext implements IDataBindingContext {
 					};
 				}
 
-				// FIXME: Data binding context keeps its own ValidatorRegistry now...
-				IValidator dataTypeValidator = ValidatorRegistry.getDefault()
+				IValidator dataTypeValidator = getValidatorRegistry()
 						.get(fromType, toType);
 				if (dataTypeValidator == null) {
 					throw new BindingException(
@@ -156,7 +157,7 @@ public class DataBindingContext implements IDataBindingContext {
 				return dataTypeValidator;
 			}
 
-			public IConverter createConverter(Class fromType, Class toType,
+			public IConverter createConverter(Object fromType, Object toType,
 					Object modelDescription) {
 				if (toType == null) {
 					return null;
@@ -176,9 +177,9 @@ public class DataBindingContext implements IDataBindingContext {
 				return null;
 			}
 
-			public IDomainValidator createDomainValidator(Class modelType, Object modelDescription) {
+			public IDomainValidator createDomainValidator(Object modelType, Object modelDescription) {
 				return new IDomainValidator() {
-					public String isValid(Object value) {
+					public ValidationError isValid(Object value) {
 						return null;
 					}
 				};
@@ -315,9 +316,12 @@ public class DataBindingContext implements IDataBindingContext {
 
 	protected void fillBindSpecDefaults(IBindSpec bindSpec, Object fromType,
 			Object toType, Object modelDescriptionOrNull) {
-		if (bindSpec.getValidator() == null) {
+		if (bindSpec.getTypeConversionValidator() == null) {
 			((BindSpec) bindSpec).setValidator(createValidator(fromType,
 					toType, modelDescriptionOrNull));
+		}
+		if (bindSpec.getDomainValidator() == null) {
+			((BindSpec) bindSpec).setDomainValidator(createDomainValidator(fromType, modelDescriptionOrNull)); // FIXME: Not sure which is the model type
 		}
 		if (bindSpec.getConverter() == null) {
 			((BindSpec) bindSpec).setConverter(createConverter(fromType,
@@ -325,7 +329,7 @@ public class DataBindingContext implements IDataBindingContext {
 		}
 	}
 
-	public IValidator createValidator(Class fromType, Class toType,
+	public IValidator createValidator(Object fromType, Object toType,
 			Object modelDescription) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
@@ -342,7 +346,23 @@ public class DataBindingContext implements IDataBindingContext {
 		return null;
 	}
 
-	public IConverter createConverter(Class fromType, Class toType,
+	public IDomainValidator createDomainValidator(Object modelType,	Object modelDescription) {
+		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
+			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+					.get(i);
+			IDomainValidator validator = bindSupportFactory.createDomainValidator(modelType,
+					modelDescription);
+			if (validator != null) {
+				return validator;
+			}
+		}
+		if (parent != null) {
+			return parent.createDomainValidator(modelType, modelDescription);
+		}
+		return null;
+	}
+
+	public IConverter createConverter(Object fromType, Object toType,
 			Object modelDescription) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
@@ -444,8 +464,8 @@ public class DataBindingContext implements IDataBindingContext {
 	
 	private List bindingEventListeners = new ArrayList();
 	
-	protected String fireBindingEvent(BindingEvent event) {
-		String result = null;
+	protected ValidationError fireBindingEvent(BindingEvent event) {
+		ValidationError result = null;
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter.hasNext();) {
 			IBindingListener listener = (IBindingListener) bindingEventIter.next();
 			result = listener.bindingEvent(event);
@@ -457,5 +477,19 @@ public class DataBindingContext implements IDataBindingContext {
 
 	public boolean isAssignableFromTo(Object fromType, Object toType) {
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IDataBindingContext#getValidatorRegistry()
+	 */
+	public ValidatorRegistry getValidatorRegistry() {
+		return validatorRegistry;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IDataBindingContext#setValidatorRegistry(org.eclipse.jface.internal.databinding.api.validation.ValidatorRegistry)
+	 */
+	public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
+		this.validatorRegistry = validatorRegistry;
 	}
 }

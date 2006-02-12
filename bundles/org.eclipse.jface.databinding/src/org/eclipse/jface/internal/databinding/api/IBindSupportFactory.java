@@ -11,6 +11,7 @@
 package org.eclipse.jface.internal.databinding.api;
 
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
 /**
@@ -47,8 +48,19 @@ public interface IBindSupportFactory {
 	 * @return a validator, or <code>null</code> if this factory cannot create
 	 *         a validator for the given arguments.
 	 */
-	IValidator createValidator(Class fromType, Class toType,
+	IValidator createValidator(Object fromType, Object toType,
 			Object modelDescription);
+
+	/**
+	 * Creates a domain validator for the given model description.  Either modelType
+	 * or modelDescription can be null, but not both.
+	 * 
+	 * @param modelType The type to validate or <code>null</code> if not known
+	 * @param modelDescription The model description object or <code>null</code> if
+	 * not known
+	 * @return IDomainValidator
+	 */
+	IDomainValidator createDomainValidator(Object modelType, Object modelDescription);
 
 	/**
 	 * Creates a converter for the given from and to types and model
@@ -68,6 +80,6 @@ public interface IBindSupportFactory {
 	 * @return a converter, or <code>null</code> if this factory cannot create
 	 *         a converter for the given arguments.
 	 */
-	IConverter createConverter(Class fromType, Class toType,
+	IConverter createConverter(Object fromType, Object toType,
 			Object modelDescription);
 }

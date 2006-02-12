@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.jface.internal.databinding.api.BindingEvent;
 import org.eclipse.jface.internal.databinding.api.IBinding;
 import org.eclipse.jface.internal.databinding.api.IBindingListener;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 /**
  * @since 3.2
@@ -54,8 +55,8 @@ abstract public class Binding implements IBinding {
 	
 	private List bindingEventListeners = new ArrayList();
 	
-	protected String fireBindingEvent(BindingEvent event) {
-		String result = null;
+	protected ValidationError fireBindingEvent(BindingEvent event) {
+		ValidationError result = null;
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter.hasNext();) {
 			IBindingListener listener = (IBindingListener) bindingEventIter.next();
 			result = listener.bindingEvent(event);

@@ -11,6 +11,7 @@
 package org.eclipse.jface.internal.databinding.api;
 
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
 /**
@@ -48,7 +49,7 @@ public interface IBindSpec {
 	 * 
 	 * @return the validator, or <code>null</code>
 	 */
-	public IValidator getTargetValidator();
+	public IValidator getTypeConversionValidator();
 	
 	/**
 	 * Returns the validator to be used, or <code>null</code> if a default
@@ -56,7 +57,7 @@ public interface IBindSpec {
 	 * 
 	 * @return the validator, or <code>null</code>
 	 */
-	public IValidator getModelValidator();
+	public IDomainValidator getDomainValidator();
 	
 	/**
 	 * Returns the update policy to be used for updating the model when the target has changed

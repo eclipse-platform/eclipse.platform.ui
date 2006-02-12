@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.api;
 
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
+
 /**
  * An interface for objects that need to listen to events that occur in the
  * data flow pipeline
@@ -24,9 +26,9 @@ public interface IBindingListener {
 	 * 
 	 * @param e The IBindingEvent to handle.
 	 * @return null if no error or an error message to abort the operation.  The
-	 * error message will be propagated to the data binding context's error
+	 * error will be propagated to the data binding context's error
 	 * message updatable.
 	 */
-	public String bindingEvent(BindingEvent e);
+	public ValidationError bindingEvent(BindingEvent e);
 	
 }

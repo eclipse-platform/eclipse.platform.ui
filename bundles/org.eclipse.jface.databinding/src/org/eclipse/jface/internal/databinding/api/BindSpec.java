@@ -11,6 +11,7 @@
 package org.eclipse.jface.internal.databinding.api;
 
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
 /**
@@ -32,7 +33,7 @@ public class BindSpec implements IBindSpec {
 
 	private IValidator targetValidator;
 
-	private IValidator modelValidator;
+	private IDomainValidator domainValidator;
 
 	private final Integer modelUpdatePolicy;
 
@@ -54,12 +55,12 @@ public class BindSpec implements IBindSpec {
 	 */
 	public BindSpec(IConverter modelToTargetConverter,
 			IConverter targetToModelConverter, IValidator targetValidator,
-			IValidator modelValidator, Integer modelUpdatePolicy,
+			IDomainValidator domainValidator, Integer modelUpdatePolicy,
 			Integer validatePolicy, Integer targetUpdatePolicy) {
 		this.modelToTargetConverter = modelToTargetConverter;
 		this.targetToModelConverter = targetToModelConverter;
 		this.targetValidator = targetValidator;
-		this.modelValidator = modelValidator;
+		this.domainValidator = domainValidator;
 		this.modelUpdatePolicy = modelUpdatePolicy;
 		this.validatePolicy = validatePolicy;
 		this.targetUpdatePolicy = targetUpdatePolicy;
@@ -74,9 +75,9 @@ public class BindSpec implements IBindSpec {
 	 */
 	public BindSpec(IConverter modelToTargetConverter,
 			IConverter targetToModelConverter, IValidator targetValidator,
-			IValidator modelValidator) {
+			IDomainValidator domainValidator) {
 		this(modelToTargetConverter, targetToModelConverter, targetValidator,
-				modelValidator, null, null, null);
+				domainValidator, null, null, null);
 	}
 
 	public IConverter getModelToTargetConverter() {
@@ -99,12 +100,12 @@ public class BindSpec implements IBindSpec {
 		return validatePolicy;
 	}
 
-	public IValidator getTargetValidator() {
+	public IValidator getTypeConversionValidator() {
 		return targetValidator;
 	}
 
-	public IValidator getModelValidator() {
-		return modelValidator;
+	public IDomainValidator getDomainValidator() {
+		return domainValidator;
 	}
 
 	public void setValidator(IValidator validator) {
@@ -113,6 +114,10 @@ public class BindSpec implements IBindSpec {
 
 	public void setConverter(IConverter converter) {
 		this.modelToTargetConverter = converter;
+	}
+
+	public void setDomainValidator(IDomainValidator validator) {
+		this.domainValidator = validator;
 	}
 
 }
