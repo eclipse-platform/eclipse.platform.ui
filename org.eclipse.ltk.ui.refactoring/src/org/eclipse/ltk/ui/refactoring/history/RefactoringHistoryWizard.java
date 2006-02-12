@@ -234,8 +234,11 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * is executed. This method may be called from non-UI threads.
 	 * <p>
 	 * This method is guaranteed to be called exactly once during the lifetime
-	 * of a refactoring history wizard. Subclasses may reimplement this method
-	 * to perform any special processing.
+	 * of a refactoring history wizard. The default implementation does nothing
+	 * and returns a refactoring status of severity {@link RefactoringStatus#OK}.
+	 * </p>
+	 * <p>
+	 * Subclasses may reimplement this method to perform any special processing.
 	 * </p>
 	 * <p>
 	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
@@ -254,16 +257,16 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Hook method which is called before the a refactoring of the history is
-	 * executed. The refactoring itself is in an uninitialized state at the time
-	 * of the method call. The default implementation initializes the
-	 * refactoring based on the refactoring arguments stored in the descriptor.
-	 * This method may be called from non-UI threads.
+	 * executed. The refactoring itself is in an initialized state at the time
+	 * of the method call. The default implementation does nothing and returns a
+	 * status of severity {@link RefactoringStatus#OK}. This method may be
+	 * called from non-UI threads.
 	 * <p>
 	 * Subclasses may extend this method to perform any special processing.
 	 * </p>
 	 * <p>
 	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
-	 * terminate the execution of the refactorings.
+	 * terminate the execution of the current refactoring.
 	 * </p>
 	 * 
 	 * @param refactoring
@@ -277,7 +280,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		Assert.isNotNull(refactoring);
 		Assert.isNotNull(descriptor);
-		return descriptor.initialize(refactoring);
+		return new RefactoringStatus();
 	}
 
 	/**
@@ -384,6 +387,61 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * Method which is called to create a refactoring instance from a
+	 * refactoring descriptor. The refactoring must be in an initialized state
+	 * after the return of the method call. The default implementation delegates
+	 * the task to the refactoring descriptor. This method may be called from
+	 * non-UI threads.
+	 * <p>
+	 * Subclasses may reimplement this method to customize the initialization of
+	 * a refactoring.
+	 * </p>
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param status
+	 *            a refactoring status describing the outcome of the
+	 *            initialization
+	 * @return the refactoring, or <code>null</code> if this refactoring
+	 *         descriptor represents the unknown refactoring, or if no
+	 *         refactoring contribution is available for this refactoring
+	 *         descriptor
+	 * @throws CoreException
+	 *             if an error occurs while creating the refactoring instance
+	 */
+	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status) throws CoreException {
+		Assert.isNotNull(descriptor);
+		return descriptor.createRefactoring(status);
+	}
+
+	/**
+	 * Creates a refactoring from the specified refactoring descriptor.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param status
+	 *            the refactoring status
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return the refactoring, or <code>null</code> if this refactoring
+	 *         descriptor represents the unknown refactoring, or if no
+	 *         refactoring contribution is available for this refactoring
+	 *         descriptor
+	 * @throws CoreException
+	 *             if an error occurs while creating the refactoring instance
+	 */
+	private Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
+		final Refactoring refactoring= createRefactoring(descriptor, status);
+		if (refactoring != null) {
+			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
+			if (!status.hasFatalError())
+				return refactoring;
+		} else
+			status.addFatalError(NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
+		return null;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
@@ -426,44 +484,6 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		});
 		return status;
-	}
-
-	/**
-	 * Returns the refactoring descriptor of the current refactoring.
-	 * 
-	 * @return the refactoring descriptor, or <code>null</code>
-	 */
-	private RefactoringDescriptorProxy getCurrentDescriptor() {
-		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
-		if (fCurrentRefactoring >= 0 && fCurrentRefactoring < proxies.length)
-			return proxies[fCurrentRefactoring];
-		return null;
-	}
-
-	/**
-	 * Returns the refactoring associated with the current refactoring
-	 * descriptor, in initialized state.
-	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor
-	 * 
-	 * @param status
-	 *            the refactoring status
-	 * @param monitor
-	 *            the progress monitor to use
-	 * @return the refactoring, or <code>null</code>
-	 * @throws CoreException
-	 *             if an error occurs while creating the refactoring
-	 */
-	private Refactoring getCurrentRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
-		final Refactoring refactoring= descriptor.createRefactoring();
-		if (refactoring != null) {
-			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
-			if (!status.hasFatalError())
-				return refactoring;
-		} else
-			status.addFatalError(NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
-		return null;
 	}
 
 	/**
@@ -546,7 +566,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				fPreviewPage.setRefactoring(null);
 				fPreviewPage.setChange(null);
 			}
-			final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
+			final RefactoringDescriptorProxy descriptor= getRefactoringDescriptor();
 			if (descriptor != null)
 				fPreviewPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
 			else
@@ -574,6 +594,18 @@ public class RefactoringHistoryWizard extends Wizard {
 		if (page == fErrorPage || page == fPreviewPage)
 			return null;
 		return super.getPreviousPage(page);
+	}
+
+	/**
+	 * Returns the refactoring descriptor of the current refactoring.
+	 * 
+	 * @return the refactoring descriptor, or <code>null</code>
+	 */
+	private RefactoringDescriptorProxy getRefactoringDescriptor() {
+		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
+		if (fCurrentRefactoring >= 0 && fCurrentRefactoring < proxies.length)
+			return proxies[fCurrentRefactoring];
+		return null;
 	}
 
 	/**
@@ -605,7 +637,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @return the first page, or <code>null</code>
 	 */
 	private IWizardPage getRefactoringPage() {
-		final IWizardPage[] result= { null};
+		final IWizardPage[] result= { null };
 		final RefactoringStatus status= new RefactoringStatus();
 		final IWizardContainer wizard= getContainer();
 		final IRunnableWithProgress runnable= new IRunnableWithProgress() {
@@ -623,7 +655,7 @@ public class RefactoringHistoryWizard extends Wizard {
 						}
 					}
 					final boolean last= isLastRefactoring();
-					final RefactoringDescriptorProxy proxy= getCurrentDescriptor();
+					final RefactoringDescriptorProxy proxy= getRefactoringDescriptor();
 					preparePreviewPage(status, proxy, last);
 					prepareErrorPage(status, proxy, status.hasFatalError(), last || status.hasFatalError());
 					fErrorPage.setRefactoring(null);
@@ -635,7 +667,7 @@ public class RefactoringHistoryWizard extends Wizard {
 							service.connect();
 							final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 							if (descriptor != null) {
-								final Refactoring refactoring= getCurrentRefactoring(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								final Refactoring refactoring= createRefactoring(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 								if (refactoring != null && status.isOK()) {
 									fPreviewPage.setRefactoring(refactoring);
 									fErrorPage.setRefactoring(refactoring);
@@ -698,6 +730,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			// Stay on same page
 			result[0]= null;
 		}
+		getContainer().updateButtons();
 		return result[0];
 	}
 
@@ -707,7 +740,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * <p>
 	 * This method is guaranteed to be called exactly once during the lifetime
 	 * of a refactoring history wizard. It is not guaranteed that the user
-	 * interface has not already been disposed of.
+	 * interface has not already been disposed of. The default implementation
+	 * does nothing and returns a refactoring status of severity
+	 * {@link RefactoringStatus#OK}.
 	 * </p>
 	 * <p>
 	 * Subclasses may reimplement this method to perform any special processing.
@@ -782,7 +817,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
 				protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
-					final RefactoringStatus[] result= { new RefactoringStatus()};
+					final RefactoringStatus[] result= { new RefactoringStatus() };
 					SafeRunner.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
@@ -791,6 +826,21 @@ public class RefactoringHistoryWizard extends Wizard {
 
 						public final void run() throws Exception {
 							result[0]= RefactoringHistoryWizard.this.aboutToPerformRefactoring(refactoring, descriptor, monitor);
+						}
+					});
+					return result[0];
+				}
+
+				protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus state) throws CoreException {
+					final Refactoring[] result= { null };
+					SafeRunner.run(new ISafeRunnable() {
+
+						public void handleException(final Throwable exception) {
+							RefactoringUIPlugin.log(exception);
+						}
+
+						public final void run() throws Exception {
+							result[0]= RefactoringHistoryWizard.this.createRefactoring(descriptor, state);
 						}
 					});
 					return result[0];
@@ -845,6 +895,15 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 			} catch (InterruptedException exception) {
 				// Just close wizard
+			}
+			final RefactoringStatus result= operation.getExecutionStatus();
+			if (!result.isOK()) {
+				fErrorPage.setStatus(status);
+				fErrorPage.setNextPageDisabled(true);
+				fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_finish_error_title);
+				fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_finish_error_description);
+				wizard.showPage(fErrorPage);
+				return true;
 			}
 		}
 		return true;
@@ -945,6 +1004,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				fErrorPage.setPageComplete(!fatal);
 				fErrorPage.setStatus(null);
 				fErrorPage.setStatus(status);
+				getContainer().updateButtons();
 			}
 		});
 	}
@@ -968,6 +1028,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				fPreviewPage.setNextPageDisabled(disabled);
 				fPreviewPage.setPageComplete(!disabled);
 				fPreviewPage.setStatus(status);
+				getContainer().updateButtons();
 			}
 		});
 	}
@@ -975,7 +1036,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * Hook method which is called when the specified refactoring has been
 	 * performed, e.g. its change object has been successfully applied to the
-	 * workspace. This method may be called from non-UI threads.
+	 * workspace. The default implementation does nothing and returns a
+	 * refactoring status of severity {@link RefactoringStatus#OK}. This method
+	 * may be called from non-UI threads.
 	 * <p>
 	 * Subclasses may reimplement this method to perform any special processing.
 	 * </p>

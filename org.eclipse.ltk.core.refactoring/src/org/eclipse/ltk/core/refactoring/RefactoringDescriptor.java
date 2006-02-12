@@ -182,7 +182,14 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 	 * refactoring from a refactoring descriptor, in order to apply it later on
 	 * a local or remote workspace.
 	 * </p>
+	 * <p>
+	 * The returned refactoring must be in an initialized state, eg. ready to be
+	 * executed via {@link PerformRefactoringOperation}.
+	 * </p>
 	 * 
+	 * @param status
+	 *            a refactoring status used to describe the outcome of the
+	 *            initialization
 	 * @return the refactoring, or <code>null</code> if this refactoring
 	 *         descriptor represents the unknown refactoring, or if no
 	 *         refactoring contribution is available for this refactoring
@@ -190,7 +197,7 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring instance
 	 */
-	public abstract Refactoring createRefactoring() throws CoreException;
+	public abstract Refactoring createRefactoring(RefactoringStatus status) throws CoreException;
 
 	/**
 	 * {@inheritDoc}
@@ -248,26 +255,6 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 		if (fTimeStamp >= 0)
 			code+= (17 * fTimeStamp);
 		return code;
-	}
-
-	/**
-	 * Initializes a refactoring with the input specified in this refactoring
-	 * descriptor.
-	 * <p>
-	 * This method is used by the refactoring framework to initialize a
-	 * refactoring with the input of this refactoring descriptor.
-	 * </p>
-	 * <p>
-	 * Note: This method is internal API. It must not be used outside the
-	 * refactoring framework.
-	 * </p>
-	 * 
-	 * @param refactoring
-	 *            the refactoring to initialize
-	 * @return a refactoring status describing the outcome of the initialization
-	 */
-	public RefactoringStatus initialize(Refactoring refactoring) {
-		return new RefactoringStatus();
 	}
 
 	/**

@@ -21,9 +21,6 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-import org.eclipse.ltk.internal.core.refactoring.Messages;
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
-
 /**
  * Default implementation of a refactoring descriptor.
  * 
@@ -59,7 +56,7 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Refactoring createRefactoring() throws CoreException {
+	public Refactoring createRefactoring(final RefactoringStatus status) throws CoreException {
 		return null;
 	}
 
@@ -68,14 +65,7 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 	 * 
 	 * @return the argument map.
 	 */
-	public final Map getArguments() {
+	public Map getArguments() {
 		return fArguments;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public RefactoringStatus initialize(final Refactoring refactoring) {
-		return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.DefaultRefactoringDescriptor_initialization_error, getID()));
 	}
 }

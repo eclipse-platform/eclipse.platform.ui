@@ -176,6 +176,10 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringHistoryPreviewPage_description;
 
+	public static String RefactoringHistoryPreviewPage_finish_error_description;
+
+	public static String RefactoringHistoryPreviewPage_finish_error_title;
+
 	public static String RefactoringHistoryPreviewPage_refactoring_pattern;
 
 	public static String RefactoringHistoryWizard_do_not_show_message;

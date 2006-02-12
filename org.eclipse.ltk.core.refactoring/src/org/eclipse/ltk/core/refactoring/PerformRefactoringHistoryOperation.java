@@ -80,7 +80,30 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		Assert.isNotNull(refactoring);
 		Assert.isNotNull(descriptor);
-		return descriptor.initialize(refactoring);
+		return new RefactoringStatus();
+	}
+
+	/**
+	 * Method which is called to create a refactoring instance from a
+	 * refactoring descriptor. The refactoring must be in an initialized state
+	 * at the return of the method call. The default implementation delegates
+	 * the task to the refactoring descriptor.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param status
+	 *            a refactoring status to describe the outcome of the
+	 *            initialization
+	 * @return the refactoring, or <code>null</code> if this refactoring
+	 *         descriptor represents the unknown refactoring, or if no
+	 *         refactoring contribution is available for this refactoring
+	 *         descriptor
+	 * @throws CoreException
+	 *             if an error occurs while creating the refactoring instance
+	 */
+	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status) throws CoreException {
+		Assert.isNotNull(descriptor);
+		return descriptor.createRefactoring(status);
 	}
 
 	/**
@@ -102,6 +125,9 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 *            the progress monitor to use
 	 */
 	protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
+		Assert.isNotNull(refactoring);
+		Assert.isNotNull(monitor);
+
 		// Do nothing
 	}
 
@@ -118,7 +144,12 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null) {
-					final Refactoring refactoring= descriptor.createRefactoring();
+					Refactoring refactoring= null;
+					try {
+						refactoring= createRefactoring(descriptor, fExecutionStatus);
+					} catch (CoreException exception) {
+						fExecutionStatus.merge(RefactoringStatus.create(exception.getStatus()));
+					}
 					if (refactoring != null) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 						try {
