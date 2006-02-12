@@ -14,23 +14,23 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import org.eclipse.jface.databinding.BindSpec;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.converter.Converter;
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.converters.IdentityConverter;
-import org.eclipse.jface.databinding.swt.SWTProperties;
-import org.eclipse.jface.databinding.validator.IValidator;
+import javax.swing.event.ChangeEvent;
+
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Cart;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.internal.databinding.api.BindSpec;
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
+import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
+import org.eclipse.jface.internal.databinding.api.validation.IValidator;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.internal.Converter;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Spinner;
@@ -242,16 +242,16 @@ public class PropertyScenarios extends ScenariosTestCase {
 				new Property(adventure, "name"),
 				new BindSpec(new IdentityConverter(String.class),
 						new IValidator() {
-							public String isPartiallyValid(Object value) {
+							public ValidationError isPartiallyValid(Object value) {
 								return isValid(value);
 							}
 
-							public String isValid(Object value) {
+							public ValidationError isValid(Object value) {
 								String stringValue = (String) value;
 								if (stringValue.length() > 15) {
-									return max15CharactersMessage;
+									return ValidationError.error(max15CharactersMessage);
 								} else if (stringValue.indexOf(' ') != -1) {
-									return noSpacesMessage;
+									return ValidationError.error(noSpacesMessage);
 								} else {
 									return null;
 								}
@@ -292,21 +292,21 @@ public class PropertyScenarios extends ScenariosTestCase {
 						return ((Double) toObject).toString();
 					}
 				}, new IValidator() {
-					public String isPartiallyValid(Object value) {
+					public ValidationError isPartiallyValid(Object value) {
 						return null;
 					}
 
-					public String isValid(Object value) {
+					public ValidationError isValid(Object value) {
 						String stringValue = (String) value;
 						try {
 							double doubleValue = new Double(stringValue)
 									.doubleValue();
 							if (doubleValue < 0.0) {
-								return cannotBeNegativeMessage;
+								return ValidationError.error(cannotBeNegativeMessage);
 							}
 							return null;
 						} catch (NumberFormatException ex) {
-							return mustBeCurrencyMessage;
+							return ValidationError.error(mustBeCurrencyMessage);
 						}
 					}
 				}));
@@ -358,21 +358,21 @@ public class PropertyScenarios extends ScenariosTestCase {
 								.doubleValue());
 					}
 				}, new IValidator() {
-					public String isPartiallyValid(Object value) {
+					public ValidationError isPartiallyValid(Object value) {
 						return null;
 					}
 
-					public String isValid(Object value) {
+					public ValidationError isValid(Object value) {
 						String stringValue = (String) value;
 						try {
 							double doubleValue = currencyFormat.parse(
 									stringValue).doubleValue();
 							if (doubleValue < 0.0) {
-								return cannotBeNegativeMessage;
+								return ValidationError.error(cannotBeNegativeMessage);
 							}
 							return null;
 						} catch (ParseException e) {
-							return mustBeCurrencyMessage;
+							return ValidationError.error(mustBeCurrencyMessage);
 						}
 					}
 				}));
