@@ -146,7 +146,7 @@ public class DecoratedFieldCellEditor extends CellEditor {
 		decoratedField = new DecoratedField(parent, getStyle(),
 				new TextControlCreator());
 		text = (Text) decoratedField.getControl();
-		decoratedField.setBackground(text.getBackground());
+		decoratedField.getLayoutControl().setBackground(text.getBackground());
 		decoratedField.setUseMaximumDecorationWidth(false);
 		// END MOD
 		text.addSelectionListener(new SelectionAdapter() {
