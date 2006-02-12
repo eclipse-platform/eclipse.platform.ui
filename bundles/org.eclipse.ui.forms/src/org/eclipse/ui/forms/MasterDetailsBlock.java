@@ -9,11 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
+
 /**
  * This class implements the 'master/details' UI pattern suitable for inclusion
  * in a form. The block consists of two parts: 'master' and 'details' in a sash
@@ -41,18 +43,19 @@ import org.eclipse.ui.forms.widgets.*;
  * @since 3.0
  */
 public abstract class MasterDetailsBlock {
-/**
- * Details part created by the block. No attempt should be
- * made to access this field inside <code>createMasterPart</code>
- * because it has not been created yet and will be <code>null</code>.
- */
+	/**
+	 * Details part created by the block. No attempt should be made to access
+	 * this field inside <code>createMasterPart</code> because it has not been
+	 * created yet and will be <code>null</code>.
+	 */
 	protected DetailsPart detailsPart;
-/**
- * The form that is the parent of both master and details part.
- * The form allows users to change the ratio between the two
- * parts.
- */
+
+	/**
+	 * The form that is the parent of both master and details part. The form
+	 * allows users to change the ratio between the two parts.
+	 */
 	protected SashForm sashForm;
+
 	/**
 	 * Creates the content of the master/details block inside the managed form.
 	 * This method should be called as late as possible inside the parent part.
@@ -76,6 +79,7 @@ public abstract class MasterDetailsBlock {
 		createToolBarActions(managedForm);
 		form.updateToolBar();
 	}
+
 	/**
 	 * Implement this method to create a master part in the provided parent.
 	 * Typical master parts are section parts that contain tree or table viewer.
@@ -87,6 +91,7 @@ public abstract class MasterDetailsBlock {
 	 */
 	protected abstract void createMasterPart(IManagedForm managedForm,
 			Composite parent);
+
 	/**
 	 * Implement this method to statically register pages for the expected
 	 * object types. This mechanism can be used when there is 1-&gt;1 mapping
@@ -96,6 +101,7 @@ public abstract class MasterDetailsBlock {
 	 *            the details part
 	 */
 	protected abstract void registerPages(DetailsPart detailsPart);
+
 	/**
 	 * Implement this method to create form tool bar actions and add them to the
 	 * form tool bar if desired.
@@ -104,6 +110,7 @@ public abstract class MasterDetailsBlock {
 	 *            the form that owns the tool bar
 	 */
 	protected abstract void createToolBarActions(IManagedForm managedForm);
+
 	private void createDetailsPart(final IManagedForm mform, Composite parent) {
 		detailsPart = new DetailsPart(mform, parent, SWT.NULL);
 		mform.addPart(detailsPart);

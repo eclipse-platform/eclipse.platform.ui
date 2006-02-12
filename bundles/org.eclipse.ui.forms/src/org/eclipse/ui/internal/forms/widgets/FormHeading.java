@@ -58,19 +58,13 @@ public class FormHeading extends Canvas {
 
 	private int SEPARATOR_HEIGHT = 6;
 
-	private static final int S_TILED = 1 << 1;
-
-	private static final int S_CLIPPED = 1 << 2;
-
-	private static final int S_SEPARATOR = 1 << 3;
-
-	private int style = S_CLIPPED | SWT.LEFT;
-
 	private Image gradientImage;
 
 	private Image image;
 
 	private Color baseBg;
+	
+	private boolean separatorVisible;
 
 	private Color separatorColor;
 
@@ -775,7 +769,7 @@ public class FormHeading extends Canvas {
 		igc.setBackground(getBackground());
 		igc.fillRectangle(0, 0, carea.width, carea.height);
 		if (getBackgroundImage() != null) {
-			if (gradientInfo!=null || isBackgroundImageTiled())
+			if (gradientInfo!=null || getBackgroundImage()!=null)
 				drawBackground(igc, carea.x, carea.y, carea.width, carea.height);
 			else {
 				Image bgImage = getBackgroundImage();
@@ -879,73 +873,50 @@ public class FormHeading extends Canvas {
 	}
 
 	/**
-	 * TODO add javadoc
+	 * Always returns true
 	 * 
-	 * @return Returns the backgroundImageTiled.
+	 * @return Returns true
 	 */
 	public boolean isBackgroundImageTiled() {
-		return (style & S_TILED) != 0;
+		return true;
 	}
 
 	/**
-	 * TODO add javadoc
-	 * 
-	 * @param backgroundImageTiled
-	 *            The backgroundImageTiled to set.
+	 * No-op.
+	 * @deprecated background image is always tiled
 	 */
 	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
-		if (backgroundImageTiled)
-			style |= S_TILED;
-		else
-			style &= (~S_TILED);
-		if (isVisible())
-			redraw();
 	}
 
 	/**
-	 * @return Returns the backgroundImageAlignment. TODO add javadoc
-	 * @since 3.1
+	 *@return SWT.LEFT
 	 */
 	public int getBackgroundImageAlignment() {
-		if ((style & SWT.LEFT) > 0)
-			return SWT.LEFT;
-		if ((style & SWT.RIGHT) > 0)
-			return SWT.RIGHT;
-		if ((style & SWT.CENTER) > 0)
-			return SWT.CENTER;
-		return SWT.NULL;
+		return SWT.LEFT;
 	}
 
 	/**
-	 * @param backgroundImageAlignment
-	 *            The backgroundImageAlignment to set. TODO add javadoc
+	 * No-op.
+	 * @depracated background image alignment is always 0,0.
 	 * @since 3.1
 	 */
 	public void setBackgroundImageAlignment(int backgroundImageAlignment) {
-		style &= (~getBackgroundImageAlignment());
-		style |= backgroundImageAlignment;
-		if (isVisible())
-			redraw();
 	}
 
 	/**
-	 * @return Returns the backgroundImageClipped.
-	 * @since 3.1
+	 * Background image is always clipped.
+	 * @deprecated not used
+	 * @return true
 	 */
 	public boolean isBackgroundImageClipped() {
-		return (style & S_CLIPPED) != 0;
+		return true;
 	}
 
 	/**
-	 * @param backgroundImageClipped
-	 *            The backgroundImageClipped to set.
-	 * @since 3.1
+	 * Background image is always clipped.
+	 * @deprecated not used
 	 */
 	public void setBackgroundImageClipped(boolean backgroundImageClipped) {
-		if (backgroundImageClipped)
-			style |= S_CLIPPED;
-		else
-			style &= (~S_CLIPPED);
 	}
 
 	/**
@@ -955,17 +926,14 @@ public class FormHeading extends Canvas {
 	 *         <code>false</code> otherwise
 	 */
 	public boolean isSeparatorVisible() {
-		return (style & S_SEPARATOR) != 0;
+		return separatorVisible;
 	}
 
 	/**
 	 * experimental - do not use yet TODO add javadoc
 	 */
 	public void setSeparatorVisible(boolean addSeparator) {
-		if (addSeparator)
-			style |= S_SEPARATOR;
-		else
-			style &= (~S_SEPARATOR);
+		separatorVisible = addSeparator;
 	}
 
 	/**

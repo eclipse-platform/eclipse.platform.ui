@@ -141,7 +141,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	protected void createPages() {
 		addPages();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#createPageContainer(org.eclipse.swt.widgets.Composite)
 	 */

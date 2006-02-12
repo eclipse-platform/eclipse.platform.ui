@@ -9,36 +9,45 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms;
+
 import java.util.Vector;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
+
 /**
  * Managed form wraps a form widget and adds life cycle methods for form parts.
  * A form part is a portion of the form that participates in form life cycle
  * events.
  * <p>
- * There is requirement for 1/1 mapping between widgets and form parts. A
- * widget like Section can be a part by itself, but a number of widgets can
- * join around one form part.
- * <p>Note to developers: this class is left public to allow its use
- * beyond the original intention (inside a multi-page editor's page).
- * You should limit the use of this class to make new instances
- * inside a form container (wizard page, dialog etc.).
- * Clients that need access to the class should not do it directly. 
- * Instead, they should do it through IManagedForm interface as 
- * much as possible.
+ * There is requirement for 1/1 mapping between widgets and form parts. A widget
+ * like Section can be a part by itself, but a number of widgets can join around
+ * one form part.
+ * <p>
+ * Note to developers: this class is left public to allow its use beyond the
+ * original intention (inside a multi-page editor's page). You should limit the
+ * use of this class to make new instances inside a form container (wizard page,
+ * dialog etc.). Clients that need access to the class should not do it
+ * directly. Instead, they should do it through IManagedForm interface as much
+ * as possible.
  * 
  * @since 3.0
  */
 public class ManagedForm implements IManagedForm {
 	private Object input;
+
 	private ScrolledForm form;
+
 	private FormToolkit toolkit;
+
 	private Object container;
+
 	private boolean ownsToolkit;
-	private boolean initialized;	
+
+	private boolean initialized;
+
 	private Vector parts = new Vector();
+
 	/**
 	 * Creates a managed form in the provided parent. Form toolkit and widget
 	 * will be created and owned by this object.
@@ -51,6 +60,7 @@ public class ManagedForm implements IManagedForm {
 		ownsToolkit = true;
 		form = toolkit.createScrolledForm(parent);
 	}
+
 	/**
 	 * Creates a managed form that will use the provided toolkit and
 	 * 
@@ -61,53 +71,62 @@ public class ManagedForm implements IManagedForm {
 		this.form = form;
 		this.toolkit = toolkit;
 	}
-	/**
-	 * Add a part to be managed by this form.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param part
-	 *            part to add
+	 * @see org.eclipse.ui.forms.IManagedForm#addPart(org.eclipse.ui.forms.IFormPart)
 	 */
 	public void addPart(IFormPart part) {
 		parts.add(part);
 		part.initialize(this);
 	}
-	/**
-	 * Remove the part from this form.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param part
-	 *            part to remove
+	 * @see org.eclipse.ui.forms.IManagedForm#removePart(org.eclipse.ui.forms.IFormPart)
 	 */
 	public void removePart(IFormPart part) {
 		parts.remove(part);
 	}
-	/**
-	 * Returns all the parts current managed by this form.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#getParts()
 	 */
 	public IFormPart[] getParts() {
 		return (IFormPart[]) parts.toArray(new IFormPart[parts.size()]);
 	}
-	/**
-	 * Returns the toolkit used by this form.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the toolkit
+	 * @see org.eclipse.ui.forms.IManagedForm#getToolkit()
 	 */
 	public FormToolkit getToolkit() {
 		return toolkit;
 	}
-	/**
-	 * Returns the form widget managed by this form.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the form widget
+	 * @see org.eclipse.ui.forms.IManagedForm#getForm()
 	 */
 	public ScrolledForm getForm() {
 		return form;
 	}
-	/**
-	 * Reflows the form as a result of a layout change.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#reflow(boolean)
 	 */
 	public void reflow(boolean changed) {
 		form.reflow(changed);
 	}
+
 	/**
 	 * A part can use this method to notify other parts that implement
 	 * IPartSelectionListener about selection changes.
@@ -131,18 +150,19 @@ public class ManagedForm implements IManagedForm {
 	}
 
 	/**
-	 * Initializes the form by looping through the managed
-	 * parts and initializing them. Has no effect if
-	 * already called once.
+	 * Initializes the form by looping through the managed parts and
+	 * initializing them. Has no effect if already called once.
 	 */
 	public void initialize() {
-		if (initialized) return;
+		if (initialized)
+			return;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
 			part.initialize(this);
 		}
-		initialized=true;
+		initialized = true;
 	}
+
 	/**
 	 * Disposes all the parts in this form.
 	 */
@@ -155,12 +175,12 @@ public class ManagedForm implements IManagedForm {
 			toolkit.dispose();
 		}
 	}
+
 	/**
-	 * Refreshes the form by refreshes all the stale parts. 
-	 * Since 3.1, this method is performed on a UI thread
-	 * when called from another thread so it is not needed
-	 * to wrap the call in <code>Display.syncExec</code>
-	 * or <code>asyncExec</code>.
+	 * Refreshes the form by refreshes all the stale parts. Since 3.1, this
+	 * method is performed on a UI thread when called from another thread so it
+	 * is not needed to wrap the call in <code>Display.syncExec</code> or
+	 * <code>asyncExec</code>.
 	 */
 	public void refresh() {
 		Thread t = Thread.currentThread();
@@ -175,7 +195,7 @@ public class ManagedForm implements IManagedForm {
 			});
 		}
 	}
-	
+
 	private void doRefresh() {
 		int nrefreshed = 0;
 		for (int i = 0; i < parts.size(); i++) {
@@ -188,8 +208,11 @@ public class ManagedForm implements IManagedForm {
 		if (nrefreshed > 0)
 			form.reflow(true);
 	}
-	/**
-	 * Commits the form by commiting all the dirty parts to the model.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#commit(boolean)
 	 */
 	public void commit(boolean onSave) {
 		for (int i = 0; i < parts.size(); i++) {
@@ -198,16 +221,15 @@ public class ManagedForm implements IManagedForm {
 				part.commit(onSave);
 		}
 	}
-	/**
-	 * Sets the form input. Managed parts could opt to react to it by selecting
-	 * and/or revealing the object if they contain it.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param input
-	 *            the input object
+	 * @see org.eclipse.ui.forms.IManagedForm#setInput(java.lang.Object)
 	 */
 	public boolean setInput(Object input) {
-		boolean pageResult=false;
-		
+		boolean pageResult = false;
+
 		this.input = input;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
@@ -217,9 +239,16 @@ public class ManagedForm implements IManagedForm {
 		}
 		return pageResult;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#getInput()
+	 */
 	public Object getInput() {
 		return input;
 	}
+
 	/**
 	 * Transfers the focus to the first form part.
 	 */
@@ -229,6 +258,12 @@ public class ManagedForm implements IManagedForm {
 			part.setFocus();
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#isDirty()
+	 */
 	public boolean isDirty() {
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
@@ -237,6 +272,12 @@ public class ManagedForm implements IManagedForm {
 		}
 		return false;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#isStale()
+	 */
 	public boolean isStale() {
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
@@ -245,24 +286,36 @@ public class ManagedForm implements IManagedForm {
 		}
 		return false;
 	}
-	/**
-	 * @see IManagedForm#dirtyStateChanged
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#dirtyStateChanged()
 	 */
 	public void dirtyStateChanged() {
 	}
-	/**
-	 * @see IManagedForm#staleStateChanged
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#staleStateChanged()
 	 */
 	public void staleStateChanged() {
 	}
-	/**
-	 * @return Returns the container.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#getContainer()
 	 */
 	public Object getContainer() {
 		return container;
 	}
-	/**
-	 * @param container The container to set.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IManagedForm#setContainer(java.lang.Object)
 	 */
 	public void setContainer(Object container) {
 		this.container = container;

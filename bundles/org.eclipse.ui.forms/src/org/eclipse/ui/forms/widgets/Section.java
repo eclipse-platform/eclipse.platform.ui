@@ -105,6 +105,10 @@ public class Section extends ExpandableComposite {
 		reflow();
 	}
 
+	/**
+	 * Reflows this section and all the parents up the hierarchy
+	 * until a ScrolledForm is reached.
+	 */
 	protected void reflow() {
 		Composite c = this;
 		while (c != null) {
@@ -271,13 +275,6 @@ public class Section extends ExpandableComposite {
 	 */
 	public void setTitleBarGradientBackground(Color color) {
 		putTitleBarColor(COLOR_GBG, color);
-		/*
-		if ((getExpansionStyle() & TITLE_BAR) != 0) {
-			textLabel.setBackground(color);
-			if (toggle != null)
-				toggle.setBackground(color);
-		}
-		*/
 	}
 
 	/**
@@ -392,14 +389,6 @@ public class Section extends ExpandableComposite {
 				gc.fillRectangle(0, 0, marginWidth, theight);
 				gc.fillRectangle(bounds.x+bounds.width-marginWidth, 0, marginWidth, theight);
 			}
-			/*
-			 * gc.setForeground(bg); gc.setBackground(gbg);
-			 * gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width -
-			 * 1 - marginWidth - marginWidth, midpoint - 1, true);
-			 * gc.setForeground(gbg); gc.setBackground(getBackground()); gc
-			 * .fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
-			 * bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
-			 */
 		} else if (isExpanded()) {
 			gc.setForeground(bg);
 			gc.setBackground(getBackground());
@@ -477,7 +466,7 @@ public class Section extends ExpandableComposite {
 	}
 
 	/**
-	 * Background image is used for the title gradent - does nothing.
+	 * Background image is used for the title gradient - does nothing.
 	 */
 	public final void setBackgroundImage(Image image) {
 	}

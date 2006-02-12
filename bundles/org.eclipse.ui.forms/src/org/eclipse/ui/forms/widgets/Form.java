@@ -35,21 +35,21 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * form body will be resized to fill the entire form. In addition, an optional
  * title image can be set and is rendered to the left of the title (since 3.2).
  * <p>
- * The form supports status messages. These messages can have various
- * severity (error, warning, info or none). Message tray can be minimized and
- * later restored by the user, but can only be closed programmatically.
+ * The form supports status messages. These messages can have various severity
+ * (error, warning, info or none). Message tray can be minimized and later
+ * restored by the user, but can only be closed programmatically.
  * <p>
- * Form can have a background image behind the title text. The image can be
- * painted as-is, or tiled as many times as needed to fill the title area.
- * Alternatively, gradient background can be painted vertically or
- * horizontally.
- * <p>Form can be put in the 'busy' state. While in this state,
- * title image is replaced with an animation that lasts as long as the
- * 'busy' state is active.
- * <p>It is possible to create an optional head client control.
- * When created, this control is placed next to the title. If title tool
- * bar is also present, a new row is created in the header, and the tool
- * bar is right-justified in the second row.
+ * Form can have a background image behind the title text. The image is tiled as
+ * many times as needed to fill the title area. Alternatively, gradient
+ * background can be painted vertically or horizontally.
+ * <p>
+ * Form can be put in a 'busy' state. While in this state, title image is
+ * replaced with an animation that lasts as long as the 'busy' state is active.
+ * <p>
+ * It is possible to create an optional head client control. When created, this
+ * control is placed next to the title. If title tool bar is also present, a new
+ * row is created in the header, and the tool bar is right-justified in the
+ * second row.
  * <p>
  * Form has a custom layout manager that is wrap-enabled. If a form is placed in
  * a composite whose layout manager implements ILayoutExtension, the body of the
@@ -289,7 +289,10 @@ public class Form extends Composite {
 
 	/**
 	 * Sets the optional background image to be rendered behind the title
-	 * starting at the position 0,0.
+	 * starting at the position 0,0. If the image is smaller than the container
+	 * in any dimension, it will be tiled.
+	 * 
+	 * @since 3.2
 	 * 
 	 * @param backgroundImage
 	 *            the head background image.
@@ -368,56 +371,71 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * TODO add javadoc -
 	 * 
-	 * @return Returns the backgroundImageTiled.
+	 * @deprecated
+	 * @return true
 	 */
 	public boolean isBackgroundImageTiled() {
-		return head.isBackgroundImageTiled();
+		return true;
 	}
 
 	/**
-	 * TODO add javadoc
+	 * Tests if the head background image is tiled.
 	 * 
 	 * @param backgroundImageTiled
-	 *            The backgroundImageTiled to set.
+	 *            set <code>true</code> to tile the image
+	 * @deprecated due to the underlying widget limitations, background image is
+	 *             always tiled
 	 */
 	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
 		head.setBackgroundImageTiled(backgroundImageTiled);
 	}
 
 	/**
-	 * @return Returns the backgroundImageAlignment. TODO add javadoc
-	 * @since 3.1
+	 * Returns the background image alignment.
+	 * 
+	 * @deprecated due to the underlying widget limitations, background image is
+	 *             always tiled and alignment cannot be controlled.
+	 * @return SWT.LEFT
 	 */
 	public int getBackgroundImageAlignment() {
 		return head.getBackgroundImageAlignment();
 	}
 
 	/**
+	 * Sets the background image alignment.
+	 * 
+	 * @deprecated due to the underlying widget limitations, background image is
+	 *             always tiled and alignment cannot be controlled.
 	 * @param backgroundImageAlignment
-	 *            The backgroundImageAlignment to set. TODO add javadoc
+	 *            The backgroundImageAlignment to set.
 	 * @since 3.1
 	 */
 	public void setBackgroundImageAlignment(int backgroundImageAlignment) {
-		head.setBackgroundImageAlignment(backgroundImageAlignment);
 	}
 
 	/**
-	 * @return Returns the backgroundImageClipped.
+	 * Tests if background image is clipped.
+	 * 
+	 * @deprecated due to the underlying widget limitations, background image is
+	 *             always clipped.
+	 * @return true
 	 * @since 3.1
 	 */
 	public boolean isBackgroundImageClipped() {
-		return head.isBackgroundImageClipped();
+		return true;
 	}
 
 	/**
+	 * Sets whether the background image is clipped.
+	 * 
+	 * @deprecated due to the underlying widget limitations, background image is
+	 *             always clipped.
 	 * @param backgroundImageClipped
-	 *            The backgroundImageClipped to set.
+	 *            the value to set
 	 * @since 3.1
 	 */
 	public void setBackgroundImageClipped(boolean backgroundImageClipped) {
-		head.setBackgroundImageClipped(backgroundImageClipped);
 	}
 
 	void setSelectionText(FormText text) {
@@ -428,10 +446,11 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * TODO add javadoc experimental - do not use yet
+	 * Tests if the form head separator is visible.
 	 * 
-	 * @return <code>true</code> if the receiver is a visible separator,
+	 * @return <code>true</code> if the head/body separator is visible,
 	 *         <code>false</code> otherwise
+	 * @since 3.2
 	 */
 	public boolean isSeparatorVisible() {
 		return head.isSeparatorVisible();
@@ -451,9 +470,12 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * Returns the color used to render the optional head separator.
+	 * Returns the color used to render the optional head separator. If gradient
+	 * text background is used additional colors from the gradient will be used
+	 * to render the separator.
 	 * 
 	 * @return separator color or <code>null</code> if not set.
+	 * @since 3.2
 	 */
 
 	public Color getSeparatorColor() {
