@@ -42,21 +42,6 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	private boolean empty;
 	private ICommonContentExtensionSite site;
 	
-	/* public */ boolean hasChildren(TreePath path) {
-		Object element = path.getLastSegment();
-		return internalHasChildren(element);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#getChildren(org.eclipse.jface.viewers.TreePath)
-	 */
-	/* public*/ Object[] getChildren(TreePath parentPath) {
-		Object parent = parentPath.getLastSegment();
-		if (parentPath.getSegmentCount() == 1)
-			return getElements(parent);
-		return internalGetChildren(parent, false);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
@@ -336,7 +321,6 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * this content provider applies. A <code>null</code> is returned if
 	 * no context is available.
 	 * @return the synchronization context or <code>null</code>
-	 * @deprecated is now provided in method calls
 	 */
 	protected ISynchronizationContext getContext() {
 		return context;
@@ -347,7 +331,6 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * this content provider applies. A <code>null</code> is returned if
 	 * no scope is available.
 	 * @return the resource mapping scope or <code>null</code>
-	 * @deprecated is now provided in method calls
 	 */
 	protected ISynchronizationScope getScope() {
 		return scope;
@@ -393,7 +376,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(int, org.eclipse.core.runtime.IPath[])
 	 */
-	public void propertyChanged(int property, IPath[] paths) {
+	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
 		// Property changes only effect labels
 	}
 
@@ -644,5 +627,15 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Return the Common Navigator extension site for this
+	 * content provider.
+	 * @return the Common Navigator extension site for this
+	 * content provider
+	 */
+	public ICommonContentExtensionSite getExtensionSite() {
+		return site;
 	}
 }

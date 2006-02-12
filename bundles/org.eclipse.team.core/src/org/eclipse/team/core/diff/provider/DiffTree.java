@@ -252,7 +252,7 @@ public class DiffTree implements IDiffTree {
 						for (Iterator iter = propertyChanges.keySet().iterator(); iter.hasNext();) {
 							Integer key = (Integer) iter.next();
 							Set paths = (Set)propertyChanges.get(key);
-							listener.propertyChanged(key.intValue(), (IPath[]) paths.toArray(new IPath[paths
+							listener.propertyChanged(DiffTree.this, key.intValue(), (IPath[]) paths.toArray(new IPath[paths
 									.size()]));
 						}
 						

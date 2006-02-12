@@ -216,12 +216,12 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#propertyChanged(int, org.eclipse.core.runtime.IPath[])
 	 */
-	public void propertyChanged(final int property, final IPath[] paths) {
+	public void propertyChanged(IDiffTree tree, final int property, final IPath[] paths) {
 		Utils.syncExec(new Runnable() {
 			public void run() {
 				ISynchronizationContext context = getContext();
 				if (context != null) {
-					IResource[] resources = getResources(paths);
+					IResource[] resources = getResources(context, paths);
 					if (resources.length > 0)
 						((AbstractTreeViewer)getViewer()).update(resources, null);
 				}
@@ -229,25 +229,24 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		}, (StructuredViewer)getViewer());
 	}
 
-	private IResource[] getResources(IPath[] paths) {
+	private IResource[] getResources(ISynchronizationContext context, IPath[] paths) {
 		List resources = new ArrayList();
 		for (int i = 0; i < paths.length; i++) {
 			IPath path = paths[i];
-			IResource resource = getResource(path);
+			IResource resource = getResource(context, path);
 			if (resource != null)
 				resources.add(resource);
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}
 
-	private IResource getResource(IPath path) {
+	private IResource getResource(ISynchronizationContext context, IPath path) {
 		// Does the resource exist locally
 		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 		if (resource != null) {
 			return resource;
 		}
 		// Look in the diff tree for a phantom
-		ISynchronizationContext context = getContext();
 		if (context != null) {
 			IResourceDiffTree diffTree = context.getDiffTree();
 			// Is there a diff for the path

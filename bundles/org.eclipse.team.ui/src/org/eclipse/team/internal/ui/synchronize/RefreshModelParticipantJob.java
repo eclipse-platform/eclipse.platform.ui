@@ -44,7 +44,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 			}
 		}
 		
-		public void propertyChanged(int property, IPath[] paths) {
+		public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
 			// Do nothing
 		}
 	}

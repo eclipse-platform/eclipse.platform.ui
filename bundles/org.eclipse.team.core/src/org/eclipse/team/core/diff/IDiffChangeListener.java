@@ -32,9 +32,10 @@ public interface IDiffChangeListener {
 	
 	/**
 	 * The given property has changed for the given paths.
+	 * @param tree the tree for which the property changed
 	 * @param property the property
 	 * @param paths the paths
 	 */
-	void propertyChanged(int property, IPath[] paths);
+	void propertyChanged(IDiffTree tree, int property, IPath[] paths);
 
 }

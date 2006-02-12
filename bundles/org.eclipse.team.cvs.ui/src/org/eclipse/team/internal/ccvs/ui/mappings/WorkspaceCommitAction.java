@@ -72,7 +72,7 @@ public class WorkspaceCommitAction extends ModelParticipantAction implements IDi
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(int, org.eclipse.core.runtime.IPath[])
 	 */
-	public void propertyChanged(int property, IPath[] paths) {
+	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
 		// Do nothing
 	}
 	

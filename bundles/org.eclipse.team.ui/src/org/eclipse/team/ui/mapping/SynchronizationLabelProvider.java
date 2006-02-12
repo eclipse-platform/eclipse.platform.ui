@@ -15,8 +15,8 @@ import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider;
 import org.eclipse.ui.IMemento;
@@ -142,5 +142,15 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 			}
 		}
 		return text;
+	}
+
+	/**
+	 * Return the Common Navigator extension site for this
+	 * label provider.
+	 * @return the Common Navigator extension site for this
+	 * label provider
+	 */
+	public ICommonContentExtensionSite getExtensionSite() {
+		return site;
 	}
 }
