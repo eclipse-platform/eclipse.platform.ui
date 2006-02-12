@@ -148,11 +148,10 @@ public class DataBindingContext implements IDataBindingContext {
 					};
 				}
 
-				IValidator dataTypeValidator = getValidatorRegistry()
-						.get(fromType, toType);
+				IValidator dataTypeValidator = findValidator(fromType, toType);
 				if (dataTypeValidator == null) {
 					throw new BindingException(
-							"No IValidator is registered for conversions from " + fromType.getName() + " to " + toType.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+							"No IValidator is registered for conversions from " + fromType + " to " + toType); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return dataTypeValidator;
 			}
@@ -170,8 +169,8 @@ public class DataBindingContext implements IDataBindingContext {
 				}
 				// FIXME: djo -- This doesn't always work in the case of object
 				// types?
-				if (toType.isAssignableFrom(fromType)
-						|| fromType.isAssignableFrom(toType)) {
+				if (isAssignableFromTo(fromType, toType) //toType.isAssignableFrom(fromType)
+						|| isAssignableFromTo(toType, fromType)) {//fromType.isAssignableFrom(toType)) {
 					return new IdentityConverter(fromType, toType);
 				}
 				return null;
@@ -306,9 +305,9 @@ public class DataBindingContext implements IDataBindingContext {
 		Object fromType = null;
 		if (targetObservable instanceof IObservableValue) {
 			fromType = ((IObservableValue) targetObservable).getValueType();
-		} else if (targetObservable instanceof IObservableCollection) {
-			fromType = ((IObservableCollection) targetObservable)
-					.getElementType();
+//		} else if (targetObservable instanceof IObservableCollection) {
+//			fromType = ((IObservableCollection) targetObservable)
+//					.getElementType();
 		}
 		fillBindSpecDefaults(bindSpec, fromType, null, modelDescription);
 		return bind(targetObservable, createObservable(modelDescription), bindSpec);
@@ -323,8 +322,8 @@ public class DataBindingContext implements IDataBindingContext {
 		if (bindSpec.getDomainValidator() == null) {
 			((BindSpec) bindSpec).setDomainValidator(createDomainValidator(fromType, modelDescriptionOrNull)); // FIXME: Not sure which is the model type
 		}
-		if (bindSpec.getConverter() == null) {
-			((BindSpec) bindSpec).setConverter(createConverter(fromType,
+		if (bindSpec.getModelToTargetConverter() == null) {
+			((BindSpec) bindSpec).setModelToTargetConverter(createConverter(fromType,
 					toType, modelDescriptionOrNull));
 		}
 	}
@@ -477,6 +476,18 @@ public class DataBindingContext implements IDataBindingContext {
 
 	public boolean isAssignableFromTo(Object fromType, Object toType) {
 		return true;
+	}
+	
+	private IValidator findValidator(Object fromType, Object toType) {
+		ValidatorRegistry registry = getValidatorRegistry();
+		IValidator result = null;
+		if (registry != null) {
+			result = registry.get(fromType, toType);
+		}
+		if (result == null) {
+			return parent.findValidator(fromType, toType);
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)

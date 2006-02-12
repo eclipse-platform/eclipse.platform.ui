@@ -31,6 +31,8 @@ public class BindSpec implements IBindSpec {
 
 	private IConverter modelToTargetConverter;
 
+	private IConverter targetToModelConverter;
+
 	private IValidator targetValidator;
 
 	private IDomainValidator domainValidator;
@@ -40,8 +42,6 @@ public class BindSpec implements IBindSpec {
 	private final Integer validatePolicy;
 
 	private final Integer targetUpdatePolicy;
-
-	private final IConverter targetToModelConverter;
 
 	/**
 	 * Creates a bind spec with the given converters, validators, and update
@@ -80,14 +80,6 @@ public class BindSpec implements IBindSpec {
 				domainValidator, null, null, null);
 	}
 
-	public IConverter getModelToTargetConverter() {
-		return modelToTargetConverter;
-	}
-
-	public IConverter getTargetToModelConverter() {
-		return targetToModelConverter;
-	}
-	
 	public Integer getModelUpdatePolicy() {
 		return modelUpdatePolicy;
 	}
@@ -108,14 +100,26 @@ public class BindSpec implements IBindSpec {
 		return domainValidator;
 	}
 
+	public IConverter getModelToTargetConverter() {
+		return modelToTargetConverter;
+	}
+
+	public IConverter getTargetToModelConverter() {
+		return targetToModelConverter;
+	}
+	
+	public void setModelToTargetConverter(IConverter converter) {
+		this.modelToTargetConverter = converter;
+	}
+	
+	public void setTargetToModelConverter(IConverter converter) {
+		this.targetToModelConverter = converter;
+	}
+
 	public void setValidator(IValidator validator) {
 		this.targetValidator = validator;
 	}
-
-	public void setConverter(IConverter converter) {
-		this.modelToTargetConverter = converter;
-	}
-
+	
 	public void setDomainValidator(IDomainValidator validator) {
 		this.domainValidator = validator;
 	}

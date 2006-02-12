@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.api.validation;
 
 /**
  * A validator.  This validator is responsible for telling clients if its associated
- * conversion function will succeed or fail.  For example, a String2IntValidator would
+ * type conversion function will succeed or fail.  For example, a String2IntValidator would
  * only accept source Strings that can successfully be converted to an integer value.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

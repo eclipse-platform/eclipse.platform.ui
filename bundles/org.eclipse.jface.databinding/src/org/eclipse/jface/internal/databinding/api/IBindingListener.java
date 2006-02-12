@@ -25,9 +25,9 @@ public interface IBindingListener {
 	 * occurs in the data flow pipeline.
 	 * 
 	 * @param e The IBindingEvent to handle.
-	 * @return null if no error or an error message to abort the operation.  The
-	 * error will be propagated to the data binding context's error
-	 * message updatable.
+	 * @return null if no error or a ValidationError with an error status to 
+	 * abort the operation.  The error will be propagated to the data binding 
+	 * context's error message updatable.
 	 */
 	public ValidationError bindingEvent(BindingEvent e);
 	

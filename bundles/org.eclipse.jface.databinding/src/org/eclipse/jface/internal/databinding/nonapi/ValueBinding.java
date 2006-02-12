@@ -199,7 +199,8 @@ public class ValueBinding extends Binding {
 	}
 
 	private boolean failure(ValidationError errorMessage) {
-		if (errorMessage != null) {
+		// FIXME: Need to fire a BindingEvent here
+		if (errorMessage != null && errorMessage.status == ValidationError.ERROR) {
 			return true;
 		}
 		return false;

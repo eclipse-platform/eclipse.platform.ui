@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.jface.internal.databinding.api.observable.IDiff;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 /**
  * The event that is passed to a #bindingEvent method of an IBindingListener.
@@ -44,12 +45,6 @@ public class BindingEvent {
 	}
 
 	/**
-	 * A Map of Integer --> String mapping the integer constants for the
-	 * pipeline events defined in this class to their String symbols.
-	 */
-	public final Map pipelineConstants = new HashMap();
-
-	/**
 	 * The model observable for the change that is being processed.
 	 */
 	public final IObservable model;
@@ -76,6 +71,11 @@ public class BindingEvent {
 	 * effect.
 	 */
 	public int pipelinePosition;
+	
+	/**
+	 * The current ValidationError object (if there is one).
+	 */
+	public ValidationError validationError;
 
 	/**
 	 * Holds the value that was retrieved from the source updatable. Setting the
@@ -92,8 +92,6 @@ public class BindingEvent {
 	 * subsequent steps in the data flow pipeline.
 	 */
 	public Object convertedValue = null;
-
-	private HashMap eventConstants;
 
 	/**
 	 * A constant indicating that this event is occuring during a copy from
@@ -149,6 +147,19 @@ public class BindingEvent {
 	 * converted value has been set/changed on the updatable.
 	 */
 	public static final int PIPELINE_AFTER_CHANGE = 4;
+	
+	/**
+	 * A constant indicating that this event is occuring due to either a validation
+	 * error or warning occuring.
+	 */
+	public static final int PIPELINE_VALIDATION_ERROR_OR_WARNING = 5;
+
+	/**
+	 * A Map of Integer --> String mapping the integer constants for the
+	 * pipeline events defined in this class to their String symbols.
+	 */
+	public final Map pipelineConstants = new HashMap();
+	private HashMap eventConstants;
 
 	/**
 	 * Creates a table of constants from this class.
