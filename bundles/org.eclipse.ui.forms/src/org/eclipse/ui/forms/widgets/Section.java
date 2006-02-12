@@ -25,8 +25,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * A variation of the expandable composite that adds optional description below
@@ -82,7 +82,7 @@ public class Section extends ExpandableComposite {
 		super(parent, cstyle|getBackgroundStyle(style), style);
 		int rtl = cstyle & SWT.RIGHT_TO_LEFT;
 		if ((style & DESCRIPTION) != 0) {
-			descriptionControl = new Label(this, SWT.WRAP | rtl);
+			descriptionControl = new Text(this, SWT.READ_ONLY | SWT.WRAP | rtl);
 		}
 		if ((style & TITLE_BAR) != 0) {
 			addListener(SWT.Resize, new Listener() {
@@ -144,8 +144,8 @@ public class Section extends ExpandableComposite {
 	 * @param description
 	 */
 	public void setDescription(String description) {
-		if (descriptionControl instanceof Label)
-			((Label) descriptionControl).setText(description);
+		if (descriptionControl instanceof Text)
+			((Text) descriptionControl).setText(description);
 	}
 
 	/**
@@ -155,8 +155,8 @@ public class Section extends ExpandableComposite {
 	 *         not used to create the control.
 	 */
 	public String getDescription() {
-		if (descriptionControl instanceof Label)
-			return ((Label) descriptionControl).getText();
+		if (descriptionControl instanceof Text)
+			return ((Text) descriptionControl).getText();
 		return null;
 	}
 
