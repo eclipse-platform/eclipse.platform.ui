@@ -15,8 +15,8 @@ import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
 /**
- * A factory for creating validators and converters.  This interface is not
- * intended to be implemented directly.  Instead, extend the abstract 
+ * A factory for creating validators and converters. This interface is not
+ * intended to be implemented directly. Instead, extend the abstract
  * BindSupportFactory class.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -50,19 +50,20 @@ public interface IBindSupportFactory {
 	 * @return a validator, or <code>null</code> if this factory cannot create
 	 *         a validator for the given arguments.
 	 */
-	IValidator createValidator(Object fromType, Object toType,
-			Object modelDescription);
+	IValidator createValidator(Object fromType, Object toType);
 
 	/**
-	 * Creates a domain validator for the given model description.  Either modelType
-	 * or modelDescription can be null, but not both.
+	 * Creates a domain validator for the given model description. Either
+	 * modelType or modelDescription can be null, but not both.
 	 * 
-	 * @param modelType The type to validate or <code>null</code> if not known
-	 * @param modelDescription The model description object or <code>null</code> if
-	 * not known
+	 * @param modelType
+	 *            The type to validate or <code>null</code> if not known
+	 * @param modelDescription
+	 *            The model description object or <code>null</code> if not
+	 *            known
 	 * @return IDomainValidator
 	 */
-	IDomainValidator createDomainValidator(Object modelType, Object modelDescription);
+	IDomainValidator createDomainValidator(Object modelType);
 
 	/**
 	 * Creates a converter for the given from and to types and model
@@ -76,55 +77,17 @@ public interface IBindSupportFactory {
 	 *            The type to convert from
 	 * @param toType
 	 *            The type to convert to, or <code>null</code> if not known
-	 * @param modelDescription
-	 *            The model description object passed to
-	 *            DataBindingContext#bind, or <code>null</code> if not known
 	 * @return a converter, or <code>null</code> if this factory cannot create
 	 *         a converter for the given arguments.
 	 */
-	IConverter createConverter(Object targetType, Object modelType,
-			Object modelDescription);
-	
+	IConverter createConverter(Object fromType, Object toType);
 
 	/**
-	 * Creates a converter for the given from and to types and model
-	 * description. Either toType or modelDescription can be null, but not both.
-	 * The returned converter (if not null) should convert values of type
-	 * fromType to values of type toType (in the case that toType is given), and
-	 * (in the case that modelDescription is given) convert to the type expected
-	 * by updatable objects created from the given model description.
-	 * 
 	 * @param fromType
-	 *            The type to convert from
 	 * @param toType
-	 *            The type to convert to, or <code>null</code> if not known
-	 * @param modelDescription
-	 *            The model description object passed to
-	 *            DataBindingContext#bind, or <code>null</code> if not known
-	 * @return a converter, or <code>null</code> if this factory cannot create
-	 *         a converter for the given arguments.
+	 * @return whether fromType is assignable to toType, or <code>null</code>
+	 *         if this factory cannot determine assignability between the given
+	 *         types
 	 */
-	public IConverter createModelToTargetConverter(Object fromType, Object toType,
-			Object modelDescription);
-	
-	/**
-	 * Creates a converter for the given from and to types and model
-	 * description. Either toType or modelDescription can be null, but not both.
-	 * The returned converter (if not null) should convert values of type
-	 * fromType to values of type toType (in the case that toType is given), and
-	 * (in the case that modelDescription is given) convert to the type expected
-	 * by updatable objects created from the given model description.
-	 * 
-	 * @param fromType
-	 *            The type to convert from
-	 * @param toType
-	 *            The type to convert to, or <code>null</code> if not known
-	 * @param modelDescription
-	 *            The model description object passed to
-	 *            DataBindingContext#bind, or <code>null</code> if not known
-	 * @return a converter, or <code>null</code> if this factory cannot create
-	 *         a converter for the given arguments.
-	 */
-	public IConverter createTargetToModelConverter(Object fromType, Object toType,
-			Object modelDescription);
+	Boolean isAssignableFromTo(Object fromType, Object toType);
 }

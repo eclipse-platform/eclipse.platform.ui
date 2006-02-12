@@ -14,7 +14,6 @@ import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
-import org.eclipse.jface.internal.databinding.api.validation.ValidatorRegistry;
 
 /**
  * A context for binding observable objects with a shared lifecycle. The
@@ -158,40 +157,21 @@ public interface IDataBindingContext {
 	 * @param modelDescription
 	 * @return an IValidator, or <code>null</code> if unsuccessful
 	 */
-	public IValidator createValidator(Object fromType, Object toType,
-			Object modelDescription);
+	public IValidator createValidator(Object fromType, Object toType);
 
-	/**
-	 * Return the validator registry associated with this data binding context
-	 * 
-	 * @return This data binding context's validator registry or null if the parent
-	 * context's validator registry should be used.
-	 */
-	public ValidatorRegistry getValidatorRegistry();
-	
-	/**
-	 * Sets the validator registry associated with this data binding context
-	 * 
-	 * @param registry The registry to use or null to tell this data binding
-	 * context to delegate to its parent's validator registry.
-	 */
-	public void setValidatorRegistry(ValidatorRegistry registry);
-	
 	/**
 	 * Tries to create a converter that can convert from values of type fromType.
 	 * Returns <code>null</code> if no converter could be created. Either
 	 * toType or modelDescription can be <code>null</code>, but not both. The
 	 * implementation of this method will iterate over the registered bind
 	 * support factories in reverse order, passing the given arguments to
-	 * {@link IBindSupportFactory#createConverter(Class, Class, Object)}. The
+	 * {@link IBindSupportFactory#createConverter(Object, Object)}. The
 	 * first non-null converter will be returned. 
 	 * @param fromType
 	 * @param toType
-	 * @param modelDescription
 	 * @return an IConverter, or <code>null</code> if unsuccessful
 	 */
-	public IConverter createConverter(Object fromType, Object toType,
-			Object modelDescription);
+	public IConverter createConverter(Object fromType, Object toType);
 
 	/**
 	 * Disposes of this data binding context and all observable objects created

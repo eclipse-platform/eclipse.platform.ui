@@ -363,42 +363,42 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	// Bulk Modification Operations
 
-	/**
-	 * @TrackedGetter
-	 */
-	public boolean containsAll(Collection c);
+	public boolean containsAll(Collection c) {
+		getterCalled();
+		return super.containsAll(c);
+	}
 
-	/**
-	 * @TrackedGetter
-	 */
-	public boolean addAll(Collection c);
+	public boolean addAll(Collection c) {
+		getterCalled();
+		super.addAll(c);
+	}
 
-	/**
-	 * @TrackedGetter
-	 */
-	public boolean addAll(int index, Collection c);
+	public boolean addAll(int index, Collection c) {
+		getterCalled();
+		super.addAll(c);
+	}
 
-	/**
-	 * @TrackedGetter
-	 */
-	public boolean removeAll(Collection c);
+	public boolean removeAll(Collection c) {
+		getterCalled();
+		super.removeAll(c);
+	}
 
-	/**
-	 * @TrackedGetter
-	 */
-	public boolean retainAll(Collection c);
+	public boolean retainAll(Collection c) {
+		getterCalled();
+		return super.retainAll(c);
+	}
 
 	// Comparison and hashing
 
-	/**
-	 * @TrackedGetter
-	 */
-	public boolean equals(Object o);
+	public boolean equals(Object o) {
+		getterCalled();
+		return super.equals(o);
+	}
 
-	/**
-	 * @TrackedGetter
-	 */
-	public int hashCode();
+	public int hashCode() {
+		getterCalled();
+		return super.hashCode();
+	}
 
 	// Positional Access Operations
 

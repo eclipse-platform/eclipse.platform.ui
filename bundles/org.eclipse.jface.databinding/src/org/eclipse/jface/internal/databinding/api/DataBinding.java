@@ -38,15 +38,20 @@ public class DataBinding {
 	 * {@link IDataBindingContext#addUpdatableFactory(IUpdatableFactory)}. The
 	 * factories will be added in the order given.
 	 * 
-	 * @param factories
+	 * @param observableFactories
+	 * @param bindSupportFactories 
 	 * @return a data binding context
 	 */
 	public static IDataBindingContext createContext(
-			IObservableFactory[] factories) {
+			IObservableFactory[] observableFactories, IBindSupportFactory[] bindSupportFactories) {
 		DataBindingContext result = new DataBindingContext();
-		if (factories != null)
-			for (int i = 0; i < factories.length; i++) {
-				result.addObservableFactory(factories[i]);
+		if (observableFactories != null)
+			for (int i = 0; i < observableFactories.length; i++) {
+				result.addObservableFactory(observableFactories[i]);
+			}
+		if(bindSupportFactories!=null)
+			for (int i = 0; i < bindSupportFactories.length; i++) {
+				result.addBindSupportFactory(bindSupportFactories[i]);
 			}
 		return result;
 	}

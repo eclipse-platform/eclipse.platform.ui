@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,9 +30,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
-import org.eclipse.jface.internal.databinding.api.validation.ValidatorRegistry;
 import org.eclipse.jface.util.Assert;
-
 
 /**
  * @since 3.2
@@ -58,8 +55,6 @@ public class DataBindingContext implements IDataBindingContext {
 
 	private List bindSupportFactories = new ArrayList();
 
-	private ValidatorRegistry validatorRegistry = null;
-	
 	protected int validationTime;
 
 	protected int updateTime;
@@ -77,9 +72,16 @@ public class DataBindingContext implements IDataBindingContext {
 	 * 
 	 */
 	public DataBindingContext() {
-		registerDefaultBindSupportFactory();
 	}
 
+	/**
+	 * @param parent 
+	 * 
+	 */
+	public DataBindingContext(DataBindingContext parent) {
+		this.parent = parent;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -117,73 +119,6 @@ public class DataBindingContext implements IDataBindingContext {
 	 */
 	public IObservableValue getValidationMessage() {
 		return validationMessage;
-	}
-
-	protected void registerDefaultBindSupportFactory() {
-		// Add the default bind support factory
-		addBindSupportFactory(new IBindSupportFactory() {
-
-			public IValidator createValidator(Object fromType, Object toType,
-					Object modelDescription) {
-				if (fromType == null || toType == null) {
-					// System.err.println("FIXME: Boris, is this a bug? In
-					// registerDefaultBindSupportFactory.addBindSupportFactory.createValidator:
-					// fromType is null or toType is null!!!!!"); //$NON-NLS-1$
-					// try {
-					// throw new BindingException("Cannot create proper
-					// IValidator."); //$NON-NLS-1$
-					// } catch (BindingException e) {
-					// e.printStackTrace();
-					// System.err.println();
-					// }
-					return new IValidator() {
-
-						public ValidationError isPartiallyValid(Object value) {
-							return null;
-						}
-
-						public ValidationError isValid(Object value) {
-							return null;
-						}
-					};
-				}
-
-				IValidator dataTypeValidator = findValidator(fromType, toType);
-				if (dataTypeValidator == null) {
-					throw new BindingException(
-							"No IValidator is registered for conversions from " + fromType + " to " + toType); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				return dataTypeValidator;
-			}
-
-			public IConverter createConverter(Object fromType, Object toType,
-					Object modelDescription) {
-				if (toType == null) {
-					return null;
-				}
-				if (fromType == toType) {
-					return new IdentityConverter(fromType, toType);
-				}
-				if (ConversionFunctionRegistry.canConvertPair(fromType, toType)) {
-					return new FunctionalConverter(fromType, toType);
-				}
-				// FIXME: djo -- This doesn't always work in the case of object
-				// types?
-				if (isAssignableFromTo(fromType, toType) //toType.isAssignableFrom(fromType)
-						|| isAssignableFromTo(toType, fromType)) {//fromType.isAssignableFrom(toType)) {
-					return new IdentityConverter(fromType, toType);
-				}
-				return null;
-			}
-
-			public IDomainValidator createDomainValidator(Object modelType, Object modelDescription) {
-				return new IDomainValidator() {
-					public ValidationError isValid(Object value) {
-						return null;
-					}
-				};
-			}
-		});
 	}
 
 	private void removeValidationListenerAndMessage(List listOfPairs,
@@ -251,11 +186,11 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      org.eclipse.jface.databinding.IObservable,
 	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
-	public IBinding bind(IObservable targetObservable, IObservable modelObservable,
-			IBindSpec bindSpec) {
+	public IBinding bind(IObservable targetObservable,
+			IObservable modelObservable, IBindSpec bindSpec) {
 		Binding binding;
 		if (bindSpec == null) {
-			bindSpec = new BindSpec(null, null,null,null);
+			bindSpec = new BindSpec(null, null, null, null);
 		}
 		if (targetObservable instanceof IObservableValue) {
 			if (modelObservable instanceof IObservableValue) {
@@ -288,7 +223,8 @@ public class DataBindingContext implements IDataBindingContext {
 	 */
 	public IBinding bind(Object targetDescription, IObservable modelObservable,
 			IBindSpec bindSpec) {
-		return bind(createObservable(targetDescription), modelObservable, bindSpec);
+		return bind(createObservable(targetDescription), modelObservable,
+				bindSpec);
 	}
 
 	/*
@@ -300,80 +236,87 @@ public class DataBindingContext implements IDataBindingContext {
 	public IBinding bind(IObservable targetObservable, Object modelDescription,
 			IBindSpec bindSpec) {
 		if (bindSpec == null) {
-			bindSpec = new BindSpec(null, null,null,null);
+			bindSpec = new BindSpec(null, null, null, null);
 		}
 		Object fromType = null;
 		if (targetObservable instanceof IObservableValue) {
 			fromType = ((IObservableValue) targetObservable).getValueType();
-//		} else if (targetObservable instanceof IObservableCollection) {
-//			fromType = ((IObservableCollection) targetObservable)
-//					.getElementType();
+			// } else if (targetObservable instanceof IObservableCollection) {
+			// fromType = ((IObservableCollection) targetObservable)
+			// .getElementType();
 		}
 		fillBindSpecDefaults(bindSpec, fromType, null, modelDescription);
-		return bind(targetObservable, createObservable(modelDescription), bindSpec);
+		return bind(targetObservable, createObservable(modelDescription),
+				bindSpec);
 	}
 
 	protected void fillBindSpecDefaults(IBindSpec bindSpec, Object fromType,
 			Object toType, Object modelDescriptionOrNull) {
 		if (bindSpec.getTypeConversionValidator() == null) {
-			((BindSpec) bindSpec).setValidator(createValidator(fromType,
-					toType, modelDescriptionOrNull));
+			((BindSpec) bindSpec)
+					.setValidator(createValidator(fromType, toType));
 		}
 		if (bindSpec.getDomainValidator() == null) {
-			((BindSpec) bindSpec).setDomainValidator(createDomainValidator(fromType, modelDescriptionOrNull)); // FIXME: Not sure which is the model type
+			((BindSpec) bindSpec)
+					.setDomainValidator(createDomainValidator(fromType)); // FIXME:
+			// Not
+			// sure
+			// which
+			// is
+			// the
+			// model
+			// type
 		}
 		if (bindSpec.getModelToTargetConverter() == null) {
-			((BindSpec) bindSpec).setModelToTargetConverter(createConverter(fromType,
-					toType, modelDescriptionOrNull));
+			((BindSpec) bindSpec).setModelToTargetConverter(createConverter(
+					fromType, toType));
 		}
 	}
 
-	public IValidator createValidator(Object fromType, Object toType,
-			Object modelDescription) {
+	public IValidator createValidator(Object fromType, Object toType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
 					.get(i);
 			IValidator validator = bindSupportFactory.createValidator(fromType,
-					toType, modelDescription);
+					toType);
 			if (validator != null) {
 				return validator;
 			}
 		}
 		if (parent != null) {
-			return parent.createValidator(fromType, toType, modelDescription);
+			return parent.createValidator(fromType, toType);
 		}
 		return null;
 	}
 
-	public IDomainValidator createDomainValidator(Object modelType,	Object modelDescription) {
+	public IDomainValidator createDomainValidator(Object modelType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
 					.get(i);
-			IDomainValidator validator = bindSupportFactory.createDomainValidator(modelType,
-					modelDescription);
+			IDomainValidator validator = bindSupportFactory
+					.createDomainValidator(modelType);
 			if (validator != null) {
 				return validator;
 			}
 		}
 		if (parent != null) {
-			return parent.createDomainValidator(modelType, modelDescription);
+			return parent.createDomainValidator(modelType);
 		}
 		return null;
 	}
 
-	public IConverter createConverter(Object fromType, Object toType,
-			Object modelDescription) {
+	public IConverter createConverter(Object fromType, Object toType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
 					.get(i);
 			IConverter converter = bindSupportFactory.createConverter(fromType,
-					toType, modelDescription);
+					toType);
 			if (converter != null) {
 				return converter;
 			}
 		}
 		if (parent != null) {
-			return parent.createConverter(fromType, toType, modelDescription);
+			return parent.createConverter(fromType, toType);
 		}
 		return null;
 	}
@@ -386,7 +329,8 @@ public class DataBindingContext implements IDataBindingContext {
 	 */
 	public IBinding bind(Object targetDescription, Object modelDescription,
 			IBindSpec bindSpec) {
-		return bind(createObservable(targetDescription), modelDescription, bindSpec);
+		return bind(createObservable(targetDescription), modelDescription,
+				bindSpec);
 	}
 
 	/*
@@ -401,26 +345,29 @@ public class DataBindingContext implements IDataBindingContext {
 		}
 		return updatable;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#registerForDispose(org.eclipse.jface.databinding.IObservable)
 	 */
 	public void registerForDispose(IObservable updatable) {
 		createdObservables.add(updatable);
 	}
-	
+
 	protected IObservable doCreateObservable(Object description,
 			DataBindingContext thisDatabindingContext) {
 		for (int i = factories.size() - 1; i >= 0; i--) {
 			IObservableFactory factory = (IObservableFactory) factories.get(i);
-			IObservable result = factory.createObservable(thisDatabindingContext, description);
+			IObservable result = factory.createObservable(
+					thisDatabindingContext, description);
 			if (result != null) {
 				return result;
 			}
 		}
 		if (parent != null) {
-			return parent
-					.doCreateObservable(description, thisDatabindingContext);
+			return parent.doCreateObservable(description,
+					thisDatabindingContext);
 		}
 		throw new BindingException("could not find updatable for " //$NON-NLS-1$
 				+ description);
@@ -447,26 +394,32 @@ public class DataBindingContext implements IDataBindingContext {
 		Assert.isTrue(false, "updateModels is not yet implemented"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#addBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
 	 */
 	public void addBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.add(listener);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#removeBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
 	 */
 	public void removeBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.remove(listener);
 	}
-	
+
 	private List bindingEventListeners = new ArrayList();
-	
+
 	protected ValidationError fireBindingEvent(BindingEvent event) {
 		ValidationError result = null;
-		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter.hasNext();) {
-			IBindingListener listener = (IBindingListener) bindingEventIter.next();
+		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter
+				.hasNext();) {
+			IBindingListener listener = (IBindingListener) bindingEventIter
+					.next();
 			result = listener.bindingEvent(event);
 			if (result != null)
 				break;
@@ -474,33 +427,26 @@ public class DataBindingContext implements IDataBindingContext {
 		return result;
 	}
 
+	/**
+	 * @param fromType
+	 * @param toType
+	 * @return whether fromType is assignable to toType
+	 */
 	public boolean isAssignableFromTo(Object fromType, Object toType) {
+		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
+			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+					.get(i);
+			Boolean result = bindSupportFactory.isAssignableFromTo(fromType,
+					toType);
+			if (result != null) {
+				return result.booleanValue();
+			}
+		}
+		if (parent != null) {
+			return parent.isAssignableFromTo(fromType, toType);
+		}
+		// TODO does this default make sense?
 		return true;
 	}
-	
-	private IValidator findValidator(Object fromType, Object toType) {
-		ValidatorRegistry registry = getValidatorRegistry();
-		IValidator result = null;
-		if (registry != null) {
-			result = registry.get(fromType, toType);
-		}
-		if (result == null) {
-			return parent.findValidator(fromType, toType);
-		}
-		return result;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IDataBindingContext#getValidatorRegistry()
-	 */
-	public ValidatorRegistry getValidatorRegistry() {
-		return validatorRegistry;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IDataBindingContext#setValidatorRegistry(org.eclipse.jface.internal.databinding.api.validation.ValidatorRegistry)
-	 */
-	public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
-		this.validatorRegistry = validatorRegistry;
-	}
 }
