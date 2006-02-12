@@ -11,32 +11,47 @@
  */
 package org.eclipse.jface.internal.databinding.api.conversion;
 
-
-
-
 /**
- * TheNullConverter.  TheNullObjectPattern for any type to String conversion.
+ * TheIdentityConverter. Returns the source value (the identity function).
  */
-public class TheNullStringFunction implements IConverter {
+public class IdentityConverter implements IConverter {
+
+	private Class fromType;
+
+	private Class toType;
 
 	/**
-	 * Null converter singleton
+	 * @param type
 	 */
-	public static final IConverter NULL = new TheNullStringFunction();
+	public IdentityConverter(Class type) {
+		this.fromType = type;
+		this.toType = type;
+	}
 
-	/* (non-Javadoc)
+	/**
+	 * @param fromType
+	 * @param toType
+	 */
+	public IdentityConverter(Class fromType, Class toType) {
+		this.fromType = fromType;
+		this.toType = toType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
-        return ""; //$NON-NLS-1$
+		return source;
 	}
 
 	public Object getFromType() {
-		return null;
+		return fromType;
 	}
 
 	public Object getToType() {
-		return String.class;
+		return toType;
 	}
 
 }

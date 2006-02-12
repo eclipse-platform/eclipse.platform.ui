@@ -14,9 +14,10 @@ package org.eclipse.jface.internal.databinding.api;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.api.conversion.TheIdentityFunction;
+import org.eclipse.jface.internal.databinding.api.conversion.IdentityConverter;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ReadOnlyValidator;
@@ -31,12 +32,18 @@ import org.eclipse.jface.internal.databinding.api.validation.String2LongValidato
 import org.eclipse.jface.internal.databinding.api.validation.String2ShortValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 import org.eclipse.jface.internal.databinding.nonapi.BindingMessages;
+import org.eclipse.jface.internal.databinding.nonapi.ClassLookupSupport;
 import org.eclipse.jface.internal.databinding.nonapi.Pair;
 
+/**
+ * @since 3.2
+ *
+ */
 public final class DefaultBindSupportFactory implements IBindSupportFactory {
 	
 	private ValidatorRegistry validatorRegistry = new ValidatorRegistry();
-
+	private Map converterMap;
+	
 	public IValidator createValidator(Object fromType, Object toType) {
 		if (fromType == null || toType == null) {
 			return new IValidator() {
@@ -65,23 +72,59 @@ public final class DefaultBindSupportFactory implements IBindSupportFactory {
 	}
 
 	public IConverter createConverter(Object fromType, Object toType) {
-		if (toType == null) {
+		if (!(fromType instanceof Class) || !(toType instanceof Class)) {
 			return null;
 		}
-		if (fromType == toType) {
-			return TheIdentityFunction.IDENTITY;
-		}
-		// TODO string-based lookup of converter
-		if (ConversionFunctionRegistry.canConvertPair(fromType, toType)) {
-			return new FunctionalConverter(fromType, toType);
-		}
-		// FIXME: djo -- This doesn't always work in the case of object
-		// types?
-		Boolean assignableFromTo = isAssignableFromTo(fromType, toType);
-		if (assignableFromTo!=null && assignableFromTo.booleanValue()) {
-			return TheIdentityFunction.IDENTITY;
+		Map converterMap = getConverterMap();
+		Class[] supertypeHierarchyFlattened = ClassLookupSupport.getTypeHierarchyFlattened((Class) fromType);
+		for(int i=0; i<supertypeHierarchyFlattened.length; i++) {
+			Class fromClass = supertypeHierarchyFlattened[i];
+			if (fromClass == toType) {
+				// converting to toType is just a widening
+				return new IdentityConverter(fromClass, (Class) toType);
+			}
+			Pair key = new Pair(fromClass, toType);
+			Object converterOrClassname = converterMap.get(key);
+			if(converterOrClassname instanceof IConverter) {
+				return (IConverter) converterOrClassname;
+			} else if(converterOrClassname instanceof String) {
+				String classname = (String) converterOrClassname;
+				Class converterClass;
+				try {
+					converterClass = Class.forName(classname);
+					IConverter result = (IConverter) converterClass.newInstance();
+					converterMap.put(key, result);
+					return result;
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return null;
+	}
+
+	private Map getConverterMap() {
+		// using string-based lookup avoids loading of too many classes
+		if(converterMap==null) {
+			converterMap = new HashMap();
+			converterMap.put(new Pair("java.util.Date","java.lang.String"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertDate2String");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.math.BigDecimal"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2BigDecimal");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Boolean"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Boolean");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Byte"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Byte");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Character"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Character");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.util.Date"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Date");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Double"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Double");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Float"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Float");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Integer"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Integer");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Long"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Long");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.util.String","java.lang.Short"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Short");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			converterMap.put(new Pair("java.lang.Object","java.lang.String"), "org.eclipse.jface.internal.databinding.api.conversion.ToStringConverter");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return converterMap;
 	}
 
 	public IDomainValidator createDomainValidator(Object modelType) {
