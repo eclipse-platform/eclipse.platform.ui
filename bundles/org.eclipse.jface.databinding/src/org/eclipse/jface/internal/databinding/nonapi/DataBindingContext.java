@@ -58,7 +58,7 @@ public class DataBindingContext implements IDataBindingContext {
 
 	private List bindSupportFactories = new ArrayList();
 
-	private ValidatorRegistry validatorRegistry;
+	private ValidatorRegistry validatorRegistry = null;
 	
 	protected int validationTime;
 
