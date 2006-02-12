@@ -51,4 +51,15 @@ public class DataBinding {
 		return result;
 	}
 
+	/**
+	 * Returns a new data binding context with the given parent.
+	 * 
+	 * @param factories
+	 * @return a data binding context
+	 */
+	public static IDataBindingContext createContext(IDataBindingContext parent) {
+		DataBindingContext result = new DataBindingContext((DataBindingContext) parent);
+		return result;
+	}
+	
 }

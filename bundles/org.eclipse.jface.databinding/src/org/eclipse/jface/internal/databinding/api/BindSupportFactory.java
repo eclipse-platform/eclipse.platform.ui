@@ -18,46 +18,17 @@ import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 /**
  * @since 3.2
  */
-public abstract class BindSupportFactory implements IBindSupportFactory {
+abstract public class BindSupportFactory implements IBindSupportFactory {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createValidator(java.lang.Object, java.lang.Object, java.lang.Object)
-	 */
-	public IValidator createValidator(Object fromType, Object toType,
-			Object modelDescription) {
+	public IValidator createValidator(Object fromType, Object toType) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createDomainValidator(java.lang.Object, java.lang.Object)
-	 */
-	public IDomainValidator createDomainValidator(Object modelType,
-			Object modelDescription) {
+	public IDomainValidator createDomainValidator(Object modelType) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createConverter(java.lang.Object, java.lang.Object, java.lang.Object)
-	 */
-	public IConverter createConverter(Object targetType, Object modelType,
-			Object modelDescription) {
+	public IConverter createConverter(Object targetType, Object modelType) {
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createModelToTargetConverter(java.lang.Object, java.lang.Object, java.lang.Object)
-	 */
-	public IConverter createModelToTargetConverter(Object fromType,
-			Object toType, Object modelDescription) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createTargetToModelConverter(java.lang.Object, java.lang.Object, java.lang.Object)
-	 */
-	public IConverter createTargetToModelConverter(Object fromType,
-			Object toType, Object modelDescription) {
-		return null;
-	}
-
 }
