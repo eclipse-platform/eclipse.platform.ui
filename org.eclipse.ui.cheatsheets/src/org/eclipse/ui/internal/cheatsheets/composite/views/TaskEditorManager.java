@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.cheatsheets.ITaskEditor;
+import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
@@ -42,11 +42,11 @@ public class TaskEditorManager {
 		return instance;
 	}
 
-	public ITaskEditor getEditor(String editorKind) {
+	public TaskEditor getEditor(String editorKind) {
 		CheatSheetRegistryReader.TaskEditorNode editorInfo =
 			CheatSheetRegistryReader.getInstance().findTaskEditor(editorKind);
 		if (editorInfo != null) {
-			ITaskEditor editorInstance = null;
+			TaskEditor editorInstance = null;
 			Class extClass = null;
 			String className = editorInfo.getClassName();
 			try {
@@ -61,7 +61,7 @@ public class TaskEditorManager {
 				if (extClass != null) {
 					Constructor c = extClass.getConstructor(new Class[0]);
 					Object[] parameters = new Object[0];
-					editorInstance = (ITaskEditor) c.newInstance(parameters);
+					editorInstance = (TaskEditor) c.newInstance(parameters);
 				}
 			} catch (Exception e) {
 				String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {className}));

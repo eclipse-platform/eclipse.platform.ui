@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.cheatsheets.ITaskExplorer;
+import org.eclipse.ui.cheatsheets.TaskExplorer;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
@@ -47,11 +47,11 @@ private static TaskExplorerManager instance;
 		return instance;
 	}
 	
-	public ITaskExplorer getExplorer(String explorerKind) {
+	public TaskExplorer getExplorer(String explorerKind) {
 		CheatSheetRegistryReader.TaskExplorerNode explorerInfo =
 			CheatSheetRegistryReader.getInstance().findTaskExplorer(explorerKind);
 		if (explorerInfo != null) {
-			ITaskExplorer explorerInstance = null;
+			TaskExplorer explorerInstance = null;
 			Class extClass = null;
 			String className = explorerInfo.getClassName();
 			try {
@@ -66,7 +66,7 @@ private static TaskExplorerManager instance;
 				if (extClass != null) {
 					Constructor c = extClass.getConstructor(new Class[0]);
 					Object[] parameters = new Object[0];
-					explorerInstance = (ITaskExplorer) c.newInstance(parameters);
+					explorerInstance = (TaskExplorer) c.newInstance(parameters);
 				}
 			} catch (Exception e) {
 				String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {className}));

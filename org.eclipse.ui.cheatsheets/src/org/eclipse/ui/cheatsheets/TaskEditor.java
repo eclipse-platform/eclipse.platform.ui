@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,37 +24,36 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * @since 3.2
  */
 
-public interface ITaskEditor {
+public abstract class TaskEditor {
 
 	/**
 	 * Creates the widget
 	 * @param parent
 	 * @param toolkit
 	 */
-	public void createControl(Composite parent, FormToolkit toolkit);
+	public abstract void createControl(Composite parent, FormToolkit toolkit);
 
 	/**
 	 * @return the Control created by a previous call to CreateControl()
 	 */
-	public Control getControl();
+	public abstract Control getControl();
 
 	/**
 	 * Starts editing the provided task. The editor is responsible
-	 * for setting the 'percentage complete' state of the task and 
-	 * saving its state. createControl() will always be called before setInput().
+	 * for saving its state. createControl() will always be called before setInput().
+	 * @param task The task associated with this editor
+	 * @param memento The state of this task saved from a previous invocation. 
 	 * The memento will be <b>null</b> if the task has not been previously started
 	 * or if it is being restarted. If the editor is being restored from a previous
 	 * session the memento will contain the last saved state.
-	 * @param task The task associated with this editor
-	 * @param memento The state of this task saved from a previous invocation, may be null. 
 	 */
-	public void setInput(ICompositeCheatSheetTask task, IMemento memento);
+	public abstract void setInput(IEditableTask task, IMemento memento);
 
 	/**
 	 * Saves the object state within a memento.
 	 *
 	 * @param memento a memento to receive the object state
 	 */
-	public void saveState(IMemento memento);
+	public abstract void saveState(IMemento memento);
 
 }

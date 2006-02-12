@@ -20,7 +20,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskEditor;
+import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 /**
  * Class to save and restore composite cheatsheet state using a memento
  * There is a child memento for each task which contains keys for the
- * state and percentage complete. There is also a grandchild memento for 
+ * state complete. There is also a grandchild memento for 
  * each task that has been started.
  */
 
@@ -51,7 +51,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 			return Status.OK_STATUS;
 		}	
         taskMementoMap = createTaskMap(readMemento);
-        loadTaskState(taskMementoMap, (CheatSheetTask)model.getRootTask());
+        loadTaskState(taskMementoMap, (AbstractTask)model.getRootTask());
         loadCheatsheetManagerData(readMemento, model.getCheatSheetManager());
         return Status.OK_STATUS;
 	}
@@ -68,7 +68,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 		return map;
 	}
 
-	private void loadTaskState(Map taskMap, CheatSheetTask task) {
+	private void loadTaskState(Map taskMap, AbstractTask task) {
 		ICompositeCheatSheetTask[] children = task.getSubtasks();
 		IMemento memento = (IMemento)taskMap.get(task.getId());
 		if (memento != null) {
@@ -76,13 +76,12 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 			if (state != null) {
 				task.setState(Integer.parseInt(state));
 			}
-			String percentage = memento.getString(ICompositeCheatsheetTags.PERCENTAGE_COMPLETE);
-			if (percentage != null) {
-				task.setPercentageComplete(Integer.parseInt(percentage));
-			}
 		}
-		for (int i = 0; i < children.length; i++) {		
-			loadTaskState(taskMap, (CheatSheetTask) children[i]);
+		if (task instanceof TaskGroup) {
+			for (int i = 0; i < children.length; i++) {		
+				loadTaskState(taskMap, (AbstractTask) children[i]);
+			}
+			((TaskGroup)task).checkState();
 		}
 	}
 	
@@ -107,7 +106,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 	public IStatus saveCompositeState(CompositeCheatSheetModel model) {
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE);
 		writeMemento.putString(IParserTags.ID, model.getId());		
-        saveTaskState(writeMemento, (CheatSheetTask)model.getRootTask());
+        saveTaskState(writeMemento, (AbstractTask)model.getRootTask());
         saveCheatSheetManagerData(writeMemento, model.getCheatSheetManager());
 		taskMementoMap = createTaskMap(writeMemento);
 		return CheatSheetPlugin.getPlugin().saveMemento(writeMemento, model.getId() + DOT_XML);
@@ -127,14 +126,12 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 		}
 	}
 
-	private void saveTaskState(IMemento writeMemento, CheatSheetTask task) {
+	private void saveTaskState(IMemento writeMemento, AbstractTask task) {
 		IMemento childMemento = writeMemento.createChild(ICompositeCheatsheetTags.TASK);
 		childMemento.putString(ICompositeCheatsheetTags.TASK_ID, task.getId());
 		childMemento.putString(ICompositeCheatsheetTags.STATE, Integer.toString(task.getState())); 
-		childMemento.putString(ICompositeCheatsheetTags.PERCENTAGE_COMPLETE, Integer.toString(task.getPercentageComplete())); 
-
-		ICompositeCheatSheetTask[] subtasks = task.getSubtasks();
-		ITaskEditor editor = task.getEditor();
+		
+		TaskEditor editor = getEditor(task);
 		if (editor != null) {
 			IMemento taskDataMemento = childMemento.createChild(ICompositeCheatsheetTags.TASK_DATA);
 			editor.saveState(taskDataMemento);
@@ -146,9 +143,17 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 				previousDataMemento.putMemento(taskData);
 			}
 		}
+		ICompositeCheatSheetTask[] subtasks = task.getSubtasks();
 		for (int i = 0; i < subtasks.length; i++) {
-			saveTaskState(writeMemento, (CheatSheetTask)subtasks[i]);
+			saveTaskState(writeMemento, (AbstractTask)subtasks[i]);
 		}
+	}
+
+	private TaskEditor getEditor(AbstractTask task) {
+        if (task instanceof EditableTask) {
+        	return ((EditableTask)task).getEditor();
+        }
+		return null;
 	}
 
 	public IMemento getTaskMemento(String id) {

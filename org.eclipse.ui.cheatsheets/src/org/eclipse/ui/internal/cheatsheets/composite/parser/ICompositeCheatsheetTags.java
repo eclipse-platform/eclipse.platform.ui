@@ -21,6 +21,7 @@ public interface ICompositeCheatsheetTags {
 	public static final String COMPOSITE_CHEATSHEET= "compositeCheatsheet"; //$NON-NLS-1$
 	public static final String COMPOSITE_CHEATSHEET_STATE= "compositeCheatSheetState"; //$NON-NLS-1$
 	public static final String TASK = "task"; //$NON-NLS-1$
+	public static final String TASK_GROUP = "taskGroup"; //$NON-NLS-1$
 	public static final String EXPLORER = "explorer"; //$NON-NLS-1$
 	public static final String NAME = "name"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$
@@ -28,7 +29,6 @@ public interface ICompositeCheatsheetTags {
 	public static final String ON_COMPLETION = "onCompletion"; //$NON-NLS-1$
 	public static final String DEPENDS_ON = "dependsOn"; //$NON-NLS-1$
 	public static final String STATE = "state"; //$NON-NLS-1$
-	public static final String PERCENTAGE_COMPLETE = "percentageComplete"; //$NON-NLS-1$
 	
 	// Attribute values
 	public static final String TREE = "tree"; //$NON-NLS-1$

@@ -21,8 +21,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.ResourceFinder;
-import org.eclipse.ui.internal.cheatsheets.composite.model.CheatSheetTask;
+import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
+import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.CompositeCheatSheetParser;
 
 public class TestCompositeParser extends TestCase {
@@ -60,6 +61,7 @@ public class TestCompositeParser extends TestCase {
 		CompositeCheatSheetModel model = parseTestFile("SingleTask.xml");
 		assertNotNull(model);
 		assertTrue(parser.getStatus().isOK());
+		assertFalse(((EditableTask)model.getRootTask()).isSkippable());
 	}
 	
 	public void testNoTasks() {
@@ -106,22 +108,24 @@ public class TestCompositeParser extends TestCase {
 		CompositeCheatSheetModel model = parseTestFile("TaskDependency.xml");
 		assertNotNull(model);
 		assertTrue(parser.getStatus().isOK());
-		CheatSheetTask task1 = model.getDependencies().getTask("task1");
-		CheatSheetTask task2 = model.getDependencies().getTask("task2");
+		AbstractTask task1 = model.getDependencies().getTask("task1");
+		AbstractTask task2 = model.getDependencies().getTask("task2");
 		assertTrue(task1.getRequiredTasks().length == 0);
 		assertTrue(task1.getSuccessorTasks().length == 1);
 		assertEquals(task2, task1.getSuccessorTasks()[0]);
 		assertTrue(task2.getSuccessorTasks().length == 0);
 		assertTrue(task2.getRequiredTasks().length == 1);
 		assertEquals(task1, task2.getRequiredTasks()[0]);
+		assertTrue(task1.isSkippable());
+		assertFalse(task2.isSkippable());
 	}
 	
 	public void testBackwardDependency() {
 		CompositeCheatSheetModel model = parseTestFile("BackwardDependency.xml");
 		assertNotNull(model);
 		assertTrue(parser.getStatus().isOK());
-		CheatSheetTask task1 = model.getDependencies().getTask("task1");
-		CheatSheetTask task2 = model.getDependencies().getTask("task2");
+		AbstractTask task1 = model.getDependencies().getTask("task1");
+		AbstractTask task2 = model.getDependencies().getTask("task2");
 		assertTrue(task1.getRequiredTasks().length == 0);
 		assertTrue(task1.getSuccessorTasks().length == 1);
 		assertEquals(task2, task1.getSuccessorTasks()[0]);
@@ -142,7 +146,6 @@ public class TestCompositeParser extends TestCase {
 		assertStatusContains(parser.getStatus(), "Invalid id");
 	}
 	
-
 	public void testCircularDependency() {
 		assertNull(parseTestFile("CircularDependency.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());

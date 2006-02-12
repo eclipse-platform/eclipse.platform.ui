@@ -14,8 +14,6 @@ package org.eclipse.ui.internal.cheatsheets.composite.parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Hashtable;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -25,8 +23,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
-import org.eclipse.ui.internal.cheatsheets.composite.model.CheatSheetTask;
+import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
+import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
+import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParserException;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.w3c.dom.Document;
@@ -170,7 +170,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 					throw new CheatSheetParserException(message);
 				}
 				
-				String title = ""; //$NON-NLS-1$
+				String name = ""; //$NON-NLS-1$
 				String explorerId = ICompositeCheatsheetTags.TREE;
 				
 				NamedNodeMap attributes = rootnode.getAttributes();
@@ -178,15 +178,15 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 					for (int x = 0; x < attributes.getLength(); x++) {
 						Node attribute = attributes.item(x);
 						String attributeName = attribute.getNodeName();
-						if ( attributeName != null && attributeName.equals(IParserTags.TITLE)) {
-							title= attribute.getNodeValue();
+						if ( attributeName != null && attributeName.equals(ICompositeCheatsheetTags.NAME)) {
+							name= attribute.getNodeValue();
 						}
 						if (attributeName.equals(ICompositeCheatsheetTags.EXPLORER)) {
 							explorerId= attribute.getNodeValue();
 						}
 					}
 				}
-				CompositeCheatSheetModel compositeCS = new CompositeCheatSheetModel(title, title, explorerId);
+				CompositeCheatSheetModel compositeCS = new CompositeCheatSheetModel(name, name, explorerId);
 				
 				parseCompositeCheatSheetChildren(rootnode, compositeCS);
 				
@@ -211,8 +211,8 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		NodeList childNodes = compositeCSNode.getChildNodes();
 		for (int index = 0; index < childNodes.getLength(); index++) {
 			Node nextNode = childNodes.item(index);
-			if (nextNode.getNodeName() == ICompositeCheatsheetTags.TASK) {
-				CheatSheetTask task = parseTask(nextNode, model);
+			if (isAbstractTask(nextNode.getNodeName()) ) {
+				AbstractTask task = parseAbstractTask(nextNode, model);
 			    if (model.getRootTask() == null ) { 
 					model.setRootTask(task);
 					parseTaskChildren(nextNode, task, model);
@@ -222,29 +222,49 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			}
 		}		
 	}
+
+	public static boolean isAbstractTask(String nodeName) {
+		return nodeName == ICompositeCheatsheetTags.TASK ||
+			nodeName == ICompositeCheatsheetTags.TASK_GROUP;
+	}
 	
-	private void parseTaskChildren(Node parentNode, CheatSheetTask parentTask, CompositeCheatSheetModel model) {
+	private void parseTaskChildren(Node parentNode, AbstractTask parentTask, CompositeCheatSheetModel model) {
 		NodeList childNodes = parentNode.getChildNodes();
+		ITaskParseStrategy strategy = parentTask.getParserStrategy();
+		strategy.init();
 		for (int index = 0; index < childNodes.getLength(); index++) {
 			Node childNode = childNodes.item(index);
-			String nodeName = childNode.getNodeName();
-			if (nodeName == ICompositeCheatsheetTags.TASK) {
-				CheatSheetTask task = parseTask(childNode, model);
-				parentTask.addSubtask(task);
-				parseTaskChildren(childNode, task, model);
-			} else if (nodeName == IParserTags.PARAM) {
-				addParameter(parentTask, childNode.getAttributes());				
-			} else if (nodeName == IParserTags.INTRO) {
-				parentTask.setDescription(parseTextMarkup(childNode, parentTask));
-			} else if (nodeName == ICompositeCheatsheetTags.ON_COMPLETION) {
-				parentTask.setCompletionMessage(parseTextMarkup(childNode, parentTask));
-			} else if (nodeName == ICompositeCheatsheetTags.DEPENDS_ON) {
-				parseDependency(childNode, parentTask, model);
+			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+				String nodeName = childNode.getNodeName();
+				if (nodeName == IParserTags.PARAM) {
+					addParameter(parentTask, childNode.getAttributes());			
+				} else if (nodeName == IParserTags.INTRO) {
+					parentTask.setDescription(parseTextMarkup(childNode, parentTask, this));
+				} else if (nodeName == ICompositeCheatsheetTags.ON_COMPLETION) {
+					parentTask.setCompletionMessage(parseTextMarkup(childNode, parentTask, this));						
+				} else if (nodeName == ICompositeCheatsheetTags.DEPENDS_ON) {
+					parseDependency(childNode, parentTask, model);
+				} else if (CompositeCheatSheetParser.isAbstractTask(nodeName)) {
+					if (parentTask instanceof TaskGroup) {
+					    AbstractTask task = parseAbstractTask(childNode, model);
+					    ((TaskGroup)parentTask).addSubtask(task);
+					    parseTaskChildren(childNode, task, model);
+					}
+			    } else {
+					if (!strategy.parseElementNode(childNode, parentNode, parentTask, this)) {
+						String message = NLS
+						.bind(
+								Messages.WARNING_PARSING_UNKNOWN_ELEMENT,
+								(new Object[] { nodeName,
+										parentNode.getNodeName() }));
+				        addStatus(IStatus.WARNING, message, null);
+					}
+				}
 			}
 		}	
 	}
 
-	private void parseDependency(Node taskNode, CheatSheetTask task, CompositeCheatSheetModel model) {
+	private void parseDependency(Node taskNode, AbstractTask task, CompositeCheatSheetModel model) {
 		NamedNodeMap attributes = taskNode.getAttributes();
 		if (attributes != null) {
 		     Node taskAttribute = attributes.getNamedItem(ICompositeCheatsheetTags.TASK);
@@ -257,7 +277,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		}	
 	}
 
-	private void addParameter(CheatSheetTask parentTask, NamedNodeMap attributes) {
+	private void addParameter(AbstractTask parentTask, NamedNodeMap attributes) {
 		String name = null;
 		String value = null;
 
@@ -287,12 +307,13 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		
 	}
 
-	private CheatSheetTask parseTask(Node taskNode, CompositeCheatSheetModel model) {
-		CheatSheetTask task;
+	private AbstractTask parseAbstractTask(Node taskNode, CompositeCheatSheetModel model) {
+		AbstractTask task;
 		NamedNodeMap attributes = taskNode.getAttributes();
 		String kind = null;
-		String title = null;
+		String name = null;
 		String id = null;
+		boolean skippable = false;
 		if (attributes != null) {
 			for (int x = 0; x < attributes.getLength(); x++) {
 				Node attribute = attributes.item(x);
@@ -302,19 +323,24 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 				if (attributeName.equals(ICompositeCheatsheetTags.KIND)) {
 					kind = attribute.getNodeValue();
 				}
-				if (attributeName.equals(IParserTags.TITLE)) {
-					title= attribute.getNodeValue();
+				if (attributeName.equals(ICompositeCheatsheetTags.NAME)) {
+					name= attribute.getNodeValue();
 				}
 				if (attributeName.equals(IParserTags.ID)) {
-					id= attribute.getNodeValue();
+					id = attribute.getNodeValue();
+				}			
+				if (attributeName.equals(IParserTags.SKIP)) {
+					skippable = "true".equalsIgnoreCase(attribute.getNodeValue()); //$NON-NLS-1$
 				}				
 			}
 		}
-		Hashtable params = new Hashtable();
+
 		if (id == null) {
 			id = autoGenerateId();
 		}
-		task= new CheatSheetTask(model, id, title, kind, params, title);
+		String nodeName = taskNode.getNodeName();
+		task = createTask(nodeName, model, kind, id, name);
+		task.setSkippable(skippable);
 
 		if (model.getDependencies().getTask(id) != null) {
 			String message = NLS.bind(Messages.ERROR_PARSING_DUPLICATE_TASK_ID, (new Object[] {id}));
@@ -323,16 +349,28 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		    model.getDependencies().saveId(task);
 		}
 
-		String completionMessage = NLS.bind(Messages.COMPLETED_TASK, (new Object[] {title}));
+		return task;
+	}
+
+	private AbstractTask createTask(String nodeKind, CompositeCheatSheetModel model, String kind, String id, String name) {
+		AbstractTask task;
+		if (ICompositeCheatsheetTags.TASK_GROUP.equals(nodeKind)) {
+			task = new TaskGroup(model, id, name, kind);
+		} else {
+			task = new EditableTask(model, id, name, kind);
+		}
+		String completionMessage = NLS.bind(Messages.COMPLETED_TASK, (new Object[] {name}));
 		task.setCompletionMessage(completionMessage);
 		return task;
 	}
 	
 	private String autoGenerateId() {
-		return "AutogenID" + nextTaskId++; //$NON-NLS-1$
+		return "TaskId_" + nextTaskId++; //$NON-NLS-1$
 	}
 
-	public String parseTextMarkup(Node descriptionNode, CheatSheetTask parentTask) {
+	public static String parseTextMarkup(Node descriptionNode, 
+			                             AbstractTask parentTask,
+			                             IStatusContainer status) {
 	    NodeList nodes = descriptionNode.getChildNodes();
 		StringBuffer text = new StringBuffer();
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -353,7 +391,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 									Messages.WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT,
 									(new Object[] { parentTask.getName(),
 											node.getNodeName() }));
-					addStatus(IStatus.WARNING, message, null);
+					status.addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}

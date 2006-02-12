@@ -32,16 +32,16 @@ import org.eclipse.ui.internal.cheatsheets.composite.parser.IStatusContainer;
 public class TaskDependencies {
 	
 	private class Dependency {
-		private CheatSheetTask sourceTask;
+		private AbstractTask sourceTask;
 		
 		private String requiredTaskId;
 		
-		public Dependency(CheatSheetTask sourceTask, String requiredTaskId) {
+		public Dependency(AbstractTask sourceTask, String requiredTaskId) {
 			this.sourceTask = sourceTask;
 			this.requiredTaskId = requiredTaskId;
 		}
 		
-		public CheatSheetTask getSourceTask() {
+		public AbstractTask getSourceTask() {
 			return sourceTask;
 		}
 		
@@ -54,15 +54,15 @@ public class TaskDependencies {
 	
 	private Map taskIdMap = new HashMap();
 
-	public void saveId(CheatSheetTask task) {
+	public void saveId(AbstractTask task) {
 		String id = task.getId();
 		if (id != null) {
 			taskIdMap.put(id, task);
 		}		
 	}
 	
-	public CheatSheetTask getTask(String id) {
-		return (CheatSheetTask)taskIdMap.get(id);
+	public AbstractTask getTask(String id) {
+		return (AbstractTask)taskIdMap.get(id);
 	}
 	
 	public TaskDependencies() {
@@ -74,7 +74,7 @@ public class TaskDependencies {
 	 * @param sourceTask a task which cannot be started until another task is completed
 	 * @param requiredTaskId the id of the task which must be completed first
 	 */
-	public void addDependency(CheatSheetTask sourceTask, String requiredTaskId) {
+	public void addDependency(AbstractTask sourceTask, String requiredTaskId) {
 		dependencies.add(new Dependency(sourceTask, requiredTaskId));
 	}
 	
@@ -86,8 +86,8 @@ public class TaskDependencies {
 	public void resolveDependencies(IStatusContainer status) {
 		for (Iterator dependencyIterator = dependencies.iterator(); dependencyIterator.hasNext();) {
 			 Dependency dep = (Dependency)dependencyIterator.next();
-			 CheatSheetTask sourceTask = dep.getSourceTask();
-			 CheatSheetTask requiredTask = getTask(dep.requiredTaskId);
+			 AbstractTask sourceTask = dep.getSourceTask();
+			 AbstractTask requiredTask = getTask(dep.requiredTaskId);
 			 if (requiredTask == null) {
 					String message = NLS.bind(Messages.ERROR_PARSING_INVALID_ID, (new Object[] {dep.getRequiredTaskId()}));	
 					status.addStatus(IStatus.ERROR, message, null);
@@ -114,7 +114,7 @@ public class TaskDependencies {
 		Set tasks = new HashSet();
 		// Combine steps 1 + 2
 		for (Iterator idIterator = taskIdMap.values().iterator(); idIterator.hasNext(); ) {
-			CheatSheetTask nextTask = (CheatSheetTask)idIterator.next();
+			AbstractTask nextTask = (AbstractTask)idIterator.next();
 			if (nextTask.getRequiredTasks().length > 0) {
 				tasks.add(nextTask);
 			}

@@ -14,13 +14,13 @@ package org.eclipse.ua.tests.cheatsheet.util;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskEditor;
+import org.eclipse.ui.cheatsheets.IEditableTask;
+import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 // Task Editor used in the persistence tests
 
-public class MockTaskEditor implements ITaskEditor {
+public class MockTaskEditor extends TaskEditor {
 	
 	public static final String NO_MEMENTO = "No Memento";
 	
@@ -33,7 +33,7 @@ public class MockTaskEditor implements ITaskEditor {
 		return null;
 	}
 
-	public void setInput(ICompositeCheatSheetTask task, IMemento memento) {
+	public void setInput(IEditableTask task, IMemento memento) {
 		if (memento == null) {
 			setValue(NO_MEMENTO);
 		} else {

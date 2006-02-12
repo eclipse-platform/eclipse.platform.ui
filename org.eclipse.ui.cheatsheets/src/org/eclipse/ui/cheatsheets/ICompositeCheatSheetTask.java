@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.cheatsheets;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Dictionary;
 
 /**
@@ -34,9 +32,13 @@ public interface ICompositeCheatSheetTask {
 	 */
 	public static final int IN_PROGRESS = 1;
 	/**
+	 * The constant that indicates that the task has been skipped.
+	 */
+	public static final int SKIPPED = 2;
+	/**
 	 * The constant that indicates that the task has been completed.
 	 */
-	public static final int COMPLETED = 2;
+	public static final int COMPLETED = 3;
 	/**
 	 * @return the unique identifier of this task.
 	 */
@@ -46,9 +48,7 @@ public interface ICompositeCheatSheetTask {
 	 */
 	public String getName();
 	/**
-	 * Returns the kind of the task editor. Tasks without
-	 * editor kind are 'informational' tasks because they
-	 * cannot be 'completed'. 
+	 * Returns the kind of the task editor or task group.
 	 * @return task editor kind or <code>null</code> if no editor
 	 * is assoticated with this task.
 	 */
@@ -67,48 +67,6 @@ public interface ICompositeCheatSheetTask {
 	 * @see org.eclipse.ui.forms.widgets.FormText
 	 */
 	public String getDescription();
-	/**
-	 * Returns an array of subtasks that are children of this task.
-	 * The array will be empty if this is a leaf task.
-	 * @return an array of subtasks for this task
-	 */
-	public ICompositeCheatSheetTask [] getSubtasks();
-	/**
-	 * get the tasks which are required to be completed 
-	 * before this task is started. 
-	 * @return an array of tasks that must be completed
-	 * before this task can be started.  The array will be
-	 * empty if this tasks is independent of other tasks.
-	 */
-	public ICompositeCheatSheetTask [] getRequiredTasks();
-	
-	/**
-	 * Get the state of this task
-	 * @return NOT_STARTED, IN_PROGRESS or COMPLETED.
-	 */
-	public int getState();
-	
-	/**
-	 * Returns the percentage of this task that has been 
-	 * completed. 
-	 * @return A task that has not been
-	 * started yet has '0' as result. A task that has been
-	 * completed must return '100' as a result. Anything
-	 * in between represents a task in various stages of
-	 * completion.
-	 */
-	public int getPercentageComplete();
-	
-	/**
-	 * Set the percentage of the task that has been completed
-	 * @param percentageComplete an integer between 0 and 100
-	 */
-	public void setPercentageComplete(int percentageComplete);
-	
-	/**
-	 * Advance the state of this task
-	 */
-	public void advanceState();
 	
 	/**
 	 * Gets the text to be displayed when this task is completed
@@ -119,22 +77,35 @@ public interface ICompositeCheatSheetTask {
 	public String getCompletionMessage();
 	
 	/**
-	 * Determine whether this task can be started.
-	 * @return true unless this task depends on a required task that has
-	 * not been completed.
+	 * Get the subtasks of this task. Each subtask may be
+	 * a task group or editable task. If the task is an editable task
+	 * there will be no children and an empty array will be returned.
+	 * @return an array of subtasks for this task
 	 */
-	public boolean isStartable();
+	public ICompositeCheatSheetTask [] getSubtasks();
 	
 	/**
-	 * Gets a URL which can be used to open the content file for this 
-	 * task if the content file can be specified by a path relative to
-	 * the content file for the composite cheat sheet which contains it.
-	 * @param path a relative path
-	 * @throws MalformedURLException 
-	 * @return a URL which represents a location relative to the
-	 * location of the content file for the composite cheat sheet.
+	 * get the tasks which are required to be completed 
+	 * before this task is started. 
+	 * @return an array of tasks that must be completed
+	 * before this task can be started.  The array will be
+	 * empty if this tasks is independent of other tasks.
 	 */
-	public URL getInputUrl(String path) throws MalformedURLException;
+	public ICompositeCheatSheetTask [] getRequiredTasks();
+
+	/**
+	 * Determine whether the required tasks for this task have
+	 * all been completed.
+	 * @return true if there are noi required tasks or all required 
+	 * tasks have been completed.
+	 */
+	public boolean requiredTasksCompleted();
+	
+	/**
+	 * Get the state of this task
+	 * @return NOT_STARTED, IN_PROGRESS, SKIPPED or COMPLETED.
+	 */
+	public int getState();
 	
 	/**
 	 * Get the enclosing composite cheat sheet

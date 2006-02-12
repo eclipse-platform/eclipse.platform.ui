@@ -38,8 +38,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskEditor;
-import org.eclipse.ui.cheatsheets.ITaskExplorer;
+import org.eclipse.ui.cheatsheets.IEditableTask;
+import org.eclipse.ui.cheatsheets.TaskEditor;
+import org.eclipse.ui.cheatsheets.TaskExplorer;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -50,9 +51,10 @@ import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.actions.IMenuContributor;
-import org.eclipse.ui.internal.cheatsheets.composite.model.CheatSheetTask;
+import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
+import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.SuccesorTaskFinder;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
@@ -72,13 +74,14 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private PageBook explorerContainer;
 	private PageBook taskEditorContainer;
 	private CompositeCheatSheetModel model;
-	private ITaskExplorer currentExplorer;
+	private TaskExplorer currentExplorer;
 	private ScrolledFormText descriptionPanel;
 	private ScrolledFormText completePanel;
 	
 	private CompositeCheatSheetSaveHelper saveHelper;
 	
 	private static final String START_HREF = "__start__"; //$NON-NLS-1$
+	private static final String SKIP_HREF = "__skip__"; //$NON-NLS-1$
 	private ICompositeCheatSheetTask selectedTask;
 	
 	public CompositeCheatSheetPage(CompositeCheatSheetModel model) {
@@ -186,7 +189,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	}
 
 	private void setCurrentExplorerFromId(String explorerId) {
-		ITaskExplorer explorer = getTaskExplorer(explorerId);
+		TaskExplorer explorer = getTaskExplorer(explorerId);
 		if (explorer!=null) {
 			explorer.setCompositeCheatSheet(this.model);
 			explorer.setFocus();
@@ -196,10 +199,10 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 
 	private void setExplorerVisible(String id) {
 		Control [] excontrols = explorerContainer.getChildren();
-		ITaskExplorer explorer=null;
+		TaskExplorer explorer=null;
 		for (int i=0; i<excontrols.length; i++) {
 			Control excontrol = excontrols[i];
-			explorer = (ITaskExplorer)excontrol.getData(ICompositeCheatsheetTags.EXPLORER);
+			explorer = (TaskExplorer)excontrol.getData(ICompositeCheatsheetTags.EXPLORER);
 			if (explorer.getId().equals(id)) {
 				explorerContainer.showPage(excontrol);
 				setCurrentExplorer(explorer);
@@ -208,7 +211,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		}
 	}
 	
-	private void setCurrentExplorer(ITaskExplorer explorer) {
+	private void setCurrentExplorer(TaskExplorer explorer) {
 		if (currentExplorer!=null) {
 			currentExplorer.getSelectionProvider().removeSelectionChangedListener(this);
 		}
@@ -217,14 +220,14 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		updateForSelection(currentExplorer.getSelectionProvider().getSelection());
 	}
 
-	private ITaskExplorer getTaskExplorer(String id) {
+	private TaskExplorer getTaskExplorer(String id) {
 		Control [] excontrols = explorerContainer.getChildren();
-		ITaskExplorer explorer=null;
+		TaskExplorer explorer=null;
 		for (int i=0; i<excontrols.length; i++) {
 			Control excontrol = excontrols[i];
 			Object data = excontrol.getData(ICompositeCheatsheetTags.EXPLORER);
-			if (data instanceof ITaskExplorer) {
-			    explorer = (ITaskExplorer)data;
+			if (data instanceof TaskExplorer) {
+			    explorer = (TaskExplorer)data;
 			    if (explorer.getId().equals(id)) {
 				    return explorer;
 			    }
@@ -261,19 +264,26 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			break;
 		case ICompositeCheatSheetTask.IN_PROGRESS:
 			// In progress, show the task editor
-			showTaskEditor(task);
+			if (task instanceof IEditableTask) {
+			    showTaskEditor((EditableTask) task);
+			} else {
+				showDescription(task);
+			}
 			break;
 		case ICompositeCheatSheetTask.COMPLETED:
+		case ICompositeCheatSheetTask.SKIPPED:
 			// complete task - show the completion panel
 			showComplete(task);
 			break;
 		}
 	}
 
-	private void showTaskEditor(ICompositeCheatSheetTask task) {
+	private void showTaskEditor(EditableTask task) {
 		startIfSelected(task);
-		ITaskEditor editor = getTaskEditor(task);
-		setCurrentEditor(editor.getControl().getParent());
+		TaskEditor editor = getTaskEditor(task);
+		if (editor != null) {
+		    setCurrentEditor(editor.getControl().getParent());
+		}
 	}
 
 	public void saveState() {
@@ -291,16 +301,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			text.setFont("header", JFaceResources.getHeaderFont()); //$NON-NLS-1$
 			text.setColor("title", mform.getToolkit().getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$
 			text.setImage("start", CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START)); //$NON-NLS-1$
+			text.setImage("skip", CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP)); //$NON-NLS-1$
 			descriptionPanel.setFormText(text);
-			text.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					if (e.getHref().equals(START_HREF)) {
-						ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)descriptionPanel.getData(ICompositeCheatsheetTags.TASK);
-						task.advanceState();
-						startIfSelected(task);
-					}
-				}
-			});
+			text.addHyperlinkListener(new DescriptionLinkListener());
 		} else {
 			text = descriptionPanel.getFormText();
 		}
@@ -314,40 +317,66 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			buf.append("<p>"); //$NON-NLS-1$
 			buf.append(desc);
 			buf.append("</p>"); //$NON-NLS-1$
-		}
-		else
+		} else {
 			buf.append(desc);
-		if (task.getKind()!=null) {
-			if (task.isStartable()) {
-				buf.append("<p/>"); //$NON-NLS-1$
-				buf.append("<p><a href=\""); //$NON-NLS-1$
-				buf.append(START_HREF);
-				buf.append("\">"); //$NON-NLS-1$
-				buf.append("<img href=\"start\"/> "); //$NON-NLS-1$
-				buf.append(Messages.COMPOSITE_PAGE_START_TASK);
-				buf.append("</a></p>"); //$NON-NLS-1$
+		}
+		
+		if (!task.requiredTasksCompleted()) {
+			showBlockedTasks(task, buf);
+		} else {
+			if (task instanceof IEditableTask) {
+			    addStartHyperlink(buf);
 			} else {
-				buf.append("<p/>"); //$NON-NLS-1$
-				buf.append("<p>"); //$NON-NLS-1$
-				buf.append("<b>"); //$NON-NLS-1$
-				buf.append(Messages.COMPOSITE_PAGE_BLOCKED);
-				buf.append("</b>"); //$NON-NLS-1$
-				buf.append("</p>");	 //$NON-NLS-1$// Add the list of blocking tasks
-				
-				ICompositeCheatSheetTask[] requiredTasks = task.getRequiredTasks();
-				for (int i = 0; i < requiredTasks.length; i++) {
-					addIfIncomplete(buf, requiredTasks[i]);
-				}
-				buf.append("<p>"); //$NON-NLS-1$
-				buf.append("</p>");	 //$NON-NLS-1$
+				showSuccesorTaskLinks(task, buf);
+			}
+			AbstractTask abstractTask = (AbstractTask)task;
+			if (abstractTask.isSkippable()) {
+				addSkipHyperlink(buf);
 			}
 		}
+	
 		buf.append("</form>"); //$NON-NLS-1$
 
 		text.setText(buf.toString(), true, false);
 		descriptionPanel.setData(ICompositeCheatsheetTags.TASK, task);
 		descriptionPanel.reflow(true);
 		setCurrentEditor(descriptionPanel);
+	}
+
+	private void showBlockedTasks(final ICompositeCheatSheetTask task, StringBuffer buf) {
+		buf.append("<p/>"); //$NON-NLS-1$
+		buf.append("<p>"); //$NON-NLS-1$
+		buf.append("<b>"); //$NON-NLS-1$
+		buf.append(Messages.COMPOSITE_PAGE_BLOCKED);
+		buf.append("</b>"); //$NON-NLS-1$
+		buf.append("</p>");	 //$NON-NLS-1$// Add the list of blocking tasks
+		
+		ICompositeCheatSheetTask[] requiredTasks = task.getRequiredTasks();
+		for (int i = 0; i < requiredTasks.length; i++) {
+			addIfIncomplete(buf, requiredTasks[i]);
+		}
+		buf.append("<p>"); //$NON-NLS-1$
+		buf.append("</p>");	 //$NON-NLS-1$
+	}
+	
+	private void addSkipHyperlink(StringBuffer buf) {
+		buf.append("<p/>"); //$NON-NLS-1$
+		buf.append("<p><a href=\""); //$NON-NLS-1$
+		buf.append(SKIP_HREF);
+		buf.append("\">"); //$NON-NLS-1$
+		buf.append("<img href=\"skip\"/> "); //$NON-NLS-1$
+		buf.append(Messages.COMPOSITE_PAGE_SKIP_TASK);
+		buf.append("</a></p>"); //$NON-NLS-1$
+	}
+
+	private void addStartHyperlink(StringBuffer buf) {
+		buf.append("<p/>"); //$NON-NLS-1$
+		buf.append("<p><a href=\""); //$NON-NLS-1$
+		buf.append(START_HREF);
+		buf.append("\">"); //$NON-NLS-1$
+		buf.append("<img href=\"start\"/> "); //$NON-NLS-1$
+		buf.append(Messages.COMPOSITE_PAGE_START_TASK);
+		buf.append("</a></p>"); //$NON-NLS-1$
 	}
 	
 	private void addIfIncomplete(StringBuffer buf, ICompositeCheatSheetTask task) {
@@ -364,7 +393,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	 */
 	private void startIfSelected(ICompositeCheatSheetTask task) {
 		if (task == selectedTask) {
-			ITaskEditor editor = getTaskEditor(task);
+			TaskEditor editor = getTaskEditor(task);
 			if (editor!=null) {
 				setCurrentEditor(editor.getControl());
 			}
@@ -375,25 +404,54 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		taskEditorContainer.showPage(c);
 	}
 	
+	private final class DescriptionLinkListener extends HyperlinkAdapter {
+		public void linkActivated(HyperlinkEvent e) {
+			String ref = (String)e.getHref();
+			if (ref.equals(START_HREF)) {
+				Object data = descriptionPanel.getData(ICompositeCheatsheetTags.TASK);
+				if (data instanceof EditableTask) {
+				    EditableTask task = (EditableTask)data;
+				    task.setStarted();
+				    startIfSelected(task);
+				}
+			}     
+            if (ref.equals(SKIP_HREF)) {
+				Object data = descriptionPanel.getData(ICompositeCheatsheetTags.TASK);
+				if (data instanceof AbstractTask) {
+				    AbstractTask task = (AbstractTask)data;
+				    task.setState(ICompositeCheatSheetTask.SKIPPED);
+				}
+			}
+            checkForTaskLink(ref);
+		}
+	}
+
 	private final class CompletionHyperlinkAdapter extends HyperlinkAdapter {
 
 		public void linkActivated(HyperlinkEvent e) {
 			String ref = (String)e.getHref();
 			if (ref.startsWith(REVIEW_TAG)) {
 				String review = ref.substring(REVIEW_TAG.length());
-				CheatSheetTask reviewTask =
+				AbstractTask reviewTask =
 				    model.getDependencies().getTask(review);
-				showTaskEditor(reviewTask);
+				if (reviewTask instanceof EditableTask) {
+				    showTaskEditor((EditableTask) reviewTask);
+				}
 			}
-			if (ref.startsWith(NEXT_TASK_TAG)) {
-				String next = ref.substring(NEXT_TASK_TAG.length());
-				CheatSheetTask nextTask =
-				    model.getDependencies().getTask(next);
-				currentExplorer.setSelection
-				    (new StructuredSelection(nextTask), true);				
-			}
+			checkForTaskLink(ref);
 		}
 	}
+	
+	private void checkForTaskLink(String ref) {
+		if (ref.startsWith(NEXT_TASK_TAG)) {
+			String next = ref.substring(NEXT_TASK_TAG.length());
+			AbstractTask nextTask =
+			    model.getDependencies().getTask(next);
+			currentExplorer.setSelection
+			    (new StructuredSelection(nextTask), true);				
+		}
+	}
+
 
 	private void showComplete(ICompositeCheatSheetTask task) {
 		if (completePanel==null) {
@@ -421,26 +479,31 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			buf.append(desc);
 	    }
 		
-		// Add the links to the next tasks
-		ICompositeCheatSheetTask[] successorTasks = new SuccesorTaskFinder(task).getRecommendedSuccessors();
-		for (int i = 0; i < successorTasks.length; i++) {
-			addSuccessorTask(buf, successorTasks[i]);
-		}
+		showSuccesorTaskLinks(task, buf);
 		
-        // Add a link to redisplay the editor
-		buf.append("<p/>"); //$NON-NLS-1$
-		buf.append("<p><a href=\""); //$NON-NLS-1$
-		buf.append(REVIEW_TAG);
-		buf.append(task.getId());
-		buf.append("\">"); //$NON-NLS-1$
-		buf.append(Messages.COMPOSITE_PAGE_REVIEW_TASK);
-		String string = "</a></p>"; //$NON-NLS-1$
-		buf.append(string);
+		if (task instanceof IEditableTask) {
+	        // Add a link to redisplay the editor
+			buf.append("<p/>"); //$NON-NLS-1$
+			buf.append("<p><a href=\""); //$NON-NLS-1$
+			buf.append(REVIEW_TAG);
+			buf.append(task.getId());
+			buf.append("\">"); //$NON-NLS-1$
+			buf.append(Messages.COMPOSITE_PAGE_REVIEW_TASK);
+			buf.append("</a></p>"); //$NON-NLS-1$
+		}
 				
 		buf.append("</form>"); //$NON-NLS-1$
 		completePanel.setText(buf.toString());
 		completePanel.reflow(true);
 		setCurrentEditor(completePanel);
+	}
+
+	private void showSuccesorTaskLinks(ICompositeCheatSheetTask task, StringBuffer buf) {
+		// Add the links to the next tasks
+		ICompositeCheatSheetTask[] successorTasks = new SuccesorTaskFinder(task).getRecommendedSuccessors();
+		for (int i = 0; i < successorTasks.length; i++) {
+			addSuccessorTask(buf, successorTasks[i]);
+		}
 	}
 	
 	private void addSuccessorTask(StringBuffer buf, ICompositeCheatSheetTask task) {
@@ -456,19 +519,19 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	/*
 	 * Get the task editor for this task. If no editor exists create one
 	 */
-	private ITaskEditor getTaskEditor(ICompositeCheatSheetTask task) {
-		if (task instanceof CheatSheetTask) {
-			CheatSheetTask csTask = (CheatSheetTask)task;
-			if (csTask.getEditor() == null) {
+	private TaskEditor getTaskEditor(ICompositeCheatSheetTask task) {
+		if (task instanceof EditableTask) {
+			EditableTask editable = (EditableTask)task;
+			if (editable.getEditor() == null) {
                 // Create a new editor using the extension point data
-				ITaskEditor editor = TaskEditorManager.getInstance().getEditor(task.getKind());
+				TaskEditor editor = TaskEditorManager.getInstance().getEditor(task.getKind());
 				if (editor != null) {
 					editor.createControl(taskEditorContainer, mform.getToolkit());
-					editor.setInput(task, model.getTaskMemento(task.getId()));
-					csTask.setEditor(editor);
+					editor.setInput(editable, model.getTaskMemento(task.getId()));
+					editable.setEditor(editor);
 				}				
 			}
-			return csTask.getEditor();
+			return editable.getEditor();
 		}
 		
 		return null;
@@ -497,7 +560,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private int contributeRestartItem(Menu menu, int index) {
 		MenuItem item = new MenuItem(menu, SWT.PUSH, index++);
 		item.setText(Messages.RESTART_ALL_MENU);
-		// TODO set the image 
+		item.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
 		item.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (model != null) {
@@ -506,6 +569,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 							Messages.COMPOSITE_RESTART_DIALOG_TITLE, 
 							Messages.COMPOSITE_RESTART_CONFIRM_MESSAGE)) {
 					    model.resetAllTasks();
+					    currentExplorer.setSelection
+					        (new StructuredSelection(model.getRootTask()), true);	
 				    }
 				}
 			}

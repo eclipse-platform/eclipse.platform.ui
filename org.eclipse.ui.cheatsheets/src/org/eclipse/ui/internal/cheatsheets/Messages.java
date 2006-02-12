@@ -116,6 +116,7 @@ public final class Messages extends NLS {
 	public static String COMPOSITE_PAGE_REVIEW_TASK;
 	public static String COMPOSITE_PAGE_GOTO_TASK;
 	public static String COMPOSITE_PAGE_START_TASK;
+	public static String COMPOSITE_PAGE_SKIP_TASK;
 	public static String COMPOSITE_PAGE_BLOCKED;
 	public static String COMPOSITE_PAGE_TASK_NOT_COMPLETE;
 	public static String EXPLORER_PULLDOWN_MENU;
@@ -123,6 +124,7 @@ public final class Messages extends NLS {
 	public static String COMPOSITE_RESTART_CONFIRM_MESSAGE;
 	public static String RESTART_ALL_MENU;
 	public static String RESTART_MENU;
+	public static String ERROR_EDITABLE_TASK_WITH_CHILDREN;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

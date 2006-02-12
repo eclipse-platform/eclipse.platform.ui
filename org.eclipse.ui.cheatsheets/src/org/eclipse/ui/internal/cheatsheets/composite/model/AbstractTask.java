@@ -15,52 +15,51 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskEditor;
+import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
 
 /**
- * A single task within a composite cheatsheet.
+ * A single task within a composite cheatsheet. This class encapsulates the
+ * behavior common to editable tasks and taskGroups
  */
 
-public class CheatSheetTask implements ICompositeCheatSheetTask {
-	private CompositeCheatSheetModel model;
-	private int state = NOT_STARTED;
+public abstract class AbstractTask implements ICompositeCheatSheetTask {
+	protected CompositeCheatSheetModel model;
+	protected int state = NOT_STARTED;
 	private String id;
 
 	private String name;
 
-	private String kind;
+	protected String kind;
 
 	private Dictionary parameters;
-
-	private String description;
 	
+	private String description;
+		
 	private String completionMessage;
-
-	private ArrayList subtasks;
 
 	private ArrayList requiredTasks;
 	
 	private ArrayList successorTasks;
 	
-	private int percentageComplete;
+	private boolean skippable;
 	
-	private ITaskEditor editor;
+	private TaskGroup parent;
 
-	private static final ICompositeCheatSheetTask[] EMPTY = new ICompositeCheatSheetTask[0];
+	protected static final ICompositeCheatSheetTask[] EMPTY = new ICompositeCheatSheetTask[0];
 
-	public CheatSheetTask(CompositeCheatSheetModel model, String id, String name, String kind,
-			Dictionary parameters, String description) {
+	public AbstractTask(CompositeCheatSheetModel model, String id, String name, String kind) {
 		this.model = model;
 		this.id = id;
 		this.name = name;
 		this.kind = kind;
-		this.parameters = parameters;
-		this.description = description;
+		this.parameters = new Hashtable();
+		this.description = name;
 		requiredTasks = new ArrayList();
 	}
 
@@ -87,10 +86,13 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public void setCompletionMessage(String completionMessage) {
+		this.completionMessage = completionMessage;
+	}
 
-	public ICompositeCheatSheetTask[] getSubtasks() {
-		if (subtasks==null) return EMPTY;
-		return (ICompositeCheatSheetTask[])subtasks.toArray(new ICompositeCheatSheetTask[subtasks.size()]);
+	public String getCompletionMessage() {
+		return completionMessage;
 	}
 
 	public ICompositeCheatSheetTask[] getRequiredTasks() {
@@ -101,17 +103,6 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 	public ICompositeCheatSheetTask[] getSuccessorTasks() {
 		if (successorTasks==null) return EMPTY;
 		return (ICompositeCheatSheetTask[])successorTasks.toArray(new ICompositeCheatSheetTask[successorTasks.size()]);
-	}
-
-	public int getPercentageComplete() {
-		return percentageComplete;
-	}
-	
-	public void addSubtask(ICompositeCheatSheetTask task) {
-		if (subtasks==null)
-			subtasks = new ArrayList();
-		subtasks.add(task);
-		
 	}
 	
 	public void addRequiredTask(ICompositeCheatSheetTask task) {
@@ -126,54 +117,30 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 		successorTasks.add(task);
 	}
 
-	public void setPercentageComplete(int percentageComplete) {
-		if (percentageComplete>=0 && percentageComplete<=100) {
-		    this.percentageComplete = percentageComplete;
-		    model.notifyStateChanged(this);
-		}
-	}
-
 	public int getState() {
 		return state;
 	}
-	
-	public void advanceState() {
-		if (state==NOT_STARTED)
-			state = IN_PROGRESS;
-		else if (state==IN_PROGRESS) {
-			completeTask();
-		}
-		model.notifyStateChanged(this);
-	}
 
-	private void completeTask() {
+	public void complete() {
 		// Find out all successor tasks which were blocked
 		List blockedTasks = new ArrayList();
 		ICompositeCheatSheetTask[] successorTasks = getSuccessorTasks();
 		for (int i = 0; i < successorTasks.length; i++) {
-			if (!successorTasks[i].isStartable()) {
+			if (!successorTasks[i].requiredTasksCompleted()) {
 				blockedTasks.add(successorTasks[i]);
 			}
 		}
-		state = COMPLETED;
 		// Did any tasks get unblocked
 		for (Iterator iter = blockedTasks.iterator(); iter.hasNext();) {
 			ICompositeCheatSheetTask nextTask = (ICompositeCheatSheetTask)iter.next();
-			if (nextTask.isStartable()) {
+			if (nextTask.requiredTasksCompleted()) {
 			    model.notifyStateChanged(nextTask);
 			}
 		}
+		setState(COMPLETED);
 	}
 
-	public void setCompletionMessage(String completionMessage) {
-		this.completionMessage = completionMessage;
-	}
-
-	public String getCompletionMessage() {
-		return completionMessage;
-	}
-	
-	public boolean isStartable() {
+	public boolean requiredTasksCompleted() {
 		boolean startable = true;
 		ICompositeCheatSheetTask[] requiredTasks = getRequiredTasks();
 		for (int i = 0; i < requiredTasks.length; i++) {
@@ -192,21 +159,37 @@ public class CheatSheetTask implements ICompositeCheatSheetTask {
 	public void setState(int state) {
 		this.state = state;	
 		model.notifyStateChanged(this);
+		if (parent != null) {
+		    parent.checkState();
+		}
 	}
 
 	public URL getInputUrl(String path) throws MalformedURLException {
 		return new URL(model.getContentUrl(), path);
 	}
 
-	public void setEditor(ITaskEditor editor) {
-		this.editor = editor;
-	}
-
-	public ITaskEditor getEditor() {
-		return editor;
-	}
-
 	public ICompositeCheatSheet getCompositeCheatSheet() {
 		return model;
 	}
+	
+	public abstract ITaskParseStrategy getParserStrategy();
+
+	public abstract ICompositeCheatSheetTask[] getSubtasks();
+
+	public void setSkippable(boolean skippable) {
+		this.skippable = skippable;
+	}
+
+	public boolean isSkippable() {
+		return skippable;
+	}
+
+	protected void setParent(TaskGroup parent) {
+		this.parent = parent;
+	}
+
+	public TaskGroup getParent() {
+		return parent;
+	}
+
 }

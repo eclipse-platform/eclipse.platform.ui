@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskExplorer;
+import org.eclipse.ui.cheatsheets.TaskExplorer;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 
-public class TreeTaskExplorer implements ITaskExplorer {
+public class TreeTaskExplorer extends TaskExplorer {
 	private TreeViewer viewer;
 
 	

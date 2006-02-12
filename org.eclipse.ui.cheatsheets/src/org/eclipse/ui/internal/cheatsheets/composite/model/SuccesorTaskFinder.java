@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,21 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.cheatsheets.ITaskGroup;
 
 public class SuccesorTaskFinder {
 	
-	private CheatSheetTask csTask;
-	ICompositeCheatSheetTask bestSuccessor;
-	ICompositeCheatSheetTask bestPredecessor;
+	private AbstractTask currentTask;
+	ICompositeCheatSheetTask bestLaterTask;
+	ICompositeCheatSheetTask bestEarlierTask;
 	private boolean seenThisTask;
 
 	public SuccesorTaskFinder(ICompositeCheatSheetTask task) {
-		csTask = (CheatSheetTask)task;
+		currentTask = (AbstractTask)task;
 	}
 	
 	/**
@@ -38,44 +42,82 @@ public class SuccesorTaskFinder {
 	 */
     public ICompositeCheatSheetTask[] getRecommendedSuccessors() 
     {	
-    	bestSuccessor = null;
-    	bestPredecessor = null;
-    	seenThisTask = false;
-		searchRunnableChildren(csTask.getCompositeCheatSheet().getRootTask());
-		// If there is a task which is found later in the tree return
-		// that, otherwise an earlier task.
-		if (bestSuccessor != null) {
-			return new ICompositeCheatSheetTask[] {bestSuccessor};
-		}
-		if (bestPredecessor != null) {
-			return new ICompositeCheatSheetTask[] {bestPredecessor};
-		}
-		return new ICompositeCheatSheetTask[0];
+    	// TODO this code could be moved to TaskGroup
+    	if (ITaskGroup.CHOICE.equals(currentTask.getKind())) {
+    		// For a choice if more than one child is runnable return it
+    		List runnableChoices = findRunnableChoices();
+    		if (runnableChoices.size() != 0) {
+    			return (ICompositeCheatSheetTask[])runnableChoices.toArray
+    			(    new ICompositeCheatSheetTask[runnableChoices.size()]);
+    		}
+    	}
+    	return getBestSuccessor();
     }
 
-	private void searchRunnableChildren(ICompositeCheatSheetTask task) {
-		if (bestSuccessor != null) {
-			return;
-		}
-		if (task == csTask) {
-			seenThisTask = true;
-		} 
-			
-		if (task.getKind() != null && task.isStartable() 
-				&& task.getState() != ICompositeCheatSheetTask.COMPLETED) {
-			if (seenThisTask) {
-				if (bestSuccessor == null) {
-					bestSuccessor = task;
-				}
-			} else {
-				if (bestPredecessor == null) {
-					bestPredecessor = task;
+	private List findRunnableChoices() {
+		List result;
+		result = new ArrayList();
+		if (isStartable(currentTask)) {
+			ICompositeCheatSheetTask[] subtasks = currentTask.getSubtasks();
+			for (int i = 0; i < subtasks.length; i++) {
+				if (isStartable(subtasks[i])) {
+					result.add(subtasks[i]);
 				}
 			}
 		}
-		ICompositeCheatSheetTask[] subtasks = task.getSubtasks();
-		for (int i = 0; i < subtasks.length; i++) {
-			searchRunnableChildren(subtasks[i]);
-		}	
+		return result;
+	}
+
+	private boolean isStartable(ICompositeCheatSheetTask task) {
+		int state = task.getState();
+		return (state != ICompositeCheatSheetTask.COMPLETED &&
+			    state != ICompositeCheatSheetTask.SKIPPED &&
+			    task.requiredTasksCompleted());
+	}
+
+	private ICompositeCheatSheetTask[] getBestSuccessor() {
+		bestLaterTask = null;
+    	bestEarlierTask = null;
+    	seenThisTask = false;
+		searchRunnableChildren(currentTask.getCompositeCheatSheet().getRootTask());
+		// If there is a task which is found later in the tree return
+		// that, otherwise an earlier task.
+		if (bestLaterTask != null) {
+			return new ICompositeCheatSheetTask[] {bestLaterTask};
+		}
+		if (bestEarlierTask != null) {
+			return new ICompositeCheatSheetTask[] {bestEarlierTask};
+		}
+		return new ICompositeCheatSheetTask[0];
+	}
+
+	private void searchRunnableChildren(ICompositeCheatSheetTask task) {
+		// Don't search completed tasks or their children
+		// and stop searching if we've already found the best successor
+		if (task.getState() == ICompositeCheatSheetTask.COMPLETED || 
+		     bestLaterTask != null) {
+			return;
+		}
+		if (task == currentTask) {
+			seenThisTask = true;
+		} else {		
+			if ( isStartable(task)) {
+				if (seenThisTask) {
+					if (bestLaterTask == null) {
+						bestLaterTask = task;
+					}
+				} else {
+					if (bestEarlierTask == null) {
+						bestEarlierTask = task;
+					}
+				}
+			}
+		}
+		if (task instanceof TaskGroup) {
+			ICompositeCheatSheetTask[] subtasks = ((TaskGroup)task).getSubtasks();
+			for (int i = 0; i < subtasks.length; i++) {
+				searchRunnableChildren(subtasks[i]);
+			}	
+		}
 	}
 }

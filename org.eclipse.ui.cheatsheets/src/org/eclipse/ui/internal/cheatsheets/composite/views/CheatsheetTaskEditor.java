@@ -22,15 +22,15 @@ import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.CheatSheetViewerFactory;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
 import org.eclipse.ui.cheatsheets.ICheatSheetViewer;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskEditor;
+import org.eclipse.ui.cheatsheets.IEditableTask;
+import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetViewer;
 
-public class CheatsheetTaskEditor implements ITaskEditor {
+public class CheatsheetTaskEditor extends TaskEditor {
 	private ICheatSheetViewer viewer;
-	private ICompositeCheatSheetTask task;
+	private IEditableTask task;
 
 	public void createControl(Composite parent, FormToolkit toolkit) {
 		viewer = CheatSheetViewerFactory.createCheatSheetView();
@@ -42,7 +42,7 @@ public class CheatsheetTaskEditor implements ITaskEditor {
 	}
 
 
-	public void setInput(ICompositeCheatSheetTask task, IMemento memento) {
+	public void setInput(IEditableTask task, IMemento memento) {
 		this.task = task;	
 		Dictionary params = task.getParameters();
 		String id = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
@@ -54,14 +54,15 @@ public class CheatsheetTaskEditor implements ITaskEditor {
 				viewer.setInput(id, task.getName(), url);				
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
+				return;
 			}
 		} else {
 		    viewer.setInput(id);
-			CheatSheetViewer cheatSheetViewer = (CheatSheetViewer)viewer;
-			cheatSheetViewer.addListener(new TaskListener());
-			if (memento == null) {
-				cheatSheetViewer.restart();
-			}
+		}
+		CheatSheetViewer cheatSheetViewer = (CheatSheetViewer)viewer;
+		cheatSheetViewer.addListener(new TaskListener());
+		if (memento == null) {
+			cheatSheetViewer.restart();
 		}
 	}
 	
@@ -72,12 +73,12 @@ public class CheatsheetTaskEditor implements ITaskEditor {
 
 		public void cheatSheetEvent(ICheatSheetEvent event) {
 			if (event.getEventType() == ICheatSheetEvent.CHEATSHEET_COMPLETED) {
-				task.advanceState();
+				task.complete();
 			}	
 		}	
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Implement state save
+		// TODO Implement state save to memento
 	}
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<compositeCheatsheet title="Test Guide">
-    <task kind="html" title= "Task Title">
-        <task kind = "html" title="This is Task1" id = "task1" />
-        <task kind = "html" title="This is Task2" id = "task2"> 
+<compositeCheatsheet name="Test Guide">
+    <taskGroup kind="html" name= "Task name">
+        <task kind = "html" name="This is Task1" id = "task1" skip = "true"/>
+        <task kind = "html" name="This is Task2" id = "task2" skip = "false"> 
             <dependsOn task = "task1"/>
         </task>
-    </task>
+    </taskGroup>
 </compositeCheatsheet>

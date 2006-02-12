@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.composite.views.TaskEditorManager;
 import org.osgi.framework.Bundle;
@@ -62,15 +63,22 @@ public class TreeLabelProvider extends LabelProvider {
 	}
 
 	public String getText(Object obj) {
-		if (obj instanceof ICompositeCheatSheetTask)
-			return ((ICompositeCheatSheetTask) obj).getName();
-		return obj.toString();
+		String result;
+		if (obj instanceof ICompositeCheatSheetTask) {
+			result =  ((ICompositeCheatSheetTask) obj).getName();
+		} else {
+		    result =  obj.toString();
+		}
+		if (result == null) {
+			result = ""; //$NON-NLS-1$
+		}
+		return result;
 	}
 
 	public Image getImage(Object obj) {
 		if (obj instanceof ICompositeCheatSheetTask) {
 			ICompositeCheatSheetTask task = (ICompositeCheatSheetTask) obj;
-			return lookupImage(task.getKind(), task.getState(), task.isStartable());		
+			return lookupImage(task.getKind(), task.getState(), task.requiredTasksCompleted());		
 		}
 		return super.getImage(obj);
 	}
@@ -98,25 +106,58 @@ public class TreeLabelProvider extends LabelProvider {
 		return images.getImage(BLOCKED);
 	}
 
+	/**
+	 * Create a set of images for a task which may be [redefined.
+	 * @param kind
+	 * @return
+	 */
 	private ImageSet createImages(String kind) {
 		ImageSet images = new ImageSet();
-		ImageDescriptor desc = TaskEditorManager.getInstance().getImageDescriptor(kind);
+		ImageDescriptor desc;
+		desc = getPredefinedImageDescriptor(kind);
+        if (desc == null) {
+		    desc = TaskEditorManager.getInstance().getImageDescriptor(kind);
+        }
 		if (desc != null) {		
 			images.put(ICompositeCheatSheetTask.NOT_STARTED, desc.createImage());
-			ImageDescriptor inProgress = createImageDescriptor("icons/ovr16/task_in_progress.gif"); //$NON-NLS-1$
-			OverlayIcon icon = new OverlayIcon(desc, new ImageDescriptor[][] {
-					{}, { inProgress } });
-			images.put(ICompositeCheatSheetTask.IN_PROGRESS, icon.createImage());
-			ImageDescriptor complete = createImageDescriptor("icons/ovr16/task_complete.gif"); //$NON-NLS-1$
-			icon = new OverlayIcon(desc, new ImageDescriptor[][] {
-					{}, { complete } });
-			images.put(ICompositeCheatSheetTask.COMPLETED, icon.createImage());
-			ImageDescriptor blocked = createImageDescriptor("icons/ovr16/task_blocked.gif"); //$NON-NLS-1$
-			icon = new OverlayIcon(desc, new ImageDescriptor[][] {
-					{}, { blocked } });
-			images.put(BLOCKED, icon.createImage());
+			
+			createImageWithOverlay(ICompositeCheatSheetTask.IN_PROGRESS, 
+		               "icons/ovr16/task_in_progress.gif",  //$NON-NLS-1$
+		               images, 
+		               desc);
+			createImageWithOverlay(ICompositeCheatSheetTask.SKIPPED, 
+		               "icons/ovr16/task_skipped.gif",  //$NON-NLS-1$
+		               images, 
+		               desc);
+			createImageWithOverlay(BLOCKED, 
+		               "icons/ovr16/task_blocked.gif",  //$NON-NLS-1$
+		               images, 
+		               desc);
+			createImageWithOverlay(ICompositeCheatSheetTask.COMPLETED, 
+		               "icons/ovr16/task_complete.gif",  //$NON-NLS-1$
+		               images, 
+		               desc);
+			
 		}
 		return images;
+	}
+
+	private ImageDescriptor getPredefinedImageDescriptor(String kind) {
+		if (ITaskGroup.SET.equals(kind)) {
+			return createImageDescriptor("icons/obj16/task_set.gif"); //$NON-NLS-1$
+		} else if (ITaskGroup.CHOICE.equals(kind)) {
+			return createImageDescriptor("icons/obj16/task_choice.gif"); //$NON-NLS-1$
+		} else if (ITaskGroup.SEQUENCE.equals(kind)) {
+			return createImageDescriptor("icons/obj16/task_sequence.gif"); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	private void createImageWithOverlay(int state, String imagePath, ImageSet images, ImageDescriptor baseDescriptor) {
+		ImageDescriptor descriptor = createImageDescriptor(imagePath); 
+		OverlayIcon icon = new OverlayIcon(baseDescriptor, new ImageDescriptor[][] {
+				{}, { descriptor } });
+		images.put(state, icon.createImage());
 	}
 
 	private ImageDescriptor createImageDescriptor(String relativePath) {

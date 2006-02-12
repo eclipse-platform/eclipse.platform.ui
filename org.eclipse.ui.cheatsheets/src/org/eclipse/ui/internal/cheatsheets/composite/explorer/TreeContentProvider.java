@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.cheatsheets.composite.explorer;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
+import org.eclipse.ui.cheatsheets.ITaskGroup;
 
 class TreeContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
@@ -22,8 +22,8 @@ class TreeContentProvider implements ITreeContentProvider {
 			final Object[] rootTask = {((ICompositeCheatSheet) parentElement).getRootTask()};
 			return rootTask;
 		}
-		if (parentElement instanceof ICompositeCheatSheetTask)
-			return ((ICompositeCheatSheetTask) parentElement).getSubtasks();
+		if (parentElement instanceof ITaskGroup)
+			return ((ITaskGroup) parentElement).getSubtasks();
 		return new Object[0];
 	}
 
@@ -34,8 +34,8 @@ class TreeContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		if (element instanceof ICompositeCheatSheet)
 			return true;
-		if (element instanceof ICompositeCheatSheetTask)
-			return ((ICompositeCheatSheetTask) element).getSubtasks().length > 0;
+		if (element instanceof ITaskGroup)
+			return ((ITaskGroup) element).getSubtasks().length > 0;
 		return false;
 	}
 

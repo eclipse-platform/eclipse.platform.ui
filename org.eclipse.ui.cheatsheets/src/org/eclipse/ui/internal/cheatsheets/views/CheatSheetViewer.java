@@ -242,11 +242,10 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 			FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 		} else if (indexNextItem == viewItemList.size()) {
-			saveCurrentSheet();
-			showIntroItem();
 			if (!currentItem.isCompletionMessageExpanded()) { // The event will already have been fired
 			    getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 			}
+			showIntroItem();
 		}
 
 		saveCurrentSheet();

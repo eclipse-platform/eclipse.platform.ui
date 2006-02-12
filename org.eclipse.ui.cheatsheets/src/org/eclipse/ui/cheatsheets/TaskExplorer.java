@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,18 +18,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
- * Classes that implement this interface are responsible for rendering the
+ * Classes that extend this class are responsible for rendering the
  * hierarchy of tasks in the composite cheat sheet. They must support task
  * selection via the selection provider, be able to accept focus, and create
  * control when asked.
  */
 
-public interface ITaskExplorer {
+public abstract class TaskExplorer {
 	/**
 	 * @return the id of this TaskExplorer which must match the id used in the
 	 *         extension point
 	 */
-	String getId();
+	public abstract String getId();
 
 	/**
 	 * Create a control which will display the structure of the composite cheat
@@ -38,19 +38,19 @@ public interface ITaskExplorer {
 	 * @param parent
 	 * @param toolkit
 	 */
-	void createControl(Composite parent, FormToolkit toolkit);
+	public abstract void createControl(Composite parent, FormToolkit toolkit);
 
 	/**
 	 * Get the control created by a previous call to createControl
 	 * 
 	 * @return the task explorer control
 	 */
-	Control getControl();
+	public abstract Control getControl();
 
 	/**
 	 * Called when the explorer gains focus.
 	 */
-	void setFocus();
+	public abstract void setFocus();
 
 	/**
 	 * Get the selection provider for this explorer. The selections returned by
@@ -58,7 +58,7 @@ public interface ITaskExplorer {
 	 * 
 	 * @return the selection provider for the task explorer
 	 */
-	ISelectionProvider getSelectionProvider();
+	public abstract ISelectionProvider getSelectionProvider();
 
 	/**
 	 * Sets the composite cheat sheet to be displayed. createControl will
@@ -66,13 +66,13 @@ public interface ITaskExplorer {
 	 * 
 	 * @param compositeCheatSheet
 	 */
-	void setCompositeCheatSheet(ICompositeCheatSheet compositeCheatSheet);
+	public abstract void setCompositeCheatSheet(ICompositeCheatSheet compositeCheatSheet);
 
 	/**
 	 * Called after this explorer is no longer in use. Any resources should be
 	 * disposed of at this point.
 	 */
-	void dispose();
+	public abstract void dispose();
 
 	/**
 	 * Called when the state of a task changes and the representation of the
@@ -80,7 +80,7 @@ public interface ITaskExplorer {
 	 * 
 	 * @param task
 	 */
-	void taskUpdated(ICompositeCheatSheetTask task);
+	public abstract void taskUpdated(ICompositeCheatSheetTask task);
 
 	/**
 	 * Called to set the provided selection and optionally reveal it
@@ -91,5 +91,5 @@ public interface ITaskExplorer {
 	 * @param reveal if <code>true</code>, expose the task if hidden;
 	 * otherwise, just select.
 	 */	
-	void setSelection(ISelection selection, boolean reveal);
+	public abstract void setSelection(ISelection selection, boolean reveal);
 }

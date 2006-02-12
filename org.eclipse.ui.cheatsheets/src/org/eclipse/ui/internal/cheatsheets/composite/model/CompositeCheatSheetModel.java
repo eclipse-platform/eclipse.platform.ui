@@ -18,10 +18,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
-import org.eclipse.ui.cheatsheets.ITaskEditor;
+import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
-
 
 public class CompositeCheatSheetModel extends Observable implements ICompositeCheatSheet, ICheatSheet{
 
@@ -44,7 +43,6 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	    this.description = description;
 	    this.explorerId = explorerId;
 	    this.dependencies = new TaskDependencies();
-	    // TODO initialize the CheatSheetManager
 	}
 	
 	public String getName() {
@@ -116,16 +114,20 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	 * Reset the state of a task and it's children
 	 */
 	private void resetTask(ICompositeCheatSheetTask task) {
-		CheatSheetTask csTask = (CheatSheetTask)task;
-		csTask.setState(0);
-		csTask.setPercentageComplete(0);
-		ITaskEditor editor = csTask.getEditor();
-	    if (editor != null) {
-	    	editor.setInput(task, null);
-	    }
-		ICompositeCheatSheetTask[] subtasks = csTask.getSubtasks();
-		for (int i = 0; i < subtasks.length; i++) {
-			resetTask(subtasks[i]);
+		if (task instanceof EditableTask) {
+		    EditableTask editable = (EditableTask)task;
+			editable.setState(ICompositeCheatSheetTask.NOT_STARTED);
+			TaskEditor editor = editable.getEditor();
+		    if (editor != null) {
+		    	editor.setInput(editable, null);
+		    }
+		} else if (task instanceof TaskGroup) { 
+			TaskGroup group = (TaskGroup)task;
+		    ICompositeCheatSheetTask[] subtasks = group.getSubtasks();
+		    for (int i = 0; i < subtasks.length; i++) {
+			    resetTask(subtasks[i]);
+		    }
+		   group.setState(ICompositeCheatSheetTask.NOT_STARTED);
 		}
 	}
 

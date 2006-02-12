@@ -18,9 +18,10 @@ import org.eclipse.ua.tests.cheatsheet.util.MockTaskEditor;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
-import org.eclipse.ui.internal.cheatsheets.composite.model.CheatSheetTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
+import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
+import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 
 public class TestPersistence extends TestCase {
 	
@@ -36,9 +37,9 @@ public class TestPersistence extends TestCase {
 	private final static String DATA2 = "2";
 	
 	private CompositeCheatSheetModel model;
-	private CheatSheetTask rootTask;
-	private CheatSheetTask task1;
-	private CheatSheetTask task2;
+	private TaskGroup rootTask;
+	private EditableTask task1;
+	private EditableTask task2;
 	private MockTaskEditor editor1;
 	private MockTaskEditor editor2;
 	private CompositeCheatSheetSaveHelper helper;
@@ -49,9 +50,9 @@ public class TestPersistence extends TestCase {
 	private void createCompositeCheatSheet() {
 		model = new CompositeCheatSheetModel("name", "description", "explorerId");
 		model.setId("org.eclipse.ua.tests.testPersistence");
-		rootTask = new CheatSheetTask(model, "root", "name", "kind", null, "description");
-		task1 = new CheatSheetTask(model, "task1", "name", "kind", null, "description");
-		task2 = new CheatSheetTask(model, "task2", "name", "kind", null, "description");
+		rootTask = new TaskGroup(model, "root", "name", "kind");
+		task1 = new EditableTask(model, "task1", "name", "kind");
+		task2 = new EditableTask(model, "task2", "name", "kind");
 		helper = new CompositeCheatSheetSaveHelper();
 		model.setSaveHelper(helper);
 		editor1 = new MockTaskEditor();
@@ -86,7 +87,6 @@ public class TestPersistence extends TestCase {
     public void testSaveTaskState() {
     	createCompositeCheatSheet();
     	task1.setState(ICompositeCheatSheetTask.IN_PROGRESS);
-    	task1.setPercentageComplete(25);
     	task2.setState(ICompositeCheatSheetTask.COMPLETED);
     	helper.saveCompositeState(model);
 
@@ -94,9 +94,12 @@ public class TestPersistence extends TestCase {
     	model.loadState();
     	assertEquals(ICompositeCheatSheetTask.IN_PROGRESS, task1.getState());
     	assertEquals(ICompositeCheatSheetTask.COMPLETED, task2.getState());
-    	assertEquals(25, task1.getPercentageComplete());
     }
     
+    /**
+     * Test that each task can save its state in a memento and that state
+     * can be restored.
+     */
     public void testSaveTaskMemento() {
     	final String value1 = "13579";
     	final String value2 = "AB24";
