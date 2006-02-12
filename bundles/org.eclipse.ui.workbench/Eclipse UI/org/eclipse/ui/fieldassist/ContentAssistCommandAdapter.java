@@ -34,11 +34,6 @@ import org.eclipse.ui.handlers.IHandlerService;
  * is specified by the client, then the default workbench content assist command
  * is used.
  * 
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
- * 
  * @since 3.2
  */
 public class ContentAssistCommandAdapter extends ContentProposalAdapter {

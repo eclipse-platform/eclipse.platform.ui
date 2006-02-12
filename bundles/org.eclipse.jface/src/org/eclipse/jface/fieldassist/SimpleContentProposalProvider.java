@@ -13,10 +13,6 @@ package org.eclipse.jface.fieldassist;
 /**
  * SimpleContentProposalProvider is a class designed to map a static list of
  * Strings to content proposals.
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
  * 
  * @see IContentProposalProvider
  * @since 3.2

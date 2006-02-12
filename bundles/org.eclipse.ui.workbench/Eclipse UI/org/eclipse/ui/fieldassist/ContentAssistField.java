@@ -30,11 +30,6 @@ import org.eclipse.ui.keys.IBindingService;
  * content assist cue when it gets focus and invokes content assist for a
  * specified command.
  * 
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
- * 
  * @since 3.2
  */
 public class ContentAssistField extends DecoratedField {

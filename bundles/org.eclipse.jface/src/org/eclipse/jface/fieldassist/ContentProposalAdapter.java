@@ -43,11 +43,13 @@ import org.eclipse.swt.widgets.Text;
  * control. This behavior includes obtaining proposals, opening a popup dialog,
  * managing the content of the control relative to the selections in the popup,
  * and optionally opening up a secondary popup to further describe proposals.
- * 
  * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
+ * A number of configurable options are provided to determine how the control
+ * content is altered when a proposal is chosen, how the content proposal popup
+ * is activated, and whether any filtering should be done on the proposals as
+ * the user types characters.
+ * <p>
+ * This class is not intended to be subclassed.
  * 
  * @since 3.2
  */
@@ -157,7 +159,7 @@ public class ContentProposalAdapter {
 					getShell().removeListener(SWT.Deactivate, this);
 					getShell().removeListener(SWT.Close, this);
 				}
-				
+
 				if (control != null && !control.isDisposed()) {
 
 					control.removeListener(SWT.MouseDoubleClick, this);

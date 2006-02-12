@@ -21,13 +21,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * WorkbenchFieldDecorationSupport initializes the JFace FieldDecorationRegistry
  * with commonly used workbench field decorations.
  * 
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
- * 
  * @since 3.2
- * 
  */
 public class WorkbenchFieldDecorationSupport {
 

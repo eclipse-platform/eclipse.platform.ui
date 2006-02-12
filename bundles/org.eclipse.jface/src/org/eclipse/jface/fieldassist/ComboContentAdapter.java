@@ -21,11 +21,6 @@ import org.eclipse.swt.widgets.Control;
  * convenience class for easily creating a {@link ContentProposalAdapter} for
  * combo fields.
  * 
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
- * 
  * @since 3.2
  */
 public class ComboContentAdapter implements IControlContentAdapter {

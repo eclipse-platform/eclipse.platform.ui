@@ -18,11 +18,6 @@ import org.eclipse.swt.widgets.Text;
  * An {@link IControlCreator} for SWT Text controls. This is a convenience class
  * for creating text controls to be supplied to a decorated field.
  * 
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
- * 
  * @since 3.2
  */
 public class TextControlCreator implements IControlCreator {

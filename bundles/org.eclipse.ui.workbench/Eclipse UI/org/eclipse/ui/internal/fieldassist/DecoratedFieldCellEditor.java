@@ -52,12 +52,6 @@ import org.eclipse.swt.widgets.Text;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * 
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
- * </p>
- * 
  * @since 3.2
  */
 public class DecoratedFieldCellEditor extends CellEditor {

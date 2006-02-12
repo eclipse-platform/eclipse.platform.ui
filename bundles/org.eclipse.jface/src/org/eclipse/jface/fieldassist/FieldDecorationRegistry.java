@@ -32,10 +32,6 @@ import org.eclipse.swt.graphics.Image;
  * itself can be specified when registering the decoration. In this case, the
  * life cycle should be managed by the specifying client.
  * </p>
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
  * 
  * @see FieldDecoration
  * @see DecoratedField

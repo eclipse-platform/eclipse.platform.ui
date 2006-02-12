@@ -15,11 +15,6 @@ package org.eclipse.jface.fieldassist;
  * appropriate for a textual dialog field, given the field's current content and
  * the current cursor position. 
  * 
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
- * 
  * @since 3.2
  */
 public interface IContentProposalProvider {

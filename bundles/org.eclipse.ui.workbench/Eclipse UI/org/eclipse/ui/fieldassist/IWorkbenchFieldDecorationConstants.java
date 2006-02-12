@@ -15,11 +15,6 @@ package org.eclipse.ui.fieldassist;
  * be useful to other plug-ins.
  * <p>
  * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
- * This API is considered experimental. It is still evolving during 3.2 and is
- * subject to change. It is being released to obtain feedback from early
- * adopters.
  * 
  * @since 3.2
  */
