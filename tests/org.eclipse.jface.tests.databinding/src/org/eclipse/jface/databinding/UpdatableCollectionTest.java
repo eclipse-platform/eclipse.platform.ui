@@ -5,13 +5,13 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-public class UpdatableCollectionTest extends TestCase {
+public class ObservableCollectionTest extends TestCase {
 
 	/*
-	 * Test method for 'org.eclipse.jface.databinding.UpdatableCollection.getElements()'
+	 * Test method for 'org.eclipse.jface.databinding.ObservableCollection.getElements()'
 	 */
 	public void testGetElementsAndSetElements() {
-		TestUpdatableCollection collection = new TestUpdatableCollection();
+		TestObservableCollection collection = new TestObservableCollection();
 		String string1 = "string1";
 		String string2 = "string2";
 		String string3 = "string3";
@@ -41,7 +41,7 @@ public class UpdatableCollectionTest extends TestCase {
 		assertEquals("The wrong element was found in position 2 of the returned list", string5, returnedList.get(2));
 	}
 
-	private class TestUpdatableCollection extends UpdatableCollection {
+	private class TestObservableCollection extends ObservableCollection {
 		private List elements = new ArrayList();
 		
 		public int addElement(Object value, int index) {

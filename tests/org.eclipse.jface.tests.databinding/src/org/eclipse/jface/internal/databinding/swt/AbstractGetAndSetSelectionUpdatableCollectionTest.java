@@ -13,37 +13,37 @@ package org.eclipse.jface.internal.databinding.swt;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
+import org.eclipse.jface.databinding.SelectionAwareObservableCollection;
 
 /**
  * @since 3.2
  *
  */
-public abstract class AbstractGetAndSetSelectionUpdatableCollectionTest extends TestCase {
+public abstract class AbstractGetAndSetSelectionObservableCollectionTest extends TestCase {
 
 	public void testGetSelectedObject() {		
-		SelectionAwareUpdatableCollection updatable = getSelectionAwareUpdatable(new String[] {"foo", "bar"}); 
-		assertEquals("No initial selection should be found.", null, updatable.getSelectedObject());
+		SelectionAwareObservableCollection observable = getSelectionAwareObservable(new String[] {"foo", "bar"}); 
+		assertEquals("No initial selection should be found.", null, observable.getSelectedObject());
 		setSelectedValueOfControl("bar");
-		assertEquals("bar", updatable.getSelectedObject());	
+		assertEquals("bar", observable.getSelectedObject());	
 	}
 
 	/*
-	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboUpdatableCollection.setSelectedObject(Object)'
+	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.setSelectedObject(Object)'
 	 */
 	public void testSetSelectedObject() {
-		SelectionAwareUpdatableCollection updatable = getSelectionAwareUpdatable(new String[] {"foo", "bar"}); 
-		updatable.setSelectedObject("bar");
+		SelectionAwareObservableCollection observable = getSelectionAwareObservable(new String[] {"foo", "bar"}); 
+		observable.setSelectedObject("bar");
 		assertEquals("bar", getSelectedObjectOfControl());
-		updatable.setSelectedObject("bar1");
+		observable.setSelectedObject("bar1");
 		assertEquals("bar", getSelectedObjectOfControl());
-		updatable.setSelectedObject("foo");
+		observable.setSelectedObject("foo");
 		assertEquals("foo", getSelectedObjectOfControl());
-		updatable.setSelectedObject(null);
+		observable.setSelectedObject(null);
 		assertEquals(null, getSelectedObjectOfControl());		
 	}
 	
-	protected abstract SelectionAwareUpdatableCollection getSelectionAwareUpdatable(String[] values);
+	protected abstract SelectionAwareObservableCollection getSelectionAwareObservable(String[] values);
 	
 	protected abstract Object getSelectedObjectOfControl();
 	

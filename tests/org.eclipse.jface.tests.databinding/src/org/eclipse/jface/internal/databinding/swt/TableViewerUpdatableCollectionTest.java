@@ -15,10 +15,10 @@ import java.util.Arrays;
 
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IObservableFactory;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
+import org.eclipse.jface.databinding.SelectionAwareObservableCollection;
+import org.eclipse.jface.databinding.swt.SWTObservableFactory;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -30,20 +30,20 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.2
  *
  */
-public class TableViewerUpdatableCollectionTest extends AbstractGetAndSetSelectionUpdatableCollectionTest {
+public class TableViewerObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
 
 	/*
-	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboUpdatableCollection.getSelectedObject()'
+	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
 	 */
 	private TableViewer viewer;
 	
-	protected SelectionAwareUpdatableCollection getSelectionAwareUpdatable(String[] values) {
+	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
 		Shell shell = BindingScenariosTestSuite.getShell();
 		this.viewer = new TableViewer(shell, SWT.NONE);
-		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new SWTUpdatableFactory()});
-		SelectionAwareUpdatableCollection  updatableCollection = (SelectionAwareUpdatableCollection) ctx.createUpdatable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
-		updatableCollection.setElements(Arrays.asList(values));
-		return updatableCollection;
+		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
+		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
+		observableCollection.setElements(Arrays.asList(values));
+		return observableCollection;
 	}
 	
 	protected Object getSelectedObjectOfControl() {

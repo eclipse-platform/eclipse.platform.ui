@@ -4,12 +4,12 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.IObservableFactory;
+import org.eclipse.jface.databinding.IObservableValue;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.beans.JavaBeansScalarUpdatableValueFactory;
+import org.eclipse.jface.databinding.beans.JavaBeansScalarObservableValueFactory;
 
-public class JavaBeansScalarUpdatableValueFactoryTest extends TestCase {
+public class JavaBeansScalarObservableValueFactoryTest extends TestCase {
    
    public static class TestBean {
       private String field = "Hello, world";
@@ -23,14 +23,14 @@ public class JavaBeansScalarUpdatableValueFactoryTest extends TestCase {
       }
    }
    
-   public void test_getUpdatableValue() throws Exception {
+   public void test_getObservableValue() throws Exception {
       TestBean test = new TestBean();
       
-      IDataBindingContext dbc = DataBinding.createContext(new IUpdatableFactory[] {
-              new JavaBeansScalarUpdatableValueFactory()
+      IDataBindingContext dbc = DataBinding.createContext(new IObservableFactory[] {
+              new JavaBeansScalarObservableValueFactory()
         });
-      IUpdatableValue updatable = (IUpdatableValue) dbc.createUpdatable(new Property(test, "field"));
-      assertEquals("Hello, world", updatable.getValue());
+      IObservableValue observable = (IObservableValue) dbc.createObservable(new Property(test, "field"));
+      assertEquals("Hello, world", observable.getValue());
    }
    
 }

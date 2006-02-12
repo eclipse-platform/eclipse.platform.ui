@@ -11,18 +11,18 @@
 /*
  *  Created Oct 21, 2005 by Gili Mendel
  * 
- *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.5 $  $Date: 2005/11/21 16:07:44 $ 
+ *  $RCSfile: ObservableFactoriesTest.java,v $
+ *  $Revision: 1.6 $  $Date: 2006/01/26 21:35:39 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Map;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IObservable;
+import org.eclipse.jface.databinding.IObservableFactory;
 
-public class UpdatableFactoriesTest extends ScenariosTestCase {
+public class ObservableFactoriesTest extends ScenariosTestCase {
 
 	interface Root {
 	};
@@ -51,21 +51,21 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 	class MiddleChild extends MiddleClass {
 	};
 
-	interface TestIUpdatable extends IUpdatable {
+	interface TestIObservable extends IObservable {
 		public Class getType();
 	}
 
-	class Factory implements IUpdatableFactory {
+	class Factory implements IObservableFactory {
 		Class c;
 
 		public Factory(Class c) {
 			this.c = c;
 		}
 
-		public IUpdatable createUpdatable(Map properties, Object description,
+		public IObservable createObservable(Map properties, Object description,
 				IDataBindingContext bindingContext) {
 			if (c.isInstance(description)) {
-				return new TestIUpdatable() {
+				return new TestIObservable() {
 					public void dispose() {
 					}
  
@@ -93,23 +93,23 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 		}
 	}
 
-	IUpdatableFactory root = new Factory(Root.class);
+	IObservableFactory root = new Factory(Root.class);
 
-	IUpdatableFactory middle = new Factory(Middle.class);
+	IObservableFactory middle = new Factory(Middle.class);
 
-	IUpdatableFactory sa = new Factory(StandAlone.class);
+	IObservableFactory sa = new Factory(StandAlone.class);
 
-	IUpdatableFactory factory = new Factory(Object.class);
+	IObservableFactory factory = new Factory(Object.class);
 
 	protected Class getFactoryType(Object src) {
-		TestIUpdatable u = (TestIUpdatable) getDbc().createUpdatable(src);
+		TestIObservable u = (TestIObservable) getDbc().createObservable(src);
 		return u.getType();
 	}
 
 	public void test_factoryRegistration() {
 
-		getDbc().addUpdatableFactory(root);
-		getDbc().addUpdatableFactory(middle);
+		getDbc().addObservableFactory(root);
+		getDbc().addObservableFactory(middle);
 
 		// Direct mapping
 		assertEquals(Root.class, getFactoryType(new RootClass()));
@@ -125,11 +125,11 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 		assertEquals(Middle.class, getFactoryType(new MiddleChild()));
 
 		// Direct, first interface
-		getDbc().addUpdatableFactory(sa);
+		getDbc().addObservableFactory(sa);
 		assertEquals(StandAlone.class, getFactoryType(new AllClass()));
 
 		// Class based contribution.
-		getDbc().addUpdatableFactory(factory);
+		getDbc().addObservableFactory(factory);
 		assertEquals(Object.class, getFactoryType(new AllClass()));
 
 	}

@@ -91,7 +91,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario03(){
 		// Show that the Escape key can be pressed in the middle of editing and the value will revert
 		// the updatePolicy for this test is TIME_LATE so it occurs when focus is lost from the Text control 
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);		
+		getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);		
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String currentText = text.getText();
 		text.setText("Switzerland");
@@ -123,7 +123,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario04(){
 		// Show that the Escape key can be pressed in the middle of editing and the value will revert
 		// the updatePolicy for this test is TIME_EARLY so it occurs when each keystroke occurs 
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);	
+		getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);	
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String originalName = adventure.getName();
 		// Change the text field character by character and ensure that the model changes
@@ -165,7 +165,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario06(){
 		// Show that partial validation works for TIME_EARLY
 		// We are using TIME_EARLY to verify that invalid states are not sent to the model		
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);		
+		getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);		
 		getDbc().bind(text, new Property(account, "phone"), new BindSpec(new PhoneConverter(),new PhoneValidator()));
 		// Verify we have no error message for partial validation or full validation yet
 		assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length() == 0);
@@ -187,7 +187,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	
 	public void testScenario07(){
 		// Show that partial validation works for TIME_LATE
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);
+		getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);
 		getDbc().bind(text, new Property(account, "phone"), new BindSpec(new PhoneConverter(),new PhoneValidator()));		
 		// Update some of the phone number		
 		String originalPhoneNumber = account.getPhone();
@@ -212,7 +212,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario08() {
 		// Show that the BeanBindSupportFactory will automatically pick up the
 		// validator on the MaxNumberOfPeople property
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);	
+		getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);	
 		getDbc().addBindSupportFactory(new BeanBindSupportFactory());
 		getDbc().bind(text, new Property(adventure, "maxNumberOfPeople"), null);
 		// make sure we can set a value inside the validator's range
@@ -226,7 +226,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario09(){
 		
 		// Verify direct binding between a Text and Label following bugzilla 118696
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);
+		getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);
 		Label label = new Label(getComposite(),SWT.NONE);
 		getDbc().bind(text,label,null);
 		// Change the text
@@ -242,7 +242,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	public void testScenario10(){
 		
 		// Verify direct binding between a Text and Label following bugzilla 118696 with TIME_EARLY
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
+		getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
 		Label label = new Label(getComposite(),SWT.NONE);
 		getDbc().bind(text,label,null);
 		// Change the text

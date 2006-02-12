@@ -5,10 +5,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-public class SelectionAwareUpdatableCollectionTest extends TestCase {
+public class SelectionAwareObservableCollectionTest extends TestCase {
 
 	public void testGetElementsAndSetElements() {
-		TestSelectionUpdatableCollection collection = new TestSelectionUpdatableCollection();
+		TestSelectionObservableCollection collection = new TestSelectionObservableCollection();
 		String string1 = "string1";
 		String string2 = "string2";
 		String string3 = "string3";
@@ -51,7 +51,7 @@ public class SelectionAwareUpdatableCollectionTest extends TestCase {
 		assertSame("The selected element was not retained.", string3, collection.getSelectedObject());
 	}
 
-	private class TestSelectionUpdatableCollection extends SelectionAwareUpdatableCollection {
+	private class TestSelectionObservableCollection extends SelectionAwareObservableCollection {
 		private List elements = new ArrayList();
 		private Object selected;
 		

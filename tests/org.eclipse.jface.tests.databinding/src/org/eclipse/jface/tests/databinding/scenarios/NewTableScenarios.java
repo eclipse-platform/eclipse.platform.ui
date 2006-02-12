@@ -15,13 +15,13 @@ import java.beans.PropertyDescriptor;
 import java.util.Random;
 
 import org.eclipse.jface.databinding.IReadableSet;
-import org.eclipse.jface.databinding.IUpdatableCellProvider;
-import org.eclipse.jface.databinding.IUpdatableTable;
+import org.eclipse.jface.databinding.IObservableCellProvider;
+import org.eclipse.jface.databinding.IObservableTable;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.beans.JavaBeans;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.viewers.TableViewerDescription;
-import org.eclipse.jface.databinding.viewers.TableViewerUpdatableTable;
+import org.eclipse.jface.databinding.viewers.TableViewerObservableTable;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
@@ -108,11 +108,11 @@ public class NewTableScenarios extends ScenariosTestCase {
 	}
 
 	public void testScenario01() throws IntrospectionException {
-		// Factory for directly creating IUpdatables for beans
+		// Factory for directly creating IObservables for beans
 		JavaBeans javaBeans = new JavaBeans();
 		
-		// Wrap the TableViewer in an IUpdatableTable
-		IUpdatableTable accountTable = new TableViewerUpdatableTable(
+		// Wrap the TableViewer in an IObservableTable
+		IObservableTable accountTable = new TableViewerObservableTable(
 				tableViewer);
 
 		// Create a readable set to track the catalog's accounts
@@ -120,8 +120,8 @@ public class NewTableScenarios extends ScenariosTestCase {
 				new PropertyDescriptor("accounts", Catalog.class, "getAccounts", null),
 				Account.class);
 		
-		// Create an updatable cell provider to track the given accounts' properties.
-		IUpdatableCellProvider accountCellProvider = javaBeans.createUpdatableCellProvider(
+		// Create an observable cell provider to track the given accounts' properties.
+		IObservableCellProvider accountCellProvider = javaBeans.createObservableCellProvider(
 				accountSet, new String[] { "firstName", "lastName", "state" });
 
 		// bind
@@ -361,7 +361,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addEditableColumn("price");
 		// The column's type is not set to be Double.TYPE. This will be inferred
 		// once the first Transportation object is set
-		// into the UpdatableCollection
+		// into the ObservableCollection
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "transporations"), null);
 		Transportation transporation = catalog.getTransporations()[0];
@@ -445,7 +445,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 	 * occurs on a per key basic for a TextCellEditor // Show that converters
 	 * work for table columns Account[] accounts = catalog.getAccounts();
 	 * Account firstAccount = accounts[0];
-	 * SampleData.getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
+	 * SampleData.getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
 	 * TableViewerDescription tableViewerDescription = new
 	 * TableViewerDescription(tableViewer);
 	 * tableViewerDescription.addEditableColumn("lastName");

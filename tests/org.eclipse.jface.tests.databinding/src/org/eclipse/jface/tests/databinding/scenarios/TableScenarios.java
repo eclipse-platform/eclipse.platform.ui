@@ -325,7 +325,7 @@ public class TableScenarios extends ScenariosTestCase {
 				tableViewer);
 		tableViewerDescription.addEditableColumn("price");
 		// The column's type is not set to be Double.TYPE.  This will be inferred once the first Transportation object is set
-		// into the UpdatableCollection
+		// into the ObservableCollection
 		getDbc().bind(tableViewerDescription,
 				new Property(catalog, "transporations"), null);
 		Transportation transporation = catalog.getTransporations()[0];
@@ -404,7 +404,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// Show that converters work for table columns
 		Account[] accounts = catalog.getAccounts();
 		Account firstAccount = accounts[0];
-		SampleData.getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
+		SampleData.getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(tableViewer);
 		tableViewerDescription.addEditableColumn("lastName");
 		tableViewerDescription.addColumn("lastName");

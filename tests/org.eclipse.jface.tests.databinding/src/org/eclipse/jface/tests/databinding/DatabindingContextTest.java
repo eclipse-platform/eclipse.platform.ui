@@ -35,7 +35,7 @@ public class DatabindingContextTest extends TestCase {
 
 	IDataBindingContext dbc;
 
-	IUpdatableValue updatableValueRMock;
+	IObservableValue observableValueRMock;
 
 	IValidator validatorMock;
 
@@ -51,9 +51,9 @@ public class DatabindingContextTest extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		dbc = DataBinding.createContext(new IUpdatableFactory[0]);
-		updatableValueRMock = (IUpdatableValue) Mocks
-				.createRelaxedMock(IUpdatableValue.class);
+		dbc = DataBinding.createContext(new IObservableFactory[0]);
+		observableValueRMock = (IObservableValue) Mocks
+				.createRelaxedMock(IObservableValue.class);
 		validatorMock = (IValidator) Mocks.createMock(IValidator.class);
 		settableValue1 = new SettableValue(Object.class);
 		settableValue2 = new SettableValue(Object.class);
@@ -61,7 +61,7 @@ public class DatabindingContextTest extends TestCase {
 
 	protected void tearDown() throws Exception {
 		if (!failed) {
-			Mocks.verify(updatableValueRMock);
+			Mocks.verify(observableValueRMock);
 			Mocks.verify(validatorMock);
 		}
 		super.tearDown();
@@ -78,7 +78,7 @@ public class DatabindingContextTest extends TestCase {
 
 	public void testRegisterForDispose() {
 		final boolean[] disposeCalled = new boolean[] {false};
-		IUpdatableValue target = new SettableValue(Integer.TYPE) {
+		IObservableValue target = new SettableValue(Integer.TYPE) {
 			public void dispose() {
 				super.dispose();
 				disposeCalled[0] = true;
@@ -89,7 +89,7 @@ public class DatabindingContextTest extends TestCase {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		IDataBindingContext dbc = DataBinding.createContext(shell, 
-				new IUpdatableFactory[] {});
+				new IObservableFactory[] {});
 		dbc.registerForDispose(target);
 		dbc.registerForDispose(model);
 		dbc.bind(target, model, null);
@@ -101,7 +101,7 @@ public class DatabindingContextTest extends TestCase {
 		assertTrue("dispose should have been called", disposeCalled[0]);
 	}
 	
-	private class DisposableUpdatable extends UpdatableValue {
+	private class DisposableObservable extends ObservableValue {
 		protected Object computeValue() {
 			return null;
 		}
@@ -112,9 +112,9 @@ public class DatabindingContextTest extends TestCase {
 		}
 	}
 	
-	private class DisposableUpdatableFactory implements IUpdatableFactory {
-		public IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext) {
-			return new DisposableUpdatable();
+	private class DisposableObservableFactory implements IObservableFactory {
+		public IObservable createObservable(Map properties, Object description, IDataBindingContext bindingContext) {
+			return new DisposableObservable();
 		}
 	}
 	
@@ -122,8 +122,8 @@ public class DatabindingContextTest extends TestCase {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		IDataBindingContext dbc = DataBinding.createContext(shell, 
-				new IUpdatableFactory[] {new DisposableUpdatableFactory()});
-		IUpdatable u = dbc.createUpdatable(null);
+				new IObservableFactory[] {new DisposableObservableFactory()});
+		IObservable u = dbc.createObservable(null);
 		assertFalse("is not disposed", u.isDisposed());
 		shell.dispose();
 		display.dispose();
@@ -131,29 +131,29 @@ public class DatabindingContextTest extends TestCase {
 	}
 	
 	public void testBindValueModel() {
-		Mocks.reset(updatableValueRMock);
-		updatableValueRMock.addChangeListener(null);
-		updatableValueRMock.getValue();
-		updatableValueRMock.getValueType();
-		Mocks.setLastReturnValue(updatableValueRMock, Object.class);
+		Mocks.reset(observableValueRMock);
+		observableValueRMock.addChangeListener(null);
+		observableValueRMock.getValue();
+		observableValueRMock.getValueType();
+		Mocks.setLastReturnValue(observableValueRMock, Object.class);
 		validatorMock.isValid(null);
-		Mocks.startChecking(updatableValueRMock);
+		Mocks.startChecking(observableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind(settableValue1, updatableValueRMock, new BindSpec(
+		dbc.bind(settableValue1, observableValueRMock, new BindSpec(
 				identityConverter, validatorMock));
-		Mocks.verify(updatableValueRMock);
+		Mocks.verify(observableValueRMock);
 	}
 
 	public void testBindValueTarget() {
-		updatableValueRMock.addChangeListener(null);
-		updatableValueRMock.setValue(null);
-		updatableValueRMock.getValue();
-		updatableValueRMock.getValueType();
-		Mocks.setLastReturnValue(updatableValueRMock, Object.class);
+		observableValueRMock.addChangeListener(null);
+		observableValueRMock.setValue(null);
+		observableValueRMock.getValue();
+		observableValueRMock.getValueType();
+		Mocks.setLastReturnValue(observableValueRMock, Object.class);
 		validatorMock.isValid(null);
-		Mocks.startChecking(updatableValueRMock);
+		Mocks.startChecking(observableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind(updatableValueRMock, settableValue2, new BindSpec(
+		dbc.bind(observableValueRMock, settableValue2, new BindSpec(
 				identityConverter, validatorMock));
 	}
 
@@ -247,63 +247,63 @@ public class DatabindingContextTest extends TestCase {
 		calls[0] = 0;
 	}
 	
-	public void testCreateNestedUpdatableWithArrays() {
+	public void testCreateNestedObservableWithArrays() {
 		String parentObject = "";
 		NestedProperty nestedProperty = new NestedProperty(parentObject, new String[] {"nestedChild1", "nestedChild2", "foo"}, new Class[] {Integer.class, String.class, Float.class});
-		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory(), new NestedUpdatableFactory()});
-		INestedUpdatableValue updatableValue = (INestedUpdatableValue) ctx.createUpdatable(nestedProperty);
-		assertEquals("The child IUpdatable does not have the right type.", Float.class, updatableValue.getValueType());
+		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new MockObservableFactory(), new NestedObservableFactory()});
+		INestedObservableValue observableValue = (INestedObservableValue) ctx.createObservable(nestedProperty);
+		assertEquals("The child IObservable does not have the right type.", Float.class, observableValue.getValueType());
 
-		updatableValue = ((INestedUpdatableValue) updatableValue.getOuterUpdatableValue());
-		assertEquals("The child IUpdatable does not have the right type.", String.class, updatableValue.getValueType());
+		observableValue = ((INestedObservableValue) observableValue.getOuterObservableValue());
+		assertEquals("The child IObservable does not have the right type.", String.class, observableValue.getValueType());
 	
-		MockUpdatableValue v = ((MockUpdatableValue) updatableValue.getOuterUpdatableValue());
-		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild1", v.getDescription());
-		assertSame("The child IUpdatable does not have a correct parent target object.", parentObject, v.getOuterUpdatableValue());
-		assertEquals("The child IUpdatable does not have the right type.", Integer.class, v.getType());
+		MockObservableValue v = ((MockObservableValue) observableValue.getOuterObservableValue());
+		assertEquals("The child IObservable does not have the right getter.", "nestedChild1", v.getDescription());
+		assertSame("The child IObservable does not have a correct parent target object.", parentObject, v.getOuterObservableValue());
+		assertEquals("The child IObservable does not have the right type.", Integer.class, v.getType());
 	}
 	
-	public void testCreateNestedUpdatableWithPrototypeClass() {
+	public void testCreateNestedObservableWithPrototypeClass() {
 		String parentObject = "";
 		NestedProperty nestedProperty = new NestedProperty(parentObject, "nestedChild1.nestedChild2.foo", NestedParent.class);
-		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory(), new NestedUpdatableFactory()});
-		INestedUpdatableValue updatableValue = (INestedUpdatableValue) ctx.createUpdatable(nestedProperty);
-		assertEquals("The child IUpdatable does not have the right type.", String.class, updatableValue.getValueType());
+		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new MockObservableFactory(), new NestedObservableFactory()});
+		INestedObservableValue observableValue = (INestedObservableValue) ctx.createObservable(nestedProperty);
+		assertEquals("The child IObservable does not have the right type.", String.class, observableValue.getValueType());
 
-		updatableValue = ((INestedUpdatableValue) updatableValue.getOuterUpdatableValue());
-		assertEquals("The child IUpdatable does not have the right type.", NestedChild2.class, updatableValue.getValueType());
+		observableValue = ((INestedObservableValue) observableValue.getOuterObservableValue());
+		assertEquals("The child IObservable does not have the right type.", NestedChild2.class, observableValue.getValueType());
 	
-		MockUpdatableValue v = ((MockUpdatableValue) updatableValue.getOuterUpdatableValue());
-		assertEquals("The child IUpdatable does not have the right getter.", "nestedChild1", v.getDescription());
-		assertSame("The child IUpdatable does not have a correct parent target object.", parentObject, v.getOuterUpdatableValue());
-		assertEquals("The child IUpdatable does not have the right type.", NestedChild1.class, v.getType());
+		MockObservableValue v = ((MockObservableValue) observableValue.getOuterObservableValue());
+		assertEquals("The child IObservable does not have the right getter.", "nestedChild1", v.getDescription());
+		assertSame("The child IObservable does not have a correct parent target object.", parentObject, v.getOuterObservableValue());
+		assertEquals("The child IObservable does not have the right type.", NestedChild1.class, v.getType());
 	}
 	
-	public void testCreateNestedUpdatableWithPrototypeClassAndInvalidPath() {
+	public void testCreateNestedObservableWithPrototypeClassAndInvalidPath() {
 		String parentObject = "";
 		NestedProperty nestedProperty = new NestedProperty(parentObject, "nestedChild1.nestedChild3.foo", NestedParent.class);
 		try {
-			IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new MockUpdatableFactory(), new NestedUpdatableFactory()});
-			MockUpdatableValue updatableValue = (MockUpdatableValue) ctx.createUpdatable(nestedProperty);
+			IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new MockObservableFactory(), new NestedObservableFactory()});
+			MockObservableValue observableValue = (MockObservableValue) ctx.createObservable(nestedProperty);
 			fail("Expected binding exception.");
 		} catch (BindingException be) {			
 		}
 	}
 
-	public class MockUpdatableFactory implements IUpdatableFactory {
+	public class MockObservableFactory implements IObservableFactory {
 
-		public IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext) {
+		public IObservable createObservable(Map properties, Object description, IDataBindingContext bindingContext) {
 			Property property = (Property) description;
-			return new MockUpdatableValue(property.getObject(), property.getPropertyID(), property.getPropertyType());
+			return new MockObservableValue(property.getObject(), property.getPropertyID(), property.getPropertyType());
 		}
 	}
 	
-	public class MockUpdatableValue extends UpdatableValue {
+	public class MockObservableValue extends ObservableValue {
 		public Object targetObject;
 		public Object description;
 		private Class type;
 		
-		public MockUpdatableValue(Object targetObject, Object description, Class type) {
+		public MockObservableValue(Object targetObject, Object description, Class type) {
 			super();
 			this.targetObject = targetObject;
 			this.description = description;
@@ -318,7 +318,7 @@ public class DatabindingContextTest extends TestCase {
 			return type;
 		}
 
-		public Object getOuterUpdatableValue() {
+		public Object getOuterObservableValue() {
 			return targetObject;
 		}
 

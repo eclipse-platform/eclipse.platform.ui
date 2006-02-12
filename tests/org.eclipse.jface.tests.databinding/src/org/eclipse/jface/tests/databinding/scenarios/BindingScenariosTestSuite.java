@@ -16,11 +16,11 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jface.internal.databinding.swt.AutoSelectTableViewerCollectionExtendedTest;
 import org.eclipse.jface.internal.databinding.swt.AutoSelectTableViewerCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.CComboUpdatableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.ComboUpdatableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.ListUpdatableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.TableViewerUpdatableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.UpdatableCollectionViewerTest;
+import org.eclipse.jface.internal.databinding.swt.CComboObservableCollectionTest;
+import org.eclipse.jface.internal.databinding.swt.ComboObservableCollectionTest;
+import org.eclipse.jface.internal.databinding.swt.ListObservableCollectionTest;
+import org.eclipse.jface.internal.databinding.swt.TableViewerObservableCollectionTest;
+import org.eclipse.jface.internal.databinding.swt.ObservableCollectionViewerTest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -66,7 +66,7 @@ public class BindingScenariosTestSuite extends TestSuite {
 	}
 
 	public BindingScenariosTestSuite() {
-		addTestSuite(UpdatableFactoriesTest.class);
+		addTestSuite(ObservableFactoriesTest.class);
 		addTestSuite(PropertyScenarios.class);
 		addTestSuite(CustomScenarios.class);
 		addTestSuite(CustomConverterScenarios.class);
@@ -82,11 +82,11 @@ public class BindingScenariosTestSuite extends TestSuite {
 		// Test each of the basic JFace controls
 		addTestSuite(ComboViewerScenario.class);		
 		addTestSuite(ListViewerScenario.class);	
-		addTestSuite(CComboUpdatableCollectionTest.class);
-		addTestSuite(ComboUpdatableCollectionTest.class);
-		addTestSuite(TableViewerUpdatableCollectionTest.class);
-		addTestSuite(ListUpdatableCollectionTest.class);
-		addTestSuite(UpdatableCollectionViewerTest.class);
+		addTestSuite(CComboObservableCollectionTest.class);
+		addTestSuite(ComboObservableCollectionTest.class);
+		addTestSuite(TableViewerObservableCollectionTest.class);
+		addTestSuite(ListObservableCollectionTest.class);
+		addTestSuite(ObservableCollectionViewerTest.class);
 		addTestSuite(AutoSelectTableViewerCollectionTest.class);
 		addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class);
 	}

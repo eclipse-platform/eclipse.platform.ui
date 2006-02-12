@@ -368,7 +368,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	}
 
 	/**
-	 * Simple binding of a TreeViewer to a Tree Model Description, using a nested TreeUpdatable
+	 * Simple binding of a TreeViewer to a Tree Model Description, using a nested TreeObservable
 	 */
 	public void test_Trees_Scenario04() {
 		
@@ -380,7 +380,7 @@ public class TreeScenarios extends ScenariosTestCase {
 					
 		treeDescription.addColumn(Category.class, "name");
 		
-		// Describe the model with a Property Root object.  This will be translated to a Nested Updatable Tree
+		// Describe the model with a Property Root object.  This will be translated to a Nested Observable Tree
 		TreeModelDescription modelDescription = new TreeModelDescription(new Property(catalog, "categories"));
 		modelDescription.addChildrenProperty(Category.class, "adventures");
 				

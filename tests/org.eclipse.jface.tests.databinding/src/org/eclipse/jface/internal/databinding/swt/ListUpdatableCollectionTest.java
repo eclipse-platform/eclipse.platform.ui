@@ -13,11 +13,11 @@ package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IObservableFactory;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
+import org.eclipse.jface.databinding.SelectionAwareObservableCollection;
 import org.eclipse.jface.databinding.swt.SWTProperties;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
+import org.eclipse.jface.databinding.swt.SWTObservableFactory;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
@@ -27,21 +27,21 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.2
  *
  */
-public class ListUpdatableCollectionTest extends AbstractGetAndSetSelectionUpdatableCollectionTest {
+public class ListObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
 
 	/*
-	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboUpdatableCollection.getSelectedObject()'
+	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
 	 */
 	private List listControl;
 	
-	protected SelectionAwareUpdatableCollection getSelectionAwareUpdatable(String[] values) {
+	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
 		Shell shell = BindingScenariosTestSuite.getShell();
 		this.listControl = new List(shell, SWT.NONE);
 		for (int i = 0; i < values.length; i++) {
 			this.listControl.add(values[i]);
 		}
-		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new SWTUpdatableFactory()});
-		return (SelectionAwareUpdatableCollection) ctx.createUpdatable(new Property(listControl, SWTProperties.ITEMS, String.class, new Boolean(true)));
+		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
+		return (SelectionAwareObservableCollection) ctx.createObservable(new Property(listControl, SWTProperties.ITEMS, String.class, new Boolean(true)));
 	}
 	
 	protected Object getSelectedObjectOfControl() {

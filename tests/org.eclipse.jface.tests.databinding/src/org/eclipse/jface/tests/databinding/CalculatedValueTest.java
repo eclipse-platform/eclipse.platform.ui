@@ -16,12 +16,12 @@ import junit.framework.TestCase;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.IObservableFactory;
+import org.eclipse.jface.databinding.IObservableValue;
 import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.beans.BeanUpdatableFactory;
-import org.eclipse.jface.databinding.updatables.CalculatedValue;
-import org.eclipse.jface.databinding.updatables.SettableValue;
+import org.eclipse.jface.databinding.beans.BeanObservableFactory;
+import org.eclipse.jface.databinding.observables.CalculatedValue;
+import org.eclipse.jface.databinding.observables.SettableValue;
 import org.eclipse.jface.examples.databinding.model.ModelObject;
 
 /**
@@ -56,7 +56,7 @@ public class CalculatedValueTest extends TestCase {
 		};
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		seed[0]++;
-		cv.getUpdatableChangeListener().handleChange(new ChangeEvent(this, ChangeEvent.CHANGE, null, null));
+		cv.getObservableChangeListener().handleChange(new ChangeEvent(this, ChangeEvent.CHANGE, null, null));
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 	}
 
@@ -64,7 +64,7 @@ public class CalculatedValueTest extends TestCase {
 		return new Integer(seed[0] + 2);
 	}
 	
-	public void test_hookAndUnhookDependantUpdatableValues() throws Exception {
+	public void test_hookAndUnhookDependantObservableValues() throws Exception {
 		final int[] seed = new int[] {42};
 		CalculatedValue cv = new CalculatedValue(Integer.TYPE) {
 			protected Object calculate() {
@@ -74,8 +74,8 @@ public class CalculatedValueTest extends TestCase {
 		SettableValue test1 = new SettableValue(Integer.TYPE);
 		SettableValue test2 = new SettableValue(Integer.TYPE);
 		
-		// Hook updatables...
-		cv.setDependencies(new IUpdatableValue[] {test1, test2});
+		// Hook observables...
+		cv.setDependencies(new IObservableValue[] {test1, test2});
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		
 		seed[0]++;
@@ -86,10 +86,10 @@ public class CalculatedValueTest extends TestCase {
 		test2.setValue(new Integer(0));
 		assertEquals("CalculatedValue should be " + calcNewValue(seed), calcNewValue(seed), cv.getValue());
 		
-		// Unhook updatables...
+		// Unhook observables...
 		SettableValue test3 = new SettableValue(Integer.TYPE);
 		SettableValue test4 = new SettableValue(Integer.TYPE);
-		cv.setDependencies(new IUpdatableValue[] {test3, test4});
+		cv.setDependencies(new IObservableValue[] {test3, test4});
 		
 		Integer oldValue = (Integer) cv.getValue();
 
@@ -124,7 +124,7 @@ public class CalculatedValueTest extends TestCase {
 		}
 	}
 
-	public void test_convertToUpdatables() throws Exception {
+	public void test_convertToObservables() throws Exception {
 		final int[] seed = new int[] {42};
 		CalculatedValue cv = new CalculatedValue(Integer.TYPE) {
 			protected Object calculate() {
@@ -135,8 +135,8 @@ public class CalculatedValueTest extends TestCase {
 		TestModel test2 = new TestModel();
 		
 		// Hook beans...
-		IDataBindingContext dbc = DataBinding.createContext(new IUpdatableFactory[] {
-				new BeanUpdatableFactory()
+		IDataBindingContext dbc = DataBinding.createContext(new IObservableFactory[] {
+				new BeanObservableFactory()
 				});
 
 		cv.setDependencies(dbc, new Object[] {new Property(test1, "a"), new Property(test2, "a")});

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.IObservableValue;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.examples.databinding.model.Adventure;
-import org.eclipse.jface.examples.databinding.model.AggregateUpdatableValue;
+import org.eclipse.jface.examples.databinding.model.AggregateObservableValue;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
@@ -44,17 +44,17 @@ public class CustomScenarios extends ScenariosTestCase {
 		Adventure adventure = SampleData.WINTER_HOLIDAY;
 		Text text = new Text(getComposite(), SWT.BORDER);
 
-		IUpdatableValue descriptionUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(new Property(adventure, "description"));
-		IUpdatableValue nameUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(new Property(adventure, "name"));
+		IObservableValue descriptionObservable = (IObservableValue) getDbc()
+				.createObservable(new Property(adventure, "description"));
+		IObservableValue nameObservable = (IObservableValue) getDbc()
+				.createObservable(new Property(adventure, "name"));
 
-		AggregateUpdatableValue customUpdatable_comma = new AggregateUpdatableValue(
-				new IUpdatableValue[] { descriptionUpdatable, nameUpdatable },
+		AggregateObservableValue customObservable_comma = new AggregateObservableValue(
+				new IObservableValue[] { descriptionObservable, nameObservable },
 				",");
 
-		getDbc().bind(getDbc().createUpdatable(new Property(text, "text")),
-								customUpdatable_comma, null);
+		getDbc().bind(getDbc().createObservable(new Property(text, "text")),
+								customObservable_comma, null);
 		// spinEventLoop(1);
 		// Make sure that the description on the model match the widget
 		assertEquals(adventure.getDescription() + "," + adventure.getName(),

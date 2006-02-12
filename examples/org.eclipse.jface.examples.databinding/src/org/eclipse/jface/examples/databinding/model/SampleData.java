@@ -10,19 +10,21 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
+import java.beans.Beans;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.ITree;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.beans.BeanUpdatableFactory;
-import org.eclipse.jface.databinding.beans.NestedUpdatableFactory;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
+import org.eclipse.jface.internal.databinding.api.DataBinding;
+import org.eclipse.jface.internal.databinding.api.DefaultBindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.IBindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
+import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 
 public class SampleData {
@@ -61,16 +63,16 @@ public class SampleData {
 
 	public static AdventureFactory FACTORY;
 	
-	public static ITree CATALOG_TREE;
-	
-	public static ITree CATEGORY_TREE;
+//	public static ITree CATALOG_TREE;
+//	
+//	public static ITree CATEGORY_TREE;
 	
 	public static Signon SIGNON_ADMINISTRATOR;
 	
 	public static Signon SIGNON_JOEBLOGGS;	
 
-	private static SWTUpdatableFactory swtUpdatableFactory = new SWTUpdatableFactory();
-	private static ViewersUpdatableFactory viewersUpdatableFactory = new ViewersUpdatableFactory();
+	private static SWTObservableFactory swtUpdatableFactory = new SWTObservableFactory();
+	//private static ViewersObservableFactory viewersUpdatableFactory = new ViewersObservableFactory();
 
 	static {
 		initializeData();
@@ -183,6 +185,10 @@ public class SampleData {
 
 		CART = FACTORY.createCart();
 		
+//		initTrees();
+	}
+
+	private static void initTrees() {
 		CATALOG_TREE = new ITree() {
 			Catalog catalog = CATALOG_2005;						
 			public boolean hasChildren(Object element) {
@@ -261,19 +267,24 @@ public class SampleData {
 	}
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
-		IDataBindingContext result = DataBinding.createContext(aControl,
-				new IUpdatableFactory[] { new NestedUpdatableFactory(),
-						new BeanUpdatableFactory(), swtUpdatableFactory,
-						viewersUpdatableFactory });
+		final IDataBindingContext result = DataBinding.createContext(
+				new IObservableFactory[] {// new NestedUpdatableFactory(),
+						new BeanObservableFactory(), swtUpdatableFactory, //viewersUpdatableFactory 
+						}, new IBindSupportFactory[] {new DefaultBindSupportFactory()});
+		aControl.addDisposeListener(new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				result.dispose();
+			}});
 		return result;
 	}
 
-	public static SWTUpdatableFactory getSWTUpdatableFactory() {
+	public static SWTObservableFactory getSWTObservableFactory() {
 		return swtUpdatableFactory;
 	}
 	
-	public static ViewersUpdatableFactory getViewersUpdatableFactory(){
-		return viewersUpdatableFactory;
-	}
+//	public static ViewersObservableFactory getViewersUpdatableFactory(){
+//		return viewersObservableFactory;
+//	}
 
 }

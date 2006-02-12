@@ -15,9 +15,9 @@ import junit.framework.TestCase;
 import org.eclipse.jface.databinding.*;
 import org.eclipse.jface.tests.databinding.util.Mocks;
 
-public class UpdatableTest extends TestCase {
+public class ObservableTest extends TestCase {
 
-	private static class MyUpdatable extends WritableUpdatable {
+	private static class MyObservable extends WritableObservable {
 		public void fireChange(int changeType, Object oldValue,
 				Object newValue, int position) {
 			fireChangeEvent(changeType, oldValue, newValue, position);
@@ -28,53 +28,53 @@ public class UpdatableTest extends TestCase {
 		}
 	}
 
-	private MyUpdatable updatable;
+	private MyObservable observable;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		updatable = new MyUpdatable();
+		observable = new MyObservable();
 	}
 
 	protected void tearDown() throws Exception {
-		if (updatable != null) {
+		if (observable != null) {
 			try {
-				updatable.dispose();
+				observable.dispose();
 			} catch (Exception ex) {
 				// ignore
 			}
 		}
-		updatable = null;
+		observable = null;
 		super.tearDown();
 	}
 
 	/*
 	 * Test method for
-	 * 'org.eclipse.jface.databinding.Updatable.addChangeListener(IChangeListener)'
+	 * 'org.eclipse.jface.databinding.Observable.addChangeListener(IChangeListener)'
 	 */
 	public void testAddChangeListener() {
 		IChangeListener changeListenerMock = (IChangeListener) Mocks
 				.createOrderedMock(IChangeListener.class);
 
-		// testing that no methods on the updatable are called when adding the
+		// testing that no methods on the observable are called when adding the
 		// change listener
 		Mocks.startChecking(changeListenerMock);
-		updatable.addChangeListener(changeListenerMock);
+		observable.addChangeListener(changeListenerMock);
 
 		// testing that handleChange is actually called
 		Mocks.reset(changeListenerMock);
 		changeListenerMock.handleChange(null);
 		changeListenerMock.handleChange(null);
 		Mocks.startChecking(changeListenerMock);
-		updatable.fireChange(0, null, null, 0);
-		updatable.fireChange(0, null, null, 0);
+		observable.fireChange(0, null, null, 0);
+		observable.fireChange(0, null, null, 0);
 		Mocks.verify(changeListenerMock);
 
 		// testing that handleChange is called just once
 		Mocks.reset(changeListenerMock);
 		changeListenerMock.handleChange(null);
 		Mocks.startChecking(changeListenerMock);
-		updatable.addChangeListener(changeListenerMock);
-		updatable.fireChange(0, null, null, 0);
+		observable.addChangeListener(changeListenerMock);
+		observable.fireChange(0, null, null, 0);
 		Mocks.verify(changeListenerMock);
 		
 		// dispose() will call another handleChange.  Prevent this from causing a test failure
@@ -85,27 +85,27 @@ public class UpdatableTest extends TestCase {
 
 	/*
 	 * Test method for
-	 * 'org.eclipse.jface.databinding.Updatable.removeChangeListener(IChangeListener)'
+	 * 'org.eclipse.jface.databinding.Observable.removeChangeListener(IChangeListener)'
 	 */
 	public void testRemoveChangeListener() {
 		IChangeListener changeListenerMock = (IChangeListener) Mocks
 				.createOrderedMock(IChangeListener.class);
 
-		// testing that no methods on the updatable are called when removing the
+		// testing that no methods on the observable are called when removing the
 		// change listener
 		Mocks.startChecking(changeListenerMock);
-		updatable.removeChangeListener(changeListenerMock);
+		observable.removeChangeListener(changeListenerMock);
 
-		// testing that no methods on the updatable are called after adding and
+		// testing that no methods on the observable are called after adding and
 		// removing the change listener
-		updatable.addChangeListener(changeListenerMock);
-		updatable.removeChangeListener(changeListenerMock);
+		observable.addChangeListener(changeListenerMock);
+		observable.removeChangeListener(changeListenerMock);
 
-		updatable.fireChange(0, null, null, 0);
+		observable.fireChange(0, null, null, 0);
 	}
 
 	/*
-	 * Test method for 'org.eclipse.jface.databinding.Updatable.fireChangeEvent(int,
+	 * Test method for 'org.eclipse.jface.databinding.Observable.fireChangeEvent(int,
 	 * Object, Object)'
 	 */
 	public void testFireChangeEvent() {
@@ -125,24 +125,24 @@ public class UpdatableTest extends TestCase {
 												.getNewValue();
 							}
 						});
-		updatable.addChangeListener(changeListenerMock);
+		observable.addChangeListener(changeListenerMock);
 
 		Object o1 = new Object();
 		Object o2 = new Object();
 
-		changeListenerMock.handleChange(new ChangeEvent(updatable, 0, null,
+		changeListenerMock.handleChange(new ChangeEvent(observable, 0, null,
 				null, ChangeEvent.POSITION_UNKNOWN));
-		changeListenerMock.handleChange(new ChangeEvent(updatable, 0, null,
+		changeListenerMock.handleChange(new ChangeEvent(observable, 0, null,
 				null, 1));
-		changeListenerMock.handleChange(new ChangeEvent(updatable,
+		changeListenerMock.handleChange(new ChangeEvent(observable,
 				ChangeEvent.CHANGE, o1, o2, ChangeEvent.POSITION_UNKNOWN));
-		changeListenerMock.handleChange(new ChangeEvent(updatable,
+		changeListenerMock.handleChange(new ChangeEvent(observable,
 				ChangeEvent.CHANGE, o1, o2, 42));
 		Mocks.startChecking(changeListenerMock);
-		updatable.fireChange(0, null, null);
-		updatable.fireChange(0, null, null, 1);
-		updatable.fireChange(ChangeEvent.CHANGE, o1, o2);
-		updatable.fireChange(ChangeEvent.CHANGE, o1, o2, 42);
+		observable.fireChange(0, null, null);
+		observable.fireChange(0, null, null, 1);
+		observable.fireChange(ChangeEvent.CHANGE, o1, o2);
+		observable.fireChange(ChangeEvent.CHANGE, o1, o2, 42);
 		Mocks.verify(changeListenerMock);
 
 		// dispose() will call another handleChange.  Prevent this from causing a test failure

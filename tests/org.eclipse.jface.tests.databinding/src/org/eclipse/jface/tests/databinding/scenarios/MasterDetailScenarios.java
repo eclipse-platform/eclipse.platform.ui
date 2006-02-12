@@ -13,10 +13,10 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.IObservableValue;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.swt.SWTProperties;
-import org.eclipse.jface.databinding.updatables.ConditionalUpdatableValue;
+import org.eclipse.jface.databinding.observables.ConditionalObservableValue;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
@@ -91,8 +91,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
-		IUpdatableValue selectedLodging = (IUpdatableValue) getDbc()
-				.createUpdatable(
+		IObservableValue selectedLodging = (IObservableValue) getDbc()
+				.createObservable(
 						new Property(listViewer,
 								ViewersProperties.SINGLE_SELECTION));
 
@@ -155,32 +155,32 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
-		final IUpdatableValue selectedLodgingUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(
+		final IObservableValue selectedLodgingObservable = (IObservableValue) getDbc()
+				.createObservable(
 						new Property(listViewer,
 								ViewersProperties.SINGLE_SELECTION));
 
-		selectedLodgingUpdatable.setValue(null);
+		selectedLodgingObservable.setValue(null);
 		assertTrue(listViewer.getSelection().isEmpty());
 
-		ConditionalUpdatableValue selectionExistsUpdatable = new ConditionalUpdatableValue(
-				selectedLodgingUpdatable) {
+		ConditionalObservableValue selectionExistsObservable = new ConditionalObservableValue(
+				selectedLodgingObservable) {
 			protected boolean compute(Object currentValue) {
 				return currentValue != null;
 			}
 		};
 
-		assertFalse(((Boolean) selectionExistsUpdatable.computeValue())
+		assertFalse(((Boolean) selectionExistsObservable.computeValue())
 				.booleanValue());
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bind(
 				new Property(txtName, SWTProperties.ENABLED),
-				selectionExistsUpdatable, null);
+				selectionExistsObservable, null);
 		getDbc().bind(
 				new Property(txtName, SWTProperties.TEXT),
-				new Property(selectedLodgingUpdatable, "name",
+				new Property(selectedLodgingObservable, "name",
 						String.class, Boolean.FALSE), null);
 
 		assertEquals(txtName.getText(), "");
@@ -190,12 +190,12 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				new Property(txtDescription,
-						SWTProperties.ENABLED), selectionExistsUpdatable,
+						SWTProperties.ENABLED), selectionExistsObservable,
 				null);
 		getDbc().bind(
 				new Property(txtDescription,
 						SWTProperties.TEXT),
-				new Property(selectedLodgingUpdatable,
+				new Property(selectedLodgingObservable,
 						"description", String.class, Boolean.FALSE), null);
 
 		assertEquals(txtDescription.getText(), "");
@@ -204,7 +204,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		Button addButton = new Button(getComposite(), SWT.PUSH);
 		addButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				Lodging selectedLodging = (Lodging) selectedLodgingUpdatable
+				Lodging selectedLodging = (Lodging) selectedLodgingObservable
 						.getValue();
 				int insertionIndex = 0;
 				if (selectedLodging != null) {
@@ -220,7 +220,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				catalog.addLodging(newLodging);
 				assertEquals(itemCount + 1, listViewer.getList().getItemCount());
 				listViewer.setSelection(new StructuredSelection(newLodging));
-				assertSame(newLodging, selectedLodgingUpdatable.getValue());
+				assertSame(newLodging, selectedLodgingObservable.getValue());
 				assertTrue(txtName.getEnabled());
 				assertTrue(txtDescription.getEnabled());
 				assertEquals(newLodging.getName(), txtName.getText());
@@ -236,7 +236,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		Button removeButton = new Button(getComposite(), SWT.PUSH);
 		removeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				Lodging selectedLodging = (Lodging) selectedLodgingUpdatable
+				Lodging selectedLodging = (Lodging) selectedLodgingObservable
 						.getValue();
 				assertNotNull(selectedLodging);
 				int deletionIndex = Arrays.asList(catalog.getLodgings())
@@ -245,7 +245,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				int itemCount = listViewer.getList().getItemCount();
 				catalog.removeLodging(selectedLodging);
 				assertEquals(itemCount - 1, listViewer.getList().getItemCount());
-				assertNull(selectedLodgingUpdatable.getValue());
+				assertNull(selectedLodgingObservable.getValue());
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -283,8 +283,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertArrayEquals(catalog.getCategories(),
 				getViewerContent(categoryListViewer).toArray());
 
-		final IUpdatableValue selectedCategoryUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(
+		final IObservableValue selectedCategoryObservable = (IObservableValue) getDbc()
+				.createObservable(
 						new Property(categoryListViewer,
 								ViewersProperties.SINGLE_SELECTION));
 
@@ -300,11 +300,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				adventureListViewer,
-				new Property(selectedCategoryUpdatable,
+				new Property(selectedCategoryObservable,
 						"adventures", Adventure.class, Boolean.TRUE), null);
 
-		ConditionalUpdatableValue categorySelectionExistsUpdatable = new ConditionalUpdatableValue(
-				selectedCategoryUpdatable) {
+		ConditionalObservableValue categorySelectionExistsObservable = new ConditionalObservableValue(
+				selectedCategoryObservable) {
 			protected boolean compute(Object currentValue) {
 				return currentValue != null;
 			}
@@ -313,15 +313,15 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		getDbc().bind(
 				new Property(adventureListViewer.getList(),
 						SWTProperties.ENABLED),
-				categorySelectionExistsUpdatable, null);
+				categorySelectionExistsObservable, null);
 
-		final IUpdatableValue selectedAdventureUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(
+		final IObservableValue selectedAdventureObservable = (IObservableValue) getDbc()
+				.createObservable(
 						new Property(adventureListViewer,
 								ViewersProperties.SINGLE_SELECTION));
 
-		ConditionalUpdatableValue adventureSelectionExistsUpdatable = new ConditionalUpdatableValue(
-				selectedAdventureUpdatable) {
+		ConditionalObservableValue adventureSelectionExistsObservable = new ConditionalObservableValue(
+				selectedAdventureObservable) {
 			protected boolean compute(Object currentValue) {
 				return currentValue != null;
 			}
@@ -331,10 +331,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				new Property(txtName, SWTProperties.ENABLED),
-				adventureSelectionExistsUpdatable, null);
+				adventureSelectionExistsObservable, null);
 		getDbc().bind(
 				new Property(txtName, SWTProperties.TEXT),
-				new Property(selectedAdventureUpdatable, "name",
+				new Property(selectedAdventureObservable, "name",
 						String.class, Boolean.FALSE), null);
 
 		assertEquals(txtName.getText(), "");
@@ -345,11 +345,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		getDbc().bind(
 				new Property(txtDescription,
 						SWTProperties.ENABLED),
-				adventureSelectionExistsUpdatable, null);
+				adventureSelectionExistsObservable, null);
 		getDbc().bind(
 				new Property(txtDescription,
 						SWTProperties.TEXT),
-				new Property(selectedAdventureUpdatable,
+				new Property(selectedAdventureObservable,
 						"description", String.class, Boolean.FALSE), null);
 
 		assertFalse(adventureListViewer.getList().isEnabled());

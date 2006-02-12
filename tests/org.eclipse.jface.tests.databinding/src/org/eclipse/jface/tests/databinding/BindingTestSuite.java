@@ -13,8 +13,8 @@ package org.eclipse.jface.tests.databinding;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.databinding.SelectionAwareUpdatableCollectionTest;
-import org.eclipse.jface.databinding.UpdatableCollectionTest;
+import org.eclipse.jface.databinding.SelectionAwareObservableCollectionTest;
+import org.eclipse.jface.databinding.ObservableCollectionTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 
 public class BindingTestSuite extends TestSuite {
@@ -28,11 +28,11 @@ public class BindingTestSuite extends TestSuite {
 	}
 
 	public BindingTestSuite() {
-		addTestSuite(UpdatableTest.class);
-		addTestSuite(JavaBeansScalarUpdatableValueFactoryTest.class);
+		addTestSuite(ObservableTest.class);
+		addTestSuite(JavaBeansScalarObservableValueFactoryTest.class);
 		addTestSuite(DatabindingContextTest.class);
-		addTestSuite(UpdatableCollectionTest.class);
-		addTestSuite(SelectionAwareUpdatableCollectionTest.class);
+		addTestSuite(ObservableCollectionTest.class);
+		addTestSuite(SelectionAwareObservableCollectionTest.class);
 		addTest(BindingScenariosTestSuite.suite());
 	}
 }

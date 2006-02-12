@@ -14,9 +14,9 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -43,7 +43,7 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected Text dummyText;
 
-	private SWTUpdatableFactory swtUpdatableFactory;
+	private SWTObservableFactory swtObservableFactory;
 
 	protected Composite getComposite() {
 		return composite;
@@ -53,8 +53,8 @@ abstract public class ScenariosTestCase extends TestCase {
 		return dbc;
 	}
 	
-	protected SWTUpdatableFactory getSWTUpdatableFactory() {
-		return swtUpdatableFactory;
+	protected SWTObservableFactory getSWTObservableFactory() {
+		return swtObservableFactory;
 	}
 
 	public Shell getShell() {
@@ -120,7 +120,7 @@ abstract public class ScenariosTestCase extends TestCase {
 		SampleData.initializeData(); // test may manipulate the data... let
 		// all start from fresh
 		dbc = SampleData.getDatabindingContext(composite);
-		swtUpdatableFactory = SampleData.getSWTUpdatableFactory();
+		swtObservableFactory = SampleData.getSWTObservableFactory();
 		dummyText = new Text(getComposite(), SWT.NONE);
 		dummyText.setText("dummy");
 	}
