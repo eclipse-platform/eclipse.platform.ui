@@ -113,7 +113,8 @@ public class TocModelSerializerTest extends TestCase {
 						String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
 						boolean isPrimary = "true".equals(configElements[j].getAttribute("primary")); //$NON-NLS-1$
 						String extraDir = configElements[j].getAttribute("extradir"); //$NON-NLS-1$
-						tocFiles.add(new TocFile(pluginId, href, isPrimary, Platform.getNL(), extraDir));
+						String categoryId = configElements[j].getAttribute("category"); //$NON-NLS-1$
+						tocFiles.add(new TocFile(pluginId, href, isPrimary, Platform.getNL(), extraDir, categoryId));
 					}
 				}
 			}

@@ -23,6 +23,7 @@ public class TocFile {
 	protected boolean primary;
 	protected String locale;
 	protected String extraDir;
+	protected String categoryId;
 
 	// used for fast access to anchors
 	protected Map anchors;
@@ -31,12 +32,13 @@ public class TocFile {
 	 * Toc File Constructor
 	 */
 	public TocFile(String plugin, String href, boolean primary,
-			String locale, String extraDir) {
+			String locale, String extraDir, String categoryId) {
 		this.plugin = plugin;
 		this.href = href;
 		this.primary = primary;
 		this.locale = locale;
 		this.extraDir = extraDir;
+		this.categoryId = categoryId;
 	}
 
 	/**
@@ -141,5 +143,13 @@ public class TocFile {
 	 */
 	public String getLocale() {
 		return locale;
+	}
+	/**
+	 * Gets the category id.
+	 * 
+	 * @return Returns a String
+	 */
+	public String getCategoryId() {
+		return categoryId;
 	}
 }

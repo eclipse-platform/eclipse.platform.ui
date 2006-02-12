@@ -135,33 +135,62 @@ public class TocManager {
 	}
 
 	/**
+	 * Expands the given list of TOCs and categories into the full list of TOCs. This is
+	 * done by substituting each category with all the TOCs in that category.
+	 * 
+	 * @param entries the TOCs and categories
+	 * @return full list of TOCs
+	 */
+	private List expandCategories(List entries) {
+		List expanded = new ArrayList();
+		Iterator iter = entries.iterator();
+		while (iter.hasNext()) {
+			Object entry = iter.next();
+			if (entry instanceof ITocElement) {
+				expanded.add(entry);
+			}
+			else if (entry instanceof TocCategory) {
+				expanded.addAll((TocCategory)entry);
+			}
+		}
+		return expanded;
+	}
+	
+	/**
 	 * Orders the TOCs according to a product wide preference.
 	 */
 	private List orderTocs(Collection unorderedTocs) {
-		ArrayList orderedHrefs = getPreferredTocOrder();
-		ArrayList orderedTocs = new ArrayList(unorderedTocs.size());
-
-		// add the tocs from the preferred order...
-		for (Iterator it = orderedHrefs.iterator(); it.hasNext();) {
-			String href = (String) it.next();
-			ITocElement toc = getToc(unorderedTocs, href);
-			if (toc != null)
-				orderedTocs.add(toc);
+		// first categorize the TOCs
+		Map categorized = categorizeTocs(unorderedTocs);
+		
+		// order the categories/TOCs according to preferred order
+		List preferredOrder = getPreferredOrder();
+		List orderedEntries = new ArrayList(unorderedTocs.size());
+		for (Iterator it = preferredOrder.iterator(); it.hasNext();) {
+			String entry = (String)it.next();
+			Object obj = categorized.get(entry);
+			if (obj != null) {
+				// move from map to ordered list
+				orderedEntries.add(obj);
+				categorized.remove(entry);
+			}
 		}
-		// add the remaining tocs
-		for (Iterator it = unorderedTocs.iterator(); it.hasNext();) {
-			ITocElement toc = (ITocElement) it.next();
-			if (!orderedTocs.contains(toc))
-				orderedTocs.add(toc);
-		}
+		
+		// add the remaining categories/tocs at the end
+		orderedEntries.addAll(categorized.values());
+		
+		// now expand the categories to get the full list of TOCs
+		List orderedTocs = expandCategories(orderedEntries);
+		
 		return orderedTocs;
 	}
 
 	/**
-	 * Reads preferences to determine toc ordering.
-	 * @return the list of TOC href's.
+	 * Reads preferences to determine the preferred order of the TOCs/TOC categories.
+	 * 
+	 * @return the list of TOC href's/category ids.
 	 */
-	private ArrayList getPreferredTocOrder() {
+	private List getPreferredOrder() {
 		ArrayList orderedTocs = new ArrayList();
 		try {
 			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
@@ -204,18 +233,6 @@ public class TocManager {
 		}
 		return ignored;
 	}
-	/**
-	 * Returns the toc from a list of IToc by identifying it with its (unique)
-	 * href.
-	 */
-	private ITocElement getToc(Collection list, String href) {
-		for (Iterator it = list.iterator(); it.hasNext();) {
-			ITocElement toc = (ITocElement) it.next();
-			if (toc.getHref().equals(href))
-				return toc;
-		}
-		return null;
-	}
 
 	/**
 	 * Returns a collection of TocFile that were not processed.
@@ -241,8 +258,10 @@ public class TocManager {
 				if (configElements[j].getName().equals(TOC_ELEMENT_NAME)) {
 					// add to TocFiles declared in this extension
 					String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
+					String categoryId = configElements[j].getAttribute("category"); //$NON-NLS-1$
 					if (href == null
-							|| ignored.contains("/" + pluginId + "/" + href)) { //$NON-NLS-1$ //$NON-NLS-2$
+							|| ignored.contains("/" + pluginId + "/" + href) //$NON-NLS-1$ //$NON-NLS-2$
+							|| (categoryId != null && ignored.contains(categoryId))) {
 						continue;
 					}
 					boolean isPrimary = "true".equals( //$NON-NLS-1$
@@ -250,7 +269,7 @@ public class TocManager {
 					String extraDir = configElements[j]
 							.getAttribute("extradir"); //$NON-NLS-1$
 					contributedTocFiles.add(new TocFile(pluginId, href,
-							isPrimary, locale, extraDir));
+							isPrimary, locale, extraDir, categoryId));
 				} else 	if (configElements[j].getName().equals(INDEX_ELEMENT_NAME)) {
 					// add to index paths declared in this extension
 					String path = configElements[j].getAttribute("path"); //$NON-NLS-1$
@@ -264,5 +283,66 @@ public class TocManager {
 			}
 		}
 		return contributedTocFiles;
+	}
+	
+	/**
+	 * Categorizes TOCs by their category ids. If a TOC does not have a category specified,
+	 * it is treated as a category of one. The result is a mapping between a string that
+	 * represents either the TOC href or the category id, to the Toc or TocCategory,
+	 * respectively.
+	 * 
+	 * @param tocs the collection of Tocs to categorize
+	 * @return a mapping of category id/toc href to TocCategory/Toc
+	 */
+	private Map categorizeTocs(Collection tocs) {
+		// guarantees iteration order is same as order of things added
+		Map categorized = new LinkedHashMap();
+		Iterator iter = tocs.iterator();
+		while (iter.hasNext()) {
+			Toc toc = (Toc)iter.next();
+			String categoryId = toc.getTocFile().getCategoryId();
+			if (categoryId != null) {
+				// it has a category, add it to the appropriate TocCategory
+				TocCategory category = (TocCategory)categorized.get(categoryId);
+				if (category == null) {
+					// create categories as needed
+					category = new TocCategory(categoryId);
+					categorized.put(categoryId, category);
+				}
+				category.add(toc);
+			}
+			else {
+				// doesn't have a category; insert the TOC directly
+				categorized.put(toc.getHref(), toc);
+			}
+		}
+		return categorized;
+	}
+	
+	/**
+	 * A category of TOCs. A category has an id and a list of contained TOCs.
+	 */
+	private static class TocCategory extends ArrayList {
+		
+		private static final long serialVersionUID = 1L;
+		private String id;
+		
+		/**
+		 * Constructs a new empty TOC category with the given id.
+		 * 
+		 * @param id the category's id
+		 */
+		public TocCategory(String id) {
+			this.id = id;
+		}
+		
+		/**
+		 * Returns the category's id.
+		 * 
+		 * @return the id of the category
+		 */
+		public String getId() {
+			return id;
+		}
 	}
 }

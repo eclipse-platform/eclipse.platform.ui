@@ -174,6 +174,13 @@ the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  specifies the category of TOCs to which this one belongs. This applies only to primary TOCs. Categories are used to group together related books. The value must be a string that uniquely identifies the category.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -207,7 +214,8 @@ the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the
 &lt;p&gt;(in file &lt;tt&gt;plugin.xml&lt;/tt&gt;)
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.help.toc&quot;&gt;
-  &lt;toc file=&quot;maindocs.html&quot; primary=&quot;true&quot;/&gt;
+  &lt;toc file=&quot;toc1.xml&quot; primary=&quot;true&quot;/&gt;
+  &lt;toc file=&quot;toc2.xml&quot; primary=&quot;true&quot; category=&quot;myCategory&quot;/&gt;
   &lt;toc file=&quot;task.xml&quot;/&gt;
   &lt;toc file=&quot;sample.xml&quot; extradir=&quot;samples&quot;/&gt;
   &lt;index path=&quot;index/&quot;/&gt;
@@ -310,7 +318,7 @@ files mentioned in the plugin.xml file.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
