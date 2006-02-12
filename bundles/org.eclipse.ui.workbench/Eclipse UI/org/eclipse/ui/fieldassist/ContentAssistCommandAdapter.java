@@ -33,6 +33,8 @@ import org.eclipse.ui.handlers.IHandlerService;
  * this class, and instead the String id of a command is used. If no command id
  * is specified by the client, then the default workbench content assist command
  * is used.
+ * <p>
+ * This class is not intended to be subclassed.
  * 
  * @since 3.2
  */

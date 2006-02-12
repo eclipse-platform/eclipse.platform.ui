@@ -29,6 +29,8 @@ import org.eclipse.ui.keys.IBindingService;
  * {@link ContentAssistCommandAdapter} to provide a decorated field that shows a
  * content assist cue when it gets focus and invokes content assist for a
  * specified command.
+ * <p>
+ * This class is not intended to be subclassed.
  * 
  * @since 3.2
  */
