@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 public abstract class StructuredViewerTest extends ViewerTestCase {
@@ -310,11 +309,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testSomeChildrenChanged() {
-    	if(!SWT.getPlatform().equals("gtk")) {
-    		// TODO see Bug 126638 [Viewers] Remove GTK checks from StructuredViewerTest
-    		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE,
-    				fRootElement));
-    	}
+		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE,
+				fRootElement));
     }
 
     public void testSorter() {
@@ -336,9 +332,6 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testWorldChanged() {
-    	if(!SWT.getPlatform().equals("gtk")) {
-    		// TODO see Bug 126638 [Viewers] Remove GTK checks from StructuredViewerTest
-    		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE, null));
-    	}
+		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE, null));
     }
 }
