@@ -151,6 +151,12 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 		if (base == null || base.length() == 0) {
 			if (element instanceof ModelProvider) {
 				ModelProvider provider = (ModelProvider) element;
+				ResourceMapping mapping = Utils.getResourceMapping(provider);
+				if (mapping != null) {
+					base = Utils.getLabel(mapping);
+					if (base != null && base.length() > 0)
+						return base;
+				}
 				base = provider.getDescriptor().getLabel();
 			}
 		}

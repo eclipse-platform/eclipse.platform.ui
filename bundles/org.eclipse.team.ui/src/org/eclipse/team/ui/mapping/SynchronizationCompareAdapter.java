@@ -78,6 +78,9 @@ public abstract class SynchronizationCompareAdapter implements ISynchronizationC
 			return resource.getName();
 		if (object instanceof ModelProvider) {
 			ModelProvider provider = (ModelProvider) object;
+			if (provider.getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID)) {
+				return "Workspace";
+			}
 			return provider.getDescriptor().getLabel();
 		}
 		return ""; //$NON-NLS-1$

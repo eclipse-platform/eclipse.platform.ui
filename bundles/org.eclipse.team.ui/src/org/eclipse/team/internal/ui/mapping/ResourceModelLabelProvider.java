@@ -20,6 +20,7 @@ import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 /**
@@ -28,7 +29,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 public class ResourceModelLabelProvider extends
 		SynchronizationLabelProvider implements IFontProvider, IResourceChangeListener {
 
-	private ILabelProvider provider = new ResourceMappingLabelProvider();
+	private ILabelProvider provider = new WorkbenchLabelProvider();
 	private ResourceModelContentProvider contentProvider;
 
 	public void init(ICommonContentExtensionSite site) {
