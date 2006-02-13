@@ -1,4 +1,4 @@
-#Tue Oct 18 16:50:46 EDT 2005
+#Mon Feb 13 15:53:04 EST 2006
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.cleanOutputFolder=clean
 org.eclipse.jdt.core.builder.duplicateResourceTask=warning
@@ -45,7 +45,7 @@ org.eclipse.jdt.core.compiler.problem.missingJavadocTagsVisibility=public
 org.eclipse.jdt.core.compiler.problem.missingSerialVersion=error
 org.eclipse.jdt.core.compiler.problem.noEffectAssignment=error
 org.eclipse.jdt.core.compiler.problem.noImplicitStringConversion=warning
-org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=warning
+org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore
 org.eclipse.jdt.core.compiler.problem.overridingPackageDefaultMethod=error
 org.eclipse.jdt.core.compiler.problem.possibleAccidentalBooleanAssignment=warning
 org.eclipse.jdt.core.compiler.problem.specialParameterHidingField=disabled
