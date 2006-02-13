@@ -240,26 +240,29 @@ public class AsynchronousTreeModel extends AsynchronousModel {
      * @param containsChildren
      */
      void setIsContainer(ModelNode node, boolean containsChildren) {
-        ModelNode[] prevChildren = node.getChildrenNodes();
-        node.setIsContainer(containsChildren);
-        AsynchronousTreeModelViewer viewer = getTreeViewer();
-		if (containsChildren) {
-            if (prevChildren == null) {
-                viewer.nodeChildrenChanged(node);
-                viewer.nodeContainerChanged(node);
-            } else {
-                (viewer).nodeContainerChanged(node);
-            }
-        } else if (!containsChildren && prevChildren != null) {
-            synchronized (this) {
+    	ModelNode[] prevChildren = null;
+    	synchronized (this) {
+			prevChildren = node.getChildrenNodes();
+			node.setIsContainer(containsChildren);
+			if (!containsChildren && prevChildren != null) {
                 for (int i = 0; i < prevChildren.length; i++) {
                     ModelNode child = prevChildren[i];
                     unmapNode(child);
                     child.dispose();
                 }
                 node.setChildren(null);
+			}
+		}
+//    	 update tree outside lock
+        AsynchronousTreeModelViewer viewer = getTreeViewer();
+		if (containsChildren) {
+            if (prevChildren == null) {
+                viewer.nodeChildrenChanged(node);
+                viewer.nodeContainerChanged(node);
+            } else {
+                viewer.nodeContainerChanged(node);
             }
-            // update tree outside lock
+        } else if (!containsChildren && prevChildren != null) {            
             for (int i = 0; i < prevChildren.length; i++) {
                 ModelNode child = prevChildren[i];
                 viewer.nodeDisposed(child);
