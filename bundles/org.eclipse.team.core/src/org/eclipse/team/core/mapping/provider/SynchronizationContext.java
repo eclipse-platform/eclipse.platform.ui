@@ -100,7 +100,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 */
 	public void refresh(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100);
-		SynchronizationScopeManager manager = null; //getScopeManager();
+		ISynchronizationScopeManager manager = getScopeManager();
 		if (manager == null) {
 			// The scope manager is missing so just refresh everything
 			refresh(getScope().getTraversals(), IResource.NONE, Policy.subMonitorFor(monitor, 50));
