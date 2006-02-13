@@ -492,8 +492,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         		ModelNode child = childrenNodes[index];
         		getModel().mapWidget(item, child);
         		internalRefresh(child.getElement(), item);
-                attemptExpansion();
-                attemptSelection(false);
         	} else {
         		addPendingChildIndex(parentNode, index);
             }
