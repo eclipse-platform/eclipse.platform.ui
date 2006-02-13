@@ -200,6 +200,7 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 		setHasAdditionalResources(consultModels && hasAdditionalResources);
 		monitor.done();
 		initialized = true;
+		fireMappingsChangedEvent(scope.getMappings(), scope.getTraversals());
 	}
 
 	private ResourceTraversal[] internalRefreshScope(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
