@@ -87,6 +87,11 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 						}
 					}
 				}
+				// expand the target if no suspended thread
+				ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+				ModelDelta node = delta.addNode(target.getLaunch(), IModelDelta.NO_CHANGE);
+				node = node.addNode(target, IModelDelta.EXPAND);
+				fireModelChanged(delta);
 			} catch (DebugException e) {
 			}
 		}
