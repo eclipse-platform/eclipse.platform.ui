@@ -4,7 +4,6 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.util.Map;
 
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
@@ -20,10 +19,13 @@ import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableVal
  * 
  * @since 3.2
  */
-public class JavaBeansScalarUpdatableValueFactory extends Object implements
+public class JavaBeansScalarObservableValueFactory extends Object implements
 		IObservableFactory {
 
-    public IObservable createObservable(Map properties, Object description, IDataBindingContext bindingContext) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IObservableFactory#createObservable(org.eclipse.jface.internal.databinding.api.IDataBindingContext, java.lang.Object)
+	 */
+	public IObservable createObservable(IDataBindingContext bindingContext, Object description) {
         if (! (description instanceof Property)) {
            return null;
         }
@@ -54,13 +56,5 @@ public class JavaBeansScalarUpdatableValueFactory extends Object implements
         IObservableValue updatable = new JavaBeanObservableValue(collectionContainer, pds[position]);
         return updatable;
      }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IObservableFactory#createObservable(org.eclipse.jface.internal.databinding.api.IDataBindingContext, java.lang.Object)
-	 */
-	public IObservable createObservable(IDataBindingContext bindingContext, Object description) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

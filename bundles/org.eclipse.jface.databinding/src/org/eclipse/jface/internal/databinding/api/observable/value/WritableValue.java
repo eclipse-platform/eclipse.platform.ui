@@ -23,6 +23,10 @@ public class WritableValue extends AbstractObservableValue {
 		this(null, initialValue);
 	}
 
+	public WritableValue(Class type) {
+		this(type, null);
+	}
+	
 	public WritableValue(Object valueType, Object initialValue) {
 		this.valueType = valueType;
 		this.value = initialValue;

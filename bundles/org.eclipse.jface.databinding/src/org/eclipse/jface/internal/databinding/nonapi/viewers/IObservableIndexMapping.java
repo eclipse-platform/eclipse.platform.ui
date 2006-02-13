@@ -9,30 +9,17 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.beans;
-
-import org.eclipse.jface.internal.databinding.api.Property;
+package org.eclipse.jface.internal.databinding.nonapi.viewers;
 
 /**
  * @since 3.2
  *
  */
-public class TableModelDescription {
-	
-	private final Property collectionProperty;
-	private final Object[] columnIDs;
+public interface IObservableIndexMapping {
 
-	public TableModelDescription(Property collectionProperty, Object[] columnIDs) {
-		this.collectionProperty = collectionProperty;
-		this.columnIDs = columnIDs;
-	}
-
-	public Property getCollectionProperty() {
-		return collectionProperty;
-	}
-
-	public Object[] getColumnIDs() {
-		return columnIDs;
-	}
+	/**
+	 * @param mappingListener
+	 */
+	void addIndexMappingChangeListener(IIndexMappingChangeListener mappingListener);
 
 }

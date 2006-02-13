@@ -9,30 +9,29 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.beans;
-
-import org.eclipse.jface.internal.databinding.api.Property;
+package org.eclipse.jface.internal.databinding.nonapi.viewers;
 
 /**
  * @since 3.2
  *
  */
-public class TableModelDescription {
+public interface IIndexMappingDiff {
 	
-	private final Property collectionProperty;
-	private final Object[] columnIDs;
+	/**
+	 * @return an array of indices for which the function value has changed
+	 */
+	public int[] getIndices();
+	
+	/**
+	 * @param index
+	 * @return the old value of the function at the given index
+	 */
+	public Object getOldMappingValue(int index);
 
-	public TableModelDescription(Property collectionProperty, Object[] columnIDs) {
-		this.collectionProperty = collectionProperty;
-		this.columnIDs = columnIDs;
-	}
-
-	public Property getCollectionProperty() {
-		return collectionProperty;
-	}
-
-	public Object[] getColumnIDs() {
-		return columnIDs;
-	}
+	/**
+	 * @param index
+	 * @return the new value of the function at the given index
+	 */
+	public Object getNewMappingValue(int index);
 
 }
