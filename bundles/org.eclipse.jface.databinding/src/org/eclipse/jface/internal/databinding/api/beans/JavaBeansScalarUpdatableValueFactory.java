@@ -6,12 +6,12 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.Map;
 
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableValue;
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableValue;
 
 /**
  * This is an optional IUpdatableFactory that forces all JavaBeans updatables
@@ -21,9 +21,9 @@ import org.eclipse.jface.internal.databinding.beans.JavaBeanUpdatableValue;
  * @since 3.2
  */
 public class JavaBeansScalarUpdatableValueFactory extends Object implements
-		IUpdatableFactory {
+		IObservableFactory {
 
-    public IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext) {
+    public IObservable createObservable(Map properties, Object description, IDataBindingContext bindingContext) {
         if (! (description instanceof Property)) {
            return null;
         }
@@ -51,8 +51,16 @@ public class JavaBeansScalarUpdatableValueFactory extends Object implements
         if (!found) {
            return null;
         }
-        IUpdatableValue updatable = new JavaBeanUpdatableValue(collectionContainer, pds[position]);
+        IObservableValue updatable = new JavaBeanObservableValue(collectionContainer, pds[position]);
         return updatable;
      }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IObservableFactory#createObservable(org.eclipse.jface.internal.databinding.api.IDataBindingContext, java.lang.Object)
+	 */
+	public IObservable createObservable(IDataBindingContext bindingContext, Object description) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

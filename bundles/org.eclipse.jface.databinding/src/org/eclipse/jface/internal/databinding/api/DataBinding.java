@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api;
 
+import org.eclipse.jface.internal.databinding.api.beans.BeanBindSupportFactory;
 import org.eclipse.jface.internal.databinding.nonapi.DataBindingContext;
 
 /**
@@ -54,6 +55,22 @@ public class DataBinding {
 				result.addBindSupportFactory(bindSupportFactories[i]);
 			}
 		return result;
+	}
+	
+	/**
+	 * Returns a new data binding context on which the given factories have been
+	 * registered using
+	 * {@link IDataBindingContext#addUpdatableFactory(IUpdatableFactory)}. The
+	 * factories will be added in the order given.
+	 * 
+	 * @param observableFactories
+	 * @return a data binding context
+	 */
+	public static IDataBindingContext createContext(IObservableFactory[] observableFactories) {
+		return createContext(observableFactories, new IBindSupportFactory[] {
+				new BeanBindSupportFactory(),
+				new DefaultBindSupportFactory()
+			});
 	}
 
 	/**

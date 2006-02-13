@@ -3,11 +3,11 @@ package org.eclipse.jface.internal.databinding.api.beans;
 
 import java.lang.reflect.Method;
 
-import org.eclipse.jface.databinding.IBindSupportFactory;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.validator.IDomainValidator;
-import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.internal.databinding.api.IBindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
+import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
 /**
  * A BindSupportFactory that will automatically grab validators from an object's properties,
@@ -48,9 +48,6 @@ public class BeanBindSupportFactory implements IBindSupportFactory {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IBindSupportFactory#createDomainValidator(java.lang.Class, java.lang.Object)
-	 */
 	public IDomainValidator createDomainValidator(Class modelType, Object modelDescription) {
 		if (modelDescription instanceof Property) {
 			Property property = (Property) modelDescription;
@@ -82,6 +79,38 @@ public class BeanBindSupportFactory implements IBindSupportFactory {
     }
 
     public IConverter createConverter(Class fromType, Class toType, Object modelDescription) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createValidator(java.lang.Object, java.lang.Object)
+	 */
+	public IValidator createValidator(Object fromType, Object toType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createDomainValidator(java.lang.Object)
+	 */
+	public IDomainValidator createDomainValidator(Object modelType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#createConverter(java.lang.Object, java.lang.Object)
+	 */
+	public IConverter createConverter(Object fromType, Object toType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.api.IBindSupportFactory#isAssignableFromTo(java.lang.Object, java.lang.Object)
+	 */
+	public Boolean isAssignableFromTo(Object fromType, Object toType) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
