@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

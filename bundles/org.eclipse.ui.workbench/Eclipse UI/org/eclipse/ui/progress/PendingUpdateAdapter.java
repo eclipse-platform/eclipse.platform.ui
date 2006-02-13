@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.progress;
+package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
