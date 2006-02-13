@@ -214,6 +214,9 @@ public class MemoryViewSynchronizationService implements
 		{
 			public void run()
 			{
+				if (fSynchronizeInfo == null)
+					return;
+				
 				IMemoryRendering rendering = (IMemoryRendering)evt.getSource();
 				String propertyId = evt.getProperty();
 				
