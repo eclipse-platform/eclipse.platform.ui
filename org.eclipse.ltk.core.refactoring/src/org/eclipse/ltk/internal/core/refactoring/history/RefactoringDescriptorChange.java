@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 
 /**
  * Wrapper change for refactorings which returns an unknown refactoring
@@ -36,8 +37,9 @@ public final class RefactoringDescriptorChange extends CompositeChange {
 	 */
 	public final ChangeDescriptor getDescriptor() {
 		final ChangeDescriptor descriptor= super.getDescriptor();
-		if (descriptor == null)
-			return new UnknownRefactoringDescriptor(getChildren()[0].getName());
+		if (descriptor == null) {
+			return new RefactoringChangeDescriptor(new UnknownRefactoringDescriptor(getChildren()[0].getName()));
+		}
 		return descriptor;
 	}
 }

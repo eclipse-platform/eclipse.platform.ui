@@ -57,6 +57,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
@@ -360,12 +361,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				switch (event.getEventType()) {
 					case OperationHistoryEvent.ABOUT_TO_EXECUTE:
 						fDescriptor= null;
-						final ChangeDescriptor descriptor= change.getDescriptor();
-						if (descriptor instanceof RefactoringDescriptor) {
-							final RefactoringDescriptor extended= (RefactoringDescriptor) descriptor;
-							if (!extended.getID().equals(RefactoringDescriptor.ID_UNKNOWN))
-								fDescriptor= extended;
-							fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(extended));
+						final ChangeDescriptor changeDescriptor= change.getDescriptor();
+						if (changeDescriptor instanceof RefactoringChangeDescriptor) {
+							final RefactoringDescriptor refactDesc= ((RefactoringChangeDescriptor) changeDescriptor).getRefactoringDescriptor();
+							if (!refactDesc.getID().equals(RefactoringDescriptor.ID_UNKNOWN))
+								fDescriptor= refactDesc;
+							fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(refactDesc));
 						}
 						break;
 					case OperationHistoryEvent.DONE:

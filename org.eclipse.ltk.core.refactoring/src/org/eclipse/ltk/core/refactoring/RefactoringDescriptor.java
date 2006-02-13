@@ -54,7 +54,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * 
  * @since 3.2
  */
-public abstract class RefactoringDescriptor extends ChangeDescriptor implements Comparable {
+public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Constant describing the API change flag (value: 1)
@@ -117,11 +117,22 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 	public static final int USER_CHANGE= 1 << 8;
 
 	/**
+	 * The id of the used refactoring type.
+	 */
+	private String fRefactoringId;
+	
+	/**
+	 * The description associated with this refactoring
+	 */
+	private String fDescription;
+	
+	/**
 	 * The comment associated with this refactoring, or <code>null</code> for
 	 * no comment
 	 */
 	private String fComment;
-
+	
+	
 	/** The flags of the refactoring descriptor */
 	private final int fFlags;
 
@@ -156,9 +167,12 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 	 *            the flags of the refactoring descriptor
 	 */
 	protected RefactoringDescriptor(final String id, final String project, final String description, final String comment, final int flags) {
-		super(id, description);
+		Assert.isNotNull(id);
+		Assert.isNotNull(description);
 		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
 		Assert.isTrue(flags >= NONE);
+		fRefactoringId= id;
+		fDescription= description;
 		fProject= project;
 		fComment= comment;
 		fFlags= flags;
@@ -210,6 +224,24 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 		return false;
 	}
 
+	/**
+	 * Returns the ID of the refactoring type used.
+	 * 
+	 * @return the refactoring id.
+	 */
+	public final String getID() {
+		return fRefactoringId;
+	}
+	
+	/**
+	 * Returns the description associated with this refactoring.
+	 * 
+	 * @return the associated description
+	 */
+	public final String getDescription() {
+		return fDescription;
+	}
+	
 	/**
 	 * Returns the comment associated with this refactoring.
 	 * 
@@ -293,15 +325,15 @@ public abstract class RefactoringDescriptor extends ChangeDescriptor implements 
 		final StringBuffer buffer= new StringBuffer(128);
 
 		buffer.append(getClass().getName());
-		if (getID().equals(ID_UNKNOWN))
+		if (fRefactoringId.equals(ID_UNKNOWN))
 			buffer.append("[unknown refactoring]"); //$NON-NLS-1$
 		else {
 			buffer.append("[timeStamp="); //$NON-NLS-1$
 			buffer.append(fTimeStamp);
 			buffer.append(",id="); //$NON-NLS-1$
-			buffer.append(getID());
+			buffer.append(fRefactoringId);
 			buffer.append(",description="); //$NON-NLS-1$
-			buffer.append(getDescription());
+			buffer.append(fDescription);
 			buffer.append(",project="); //$NON-NLS-1$
 			buffer.append(fProject);
 			buffer.append(",comment="); //$NON-NLS-1$
