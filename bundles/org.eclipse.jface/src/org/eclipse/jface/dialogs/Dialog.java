@@ -1194,12 +1194,16 @@ public abstract class Dialog extends Window {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the initial size to use for the shell. Overridden
+	 * to check whether a size has been stored in dialog settings.
+	 * If a size has been stored, it is returned.
 	 * 
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
+	 * @return the initial size of the shell
 	 * 
 	 * @since 3.2
+	 * @see #getDialogBoundsSettings()
+	 * @see #getDialogBoundsStrategy()
 	 */
 	protected Point getInitialSize() {
 		Point result = super.getInitialSize();
@@ -1226,12 +1230,19 @@ public abstract class Dialog extends Window {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the initial location to use for the shell. Overridden
+	 * to check whether the bounds of the dialog have been stored in
+	 * dialog settings.  If a location has been stored, it is returned.
 	 * 
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+	 * @param initialSize
+	 *            the initial size of the shell, as returned by
+	 *            <code>getInitialSize</code>.
+	 * @return the initial location of the shell
 	 * 
 	 * @since 3.2
+	 * @see #getDialogBoundsSettings()
+	 * @see #getDialogBoundsStrategy()
 	 */
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = super.getInitialLocation(initialSize);
