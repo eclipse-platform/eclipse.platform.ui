@@ -57,10 +57,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
@@ -82,6 +84,24 @@ import org.xml.sax.InputSource;
  * @since 3.2
  */
 public final class RefactoringHistoryService implements IRefactoringHistoryService {
+
+	/** Refactoring descriptor to denote a non-refactoring change */
+	private static final class NoRefactoringDescriptor extends RefactoringDescriptor {
+
+		/**
+		 * Creates a new no refactoring descriptor.
+		 */
+		private NoRefactoringDescriptor() {
+			super("org.eclipse.ltk.core.refactoring.none", null, "", null, RefactoringDescriptor.NONE); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public Refactoring createRefactoring(final RefactoringStatus status) throws CoreException {
+			return null;
+		}
+	}
 
 	/** The null refactoring history */
 	private static final class NullRefactoringHistory extends RefactoringHistory {
@@ -359,17 +379,16 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			if (adapter != null) {
 				final Change change= adapter.getChange();
 				switch (event.getEventType()) {
-					case OperationHistoryEvent.ABOUT_TO_EXECUTE:
+					case OperationHistoryEvent.ABOUT_TO_EXECUTE: {
 						fDescriptor= null;
 						final ChangeDescriptor changeDescriptor= change.getDescriptor();
 						if (changeDescriptor instanceof RefactoringChangeDescriptor) {
-							final RefactoringDescriptor refactDesc= ((RefactoringChangeDescriptor) changeDescriptor).getRefactoringDescriptor();
-							if (!refactDesc.getID().equals(RefactoringDescriptor.ID_UNKNOWN))
-								fDescriptor= refactDesc;
-							fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(refactDesc));
+							fDescriptor= ((RefactoringChangeDescriptor) changeDescriptor).getRefactoringDescriptor();
+							fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
 						}
 						break;
-					case OperationHistoryEvent.DONE:
+					}
+					case OperationHistoryEvent.DONE: {
 						if (fDescriptor != null) {
 							if (!fDescriptor.getID().equals(RefactoringDescriptor.ID_UNKNOWN)) {
 								if (fOverrideTimeStamp >= 0)
@@ -380,23 +399,37 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 							fUndoStack.push(fDescriptor);
 							fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
 							fDescriptor= null;
-						}
+						} else
+							fUndoStack.push(NO_REFACTORING);
 						break;
-					case OperationHistoryEvent.ABOUT_TO_UNDO:
-						fireAboutToUndoEvent(new RefactoringDescriptorProxyAdapter(fUndoStack.peek()));
+					}
+					case OperationHistoryEvent.ABOUT_TO_UNDO: {
+						final RefactoringDescriptor descriptor= fUndoStack.peek();
+						if (descriptor != NO_REFACTORING)
+							fireAboutToUndoEvent(new RefactoringDescriptorProxyAdapter(descriptor));
 						break;
-					case OperationHistoryEvent.UNDONE:
+					}
+					case OperationHistoryEvent.UNDONE: {
 						fRedoQueue.addFirst(fUndoStack.peek());
 						fUndoStack.pop();
-						fireRefactoringUndoneEvent(new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) fRedoQueue.getFirst()));
+						final RefactoringDescriptor descriptor= (RefactoringDescriptor) fRedoQueue.getFirst();
+						if (descriptor != NO_REFACTORING)
+							fireRefactoringUndoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
 						break;
-					case OperationHistoryEvent.ABOUT_TO_REDO:
-						fireAboutToRedoEvent(new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) fRedoQueue.getFirst()));
+					}
+					case OperationHistoryEvent.ABOUT_TO_REDO: {
+						final RefactoringDescriptor descriptor= (RefactoringDescriptor) fRedoQueue.getFirst();
+						if (descriptor != NO_REFACTORING)
+							fireAboutToRedoEvent(new RefactoringDescriptorProxyAdapter(descriptor));
 						break;
-					case OperationHistoryEvent.REDONE:
+					}
+					case OperationHistoryEvent.REDONE: {
+						final RefactoringDescriptor descriptor= fUndoStack.peek();
 						fUndoStack.push((RefactoringDescriptor) fRedoQueue.removeFirst());
-						fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(fUndoStack.peek()));
+						if (descriptor != NO_REFACTORING)
+							fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
 						break;
+					}
 				}
 			}
 		}
@@ -484,6 +517,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 
 	/** The no history constant */
 	private static final NullRefactoringHistory NO_HISTORY= new NullRefactoringHistory();
+
+	/** The no refactoring descriptor constant */
+	private static final RefactoringDescriptor NO_REFACTORING= new NoRefactoringDescriptor();
 
 	/**
 	 * Returns the singleton instance of the refactoring history.
@@ -952,7 +988,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public boolean hasSharedRefactoringHistory(final IProject project) {
 		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project) };
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
 			return Boolean.valueOf(preference).booleanValue();
