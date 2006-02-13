@@ -11,60 +11,45 @@
 
 package org.eclipse.jface.internal.databinding.swt;
 
-import java.util.Arrays;
-
 import junit.framework.TestCase;
-
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IObservableFactory;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.SelectionAwareObservableCollection;
-import org.eclipse.jface.databinding.viewers.AutoSelectTableViewerFactory;
-import org.eclipse.jface.databinding.viewers.ViewersProperties;
-import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
  *
  */
 public class CopyOfAutoSelectTableViewerCollectionExtendedTest extends TestCase {
-
-	/*
-	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
-	 */
-	private TableViewer viewer;
-	
-	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
-		Shell shell = BindingScenariosTestSuite.getShell();
-		this.viewer = new TableViewer(shell, SWT.NONE);
-		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new AutoSelectTableViewerFactory()});
-		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
-		observableCollection.setElements(Arrays.asList(values));
-		return observableCollection;
-	}
-	
-	protected Object getSelectedObjectOfControl() {
-		StructuredSelection selection = (StructuredSelection) this.viewer.getSelection();
-		if (selection.isEmpty()) {
-			return null;
-		}
-		return selection.getFirstElement();
-	}
-	
-	protected void setSelectedValueOfControl(String value) {
-		this.viewer.setSelection(new StructuredSelection(new String[]{value}));
-	}
-	
-	/*
-	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.setSelectedObject(Object)'
-	 */
-	public void testAutoSelect() {
-		SelectionAwareObservableCollection observable = getSelectionAwareObservable(new String[] {"foo", "bar"}); 
-		assertEquals("foo", getSelectedObjectOfControl());
-	}
+//
+//	/*
+//	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
+//	 */
+//	private TableViewer viewer;
+//	
+//	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
+//		Shell shell = BindingScenariosTestSuite.getShell();
+//		this.viewer = new TableViewer(shell, SWT.NONE);
+//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new AutoSelectTableViewerFactory()});
+//		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
+//		observableCollection.setElements(Arrays.asList(values));
+//		return observableCollection;
+//	}
+//	
+//	protected Object getSelectedObjectOfControl() {
+//		StructuredSelection selection = (StructuredSelection) this.viewer.getSelection();
+//		if (selection.isEmpty()) {
+//			return null;
+//		}
+//		return selection.getFirstElement();
+//	}
+//	
+//	protected void setSelectedValueOfControl(String value) {
+//		this.viewer.setSelection(new StructuredSelection(new String[]{value}));
+//	}
+//	
+//	/*
+//	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.setSelectedObject(Object)'
+//	 */
+//	public void testAutoSelect() {
+//		SelectionAwareObservableCollection observable = getSelectionAwareObservable(new String[] {"foo", "bar"}); 
+//		assertEquals("foo", getSelectedObjectOfControl());
+//	}
 }
