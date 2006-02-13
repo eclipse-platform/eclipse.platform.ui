@@ -90,31 +90,25 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 			return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 		}
 		if (isWorkspaceSelected()) {
-			ResourceMapping[] mappings = manager.getScope().getMappings(ModelProvider.RESOURCE_MODEL_PROVIDER_ID);
 			try {
 				ModelProvider provider = ModelProvider.getModelProviderDescriptor(ModelProvider.RESOURCE_MODEL_PROVIDER_ID).getModelProvider();
-				return new ResourceMapping[] {new CompositeResourceMapping(ModelProvider.RESOURCE_MODEL_PROVIDER_ID, provider, mappings) };
+				ResourceMapping mapping = Utils.getResourceMapping(provider);
+				if (mapping != null) {
+					return new ResourceMapping[] {mapping };
+				}
 			} catch (CoreException e) {
 				// Shouldn't happen
 				TeamUIPlugin.log(e);
 			}
+			ResourceMapping[] mappings = manager.getScope().getMappings(ModelProvider.RESOURCE_MODEL_PROVIDER_ID);
+			return mappings;
 		}
 		List result = new ArrayList();
 		Object[] objects = getRootElement();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			ResourceMapping mapping = Utils.getResourceMapping(object);
-			if (mapping == null) {
-				// For model providers, add a composite resource mapping
-				if (object instanceof ModelProvider) {
-					ModelProvider provider = (ModelProvider) object;
-					ResourceMapping[] mappings = manager.getScope().getMappings(provider.getId());
-					if (mappings.length > 0) {
-						mapping = new CompositeResourceMapping(ModelProvider.RESOURCE_MODEL_PROVIDER_ID, provider, mappings);
-						result.add(mapping);
-					}
-				}
-			} else {
+			if (mapping != null) {
 				result.add(mapping);
 			}
 		}

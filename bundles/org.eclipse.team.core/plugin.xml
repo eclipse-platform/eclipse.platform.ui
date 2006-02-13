@@ -146,5 +146,13 @@
             class="org.eclipse.team.internal.core.TeamHookDispatcher">
       </teamHook>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
+            class="org.eclipse.team.internal.core.AdapterFactory">
+         <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+      </factory>
+   </extension>
 
 </plugin>

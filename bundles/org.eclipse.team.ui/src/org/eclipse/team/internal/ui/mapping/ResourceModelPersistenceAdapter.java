@@ -125,7 +125,7 @@ public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapt
 			try {
 				ModelProvider provider = desc.getModelProvider();
 				if (provider != null) {
-					ResourceMapping mapping = getMappingForProvider(provider);
+					ResourceMapping mapping = Utils.getResourceMapping(provider);
 					if (mapping != null)
 						result.add(mapping);
 				}
@@ -134,11 +134,6 @@ public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapt
 			}
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
-	}
-
-	private ResourceMapping getMappingForProvider(ModelProvider provider) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 }
