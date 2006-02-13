@@ -146,7 +146,7 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
 				String id = stok.nextToken().trim();
-				IntroElement page = createRootPageLink(id);
+				IntroElement page = createRootPageLink(id, standby);
 				if (page != null)
 					links.add(page);
 			}
@@ -184,48 +184,49 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		return new IntroElement[] { clink };
 	}
 
-	private IntroElement createRootPageLink(String id) {
+	private IntroElement createRootPageLink(String id, boolean standby) {
+		
 		if (id.equals(ID_OVERVIEW))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_overview_name,
-					"http://org.eclipse.ui.intro/showPage?id=overview", id, //$NON-NLS-1$
+					createPageURL(id, standby), id, 
 					"overview_img", "css/graphics/root/overview.png", Messages.SharedIntroConfigurer_overview_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_overview_tooltip);
 		if (id.equals(ID_FIRSTSTEPS))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_firststeps_name,
-					"http://org.eclipse.ui.intro/showPage?id=firststeps", //$NON-NLS-1$
+					createPageURL(id, standby), 
 					id,
 					"firststeps_img", "css/graphics/root/firststeps.png", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_firststeps_tooltip);
 		if (id.equals(ID_TUTORIALS))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_tutorials_name,
-					"http://org.eclipse.ui.intro/showPage?id=tutorials", //$NON-NLS-1$
+					createPageURL(id, standby), 
 					id,
 					"tutorials_img", "css/graphics/root/tutorials.png", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_tutorials_tooltip);
 		if (id.equals(ID_SAMPLES))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_samples_name,
-					"http://org.eclipse.ui.intro/showPage?id=samples", id, //$NON-NLS-1$
+					createPageURL(id, standby), id, 
 					"samples_img", "css/graphics/root/samples.png", Messages.SharedIntroConfigurer_samples_alt, Messages.SharedIntroConfigurer_samples_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
 		if (id.equals(ID_WHATSNEW))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_whatsnew_name,
-					"http://org.eclipse.ui.intro/showPage?id=whatsnew", //$NON-NLS-1$
+					createPageURL(id, standby), 
 					id,
 					"whatsnew_img", "css/graphics/root/whatsnew.png", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_whatsnew_tooltip);
 		if (id.equals(ID_MIGRATE))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_migrate_name,
-					"http://org.eclipse.ui.intro/showPage?id=migrate", id, //$NON-NLS-1$
+					createPageURL(id, standby), id, 
 					"migrate_img", "css/graphics/root/migrate.png", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
 		if (id.equals(ID_WEBRESOURCES))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_webresources_name,
-					"http://org.eclipse.ui.intro/showPage?id=webresources", //$NON-NLS-1$
+					createPageURL(id, standby), 
 					id, "webresources_img", "css/graphics/root/webresources.png", //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_webresources_alt,
 					Messages.SharedIntroConfigurer_webresources_tooltip);
@@ -235,26 +236,33 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 	private IntroElement createNavLink(String id, String pageId) {
 		if (id.equals(ID_OVERVIEW))
 			return createNavLink(Messages.SharedIntroConfigurer_overview_nav,
-					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$ 
 		if (id.equals(ID_FIRSTSTEPS))
 			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav,
-					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		if (id.equals(ID_TUTORIALS))
 			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav,
-					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		if (id.equals(ID_SAMPLES))
 			return createNavLink(Messages.SharedIntroConfigurer_samples_nav,
-					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		if (id.equals(ID_WHATSNEW))
 			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav,
-					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		if (id.equals(ID_MIGRATE))
 			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav,
-					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		if (id.equals(ID_WEBRESOURCES))
 			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav,
-					"http://org.eclipse.ui.intro/showPage?id=" + id, id, "left"); //$NON-NLS-1$//$NON-NLS-2$ 
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		return null;
+	}
+	
+	private String createPageURL(String id, boolean standby) {
+		String url = "http://org.eclipse.ui.intro/showPage?id=" + id; //$NON-NLS-1$
+		if (standby)
+			url+= "&standby=false"; //$NON-NLS-1$
+		return url;
 	}
 
 	private IntroElement createLaunchBarShortcut(String id) {
@@ -320,7 +328,7 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 		IntroElement element = new IntroElement("shortcut"); //$NON-NLS-1$
 		element.setAttribute("icon", icon); //$NON-NLS-1$
 		element.setAttribute("tooltip", tooltip); //$NON-NLS-1$
-		element.setAttribute("url", "http://org.eclipse.ui.intro/showPage?id=" + id); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("url", createPageURL(id, false)); //$NON-NLS-1$
 		return element;
 	}
 

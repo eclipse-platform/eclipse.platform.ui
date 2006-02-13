@@ -239,8 +239,13 @@ public class PageWidgetFactory {
             layout.numColumns = 2;
             container.setLayout(layout);
 
-            Label ilabel = toolkit.createLabel(container, null);
+            //Label ilabel = toolkit.createLabel(container, null);
+            ImageHyperlink ilabel = toolkit.createImageHyperlink(container, SWT.NULL);
             ilabel.setImage(linkImage);
+            ilabel.setHoverImage(styleManager.getImage(link, "hover-icon", //$NON-NLS-1$
+                null));
+            ilabel.setHref(link.getUrl());
+            ilabel.addHyperlinkListener(hyperlinkAdapter);
             TableWrapData td = new TableWrapData();
             td.valign = TableWrapData.TOP;
             td.rowspan = 2;
