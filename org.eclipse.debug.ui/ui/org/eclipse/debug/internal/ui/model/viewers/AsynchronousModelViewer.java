@@ -602,9 +602,9 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param reveal whether to reveal the selection
 	 */
 	protected void attemptSelection(boolean reveal) {
-		if (fPendingSelection != null) {
-			ISelection currentSelection = null;
-			synchronized (this) {
+		ISelection currentSelection = null;
+		synchronized (this) {
+			if (fPendingSelection != null) {
 				ISelection remaining = doAttemptSelectionToWidget(fPendingSelection, reveal);
 				if (remaining.isEmpty()) {
 					remaining = null;
@@ -617,10 +617,9 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 					}
 				}
 			}
-
-			if (currentSelection != null) {
-				updateSelection(currentSelection);
-			}
+		}
+		if (currentSelection != null) {
+			updateSelection(currentSelection);
 		}
 	}
 	
