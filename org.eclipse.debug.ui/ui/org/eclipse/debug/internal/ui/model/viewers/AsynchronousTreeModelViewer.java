@@ -682,6 +682,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     Object element = theElements.get(i);
                     if (!item.isDisposed() && item.getData() != element) {
                         ModelNode node = getModel().getNode(item);
+                        if (node == null) {
+                        	// the node has been unmapped from the widget (pushed down perhaps)
+                        	return selection;
+                        }
                         node.remap(element);
                         item.setData(element);
                     }
