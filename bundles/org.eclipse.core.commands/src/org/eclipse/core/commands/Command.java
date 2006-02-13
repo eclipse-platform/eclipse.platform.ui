@@ -172,6 +172,7 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *            <code>null</code>.
 	 * @param state
 	 *            The state to add; must not be <code>null</code>.
+	 * @since 3.2
 	 */
 	public void addState(final String id, final State state) {
 		super.addState(id, state);
@@ -863,6 +864,7 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * @param stateId
 	 *            The identifier of the state to remove; must not be
 	 *            <code>null</code>.
+	 * @since 3.2
 	 */
 	public void removeState(final String stateId) {
 		if (handler instanceof IObjectWithState) {

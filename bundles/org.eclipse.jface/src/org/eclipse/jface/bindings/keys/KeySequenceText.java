@@ -365,7 +365,7 @@ public final class KeySequenceText {
 					break;
 				}
 
-			// fall through -- either no modifiers, or just shift.
+				// fall through -- either no modifiers, or just shift.
 
 			case SWT.TRAVERSE_ARROW_NEXT:
 			case SWT.TRAVERSE_ARROW_PREVIOUS:
@@ -470,10 +470,12 @@ public final class KeySequenceText {
 	 * that an infinite number should be allowed.
 	 */
 	public static final int INFINITE = -1;
-	
+
 	/**
 	 * The name of the property representing the current key sequence in this
 	 * key sequence widget.
+	 * 
+	 * @since 3.2
 	 */
 	public static final String P_KEY_SEQUENCE = "org.eclipse.jface.bindings.keys.KeySequenceText.KeySequence"; //$NON-NLS-1$
 
@@ -493,7 +495,7 @@ public final class KeySequenceText {
 	 * The text of the key sequence -- containing only the complete key strokes.
 	 */
 	private KeySequence keySequence = KeySequence.getInstance();
-	
+
 	/**
 	 * Those listening to changes to the key sequence in this widget. This value
 	 * may be <code>null</code> if there are no listeners.
@@ -555,6 +557,7 @@ public final class KeySequenceText {
 	 * @param listener
 	 *            The listener to be notified when changes occur; must not be
 	 *            <code>null</code>.
+	 * @since 3.2
 	 */
 	public final void addPropertyChangeListener(
 			final IPropertyChangeListener listener) {
@@ -682,12 +685,13 @@ public final class KeySequenceText {
 
 		return startStrokeIndex;
 	}
-	
+
 	/**
 	 * Fires a property change event to all of the listeners.
 	 * 
 	 * @param oldKeySequence
 	 *            The old key sequence; must not be <code>null</code>.
+	 * @since 3.2
 	 */
 	protected final void firePropertyChangeEvent(
 			final KeySequence oldKeySequence) {
@@ -768,8 +772,7 @@ public final class KeySequenceText {
 		}
 
 		KeyStroke[][] deletedKeyStrokes = new KeyStroke[1][];
-		int index = deleteSelection(newKeyStrokes, false,
-				deletedKeyStrokes);
+		int index = deleteSelection(newKeyStrokes, false, deletedKeyStrokes);
 		if (index == -1) {
 			index = 0;
 		}
@@ -829,12 +832,13 @@ public final class KeySequenceText {
 	private boolean isCursorInLastPosition() {
 		return (text.getSelection().y >= getText().length());
 	}
-	
+
 	/**
 	 * Removes the given listener from this key sequence widget.
 	 * 
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
+	 * @since 3.2
 	 */
 	public final void removePropertyChangeListener(
 			final IPropertyChangeListener listener) {
@@ -886,7 +890,7 @@ public final class KeySequenceText {
 			text.addModifyListener(updateSequenceListener);
 			text.setSelection(getText().length());
 		}
-		
+
 		firePropertyChangeEvent(oldKeySequence);
 	}
 

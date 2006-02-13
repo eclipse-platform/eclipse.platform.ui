@@ -377,16 +377,18 @@ public final class TriggeredOperations extends AbstractOperation implements
 	
 	/**
 	 * Replace the undo context of the receiver with the provided replacement
-	 * undo context.  In the case of triggered operations, all contained operations
-	 * are checked and any occurrence of the original context is replaced with the
-	 * new undo context.
+	 * undo context. In the case of triggered operations, all contained
+	 * operations are checked and any occurrence of the original context is
+	 * replaced with the new undo context.
 	 * <p>
 	 * This message has no effect if the original undo context is not present in
 	 * the receiver.
 	 * 
-	 * @param original the undo context which is to be replaced
-	 * @param replacement the undo context which is replacing the original
-	 * 
+	 * @param original
+	 *            the undo context which is to be replaced
+	 * @param replacement
+	 *            the undo context which is replacing the original
+	 * @since 3.2
 	 */
 	public void replaceContext(IUndoContext original, IUndoContext replacement) {
 		
