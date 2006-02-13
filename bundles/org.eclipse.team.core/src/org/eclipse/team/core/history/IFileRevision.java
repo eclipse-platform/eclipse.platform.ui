@@ -35,7 +35,9 @@ public interface IFileRevision {
 	 * <code>IFile</code> clients can assume that this
 	 * file state represents the current state of
 	 * the returned <code>IFile</code>.
+	 * @param monitor a progress monitor
 	 * @return IStorage containing file storage 
+	 * @throws CoreException 
 	 */
 	public IStorage getStorage(IProgressMonitor monitor) throws CoreException;
 

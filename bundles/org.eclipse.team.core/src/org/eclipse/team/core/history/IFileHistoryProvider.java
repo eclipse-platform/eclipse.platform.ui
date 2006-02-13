@@ -85,6 +85,7 @@ public interface IFileHistoryProvider {
 	/**
 	 * Returns an {@link IFileHistory} for the specified {@link IFileStore}.
 	 * @param store an IFileStore
+	 * @param flags {@link #SINGLE_REVISION}  or {@link #SINGLE_LINE_OF_DESCENT}
 	 * @param monitor  a progress monitor
 	 * @return the history for the IFileStore
 	 */

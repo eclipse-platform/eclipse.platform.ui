@@ -281,10 +281,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				compareAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
 			}
 		});
+		compareAction.setPage(this);
+		
+		openAction = new OpenRevisionAction(CVSUIMessages.CVSHistoryPage_OpenAction);
+		tableViewer.getTable().addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				openAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
+			}
+		});
+		openAction.setPage(this);
 		
 		compareAction.setPage(this);
-		openAction = new OpenRevisionAction();
-		
 		OpenStrategy handler = new OpenStrategy(tableViewer.getTable());
 		handler.addOpenListener(new IOpenEventListener() {
 		public void handleOpen(SelectionEvent e) {
@@ -295,8 +302,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					compareAction.run();
 				} else {
 					StructuredSelection sel = new StructuredSelection(new Object[] {tableSelection});
-					openAction.selectionChanged(null, sel);
-					openAction.run(null);
+					openAction.selectionChanged(sel);
+					openAction.run();
 				}
 			}
 		});
@@ -534,6 +541,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		// file actions go first (view file)
 		IHistoryPageSite parentSite = getHistoryPageSite();
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
+		
+		if (file != null && !parentSite.isModal()){
+			manager.add(openAction);
+			manager.add(compareAction);
+			manager.add(new Separator("openCompare")); //$NON-NLS-1$
+		}
 		if (file != null &&
 		  !(file instanceof RemoteFile)) {
 			// Add the "Add to Workspace" action if 1 revision is selected.
@@ -553,7 +566,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 			}
 		}
-		manager.add(compareAction);
+		
 		if (!parentSite.isModal()){
 			manager.add(new Separator("additions")); //$NON-NLS-1$
 			manager.add(refreshAction);
@@ -707,10 +720,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (refreshCVSFileHistoryJob.getState() != Job.NONE){
 			refreshCVSFileHistoryJob.cancel();
 		}
-		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
-		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
+		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
+		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
+		
 		IHistoryPageSite parentSite = getHistoryPageSite();
 		Utils.schedule(refreshCVSFileHistoryJob, getWorkbenchSite(parentSite));
 	}

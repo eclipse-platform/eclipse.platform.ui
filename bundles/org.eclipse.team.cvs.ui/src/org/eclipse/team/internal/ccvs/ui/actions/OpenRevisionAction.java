@@ -16,63 +16,70 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.internal.ccvs.ui.CVSHistoryPage;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.BaseSelectionListenerAction;
+import org.eclipse.ui.progress.IProgressService;
 
-public class OpenRevisionAction extends TeamAction {
+public class OpenRevisionAction extends BaseSelectionListenerAction {
 
-	public void run(IAction action) {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					IStructuredSelection structSel = getSelection();
-
-					Object[] objArray = structSel.toArray();
-
-					for (int i = 0; i < objArray.length; i++) {
-						IFileRevision revision = (IFileRevision) objArray[i];
-						if (revision == null || !revision.exists()) {
-							MessageDialog.openError(getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, TeamUIMessages.OpenRevisionAction_DeletedRevisionMessage);
-						} else {
-							IStorage file = revision.getStorage(monitor);
-
-							String id = getEditorID(file.getName(), file.getContents());
-							getTargetPage().openEditor(new FileRevisionEditorInput(revision), id);
-						}
-
-					}
-
-				} catch (Exception e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR);
+	private IStructuredSelection selection;
+	private CVSHistoryPage page;
+	
+	public OpenRevisionAction(String text) {
+		super(text);
 	}
 
-	protected boolean isEnabled() throws TeamException {
+	public void run() {
+			IStructuredSelection structSel = selection;
+
+			Object[] objArray = structSel.toArray();
+
+			for (int i = 0; i < objArray.length; i++) {
+				final IFileRevision revision = (IFileRevision) objArray[i];
+				if (revision == null || !revision.exists()) {
+					MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, TeamUIMessages.OpenRevisionAction_DeletedRevisionMessage);
+				} else {
+					IRunnableWithProgress runnable = new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							IStorage file;
+							try {
+								file = revision.getStorage(monitor);
+								String id = getEditorID(file.getName(), file.getContents());
+								page.getSite().getPage().openEditor(new FileRevisionEditorInput(revision), id);
+							} catch (CoreException e) {
+							}
+							
+						}
+					};
+					
+					IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+					try {
+						progressService.run(false, false, runnable);
+					} catch (InvocationTargetException e) {
+					} catch (InterruptedException e) {
+					}
+				}
+
+			}
+	}
+	
+	public boolean isEnabled() {
 		return true;
 	}
 
 	/* private */ String getEditorID(String fileName, InputStream contents) {
 		IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
 		IEditorRegistry registry = workbench.getEditorRegistry();
-		IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-
 		IContentType type = null;
 		if (contents != null) {
 			try {
@@ -95,4 +102,12 @@ public class OpenRevisionAction extends TeamAction {
 		return id;
 	}
 
+	protected boolean updateSelection(IStructuredSelection selection) {
+		this.selection = selection;
+		return true;
+	}
+	
+	public void setPage(CVSHistoryPage page) {
+		this.page = page;
+	}
 }
