@@ -511,36 +511,23 @@ public abstract class AsynchronousModel {
         	sorter.sort(viewer, children);
         }
         
-        final ModelNode[] prevKids = parentNode.getChildrenNodes();
-        if (prevKids == null) {
-        	final ModelNode[] newKids = new ModelNode[children.length];
-            synchronized (this) {
-                if (isDisposed()) {
-                    return;
-                }
+        ModelNode[] prevKids = null;
+        ModelNode[] newChildren = null;
+        
+        synchronized (this) {
+        	if (isDisposed()) {
+                return;
+            }
+        	prevKids = parentNode.getChildrenNodes();
+            if (prevKids == null) {
+            	newChildren = new ModelNode[children.length];
             	for (int i = 0; i < children.length; i++) {
     				ModelNode node = new ModelNode(parentNode, children[i]);
     				mapElement(children[i], node);
-    				newKids[i] = node;
+    				newChildren[i] = node;
     			}
-            	parentNode.setChildren(newKids);
-            }
-            preservingSelection(new Runnable() {
-                public void run() {
-                	if (newKids.length == 0) {
-                		viewer.nodeChildrenChanged(parentNode);
-                	} else {
-//                  the tree could have asked for data before it was ready...
-                		viewer.nodeChildrenSet(parentNode, newKids);
-                	}
-                }
-            });
-
-        } else {
-            synchronized (this) {
-                if (isDisposed()) {
-                    return;
-                }
+            	parentNode.setChildren(newChildren);
+            } else {
     	        for (int i = 0; i < prevKids.length; i++) {
     				ModelNode kid = prevKids[i];
     				if (i >= children.length) {
@@ -557,29 +544,31 @@ public abstract class AsynchronousModel {
     			}
     			// create new children
     	        if (children.length > prevKids.length) {
-    		        ModelNode[] replaceChildren = new ModelNode[children.length];
-    		        System.arraycopy(prevKids, 0, replaceChildren, 0, prevKids.length);
+    		        newChildren = new ModelNode[children.length];
+    		        System.arraycopy(prevKids, 0, newChildren, 0, prevKids.length);
     		        for (int i = prevKids.length; i < children.length; i ++) {
     		        	Object child = children[i];
     					ModelNode childNode = new ModelNode(parentNode, child);
     		        	mapElement(child, childNode);
-    		        	replaceChildren[i] = childNode;
+    		        	newChildren[i] = childNode;
     		        }
-    		        parentNode.setChildren(replaceChildren);
+    		        parentNode.setChildren(newChildren);
     	        }
                 if (children.length < prevKids.length) {
-                    ModelNode[] replaceChildren = new ModelNode[children.length];
-                    System.arraycopy(prevKids, 0, replaceChildren, 0, children.length);
-                    parentNode.setChildren(replaceChildren);
+                	newChildren = new ModelNode[children.length];
+                    System.arraycopy(prevKids, 0, newChildren, 0, children.length);
+                    parentNode.setChildren(newChildren);
                 }
-                    
-            }
-            // update viewer outside the lock
-            
+            }        	
+        }
+        
+        //update viewer outside the lock
+        if (prevKids != null) {
+        	final ModelNode[] finalPrevKids = prevKids; 
             preservingSelection(new Runnable() {
                 public void run() {
-                    for (int i = 0; i < prevKids.length; i++) {
-                        ModelNode kid = prevKids[i];
+                    for (int i = 0; i < finalPrevKids.length; i++) {
+                        ModelNode kid = finalPrevKids[i];
                         if (i >= children.length) {
                             viewer.nodeDisposed(kid);
                         } else {
@@ -588,8 +577,21 @@ public abstract class AsynchronousModel {
                     }
                     viewer.nodeChildrenChanged(parentNode);
                 }
+            });        	
+        } else {
+        	final ModelNode[] finalNewChildren = newChildren;
+            preservingSelection(new Runnable() {
+                public void run() {
+                	if (finalNewChildren.length == 0) {
+                		viewer.nodeChildrenChanged(parentNode);
+                	} else {
+//                  the tree could have asked for data before it was ready...
+                		viewer.nodeChildrenSet(parentNode, finalNewChildren);
+                	}
+                }
             });
-
         }
+        
+
 	}
 }
