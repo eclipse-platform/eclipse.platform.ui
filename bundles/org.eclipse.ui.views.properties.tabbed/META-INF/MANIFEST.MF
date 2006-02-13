@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.views.properties.tabbed,
  org.eclipse.ui.views.properties.tabbed.internal;x-internal:=true,
  org.eclipse.ui.views.properties.tabbed.internal.l10n;x-internal:=true,
- org.eclipse.ui.views.properties.tabbed.internal.view;x-internal:=true
+ org.eclipse.ui.views.properties.tabbed.internal.view;x-friends:="org.eclipse.ui.tests.views.properties.tabbed"
 Require-Bundle: org.eclipse.ui.forms;visibility:=reexport,
  org.eclipse.ui.views;visibility:=reexport,
  org.eclipse.ui;visibility:=reexport,
