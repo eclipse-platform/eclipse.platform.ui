@@ -431,6 +431,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			}
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
 			Object tempPageSource = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
+			if (tempPageSource == null) {
+				tempPageSource = Platform.getAdapterManager().getAdapter(teamProvider, IHistoryPageSource.class);
+			}
 			if (tempPageSource instanceof IHistoryPageSource) {
 				IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
 
