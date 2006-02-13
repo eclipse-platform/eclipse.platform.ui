@@ -12,6 +12,8 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.util.*;
 
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.*;
@@ -19,7 +21,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.core.mapping.ISynchronizationScopeChangeListener;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.*;
@@ -114,13 +118,29 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 * @return a newly created common viewer
 	 */
 	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration, IEmptyTreeListener listener) {
-		CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, listener);
+		final CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, listener);
 		v.setSorter(new CommonViewerSorter());
 		ISynchronizationScope scope = getScope(configuration);
-		v.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
-		v.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
+		scope.addScopeChangeListener(new ISynchronizationScopeChangeListener() {
+			public void scopeChanged(final ISynchronizationScope scope,
+					ResourceMapping[] newMappings, ResourceTraversal[] newTraversals) {
+				enableContentProviders(v, scope);
+				Utils.asyncExec(new Runnable() {			
+					public void run() {
+						v.refresh();
+					}
+				
+				}, v);
+			}
+		});
+		enableContentProviders(v, scope);
 		configuration.getSite().setSelectionProvider(v);
 		return v;
+	}
+
+	private static void enableContentProviders(CommonViewer v, ISynchronizationScope scope) {
+		v.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
+		v.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
 	}
 	
 	private static ISynchronizationScope getScope(ISynchronizePageConfiguration configuration) {
@@ -134,7 +154,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	public CommonViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
 		super(configuration);
-		CommonViewer viewer = CommonViewerAdvisor.createViewer(parent, configuration, this);
+		final CommonViewer viewer = CommonViewerAdvisor.createViewer(parent, configuration, this);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
         viewer.getNavigatorContentService().addListener(this);
