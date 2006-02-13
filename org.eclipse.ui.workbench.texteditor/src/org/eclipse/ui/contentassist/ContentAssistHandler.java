@@ -46,6 +46,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * and its subject adapter.
  *
  * @since 3.0
+ * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
 public class ContentAssistHandler {
 	/**
