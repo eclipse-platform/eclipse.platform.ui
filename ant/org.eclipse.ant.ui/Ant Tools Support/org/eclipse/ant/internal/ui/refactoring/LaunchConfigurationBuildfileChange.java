@@ -58,7 +58,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
         String projectName= project.getDescription().getName();
         ILaunchConfiguration[] configs = getAntLaunchConfigurations();
         List changes= createChangesForProjectRename(project, configs, projectName, newProjectName);
-        return createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
+        return createChangeFromList(changes, RefactoringMessages.LaunchConfigurationBuildfileChange_7); 
     }
     
     /**
@@ -81,7 +81,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
         }
         ILaunchConfiguration[] configs = getAntLaunchConfigurations();
         List changes= createChangesForBuildfileRename(file, configs, file.getProject().getName(), newBuildfileName);
-        return createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
+        return createChangeFromList(changes, RefactoringMessages.LaunchConfigurationBuildfileChange_7); 
     }
 
     private static ILaunchConfiguration[] getAntLaunchConfigurations() throws CoreException {
@@ -182,15 +182,12 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 */
 	public String getName() {
 		if (fNewLaunchConfigurationName != null) {
-			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); 
+			return MessageFormat.format(RefactoringMessages.LaunchConfigurationBuildfileChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); 
 		} 
 		if (fNewProjectName == null) {
-			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_1, new String[] {fLaunchConfiguration.getName()}); 
+			return MessageFormat.format(RefactoringMessages.LaunchConfigurationBuildfileChange_1, new String[] {fLaunchConfiguration.getName()}); 
 		}
-		if (fNewBuildfileLocation == null) {
-			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_2, new String[] {fLaunchConfiguration.getName()}); 
-		}
-		return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_3, new String[] {fLaunchConfiguration.getName()}); 
+		return MessageFormat.format(RefactoringMessages.LaunchConfigurationBuildfileChange_2, new String[] {fLaunchConfiguration.getName()});  
 	}
 	
 	/* (non-Javadoc)
@@ -210,11 +207,11 @@ public class LaunchConfigurationBuildfileChange extends Change {
 				if (fOldProjectName.equals(projectName)) {
 					return new RefactoringStatus();
 				}
-				return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName})); 
+				return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationBuildfileChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName})); 
 			}
-			return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_5, new String[] {fLaunchConfiguration.getName(), fOldBuildfileLocation})); 
+			return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationBuildfileChange_5, new String[] {fLaunchConfiguration.getName(), fOldBuildfileLocation})); 
 		} 
-		return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, new String[] {fLaunchConfiguration.getName()})); 
+		return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationBuildfileChange_6, new String[] {fLaunchConfiguration.getName()})); 
 	}
 	
 	/* (non-Javadoc)

@@ -14,17 +14,14 @@ import org.eclipse.osgi.util.NLS;
 public class RefactoringMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.refactoring.RefactoringMessages";//$NON-NLS-1$
 
-	public static String LaunchConfigurationIJavaProjectRenameParticipant_0;
-	public static String LaunchConfigurationITypeMoveParticipant_0;
-	public static String LaunchConfigurationITypeRenameParticipant_0;
-	public static String LaunchConfigurationProjectMainTypeChange_0;
-	public static String LaunchConfigurationProjectMainTypeChange_1;
-	public static String LaunchConfigurationProjectMainTypeChange_2;
-	public static String LaunchConfigurationProjectMainTypeChange_3;
-	public static String LaunchConfigurationProjectMainTypeChange_4;
-	public static String LaunchConfigurationProjectMainTypeChange_5;
-	public static String LaunchConfigurationProjectMainTypeChange_6;
-	public static String LaunchConfigurationProjectMainTypeChange_7;
+	public static String LaunchConfigurationParticipant_0;
+	public static String LaunchConfigurationBuildfileChange_0;
+	public static String LaunchConfigurationBuildfileChange_1;
+	public static String LaunchConfigurationBuildfileChange_2;
+	public static String LaunchConfigurationBuildfileChange_4;
+	public static String LaunchConfigurationBuildfileChange_5;
+	public static String LaunchConfigurationBuildfileChange_6;
+	public static String LaunchConfigurationBuildfileChange_7;
 
 	static {
 		// load message values from bundle file
