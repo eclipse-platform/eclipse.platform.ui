@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -42,6 +43,8 @@ import org.eclipse.ui.services.IServiceLocator;
  * <li>{@link ICommandService}</li>
  * <li>{@link IContextService}</li>
  * <li>{@link IHandlerService}</li>
+ * <li>{@link IBindingService}. Resources allocated through this service will
+ * not be cleaned up until the workbench shuts down.</li>
  * </ul>
  * <p>
  * This interface is not intended to be implemented by clients.

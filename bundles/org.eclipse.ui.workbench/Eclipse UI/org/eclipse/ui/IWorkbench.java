@@ -24,6 +24,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -65,6 +66,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * are:
  * </p>
  * <ul>
+ * <li>{@link IBindingService}</li>
  * <li>{@link ICommandService}</li>
  * <li>{@link IContextService}</li>
  * <li>{@link IHandlerService}</li>
