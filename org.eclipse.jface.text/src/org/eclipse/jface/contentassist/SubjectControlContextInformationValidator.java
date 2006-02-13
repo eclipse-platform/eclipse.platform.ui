@@ -23,6 +23,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * considered valid.
  *
  * @since 3.0
+ * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
 public final class SubjectControlContextInformationValidator implements ISubjectControlContextInformationValidator {
 

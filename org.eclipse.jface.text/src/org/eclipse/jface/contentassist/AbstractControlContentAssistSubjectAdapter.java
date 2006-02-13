@@ -58,6 +58,7 @@ import org.eclipse.jface.text.IEventConsumer;
  * A visual feedback can be configured via {@link #setContentAssistCueProvider(ILabelProvider)}.
  *
  * @since 3.0
+ * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
 public abstract class AbstractControlContentAssistSubjectAdapter implements IContentAssistSubjectControl {
 

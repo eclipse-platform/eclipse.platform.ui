@@ -35,6 +35,7 @@ import org.eclipse.jface.text.IDocument;
  * @see org.eclipse.swt.widgets.Text
  * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl
  * @since 3.0
+ * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
 public class TextContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
 

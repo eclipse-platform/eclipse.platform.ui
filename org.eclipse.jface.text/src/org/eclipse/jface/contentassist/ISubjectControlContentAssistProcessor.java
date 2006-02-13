@@ -21,6 +21,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * {@linkplain org.eclipse.jface.contentassist.ISubjectControlContentAssistant subject control content assistant}.
  *
  * @since 3.0
+ * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
 public interface ISubjectControlContentAssistProcessor extends IContentAssistProcessor {
 
