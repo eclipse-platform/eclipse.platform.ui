@@ -144,7 +144,6 @@
                filter="org.eclipse.ui.tests.views.properties.tabbed.views.InformationTwoFilter"
                id="propertySection10"
                tab="propertyTab1">
-            <input type="org.eclipse.ui.tests.views.properties.tabbed.model.Information"/>
          </propertySection>
       </propertySections>
    </extension>

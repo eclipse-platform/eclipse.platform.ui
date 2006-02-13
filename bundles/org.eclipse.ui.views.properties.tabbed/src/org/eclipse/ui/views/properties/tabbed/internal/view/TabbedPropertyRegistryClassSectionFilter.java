@@ -62,22 +62,33 @@ public class TabbedPropertyRegistryClassSectionFilter {
 				return false;
 			}
 
-			Set effectiveTypes = new HashSet();
+            IFilter filter = descriptor.getFilter();
+            
+            if (filter != null) {
+                for (Iterator i = ((IStructuredSelection) selection).iterator(); i
+                .hasNext();) {
+                    Object object = i.next();
 
-			IFilter filter = descriptor.getFilter();
+                    if (filter != null && filter.select(object) == false) {
+                        /**
+                         * filter fails so section does not apply to the selection,
+                         * do not display section.
+                         */
+                        return false;
+                    }
+                }
+                /**
+                 * filter passes for all objects in the selection.
+                 */
+                return true;
+            }
+
+			Set effectiveTypes = new HashSet();
 
 			for (Iterator i = ((IStructuredSelection) selection).iterator(); i
 				.hasNext();) {
 
 				Object object = i.next();
-
-				if (filter != null && filter.select(object) == false) {
-					/**
-					 * filter fails so section does not apply to the selection,
-					 * do not display section.
-					 */
-					return false;
-				}
 
 				Class remapType = object.getClass();
 				if (typeMapper != null) {

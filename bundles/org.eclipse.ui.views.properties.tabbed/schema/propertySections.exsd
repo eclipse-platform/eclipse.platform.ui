@@ -93,7 +93,8 @@
          <attribute name="filter" type="string">
             <annotation>
                <documentation>
-                  The class that implements a section filter, i.e. implements &lt;tt&gt;org.eclipse.jface.viewers.IFilter&lt;/tt&gt;
+                  The class that implements a section filter, i.e. implements &lt;tt&gt;org.eclipse.jface.viewers.IFilter&lt;/tt&gt;.
+A filter is used to override the type mapper and input for the selection. When a filter is specified, type mapper and input are ignored.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.IFilter"/>
