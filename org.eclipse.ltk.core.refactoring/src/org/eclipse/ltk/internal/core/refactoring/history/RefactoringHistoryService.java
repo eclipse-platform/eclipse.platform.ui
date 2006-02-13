@@ -424,8 +424,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						break;
 					}
 					case OperationHistoryEvent.REDONE: {
-						final RefactoringDescriptor descriptor= fUndoStack.peek();
 						fUndoStack.push((RefactoringDescriptor) fRedoQueue.removeFirst());
+						final RefactoringDescriptor descriptor= fUndoStack.peek();
 						if (descriptor != NO_REFACTORING)
 							fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
 						break;
