@@ -729,10 +729,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 
 	void storeComboContent(Combo combo, String key, int maxItems) {
 		String ckey= key + KEY_EXT_COMBO_CONTENT;
-		String[] stored= fDialogSettings.getArray(ckey);
-		if (stored == null) {
-			stored= new String[0];
-		}
+		String[] current= combo.getItems();
 		
 		// copy elements
 		String text= combo.getText();
@@ -741,10 +738,21 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 			newElems.add(text);
 		}
 		
-		for (int i = 0; i < stored.length && newElems.size() < maxItems; i++) {
-			String elem = stored[i];
-			if (!text.equals(elem)) {
-				newElems.add(elem);
+		for (int i = 0; i < current.length && newElems.size() < maxItems; i++) {
+			String old = current[i];
+			if (!newElems.contains(old)) {
+				newElems.add(old);
+			}
+		}
+		if (newElems.size() < maxItems) {
+			String[] stored= fDialogSettings.getArray(ckey);
+			if (stored != null) {
+				for (int i = 0; i < stored.length && newElems.size() < maxItems; i++) {
+					String old = stored[i];
+					if (!newElems.contains(old)) {
+						newElems.add(old);
+					}
+				}	
 			}
 		}
 		
@@ -1030,10 +1038,13 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		sLastIsRegularExpression= getValue(ds, KEY_REGULAR_EXPRESSION_SEARCH, false);
 		sLastIsWholeWord= getValue(ds, KEY_WHOLE_WORD, true);
 		sLastConsiderDerivedResources= getValue(ds, KEY_CONSIDER_DERIVED_RESOURCES, false);
-		sLastFilePatterns= getValue(ds, KEY_FILE_PATTERNS, "*.c,*.cpp,*.h,*.java"); //$NON-NLS-1$
+		sLastFilePatterns= getValue(ds, KEY_FILE_PATTERNS, null); 
 		sLastUseCaseSensitiveFilePatterns= getValue(ds, KEY_USE_CASE_SENSITIVE_FILE_PATTERNS, false);
 		sLastUseFlatLayout= getValue(ds, KEY_USE_FLAT_LAYOUT, false);
 		sLastScope= getScope(ds, KEY_SEARCH_SCOPE);
+		if (sLastFilePatterns == null) {
+			sLastFilePatterns= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry().getDefaultFilePatterns()[0];
+		}
 	}
 
 	private static String getValue(IDialogSettings ds, String key, String def) {
