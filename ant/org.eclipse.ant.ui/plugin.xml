@@ -773,7 +773,7 @@ M4 = Platform-specific fourth key -->
    <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
      <renameParticipant
             class="org.eclipse.ant.internal.ui.refactoring.LaunchConfigurationBuildfileRenameParticipant"
-            name="%LaunchConfigurationITypeRenameParticipant.name"
+            name="%AntRenameParticipant.name"
             id="org.eclipse.ant.ui.refactoring.launchConfiguration.buildfileRename"> 
          <enablement>
            <with variable="element">
@@ -783,7 +783,7 @@ M4 = Platform-specific fourth key -->
       </renameParticipant>
 	 <renameParticipant
             class="org.eclipse.ant.internal.ui.refactoring.LaunchConfigurationIProjectRenameParticipant"
-            name="Ant Launch configuration participant"
+            name="%AntRenameParticipant.name"
             id="org.eclipse.ant.ui.refactoring.launchConfiguration.projectRename">
          <enablement>
            <with variable="element">
