@@ -78,10 +78,12 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Gets the best active binding for a command. The best binding is the one
 	 * that would be most appropriate to show in a menu. Bindings which belong
-	 * to a child scheme are given preference over those in a parent scheme. The
-	 * rest of the calculaton is based most on various concepts of "length", as
-	 * well as giving some modifier keys preference (e.g., <code>Alt</code> is
-	 * less likely to appear than <code>Ctrl</code>).
+	 * to a child scheme are given preference over those in a parent scheme.
+	 * Bindings which belong to a particular locale or platform are given
+	 * preference over those that do not. The rest of the calculaton is based
+	 * most on various concepts of "length", as well as giving some modifier
+	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
+	 * <code>Ctrl</code>).
 	 * 
 	 * @param commandId
 	 *            The identifier of the command for which the best active
@@ -118,7 +120,7 @@ public interface IBindingService extends IDisposable {
 	 * @return The current array of bindings (<code>Binding</code>).
 	 */
 	public Binding[] getBindings();
-	
+
 	/**
 	 * Returns the current state of the key binding buffer. This will contain
 	 * all of the keys currently awaiting processing. If the system is currently

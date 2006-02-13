@@ -1181,10 +1181,12 @@ public final class BindingManager extends HandleObjectManager implements
 	/**
 	 * Gets the best active binding for a command. The best binding is the one
 	 * that would be most appropriate to show in a menu. Bindings which belong
-	 * to a child scheme are given preference over those in a parent scheme. The
-	 * rest of the calculaton is based most on various concepts of "length", as
-	 * well as giving some modifier keys preference (e.g., <code>Alt</code> is
-	 * less likely to appear than <code>Ctrl</code>).
+	 * to a child scheme are given preference over those in a parent scheme.
+	 * Bindings which belong to a particular locale or platform are given
+	 * preference over those that do not. The rest of the calculaton is based
+	 * most on various concepts of "length", as well as giving some modifier
+	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
+	 * <code>Ctrl</code>).
 	 * 
 	 * @param commandId
 	 *            The identifier of the command for which the best active
@@ -1194,7 +1196,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         command.
 	 * @since 3.2
 	 */
-	public final TriggerSequence getBestActiveBindingFor(final String commandId) {
+public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		final Binding[] bindings = getActiveBindingsFor1(commandId);
 		if ((bindings == null) || (bindings.length == 0)) {
 			return null;
@@ -1213,6 +1215,32 @@ public final class BindingManager extends HandleObjectManager implements
 				bestBinding = currentBinding;
 			}
 			if (compareTo != 0) {
+				continue;
+			}
+
+			/*
+			 * Bindings with a locale are given preference over those that do
+			 * not.
+			 */
+			final String bestLocale = bestBinding.getLocale();
+			final String currentLocale = currentBinding.getLocale();
+			if ((bestLocale == null) && (currentLocale != null)) {
+				bestBinding = currentBinding;
+			}
+			if (!(Util.equals(bestLocale, currentLocale))) {
+				continue;
+			}
+
+			/*
+			 * Bindings with a platform are given preference over those that do
+			 * not.
+			 */
+			final String bestPlatform = bestBinding.getPlatform();
+			final String currentPlatform = currentBinding.getPlatform();
+			if ((bestPlatform == null) && (currentPlatform != null)) {
+				bestBinding = currentBinding;
+			}
+			if (!(Util.equals(bestPlatform, currentPlatform))) {
 				continue;
 			}
 
@@ -1259,7 +1287,6 @@ public final class BindingManager extends HandleObjectManager implements
 
 		return bestBinding.getTriggerSequence();
 	}
-
 	/**
 	 * Gets the formatted string representing the best active binding for a
 	 * command. The best binding is the one that would be most appropriate to
