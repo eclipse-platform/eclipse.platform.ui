@@ -115,8 +115,22 @@ public class Bug99858Test extends TestCase {
 		// the delete even ran
 		assertTrue(newDel.fRan);
 
-		Platform.getJobManager().join(
-				IDEWorkbenchMessages.DeleteResourceAction_jobName, null);
+		boolean joined = false;
+		while (!joined) {
+			try {
+				Platform
+						.getJobManager()
+						.join(
+								IDEWorkbenchMessages.DeleteResourceAction_jobName,
+								null);
+				joined = true;
+			} catch (InterruptedException ex) {
+				// we might be blocking some other thread, spin the event loop
+				// to run syncExecs
+				chewUpEvents();
+				// and now keep trying to join
+			}
+		}
 
 		// if our project still exists, the delete failed.
 		assertFalse(testProject.exists());
