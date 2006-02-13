@@ -189,14 +189,7 @@ public class DataBindingContext implements IDataBindingContext {
 		}
 		if (bindSpec.getDomainValidator() == null) {
 			((BindSpec) bindSpec)
-					.setDomainValidator(createDomainValidator(toType)); // FIXME:
-			// Not
-			// sure
-			// which
-			// is
-			// the
-			// model
-			// type
+					.setDomainValidator(createDomainValidator(toType));
 		}
 		if (bindSpec.getModelToTargetConverter() == null) {
 			((BindSpec) bindSpec).setModelToTargetConverter(createConverter(
