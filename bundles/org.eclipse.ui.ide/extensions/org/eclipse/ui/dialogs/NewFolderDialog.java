@@ -346,12 +346,12 @@ public class NewFolderDialog extends SelectionStatusDialog {
      * 	specified container as a parent. 
      */
     private boolean isValidContainer() {
-        if (container.getType() != IResource.PROJECT)
+        if (container.getType() != IResource.PROJECT && container.getType() != IResource.FOLDER)
             return false;
 
         try {
             IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-            IProject project = (IProject) container;
+            IProject project = container.getProject();
             String[] natureIds = project.getDescription().getNatureIds();
 
             for (int i = 0; i < natureIds.length; i++) {

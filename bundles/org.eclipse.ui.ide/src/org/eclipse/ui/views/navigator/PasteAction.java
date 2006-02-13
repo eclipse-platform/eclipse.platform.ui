@@ -225,7 +225,8 @@ import org.eclipse.ui.part.ResourceTransfer;
         if (resourceData != null) {
             // linked resources can only be pasted into projects
             if (isLinked(resourceData)
-                    && targetResource.getType() != IResource.PROJECT)
+                    && targetResource.getType() != IResource.PROJECT
+                    && targetResource.getType() != IResource.FOLDER)
                 return false;
 
             if (targetResource.getType() == IResource.FOLDER) {
