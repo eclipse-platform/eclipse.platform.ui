@@ -16,11 +16,13 @@ import java.util.Random;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.SelectionProviderView;
+import org.eclipse.ui.tests.api.SaveableMockViewPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -272,6 +274,19 @@ public class PropertySheetAuto extends UITestCase {
             while (Display.getCurrent().readAndDispatch())
                 ;
         }
+    }
+    
+    /**
+     * Tests that the Properties view provides the source part for getAdapter(ISaveablePart.class)
+     * if it's saveable.  
+     * See  Bug 125386 [PropertiesView] Properties view should delegate Save back to source part
+     */
+    public void testSaveableRetargeting() throws Throwable {
+    	IWorkbenchPart propView = createTestPart(activePage);
+    	assertNull(propView.getAdapter(ISaveablePart.class));
+    	IViewPart saveableView = activePage.showView(SaveableMockViewPart.ID);
+    	activePage.activate(propView);
+    	assertEquals(saveableView, propView.getAdapter(ISaveablePart.class));
     }
 }
 
