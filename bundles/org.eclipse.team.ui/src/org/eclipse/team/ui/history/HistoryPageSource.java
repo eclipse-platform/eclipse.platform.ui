@@ -33,9 +33,18 @@ public abstract class HistoryPageSource implements IHistoryPageSource {
 	public static IHistoryPageSource getHistoryPageSource(Object object) {
 		IResource resource = Utils.getResource(object);
 		if (resource != null) {
-			IFileHistoryProvider fileHistoryProvider = RepositoryProvider.getProvider(resource.getProject()).getFileHistoryProvider();
-			IHistoryPageSource pageSource = (IHistoryPageSource)Utils.getAdapter(fileHistoryProvider, IHistoryPageSource.class);
-			return pageSource;
+			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+			if (provider != null) {
+				IFileHistoryProvider fileHistoryProvider = provider.getFileHistoryProvider();
+				if (fileHistoryProvider != null) {
+					IHistoryPageSource pageSource = (IHistoryPageSource)Utils.getAdapter(fileHistoryProvider, IHistoryPageSource.class);
+					if (pageSource != null)
+						return pageSource;
+				}
+				IHistoryPageSource pageSource = (IHistoryPageSource)Utils.getAdapter(provider, IHistoryPageSource.class);
+				if (pageSource != null)
+					return pageSource;
+			}
 		}
 		IHistoryPageSource pageSource = (IHistoryPageSource)Utils.getAdapter(object, IHistoryPageSource.class);
 		return pageSource;

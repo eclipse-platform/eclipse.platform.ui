@@ -430,7 +430,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				return localItemDropped(resource);
 			}
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
-			Object tempPageSource = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
+			Object tempPageSource = null;
+			if (fileHistory != null) {
+				tempPageSource = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
+			}
 			if (tempPageSource == null) {
 				tempPageSource = Platform.getAdapterManager().getAdapter(teamProvider, IHistoryPageSource.class);
 			}
