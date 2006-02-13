@@ -196,5 +196,6 @@ public final class SearchMessages extends NLS {
 	public static String RetrieverPage_Automatic;
 	public static String RetrieverPage_ResultsViewOnly;
 	public static String RetrieverPage_HierarchicalPresentation;
+	public static String SearchHistorySelectionDialog_open_in_new;
 
 }

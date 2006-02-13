@@ -31,6 +31,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
@@ -307,4 +308,26 @@ public class InternalSearchUI {
 		fSearchJobs.clear();
 		getSearchManager().removeAll();
 	}
+	
+	public void showSearchResult(SearchView searchView, ISearchResult result, boolean openInNew) {
+		if (openInNew) {
+			boolean isPinned= searchView.isPinned();
+			searchView.setPinned(true);
+			try {
+				SearchView newPart= (SearchView) InternalSearchUI.getInstance().getSearchViewManager().activateSearchView(true);
+				showSearchResult(newPart, result);
+			} finally {
+				searchView.setPinned(isPinned);
+			}
+		} else {
+			showSearchResult(searchView, result);
+		}
+	}
+	
+	private void showSearchResult(SearchView searchView, ISearchResult result) {
+		getSearchManager().touch(result.getQuery());
+		searchView.showSearchResult(result);
+	}
+	
+	
 }
