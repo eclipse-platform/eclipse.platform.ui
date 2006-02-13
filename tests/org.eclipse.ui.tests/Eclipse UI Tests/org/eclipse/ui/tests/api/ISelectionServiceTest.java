@@ -11,7 +11,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -186,8 +186,8 @@ public class ISelectionServiceTest extends UITestCase implements
      * Unwrap a selection.
      */
     private Object unwrapSelection(ISelection sel) {
-        if (sel instanceof StructuredSelection) {
-            StructuredSelection struct = (StructuredSelection) sel;
+        if (sel instanceof IStructuredSelection) {
+            IStructuredSelection struct = (IStructuredSelection) sel;
             if (struct.size() == 1)
                 return struct.getFirstElement();
         }

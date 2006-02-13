@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.ILogger;
@@ -17,14 +19,13 @@ import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import junit.framework.TestCase;
 
 public abstract class ViewerTestCase extends TestCase {
 
@@ -40,8 +41,8 @@ public abstract class ViewerTestCase extends TestCase {
 
 	protected void assertSelectionEquals(String message, TestElement expected) {
 	    ISelection selection = fViewer.getSelection();
-	    assertTrue(selection instanceof StructuredSelection);
-	    StructuredSelection expectedSelection = new StructuredSelection(
+	    assertTrue(selection instanceof IStructuredSelection);
+	    IStructuredSelection expectedSelection = new StructuredSelection(
 	            expected);
 	    assertEquals("selectionEquals - " + message, selection, expectedSelection);
 	}

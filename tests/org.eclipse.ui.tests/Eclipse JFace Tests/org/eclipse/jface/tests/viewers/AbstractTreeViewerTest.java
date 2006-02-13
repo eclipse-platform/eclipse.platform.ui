@@ -41,7 +41,8 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	    assertTrue(selection instanceof IStructuredSelection);
 	    List expectedList = new ArrayList();
 	    expectedList.add(expected);
-	    assertEquals("selectionEquals - " + message, expectedList, ((IStructuredSelection)selection).toList());
+	    IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+	    assertEquals("selectionEquals - " + message, expectedList, (structuredSelection).toList());
 	}
 
     protected abstract int getItemCount(TestElement element); //was IElement
