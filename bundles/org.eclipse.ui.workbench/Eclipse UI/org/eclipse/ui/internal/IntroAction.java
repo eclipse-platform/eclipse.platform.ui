@@ -55,7 +55,8 @@ public class IntroAction extends Action implements
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-
+        setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
+        
         window.addPageListener(pageListener);
     }
 
