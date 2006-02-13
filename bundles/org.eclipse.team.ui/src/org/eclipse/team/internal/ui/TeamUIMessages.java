@@ -419,4 +419,8 @@ public class TeamUIMessages extends NLS {
 	public static String ModelParticipantAction_1;
 
 	public static String ShowModelProviderAction_0;
+
+	public static String GenericHistoryView_RefreshTooltip;
+
+	public static String GenericHistoryView_LinkWithTooltip;
 }

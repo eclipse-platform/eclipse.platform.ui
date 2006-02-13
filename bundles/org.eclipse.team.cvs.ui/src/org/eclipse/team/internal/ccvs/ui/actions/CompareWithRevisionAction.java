@@ -99,7 +99,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 					IHistoryPage page = TeamUI.getHistoryView().showHistoryFor((IFile)getSelectedResources()[0]);
 					if (page instanceof CVSHistoryPage){
 						CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) page;
-						cvsHistoryPage.setClickAction(CVSHistoryPage.COMPARE_CLICK);
+						cvsHistoryPage.setClickAction(true);
 					}
 				}
 			}

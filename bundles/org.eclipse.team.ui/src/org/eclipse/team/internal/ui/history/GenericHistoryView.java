@@ -151,11 +151,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				IStructuredSelection structSelection = (IStructuredSelection) selection;
 				//Always take the first element - this is not intended to work with multiple selection
 				Object firstElement = structSelection.getFirstElement();
-				Object resource = Utils.getAdapter(firstElement, IResource.class);
-				if (resource != null)
-					itemDropped((IResource) resource, false);
-				else
-					itemDropped(firstElement, false);
+				if (firstElement != null){
+					Object resource = Utils.getAdapter(firstElement, IResource.class);
+					if (resource != null)
+						itemDropped((IResource) resource, false);
+					else
+						itemDropped(firstElement, false);
+				}
 			}
 		}
 
@@ -257,7 +259,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				((IHistoryPage) currentPageContainer.getPage()).refresh();
 			}
 		};
-		refreshAction.setToolTipText("Refresh");
+		refreshAction.setToolTipText(TeamUIMessages.GenericHistoryView_RefreshTooltip);
 
 		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) {
 			public void run() {
@@ -265,7 +267,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			}
 		};
 		linkWithEditorAction.setChecked(isLinkingEnabled());
-		linkWithEditorAction.setToolTipText("Link with Editor and Selection");
+		linkWithEditorAction.setToolTipText(TeamUIMessages.GenericHistoryView_LinkWithTooltip);
 		
 		//Create the local tool bar
 		IToolBarManager tbm = actionBars.getToolBarManager();

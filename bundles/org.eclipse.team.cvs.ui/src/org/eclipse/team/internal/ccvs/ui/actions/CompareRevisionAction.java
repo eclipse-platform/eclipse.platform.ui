@@ -11,69 +11,79 @@
 
 package org.eclipse.team.internal.ccvs.ui.actions;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ccvs.ui.CVSHistoryPage;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
-public class CompareRevisionAction extends TeamAction {
-
-	public void run(IAction action) {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					IStructuredSelection structSel = getSelection();
-					if (structSel.size() != 2)
-						return;
-
-					Object[] objArray = structSel.toArray();
-
-					IFileRevision file1 = (IFileRevision) objArray[0];
-					IFileRevision file2 = (IFileRevision) objArray[1];
-
-					FileRevisionTypedElement left = new FileRevisionTypedElement(file1);
-					FileRevisionTypedElement right = new FileRevisionTypedElement(file2);
-					
-				   CompareEditorInput input = new CompareFileRevisionEditorInput(left, right);
-				   IWorkbenchPage page = getTargetPage();
-				   IEditorPart editor = findReusableCompareEditor(getTargetPage());
-				     if(editor != null) {
-				     	IEditorInput otherInput = editor.getEditorInput();
-				     	if(otherInput.equals(input)) {
-				     		// simply provide focus to editor
-				     		page.activate(editor);
-				     	} else {
-				     		// if editor is currently not open on that input either re-use existing
-				     		CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
-				     		page.activate(editor);
-				     	}
-				     } else {
-				     	CompareUI.openCompareEditor(input);
-				     }
-				} catch (Exception e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR);
-	}
+public class CompareRevisionAction extends BaseSelectionListenerAction {
 	
-	protected boolean isEnabled() throws TeamException {
-		int sizeofSelection = getSelection().size();
+	public CompareRevisionAction(String text) {
+		super(text);
+	}
 
-		if (sizeofSelection == 2)
-			return true;
+	CVSHistoryPage page;
+	IStructuredSelection selection;
+	
+	public void run() {
+		try {
+			IStructuredSelection structSel = selection;
+			Object[] objArray = structSel.toArray();
 
+			IFileRevision file1 = null;
+			IFileRevision file2 = null;
+			
+			switch (structSel.size()){
+				case 1:
+					file1 = page.getCurrentFileRevision();
+					file2 = (IFileRevision) objArray[0];
+				break;
+				
+				case 2:
+					file1 = (IFileRevision) objArray[0];
+					file2 = (IFileRevision) objArray[1];
+				break;
+			}
+
+			FileRevisionTypedElement left = new FileRevisionTypedElement(file1);
+			FileRevisionTypedElement right = new FileRevisionTypedElement(file2);
+			
+		   CompareEditorInput input = new CompareFileRevisionEditorInput(left, right);
+		   IWorkbenchPage workBenchPage = page.getSite().getPage();
+		   IEditorPart editor = findReusableCompareEditor(workBenchPage);
+		     if(editor != null) {
+		     	IEditorInput otherInput = editor.getEditorInput();
+		     	if(otherInput.equals(input)) {
+		     		// simply provide focus to editor
+		     		workBenchPage.activate(editor);
+		     	} else {
+		     		// if editor is currently not open on that input either re-use existing
+		     		CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
+		     		workBenchPage.activate(editor);
+		     	}
+		     } else {
+		     	CompareUI.openCompareEditor(input);
+		     }
+		} catch (Exception e) {
+		}
+	}
+
+	
+	public boolean isEnabled() {
+		
+		if (selection != null){
+			int sizeofSelection = selection.size();
+	
+			if (sizeofSelection < 3)
+				return true;
+		}
+		
 		return false;
 	}
 	
@@ -94,6 +104,20 @@ public class CompareRevisionAction extends TeamAction {
 			}
 		}
 		return null;
+	}
+	
+	protected boolean updateSelection(IStructuredSelection selection) {
+		if (selection.size() == 1)
+			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithCurrent); 
+		else if (selection.size() == 2)
+			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithOther);	
+		
+		this.selection = selection;
+		
+		return true;
+	}
+	public void setPage(CVSHistoryPage page) {
+		this.page = page;
 	}
 
 }

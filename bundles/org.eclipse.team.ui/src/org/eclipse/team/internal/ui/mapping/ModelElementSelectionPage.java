@@ -108,7 +108,6 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 				// For model providers, add a composite resource mapping
 				if (object instanceof ModelProvider) {
 					ModelProvider provider = (ModelProvider) object;
-					Set projects = new HashSet();
 					ResourceMapping[] mappings = manager.getScope().getMappings(provider.getId());
 					if (mappings.length > 0) {
 						mapping = new CompositeResourceMapping(ModelProvider.RESOURCE_MODEL_PROVIDER_ID, provider, mappings);

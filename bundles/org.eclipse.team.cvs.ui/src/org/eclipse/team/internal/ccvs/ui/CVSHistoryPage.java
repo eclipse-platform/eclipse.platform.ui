@@ -36,6 +36,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -83,7 +84,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
 	private IAction toggleCompareAction;
-	private IAction toggleOpenAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
@@ -120,9 +120,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static String PREF_GENERIC_HISTORYVIEW_SHOW_TAGS = "pref_generichistory_show_tags"; //$NON-NLS-1$
 
 	//toggle constants for default click action
-	public final static int COMPARE_CLICK = 0;
-	public final static int OPEN_CLICK = 1;
-	private int clickAction = OPEN_CLICK;
+	private boolean compareMode = false;
 	
 	//filter constants
 	public final static int REMOTE_LOCAL_MODE = 0;
@@ -237,7 +235,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
-		localMode =  new Action("Local Mode", plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE)) {
+		localMode =  new Action(CVSUIMessages.CVSHistoryPage_LocalModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE)) {
 			public void run() {
 				if (isChecked())
 					updateFilterMode(LOCAL_MODE);
@@ -245,11 +243,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					setChecked(true);
 			}
 		};
-		localMode.setToolTipText("Local Revisions"); 
+		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip); 
 		localMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
 		localMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
 		
-		remoteMode =  new Action("Remote Mode", plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY)) {
+		remoteMode =  new Action(CVSUIMessages.CVSHistoryPage_RemoteModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY)) {
 			public void run() {
 				if (isChecked())
 					updateFilterMode(REMOTE_MODE);
@@ -257,11 +255,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					setChecked(true);
 			}
 		};
-		remoteMode.setToolTipText("Remote Revisions"); 
+		remoteMode.setToolTipText(CVSUIMessages.CVSHistoryPage_RemoteModeTooltip); 
 		remoteMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
 		remoteMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
 		
-		remoteLocalMode =  new Action("Remote Local Mode", plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE)) {
+		remoteLocalMode =  new Action(CVSUIMessages.CVSHistoryPage_CombinedModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE)) {
 			public void run() {
 				if (isChecked())
 					updateFilterMode(REMOTE_LOCAL_MODE);
@@ -269,7 +267,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					setChecked(true);
 			}
 		};
-		remoteLocalMode.setToolTipText("Local and Remote Revisions"); 
+		remoteLocalMode.setToolTipText(CVSUIMessages.CVSHistoryPage_CombinedModeTooltip); 
 		remoteLocalMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
 		remoteLocalMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
 		
@@ -277,18 +275,25 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		updateFilterMode(REMOTE_LOCAL_MODE);
 		
 		// Click Compare action
-		compareAction = new CompareRevisionAction();
+		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction);
+		tableViewer.getTable().addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				compareAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
+			}
+		});
+		
+		compareAction.setPage(this);
 		openAction = new OpenRevisionAction();
 		
 		OpenStrategy handler = new OpenStrategy(tableViewer.getTable());
 		handler.addOpenListener(new IOpenEventListener() {
 		public void handleOpen(SelectionEvent e) {
 				Object tableSelection = ((StructuredSelection) tableViewer.getSelection()).getFirstElement();
-				if (clickAction == COMPARE_CLICK){
+				if (compareMode){
 					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableSelection});
-					compareAction.selectionChanged(null, sel);
-					compareAction.run(null);
-				} else if (clickAction == OPEN_CLICK){
+					compareAction.selectionChanged(sel);
+					compareAction.run();
+				} else {
 					StructuredSelection sel = new StructuredSelection(new Object[] {tableSelection});
 					openAction.selectionChanged(null, sel);
 					openAction.run(null);
@@ -435,23 +440,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		toggleListAction.setChecked(store.getBoolean(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS));
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
 
-		toggleCompareAction = new Action("Compare on selection"){
+		toggleCompareAction = new Action(CVSUIMessages.CVSHistoryPage_CompareModeToggleAction){
 			public void run() {
-				toggleOpenAction.setChecked(false);
-				toggleCompareAction.setChecked(true);
-				clickAction = COMPARE_CLICK;
+				compareMode = !compareMode;
+				toggleCompareAction.setChecked(compareMode);
 			}
 		};
 		toggleCompareAction.setChecked(false);
-		
-		toggleOpenAction = new Action("Open on selection"){
-			public void run() {
-				toggleCompareAction.setChecked(false);
-				toggleOpenAction.setChecked(true);
-				clickAction = OPEN_CLICK;
-			}
-		};
-		toggleOpenAction.setChecked(true);
 		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
@@ -478,7 +473,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				IMenuManager actionBarsMenu = actionBars.getMenuManager();
 				if (actionBarsMenu != null){
 					actionBarsMenu.add(toggleCompareAction);
-					actionBarsMenu.add(toggleOpenAction);
 					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleTextWrapAction);
 					actionBarsMenu.add(new Separator());
@@ -501,7 +495,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		cvsHistoryFilter = new CVSHistoryFilterAction(this);
 		cvsHistoryFilter.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
 		cvsHistoryFilter.init(tableViewer);
-		cvsHistoryFilter.setToolTipText("Filter History");
+		cvsHistoryFilter.setToolTipText(CVSUIMessages.CVSHistoryPage_FilterHistoryTooltip);
 		
 		//Create the local tool bar
 		IToolBarManager tbm = parentSite.getToolBarManager();
@@ -559,6 +553,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 			}
 		}
+		manager.add(compareAction);
 		if (!parentSite.isModal()){
 			manager.add(new Separator("additions")); //$NON-NLS-1$
 			manager.add(refreshAction);
@@ -819,7 +814,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		}
 	}
 
-	private IFileRevision getCurrentFileRevision() {
+	public IFileRevision getCurrentFileRevision() {
 		if (currentFileRevision != null)
 			return currentFileRevision;
 
@@ -848,8 +843,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 				return currentFileRevision;
 			} catch (CVSException e) {
-			} catch (TeamException e) {
-			}
+			} 
 		}
 
 		return null;
@@ -976,7 +970,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (file != null)
 			return file.getName();
 		
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/*
@@ -1014,16 +1008,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return null;
 	}
 
-	public void setClickAction(int clickAction) {
-		switch (clickAction) {
-			case COMPARE_CLICK:
-			toggleCompareAction.run();
-			break;
-			
-			case OPEN_CLICK:
-			toggleOpenAction.run();
-			break;
-		}
+	public void setClickAction(boolean compare) {
+		//toggleCompareAction is going to switch the mode
+		//so make sure that we're in the appropriate mode before
+		compareMode = !compare;
+		toggleCompareAction.run();
 	}
 
 	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) {
@@ -1081,7 +1070,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	public boolean inputSet() {
 		//reset default behaviour for clicks
-		clickAction = OPEN_CLICK;
+		compareMode = false;
 		//reset currentFileRevision
 		currentFileRevision = null;
 		ICVSFile cvsFile = getCVSFile(getInput());

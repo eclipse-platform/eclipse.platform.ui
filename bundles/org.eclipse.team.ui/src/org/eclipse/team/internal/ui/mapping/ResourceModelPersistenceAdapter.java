@@ -15,9 +15,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.SynchronizationCompareAdapter;
 import org.eclipse.ui.*;
@@ -29,6 +29,8 @@ public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapt
 	private static final String RESOURCE_TYPE = "resourceType"; //$NON-NLS-1$
 	private static final String WORKING_SETS = "workingSets"; //$NON-NLS-1$
 	private static final String WORKING_SET_NAME = "workingSetName"; //$NON-NLS-1$
+	private static final String MODEL_PROVIDERS = "modelProviders"; //$NON-NLS-1$
+	private static final String MODEL_PROVIDER_ID = "modelProviderId"; //$NON-NLS-1$
 	
 	public ResourceModelPersistenceAdapter() {
 	}
@@ -49,6 +51,10 @@ public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapt
 				IWorkingSet ws = (IWorkingSet) object;
 				IMemento child = memento.createChild(WORKING_SETS);
 				child.putString(WORKING_SET_NAME, ws.getName());
+			} else if (object instanceof ModelProvider) {
+				ModelProvider provider = (ModelProvider) object;
+				IMemento child = memento.createChild(MODEL_PROVIDERS);
+				child.putString(MODEL_PROVIDER_ID, provider.getId());
 			}
 		}
 	}
@@ -63,11 +69,11 @@ public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapt
 			IMemento child = children[i];
 			Integer typeInt = child.getInteger(RESOURCE_TYPE);
 			if (typeInt == null) 
-				break;
+				continue;
 			int type = typeInt.intValue();
 			String pathString = child.getString(RESOURCE_PATH);
 			if (pathString == null)
-				break;
+				continue;
 			IPath path = new Path(pathString);
 			IResource resource;
 			switch (type) {
@@ -99,7 +105,7 @@ public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapt
 			IMemento child = children[i];
 			String name = child.getString(WORKING_SET_NAME);
 			if (name == null)
-				break;
+				continue;
 			IWorkingSet set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
 			if (set != null) {
 				ResourceMapping mapping = Utils.getResourceMapping(set);
@@ -107,7 +113,32 @@ public class ResourceModelPersistenceAdapter extends SynchronizationCompareAdapt
 					result.add(mapping);
 			}
 		}
+		children = memento.getChildren(MODEL_PROVIDERS);
+		for (int i = 0; i < children.length; i++) {
+			IMemento child = children[i];
+			String id = child.getString(MODEL_PROVIDER_ID);
+			if (id == null)
+				continue;
+			IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
+			if (desc == null)
+				continue;
+			try {
+				ModelProvider provider = desc.getModelProvider();
+				if (provider != null) {
+					ResourceMapping mapping = getMappingForProvider(provider);
+					if (mapping != null)
+						result.add(mapping);
+				}
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+	}
+
+	private ResourceMapping getMappingForProvider(ModelProvider provider) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

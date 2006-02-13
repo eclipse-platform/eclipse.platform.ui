@@ -1053,5 +1053,16 @@ public class CVSUIMessages extends NLS {
 	public static String OutgoingChangesDialog_1;
 	public static String SyncAction_0;
 	public static String ModelCompareOperation_0;
+	public static String CVSHistoryPage_LocalModeAction;
+	public static String CVSHistoryPage_LocalModeTooltip;
+	public static String CVSHistoryPage_RemoteModeAction;
+	public static String CVSHistoryPage_RemoteModeTooltip;
+	public static String CVSHistoryPage_CombinedModeAction;
+	public static String CVSHistoryPage_CombinedModeTooltip;
+	public static String CVSHistoryPage_CompareRevisionAction;
+	public static String CVSHistoryPage_CompareModeToggleAction;
+	public static String CVSHistoryPage_FilterHistoryTooltip;
+	public static String CompareRevisionAction_CompareWithCurrent;
+	public static String CompareRevisionAction_CompareWithOther;
 
 }
