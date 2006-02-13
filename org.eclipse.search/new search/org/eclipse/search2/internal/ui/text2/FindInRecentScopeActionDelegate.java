@@ -50,7 +50,10 @@ public class FindInRecentScopeActionDelegate extends RetrieverAction implements 
 
 	// IEditorActionDelegate
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		fWindow= targetEditor.getSite().getWorkbenchWindow();
+		fWindow= null;
+		if (targetEditor != null) {
+			fWindow= targetEditor.getSite().getWorkbenchWindow();
+		}
 	}
 
 	// IActionDelegate

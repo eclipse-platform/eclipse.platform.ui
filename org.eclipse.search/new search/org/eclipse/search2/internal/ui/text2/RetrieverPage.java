@@ -68,6 +68,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
@@ -106,7 +107,6 @@ import org.eclipse.search.internal.ui.text.NewTextSearchActionGroup;
 import org.eclipse.search.internal.ui.text.ResourceTransferDragAdapter;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
-import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 
 /**
  * @author markus.schorn@windriver.com
@@ -144,8 +144,8 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	private ViewForm fInputForm;
 	private CTabFolder fTabFolder;
 
-	private SetLayoutAction fFlatAction;
-	private SetLayoutAction fHierarchicalAction;
+	private boolean fUseFlatPresentation;
+	private Action fHierarchicalPresentation;
 
 	private Action fEnableFilter;
 	private Action fUseCaseSensitiveFilePatterns;
@@ -159,7 +159,6 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 
 	private RetrieverViewerSorter fSorter;
 
-	private boolean fUseFlatLayout;
 	private int fRequestedViewOrientation= 0;
 	private int fCurrentViewOrientation= -1;
 
@@ -183,7 +182,6 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		if (fDialogSettings == null) {
 			fDialogSettings = ds.addNewSection(getClass().getName()); 
 		}
-		restoreCurrentLayout();
 
 		fSplitter= new SashForm(parent, SWT.HORIZONTAL);
 		fSplitter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -218,12 +216,11 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		mm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fCreateWSAction);
 		mm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fUseCaseSensitiveFilePatterns);
 		mm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fConsiderDerivedResources);
-		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fFlatAction);
-		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fHierarchicalAction);
+		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fHierarchicalPresentation);
 		
 		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, new Separator());
 		
-		MenuManager submenu= new MenuManager(SearchMessages.RetrieverPage_ViewOrientation);
+		MenuManager submenu= new MenuManager(SearchMessages.RetrieverPage_Layout);
 		submenu.add(fHorizontalOrientation);
 		submenu.add(fVerticalOrientation);
 		submenu.add(fAutomaticOrientation);
@@ -251,13 +248,6 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		fSearchControl.dispose();
 		fFilterControl= null;
 		super.dispose();
-	}
-
-	public void setLayout(int layout) {
-		boolean flat= ((layout & FLAG_LAYOUT_FLAT) != 0);
-		if (fUseFlatLayout != flat) {
-			onChangeLayout(flat);
-		}
 	}
 
 	protected void fillContextMenu(IMenuManager mgr) {
@@ -370,10 +360,13 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	private void createActions() {
 		fReplaceControl.createActions();
 
-		fFlatAction = new SetLayoutAction(this, SearchMessages.AbstractTextSearchViewPage_flat_layout_label, SearchMessages.AbstractTextSearchViewPage_flat_layout_tooltip, FLAG_LAYOUT_FLAT); 
-		fHierarchicalAction = new SetLayoutAction(this, SearchMessages.AbstractTextSearchViewPage_hierarchical_layout_label, SearchMessages.AbstractTextSearchViewPage_hierarchical_layout_tooltip, FLAG_LAYOUT_TREE); 
-		SearchPluginImages.setImageDescriptors(fFlatAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
-		SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
+		fHierarchicalPresentation= new Action() {
+			public void run() {
+				onChangePresentation();
+			}
+		};
+		fHierarchicalPresentation.setText(SearchMessages.RetrieverPage_HierarchicalPresentation);
+		SearchPluginImages.setImageDescriptors(fHierarchicalPresentation, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
 
 		fEnableFilter= new Action(SearchMessages.RetrieverPage_EnableFilter_text, IAction.AS_CHECK_BOX) { 
 			public void run() {
@@ -467,12 +460,17 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		sLastUseCaseSensitiveFilePatterns= fUseCaseSensitiveFilePatterns.isChecked();
 	}
 
-	private void onChangeLayout(boolean flat) {
-		fUseFlatLayout= flat;
-		fLabelProvider.setAppendFileContainer(flat);
-		fContentProvider.setLayout(flat);
-		getViewer().refresh();
-		storeValues();
+	protected void onChangePresentation() {
+		boolean flat= !fHierarchicalPresentation.isChecked();
+		if (fUseFlatPresentation != flat) {
+			Object[] selection= ((IStructuredSelection) getViewer().getSelection()).toArray();
+			fUseFlatPresentation= flat;
+			fLabelProvider.setAppendFileContainer(flat);
+			fContentProvider.setLayout(flat);
+			getViewer().refresh();
+			getViewer().setSelection(new StructuredSelection(selection), true);
+			storeValues();
+		}
 	}
 
 
@@ -620,8 +618,8 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		fDialogSettings.put(KEY_ENABLE_FILTER, fEnableFilter.isChecked());
 		fDialogSettings.put(KEY_CONSIDER_DERIVED_RESOURCES, fConsiderDerivedResources.isChecked());
 		fDialogSettings.put(KEY_USE_CASE_SENSITIVE_FILE_PATTERNS, fUseCaseSensitiveFilePatterns.isChecked());
-		fDialogSettings.put(KEY_USE_FLAT_LAYOUT, fUseFlatLayout);
-		sLastUseFlatLayout= fUseFlatLayout;
+		fDialogSettings.put(KEY_USE_FLAT_LAYOUT, fUseFlatPresentation);
+		sLastUseFlatLayout= fUseFlatPresentation;
 		sLastConsiderDerivedResources= fConsiderDerivedResources.isChecked();
 		sLastUseCaseSensitiveFilePatterns= fUseCaseSensitiveFilePatterns.isChecked();
 
@@ -630,14 +628,6 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		fReplaceControl.storeValues();
 	}
 	
-	private void restoreCurrentLayout() {
-		if (fDialogSettings.get(KEY_USE_FLAT_LAYOUT) == null) {
-			fUseFlatLayout= true;
-		} else {
-			fUseFlatLayout= fDialogSettings.getBoolean(KEY_USE_FLAT_LAYOUT);
-		}
-	}
-
 	private void restoreCurrentOrientation() {
 		if (fDialogSettings.get(KEY_VIEW_ORIENTATION) == null) {
 			fRequestedViewOrientation= ORIENTATION_AUTOMATIC;
@@ -719,8 +709,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		fSearchControl.restoreValues();
 		fFilterControl.restoreValues(fEnableFilter.isChecked());
 		fReplaceControl.restoreValues();
-		fFlatAction.setChecked(fUseFlatLayout);
-		fHierarchicalAction.setChecked(!fUseFlatLayout);
+		fHierarchicalPresentation.setChecked(!fUseFlatPresentation);
 	}
 	
 
@@ -853,11 +842,13 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	}
 
 	protected void configureTreeViewer(TreeViewer viewer) {
+		fUseFlatPresentation= fDialogSettings.getBoolean(KEY_USE_FLAT_LAYOUT);
+
 		viewer.setUseHashlookup(true);
 		fLabelProvider= new RetrieverLabelProvider(this, FileLabelProvider.SHOW_LABEL);
-		fLabelProvider.setAppendFileContainer(fUseFlatLayout);
+		fLabelProvider.setAppendFileContainer(fUseFlatPresentation);
 		viewer.setLabelProvider(new DecoratingLabelProvider(fLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
-		fContentProvider= new RetrieverContentProvider((RetrieverTreeViewer) viewer, fUseFlatLayout);
+		fContentProvider= new RetrieverContentProvider((RetrieverTreeViewer) viewer, fUseFlatPresentation);
 		viewer.setContentProvider(fContentProvider);
 		fSorter= new RetrieverViewerSorter(fLabelProvider);
 		viewer.setSorter(fSorter);
@@ -1106,7 +1097,7 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 	}
 
 	public IFileSorter getPreferredSearchOrder() {
-		return getSorterForLayout(fUseFlatLayout);
+		return getSorterForLayout(fUseFlatPresentation);
 	}
 
 	private static IFileSorter getSorterForLayout(boolean useFlatLayout) {

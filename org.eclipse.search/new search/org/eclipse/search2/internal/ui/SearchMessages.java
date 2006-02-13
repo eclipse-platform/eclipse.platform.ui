@@ -190,10 +190,11 @@ public final class SearchMessages extends NLS {
 	public static String SelectedResourcesScopeDescription_projectName;
 	public static String SelectedResourcesScopeDescription_multiProjectName;
 	public static String RetrieverFindTab_choosePatterns;
-	public static String RetrieverPage_ViewOrientation;
+	public static String RetrieverPage_Layout;
 	public static String RetrieverPage_Horizontal;
 	public static String RetrieverPage_Vertical;
 	public static String RetrieverPage_Automatic;
 	public static String RetrieverPage_ResultsViewOnly;
+	public static String RetrieverPage_HierarchicalPresentation;
 
 }

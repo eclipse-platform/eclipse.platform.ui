@@ -165,10 +165,15 @@ abstract public class RetrieverAction extends Action {
 				sel= s[0];
 			}
 		}
+		
+		if (sel != null) {
+			sel= trimSearchString(sel);
+		}
 		return sel;
 	}
 
 	private String trimSearchString(String text) {
+		text= text.trim();
 		int idx= text.indexOf('\n');
 		int idx2= text.indexOf('\r');
 		if (idx2 >= 0 && idx2 < idx) {
@@ -177,7 +182,7 @@ abstract public class RetrieverAction extends Action {
 		if (idx >= 0) {
 			text= text.substring(0, idx);
 		}
-		return text.trim();
+		return text;
 	}
 
 	private ITextEditor getTextEditor(IEditorPart editor) {
