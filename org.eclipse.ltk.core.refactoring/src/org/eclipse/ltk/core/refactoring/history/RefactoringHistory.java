@@ -26,9 +26,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * <p>
  * Note: this class may be extended to provide different implementations
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see IRefactoringHistoryService
  * @see RefactoringDescriptorProxy

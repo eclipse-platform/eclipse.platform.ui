@@ -47,9 +47,6 @@ import org.eclipse.osgi.util.NLS;
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see IRefactoringHistoryControl
  * @see RefactoringHistoryControlConfiguration

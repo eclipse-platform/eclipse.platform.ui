@@ -39,9 +39,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * Note: this class is intended to be implemented by clients which need to
  * enhance a model provider with a refactoring model.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see ResourceMapping
  * @see ModelProvider

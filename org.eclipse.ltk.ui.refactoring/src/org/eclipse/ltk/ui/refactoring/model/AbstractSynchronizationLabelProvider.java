@@ -34,9 +34,6 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff;
  * used in team synchronization views may use this class as a basis for
  * refactoring-aware synchronization label providers.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see org.eclipse.team.ui.mapping.SynchronizationLabelProvider
  * 

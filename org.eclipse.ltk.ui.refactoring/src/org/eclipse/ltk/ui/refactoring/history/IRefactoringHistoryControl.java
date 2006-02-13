@@ -27,9 +27,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see RefactoringHistoryControlConfiguration
  * @see RefactoringHistoryContentProvider

@@ -60,9 +60,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * <code>org.eclipse.ui.navigator.viewer</code> extension points in order to
  * participate in the team synchronization viewers.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see org.eclipse.team.ui.mapping.SynchronizationActionProvider
  * 

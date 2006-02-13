@@ -94,9 +94,6 @@ import org.eclipse.osgi.util.NLS;
  * <p>
  * Note: this class is intended to be extended by clients.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see org.eclipse.ltk.core.refactoring.Refactoring
  * @see org.eclipse.ltk.core.refactoring.history.RefactoringHistory

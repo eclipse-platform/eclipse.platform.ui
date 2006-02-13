@@ -34,9 +34,6 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  * team synchronization views may extend this class to provide specific compare
  * inputs for their model elements.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see SynchronizationCompareAdapter
  * 

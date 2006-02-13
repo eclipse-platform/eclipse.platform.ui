@@ -35,9 +35,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * Note: this class is not intended to be instantiated or extended outside of
  * the refactoring framework.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see org.eclipse.core.resources.IWorkspace
  * @see PerformRefactoringOperation

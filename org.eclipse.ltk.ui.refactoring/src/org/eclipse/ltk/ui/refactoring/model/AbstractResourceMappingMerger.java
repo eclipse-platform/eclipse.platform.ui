@@ -79,9 +79,6 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  * associated with their model provider may extend this class to implement
  * language-specific project dependency rules.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see org.eclipse.team.core.mapping.IResourceMappingMerger
  * 

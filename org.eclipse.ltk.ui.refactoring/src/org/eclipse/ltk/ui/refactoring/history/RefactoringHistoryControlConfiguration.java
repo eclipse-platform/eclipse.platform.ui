@@ -22,9 +22,6 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
  * Note: this class is intended to be subclassed by clients wishing to control
  * the configuration behavior of their refactoring history control.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see RefactoringUI#createRefactoringHistoryControl(org.eclipse.swt.widgets.Composite,
  *      RefactoringHistoryControlConfiguration)

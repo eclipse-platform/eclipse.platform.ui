@@ -45,9 +45,6 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * Note: this class is indented to be subclassed by clients to provide
  * specialized refactoring descriptors for particular refactorings.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see RefactoringDescriptorProxy
  * @see IRefactoringHistoryService

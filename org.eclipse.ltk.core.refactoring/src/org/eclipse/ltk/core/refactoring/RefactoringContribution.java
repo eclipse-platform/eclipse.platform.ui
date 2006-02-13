@@ -21,9 +21,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescr
  * They are instantiated on demand by the refactoring framework. It is not
  * guaranteed that the same refactoring contribution object will be used to
  * create the arguments for a refactoring and to create the refactoring itself.
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @since 3.2
  */

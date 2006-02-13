@@ -44,9 +44,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * Note: this class is not intended to be subclassed and instantiated by
  * clients.
  * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @see IRefactoringHistoryService
  * @see RefactoringHistory
