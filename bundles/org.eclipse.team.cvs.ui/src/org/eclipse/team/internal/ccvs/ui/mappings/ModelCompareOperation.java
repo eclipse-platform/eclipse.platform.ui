@@ -45,7 +45,9 @@ public class ModelCompareOperation extends AbstractModelMergeOperation {
 	}
 	
 	protected ModelSynchronizeParticipant createParticipant() {
-		return new ModelCompareParticipant(createMergeContext());
+		ModelCompareParticipant modelCompareParticipant = new ModelCompareParticipant(createMergeContext());
+		setOwnsManager(false);
+		return modelCompareParticipant;
 	}
 	
 	protected String getJobName() {

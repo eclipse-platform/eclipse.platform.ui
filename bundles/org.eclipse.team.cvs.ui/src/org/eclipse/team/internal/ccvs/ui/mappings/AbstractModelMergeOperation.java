@@ -54,8 +54,16 @@ public abstract class AbstractModelMergeOperation extends ModelParticipantMergeO
 	protected ModelSynchronizeParticipant createParticipant() {
 		ModelSynchronizeParticipant participant = super.createParticipant();
 		// Transfer ownership of the manager to the participant
-		ownsManager = false;
+		setOwnsManager(false);
 		return participant;
+	}
+
+	public boolean isOwnsManager() {
+		return ownsManager;
+	}
+
+	public void setOwnsManager(boolean ownsManager) {
+		this.ownsManager = ownsManager;
 	}
 
 }

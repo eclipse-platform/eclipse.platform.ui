@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.mappings.ModelCompareOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
@@ -83,8 +85,7 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 	}
 
     private boolean isShowModelSync() {
-		//return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC);
-    	return false;
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC);
 	}
     
     protected CVSTag promptForTag(IResource[] resources) {
