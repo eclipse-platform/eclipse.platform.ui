@@ -107,6 +107,7 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 	 * If <code>consultModels</code> is <code>true</code> then
 	 * the moel providers will be queried in order to determine if
 	 * additional mappings should be included in the scope
+	 * @param name the name of the scope
 	 * @param inputMappings the input mappings
 	 * @param resourceMappingContext a resource mapping context
 	 * @param consultModels whether modle providers should be consulted
