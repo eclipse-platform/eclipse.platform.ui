@@ -20,8 +20,10 @@ package org.eclipse.jface.text.source;
  * <code>IAnnotationAccess</code>, extension interfaces are used as a means
  * of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.source.IAnnotationAccessExtension}since
+ * <li>{@link org.eclipse.jface.text.source.IAnnotationAccessExtension} since
  *     version 3.0 replacing all methods in that interface</li>
+ * <li>{@link IAnnotationAccessExtension2} since
+ *     version 3.2 allowing to set a quick assist assistant to an annotation access.</li>
  * </ul></p>
  * <p>
  * Clients usually implement this interface and its extension interfaces.</p>

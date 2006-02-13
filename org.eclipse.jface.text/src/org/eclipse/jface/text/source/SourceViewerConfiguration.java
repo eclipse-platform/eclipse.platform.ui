@@ -38,6 +38,7 @@ import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
 
@@ -142,15 +143,12 @@ public class SourceViewerConfiguration {
 	 * Returns the quick assist assistant ready to be used with the given
 	 * source viewer.
 	 * This implementation always returns <code>null</code>.
-	 * <p>
-	 * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
-	 * </p>
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return a quick assist assistant or <code>null</code> if quick assist should not be supported
 	 * @since 3.2
 	 */
-	public IContentAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		return null;
 	}
 

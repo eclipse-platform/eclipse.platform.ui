@@ -48,6 +48,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.projection.ChildDocument;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
 /**
@@ -165,17 +166,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	protected boolean fContentAssistantInstalled;
 	/**
 	 * This viewer's quick assist assistant.
-	 * <p>
-	 * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
-	 * </p>
 	 * @since 3.2
 	 */
-	protected IContentAssistant fQuickAssistAssistant;
+	protected IQuickAssistAssistant fQuickAssistAssistant;
 	/**
 	 * Flag indicating whether this viewer's quick assist assistant is installed.
-	 * <p>
-	 * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
-	 * </p>
 	 * @since 3.2
 	 */
 	protected boolean fQuickAssistAssistantInstalled;
@@ -544,6 +539,16 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		return null;
 	}
 
+	/**
+	 * Returns this viewers quick assist assistant.
+	 *
+	 * @return the quick assist assistant or <code>null</code> if none is configured
+	 * @since 3.2
+	 */
+	public IQuickAssistAssistant getQuickAssistAssistant() {
+		return fQuickAssistAssistant;
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.source.ISourceViewerExtension2#getVisualAnnotationModel()
 	 * @since 3.0
@@ -766,7 +771,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fContentAssistant.showContextInformation();
 				return;
 			case QUICK_ASSIST:
-				String msg= fQuickAssistAssistant.showPossibleCompletions();
+				String msg= fQuickAssistAssistant.showPossibleQuickAssists();
 				// FIXME: must find a way to post to the status line
 				// setStatusLineErrorMessage(msg);
 				return;

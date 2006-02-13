@@ -42,6 +42,9 @@
 
  <package name="org.eclipse.jface.text.presentation">
  </package>
+ 
+ <package name="org.eclipse.jface.text.quickassist">
+ </package>
 
  <package name="org.eclipse.jface.text.reconciler">
  </package>
