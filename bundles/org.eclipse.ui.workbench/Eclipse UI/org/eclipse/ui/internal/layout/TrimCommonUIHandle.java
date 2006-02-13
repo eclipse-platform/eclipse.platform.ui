@@ -131,7 +131,7 @@ public class TrimCommonUIHandle extends Composite {
 		        cb.setSize(size);
 		        ci.setSize(size);
 		        ci.setPreferredSize(size);
-		        cb.pack();
+		        cb.layout(true);
 			}
 		}
     };
@@ -302,6 +302,10 @@ public class TrimCommonUIHandle extends Composite {
 		cb = new CoolBar(this, orientation | SWT.FLAT);
 		cb.setLocation(0,0);
 		ci = new CoolItem(cb, SWT.FLAT);
+		
+		// Create a composite in order to get the handles to appear
+		Composite comp = new Composite(cb, SWT.NONE);
+		ci.setControl(comp);
 	}
 	
 	/**
