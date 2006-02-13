@@ -41,7 +41,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ResourceMapping#isAncestorOf(org.eclipse.core.resources.mapping.ResourceMapping)
+	 * @see org.eclipse.core.resources.mapping.ResourceMapping#contains(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */
 	public boolean contains(ResourceMapping mapping) {
 		for (int i = 0; i < mappings.length; i++) {
