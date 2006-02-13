@@ -102,13 +102,13 @@
             pluginId="org.eclipse.platform"/>
       <configExtension
             configId="org.eclipse.ui.intro.sharedConfig"
-            content="intro/overviewEx.xml"/>
+            content="new-intro/overviewEx.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.sharedConfig"
-            content="intro/whatsnewEx1.xml"/>
+            content="new-intro/whatsnewEx1.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.sharedConfig"
-            content="intro/whatsnewEx2.xml"/>
+            content="new-intro/whatsnewEx2.xml"/>
    </extension>
    <!--
    <extension
@@ -121,6 +121,6 @@
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
    </extension>
-   -->
+ -->
 
 </plugin>
