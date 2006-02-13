@@ -997,10 +997,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * that any use of this method is consistant with the currently enabled
 	 * activity set.
 	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
-	 * 
 	 * @return the visible working sets for this page
 	 * @see IWorkbench#getActivitySupport()
 	 * @since 3.2
@@ -1010,10 +1006,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	/**
 	 * Set the working sets for this page. Any duplicate entries will be removed
 	 * from the array by this method.
-	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
 	 * 
 	 * @param sets
 	 *            the new working sets for this page. The array may be empty,
@@ -1069,10 +1061,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 		}
 	 * }
 	 * </code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
 	 * </p>
 	 * 
 	 * @return the aggregate working set for this page

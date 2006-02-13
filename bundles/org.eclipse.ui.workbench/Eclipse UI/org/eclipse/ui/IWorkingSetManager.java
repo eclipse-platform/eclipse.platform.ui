@@ -132,10 +132,6 @@ public interface IWorkingSetManager {
 	 * will be automatically updated to reflect the contents of the component
 	 * sets, should they themselves change.
 	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
-	 * 
 	 * @param name
 	 *            the name of the new working set. Should not have leading or
 	 *            trailing whitespace.
@@ -301,10 +297,6 @@ public interface IWorkingSetManager {
     /**
 	 * Returns an array of all working sets stored in the receiver including
 	 * those that are marked as being not visible.
-	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
 	 * 
 	 * @see IWorkingSet#isVisible()
 	 * @return the working sets stored in the receiver

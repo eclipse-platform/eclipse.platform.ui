@@ -125,10 +125,6 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * Return the name of this working set, formated for the end user. Often this value is
 	 * the same as the one returned from {@link #getName()}.
 	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
-	 * 
 	 * @return the name of this working set, formated for the end user
 	 * @since 3.2
 	 */
@@ -136,10 +132,6 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
     
     /**
 	 * Set the name of this working set, formated for the end user.
-	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
 	 * 
 	 * @param label
 	 *            the label for this working set. If <code>null</code> is
@@ -156,10 +148,6 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * all component sets have {@link IWorkingSetUpdater}s installed. Otherwise
 	 * returns <code>false</code>.
 	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
-	 * 
 	 * @return whether the set is self-updating or not
 	 * @since 3.2
 	 */
@@ -172,11 +160,6 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * It is recommended that clients of aggregate working sets treat them in a
 	 * specific way. Please see the documentation for
 	 * {@link IWorkbenchPage#getAggregateWorkingSet()} for details.
-	 * </p>
-	 * 
-	 * <p>
-	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
-	 * </p>
 	 * 
 	 * @return whether this working set is an aggregate working set or not
 	 * @since 3.2
@@ -185,8 +168,6 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	
 	/**
 	 * Returns whether this working set is currently empty (has no elements).
-	 * 
-	 * <p><em>Please note: This API is experiemental and may change before 3.2 ships.</em></p>
 	 * 
 	 * @return whether this working set is currently empty
 	 * @since 3.2
