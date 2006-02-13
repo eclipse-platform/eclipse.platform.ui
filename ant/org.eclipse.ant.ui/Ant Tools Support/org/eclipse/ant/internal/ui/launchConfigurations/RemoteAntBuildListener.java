@@ -174,8 +174,11 @@ public class RemoteAntBuildListener implements ILaunchesListener {
                 if (message.startsWith("BUILD FAILED")) { //$NON-NLS-1$
                     fBuildFailed= true;
                 } else if (fBuildFailed) {
-                    AntUtil.linkBuildFailedMessage(message, getProcess());
-                    fBuildFailed= false;
+                	if (message.startsWith("Total time:")) { //$NON-NLS-1$
+                		fBuildFailed= false;
+                	} else {
+                		AntUtil.linkBuildFailedMessage(message, getProcess());
+                	}
 				}
             }
         }
