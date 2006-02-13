@@ -62,8 +62,10 @@ public class ResourceMergeHandler extends MergeActionHandler {
 								if ((twd.getDirection() == IThreeWayDiff.OUTGOING && overwrite) || twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
 									return true;
 								}
+								return false;
 							}
-							return false;
+							// Overwrite should always be available for two-way diffs
+							return overwrite;
 						}
 					};
 				}

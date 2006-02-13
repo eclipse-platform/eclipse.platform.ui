@@ -273,6 +273,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     	IFileRevision remote = null;
     	if (diff instanceof IResourceDiff) {
     		d = (IResourceDiff) diff;
+    		if (d != null)
+    			remote = d.getAfterState();
     	} else {
     		d = (IResourceDiff)((IThreeWayDiff)diff).getRemoteChange();
     		if (d != null)

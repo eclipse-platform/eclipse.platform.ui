@@ -17,8 +17,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.IResourceDiffTree;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
@@ -108,7 +107,7 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 				return true;
 			}
 		}
-		return false;
+		return configuration.getComparisonType() == ISynchronizePageConfiguration.TWO_WAY && node instanceof IResourceDiff;
 	}
 
 	private ResourceTraversal[] getTraversals(Object o) {
