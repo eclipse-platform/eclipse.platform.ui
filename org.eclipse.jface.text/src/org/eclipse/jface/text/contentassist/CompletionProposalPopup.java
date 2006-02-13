@@ -303,7 +303,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private Font fMessageTextFont;
 	/**
-	 * The most recent completion offset (used to determine repeteated invocation)
+	 * The most recent completion offset (used to determine repeated invocation)
 	 * 
 	 * @since 3.2
 	 */
