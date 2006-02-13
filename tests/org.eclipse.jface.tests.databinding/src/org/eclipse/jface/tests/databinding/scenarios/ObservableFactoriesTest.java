@@ -11,16 +11,18 @@
 /*
  *  Created Oct 21, 2005 by Gili Mendel
  * 
- *  $RCSfile: ObservableFactoriesTest.java,v $
- *  $Revision: 1.6 $  $Date: 2006/01/26 21:35:39 $ 
+ *  $RCSfile: UpdatableFactoriesTest.java,v $
+ *  $Revision: 1.6.2.1 $  $Date: 2006/02/12 19:18:42 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Map;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IObservable;
-import org.eclipse.jface.databinding.IObservableFactory;
+
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
+import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.IStaleListener;
 
 public class ObservableFactoriesTest extends ScenariosTestCase {
 
@@ -87,8 +89,22 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 					public Class getType() {
 						return c;
 					}
+					
+					public void addStaleListener(IStaleListener listener) {
+					}
+
+					public void removeStaleListener(IStaleListener listener) {
+					}
 				};
 			}
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.internal.databinding.api.IObservableFactory#createObservable(org.eclipse.jface.internal.databinding.api.IDataBindingContext, java.lang.Object)
+		 */
+		public IObservable createObservable(IDataBindingContext bindingContext, Object description) {
+			// TODO Auto-generated method stub
 			return null;
 		}
 	}

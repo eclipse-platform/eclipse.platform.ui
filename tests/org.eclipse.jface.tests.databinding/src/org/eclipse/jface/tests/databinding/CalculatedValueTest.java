@@ -11,18 +11,17 @@
 
 package org.eclipse.jface.tests.databinding;
 
+import javax.swing.event.ChangeEvent;
+
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IObservableFactory;
-import org.eclipse.jface.databinding.IObservableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.beans.BeanObservableFactory;
-import org.eclipse.jface.databinding.observables.CalculatedValue;
-import org.eclipse.jface.databinding.observables.SettableValue;
 import org.eclipse.jface.examples.databinding.model.ModelObject;
+import org.eclipse.jface.internal.databinding.api.DataBinding;
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 
 /**
  * @since 3.2

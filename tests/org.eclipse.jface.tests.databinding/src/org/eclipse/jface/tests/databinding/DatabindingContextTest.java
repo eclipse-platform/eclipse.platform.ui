@@ -22,8 +22,15 @@ import org.eclipse.jface.internal.databinding.api.BindingException;
 import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.IBinding;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.NestedProperty;
 import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.beans.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.api.conversion.IdentityConverter;
+import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.tests.databinding.util.Mocks;
 import org.eclipse.swt.widgets.Display;
@@ -39,9 +46,9 @@ public class DatabindingContextTest extends TestCase {
 
 	IValidator validatorMock;
 
-	SettableValue settableValue1;
+	WritableValue settableValue1;
 
-	SettableValue settableValue2;
+	WritableValue settableValue2;
 
 	Object o1 = new Object();
 
@@ -55,8 +62,8 @@ public class DatabindingContextTest extends TestCase {
 		observableValueRMock = (IObservableValue) Mocks
 				.createRelaxedMock(IObservableValue.class);
 		validatorMock = (IValidator) Mocks.createMock(IValidator.class);
-		settableValue1 = new SettableValue(Object.class);
-		settableValue2 = new SettableValue(Object.class);
+		settableValue1 = new WritableValue(Object.class);
+		settableValue2 = new WritableValue(Object.class);
 	}
 
 	protected void tearDown() throws Exception {
@@ -78,13 +85,13 @@ public class DatabindingContextTest extends TestCase {
 
 	public void testRegisterForDispose() {
 		final boolean[] disposeCalled = new boolean[] {false};
-		IObservableValue target = new SettableValue(Integer.TYPE) {
+		IObservableValue target = new WritableValue(Integer.TYPE) {
 			public void dispose() {
 				super.dispose();
 				disposeCalled[0] = true;
 			}
 		};
-		SettableValue model = new SettableValue(Integer.TYPE);
+		WritableValue model = new WritableValue(Integer.TYPE);
 		model.setValue(new Integer(12));
 		Display display = new Display();
 		Shell shell = new Shell(display);

@@ -14,19 +14,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.ITree;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.TreeModelDescription;
-import org.eclipse.jface.databinding.viewers.TreeViewerDescription;
-import org.eclipse.jface.databinding.viewers.ViewersProperties;
+import javax.swing.event.ChangeEvent;
+
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
+import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
