@@ -74,7 +74,7 @@ public class ProductPreferencesService implements IProductPreferencesService {
 				url = new URL(customizationValue);
 			} catch (MalformedURLException e) {
 				// didn't work so treat it as a filename
-				url = BundleFinder.find(customizationBundle, new Path(customizationValue), null);
+				url = FileLocator.find(customizationBundle, new Path(customizationValue), null);
 			}
 		}
 
@@ -91,7 +91,7 @@ public class ProductPreferencesService implements IProductPreferencesService {
 		URL transURL = null;
 
 		if (customizationValue != null)
-			transURL = BundleFinder.find(customizationBundle, NL_DIR.append(customizationValue).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION), null);
+			transURL = FileLocator.find(customizationBundle, NL_DIR.append(customizationValue).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION), null);
 
 		if (transURL == null && InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
 			InternalPlatform.message("No preference translations found for product/file: " + customizationBundle.getSymbolicName() + '/' + customizationValue); //$NON-NLS-1$

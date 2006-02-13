@@ -228,11 +228,10 @@ public abstract class Plugin implements BundleActivator {
 	 * 
 	 * @param path path relative to plug-in installation location 
 	 * @return a URL for the given path or <code>null</code>
-	 * XXX deprecate and use {@link BundleFinder}
+	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
 	public final URL find(IPath path) {
-		return BundleFinder.find(bundle, path, null);
-		// TODO: deprecate?
+		return FileLocator.find(bundle, path, null);
 	}
 
 	/**
@@ -247,11 +246,10 @@ public abstract class Plugin implements BundleActivator {
 	 * or does not contain the required substitution argument, the default
 	 * is used.
 	 * @return a URL for the given path or <code>null</code>
-	 * XXX deprecate and use {@link BundleFinder}
+	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
 	public final URL find(IPath path, Map override) {
-		return BundleFinder.find(bundle, path, override);
-		// TODO: deprecate?
+		return FileLocator.find(bundle, path, override);
 	}
 
 	/**
