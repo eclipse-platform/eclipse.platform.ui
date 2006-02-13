@@ -12,19 +12,8 @@ package org.eclipse.core.tests.internal.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.CancelingProgressMonitor;
@@ -168,8 +157,10 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		//create a POST_BUILD listener that will touch a project
 		final IProject touch = workspace.getRoot().getProject("ToTouch");
 		final IProject rule = workspace.getRoot().getProject("jobThree");
+		final IFile ruleFile = rule.getFile("somefile.txt");
 		ensureExistsInWorkspace(rule, true);
 		ensureExistsInWorkspace(touch, true);
+		ensureExistsInWorkspace(ruleFile, true);
 		final Throwable[] failure = new Throwable[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
@@ -231,7 +222,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			};
 			jobTwo.schedule();
 			//create job three that has a non-null rule
-			Job jobThree= new Job("jobTwo") {
+			Job jobThree= new Job("jobThree") {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						workspace.run(new IWorkspaceRunnable() {
@@ -241,11 +232,11 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 								//let job two finish
 								status[1] = TestBarrier.STATUS_WAIT_FOR_DONE;
 								//ensure this job does something so the build listener runs
-								rule.touch(null);
+								ruleFile.touch(null);
 								//wait for the ok to complete
 								TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_DONE);
 							}
-						}, rule, IResource.NONE, null);
+						}, workspace.getRuleFactory().modifyRule(ruleFile), IResource.NONE, null);
 					} catch (CoreException e) {
 						return e.getStatus();
 					}
