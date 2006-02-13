@@ -452,11 +452,10 @@ public abstract class Plugin implements BundleActivator {
 	 * @exception IOException if the given path cannot be found in this plug-in
 	 * 
 	 * @see #openStream(IPath,boolean)
-	 * XXX deprecate and use {@link BundleFinder}
+	 * @deprecated use {@link FileLocator#openStream(Bundle, IPath, boolean)}
 	 */
 	public final InputStream openStream(IPath file) throws IOException {
-		return BundleFinder.openStream(bundle, file, false);
-		// TODO: deprecate?
+		return FileLocator.openStream(bundle, file, false);
 	}
 
 	/**
@@ -476,11 +475,10 @@ public abstract class Plugin implements BundleActivator {
 	 *   as specified
 	 * @return an input stream
 	 * @exception IOException if the given path cannot be found in this plug-in
-	 * XXX deprecate and use {@link BundleFinder}
+	 * @deprecated use {@link FileLocator#openStream(Bundle, IPath, boolean)}
 	 */
 	public final InputStream openStream(IPath file, boolean localized) throws IOException {
-		return BundleFinder.openStream(bundle, file, localized);
-		// TODO : deprecate?
+		return FileLocator.openStream(bundle, file, localized);
 	}
 
 	/**

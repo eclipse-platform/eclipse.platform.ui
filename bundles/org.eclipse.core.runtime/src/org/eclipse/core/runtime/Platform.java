@@ -510,10 +510,10 @@ public final class Platform {
 	 * @see #resolve(URL)
 	 * @see #find(Bundle, IPath)
 	 * @see Bundle#getEntry(String)
-	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
+	 * @deprecated use {@link FileLocator#toFileURL(URL)} instead
 	 */
 	public static URL asLocalURL(URL url) throws IOException {
-		return InternalPlatform.getDefault().asLocalURL(url);
+		return FileLocator.toFileURL(url);
 	}
 
 	/**
@@ -798,10 +798,10 @@ public final class Platform {
 	 * @see #asLocalURL(URL)
 	 * @see #find(Bundle, IPath)
 	 * @see Bundle#getEntry(String)
-	 * XXX deprecate and use the new class being created from the renaming of BundleFinder.
+	 * @deprecated use {@link FileLocator#resolve(URL)} instead
 	 */
 	public static URL resolve(URL url) throws IOException {
-		return InternalPlatform.getDefault().resolve(url);
+		return FileLocator.resolve(url);
 	}
 
 	/**
@@ -852,11 +852,10 @@ public final class Platform {
 	 * @see #resolve(URL)
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
-	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
+	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
 	public static URL find(Bundle bundle, IPath path) {
-		// TODO deparecate this method?
-		return BundleFinder.find(bundle, path, null);
+		return FileLocator.find(bundle, path, null);
 	}
 
 	/**
@@ -909,11 +908,10 @@ public final class Platform {
 	 * @see #resolve(URL)
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
-	 * XXX deprecate and use the new class being cerated from the renaming of BundleFinder.
+	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)} instead
 	 */
 	public static URL find(Bundle bundle, IPath path, Map override) {
-		// TODO: deprecate this method?
-		return BundleFinder.find(bundle, path, override);
+		return FileLocator.find(bundle, path, override);
 	}
 
 	/**

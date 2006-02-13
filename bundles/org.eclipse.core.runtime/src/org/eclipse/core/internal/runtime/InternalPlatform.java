@@ -136,7 +136,6 @@ public final class InternalPlatform {
 	private ServiceRegistration platformURLConverterService = null;
 
 	private ServiceTracker environmentTracker = null;
-	private Map urlTrackers = new HashMap();
 	private ServiceTracker logTracker = null;
 	private ServiceTracker bundleTracker = null;
 	private ServiceTracker debugTracker = null;
@@ -171,14 +170,6 @@ public final class InternalPlatform {
 
 	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
-	}
-
-	/**
-	 * @see Platform#asLocalURL(URL)
-	 */
-	public URL asLocalURL(URL url) throws IOException {
-		URLConverter converter = getURLConverter(url);
-		return converter == null ? url : converter.toFileURL(url);
 	}
 
 	private void assertInitialized() {
@@ -707,29 +698,6 @@ public final class InternalPlatform {
 		return admin == null ? -1 : admin.getState(false).getTimeStamp();
 	}
 
-	/*package*/URLConverter getURLConverter(URL url) {
-		String protocol = url.getProtocol();
-		synchronized (urlTrackers) {
-			ServiceTracker tracker = (ServiceTracker) urlTrackers.get(protocol);
-			if (tracker == null) {
-				// get the right service based on the protocol
-				String FILTER_PREFIX = "(&(objectClass=" + URLConverter.class.getName() + ")(protocol="; //$NON-NLS-1$ //$NON-NLS-2$
-				String FILTER_POSTFIX = "))"; //$NON-NLS-1$
-				Filter filter = null;
-				try {
-					filter = context.createFilter(FILTER_PREFIX + protocol + FILTER_POSTFIX);
-				} catch (InvalidSyntaxException e) {
-					return null;
-				}
-				tracker = new ServiceTracker(context, filter, null);
-				tracker.open();
-				// cache it in the registry
-				urlTrackers.put(protocol, tracker);
-			}
-			return (URLConverter) tracker.getService();
-		}
-	}
-
 	public Location getUserLocation() {
 		assertInitialized();
 		return (Location) userLocation.getService();
@@ -982,14 +950,6 @@ public final class InternalPlatform {
 		RuntimeLog.removeLogListener(listener);
 	}
 
-	/**
-	 * @see Platform#resolve(URL)
-	 */
-	public URL resolve(URL url) throws IOException {
-		URLConverter converter = getURLConverter(url);
-		return converter == null ? url : converter.resolve(url);
-	}
-
 	public void setOption(String option, String value) {
 		DebugOptions options = getDebugOptions();
 		if (options != null)
@@ -1128,16 +1088,6 @@ public final class InternalPlatform {
 		if (logTracker != null) {
 			logTracker.close();
 			logTracker = null;
-		}
-		synchronized (urlTrackers) {
-			if (!urlTrackers.isEmpty()) {
-				for (Iterator iter = urlTrackers.keySet().iterator(); iter.hasNext();) {
-					String key = (String) iter.next();
-					ServiceTracker tracker = (ServiceTracker) urlTrackers.get(key);
-					tracker.close();
-				}
-				urlTrackers = new HashMap();
-			}
 		}
 		if (groupProviderTracker != null) {
 			groupProviderTracker.close();

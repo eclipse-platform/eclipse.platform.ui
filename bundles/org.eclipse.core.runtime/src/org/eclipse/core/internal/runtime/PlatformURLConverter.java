@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 
 /**
@@ -36,8 +37,7 @@ public class PlatformURLConverter implements URLConverter {
 		// if we have a bundle*: url we should try to convert it
 		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
 			return result;
-		URLConverter converter = InternalPlatform.getDefault().getURLConverter(result);
-		return result == null ? result : converter.toFileURL(result);
+		return FileLocator.toFileURL(result);
 	}
 
 	/* (non-Javadoc)
@@ -51,7 +51,6 @@ public class PlatformURLConverter implements URLConverter {
 		// if we have a bundle*: url we should try to convert it
 		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
 			return result;
-		URLConverter converter = InternalPlatform.getDefault().getURLConverter(result);
-		return result == null ? result : converter.resolve(result);
+		return FileLocator.resolve(result);
 	}
 }
