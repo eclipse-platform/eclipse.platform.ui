@@ -39,7 +39,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 * 
 	 * <p>
 	 * The IUpdatableListener stores each updatable in the dependencies list.
-	 * This is registered as the listener when calling UpdatableTracker, to
+	 * This is registered as the listener when calling ObservableTracker, to
 	 * detect every updatable that is used by computeValue.
 	 * </p>
 	 * 
@@ -81,7 +81,6 @@ public abstract class ComputedValue extends AbstractObservableValue {
 			for (int i = 0; i < newDependencies.length; i++) {
 				IObservable observable = newDependencies[i];
 				// Add a change listener to the new dependency.
-				observable.addChangeListener(privateInterface);
 				if (observable.isStale()) {
 					stale = true;
 				} else {

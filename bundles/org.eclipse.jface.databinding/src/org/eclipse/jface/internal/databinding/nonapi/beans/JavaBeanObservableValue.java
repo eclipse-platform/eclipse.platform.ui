@@ -41,7 +41,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 		this.propertyDescriptor = descriptor;
 	}
 
-	protected void hookListeners() {
+	protected void firstListenerAdded() {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
 				if (!updating && event.getPropertyName().equals(propertyDescriptor.getName())) {
@@ -112,7 +112,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 		}
 	}
 
-	protected void unhookListeners() {
+	protected void lastListenerRemoved() {
 		if (listener != null) {
 			Method removePropertyChangeListenerMethod = null;
 			try {

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.jface.internal.databinding.api.observable.AbstractObservable;
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
 
 /**
@@ -341,13 +342,6 @@ public abstract class ObservableList extends AbstractObservable implements
 		}
 	}
 
-	/**
-	 * @param wrappedList The wrappedList to list.
-	 */
-	protected void setWrappedList(List wrappedList) {
-		this.wrappedList = wrappedList;
-	}
-
 	protected void fireChange() {
 		throw new RuntimeException("fireChange should not be called, use fireListChange() instead"); //$NON-NLS-1$
 	}
@@ -359,4 +353,14 @@ public abstract class ObservableList extends AbstractObservable implements
 		listChangeListeners = null;
 		super.dispose();
 	}
+
+	protected void updateWrappedList(List newList) {
+		// TODO this is a naive list diff algorithm, we need a
+		// smarter one
+		List oldList = wrappedList;
+		ListDiff listDiff = Diffs.computeDiff(oldList, newList);
+		wrappedList = newList;
+		fireListChange(listDiff);
+	}
+
 }

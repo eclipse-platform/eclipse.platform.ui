@@ -25,8 +25,11 @@ import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
+import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
+import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
+import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
@@ -41,16 +44,6 @@ public class DataBindingContext implements IDataBindingContext {
 
 	private DataBindingContext parent;
 
-	private List partialValidationMessages = new ArrayList();
-
-	private List validationMessages = new ArrayList();
-
-	private WritableValue partialValidationMessage = new WritableValue(""); //$NON-NLS-1$
-
-	private WritableValue validationMessage = new WritableValue(""); //$NON-NLS-1$
-
-	private WritableValue combinedValidationMessage = new WritableValue(""); //$NON-NLS-1$
-
 	private List factories = new ArrayList();
 
 	private List bindSupportFactories = new ArrayList();
@@ -58,6 +51,28 @@ public class DataBindingContext implements IDataBindingContext {
 	protected int validationTime;
 
 	protected int updateTime;
+
+	private WritableList bindings = new WritableList();
+
+	private ObservableList validationErrors = new ValidationErrorList(bindings,
+			false);
+
+	private ObservableList partialValidationErrors = new ValidationErrorList(
+			bindings, true);
+
+	private ComputedValue validationError = new ComputedValue() {
+		protected Object calculate() {
+			int size = validationErrors.size();
+			return size == 0 ? null : validationErrors.get(size - 1);
+		}
+	};
+
+	private ComputedValue partialValidationError = new ComputedValue() {
+		protected Object calculate() {
+			int size = partialValidationErrors.size();
+			return size == 0 ? null : partialValidationErrors.get(size - 1);
+		}
+	};
 
 	/*
 	 * (non-Javadoc)
@@ -75,13 +90,13 @@ public class DataBindingContext implements IDataBindingContext {
 	}
 
 	/**
-	 * @param parent 
+	 * @param parent
 	 * 
 	 */
 	public DataBindingContext(DataBindingContext parent) {
 		this.parent = parent;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -91,91 +106,6 @@ public class DataBindingContext implements IDataBindingContext {
 		for (Iterator it = createdObservables.iterator(); it.hasNext();) {
 			IObservable updatable = (IObservable) it.next();
 			updatable.dispose();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#getCombinedValidationMessage()
-	 */
-	public IObservableValue getCombinedValidationMessage() {
-		return combinedValidationMessage;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#getPartialValidationMessage()
-	 */
-	public IObservableValue getPartialValidationMessage() {
-		return partialValidationMessage;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#getValidationMessage()
-	 */
-	public IObservableValue getValidationMessage() {
-		return validationMessage;
-	}
-
-	private void removeValidationListenerAndMessage(List listOfPairs,
-			Object first) {
-		for (int i = listOfPairs.size() - 1; i >= 0; i--) {
-			Pair pair = (Pair) listOfPairs.get(i);
-			if (pair.a.equals(first)) {
-				listOfPairs.remove(i);
-				return;
-			}
-		}
-		return;
-	}
-
-	/**
-	 * @param binding
-	 * @param partialValidationErrorOrNull
-	 */
-	public void updatePartialValidationError(IBinding binding,
-			ValidationError partialValidationErrorOrNull) {
-		removeValidationListenerAndMessage(partialValidationMessages, binding);
-		if (partialValidationErrorOrNull != null) {
-			partialValidationMessages.add(new Pair(binding,
-					partialValidationErrorOrNull));
-		}
-		updateValidationMessage(
-				combinedValidationMessage,
-				partialValidationMessages.size() > 0 ? partialValidationMessages
-						: validationMessages);
-		updateValidationMessage(partialValidationMessage,
-				partialValidationMessages);
-	}
-
-	/**
-	 * @param binding
-	 * @param validationErrorOrNull
-	 */
-	public void updateValidationError(IBinding binding,
-			ValidationError validationErrorOrNull) {
-		removeValidationListenerAndMessage(validationMessages, binding);
-		if (validationErrorOrNull != null) {
-			validationMessages.add(new Pair(binding, validationErrorOrNull));
-		}
-		updateValidationMessage(
-				combinedValidationMessage,
-				partialValidationMessages.size() > 0 ? partialValidationMessages
-						: validationMessages);
-		updateValidationMessage(validationMessage, validationMessages);
-	}
-
-	private void updateValidationMessage(
-			WritableValue validationSettableMessage, List listOfPairs) {
-		if (listOfPairs.size() == 0) {
-			validationSettableMessage.setValue(""); //$NON-NLS-1$
-		} else {
-			validationSettableMessage.setValue(((Pair) listOfPairs
-					.get(listOfPairs.size() - 1)).b);
 		}
 	}
 
@@ -211,6 +141,7 @@ public class DataBindingContext implements IDataBindingContext {
 		// targetObservable.addChangeListener(binding);
 		// modelObservable.addChangeListener(binding);
 		binding.updateTargetFromModel();
+		bindings.add(binding);
 		return binding;
 	}
 
@@ -258,7 +189,7 @@ public class DataBindingContext implements IDataBindingContext {
 		}
 		if (bindSpec.getDomainValidator() == null) {
 			((BindSpec) bindSpec)
-					.setDomainValidator(createDomainValidator(fromType)); // FIXME:
+					.setDomainValidator(createDomainValidator(toType)); // FIXME:
 			// Not
 			// sure
 			// which
@@ -270,6 +201,10 @@ public class DataBindingContext implements IDataBindingContext {
 		if (bindSpec.getModelToTargetConverter() == null) {
 			((BindSpec) bindSpec).setModelToTargetConverter(createConverter(
 					fromType, toType));
+		}
+		if (bindSpec.getTargetToModelConverter() == null) {
+			((BindSpec) bindSpec).setTargetToModelConverter(createConverter(
+					toType, fromType));
 		}
 	}
 
@@ -447,6 +382,22 @@ public class DataBindingContext implements IDataBindingContext {
 		}
 		// TODO does this default make sense?
 		return true;
+	}
+
+	public IObservableList getBindings() {
+		return bindings;
+	}
+
+	public IObservableValue getPartialValidationError() {
+		return partialValidationError;
+	}
+
+	public IObservableList getValidationErrors() {
+		return validationErrors;
+	}
+
+	public IObservableValue getValidationError() {
+		return validationError;
 	}
 
 }

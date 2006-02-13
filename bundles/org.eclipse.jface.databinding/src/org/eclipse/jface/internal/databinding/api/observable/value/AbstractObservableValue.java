@@ -40,10 +40,15 @@ abstract public class AbstractObservableValue extends AbstractObservable
 			listenerList.addAll(valueChangeListeners);
 			valueChangeListeners = listenerList;
 			valueChangeListeners.add(listener);
+		} else {
+			valueChangeListeners.add(listener);
 		}
 	}
 
 	public void removeValueChangeListener(IValueChangeListener listener) {
+		if (valueChangeListeners == null) {
+			return;
+		}
 		valueChangeListeners.remove(listener);
 		if (valueChangeListeners.size() == 0) {
 			valueChangeListeners = null;
@@ -62,7 +67,8 @@ abstract public class AbstractObservableValue extends AbstractObservable
 		super.fireChange();
 		if (valueChangeListeners != null) {
 			IValueChangeListener[] listeners = (IValueChangeListener[]) valueChangeListeners
-					.toArray(new IValueChangeListener[valueChangeListeners.size()]);
+					.toArray(new IValueChangeListener[valueChangeListeners
+							.size()]);
 			for (int i = 0; i < listeners.length; i++) {
 				listeners[i].handleValueChange(this, diff);
 			}

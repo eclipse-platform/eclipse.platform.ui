@@ -11,12 +11,25 @@
 
 package org.eclipse.jface.internal.databinding.api;
 
+import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
+
 /**
  * The interface that represents a binding between a model and a target.
  * 
  * @since 3.2
  */
 public interface IBinding {
+	
+	/**
+	 * @return an observable value containing the current validation error or null
+	 */
+	public IObservableValue getValidationError();
+
+	/**
+	 * @return an observable value containing the current partial validation error or null
+	 */
+	public IObservableValue getPartialValidationError();
+	
 	/**
 	 * Add a listener to the set of listeners that will be notified when
 	 * an event occurs in the data flow pipeline that is managed by this

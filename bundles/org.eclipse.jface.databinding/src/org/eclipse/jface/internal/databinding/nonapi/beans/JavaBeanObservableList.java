@@ -18,13 +18,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
-import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -40,24 +35,7 @@ public class JavaBeanObservableList extends ObservableList {
 			if (!updating) {
 				if (JavaBeanObservableList.this.descriptor.getName().equals(
 						event.getPropertyName())) {
-					List diffEntries = new ArrayList();
-					List newList = Arrays.asList(getValues());
-					// TODO this is a naive list diff algorithm, we need a
-					// smarter one
-					for (Iterator it = wrappedList.iterator(); it.hasNext();) {
-						Object oldElement = it.next();
-						diffEntries
-								.add(new ListDiffEntry(0, false, oldElement));
-					}
-					int i = 0;
-					for (Iterator it = newList.iterator(); it.hasNext();) {
-						Object newElement = it.next();
-						diffEntries
-								.add(new ListDiffEntry(i++, true, newElement));
-					}
-					wrappedList = newList;
-					fireListChange(new ListDiff((IListDiffEntry[]) diffEntries
-							.toArray(new IListDiffEntry[diffEntries.size()])));
+					updateWrappedList(Arrays.asList(getValues()));
 				}
 			}
 		}
@@ -83,6 +61,7 @@ public class JavaBeanObservableList extends ObservableList {
 		this.object = object;
 		this.descriptor = descriptor;
 		this.elementType = elementType;
+		// initialize list without firing events
 		wrappedList.addAll(Arrays.asList(getValues()));
 	}
 

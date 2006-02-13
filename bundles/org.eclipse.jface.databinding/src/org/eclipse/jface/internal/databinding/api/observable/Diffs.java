@@ -11,11 +11,16 @@
 
 package org.eclipse.jface.internal.databinding.api.observable;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.internal.databinding.api.observable.list.IListDiff;
+import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.map.IMapDiff;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
@@ -26,6 +31,25 @@ import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
  * 
  */
 public class Diffs {
+	
+	public static ListDiff computeDiff(List oldList, List newList) {
+		List diffEntries = new ArrayList();
+		for (Iterator it = oldList.iterator(); it.hasNext();) {
+			Object oldElement = it.next();
+			diffEntries
+					.add(new ListDiffEntry(0, false, oldElement));
+		}
+		int i = 0;
+		for (Iterator it = newList.iterator(); it.hasNext();) {
+			Object newElement = it.next();
+			diffEntries
+					.add(new ListDiffEntry(i++, true, newElement));
+		}
+		ListDiff listDiff = new ListDiff((IListDiffEntry[]) diffEntries
+				.toArray(new IListDiffEntry[diffEntries.size()]));
+		return listDiff;
+	}
+	
 	public static ISetDiff compose(ISetDiff first, ISetDiff second) {
 		return null;
 	}

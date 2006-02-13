@@ -12,6 +12,7 @@ package org.eclipse.jface.internal.databinding.api;
 
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
@@ -39,7 +40,8 @@ public interface IDataBindingContext {
 
 	/**
 	 * Policy constant specifying that update or validation should occur
-	 * automatically whenever a bound observable object generates a change event.
+	 * automatically whenever a bound observable object generates a change
+	 * event.
 	 */
 	public static final int POLICY_AUTOMATIC = 1;
 
@@ -49,18 +51,18 @@ public interface IDataBindingContext {
 	 * {@link #updateTargets() }.
 	 */
 	public static final int POLICY_EXPLICIT = 2;
-	
+
 	/**
 	 * Constant specifiying that validation or update events from UI observables
 	 * should be triggered early, typically on each keystroke.
 	 */
 	public static final int TIME_EARLY = 0;
+
 	/**
 	 * Constant specifiying that validation or update events from UI observables
 	 * should be triggered late, typically on focus lost.
 	 */
-	public static final int TIME_LATE = 1;	
-	
+	public static final int TIME_LATE = 1;
 
 	/**
 	 * Adds a factory that can create converters and validators. The list of
@@ -73,8 +75,8 @@ public interface IDataBindingContext {
 	public void addBindSupportFactory(IBindSupportFactory factory);
 
 	/**
-	 * Adds a factory for creating observable objects from description objects to
-	 * this context. The list of observable factories is used for creating
+	 * Adds a factory for creating observable objects from description objects
+	 * to this context. The list of observable factories is used for creating
 	 * observable objects when binding based on description objects.
 	 * 
 	 * @param observableFactory
@@ -82,8 +84,8 @@ public interface IDataBindingContext {
 	public void addObservableFactory(IObservableFactory observableFactory);
 
 	/**
-	 * Binds targetObservable and modelObservable using converter and validator as
-	 * specified in bindSpec. If bindSpec is null, a default converter and
+	 * Binds targetObservable and modelObservable using converter and validator
+	 * as specified in bindSpec. If bindSpec is null, a default converter and
 	 * validator is used.
 	 * 
 	 * @param targetObservable
@@ -92,8 +94,8 @@ public interface IDataBindingContext {
 	 *            the bind spec, or null
 	 * @return The IBinding that manages this data flow
 	 */
-	public IBinding bind(IObservable targetObservable, IObservable modelObservable,
-			IBindSpec bindSpec) ;
+	public IBinding bind(IObservable targetObservable,
+			IObservable modelObservable, IBindSpec bindSpec);
 
 	/**
 	 * Convenience method to bind targetObservable and
@@ -119,7 +121,7 @@ public interface IDataBindingContext {
 	 * @return The IBinding that manages this data flow
 	 */
 	public IBinding bind(Object targetDescription, IObservable modelObservable,
-			IBindSpec bindSpec) ;
+			IBindSpec bindSpec);
 
 	/**
 	 * Convenience method to bind createObservable(targetDescription) and
@@ -132,7 +134,7 @@ public interface IDataBindingContext {
 	 * @return The IBinding that manages this data flow
 	 */
 	public IBinding bind(Object targetDescription, Object modelDescription,
-			IBindSpec bindSpec) ;
+			IBindSpec bindSpec);
 
 	/**
 	 * Creates an observable object from a description. Description objects are
@@ -151,7 +153,8 @@ public interface IDataBindingContext {
 	 * implementation of this method will iterate over the registered bind
 	 * support factories in reverse order, passing the given arguments to
 	 * {@link IBindSupportFactory#createValidator(Class, Class, Object)}. The
-	 * first non-null validator will be returned. 
+	 * first non-null validator will be returned.
+	 * 
 	 * @param fromType
 	 * @param toType
 	 * @param modelDescription
@@ -160,13 +163,14 @@ public interface IDataBindingContext {
 	public IValidator createValidator(Object fromType, Object toType);
 
 	/**
-	 * Tries to create a converter that can convert from values of type fromType.
-	 * Returns <code>null</code> if no converter could be created. Either
-	 * toType or modelDescription can be <code>null</code>, but not both. The
-	 * implementation of this method will iterate over the registered bind
-	 * support factories in reverse order, passing the given arguments to
-	 * {@link IBindSupportFactory#createConverter(Object, Object)}. The
-	 * first non-null converter will be returned. 
+	 * Tries to create a converter that can convert from values of type
+	 * fromType. Returns <code>null</code> if no converter could be created.
+	 * Either toType or modelDescription can be <code>null</code>, but not
+	 * both. The implementation of this method will iterate over the registered
+	 * bind support factories in reverse order, passing the given arguments to
+	 * {@link IBindSupportFactory#createConverter(Object, Object)}. The first
+	 * non-null converter will be returned.
+	 * 
 	 * @param fromType
 	 * @param toType
 	 * @return an IConverter, or <code>null</code> if unsuccessful
@@ -194,53 +198,67 @@ public interface IDataBindingContext {
 	public void updateModels();
 
 	/**
-	 * Returns an observable value of type String
+	 * Returns an observable list with elements of type IBinding, ordered by
+	 * creation time
 	 * 
-	 * @return the validation message observable value
+	 * @return the observable list containing all bindings
 	 */
-	public IObservableValue getCombinedValidationMessage();
+	public IObservableList getBindings();
 
 	/**
-	 * Returns an observable value of type String
+	 * Returns an observable value of type ValidationError, containing the most
+	 * recent partial validation error
+	 * 
+	 * @return the validation error observable
+	 */
+	public IObservableValue getPartialValidationError();
+	
+	/**
+	 * Returns an observable list with elements of type ValidationError, ordered
+	 * by the time of detection
+	 * 
+	 * @return the observable list containing all validation errors
+	 */
+	public IObservableList getValidationErrors();
+
+	/**
+	 * Returns an observable value of type ValidationError, containing the most
+	 * recent full validation error, i.e. the last element of the list
+	 * returned by getValidationErrors().
 	 * 
 	 * @return the validation observable
 	 */
-	public IObservableValue getPartialValidationMessage();
+	public IObservableValue getValidationError();
 
 	/**
-	 * Returns an observable value of type String
+	 * Add a listener to the set of listeners that will be notified when an
+	 * event occurs in the data flow pipeline that is managed by any binding
+	 * created by this data binding context.
 	 * 
-	 * @return the validation observable
-	 */
-	public IObservableValue getValidationMessage();
-
-	/**
-	 * Add a listener to the set of listeners that will be notified when
-	 * an event occurs in the data flow pipeline that is managed by any
-	 * binding created by this data binding context.
-	 * 
-	 * @param listener The listener to add.
+	 * @param listener
+	 *            The listener to add.
 	 */
 	public void addBindingEventListener(IBindingListener listener);
+
 	/**
 	 * Removes a listener from the set of listeners that will be notified when
-	 * an event occurs in the data flow pipeline that is managed by any 
-	 * binding created by this data binding context.
+	 * an event occurs in the data flow pipeline that is managed by any binding
+	 * created by this data binding context.
 	 * 
-	 * @param listener The listener to remove.
+	 * @param listener
+	 *            The listener to remove.
 	 */
 	public void removeBindingEventListener(IBindingListener listener);
 
 	/**
-	 * Registers an IObservable with the data binding context so that it
-	 * will be disposed when all other IObservables are disposed.  This is
-	 * only necessary for observables like SettableValue that are instantiated
-	 * directly, rather being created by a data binding context to begin
-	 * with.
+	 * Registers an IObservable with the data binding context so that it will be
+	 * disposed when all other IObservables are disposed. This is only necessary
+	 * for observables like SettableValue that are instantiated directly, rather
+	 * being created by a data binding context to begin with.
 	 * 
-	 * @param observable The IObservable to register.
+	 * @param observable
+	 *            The IObservable to register.
 	 */
 	public void registerForDispose(IObservable observable);
 
 }
-

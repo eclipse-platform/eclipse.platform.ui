@@ -19,6 +19,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeL
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangingListener;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.IVetoableValue;
+import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
@@ -43,6 +44,11 @@ public class ValueBinding extends Binding {
 
 	private boolean updating = false;
 
+	private WritableValue partialValidationErrorObservable = new WritableValue(
+			null);
+
+	private WritableValue validationErrorObservable = new WritableValue(null);
+
 	/**
 	 * @param context
 	 * @param target
@@ -56,24 +62,34 @@ public class ValueBinding extends Binding {
 		this.model = model;
 		targetToModelConverter = bindSpec.getTargetToModelConverter();
 		modelToTargetConverter = bindSpec.getModelToTargetConverter();
-//		if (targetToModelConverter == null) {
-//			throw new BindingException(
-//					"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//		if (modelToTargetConverter == null) {
-//			throw new BindingException(
-//					"Missing model to target converter from " + model.getValueType() + " to " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//		if (!context.isAssignableFromTo(model.getValueType(),
-//				modelToTargetConverter.getFromType())) {
-//			throw new BindingException(
-//					"Converter does not apply to model type. Expected: " + model.getValueType() + ", actual: " + modelToTargetConverter.getFromType()); //$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//		if (!context.isAssignableFromTo(modelToTargetConverter.getToType(),
-//				target.getValueType())) {
-//			throw new BindingException(
-//					"Converter does not apply to target type. Expected: " + modelToTargetConverter.getToType() + ", actual: " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
-//		}
+		if (targetToModelConverter == null) {
+			throw new BindingException(
+					"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (modelToTargetConverter == null) {
+			throw new BindingException(
+					"Missing model to target converter from " + model.getValueType() + " to " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (!context.isAssignableFromTo(model.getValueType(),
+				modelToTargetConverter.getFromType())) {
+			throw new BindingException(
+					"model to target converter does not convert from model type. Expected: " + model.getValueType() + ", actual: " + modelToTargetConverter.getFromType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (!context.isAssignableFromTo(modelToTargetConverter.getToType(),
+				target.getValueType())) {
+			throw new BindingException(
+					"model to target converter does convert to target type. Expected: " + target.getValueType() + ", actual: " + modelToTargetConverter.getToType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (!context.isAssignableFromTo(target.getValueType(),
+				targetToModelConverter.getFromType())) {
+			throw new BindingException(
+					"target to model converter does not convert from target type. Expected: " + target.getValueType() + ", actual: " + targetToModelConverter.getFromType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (!context.isAssignableFromTo(targetToModelConverter.getToType(),
+				model.getValueType())) {
+			throw new BindingException(
+					"target to model converter does convert to model type. Expected: " + model.getValueType() + ", actual: " + targetToModelConverter.getToType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		targetValidator = bindSpec.getTypeConversionValidator();
 		if (targetValidator == null) {
 			throw new BindingException("Missing validator"); //$NON-NLS-1$
@@ -97,8 +113,7 @@ public class ValueBinding extends Binding {
 			Object value = diff.getNewValue();
 			ValidationError partialValidationError = targetValidator
 					.isPartiallyValid(value);
-			context.updatePartialValidationError(ValueBinding.this,
-					partialValidationError);
+			partialValidationErrorObservable.setValue(partialValidationError);
 			return partialValidationError == null;
 		}
 	};
@@ -168,8 +183,9 @@ public class ValueBinding extends Binding {
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 			fireBindingEvent(e);
 		} catch (Exception ex) {
-			context.updateValidationError(this, ValidationError.error(BindingMessages
-					.getString("ValueBinding_ErrorWhileSettingValue"))); //$NON-NLS-1$
+			ValidationError error = ValidationError.error(BindingMessages
+					.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
+			validationErrorObservable.setValue(error);
 		} finally {
 			updating = false;
 		}
@@ -183,7 +199,8 @@ public class ValueBinding extends Binding {
 		if (domainValidator == null) {
 			return null;
 		}
-		ValidationError validationError = domainValidator.isValid(convertedValue);
+		ValidationError validationError = domainValidator
+				.isValid(convertedValue);
 		return errMsg(validationError);
 	}
 
@@ -193,14 +210,15 @@ public class ValueBinding extends Binding {
 	}
 
 	private ValidationError errMsg(ValidationError validationError) {
-		context.updatePartialValidationError(this, null);
-		context.updateValidationError(this, validationError);
+		partialValidationErrorObservable.setValue(null);
+		validationErrorObservable.setValue(validationError);
 		return validationError;
 	}
 
 	private boolean failure(ValidationError errorMessage) {
 		// FIXME: Need to fire a BindingEvent here
-		if (errorMessage != null && errorMessage.status == ValidationError.ERROR) {
+		if (errorMessage != null
+				&& errorMessage.status == ValidationError.ERROR) {
 			return true;
 		}
 		return false;
@@ -242,5 +260,23 @@ public class ValueBinding extends Binding {
 		} finally {
 			updating = false;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.internal.databinding.api.IBinding#getValidationError()
+	 */
+	public IObservableValue getValidationError() {
+		return validationErrorObservable;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.internal.databinding.api.IBinding#getPartialValidationError()
+	 */
+	public IObservableValue getPartialValidationError() {
+		return partialValidationErrorObservable;
 	}
 }

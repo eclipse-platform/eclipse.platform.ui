@@ -154,10 +154,12 @@ final public class SWTObservableFactory implements IObservableFactory {
 //		else if (description instanceof Combo) {
 //			return new ComboObservableCollection((Combo) description,
 //					SWTProperties.ITEMS);
-//		} else if (description instanceof Spinner) {
-//			return new SpinnerObservableValue((Spinner) description,
-//					SWTProperties.SELECTION);
-//		} else if (description instanceof CCombo) {
+//		} else
+		if (description instanceof Spinner) {
+			return new SpinnerObservableValue((Spinner) description,
+					SWTProperties.SELECTION);
+		} 
+			//else if (description instanceof CCombo) {
 //			return new CComboObservableCollection((CCombo) description,
 //					SWTProperties.ITEMS);
 //		} else if (description instanceof List) {

@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.IStaleListener;
@@ -370,17 +368,17 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	public boolean addAll(Collection c) {
 		getterCalled();
-		super.addAll(c);
+		return super.addAll(c);
 	}
 
 	public boolean addAll(int index, Collection c) {
 		getterCalled();
-		super.addAll(c);
+		return super.addAll(c);
 	}
 
 	public boolean removeAll(Collection c) {
 		getterCalled();
-		super.removeAll(c);
+		return super.removeAll(c);
 	}
 
 	public boolean retainAll(Collection c) {
@@ -400,52 +398,14 @@ public abstract class AbstractObservableList extends AbstractList implements
 		return super.hashCode();
 	}
 
-	// Positional Access Operations
+	public int indexOf(Object o) {
+		getterCalled();
+		return super.indexOf(o);
+	}
 
-	/**
-	 * @TrackedGetter
-	 */
-	public Object get(int index);
-
-	/**
-	 * @TrackedGetter because of the returned object
-	 */
-	public Object set(int index, Object element);
-
-	/**
-	 * @TrackedGetter
-	 */
-	public Object remove(int index);
-
-	// Search Operations
-
-	/**
-	 * @TrackedGetter
-	 */
-	public int indexOf(Object o);
-
-	/**
-	 * @TrackedGetter
-	 */
-	public int lastIndexOf(Object o);
-
-	// List Iterators
-
-	/**
-	 * @TrackedGetter
-	 */
-	public ListIterator listIterator();
-
-	/**
-	 * @TrackedGetter
-	 */
-	public ListIterator listIterator(int index);
-
-	// View
-
-	/**
-	 * @TrackedGetter
-	 */
-	public List subList(int fromIndex, int toIndex);
+	public int lastIndexOf(Object o) {
+		getterCalled();
+		return super.lastIndexOf(o);
+	}
 
 }
