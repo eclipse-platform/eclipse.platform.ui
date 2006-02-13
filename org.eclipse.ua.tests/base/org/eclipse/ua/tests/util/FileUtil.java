@@ -144,6 +144,10 @@ public class FileUtil {
 		while ((num = in.read(buffer)) > 0) {
 			out.write(buffer, 0, num);
 		}
-		return new String(out.toByteArray(), "UTF-8");
+		String result = new String(out.toByteArray(), "UTF-8");
+		if (result != null) {
+			result = result.replaceAll("\r", "");
+		}
+		return result;
 	}
 }
