@@ -59,7 +59,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	            }
 	        }
 	        // refresh the leaf parent, if any
-	        for (int i = parentIndex - 1; i >= 0; i++) {
+	        for (int i = parentIndex - 1; i >= 0; i--) {
 	            parent = treePath.getSegment(i);
 	            nodes = getNodes(parent);
 	            if (nodes != null) {
