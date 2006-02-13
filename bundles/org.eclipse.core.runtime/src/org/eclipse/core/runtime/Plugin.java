@@ -131,6 +131,15 @@ public abstract class Plugin implements BundleActivator {
 	private IPluginDescriptor descriptor;
 
 	/**
+	 * The base name (value <code>"preferences"</code>) for the file which is used for
+	 * overriding default preference values.
+	 *   
+	 * @since 2.0
+	 * @see #PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME
+	 */
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
+
+	/**
 	 * The name of the file (value <code>"preferences.ini"</code>) in a
 	 * plug-in's (read-only) directory that, when present, contains values that
 	 * override the normal default values for this plug-in's preferences.
@@ -141,7 +150,6 @@ public abstract class Plugin implements BundleActivator {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
 
 	/**
