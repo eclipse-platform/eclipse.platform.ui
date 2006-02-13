@@ -83,5 +83,5 @@ public class DataBinding {
 		DataBindingContext result = new DataBindingContext((DataBindingContext) parent);
 		return result;
 	}
-	
+
 }
