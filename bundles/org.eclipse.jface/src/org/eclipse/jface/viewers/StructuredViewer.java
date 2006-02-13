@@ -288,7 +288,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * a color or font provider.
 	 *
 	 */
-	class ColorAndFontCollector {
+	protected class ColorAndFontCollector {
 
 		Color foreground = null;
 
