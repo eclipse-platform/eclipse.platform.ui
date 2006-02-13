@@ -371,21 +371,23 @@ public class Form extends Composite {
 	}
 
 	/**
+	 * Tests if the background image is tiled to cover the entire area of the
+	 * form heading.
 	 * 
-	 * @deprecated
-	 * @return true
+	 * @return <code>true</code> if heading background image is tiled,
+	 *         <code>false</code> otherwise.
 	 */
 	public boolean isBackgroundImageTiled() {
 		return true;
 	}
 
 	/**
-	 * Tests if the head background image is tiled.
+	 * Sets whether the header background image is repeated to cover the entire
+	 * heading area or not.
 	 * 
 	 * @param backgroundImageTiled
-	 *            set <code>true</code> to tile the image
-	 * @deprecated due to the underlying widget limitations, background image is
-	 *             always tiled
+	 *            set <code>true</code> to tile the image, or
+	 *            <code>false</code> to paint the background image only once
 	 */
 	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
 		head.setBackgroundImageTiled(backgroundImageTiled);

@@ -57,6 +57,9 @@ public class FormHeading extends Canvas {
 	private int TITLE_GAP = 5;
 
 	private int SEPARATOR_HEIGHT = 6;
+	
+	private static final int SEPARATOR = 1 << 1;
+	private static final int TILED = 1 << 2;
 
 	private Image gradientImage;
 
@@ -64,8 +67,8 @@ public class FormHeading extends Canvas {
 
 	private Color baseBg;
 	
-	private boolean separatorVisible;
-
+	private int flags;
+	
 	private Color separatorColor;
 
 	private GradientInfo gradientInfo;
@@ -769,7 +772,7 @@ public class FormHeading extends Canvas {
 		igc.setBackground(getBackground());
 		igc.fillRectangle(0, 0, carea.width, carea.height);
 		if (getBackgroundImage() != null) {
-			if (gradientInfo!=null || getBackgroundImage()!=null)
+			if (gradientInfo!=null || isBackgroundImageTiled())
 				drawBackground(igc, carea.x, carea.y, carea.width, carea.height);
 			else {
 				Image bgImage = getBackgroundImage();
@@ -878,14 +881,17 @@ public class FormHeading extends Canvas {
 	 * @return Returns true
 	 */
 	public boolean isBackgroundImageTiled() {
-		return true;
+		return (flags & TILED) !=0;
 	}
 
 	/**
-	 * No-op.
-	 * @deprecated background image is always tiled
+	 *
 	 */
 	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
+		if (backgroundImageTiled)
+			flags |= TILED;
+		else
+			flags &= ~TILED;
 	}
 
 	/**
@@ -926,14 +932,17 @@ public class FormHeading extends Canvas {
 	 *         <code>false</code> otherwise
 	 */
 	public boolean isSeparatorVisible() {
-		return separatorVisible;
+		return (flags & SEPARATOR)!=0;
 	}
 
 	/**
 	 * experimental - do not use yet TODO add javadoc
 	 */
 	public void setSeparatorVisible(boolean addSeparator) {
-		separatorVisible = addSeparator;
+		if (addSeparator)
+			flags |= SEPARATOR;
+		else
+			flags &= ~SEPARATOR;
 	}
 
 	/**
