@@ -11,14 +11,14 @@
 package org.eclipse.search2.internal.ui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
-import org.eclipse.search.internal.ui.SearchPlugin;
+
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
 
 
 
@@ -58,11 +58,10 @@ class ShowSearchHistoryDialogAction extends Action {
 			dlg.setInitialSelections(selected);
 		}
 		if (dlg.open() == Window.OK) {
-			List result= Arrays.asList(dlg.getResult());
-			if (result != null && result.size() == 1) {
-				ISearchResult searchResult= (ISearchResult) result.get(0);
-				InternalSearchUI.getInstance().getSearchManager().touch(searchResult.getQuery());
-				fSearchView.showSearchResult(searchResult);
+			Object[] result= dlg.getResult();
+			if (result != null && result.length == 1) {
+				ISearchResult searchResult= (ISearchResult) result[0];
+				InternalSearchUI.getInstance().showSearchResult(fSearchView, searchResult, dlg.isOpenInNewView());
 			}
 		}
 

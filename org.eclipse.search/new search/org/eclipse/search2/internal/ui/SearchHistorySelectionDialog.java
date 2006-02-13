@@ -59,6 +59,9 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	private List fInput;
 	private TableViewer fViewer;
 	private Button fRemoveButton;
+	private Button fOpenInNewButton;
+	
+	private boolean fIsOpenInNewView;
 	
 	private static final class SearchesLabelProvider extends LabelProvider {
 		
@@ -95,6 +98,13 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		setTitle(SearchMessages.SearchesDialog_title);  
 		setMessage(SearchMessages.SearchesDialog_message); 
 		fInput= input;
+	}
+	
+	/**
+	 * @return the isOpenInNewView
+	 */
+	public boolean isOpenInNewView() {
+		return fIsOpenInNewView;
 	}
 	
 	/* (non-Javadoc)
@@ -189,6 +199,11 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			}
 		});
 		
+		fOpenInNewButton= new Button(parent, SWT.CHECK);
+		fOpenInNewButton.setText(SearchMessages.SearchHistorySelectionDialog_open_in_new);
+		fOpenInNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		
+		
 		applyDialogFont(ancestor);
 
 		// set input & selections last, so all the widgets are created.
@@ -234,6 +249,8 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		ISelection selection= fViewer.getSelection();
 		if (selection instanceof IStructuredSelection)
 			setResult(((IStructuredSelection)fViewer.getSelection()).toList());
+		fIsOpenInNewView= fOpenInNewButton.getSelection();
+		
 		super.okPressed();
 	}
 }

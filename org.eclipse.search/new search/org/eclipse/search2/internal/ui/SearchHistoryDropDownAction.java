@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -63,9 +64,12 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 			return buf.toString();
 		}
 		
+		public void runWithEvent(Event event) {
+			InternalSearchUI.getInstance().showSearchResult(fSearchView, fSearch, event.stateMask == SWT.CTRL);
+		}
+		
 		public void run() {
-			InternalSearchUI.getInstance().getSearchManager().touch(fSearch.getQuery());
-			fSearchView.showSearchResult(fSearch);
+			InternalSearchUI.getInstance().showSearchResult(fSearchView, fSearch, false);
 		}
 	}
 	
@@ -163,7 +167,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
-
+	
 	public void run() {
 		new ShowSearchHistoryDialogAction(fSearchView).run();
 	}
