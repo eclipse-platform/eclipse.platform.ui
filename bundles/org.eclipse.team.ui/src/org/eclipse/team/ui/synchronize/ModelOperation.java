@@ -189,7 +189,7 @@ public abstract class ModelOperation extends TeamOperation {
 					if (inputScope.getTraversals(mapping) == null) {
 						// This mapping was not in the input
 						String id = mapping.getModelProviderId();
-						if (id.equals(modelProviderId)) {
+						if (id.equals(modelProviderId) && !modelProviderId.equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID)) {
 							prompt = true;
 							break;
 						} else if (isIndependantModel(modelProviderId, id)) {
@@ -331,9 +331,10 @@ public abstract class ModelOperation extends TeamOperation {
 	}
 
 	private boolean isIndependantModel(String modelProviderId, String id) {
+		if (id.equals(modelProviderId))
+			return false;
 		IModelProviderDescriptor desc1 = ModelProvider.getModelProviderDescriptor(modelProviderId);
 		IModelProviderDescriptor desc2 = ModelProvider.getModelProviderDescriptor(id);
-		
 		return !(isExtension(desc1, desc2) || isExtension(desc2, desc1));
 	}
 
