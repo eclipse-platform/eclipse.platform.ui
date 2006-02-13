@@ -242,6 +242,19 @@ public class InspectPopupDialog extends DebugPopup {
     }
     
     /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.DebugPopup#close()
+     */
+    public boolean close() {
+    	if(fVariablesViewer != null) {
+    		fVariablesViewer.dispose();
+    	}
+    	if(fModelPresentation != null) {
+    		fModelPresentation.dispose();
+    	}
+		return super.close();
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.debug.ui.DebugPopup#getActionText()
      */
     protected String getActionText() {

@@ -883,9 +883,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                 attemptExpansion();
                 attemptSelection(false);
             }
-        } else {
-            setItemCount(widget, children.length);
-        }
+            else {
+                setItemCount(widget, children.length);
+            }   
+        } 
     }
 
 	/* (non-Javadoc)
