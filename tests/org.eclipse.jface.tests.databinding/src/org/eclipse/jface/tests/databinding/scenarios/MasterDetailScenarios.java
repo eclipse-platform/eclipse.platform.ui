@@ -19,6 +19,7 @@ import org.eclipse.jface.examples.databinding.model.Category;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
@@ -162,14 +163,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		selectedLodgingObservable.setValue(null);
 		assertTrue(listViewer.getSelection().isEmpty());
 
-		ConditionalObservableValue selectionExistsObservable = new ConditionalObservableValue(
-				selectedLodgingObservable) {
-			protected boolean compute(Object currentValue) {
-				return currentValue != null;
+		ComputedValue selectionExistsObservable = new ComputedValue() {
+			protected Object calculate() {
+				return new Boolean(selectedLodgingObservable.getValue() != null);
 			}
 		};
 
-		assertFalse(((Boolean) selectionExistsObservable.computeValue())
+		assertFalse(((Boolean) selectionExistsObservable.getValue())
 				.booleanValue());
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
@@ -302,10 +302,9 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				new Property(selectedCategoryObservable,
 						"adventures", Adventure.class, Boolean.TRUE), null);
 
-		ConditionalObservableValue categorySelectionExistsObservable = new ConditionalObservableValue(
-				selectedCategoryObservable) {
-			protected boolean compute(Object currentValue) {
-				return currentValue != null;
+		ComputedValue categorySelectionExistsObservable = new ComputedValue() {
+			protected Object calculate() {
+				return new Boolean(selectedCategoryObservable.getValue() != null);
 			}
 		};
 
@@ -319,10 +318,9 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 						new Property(adventureListViewer,
 								ViewersProperties.SINGLE_SELECTION));
 
-		ConditionalObservableValue adventureSelectionExistsObservable = new ConditionalObservableValue(
-				selectedAdventureObservable) {
-			protected boolean compute(Object currentValue) {
-				return currentValue != null;
+		ComputedValue adventureSelectionExistsObservable = new ComputedValue() {
+			protected Object calculate() {
+				return new Boolean(selectedAdventureObservable.getValue() != null);
 			}
 		};
 
