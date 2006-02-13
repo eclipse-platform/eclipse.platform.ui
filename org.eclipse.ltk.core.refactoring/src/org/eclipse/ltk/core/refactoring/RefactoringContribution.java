@@ -49,7 +49,7 @@ public abstract class RefactoringContribution {
 	 *            refactoring instance
 	 * @param comment
 	 *            the comment associated with the refactoring, or
-	 *            <code>null</code> for no commment
+	 *            <code>null</code> for no comment
 	 * @param arguments
 	 *            the argument map (element type: &lt;String, String&gt;). The
 	 *            keys of the arguments are required to be non-empty strings
