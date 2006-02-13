@@ -280,17 +280,18 @@ public class PropertyScenarios extends ScenariosTestCase {
 							}
 						}, null));
 		// no validation message
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
-		text.setText("Invalid Value");
-		assertEquals(noSpacesMessage, getDbc().getCombinedValidationMessage()
-				.getValue());
+		assertEquals(null, getDbc().getPartialValidationError().getValue());
+		enterText(text,"Invalid Value");
+		assertEquals(noSpacesMessage, ((ValidationError)getDbc().getPartialValidationError()
+				.getValue()).message);
 		assertEquals("ValidValue", text.getText());
 		text.setText("InvalidValueBecauseTooLong");
-		assertEquals(max15CharactersMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(max15CharactersMessage, ((ValidationError)getDbc()
+				.getPartialValidationError().getValue()).message);
 		assertEquals("ValidValue", text.getText());
 		enterText(text, "anothervalid");
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc()
+				.getPartialValidationError().getValue());
 		assertEquals("anothervalid", text.getText());
 		assertEquals("anothervalid", adventure.getName());
 	}
@@ -304,17 +305,17 @@ public class PropertyScenarios extends ScenariosTestCase {
 		final String cannotBeNegativeMessage = "Price cannot be negative.";
 		final String mustBeCurrencyMessage = "Price must be a currency.";
 		getDbc().bind(text, new Property(adventure, "price"),
-				new BindSpec(new Converter(String.class, double.class) {
+				new BindSpec(new Converter(double.class, String.class) {
+					public Object convert(Object toObject) {
+						return ((Double) toObject).toString();
+					}
+				}, new Converter(String.class, double.class) {
 
 					public Object convert(Object fromObject) {
 						return new Double((String) fromObject);
 					}
 
 					public Object convertModelToTarget(Object toObject) {
-						return ((Double) toObject).toString();
-					}
-				}, new Converter(double.class, String.class) {
-					public Object convert(Object toObject) {
 						return ((Double) toObject).toString();
 					}
 				}, new IValidator() {
@@ -338,22 +339,22 @@ public class PropertyScenarios extends ScenariosTestCase {
 					}
 				}, null));
 		assertEquals("5.0", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "0.65");
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		assertEquals(0.65, adventure.getPrice(), 0.0001);
 		adventure.setPrice(42.24);
 		assertEquals("42.24", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "jygt");
-		assertEquals(mustBeCurrencyMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(mustBeCurrencyMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		enterText(text, "-23.9");
-		assertEquals(cannotBeNegativeMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(cannotBeNegativeMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		assertEquals(42.24, adventure.getPrice(), 0.0001);
 		adventure.setPrice(0.0);
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 	}
 
 	public void testScenario08() {
@@ -368,7 +369,12 @@ public class PropertyScenarios extends ScenariosTestCase {
 		final NumberFormat currencyFormat = NumberFormat
 				.getCurrencyInstance(Locale.CANADA);
 		getDbc().bind(text, new Property(adventure, "price"),
-				new BindSpec(new Converter(String.class, double.class) {
+				new BindSpec(new Converter(double.class, String.class) {
+					public Object convert(Object toObject) {
+						return currencyFormat.format(((Double) toObject)
+								.doubleValue());
+					}
+				}, new Converter(String.class, double.class) {
 
 					public Object convert(Object fromObject) {
 						try {
@@ -378,11 +384,6 @@ public class PropertyScenarios extends ScenariosTestCase {
 							// IllegalConversionException?
 							return new Double(0);
 						}
-					}
-				}, new Converter(double.class, String.class) {
-					public Object convert(Object toObject) {
-						return currencyFormat.format(((Double) toObject)
-								.doubleValue());
 					}
 				}, new IValidator() {
 					public ValidationError isPartiallyValid(Object value) {
@@ -405,22 +406,22 @@ public class PropertyScenarios extends ScenariosTestCase {
 					}
 				}, null));
 		assertEquals("$5.00", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "$0.65");
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		assertEquals(0.65, adventure.getPrice(), 0.0001);
 		adventure.setPrice(42.24);
 		assertEquals("$42.24", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "jygt");
-		assertEquals(mustBeCurrencyMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(mustBeCurrencyMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		enterText(text, "-$23.9");
-		assertEquals(cannotBeNegativeMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(cannotBeNegativeMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		assertEquals(42.24, adventure.getPrice(), 0.0001);
 		adventure.setPrice(0.0);
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 	}
 
 	public void testScenario09() {

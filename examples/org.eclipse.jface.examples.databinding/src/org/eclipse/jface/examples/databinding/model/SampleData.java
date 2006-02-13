@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import java.beans.Beans;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.eclipse.jface.internal.databinding.api.IBindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.api.beans.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.swt.events.DisposeEvent;
@@ -268,7 +268,7 @@ public class SampleData {
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
 		final IDataBindingContext result = DataBinding.createContext(
-				new IObservableFactory[] {// new NestedUpdatableFactory(),
+				new IObservableFactory[] { new NestedObservableFactory(),
 						new BeanObservableFactory(), swtUpdatableFactory, //viewersUpdatableFactory 
 						}, new IBindSupportFactory[] {new DefaultBindSupportFactory()});
 		aControl.addDisposeListener(new DisposeListener() {
