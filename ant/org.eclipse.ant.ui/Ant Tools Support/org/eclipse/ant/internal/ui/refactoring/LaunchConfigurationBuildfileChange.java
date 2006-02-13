@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -64,7 +65,17 @@ public class LaunchConfigurationBuildfileChange extends Change {
      * Create a change for each launch configuration which needs to be updated for this buildfile rename.
      */
     public static Change createChangesForBuildfileRename(IFile file, String newBuildfileName) throws CoreException {
-        IContentType contentType= file.getContentDescription().getContentType();
+        IContentDescription description= null;
+        try {
+            description= file.getContentDescription();
+        } catch (CoreException e) {
+            //missing file
+            return null;
+        }
+        if (description == null) {
+            return null;
+        }
+        IContentType contentType= description.getContentType();
         if (contentType == null || !AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE.equals(contentType.getId())) {
             return null; //not an Ant buildfile
         }
@@ -105,7 +116,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 			ILaunchConfiguration launchConfiguration = configs[i];
 			String launchConfigurationProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 			if (projectName.equals(launchConfigurationProjectName)) {
-				LaunchConfigurationBuildfileChange change = new LaunchConfigurationBuildfileChange(launchConfiguration, null, null, newProjectName);
+				LaunchConfigurationBuildfileChange change = new LaunchConfigurationBuildfileChange(launchConfiguration, null, null, newProjectName, false);
                 String newContainerName = computeNewContainerName(project, launchConfiguration);
                 if (newContainerName != null) {
                     change.setNewContainerName(newContainerName);
@@ -127,7 +138,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
             ILaunchConfiguration launchConfiguration = configs[i];
             String launchConfigurationProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
             if (projectName.equals(launchConfigurationProjectName)) {
-                LaunchConfigurationBuildfileChange change = new LaunchConfigurationBuildfileChange(launchConfiguration, buildfile.getName(), newBuildfileName, null);
+                LaunchConfigurationBuildfileChange change = new LaunchConfigurationBuildfileChange(launchConfiguration, buildfile.getName(), newBuildfileName, null, false);
                 changes.add(change);
             }
         }
@@ -149,7 +160,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
         return null;
     }
     
-    protected LaunchConfigurationBuildfileChange(ILaunchConfiguration launchConfiguration, String oldBuildFileName, String newBuildfileName, String newProjectName) throws CoreException {
+    protected LaunchConfigurationBuildfileChange(ILaunchConfiguration launchConfiguration, String oldBuildFileName, String newBuildfileName, String newProjectName, boolean undo) throws CoreException {
         fLaunchConfiguration= launchConfiguration;
         fNewLaunchConfiguration= launchConfiguration.getWorkingCopy();
         fNewBuildfileLocation= newBuildfileName;
@@ -160,7 +171,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
             // generate the new configuration name
             String launchConfigurationName= fLaunchConfiguration.getName();
             fNewLaunchConfigurationName= launchConfigurationName.replaceAll(oldBuildFileName, newBuildfileName);
-            if (launchConfigurationName.equals(fNewLaunchConfigurationName) || DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(fNewLaunchConfigurationName)) {
+            if (launchConfigurationName.equals(fNewLaunchConfigurationName) || (!undo && DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(fNewLaunchConfigurationName))) {
                 fNewLaunchConfigurationName= null;
             }
         }
@@ -194,7 +205,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fLaunchConfiguration.exists()) {
 			String buildFileLocation= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
-			if (buildFileLocation.endsWith(fOldBuildfileLocation + '}') || buildFileLocation.endsWith(fOldBuildfileLocation)) {
+			if (fOldBuildfileLocation == null || (buildFileLocation.endsWith(fOldBuildfileLocation + '}') || buildFileLocation.endsWith(fOldBuildfileLocation))) {
 				String projectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 				if (fOldProjectName.equals(projectName)) {
 					return new RefactoringStatus();
@@ -218,18 +229,14 @@ public class LaunchConfigurationBuildfileChange extends Change {
             fNewLaunchConfiguration.setContainer(container);
         }
 
-		String oldBuildfileLocation;
+		String oldBuildfileLocation= fNewLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
 		String oldProjectName;
 		if (fNewBuildfileLocation != null) {
-            oldBuildfileLocation= fNewLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
             String newBuildFileLocation= oldBuildfileLocation.replaceFirst(fOldBuildfileLocation, fNewBuildfileLocation);
             fNewLaunchConfiguration.setAttribute(IExternalToolConstants.ATTR_LOCATION, newBuildFileLocation);
-		} else {
-            oldBuildfileLocation= null;
-		}
+		} 
 		if (fNewProjectName != null) {
 			oldProjectName= fOldProjectName;
-            oldBuildfileLocation= fOldBuildfileLocation;
 			fNewLaunchConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
             String newBuildFileLocation= oldBuildfileLocation.replaceFirst(oldProjectName, fNewProjectName);
             fNewLaunchConfiguration.setAttribute(IExternalToolConstants.ATTR_LOCATION, newBuildFileLocation);
@@ -249,7 +256,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 		fNewLaunchConfiguration.doSave();
 
 		// create the undo change
-		return new LaunchConfigurationBuildfileChange(fNewLaunchConfiguration, fNewBuildfileLocation, fOldBuildfileLocation, oldProjectName);
+		return new LaunchConfigurationBuildfileChange(fNewLaunchConfiguration, fNewBuildfileLocation, fOldBuildfileLocation, oldProjectName, true);
 	}
 	
 	/* (non-Javadoc)
