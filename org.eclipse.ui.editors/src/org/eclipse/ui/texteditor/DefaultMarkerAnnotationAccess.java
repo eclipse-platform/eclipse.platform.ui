@@ -24,9 +24,12 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.IQuickFixableAnnotation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension2;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
 import org.eclipse.jface.text.source.ImageUtilities;
 
@@ -34,7 +37,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.texteditor.*;
+import org.eclipse.ui.internal.texteditor.AnnotationType;
+import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 
 
 /**
@@ -42,7 +46,7 @@ import org.eclipse.ui.internal.texteditor.*;
  *
  * @since 2.1
  */
-public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnotationAccessExtension {
+public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnotationAccessExtension, IAnnotationAccessExtension2 {
 
 	/**
 	 * Constant for the unknown marker type.
@@ -112,6 +116,13 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	protected MarkerAnnotationPreferences fMarkerAnnotationPreferences;
 
 	/**
+	 * An optional quick assist processor.
+	 * 
+	 * @since 3.2
+	 */
+	private IQuickAssistAssistant fQuickAssistAssistant;
+
+	/**
 	 * Returns a new default marker annotation access with the given preferences.
 	 *
 	 * @param markerAnnotationPreferences
@@ -129,6 +140,14 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @since 3.0
 	 */
 	public DefaultMarkerAnnotationAccess() {
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension2#setQuickAssistAssistant(org.eclipse.jface.text.quickassist.IQuickAssistAssistant)
+	 * @since 3.2
+	 */
+	public void setQuickAssistAssistant(IQuickAssistAssistant assistant) {
+		fQuickAssistAssistant= assistant;
 	}
 
 	/**
@@ -345,6 +364,19 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		if (annotationType == null)
 			return null;
 
+		if (hasQuickFix(annotation)) {
+			ImageDescriptor quickFixImageDesc= preference.getQuickFixImageDescriptor();
+			if (quickFixImageDesc != null) {
+				Image image= registry.get(quickFixImageDesc.toString());
+				if (image == null) {
+					registry.put(quickFixImageDesc.toString(), quickFixImageDesc);
+					image= registry.get(quickFixImageDesc.toString());
+				}
+				if (image != null)
+					return image;
+			}
+		}
+
 		Image image= registry.get(annotationType);
 		if (image == null) {
 			ImageDescriptor descriptor= preference.getImageDescriptor();
@@ -361,4 +393,24 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		}
 		return image;
 	}
+
+	/**
+	 * Checks whether there's a quick assist assistant and if so,
+	 * whether the assistant has a possible fix for the given
+	 * annotation.
+	 * 
+	 * @param annotation the annotation
+	 * @return <code>true</code> if there is quick fix
+	 * @since 3.2
+	 */
+	protected boolean hasQuickFix(Annotation annotation) {
+		if (annotation instanceof IQuickFixableAnnotation) {
+			IQuickFixableAnnotation quickFixableAnnotation= (IQuickFixableAnnotation)annotation;
+			if (!quickFixableAnnotation.isQuickFixableStateSet())
+				quickFixableAnnotation.setQuickFixable(fQuickAssistAssistant != null && fQuickAssistAssistant.canFix(annotation));
+			return quickFixableAnnotation.isQuickFixable();
+		}
+		return false;
+	}
+
 }

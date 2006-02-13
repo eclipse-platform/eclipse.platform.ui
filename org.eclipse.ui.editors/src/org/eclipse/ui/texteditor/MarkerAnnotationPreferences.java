@@ -489,6 +489,10 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("icon");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setImageDescriptor(getImageDescriptor(s, element));
+		
+		s= element.getAttribute("quickFixIcon");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			info.setQuickFixImageDescriptor(getImageDescriptor(s, element));
 
 		s= element.getAttribute("annotationImageProvider"); //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)

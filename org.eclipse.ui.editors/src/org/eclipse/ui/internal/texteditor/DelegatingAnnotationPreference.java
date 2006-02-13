@@ -139,6 +139,13 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 	public ImageDescriptor getImageDescriptor() {
 		return (ImageDescriptor) getAttributeValue(IMAGE_DESCRIPTOR);
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getQuickFixImageDescriptor()
+	 */
+	public ImageDescriptor getQuickFixImageDescriptor() {
+		return (ImageDescriptor) getAttributeValue(QUICK_FIX_IMAGE_DESCRIPTOR);
+	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getIsGoToNextNavigationTargetKey()

@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * <li>the style of text decorations that are drawn (and respective preference
  * key),</li>
  * <li>the annotation image provider,</li>
+ * <li>the quick fix image descriptor,</li>
  * <li>the image descriptor,</li>
  * <li>the symbolic image name,</li>
  * <li>the presentation layer.</li>
@@ -112,6 +113,11 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	protected final static Object IMAGE_DESCRIPTOR= new Object();
+	/**
+	 * The Quick Fix image to be used for drawing in the vertical ruler.
+	 * @since 3.2
+	 */
+	protected final static Object QUICK_FIX_IMAGE_DESCRIPTOR= new Object();
 	/**
 	 * The preference label.
 	 * @since 3.0
@@ -241,6 +247,7 @@ public class AnnotationPreference {
 	 */
 	protected final static Object[] ATTRIBUTES= new Object[] {
 			IMAGE_DESCRIPTOR,
+			QUICK_FIX_IMAGE_DESCRIPTOR,
 			PREFERENCE_LABEL,
 			PRESENTATION_LAYER,
 			SYMBOLIC_IMAGE_NAME,
@@ -1055,4 +1062,26 @@ public class AnnotationPreference {
 		if (fAnnotationImageProviderAttribute == null)
 			fAnnotationImageProviderAttribute= preference.fAnnotationImageProviderAttribute;
 	}
+
+	/**
+	 * Sets the Quick Fix image descriptor for the image to be drawn in the vertical ruler.
+	 *
+	 * @param descriptor the image descriptor
+	 * @since 3.2
+	 */
+	public void setQuickFixImageDescriptor(ImageDescriptor descriptor) {
+		setValue(QUICK_FIX_IMAGE_DESCRIPTOR, descriptor);
+	}
+	
+	/**
+	 * Returns the Quick Fix image descriptor for the image to be drawn in the vertical ruler. The provided
+	 * image is only used, if <code>getAnnotationImageProvider</code> returns <code>null</code>.
+	 *
+	 * @return the image descriptor or <code>null</code>
+	 * @since 3.2
+	 */
+	public ImageDescriptor getQuickFixImageDescriptor() {
+		return (ImageDescriptor) getValue(QUICK_FIX_IMAGE_DESCRIPTOR);
+	}
+	
 }

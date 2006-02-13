@@ -58,6 +58,7 @@ import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension2;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IChangeRulerColumn;
@@ -282,7 +283,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 
-		fAnnotationAccess= createAnnotationAccess();
+		fAnnotationAccess= getAnnotationAccess();
 		fOverviewRuler= createOverviewRuler(getSharedColors());
 
 		ISourceViewer viewer= new SourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
@@ -347,13 +348,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		if (!isOverwriteModeEnabled())
 			enableOverwriteMode(false);
-		
+
 		if (!isRangeIndicatorEnabled()) {
 			getSourceViewer().removeRangeIndication();
 			getSourceViewer().setRangeIndicator(null);
 		}
-	}
 
+		// Assign the quick assist assistant to the annotation access.
+		ISourceViewer viewer= getSourceViewer();
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 && viewer instanceof SourceViewer)
+			((IAnnotationAccessExtension2)fAnnotationAccess).setQuickAssistAssistant(((SourceViewer)viewer).getQuickAssistAssistant());
+	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#createStatusControl(org.eclipse.swt.widgets.Composite, org.eclipse.core.runtime.IStatus)

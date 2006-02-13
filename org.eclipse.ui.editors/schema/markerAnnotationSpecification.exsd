@@ -212,7 +212,16 @@ since: 3.0
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  The path to the icon to be drawn for annotations of this annotation type.
+                  The path to the icon to be drawn for annotations of this annotation type. This icon will not
+                  be used if a Quick Fix is available and the "quickFixIcon" attribute has been specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="quickFixIcon" type="string">
+            <annotation>
+               <documentation>
+                  The path to the quick fix icon to be drawn for annotations that have a quick fix.
+since: 3.2
                </documentation>
             </annotation>
          </attribute>
