@@ -302,8 +302,6 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	}
 
 	public String getLabel() {
-		// TODO Auto-generated method stub	public String getLabel() {
-		
 		if (fLabel == null)
 		{
 			fLabel = DebugUIMessages.CreateRendering_2;
