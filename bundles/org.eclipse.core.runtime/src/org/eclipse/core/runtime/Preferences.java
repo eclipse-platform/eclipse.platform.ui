@@ -145,20 +145,6 @@ public class Preferences {
 	public static final String PT_PREFERENCES = "preferences"; //$NON-NLS-1$
 
 	/**
-	 * The name of the file (value <code>"preferences.ini"</code>) in a
-	 * plug-in's (read-only) directory that, when present, contains values that
-	 * override the normal default values for this plug-in's preferences.
-	 * <p>
-	 * The format of the file is as per <code>java.io.Properties</code> where
-	 * the keys are property names and values are strings.
-	 * </p>
-	 * 
-	 * @since 3.2
-	 */
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
-
-	/**
 	 * An event object describing a change to a named property.
 	 * <p>
 	 * The preferences object reports property change events for internal state

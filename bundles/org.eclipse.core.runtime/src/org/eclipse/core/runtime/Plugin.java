@@ -141,8 +141,8 @@ public abstract class Plugin implements BundleActivator {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = Preferences.PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME;
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = Preferences.PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME;
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
 
 	/**
 	 * The preference object for this plug-in; initially <code>null</code>
