@@ -126,11 +126,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
     private ConcurrentTableUpdator updator;
     
     private IProgressMonitor sortingProgressMonitor = new NullProgressMonitor();
-    private Thread sortThread = new Thread(SORTING) {
-    	public void run() {
-            doSort(sortingProgressMonitor);
-    	}
-    };
+    private Thread sortThread = null;
 
 	private volatile FastProgressReporter sortMon = new FastProgressReporter();
 
@@ -149,8 +145,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
         updator = new ConcurrentTableUpdator(table);
         this.model = model;
         this.sortOrder = sortOrder;
-        sortThread.setDaemon(true);
-        sortThread.setPriority(Thread.NORM_PRIORITY - 1);
         model.addListener(listener);
     }
     
@@ -446,35 +440,83 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
     }
     
     /**
+     * This lock protects the two boolean variables sortThreadStarted and resortScheduled.
+     */
+    private Object lock = new Object();
+
+    /**
+     * true if the sort thread is running
+     */
+    private boolean sortThreadStarted = false;
+
+    /**
+     * true if we need to sort
+     */
+    private boolean sortScheduled = false;
+    
+	private final class SortThread extends Thread {
+		private SortThread(String name) {
+			super(name);
+		}
+
+		public void run() {
+			loop: while (true) {
+				synchronized (lock) {
+					sortScheduled = false;
+				}
+				try {
+					// this is the main work
+					doSort(sortingProgressMonitor);
+				} catch (Exception ex) {
+					// ignore
+				}
+				synchronized (lock) {
+					if (sortScheduled) {
+						continue loop;
+					}
+					sortThreadStarted = false;
+					break loop;
+				}
+			}
+		}
+	}
+    
+    /**
      * Must be called whenever the model changes. Dirties this object and triggers a sort
      * if necessary. 
      */
     private void makeDirty() {
-        sortMon.cancel();
-        // make sure the sort thread is not running
-        try {
-			sortThread.join();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+		synchronized (lock) {
+			sortMon.cancel();
+			// request sorting
+			sortScheduled = true;
+			if (!sortThreadStarted) {
+				sortThreadStarted = true;
+				sortThread = new SortThread(SORTING);
+				sortThread.setDaemon(true);
+				sortThread.setPriority(Thread.NORM_PRIORITY - 1);
+				sortThread.start();
+			}
 		}
-    	sortThread.start();
-    }
+	}
     
     /**
-     * Cancels any sort in progress. Note that we try to use the FastProgresReporter if possible
-     * since this is more responsive than cancelling the sort job. However, it is not
-     * a problem to cancel in both ways. 
-     */
+	 * Cancels any sort in progress. Note that we try to use the
+	 * FastProgresReporter if possible since this is more responsive than
+	 * cancelling the sort job. However, it is not a problem to cancel in both
+	 * ways.
+	 */
     private void cancelSortJob() {
         sortMon.cancel();
         sortingProgressMonitor.setCanceled(true);
     }
     
     /**
-     * Called when new elements are added to the model.
-     * 
-     * @param toAdd newly added elements
-     */
+	 * Called when new elements are added to the model.
+	 * 
+	 * @param toAdd
+	 *            newly added elements
+	 */
     private void add(Object[] toAdd) {
     	changeQueue.enqueue(ChangeQueue.ADD, toAdd);
     	makeDirty();
