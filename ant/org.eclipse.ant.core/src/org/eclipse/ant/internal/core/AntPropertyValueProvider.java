@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 BBDO Detroit and others.
+ * Copyright (c) 2003, 2006 BBDO Detroit and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 	/**
 	 * Returns the dynamic property values for Ant properties.
 	 * 
-	 * @param propertyName The name of the property to resovle the value for
+	 * @param propertyName The name of the property to resolve the value for
 	 * @return The resolved value for the property
 	 * @see org.eclipse.ant.core.IAntPropertyValueProvider#getAntPropertyValue(String)
 	 */
