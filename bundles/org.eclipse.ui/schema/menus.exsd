@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-This extension point allows the plug-in developer to define menus, separators, logical groups and menu items -- appearing anywhere within the application, from status lines to context menus.  It also allows sets of such contributions to be defined (i.e., action sets); these action sets can be turned on or off by the end user.  In brief, the menus extension point contains all of the presentation elements (except the icons) for contributing to any menu, tool bar or status line in Eclipse.
+This extension point allows the plug-in developer to define menus, separators, logical groups and menu items -- appearing anywhere within the application, from status lines to context menus.  It also allows sets of such contributions to be defined (i.e., action sets); these action sets can be turned on or off by the end user.  In brief, the menus extension point contains all of the presentation elements (except the icons) for contributing to any menu or trim area in Eclipse.
 &lt;/p&gt;
 &lt;p&gt;
 Every element within this extension point is given a unique identifier.  This is so that these elements can be referred to elsewhere without having to restate the element.  For example, the identifier might be required for ordering or for defining an action set.  Also, this allows third-party plug-in developers to place these elements in new locations within the interface, as appropriate.
@@ -56,7 +56,7 @@ Every element within this extension point is given a unique identifier.  This is
       <annotation>
          <documentation>
             &lt;p&gt;
-An item could be a menu item or a tool item, depending on where it is placed.  It could also be something in the status line.  The text and image associated with the item will be drawn from the command.
+An item could be a menu item or a trim item, depending on where it is placed.  The text and image associated with the item will be drawn from the command.
 &lt;/p&gt;
          </documentation>
       </annotation>
@@ -181,7 +181,7 @@ A group can contain menus, items and other groups.
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  This class is loaded to fill the appropriate spot in the menu, tool bar or status line when it shows.  This class must implement &lt;code&gt;IWidget&lt;/code&gt;.  It is possible to use the &lt;code&gt;class&lt;/code&gt; element instead.
+                  This class is loaded to fill the appropriate spot in the menu or trim when it shows.  This class must implement &lt;code&gt;IWidget&lt;/code&gt;.  It is possible to use the &lt;code&gt;class&lt;/code&gt; element instead.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -253,7 +253,7 @@ A group can contain menus, items and other groups.
    <element name="bar">
       <annotation>
          <documentation>
-            A leaf element within a location.  This can be the menu bar, the tool bar or the status line.  If unqualified, this indicates the top-level menu bar, tool bar or status line.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu, tool bar or status line.
+            A leaf element within a location.  This can be the menu bar or the trim area.  If unqualified, this indicates the top-level menu bar or trim.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu or trim.
          </documentation>
       </annotation>
       <complexType>
@@ -526,7 +526,7 @@ It is possible to associate help with a menu.
  label=&quot;Run With Configuration&quot;
  helpContextId=&quot;run_with_configuration_context&quot;&gt;
  &lt;location&gt;
-  &lt;menubar /&gt;
+  &lt;bar /&gt;
  &lt;/location&gt;
 &lt;/menu&gt;
 &lt;/pre&gt;
@@ -536,14 +536,14 @@ Within a menu, it is possible to define logical groups.  These logical groups ca
 &lt;pre&gt;
 &lt;group id=&quot;com.mycompany.myplugin.stepGroup&quot;&gt;
  &lt;location&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
+  &lt;bar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/group&gt;
 &lt;group
  id=&quot;com.mycompany.myplugin.stepIntoGroup&quot;
  separatorsVisible=&quot;false&quot; &gt;
  &lt;location&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
+  &lt;bar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/group&gt;
 &lt;/pre&gt;
@@ -555,11 +555,11 @@ It is possible to place menus, group, items and widgets in multiple locations.
  id=&quot;com.mycompany.myplugin.ToggleStepFilters&quot;
  commandId=&quot;com.mycompany.myplugin.ToggleStepFilters&quot;&gt;
  &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run/emptyStepGroup&quot; /&gt;
+  &lt;bar path=&quot;org.eclipse.ui.run/emptyStepGroup&quot; /&gt;
  &lt;/location&gt;
  &lt;location&gt;
   &lt;part id=&quot;org.eclipse.debug.ui.DebugView&quot;&gt;
-   &lt;toolbar path=&quot;renderGroup&quot; /&gt;
+   &lt;bar type=&quot;trim&quot; path=&quot;renderGroup&quot; /&gt;
   &lt;/part&gt;
  &lt;/location&gt;
  &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
@@ -628,7 +628,7 @@ Any item associated with a command can include parameter values.  If the paramet
  id=&quot;com.mycompany.myplugin.RunHistory&quot;
  commandId=&quot;com.mycompany.myplugin.RunHistory&quot;&gt;
  &lt;location&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
+  &lt;bar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
  &lt;parameter name=&quot;index&quot; value=&quot;1&quot; /&gt;
 &lt;/item&gt;
@@ -642,7 +642,7 @@ It also possible to specify relative ordering.  This is done using the order att
  commandId=&quot;com.mycompany.myplugin.MyFirstCommand&quot;&gt;
  &lt;location&gt;
   &lt;order position=&quot;start&quot; /&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
+  &lt;bar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/item&gt;
 &lt;item
@@ -650,7 +650,7 @@ It also possible to specify relative ordering.  This is done using the order att
  commandId=&quot;com.mycompany.myplugin.MySecondCommand&quot;&gt;
  &lt;location&gt;
   &lt;order position=&quot;after&quot; relativeTo=&quot;com.mycompany.myplugin.MyFirstItem&quot; /&gt;
-  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
+  &lt;bar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/item&gt;
 &lt;/pre&gt;
@@ -662,14 +662,14 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
  id=&quot;com.mycompany.myplugin.MyComboBoxSimple&quot;
  class=&quot;com.mycompany.myplugin.MyComboBox&quot;&gt;
  &lt;location&gt;
-  &lt;toolbar path=&quot;myGroup&quot; /&gt;
+  &lt;bar type=&quot;trim&quot; path=&quot;myGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/widget&gt;
 &lt;widget
  id=&quot;com.mycompany.myplugin.MyComboBoxParameterized1&quot;
  class=&quot;com.mycompany.myplugin.MyComboBox:a,b,c&quot;&gt;
  &lt;location&gt;
-  &lt;toolbar path=&quot;myGroup&quot; /&gt;
+  &lt;bar type=&quot;trim&quot; path=&quot;myGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/widget&gt;
 &lt;widget
@@ -680,24 +680,9 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
   &lt;parameter name=&quot;editable&quot; value=&quot;false&quot; /&gt;
  &lt;/class&gt;
  &lt;location&gt;
-  &lt;toolbar pathd=&quot;myGroup&quot; /&gt;
+  &lt;bar type=&quot;trim&quot; path=&quot;myGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/widget&gt;
-&lt;/pre&gt;
-&lt;p&gt;
-It is possible to define action sets, or groups of elements with a name.  The workbench allows the user to view acton sets, and disable or enable them as desired.  It is also possible for certain action sets to be associated with particular parts or perspectives.
-&lt;/p&gt;
-&lt;pre&gt;
-&lt;actionSet
- label=&quot;%ProfileActionSet.label&quot;
- visible=&quot;false&quot;
- id=&quot;org.eclipse.debug.ui.profileActionSet&quot;&gt;
- &lt;reference id=&quot;ProfileDropDownAction&quot; type=&quot;menu&quot;/&gt;
- &lt;reference id=&quot;ProfileWithConfigurationAction&quot; type=&quot;menu&quot;/&gt;
- &lt;reference id=&quot;ProfileHistoryMenuAction&quot; type=&quot;menu&quot; /&gt;
- &lt;reference id=&quot;OpenProfileConfigurations&quot; type=&quot;item&quot;/&gt;
-  &lt;reference id=&quot;ProfileLast&quot; type=&quot;item&quot;/&gt;
-&lt;/actionSet&gt;
 &lt;/pre&gt;
       </documentation>
    </annotation>
