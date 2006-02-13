@@ -569,11 +569,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
+			Assert.isLegal(resources != null);
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
 			String message = Messages.resources_copying_0;
 			monitor.beginTask(message, totalWork);
-			Assert.isLegal(resources != null);
 			if (resources.length == 0)
 				return Status.OK_STATUS;
 			// to avoid concurrent changes to this array
@@ -1446,11 +1446,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
+			Assert.isLegal(resources != null);
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
 			String message = Messages.resources_moving_0;
 			monitor.beginTask(message, totalWork);
-			Assert.isLegal(resources != null);
 			if (resources.length == 0)
 				return Status.OK_STATUS;
 			resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array

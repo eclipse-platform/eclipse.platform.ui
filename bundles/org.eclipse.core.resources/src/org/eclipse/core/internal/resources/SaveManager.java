@@ -1403,18 +1403,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			message = NLS.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		} finally {
-			if (markersOutput != null)
-				try {
-					markersOutput.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			if (syncInfoOutput != null)
-				try {
-					syncInfoOutput.close();
-				} catch (IOException e) {
-					// ignore
-				}
+			FileUtil.safeClose(markersOutput);
+			FileUtil.safeClose(syncInfoOutput);
 		}
 
 		// recurse over the projects in the workspace if we were given the workspace root
@@ -1460,12 +1450,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				o2 = new DataOutputStream(safeSyncInfoStream);
 			}
 		} catch (IOException e) {
-			if (o1 != null)
-				try {
-					o1.close();
-				} catch (IOException e2) {
-					// ignore
-				}
+			FileUtil.safeClose(o1);
 			message = NLS.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		}
@@ -1519,7 +1504,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				System.out.println("Snap Markers for " + root.getFullPath() + ": " + snapTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (Policy.DEBUG_SAVE_SYNCINFO)
 				System.out.println("Snap SyncInfo for " + root.getFullPath() + ": " + snapTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (safeMarkerStream != null && markerFileSize != markersOutput.size())
+			if (markerFileSize != markersOutput.size())
 				safeMarkerStream.succeed();
 			if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size())
 				safeSyncInfoStream.succeed();
@@ -1527,18 +1512,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			message = NLS.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		} finally {
-			if (markersOutput != null)
-				try {
-					markersOutput.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			if (syncInfoOutput != null)
-				try {
-					syncInfoOutput.close();
-				} catch (IOException e) {
-					// ignore
-				}
+			FileUtil.safeClose(markersOutput);
+			FileUtil.safeClose(syncInfoOutput);
 		}
 
 		// recurse over the projects in the workspace if we were given the workspace root
