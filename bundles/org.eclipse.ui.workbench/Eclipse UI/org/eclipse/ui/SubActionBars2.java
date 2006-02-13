@@ -28,7 +28,17 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	 * Constucts a sub action bars object using an IActionBars2 parent.
 	 * 
 	 * @param parent
-	 *            the action bars to vitualize.
+	 *            the action bars to virtualize; must not be <code>null</code>.
+	 */
+	public SubActionBars2(final IActionBars2 parent) {
+		this(parent, parent.getServiceLocator());
+	}
+
+	/**
+	 * Constucts a sub action bars object using an IActionBars2 parent.
+	 * 
+	 * @param parent
+	 *            the action bars to virtualize; must not be <code>null</code>.
 	 * @param serviceLocator
 	 *            The service locator for this action bar; must not be
 	 *            <code>null</code>.
