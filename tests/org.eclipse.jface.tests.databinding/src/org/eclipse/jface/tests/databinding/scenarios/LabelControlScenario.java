@@ -50,12 +50,7 @@ public class LabelControlScenario extends ScenariosTestCase {
 		assertEquals(adventure.getName(), label.getText());
 		adventure.setName("France");
 		assertEquals("France", label.getText());
-		// Verify that the model can be changed in a non-UI thread and the SWT Label still gets updated OK
-		invokeNonUI(new Runnable(){
-			public void run(){
 				adventure.setName("Climb Everest");
-			}
-		});		
 		spinEventLoop(0);
 		assertEquals("Climb Everest",label.getText());		
 	}

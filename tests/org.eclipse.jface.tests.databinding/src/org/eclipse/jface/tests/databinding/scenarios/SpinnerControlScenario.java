@@ -43,21 +43,17 @@ public class SpinnerControlScenario extends ScenariosTestCase {
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
 		Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
-		getDbc().bind(spinner, new Property(adventure, "maxNumberOfPeople"), null);
+		getDbc().bind(spinner, new Property(adventure, "maxNumberOfPeople"),
+				null);
 		assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
-		// Verify the model is updated when the GUI is changed		
-		spinner.setSelection(5);	
-		assertEquals(5,adventure.getMaxNumberOfPeople());
+		// Verify the model is updated when the GUI is changed
+		spinner.setSelection(5);
+		assertEquals(5, adventure.getMaxNumberOfPeople());
 		// Verify the GUI is updated when the model changes
 		adventure.setMaxNumberOfPeople(7);
-		assertEquals(7,spinner.getSelection());
-		// Verify that updates can occured to the model on a non UI thread
-		invokeNonUI(new Runnable(){
-			public void run(){
-				adventure.setMaxNumberOfPeople(11);
-			}
-		});
+		assertEquals(7, spinner.getSelection());
+		adventure.setMaxNumberOfPeople(11);
 		spinEventLoop(0);
-		assertEquals(11,spinner.getSelection());
+		assertEquals(11, spinner.getSelection());
 	}
 }

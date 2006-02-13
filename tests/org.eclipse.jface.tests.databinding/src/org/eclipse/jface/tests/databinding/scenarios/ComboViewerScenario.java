@@ -86,12 +86,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		comboViewer.getCombo().select(3);
 		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());
 		
-		// Change the model on a non-UI thread and verify that the combo selection changes
-		invokeNonUI(new Runnable(){
-			public void run(){
 				adventure.setDefaultLodging(SampleData.YOUTH_HOSTEL);
-			}
-		});
 		spinEventLoop(0);
 		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());		
 	}

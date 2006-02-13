@@ -1,12 +1,14 @@
 package org.eclipse.jface.examples.databinding;
 
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.beans.BeanUpdatableFactory;
-import org.eclipse.jface.databinding.beans.NestedUpdatableFactory;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
+import org.eclipse.jface.internal.databinding.api.DataBinding;
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.api.beans.NestedObservableFactory;
+import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
+import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFactory;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -38,9 +40,18 @@ public class ExampleBinding {
 	 * @return a data binding context
 	 */
 	public static IDataBindingContext createContext(Control control) {
-		return DataBinding.createContext(control, new IUpdatableFactory[] {
-				new NestedUpdatableFactory(), new BeanUpdatableFactory(),
-				new SWTUpdatableFactory(), new ViewersUpdatableFactory() });
+		final IDataBindingContext context = DataBinding
+				.createContext(new IObservableFactory[] {
+						new NestedObservableFactory(),
+						new BeanObservableFactory(),
+						new SWTObservableFactory(),
+						new ViewersObservableFactory() });
+		control.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				context.dispose();
+			}
+		});
+		return context;
 	}
 
 	/**
@@ -61,8 +72,8 @@ public class ExampleBinding {
 	 * @return a data binding context
 	 */
 	public static IDataBindingContext createContext() {
-		return DataBinding.createContext(new IUpdatableFactory[] {
-				new NestedUpdatableFactory(), new BeanUpdatableFactory(),
-				new SWTUpdatableFactory(), new ViewersUpdatableFactory() });
+		return DataBinding.createContext(new IObservableFactory[] {
+				new NestedObservableFactory(), new BeanObservableFactory(),
+				new SWTObservableFactory(), new ViewersObservableFactory() });
 	}
 }

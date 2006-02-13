@@ -62,11 +62,7 @@ public class TextControlScenario extends ScenariosTestCase {
 		assertEquals("England", adventure.getName());
 		adventure.setName("France");
 		assertEquals("France", text.getText());
-		invokeNonUI(new Runnable(){
-			public void run(){
-				adventure.setName("Germany");			
-			}
-		});
+		adventure.setName("Germany");			
 		spinEventLoop(0);
 		assertEquals("Germany",text.getText());
 	}

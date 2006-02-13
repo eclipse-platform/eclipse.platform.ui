@@ -14,12 +14,12 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 import java.util.Collections;
 
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.internal.databinding.api.observable.set.WritableSet;
+import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 import org.eclipse.jface.internal.databinding.api.viewers.ListeningLabelProvider;
-import org.eclipse.jface.internal.databinding.api.viewers.ObservableSetContentProvider;
+import org.eclipse.jface.internal.databinding.api.viewers.ObservableListContentProvider;
 import org.eclipse.jface.internal.databinding.api.viewers.SelectionObservableValue;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @since 3.2
  */
-public class LabelProviderTest {
+public class LabelProviderTest2 {
 
 	private Shell shell;
 
@@ -51,7 +51,7 @@ public class LabelProviderTest {
 
 	private Label exploredNodesLabel;
 
-	private WritableSet setOfRenamables;
+	private WritableList listOfRenamables;
 
 	private Button addButton;
 
@@ -68,9 +68,9 @@ public class LabelProviderTest {
 		public void widgetSelected(SelectionEvent e) {
 			Button pressed = (Button) e.widget;
 			if (pressed == addButton) {
-				setOfRenamables.add(new RenamableItem());
+				listOfRenamables.add(new RenamableItem());
 			} else if (pressed == removeButton) {
-				setOfRenamables.remove(getCurrentSelection());
+				listOfRenamables.remove(getCurrentSelection());
 			} else if (pressed == renameButton) {
 				rename(getCurrentSelection());
 			}
@@ -84,15 +84,15 @@ public class LabelProviderTest {
 	/**
 	 * 
 	 */
-	public LabelProviderTest() {
+	public LabelProviderTest2() {
 
 		// Create shell
 		shell = new Shell(Display.getCurrent());
 		{ // Initialize shell
-			setOfRenamables = new WritableSet();
+			listOfRenamables = new WritableList();
 
 			list = new ListViewer(shell);
-			ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
+			ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 			list.setContentProvider(contentProvider);
 			list.setLabelProvider(new ListeningLabelProvider(contentProvider
 					.getKnownElements()) {
@@ -128,7 +128,7 @@ public class LabelProviderTest {
 					item.removeListener(listener);
 				}
 			});
-			list.setInput(setOfRenamables);
+			list.setInput(listOfRenamables);
 
 			selectedRenamable = new SelectionObservableValue(list);
 
@@ -189,7 +189,7 @@ public class LabelProviderTest {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
-		LabelProviderTest test = new LabelProviderTest();
+		LabelProviderTest2 test = new LabelProviderTest2();
 		Shell s = test.getShell();
 		s.pack();
 		s.setVisible(true);

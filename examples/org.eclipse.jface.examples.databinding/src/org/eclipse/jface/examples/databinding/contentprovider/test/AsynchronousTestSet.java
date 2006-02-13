@@ -2,14 +2,14 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
-import org.eclipse.jface.databinding.AbstractUpdatableSet;
-import org.eclipse.jface.internal.databinding.swt.SWTUtil;
+import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -27,9 +27,8 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since 3.2
  */
-public class AsynchronousTestSet extends AbstractUpdatableSet {
+public class AsynchronousTestSet extends ObservableSet {
 
-	private Set elements = new HashSet();
 	private static Random randomNumberGenerator = new Random();
 	private Display display;
 	private boolean stale = false;
@@ -50,15 +49,12 @@ public class AsynchronousTestSet extends AbstractUpdatableSet {
 	private static List allSets = new ArrayList();
 	
 	public AsynchronousTestSet() {
+		super(new HashSet());
 		display = Display.getCurrent();
 		if (display == null) {
-			throw new IllegalStateException("This object can only be created in the UI thread");
+			throw new IllegalStateException("This object can only be created in the UI thread"); //$NON-NLS-1$
 		}
 		recompute();
-	}
-	
-	protected Collection computeElements() {
-		return elements;
 	}
 	
 	protected void firstListenerAdded() {
@@ -80,12 +76,12 @@ public class AsynchronousTestSet extends AbstractUpdatableSet {
 	}
 	
 	public void remove(Collection toRemove) {
-		HashSet rem = new HashSet();
-		rem.addAll(toRemove);
-		rem.retainAll(elements);
+		HashSet removed = new HashSet();
+		removed.addAll(toRemove);
+		removed.retainAll(wrappedSet);
 		
-		elements.removeAll(rem);
-		fireRemoved(rem);
+		wrappedSet.removeAll(removed);
+		fireSetChange(new SetDiff(Collections.EMPTY_SET, removed));
 	}
 	
 	public boolean isStale() {
@@ -107,7 +103,7 @@ public class AsynchronousTestSet extends AbstractUpdatableSet {
 
 					
 					// Add and remove some elements -- important: fire all events in the UI thread
-					SWTUtil.greedyExec(display, new Runnable() {
+					display.asyncExec(new Runnable() {
 						public void run() {
 							final HashSet toAdd = new HashSet();
 							final HashSet toRemove = new HashSet();
@@ -126,32 +122,24 @@ public class AsynchronousTestSet extends AbstractUpdatableSet {
 							} 
 							
 							if (removeCount > 0) {
-								Iterator oldElements = elements.iterator();
+								Iterator oldElements = wrappedSet.iterator();
 								for (int i = 0; i < removeCount && oldElements.hasNext(); i++) {
 									toRemove.add(oldElements.next());
 								}
 							}
 							
+							toAdd.removeAll(wrappedSet);
+							wrappedSet.addAll(toAdd);
+							wrappedSet.removeAll(toRemove);
+
 							setStale(false);
-							
-							toAdd.removeAll(elements);
-							elements.addAll(toAdd);
-							fireAdded(toAdd);
-							elements.removeAll(toRemove);
-							fireRemoved(toRemove);
+							fireSetChange(new SetDiff(toAdd, toRemove));
 						}
 					});
 				}
 			});
 			
 			newThread.start();
-		}
-	}
-
-	private void setStale(boolean b) {
-		if (!stale == b) {
-			stale = b;
-			fireStale(b);
 		}
 	}
 }

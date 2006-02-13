@@ -6,7 +6,7 @@ import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.Property;
-import org.eclipse.jface.internal.databinding.api.beans.JavaBeansScalarUpdatableValueFactory;
+import org.eclipse.jface.internal.databinding.api.beans.JavaBeansScalarObservableValueFactory;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 
 public class JavaBeansScalarObservableValueFactoryTest extends TestCase {
@@ -27,7 +27,7 @@ public class JavaBeansScalarObservableValueFactoryTest extends TestCase {
       TestBean test = new TestBean();
       
       IDataBindingContext dbc = DataBinding.createContext(new IObservableFactory[] {
-              new JavaBeansScalarUpdatableValueFactory()
+              new JavaBeansScalarObservableValueFactory()
         });
       IObservableValue observable = (IObservableValue) dbc.createObservable(new Property(test, "field"));
       assertEquals("Hello, world", observable.getValue());

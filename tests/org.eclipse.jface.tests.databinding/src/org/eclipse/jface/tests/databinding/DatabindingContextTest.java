@@ -161,7 +161,7 @@ public class DatabindingContextTest extends TestCase {
 
 	public void testBindValueModel() {
 		Mocks.reset(observableValueRMock);
-		observableValueRMock.addChangeListener(null);
+		observableValueRMock.addValueChangeListener(null);
 		observableValueRMock.getValue();
 		observableValueRMock.getValueType();
 		Mocks.setLastReturnValue(observableValueRMock, Object.class);
@@ -174,7 +174,7 @@ public class DatabindingContextTest extends TestCase {
 	}
 
 	public void testBindValueTarget() {
-		observableValueRMock.addChangeListener(null);
+		observableValueRMock.addValueChangeListener(null);
 		observableValueRMock.setValue(null);
 		observableValueRMock.getValue();
 		observableValueRMock.getValueType();

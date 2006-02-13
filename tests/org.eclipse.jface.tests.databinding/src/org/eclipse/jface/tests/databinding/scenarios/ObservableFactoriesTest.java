@@ -11,13 +11,12 @@
 /*
  *  Created Oct 21, 2005 by Gili Mendel
  * 
- *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.6.2.1 $  $Date: 2006/02/12 19:18:42 $ 
+ *  $RCSfile: ObservableFactoriesTest.java,v $
+ *  $Revision: 1.1.2.1 $  $Date: 2006/02/13 03:55:25 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import java.util.Map;
-
+import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
@@ -64,21 +63,21 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 			this.c = c;
 		}
 
-		public IObservable createObservable(Map properties, Object description,
-				IDataBindingContext bindingContext) {
+		public IObservable createObservable(IDataBindingContext bindingContext,
+				Object description) {
 			if (c.isInstance(description)) {
 				return new TestIObservable() {
 					public void dispose() {
 					}
- 
+
 					public boolean isDisposed() {
 						return false;
 					}
-					
+
 					public boolean isStale() {
 						return false;
 					}
-					
+
 					public void removeChangeListener(
 							IChangeListener changeListener) {
 					}
@@ -89,7 +88,7 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 					public Class getType() {
 						return c;
 					}
-					
+
 					public void addStaleListener(IStaleListener listener) {
 					}
 
@@ -97,14 +96,6 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 					}
 				};
 			}
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.internal.databinding.api.IObservableFactory#createObservable(org.eclipse.jface.internal.databinding.api.IDataBindingContext, java.lang.Object)
-		 */
-		public IObservable createObservable(IDataBindingContext bindingContext, Object description) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}
@@ -116,6 +107,15 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 	IObservableFactory sa = new Factory(StandAlone.class);
 
 	IObservableFactory factory = new Factory(Object.class);
+
+	private IDataBindingContext myDbc = null;
+
+	protected IDataBindingContext getDbc() {
+		if (myDbc == null) {
+			myDbc = DataBinding.createContext(new IObservableFactory[0]);
+		}
+		return myDbc;
+	}
 
 	protected Class getFactoryType(Object src) {
 		TestIObservable u = (TestIObservable) getDbc().createObservable(src);

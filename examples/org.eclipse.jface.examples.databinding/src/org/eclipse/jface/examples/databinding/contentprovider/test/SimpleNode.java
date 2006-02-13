@@ -1,6 +1,7 @@
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.jface.databinding.IReadableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
+
 
 /**
  * This object will be given randomly-generated children
@@ -9,9 +10,9 @@ import org.eclipse.jface.databinding.IReadableSet;
  */
 public class SimpleNode {
 	private String nodeName;
-	private IReadableSet children;
+	private IObservableSet children;
 
-	public SimpleNode(String nodeName, IReadableSet children) {
+	public SimpleNode(String nodeName, IObservableSet children) {
 		super();
 		this.nodeName = nodeName;
 		this.children = children;
@@ -21,7 +22,7 @@ public class SimpleNode {
 		return nodeName;
 	}
 
-	public IReadableSet getChildren() {
+	public IObservableSet getChildren() {
 		return children;
 	}
 	
