@@ -74,49 +74,44 @@ public class ReadmeFilePropertyPage extends PropertyPage {
         IResource resource = (IResource) getElement();
         IStatus result = null;
         if (resource.getType() == IResource.FILE) {
-            Label l = createLabel(panel, MessageUtil.getString("File_name")); //$NON-NLS-1$
-            l = createLabel(panel, resource.getName());
-            grabExcessSpace(l);
+            Label label = createLabel(panel, MessageUtil.getString("File_name")); //$NON-NLS-1$
+            label = createLabel(panel, resource.getName());
+            grabExcessSpace(label);
 
             //
             createLabel(panel, MessageUtil.getString("Path")); //$NON-NLS-1$
-            l = createLabel(panel, resource.getFullPath().setDevice(null)
+            label = createLabel(panel, resource.getFullPath().setDevice(null)
                     .toString());
-            grabExcessSpace(l);
+            grabExcessSpace(label);
 
             //
             createLabel(panel, MessageUtil.getString("Size")); //$NON-NLS-1$
             InputStream contentStream = null;
             try {
                 IFile file = (IFile) resource;
-                if (!file.isLocal(IResource.DEPTH_ZERO))
-                    l = createLabel(panel, MessageUtil
-                            .getString("<file_contents_not_local>")); //$NON-NLS-1$
-                else {
-                    contentStream = file.getContents();
-                    Reader in = new InputStreamReader(contentStream);
-                    int chunkSize = contentStream.available();
-                    StringBuffer buffer = new StringBuffer(chunkSize);
-                    char[] readBuffer = new char[chunkSize];
-                    int n = in.read(readBuffer);
+                contentStream = file.getContents();
+                Reader in = new InputStreamReader(contentStream);
+                int chunkSize = contentStream.available();
+                StringBuffer buffer = new StringBuffer(chunkSize);
+                char[] readBuffer = new char[chunkSize];
+                int n = in.read(readBuffer);
 
-                    while (n > 0) {
-                        buffer.append(readBuffer);
-                        n = in.read(readBuffer);
-                    }
-
-                    contentStream.close();
-                    l = createLabel(panel, Integer.toString(buffer.length()));
+                while (n > 0) {
+                    buffer.append(readBuffer);
+                    n = in.read(readBuffer);
                 }
+
+                contentStream.close();
+                label = createLabel(panel, Integer.toString(buffer.length()));
             } catch (CoreException e) {
                 result = e.getStatus();
                 String message = result.getMessage();
                 if (message == null)
-                    l = createLabel(panel, MessageUtil.getString("<Unknown>")); //$NON-NLS-1$
+                    label = createLabel(panel, MessageUtil.getString("<Unknown>")); //$NON-NLS-1$
                 else
-                    l = createLabel(panel, message);
+                    label = createLabel(panel, message);
             } catch (IOException e) {
-                l = createLabel(panel, MessageUtil.getString("<Unknown>")); //$NON-NLS-1$
+                label = createLabel(panel, MessageUtil.getString("<Unknown>")); //$NON-NLS-1$
             } finally {
                 if (contentStream != null) {
                     try {
@@ -126,23 +121,23 @@ public class ReadmeFilePropertyPage extends PropertyPage {
                     }
                 }
             }
-            grabExcessSpace(l);
+            grabExcessSpace(label);
             createLabel(panel, MessageUtil.getString("Number_of_sections")); //$NON-NLS-1$
             // We will get the sections property and simply
             // report number of elements found.
             IAdaptable sections = getSections(resource);
             if (sections instanceof AdaptableList) {
                 AdaptableList list = (AdaptableList) sections;
-                l = createLabel(panel, String.valueOf(list.size()));
-                grabExcessSpace(l);
+                label = createLabel(panel, String.valueOf(list.size()));
+                grabExcessSpace(label);
             }
         }
 
         //
-        Label l = createLabel(panel, MessageUtil
+        Label label = createLabel(panel, MessageUtil
                 .getString("Additional_information")); //$NON-NLS-1$
-        grabExcessSpace(l);
-        GridData gd = (GridData) l.getLayoutData();
+        grabExcessSpace(label);
+        GridData gd = (GridData) label.getLayoutData();
         gd.horizontalSpan = 2;
         return new Canvas(panel, 0);
     }
@@ -171,8 +166,7 @@ public class ReadmeFilePropertyPage extends PropertyPage {
         if (adaptable instanceof IFile)
             return ReadmeModelFactory.getInstance().getSections(
                     (IFile) adaptable);
-        else
-            return null;
+        return null;
     }
 
     /**

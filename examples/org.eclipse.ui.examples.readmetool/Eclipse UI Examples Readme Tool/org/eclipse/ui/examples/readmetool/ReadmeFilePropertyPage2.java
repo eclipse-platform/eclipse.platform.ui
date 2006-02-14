@@ -193,23 +193,20 @@ public class ReadmeFilePropertyPage2 extends PropertyPage {
             int length = 0;
             try {
                 IFile file = (IFile) resource;
+                contentStream = file.getContents();
+                Reader in = new InputStreamReader(contentStream);
+                int chunkSize = contentStream.available();
+                StringBuffer buffer = new StringBuffer(chunkSize);
+                char[] readBuffer = new char[chunkSize];
+                int n = in.read(readBuffer);
 
-                if (file.isLocal(IResource.DEPTH_ZERO)) {
-                    contentStream = file.getContents();
-                    Reader in = new InputStreamReader(contentStream);
-                    int chunkSize = contentStream.available();
-                    StringBuffer buffer = new StringBuffer(chunkSize);
-                    char[] readBuffer = new char[chunkSize];
-                    int n = in.read(readBuffer);
-
-                    while (n > 0) {
-                        buffer.append(readBuffer);
-                        n = in.read(readBuffer);
-                    }
-
-                    contentStream.close();
-                    length = buffer.length();
+                while (n > 0) {
+                    buffer.append(readBuffer);
+                    n = in.read(readBuffer);
                 }
+
+                contentStream.close();
+                length = buffer.length();
             } catch (CoreException e) {
                 length = 0;
             } catch (IOException e) {
