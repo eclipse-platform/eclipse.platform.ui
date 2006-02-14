@@ -16,6 +16,7 @@ public class ExtensionData {
 	private String name;
 	private int fImportance = LOW;
 	private boolean implicit = false;
+	private GroupData parent;
 
 	public static final String[] IMPORTANCE_TABLE = { ISharedIntroConstants.CALLOUT,
 			ISharedIntroConstants.LOW, ISharedIntroConstants.MEDIUM, ISharedIntroConstants.HIGH,
@@ -23,6 +24,21 @@ public class ExtensionData {
 
 	public ExtensionData(String id, String name) {
 		this(id, name, ISharedIntroConstants.LOW, false);
+	}
+	
+	public ExtensionData(String id, String name, int importance) {
+		this.id = id;
+		this.name = name;
+		this.fImportance = importance;
+		this.implicit = false;
+	}
+	
+	void setParent(GroupData gd) {
+		this.parent = gd;
+	}
+	
+	public GroupData getParent() {
+		return parent;
 	}
 
 	public boolean isImplicit() {
@@ -85,4 +101,15 @@ public class ExtensionData {
 	public String toString() {
 		return name!=null?name:id;
 	}
+/*
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (obj == this) return true;
+		if (obj instanceof ExtensionData) {
+			ExtensionData src = (ExtensionData)obj;
+			return (id.equals(src.id) && name.equals(src.name) && fImportance==src.fImportance);
+		}
+		return false;
+	}
+	*/
 }

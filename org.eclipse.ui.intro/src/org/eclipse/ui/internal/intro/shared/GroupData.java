@@ -56,14 +56,20 @@ public class GroupData {
 	
 	public void add(ExtensionData ed) {
 		extensions.add(ed);
+		ed.setParent(this);
+	}
+	public void add(int index, ExtensionData ed) {
+		extensions.add(index, ed);
+		ed.setParent(this);
 	}
 	public void remove(ExtensionData ed) {
 		extensions.remove(ed);
+		ed.setParent(null);
 	}
 	
 	public void addImplicitExtension(String id, String name) {
 		ExtensionData ed = new ExtensionData(id, name, ISharedIntroConstants.LOW, true);
-		extensions.add(ed);
+		add(ed);
 	}
 
 	private void loadExtension(Element element) {
@@ -71,7 +77,7 @@ public class GroupData {
 		String name = element.getAttribute("name"); //$NON-NLS-1$
 		String importance = element.getAttribute("importance"); //$NON-NLS-1$
 		ExtensionData ed = new ExtensionData(id, name, importance, false);
-		extensions.add(ed);
+		add(ed);
 	}
 
 	public ExtensionData[] getExtensions() {
@@ -93,6 +99,19 @@ public class GroupData {
 				return ed;
 		}
 		return null;
+	}
+	
+	public int getIndexOf(ExtensionData ed) {
+		return extensions.indexOf(ed);
+	}
+	
+	public int getIndexOf(String extensionId) {
+		for (int i = 0; i < extensions.size(); i++) {
+			ExtensionData ed = (ExtensionData) extensions.get(i);
+			if (ed.getId().equals(extensionId))
+				return i;
+		}
+		return -1;
 	}
 	
 	public boolean canMoveUp(ExtensionData ed) {
@@ -121,16 +140,23 @@ public class GroupData {
 	
 	public void write(PrintWriter writer, String indent) {
 		writer.print(indent);
-		writer.print("<group path=\""+path+"\"");  //$NON-NLS-1$ //$NON-NLS-2$
-		if (fDefault)
-			writer.println(" default=\"true\">"); //$NON-NLS-1$
-		else
-			writer.println(">"); //$NON-NLS-1$
+		if (isHidden())
+			writer.print("<hidden>"); //$NON-NLS-1$
+		else {
+			writer.print("<group path=\""+path+"\"");  //$NON-NLS-1$ //$NON-NLS-2$
+			if (fDefault)
+				writer.println(" default=\"true\">"); //$NON-NLS-1$
+			else
+				writer.println(">"); //$NON-NLS-1$
+		}
 		for (int i=0; i<extensions.size(); i++) {
 			ExtensionData ed = (ExtensionData)extensions.get(i);
 			ed.write(writer, indent+"   "); //$NON-NLS-1$
 		}
 		writer.print(indent);
-		writer.println("</group>"); //$NON-NLS-1$
+		if (isHidden())
+			writer.println("</hidden>"); //$NON-NLS-1$
+		else
+			writer.println("</group>"); //$NON-NLS-1$
 	}
 }

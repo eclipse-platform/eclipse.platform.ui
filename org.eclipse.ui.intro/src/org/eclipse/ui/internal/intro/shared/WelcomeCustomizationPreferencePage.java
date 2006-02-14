@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,19 +38,32 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.ByteArrayTransfer;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -61,6 +75,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -77,6 +92,8 @@ import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
 import org.eclipse.ui.intro.config.IntroURLFactory;
 import org.osgi.framework.Bundle;
+
+import sun.awt.datatransfer.DataTransferer;
 
 
 public class WelcomeCustomizationPreferencePage extends PreferencePage implements IWorkbenchPreferencePage,
@@ -106,6 +123,8 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private Button applyToAll;
 	private Image extensionImage;
 	private Image bgImage;
+	private static final Transfer[] TRANSFER_TYPES = new Transfer[] {ExtensionDataTransfer.getInstance()};
+
 
 	private static final RootPage ROOT_PAGE_TABLE[] = new RootPage[] {
 			new RootPage(ISharedIntroConstants.ID_OVERVIEW,
@@ -168,6 +187,93 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
+	
+	class TableDragSourceListener implements DragSourceListener {
+		TableViewer viewer;
+		ExtensionData [] sel;
+
+		public TableDragSourceListener(TableViewer viewer) {
+			this.viewer = viewer;
+		}
+		public void dragStart(DragSourceEvent event) {
+			IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+			if (ssel.size()>0) {
+				event.doit = true;
+			} else {
+				event.doit = false;
+			}
+		};
+		public void dragSetData (DragSourceEvent event) {
+			IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+			ExtensionData [] array = new ExtensionData[ssel.size()];
+			int i=0;
+			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+				array[i++] = (ExtensionData)iter.next();
+			}
+			event.data = array;
+			sel = array;
+		}
+		public void dragFinished(DragSourceEvent event) {
+			if (event.detail == DND.DROP_MOVE) {
+				GroupData gd = (GroupData)viewer.getInput();
+				for (int i=0; i<sel.length; i++) {
+					ExtensionData ed = sel[i];
+					gd.remove(ed);
+				}
+				viewer.refresh();
+			}
+			sel = null;
+		}
+	}
+
+	class TableDropTargetListener extends ViewerDropAdapter {
+		
+		public TableDropTargetListener (TableViewer viewer) {
+			super(viewer);
+		}
+		public boolean performDrop(Object data) {
+			ExtensionData target = (ExtensionData)getCurrentTarget();
+			int loc = getCurrentLocation();
+			GroupData gd = (GroupData)getViewer().getInput();
+			if (gd==null)
+				gd = createTargetGd(getViewer());
+			ExtensionData [] sel = (ExtensionData[])data;
+
+			int index = target!=null?gd.getIndexOf(target): -1;
+			int startingIndex = getStartIndex(gd, sel);
+			if (target!=null) {
+				if (loc== LOCATION_AFTER || (loc==LOCATION_ON && startingIndex!= -1 && startingIndex < index))
+					index++;
+				else if (index>0 && loc==LOCATION_BEFORE)
+					index --;
+			}
+
+			for (int i=0; i<sel.length; i++) {
+				ExtensionData ed = sel[i];
+				if (index== -1)
+					gd.add(ed);
+				else
+					gd.add(index++, ed);
+			}
+			if (getViewer().getInput()!=null)
+				getViewer().refresh();
+			else
+				getViewer().setInput(gd);
+			return true;
+		}
+		private int getStartIndex(GroupData gd, ExtensionData [] sel) {
+			for (int i=0; i<sel.length; i++) {
+				ExtensionData ed = sel[i];
+				int index = gd.getIndexOf(ed.getId());
+				if (index!= -1)
+					return index;
+			}
+			return -1;
+		}
+		public boolean validateDrop(Object target, int operation, TransferData transferType) {
+			return ExtensionDataTransfer.getInstance().isSupportedType(transferType);
 		}
 	}
 
@@ -376,9 +482,18 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		pageContainer.setLayout(layout);
 		layout.numColumns = 4;
 		Label label;
+		label = new Label(pageContainer, SWT.WRAP);
+		label.setText(Messages.WelcomeCustomizationPreferencePage_pageDesc);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 4;
+		label.setLayoutData(gd);
+		label = new Label(pageContainer, SWT.SEPARATOR|SWT.HORIZONTAL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 4;
+		label.setLayoutData(gd);		
 		label = new Label(pageContainer, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_available);
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 		label = new Label(pageContainer, SWT.NULL);
@@ -390,6 +505,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		available.setLabelProvider(labelProvider);
 		available.setSorter(new ViewerSorter());
 		available.setData("id", "hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+		addDNDSupport(available);
 		createPopupMenu(available);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 		gd.verticalSpan = 3;
@@ -401,6 +517,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		left.setLabelProvider(labelProvider);
 		left.setData("id", "left"); //$NON-NLS-1$ //$NON-NLS-2$
 		createPopupMenu(left);
+		addDNDSupport(left);
 		gd = new GridData(GridData.FILL_BOTH);
 		left.getControl().setLayoutData(gd);
 		right = new TableViewer(pageContainer, SWT.BORDER);
@@ -408,6 +525,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		right.setLabelProvider(labelProvider);
 		right.setData("id", "right"); //$NON-NLS-1$ //$NON-NLS-2$
 		createPopupMenu(right);
+		addDNDSupport(right);
 		gd = new GridData(GridData.FILL_BOTH);
 		right.getControl().setLayoutData(gd);
 
@@ -418,6 +536,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		bottom.setLabelProvider(labelProvider);
 		bottom.setData("id", "bottom"); //$NON-NLS-1$ //$NON-NLS-2$
 		createPopupMenu(bottom);
+		addDNDSupport(bottom);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 2;
 		bottom.getControl().setLayoutData(gd);
@@ -436,6 +555,11 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		String id = (String) item.getData();
 		if (item.getControl() == pageContainer)
 			updatePageContainer(id, (PageData) item.getData("pageData")); //$NON-NLS-1$
+	}
+	
+	private PageData getPageData() {
+		TabItem [] items = tabFolder.getSelection();
+		return (PageData)items[0].getData("pageData"); //$NON-NLS-1$
 	}
 
 	private void loadData(boolean fromDefault) {
@@ -803,6 +927,11 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			}
 		});
 	}
+	
+	private void addDNDSupport(TableViewer viewer) {
+		viewer.addDragSupport(DND.DROP_MOVE, TRANSFER_TYPES, new TableDragSourceListener(viewer));
+		viewer.addDropSupport(DND.DROP_MOVE, TRANSFER_TYPES, new TableDropTargetListener(viewer));
+	}
 
 	private void fillPopupMenu(IMenuManager manager, final Viewer viewer) {
 		StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
@@ -892,17 +1021,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		GroupData sourceGd = (GroupData) source.getInput();
 		GroupData targetGd = (GroupData) target.getInput();
 		if (targetGd == null) {
-			if (target == left)
-				targetGd = new GroupData(PageData.P_LEFT, false);
-			else if (target == right)
-				targetGd = new GroupData(PageData.P_RIGHT, false);
-			else if (target == bottom)
-				targetGd = new GroupData(PageData.P_BOTTOM, false);
-			else if (target == available)
-				targetGd = new GroupData(ISharedIntroConstants.HIDDEN, false);
-			TabItem[] items = tabFolder.getSelection();
-			PageData pd = (PageData) items[0].getData("pageData"); //$NON-NLS-1$
-			pd.add(targetGd);
+			targetGd = createTargetGd(target);
 		}
 		for (int i = 0; i < selObjs.length; i++) {
 			ExtensionData ed = (ExtensionData) selObjs[i];
@@ -914,6 +1033,24 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			target.refresh();
 		else
 			target.setInput(targetGd);
+	}
+
+	private GroupData createTargetGd(Viewer target) {
+		GroupData targetGd=null;
+		if (target == left)
+			targetGd = new GroupData(PageData.P_LEFT, false);
+		else if (target == right)
+			targetGd = new GroupData(PageData.P_RIGHT, false);
+		else if (target == bottom)
+			targetGd = new GroupData(PageData.P_BOTTOM, false);
+		else if (target == available)
+			targetGd = new GroupData(ISharedIntroConstants.HIDDEN, false);
+		else
+			return null;
+		TabItem[] items = tabFolder.getSelection();
+		PageData pd = (PageData) items[0].getData("pageData"); //$NON-NLS-1$
+		pd.add(targetGd);
+		return targetGd;
 	}
 
 	public void setCurrentPage(String pageId) {
