@@ -1161,6 +1161,15 @@
                class="org.eclipse.ui.tests.api.MockActionDelegate" />
       </actionSet>
    </extension>
+   
+   <!-- Bug 122674.  To verify this bug, simply start Eclipse with this plug-in. 
+   -->
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Bug 122674"
+            id="org.eclipse.ui.tests.actionSet122674" />
+   </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
 <!-- PopupMenuExpressionTest -->
