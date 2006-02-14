@@ -889,6 +889,11 @@ public class PopupDialog extends Window {
 	 *         <code>false</code> if it is still open
 	 */
 	public boolean close() {
+		// If already closed, there is nothing to do.
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=127505
+		if (getShell() == null || getShell().isDisposed())
+			return true;
+		
 		saveDialogBounds(getShell());
 		// Widgets are about to be disposed, so null out any state
 		// related to them that was not handled in dispose listeners.
