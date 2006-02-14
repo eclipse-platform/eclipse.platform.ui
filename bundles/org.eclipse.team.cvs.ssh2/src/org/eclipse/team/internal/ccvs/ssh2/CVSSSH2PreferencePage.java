@@ -996,8 +996,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
       MessageDialog.openInformation(getShell(),
 				    CVSSSH2Messages.CVSSSH2PreferencePage_information,  
-				    CVSSSH2Messages.CVSSSH2PreferencePage_109+ 
-				    (user+"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				    NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_109, 
+				    		(user+"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
       c.disconnect();
       //session.disconnect();
