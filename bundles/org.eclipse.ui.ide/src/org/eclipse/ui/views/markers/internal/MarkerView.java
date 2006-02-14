@@ -1596,6 +1596,8 @@ public abstract class MarkerView extends TableView {
 	 * Schedule an update of the markers
 	 */
 	void scheduleMarkerUpdate() {
+		markerProcessJob.cancel();
+		updateJob.cancel();
 		updateJob.refreshAll();
 		getProgressService().schedule(markerProcessJob, 100);
 	}
