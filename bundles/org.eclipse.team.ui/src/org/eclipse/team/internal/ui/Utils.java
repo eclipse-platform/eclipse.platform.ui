@@ -875,7 +875,10 @@ public class Utils {
 		ISynchronizationCompareAdapter adapter = getCompareAdapter(provider);
 		if (adapter == null)
 			return ""; //$NON-NLS-1$
-		return adapter.getPathString(mapping).toString();
+		String pathString = adapter.getPathString(mapping);
+		if (pathString == null || pathString.length() == 0)
+			return adapter.getName(mapping);
+		return pathString;
 	}
 
 	public static String getScopeDescription(ISynchronizationScope scope) {
