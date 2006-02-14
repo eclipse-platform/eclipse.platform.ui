@@ -25,9 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class TerminateAllAction extends AbstractDebugContextActionDelegate {
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
-	 */
+
 	protected void doAction(Object element) throws DebugException {
 		if (element instanceof ILaunch) {
 			ILaunch launch = (ILaunch) element;
@@ -56,16 +54,9 @@ public class TerminateAllAction extends AbstractDebugContextActionDelegate {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		setAction(action);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#getSelection()
 	 */
-	protected IStructuredSelection getSelection() {
+	protected IStructuredSelection getContext() {
 		return new StructuredSelection(DebugPlugin.getDefault().getLaunchManager().getLaunches());
 	}		
 	
