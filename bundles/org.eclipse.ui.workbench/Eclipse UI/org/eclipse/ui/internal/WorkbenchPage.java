@@ -836,6 +836,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             window.firePerspectiveChanged(this, desc, CHANGE_RESET);
 
             // Create new persp from original template.
+            // Suppress the perspectiveOpened and perspectiveClosed events otherwise it looks like two
+            // instances of the same perspective are open temporarily (see bug 127470).
             Perspective newPersp = createPerspective(desc, false);
             if (newPersp == null) {
                 // We're not going through with the reset, so it is complete.
