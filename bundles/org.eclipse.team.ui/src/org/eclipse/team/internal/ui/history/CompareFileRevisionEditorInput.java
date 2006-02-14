@@ -193,10 +193,10 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 					IStorage storage = ((LocalFileRevision) fileObject).getStorage(new NullProgressMonitor());
 					if (Utils.getAdapter(storage, IFileState.class) != null){
 						//local revision
-						title =  new Object[]{fileRevisionElement.getName(),"Local Revision"};
+						title =  new Object[]{fileRevisionElement.getName(),TeamUIMessages.CompareFileRevisionEditorInput_0};
 					} else if (Utils.getAdapter(storage, IFile.class) != null) {
 						//current revision
-						title =  new Object[]{fileRevisionElement.getName(),"Current Revision"};
+						title =  new Object[]{fileRevisionElement.getName(),TeamUIMessages.CompareFileRevisionEditorInput_1};
 					}
 				} catch (CoreException e) {
 				}
@@ -208,7 +208,7 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 		}
 		else if (element instanceof TypedBufferedContent){
 			TypedBufferedContent typedContent = (TypedBufferedContent) element;
-			return new Object[]{typedContent.getResource().getFullPath().toString(),"Current"};
+			return new Object[]{typedContent.getResource().getFullPath().toString(),TeamUIMessages.CompareFileRevisionEditorInput_2};
 		}
 		return new Object[0];
 	}

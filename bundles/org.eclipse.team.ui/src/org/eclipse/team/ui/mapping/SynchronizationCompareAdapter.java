@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceSaveableCompareModel.ResourceDiffCompareInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -79,7 +80,7 @@ public abstract class SynchronizationCompareAdapter implements ISynchronizationC
 		if (object instanceof ModelProvider) {
 			ModelProvider provider = (ModelProvider) object;
 			if (provider.getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID)) {
-				return "Workspace";
+				return TeamUIMessages.SynchronizationCompareAdapter_0;
 			}
 			return provider.getDescriptor().getLabel();
 		}

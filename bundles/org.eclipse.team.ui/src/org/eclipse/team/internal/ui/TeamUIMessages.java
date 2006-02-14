@@ -423,4 +423,12 @@ public class TeamUIMessages extends NLS {
 	public static String GenericHistoryView_RefreshTooltip;
 
 	public static String GenericHistoryView_LinkWithTooltip;
+
+	public static String CompareFileRevisionEditorInput_0;
+
+	public static String CompareFileRevisionEditorInput_1;
+
+	public static String CompareFileRevisionEditorInput_2;
+
+	public static String SynchronizationCompareAdapter_0;
 }
