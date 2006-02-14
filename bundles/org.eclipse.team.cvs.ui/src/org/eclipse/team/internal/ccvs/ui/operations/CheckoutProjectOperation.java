@@ -150,7 +150,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			
 			final boolean sendModuleName = project != null;
 			final IStatus[] result = new IStatus[] { null };
-			ISchedulingRule schedulingRule = getSchedulingRule(targetProjects);
+			final ISchedulingRule schedulingRule = getSchedulingRule(targetProjects);
 			if (schedulingRule instanceof IResource && ((IResource)schedulingRule).getType() == IResource.ROOT) {
 				// One of the projects is mapped to a provider that locks the workspace.
 				// Just return the workspace root rule

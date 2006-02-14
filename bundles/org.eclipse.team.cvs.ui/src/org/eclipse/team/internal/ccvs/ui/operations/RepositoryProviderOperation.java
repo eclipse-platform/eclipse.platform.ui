@@ -263,7 +263,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
         IResource[] deepResources = entry.getDeepResources();
         IResource[] shallowResources = entry.getShallowResources();
         IResource[] nontraversedFolders = entry.getNontraversedFolders();
-        ISchedulingRule rule = getSchedulingRule(provider);
+        final ISchedulingRule rule = getSchedulingRule(provider);
         monitor.beginTask(getTaskName(provider), (deepResources.length > 0 ? 100 : 0) + (shallowResources.length > 0 ? 100 : 0) + (nontraversedFolders.length > 0 ? 10 : 0));
         try {
         	Platform.getJobManager().beginRule(rule, monitor);

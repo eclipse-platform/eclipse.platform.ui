@@ -186,7 +186,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		} else if (sendContents) {
 		    // Perform the send of modified contents in a sheduling rule to ensure that
 		    // the contents are not modified while we are sending them
-		    IResource resource = mFile.getIResource();
+		    final IResource resource = mFile.getIResource();
             try {
                 if (resource != null)
                     Platform.getJobManager().beginRule(resource, monitor);

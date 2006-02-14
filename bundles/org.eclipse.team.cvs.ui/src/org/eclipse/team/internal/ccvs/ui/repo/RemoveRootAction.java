@@ -114,7 +114,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 					try {
 						manager.busyCursorWhile(new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								ISchedulingRule rule = new RepositoryLocationSchedulingRule(root);
+								final ISchedulingRule rule = new RepositoryLocationSchedulingRule(root);
 								try {
 									Platform.getJobManager().beginRule(rule, monitor);
 									view.getContentProvider().cancelJobs(root);
