@@ -11,12 +11,11 @@
 package org.eclipse.jface.viewers;
 
 import java.text.Collator;
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * A viewer sorter is used by a {@link StructuredViewer} to
- * reorder the elements provided by its content provider.
+ * A viewer sorter is used by a {@link StructuredViewer} to reorder the elements 
+ * provided by its content provider.
  * <p>
  * The default <code>compare</code> method compares elements using two steps. 
  * The first step uses the values returned from <code>category</code>. 
@@ -33,7 +32,7 @@ import java.util.Comparator;
  * @see IStructuredContentProvider
  * @see StructuredViewer
  */
-public class ViewerSorter {
+public class ViewerSorter extends ViewerComparator{
     /**
      * The collator used to sort strings.
      */
@@ -57,47 +56,11 @@ public class ViewerSorter {
         this.collator = collator;
     }
 
-    /**
-     * Returns the category of the given element. The category is a
-     * number used to allocate elements to bins; the bins are arranged
-     * in ascending numeric order. The elements within a bin are arranged
-     * via a second level sort criterion.
-     * <p>
-     * The default implementation of this framework method returns
-     * <code>0</code>. Subclasses may reimplement this method to provide
-     * non-trivial categorization.
-     * </p>
-     *
-     * @param element the element
-     * @return the category
-     */
-    public int category(Object element) {
-        return 0;
-    }
-
-    /**
-     * Returns a negative, zero, or positive number depending on whether
-     * the first element is less than, equal to, or greater than
-     * the second element.
-     * <p>
-     * The default implementation of this method is based on
-     * comparing the elements' categories as computed by the <code>category</code>
-     * framework method. Elements within the same category are further 
-     * subjected to a case insensitive compare of their label strings, either
-     * as computed by the content viewer's label provider, or their 
-     * <code>toString</code> values in other cases. Subclasses may override.
-     * </p>
-     * 
-     * @param viewer the viewer
-     * @param e1 the first element
-     * @param e2 the second element
-     * @return a negative number if the first element is less  than the 
-     *  second element; the value <code>0</code> if the first element is
-     *  equal to the second element; and a positive number if the first
-     *  element is greater than the second element
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public int compare(Viewer viewer, Object e1, Object e2) {
-
         int cat1 = category(e1);
         int cat2 = category(e2);
 
@@ -126,6 +89,8 @@ public class ViewerSorter {
             name1 = "";//$NON-NLS-1$
         if (name2 == null)
             name2 = "";//$NON-NLS-1$
+        
+        // use a collator to compare the strings
         return collator.compare(name1, name2);
     }
 
@@ -138,42 +103,15 @@ public class ViewerSorter {
         return collator;
     }
 
-    /**
-     * Returns whether this viewer sorter would be affected 
-     * by a change to the given property of the given element.
-     * <p>
-     * The default implementation of this method returns <code>false</code>.
-     * Subclasses may reimplement.
-     * </p>
-     *
-     * @param element the element
-     * @param property the property
-     * @return <code>true</code> if the sorting would be affected,
-     *    and <code>false</code> if it would be unaffected
-     */
-    public boolean isSorterProperty(Object element, String property) {
-        return false;
-    }
-
-    /**
-     * Sorts the given elements in-place, modifying the given array.
-     * <p>
-     * The default implementation of this method uses the 
-     * java.util.Arrays#sort algorithm on the given array, 
-     * calling <code>compare</code> to compare elements.
-     * </p>
-     * <p>
-     * Subclasses may reimplement this method to provide a more optimized implementation.
-     * </p>
-     *
-     * @param viewer the viewer
-     * @param elements the elements to sort
-     */
-    public void sort(final Viewer viewer, Object[] elements) {
-        Arrays.sort(elements, new Comparator() {
-            public int compare(Object a, Object b) {
-                return ViewerSorter.this.compare(viewer, a, b);
-            }
-        });
-    }
+	/**
+	 * Method overridden from superclass as {@link Comparator} is not 
+	 * supported in a {@link ViewerSorter}.
+	 * 
+	 * @exception UnsupportedOperationException
+	 * @deprecated this method is not supported in this class
+	 * @see #getCollator()
+	 */
+	protected Comparator getComparator() {
+		throw new UnsupportedOperationException();
+	}
 }
