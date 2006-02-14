@@ -867,7 +867,7 @@ public class TreeViewer extends AbstractTreeViewer {
     	super.internalAdd(widget, parentElement, childElements);
     }
 
-	protected void virtualMaterializeItem(TreeItem treeItem) {
+	private void virtualMaterializeItem(TreeItem treeItem) {
 		if (treeItem.getData() != null) {
 			// already materialized
 			return;

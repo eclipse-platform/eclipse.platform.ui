@@ -557,6 +557,8 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      *
      * @param state <code>true</code> if the element should be checked,
      *  and <code>false</code> if it should be unchecked
+     *  
+     *  @since 3.2
      */
 	public void setAllChecked(boolean state) {
 		setAllChecked(state,  getTree().getItems());

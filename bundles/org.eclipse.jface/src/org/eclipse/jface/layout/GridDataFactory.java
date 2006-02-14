@@ -97,6 +97,7 @@ import org.eclipse.swt.widgets.Control;
  * control.setLayoutData(gridDataFactory).
  * </p>
  * 
+ * @since 3.2
  */
 public final class GridDataFactory {
     private GridData data;

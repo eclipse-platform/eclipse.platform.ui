@@ -1340,6 +1340,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * 
 	 * @param elementOrTreePath
 	 * @return the parent element, or parent path, or <code>null</code>
+	 * 
+	 * @since 3.2
 	 */ 
     protected Object getParentElement(Object elementOrTreePath) {
     	if(elementOrTreePath instanceof TreePath) {
@@ -1869,8 +1871,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * the model.
      * </p>
      * 
+     * @param parent the parent of the elements to remove
      * @param elements
      *           the elements to remove
+     *           
+     * @since 3.2
      */
     public void remove(final Object parent, final Object[] elements) {
         assertElementsNotNull(elements);
@@ -2055,6 +2060,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @param treePaths
      *           the array of expanded tree paths
      * @see #getExpandedTreePaths()
+     * 
+     * @since 3.2
      */
     public void setExpandedTreePaths(TreePath[] treePaths) {
         assertElementsNotNull(treePaths);
@@ -2430,6 +2437,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         }
     }
 
+    /**
+     * Returns the tree path for the given item.
+     *  
+     * @since 3.2
+     */
     protected TreePath getTreePathFromItem(Item item) {
 		LinkedList segments = new LinkedList();
 		while(item!=null) {
@@ -2484,6 +2496,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * 
      * @return the array of expanded tree paths
      * @see #setExpandedElements
+     * 
+     * @since 3.2
      */
     public TreePath[] getExpandedTreePaths() {
         ArrayList items = new ArrayList();
