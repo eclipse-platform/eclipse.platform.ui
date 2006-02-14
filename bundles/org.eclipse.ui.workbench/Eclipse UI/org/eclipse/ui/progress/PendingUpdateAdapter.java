@@ -21,13 +21,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
-    boolean removed = false;
+    private boolean removed = false;
 
     /**
      * Return whether or not this has been removed from the tree.
      * @return boolean
      */
-    public boolean isRemoved() {
+    protected boolean isRemoved() {
         return removed;
     }
 
@@ -35,14 +35,14 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
      * Set whether or not this has been removed from the tree.
      * @param removedValue boolean
      */
-    public void setRemoved(boolean removedValue) {
+    protected void setRemoved(boolean removedValue) {
         this.removed = removedValue;
     }
 
     /**
      * Create a new instance of the receiver.
      */
-    public PendingUpdateAdapter() {
+    protected PendingUpdateAdapter() {
         //No initial behavior
     }
 
