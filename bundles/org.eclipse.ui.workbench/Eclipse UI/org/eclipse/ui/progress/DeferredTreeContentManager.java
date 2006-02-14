@@ -136,10 +136,21 @@ public class DeferredTreeContentManager {
         IDeferredWorkbenchAdapter element = getAdapter(parent);
         if (element == null)
             return null;
-        PendingUpdateAdapter placeholder = new PendingUpdateAdapter();
+        PendingUpdateAdapter placeholder = createPendingUpdateAdapter();
         startFetchingDeferredChildren(parent, element, placeholder);
         return new Object[] { placeholder };
     }
+
+	/**
+	 * Factory method for creating the pending update adapter representing the
+	 * placeholder node. Subclasses may override.
+	 * 
+	 * @return a pending update adapter
+	 * @since 3.2
+	 */
+	protected PendingUpdateAdapter createPendingUpdateAdapter() {
+		return new PendingUpdateAdapter();
+	}
 
     /**
      * Return the IDeferredWorkbenchAdapter for element or the element if it is

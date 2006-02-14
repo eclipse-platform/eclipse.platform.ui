@@ -18,6 +18,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * The PendingUpdateAdapter is a convenience object that can be used
  * by a BaseWorkbenchContentProvider that wants to show a pending update.
+ * 
+ * @since 3.2
  */
 public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
@@ -42,7 +44,7 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
     /**
      * Create a new instance of the receiver.
      */
-    protected PendingUpdateAdapter() {
+    public PendingUpdateAdapter() {
         //No initial behavior
     }
 
