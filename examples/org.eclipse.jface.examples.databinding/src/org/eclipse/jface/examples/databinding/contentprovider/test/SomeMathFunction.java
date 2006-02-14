@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
  * <li>Do nothing</li>
  * </ul>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class SomeMathFunction extends ObservableMapping {
 

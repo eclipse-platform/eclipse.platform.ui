@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Shell;
  * a tree containing three randomly-generated sets of integers, and one node
  * that contains the union of the other sets.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class LabelProviderTest2 {
 

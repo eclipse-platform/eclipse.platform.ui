@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Contains various layout constants
  * 
- * @since 3.2
+ * @since 1.0
  */
 public final class LayoutConstants {
 	private static Point dialogMargins = null;

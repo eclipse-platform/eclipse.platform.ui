@@ -13,7 +13,7 @@ package org.eclipse.jface.tests.databinding.swt;
 
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class ListObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {

@@ -14,7 +14,7 @@ package org.eclipse.jface.tests.databinding.swt;
 import junit.framework.TestCase;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class AutoSelectTableViewerCollectionExtendedTest extends TestCase {

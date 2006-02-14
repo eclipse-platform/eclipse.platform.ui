@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class TestMasterDetail {

@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
  * first.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class ExampleBinding {
 

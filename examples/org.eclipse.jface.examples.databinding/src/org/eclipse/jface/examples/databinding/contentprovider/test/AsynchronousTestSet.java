@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Display;
  * slow operation, then make changes to the set).
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class AsynchronousTestSet extends ObservableSet {
 

@@ -14,7 +14,7 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 import java.util.ArrayList;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class RenamableItem {

@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class CalculatedValueTest extends TestCase {

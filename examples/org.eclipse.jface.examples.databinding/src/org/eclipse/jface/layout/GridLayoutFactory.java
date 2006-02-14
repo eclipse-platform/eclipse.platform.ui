@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Composite;
  * to a child control and it will not recurse into nested composites. 
  * </p>
  *
- * @since 3.2
+ * @since 1.0
  */
 public final class GridLayoutFactory {
 	
