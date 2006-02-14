@@ -836,7 +836,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             window.firePerspectiveChanged(this, desc, CHANGE_RESET);
 
             // Create new persp from original template.
-            Perspective newPersp = createPerspective(desc);
+            Perspective newPersp = createPerspective(desc, false);
             if (newPersp == null) {
                 // We're not going through with the reset, so it is complete.
                 window
@@ -852,7 +852,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             setPerspective(newPersp);
 
             // Destroy old persp.
-            disposePerspective(oldPersp);
+            disposePerspective(oldPersp, false);
 
             // Update the Coolbar layout.
             resetToolBarLayout();
@@ -903,7 +903,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             PerspectiveDescriptor realDesc = (PerspectiveDescriptor) desc;
             newPersp = findPerspective(realDesc);
             if (newPersp == null) {
-                newPersp = createPerspective(realDesc);
+                newPersp = createPerspective(realDesc, true);
                 if (newPersp == null)
                     return;
             }
@@ -1322,7 +1322,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         boolean isActive = (perspList.getActive() == persp);
         if (isActive)
             setPerspective(perspList.getNextActive());
-        disposePerspective(persp);
+        disposePerspective(persp, true);
         if (closePage && perspList.size() == 0)
             close();
     }
@@ -1370,14 +1370,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     /**
      * Creates a new view set. Return null on failure.
+     * 
+     * @param desc the perspective descriptor
+     * @param notify whether to fire a perspective opened event
      */
-    private Perspective createPerspective(PerspectiveDescriptor desc) {
+    private Perspective createPerspective(PerspectiveDescriptor desc, boolean notify) {
         String label = desc.getId(); // debugging only
         try {
             UIStats.start(UIStats.CREATE_PERSPECTIVE, label);
             Perspective persp = new Perspective(desc, this);
             perspList.add(persp);
-            window.firePerspectiveOpened(this, desc);
+            if (notify) {
+            	window.firePerspectiveOpened(this, desc);
+            }
             //if the perspective is fresh and uncustomzied then it is not dirty
             //no reset will be prompted for
             if (!desc.hasCustomDefinition())
@@ -1539,11 +1544,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     /**
      * Dispose a perspective.
+     * 
+     * @param persp the perspective descriptor
+     * @param notify whether to fire a perspective closed event
      */
-    private void disposePerspective(Perspective persp) {
+    private void disposePerspective(Perspective persp, boolean notify) {
         // Get rid of perspective.
         perspList.remove(persp);
-        window.firePerspectiveClosed(this, persp.getDesc());
+        if (notify) {
+        	window.firePerspectiveClosed(this, persp.getDesc());
+        }
         persp.dispose();
 
         stickyPerspectives.remove(persp.getDesc().getId());
@@ -2089,7 +2099,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (desc == null)
                 throw new WorkbenchException(
                         NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,layoutID )); 
-            Perspective persp = createPerspective(desc);
+            Perspective persp = createPerspective(desc, true);
             if (persp == null)
                 return;
             perspList.setActive(persp);
@@ -2666,7 +2676,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     restoreActivePerspective = true;
                 } else {
                     restoreActivePerspective = false;
-                    activePerspective = createPerspective((PerspectiveDescriptor) activeDescriptor);
+                    activePerspective = createPerspective((PerspectiveDescriptor) activeDescriptor, true);
                     if (activePerspective == null) {
                         result
                                 .merge(new Status(
