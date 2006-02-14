@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.ITree;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.beans.BeanUpdatableFactory;
-import org.eclipse.jface.databinding.beans.NestedUpdatableFactory;
-import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.DataBinding;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.ITree;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.beans.BeanUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.beans.NestedUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.swt.SWTUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersUpdatableFactory;
 import org.eclipse.swt.widgets.Control;
 
 public class SampleData {

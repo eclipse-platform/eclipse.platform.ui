@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
 
 public class PhoneValidator implements IValidator {
 

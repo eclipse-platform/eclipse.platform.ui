@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.viewers;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.UpdatableValue;
-import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.internal.databinding.swt.AsyncRunnable;
 import org.eclipse.jface.internal.databinding.swt.SyncRunnable;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

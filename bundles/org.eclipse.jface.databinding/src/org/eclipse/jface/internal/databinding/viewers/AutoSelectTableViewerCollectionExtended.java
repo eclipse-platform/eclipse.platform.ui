@@ -13,8 +13,8 @@ package org.eclipse.jface.internal.databinding.viewers;
 
 import java.util.List;
 
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.viewers.TableViewerDescription;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**

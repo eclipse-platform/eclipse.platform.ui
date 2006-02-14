@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.swt;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.UpdatableValue;
-import org.eclipse.jface.databinding.swt.SWTProperties;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.swt.SWTProperties;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Table;

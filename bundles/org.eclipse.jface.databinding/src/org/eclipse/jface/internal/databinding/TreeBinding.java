@@ -12,11 +12,11 @@ package org.eclipse.jface.internal.databinding;
 
 import java.util.Collection;
 
-import org.eclipse.jface.databinding.BindingEvent;
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IUpdatableTree;
+import org.eclipse.jface.internal.provisional.databinding.BindingEvent;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableTree;
 
 /**
  * TreeBinding facts:

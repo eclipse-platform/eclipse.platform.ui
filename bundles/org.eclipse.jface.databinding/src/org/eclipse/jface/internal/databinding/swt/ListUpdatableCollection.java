@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.swt;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
-import org.eclipse.jface.databinding.swt.SWTProperties;
-import org.eclipse.jface.databinding.viewers.ViewersProperties;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.SelectionAwareUpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.swt.SWTProperties;
+import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersProperties;
 import org.eclipse.swt.widgets.List;
 
 /**

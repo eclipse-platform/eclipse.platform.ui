@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.databinding.validator.IValidator;
-import org.eclipse.jface.databinding.validators.String2IntValidator;
+import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
+import org.eclipse.jface.internal.provisional.databinding.validators.String2IntValidator;
 
 public class Adventure extends ModelObject {
 

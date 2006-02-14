@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IUpdatableTree;
-import org.eclipse.jface.databinding.WritableUpdatable;
 import org.eclipse.jface.internal.databinding.swt.AsyncRunnable;
 import org.eclipse.jface.internal.databinding.swt.SyncRunnable;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableTree;
+import org.eclipse.jface.internal.provisional.databinding.WritableUpdatable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.internal.provisional.databinding.Property;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 

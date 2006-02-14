@@ -12,15 +12,16 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.5 $  $Date: 2005/11/21 16:07:44 $ 
+ *  $Revision: 1.6 $  $Date: 2006/01/26 21:35:39 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Map;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
+
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatable;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
 
 public class UpdatableFactoriesTest extends ScenariosTestCase {
 

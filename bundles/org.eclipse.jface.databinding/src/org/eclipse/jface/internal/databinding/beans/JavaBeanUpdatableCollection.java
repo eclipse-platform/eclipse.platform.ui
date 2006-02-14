@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.UpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableCollection;
 import org.eclipse.jface.util.Assert;
 
 /**

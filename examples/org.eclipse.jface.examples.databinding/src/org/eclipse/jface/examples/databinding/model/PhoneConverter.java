@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.internal.provisional.databinding.converter.IConverter;
  
 public class PhoneConverter implements IConverter {
 

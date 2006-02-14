@@ -21,11 +21,11 @@ import java.util.Locale;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IReadableSet;
-import org.eclipse.jface.databinding.IUpdatableCellProvider;
-import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IReadableSet;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCellProvider;
+import org.eclipse.jface.internal.provisional.databinding.Updatable;
 import org.eclipse.jface.util.Policy;
 
 /**
@@ -99,14 +99,14 @@ public class JavaBeansUpdatableCellProvider extends Updatable implements IUpdata
 	private ListenerSupport listenerSupport = new ListenerSupport(elementListener);
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IUpdatableTable#getReadableSet()
+	 * @see org.eclipse.jface.internal.provisional.databinding.IUpdatableTable#getReadableSet()
 	 */
 	public IReadableSet getReadableSet() {
 		return readableSet;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.ICellProvider#getCellValue(java.lang.Object, int)
+	 * @see org.eclipse.jface.internal.provisional.databinding.ICellProvider#getCellValue(java.lang.Object, int)
 	 */
 	public Object getCellValue(Object element, int index) {
 		if (index >= propertyNames.length) {
@@ -125,7 +125,7 @@ public class JavaBeansUpdatableCellProvider extends Updatable implements IUpdata
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.ICellProvider#setCellValue(java.lang.Object, int, java.lang.Object)
+	 * @see org.eclipse.jface.internal.provisional.databinding.ICellProvider#setCellValue(java.lang.Object, int, java.lang.Object)
 	 */
 	public void setCellValue(Object element, int index, Object value) {
 		// TODO Auto-generated method stub

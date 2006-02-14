@@ -13,8 +13,8 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
 
 /**
  * @since 3.2

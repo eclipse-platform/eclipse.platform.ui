@@ -6,7 +6,7 @@
    name="JFace Data Binding">
  <plugin id="org.eclipse.jface.databinding" />
 
- <package name="org.eclipse.jface.databinding" >
+ <package name="org.eclipse.jface.internal.provisional.databinding" >
    <type name="BindingException" subclass="false"/>
    <type name="BindSpec"/>
    <type name="ChangeEvent" subclass="false"/>

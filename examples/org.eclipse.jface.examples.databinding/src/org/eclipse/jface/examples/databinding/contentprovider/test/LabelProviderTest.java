@@ -13,16 +13,16 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.Collections;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IReadableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.updatables.WritableSet;
-import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
-import org.eclipse.jface.databinding.viewers.UpdatableSetContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.examples.databinding.ExampleBinding;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IReadableValue;
+import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.provisional.databinding.updatables.WritableSet;
+import org.eclipse.jface.internal.provisional.databinding.viewers.ListeningLabelProvider;
+import org.eclipse.jface.internal.provisional.databinding.viewers.UpdatableSetContentProvider;
+import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -87,7 +87,7 @@ public class LabelProviderTest {
 			list.setLabelProvider(new ListeningLabelProvider(contentProvider.getKnownElements()) {
 				IChangeListener listener = new IChangeListener() {
 					/* (non-Javadoc)
-					 * @see org.eclipse.jface.databinding.IChangeListener#handleChange(org.eclipse.jface.databinding.ChangeEvent)
+					 * @see org.eclipse.jface.internal.provisional.databinding.IChangeListener#handleChange(org.eclipse.jface.internal.provisional.databinding.ChangeEvent)
 					 */
 					public void handleChange(ChangeEvent changeEvent) {
 						fireChangeEvent(Collections.singleton(changeEvent.getSource()));
@@ -95,7 +95,7 @@ public class LabelProviderTest {
 				};
 				
 				/* (non-Javadoc)
-				 * @see org.eclipse.jface.databinding.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, java.lang.Object)
+				 * @see org.eclipse.jface.internal.provisional.databinding.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, java.lang.Object)
 				 */
 				public void updateLabel(ViewerLabel label, Object element) {
 					if (element instanceof RenamableItem) {

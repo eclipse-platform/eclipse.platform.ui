@@ -15,15 +15,15 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.UpdatableCollection;
-import org.eclipse.jface.databinding.beans.JavaBeansScalarUpdatableValueFactory;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.DataBinding;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.beans.JavaBeansScalarUpdatableValueFactory;
 import org.eclipse.jface.util.Assert;
 
 /**

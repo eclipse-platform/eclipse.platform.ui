@@ -12,8 +12,8 @@ package org.eclipse.jface.internal.databinding;
 
 import java.util.List;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.UpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableCollection;
 
 /**
  * @since 3.2

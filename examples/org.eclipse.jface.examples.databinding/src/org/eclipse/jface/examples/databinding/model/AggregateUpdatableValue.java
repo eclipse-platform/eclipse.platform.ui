@@ -12,10 +12,10 @@ package org.eclipse.jface.examples.databinding.model;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableValue;
 
 public class AggregateUpdatableValue extends UpdatableValue {
 

@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
 
 /**
  * @since 3.2

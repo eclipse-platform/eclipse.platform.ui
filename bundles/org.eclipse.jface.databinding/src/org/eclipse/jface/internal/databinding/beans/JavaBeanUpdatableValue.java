@@ -15,9 +15,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableValue;
 
 /**
  * @since 3.2

@@ -12,9 +12,6 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Random;
 
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
@@ -23,6 +20,9 @@ import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.examples.databinding.model.Signon;
 import org.eclipse.jface.examples.databinding.model.StateConverter;
 import org.eclipse.jface.examples.databinding.model.Transportation;
+import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.provisional.databinding.converter.IConverter;
+import org.eclipse.jface.internal.provisional.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;

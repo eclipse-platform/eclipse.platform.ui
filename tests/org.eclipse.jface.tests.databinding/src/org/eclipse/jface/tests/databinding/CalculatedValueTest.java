@@ -13,16 +13,16 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.beans.BeanUpdatableFactory;
-import org.eclipse.jface.databinding.updatables.CalculatedValue;
-import org.eclipse.jface.databinding.updatables.SettableValue;
 import org.eclipse.jface.examples.databinding.model.ModelObject;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.DataBinding;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.provisional.databinding.beans.BeanUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.updatables.CalculatedValue;
+import org.eclipse.jface.internal.provisional.databinding.updatables.SettableValue;
 
 /**
  * @since 3.2

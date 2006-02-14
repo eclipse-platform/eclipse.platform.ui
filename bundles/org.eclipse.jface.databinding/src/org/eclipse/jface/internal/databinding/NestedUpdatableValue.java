@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.INestedUpdatableValue;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.INestedUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.provisional.databinding.UpdatableValue;
 import org.eclipse.jface.util.Assert;
 
 /**

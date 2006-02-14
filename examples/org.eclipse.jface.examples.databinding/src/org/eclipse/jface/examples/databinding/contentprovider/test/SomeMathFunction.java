@@ -1,8 +1,8 @@
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IReadableSet;
-import org.eclipse.jface.databinding.updatables.UpdatableFunction;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IReadableSet;
+import org.eclipse.jface.internal.provisional.databinding.updatables.UpdatableFunction;
 
 /**
  * Simple function that performs one of three operations on Doubles:

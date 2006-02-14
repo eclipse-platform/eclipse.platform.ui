@@ -1,6 +1,6 @@
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.jface.databinding.IReadableSet;
+import org.eclipse.jface.internal.provisional.databinding.IReadableSet;
 
 /**
  * This object will be given randomly-generated children

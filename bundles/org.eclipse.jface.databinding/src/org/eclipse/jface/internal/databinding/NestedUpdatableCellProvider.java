@@ -12,16 +12,16 @@ package org.eclipse.jface.internal.databinding;
 
 import java.util.Collection;
 
-import org.eclipse.jface.databinding.AbstractUpdatableSet;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IReadableSet;
-import org.eclipse.jface.databinding.IUpdatableCellProvider;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.Updatable;
-import org.eclipse.jface.databinding.beans.TableModelDescription;
+import org.eclipse.jface.internal.provisional.databinding.AbstractUpdatableSet;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IReadableSet;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCellProvider;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.provisional.databinding.Updatable;
+import org.eclipse.jface.internal.provisional.databinding.beans.TableModelDescription;
 
 /**
  * @since 3.2
@@ -127,14 +127,14 @@ public class NestedUpdatableCellProvider extends Updatable implements IUpdatable
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IUpdatableCellProvider#getReadableSet()
+	 * @see org.eclipse.jface.internal.provisional.databinding.IUpdatableCellProvider#getReadableSet()
 	 */
 	public IReadableSet getReadableSet() {
 		return readableSet;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.ICellProvider#getCellValue(java.lang.Object, int)
+	 * @see org.eclipse.jface.internal.provisional.databinding.ICellProvider#getCellValue(java.lang.Object, int)
 	 */
 	public Object getCellValue(Object element, int index) {
 		return innerUpdatableCellProvider.getCellValue(element, index);
@@ -142,7 +142,7 @@ public class NestedUpdatableCellProvider extends Updatable implements IUpdatable
 	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.ICellProvider#setCellValue(java.lang.Object, int, java.lang.Object)
+	 * @see org.eclipse.jface.internal.provisional.databinding.ICellProvider#setCellValue(java.lang.Object, int, java.lang.Object)
 	 */
 	public void setCellValue(Object element, int index, Object value) {
 		innerUpdatableCellProvider.setCellValue(element, index, value);

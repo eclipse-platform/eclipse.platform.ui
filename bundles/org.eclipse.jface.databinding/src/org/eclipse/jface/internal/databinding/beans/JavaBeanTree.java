@@ -23,11 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.ITree;
-import org.eclipse.jface.databinding.TreeModelDescription;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.ITree;
+import org.eclipse.jface.internal.provisional.databinding.TreeModelDescription;
 
 /**
  * This class is a JavaBean implementation for a ITree.  It is a ITree facade that is built

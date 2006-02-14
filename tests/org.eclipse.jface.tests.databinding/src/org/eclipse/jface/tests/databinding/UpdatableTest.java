@@ -12,7 +12,7 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.*;
+import org.eclipse.jface.internal.provisional.databinding.*;
 import org.eclipse.jface.tests.databinding.util.Mocks;
 
 public class UpdatableTest extends TestCase {
@@ -49,7 +49,7 @@ public class UpdatableTest extends TestCase {
 
 	/*
 	 * Test method for
-	 * 'org.eclipse.jface.databinding.Updatable.addChangeListener(IChangeListener)'
+	 * 'org.eclipse.jface.internal.provisional.databinding.Updatable.addChangeListener(IChangeListener)'
 	 */
 	public void testAddChangeListener() {
 		IChangeListener changeListenerMock = (IChangeListener) Mocks
@@ -85,7 +85,7 @@ public class UpdatableTest extends TestCase {
 
 	/*
 	 * Test method for
-	 * 'org.eclipse.jface.databinding.Updatable.removeChangeListener(IChangeListener)'
+	 * 'org.eclipse.jface.internal.provisional.databinding.Updatable.removeChangeListener(IChangeListener)'
 	 */
 	public void testRemoveChangeListener() {
 		IChangeListener changeListenerMock = (IChangeListener) Mocks
@@ -105,7 +105,7 @@ public class UpdatableTest extends TestCase {
 	}
 
 	/*
-	 * Test method for 'org.eclipse.jface.databinding.Updatable.fireChangeEvent(int,
+	 * Test method for 'org.eclipse.jface.internal.provisional.databinding.Updatable.fireChangeEvent(int,
 	 * Object, Object)'
 	 */
 	public void testFireChangeEvent() {

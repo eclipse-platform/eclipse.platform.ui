@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.IUpdatableTree;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.TreeModelDescription;
-import org.eclipse.jface.databinding.WritableUpdatable;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatable;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableTree;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.TreeModelDescription;
+import org.eclipse.jface.internal.provisional.databinding.WritableUpdatable;
 import org.eclipse.jface.util.Assert;
 
 /**

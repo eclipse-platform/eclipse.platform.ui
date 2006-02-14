@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding;
 
-import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
 
 interface EventSource {
 	public ChangeEvent fireEvent(int changeType, Object oldValue, Object newValue, Object parent, int position);

@@ -14,30 +14,30 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.databinding.BindSpec;
-import org.eclipse.jface.databinding.BindingEvent;
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.IBindSpec;
-import org.eclipse.jface.databinding.IBindSupportFactory;
-import org.eclipse.jface.databinding.IBinding;
-import org.eclipse.jface.databinding.IBindingListener;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableCellProvider;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IUpdatableTable;
-import org.eclipse.jface.databinding.IUpdatableTree;
-import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.converterfunction.ConversionFunctionRegistry;
-import org.eclipse.jface.databinding.converters.FunctionalConverter;
-import org.eclipse.jface.databinding.converters.IdentityConverter;
-import org.eclipse.jface.databinding.updatables.SettableValue;
-import org.eclipse.jface.databinding.validator.IDomainValidator;
-import org.eclipse.jface.databinding.validator.IValidator;
-import org.eclipse.jface.databinding.validator.ValidatorRegistry;
+import org.eclipse.jface.internal.provisional.databinding.BindSpec;
+import org.eclipse.jface.internal.provisional.databinding.BindingEvent;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.IBindSpec;
+import org.eclipse.jface.internal.provisional.databinding.IBindSupportFactory;
+import org.eclipse.jface.internal.provisional.databinding.IBinding;
+import org.eclipse.jface.internal.provisional.databinding.IBindingListener;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatable;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCellProvider;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableTable;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableTree;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
+import org.eclipse.jface.internal.provisional.databinding.converter.IConverter;
+import org.eclipse.jface.internal.provisional.databinding.converterfunction.ConversionFunctionRegistry;
+import org.eclipse.jface.internal.provisional.databinding.converters.FunctionalConverter;
+import org.eclipse.jface.internal.provisional.databinding.converters.IdentityConverter;
+import org.eclipse.jface.internal.provisional.databinding.updatables.SettableValue;
+import org.eclipse.jface.internal.provisional.databinding.validator.IDomainValidator;
+import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
+import org.eclipse.jface.internal.provisional.databinding.validator.ValidatorRegistry;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -73,7 +73,7 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#addBindSupportFactory(org.eclipse.jface.databinding.IBindSupportFactory)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#addBindSupportFactory(org.eclipse.jface.internal.provisional.databinding.IBindSupportFactory)
 	 */
 	public void addBindSupportFactory(IBindSupportFactory factory) {
 		bindSupportFactories.add(factory);
@@ -89,7 +89,7 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#dispose()
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#dispose()
 	 */
 	public void dispose() {
 		for (Iterator it = createdUpdatables.iterator(); it.hasNext();) {
@@ -101,7 +101,7 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#getCombinedValidationMessage()
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#getCombinedValidationMessage()
 	 */
 	public IUpdatableValue getCombinedValidationMessage() {
 		return combinedValidationMessage;
@@ -110,7 +110,7 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#getPartialValidationMessage()
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#getPartialValidationMessage()
 	 */
 	public IUpdatableValue getPartialValidationMessage() {
 		return partialValidationMessage;
@@ -119,7 +119,7 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#getValidationMessage()
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#getValidationMessage()
 	 */
 	public IUpdatableValue getValidationMessage() {
 		return validationMessage;
@@ -254,9 +254,9 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(org.eclipse.jface.databinding.IUpdatable,
-	 *      org.eclipse.jface.databinding.IUpdatable,
-	 *      org.eclipse.jface.databinding.IBindSpec)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#bind(org.eclipse.jface.internal.provisional.databinding.IUpdatable,
+	 *      org.eclipse.jface.internal.provisional.databinding.IUpdatable,
+	 *      org.eclipse.jface.internal.provisional.databinding.IBindSpec)
 	 */
 	public IBinding bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) {
@@ -320,9 +320,9 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(java.lang.Object,
-	 *      org.eclipse.jface.databinding.IUpdatable,
-	 *      org.eclipse.jface.databinding.IBindSpec)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#bind(java.lang.Object,
+	 *      org.eclipse.jface.internal.provisional.databinding.IUpdatable,
+	 *      org.eclipse.jface.internal.provisional.databinding.IBindSpec)
 	 */
 	public IBinding bind(Object targetDescription, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) {
@@ -332,8 +332,8 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(org.eclipse.jface.databinding.IUpdatable,
-	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#bind(org.eclipse.jface.internal.provisional.databinding.IUpdatable,
+	 *      java.lang.Object, org.eclipse.jface.internal.provisional.databinding.IBindSpec)
 	 */
 	public IBinding bind(IUpdatable targetUpdatable, Object modelDescription,
 			IBindSpec bindSpec) {
@@ -400,8 +400,8 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(java.lang.Object,
-	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#bind(java.lang.Object,
+	 *      java.lang.Object, org.eclipse.jface.internal.provisional.databinding.IBindSpec)
 	 */
 	public IBinding bind(Object targetDescription, Object modelDescription,
 			IBindSpec bindSpec) {
@@ -411,7 +411,7 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#createUpdatable(java.lang.Object)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#createUpdatable(java.lang.Object)
 	 */
 	public IUpdatable createUpdatable(Object description) {
 		IUpdatable updatable = doCreateUpdatable(description, this);
@@ -422,7 +422,7 @@ public class DataBindingContext implements IDataBindingContext {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#registerForDispose(org.eclipse.jface.databinding.IUpdatable)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#registerForDispose(org.eclipse.jface.internal.provisional.databinding.IUpdatable)
 	 */
 	public void registerForDispose(IUpdatable updatable) {
 		createdUpdatables.add(updatable);
@@ -449,7 +449,7 @@ public class DataBindingContext implements IDataBindingContext {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#addUpdatableFactory(org.eclipse.jface.databinding.IUpdatableFactory)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#addUpdatableFactory(org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory)
 	 */
 	public void addUpdatableFactory(IUpdatableFactory updatableFactory) {
 		// TODO: consider the fact that adding new factories for a given
@@ -468,14 +468,14 @@ public class DataBindingContext implements IDataBindingContext {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#addBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#addBindingEventListener(org.eclipse.jface.internal.provisional.databinding.IBindingListener)
 	 */
 	public void addBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.add(listener);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IDataBindingContext#removeBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IDataBindingContext#removeBindingEventListener(org.eclipse.jface.internal.provisional.databinding.IBindingListener)
 	 */
 	public void removeBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.remove(listener);

@@ -1,12 +1,12 @@
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.jface.databinding.IReadableSet;
-import org.eclipse.jface.databinding.ITreeProvider;
-import org.eclipse.jface.databinding.updatables.UnionSet;
-import org.eclipse.jface.databinding.updatables.WritableSet;
-import org.eclipse.jface.databinding.viewers.DirtyIndicationLabelProvider;
-import org.eclipse.jface.databinding.viewers.UpdatableTreeContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewerLabelProvider;
+import org.eclipse.jface.internal.provisional.databinding.IReadableSet;
+import org.eclipse.jface.internal.provisional.databinding.ITreeProvider;
+import org.eclipse.jface.internal.provisional.databinding.updatables.UnionSet;
+import org.eclipse.jface.internal.provisional.databinding.updatables.WritableSet;
+import org.eclipse.jface.internal.provisional.databinding.viewers.DirtyIndicationLabelProvider;
+import org.eclipse.jface.internal.provisional.databinding.viewers.UpdatableTreeContentProvider;
+import org.eclipse.jface.internal.provisional.databinding.viewers.ViewerLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IViewerLabelProvider;
 import org.eclipse.jface.viewers.ListViewer;

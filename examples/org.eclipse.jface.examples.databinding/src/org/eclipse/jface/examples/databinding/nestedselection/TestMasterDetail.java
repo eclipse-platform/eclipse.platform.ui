@@ -13,11 +13,11 @@ package org.eclipse.jface.examples.databinding.nestedselection;
 
 import java.util.List;
 
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.Property;
-import org.eclipse.jface.databinding.beans.TableModelDescription;
-import org.eclipse.jface.databinding.viewers.ViewersProperties;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatable;
+import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.provisional.databinding.beans.TableModelDescription;
+import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

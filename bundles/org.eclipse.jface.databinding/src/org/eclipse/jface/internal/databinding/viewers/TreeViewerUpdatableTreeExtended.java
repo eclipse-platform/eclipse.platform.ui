@@ -12,16 +12,16 @@ package org.eclipse.jface.internal.databinding.viewers;
 
 import java.util.HashMap;
 
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.converters.IdentityConverter;
-import org.eclipse.jface.databinding.validator.IValidator;
-import org.eclipse.jface.databinding.viewers.TreeViewerDescription;
-import org.eclipse.jface.databinding.viewers.TableViewerDescription.Column;
 import org.eclipse.jface.internal.databinding.beans.PropertyHelper;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
+import org.eclipse.jface.internal.provisional.databinding.converter.IConverter;
+import org.eclipse.jface.internal.provisional.databinding.converters.IdentityConverter;
+import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
+import org.eclipse.jface.internal.provisional.databinding.viewers.TreeViewerDescription;
+import org.eclipse.jface.internal.provisional.databinding.viewers.TableViewerDescription.Column;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ITableLabelProvider;

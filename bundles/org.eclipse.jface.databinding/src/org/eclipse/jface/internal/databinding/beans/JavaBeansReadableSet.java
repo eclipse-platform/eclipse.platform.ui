@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.databinding.AbstractUpdatableSet;
-import org.eclipse.jface.databinding.IReadableSet;
+import org.eclipse.jface.internal.provisional.databinding.AbstractUpdatableSet;
+import org.eclipse.jface.internal.provisional.databinding.IReadableSet;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -35,7 +35,7 @@ public class JavaBeansReadableSet extends AbstractUpdatableSet implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.databinding.AbstractUpdatableSet#computeElements()
+	 * @see org.eclipse.jface.internal.provisional.databinding.AbstractUpdatableSet#computeElements()
 	 */
 	protected Collection computeElements() {
 		return Collections.unmodifiableSet(elements);

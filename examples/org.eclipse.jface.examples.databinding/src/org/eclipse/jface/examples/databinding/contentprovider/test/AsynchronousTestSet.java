@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.jface.databinding.AbstractUpdatableSet;
 import org.eclipse.jface.internal.databinding.swt.SWTUtil;
+import org.eclipse.jface.internal.provisional.databinding.AbstractUpdatableSet;
 import org.eclipse.swt.widgets.Display;
 
 /**

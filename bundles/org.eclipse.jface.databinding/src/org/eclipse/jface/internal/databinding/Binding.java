@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.databinding.BindingEvent;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IBinding;
-import org.eclipse.jface.databinding.IBindingListener;
+import org.eclipse.jface.internal.provisional.databinding.BindingEvent;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IBinding;
+import org.eclipse.jface.internal.provisional.databinding.IBindingListener;
 
 /**
  * @since 3.2
@@ -40,14 +40,14 @@ abstract public class Binding implements IBinding {
 	abstract public void updateTargetFromModel(ChangeEvent changeEvent);
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IBinding#addBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IBinding#addBindingEventListener(org.eclipse.jface.internal.provisional.databinding.IBindingListener)
 	 */
 	public void addBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.add(listener);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.IBinding#removeBindingEventListener(org.eclipse.jface.databinding.IBindingListener)
+	 * @see org.eclipse.jface.internal.provisional.databinding.IBinding#removeBindingEventListener(org.eclipse.jface.internal.provisional.databinding.IBindingListener)
 	 */
 	public void removeBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.remove(listener);

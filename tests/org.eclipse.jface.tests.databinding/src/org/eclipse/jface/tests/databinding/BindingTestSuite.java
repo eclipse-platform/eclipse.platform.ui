@@ -13,8 +13,6 @@ package org.eclipse.jface.tests.databinding;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.databinding.SelectionAwareUpdatableCollectionTest;
-import org.eclipse.jface.databinding.UpdatableCollectionTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 
 public class BindingTestSuite extends TestSuite {

@@ -2,7 +2,7 @@ package org.eclipse.jface.internal.databinding.beans;
 
 import java.util.HashMap;
 
-import org.eclipse.jface.databinding.IUpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCollection;
 
 /**
  * Maintains a registry of all JavaBean collections that are being edited

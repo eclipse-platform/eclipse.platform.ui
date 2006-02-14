@@ -13,10 +13,10 @@ package org.eclipse.jface.internal.databinding.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.SelectionAwareUpdatableCollection;
 import org.eclipse.jface.internal.databinding.swt.SyncRunnable;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.SelectionAwareUpdatableCollection;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;

@@ -13,14 +13,14 @@ package org.eclipse.jface.internal.databinding;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.databinding.BindingEvent;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IBindSpec;
-import org.eclipse.jface.databinding.ICellProvider;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IReadableSet;
-import org.eclipse.jface.databinding.IUpdatableTable;
-import org.eclipse.jface.databinding.IUpdatableCellProvider;
+import org.eclipse.jface.internal.provisional.databinding.BindingEvent;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IBindSpec;
+import org.eclipse.jface.internal.provisional.databinding.ICellProvider;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IReadableSet;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCellProvider;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableTable;
 
 /**
  * 
@@ -113,7 +113,7 @@ public class TableBinding extends Binding {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.Binding#updateTargetFromModel(org.eclipse.jface.databinding.ChangeEvent)
+	 * @see org.eclipse.jface.internal.databinding.Binding#updateTargetFromModel(org.eclipse.jface.internal.provisional.databinding.ChangeEvent)
 	 */
 	public void updateTargetFromModel(ChangeEvent changeEvent) {
 		target.clear();

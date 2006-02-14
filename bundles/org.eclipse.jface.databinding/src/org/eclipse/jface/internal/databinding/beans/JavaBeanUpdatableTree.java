@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.beans;
 
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.ITree;
-import org.eclipse.jface.databinding.IUpdatableTree;
-import org.eclipse.jface.databinding.WritableUpdatable;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.ITree;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableTree;
+import org.eclipse.jface.internal.provisional.databinding.WritableUpdatable;
 
 
 

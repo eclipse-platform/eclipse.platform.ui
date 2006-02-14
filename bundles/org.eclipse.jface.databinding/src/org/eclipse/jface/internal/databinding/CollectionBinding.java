@@ -12,14 +12,14 @@ package org.eclipse.jface.internal.databinding;
 
 import java.util.List;
 
-import org.eclipse.jface.databinding.BindingEvent;
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IBindSpec;
-import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.converter.IConverter;
-import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.internal.provisional.databinding.BindingEvent;
+import org.eclipse.jface.internal.provisional.databinding.BindingException;
+import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
+import org.eclipse.jface.internal.provisional.databinding.IBindSpec;
+import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
+import org.eclipse.jface.internal.provisional.databinding.IUpdatableCollection;
+import org.eclipse.jface.internal.provisional.databinding.converter.IConverter;
+import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
 
 /**
  * 
