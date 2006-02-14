@@ -91,12 +91,14 @@ public class ResourceModelScopeParticipant implements
 				for (int j = 0; j < elements.length; j++) {
 					IAdaptable adaptable = elements[j];
 					ResourceMapping m = (ResourceMapping)Utils.getAdapter(adaptable, ResourceMapping.class);
-					IProject[] p = m.getProjects();
-					for (int k = 0; k < p.length; k++) {
-						IProject mp = p[k];
-						if (mp.equals(project)) {
-							refresh = true;
-							break;
+					if (m != null) {
+						IProject[] p = m.getProjects();
+						for (int k = 0; k < p.length; k++) {
+							IProject mp = p[k];
+							if (mp.equals(project)) {
+								refresh = true;
+								break;
+							}
 						}
 					}
 					if (refresh)
