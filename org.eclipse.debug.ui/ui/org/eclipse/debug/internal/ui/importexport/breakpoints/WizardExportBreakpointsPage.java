@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -173,12 +174,11 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Font font = parent.getFont();
 		initializeDialogUnits(parent);
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		composite.setFont(font);
+
 		fTView = new EmbeddedBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), fSelection);
 		fTView.getViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -193,6 +193,8 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		setPageComplete(detectPageComplete());
 		restoreWidgetState();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.EXPORT_BREAKPOINTS_WIZARD_PAGE);
+		
+		Dialog.applyDialogFont(parent);
 	}
 	
 	/* (non-Javadoc)
