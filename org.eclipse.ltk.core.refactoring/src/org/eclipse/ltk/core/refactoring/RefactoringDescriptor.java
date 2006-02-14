@@ -114,22 +114,16 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public static final int USER_CHANGE= 1 << 8;
 
 	/**
-	 * The id of the used refactoring type.
-	 */
-	private String fRefactoringId;
-	
-	/**
-	 * The description associated with this refactoring
-	 */
-	private String fDescription;
-	
-	/**
 	 * The comment associated with this refactoring, or <code>null</code> for
 	 * no comment
 	 */
 	private String fComment;
-	
-	
+
+	/**
+	 * The description associated with this refactoring
+	 */
+	private String fDescription;
+
 	/** The flags of the refactoring descriptor */
 	private final int fFlags;
 
@@ -137,7 +131,12 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * The name of the project this refactoring is associated with, or
 	 * <code>null</code>
 	 */
-	private final String fProject;
+	private String fProject;
+
+	/**
+	 * The id of the used refactoring type.
+	 */
+	private String fRefactoringId;
 
 	/**
 	 * The time stamp, or <code>-1</code> if no time is associated with the
@@ -222,24 +221,6 @@ public abstract class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Returns the ID of the refactoring type used.
-	 * 
-	 * @return the refactoring id.
-	 */
-	public final String getID() {
-		return fRefactoringId;
-	}
-	
-	/**
-	 * Returns the description associated with this refactoring.
-	 * 
-	 * @return the associated description
-	 */
-	public final String getDescription() {
-		return fDescription;
-	}
-	
-	/**
 	 * Returns the comment associated with this refactoring.
 	 * 
 	 * @return the associated comment, or the empty string
@@ -249,12 +230,30 @@ public abstract class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
+	 * Returns the description associated with this refactoring.
+	 * 
+	 * @return the associated description
+	 */
+	public final String getDescription() {
+		return fDescription;
+	}
+
+	/**
 	 * Returns the flags of this refactoring.
 	 * 
 	 * @return the flags of this refactoring
 	 */
 	public final int getFlags() {
 		return fFlags;
+	}
+
+	/**
+	 * Returns the ID of the refactoring type used.
+	 * 
+	 * @return the refactoring id.
+	 */
+	public final String getID() {
+		return fRefactoringId;
 	}
 
 	/**
@@ -297,6 +296,21 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	public final void setComment(final String comment) {
 		fComment= comment;
+	}
+
+	/**
+	 * Sets the project of this refactoring.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the non-empty project name to set
+	 */
+	public final void setProject(final String project) {
+		Assert.isNotNull(project);
+		Assert.isLegal(!"".equals(project)); //$NON-NLS-1$
+		fProject= project;
 	}
 
 	/**
