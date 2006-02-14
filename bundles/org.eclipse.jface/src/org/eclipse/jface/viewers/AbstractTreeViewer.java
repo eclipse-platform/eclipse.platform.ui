@@ -2517,4 +2517,62 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		return getContentProvider() instanceof ITreePathContentProvider;
 	}
 
+	/**
+	 * Inserts the given element as a new child element of the given parent
+	 * element at the given position.
+	 * If this viewer has a sorter, the position is ignored and the element is
+	 * inserted at the correct position in the sort order.
+	 * <p>
+	 * This method should be called (by the content provider) when elements have
+	 * been added to the model, in order to cause the viewer to accurately
+	 * reflect the model. This method only affects the viewer, not the model.
+	 * </p>
+	 * 
+	 * @param parentElementOrTreePath 
+	 * 			  the parent element, or the tree path to the parent
+	 * @param element
+	 *            the element
+	 * @param position
+	 *            a 0-based position relative to the model, or -1 to indicate
+	 *            the last position
+	 *            
+	 * @since 3.2
+	 */
+	public void insert(Object parentElementOrTreePath, Object element,
+			int position) {
+		Assert.isNotNull(parentElementOrTreePath);
+		Assert.isNotNull(element);
+
+		if (getSorter() != null || hasFilters()) {
+			add(parentElementOrTreePath, new Object[] { element });
+			return;
+		}
+		Widget[] items = internalFindItems(parentElementOrTreePath);
+
+		for (int i = 0; i < items.length; i++) {
+			Widget widget = items[i];
+			if (widget instanceof Item) {
+				Item item = (Item) widget;
+
+				Item[] childItems = getChildren(item);
+				if (getExpanded(item)
+						|| (childItems.length > 0 && childItems[0].getData() != null)) {
+					// item has real children, go ahead and add
+					int insertionPosition = position;
+					if (insertionPosition == -1)
+						insertionPosition = getItemCount(item);
+
+					createTreeItem(item, element, position);
+				}
+			} else {
+				int insertionPosition = position;
+				if (insertionPosition == -1)
+					insertionPosition = getItemCount((Control)widget);
+
+				createTreeItem(widget, element, position);
+			}
+		}
+	}
+
+
 }
