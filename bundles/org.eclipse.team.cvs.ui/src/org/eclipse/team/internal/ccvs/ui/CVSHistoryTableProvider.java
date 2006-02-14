@@ -81,7 +81,7 @@ public class CVSHistoryTableProvider {
 				case COL_DATE :
 					long date = entry.getTimestamp();
 					Date dateFromLong = new Date(date);
-					return DateFormat.getDateTimeInstance().format(dateFromLong);
+					return DateFormat.getInstance().format(dateFromLong);
 				case COL_AUTHOR :
 					return entry.getAuthor();
 				case COL_COMMENT :

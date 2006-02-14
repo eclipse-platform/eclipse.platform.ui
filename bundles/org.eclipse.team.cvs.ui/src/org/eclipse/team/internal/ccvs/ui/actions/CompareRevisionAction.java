@@ -74,19 +74,6 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		}
 	}
 
-	
-	public boolean isEnabled() {
-		
-		if (selection != null){
-			int sizeofSelection = selection.size();
-	
-			if (sizeofSelection < 3)
-				return true;
-		}
-		
-		return false;
-	}
-	
 	/**
 	 * Returns an editor that can be re-used. An open compare editor that
 	 * has un-saved changes cannot be re-used.
@@ -107,14 +94,17 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
-		if (selection.size() == 1)
-			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithCurrent); 
-		else if (selection.size() == 2)
-			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithOther);	
-		
 		this.selection = selection;
-		
-		return true;
+		if (selection.size() == 1){
+			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithCurrent);
+			return true;
+		}
+		else if (selection.size() == 2){
+			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithOther);	
+			return true;
+		}
+
+		return false;
 	}
 	public void setPage(CVSHistoryPage page) {
 		this.page = page;

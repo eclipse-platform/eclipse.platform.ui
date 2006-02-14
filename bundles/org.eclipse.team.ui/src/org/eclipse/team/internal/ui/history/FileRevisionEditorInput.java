@@ -71,7 +71,13 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 
 	public String getToolTipText() {
 		if (file != null)
-			return file.getContentIdentifier();
+			try {
+				return getStorage().getFullPath().toString();
+			} catch (CoreException e) {
+			}
+		
+		if (storage != null)
+			return storage.getFullPath().toString();
 		
 		return ""; //$NON-NLS-1$
 	}

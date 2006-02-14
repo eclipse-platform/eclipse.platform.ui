@@ -163,9 +163,13 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
 	 */
 	public String getTitle() {
-		//
-		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, (new Object[]{left.getName()} ));
-		//return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_compareResourceAndVersions, (new Object[] {resource.getFullPath().toString()})); 
+		Object[] titleObject = new Object[3];
+		Object[] tempLeftTitle = calculateTitle(left);
+		Object[] tempRightTitle = calculateTitle(right);
+		titleObject[0] = tempLeftTitle[0];
+		titleObject[1] = tempLeftTitle[1];
+		titleObject[2] = tempRightTitle[1];
+		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, titleObject);	 
 	}
 	
 	/* (non-Javadoc)
@@ -175,6 +179,38 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 		if (adapter == IFile.class || adapter == IResource.class)
 			return resource;
 		return super.getAdapter(adapter);
+	}
+	
+	
+	private Object[] calculateTitle(ITypedElement element){
+		if (element instanceof FileRevisionTypedElement){
+			FileRevisionTypedElement fileRevisionElement = (FileRevisionTypedElement) element;
+			Object fileObject = fileRevisionElement.getFileRevision();
+			Object[] title = null;
+			
+			if (fileObject instanceof LocalFileRevision){
+				try {
+					IStorage storage = ((LocalFileRevision) fileObject).getStorage(new NullProgressMonitor());
+					if (Utils.getAdapter(storage, IFileState.class) != null){
+						//local revision
+						title =  new Object[]{fileRevisionElement.getName(),"Local Revision"};
+					} else if (Utils.getAdapter(storage, IFile.class) != null) {
+						//current revision
+						title =  new Object[]{fileRevisionElement.getName(),"Current Revision"};
+					}
+				} catch (CoreException e) {
+				}
+			} else {
+				title = new Object[]{fileRevisionElement.getName(),fileRevisionElement.getContentIdentifier()};
+			}
+		
+			return title;
+		}
+		else if (element instanceof TypedBufferedContent){
+			TypedBufferedContent typedContent = (TypedBufferedContent) element;
+			return new Object[]{typedContent.getResource().getFullPath().toString(),"Current"};
+		}
+		return new Object[0];
 	}
 
 }
