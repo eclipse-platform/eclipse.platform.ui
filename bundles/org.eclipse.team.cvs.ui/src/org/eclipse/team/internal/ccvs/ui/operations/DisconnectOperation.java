@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -86,6 +86,13 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 	 */
 	public boolean consultModelsForMappings() {
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getSchedulingRule(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
+	protected ISchedulingRule getSchedulingRule(CVSTeamProvider provider) {
+		return ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(provider.getProject());
 	}
 
 }
