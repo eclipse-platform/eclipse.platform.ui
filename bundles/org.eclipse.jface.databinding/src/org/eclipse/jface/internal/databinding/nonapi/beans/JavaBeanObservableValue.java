@@ -20,7 +20,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObser
 import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class JavaBeanObservableValue extends AbstractObservableValue {

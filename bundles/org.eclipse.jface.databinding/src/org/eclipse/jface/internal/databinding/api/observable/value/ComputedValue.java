@@ -20,7 +20,7 @@ import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
  * on its dependencies as long as all of its dependencies are IObservable
  * objects
  * 
- * @since 3.2
+ * @since 1.0
  */
 public abstract class ComputedValue extends AbstractObservableValue {
 

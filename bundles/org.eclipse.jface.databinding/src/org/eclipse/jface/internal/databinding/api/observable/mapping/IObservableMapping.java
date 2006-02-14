@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.api.observable.mapping;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IObservableMapping extends IObservable {

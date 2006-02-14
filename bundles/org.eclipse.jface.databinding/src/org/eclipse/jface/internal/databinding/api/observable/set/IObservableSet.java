@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.api.observable.IObservable;
  * Clients must subclass {@link ObservableSet} instead of implementing
  * this interface directly.
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IObservableSet extends Set, IObservable {

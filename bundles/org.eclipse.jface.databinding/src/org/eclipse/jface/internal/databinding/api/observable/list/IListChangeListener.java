@@ -13,11 +13,17 @@ package org.eclipse.jface.internal.databinding.api.observable.list;
 
 
 /**
- * @since 3.2
- *
+ * Listener for changes of observable lists.
+ * 
+ * @since 1.0
  */
 public interface IListChangeListener {
 	
+	/**
+	 * Handle a change to the given observable list. The change is described by the diff objects.
+	 * @param source
+	 * @param diff
+	 */
 	void handleListChange(IObservableList source, IListDiff diff);
 
 }

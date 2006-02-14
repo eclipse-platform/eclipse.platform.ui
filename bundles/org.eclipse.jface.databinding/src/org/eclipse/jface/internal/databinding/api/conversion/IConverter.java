@@ -19,7 +19,7 @@ package org.eclipse.jface.internal.databinding.api.conversion;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IConverter {
@@ -43,7 +43,7 @@ public interface IConverter {
 	 * object must be an instance of getTargetType(), and the result must be an
 	 * instance of getModelType().
 	 * 
-	 * @param targetObject
+	 * @param fromObject
 	 *            the object to convert
 	 * @return the converted object
 	 */

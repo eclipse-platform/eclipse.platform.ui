@@ -25,7 +25,7 @@ import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class ValueBinding extends Binding {
@@ -146,7 +146,7 @@ public class ValueBinding extends Binding {
 	public void updateModelFromTarget(IValueDiff diff) {
 		BindingEvent e = new BindingEvent(model, target, diff,
 				BindingEvent.EVENT_COPY_TO_MODEL,
-				BindingEvent.PIPELINE_AFTER_GET);
+				BindingEvent.PIPELINE_AFTER_GET){};
 		e.originalValue = target.getValue();
 		if (failure(errMsg(fireBindingEvent(e)))) {
 			return;
@@ -236,7 +236,7 @@ public class ValueBinding extends Binding {
 			updating = true;
 			BindingEvent e = new BindingEvent(model, target, diff,
 					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET);
+					BindingEvent.PIPELINE_AFTER_GET){};
 			e.originalValue = model.getValue();
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;

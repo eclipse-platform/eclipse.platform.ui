@@ -11,12 +11,29 @@
 
 package org.eclipse.jface.internal.databinding.api.observable;
 
+import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingChangeListener;
+import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
+
 /**
- * @since 3.2
- *
+ * Listener for generic change events. Note that the change events do not carry information about
+ * the change, they only specify the affected observable. To listen for specific change events, use
+ * more specific change listeners.
+ * 
+ *  @see IValueChangeListener
+ *  @see IListChangeListener
+ *  @see ISetChangeListener
+ *  @see IMappingChangeListener
+ * 
+ * @since 1.0
  */
 public interface IChangeListener {
 	
+	/**
+	 * Handle a generic change to the given observable.
+	 * 
+	 * @param source
+	 */
 	public void handleChange(IObservable source);
 
 }

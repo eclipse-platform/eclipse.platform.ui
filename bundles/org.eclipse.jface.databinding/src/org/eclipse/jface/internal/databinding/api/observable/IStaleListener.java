@@ -12,11 +12,17 @@
 package org.eclipse.jface.internal.databinding.api.observable;
 
 /**
- * @since 3.2
- *
+ * Listener for staleness events. An observable object is stale if its state will change
+ * eventually.
+ * 
+ * @since 1.0
  */
 public interface IStaleListener {
 	
+	/**
+	 * Handle the event that the given observable object is now stale.
+	 * @param source
+	 */
 	public void handleStale(IObservable source);
 
 }

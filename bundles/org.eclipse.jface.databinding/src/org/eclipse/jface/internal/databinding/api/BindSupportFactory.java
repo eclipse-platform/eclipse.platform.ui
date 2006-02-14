@@ -16,7 +16,8 @@ import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
 /**
- * @since 3.2
+ * A concrete implementation of IBindSupportFactory, suitable for subclassing.
+ * @since 1.0
  */
 abstract public class BindSupportFactory implements IBindSupportFactory {
 

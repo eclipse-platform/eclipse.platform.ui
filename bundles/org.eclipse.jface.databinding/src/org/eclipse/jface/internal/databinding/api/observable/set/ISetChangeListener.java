@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.api.observable.set;
 
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public interface ISetChangeListener {

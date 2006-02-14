@@ -11,9 +11,17 @@
 
 package org.eclipse.jface.internal.databinding.api.observable;
 
+import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
+
 /**
  * A diff represents a state change of an observable object.
- * @since 3.2
+ * 
+ * @see IValueDiff
+ * @see IListDiff
+ * @see ISetDiff
+ * @see IMappingDiff
+ * 
+ * @since 1.0
  *
  */
 public interface IDiff {

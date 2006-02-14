@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class TextObservableValue extends AbstractVetoableValue {

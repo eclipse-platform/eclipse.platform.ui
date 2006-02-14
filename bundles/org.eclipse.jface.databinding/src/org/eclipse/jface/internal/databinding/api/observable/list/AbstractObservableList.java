@@ -24,7 +24,7 @@ import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
 /**
  * Subclasses should override at least get(int index) and size()
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public abstract class AbstractObservableList extends AbstractList implements

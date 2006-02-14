@@ -68,7 +68,7 @@ import org.eclipse.swt.widgets.Control;
  * // be updated whenever someValue changes and the label is visible
  * </code>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public abstract class ControlUpdater {
 	

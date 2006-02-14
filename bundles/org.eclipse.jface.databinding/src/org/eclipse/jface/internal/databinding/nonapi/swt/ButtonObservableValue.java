@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class ButtonObservableValue extends AbstractObservableValue {

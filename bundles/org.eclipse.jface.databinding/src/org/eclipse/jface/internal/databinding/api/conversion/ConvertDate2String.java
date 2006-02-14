@@ -18,7 +18,7 @@ import java.util.Date;
  * Convert a Java.util.Date to a String using the current locale.  Null date
  * values are converted to an empty string.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class ConvertDate2String extends DateConversionSupport implements IConverter {	
 	public Object convert(Object source) {

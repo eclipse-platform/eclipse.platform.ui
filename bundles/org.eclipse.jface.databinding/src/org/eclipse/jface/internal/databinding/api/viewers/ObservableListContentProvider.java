@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class ObservableListContentProvider implements
@@ -118,7 +118,9 @@ public class ObservableListContentProvider implements
 	}
 
 	/**
-	 * @return
+	 * @return the set of elements known to this content provider. Label providers may track
+	 * this set if they need to be notified about additions before the viewer sees the added
+	 * element, and notified about removals after the element was removed from the viewer.
 	 */
 	public IObservableSet getKnownElements() {
 		return knownElements;

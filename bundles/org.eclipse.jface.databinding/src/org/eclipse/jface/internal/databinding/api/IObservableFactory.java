@@ -21,7 +21,7 @@ import org.eclipse.jface.internal.databinding.api.observable.IObservable;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IObservableFactory {

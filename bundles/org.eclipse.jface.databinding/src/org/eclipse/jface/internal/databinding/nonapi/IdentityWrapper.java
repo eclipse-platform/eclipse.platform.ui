@@ -16,7 +16,7 @@ package org.eclipse.jface.internal.databinding.nonapi;
  * and hashCode() when putting them in sets or hashmaps to ensure identity
  * comparison.
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class IdentityWrapper {

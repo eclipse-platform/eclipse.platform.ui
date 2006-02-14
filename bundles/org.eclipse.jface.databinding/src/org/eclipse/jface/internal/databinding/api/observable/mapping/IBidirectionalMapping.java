@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IBidirectionalMapping extends IObservableMapping {

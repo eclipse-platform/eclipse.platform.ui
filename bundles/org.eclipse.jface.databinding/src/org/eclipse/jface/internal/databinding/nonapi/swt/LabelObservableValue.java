@@ -15,7 +15,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class LabelObservableValue extends AbstractObservableValue {

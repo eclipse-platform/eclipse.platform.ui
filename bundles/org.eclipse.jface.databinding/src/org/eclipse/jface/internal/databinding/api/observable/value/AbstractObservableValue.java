@@ -19,7 +19,7 @@ import org.eclipse.jface.internal.databinding.api.observable.AbstractObservable;
 import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 abstract public class AbstractObservableValue extends AbstractObservable

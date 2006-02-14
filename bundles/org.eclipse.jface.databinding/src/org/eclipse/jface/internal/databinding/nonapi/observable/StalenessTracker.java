@@ -20,7 +20,7 @@ import org.eclipse.jface.internal.databinding.api.observable.IStaleListener;
 import org.eclipse.jface.internal.databinding.nonapi.IdentityWrapper;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class StalenessTracker {

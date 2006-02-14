@@ -11,25 +11,47 @@
 package org.eclipse.jface.internal.databinding.api;
 
 
+/**
+ * TODO Javadoc
+ * 
+ * @since 1.0
+ *
+ */
 public class NestedProperty  extends Property {
 
 	private Class[] types;
 	private Class prototypeClass;
 
+	/**
+	 * @param object
+	 * @param properties
+	 * @param types
+	 */
 	public NestedProperty(Object object, String[] properties, Class[] types) {
 		super(object, properties);
 		this.types = types;
 	}
 	
+	/**
+	 * @param object
+	 * @param properties
+	 * @param prototypeClass
+	 */
 	public NestedProperty(Object object, String properties, Class prototypeClass) {
 		super(object, properties);
 		this.prototypeClass = prototypeClass;		
 	}
 
+	/**
+	 * @return the array of types
+	 */
 	public Class[] getTypes() {
 		return types;
 	}
 
+	/**
+	 * @return the prototype class
+	 */
 	public Class getPrototypeClass() {
 		return prototypeClass;
 	}

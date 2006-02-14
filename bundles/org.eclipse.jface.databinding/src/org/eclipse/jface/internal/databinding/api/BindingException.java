@@ -22,7 +22,7 @@ package org.eclipse.jface.internal.databinding.api;
  * 
  * TODO API review issue: Use CoreException instead?
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class BindingException extends RuntimeException {
 
@@ -39,6 +39,11 @@ public class BindingException extends RuntimeException {
 		super(message);
 	}
 
+	/**
+	 * Creates a new BindingException with the given message and cause.
+	 * @param message
+	 * @param cause
+	 */
 	public BindingException(String message, Throwable cause) {
 		super(message, cause);
 	}

@@ -12,11 +12,24 @@
 package org.eclipse.jface.internal.databinding.api.observable.list;
 
 /**
- * @since 3.2
- *
+ * A single addition of an element to a list or removal of an element from a list.
+ *  
+ * @since 1.0
  */
 public interface IListDiffEntry {
+	
+	/**
+	 * @return the 0-based position of the addition or removal
+	 */
 	public int getPosition();
+	
+	/**
+	 * @return true if this represents an addition, false if this represents a removal
+	 */
 	public boolean isAddition();
+	
+	/**
+	 * @return the element that was added or removed
+	 */
 	public Object getElement();
 }

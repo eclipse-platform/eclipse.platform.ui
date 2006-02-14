@@ -15,8 +15,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Mutable observable list backed by an ArrayList.
+ * 
+ * @since 1.0
+ */
 public class WritableList extends ObservableList {
 
+	/**
+	 * Creates an empty writable list. 
+	 */
 	public WritableList() {
 		super(new ArrayList());
 	}

@@ -20,7 +20,7 @@ import org.eclipse.jface.internal.databinding.api.IBindingListener;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 abstract public class Binding implements IBinding {

@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.AbstractListViewer;
  * </ul>
  * TODO complete the list
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 final public class ViewersObservableFactory implements IObservableFactory {

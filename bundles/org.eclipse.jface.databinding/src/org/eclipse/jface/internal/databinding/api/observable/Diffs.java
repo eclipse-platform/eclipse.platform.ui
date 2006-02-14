@@ -14,24 +14,22 @@ package org.eclipse.jface.internal.databinding.api.observable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiff;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
 import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
-import org.eclipse.jface.internal.databinding.api.observable.map.IMapDiff;
-import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
-import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class Diffs {
 	
+	/**
+	 * @param oldList
+	 * @param newList
+	 * @return the differences between oldList and newList
+	 */
 	public static ListDiff computeDiff(List oldList, List newList) {
 		List diffEntries = new ArrayList();
 		for (Iterator it = oldList.iterator(); it.hasNext();) {
@@ -50,50 +48,6 @@ public class Diffs {
 		return listDiff;
 	}
 	
-	public static ISetDiff compose(ISetDiff first, ISetDiff second) {
-		return null;
-	}
-
-	public static IListDiff compose(IListDiff first, IListDiff second) {
-		return null;
-	}
-
-	public static IValueDiff compose(IValueDiff first, IValueDiff second) {
-		return null;
-	}
-
-	public static IMapDiff compose(IMapDiff first, IMapDiff second) {
-		return null;
-	}
-
-	public static boolean isIdentity(ISetDiff diff) {
-		return false;
-	}
-
-	public static boolean isIdentity(IValueDiff diff) {
-		return false;
-	}
-
-	public static boolean isIdentity(IListDiff diff) {
-		return false;
-	}
-
-	public static boolean isIdentity(IMapDiff diff) {
-		return false;
-	}
-
-	public static void applyDiff(Set toModify, ISetDiff diff) {
-	}
-
-	public static void applyDiff(List toModify, IListDiff diff) {
-	}
-
-	public static void applyDiff(IObservableValue toModify, IValueDiff diff) {
-	}
-
-	public static void applyDiff(Map toModify, IMapDiff diff) {
-	}
-
 	/**
 	 * Checks whether the two objects are <code>null</code> -- allowing for
 	 * <code>null</code>.

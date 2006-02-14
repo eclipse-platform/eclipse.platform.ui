@@ -24,7 +24,7 @@ package org.eclipse.jface.internal.databinding.api;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class Property {

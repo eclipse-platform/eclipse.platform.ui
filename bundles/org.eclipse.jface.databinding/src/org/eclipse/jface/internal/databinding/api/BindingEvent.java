@@ -20,21 +20,22 @@ import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 /**
  * The event that is passed to a #bindingEvent method of an IBindingListener.
+ * This class is not intended to be subclassed by clients.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class BindingEvent {
-	public final int copyType;
-
 	/**
 	 * (Non-API Method) Construct a BindingEvent.
 	 * 
-	 * @param source
+	 * @param model 
+	 * @param target 
 	 * @param diff
+	 * @param copyType 
 	 * @param pipelinePosition
 	 *            The initial processing pipeline position.
 	 */
-	public BindingEvent(IObservable model, IObservable target, IDiff diff, int copyType,
+	protected BindingEvent(IObservable model, IObservable target, IDiff diff, int copyType,
 			int pipelinePosition) {
 		this.model = model;
 		this.target = target;
@@ -59,6 +60,12 @@ public class BindingEvent {
 	 * available.
 	 */
 	public final IDiff diff;
+
+	/**
+	 * The direction in which data is copied, either EVENT_COPY_TO_TARGET
+	 * or EVENT_COPY_TO_MODEL.
+	 */
+	public final int copyType;
 
 	/**
 	 * The position in the processing pipeline where this event is occuring. One

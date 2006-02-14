@@ -16,7 +16,7 @@ import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 /**
  * A default implementation for an IBindingListener event handler.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class BindingAdapter implements IBindingListener {
 

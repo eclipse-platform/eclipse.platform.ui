@@ -14,7 +14,9 @@ package org.eclipse.jface.internal.databinding.api.beans;
 import org.eclipse.jface.internal.databinding.api.Property;
 
 /**
- * @since 3.2
+ * TODO Javadoc
+ * 
+ * @since 1.0
  *
  */
 public class TableModelDescription {
@@ -22,15 +24,25 @@ public class TableModelDescription {
 	private final Property collectionProperty;
 	private final Object[] columnIDs;
 
+	/**
+	 * @param collectionProperty
+	 * @param columnIDs
+	 */
 	public TableModelDescription(Property collectionProperty, Object[] columnIDs) {
 		this.collectionProperty = collectionProperty;
 		this.columnIDs = columnIDs;
 	}
 
+	/**
+	 * @return the collection property
+	 */
 	public Property getCollectionProperty() {
 		return collectionProperty;
 	}
 
+	/**
+	 * @return the column identifiers
+	 */
 	public Object[] getColumnIDs() {
 		return columnIDs;
 	}

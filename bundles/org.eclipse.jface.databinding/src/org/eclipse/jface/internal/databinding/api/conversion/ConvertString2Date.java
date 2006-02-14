@@ -17,7 +17,7 @@ import java.util.Date;
 /**
  * Convert a String to a java.util.Date, respecting the current locale
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class ConvertString2Date extends DateConversionSupport implements IConverter {
 	public Object convert(Object source) {

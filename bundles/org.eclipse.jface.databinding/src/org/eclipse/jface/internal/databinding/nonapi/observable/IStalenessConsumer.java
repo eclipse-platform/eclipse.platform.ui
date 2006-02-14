@@ -12,7 +12,7 @@
 package org.eclipse.jface.internal.databinding.nonapi.observable;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IStalenessConsumer {

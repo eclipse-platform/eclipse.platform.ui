@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public abstract class AbstractObservable implements IObservable {

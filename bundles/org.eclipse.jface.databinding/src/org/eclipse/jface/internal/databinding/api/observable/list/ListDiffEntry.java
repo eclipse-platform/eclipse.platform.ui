@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api.observable.list;
 
+/**
+ * Standard implementation of IListDiffEntry.
+ * 
+ * @since 1.0
+ */
 public class ListDiffEntry implements IListDiffEntry {
 
 	private int position;

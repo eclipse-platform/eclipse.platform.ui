@@ -20,7 +20,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.util.Assert;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class NestedObservableValue extends AbstractObservableValue {

@@ -34,7 +34,11 @@ import org.eclipse.jface.internal.databinding.nonapi.ClassLookupSupport;
 import org.eclipse.jface.internal.databinding.nonapi.Pair;
 
 /**
- * @since 3.2
+ * Default bind support factory. This factory adds the following converters and validators:
+ * 
+ * TODO list converters and validators
+ * 
+ * @since 1.0
  *
  */
 public final class DefaultBindSupportFactory implements IBindSupportFactory {

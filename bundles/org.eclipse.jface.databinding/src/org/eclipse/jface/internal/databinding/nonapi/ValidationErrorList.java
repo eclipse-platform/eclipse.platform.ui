@@ -26,7 +26,7 @@ import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class ValidationErrorList extends ObservableList {

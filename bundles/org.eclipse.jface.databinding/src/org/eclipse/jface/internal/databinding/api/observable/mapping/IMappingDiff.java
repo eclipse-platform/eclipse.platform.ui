@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.api.observable.mapping;
 import java.util.Set;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IMappingDiff {

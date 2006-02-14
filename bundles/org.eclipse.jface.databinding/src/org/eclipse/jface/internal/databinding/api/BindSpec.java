@@ -25,7 +25,7 @@ import org.eclipse.jface.internal.databinding.api.validation.IValidator;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class BindSpec implements IBindSpec {
 
@@ -47,11 +47,14 @@ public class BindSpec implements IBindSpec {
 	 * Creates a bind spec with the given converters, validators, and update
 	 * policies.
 	 * 
-	 * @param modelToTargetConverter
-	 * @param targetValidator
-	 * @param modelUpdatePolicy
-	 * @param validatePolicy
-	 * @param targetUpdatePolicy
+	 * @param modelToTargetConverter 
+	 * @param targetToModelConverter 
+	 * @param targetValidator 
+	 * @param domainValidator 
+	 * @param modelUpdatePolicy 
+	 * @param validatePolicy 
+	 * @param targetUpdatePolicy 
+	 * 
 	 */
 	public BindSpec(IConverter modelToTargetConverter,
 			IConverter targetToModelConverter, IValidator targetValidator,
@@ -70,8 +73,11 @@ public class BindSpec implements IBindSpec {
 	 * Creates a bind spec with the given converter and validator. The update
 	 * policies are set to <code>IBindSpec.POLICY_CONTEXT</code>.
 	 * 
-	 * @param converter
-	 * @param validator
+	 * @param modelToTargetConverter 
+	 * @param targetToModelConverter 
+	 * @param targetValidator 
+	 * @param domainValidator 
+	 * 
 	 */
 	public BindSpec(IConverter modelToTargetConverter,
 			IConverter targetToModelConverter, IValidator targetValidator,
@@ -108,18 +114,30 @@ public class BindSpec implements IBindSpec {
 		return targetToModelConverter;
 	}
 	
+	/**
+	 * @param converter
+	 */
 	public void setModelToTargetConverter(IConverter converter) {
 		this.modelToTargetConverter = converter;
 	}
 	
+	/**
+	 * @param converter
+	 */
 	public void setTargetToModelConverter(IConverter converter) {
 		this.targetToModelConverter = converter;
 	}
 
+	/**
+	 * @param validator
+	 */
 	public void setValidator(IValidator validator) {
 		this.targetValidator = validator;
 	}
 	
+	/**
+	 * @param validator
+	 */
 	public void setDomainValidator(IDomainValidator validator) {
 		this.domainValidator = validator;
 	}

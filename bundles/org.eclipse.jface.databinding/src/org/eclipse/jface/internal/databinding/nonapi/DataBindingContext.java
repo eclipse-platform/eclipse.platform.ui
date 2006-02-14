@@ -36,7 +36,7 @@ import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 import org.eclipse.jface.util.Assert;
 
 /**
- * @since 3.2
+ * @since 1.0
  */
 public class DataBindingContext implements IDataBindingContext {
 

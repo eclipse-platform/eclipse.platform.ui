@@ -22,12 +22,12 @@ import java.util.Set;
  * This is a helper that will hook up and listen for <code>PropertyChangeEvent</code> events
  * for a set of target JavaBeans
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class ListenerSupport {
 
 	/**
-	 * @since 3.2
+	 * @since 1.0
 	 */
 	 static class IdentityWrapper {
 		final Object o;

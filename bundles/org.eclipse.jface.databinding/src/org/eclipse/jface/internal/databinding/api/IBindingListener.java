@@ -17,7 +17,7 @@ import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
  * An interface for objects that need to listen to events that occur in the
  * data flow pipeline
  *  
- * @since 3.2
+ * @since 1.0
  */
 public interface IBindingListener {
 	/**

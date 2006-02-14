@@ -12,7 +12,7 @@
 package org.eclipse.jface.internal.databinding.api.observable.value;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class WritableValue extends AbstractObservableValue {

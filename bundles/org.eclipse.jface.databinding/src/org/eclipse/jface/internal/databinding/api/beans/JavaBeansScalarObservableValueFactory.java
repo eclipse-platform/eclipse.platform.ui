@@ -27,7 +27,7 @@ import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableVal
  * that it creates to be an IUpdatableValue, even if the actual type of
  * the property is a collection.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class JavaBeansScalarObservableValueFactory extends Object implements
 		IObservableFactory {

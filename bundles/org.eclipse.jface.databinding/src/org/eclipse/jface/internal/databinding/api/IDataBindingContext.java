@@ -33,7 +33,7 @@ import org.eclipse.jface.internal.databinding.api.validation.IValidator;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public interface IDataBindingContext {

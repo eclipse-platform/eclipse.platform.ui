@@ -52,7 +52,7 @@ import org.eclipse.jface.internal.databinding.nonapi.IdentityWrapper;
  * stay in synch with changes to the widget update logic.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class ObservableTracker {
 

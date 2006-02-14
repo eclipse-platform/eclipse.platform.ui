@@ -16,7 +16,7 @@ import org.eclipse.jface.internal.databinding.api.observable.value.IObservableVa
 /**
  * The interface that represents a binding between a model and a target.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public interface IBinding {
 	

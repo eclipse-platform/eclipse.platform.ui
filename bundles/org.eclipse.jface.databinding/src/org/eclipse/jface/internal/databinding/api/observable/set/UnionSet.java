@@ -26,7 +26,7 @@ import org.eclipse.jface.internal.databinding.nonapi.observable.StalenessTracker
  * sets. This object does not need to be explicitly disposed. If nobody is
  * listening to the UnionSet, the set will remove its listeners.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public final class UnionSet extends ObservableSet {
 

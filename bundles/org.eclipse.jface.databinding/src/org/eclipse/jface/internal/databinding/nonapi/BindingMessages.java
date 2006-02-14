@@ -14,7 +14,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class BindingMessages {

@@ -51,7 +51,7 @@ import org.eclipse.swt.widgets.Text;
  * </ul>
  * TODO complete the list
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 final public class SWTObservableFactory implements IObservableFactory {

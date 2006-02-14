@@ -24,9 +24,9 @@ import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
 
 /**
  * 
- * Abstract implementation of {@link IObservableList}. 
+ * Abstract implementation of {@link IObservableList}, based on an underlying regular list. 
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public abstract class ObservableList extends AbstractObservable implements
@@ -93,9 +93,6 @@ public abstract class ObservableList extends AbstractObservable implements
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean hasListeners() {
 		return super.hasListeners() || listChangeListeners!=null;
 	}

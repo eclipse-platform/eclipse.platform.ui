@@ -16,7 +16,7 @@ import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class ControlObservableValue extends AbstractObservableValue {

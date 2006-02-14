@@ -18,7 +18,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListe
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public abstract class ListeningLabelProvider extends ViewerLabelProvider {

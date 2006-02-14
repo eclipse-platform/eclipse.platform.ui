@@ -26,7 +26,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.util.Policy;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class JavaBeanObservableMapping extends ObservableMapping {

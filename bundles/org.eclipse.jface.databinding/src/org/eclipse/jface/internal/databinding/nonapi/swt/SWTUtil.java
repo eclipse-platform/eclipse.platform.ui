@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * @since 3.2
+ * @since 1.0
  */
 public class SWTUtil {
     /**

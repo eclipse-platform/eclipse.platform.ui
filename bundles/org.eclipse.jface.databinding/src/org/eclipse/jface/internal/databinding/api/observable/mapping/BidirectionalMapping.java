@@ -24,7 +24,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
 import org.eclipse.jface.internal.databinding.api.observable.set.WritableSet;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class BidirectionalMapping extends AbstractObservableMapping implements

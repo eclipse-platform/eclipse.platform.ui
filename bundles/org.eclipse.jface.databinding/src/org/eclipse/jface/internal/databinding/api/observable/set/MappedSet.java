@@ -23,7 +23,7 @@ import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingDif
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMapping;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class MappedSet extends ObservableSet {

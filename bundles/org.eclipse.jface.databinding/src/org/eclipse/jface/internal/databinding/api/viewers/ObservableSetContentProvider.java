@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public final class ObservableSetContentProvider implements

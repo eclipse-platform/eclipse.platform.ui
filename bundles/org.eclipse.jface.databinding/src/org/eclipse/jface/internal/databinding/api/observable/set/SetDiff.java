@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public final class SetDiff implements ISetDiff {

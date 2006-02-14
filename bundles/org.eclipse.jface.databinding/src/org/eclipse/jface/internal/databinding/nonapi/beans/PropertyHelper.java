@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.internal.databinding.api.BindingException;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class PropertyHelper {

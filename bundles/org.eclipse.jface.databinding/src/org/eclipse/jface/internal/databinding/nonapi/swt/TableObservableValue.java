@@ -18,7 +18,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Table;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class TableObservableValue extends AbstractObservableValue {

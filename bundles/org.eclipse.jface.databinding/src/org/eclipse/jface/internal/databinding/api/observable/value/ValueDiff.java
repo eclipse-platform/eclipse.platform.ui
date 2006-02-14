@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.api.observable.value;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class ValueDiff implements IValueDiff {

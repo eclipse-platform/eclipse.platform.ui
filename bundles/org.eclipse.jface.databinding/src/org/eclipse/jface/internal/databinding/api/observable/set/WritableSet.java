@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public final class WritableSet extends ObservableSet {

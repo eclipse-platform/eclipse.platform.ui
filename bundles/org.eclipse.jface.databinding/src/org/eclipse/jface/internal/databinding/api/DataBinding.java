@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api;
 
-import org.eclipse.jface.internal.databinding.api.beans.BeanBindSupportFactory;
 import org.eclipse.jface.internal.databinding.nonapi.DataBindingContext;
 
 /**
@@ -28,7 +27,7 @@ import org.eclipse.jface.internal.databinding.nonapi.DataBindingContext;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class DataBinding {
@@ -68,7 +67,6 @@ public class DataBinding {
 	 */
 	public static IDataBindingContext createContext(IObservableFactory[] observableFactories) {
 		return createContext(observableFactories, new IBindSupportFactory[] {
-				new BeanBindSupportFactory(),
 				new DefaultBindSupportFactory()
 			});
 	}
@@ -76,7 +74,7 @@ public class DataBinding {
 	/**
 	 * Returns a new data binding context with the given parent.
 	 * 
-	 * @param factories
+	 * @param parent 
 	 * @return a data binding context
 	 */
 	public static IDataBindingContext createContext(IDataBindingContext parent) {

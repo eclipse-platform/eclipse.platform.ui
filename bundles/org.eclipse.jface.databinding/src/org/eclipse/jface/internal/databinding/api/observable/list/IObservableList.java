@@ -19,148 +19,138 @@ import java.util.ListIterator;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 
 /**
- * @since 3.2
- *
+ * A list whose changes can be tracked by change listeners. 
+ * 
+ * @since 1.0
  */
 public interface IObservableList extends List, IObservable {
 	
+	/**
+	 * Adds the given list change listener to the list of list change listeners.
+	 * @param listener
+	 */
 	public void addListChangeListener(IListChangeListener listener);
 	
+	/**
+	 * Removes the given list change listener from the list of list change listeners.
+	 * Has no effect if the given listener is not registered as a list change listener.
+	 * 
+	 * @param listener
+	 */
 	public void removeListChangeListener(IListChangeListener listener);
 
-    // Query Operations
+	/**
+	 * @TrackedGetter
+	 */
+    public int size();
 
 	/**
 	 * @TrackedGetter
 	 */
-    int size();
+    public boolean isEmpty();
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean isEmpty();
+    public boolean contains(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean contains(Object o);
+    public Iterator iterator();
 
 	/**
 	 * @TrackedGetter
 	 */
-    Iterator iterator();
+    public Object[] toArray();
 
 	/**
 	 * @TrackedGetter
 	 */
-    Object[] toArray();
-
-	/**
-	 * @TrackedGetter
-	 */
-    Object[] toArray(Object a[]);
-
-
-    // Modification Operations
+    public Object[] toArray(Object a[]);
 
 	/**
 	 * @TrackedGetter because of the returned boolean
 	 */
-    boolean add(Object o);
+    public boolean add(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean remove(Object o);
-
-
-    // Bulk Modification Operations
+    public boolean remove(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean containsAll(Collection c);
+    public boolean containsAll(Collection c);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean addAll(Collection c);
+    public boolean addAll(Collection c);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean addAll(int index, Collection c);
+    public boolean addAll(int index, Collection c);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean removeAll(Collection c);
+    public boolean removeAll(Collection c);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean retainAll(Collection c);
-
-    // Comparison and hashing
+    public boolean retainAll(Collection c);
 
 	/**
 	 * @TrackedGetter
 	 */
-    boolean equals(Object o);
+    public boolean equals(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    int hashCode();
-
-
-    // Positional Access Operations
+    public int hashCode();
 
 	/**
 	 * @TrackedGetter
 	 */
-    Object get(int index);
+    public Object get(int index);
 
 	/**
 	 * @TrackedGetter because of the returned object
 	 */
-    Object set(int index, Object element);
+    public Object set(int index, Object element);
 
 	/**
 	 * @TrackedGetter
 	 */
-    Object remove(int index);
-
-
-    // Search Operations
+    public Object remove(int index);
 
 	/**
 	 * @TrackedGetter
 	 */
-    int indexOf(Object o);
+    public int indexOf(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    int lastIndexOf(Object o);
-
-
-    // List Iterators
+    public int lastIndexOf(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    ListIterator listIterator();
+    public ListIterator listIterator();
 
 	/**
 	 * @TrackedGetter
 	 */
-    ListIterator listIterator(int index);
-
-    // View
+    public ListIterator listIterator(int index);
 
 	/**
 	 * @TrackedGetter
 	 */
-    List subList(int fromIndex, int toIndex);
+    public List subList(int fromIndex, int toIndex);
 }

@@ -19,7 +19,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class SpinnerObservableValue extends AbstractObservableValue {

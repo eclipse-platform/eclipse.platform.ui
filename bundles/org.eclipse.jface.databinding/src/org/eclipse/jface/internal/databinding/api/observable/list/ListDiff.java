@@ -10,19 +10,25 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api.observable.list;
 
+/**
+ * Standard implementation of IListDiff.
+ * @since 1.0
+ *
+ */
 public class ListDiff implements IListDiff {
 
 	private IListDiffEntry[] differences;
 
 	/**
-	 * @param differences
+	 * @param difference
 	 */
 	public ListDiff(IListDiffEntry difference) {
 		this.differences = new IListDiffEntry[] { difference };
 	}
 
 	/**
-	 * @param differences
+	 * @param difference1
+	 * @param difference2
 	 */
 	public ListDiff(IListDiffEntry difference1, IListDiffEntry difference2) {
 		this.differences = new IListDiffEntry[] { difference1, difference2 };

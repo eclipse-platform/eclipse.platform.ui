@@ -14,10 +14,12 @@ package org.eclipse.jface.internal.databinding.api.observable.list;
 
 
 /**
- * @since 3.2
- *
+ * Object describing a diff between two lists.
+ * 
+ * @since 1.0
  */
 public interface IListDiff {
+
 	/**
 	 * Returns a list of IListDiffEntry
 	 * 

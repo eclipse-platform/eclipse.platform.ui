@@ -25,6 +25,13 @@ import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.nonapi.observable.NestedObservableValue;
 
+/**
+ * 
+ * TODO Javadoc
+ * 
+ * @since 1.0
+ *
+ */
 public class NestedObservableFactory implements IObservableFactory {
 	public IObservable createObservable(IDataBindingContext bindingContext,Object description) {
 		if (description instanceof NestedProperty) {

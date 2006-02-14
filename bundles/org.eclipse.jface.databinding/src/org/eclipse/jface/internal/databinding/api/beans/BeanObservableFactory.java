@@ -39,7 +39,7 @@ import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableVal
  * </li>
  * </ul>
  * 
- * @since 3.2
+ * @since 1.0
  * 
  */
 final public class BeanObservableFactory implements IObservableFactory {

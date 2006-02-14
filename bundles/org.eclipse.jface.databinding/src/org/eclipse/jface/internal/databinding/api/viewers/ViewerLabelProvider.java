@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class ViewerLabelProvider implements IViewerLabelProvider,

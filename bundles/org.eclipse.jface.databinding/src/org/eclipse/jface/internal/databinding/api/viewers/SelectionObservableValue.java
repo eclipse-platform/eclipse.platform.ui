@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 
 /**
- * @since 3.2
+ * @since 1.0
  * 
  */
 public class SelectionObservableValue extends AbstractObservableValue {

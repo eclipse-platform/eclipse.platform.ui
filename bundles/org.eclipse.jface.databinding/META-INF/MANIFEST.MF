@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface.databinding
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -11,7 +11,6 @@ Export-Package: org.eclipse.jface.internal.databinding.api,
  org.eclipse.jface.internal.databinding.api.conversion,
  org.eclipse.jface.internal.databinding.api.observable,
  org.eclipse.jface.internal.databinding.api.observable.list,
- org.eclipse.jface.internal.databinding.api.observable.map,
  org.eclipse.jface.internal.databinding.api.observable.mapping,
  org.eclipse.jface.internal.databinding.api.observable.set,
  org.eclipse.jface.internal.databinding.api.observable.tree,
