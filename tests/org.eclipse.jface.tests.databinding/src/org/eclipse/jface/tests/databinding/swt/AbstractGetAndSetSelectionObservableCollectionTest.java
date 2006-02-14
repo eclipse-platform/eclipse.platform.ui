@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.swt;
+package org.eclipse.jface.tests.databinding.swt;
 
 import junit.framework.TestCase;
 

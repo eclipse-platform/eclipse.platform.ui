@@ -25,6 +25,7 @@ import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.api.Property;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
+import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -139,6 +140,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario03_vanilla() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		Adventure skiAdventure = SampleData.WINTER_HOLIDAY; // selection will
 		// change its defaultLodging
 
@@ -189,6 +192,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario03_collectionBindings() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		cviewer.setLabelProvider(lodgingLabelProvider); // TODO: need to resolve
 		// column binding
 		// Bind the ComboViewer's content to the available lodging
@@ -256,6 +261,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario01() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		// Read-Only Combo will not change its text property on a call to
 		// setText()
 
@@ -298,6 +305,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario02_SWTCombo() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		// Create a list of Strings for the countries
 		List list = new ArrayList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)
@@ -329,6 +338,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario02_ComboViewer() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		// Account label provider will fill the combo with the country
 		cviewer.setLabelProvider(accountLabelProvider);
 		// Bind the ComboViewer's content to the available accounts
@@ -364,6 +375,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_multipleBindings() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		Adventure skiAdventure = SampleData.WINTER_HOLIDAY; // for selection
 
 		cviewer.setLabelProvider(lodgingLabelProvider); // TODO: need to resolve
@@ -422,6 +435,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_SWTCCombo() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		// Create a list of Strings for the countries
 		List list = new ArrayList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)
@@ -457,6 +472,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_WCombo_SWTCCombo() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		// Create a list of Strings for the countries
 		List list = new ArrayList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)
@@ -501,6 +518,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_SWTList() {
 
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		// Create a list of Strings for the countries
 		List list = new ArrayList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)

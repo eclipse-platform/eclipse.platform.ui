@@ -9,38 +9,39 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.swt;
+package org.eclipse.jface.tests.databinding.swt;
 
 
 /**
  * @since 3.2
  *
  */
-public class TableViewerObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
+public class ComboObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
 //
 //	/*
 //	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
 //	 */
-//	private TableViewer viewer;
+//	private Combo combo;
 //	
 //	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
 //		Shell shell = BindingScenariosTestSuite.getShell();
-//		this.viewer = new TableViewer(shell, SWT.NONE);
+//		this.combo = new Combo(shell, SWT.NONE);
+//		for (int i = 0; i < values.length; i++) {
+//			this.combo.add(values[i]);
+//		}
 //		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
-//		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
-//		observableCollection.setElements(Arrays.asList(values));
-//		return observableCollection;
+//		return (SelectionAwareObservableCollection) ctx.createObservable(new Property(combo, SWTProperties.ITEMS, String.class, new Boolean(true)));
 //	}
 //	
 //	protected Object getSelectedObjectOfControl() {
-//		StructuredSelection selection = (StructuredSelection) this.viewer.getSelection();
-//		if (selection.isEmpty()) {
-//			return null;
-//		}
-//		return selection.getFirstElement();
+//		int selectionIndex = this.combo.getSelectionIndex();
+//		if (selectionIndex != -1) {
+//			return this.combo.getItem(selectionIndex);
+//		} 
+//		return null;
 //	}
 //	
 //	protected void setSelectedValueOfControl(String value) {
-//		this.viewer.setSelection(new StructuredSelection(new String[]{value}));
+//		this.combo.select(this.combo.indexOf(value));
 //	}
 }

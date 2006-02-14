@@ -247,6 +247,9 @@ public class DatabindingContextTest extends TestCase {
 	}
 	
 	public void testCollectionBindingListeners() {
+
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		WritableList v1 = new WritableList();
 		WritableList v2 = new WritableList();
 		

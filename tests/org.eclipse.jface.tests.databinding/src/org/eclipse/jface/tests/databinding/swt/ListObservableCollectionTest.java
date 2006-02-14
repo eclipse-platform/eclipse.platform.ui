@@ -9,39 +9,39 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.swt;
+package org.eclipse.jface.tests.databinding.swt;
 
 
 /**
  * @since 3.2
  *
  */
-public class CComboObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
-
+public class ListObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
+//
 //	/*
 //	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
 //	 */
-//	private CCombo ccombo;
+//	private List listControl;
 //	
 //	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
 //		Shell shell = BindingScenariosTestSuite.getShell();
-//		this.ccombo = new CCombo(shell, SWT.NONE);
+//		this.listControl = new List(shell, SWT.NONE);
 //		for (int i = 0; i < values.length; i++) {
-//			this.ccombo.add(values[i]);
+//			this.listControl.add(values[i]);
 //		}
 //		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
-//		return (SelectionAwareObservableCollection) ctx.createObservable(new Property(ccombo, SWTProperties.ITEMS, String.class, new Boolean(true)));
+//		return (SelectionAwareObservableCollection) ctx.createObservable(new Property(listControl, SWTProperties.ITEMS, String.class, new Boolean(true)));
 //	}
 //	
 //	protected Object getSelectedObjectOfControl() {
-//		int selectionIndex = this.ccombo.getSelectionIndex();
+//		int selectionIndex = this.listControl.getSelectionIndex();
 //		if (selectionIndex != -1) {
-//			return this.ccombo.getItem(selectionIndex);
+//			return this.listControl.getItem(selectionIndex);
 //		} 
 //		return null;
 //	}
 //	
 //	protected void setSelectedValueOfControl(String value) {
-//		this.ccombo.setText(value);
+//		this.listControl.setSelection(new String[] {value});
 //	}
 }

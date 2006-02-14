@@ -9,15 +9,14 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.swt;
+package org.eclipse.jface.tests.databinding.swt;
 
-import junit.framework.TestCase;
 
 /**
  * @since 3.2
  *
  */
-public class AutoSelectTableViewerCollectionExtendedTest extends TestCase {
+public class TableViewerObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
 //
 //	/*
 //	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
@@ -27,9 +26,8 @@ public class AutoSelectTableViewerCollectionExtendedTest extends TestCase {
 //	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
 //		Shell shell = BindingScenariosTestSuite.getShell();
 //		this.viewer = new TableViewer(shell, SWT.NONE);
-//		TableViewerDescription description = new TableViewerDescription(viewer);
-//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new AutoSelectTableViewerFactory()});
-//		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(description);
+//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
+//		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
 //		observableCollection.setElements(Arrays.asList(values));
 //		return observableCollection;
 //	}
@@ -44,13 +42,5 @@ public class AutoSelectTableViewerCollectionExtendedTest extends TestCase {
 //	
 //	protected void setSelectedValueOfControl(String value) {
 //		this.viewer.setSelection(new StructuredSelection(new String[]{value}));
-//	}
-//	
-//	/*
-//	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.setSelectedObject(Object)'
-//	 */
-//	public void testAutoSelect() {
-//		SelectionAwareObservableCollection observable = getSelectionAwareObservable(new String[] {"foo", "bar"}); 
-//		assertEquals("foo", getSelectedObjectOfControl());
 //	}
 }

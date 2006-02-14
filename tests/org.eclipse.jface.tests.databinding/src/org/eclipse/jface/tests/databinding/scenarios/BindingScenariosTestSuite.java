@@ -14,13 +14,14 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.internal.databinding.swt.AutoSelectTableViewerCollectionExtendedTest;
-import org.eclipse.jface.internal.databinding.swt.AutoSelectTableViewerCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.CComboObservableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.ComboObservableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.ListObservableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.TableViewerObservableCollectionTest;
-import org.eclipse.jface.internal.databinding.swt.ObservableCollectionViewerTest;
+import org.eclipse.jface.tests.databinding.BindingTestSuite;
+import org.eclipse.jface.tests.databinding.swt.AutoSelectTableViewerCollectionExtendedTest;
+import org.eclipse.jface.tests.databinding.swt.AutoSelectTableViewerCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.CComboObservableCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.ComboObservableCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.ListObservableCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.ObservableCollectionViewerTest;
+import org.eclipse.jface.tests.databinding.swt.TableViewerObservableCollectionTest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -74,7 +75,9 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(ComboScenarios.class);
 		addTestSuite(TableScenarios.class);
 		addTestSuite(NewTableScenarios.class);
-		addTestSuite(TreeScenarios.class);
+
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(TreeScenarios.class);
 		// Test each of the basic SWT controls
 		addTestSuite(TextControlScenario.class);
 		addTestSuite(SpinnerControlScenario.class);	
@@ -82,13 +85,20 @@ public class BindingScenariosTestSuite extends TestSuite {
 		// Test each of the basic JFace controls
 		addTestSuite(ComboViewerScenario.class);		
 		addTestSuite(ListViewerScenario.class);	
-		addTestSuite(CComboObservableCollectionTest.class);
-		addTestSuite(ComboObservableCollectionTest.class);
-		addTestSuite(TableViewerObservableCollectionTest.class);
-		addTestSuite(ListObservableCollectionTest.class);
-		addTestSuite(ObservableCollectionViewerTest.class);
-		addTestSuite(AutoSelectTableViewerCollectionTest.class);
-		addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class);
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(CComboObservableCollectionTest.class);
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(ComboObservableCollectionTest.class);
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(TableViewerObservableCollectionTest.class);
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(ListObservableCollectionTest.class);
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(ObservableCollectionViewerTest.class);
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(AutoSelectTableViewerCollectionTest.class);
+		if(!BindingTestSuite.failingTestsDisabled()) 
+			addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class);
 	}
 
 	public static Shell getShell() {

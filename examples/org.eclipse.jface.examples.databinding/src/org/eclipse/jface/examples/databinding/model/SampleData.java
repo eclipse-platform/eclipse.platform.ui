@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.IBindSupportFactory;
@@ -21,7 +17,6 @@ import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.api.beans.NestedObservableFactory;
-import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFactory;
 import org.eclipse.swt.events.DisposeEvent;
@@ -188,98 +183,6 @@ public class SampleData {
 		CART = FACTORY.createCart();
 
 		// initTrees();
-	}
-
-	private static void initTrees() {
-		CATALOG_TREE = new ITree() {
-			Catalog catalog = CATALOG_2005;
-
-			public boolean hasChildren(Object element) {
-				if (element instanceof Catalog) {
-					return true;
-				} else if (element instanceof Category) {
-					Adventure[] list = ((Category) element).getAdventures();
-					return list == null ? true : list.length > 0;
-				} else if (element instanceof Lodging) {
-
-				}
-				return false;
-			}
-
-			public void setChildren(Object parentElement, Object[] children) {
-				// ReadOnly for Adding Elements
-			}
-
-			public Object[] getChildren(Object parentElement) {
-				if (parentElement == null)
-					return new Object[] { catalog };
-				else if (parentElement instanceof Catalog) {
-					List list = new ArrayList();
-					list.addAll(Arrays.asList(((Catalog) parentElement)
-							.getCategories()));
-					list.addAll(Arrays.asList(((Catalog) parentElement)
-							.getLodgings()));
-					list.addAll(Arrays.asList(((Catalog) parentElement)
-							.getAccounts()));
-					return list.toArray();
-				} else if (parentElement instanceof Category)
-					return ((Category) parentElement).getAdventures();
-				return null;
-			}
-
-			public Class[] getTypes() {
-				return new Class[] { Catalog.class, Category.class,
-						Lodging.class, Account.class, Adventure.class };
-			}
-
-			public void addTreeChangeListener(IChangeListener listener) {
-			}
-
-			public void removeTreeChangeListener(IChangeListener listener) {
-			}
-
-			public void dispose() {
-			}
-		};
-
-		CATEGORY_TREE = new ITree() {
-			Catalog catalog = CATALOG_2005;
-
-			public boolean hasChildren(Object element) {
-				if (element instanceof Catalog) {
-					return true;
-				} else if (element instanceof Category) {
-					Adventure[] list = ((Category) element).getAdventures();
-					return list == null ? true : list.length > 0;
-				}
-				return false;
-			}
-
-			public void setChildren(Object parentElement, Object[] children) {
-				// ReadOnly for Adding Elements
-			}
-
-			public Object[] getChildren(Object parentElement) {
-				if (parentElement == null)
-					return catalog.getCategories();
-				else if (parentElement instanceof Category)
-					return ((Category) parentElement).getAdventures();
-				return null;
-			}
-
-			public Class[] getTypes() {
-				return new Class[] { Category.class, Account.class };
-			}
-
-			public void addTreeChangeListener(IChangeListener listener) {
-			}
-
-			public void removeTreeChangeListener(IChangeListener listener) {
-			}
-
-			public void dispose() {
-			}
-		};
 	}
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {

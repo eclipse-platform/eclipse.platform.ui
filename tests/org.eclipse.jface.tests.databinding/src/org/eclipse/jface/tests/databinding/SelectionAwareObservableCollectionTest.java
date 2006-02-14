@@ -1,4 +1,4 @@
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 

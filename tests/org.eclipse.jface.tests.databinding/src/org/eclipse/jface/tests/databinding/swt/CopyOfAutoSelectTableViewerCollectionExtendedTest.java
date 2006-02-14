@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.swt;
+package org.eclipse.jface.tests.databinding.swt;
 
 import junit.framework.TestCase;
 
@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  * @since 3.2
  *
  */
-public class AutoSelectTableViewerCollectionTest extends TestCase {
+public class CopyOfAutoSelectTableViewerCollectionExtendedTest extends TestCase {
 //
 //	/*
 //	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'

@@ -9,39 +9,38 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.swt;
+package org.eclipse.jface.tests.databinding.swt;
 
 
 /**
  * @since 3.2
  *
  */
-public class ListObservableCollectionTest extends AbstractGetAndSetSelectionObservableCollectionTest {
+public class ObservableCollectionViewerTest extends AbstractGetAndSetSelectionObservableCollectionTest {
 //
 //	/*
 //	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
 //	 */
-//	private List listControl;
+//	private AbstractListViewer viewer;
 //	
 //	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
 //		Shell shell = BindingScenariosTestSuite.getShell();
-//		this.listControl = new List(shell, SWT.NONE);
-//		for (int i = 0; i < values.length; i++) {
-//			this.listControl.add(values[i]);
-//		}
-//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
-//		return (SelectionAwareObservableCollection) ctx.createObservable(new Property(listControl, SWTProperties.ITEMS, String.class, new Boolean(true)));
+//		this.viewer = new ListViewer(shell, SWT.NONE);
+//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});		
+//		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
+//		observableCollection.setElements(Arrays.asList(values));
+//		return observableCollection;
 //	}
 //	
 //	protected Object getSelectedObjectOfControl() {
-//		int selectionIndex = this.listControl.getSelectionIndex();
-//		if (selectionIndex != -1) {
-//			return this.listControl.getItem(selectionIndex);
-//		} 
-//		return null;
+//		StructuredSelection selection = (StructuredSelection) this.viewer.getSelection();
+//		if (selection.isEmpty()) {
+//			return null;
+//		}
+//		return selection.getFirstElement();
 //	}
 //	
 //	protected void setSelectedValueOfControl(String value) {
-//		this.listControl.setSelection(new String[] {value});
+//		this.viewer.setSelection(new StructuredSelection(new String[]{value}));
 //	}
 }

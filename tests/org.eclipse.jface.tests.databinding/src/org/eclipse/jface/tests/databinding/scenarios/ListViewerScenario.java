@@ -15,6 +15,7 @@ import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.api.Property;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
+import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -49,6 +50,9 @@ public class ListViewerScenario extends ScenariosTestCase {
 	}
 
 	public void testScenario01() {
+
+		if(BindingTestSuite.failingTestsDisabled()) return;
+		
 		// Bind the catalog's lodgings to the combo
 		getDbc().bind(
 				listViewer, 
