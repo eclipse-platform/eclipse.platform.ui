@@ -57,10 +57,12 @@ public class BatchingLock {
 		 * Push a scheduling rule onto the stack for this thread and
 		 * acquire the rule if it is not the workspace root.
 		 * @param resource
+		 * @param monitor 
+		 * @return the schedulsing rule that was obtained
 		 */
 		public ISchedulingRule pushRule(ISchedulingRule resource, IProgressMonitor monitor) {
 			// The scheduling rule is either the project or the resource's parent
-			ISchedulingRule rule = getRuleForResoure(resource);
+			final ISchedulingRule rule = getRuleForResoure(resource);
 			if (rule != NULL_SCHEDULING_RULE) {
 				boolean success = false;
 				try {
@@ -94,6 +96,7 @@ public class BatchingLock {
 		 * disk if necessary. A flush is necessary if the stack is empty
 		 * or if the top-most non-null scheduling rule was popped as a result
 		 * of this operation.
+		 * @param rule 
 		 * @param monitor
 		 * @throws TeamException
 		 */
