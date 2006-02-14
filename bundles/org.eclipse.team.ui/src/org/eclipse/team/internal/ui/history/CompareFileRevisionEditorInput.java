@@ -167,5 +167,14 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, (new Object[]{left.getName()} ));
 		//return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_compareResourceAndVersions, (new Object[] {resource.getFullPath().toString()})); 
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IFile.class || adapter == IResource.class)
+			return resource;
+		return super.getAdapter(adapter);
+	}
 
 }
