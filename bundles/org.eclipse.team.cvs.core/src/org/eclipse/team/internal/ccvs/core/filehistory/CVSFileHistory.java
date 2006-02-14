@@ -115,6 +115,7 @@ public class CVSFileHistory extends FileHistory {
 					}
 
 					//copy over remote revisions
+					revisions = new IFileRevision[remoteRevisions.length];
 					System.arraycopy(remoteRevisions, 0, revisions, 0, remoteRevisions.length);
 
 				} else {
