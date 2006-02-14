@@ -86,10 +86,11 @@ public abstract class DebugPopup extends PopupDialog {
     	if (getCommandId() != null && getActionText() != null) {
 	        IWorkbench workbench = PlatformUI.getWorkbench();
 	        IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
-	        TriggerSequence[] bindings = bindingService.getActiveBindingsFor(getCommandId());
+	        String formattedBinding = bindingService.getBestActiveBindingFormattedFor(getCommandId());
+	        
 	        String infoText = null;
-	        if (bindings.length > 0) {
-	             infoText = MessageFormat.format(DebugUIViewsMessages.InspectPopupDialog_1, new String[] { bindings[0].format(), getActionText()});
+	        if (formattedBinding != null) {
+	             infoText = MessageFormat.format(DebugUIViewsMessages.InspectPopupDialog_1, new String[] { formattedBinding, getActionText()});
 	        }
 	        return infoText;
     	}
