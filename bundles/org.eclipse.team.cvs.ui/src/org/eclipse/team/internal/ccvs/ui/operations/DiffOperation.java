@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
@@ -55,8 +56,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		try {
 			stream = openStream();
 			if (isMultiPatch){
-				//stream.println(CompareUI.getWorkspacePatchHeader());
-				stream.println("### Eclipse Workspace Patch 1.0");
+				stream.println(WorkspacePatcherUI.getWorkspacePatchHeader());
 			}
 			super.execute(monitor);
 		} finally {
@@ -132,8 +132,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			if (isMultiPatch && !haveAddedProjectHeader){
 				haveAddedProjectHeader=true;
 				IProject project=resources[0].getProject();
-				//stream.println(CompareUI.getWorkspacePatchProjectHeader(project));
-				stream.println("#P " + project.getName());
+				stream.println(WorkspacePatcherUI.getWorkspacePatchProjectHeader(project));
 			}
 			try{
 				super.execute(provider, (IResource[]) existingFiles.toArray(new IResource[existingFiles.size()]), recurse, Policy.subMonitorFor(monitor, 90));
@@ -150,8 +149,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			if (isMultiPatch &&!haveAddedProjectHeader){
 				haveAddedProjectHeader=true;
 				IProject project=resources[0].getProject();
-				//stream.println(CompareUI.getWorkspacePatchProjectHeader(project));
-				stream.println("#P " + project.getName());
+				stream.println(WorkspacePatcherUI.getWorkspacePatchProjectHeader(project));
 			}
 			
 			for (Iterator iter = newFiles.iterator(); iter.hasNext();) {
