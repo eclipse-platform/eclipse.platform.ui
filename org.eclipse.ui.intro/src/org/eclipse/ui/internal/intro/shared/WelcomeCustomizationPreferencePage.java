@@ -33,8 +33,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -54,14 +57,11 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,6 +75,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -120,6 +121,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private Button applyToAll;
 	private Image extensionImage;
 	private Image bgImage;
+	private Image ihighImage;
+	private Image ilowImage;
+	private Image inewImage;
+	private Image icalloutImage;
 	private static final Transfer[] TRANSFER_TYPES = new Transfer[] { ExtensionDataTransfer.getInstance() };
 
 
@@ -224,6 +229,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 					gd.remove(ed);
 				}
 				viewer.refresh();
+				updateColumnSizes(viewer);
 			}
 			sel = null;
 		}
@@ -264,6 +270,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 				getViewer().refresh();
 			else
 				getViewer().setInput(gd);
+			updateColumnSizes((TableViewer) getViewer());
 			return true;
 		}
 
@@ -283,6 +290,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	}
 
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+
 		public String getText(Object obj) {
 			if (obj instanceof RootPage) {
 				return ((RootPage) obj).name;
@@ -302,21 +310,33 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		}
 
 		public Image getImage(Object obj) {
-			if (obj instanceof ExtensionData)
+			if (obj instanceof ExtensionData) {
+				ExtensionData ed = (ExtensionData) obj;
+				switch (ed.getImportance()) {
+				case ExtensionData.HIGH:
+					return ihighImage;
+				case ExtensionData.LOW:
+					return ilowImage;
+				case ExtensionData.NEW:
+					return inewImage;
+				case ExtensionData.CALLOUT:
+					return icalloutImage;
+				}
 				return extensionImage;
+			}
 			if (obj instanceof IntroBackground)
 				return bgImage;
 			return null;
 		}
 
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex==0)
+			if (columnIndex == 0)
 				return getImage(element);
 			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			if (columnIndex==1 || element instanceof IntroBackground || element instanceof RootPage)
+			if (columnIndex == 1 || element instanceof IntroBackground || element instanceof RootPage)
 				return getText(element);
 			return null;
 		}
@@ -434,6 +454,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			});
 		}
 		extensionImage = ImageUtil.createImage("full/obj16/extension_obj.gif"); //$NON-NLS-1$
+		ihighImage = ImageUtil.createImage("full/obj16/ihigh_obj.gif"); //$NON-NLS-1$
+		ilowImage = ImageUtil.createImage("full/obj16/ilow_obj.gif"); //$NON-NLS-1$
+		inewImage = ImageUtil.createImage("full/obj16/inew_obj.gif"); //$NON-NLS-1$
+		icalloutImage = ImageUtil.createImage("full/obj16/icallout_obj.gif"); //$NON-NLS-1$
 		bgImage = ImageUtil.createImage("full/obj16/image_obj.gif"); //$NON-NLS-1$
 		addPages();
 		org.eclipse.jface.dialogs.Dialog.applyDialogFont(container);
@@ -513,22 +537,18 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		label.setText(Messages.WelcomeCustomizationPreferencePage_left);
 		label = new Label(pageContainer, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_right);
-		available = new TableViewer(pageContainer, SWT.BORDER);
-		available.setContentProvider(contentProvider);
-		available.setLabelProvider(labelProvider);
+		available = createTableViewer(pageContainer, "hidden"); //$NON-NLS-1$
 		available.setSorter(new ViewerSorter());
-		available.setData("id", "hidden"); //$NON-NLS-1$ //$NON-NLS-2$
-		addDNDSupport(available);
-		createPopupMenu(available);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 		gd.verticalSpan = 3;
+		gd.widthHint = 100;
 		gd.horizontalSpan = 2;
 		available.getControl().setLayoutData(gd);
 
 		left = createTableViewer(pageContainer, "left"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_BOTH);
 		left.getControl().setLayoutData(gd);
-		
+
 		right = createTableViewer(pageContainer, "right"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_BOTH);
 		right.getControl().setLayoutData(gd);
@@ -548,6 +568,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		right.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_RIGHT));
 		bottom.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_BOTTOM));
 		available.setInput(pd.findGroup(ISharedIntroConstants.HIDDEN));
+		updateColumnSizes(left);
+		updateColumnSizes(right);
+		updateColumnSizes(bottom);
+		updateColumnSizes(available);
 	}
 
 	private void onTabChange(TabItem item) {
@@ -609,7 +633,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		}
 		if (value.length() == 0)
 			value = null;
-		if (value.startsWith("product:")) //$NON-NLS-1$
+		if (value != null && value.startsWith("product:")) //$NON-NLS-1$
 			value = value.substring(8);
 		value = BundleUtil.getResolvedResourceLocation(value, product.getDefiningBundle());
 		introData = new IntroData(pid, value, true);
@@ -620,14 +644,12 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		for (int i = 0; i < backgroundImageList.size(); i++)
 			((IntroBackground) backgroundImageList.get(i)).dispose();
 		backgroundImageList.clear();
-		if (extensionImage != null) {
-			extensionImage.dispose();
-			extensionImage = null;
-		}
-		if (bgImage != null) {
-			bgImage.dispose();
-			bgImage = null;
-		}
+		extensionImage.dispose();
+		ihighImage.dispose();
+		ilowImage.dispose();
+		inewImage.dispose();
+		icalloutImage.dispose();
+		bgImage.dispose();
 		super.dispose();
 	}
 
@@ -668,7 +690,8 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	private void updateBackground() {
 		backgrounds.setInput(backgrounds);
-		backgrounds.setSelection(new StructuredSelection(introBackground), true);
+		if (introBackground != null)
+			backgrounds.setSelection(new StructuredSelection(introBackground), true);
 		bgPreview.redraw();
 	}
 
@@ -911,7 +934,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			throws CoreException {
 	}
 
-	private void createPopupMenu(final Viewer viewer) {
+	private void createPopupMenu(final TableViewer viewer) {
 		MenuManager manager = new MenuManager();
 		manager.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(manager.getMenu());
@@ -928,47 +951,42 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		viewer.addDragSupport(DND.DROP_MOVE, TRANSFER_TYPES, new TableDragSourceListener(viewer));
 		viewer.addDropSupport(DND.DROP_MOVE, TRANSFER_TYPES, new TableDropTargetListener(viewer));
 	}
-	
+
 	private TableViewer createTableViewer(Composite parent, String id) {
-		final Table table = new Table(parent, SWT.BORDER|SWT.FULL_SELECTION);
+		final Table table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		final TableColumn column1 = new TableColumn(table, SWT.NULL);
 		column1.setMoveable(false);
 		column1.setWidth(20);
 		column1.setResizable(false);
 		final TableColumn column2 = new TableColumn(table, SWT.NULL);
 		column2.setResizable(true);
-		
-		table.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				Rectangle area = table.getClientArea();
-				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				int width = area.width - 2*table.getBorderWidth();
-				if (preferredSize.y > area.height) {
-					// Subtract the scrollbar width from the total column width
-					// if a vertical scrollbar will be required
-					Point vBarSize = table.getVerticalBar().getSize();
-					width -= vBarSize.x;
-				}
-				Point oldSize = table.getSize();
-				if (oldSize.x > area.width) {
-					// table is getting smaller so make the columns 
-					// smaller first and then resize the table to
-					// match the client area width
-					//column2.setWidth(width - column1.getWidth());
-					column2.pack();
-					//table.setSize(area.width, area.height);
-				} else {
-					// table is getting bigger so make the table 
-					// bigger first and then make the columns wider
-					// to match the client area width
-					//table.setSize(area.width, area.height);
-					//column2.setWidth(width - column1.getWidth());
-					column2.pack();
-				}
+		final TableViewer viewer = new TableViewer(table);
+		CellEditor[] editors = new CellEditor[2];
+		editors[0] = new ComboBoxCellEditor(table, ExtensionData.IMPORTANCE_NAME_TABLE, SWT.READ_ONLY);
+		viewer.setCellEditors(editors);
+		viewer.setColumnProperties(new String[] { ISharedIntroConstants.P_IMPORTANCE,
+				ISharedIntroConstants.P_NAME });
+		viewer.setCellModifier(new ICellModifier() {
+
+			public boolean canModify(Object element, String property) {
+				return property.equals(ISharedIntroConstants.P_IMPORTANCE);
+			}
+
+			public Object getValue(Object element, String property) {
+				ExtensionData ed = (ExtensionData) element;
+				if (property.equals(ISharedIntroConstants.P_IMPORTANCE))
+					return new Integer(ed.getImportance());
+				return null;
+			}
+
+			public void modify(Object element, String property, Object value) {
+				Integer ivalue = (Integer) value;
+				TableItem item = (TableItem) element;
+				ExtensionData ed = (ExtensionData) item.getData();
+				ed.setImportance(ivalue.intValue());
+				viewer.update(ed, new String [] {ISharedIntroConstants.P_IMPORTANCE});
 			}
 		});
-		
-		TableViewer viewer = new TableViewer(table);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(labelProvider);
 		viewer.setData("id", id); //$NON-NLS-1$
@@ -977,7 +995,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		return viewer;
 	}
 
-	private void fillPopupMenu(IMenuManager manager, final Viewer viewer) {
+	private void fillPopupMenu(IMenuManager manager, final TableViewer viewer) {
 		StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
 
 		if (ssel.size() == 1 && viewer != available) {
@@ -1038,7 +1056,8 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		}
 	}
 
-	private void addMoveToAction(MenuManager menu, final Viewer target, final Viewer source, String name) {
+	private void addMoveToAction(MenuManager menu, final TableViewer target, final TableViewer source,
+			String name) {
 		if (source == target)
 			return;
 		Action action = new Action(name) {
@@ -1060,7 +1079,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		viewer.refresh();
 	}
 
-	private void doMoveTo(Viewer source, Viewer target) {
+	private void doMoveTo(TableViewer source, TableViewer target) {
 		Object[] selObjs = ((StructuredSelection) source.getSelection()).toArray();
 		GroupData sourceGd = (GroupData) source.getInput();
 		GroupData targetGd = (GroupData) target.getInput();
@@ -1073,10 +1092,17 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			targetGd.add(ed);
 		}
 		source.refresh();
+		updateColumnSizes(source);
 		if (target.getInput() != null)
 			target.refresh();
 		else
 			target.setInput(targetGd);
+		updateColumnSizes(target);
+	}
+
+	private void updateColumnSizes(TableViewer viewer) {
+		TableColumn sc = viewer.getTable().getColumn(1);
+		sc.pack();
 	}
 
 	private GroupData createTargetGd(Viewer target) {

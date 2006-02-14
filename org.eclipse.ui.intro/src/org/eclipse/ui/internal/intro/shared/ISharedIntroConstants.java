@@ -32,4 +32,8 @@ public interface ISharedIntroConstants {
 	String VAR_INTRO_BACKGROUND_IMAGE = "INTRO_BACKGROUND_IMAGE"; //$NON-NLS-1$
 	String VAR_INTRO_ROOT_PAGES = "INTRO_ROOT_PAGES"; //$NON-NLS-1$
 	String VAR_INTRO_DATA = "INTRO_DATA";  //$NON-NLS-1$
+	
+	//Page table properties
+	String P_IMPORTANCE = "importance"; //$NON-NLS-1$
+	String P_NAME = "name"; //$NON-NLS-1$
 }

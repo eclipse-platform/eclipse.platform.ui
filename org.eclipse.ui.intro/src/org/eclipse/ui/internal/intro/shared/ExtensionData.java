@@ -2,6 +2,8 @@ package org.eclipse.ui.internal.intro.shared;
 
 import java.io.PrintWriter;
 
+import org.eclipse.ui.internal.intro.impl.Messages;
+
 
 public class ExtensionData {
 
@@ -21,6 +23,9 @@ public class ExtensionData {
 	public static final String[] IMPORTANCE_TABLE = { ISharedIntroConstants.CALLOUT,
 			ISharedIntroConstants.LOW, ISharedIntroConstants.MEDIUM, ISharedIntroConstants.HIGH,
 			ISharedIntroConstants.NEW };
+	
+	public static final String [] IMPORTANCE_NAME_TABLE = { Messages.ExtensionData_callout, 
+		Messages.ExtensionData_low, Messages.ExtensionData_medium, Messages.ExtensionData_high, Messages.ExtensionData_new };
 
 	public ExtensionData(String id, String name) {
 		this(id, name, ISharedIntroConstants.LOW, false);
@@ -79,6 +84,10 @@ public class ExtensionData {
 
 	public int getImportance() {
 		return fImportance;
+	}
+	
+	public void setImportance(int newValue) {
+		fImportance = newValue;
 	}
 
 	public boolean isHidden() {
