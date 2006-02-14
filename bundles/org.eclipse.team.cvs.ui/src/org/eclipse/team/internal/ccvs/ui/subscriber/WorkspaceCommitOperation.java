@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -216,6 +217,9 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 				protected ResourceMappingContext getResourceMappingContext() {
 					return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
 				}
+				protected SynchronizationScopeManager createScopeManager(boolean consultModels) {
+					return new SingleProjectScopeManager(getJobName(), getSelectedMappings(), getResourceMappingContext(), consultModels, project);
+				}
 			};
 			commitOperation
 						.run(monitor);
@@ -231,6 +235,9 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 			new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(additions)) {
 				protected ResourceMappingContext getResourceMappingContext() {
 					return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
+				}
+				protected SynchronizationScopeManager createScopeManager(boolean consultModels) {
+					return new SingleProjectScopeManager(getJobName(), getSelectedMappings(), getResourceMappingContext(), consultModels, project);
 				}
 			}.run(monitor);
 		} catch (InvocationTargetException e1) {

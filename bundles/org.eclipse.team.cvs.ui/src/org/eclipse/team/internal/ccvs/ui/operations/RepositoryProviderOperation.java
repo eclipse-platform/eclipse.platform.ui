@@ -219,7 +219,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 
     public ISynchronizationScope buildScope(IProgressMonitor monitor) throws InterruptedException, CVSException {
     	if (manager == null) {
-    		manager = new SynchronizationScopeManager(getJobName(), selectedMappings, getResourceMappingContext(), consultModelsWhenBuildingScope && consultModelsForMappings());
+    		manager = createScopeManager(consultModelsWhenBuildingScope && consultModelsForMappings());
     		BuildScopeOperation op = new BuildScopeOperation(getPart(), manager);
 			try {
 				op.run(monitor);
@@ -228,6 +228,15 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 			}
     	}
     	return manager.getScope();
+	}
+
+    /**
+     * Create the scope manager to be used by this operation.
+     * @param consultModels whether models should be consulted to include additional mappings
+     * @return a scope manager
+     */
+	protected SynchronizationScopeManager createScopeManager(boolean consultModels) {
+		return new SynchronizationScopeManager(getJobName(), getSelectedMappings(), getResourceMappingContext(), consultModels);
 	}
 
 	private void execute(Map providerTraversal, IProgressMonitor monitor) throws CVSException, InterruptedException {

@@ -14,10 +14,11 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.mapping.*;
@@ -128,20 +129,12 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 	
 	/**
 	 * Return the scheduling rule that is used when initializing and refreshing
-	 * the scope. By default, it is the workspace root if the resource mapping
-	 * context is a local context. If the context is a
-	 * {@link RemoteResourceMappingContext}, the rule is a multi-rule that
-	 * covers the projects of the context.
+	 * the scope. By default, it is the workspace root.
 	 * 
 	 * @return the scheduling rule that is used when initializing and refreshing
 	 *         the scope
 	 */
 	public ISchedulingRule getSchedulingRule() {
-		ResourceMappingContext context = getContext();
-		if (context instanceof RemoteResourceMappingContext) {
-			RemoteResourceMappingContext rrmc = (RemoteResourceMappingContext) context;
-			return MultiRule.combine(rrmc.getProjects());
-		}
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	

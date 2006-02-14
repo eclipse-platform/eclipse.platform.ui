@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -50,6 +51,10 @@ public class OverrideAndUpdateOperation extends ReplaceOperation {
 	 */
 	protected ResourceMappingContext getResourceMappingContext() {
 		return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
+	}
+	
+	protected SynchronizationScopeManager createScopeManager(boolean consultModels) {
+		return new SingleProjectScopeManager(getJobName(), getSelectedMappings(), getResourceMappingContext(), consultModels, project);
 	}
 
 }

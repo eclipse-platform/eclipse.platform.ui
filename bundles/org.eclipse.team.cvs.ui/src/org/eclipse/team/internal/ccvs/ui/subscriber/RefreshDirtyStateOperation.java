@@ -23,14 +23,14 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.SingleProjectSubscriberContext;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -97,6 +97,9 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 					tree, true) {
 				protected ResourceMappingContext getResourceMappingContext() {
 					return new SingleProjectSubscriberContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), false, project);
+				}
+				protected SynchronizationScopeManager createScopeManager(boolean consultModels) {
+					return new SingleProjectScopeManager(getJobName(), getSelectedMappings(), getResourceMappingContext(), consultModels, project);
 				}
 			}.run(monitor);
 		} catch (InvocationTargetException e) {
