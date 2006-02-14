@@ -70,7 +70,7 @@ class ImplicitJobs {
 				threadJob.acquireRule = true;
 			}
 			//don't acquire rule if it is a suspended rule
-			if (rule != null && isSuspended(rule))
+			if (isSuspended(rule))
 				threadJob.acquireRule = false;
 			//indicate if it is a system job to ensure isBlocking works correctly
 			threadJob.setRealJob(realJob);
@@ -92,7 +92,7 @@ class ImplicitJobs {
 			//and release other rules while waiting.
 			synchronized (this) {
 				threadJobs.put(currentThread, threadJob);
-				if (suspend && rule != null)
+				if (suspend)
 					suspendedRules.add(rule);
 			}
 			if (threadJob.isBlocked) {
