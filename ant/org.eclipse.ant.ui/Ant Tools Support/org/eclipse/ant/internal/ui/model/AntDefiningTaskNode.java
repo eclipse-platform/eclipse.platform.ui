@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.Task;
@@ -29,7 +30,7 @@ import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
@@ -100,7 +101,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 				handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
 			} catch (LinkageError e) {
                 //A classpath problem with the definer. Possible causes are having multiple
-                //versions of the same JAR on the Ant runtime classpath (either explictly or via the plugin 
+                //versions of the same JAR on the Ant runtime classpath (either explicitly or via the plugin 
                 //classloaders. See bug 71888
                 ((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
                 handleBuildException(new BuildException(AntModelMessages.AntDefiningTaskNode_0), AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
@@ -150,7 +151,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		File file= null;
 		for (int i = 0; i < antClasspath.length; i++) {
 			try {
-				file = new File(Platform.asLocalURL(antClasspath[i]).getPath());
+				file = new File(FileLocator.toFileURL(antClasspath[i]).getPath());
 			} catch (IOException e) {
 				continue;
 			}

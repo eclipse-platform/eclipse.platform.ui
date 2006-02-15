@@ -36,6 +36,7 @@ import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.debug.model.RemoteAntDebugBuildListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -687,7 +688,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
             }
             Bundle fragBundle= Platform.getBundle(fragments[0].getSymbolicName());
             try {
-                URL url= Platform.asLocalURL(fragBundle.getEntry("/")); //$NON-NLS-1$
+                URL url= FileLocator.toFileURL(fragBundle.getEntry("/")); //$NON-NLS-1$
                 IPath path= new Path(url.getPath());
                 path= path.removeTrailingSeparator();
                 fgSWTLibraryLocation= path.toOSString();

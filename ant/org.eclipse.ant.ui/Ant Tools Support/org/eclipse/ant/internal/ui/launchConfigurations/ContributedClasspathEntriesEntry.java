@@ -25,6 +25,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -149,7 +150,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
                 Bundle fragmentBundle= Platform.getBundle(fragments[i].getName());
                 URL bundleURL;
                 try {
-                    bundleURL = Platform.resolve(fragmentBundle.getEntry("/")); //$NON-NLS-1$
+                    bundleURL = FileLocator.resolve(fragmentBundle.getEntry("/")); //$NON-NLS-1$
                 } catch (IOException e) {
                     AntUIPlugin.log(e);
                    continue;
