@@ -160,6 +160,13 @@ public class AsynchronousTreeModel extends AsynchronousModel {
             return; // added element was filtered out.
         }
         synchronized (this) {
+        	ModelNode[] childrenNodes = parent.getChildrenNodes();
+        	if (childrenNodes != null) {
+        		for (int i = 0; i < childrenNodes.length; i++) {
+        			if (element == childrenNodes[i].getElement())
+        				return; //already added to the tree (probably via a refresh)
+        		}
+        	}
             ModelNode node = new ModelNode(parent, element);
             parent.addChild(node);
             mapElement(element, node);
