@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.views.memory.MemoryViewPresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryBlockListener {
 	private IMemoryBlockRetrieval fRetrieval;
@@ -107,17 +108,22 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	
 	private IStructuredSelection getCurrentSelection()
 	{
+		if (getPresentationContext() == null)
+		{
+			return StructuredSelection.EMPTY;
+		}
+		
 		ISelection selection = getPresentationContext().getPart().getSite().getSelectionProvider().getSelection();
 		
 		if (selection instanceof IStructuredSelection)
 			return (IStructuredSelection)selection;
 		
-		return null;
+		return StructuredSelection.EMPTY;
 	}
 	
 	private boolean isMemoryBlockSelected(IStructuredSelection selection, IMemoryBlock memoryBlock)
 	{
-		if (selection != null)
+		if (!selection.isEmpty())
 		{
 			Iterator iter = selection.iterator();
 			while (iter.hasNext())
@@ -141,7 +147,16 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		if (memoryBlocks.length > 0)
 		{
 			ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NO_CHANGE);
-			addSelectDeltaNode(delta);
+			
+			// Select the first memory block if nothing is selected in the view
+			// If something is selected, it means the view has restored selection and the
+			// proxy should not interfere.
+			IStructuredSelection selection = getCurrentSelection();
+			if (selection.isEmpty())
+			{
+				addSelectDeltaNode(delta);
+			}
+
 			fireModelChanged(delta);
 		}
 	}

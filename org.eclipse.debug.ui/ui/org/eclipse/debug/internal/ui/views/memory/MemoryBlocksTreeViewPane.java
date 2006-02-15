@@ -402,7 +402,9 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		}
 		
 		TreePath[] paths = getTreePaths(memoryBlock);
-		if (memoryBlock != null && paths != null)
+		
+		// Set selection if tree path is not empty
+		if (memoryBlock != null && paths != null && paths.length > 0)
 		{
 			fTreeViewer.setSelection(new TreeSelection(paths));
 		}
