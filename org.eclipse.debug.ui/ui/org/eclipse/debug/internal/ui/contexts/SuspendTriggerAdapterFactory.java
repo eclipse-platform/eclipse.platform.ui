@@ -32,7 +32,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 			if (adaptableObject instanceof ILaunch) {
 				Object trigger = fSuspendTriggers.get(adaptableObject);
 				if (trigger == null) {
-					trigger = new LaunchSuspendTrigger(this);
+					trigger = new LaunchSuspendTrigger((ILaunch) adaptableObject, this);
 					fSuspendTriggers.put(adaptableObject, trigger);
 				}
 				return trigger;
@@ -49,7 +49,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	}
 	
 	public synchronized void dispose(LaunchSuspendTrigger trigger) {
-		fSuspendTriggers.remove(trigger);
+		fSuspendTriggers.remove(trigger.getLaunch());
 	}
 
 }

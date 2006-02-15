@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
@@ -32,10 +33,16 @@ public class LaunchSuspendTrigger implements ISuspendTriggerAdapter, IDebugEvent
 
 	private ListenerList fListeners = new ListenerList();
 	private SuspendTriggerAdapterFactory fFactory = null;
+	private ILaunch fLaunch = null;
 	
-	public LaunchSuspendTrigger(SuspendTriggerAdapterFactory factory) {
+	public LaunchSuspendTrigger(ILaunch launch, SuspendTriggerAdapterFactory factory) {
 		fFactory = factory;
+		fLaunch = launch;
 		DebugPlugin.getDefault().addDebugEventListener(this);
+	}
+	
+	public ILaunch getLaunch() {
+		return fLaunch;
 	}
 	
 	protected void dispose() {
@@ -73,8 +80,17 @@ public class LaunchSuspendTrigger implements ISuspendTriggerAdapter, IDebugEvent
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.SUSPEND && !event.isEvaluation() && event.getDetail() != DebugEvent.STEP_END) {
-			    // Don't switch perspective for evaluations or stepping
-				notifySuspend(event);
+//				 Don't switch perspective for evaluations or stepping
+				Object source = event.getSource();
+				if (source instanceof IAdaptable) {
+					IAdaptable adaptable = (IAdaptable) source;
+					ILaunch launch = (ILaunch) adaptable.getAdapter(ILaunch.class);
+					if (fLaunch.equals(launch)) {
+						// only notify for this launch
+						notifySuspend(event);						
+					}
+				}
+
 			}
 		}
 	}
