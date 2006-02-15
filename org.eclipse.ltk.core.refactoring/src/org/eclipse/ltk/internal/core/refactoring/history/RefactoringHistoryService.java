@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -51,6 +52,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -439,49 +441,76 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	private final class WorkspaceChangeListener implements IResourceChangeListener {
 
 		/**
-		 * Removes refactoring descriptors from the global refactoring history.
+		 * Deletes the refactoring history from the specified project.
 		 * 
-		 * @param event
-		 *            the resource change event
+		 * @param project
+		 *            the project to delete its refactoring history
+		 * @param monitor
+		 *            the progress monitor to use
 		 */
-		private void removeDescriptors(final IResourceChangeEvent event) {
-			Assert.isNotNull(event);
-			final IResource resource= event.getResource();
-			if (resource != null) {
-				final int type= resource.getType();
-				if (type == IResource.PROJECT) {
-					final IProject project= (IProject) resource;
-					if (project.exists()) {
-						try {
-							final URI uri= project.getLocationURI();
-							if (uri != null)
-								EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(project.getName()).delete(EFS.NONE, null);
-						} catch (CoreException exception) {
-							RefactoringCorePlugin.log(exception);
-						}
-					}
+		private void deleteHistory(final IProject project, final IProgressMonitor monitor) {
+			try {
+				EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(project.getName()).delete(EFS.NONE, monitor);
+			} catch (CoreException exception) {
+				RefactoringCorePlugin.log(exception);
+			}
+		}
+
+		/**
+		 * Moves the project history from the old project to the new one.
+		 * 
+		 * @param oldProject
+		 *            the old project, which does not exist anymore
+		 * @param newProject
+		 *            the new project, which already exists
+		 * @param monitor
+		 *            the progress monitor to use
+		 */
+		private void moveHistory(final IProject oldProject, final IProject newProject, final IProgressMonitor monitor) {
+			try {
+				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 150);
+				final IFileStore historyStore= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
+				final String oldName= oldProject.getName();
+				final String newName= newProject.getName();
+				final IFileStore oldStore= historyStore.getChild(oldName);
+				if (oldStore.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
+					final IFileStore newStore= historyStore.getChild(newName);
+					if (newStore.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists())
+						newStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+					oldStore.move(newStore, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				}
+				for (final Iterator iterator= fUndoStack.fImplementation.iterator(); iterator.hasNext();) {
+					final RefactoringDescriptor descriptor= (RefactoringDescriptor) iterator.next();
+					if (oldName.equals(descriptor.getProject()))
+						descriptor.setProject(newName);
+				}
+				for (final Iterator iterator= fRedoQueue.iterator(); iterator.hasNext();) {
+					final RefactoringDescriptor descriptor= (RefactoringDescriptor) iterator.next();
+					if (oldName.equals(descriptor.getProject()))
+						descriptor.setProject(newName);
+				}
+				final String name= newProject.getName();
+				if (hasSharedRefactoringHistory(newProject)) {
+					final URI uri= newProject.getLocationURI();
+					if (uri != null)
+						fUndoStack.getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).moveRefactoringHistory(oldProject, newProject, new SubProgressMonitor(monitor, 100));
+				} else
+					fUndoStack.getManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(name), name).moveRefactoringHistory(oldProject, newProject, new SubProgressMonitor(monitor, 100));
+			} catch (CoreException exception) {
+				RefactoringCorePlugin.log(exception);
+			} finally {
+				monitor.done();
 			}
 		}
 
 		/**
 		 * Resets the refactoring history stacks.
-		 * 
-		 * @param event
-		 *            the resource change event
 		 */
-		private void resetStacks(final IResourceChangeEvent event) {
-			Assert.isNotNull(event);
-			final IResource resource= event.getResource();
-			if (resource != null) {
-				final int type= resource.getType();
-				if (type == IResource.PROJECT) {
-					if (fUndoStack != null)
-						fUndoStack.fImplementation.clear();
-					if (fRedoQueue != null)
-						fRedoQueue.clear();
-				}
-			}
+		private void resetStacks() {
+			if (fUndoStack != null)
+				fUndoStack.fImplementation.clear();
+			if (fRedoQueue != null)
+				fRedoQueue.clear();
 		}
 
 		/**
@@ -489,11 +518,39 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 */
 		public void resourceChanged(final IResourceChangeEvent event) {
 			final int type= event.getType();
-			if ((type & IResourceChangeEvent.PRE_DELETE) != 0) {
-				resetStacks(event);
-				removeDescriptors(event);
+			if ((type & IResourceChangeEvent.POST_CHANGE) != 0) {
+				final IResourceDelta delta= event.getDelta();
+				if (delta != null) {
+					final IResourceDelta[] deltas= delta.getAffectedChildren();
+					if (deltas.length == 2) {
+						final IPath toPath= deltas[0].getMovedToPath();
+						final IPath fromPath= deltas[1].getMovedFromPath();
+						if (fromPath != null && toPath != null) {
+							final IResource oldResource= deltas[0].getResource();
+							final IResource newResource= deltas[1].getResource();
+							if (oldResource.getType() == IResource.PROJECT && newResource.getType() == IResource.PROJECT)
+								moveHistory((IProject) oldResource, (IProject) newResource, new NullProgressMonitor());
+						} else {
+							if (deltas[0].getKind() == IResourceDelta.ADDED && deltas[1].getKind() == IResourceDelta.REMOVED) {
+								final IResource newResource= deltas[0].getResource();
+								final IResource oldResource= deltas[1].getResource();
+								if (oldResource.getType() == IResource.PROJECT && newResource.getType() == IResource.PROJECT)
+									moveHistory((IProject) oldResource, (IProject) newResource, new NullProgressMonitor());
+							}
+						}
+					} else if (deltas.length == 1) {
+						final IResourceDelta child= deltas[0];
+						if (child.getKind() == IResourceDelta.REMOVED) {
+							final IResource oldResource= child.getResource();
+							if (oldResource.getType() == IResource.PROJECT) {
+								resetStacks();
+								deleteHistory((IProject) oldResource, new NullProgressMonitor());
+							}
+						}
+					}
+				}
 			} else if ((type & IResourceChangeEvent.PRE_CLOSE) != 0)
-				resetStacks(event);
+				resetStacks();
 		}
 	}
 
@@ -590,7 +647,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			fOperationListener= new RefactoringOperationHistoryListener();
 			OperationHistoryFactory.getOperationHistory().addOperationHistoryListener(fOperationListener);
 			fResourceListener= new WorkspaceChangeListener();
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
 			fUndoStack= new RefactoringDescriptorStack();
 			fRedoQueue= new LinkedList();
 		}
@@ -1029,7 +1086,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringHistory readRefactoringHistory(final InputStream stream, int flags) throws CoreException {
+	public RefactoringHistory readRefactoringHistory(final InputStream stream, final int flags) throws CoreException {
 		Assert.isNotNull(stream);
 		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		final List list= new ArrayList();
@@ -1166,8 +1223,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final URI uri= project.getLocationURI();
 			if (uri != null) {
 				try {
+					final IFileStore history= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
 					if (enable) {
-						final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
+						final IFileStore source= history.getChild(name);
 						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
 							IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
 							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
@@ -1179,7 +1237,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					} else {
 						final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
 						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
-							IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
+							IFileStore destination= history.getChild(name);
 							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
 								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
 							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
