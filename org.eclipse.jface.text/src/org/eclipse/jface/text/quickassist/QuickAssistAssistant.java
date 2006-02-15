@@ -44,24 +44,24 @@ public class QuickAssistAssistant implements IQuickAssistAssistant {
 	private static final class TextViewerContext implements IQuickAssistInvocationContext {
 
 		private ITextViewer fTextViewer;
-		private int fSelectionOffset;
+		private int fOffset;
 		
 		TextViewerContext(ITextViewer textViewer, int offset) {
 			fTextViewer= textViewer;
-			fSelectionOffset= offset;
+			fOffset= offset;
 		}
 
 		/*
-		 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getSelectionOffset()
+		 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getOffset()
 		 */
-		public int getSelectionOffset() {
-			return fSelectionOffset;
+		public int getOffset() {
+			return fOffset;
 		}
 
 		/*
-		 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getSelectionLength()
+		 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getLength()
 		 */
-		public int getSelectionLength() {
+		public int getLength() {
 			return -1;
 		}
 

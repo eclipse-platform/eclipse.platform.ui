@@ -23,16 +23,18 @@ import org.eclipse.jface.text.ITextViewer;
 public interface IQuickAssistInvocationContext {
 
 	/**
-	 * @return the offset of the current selection or <code>-1</code> if unknown
+	 * Returns the offset where quick assist was invoked.
+	 * 
+	 * @return the invocation offset or <code>-1</code> if unknown
 	 */
-	int getSelectionOffset();
+	int getOffset();
 
 	/**
-	 * Returns the selection length.
+	 * Returns the length of the selection at the invocation offset.
 	 * 
-	 * @return the length of the current selection or <code>-1</code> if unknown
+	 * @return the length of the current selection or <code>-1</code> if none or unknown
 	 */
-	int getSelectionLength();
+	int getLength();
 	
 	/**
 	 * Returns the viewer for this context.
