@@ -276,19 +276,15 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	protected synchronized void unmapAllElements() {
 		final AsynchronousModel model = getModel();
 		if (model != null) {
-			preservingSelection(new Runnable() {
-				public void run() {
-					ModelNode root = model.getModelNode(getControl());
-					if (root != null) {
-						ModelNode[] childrenNodes = root.getChildrenNodes();
-						if (childrenNodes != null) {
-							for (int i = 0; i < childrenNodes.length; i++) {
-								nodeDisposed(childrenNodes[i]);
-							}
-						}
-					}				
-				}
-			});
+			ModelNode root = model.getModelNode(getControl());
+			if (root != null) {
+				ModelNode[] childrenNodes = root.getChildrenNodes();
+				if (childrenNodes != null) {
+					for (int i = 0; i < childrenNodes.length; i++) {
+						nodeDisposed(childrenNodes[i]);
+					}
+				}				
+			}
 		}
 	}
 
