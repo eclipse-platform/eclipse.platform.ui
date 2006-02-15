@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -394,7 +394,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		if (fWorkingSetButton.getSelection() && (fWorkingSet == null || fWorkingSet.getElements().length == 0)) {
+		if (fRefreshButton.getSelection() && (fWorkingSetButton.getSelection() && (fWorkingSet == null || fWorkingSet.getElements().length == 0))) {
 			setErrorMessage(StringSubstitutionMessages.RefreshTab_42); 
 			return false;
 		}
