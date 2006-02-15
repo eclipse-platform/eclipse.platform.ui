@@ -67,6 +67,7 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension;
+import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.LineChangeHover;
@@ -356,8 +357,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		// Assign the quick assist assistant to the annotation access.
 		ISourceViewer viewer= getSourceViewer();
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 && viewer instanceof SourceViewer)
-			((IAnnotationAccessExtension2)fAnnotationAccess).setQuickAssistAssistant(((SourceViewer)viewer).getQuickAssistAssistant());
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 && viewer instanceof ISourceViewerExtension3)
+			((IAnnotationAccessExtension2)fAnnotationAccess).setQuickAssistAssistant(((ISourceViewerExtension3)viewer).getQuickAssistAssistant());
 	}
 
 	/*
