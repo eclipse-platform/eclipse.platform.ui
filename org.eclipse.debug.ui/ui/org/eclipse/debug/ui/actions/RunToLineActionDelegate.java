@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,10 @@ import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -28,11 +30,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * A run to line action that can be contributed to a an editor or view. The action
@@ -52,15 +54,15 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	private IWorkbenchPart fActivePart = null;
 	private IRunToLineTarget fPartTarget = null;
 	private IAction fAction = null;
-	private ISelectionListener fSelectionListener = new DebugSelectionListener();
+	private IDebugContextListener fContextListener = new DebugContextListener();
 	private ISuspendResume fTargetElement = null;
 	
-	class DebugSelectionListener implements ISelectionListener {
+	class DebugContextListener implements IDebugContextListener {
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 		 */
-		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		public void contextActivated(ISelection selection, IWorkbenchPart part) {
 			fTargetElement = null;
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
@@ -74,13 +76,20 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			update();
 		}
 		
-	}
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
+		 */
+		public void contextChanged(ISelection selection, IWorkbenchPart part) {
+			contextActivated(selection, part);
+		}
+		
+	}		
 	
 	/*(non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
-		fActivePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
+		DebugContextManager.getDefault().removeDebugContextListener(fContextListener, fActivePart.getSite().getWorkbenchWindow());
 		fActivePart = null;
 		fPartTarget = null;
 		
@@ -164,13 +173,15 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @param part
 	 */
 	private void bindTo(IWorkbenchPart part) {
+		IDebugContextManager manager = DebugContextManager.getDefault();
 		if (fActivePart != null && !fActivePart.equals(part)) {
-			fActivePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
+			manager.removeDebugContextListener(fContextListener, fActivePart.getSite().getWorkbenchWindow());
 		}
 		fPartTarget = null;
 		fActivePart = part;
 		if (part != null) {
-			part.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
+			IWorkbenchWindow workbenchWindow = part.getSite().getWorkbenchWindow();
+			manager.addDebugContextListener(fContextListener, workbenchWindow);
 			fPartTarget  = (IRunToLineTarget) part.getAdapter(IRunToLineTarget.class);
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
@@ -179,8 +190,8 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(part, IRunToLineTarget.class.getName());
 				}
 			}
-			ISelection selection = part.getSite().getWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-			fSelectionListener.selectionChanged(part, selection);
+			ISelection activeContext = manager.getActiveContext(workbenchWindow);
+			fContextListener.contextActivated(activeContext, part);
 		}
 		update();			
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,12 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.*;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
+import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -27,26 +28,33 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class RetargetRunToLineAction extends RetargetAction {
 	
-	private ISelectionListener selectionListener = new DebugSelectionListener();
-	private ISuspendResume targetElement = null;
+	private IDebugContextListener fContextListener = new DebugContextListener();
+	private ISuspendResume fTargetElement = null;
 	
-	class DebugSelectionListener implements ISelectionListener {
+	class DebugContextListener implements IDebugContextListener {
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 		 */
-		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-			targetElement = null;
+		public void contextActivated(ISelection selection, IWorkbenchPart part) {
+			fTargetElement = null;
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
 					Object object = ss.getFirstElement();
 					if (object instanceof ISuspendResume) {
-						targetElement = (ISuspendResume) object;
+						fTargetElement = (ISuspendResume) object;
 					}
 				}
 			}
 			update();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
+		 */
+		public void contextChanged(ISelection selection, IWorkbenchPart part) {
+			contextActivated(selection, part);
 		}
 		
 	}
@@ -55,7 +63,7 @@ public class RetargetRunToLineAction extends RetargetAction {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		fWindow.getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
+		DebugContextManager.getDefault().removeDebugContextListener(fContextListener, fWindow);
 		super.dispose();
 	}
 	/* (non-Javadoc)
@@ -63,15 +71,18 @@ public class RetargetRunToLineAction extends RetargetAction {
 	 */
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
-		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
+		IDebugContextManager manager = DebugContextManager.getDefault();
+		manager.addDebugContextListener(fContextListener, window);
+		ISelection activeContext = manager.getActiveContext(window);
+		fContextListener.contextActivated(activeContext, null);
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected boolean canPerformAction(Object target, ISelection selection,	IWorkbenchPart part) {
-		return targetElement != null &&
-			((IRunToLineTarget)target).canRunToLine(part, selection, targetElement);
+		return fTargetElement != null &&
+			((IRunToLineTarget)target).canRunToLine(part, selection, fTargetElement);
 	}
 	
 	/* (non-Javadoc)
@@ -84,6 +95,6 @@ public class RetargetRunToLineAction extends RetargetAction {
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
-		((IRunToLineTarget)target).runToLine(part, selection, targetElement);
+		((IRunToLineTarget)target).runToLine(part, selection, fTargetElement);
 	}
 }
