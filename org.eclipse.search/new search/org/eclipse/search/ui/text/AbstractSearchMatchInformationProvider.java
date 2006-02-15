@@ -25,9 +25,6 @@ import org.eclipse.search.core.text.TextSearchMatchAccess;
  * offsets of lines.
  * 
  * @since 3.2
- * 
- * This API is experimental and might be removed before 3.2
- * 
  */
 public abstract class AbstractSearchMatchInformationProvider extends SearchMatchInformationProvider {
 

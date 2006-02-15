@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IFile;
  * a {@link TextSearchMatchAccess} element.
  * </p>
  * <p>
- * This class is not intended to be instantiated or implemented by clients.
+ * This class is not only to be implemented by implementors of a {@link TextSearchEngine}.
  * </p>
  * @since 3.2
  */

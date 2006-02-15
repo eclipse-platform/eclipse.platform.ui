@@ -14,7 +14,6 @@ package org.eclipse.search.core.text;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceProxy;
 
 /**
  * Collects the results from a search engine query. 
@@ -24,7 +23,9 @@ import org.eclipse.core.resources.IResourceProxy;
  * method, and possibly override other life cycle methods.
  * <p>
  * The search engine calls {@link #beginReporting()} when a search starts,
- * then calls {@link #acceptFile(IFile)} for a file visited followed by
+ * then calls {@link #acceptFile(IFile)} for a file visited.
+ * If {@link #acceptFile(IFile)} returns <code>true</code> {@link #reportBinaryFile(IFile)} is
+ * called if the file could be binary followed by
  * {@link #acceptPatternMatch(TextSearchMatchAccess)} for each pattern match found
  * in this file. The end of the search is signaled with a call to {@link #endReporting()}.
  * Note that {@link #acceptFile(IFile)} is called for all files in the search scope,
@@ -69,25 +70,11 @@ public abstract class TextSearchRequestor {
 	
 	/**
 	 * Notification sent before search starts in the given file. This method is called for all files that are contained
-	 * in the search scope. The <code>fileProxy</code> is guaranteed to be of type {@link org.eclipse.core.resources.IResource#FILE}
+	 * in the search scope.
 	 * Implementors can decide if the file content should be searched for search matches or not.
-	 * 
-	 * @param fileProxy proxy of a file resource to be searched.
-	 * @return If false, no pattern matches will be reported for the content of this file.
-	 * @throws CoreException implementors can throw a {@link CoreException} if accessing the resource fails or another
-	 * problem prevented the processing of the search match.
-	 * 
-	 * @deprecated This API will be removed before M5. Use {@link #acceptFile(IFile)} instead.
-	 */
-	public boolean acceptFile(IResourceProxy fileProxy) throws CoreException {
-		return true;
-	}
-	
-	/**
-	 * Notification sent before search starts in the given file. This method is called for all files that are contained
-	 * in the search scope. The <code>fileProxy</code> is guaranteed to be of type {@link org.eclipse.core.resources.IResource#FILE}
-	 * Implementors can decide if the file content should be searched for search matches or not.
-	 * 
+	 * <p>
+	 * The default behaviour is to search the file for matches.
+	 * </p>
 	 * @param file the file resource to be searched.
 	 * @return If false, no pattern matches will be reported for the content of this file.
 	 * @throws CoreException implementors can throw a {@link CoreException} if accessing the resource fails or another
@@ -98,7 +85,26 @@ public abstract class TextSearchRequestor {
 	}
 	
 	/**
-	 * Accepts the given search match.
+	 * Notification sent that a file might contain binary context.
+	 * It is the choice of the search engine to report binary files and it is the heuristic of the search engine to decide
+	 * that a file could be binary.
+	 * <p>
+	 * This call is sent after calls {link {@link #acceptFile(IFile)} that return <code>true</code> and any matches
+	 * reported for this file with {@link #acceptPatternMatch(TextSearchMatchAccess)}.
+	 * </p>
+	 * <p>
+	 * The default behaviour is to skip binary files
+	 * </p>
+	 * 
+	 * @param file the file that might be binary
+	 * @return If false, no pattern matches will be reported for the content of this file.
+	 */
+	public boolean reportBinaryFile(IFile file) {
+		return true;
+	}
+	
+	/**
+	 * Accepts the given search match and decides if the search should continue for this file.
 	 *
 	 * @param matchAccess gives access to information of the match found. The matchAccess is not a value
 	 * object. Its value might change after this method is finished, and the element might be reused.
