@@ -57,6 +57,8 @@ public abstract class DebugPopup extends PopupDialog {
     private IHandlerService fHandlerService;
 
 	private String fCommandId;
+	
+	private boolean fPersisted = false;
 
     /**
      * Constructs a new popup dialog of type <code>PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE</code>
@@ -122,9 +124,20 @@ public abstract class DebugPopup extends PopupDialog {
     }
 
     /**
-     * Persists the contents of the dialog.
+     * Persists the contents of the dialog. Subclasses should override as required,
+     * but also call super.persist().
      */
     protected void persist() {
+    	fPersisted = true;
+    }
+    
+    /**
+     * Returns whether the command handler was invoked to persist this popup's result.
+     * 
+     * @return whether the command handler was invoked to persist this popup's result
+     */
+    protected boolean wasPersisted() {
+    	return fPersisted;
     }
 
     /*

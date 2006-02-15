@@ -251,6 +251,9 @@ public class InspectPopupDialog extends DebugPopup {
     	if(fModelPresentation != null) {
     		fModelPresentation.dispose();
     	}
+    	if (!wasPersisted()) {
+    		fExpression.dispose();
+    	}
 		return super.close();
 	}
 
@@ -265,6 +268,7 @@ public class InspectPopupDialog extends DebugPopup {
      * @see org.eclipse.debug.ui.DebugPopup#persist()
      */
     protected void persist() {
+    	super.persist();
         DebugPlugin.getDefault().getExpressionManager().addExpression(fExpression);
 
         fExpression = null;
