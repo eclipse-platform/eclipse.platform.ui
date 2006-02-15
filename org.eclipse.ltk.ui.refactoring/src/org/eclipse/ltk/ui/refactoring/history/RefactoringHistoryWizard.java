@@ -451,8 +451,10 @@ public class RefactoringHistoryWizard extends Wizard {
 			public final void run() throws Exception {
 				if (fAboutToPerformFired) {
 					final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
-					if (entry != null)
-						RefactoringUIPlugin.log(new Status(IStatus.ERROR, entry.getPluginId(), entry.getCode(), entry.getMessage(), null));
+					if (entry != null) {
+						final String id= entry.getPluginId();
+						RefactoringUIPlugin.log(new Status(IStatus.ERROR, id != null && !id.equals("") ? id : RefactoringUIPlugin.getPluginId(), entry.getCode(), entry.getMessage(), null)); //$NON-NLS-1$
+					}
 				}
 			}
 		});
@@ -866,8 +868,10 @@ public class RefactoringHistoryWizard extends Wizard {
 								fAboutToPerformFired= true;
 							}
 						}
-						if (!status.isOK())
-							throw new CoreException(new Status(status.getSeverity(), RefactoringUIPlugin.getPluginId(), 0, null, null));
+						if (!status.isOK()) {
+							final int severity= status.getSeverity();
+							throw new CoreException(new Status(severity != RefactoringStatus.FATAL ? severity : IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 0, null, null));
+						}
 						super.run(new SubProgressMonitor(monitor, 80, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 					} finally {
 						monitor.done();
