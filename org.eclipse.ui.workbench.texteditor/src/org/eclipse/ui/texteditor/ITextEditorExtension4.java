@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 
 /**
@@ -34,4 +35,13 @@ public interface ITextEditorExtension4 {
 	 * @return the selected annotation or <code>null</code> if none
 	 */
 	public Annotation gotoAnnotation(boolean forward);
+
+	/**
+	 * Shows revision information in this editor.
+	 * 
+	 * @param info the revision information to display
+	 * @param quickDiffProviderId the quick diff provider that matches the source of the revision
+	 *        information
+	 */
+	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId);
 }

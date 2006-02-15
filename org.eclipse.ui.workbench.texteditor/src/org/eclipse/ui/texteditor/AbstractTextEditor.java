@@ -121,6 +121,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -5678,4 +5679,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return true;
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension4#showRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation, java.lang.String)
+	 * @since 3.2
+	 */
+	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
+		// no implementation
+	}
 }

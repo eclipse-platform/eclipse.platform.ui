@@ -443,13 +443,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			fIsChangeInformationShown= false;
 	}
 	
-	/**
-	 * Shows revision information in this editor.
-	 * 
-	 * @param info the revision information to display
-	 * @param quickDiffProviderId the quick diff provider that matches the source of the revision
-	 *        information
-	 * @since 3.2
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension4#showRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation, java.lang.String)
 	 */
 	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
 		if (!ensureQuickDiffProvider(quickDiffProviderId))

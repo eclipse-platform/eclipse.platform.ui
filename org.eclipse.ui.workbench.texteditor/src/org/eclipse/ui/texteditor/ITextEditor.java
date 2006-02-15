@@ -49,7 +49,7 @@ import org.eclipse.ui.IEditorPart;
  * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension3} since version 3.0
  * 		adding input state and change information control.</li>
  * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension4} since version 3.2
- * 		adding annotation navigation.</li>
+ * 		adding annotation navigation and revision information display.</li>
  * </ul>
  * </p>
  *
