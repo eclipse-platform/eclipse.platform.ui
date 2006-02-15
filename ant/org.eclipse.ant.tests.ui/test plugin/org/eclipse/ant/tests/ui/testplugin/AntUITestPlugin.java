@@ -19,8 +19,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 
@@ -54,7 +54,7 @@ public class AntUITestPlugin extends AbstractUIPlugin {
 		try {
 			Bundle bundle = getDefault().getBundle();
 			URL installURL= new URL(bundle.getEntry("/"), path.toString());
-			URL localURL= Platform.asLocalURL(installURL);
+			URL localURL= FileLocator.toFileURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException e) {
 			return null;

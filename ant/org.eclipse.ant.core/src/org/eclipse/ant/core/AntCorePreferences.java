@@ -32,6 +32,7 @@ import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -527,7 +528,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		try {
 			antObject.setPluginLabel(element.getNamespace());
 			Bundle bundle = Platform.getBundle(element.getNamespace());
-			URL url = Platform.asLocalURL(bundle.getEntry(library));
+			URL url = FileLocator.toFileURL(bundle.getEntry(library));
 			if (new File(url.getPath()).exists()) {
 				addURLToExtraClasspathEntries(url, element);
 				result.add(antObject);
@@ -565,7 +566,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			Bundle bundle = Platform.getBundle(element.getNamespace());
 			try {
-				URL url = Platform.asLocalURL(bundle.getEntry(library));
+				URL url = FileLocator.toFileURL(bundle.getEntry(library));
 				
 				if (new File(url.getPath()).exists()) {
 					addURLToExtraClasspathEntries(url, element);  
@@ -805,8 +806,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			return;
 		for (int i = 0; i < libraries.length; i++) {
 			try {
-				URL url = Platform.asLocalURL(source.getEntry(libraries[i].getValue()));
-				destination.add(new AntClasspathEntry(Platform.asLocalURL(url)));
+				URL url = FileLocator.toFileURL(source.getEntry(libraries[i].getValue()));
+				destination.add(new AntClasspathEntry(FileLocator.toFileURL(url)));
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);

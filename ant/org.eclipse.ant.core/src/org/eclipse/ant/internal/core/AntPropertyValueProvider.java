@@ -16,7 +16,7 @@ import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.IAntPropertyValueProvider;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.FileLocator;
 
 /**
  * Dynamic provider for Ant properties.
@@ -46,7 +46,7 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 			return "true"; //$NON-NLS-1$
 		} else if ("eclipse.home".equals(propertyName)) { //$NON-NLS-1$
 			try {
-				value = new File(Platform.resolve(new URL("platform:/base/")).getPath()).getAbsolutePath(); //$NON-NLS-1$
+				value = new File(FileLocator.resolve(new URL("platform:/base/")).getPath()).getAbsolutePath(); //$NON-NLS-1$
 				if (value.endsWith("/")) { //$NON-NLS-1$
 				    value = value.substring(0, value.length() - 1);
 				}

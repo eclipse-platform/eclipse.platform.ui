@@ -57,12 +57,12 @@ import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.core.AntSecurityManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Bundle;
@@ -1465,7 +1465,7 @@ public class InternalAntRunner {
 		File file= null;
 		for (int i = 0; i < antClasspath.length; i++) {
 			try {
-				file = new File(Platform.asLocalURL(antClasspath[i]).getPath());
+				file = new File(FileLocator.toFileURL(antClasspath[i]).getPath());
 			} catch (IOException e) {
 				continue;
 			}
