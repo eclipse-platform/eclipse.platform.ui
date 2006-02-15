@@ -23,13 +23,11 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
  * An <code>IQuickAssistAssistant</code> provides support for quick fixes and quick
  * assists.
  * The quick assist assistant is a {@link ISourceViewer} add-on. Its
- * purpose is to propose, display, and insert completions of the content
- * of the source viewer's document at the viewer's cursor position.
+ * purpose is to propose, display, and insert quick assist and quick fixes
+ * available at the current source viewer's quick assist invocation context.
  * <p>
- * A quick assist assistant has a list of {@link IQuickAssistProcessor}
- * objects each of which is registered for a  particular document content
- * type. The quick assist assistant uses the processors to provide the possible
- * quick assists.
+ * The quick assist assistant can be configured with a {@link IQuickAssistProcessor}
+ * which provides the possible quick assist and quick fix completions.
  * </p>
  * <p>
  * The interface can be implemented by clients. By default, clients use
@@ -37,8 +35,8 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
  * implementer of this interface.
  * </p>
  *
- * @see org.eclipse.jface.text.ITextViewer
- * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor
+ * @see ISourceViewer
+ * @see IQuickAssistProcessor
  */
  public interface IQuickAssistAssistant {
 
