@@ -51,6 +51,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.contexts.IContextService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -123,6 +124,17 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     private static final String XML_VALUE_OPENED = "opened"; //$NON-NLS-1$
     private static final String XML_VALUE_CLOSED = "closed"; //$NON-NLS-1$
     
+    // ids of base debug views in debug perspective that should not be auto-closed
+    private static Set fgBaseDebugViewIds = null;
+    
+    static {
+        fgBaseDebugViewIds = new HashSet();
+        fgBaseDebugViewIds.add(IDebugUIConstants.ID_DEBUG_VIEW);
+        fgBaseDebugViewIds.add(IDebugUIConstants.ID_VARIABLE_VIEW);
+        fgBaseDebugViewIds.add(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+        fgBaseDebugViewIds.add(IConsoleConstants.ID_CONSOLE_VIEW);
+    }
+    
     /**
      * Information for a view
      */
@@ -166,7 +178,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          * @return
          */
         public boolean isAutoClose() {
-            return "true".equals(fElement.getAttribute(ATTR_AUTO_CLOSE)); //$NON-NLS-1$
+            String autoclose = fElement.getAttribute(ATTR_AUTO_CLOSE);
+            return autoclose == null || "true".equals(autoclose); //$NON-NLS-1$
         }
         
         /**
@@ -183,6 +196,22 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          */
         public boolean isUserClosed() {
             return fUserClosed.contains(getActivePerspective().getId());
+        }
+        
+        /**
+         * Returns whether this view is part of the active persepctive by default
+         * 
+         * TODO: we really need a programatic way to determine which views are
+         * in a perspective by default, but it does not seem to exist.
+         * 
+         * @return
+         */
+        public boolean isDefault() {
+            String id = getActivePerspective().getId();
+            if (IDebugUIConstants.ID_DEBUG_PERSPECTIVE.equals(id)) {
+                return fgBaseDebugViewIds.contains(getViewId());
+            }
+            return false;
         }
         
         protected void userOpened() {
@@ -241,7 +270,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          */
         public void deactivated(IWorkbenchPage page) {
             if (!isUserOpened()) {
-                if (isAutoClose() || !IDebugUIConstants.ID_DEBUG_PERSPECTIVE.equals(getActivePerspective().getId())) {
+                if (isAutoClose() && !isDefault()) {
                     IViewReference reference = page.findViewReference(getViewId());
                     if (reference != null) {
                         try {
@@ -564,7 +593,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveOpened(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
-	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {        
 	}
 
 	/* (non-Javadoc)
