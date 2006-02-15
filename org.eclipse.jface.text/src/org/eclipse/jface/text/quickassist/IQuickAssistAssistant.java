@@ -16,6 +16,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension3;
 
 
 /**
@@ -43,6 +44,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 	/**
 	 * Installs quick assist support on the given source viewer.
+	 * <p>
+	 * <em>Note: This quick assist assistant will only be able to query the invocation context
+	 * if <code>sourceViewer</code> also implements {@link ISourceViewerExtension3}.</em> 
+	 * </p>
 	 *
 	 * @param sourceViewer the source viewer on which quick assist will work
 	 */
