@@ -706,7 +706,8 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 					oldSelection = new StructuredSelection();
 				}
 				if (getControl().getDisplay().getThread() == Thread.currentThread()) {
-					restoreSelection(oldSelection);
+					if (oldSelection != fCurrentSelection)
+						restoreSelection(oldSelection);
 				} else {
 					final ISelection tempSelection = oldSelection;
 					WorkbenchJob job = new WorkbenchJob("attemptSelection") { //$NON-NLS-1$
