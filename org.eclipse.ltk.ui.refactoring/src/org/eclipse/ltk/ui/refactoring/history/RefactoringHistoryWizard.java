@@ -451,10 +451,8 @@ public class RefactoringHistoryWizard extends Wizard {
 			public final void run() throws Exception {
 				if (fAboutToPerformFired) {
 					final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
-					if (entry != null) {
-						final String id= entry.getPluginId();
-						RefactoringUIPlugin.log(new Status(IStatus.ERROR, id != null && !id.equals("") ? id : RefactoringUIPlugin.getPluginId(), entry.getCode(), entry.getMessage(), null)); //$NON-NLS-1$
-					}
+					if (entry != null)
+						RefactoringUIPlugin.log(entry.toStatus());
 				}
 			}
 		});

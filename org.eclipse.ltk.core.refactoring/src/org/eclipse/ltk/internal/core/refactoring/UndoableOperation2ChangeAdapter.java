@@ -34,7 +34,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
 public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdvancedUndoableOperation  {
 	
@@ -343,7 +342,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	
 	private IStatus createStatus(ExecuteResult result) {
 		if (!result.validationStatus.isOK()) {
-			return asStatus(result.validationStatus.getEntryWithHighestSeverity());
+			return result.validationStatus.getEntryWithHighestSeverity().toStatus();
 		} else {
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR, 
 				RefactoringCoreMessages.UndoableOperation2ChangeAdapter_error_message,  
@@ -355,33 +354,10 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		if (status.isOK()) {
 			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 		} else {
-			return asStatus(status.getEntryWithHighestSeverity());
+			return status.getEntryWithHighestSeverity().toStatus();
 		}
 	}
 
-	private static IStatus asStatus(RefactoringStatusEntry entry) {
-		int statusSeverity= IStatus.ERROR;
-		switch (entry.getSeverity()) {
-			case RefactoringStatus.OK :
-				statusSeverity= IStatus.OK;
-				break;
-			case RefactoringStatus.INFO :
-				statusSeverity= IStatus.INFO;
-				break;
-			case RefactoringStatus.WARNING :
-			case RefactoringStatus.ERROR :
-				statusSeverity= IStatus.WARNING;
-				break;
-		}
-		String pluginId= entry.getPluginId();
-		int code= entry.getCode();
-		if (pluginId == null) {
-			pluginId= RefactoringCorePlugin.getPluginId();
-			code= IStatus.ERROR;
-		}
-		return new Status(statusSeverity, pluginId, code, entry.getMessage(), null);
-	}
-	
 	private IValidationCheckResultQuery getQuery(IAdaptable info, String title) {
 		IValidationCheckResultQuery result= (IValidationCheckResultQuery)info.getAdapter(IValidationCheckResultQuery.class);
 		if (result != null)

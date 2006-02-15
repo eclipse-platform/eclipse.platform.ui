@@ -11,6 +11,10 @@
 package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * An immutable object representing an entry in the list in <code>RefactoringStatus</code>.
@@ -217,6 +221,45 @@ public class RefactoringStatusEntry {
 	 */
 	public boolean isInfo() {
 		return fSeverity == RefactoringStatus.INFO;
+	}
+
+	/**
+	 * Returns this refactoring status entry as an {@link IStatus}.
+	 * <p>
+	 * If this refactoring status entry has a severity of
+	 * {@link RefactoringStatus#FATAL}, the returned status will have a
+	 * severity of {@link IStatus#ERROR}, otherwise a status with severity
+	 * corresponding to the refactoring status entry is returned. If the plugin
+	 * id of this refactoring status entry is not defined, the plugin id
+	 * <code>org.eclipse.ltk.core.refactoring</code> will be used in the
+	 * returned status.
+	 * </p>
+	 * 
+	 * @return the corresponding status
+	 * 
+	 * @since 3.2
+	 */
+	public IStatus toStatus() {
+		int statusSeverity= IStatus.ERROR;
+		switch (getSeverity()) {
+			case RefactoringStatus.OK:
+				statusSeverity= IStatus.OK;
+				break;
+			case RefactoringStatus.INFO:
+				statusSeverity= IStatus.INFO;
+				break;
+			case RefactoringStatus.WARNING:
+			case RefactoringStatus.ERROR:
+				statusSeverity= IStatus.WARNING;
+				break;
+		}
+		String pluginId= getPluginId();
+		int code= getCode();
+		if (pluginId == null) {
+			pluginId= RefactoringCorePlugin.getPluginId();
+			code= IStatus.ERROR;
+		}
+		return new Status(statusSeverity, pluginId, code, getMessage(), null);
 	}
 
 	/*
