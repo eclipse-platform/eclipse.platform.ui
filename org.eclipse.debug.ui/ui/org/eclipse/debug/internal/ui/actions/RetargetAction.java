@@ -197,7 +197,12 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 			return;
 		}
 		if (fTargetAdapter != null) {
-			fAction.setEnabled(canPerformAction(fTargetAdapter, getTargetSelection(), fActivePart));
+			Runnable r = new Runnable() {
+				public void run() {
+					fAction.setEnabled(canPerformAction(fTargetAdapter, getTargetSelection(), fActivePart));
+				}
+			};
+			DebugUIPlugin.getStandardDisplay().asyncExec(r);
 		} else {
 			fAction.setEnabled(false);
 		}

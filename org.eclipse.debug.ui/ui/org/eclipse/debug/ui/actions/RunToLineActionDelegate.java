@@ -121,18 +121,23 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		if (fAction == null) {
 			return;
 		}
-		boolean enabled = false;
-		if (fPartTarget != null && fTargetElement != null) {
-			IWorkbenchPartSite site = fActivePart.getSite();
-			if (site != null) {
-			    ISelectionProvider selectionProvider = site.getSelectionProvider();
-			    if (selectionProvider != null) {
-			        ISelection selection = selectionProvider.getSelection();
-			        enabled = fTargetElement.isSuspended() && fPartTarget.canRunToLine(fActivePart, selection, fTargetElement);
-			    }
+		Runnable r = new Runnable() {
+			public void run() {
+				boolean enabled = false;
+				if (fPartTarget != null && fTargetElement != null) {
+					IWorkbenchPartSite site = fActivePart.getSite();
+					if (site != null) {
+					    ISelectionProvider selectionProvider = site.getSelectionProvider();
+					    if (selectionProvider != null) {
+					        ISelection selection = selectionProvider.getSelection();
+					        enabled = fTargetElement.isSuspended() && fPartTarget.canRunToLine(fActivePart, selection, fTargetElement);
+					    }
+					}
+				}
+				fAction.setEnabled(enabled);				
 			}
-		}
-		fAction.setEnabled(enabled);
+		};
+		DebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 		
 	/* (non-Javadoc)
