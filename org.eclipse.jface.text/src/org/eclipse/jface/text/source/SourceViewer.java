@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
+import org.eclipse.jface.internal.text.source.TextInvocationContext;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -49,6 +50,7 @@ import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
 /**
@@ -68,7 +70,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * <p>
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
-public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2 {
+public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3 {
 
 
 	/**
@@ -539,14 +541,21 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		return null;
 	}
 
-	/**
-	 * Returns this viewers quick assist assistant.
-	 *
-	 * @return the quick assist assistant or <code>null</code> if none is configured
+	/*
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension3#getQuickAssistAssistant()
 	 * @since 3.2
 	 */
 	public IQuickAssistAssistant getQuickAssistAssistant() {
 		return fQuickAssistAssistant;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension3#getQuickAssistInvocationContext()
+	 * @since 3.2
+	 */
+	public IQuickAssistInvocationContext getQuickAssistInvocationContext() {
+		Point selection= getSelectedRange();
+		return new TextInvocationContext(this, selection.x, selection.x);
 	}
 
 	/*
@@ -1016,4 +1025,5 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			}
 		}
 	}
+
 }

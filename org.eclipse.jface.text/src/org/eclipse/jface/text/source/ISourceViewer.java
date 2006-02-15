@@ -43,6 +43,9 @@ import org.eclipse.jface.text.ITextViewer;
  * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension2} since version 3.0
  * allowing source viewers to roll back a previously performed configuration and
  * allows access to the viewer's visual annotation model.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension3} since version 3.2
+ * introducing the concept of a quick assist assistant and providing access
+ * to the quick assist invocation context.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the
@@ -51,6 +54,7 @@ import org.eclipse.jface.text.ITextViewer;
  *
  * @see org.eclipse.jface.text.source.ISourceViewerExtension
  * @see org.eclipse.jface.text.source.ISourceViewerExtension2
+ * @see org.eclipse.jface.text.source.ISourceViewerExtension3
  */
 public interface ISourceViewer extends ITextViewer {
 

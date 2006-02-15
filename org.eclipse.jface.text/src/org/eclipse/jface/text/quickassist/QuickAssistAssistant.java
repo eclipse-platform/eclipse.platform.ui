@@ -12,6 +12,8 @@ package org.eclipse.jface.text.quickassist;
 
 import org.eclipse.swt.graphics.Color;
 
+import org.eclipse.jface.internal.text.source.TextInvocationContext;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
@@ -22,6 +24,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 
 /**
@@ -40,40 +43,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant {
 			super.possibleCompletionsClosed();
 		}
 	}
-	
-	private static final class TextViewerContext implements IQuickAssistInvocationContext {
 
-		private ITextViewer fTextViewer;
-		private int fOffset;
-		
-		TextViewerContext(ITextViewer textViewer, int offset) {
-			fTextViewer= textViewer;
-			fOffset= offset;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getOffset()
-		 */
-		public int getOffset() {
-			return fOffset;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getLength()
-		 */
-		public int getLength() {
-			return -1;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getTextViewer()
-		 */
-		public ITextViewer getTextViewer() {
-			return fTextViewer;
-		}
-		
-	}
-	
 	
 	private static final class ContentAssistProcessor implements IContentAssistProcessor {
 
@@ -87,7 +57,11 @@ public class QuickAssistAssistant implements IQuickAssistAssistant {
 		 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 		 */
 		public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-			return fQuickAssistProcessor.computeQuickAssistProposals(new TextViewerContext(viewer, offset));
+			// panic code - should not happen
+			if (!(viewer instanceof ISourceViewer))
+				return null;
+			
+			return fQuickAssistProcessor.computeQuickAssistProposals(new TextInvocationContext((ISourceViewer)viewer, offset, -1));
 		}
 
 		/*
@@ -175,8 +149,8 @@ public class QuickAssistAssistant implements IQuickAssistAssistant {
 	/*
 	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#install(org.eclipse.jface.text.ITextViewer)
 	 */
-	public void install(ITextViewer textViewer) {
-		fQuickAssistAssistantImpl.install(textViewer);
+	public void install(ISourceViewer sourceViewer) {
+		fQuickAssistAssistantImpl.install(sourceViewer);
 	}
 
 	/*

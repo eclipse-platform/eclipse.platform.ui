@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.quickassist;
 
-import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 
 /**
@@ -41,5 +41,5 @@ public interface IQuickAssistInvocationContext {
 	 * 
 	 * @return the viewer or <code>null</code> if not available
 	 */
-	ITextViewer getTextViewer();
+	ISourceViewer getSourceViewer();
 }

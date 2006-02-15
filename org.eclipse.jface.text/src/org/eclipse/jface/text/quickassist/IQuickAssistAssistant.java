@@ -13,9 +13,9 @@ package org.eclipse.jface.text.quickassist;
 import org.eclipse.swt.graphics.Color;
 
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 
 /**
@@ -23,7 +23,7 @@ import org.eclipse.jface.text.source.Annotation;
  * assists.
  * The quick assist assistant is a {@link org.eclipse.jface.text.ITextViewer} add-on. Its
  * purpose is to propose, display, and insert completions of the content
- * of the text viewer's document at the viewer's cursor position.
+ * of the source viewer's document at the viewer's cursor position.
  * <p>
  * A quick assist assistant has a list of {@link IQuickAssistProcessor}
  * objects each of which is registered for a  particular document content
@@ -42,11 +42,11 @@ import org.eclipse.jface.text.source.Annotation;
  public interface IQuickAssistAssistant {
 
 	/**
-	 * Installs quick assist support on the given text viewer.
+	 * Installs quick assist support on the given source viewer.
 	 *
-	 * @param textViewer the text viewer on which quick assist will work
+	 * @param sourceViewer the source viewer on which quick assist will work
 	 */
-	void install(ITextViewer textViewer);
+	void install(ISourceViewer sourceViewer);
 
 	/**
 	 * Sets the information control creator for the additional information control.
@@ -56,7 +56,7 @@ import org.eclipse.jface.text.source.Annotation;
 	void setInformationControlCreator(IInformationControlCreator creator);
 
 	/**
-	 * Uninstalls quick assist support from the text viewer it has
+	 * Uninstalls quick assist support from the source viewer it has
 	 * previously be installed on.
 	 */
 	void uninstall();
