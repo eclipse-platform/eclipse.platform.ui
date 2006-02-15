@@ -43,12 +43,12 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	 * 
 	 * @param breakpoints the breakpoints to export
 	 * @param fileName absolute path of file to export breakpoints to - the file
-	 * 	will be overritten if it already exists
+	 * 	will be overwritten if it already exists
 	 */
 	public ExportBreakpointsOperation(IBreakpoint[] breakpoints, String fileName) {
 		fBreakpoints = breakpoints;
 		fFileName = fileName;
-	}//end constructor
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)

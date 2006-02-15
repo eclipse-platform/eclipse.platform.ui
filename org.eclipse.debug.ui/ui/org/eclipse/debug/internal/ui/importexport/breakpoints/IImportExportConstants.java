@@ -131,7 +131,7 @@ public interface IImportExportConstants {
 	public static final String IE_BP_ENABLED = "enabled"; //$NON-NLS-1$
 	
 	/**
-	 * The name of the registered attribute, whic is part of the breakpoint node information
+	 * The name of the registered attribute, which is part of the breakpoint node information
 	 * 
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
