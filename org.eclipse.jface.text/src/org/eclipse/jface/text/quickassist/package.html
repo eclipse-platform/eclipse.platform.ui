@@ -1,0 +1,30 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; I) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+This package provides the quick assist assistant add-on for an <tt>ISourceViewer</tt>.
+The quick assist assistant's purpose is to propose, display, and insert quick assists and quick fixes
+available at the current source viewer's quick assist invocation context.
+<p>
+A quick fix is a completion that can correct a problem reported and visible through an <tt>Annotation</tt>
+while a quick assist is not related to a problem or <tt>Annotation</tt>. Since quick assists can be proposed
+where appropriate they are normally not visible in the viewer. The quick assist assistant implementation in
+this package can show the quick assists that are available on the current line.
+</p>
+
+<h2>
+Package Specification</h2>
+<tt>IQuickAssistAssistant</tt> defines the concept of the quick assist assistant add-on.
+It collaborates with a quick assist processor (<tt>IQuickAssistProcessor</tt>)
+in order to generate quick fix and quick assist completion proposals (<tt>ICompletionProposal</tt>)
+available at the current quick assist invocation context (<tt>IQuickAssistInvocationContext</tt>).
+The package provides a default implementation <tt>QuickAssistAssistant</tt> which completely defines
+and implements the UI and the control flow for a quick assist assistant.
+<br>&nbsp;
+</body>
+</html>
