@@ -670,7 +670,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                         ModelNode parent = node.getParentNode();
                         ModelNode child = node;
                         Widget widget = parent.getWidget();
-                        if (parent != null && widget != null) {
+                        if (parent != null && widget != null && !widget.isDisposed()) {
                             int childIndex = parent.getChildIndex(child);
                             if (childIndex < 0) {
                                 break;
