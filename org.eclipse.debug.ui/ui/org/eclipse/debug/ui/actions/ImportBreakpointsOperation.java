@@ -64,7 +64,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
 	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
 	 * 	are exported with information about the breakpoint working sets they belong to. Those
-	 * 	working sets can be optioanlly re-created on import if they do not already exist in the
+	 * 	working sets can be optionally re-created on import if they do not already exist in the
 	 * 	workspace. 
 	 */
 	public ImportBreakpointsOperation(String fileName, boolean overwrite, boolean createWorkingSets) {
@@ -134,52 +134,49 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param marker the marker to restore to
 	 * @param node the memento to get the restore information from
 	 */
-	private void restoreBreakpoint(IMarker marker, IMemento node) {
+	private void restoreBreakpoint(IMarker marker, IMemento node) throws CoreException {
 		IMemento[] childnodes = null;
 		IMemento child = null;
-		try {
 		//get the marker attributes
-			child = node.getChild(IImportExportConstants.IE_NODE_MARKER);
-			marker.setAttribute(IMarker.LINE_NUMBER, child.getInteger(IMarker.LINE_NUMBER));
-			marker.setAttribute(IImportExportConstants.IE_NODE_TYPE, child.getString(IImportExportConstants.IE_NODE_TYPE));
-			marker.setAttribute(IImportExportConstants.CHARSTART, child.getString(IImportExportConstants.CHARSTART));
-			childnodes = child.getChildren(IImportExportConstants.IE_NODE_ATTRIB);
-			String workingsets = ""; //$NON-NLS-1$
-			for(int j = 0; j < childnodes.length; j++) {
-				//get the attribute and try to convert it to either Integer, Boolean or leave it alone (String)
-				String name = childnodes[j].getString(IImportExportConstants.IE_NODE_NAME),
-					   value = childnodes[j].getString(IImportExportConstants.IE_NODE_VALUE);
-				if(value != null & name != null) {
-					if(name.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
-						workingsets = value;
-					}
-					try {
-						marker.setAttribute(name, Integer.valueOf(value));
-					} catch(NumberFormatException e) {
-						if(value.equalsIgnoreCase("false") || value.equalsIgnoreCase("true")) { //$NON-NLS-1$ //$NON-NLS-2$
-							marker.setAttribute(name, Boolean.valueOf(value));
-						}
-						else {
-							marker.setAttribute(name, value);
-						}
-					}
+		child = node.getChild(IImportExportConstants.IE_NODE_MARKER);
+		marker.setAttribute(IMarker.LINE_NUMBER, child.getInteger(IMarker.LINE_NUMBER));
+		marker.setAttribute(IImportExportConstants.IE_NODE_TYPE, child.getString(IImportExportConstants.IE_NODE_TYPE));
+		marker.setAttribute(IImportExportConstants.CHARSTART, child.getString(IImportExportConstants.CHARSTART));
+		childnodes = child.getChildren(IImportExportConstants.IE_NODE_ATTRIB);
+		String workingsets = ""; //$NON-NLS-1$
+		for(int j = 0; j < childnodes.length; j++) {
+			//get the attribute and try to convert it to either Integer, Boolean or leave it alone (String)
+			String name = childnodes[j].getString(IImportExportConstants.IE_NODE_NAME),
+			value = childnodes[j].getString(IImportExportConstants.IE_NODE_VALUE);
+			if(value != null & name != null) {
+				if(name.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
+					workingsets = value;
 				}
-			}
-			//create the breakpoint
-			IBreakpoint breakpoint = fManager.createBreakpoint(marker);
-			breakpoint.setEnabled(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_ENABLED)).booleanValue());
-			breakpoint.setPersisted(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_PERSISTANT)).booleanValue());
-			breakpoint.setRegistered(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_REGISTERED)).booleanValue());
-			//bug fix 110080
-			fAdded.add(breakpoint);
-			if(fCreateWorkingSets) {
-				String[] names = workingsets.split("\\"+IImportExportConstants.DELIMITER); //$NON-NLS-1$
-				for(int m = 1; m < names.length; m++) {
-					createWorkingSet(names[m], breakpoint);
+				try {
+					marker.setAttribute(name, Integer.valueOf(value));
+				} catch(NumberFormatException e) {
+					if(value.equalsIgnoreCase("false") || value.equalsIgnoreCase("true")) { //$NON-NLS-1$ //$NON-NLS-2$
+						marker.setAttribute(name, Boolean.valueOf(value));
+					}
+					else {
+						marker.setAttribute(name, value);
+					}
 				}
 			}
 		}
-		catch(CoreException e){DebugPlugin.log(e);}
+		//create the breakpoint
+		IBreakpoint breakpoint = fManager.createBreakpoint(marker);
+		breakpoint.setEnabled(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_ENABLED)).booleanValue());
+		breakpoint.setPersisted(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_PERSISTANT)).booleanValue());
+		breakpoint.setRegistered(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_REGISTERED)).booleanValue());
+		//bug fix 110080
+		fAdded.add(breakpoint);
+		if(fCreateWorkingSets) {
+			String[] names = workingsets.split("\\"+IImportExportConstants.DELIMITER); //$NON-NLS-1$
+			for(int m = 1; m < names.length; m++) {
+				createWorkingSet(names[m], breakpoint);
+			}
+		}
 	}
 	
 	/**
@@ -206,7 +203,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	/**
 	 * Method to ensure markers and breakpoints are not both added to the working set
 	 * @param set the set to check
-	 * @param breakpoint the breakpoint to check for existance
+	 * @param breakpoint the breakpoint to check for existence
 	 * @return true if it is present false otherwise
 	 */
 	private boolean setContainsBreakpoint(IWorkingSet set, IBreakpoint breakpoint) {
@@ -224,35 +221,35 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * With this method we can search for similar markers even though they may have differing ids
 	 * 
 	 * @param resource the resource to search for the marker
-	 * @param line the line number or null
+	 * @param line the line number or <code>null</code>
 	 * @param type the type of the marker
-	 * @param typename the typename of the marker
-	 * @return the marker if found, or null
+	 * @param charstart the charstart attribute of the marker or <code>null</code>
+	 * @return the marker if found, or <code>null</code>
 	 */
-	private IMarker findGeneralMarker(IResource resource, String line, String type, Integer charstart) {
-		try {
-			IMarker[] markers = resource.findMarkers(null, false, IResource.DEPTH_ZERO);
-			if(type != null) {
-				for(int i = 0; i < markers.length; i++) {
-					Object localline = markers[i].getAttribute(IMarker.LINE_NUMBER);
-					String localtype = markers[i].getType();
-					if(type.equals(localtype)) {
-						if(localline != null & line != null) {
-							if(line.equals(localline.toString())) {
-								//compare their charstarts
-								if(charstart.toString().equals(markers[i].getAttribute(IImportExportConstants.CHARSTART).toString())) {
+	private IMarker findGeneralMarker(IResource resource, String line, String type, Integer charstart) throws CoreException {
+		IMarker[] markers = resource.findMarkers(null, false, IResource.DEPTH_ZERO);
+		if(type != null) {
+			for(int i = 0; i < markers.length; i++) {
+				Object localline = markers[i].getAttribute(IMarker.LINE_NUMBER);
+				String localtype = markers[i].getType();
+				if(type.equals(localtype)) {
+					if(localline != null & line != null) {
+						if(line.equals(localline.toString())) {
+							Integer markerCharstart= (Integer) markers[i].getAttribute(IImportExportConstants.CHARSTART);
+							if (charstart == null) {
+								if (markerCharstart == null) {
 									return markers[i];
 								}
+							} else if (charstart.equals(markerCharstart)) {
+								return markers[i];
 							}
 						}
-						else {
-							return markers[i];
-						}
+					} else {
+						return markers[i];
 					}
 				}
 			}
 		}
-		catch(Exception e) {e.printStackTrace();}
 		return null;
 	}
 }
