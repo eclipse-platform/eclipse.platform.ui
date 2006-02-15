@@ -38,19 +38,19 @@
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             icon="icons/welcome_item.gif"
-            id="org.eclipse.ui.intro.shared"/>
+            id="org.eclipse.ui.intro.universal"/>
    </extension>
    <extension
          point="org.eclipse.ui.intro.config">
       <config
-            configurer="org.eclipse.ui.internal.intro.shared.SharedIntroConfigurer"
-            content="$nl$/shared/introContent.xml"
-            id="org.eclipse.ui.intro.sharedConfig"
-            introId="org.eclipse.ui.intro.shared">
+            configurer="org.eclipse.ui.internal.intro.universal.UniversalIntroConfigurer"
+            content="$nl$/universal/introContent.xml"
+            id="org.eclipse.ui.intro.universalConfig"
+            introId="org.eclipse.ui.intro.universal">
          <presentation
                home-page-id="root" standby-page-id="standby">
               <implementation
-                  style="$nl$/shared/css/shared.css"
+                  style="$nl$/universal/css/universal.css"
                   kind="html"
                   os="win32,linux,macosx">
             </implementation>

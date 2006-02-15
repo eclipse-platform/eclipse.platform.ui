@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal.intro.shared;
+package org.eclipse.ui.internal.intro.universal;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -116,6 +116,8 @@ public class IntroData {
 	    int at = path.lastIndexOf("/@"); //$NON-NLS-1$
 	    if (at == -1)
 	       	return;
+	    if (path.charAt(path.length()-1)!='@')
+	    	return;
 	    String pageId = path.substring(0, at);
 	    PageData pd = (PageData)pages.get(pageId);
 	    if (pd==null) {

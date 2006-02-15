@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IExecutableExtensionFactory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
-import org.eclipse.ui.internal.intro.shared.WelcomeCustomizationPreferencePage;
+import org.eclipse.ui.internal.intro.universal.WelcomeCustomizationPreferencePage;
 
 /**
  * Factory for the intro's public extensions.

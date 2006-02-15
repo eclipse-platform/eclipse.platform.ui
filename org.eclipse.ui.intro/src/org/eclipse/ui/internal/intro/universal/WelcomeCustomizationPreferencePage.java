@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
-package org.eclipse.ui.internal.intro.shared;
+package org.eclipse.ui.internal.intro.universal;
 
 import java.io.FileWriter;
 import java.io.IOException;

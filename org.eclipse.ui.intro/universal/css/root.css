@@ -51,6 +51,7 @@ body {
 	*/
 	top: 250px;
 	text-align : center;
+	background-position: center;
 }
 /* specify a width for Moz so we can center.  
  * **Important** If additional links are added, we will have to increase this width 
@@ -60,6 +61,7 @@ body {
 	width : 33em;	margin : 0 auto;
 }
 #page-links {
+	height : 177px;
 	position : relative;	top : 50px;
 }
 #page-links a {

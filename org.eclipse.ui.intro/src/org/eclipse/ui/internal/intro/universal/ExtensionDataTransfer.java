@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal.intro.shared;
+package org.eclipse.ui.internal.intro.universal;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -7,7 +7,7 @@
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 
-package org.eclipse.ui.internal.intro.shared;
+package org.eclipse.ui.internal.intro.universal;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,11 +34,11 @@ import org.osgi.framework.Bundle;
  * @since 3.2
  */
 
-public class SharedIntroConfigurer extends IntroConfigurer implements ISharedIntroConstants {
+public class UniversalIntroConfigurer extends IntroConfigurer implements ISharedIntroConstants {
 
 	private ArrayList introData = new ArrayList();
 
-	public SharedIntroConfigurer() {
+	public UniversalIntroConfigurer() {
 		initialize();
 	}
 
@@ -387,15 +387,29 @@ public class SharedIntroConfigurer extends IntroConfigurer implements ISharedInt
 	}
 
 	public String resolvePath(String extensionId, String path) {
+		boolean extensionRelativePath=false;
 		IPath ipath = new Path(path);
 		String pageId = ipath.segment(0);
+		String s2 = ipath.segment(1);
+		if (!s2.equals("@")) //$NON-NLS-1$
+			extensionRelativePath=true;
 		if (introData.size() > 0) {
 			// TODO getting the active product one only
 			// Eventually we should consult the data from all the products
 			IntroData idata = (IntroData) introData.get(0);
 			PageData pdata = idata.getPage(pageId);
 			if (pdata != null) {
-				return pdata.resolvePath(extensionId);
+				String resolvedPath=pdata.resolvePath(extensionId);
+				if (extensionRelativePath) {
+					// not done - use the resolved extension path
+					// to complete the source path
+					IPath p2 = new Path(resolvedPath);
+					IPath p1 = ipath.removeFirstSegments(2);
+					// remove the last anchor and append the
+					// relative path from the extension
+					resolvedPath = p2.removeLastSegments(1).append(p1).toString(); 
+				}
+				return resolvedPath;
 			}
 		}
 		else {
