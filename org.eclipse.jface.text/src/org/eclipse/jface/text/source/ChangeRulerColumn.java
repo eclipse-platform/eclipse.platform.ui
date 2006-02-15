@@ -119,17 +119,16 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	private final InternalListener fInternalListener= new InternalListener();
 	/**
 	 * The mouse handler.
+	 * @since 3.2
 	 */
 	private final MouseHandler fMouseHandler= new MouseHandler();
 	/**
 	 * The revision painter.
-	 * 
 	 * @since 3.2
 	 */
 	private final RevisionPainter fRevisionPainter;
 	/**
 	 * The diff info painter.
-	 * 
 	 * @since 3.2
 	 */
 	private final DiffPainter fDiffPainter;
