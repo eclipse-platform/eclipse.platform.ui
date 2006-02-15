@@ -403,21 +403,11 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @param parent
      */
     protected void nodeChildrenChanged(ModelNode parentNode) {
-       Widget widget = parentNode.getWidget();
-       if (widget != null && !widget.isDisposed()) {
-           int childCount = parentNode.getChildCount();
-           setItemCount(widget, childCount);
-           
-// this fix for bug 126817 causes bug 127307 (inconsistency between hasChildren/getChildren)           
-//           if (childCount == 0) { 
-//               clear(widget);
-//               if (isVisible(widget)) {
-//                   internalRefresh(parentNode.getElement(), widget);
-//               }
-//           }
-           attemptExpansion();
-           attemptSelection(false);
-       }
+    	ModelNode[] children = parentNode.getChildrenNodes();
+    	if(children == null) {
+    		children = new ModelNode[0];
+    	}
+    	nodeChildrenSet(parentNode, children);
     }
     
     /**
@@ -902,8 +892,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     }
                 }
                 setItemCount(widget, children.length);
-                attemptExpansion();
-                attemptSelection(false);
             }
             else {
                 setItemCount(widget, children.length);
