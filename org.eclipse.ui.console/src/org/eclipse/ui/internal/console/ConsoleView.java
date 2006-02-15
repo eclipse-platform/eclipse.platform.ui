@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,7 +170,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 	
 	/**
-	 * Activates the participants fot the given console, if any.
+	 * Activates the participants for the given console, if any.
 	 * 
 	 * @param console
 	 */
@@ -304,7 +304,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		getViewSite().getPage().removePartListener((IPartListener2)this);
         ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
         consoleManager.removeConsoleListener(this);        
-        consoleManager.registerConsoleView(this);
+        consoleManager.unregisterConsoleView(this);
 	}
 
 	/**
