@@ -33,12 +33,21 @@ public class TreeSelection implements IStructuredSelection {
     /**
      * Constructs a selection based on the elements identified by the
      * given tree paths.
+     * We must consider the case where we can have a tree path trying to be created that has
+     * zero segments, for example if we manage to have a selection that has no data node
+     * within a tree.
      * 
      * @param paths tree paths where <code>null</code> indicates an
      *  empty selection
      */
     public TreeSelection(TreePath[] paths) {
-        fPaths = paths;
+        ArrayList path = new ArrayList();
+        for(int i = 0; i < paths.length; i++) {
+        	if(paths[i].getSegmentCount() > 0) {
+        		path.add(paths[i]);
+        	}
+        }
+        fPaths = (TreePath[])path.toArray(new TreePath[path.size()]);
     }
 
     /**

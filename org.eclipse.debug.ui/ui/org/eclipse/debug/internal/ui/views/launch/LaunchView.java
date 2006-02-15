@@ -411,9 +411,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	}
 	
 	protected void possibleContextChange(Object element) {
-		if(fProvider != null) {
-			fProvider.possibleContextChange(element);
-		}
+		fProvider.possibleContextChange(element);
 	}
 
 	/* (non-Javadoc)
