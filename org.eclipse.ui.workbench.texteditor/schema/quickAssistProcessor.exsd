@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.workbench.texteditor">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="quickAssistProcessors" name="Quick Assist Processors"/>
+         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="quickAssistProcessor" name="Quick Assist Processor"/>
       </appInfo>
       <documentation>
          &lt;br&gt;&lt;br&gt;
