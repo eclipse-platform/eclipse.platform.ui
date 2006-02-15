@@ -19,6 +19,7 @@ import org.eclipse.jface.text.source.Annotation;
  * the following functions:
  * <ul>
  * 	<li>annotation navigation</li>
+ * 	<li>revision information display</li>
  * </ul>
  * <p>
  * This interface may be implemented by clients.
