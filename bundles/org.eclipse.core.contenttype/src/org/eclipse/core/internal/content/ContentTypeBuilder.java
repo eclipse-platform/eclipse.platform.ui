@@ -121,7 +121,7 @@ public class ContentTypeBuilder {
 	 * @throws CoreException if mandatory attributes are missing in the markup
 	 */
 	private ContentType createContentType(IConfigurationElement contentTypeCE) throws CoreException {
-		String namespace = contentTypeCE.getNamespace();
+		String namespace = contentTypeCE.getContributor().getName();
 		String simpleId = contentTypeCE.getAttributeAsIs("id"); //$NON-NLS-1$
 		String name = contentTypeCE.getAttribute("name"); //$NON-NLS-1$
 
@@ -219,7 +219,7 @@ public class ContentTypeBuilder {
 	 */
 	private void registerFileAssociation(IConfigurationElement fileAssociationElement) {
 		//TODO: need to ensure the config. element is valid		
-		String contentTypeId = getUniqueId(fileAssociationElement.getNamespace(), fileAssociationElement.getAttribute("content-type")); //$NON-NLS-1$
+		String contentTypeId = getUniqueId(fileAssociationElement.getContributor().getName(), fileAssociationElement.getAttribute("content-type")); //$NON-NLS-1$
 		ContentType target = catalog.internalGetContentType(contentTypeId);
 		if (target == null)
 			return;

@@ -3,30 +3,33 @@
 <stringAttribute key="product" value="org.eclipse.platform.ide"/>
 <stringAttribute key="bootstrap" value=""/>
 <booleanAttribute key="useProduct" value="false"/>
+<stringAttribute key="deselected_workspace_plugins" value="org.eclipse.core.resources,org.eclipse.osgi.services,org.eclipse.core.filesystem,org.eclipse.core.tools.resources,org.eclipse.equinox.http,org.eclipse.osgi.tests,org.eclipse.update.scheduler,org.eclipse.core.tools,org.eclipse.equinox.metatype,org.eclipse.pde.build,org.eclipse.equinox.log,org.eclipse.equinox.device,org.eclipse.core.tests.resources,org.eclipse.test,org.eclipse.platform,org.eclipse.core.boot,org.eclipse.update.ui,org.eclipse.osgi.util,org.eclipse.equinox.useradmin,org.eclipse.equinox.supplement,org.eclipse.equinox.wireadmin,org.eclipse.equinox.event,org.eclipse.update.core,org.eclipse.core.resources.compatibility,org.eclipse.update.core.win32,org.eclipse.core.resources.spysupport,org.eclipse.core.filesystem.win32.x86,org.eclipse.core.resources.win32"/>
 <booleanAttribute key="tracing" value="false"/>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
+<stringAttribute key="selected_target_plugins" value="org.eclipse.core.commands,org.eclipse.core.expressions,org.eclipse.help,org.eclipse.jdt.junit.runtime,org.eclipse.jface,org.eclipse.pde.junit.runtime,org.eclipse.swt,org.eclipse.swt.win32.win32.x86,org.eclipse.ui,org.eclipse.ui.workbench,org.junit"/>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
+<booleanAttribute key="automaticValidate" value="false"/>
 <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
 <booleanAttribute key="automaticAdd" value="true"/>
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="includeFragments" value="false"/>
-<stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
+<stringAttribute key="location" value="c:\temp\runtime-test-workspace"/>
 <stringAttribute key="configLocation" value=""/>
+<stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
 <booleanAttribute key="clearws" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.core.tests.runtime.AutomatedTests"/>
-<stringAttribute key="templateConfig" value=""/>
-<booleanAttribute key="default" value="true"/>
-<stringAttribute key="vmargs" value=""/>
+<stringAttribute key="pde.version" value="3.2a"/>
+<stringAttribute key="templateConfig" value="${workspace_loc:Configuration/config.ini}"/>
+<booleanAttribute key="default" value="false"/>
 <booleanAttribute key="clearConfig" value="true"/>
 <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<stringAttribute key="progargs" value=""/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.core.tests.runtime"/>
 <booleanAttribute key="askclear" value="false"/>
-<stringAttribute key="location0" value="c:\temp\runtime-test-workspace"/>
+<booleanAttribute key="includeOptional" value="true"/>
 </launchConfiguration>

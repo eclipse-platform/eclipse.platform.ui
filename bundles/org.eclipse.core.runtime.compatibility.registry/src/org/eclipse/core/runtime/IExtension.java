@@ -61,8 +61,28 @@ public interface IExtension {
 	 * @throws InvalidRegistryObjectException if this extension is no longer valid
 	 * @see IExtensionRegistry
 	 * @since 3.0
+	 * 
+	 * @deprecated As namespace is no longer restricted to the contributor name, 
+	 * use {@link #getNamespaceIdentifier()} to obtain namespace name or {@link #getContributor()}
+	 * to get the name of the contributor of this registry element  
 	 */
 	public String getNamespace() throws InvalidRegistryObjectException;
+
+	/**
+	 * Returns the namespace name for this extension.
+	 * @return the namespace name for this extension
+	 * @throws InvalidRegistryObjectException if this extension is no longer valid
+	 * @since org.eclipse.equinox.registry 3.2	 
+	 */
+	public String getNamespaceIdentifier() throws InvalidRegistryObjectException;
+
+	/**
+	 * Returns the contributor of the extension.
+	 * @return the contributor for this extension
+	 * @throws InvalidRegistryObjectException if this extension is no longer valid
+	 * @since org.eclipse.equinox.registry 3.2	 
+	 */
+	public IContributor getContributor() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the unique identifier of the extension point
@@ -126,7 +146,7 @@ public interface IExtension {
 	 * @since 3.1
 	 */
 	public boolean isValid();
-	
+
 	/**
 	 * Returns the descriptor of the plug-in that declares this extension.
 	 * 

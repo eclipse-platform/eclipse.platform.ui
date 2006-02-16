@@ -31,13 +31,20 @@ public class AutomatedTests extends TestCase {
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AutomatedTests.class.getName());
+		
+		// Moved to the top: bug 124867
+		suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
+		
 		suite.addTest(org.eclipse.core.tests.runtime.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.runtime.compatibility.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.runtime.model.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
+		
+		// Moved to the top: bug 124867
+		//suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
+		
 		suite.addTest(org.eclipse.core.tests.internal.registry.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.runtime.session.AllTests.suite());
 		return suite;

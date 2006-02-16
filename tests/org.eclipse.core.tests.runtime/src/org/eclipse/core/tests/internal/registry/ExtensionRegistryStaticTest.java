@@ -43,6 +43,8 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		assertNotNull(Platform.getExtensionRegistry().getExtensionPoint("test" + name + ".xpt" + name));
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("test" + name + ".xpt" + name).getLabel(), "Label xpt" + name);
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("test" + name + ".xpt" + name).getNamespace(), "test" + name);
+		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("test" + name + ".xpt" + name).getNamespaceIdentifier(), "test" + name);
+		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("test" + name + ".xpt" + name).getContributor().getName(), "test" + name);
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("test" + name + ".xpt" + name).getSchemaReference(), "schema/xpt" + name + ".exsd");
 	}
 
@@ -203,6 +205,8 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		assertNotNull(Platform.getExtensionRegistry().getExtensionPoint("testG1.xptG2"));
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("testG1.xptG2").getLabel(), "Label xptG2");
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("testG1.xptG2").getNamespace(), "testG1");
+		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("testG1.xptG2").getNamespaceIdentifier(), "testG1");
+		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("testG1.xptG2").getContributor().getName(), "testG1");
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("testG1.xptG2").getSchemaReference(), "schema/xptG2.exsd");
 
 		//Test the namespace

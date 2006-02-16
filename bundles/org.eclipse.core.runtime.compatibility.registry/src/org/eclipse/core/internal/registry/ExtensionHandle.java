@@ -21,12 +21,14 @@ import org.osgi.framework.Bundle;
  */
 public class ExtensionHandle extends BaseExtensionHandle {
 
+	static final ExtensionHandle[] EMPTY_ARRAY = new ExtensionHandle[0];
+
 	public ExtensionHandle(IObjectManager objectManager, int id) {
 		super(objectManager, id);
 	}
 
 	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException {
-		String namespace = getNamespace();
+		String namespace = getContributor().getName();
 		IPluginDescriptor result = RegistryCompatibilityHelper.getPluginDescriptor(namespace);
 		if (result == null) {
 			Bundle underlyingBundle = BundleHelper.getDefault().getBundle(namespace);

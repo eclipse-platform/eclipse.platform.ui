@@ -25,6 +25,7 @@ public class AllTests extends TestCase {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 //		suite.addTest(ExtensionRegistryDynamicTest.suite());
 		suite.addTest(ExtensionRegistryStaticTest.suite());
+		suite.addTest(NamespaceTest.suite());
 		suite.addTestSuite(StaleObjects.class);
 		return suite;
 	}
