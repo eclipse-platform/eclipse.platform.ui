@@ -110,7 +110,7 @@
             configId="org.eclipse.ui.intro.sharedConfig"
             content="new-intro/whatsnewEx2.xml"/>
    </extension>
-   <!--
+   <!-- 
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
