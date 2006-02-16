@@ -103,15 +103,11 @@ public class ViewerSorter extends ViewerComparator{
         return collator;
     }
 
-	/**
-	 * Method overridden from superclass as {@link Comparator} is not 
-	 * supported in a {@link ViewerSorter}.
-	 * 
-	 * @exception UnsupportedOperationException
-	 * @deprecated this method is not supported in this class
-	 * @see #getCollator()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerComparator#getComparator()
 	 */
 	protected Comparator getComparator() {
-		throw new UnsupportedOperationException();
+		return getCollator();
 	}
 }
