@@ -46,6 +46,7 @@ public class LaunchSuspendTrigger implements ISuspendTriggerAdapter, IDebugEvent
 	}
 	
 	protected void dispose() {
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 		fListeners = null;
 		fFactory.dispose(this);
 	}
