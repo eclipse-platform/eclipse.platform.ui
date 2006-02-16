@@ -28,8 +28,8 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * ContentAssistCommandAdapter extends {@link ContentProposalAdapter} to invoke
- * content proposals using a specified {@link ICommand}. The ability to specify
- * a {@link KeyStroke} that explicitly invokes content proposals is hidden by
+ * content proposals using a specified {@link org.eclipse.ui.commands.ICommand}. The ability to specify
+ * a {@link org.eclipse.jface.bindings.keys.KeyStroke} that explicitly invokes content proposals is hidden by
  * this class, and instead the String id of a command is used. If no command id
  * is specified by the client, then the default workbench content assist command
  * is used.
