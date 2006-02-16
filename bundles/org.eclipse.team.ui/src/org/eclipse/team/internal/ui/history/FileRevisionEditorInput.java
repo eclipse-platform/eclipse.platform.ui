@@ -5,8 +5,7 @@ import java.util.Date;
 
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
@@ -16,7 +15,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditorInput {
+public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter,IStorageEditorInput {
 
 	private IFileRevision file;
 	private IStorage storage;
@@ -86,7 +85,9 @@ public class FileRevisionEditorInput implements IWorkbenchAdapter,IStorageEditor
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;
 		}
-		return null;
+		if (adapter == IFileRevision.class)
+			return file;
+		return super.getAdapter(adapter);
 	}
 
 	public Object[] getChildren(Object o) {
