@@ -175,7 +175,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 		IntroElement clink = new IntroElement("link"); //$NON-NLS-1$
 		clink
 				.setAttribute(
-						"url", "http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.ui.intro&class=org.eclipse.ui.internal.intro.shared.CustomizeCommand&pageId=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$
+						"url", "http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.ui.intro&class=org.eclipse.ui.internal.intro.universal.CustomizeCommand&pageId=" + pageId); //$NON-NLS-1$ //$NON-NLS-2$
 		clink.setAttribute("label", Messages.SharedIntroConfigurer_customize_label); //$NON-NLS-1$
 		clink.setAttribute("id", "customize"); //$NON-NLS-1$ //$NON-NLS-2$
 		IntroElement text = new IntroElement("text"); //$NON-NLS-1$
@@ -319,7 +319,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 		IntroElement element = new IntroElement("link"); //$NON-NLS-1$
 		element.setAttribute("label", label); //$NON-NLS-1$
 		element.setAttribute("url", url); //$NON-NLS-1$
-		element.setAttribute("id", "id"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("id", id); //$NON-NLS-1$
 		element.setAttribute("style-id", styleId); //$NON-NLS-1$
 		return element;
 	}
