@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ui.history;
 
 import java.util.*;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
@@ -319,8 +320,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	}
 	
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		//TODO: Add support for refreshing contents based on current selection when
+		//view regains focus
 	}
 
 	/**
@@ -408,7 +409,14 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	}
 	
 	public IHistoryPage itemDropped(Object object, boolean refresh) {
-
+		
+		//TODO: see #setFocus()
+		/*//check to see if history view is visible - if it's not, don't bother
+		//going to the trouble of fetching the history
+		if (!this.getSite().getPage().isPartVisible(this))
+			return null;*/
+		
+		
 		IResource resource = Utils.getResource(object);
 		if (resource != null) {
 			
@@ -472,6 +480,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 					tempPageContainer = createPage(historyPageSource, object);
 				}
 				if (tempPageContainer != null) {
+					
+					//check to see if this resource is alreadu being displayed in another page
+					IHistoryPage existingPage = checkForExistingPage(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh);
+					if (existingPage != null){
+						return existingPage;
+					}
 					
 					IHistoryPage pinnedPage = checkForPinnedView(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh);
 					if (pinnedPage != null)
@@ -620,13 +634,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		IEditorInput input = editor.getEditorInput();
 
 		if (input instanceof FileRevisionEditorInput) {
-			IFile file;
-			try {
-				file = ResourcesPlugin.getWorkspace().getRoot().getFile(((FileRevisionEditorInput) input).getStorage().getFullPath());
-				if (file != null) {
-					itemDropped(file, false);
-				}
-			} catch (CoreException e) {
+			//See if the input adapts to a file revision
+			Object fileRev =((FileRevisionEditorInput) input).getAdapter(IFileRevision.class);
+			if (fileRev != null){
+				itemDropped(fileRev, false);
 			}
 		} // Handle regular file editors
 		else {

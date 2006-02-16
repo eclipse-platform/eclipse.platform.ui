@@ -762,6 +762,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			return CVSWorkspaceRoot.getCVSFileFor((IFile) object);
 		} else if (object instanceof ICVSRemoteFile){
 			return (ICVSRemoteFile) object;
+		} else if (object instanceof CVSFileRevision){
+			return ((CVSFileRevision) object).getCVSRemoteFile();
 		}
 		
 		return null;
@@ -1133,5 +1135,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//don't bother trying to refresh any history until the input has been set
 		if (refreshCVSFileHistoryJob != null)
 			refreshHistory(false);
+	}
+
+	public TableViewer getTableViewer() {
+		return tableViewer;
 	}
 }

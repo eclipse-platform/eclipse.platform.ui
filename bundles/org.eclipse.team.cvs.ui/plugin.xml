@@ -1451,6 +1451,11 @@
             class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
          <adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision"
+            class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
+         <adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.team.ui.teamDecorators">
