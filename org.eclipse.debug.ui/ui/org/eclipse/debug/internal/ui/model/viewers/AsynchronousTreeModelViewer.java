@@ -17,13 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.TreeSelection;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
@@ -205,25 +203,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         if (node != null) {
             ((AsynchronousTreeModel)getModel()).updateChildren(node);
         }
-    }
-
-    /**
-     * Returns the tree element adapter for the given element or
-     * <code>null</code> if none.
-     * 
-     * @param element
-     *            element to retrieve adapter for
-     * @return presentation adapter or <code>null</code>
-     */
-    protected IAsynchronousContentAdapter getContentAdapter(Object element) {        
-        IAsynchronousContentAdapter adapter = null;
-        if (element instanceof IAsynchronousContentAdapter) {
-            adapter = (IAsynchronousContentAdapter) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IAsynchronousContentAdapter) adaptable.getAdapter(IAsynchronousContentAdapter.class);
-        }
-        return adapter;
     }
 
     /**
