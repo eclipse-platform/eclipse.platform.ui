@@ -119,11 +119,15 @@ public class SteppingTests extends AbstractAntDebugTest {
 				fileName+="SepVM";
 			}
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
-			thread= launchToLineBreakpoint(config, bp);
-			
+			thread= launchToLineBreakpoint(config, bp); 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+
 			debugFrame(kind, frameName, frameLineNumber, thread);
 			return thread;
-		} finally {
+        } finally {
 			if (terminate) {
 				terminateAndRemove(thread);
 				removeAllBreakpoints();

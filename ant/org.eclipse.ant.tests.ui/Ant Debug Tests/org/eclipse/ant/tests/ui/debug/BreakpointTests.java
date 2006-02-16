@@ -205,6 +205,7 @@ public class BreakpointTests extends AbstractAntDebugTest {
                 Thread.sleep(3000); //TODO bug 121207
             }
 		    thread= launchToLineBreakpoint(copy, bp);
+            Thread.sleep(1000);
 			bp= createLineBreakpoint(secondLineNumber, file);
 		    resumeToLineBreakpoint(thread, bp);
 		} catch (InterruptedException e) {
