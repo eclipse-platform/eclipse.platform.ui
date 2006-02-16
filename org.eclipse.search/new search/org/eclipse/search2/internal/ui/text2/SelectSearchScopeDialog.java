@@ -56,9 +56,8 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search2.internal.ui.SearchMessages;
 
 public class SelectSearchScopeDialog extends SelectionDialog {
-    private final static int SIZING_SELECTION_WIDGET_WIDTH = 400;
-
-    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 300;
+    private final static int SIZING_SELECTION_WIDGET_WIDTH_IN_CHARS = 70;
+    private final static int SIZING_SELECTION_WIDGET_HEIGHT_IN_CHARS = 23;
 
 	private String fMessage;
 	private IScopeDescription fScope;
@@ -71,13 +70,16 @@ public class SelectSearchScopeDialog extends SelectionDialog {
 		super(parentShell);
 		setTitle(title);
 		fMessage= message;
+		setShellStyle(getShellStyle() | SWT.RESIZE);		
 	}
 
     protected Control createDialogArea(Composite parent) {
+    	initializeDialogUnits(parent);
+    	
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NULL);
         composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         Label label = new Label(composite, SWT.WRAP);
         label.setText(fMessage);
@@ -96,9 +98,9 @@ public class SelectSearchScopeDialog extends SelectionDialog {
         fTree.setInput(ResourcesPlugin.getWorkspace().getRoot());
         fTree.setSorter(new RetrieverViewerSorter(labelProvider));
 
-        data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
-        data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-        data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+        data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = convertHeightInCharsToPixels(SIZING_SELECTION_WIDGET_HEIGHT_IN_CHARS);
+        data.widthHint = convertWidthInCharsToPixels(SIZING_SELECTION_WIDGET_WIDTH_IN_CHARS);
         fTree.getControl().setLayoutData(data);
         fTree.getControl().setFont(font);
 
