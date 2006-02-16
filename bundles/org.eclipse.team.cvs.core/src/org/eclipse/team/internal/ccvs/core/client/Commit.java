@@ -13,16 +13,12 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.Collection;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 
 public class Commit extends Command {
@@ -96,12 +92,19 @@ public class Commit extends Command {
 	
 	protected IStatus clearModifiedState(ICVSFile cvsFile) throws CVSException {
 		byte[] info = cvsFile.getSyncBytes();
+		IResource resource = cvsFile.getIResource();
+		String filePath;
+		if (resource == null) {
+			filePath = cvsFile.getRepositoryRelativePath();
+		} else {
+			filePath = resource.getFullPath().toString();
+		}
 		if (info == null) {
 			// There should be sync info. Log the problem
-			return new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_syncInfoMissing, new String[] { cvsFile.getIResource().getFullPath().toString() }), null); 
+			return new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_syncInfoMissing, new String[] { filePath }), null); 
 		}
 		cvsFile.checkedIn(null, true /* commit in progress */);
-		return new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_timestampReset, new String[] { cvsFile.getIResource().getFullPath().toString() }), null); //;
+		return new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_timestampReset, new String[] { filePath }), null); //;
 	}
 	
 	/**
