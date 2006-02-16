@@ -653,22 +653,24 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                         // attempt to map widget
                         ModelNode parent = node.getParentNode();
                         ModelNode child = node;
-                        Widget widget = parent.getWidget();
-                        if (parent != null && widget != null && !widget.isDisposed()) {
-                            int childIndex = parent.getChildIndex(child);
-                            if (childIndex < 0) {
-                                break;
-                            }
-                            TreeItem[] items = getItems(widget);
-                            if (childIndex < items.length) {
-                                getModel().mapWidget(items[childIndex], child);
-                                widget = child.getWidget();
-                                toSelect.add(widget);
-                                theElements.add(child.getElement());
-                                selected = true;
-                            } else {
-                                break;
-                            }
+                        if (parent != null) {
+                        	Widget widget = parent.getWidget();
+		                    if (widget != null && !widget.isDisposed()) {
+		                        int childIndex = parent.getChildIndex(child);
+		                        if (childIndex < 0) {
+		                            break;
+		                        }
+		                        TreeItem[] items = getItems(widget);
+		                        if (childIndex < items.length) {
+		                            getModel().mapWidget(items[childIndex], child);
+		                            widget = child.getWidget();
+		                            toSelect.add(widget);
+		                            theElements.add(child.getElement());
+		                            selected = true;
+		                        } else {
+		                            break;
+		                        }
+		                    }
                         }
                     }
                 }
