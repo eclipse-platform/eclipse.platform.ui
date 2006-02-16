@@ -684,6 +684,31 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
  &lt;/location&gt;
 &lt;/widget&gt;
 &lt;/pre&gt;
+&lt;p&gt;
+You can also use widgets to contribute into the workbench trim. The following example defines a new &apos;HeapStatus&apos; widget that should be placed, by default, immediately after the status line trim (i.e. at the bottom of the workbench window). See the description fo the &apos;bar&apos; element for more information on the pre-defined groups.
+&lt;/p&gt;
+&lt;p&gt;
+Note that trim &apos;groups&apos; can be re-located to the other trim areas. The location information&apos;s &lt;code&gt;relativeTo&lt;/code&gt; will presume that the group that is referenced is in its default position when determining the new trim&apos;s location. In general it is expected that contributors of this type will create their own group to host the new widget, allowing that trim element to be relocated independently of the other trim elements. One notable exception to this is the &apos;status&apos; group.
+&lt;/p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.menus&quot;&gt;
+      &lt;group
+            id=&quot;TestTrimAPI.heapStatusGroup&quot;
+            separatorsVisible=&quot;true&quot;&gt;
+         &lt;location&gt;
+            &lt;bar type=&quot;trim&quot;/&gt;
+            &lt;order position=&quot;after&quot; relativeTo=&quot;status&quot;/&gt;
+         &lt;/location&gt;
+      &lt;/group&gt;
+      &lt;widget class=&quot;HeapStatusWidget&quot; id=&quot;TestTrimAPI.HeapStatus&quot;&gt;
+         &lt;location&gt;
+            &lt;bar path=&quot;heapStatusGroup&quot; type=&quot;trim&quot;/&gt;
+         &lt;/location&gt;
+         &lt;layout fillMajor=&quot;false&quot; fillMinor=&quot;true&quot;/&gt;
+      &lt;/widget&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
