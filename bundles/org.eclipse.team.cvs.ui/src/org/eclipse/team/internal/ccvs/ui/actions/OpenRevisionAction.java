@@ -57,6 +57,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 								String id = getEditorID(file.getName(), file.getContents());
 								page.getSite().getPage().openEditor(new FileRevisionEditorInput(revision), id);
 							} catch (CoreException e) {
+								//TODO: Better error handling here - a message would be good
 							}
 							
 						}
@@ -73,10 +74,6 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 			}
 	}
 	
-	public boolean isEnabled() {
-		return true;
-	}
-
 	/* private */ String getEditorID(String fileName, InputStream contents) {
 		IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
 		IEditorRegistry registry = workbench.getEditorRegistry();
@@ -104,10 +101,25 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 
 	protected boolean updateSelection(IStructuredSelection selection) {
 		this.selection = selection;
-		return true;
+		return shouldShow();
 	}
 	
 	public void setPage(CVSHistoryPage page) {
 		this.page = page;
 	}
+	
+	private boolean shouldShow() {
+		IStructuredSelection structSel = selection;
+		Object[] objArray = structSel.toArray();
+		
+		for (int i = 0; i < objArray.length; i++) {
+			IFileRevision revision = (IFileRevision) objArray[i];
+			//check to see if any of the selected revisions are deleted revisions
+			if (revision != null && !revision.exists())
+				return false;
+		}
+		
+		return true;
+	}
+
 }

@@ -140,6 +140,7 @@ public class CVSFileHistory extends FileHistory {
 					arrangeRevisions();
 				}
 			} catch (CoreException e) {
+				//TODO: Handle failure to connect errors
 			} finally {
 				monitor.done();
 			}

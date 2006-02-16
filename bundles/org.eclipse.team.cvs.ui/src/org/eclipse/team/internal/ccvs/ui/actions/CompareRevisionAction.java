@@ -13,10 +13,12 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ccvs.ui.CVSHistoryPage;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.ui.*;
@@ -51,6 +53,12 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 				break;
 			}
 
+			if (file1 == null || file2 == null ||
+			   !file1.exists() || !file2.exists()){
+				MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, CVSUIMessages.CompareRevisionAction_DeleteCompareMessage);
+				return;
+			}
+			
 			FileRevisionTypedElement left = new FileRevisionTypedElement(file1);
 			FileRevisionTypedElement right = new FileRevisionTypedElement(file2);
 			
@@ -97,17 +105,31 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		this.selection = selection;
 		if (selection.size() == 1){
 			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithCurrent);
-			return true;
+			return shouldShow();
 		}
 		else if (selection.size() == 2){
 			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithOther);	
-			return true;
+			return shouldShow();
 		}
 
 		return false;
 	}
 	public void setPage(CVSHistoryPage page) {
 		this.page = page;
+	}
+
+	private boolean shouldShow() {
+		IStructuredSelection structSel = selection;
+		Object[] objArray = structSel.toArray();
+		
+		for (int i = 0; i < objArray.length; i++) {
+			IFileRevision revision = (IFileRevision) objArray[i];
+			//check to see if any of the selected revisions are deleted revisions
+			if (revision != null && !revision.exists())
+				return false;
+		}
+		
+		return true;
 	}
 
 }

@@ -291,7 +291,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		});
 		openAction.setPage(this);
 		
-		compareAction.setPage(this);
 		OpenStrategy handler = new OpenStrategy(tableViewer.getTable());
 		handler.addOpenListener(new IOpenEventListener() {
 		public void handleOpen(SelectionEvent e) {
