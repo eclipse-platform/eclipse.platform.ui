@@ -39,7 +39,11 @@ package org.eclipse.jface.util;
  *             Please note that the {@link #ListenerList(int)} and
  *             {@link org.eclipse.core.runtime.ListenerList#ListenerList(int)}
  *             constructors have different semantics. Please read the javadoc
- *             carefully.
+ *             carefully. Also note that the equivalent of
+ *             {@link #ListenerList()} is actually
+ *             {@link org.eclipse.core.runtime.ListenerList#ListenerList(int)}
+ *             with {@link org.eclipse.core.runtime.ListenerList#IDENTITY} as
+ *             the argument.
  */
 public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 
