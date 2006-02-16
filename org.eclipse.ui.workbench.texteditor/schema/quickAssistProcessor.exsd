@@ -7,18 +7,20 @@
       </appInfo>
       <documentation>
          &lt;br&gt;&lt;br&gt;
-&lt;strong&gt;This extension point is not yet in use for M5. The implementation will be provided during M6.&lt;/strong&gt;
+&lt;blink&gt;&lt;strong&gt;This extension point is not yet in use for M5. The implementation will be provided during M6.&lt;/strong&gt;&lt;/blink&gt;
 &lt;br&gt;&lt;br&gt;
 
-This extension point allows to add Quick Assist processors which can offer Quick Fixes for a given annotation type and Quick Assists for a given invocation context.
+This extension point allows to add quick assist processors which can offer Quick Fixes for a given annotation type and Quick Assists for a given invocation context. A Quick Fix is a completion that can correct a problem reported and visible through an annotation (&lt;code&gt;Annotation&lt;/code&gt;) while a Quick Assist is not related to a problem or annotation. Since Quick Assists can be proposed where appropriate they are normally not visible in the viewer.
 &lt;p&gt;
-This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Properties to test on are:
-&lt;dl&gt;
+This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Variables available for testing are:
+&lt;ul&gt;
 &lt;li&gt;invocationContext: type IQuickAssistInvocationContext; the context in which quick assist or quick fix is requested&lt;/li&gt;
-&lt;/dl&gt;
+&lt;/ul&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
@@ -51,6 +53,9 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
 
    <element name="provider">
       <complexType>
+         <sequence>
+            <element ref="enablement"/>
+         </sequence>
          <attribute name="annotationType" type="string">
             <annotation>
                <documentation>
