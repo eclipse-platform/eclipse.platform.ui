@@ -82,7 +82,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *            The parent of this action bar; must not be <code>null</code>.
 	 */
 	public SubActionBars(final IActionBars parent) {
-		this(parent, parent.getServiceLocator());
+		this(parent, null);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * @param parent
 	 *            The parent of this action bar; must not be <code>null</code>.
 	 * @param serviceLocator
-	 *            The service locator for this action bar; must not be
+	 *            The service locator for this action bar; should not be
 	 *            <code>null</code>.
 	 */
 	public SubActionBars(final IActionBars parent,
@@ -413,63 +413,66 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *            may be passed to deregister a handler.
 	 */
 	public void setGlobalActionHandler(String actionID, IAction handler) {
-		final IServiceLocator locator = getServiceLocator();
 		if (handler != null) {
 			// Update the action handlers.
 			if (actionHandlers == null)
 				actionHandlers = new HashMap(11);
 			actionHandlers.put(actionID, handler);
 
-			// Update the handler activations.
-			final IHandlerService service = (IHandlerService) locator
-					.getService(IHandlerService.class);
-			Map activationsByActionId = null;
-			if (activationsByActionIdByServiceLocator == null) {
-				activationsByActionIdByServiceLocator = new WeakHashMap();
-				activationsByActionId = new HashMap();
-				activationsByActionIdByServiceLocator.put(locator,
-						activationsByActionId);
-			} else {
-				activationsByActionId = (Map) activationsByActionIdByServiceLocator
-						.get(locator);
-				if (activationsByActionId == null) {
+			// Add a mapping from this action id to the command id.
+			if (serviceLocator != null) {
+				final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
+						.getService(IActionCommandMappingService.class);
+				final String commandId = mappingService.getCommandId(actionID);
+
+				// Update the handler activations.
+				final IHandlerService service = (IHandlerService) serviceLocator
+						.getService(IHandlerService.class);
+				Map activationsByActionId = null;
+				if (activationsByActionIdByServiceLocator == null) {
+					activationsByActionIdByServiceLocator = new WeakHashMap();
 					activationsByActionId = new HashMap();
-					activationsByActionIdByServiceLocator.put(locator,
+					activationsByActionIdByServiceLocator.put(serviceLocator,
 							activationsByActionId);
-				} else if (activationsByActionId.containsKey(actionID)) {
-					final Object value = activationsByActionId.remove(actionID);
-					if (value instanceof IHandlerActivation) {
-						final IHandlerActivation activation = (IHandlerActivation) value;
-						service.deactivateHandler(activation);
-						activation.getHandler().dispose();
+				} else {
+					activationsByActionId = (Map) activationsByActionIdByServiceLocator
+							.get(serviceLocator);
+					if (activationsByActionId == null) {
+						activationsByActionId = new HashMap();
+						activationsByActionIdByServiceLocator.put(
+								serviceLocator, activationsByActionId);
+					} else if (activationsByActionId.containsKey(actionID)) {
+						final Object value = activationsByActionId
+								.remove(actionID);
+						if (value instanceof IHandlerActivation) {
+							final IHandlerActivation activation = (IHandlerActivation) value;
+							service.deactivateHandler(activation);
+							activation.getHandler().dispose();
+						}
 					}
 				}
-			}
 
-			// Add a mapping from this action id to the command id.
-			final IActionCommandMappingService mappingService = (IActionCommandMappingService) locator
-					.getService(IActionCommandMappingService.class);
-			final String commandId = mappingService.getCommandId(actionID);
+				if (commandId != null) {
+					// Register this as a handler with the given definition id.
+					// the expression gives the setGlobalActionHandler() a
+					// priority.
+					final IHandler actionHandler = new ActionHandler(handler);
+					final IHandlerActivation activation = service
+							.activateHandler(commandId, actionHandler,
+									new Expression() {
+										public final EvaluationResult evaluate(
+												final IEvaluationContext context) {
+											return EvaluationResult.TRUE;
+										}
 
-			if (commandId != null) {
-				// Register this as a handler with the given definition id.
-				// the expression gives the setGlobalActionHandler() a
-				// priority.
-				final IHandler actionHandler = new ActionHandler(handler);
-				final IHandlerActivation activation = service.activateHandler(
-						commandId, actionHandler, new Expression() {
-							public final EvaluationResult evaluate(
-									final IEvaluationContext context) {
-								return EvaluationResult.TRUE;
-							}
-
-							public final void collectExpressionInfo(
-									final ExpressionInfo info) {
-								info
-										.addVariableNameAccess(SourcePriorityNameMapping.LEGACY_LEGACY_NAME);
-							}
-						});
-				activationsByActionId.put(actionID, activation);
+										public final void collectExpressionInfo(
+												final ExpressionInfo info) {
+											info
+													.addVariableNameAccess(SourcePriorityNameMapping.LEGACY_LEGACY_NAME);
+										}
+									});
+					activationsByActionId.put(actionID, activation);
+				}
 			}
 
 		} else {
@@ -477,25 +480,28 @@ public class SubActionBars extends EventManager implements IActionBars {
 				actionHandlers.remove(actionID);
 
 			// Remove the handler activation.
-			final IHandlerService service = (IHandlerService) locator
-					.getService(IHandlerService.class);
-			if (activationsByActionIdByServiceLocator != null) {
-				final Map activationsByActionId = (Map) activationsByActionIdByServiceLocator
-						.get(locator);
-				if ((activationsByActionId != null)
-						&& (activationsByActionId.containsKey(actionID))) {
-					final Object value = activationsByActionId.remove(actionID);
-					if (value instanceof IHandlerActivation) {
-						final IHandlerActivation activation = (IHandlerActivation) value;
-						service.deactivateHandler(activation);
-						activation.getHandler().dispose();
+			if (serviceLocator != null) {
+				final IHandlerService service = (IHandlerService) serviceLocator
+						.getService(IHandlerService.class);
+				if (activationsByActionIdByServiceLocator != null) {
+					final Map activationsByActionId = (Map) activationsByActionIdByServiceLocator
+							.get(serviceLocator);
+					if ((activationsByActionId != null)
+							&& (activationsByActionId.containsKey(actionID))) {
+						final Object value = activationsByActionId
+								.remove(actionID);
+						if (value instanceof IHandlerActivation) {
+							final IHandlerActivation activation = (IHandlerActivation) value;
+							service.deactivateHandler(activation);
+							activation.getHandler().dispose();
+						}
 					}
 				}
 			}
 		}
 		actionHandlersChanged = true;
 	}
-	
+
 	/**
 	 * Sets the service locator for this action bar.
 	 * 
