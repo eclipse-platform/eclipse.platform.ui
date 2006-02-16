@@ -12,6 +12,9 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.jface.action.Action;
 
+/**
+ * @deprecated old search
+ */
 class ShowSearchAction extends Action {
 	private Search fSearch;
 	
@@ -27,8 +30,6 @@ class ShowSearchAction extends Action {
 	}
 	/**
 	 *	Invoke the resource wizard selection wizard
-	 *
-	 *	@param browser org.eclipse.jface.parts.Window
 	 */
 	public void run() {
 		if (fSearch != SearchManager.getDefault().getCurrentSearch())

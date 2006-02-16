@@ -20,6 +20,9 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
+/**
+ * @deprecated old search
+ */
 class SearchResultLabelProvider extends LabelProvider {
 	
 	private static final String MATCHES_POSTFIX= " " + SearchMessages.SearchResultView_matches + ")";  //$NON-NLS-1$ //$NON-NLS-2$

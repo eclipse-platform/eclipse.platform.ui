@@ -31,7 +31,9 @@ import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
+/**
+ * @deprecated old search
+ */
 public class Search extends Object {
 	private String fPageId;
 	private String fSingularLabel;
@@ -90,8 +92,7 @@ public class Search extends Object {
 		int i= fPluralLabelPattern.lastIndexOf("{0}"); //$NON-NLS-1$
 		if (i < 0)
 			return fPluralLabelPattern;
-		else
-			return fPluralLabelPattern.substring(0, i) + getItemCount()+ fPluralLabelPattern.substring(Math.min(i + 3, fPluralLabelPattern.length()));
+		return fPluralLabelPattern.substring(0, i) + getItemCount()+ fPluralLabelPattern.substring(Math.min(i + 3, fPluralLabelPattern.length()));
 	}
 
 	/**
@@ -107,10 +108,9 @@ public class Search extends Object {
 			return text.substring(0, Math.min(50, text.length())) + "..."; // use first 50 characters //$NON-NLS-1$
 		if (separatorPos < 30)
 			return text;	// don't cut
-		if (text.charAt(0) == '"')  //$NON-NLS-1$
+		if (text.charAt(0) == '"')
 			return text.substring(0, Math.min(30, text.length())) + "...\" - " + text.substring(Math.min(separatorPos + 3, text.length())); //$NON-NLS-1$
-		else
-			return text.substring(0, Math.min(30, text.length())) + "... - " + text.substring(Math.min(separatorPos + 3, text.length())); //$NON-NLS-1$
+		return text.substring(0, Math.min(30, text.length())) + "... - " + text.substring(Math.min(separatorPos + 3, text.length())); //$NON-NLS-1$
 	}
 	/** Image used when search is displayed in a list */
 	ImageDescriptor getImageDescriptor() {

@@ -25,6 +25,7 @@ import org.eclipse.search.ui.SearchUI;
 
 /**
  * Represents an entry in the search result view
+ * @deprecated old search
  */
 public class SearchResultViewEntry extends PlatformObject implements ISearchResultViewEntry {
 
@@ -136,8 +137,7 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 	String getMarkerType() {
 		if (fMarkerType == null)
 			return SearchUI.SEARCH_MARKER;
-		else
-			return fMarkerType;
+		return fMarkerType;
 	}
 	
 	boolean contains(IMarker marker) {
@@ -145,8 +145,7 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 			return false;
 		if (fMarkers == null)
 			return fMarker.equals(marker);
-		else
-			return fMarkers.contains(marker);
+		return fMarkers.contains(marker);
 	}
 	
 	void remove(IMarker marker) {

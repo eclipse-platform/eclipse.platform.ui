@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * @deprecated old search
+ */
 class SearchResultContentProvider implements IStructuredContentProvider {
 	
 	private static final Object[] fgEmptyArray= new Object[0];
@@ -33,7 +36,6 @@ class SearchResultContentProvider implements IStructuredContentProvider {
 	public Object[] getElements(Object element) {
 		if (element instanceof ArrayList)
 			return ((ArrayList)element).toArray();
-		else
-			return fgEmptyArray;
+		return fgEmptyArray;
 	}
 }

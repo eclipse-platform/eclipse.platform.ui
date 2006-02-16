@@ -49,7 +49,9 @@ import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
 
-
+/**
+ * @deprecated old search
+ */
 public class SearchResultView extends ViewPart implements ISearchResultView {
 
 

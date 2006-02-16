@@ -27,6 +27,7 @@ import org.eclipse.search.internal.ui.util.ListDialog;
 /**
  * Invoke the resource creation wizard selection Wizard.
  * This action will retarget to the active view.
+ * @deprecated old search
  */
 class ShowSearchesAction extends Action {
 

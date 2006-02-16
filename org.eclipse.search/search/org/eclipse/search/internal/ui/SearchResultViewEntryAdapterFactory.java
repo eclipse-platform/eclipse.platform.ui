@@ -21,6 +21,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
  * Implements basic UI support for Java elements.
  * Implements handle to persistent support for Java elements.
+ * @deprecated old search
  */
 public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 	

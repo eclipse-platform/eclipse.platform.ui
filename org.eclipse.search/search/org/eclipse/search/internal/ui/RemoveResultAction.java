@@ -27,6 +27,9 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
+/**
+ * @deprecated old search
+ */
 class RemoveResultAction extends Action {
 
 	private ISelectionProvider fSelectionProvider;
@@ -90,7 +93,6 @@ class RemoveResultAction extends Action {
 		Object firstElement= selection.getFirstElement();
 		if (firstElement instanceof ISearchResultViewEntry)
 			return ((ISearchResultViewEntry)firstElement).getMatchCount() > 1;
-		else
-			return false;
+		return false;
 	}
 }

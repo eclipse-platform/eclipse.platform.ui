@@ -28,6 +28,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * Drop down action that holds the currently registered sort actions.
+ * @deprecated old search
  */
 class SortDropDownAction extends Action implements IMenuCreator {
 

@@ -22,6 +22,9 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
+/**
+ * @deprecated old search
+ */
 class RemoveMatchAction extends Action {
 
 	private ISelectionProvider fSelectionProvider;

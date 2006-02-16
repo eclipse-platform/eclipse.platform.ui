@@ -27,6 +27,9 @@ import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
+/**
+ * @deprecated old search
+ */
 class RemovePotentialMatchesAction extends Action {
 
 	private IWorkbenchSite fSite;

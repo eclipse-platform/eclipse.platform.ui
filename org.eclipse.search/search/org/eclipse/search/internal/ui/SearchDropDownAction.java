@@ -21,6 +21,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 
+/**
+ * @deprecated old search
+ */
 class SearchDropDownAction extends Action implements IMenuCreator {
 
 

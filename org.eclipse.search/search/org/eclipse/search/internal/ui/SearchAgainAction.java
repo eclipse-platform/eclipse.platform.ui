@@ -12,6 +12,9 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.jface.action.Action;
 
+/**
+ * @deprecated old search
+ */
 class SearchAgainAction extends Action {
 
 	public SearchAgainAction() {

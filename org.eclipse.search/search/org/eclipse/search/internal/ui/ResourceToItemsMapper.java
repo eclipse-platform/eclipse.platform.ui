@@ -30,6 +30,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
  * Items are mapped to their element's underlying resource.
  * Method <code>resourceChanged</code> updates all items that are affected from the changed
  * elements.
+ * @deprecated old search
  */
 class ResourceToItemsMapper {
 
