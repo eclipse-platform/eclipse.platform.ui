@@ -101,16 +101,16 @@
             class="org.eclipse.platform.internal.CheatSheetStandbyContent"
             pluginId="org.eclipse.platform"/>
       <configExtension
-            configId="org.eclipse.ui.intro.sharedConfig"
+            configId="org.eclipse.ui.intro.universalConfig"
             content="new-intro/overviewEx.xml"/>
       <configExtension
-            configId="org.eclipse.ui.intro.sharedConfig"
+            configId="org.eclipse.ui.intro.universalConfig"
             content="new-intro/whatsnewEx1.xml"/>
       <configExtension
-            configId="org.eclipse.ui.intro.sharedConfig"
+            configId="org.eclipse.ui.intro.universalConfig"
             content="new-intro/whatsnewEx2.xml"/>
    </extension>
-   <!-- 
+   <!--
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -121,6 +121,6 @@
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
    </extension>
- -->
+-->
 
 </plugin>

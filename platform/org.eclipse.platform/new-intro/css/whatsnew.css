@@ -63,8 +63,8 @@ body {
 
 #noteworthy-links a:hover { border-right : 5px; }
 
-#noteworthy-links a img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
-#noteworthy-links a:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
+#noteworthy-links a img { background-image : url(../graphics/obj48/new_obj.gif); }
+#noteworthy-links a:hover img { background-image : url(../graphics/obj48/newhov_obj.gif); }
 
 
 #news-links {
@@ -120,13 +120,13 @@ body {
 
 #news-links a:hover { border-right : 5px; }
 
-a#new-and-noteworthy img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
-a#new-and-noteworthy:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
+a#new-and-noteworthy img { background-image : url(../graphics/obj48/new_obj.gif); }
+a#new-and-noteworthy:hover img { background-image : url(../graphics/obj48/newhov_obj.gif); }
 
-a#updates img { background-image : url(../graphics/icons/obj48/updates_obj.gif); }
-a#updates:hover img { background-image : url(../graphics/icons/obj48/updateshov_obj.gif); }
+a#updates img { background-image : url(../graphics/obj48/updates_obj.gif); }
+a#updates:hover img { background-image : url(../graphics/obj48/updateshov_obj.gif); }
 
-a#eclipse img { background-image : url(../graphics/icons/obj48/community_obj.gif); }
-a#eclipse:hover img { background-image : url(../graphics/icons/obj48/communityhov_obj.gif); }
+a#eclipse img { background-image : url(../graphics/obj48/community_obj.gif); }
+a#eclipse:hover img { background-image : url(../graphics/obj48/communityhov_obj.gif); }
 
 
