@@ -36,7 +36,7 @@ import org.osgi.framework.Bundle;
 public class PageStyleManager extends SharedStyleManager {
 
     private AbstractIntroPage page;
-    private Hashtable altStyleProperties = new Hashtable();
+    private Hashtable altStyleContexts = new Hashtable();
     private IntroModelRoot root;
 
 
@@ -50,7 +50,8 @@ public class PageStyleManager extends SharedStyleManager {
      */
     public PageStyleManager(AbstractIntroPage page, Properties sharedProperties) {
         this.page = page;
-        bundle = page.getBundle();
+        context = new StyleContext();
+        context.bundle = page.getBundle();
         
         // honor shared-style.
         if (page.injectSharedStyle())
@@ -58,8 +59,9 @@ public class PageStyleManager extends SharedStyleManager {
         else
             properties = new Properties();
         String altStyle = page.getAltStyle();
-        if (altStyle != null)
-            load(properties, altStyle);
+        if (altStyle != null) {
+            load(properties, altStyle, context);
+        }
 
         // AltStyles Hashtable has alt-styles as keys, the bundles as
         // values.
@@ -70,8 +72,10 @@ public class PageStyleManager extends SharedStyleManager {
                 String style = (String) styles.nextElement();
                 Properties inheritedProperties = new Properties();
                 Bundle bundle = (Bundle) altStyles.get(style);
-                load(inheritedProperties, style);
-                altStyleProperties.put(inheritedProperties, bundle);
+                StyleContext sc = new StyleContext();
+                sc.bundle = bundle;
+                load(inheritedProperties, style, sc);
+                altStyleContexts.put(inheritedProperties, sc);
             }
         }
 
@@ -117,7 +121,7 @@ public class PageStyleManager extends SharedStyleManager {
             return properties;
 
         // search inherited properties second.
-        Enumeration inheritedPageProperties = altStyleProperties.keys();
+        Enumeration inheritedPageProperties = altStyleContexts.keys();
         while (inheritedPageProperties.hasMoreElements()) {
             Properties aProperties = (Properties) inheritedPageProperties
                 .nextElement();
@@ -131,18 +135,19 @@ public class PageStyleManager extends SharedStyleManager {
 
 
     /**
-     * Finds the bundle from which this key was loaded. If the key is not from
-     * an inherited alt style, then use the bundle corresponding to this page.
+     * Finds the context from which this key was loaded. If the key is not from
+     * an inherited alt style, then use the context corresponding to this page.
      * 
      * @param key
      * @return
      */
-    protected Bundle getAssociatedBundle(String key) {
+   
+    protected StyleContext getAssociatedContext(String key) {
         Properties aProperties = findPropertyOwner(key);
-        Bundle bundle = (Bundle) altStyleProperties.get(aProperties);
-        if (bundle != null)
-            return bundle;
-        return super.getAssociatedBundle(key);
+        StyleContext context = (StyleContext) altStyleContexts.get(aProperties);
+        if (context != null)
+            return context;
+        return super.getAssociatedContext(key);
     }
 
 
@@ -445,7 +450,11 @@ public class PageStyleManager extends SharedStyleManager {
         if (ImageUtil.hasImage(key))
             return ImageUtil.getImage(key);
         // key not already registered.
-        ImageUtil.registerImage(key, bundle, imageLocation);
+        StyleContext acontext = getAssociatedContext(key);
+        if (acontext.inTheme)
+           	ImageUtil.registerImage(key, acontext.path, imageLocation);
+        else
+        	ImageUtil.registerImage(key, acontext.bundle, imageLocation);
         Image image = ImageUtil.getImage(key);
         return image;
     }

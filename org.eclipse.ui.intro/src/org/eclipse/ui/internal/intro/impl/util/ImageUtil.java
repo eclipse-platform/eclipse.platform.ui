@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro.impl.util;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -62,7 +63,7 @@ public final class ImageUtil {
         return createImageDescriptor(Platform
             .getBundle(IIntroConstants.PLUGIN_ID), ICONS_PATH + imageName);
     }
-
+    
     /**
      * Convenience method to create an image descriptor.
      * 
@@ -81,6 +82,26 @@ public final class ImageUtil {
         }
         Log.warning("could not create Image Descriptor for: " + imageName //$NON-NLS-1$
                 + " in bundle: " + bundle.getSymbolicName()); //$NON-NLS-1$
+        return ImageDescriptor.getMissingImageDescriptor();
+    }
+    
+    /**
+     * Convenience method to create an image descriptor.
+     * 
+     */
+    public static ImageDescriptor createImageDescriptor(IPath base,
+            String imageName) {
+        try {
+            URL imageUrl = new URL(base.append(imageName).toOSString());
+            if (imageUrl != null) {
+                ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
+                return desc;
+            }
+        } catch (Exception e) {
+            // Should never be here.
+            Log.error("could not create Image Descriptor", e); //$NON-NLS-1$
+        }
+        Log.warning("could not create Image Descriptor for: " + imageName); //$NON-NLS-1$
         return ImageDescriptor.getMissingImageDescriptor();
     }
 
@@ -142,5 +163,13 @@ public final class ImageUtil {
             // key has already been registered. do nothing.
             return;
         registry.put(key, createImageDescriptor(bundle, imageName));
+    }
+    
+    public static void registerImage(String key, IPath base, String imageName) {
+        ImageRegistry registry = IntroPlugin.getDefault().getImageRegistry();
+        if (registry.getDescriptor(key) != null)
+            // key has already been registered. do nothing.
+            return;
+        registry.put(key, createImageDescriptor(base, imageName));
     }
 }

@@ -74,7 +74,7 @@ public class IntroData {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("configExtension")) { //$NON-NLS-1$
 				String cid = element.getAttribute("configId"); //$NON-NLS-1$
-				if (cid!=null && cid.equals("org.eclipse.ui.intro.sharedConfig")) { //$NON-NLS-1$
+				if (cid!=null && cid.equals("org.eclipse.ui.intro.universalConfig")) { //$NON-NLS-1$
 					addCandidate(element);
 				}
 			}

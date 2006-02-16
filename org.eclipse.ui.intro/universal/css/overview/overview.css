@@ -1,6 +1,6 @@
 /* show the "selected" image for this page */
 #navigation-links a#overview img, #navigation-links a#overview:hover img { 
-	background-image : url(../graphics/icons/ctool/overview48sel.gif); 
+	background-image : url(../graphics/overview48sel.gif); 
 	}
 	
 iframe {
@@ -76,10 +76,3 @@ iframe {
 #overview-links a p > .text { width : 700px; }
 
 #overview-links a:hover { border-right : 5px; }
-
-a#basics img { background-image : url(../graphics/icons/obj48/wbbasics_obj.gif); }
-a#basics:hover img { background-image : url(../graphics/icons/obj48/wbbasicshov_obj.gif); }
-
-a#team img { background-image : url(../graphics/icons/obj48/teamsup_obj.gif); }
-a#team:hover img { background-image : url(../graphics/icons/obj48/teamsuphov_obj.gif); }
-

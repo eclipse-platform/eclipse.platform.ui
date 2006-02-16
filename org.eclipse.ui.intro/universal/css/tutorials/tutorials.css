@@ -3,7 +3,7 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#tutorials img, #navigation-links a#tutorials:hover img { background-image : url(../graphics/icons/ctool/tutorials48sel.gif); }
+#navigation-links a#tutorials img, #navigation-links a#tutorials:hover img { background-image : url(../graphics/tutorials48sel.gif); }
 
 /* 
  * Set up the content of the tutorials page into two

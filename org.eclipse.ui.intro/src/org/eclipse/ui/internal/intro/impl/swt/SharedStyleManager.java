@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -27,7 +29,13 @@ import org.osgi.framework.Bundle;
 public class SharedStyleManager {
 
     protected Properties properties;
-    protected Bundle bundle;
+    protected StyleContext context;
+    
+    class StyleContext {
+    	IPath path;
+    	Bundle bundle;
+    	boolean inTheme;
+    }
 
     SharedStyleManager() {
         // no-op
@@ -40,15 +48,17 @@ public class SharedStyleManager {
      * @param modelRoot
      */
     public SharedStyleManager(IntroModelRoot modelRoot) {
-        bundle = modelRoot.getBundle();
+    	context = new StyleContext();
+        context.bundle = modelRoot.getBundle();
         properties = new Properties();
         String sharedStyle = modelRoot.getPresentation()
             .getImplementationStyle();
-        if (sharedStyle != null)
-            load(properties, sharedStyle);
+        if (sharedStyle != null) {
+        	load(properties, sharedStyle, context);
+        }
     }
 
-    protected void load(Properties properties, String style) {
+    protected void load(Properties properties, String style, StyleContext context) {
         if (style == null)
             return;
         try {
@@ -56,6 +66,10 @@ public class SharedStyleManager {
             InputStream is = styleURL.openStream();
             properties.load(is);
             is.close();
+           	context.path = new Path(style).removeLastSegments(1); 
+            String t = (String)properties.get("theme"); //$NON-NLS-1$
+            if (t!=null && t.trim().equalsIgnoreCase("true")) //$NON-NLS-1$
+            	context.inTheme = true;
         } catch (Exception e) {
             Log.error("Could not load SWT style: " + style, e); //$NON-NLS-1$
         }
@@ -125,7 +139,11 @@ public class SharedStyleManager {
      * @return
      */
     protected Bundle getAssociatedBundle(String key) {
-        return bundle;
+        return context.bundle;
+    }
+    
+    protected StyleContext getAssociatedContext(String key) {
+    	return context;
     }
 
 
@@ -177,12 +195,20 @@ public class SharedStyleManager {
             if (ImageUtil.hasImage(currentKey))
                 return ImageUtil.getImage(currentKey);
             // try to register the image.
-            Bundle bundle = getAssociatedBundle(currentKey);
-            if (bundle == null)
-                // it means that we are getting a key defined in this page's
-                // styles. (ie: not an inherited style).
-                bundle = this.bundle;
-            ImageUtil.registerImage(currentKey, bundle, value);
+            StyleContext ccontext = getAssociatedContext(currentKey);
+            if (ccontext.inTheme) {
+            	// if 'theme' key is set, load image
+            	// relative to the file, not relative to the bundle
+            	ImageUtil.registerImage(currentKey, ccontext.path, value); 
+            }
+            else {
+            	Bundle bundle = ccontext.bundle;
+            	if (bundle == null)
+            		// it means that we are getting a key defined in this page's
+            		// styles. (ie: not an inherited style).
+            		bundle = this.context.bundle;
+            	ImageUtil.registerImage(currentKey, bundle, value);
+            }
             Image image = ImageUtil.getImage(currentKey);
             if (image != null)
                 return image;
