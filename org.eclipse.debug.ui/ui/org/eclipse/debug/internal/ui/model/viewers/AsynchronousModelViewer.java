@@ -811,6 +811,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
        Widget widget = node.getWidget();
        if (widget instanceof Item) {
            widget.dispose();
+           node.setWidget(null);
        } else if (widget == getControl()) {
     	   // root control
     	   ModelNode[] nodes = node.getChildrenNodes();

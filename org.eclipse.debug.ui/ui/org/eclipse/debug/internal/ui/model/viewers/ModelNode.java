@@ -69,6 +69,12 @@ public class ModelNode {
 	
 	public synchronized void dispose() {
 		fDisposed = true;
+        ModelNode[] childrenNodes = getChildrenNodes();
+        if (childrenNodes != null) {
+            for (int i = 0; i < childrenNodes.length; i++) {
+                childrenNodes[i].dispose();
+            }
+        }
 	}
 	
 	/**
