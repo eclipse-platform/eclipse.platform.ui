@@ -252,4 +252,13 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 		return null;
 	}
 	
+	/**
+	 * Method called when the action is about to be shown in a context menu.
+	 * This method recalculates the enablement for the current
+	 * selection and uses that to set the enablement. 
+	 */
+	public void updateEnablement() {
+		setEnabled(isEnabledForSelection(getStructuredSelection()));
+	}
+	
 }
