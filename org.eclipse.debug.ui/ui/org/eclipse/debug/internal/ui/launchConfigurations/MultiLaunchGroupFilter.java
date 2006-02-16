@@ -37,6 +37,7 @@ public class MultiLaunchGroupFilter extends ViewerFilter {
 		}
 		if (element instanceof ILaunchConfigurationType) {
 			type = (ILaunchConfigurationType)element;
+			priv = !type.isPublic();
 		}
 		if (element instanceof ILaunchConfiguration) {
 			config = (ILaunchConfiguration)element;
