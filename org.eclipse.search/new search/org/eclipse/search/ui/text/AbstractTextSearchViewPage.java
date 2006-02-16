@@ -441,9 +441,16 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
 		if (getCurrentMatch() != null)
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveCurrentMatch);
-		if (!getViewer().getSelection().isEmpty())
+		if (canRemoveMatchesWith(getViewer().getSelection()))
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
+	}
+
+	/**
+	 * Determines whether the provided selection can be used to remove matches from the result.
+	 */
+	protected boolean canRemoveMatchesWith(ISelection selection) {
+		return !selection.isEmpty();
 	}
 
 	/**
@@ -650,7 +657,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				fCurrentMatchIndex = -1;
-				fRemoveSelectedMatches.setEnabled(!event.getSelection().isEmpty());
+				fRemoveSelectedMatches.setEnabled(canRemoveMatchesWith(event.getSelection()));
 			}
 		});
 		

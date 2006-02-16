@@ -31,6 +31,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
@@ -455,9 +456,19 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		ISearchResult result= getCurrentSearchResult();
 		if (result != null) {
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
-			MenuManager showInSubMenu = new MenuManager(SearchMessages.SearchView_showIn_menu);  
-			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getViewSite().getWorkbenchWindow()));
-			menuManager.appendToGroup(IContextMenuConstants.GROUP_OPEN, showInSubMenu);
+			// first check if we have a selection for the show in mechanism, bugzilla 127718
+			IShowInSource showInSource= (IShowInSource) getAdapter(IShowInSource.class);
+			if (showInSource != null) {
+				ShowInContext context= showInSource.getShowInContext();
+				if (context != null) {
+					ISelection sel= context.getSelection();
+					if (sel != null && !sel.isEmpty()) {
+						MenuManager showInSubMenu= new MenuManager(SearchMessages.SearchView_showIn_menu);
+						showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getViewSite().getWorkbenchWindow()));
+						menuManager.appendToGroup(IContextMenuConstants.GROUP_OPEN, showInSubMenu);
+					}
+				}
+			}
 		}
 	}
 

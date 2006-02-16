@@ -21,9 +21,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -64,6 +66,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.DelegatingDragAdapter;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
@@ -85,7 +88,9 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.IContextMenuConstants;
@@ -111,7 +116,7 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 /**
  * @author markus.schorn@windriver.com
  */
-public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryListener, IRetrieverKeys {
+public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryListener, IRetrieverKeys, IAdaptable {
 	
 	public static final String ID= "org.eclipse.search.text.RetrieverPage"; //$NON-NLS-1$
 	private static final String QUERY_EXTENSION = ".txtSearch";  //$NON-NLS-1$
@@ -260,6 +265,20 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 		if (!fSearchInProgress) {
 			fReplaceControl.fillContextMenu(mgr);
 		}
+	}
+
+	protected boolean canRemoveMatchesWith(ISelection selection) {
+		if (selection.isEmpty()) {
+			return false;
+		}
+		// in case only the information about filtering is selected, no matches can be removed.
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel= (IStructuredSelection) selection;
+			if (ssel.size() == 1 && ssel.getFirstElement() instanceof int[]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	// overrider
@@ -1136,5 +1155,24 @@ public class RetrieverPage extends AbstractTextSearchViewPage implements IQueryL
 
 		String filter= matchCount[0] == 1 ? SearchMessages.RetrieverPage_filterSingular : SearchMessages.RetrieverPage_filterPlural;
 		return MessageFormat.format(filter, new Object[] {description, filterCount, fullCount});
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (adapter == IShowInSource.class) {
+			return new IShowInSource() {
+				public ShowInContext getShowInContext() {
+					IStructuredSelection sel= getSelection();
+					ArrayList elements= new ArrayList();
+					for (Iterator iter= sel.iterator(); iter.hasNext();) {
+						Object cand= iter.next();
+						if (cand instanceof IAdaptable) {
+							elements.add(cand);
+						}
+					}
+					return new ShowInContext(null, new StructuredSelection(elements));
+				}
+			};
+		}
+		return null;
 	}
 }
