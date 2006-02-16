@@ -116,7 +116,7 @@ public class SearchResultViewer extends TableViewer {
 		
 		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
 		boolean hasSearch= currentSearch != null;
-		boolean hasSearchOperation= hasSearch && currentSearch.getOperation() != null;
+		boolean hasSearchOperation= currentSearch != null && currentSearch.getOperation() != null;
 
 		fShowNextResultAction= new ShowNextResultAction(this);
 		fShowNextResultAction.setEnabled(false);
@@ -243,7 +243,7 @@ public class SearchResultViewer extends TableViewer {
 
 		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
 		state= currentSearch != null;
-		boolean operationState= state && currentSearch.getOperation() != null;
+		boolean operationState= currentSearch != null && currentSearch.getOperation() != null;
 		if (state != fSearchDropDownAction.isEnabled())
 			fSearchDropDownAction.setEnabled(state);
 		if (operationState != fSearchAgainAction.isEnabled())

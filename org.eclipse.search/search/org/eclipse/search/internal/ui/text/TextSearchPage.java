@@ -254,6 +254,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
 				String desc= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets)); 
 				scope= FileNamePatternSearchScope.newSearchScope(desc, workingSets, fSearchDerived);
+				break;
+			default:
+				// unknown scope
+				scope= FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
 		}
 		String[] fileExtensions= patternData.fileNamePatterns;
 		for (int i= 0; i < fileExtensions.length; i++) {

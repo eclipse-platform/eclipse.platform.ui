@@ -134,7 +134,7 @@ public class SearchViewManager {
 				IViewReference curr= viewReferences[i];
 				if (NewSearchUI.SEARCH_VIEW_ID.equals(curr.getId()) && page.equals(curr.getPage())) {
 					SearchView view= (SearchView) curr.getView(true);
-					if (view != null && !avoidPinnedViews || !view.isPinned()) {
+					if (view != null && (!avoidPinnedViews || !view.isPinned())) {
 						return view;
 					}
 					

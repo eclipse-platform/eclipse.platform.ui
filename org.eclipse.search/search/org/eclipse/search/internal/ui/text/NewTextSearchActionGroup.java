@@ -71,7 +71,7 @@ public class NewTextSearchActionGroup extends ActionGroup {
 		ISelection selection= getContext().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			addOpenWithMenu(menu, (IStructuredSelection) selection);
-			if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && selection != null &&fOpenPropertiesDialog.isApplicableForSelection((IStructuredSelection) selection))
+			if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && fOpenPropertiesDialog.isApplicableForSelection((IStructuredSelection) selection))
 				menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
 		}
 			

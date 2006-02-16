@@ -1080,7 +1080,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				// control
 				control.getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						if (control != null && !control.isDisposed())
+						if (!control.isDisposed())
 							runnable.run();
 					}
 				});
