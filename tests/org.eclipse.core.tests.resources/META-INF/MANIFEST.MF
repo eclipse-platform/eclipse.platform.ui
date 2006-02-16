@@ -7,10 +7,13 @@ Bundle-ClassPath: resourcestests.jar
 Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.tests.internal.alias,
+Export-Package: org.eclipse.core.tests.filesystem,
+ org.eclipse.core.tests.internal.alias,
  org.eclipse.core.tests.internal.builders,
  org.eclipse.core.tests.internal.dtree,
+ org.eclipse.core.tests.internal.filesystem.ram,
  org.eclipse.core.tests.internal.localstore,
+ org.eclipse.core.tests.internal.mapping,
  org.eclipse.core.tests.internal.properties,
  org.eclipse.core.tests.internal.resources,
  org.eclipse.core.tests.internal.utils,
