@@ -68,13 +68,6 @@ public class IProjectTest extends ResourceTest {
 		super.setUp();
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		//FIXME: This refresh may fail in the future if the .project file has been deleted
-		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
-	}
-
 	/**
 	 * Note that project copying is tested more thoroughly by IResourceTest#testCopy.
 	 */
@@ -1851,7 +1844,7 @@ public class IProjectTest extends ResourceTest {
 	 * 	- resources are OUT_OF_SYNC with the file system
 	 */
 	public void testProjectDeletionOpenUserDefinedOutOfSync() {
-		IProject project = getWorkspace().getRoot().getProject("Project");
+		IProject project = getWorkspace().getRoot().getProject("testProjectDeletionOpenUserDefinedOutOfSync");
 		IFile file = project.getFile("myfile.txt");
 		IFile otherFile = project.getFile("myotherfile.txt");
 		IFileStore projectStore, fileStore, otherFileStore;

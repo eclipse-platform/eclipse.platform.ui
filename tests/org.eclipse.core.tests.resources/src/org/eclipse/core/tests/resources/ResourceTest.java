@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.filesystem.Policy;
 import org.eclipse.core.internal.resources.Resource;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -350,12 +351,16 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	protected void cleanup() throws CoreException {
-		IFileStore[] toDelete = (IFileStore[]) storesToDelete.toArray(new IFileStore[0]);
+		final IFileStore[] toDelete = (IFileStore[]) storesToDelete.toArray(new IFileStore[0]);
 		storesToDelete.clear();
-		for (int i = 0; i < toDelete.length; i++) {
-			clear(toDelete[i]);
-		}
-		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+				//clear stores in workspace runnable to avoid interaction with resource jobs
+				for (int i = 0; i < toDelete.length; i++)
+					clear(toDelete[i]);
+			}
+		}, null);
 		getWorkspace().save(true, null);
 		//don't leak builder jobs, since they may affect subsequent tests
 		waitForBuild();
@@ -738,7 +743,7 @@ public abstract class ResourceTest extends CoreTest {
 				os = new FileOutputStream(osFile);
 				os.write(newContent.getBytes("UTF8"));
 			} finally {
-				os.close();
+				FileUtil.safeClose(os);
 			}
 		} catch (IOException e) {
 			fail(m + "0.0", e);
