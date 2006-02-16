@@ -163,7 +163,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         	ModelNode[] childrenNodes = parent.getChildrenNodes();
         	if (childrenNodes != null) {
         		for (int i = 0; i < childrenNodes.length; i++) {
-        			if (element == childrenNodes[i].getElement())
+        			if (element.equals(childrenNodes[i].getElement()))
         				return; //already added to the tree (probably via a refresh)
         		}
         	}
