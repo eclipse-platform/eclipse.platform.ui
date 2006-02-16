@@ -50,7 +50,7 @@
          <presentation
                home-page-id="root" standby-page-id="standby">
               <implementation
-                  style="$nl$/universal/css/universal.css"
+                  style="$theme$/shared.css"
                   kind="html"
                   os="win32,linux,macosx">
             </implementation>
@@ -64,5 +64,13 @@
             </launchBar>
          </presentation>
       </config>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <theme
+            default="true"
+            id="org.eclipse.ui.intro.eclipse32"
+            name="Eclipse 3.2"
+            path="$nl$/universal/css"/>
    </extension>
 </plugin>

@@ -16,6 +16,7 @@
             <element ref="configExtension" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="standbyContentPart" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="theme" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -127,6 +128,42 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
             <annotation>
                <documentation>
                   the macro which replaces the action name in the Intro URL.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="theme">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier of the intro theme
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name of the intro theme that will be rendered in the UI
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a plug-in-relative path to the folder where the style sheets and associated graphics reside.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  an optional flag that indicates if this theme is the default. Default theme will be used if no theme is explicitly selected.
                </documentation>
             </annotation>
          </attribute>

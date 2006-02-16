@@ -103,6 +103,9 @@ public class IntroPartPresentation extends AbstractIntroElement {
             // reset (ie: inherit) type and style to be implementation type and
             // style. Then handle HEAD content for the case of HTML Browser.
             implementationStyle = element.getAttribute(ATT_STYLE);
+            IntroModelRoot root = getModelRoot();
+            if (root!=null)
+            	implementationStyle = root.resolveVariables(implementationStyle);
             implementationKind = element.getAttribute(ATT_KIND);
             // get Head contribution, regardless of implementation class.
             // Implementation class is created lazily by UI.

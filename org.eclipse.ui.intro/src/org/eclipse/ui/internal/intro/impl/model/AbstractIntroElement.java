@@ -139,7 +139,11 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
      * Type constant which identifies am injected IFrame model element.
      */
     public static final int INJECTED_IFRAME = 1 << 17;
-
+    
+    /**
+     * Type constant for the theme element.
+     */
+    public static final int THEME = 1 << 18;
 
 
     /**
@@ -255,8 +259,19 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
      * @return
      */
     protected String[] getAttributeList(Element element, String att) {
+        if (element.hasAttribute(att)) {
+            String value = element.getAttribute(att);
+            if (value!=null) {
+            	IntroModelRoot root = getModelRoot();
+            	if (root!=null)
+            		value = root.resolveVariables(value);
+            	return value.split(","); //$NON-NLS-1$
+            }
+        }
+        /*
         if (element.hasAttribute(att))
             return element.getAttribute(att).split(","); //$NON-NLS-1$
+            */
         return null;
     }
     

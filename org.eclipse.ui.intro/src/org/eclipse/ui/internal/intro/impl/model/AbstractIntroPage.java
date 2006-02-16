@@ -119,8 +119,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         super(element, bundle, base);
         this.initialBase = base;
         content = getAttribute(element, ATT_CONTENT);
-        if (content == null)
-            init(element, bundle, base);
+        if (content == null) {
+        	//Delaying init until we have the model
+        	// so that we can resolve theme
+            //init(element, bundle, base);
+        }
         else {
             // Content is not null. Resolve it. Other page attributes (style,
             // alt-style...) will be loaded when xml content file is loaded
@@ -143,6 +146,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (sharedStyle == null)
             sharedStyle = "true"; //$NON-NLS-1$
 
+    }
+    
+    public void setParent(AbstractIntroElement parent) {
+    	super.setParent(parent);
+        if (content == null)
+            init(element, getBundle(), initialBase);
     }
     
     /**

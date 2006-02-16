@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
-	<page id="root" alt-style="css/root_swt.properties" style="css/root.css" style-id="page"
-									 bgImage="$INTRO_BACKGROUND_IMAGE$">
+	<page id="root" alt-style="$theme$/root_swt.properties" style="$theme$/root.css" style-id="page">
         <title style-id="intro-header">$introTitle$</title>
         <group id="links-background" bgImage="css/graphics/root/circles.png">
            <group id="page-links" computed="true"/>
@@ -16,8 +15,7 @@
         <group id="branding" style-id="branding" bgImage="$introBrandingImage$">
         </group>
     </page>
-    <page id="standby" alt-style="css/standby_swt.properties" style="css/standby_root.css" 
-    		 style-id="page" bgImage="$INTRO_BACKGROUND_IMAGE$">
+    <page id="standby" alt-style="$theme$/standby_swt.properties" style="$theme$/standby_root.css" style-id="page">
         <title style-id="intro-header">$introTitle$</title>
         <group id="links-background">
             <group id="page-links" computed="true">
@@ -34,7 +32,7 @@
         </group>
     </page>    
     
-    <page id="overview" style="css/overview/overview.css" alt-style="css/overview/swt.properties" style-id="page">
+    <page id="overview" style="$theme$/overview/overview.css" alt-style="$theme$/overview/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/ov_banner.jpg">
             <group id="page-links" computed="true">
             </group>
@@ -56,7 +54,7 @@
 			<group id="bottom" computed="true"/>
         </group>
     </page>
-	<page id="tutorials" style="css/tutorials/tutorials.css" alt-style="css/tutorials/swt.properties" style-id="page">
+	<page id="tutorials" style="$theme$/tutorials/tutorials.css" alt-style="$theme$/tutorials/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/tu_banner.jpg">
             <group id="page-links" computed="true">
             </group>
@@ -78,7 +76,7 @@
 			<group id="bottom" computed="true"/>
         </group>
     </page>
-	 <page id="samples" style="css/samples/samples.css" alt-style="css/samples/swt.properties" style-id="page">
+	 <page id="samples" style="$theme$/samples/samples.css" alt-style="$theme$/samples/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/sa_banner.jpg">
             <group id="page-links" computed="true">
             </group>
@@ -101,7 +99,7 @@
         </group>
     </page>
 
-    <page id="whatsnew" style="css/whatsnew/whatsnew.css" alt-style="css/whatsnew/swt.properties" style-id="page">
+    <page id="whatsnew" style="$theme$/whatsnew/whatsnew.css" alt-style="$theme$/whatsnew/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wn_banner.jpg">
             <group id="page-links" computed="true">
             </group>
@@ -123,7 +121,7 @@
         </group>
     </page>
     
-    <page id="firststeps" style="css/firststeps/firststeps.css" alt-style="css/firststeps/swt.properties" style-id="page">
+    <page id="firststeps" style="$theme$/firststeps/firststeps.css" alt-style="$theme$/firststeps/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/fs_banner.jpg">
             <group id="page-links" computed="true">
             </group>
@@ -145,7 +143,7 @@
         </group>
     </page>
     
-    <page id="webresources" style="css/webresources/webresources.css" alt-style="css/webresources/swt.properties" style-id="page">
+    <page id="webresources" style="$theme$/webresources/webresources.css" alt-style="$theme$/webresources/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wr_banner.jpg">
             <group id="page-links" computed="true">
             </group>
@@ -167,7 +165,7 @@
         </group>
     </page>
     
-    <page id="migrate" style="css/migrate/migrate.css" alt-style="css/migrate/swt.properties" style-id="page">
+    <page id="migrate" style="$theme$/migrate/migrate.css" alt-style="$theme$/migrate/swt.properties" style-id="page">
         <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/mi_banner.jpg">
             <group id="page-links" computed="true">
             </group>

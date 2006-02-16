@@ -18,6 +18,7 @@ body {
 	min-width : 770px;	/* since IE doesn't support min-width, use expression */
 	width:expression(document.body.clientWidth < 770? "770px": "auto" );
 	background-repeat : no-repeat;	background-position : top left;	background-color : #345365;
+	background-image: url('graphics/root/welcomebckgrd.jpg');
 }
 #root {
 	min-height : 450px;	height : 100%;	height : expression(document.body.clientHeight < 450? "450px": "100%" );
@@ -57,6 +58,7 @@ body {
  * **Important** If additional links are added, we will have to increase this width 
  * to accomodate them, otherwise they will wrap to a new line 
  */
+ 
 #links-background > #page-links {
 	width : 33em;	margin : 0 auto;
 }

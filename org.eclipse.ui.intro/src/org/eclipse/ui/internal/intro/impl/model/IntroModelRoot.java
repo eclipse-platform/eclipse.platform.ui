@@ -17,9 +17,12 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
@@ -97,6 +100,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
     private static final String ATT_CONFIGURER = "configurer"; //$NON-NLS-1$
+    private static final String VAR_THEME = "theme";  //$NON-NLS-1$
 
     // False if there is no valid contribution to the
     // org.eclipse.ui.into.config extension point. Start off with true, and set
@@ -104,6 +108,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private boolean hasValidConfig = true;
     private boolean isdynamicIntro;
     private IntroConfigurer configurer;
+    private IntroTheme theme;
     private IntroPartPresentation introPartPresentation;
     private IntroHomePage homePage;
     private String currentPageId;
@@ -163,6 +168,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return;
         }
         
+        loadTheme();
         loadConfigurer();
 
         introPartPresentation = new IntroPartPresentation(presentationElement);
@@ -239,6 +245,36 @@ public class IntroModelRoot extends AbstractIntroContainer {
     		catch (CoreException e) {
     			Log.error("Error loading intro configurer", e); //$NON-NLS-1$
     		}
+    	}
+    }
+    
+    private void loadTheme() {
+    	Preferences pref = IntroPlugin.getDefault().getPluginPreferences();
+    	String themeId = pref.getString("INTRO_THEME"); //$NON-NLS-1$
+    	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
+    	IConfigurationElement themeElement=null;
+    	for (int i=0; i<elements.length; i++) {
+    		if (elements[i].getName().equals("theme")) { //$NON-NLS-1$
+    			String id = elements[i].getAttribute("id"); //$NON-NLS-1$
+    			if (themeId!=null) {
+    				if (id!=null && themeId.equals(id)) {
+    					// use this one
+    					themeElement = elements[i];
+    					break;
+    				}
+    			}
+    			else {
+    				// see if this one is the default
+    				String value = elements[i].getAttribute("default"); //$NON-NLS-1$
+    				if (value!=null && value.equalsIgnoreCase("true")) { //$NON-NLS-1$
+    					themeElement = elements[i];
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	if (themeElement!=null) {
+    		theme = new IntroTheme(themeElement);
     	}
     }
 
@@ -791,7 +827,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
     
     public String resolveVariables(String text) {
-    	if (configurer==null) return text;
+    	//if (configurer==null) return text;
     	if (text.indexOf('$')== -1)
     		return text;
     	// resolve
@@ -808,7 +844,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     			}
  				inVariable=false;
    				String variable=text.substring(vindex, i);
-   				String value = configurer.getVariable(variable);
+   				String value = getVariableValue(variable);
    				if (value==null)
    					value = "$"+variable+"$"; //$NON-NLS-1$ //$NON-NLS-2$
    				buf.append(value);
@@ -818,6 +854,16 @@ public class IntroModelRoot extends AbstractIntroContainer {
     			buf.append(c);
     	}
     	return buf.toString();
+    }
+
+    private String getVariableValue(String variable) {
+     	if (variable.equals(VAR_THEME)) {
+    		if (theme!=null)
+    			return theme.getPath();
+    	}
+    	if (configurer!=null)
+    		return configurer.getVariable(variable);
+    	return null;
     }
     
     public String resolvePath(String extensionId, String path) {
