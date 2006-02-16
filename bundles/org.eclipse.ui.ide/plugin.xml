@@ -255,7 +255,6 @@
                id="goToResource">
          </action>
          <action
-               definitionId="org.eclipse.ui.navigate.openResource"
                label="%OpenWorkspaceFileAction.label"
                helpContextId="org.eclipse.ui.open_workspace_file_action_context"
                class="org.eclipse.ui.internal.ide.handlers.OpenResourceHandler"
