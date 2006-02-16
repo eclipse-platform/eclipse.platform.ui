@@ -88,7 +88,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 			
 			String imageName= elem.getAttribute(SearchPageRegistry.ATTRIB_ICON);
 			if (imageName != null) {
-				Bundle bundle = Platform.getBundle(elem.getNamespace());
+				Bundle bundle = Platform.getBundle(elem.getContributor().getName());
 				setImageDescriptor(SearchPluginImages.createImageDescriptor(bundle, new Path(imageName), true));
 			}
 		}

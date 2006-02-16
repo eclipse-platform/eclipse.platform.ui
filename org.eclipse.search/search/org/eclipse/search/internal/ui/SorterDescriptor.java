@@ -77,7 +77,7 @@ class SorterDescriptor {
 		String imageName= fElement.getAttribute(ICON_ATTRIBUTE);
 		if (imageName == null)
 			return null;
-		Bundle bundle = Platform.getBundle(fElement.getNamespace());
+		Bundle bundle = Platform.getBundle(fElement.getContributor().getName());
 		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName), true);
 	}
 

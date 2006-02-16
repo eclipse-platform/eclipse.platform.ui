@@ -371,6 +371,6 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return fElement.getNamespace();
+        return fElement.getContributor().getName();
     }
 }
