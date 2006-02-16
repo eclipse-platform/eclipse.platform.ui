@@ -76,7 +76,7 @@ public class WorkspaceCommitAction extends ModelParticipantAction implements IDi
 		// Do nothing
 	}
 	
-	private void updateEnablement() {
+	public void updateEnablement() {
 		boolean enabled = (getDiffTree().countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK) > 0)
 			&& (getDiffTree().countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK) == 0);
 		setEnabled(enabled);
