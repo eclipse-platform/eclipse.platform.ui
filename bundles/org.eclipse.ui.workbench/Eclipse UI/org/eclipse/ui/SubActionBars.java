@@ -13,6 +13,7 @@ package org.eclipse.ui;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.EventManager;
@@ -50,10 +51,11 @@ public class SubActionBars extends EventManager implements IActionBars {
 	private boolean actionHandlersChanged;
 
 	/**
-	 * A map of handler activations indexed by action id. This value is
-	 * <code>null</code> if there are no activations.
+	 * A map of handler activations ({@link IHandlerActivation} indexed by
+	 * action id ({@link String}) indexed by service locator ({@link IServiceLocator}).
+	 * This value is <code>null</code> if there are no activations.
 	 */
-	private Map activationsByActionId;
+	private Map activationsByActionIdByServiceLocator;
 
 	private boolean active = false;
 
@@ -148,22 +150,29 @@ public class SubActionBars extends EventManager implements IActionBars {
 		if (actionHandlers != null) {
 			actionHandlers.clear();
 			actionHandlersChanged = true;
+		}
 
+		if (activationsByActionIdByServiceLocator != null) {
 			// Clean up the activations.
-			final IServiceLocator locator = getServiceLocator();
-			final IHandlerService service = (IHandlerService) locator
-					.getService(IHandlerService.class);
-			final Iterator activationItr = activationsByActionId.values()
-					.iterator();
+			final Iterator activationItr = activationsByActionIdByServiceLocator
+					.entrySet().iterator();
 			while (activationItr.hasNext()) {
-				final Object value = activationItr.next();
-				if (value instanceof IHandlerActivation) {
-					final IHandlerActivation activation = (IHandlerActivation) value;
+				final Map.Entry value = (Map.Entry) activationItr.next();
+				final IServiceLocator locator = (IServiceLocator) value
+						.getKey();
+				final IHandlerService service = (IHandlerService) locator
+						.getService(IHandlerService.class);
+				final Map activationsByActionId = (Map) value.getValue();
+				final Iterator iterator = activationsByActionId.values()
+						.iterator();
+				while (iterator.hasNext()) {
+					final IHandlerActivation activation = (IHandlerActivation) iterator
+							.next();
 					service.deactivateHandler(activation);
 					activation.getHandler().dispose();
 				}
 			}
-			activationsByActionId.clear();
+			activationsByActionIdByServiceLocator.clear();
 		}
 	}
 
@@ -414,11 +423,21 @@ public class SubActionBars extends EventManager implements IActionBars {
 			// Update the handler activations.
 			final IHandlerService service = (IHandlerService) locator
 					.getService(IHandlerService.class);
-			if (activationsByActionId == null) {
+			Map activationsByActionId = null;
+			if (activationsByActionIdByServiceLocator == null) {
+				activationsByActionIdByServiceLocator = new WeakHashMap();
 				activationsByActionId = new HashMap();
+				activationsByActionIdByServiceLocator.put(locator,
+						activationsByActionId);
 			} else {
-				if (activationsByActionId.containsKey(actionID)) {
-					final Object value = activationsByActionId.get(actionID);
+				activationsByActionId = (Map) activationsByActionIdByServiceLocator
+						.get(locator);
+				if (activationsByActionId == null) {
+					activationsByActionId = new HashMap();
+					activationsByActionIdByServiceLocator.put(locator,
+							activationsByActionId);
+				} else if (activationsByActionId.containsKey(actionID)) {
+					final Object value = activationsByActionId.remove(actionID);
 					if (value instanceof IHandlerActivation) {
 						final IHandlerActivation activation = (IHandlerActivation) value;
 						service.deactivateHandler(activation);
@@ -460,8 +479,11 @@ public class SubActionBars extends EventManager implements IActionBars {
 			// Remove the handler activation.
 			final IHandlerService service = (IHandlerService) locator
 					.getService(IHandlerService.class);
-			if (activationsByActionId != null) {
-				if (activationsByActionId.containsKey(actionID)) {
+			if (activationsByActionIdByServiceLocator != null) {
+				final Map activationsByActionId = (Map) activationsByActionIdByServiceLocator
+						.get(locator);
+				if ((activationsByActionId != null)
+						&& (activationsByActionId.containsKey(actionID))) {
 					final Object value = activationsByActionId.remove(actionID);
 					if (value instanceof IHandlerActivation) {
 						final IHandlerActivation activation = (IHandlerActivation) value;
