@@ -57,6 +57,9 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 	private ModelSelectionDropDownAction modelPicker;
 	private SyncViewerShowPreferencesAction showPreferences;
 	private OpenInCompareAction openInCompareAction;
+	private MergeAction merge;
+	private MergeAction overwrite;
+	private MergeAction markAsMerged;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -136,16 +139,25 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 		ModelSynchronizeParticipant participant = ((ModelSynchronizeParticipant)getConfiguration().getParticipant());
 		if (participant.isMergingEnabled()) {
 			if (!isTwoWayMerge()) {
-				MergeAction merge = new MergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, cmm, getConfiguration());
-				configureMergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, merge);
+				if (merge == null) {
+					merge = new MergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, cmm, getConfiguration());
+					configureMergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, merge);
+				}
+				merge.update();
 				addToContextMenu(SynchronizationActionProvider.MERGE_ACTION_ID, merge, cmm);
 			}
-			MergeAction overwrite = new MergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, cmm, getConfiguration());
-			configureMergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite);
+			if (overwrite == null) {
+				overwrite = new MergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, cmm, getConfiguration());
+				configureMergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite);
+			}
+			overwrite.update();
 			addToContextMenu(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite, cmm);
 			if (!isTwoWayMerge()) {
-				MergeAction markAsMerged = new MergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, cmm, getConfiguration());
-				configureMergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged);
+				if (markAsMerged == null) {
+					markAsMerged = new MergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, cmm, getConfiguration());
+					configureMergeAction(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged);
+				}
+				markAsMerged.update();
 				addToContextMenu(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged, cmm);
 			}
 		}
@@ -218,9 +230,18 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#dispose()
+	 */
 	public void dispose() {
 		if (modelPicker != null)
 			modelPicker.dispose();
+		if (merge != null)
+			merge.dispose();
+		if (overwrite != null)
+			overwrite.dispose();
+		if (markAsMerged != null)
+			markAsMerged.dispose();
 		super.dispose();
 	}
 }

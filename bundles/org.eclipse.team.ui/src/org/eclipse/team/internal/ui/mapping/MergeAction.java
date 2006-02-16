@@ -35,6 +35,7 @@ public class MergeAction extends Action {
 	private final String handlerId;
 	private final CommonMenuManager manager;
 	private final ISynchronizePageConfiguration configuration;
+	private IHandler defaultHandler;
 	
 	public MergeAction(String handlerId, CommonMenuManager manager, ISynchronizePageConfiguration configuration) {
 		Assert.isNotNull(handlerId);
@@ -106,8 +107,11 @@ public class MergeAction extends Action {
 
 	private IHandler getHandler() {
 		IHandler handler = manager.getHandler(handlerId);
-		if (handler == null)
-			return getDefaultHandler();
+		if (handler == null) {
+			if (defaultHandler == null)
+				defaultHandler = getDefaultHandler();
+			return defaultHandler;
+		}
 		return handler;
 	}
 	
@@ -115,12 +119,18 @@ public class MergeAction extends Action {
 		return MergeActionHandler.getDefaultHandler(handlerId, configuration);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#isEnabled()
-	 */
-	public boolean isEnabled() {
+	private boolean calculateEnablement() {
 		IHandler handler = getHandler();
 		return handler != null && handler.isEnabled();
+	}
+
+	public void dispose() {
+		if (defaultHandler != null)
+			defaultHandler.dispose();
+	}
+	
+	public void update() {
+		setEnabled(calculateEnablement());
 	}
 
 }

@@ -141,5 +141,12 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 		// TODO: may be too long for enablement
 		return getFileDeltas(getElements()).length > 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.TeamOperation#canRunAsJob()
+	 */
+	protected boolean canRunAsJob() {
+		return true;
+	}
 
 }

@@ -42,8 +42,10 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	
 	/**
 	 * Return an instance of the default handler for the given merge action id.
+	 * Note that this handler must be disposed by the caller when it is no longer 
+	 * needed.
 	 * @param mergeActionId the merge action id
-	 * @param configuration the ynchronization page configuration
+	 * @param configuration the synchronization page configuration
 	 * @return the default handler for the given nerge action or <code>null</code>
 	 */
 	public static IHandler getDefaultHandler(String mergeActionId, ISynchronizePageConfiguration configuration) {
