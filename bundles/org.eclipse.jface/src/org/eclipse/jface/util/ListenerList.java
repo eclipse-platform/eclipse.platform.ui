@@ -36,6 +36,10 @@ package org.eclipse.jface.util;
  * </p>
  * 
  * @deprecated Please use {@link org.eclipse.core.runtime.ListenerList} instead.
+ *             Please note that the {@link #ListenerList(int)} and
+ *             {@link org.eclipse.core.runtime.ListenerList#ListenerList(int)}
+ *             constructors have different semantics. Please read the javadoc
+ *             carefully.
  */
 public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 
