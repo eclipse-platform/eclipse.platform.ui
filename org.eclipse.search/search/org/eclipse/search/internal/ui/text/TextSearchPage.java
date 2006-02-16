@@ -189,8 +189,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	//---- Action Handling ------------------------------------------------
 	
 	public boolean performAction() {
-		NewSearchUI.runQueryInBackground(getNewSearchQuery());
-//            NewSearchUI.runQueryInBackground(getSearchQuery());
+		if (getPattern().length() == 0) {
+			// bugzilla 128050
+			NewSearchUI.runQueryInBackground(getSearchQuery());
+		}
+		else {
+			NewSearchUI.runQueryInBackground(getNewSearchQuery());
+		}
  		return true;
 	}
 	
