@@ -26,6 +26,9 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * 
  * @since 3.2
+ * 
+ * @deprecated This Interface -will- be removed in M6 and replaced with the use of the
+ * <code>org.eclipse.ui.menus</code> extension point.
  */
 public interface IWindowTrim {
 	/**
