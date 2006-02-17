@@ -540,6 +540,12 @@ public class EclipseTest extends ResourceTest {
                 || (resource1 == null && ! resource2.exists())
                 || (resource2 == null && ! resource1.exists()))
             return;
+        if (resource1 == null && resource2 != null) {
+        	fail("Expected no resource for " + resource2.getRepositoryRelativePath() + " but there was one");
+        }
+        if (resource2 == null && resource1 != null) {
+        	fail("Expected resource " + resource1.getRepositoryRelativePath() + " was missing");
+        }
 		assertEquals("Resource types do not match for " + parent.append(resource1.getName()), resource1.isFolder(), resource2.isFolder());
 		if (!resource1.isFolder())
 			assertEquals(parent, (ICVSFile)resource1, (ICVSFile)resource2, includeTimestamps, includeTags);
@@ -1363,6 +1369,13 @@ public class EclipseTest extends ResourceTest {
             Policy.recorder.close();
             Policy.recorder = null;
         }
+    }
+    
+    protected void cleanup() throws CoreException {
+		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+		getWorkspace().save(true, null);
+		//don't leak builder jobs, since they may affect subsequent tests
+		waitForBuild();
     }
 }
 
