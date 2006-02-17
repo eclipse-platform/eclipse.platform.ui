@@ -120,11 +120,6 @@ public class SteppingTests extends AbstractAntDebugTest {
 			}
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			thread= launchToLineBreakpoint(config, bp); 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-
 			debugFrame(kind, frameName, frameLineNumber, thread);
 			return thread;
         } finally {

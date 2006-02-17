@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,8 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * The properties set during the build associated with this thread
 	 */
 	private AntProperties fRuntimeProperties;
+    
+    private Object fPropertiesLock= new Object();
 	
 	/**
 	 * Constructs a new thread for the given target
@@ -90,23 +92,25 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * possibly waiting until the frames are populated
      * 
 	 */
-	private synchronized void getStackFrames0() throws DebugException {
-		getAntDebugTarget().getStackFrames();
-        if (fFrames.size() > 0) {
-            //frames set..no need to wait
-            return;
-        }
-        int attempts= 0;
-		try {
-            while (fFrames.size() == 0 && !isTerminated()) {
-                wait(50);
-                if (attempts == 20 && fFrames.size() == 0 && !isTerminated()) {
-                    throwDebugException(DebugModelMessages.AntThread_3);
-                }
-                attempts++;
+	private void getStackFrames0() throws DebugException {
+        synchronized (fFrames) {
+    		getAntDebugTarget().getStackFrames();
+            if (fFrames.size() > 0) {
+                //frames set..no need to wait
+                return;
             }
-		} catch (InterruptedException e) {
-		}
+            int attempts= 0;
+    		try {
+                while (fFrames.size() == 0 && !isTerminated()) {
+                    fFrames.wait(50);
+                    if (attempts == 20 && fFrames.size() == 0 && !isTerminated()) {
+                        throwDebugException(DebugModelMessages.AntThread_3);
+                    }
+                    attempts++;
+                }
+    		} catch (InterruptedException e) {
+    		}
+        }
 	}
 	
 	/* (non-Javadoc)
@@ -301,39 +305,41 @@ public class AntThread extends AntDebugElement implements IThread {
 		fStepping = stepping;
 	}
 
-    public synchronized void buildStack(String data) {
-		String[] strings= data.split(DebugMessageIds.MESSAGE_DELIMITER);
-		//0 STACK message
-		//1 targetName
-		//2 taskName
-		//3 filePath
-		//4 lineNumber
-		//5 ...
-		if (fOldFrames != null && (strings.length - 1)/ 4 != fOldFrames.size()) {
-			fOldFrames= null; //stack size changed..do not preserve
-		}
-		StringBuffer name;
-		String filePath;
-		int lineNumber;
-		int stackFrameId= 0;
-        String taskName;
-		for (int i = 1; i < strings.length; i++) {
-			if (strings[i].length() > 0) {
-                name= new StringBuffer(strings[i]);
-                taskName= strings[++i];
-                if (taskName.length() > 0) {
-                     name.append(": "); //$NON-NLS-1$
-                     name.append(taskName);
+    public void buildStack(String data) { 
+        synchronized (fFrames) {
+            String[] strings= data.split(DebugMessageIds.MESSAGE_DELIMITER);
+            //0 STACK message
+            //1 targetName
+            //2 taskName
+            //3 filePath
+            //4 lineNumber
+            //5 ...
+            if (fOldFrames != null && (strings.length - 1)/ 4 != fOldFrames.size()) {
+                fOldFrames= null; //stack size changed..do not preserve
+            }
+            StringBuffer name;
+            String filePath;
+            int lineNumber;
+            int stackFrameId= 0;
+            String taskName;
+            for (int i = 1; i < strings.length; i++) {
+                if (strings[i].length() > 0) {
+                    name= new StringBuffer(strings[i]);
+                    taskName= strings[++i];
+                    if (taskName.length() > 0) {
+                        name.append(": "); //$NON-NLS-1$
+                        name.append(taskName);
+                    }
+                } else {
+                    name= new StringBuffer(strings[++i]);
                 }
-			} else {
-				name= new StringBuffer(strings[++i]);
-			}
-			filePath= strings[++i];
-			lineNumber= Integer.parseInt(strings[++i]);
-			addFrame(stackFrameId++, name.toString(), filePath, lineNumber);
-		}
-		//wake up the call from getStackFrames
-		notifyAll();
+                filePath= strings[++i];
+                lineNumber= Integer.parseInt(strings[++i]);
+                addFrame(stackFrameId++, name.toString(), filePath, lineNumber);
+            }
+            //wake up the call from getStackFrames
+            fFrames.notifyAll();
+        }
     }
     
     private void addFrame(int stackFrameId, String name, String filePath, int lineNumber) {
@@ -361,61 +367,63 @@ public class AntThread extends AntDebugElement implements IThread {
     	return frame;
     }
     
-    public synchronized void newProperties(String data) {
-	    try {
-	    	String[] datum= data.split(DebugMessageIds.MESSAGE_DELIMITER);
-	    	if (fUserProperties == null) {
-	    		initializePropertyGroups();
-	    	}
-	    	
-	    	List userProperties= ((AntPropertiesValue)fUserProperties.getLastValue()).getProperties();
-	    	List systemProperties= ((AntPropertiesValue)fSystemProperties.getLastValue()).getProperties();
-	    	List runtimeProperties= ((AntPropertiesValue)fRuntimeProperties.getLastValue()).getProperties();
-	    	//0 PROPERTIES message
-	    	//1 propertyName length
-	    	//2 propertyName
-	    	//3 propertyValue length
-	    	//3 propertyValue
-	    	//4 propertyType
-	    	//5 ...
-	    	if (datum.length > 1) { //new properties
-	    		StringBuffer propertyName;
-	    		StringBuffer propertyValue;
-	    		int propertyNameLength;
-	    		int propertyValueLength;
-	    		for (int i = 1; i < datum.length; i++) {
-	    			propertyNameLength= Integer.parseInt(datum[i]);
-	    			propertyName= new StringBuffer(datum[++i]);
-	    			while (propertyName.length() != propertyNameLength) {
-	    				propertyName.append(DebugMessageIds.MESSAGE_DELIMITER);
-						propertyName.append(datum[++i]);
-	    			}
-					
-					propertyName= getAntDebugTarget().getAntDebugController().unescapeString(propertyName);
-					
-	    			propertyValueLength= Integer.parseInt(datum[++i]);
-	    			if (propertyValueLength == 0 && i + 1 == datum.length) { //bug 81299
-	    				propertyValue= new StringBuffer(""); //$NON-NLS-1$
-	    			} else {
-	    				propertyValue= new StringBuffer(datum[++i]);
-	    			}
-	    			while (propertyValue.length() != propertyValueLength) {
-	    				propertyValue.append(DebugMessageIds.MESSAGE_DELIMITER);
-						propertyValue.append(datum[++i]);
-	    			}
-	    			
-					propertyValue= getAntDebugTarget().getAntDebugController().unescapeString(propertyValue);
-					
-					int propertyType= Integer.parseInt(datum[++i]);
-	    			addProperty(userProperties, systemProperties, runtimeProperties, propertyName.toString(), propertyValue.toString(), propertyType);
-	    		}
-	    	}
-	    } finally {
-            fRefreshProperties= false;
-            setPropertiesValid(true);
-	        //wake up the call from getVariables
-	    	notifyAll();
-	    }
+    public void newProperties(String data) {
+        synchronized (fPropertiesLock) {
+            try {
+                String[] datum= data.split(DebugMessageIds.MESSAGE_DELIMITER);
+                if (fUserProperties == null) {
+                    initializePropertyGroups();
+                }
+
+                List userProperties= ((AntPropertiesValue)fUserProperties.getLastValue()).getProperties();
+                List systemProperties= ((AntPropertiesValue)fSystemProperties.getLastValue()).getProperties();
+                List runtimeProperties= ((AntPropertiesValue)fRuntimeProperties.getLastValue()).getProperties();
+                //0 PROPERTIES message
+                //1 propertyName length
+                //2 propertyName
+                //3 propertyValue length
+                //3 propertyValue
+                //4 propertyType
+                //5 ...
+                if (datum.length > 1) { //new properties
+                    StringBuffer propertyName;
+                    StringBuffer propertyValue;
+                    int propertyNameLength;
+                    int propertyValueLength;
+                    for (int i = 1; i < datum.length; i++) {
+                        propertyNameLength= Integer.parseInt(datum[i]);
+                        propertyName= new StringBuffer(datum[++i]);
+                        while (propertyName.length() != propertyNameLength) {
+                            propertyName.append(DebugMessageIds.MESSAGE_DELIMITER);
+                            propertyName.append(datum[++i]);
+                        }
+
+                        propertyName= getAntDebugTarget().getAntDebugController().unescapeString(propertyName);
+
+                        propertyValueLength= Integer.parseInt(datum[++i]);
+                        if (propertyValueLength == 0 && i + 1 == datum.length) { //bug 81299
+                            propertyValue= new StringBuffer(""); //$NON-NLS-1$
+                        } else {
+                            propertyValue= new StringBuffer(datum[++i]);
+                        }
+                        while (propertyValue.length() != propertyValueLength) {
+                            propertyValue.append(DebugMessageIds.MESSAGE_DELIMITER);
+                            propertyValue.append(datum[++i]);
+                        }
+
+                        propertyValue= getAntDebugTarget().getAntDebugController().unescapeString(propertyValue);
+
+                        int propertyType= Integer.parseInt(datum[++i]);
+                        addProperty(userProperties, systemProperties, runtimeProperties, propertyName.toString(), propertyValue.toString(), propertyType);
+                    }
+                }
+            } finally {
+                fRefreshProperties= false;
+                setPropertiesValid(true);
+                //wake up the call from getVariables
+                fPropertiesLock.notifyAll();
+            }
+        }
 	}
 
 	private void addProperty(List userProperties, List systemProperties, List runtimeProperties, String propertyName, String propertyValue, int propertyType) {
@@ -443,27 +451,29 @@ public class AntThread extends AntDebugElement implements IThread {
 		fRuntimeProperties.setValue(new AntPropertiesValue(target));
 	}
     
-    protected synchronized IVariable[] getVariables() throws DebugException {
-        if (fRefreshProperties) {
-            getAntDebugTarget().getProperties();
-            if (fRefreshProperties) { 
-                //properties have not been set; need to wait
-                try {
-                    int attempts= 0;
-                    while (fRefreshProperties && !isTerminated()) {
-                        wait(50);
-                        if (attempts == 20 && fRefreshProperties && !isTerminated()) {
-                            throwDebugException(DebugModelMessages.AntThread_4);
+    protected IVariable[] getVariables() throws DebugException {
+        synchronized (fPropertiesLock) {
+            if (fRefreshProperties) {
+                getAntDebugTarget().getProperties();
+                if (fRefreshProperties) { 
+                    //properties have not been set; need to wait
+                    try {
+                        int attempts= 0;
+                        while (fRefreshProperties && !isTerminated()) {
+                            fPropertiesLock.wait(50);
+                            if (attempts == 20 && fRefreshProperties && !isTerminated()) {
+                                throwDebugException(DebugModelMessages.AntThread_4);
+                            }
+                            attempts++;
                         }
-                        attempts++;
+                    } catch (InterruptedException ie) {
                     }
-                } catch (InterruptedException ie) {
                 }
             }
+            if (fSystemProperties == null) {
+                return new IVariable[0];
+            }
+            return new IVariable[]{fSystemProperties, fUserProperties, fRuntimeProperties};
         }
-		if (fSystemProperties == null) {
-			return new IVariable[0];
-		}
-        return new IVariable[]{fSystemProperties, fUserProperties, fRuntimeProperties};
-      }
+    }
 }
