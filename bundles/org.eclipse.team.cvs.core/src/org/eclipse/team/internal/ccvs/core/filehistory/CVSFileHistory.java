@@ -152,14 +152,14 @@ public class CVSFileHistory extends FileHistory {
 
 	private void arrangeRevisions() {
 		if (revisions != null) {
-			if (includeLocalRevisions && includesExists && includeRemoteRevisions) {
+			if (includeLocalRevisions && includeRemoteRevisions) {
 				//Local + Remote mode
 				revisions = new IFileRevision[remoteRevisions.length + localRevisions.length];
 				//copy over remote revisions
 				System.arraycopy(remoteRevisions, 0, revisions, 0, remoteRevisions.length);
 				//copy over local revisions
 				System.arraycopy(localRevisions, 0, revisions, remoteRevisions.length, localRevisions.length);
-			} else if (includeLocalRevisions && includesExists) {
+			} else if (includeLocalRevisions) {
 				//Local mode only
 				revisions = new IFileRevision[localRevisions.length];
 				//copy over local revisions
