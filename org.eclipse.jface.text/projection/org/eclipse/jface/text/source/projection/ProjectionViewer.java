@@ -369,7 +369,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		super.setDocument(document, annotationModel, modelRangeOffset, modelRangeLength);
 
-		if (wasProjectionEnabled)
+		if (wasProjectionEnabled && document != null)
 			enableProjection();
 	}
 
