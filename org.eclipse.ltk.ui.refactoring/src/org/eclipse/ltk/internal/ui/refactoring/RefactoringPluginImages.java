@@ -14,15 +14,16 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.swt.graphics.Image;
-
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+
 import org.osgi.framework.Bundle;
 
 public class RefactoringPluginImages {
@@ -70,7 +71,7 @@ public class RefactoringPluginImages {
 	/** @since 3.2 */
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_COLL= createUnManaged(T_OBJ, "refactorings_obj.gif"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_OVR_WORKSPACE= createUnManaged(T_OVR, "workspace.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_WORKSPACE= createUnManaged(T_OVR, "workspace_ovr.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= createUnManaged(T_OBJ, "change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= createUnManaged(T_OBJ, "composite_change.gif"); //$NON-NLS-1$
@@ -168,7 +169,7 @@ public class RefactoringPluginImages {
 	 * Since 3.1.1. Load from icon paths with $NL$
 	 */
 	private static ImageDescriptor createImageDescriptor(Bundle bundle, IPath path, boolean useMissingImageDescriptor) {
-		URL url= Platform.find(bundle, path);
+		URL url= FileLocator.find(bundle, path, null);
 		if (url != null) {
 			return ImageDescriptor.createFromURL(url);
 		}
