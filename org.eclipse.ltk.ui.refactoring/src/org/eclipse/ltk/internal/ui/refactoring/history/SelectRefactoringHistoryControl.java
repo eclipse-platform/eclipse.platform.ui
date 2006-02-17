@@ -16,6 +16,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
@@ -113,6 +114,19 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 		});
 
 		Dialog.applyDialogFont(parent);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void createControl() {
+		super.createControl();
+		final GridData data= new GridData();
+		data.grabExcessHorizontalSpace= true;
+		data.heightHint= new PixelConverter(this).convertHeightInCharsToPixels(22);
+		data.horizontalAlignment= SWT.FILL;
+		data.verticalAlignment= SWT.FILL;
+		setLayoutData(data);
 	}
 
 	/**
