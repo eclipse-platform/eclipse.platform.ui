@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -45,7 +46,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.internal.dialogs.ViewLabelProvider;
 
 /**
  * Dialog which presents available breakpoint groupings to
@@ -476,7 +476,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 	/**
 	 * Label provider which provides text and images for breakpoint container factories
 	 */
-	private class BreakpointOrganzierLabelProvider extends ViewLabelProvider {
+	private class BreakpointOrganzierLabelProvider extends LabelProvider {
 		private HashMap fImageCache= new HashMap();
 		
 		public String getText(Object element) {
