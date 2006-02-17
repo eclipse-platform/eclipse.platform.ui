@@ -11,6 +11,9 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
@@ -18,6 +21,9 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -33,8 +39,9 @@ public class FindInFileActionDelegate extends FindInRecentScopeActionDelegate {
 		fEditor= null;
 		IWorkbenchPage page= getWorkbenchPage();
 		if (page != null) {
-			IEditorPart editor= page.getActiveEditor();
-			if (editor != null && editor == page.getActivePart()) {
+			IWorkbenchPart part= page.getActivePart();
+			if (part instanceof IEditorPart) {
+				IEditorPart editor= (IEditorPart) part;
 				if (editor.getEditorInput() instanceof IFileEditorInput) {
 					fEditor= editor;
 				}
@@ -46,20 +53,39 @@ public class FindInFileActionDelegate extends FindInRecentScopeActionDelegate {
 	public void setActiveEditor(IAction action, IEditorPart editor) {
 		if (editor != null && editor.getEditorInput() instanceof IFileEditorInput) {
 			fEditor= editor;
+		} else {
+			fEditor= null;
 		}
-		super.setActiveEditor(action, fEditor);
+		super.setActiveEditor(action, editor);
 	}
 
 	protected boolean modifyQuery(RetrieverQuery query) {
 		if (super.modifyQuery(query)) {
-			if (fEditor != null) {
-				IEditorInput ei= fEditor.getEditorInput();
-				if (ei instanceof IFileEditorInput) {
-					query.setSearchScope(new SingleFileScopeDescription(((IFileEditorInput) ei).getFile()));
-				}
+			IFile file= getFile();
+			if (file != null) {
+				query.setSearchScope(new SingleFileScopeDescription(file));
 				return true;
 			}
 		}
 		return false;
 	}
+	
+	private IFile getFile() {
+		if (fEditor != null) {
+			IEditorInput ei= fEditor.getEditorInput();
+			if (ei instanceof IFileEditorInput) {
+				return ((IFileEditorInput) ei).getFile();
+			}
+		}
+		return null;
+	}
+	
+	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
+		IFile file= getFile();
+		if (file != null) {
+			return FileNamePatternSearchScope.newSearchScope(SearchMessages.FindInFileActionDelegate_scope_label, new IResource[] { file }, includeDerived);
+		}
+		return FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
+	}
+	
 }

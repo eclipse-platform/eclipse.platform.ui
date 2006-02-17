@@ -11,7 +11,10 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.StyledText;
@@ -37,12 +40,23 @@ import org.eclipse.jface.text.TextSelection;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.search.internal.ui.text.FileSearchPage;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchView;
@@ -56,7 +70,14 @@ abstract public class RetrieverAction extends Action {
 		if (page == null) {
 			return;
 		}
+		if (SearchPreferencePage.useNewTextSearch()) {
+			runNewSearchQuery(page);
+		} else {
+			runOldSearchQuery(page);
+		}
+	}
 
+	private void runNewSearchQuery(IWorkbenchPage page) {
 		RetrieverQuery query= new RetrieverQuery(page);
 		RetrieverPage.initializeQuery(query);
 		if (modifyQuery(query)) {
@@ -68,6 +89,63 @@ abstract public class RetrieverAction extends Action {
 			} 
 		}
 	}
+	
+	private FileSearchQuery findLastUsedOldQuery() {
+		ISearchResultViewPart searchView= InternalSearchUI.getInstance().getSearchViewManager().getActiveSearchView();
+		if (searchView instanceof SearchView) {
+			FileSearchPage searchPage= (FileSearchPage) ((SearchView) searchView).getSearchPageRegistry().findPageForPageId("org.eclipse.search.text.FileSearchResultPage", false); //$NON-NLS-1$
+			if (searchPage != null) {
+				AbstractTextSearchResult searchResult= searchPage.getInput();
+				if (searchResult instanceof FileSearchResult) {
+					ISearchQuery query= searchResult.getQuery();
+					if (query instanceof FileSearchQuery) {
+						return (FileSearchQuery) query;
+					}
+				}
+			}
+		}
+		return null;	
+	}
+	
+	private void runOldSearchQuery(IWorkbenchPage page) {
+		String searchForString= getSearchForString(page);
+		if (searchForString == null) {
+			return;
+		}
+		FileSearchQuery lastQuery= findLastUsedOldQuery();
+		boolean includeDerived= lastQuery != null && lastQuery.getSearchScope().isIncludeDerived();
+		
+		try {
+			FileNamePatternSearchScope scope= getOldSearchScope(includeDerived);
+			if (scope == null) {
+				if (lastQuery != null) {
+					scope= lastQuery.getSearchScope();
+				} else {
+					scope= FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
+				}
+			}
+	
+			Pattern fileExtensionPattern= null;
+			if (lastQuery != null) {
+				fileExtensionPattern= lastQuery.getSearchScope().getFileNamePattern();
+				scope.setFileNamePattern(fileExtensionPattern);
+			} else {
+				SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
+				String[] fileExtensions= registry.getDefaultFilePatterns();
+				for (int i= 0; i < fileExtensions.length; i++) {
+					scope.addFileNamePattern(fileExtensions[i]);
+				}
+			}
+	
+			String searchOptions= lastQuery != null ? lastQuery.getSearchOptions() : new String();
+			FileSearchQuery query= new FileSearchQuery(scope, searchOptions, searchForString);
+			NewSearchUI.runQueryInBackground(query);
+		} catch (OperationCanceledException e) {
+			// cancelled
+		}
+	}
+	
+	protected abstract FileNamePatternSearchScope getOldSearchScope(boolean includeDerived);
 
 	abstract protected boolean modifyQuery(RetrieverQuery query);
 	abstract protected IWorkbenchPage getWorkbenchPage();
@@ -274,4 +352,20 @@ abstract public class RetrieverAction extends Action {
 		return Character.isLetterOrDigit(ch) || ch == '_';
 	}
 
+	protected String getSearchForString(IWorkbenchPage page) {
+		String searchFor= extractSearchTextFromSelection(page.getSelection());
+		if (searchFor == null || searchFor.length() == 0) {
+			IWorkbenchPart activePart= page.getActivePart();
+			if (activePart instanceof IEditorPart) {
+				searchFor= extractSearchTextFromEditor((IEditorPart) activePart);
+			}
+			if (searchFor == null) {
+				Control focus= page.getWorkbenchWindow().getShell().getDisplay().getFocusControl();
+				if (focus != null)
+					searchFor= extractSearchTextFromWidget(focus);
+			}
+		}
+		return searchFor;
+	}
+	
 }

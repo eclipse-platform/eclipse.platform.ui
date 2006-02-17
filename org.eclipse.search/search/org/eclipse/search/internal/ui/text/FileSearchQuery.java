@@ -70,6 +70,10 @@ public class FileSearchQuery implements ISearchQuery {
 		fSearchString= searchString;
 	}
 	
+	public FileNamePatternSearchScope getSearchScope() {
+		return fScope;
+	}
+	
 	public boolean canRunInBackground() {
 		return true;
 	}
@@ -93,7 +97,7 @@ public class FileSearchQuery implements ISearchQuery {
 		return fSearchString;
 	}
 	
-	private String getSearchOptions() {
+	public String getSearchOptions() {
 		return fSearchOptions;
 	}
 

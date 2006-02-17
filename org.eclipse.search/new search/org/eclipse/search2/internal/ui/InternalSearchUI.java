@@ -135,7 +135,7 @@ public class InternalSearchUI {
 	}
 
 	public ISearchResultViewPart getSearchView() {
-		return (ISearchResultViewPart) SearchPlugin.getActivePage().findView(NewSearchUI.SEARCH_VIEW_ID);
+		return getSearchViewManager().getActiveSearchView();
 	}
 
 	private IWorkbenchSiteProgressService getProgressService() {

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.text2;
 
-import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -20,6 +19,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -78,18 +79,14 @@ public class FindInRecentScopeActionDelegate extends RetrieverAction implements 
 		if (page == null) {
 			return false;
 		}
-		String searchFor= extractSearchTextFromSelection(page.getSelection());
-		if (searchFor == null || searchFor.length() == 0) {
-			if (page.getActiveEditor() == page.getActivePart()) {
-				searchFor= extractSearchTextFromEditor(page.getActiveEditor());
-			}
-			if (searchFor == null) {
-				Control focus= page.getWorkbenchWindow().getShell().getDisplay().getFocusControl();
-				if (focus != null)
-					searchFor= extractSearchTextFromWidget(focus);
-			}
-		}
+		String searchFor= getSearchForString(page);
 		query.setSearchString(searchFor);
 		return true;
 	}
+
+	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
+		return null;
+	}
+	
+
 }

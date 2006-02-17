@@ -55,7 +55,10 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String LIMIT_TABLE_TO= "org.eclipse.search.limitTableTo"; //$NON-NLS-1$
 	public static final String LIMIT_TABLE= "org.eclipse.search.limitTable"; //$NON-NLS-1$
     public static final String TEXT_SEARCH_ENGINE = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
-	
+
+    public static final String EXPERIMENTAL_SEARCH_VIEW = "org.eclipse.search.experimentalSearchResultView"; //$NON-NLS-1$
+
+    
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
 	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
@@ -95,6 +98,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(LIMIT_TABLE_TO, 200);
 		store.setDefault(LIMIT_TABLE, false);
 		store.setDefault(TEXT_SEARCH_ENGINE, ""); //default search engine is empty string //$NON-NLS-1$
+	
+		store.setDefault(EXPERIMENTAL_SEARCH_VIEW, false);
 	}
 
 
@@ -162,6 +167,14 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
                     getFieldEditorParent());
             addField(comboEditor);
         }
+        
+ 		boolEditor= new BooleanFieldEditor(
+				EXPERIMENTAL_SEARCH_VIEW,
+				"Use the experimental text search result view (work in progress)", //$NON-NLS-1$
+				getFieldEditorParent()
+				);
+		addField(boolEditor);
+        
 	}
 
 	private void createTableLimit() {
@@ -346,6 +359,11 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static RGB getPotentialMatchForegroundColor() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
+	}
+	
+	public static boolean useNewTextSearch() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(EXPERIMENTAL_SEARCH_VIEW);
 	}
 
 }

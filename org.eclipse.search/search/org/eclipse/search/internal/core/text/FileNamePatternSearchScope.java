@@ -31,6 +31,8 @@ import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.core.text.TextSearchScope;
 
+import org.eclipse.search.internal.ui.Messages;
+import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 public class FileNamePatternSearchScope extends TextSearchScope {
@@ -61,6 +63,11 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 */
 	public static FileNamePatternSearchScope newSearchScope(String description, IWorkingSet[] workingSets, boolean includeDerived) {
 		return new FileNamePatternSearchScope(description, convertToResources(workingSets, includeDerived), includeDerived);
+	}
+	
+	public static FileNamePatternSearchScope newSearchScope(IWorkingSet[] workingSets, boolean includeDerived) {
+		String desc= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets));
+		return newSearchScope(desc, workingSets, includeDerived);
 	}
 	
 	private static final boolean IS_CASE_SENSITIVE_FILESYSTEM = !new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$

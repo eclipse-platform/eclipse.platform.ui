@@ -197,5 +197,7 @@ public final class SearchMessages extends NLS {
 	public static String RetrieverPage_ResultsViewOnly;
 	public static String RetrieverPage_HierarchicalPresentation;
 	public static String SearchHistorySelectionDialog_open_in_new;
+	public static String FindInFileActionDelegate_scope_label;
+	public static String FindInProjectActionDelegate_scope_label;
 
 }

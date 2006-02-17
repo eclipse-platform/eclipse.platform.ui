@@ -11,6 +11,8 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+
 import org.eclipse.search2.internal.ui.SearchMessages;
 
 public class FindInWorkspaceActionDelegate extends FindInRecentScopeActionDelegate {
@@ -25,5 +27,9 @@ public class FindInWorkspaceActionDelegate extends FindInRecentScopeActionDelega
 			return true;
 		}
 		return false;
+	}
+	
+	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
+		return FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
 	}
 }
