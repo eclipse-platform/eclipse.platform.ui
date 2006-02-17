@@ -729,17 +729,12 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 * @see IVerticalRulerInfo#toDocumentLineNumber(int)
 	 */
 	public int toDocumentLineNumber(int y_coordinate) {
-
 		if (fTextViewer == null || y_coordinate == -1)
 			return -1;
 
 		StyledText text= fTextViewer.getTextWidget();
-		try {
-			int line= text.getLineAtOffset(text.getOffsetAtLocation(new Point(0, y_coordinate)));
-			return widgetLine2ModelLine(fTextViewer, line);
-		} catch (IllegalArgumentException ex) {
-			return -1;
-		}
+		int line= text.getLineIndex(y_coordinate);
+		return widgetLine2ModelLine(fTextViewer, line);
 	}
 
 	/**
