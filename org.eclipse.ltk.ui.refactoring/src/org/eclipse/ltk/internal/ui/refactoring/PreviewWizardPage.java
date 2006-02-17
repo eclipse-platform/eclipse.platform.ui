@@ -72,7 +72,10 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
  * Consists of a tree of changes and a compare viewer that shows the differences. 
  */
 public class PreviewWizardPage extends RefactoringWizardPage implements IPreviewWizardPage {
-	
+
+	protected static final String PREVIOUS_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.previousChange"; //$NON-NLS-1$
+	protected static final String NEXT_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.nextChange"; //$NON-NLS-1$
+
 	private static class NullPreviewer implements IChangePreviewViewer {
 		private Label fLabel;
 		public void createControl(Composite parent) {
@@ -90,6 +93,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	
 	private class NextChange extends Action {
 		public NextChange() {
+			setId(NEXT_CHANGE_ID);
 			setImageDescriptor(CompareUI.DESC_ETOOL_NEXT);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
@@ -103,6 +107,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	
 	private class PreviousChange extends Action {
 		public PreviousChange() {
+			setId(PREVIOUS_CHANGE_ID);
 			setImageDescriptor(CompareUI.DESC_ETOOL_PREV);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
@@ -199,8 +204,10 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private PageBook fPageContainer;
 	private Control fStandardPage;
 	private Control fNullPage;
-	private FilterDropDownAction fFilterDropDownAction;
-	private ViewerPane fTreeViewerPane;
+	protected Action fFilterDropDownAction;
+	protected Action fNextAction;
+	protected Action fPreviousAction;
+	protected ViewerPane fTreeViewerPane;
 	protected CheckboxTreeViewer fTreeViewer;
 	private PageBook fPreviewContainer;
 	private ChangePreviewViewerDescriptor fCurrentDescriptor;
@@ -332,8 +339,10 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fTreeViewerPane= new ViewerPane(sashForm, SWT.BORDER | SWT.FLAT);
 		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
 		ToolBarManager tbm= fTreeViewerPane.getToolBarManager();
-		tbm.add(new NextChange());
-		tbm.add(new PreviousChange());
+		fNextAction= new NextChange();
+		tbm.add(fNextAction);
+		fPreviousAction= new PreviousChange();
+		tbm.add(fPreviousAction);
 		tbm.add(new Separator());
 		fFilterDropDownAction= new FilterDropDownAction();
 		fFilterDropDownAction.setEnabled(false);
@@ -402,7 +411,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					}
 				}
 			}
-			fFilterDropDownAction.initialize(collectGroupCategories());
+			((FilterDropDownAction) fFilterDropDownAction).initialize(collectGroupCategories());
 			super.setVisible(visible);
 			fTreeViewer.getControl().setFocus();
 		} else {
@@ -514,7 +523,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	/**
 	 * Returns <code>true</code> if the preview page will show any changes when
-	 * it becomes visibile. Otherwise <code>false</code> is returned.
+	 * it becomes visible. Otherwise <code>false</code> is returned.
 	 * 
 	 * @return whether the preview has changes or not
 	 */

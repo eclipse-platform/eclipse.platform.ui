@@ -212,6 +212,22 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		if (fTreeViewerInputChange != null) {
 			input= AbstractChangeNode.createNode(null, fFilter, fTreeViewerInputChange);
 		}
+		if (input instanceof CompositeChangeNode) {
+			final CompositeChangeNode node= (CompositeChangeNode) input;
+			final PreviewNode[] nodes= node.getChildren();
+			if (nodes == null || nodes.length == 0) {
+				fTreeViewerPane.setText(RefactoringUIMessages.RefactoringHistoryPreviewPage_no_changes);
+				fNextAction.setEnabled(false);
+				fPreviousAction.setEnabled(false);
+				fFilterDropDownAction.setEnabled(false);
+				fTreeViewer.setInput(null);
+				return;
+			}
+		}
+		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes);
+		fNextAction.setEnabled(true);
+		fPreviousAction.setEnabled(true);
+		fFilterDropDownAction.setEnabled(true);
 		fTreeViewer.setInput(input);
 	}
 
