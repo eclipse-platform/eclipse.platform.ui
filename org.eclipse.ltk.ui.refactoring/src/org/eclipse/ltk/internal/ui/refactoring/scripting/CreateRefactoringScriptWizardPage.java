@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.history.SelectRefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
@@ -75,7 +74,6 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		fWizard= wizard;
 		setTitle(ScriptingMessages.CreateRefactoringScriptWizard_title);
 		setDescription(ScriptingMessages.CreateRefactoringScriptWizard_description);
-		setImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
 	}
 
 	/**

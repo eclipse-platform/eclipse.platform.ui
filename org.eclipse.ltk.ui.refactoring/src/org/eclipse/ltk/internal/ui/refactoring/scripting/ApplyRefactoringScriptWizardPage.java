@@ -26,7 +26,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
@@ -76,7 +75,6 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		fWizard= wizard;
 		setTitle(ScriptingMessages.ApplyRefactoringScriptWizard_title);
 		setDescription(ScriptingMessages.ApplyRefactoringScriptWizard_description);
-		setImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
 	}
 
 	/**
