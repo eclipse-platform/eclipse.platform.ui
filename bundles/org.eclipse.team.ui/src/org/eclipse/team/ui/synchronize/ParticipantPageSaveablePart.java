@@ -103,9 +103,12 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
-		ISaveableCompareModel currentBuffer = ((ModelSynchronizeParticipant)pageConfiguration.getParticipant()).getActiveModel();
-		if (currentBuffer != null) {
-			return currentBuffer.isDirty();
+		if (participant instanceof ModelSynchronizeParticipant) {
+			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;		
+			ISaveableCompareModel currentBuffer = msp.getActiveModel();
+			if (currentBuffer != null) {
+				return currentBuffer.isDirty();
+			}
 		}
 		return super.isDirty();
 	}
