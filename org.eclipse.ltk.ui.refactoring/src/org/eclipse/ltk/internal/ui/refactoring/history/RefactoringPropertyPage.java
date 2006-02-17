@@ -66,7 +66,23 @@ import org.osgi.service.prefs.BackingStoreException;
 public final class RefactoringPropertyPage extends PropertyPage {
 
 	/** The refactoring descriptor delete query */
-	private class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
+	private final class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
+
+		/** Has any refactoring descriptor been deleted? */
+		private boolean fDeletions= false;
+
+		/** Has the user already been warned, if enabled? */
+		private boolean fWarned= false;
+
+		/**
+		 * Returns whether any deletions have been performed successfully.
+		 * 
+		 * @return <code>true</code> if any deletions have been performed,
+		 *         <code>false</code> otherwise
+		 */
+		public boolean hasDeletions() {
+			return fDeletions;
+		}
 
 		/**
 		 * {@inheritDoc}
@@ -75,13 +91,16 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			Assert.isNotNull(proxy);
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			MessageDialogWithToggle dialog= null;
-			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
+			if (!fWarned && !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
 				final String project= proxy.getProject();
 				dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, (project == null || "".equals(project)) ? RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_workspace_pattern : RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_project_pattern, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null); //$NON-NLS-1$
 				store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
 			}
-			if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID)
+			fWarned= true;
+			if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID) {
+				fDeletions= true;
 				return new RefactoringStatus();
+			}
 			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
 		}
 	}
@@ -161,8 +180,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
 						service.connect();
+						final RefactoringDescriptorDeleteQuery query= new RefactoringDescriptorDeleteQuery();
 						try {
-							service.deleteRefactoringDescriptors(selection, new RefactoringDescriptorDeleteQuery(), null);
+							service.deleteRefactoringDescriptors(selection, query, null);
 						} catch (CoreException exception) {
 							final Throwable throwable= exception.getStatus().getException();
 							if (throwable instanceof IOException)
@@ -170,7 +190,8 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							else
 								RefactoringUIPlugin.log(exception);
 						}
-						control.setInput(service.getProjectHistory(getCurrentProject(), null));
+						if (query.hasDeletions())
+							control.setInput(service.getProjectHistory(getCurrentProject(), null));
 					} finally {
 						service.disconnect();
 					}
