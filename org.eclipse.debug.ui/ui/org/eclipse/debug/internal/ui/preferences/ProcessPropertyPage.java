@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.preferences;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -85,7 +86,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		lbl.setLayoutData(gd);
 		lbl.setFont(font);
 		
-		text = new Text(parent, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+		text = new Text(parent, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		gd.heightHint= convertHeightInCharsToPixels(15);
@@ -120,6 +121,8 @@ public class ProcessPropertyPage extends PropertyPage {
 	 * creates a vertical spacer for seperating components
 	 * @param comp
 	 * @param numlines
+	 * 
+	 * @since 3.2
 	 */
 	private void createVerticalSpacer(Composite comp, int numlines) {
 		Label lbl = new Label(comp, SWT.NONE);
@@ -128,6 +131,13 @@ public class ProcessPropertyPage extends PropertyPage {
 		lbl.setLayoutData(gd);
 	}
 	
+	/**
+	 * returns the path text
+	 * @param proc the process to extract the path text from
+	 * @return the path text or a message indicating no path text available
+	 * 
+	 * @since 3.2
+	 */
 	private String getPathText(IProcess proc) {
 		String text = DebugPreferencesMessages.ProcessPropertyPage_3;
 		if(proc != null) {
