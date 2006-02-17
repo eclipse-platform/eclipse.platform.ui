@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -94,7 +95,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 				
 				if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG)) {
 					IFile file = (IFile) getSelectedResources()[0];
-					HistoryPageSaveablePart.showHistoryInDialog(getShell(), file);
+					showCompareInDialog(getShell(), file);
 				} else {
 					IHistoryPage page = TeamUI.getHistoryView().showHistoryFor((IFile)getSelectedResources()[0]);
 					if (page instanceof CVSHistoryPage){
@@ -104,6 +105,10 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+	}
+	
+	protected void showCompareInDialog(Shell shell, Object object){
+		HistoryPageSaveablePart.showHistoryInDialog(shell, object);
 	}
 	
 	/**
