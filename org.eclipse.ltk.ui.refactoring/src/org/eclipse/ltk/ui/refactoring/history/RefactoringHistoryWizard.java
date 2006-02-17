@@ -485,6 +485,9 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Returns the error wizard page.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
 	 * 
 	 * @return the error wizard page
 	 */
@@ -517,8 +520,10 @@ public class RefactoringHistoryWizard extends Wizard {
 					key= PREFERENCE_DO_NOT_SHOW_APPLY_ERROR;
 				}
 				if (!store.getBoolean(key)) {
-					final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+					final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), wizard.getShell().getText(), message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 					store.setValue(key, dialog.getToggleState());
+					if (dialog.getReturnCode() == 1)
+						return null;
 				}
 				fCurrentRefactoring++;
 				return getRefactoringPage();
@@ -577,6 +582,9 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Returns the preview wizard page.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
 	 * 
 	 * @return the preview wizard page
 	 */
@@ -808,8 +816,10 @@ public class RefactoringHistoryWizard extends Wizard {
 		} else {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH) && proxies.length > 0) {
-				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), wizard.getShell().getText(), Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, getLabelAsText(IDialogConstants.FINISH_LABEL)), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), wizard.getShell().getText(), Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, getLabelAsText(IDialogConstants.FINISH_LABEL)), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
+				if (dialog.getReturnCode() == 1)
+					return false;
 			}
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
@@ -911,8 +921,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * Performs the change previously displayed in the preview.
 	 * <p>
-	 * This method is NOT official API. It is used by the refactoring UI plug-in
-	 * to perform changes displayed in the preview page to the workspace.
+	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
 	 * 
 	 * @param change
