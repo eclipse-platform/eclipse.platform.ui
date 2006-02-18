@@ -41,7 +41,7 @@ public class ConsolePageParticipantExtension implements IPluginContribution {
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return fConfig.getNamespace();
+        return fConfig.getContributor().getName();
     }
     
     public boolean isEnabledFor(IConsole console) throws CoreException {

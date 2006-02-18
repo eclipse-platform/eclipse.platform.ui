@@ -922,7 +922,7 @@ public class DebugPlugin extends Plugin {
 					fProcessFactories.put(id, configurationElement);
 			} else {
 				// invalid process factory
-				String badDefiner= infos[i].getNamespace();
+				String badDefiner= infos[i].getContributor().getName();
 				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_31, new String[] {badDefiner, id}), null)); 
 			}
 		}			
@@ -1326,7 +1326,7 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Parses the given command line into seperate arguments that can be passed to
+	 * Parses the given command line into separate arguments that can be passed to
 	 * <code>DebugPlugin.exec(String[], File)</code>. Embedded quotes and slashes
 	 * are escaped.
 	 * 

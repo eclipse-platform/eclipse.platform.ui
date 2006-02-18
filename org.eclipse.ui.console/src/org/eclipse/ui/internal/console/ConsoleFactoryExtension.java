@@ -18,6 +18,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -53,7 +54,7 @@ public class ConsoleFactoryExtension implements IPluginContribution {
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return fConfig.getNamespace();
+        return fConfig.getContributor().getName();
     }
 
     public boolean isEnabled() {
@@ -98,7 +99,7 @@ public class ConsoleFactoryExtension implements IPluginContribution {
             String path = fConfig.getAttributeAsIs("icon"); //$NON-NLS-1$
             if (path != null) {
                 Bundle bundle = Platform.getBundle(getPluginId());
-                URL url = Platform.find(bundle, new Path(path));
+                URL url = FileLocator.find(bundle, new Path(path), null);
                 if (url != null) {
                 	fImageDescriptor =  ImageDescriptor.createFromURL(url);
                 }

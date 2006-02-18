@@ -98,7 +98,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * on the given configuration element
 	 * 
 	 * @param element the configuration element defining the
-	 *  attribtues of this launch configuration tab extension
+	 *  attributes of this launch configuration tab extension
 	 * @return a new launch configuration tab extension
 	 */
 	public LaunchShortcutExtension(IConfigurationElement element) {
@@ -419,7 +419,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return fConfig.getNamespace();
+		return fConfig.getContributor().getName();
 	}
 }
 

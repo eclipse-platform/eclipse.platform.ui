@@ -571,7 +571,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
      */
     public String getContributingPluginId(IStringVariable variable) {
         if (variable instanceof StringVariable) {
-            return ((StringVariable) variable).getConfigurationElement().getNamespace();
+            return ((StringVariable) variable).getConfigurationElement().getContributor().getName();
         }
         return null;
     }

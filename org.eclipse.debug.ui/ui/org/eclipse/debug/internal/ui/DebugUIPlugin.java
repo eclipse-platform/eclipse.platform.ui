@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -326,7 +327,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		Bundle bundle = Platform.getBundle(element.getNamespace());
+		Bundle bundle = Platform.getBundle(element.getContributor().getName());
 		if (bundle.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		} 
@@ -1024,10 +1025,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * @return image descriptor or <code>null</code>
      */
     public static ImageDescriptor getImageDescriptor(IConfigurationElement element, String attr) {
-		Bundle bundle = Platform.getBundle(element.getNamespace());
+		Bundle bundle = Platform.getBundle(element.getContributor().getName());
 		String iconPath = element.getAttribute(attr);
 		if (iconPath != null) {
-			URL iconURL = Platform.find(bundle , new Path(iconPath));
+			URL iconURL = FileLocator.find(bundle , new Path(iconPath), null);
 			if (iconURL != null) {
 				return ImageDescriptor.createFromURL(iconURL);
 			}

@@ -1513,7 +1513,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_launch_configuration_comparator_extension_defined_by_plug_in__0____attribute_not_specified_1, new String[] {configurationElement.getNamespace()}), null); 
+					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_launch_configuration_comparator_extension_defined_by_plug_in__0____attribute_not_specified_1, new String[] {configurationElement.getContributor().getName()}), null); 
 					DebugPlugin.log(s);
 				}
 			}
@@ -1618,7 +1618,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_source_locator_extentsion_defined_by_plug_in____0_______id___not_specified_12, new String[] {configurationElement.getNamespace()} ), null);  
+					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_source_locator_extentsion_defined_by_plug_in____0_______id___not_specified_12, new String[] {configurationElement.getContributor().getName()} ), null);  
 					DebugPlugin.log(s);
 				}
 			}
