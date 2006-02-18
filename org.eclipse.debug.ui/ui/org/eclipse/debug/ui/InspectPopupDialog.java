@@ -89,7 +89,7 @@ public class InspectPopupDialog extends DebugPopup {
      * 
      * @param shell The parent shell
      * @param anchor point at which to anchor the popup in Display coordinates
-     * @param commandId The command id to be used for persistance of 
+     * @param commandId The command id to be used for persistence of 
      * the dialog (possibly <code>null</code>)
      * @param expression The expression being inspected
      */
@@ -132,7 +132,7 @@ public class InspectPopupDialog extends DebugPopup {
 
                         IValue val = null;
                         if (data instanceof IndexedVariablePartition) {
-                            // no details for parititions
+                            // no details for partitions
                             return;
                         }
                         if (data instanceof IVariable) {

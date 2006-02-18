@@ -64,7 +64,7 @@ public abstract class DebugPopup extends PopupDialog {
      * Constructs a new popup dialog of type <code>PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE</code>
      * @param parent The parent shell
      * @param anchor point at which to anchor the popup dialog in Display coordinate space
-     * @param commandId The command id to be used for persistance of 
+     * @param commandId The command id to be used for persistence of 
      *  the dialog, or <code>null</code>
      */
     public DebugPopup(Shell parent, Point anchor, String commandId) {
@@ -102,7 +102,7 @@ public abstract class DebugPopup extends PopupDialog {
      * Returns the text to be shown as the action performed when this dialog's
      * persist command is invoked, or <code>null</code>.
      * <p>
-     * Subclasses should override as neccessary.
+     * Subclasses should override as necessary.
      * </p>
      * @return the text to be shown as the action performed when this dialog's
      *  persist command is invoked
