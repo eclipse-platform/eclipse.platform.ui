@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.ui;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Path;
@@ -234,7 +235,7 @@ public class DebugPluginImages {
 		Bundle bundle = Platform.getBundle(DebugUIPlugin.getUniqueIdentifier());
 		URL url = null;
 		if (bundle != null){
-			url = Platform.find(bundle, new Path(path));
+			url = FileLocator.find(bundle, new Path(path), null);
 			desc = ImageDescriptor.createFromURL(url);
 		}
 		imageRegistry.put(key, desc);
