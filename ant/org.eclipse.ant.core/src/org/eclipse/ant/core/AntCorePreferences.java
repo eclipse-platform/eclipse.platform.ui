@@ -34,6 +34,7 @@ import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -526,8 +527,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		
 		try {
-			antObject.setPluginLabel(element.getNamespace());
-			Bundle bundle = Platform.getBundle(element.getNamespace());
+            IContributor contributor= element.getContributor();
+			antObject.setPluginLabel(contributor.getName());
+			Bundle bundle = Platform.getBundle(contributor.getName());
 			URL url = FileLocator.toFileURL(bundle.getEntry(library));
 			if (new File(url.getPath()).exists()) {
 				addURLToExtraClasspathEntries(url, element);
@@ -538,7 +540,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			} 
 
 			//type specifies a library that does not exist
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(errorMessage, new String[]{url.toExternalForm(), element.getNamespace()}), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(errorMessage, new String[]{url.toExternalForm(), element.getContributor().getName()}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		} catch (MalformedURLException e) {
@@ -548,7 +550,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			return;
 		} catch (Exception e) {
 			//likely extra classpath entry library that does not exist
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_8, new String[]{library, element.getNamespace()}), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_8, new String[]{library,  element.getContributor().getName()}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -564,7 +566,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				continue;
 			}
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
-			Bundle bundle = Platform.getBundle(element.getNamespace());
+			Bundle bundle = Platform.getBundle(element.getContributor().getName());
 			try {
 				URL url = FileLocator.toFileURL(bundle.getEntry(library));
 				
@@ -573,7 +575,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					addPluginClassLoader(bundle);
 				} else {
 					//extra classpath entry that does not exist
-					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{url.toExternalForm(), element.getNamespace()}), null);
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{url.toExternalForm(), element.getContributor().getName()}), null);
 					AntCorePlugin.getPlugin().getLog().log(status);
 					continue;
 				}
@@ -584,7 +586,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				continue;
 			} catch (Exception e) {
 				//likely extra classpath entry that does not exist
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{library, element.getNamespace()}), null);
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{library, element.getContributor().getName()}), null);
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -624,15 +626,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			Property property= null;
 			if (value != null) {
 				property = new Property(name, value);
-				property.setPluginLabel(element.getNamespace());
+				property.setPluginLabel(element.getContributor().getName());
 			} else {
-				Bundle bundle= Platform.getBundle(element.getNamespace());
+				Bundle bundle= Platform.getBundle(element.getContributor().getName());
 				if (bundle == null) {
 					continue;
 				}
 				property = new Property();
 				property.setName(name);
-				property.setPluginLabel(element.getNamespace());
+				property.setPluginLabel(element.getContributor().getName());
 				String className = element.getAttribute(AntCorePlugin.CLASS);
 				property.setValueProvider(className, new WrappedClassLoader(bundle));
 			}
