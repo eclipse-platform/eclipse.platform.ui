@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, 97051 
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, 97051, 128103
  *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210
  *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
  *******************************************************************************/
@@ -1063,7 +1063,7 @@ public class BuildFileCreator
         element.setAttribute("name", conf.getName()); //$NON-NLS-1$
         
         Element mkdirElement = doc.createElement("mkdir"); //$NON-NLS-1$
-        mkdirElement.setAttribute("dir", JUNIT_OUTPUT_DIR); //$NON-NLS-1$
+        mkdirElement.setAttribute("dir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
         element.appendChild(mkdirElement);
         
         Element junitElement = doc.createElement("junit"); //$NON-NLS-1$
@@ -1141,7 +1141,7 @@ public class BuildFileCreator
         fileset.appendChild(include);
         Element report = doc.createElement("report"); //$NON-NLS-1$
         report.setAttribute("format", "frames"); //$NON-NLS-1$ //$NON-NLS-2$
-        report.setAttribute("todir", "junit"); //$NON-NLS-1$ //$NON-NLS-2$
+        report.setAttribute("todir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
         junitreport.appendChild(report);
         element.appendChild(junitreport);
         root.appendChild(element);
@@ -1263,5 +1263,4 @@ public class BuildFileCreator
         CHECK_SOURCE_CYCLES = checkcycles;
         CREATE_ECLIPSE_COMPILE_TARGET = eclipsecompiler;
     }
-
 }
