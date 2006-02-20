@@ -133,7 +133,9 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     	if (fQualifier == null) {
     		fQualifier = fConfig.getAttribute("qualifier"); //$NON-NLS-1$
     		try {
-				fQualifier = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fQualifier, false);
+    			if (fQualifier != null) {
+    				fQualifier = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fQualifier, false);
+    			}
 			} catch (CoreException e) {
 				ConsolePlugin.log(e);
 			}
