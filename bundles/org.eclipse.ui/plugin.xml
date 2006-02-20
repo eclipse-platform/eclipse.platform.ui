@@ -1113,6 +1113,30 @@
             name="org.eclipse.ui.workbench.INACTIVE_TAB_VERTICAL"
             value="true">
       </data>
+      
+      <theme
+            id="org.eclipse.ui.ide.highContrast"
+            name="%ThemeName.HighContrast">
+         <description>%HighContrast.ThemeDescription</description>
+         <fontOverride
+               id="org.eclipse.jface.bannerfont"
+               />
+         <fontOverride
+               id="org.eclipse.jface.headerfont"
+               />
+         <fontOverride
+               id="org.eclipse.jface.textfont"
+               />
+         <colorOverride
+               id="ERROR_COLOR"
+               value="COLOR_WHITE"/>
+         <colorOverride
+               id="HYPERLINK_COLOR"
+               value="COLOR_WHITE"/>
+         <colorOverride
+               id="ACTIVE_HYPERLINK_COLOR"
+               value="COLOR_WHITE"/>
+      </theme>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

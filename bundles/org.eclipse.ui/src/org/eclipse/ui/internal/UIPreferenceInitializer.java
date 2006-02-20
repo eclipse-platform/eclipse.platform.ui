@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.themes.IThemeManager;
@@ -34,16 +35,31 @@ import org.osgi.service.prefs.BackingStoreException;
  * @since 3.0
  */
 public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
-	
+
+	 private static final String HIGH_CONTRAST_THEME = "org.eclipse.ui.ide.highContrast";//$NON-NLS-1$
+	 
 	public void initializeDefaultPreferences() {
+		
+		//Determine the high contrast setting before
+		//any access to preferences
+		final boolean[] highContrast = new boolean[1];
+		Display.getCurrent().syncExec(new Runnable(){
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				highContrast[0] = Display.getCurrent().getHighContrast();
+				
+			}
+		});
 
 		IScopeContext context = new DefaultScope();
-		IEclipsePreferences node = context.getNode(UIPlugin
-				.getDefault().getBundle().getSymbolicName());
+		IEclipsePreferences node = context.getNode(UIPlugin.getDefault()
+				.getBundle().getSymbolicName());
 		node.put(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
-		//Deprecated but kept for backwards compatibility
+		// Deprecated but kept for backwards compatibility
 		node.put(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		node.put(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE,
@@ -51,15 +67,15 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
-		//Although there is no longer any item on the preference pages
-		//for setting the linking preference, since it is now a per-part
+		// Although there is no longer any item on the preference pages
+		// for setting the linking preference, since it is now a per-part
 		// setting, it remains as a preference to allow product overrides of the
-		//initial state of linking in the Navigator. By default, linking is
+		// initial state of linking in the Navigator. By default, linking is
 		// off.
 		node.putBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
 				false);
 
-		//Appearance / Presentation preferences
+		// Appearance / Presentation preferences
 		node.put(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
 				"org.eclipse.ui.presentations.default"); //$NON-NLS-1$
 		node
@@ -73,48 +89,58 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
 				true);
 
-		//the fast view bar should be on the bottom of a fresh workspace
+		// the fast view bar should be on the bottom of a fresh workspace
 		node.put(IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
 				IWorkbenchPreferenceConstants.BOTTOM);
 
-		//default to showing intro on startup
+		// default to showing intro on startup
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_INTRO, true);
 
-		//Default to the standard key configuration.
+		// Default to the standard key configuration.
 		node.put(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
 				IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID);
 
-		//Preference for showing system jobs in the jobs view
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS,false);
+		// Preference for showing system jobs in the jobs view
+		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS, false);
 
-		//Set the default theme.
-		node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
-				IThemeManager.DEFAULT_THEME);
-		
-		//The default minimum character width for editor tabs is undefined (i.e., -1)
+		// Set the default theme.
+		if (highContrast[0])
+			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
+					HIGH_CONTRAST_THEME);
+		else
+			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
+					IThemeManager.DEFAULT_THEME);
+
+		// The default minimum character width for editor tabs is undefined
+		// (i.e., -1)
 		node
 				.putInt(
 						IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS,
 						-1);
 
-		//The default minimum character width for view tabs is 1
-		node
-				.putInt(
-						IWorkbenchPreferenceConstants.VIEW_MINIMUM_CHARACTERS,
-						1);
-		
-        // Default for closing editors on exit.
-        node.putBoolean(IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
-        
-        // Default for using window working sets 
-        node.putBoolean(IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT, false);
+		// The default minimum character width for view tabs is 1
+		node.putInt(IWorkbenchPreferenceConstants.VIEW_MINIMUM_CHARACTERS, 1);
 
-        // Default for showing filter text widget that determines what is shown in a FilteredTree
-        node.putBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS, true);
-        
-        // Default for enabling detached views
-        node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_DETACHED_VIEWS, true);
-        
+		// Default for closing editors on exit.
+		node.putBoolean(IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT,
+				false);
+
+		// Default for using window working sets
+		node
+				.putBoolean(
+						IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT,
+						false);
+
+		// Default for showing filter text widget that determines what is shown
+		// in a FilteredTree
+		node
+				.putBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS,
+						true);
+
+		// Default for enabling detached views
+		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_DETACHED_VIEWS,
+				true);
+
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
@@ -123,9 +149,13 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				.getSymbolicName();
 		try {
 			if (rootNode.nodeExists(uiName))
-				((IEclipsePreferences) rootNode.node(uiName)).addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+				((IEclipsePreferences) rootNode.node(uiName))
+						.addPreferenceChangeListener(PlatformUIPreferenceListener
+								.getSingleton());
 		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, UIPlugin.getDefault().getBundle().getSymbolicName(),IStatus.ERROR,e.getLocalizedMessage(),e);
+			IStatus status = new Status(IStatus.ERROR, UIPlugin.getDefault()
+					.getBundle().getSymbolicName(), IStatus.ERROR, e
+					.getLocalizedMessage(), e);
 			UIPlugin.getDefault().getLog().log(status);
 		}
 
@@ -140,7 +170,8 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 						if (!event.getChild().name().equals(uiName))
 							return;
 						((IEclipsePreferences) event.getChild())
-								.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+								.addPreferenceChangeListener(PlatformUIPreferenceListener
+										.getSingleton());
 
 					}
 
