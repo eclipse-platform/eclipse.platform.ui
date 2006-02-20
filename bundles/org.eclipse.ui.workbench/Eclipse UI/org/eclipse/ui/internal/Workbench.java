@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
@@ -330,7 +331,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	/**
 	 * Listener list for registered IWorkbenchListeners .
 	 */
-	private ListenerList workbenchListeners = new ListenerList(ListenerList.IDENTITY);
+	private ListenerList workbenchListeners = new ListenerList(
+			ListenerList.IDENTITY);
 
 	/**
 	 * Creates a new workbench.
@@ -472,6 +474,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	/*
 	 * (non-Javadoc) Method declared on IWorkbench.
+	 * 
 	 * @since 3.2
 	 */
 	public void addWorkbenchListener(IWorkbenchListener listener) {
@@ -480,6 +483,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	/*
 	 * (non-Javadoc) Method declared on IWorkbench.
+	 * 
 	 * @since 3.2
 	 */
 	public void removeWorkbenchListener(IWorkbenchListener listener) {
@@ -488,10 +492,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	/**
 	 * Fire workbench preShutdown event, stopping at the first one to veto
-	 *
-	 * @param forced flag indicating whether the shutdown is being forced
-     * @return <code>true</code> to allow the workbench to proceed with shutdown,
-     *   <code>false</code> to veto a non-forced shutdown
+	 * 
+	 * @param forced
+	 *            flag indicating whether the shutdown is being forced
+	 * @return <code>true</code> to allow the workbench to proceed with
+	 *         shutdown, <code>false</code> to veto a non-forced shutdown
 	 * @since 3.2
 	 */
 	boolean firePreShutdown(final boolean forced) {
@@ -512,6 +517,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	/**
 	 * Fire workbench postShutdown event.
+	 * 
 	 * @since 3.2
 	 */
 	void firePostShutdown() {
@@ -525,7 +531,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			});
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
@@ -550,7 +556,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					l.windowOpened(window);
 				}
@@ -573,7 +579,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					l.windowClosed(window);
 				}
@@ -592,7 +598,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					l.windowActivated(window);
 				}
@@ -611,7 +617,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					l.windowDeactivated(window);
 				}
@@ -635,7 +641,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return false;
 		}
 
-		// notify regular workbench clients of preShutdown and allow them to veto if not forced
+		// notify regular workbench clients of preShutdown and allow them to
+		// veto if not forced
 		isClosing = firePreShutdown(force);
 		if (!force && !isClosing) {
 			return false;
@@ -650,7 +657,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		boolean closeEditors = PrefUtil.getAPIPreferenceStore().getBoolean(
 				IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					IWorkbenchWindow windows[] = getWorkbenchWindows();
 					for (int i = 0; i < windows.length; i++) {
@@ -668,7 +675,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		if (getWorkbenchConfigurer().getSaveAndRestore()) {
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					XMLMemento mem = recordWorkbenchState();
 					// Save the IMemento to a file.
@@ -696,7 +703,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return false;
 		}
 
-		Platform.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
+		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
 			public void run() {
 				if (isClosing || force)
 					isClosing = windowManager.close();
@@ -721,7 +728,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final boolean[] result = new boolean[1];
 		result[0] = true;
 
-		Platform.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
+		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
 			public void run() {
 				// Collect dirtyParts
 				ArrayList dirtyParts = new ArrayList();
@@ -1015,7 +1022,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * 
 	 * @return true if init succeeded.
 	 */
-	private boolean init(Display display) {
+	private boolean init() {
 		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
@@ -1135,9 +1142,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private void initializeFonts() {
 		FontDefinition[] fontDefinitions = WorkbenchPlugin.getDefault()
 				.getThemeRegistry().getFonts();
-		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
-				IThemeManager.DEFAULT_THEME), fontDefinitions, PrefUtil
-				.getInternalPreferenceStore());
+
+		ThemeElementHelper.populateRegistry(
+				getThemeManager().getCurrentTheme(), fontDefinitions, PrefUtil
+						.getInternalPreferenceStore());
 	}
 
 	/*
@@ -1457,7 +1465,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		final IStatus result[] = { new Status(IStatus.OK,
 				WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, "", null) }; //$NON-NLS-1$
-		Platform.run(new SafeRunnable(WorkbenchMessages.ErrorReadingState) {
+		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorReadingState) {
 			public void run() throws Exception {
 				FileInputStream input = new FileInputStream(stateFile);
 				BufferedReader reader = new BufferedReader(
@@ -1742,7 +1750,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					// execute the code to start it
 					if (!disabledPlugins.contains(extension.getNamespace())) {
 						monitor.subTask(extension.getNamespace());
-						Platform.run(new EarlyStartupRunnable(extension));
+						SafeRunner.run(new EarlyStartupRunnable(extension));
 					}
 					monitor.worked(1);
 				}
@@ -1829,7 +1837,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			Window.setExceptionHandler(handler);
 
 			// initialize workbench and restore or open one window
-			boolean initOK = init(display);
+			boolean initOK = init();
 
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
@@ -2197,7 +2205,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// shutdown application-specific portions first
 		advisor.postShutdown();
 
-		// notify regular workbench clients of shutdown, and clear the list when done
+		// notify regular workbench clients of shutdown, and clear the list when
+		// done
 		firePostShutdown();
 		workbenchListeners.clear();
 
@@ -2578,7 +2587,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				// then
 				// execute the code to start it
 				if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
-					Platform.run(new EarlyStartupRunnable(extension));
+					SafeRunner.run(new EarlyStartupRunnable(extension));
 			}
 
 		}
