@@ -18,6 +18,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -403,7 +404,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 					// CoreException and OperationCanceledException are propagated
 				}
 			};
-			ResourcesPlugin.getWorkspace().run(workspaceRunnable, new MultiRule(projects), 0, monitor);
+			ResourcesPlugin.getWorkspace().run(workspaceRunnable, getCheckoutRule(projects), 0, monitor);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		} finally {
@@ -414,7 +415,24 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			throw eHolder[0];
 		}
 	}
-	
+
+	private static ISchedulingRule getCheckoutRule(final IProject[] projects) {
+		if (projects.length == 1) {
+			return ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projects[0]);
+		} else {
+			Set rules = new HashSet();
+			for (int i = 0; i < projects.length; i++) {
+				ISchedulingRule modifyRule = ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projects[i]);
+				if (modifyRule instanceof IResource && ((IResource)modifyRule).getType() == IResource.ROOT) {
+					// One of the projects is mapped to a provider that locks the workspace.
+					// Just return the workspace root rule
+					return modifyRule;
+				}
+				rules.add(modifyRule);
+			}
+			return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+		}
+	}
 	/*
 	 * Bring the provied projects into the workspace
 	 */
