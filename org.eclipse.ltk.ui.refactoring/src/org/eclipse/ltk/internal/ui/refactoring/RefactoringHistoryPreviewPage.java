@@ -199,7 +199,10 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 			message= descriptor.getDescription();
 		else
 			message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
-		setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
+		if (total > 1)
+			setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total) }));
+		else
+			setTitle(message);
 	}
 
 	/**

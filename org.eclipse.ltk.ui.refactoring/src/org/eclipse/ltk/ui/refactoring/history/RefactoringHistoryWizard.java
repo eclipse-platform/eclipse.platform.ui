@@ -114,8 +114,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * The status code representing an interrupted operation.
 	 * <p>
-	 * This constant is NOT official API. It is used by the refactoring UI
-	 * plug-in to recognize a status of interrupted operations.
+	 * Note: This API must not be used from outside the refactoring framework.
 	 * </p>
 	 */
 	public static final int STATUS_CODE_INTERRUPTED= 10003;
@@ -159,7 +158,10 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The description of the overview page */
 	private final String fOverviewDescription;
 
-	/** The overview wizard page */
+	/**
+	 * The overview wizard page, or <code>null</code> if no overview is
+	 * desired
+	 */
 	private RefactoringHistoryOverviewPage fOverviewPage;
 
 	/** The title of the overview page */
@@ -182,6 +184,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The refactoring history to execute */
 	private RefactoringHistory fRefactoringHistory;
 
+	/** Does the wizard show an overview of the refactorings? */
+	private final boolean fShowOverview;
+
 	/** The status entry filter */
 	private RefactoringStatusEntryFilter fStatusEntryFilter= new RefactoringStatusEntryFilter() {
 
@@ -201,6 +206,48 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * dialog.
 	 * </p>
 	 * 
+	 * @param overview
+	 *            <code>true</code> to show an overview of the refactorings,
+	 *            <code>false</code> otherwise
+	 * @param caption
+	 *            the caption of the wizard window
+	 * @param title
+	 *            the title of the overview page
+	 * @param description
+	 *            the description of the overview page
+	 * 
+	 * @see #setConfiguration(RefactoringHistoryControlConfiguration)
+	 * @see #setInput(RefactoringHistory)
+	 */
+	public RefactoringHistoryWizard(final boolean overview, final String caption, final String title, final String description) {
+		Assert.isNotNull(caption);
+		Assert.isNotNull(title);
+		Assert.isNotNull(description);
+		fShowOverview= overview;
+		fOverviewTitle= title;
+		fOverviewDescription= description;
+		fErrorPage= new RefactoringHistoryErrorPage();
+		fErrorPage.setFilter(fStatusEntryFilter);
+		fPreviewPage= new RefactoringHistoryPreviewPage();
+		fPreviewPage.setFilter(fPreviewChangeFilter);
+		setNeedsProgressMonitor(true);
+		setWindowTitle(caption);
+		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
+	}
+
+	/**
+	 * Creates a new refactoring history wizard.
+	 * <p>
+	 * Clients must ensure that the refactoring history and the refactoring
+	 * history control configuration are set before opening the wizard in a
+	 * dialog.
+	 * </p>
+	 * <p>
+	 * Calling his constructor is equivalent to
+	 * {@link #RefactoringHistoryWizard(boolean, String, String, String)} with
+	 * the first argument equal to <code>true</code>.
+	 * </p>
+	 * 
 	 * @param caption
 	 *            the caption of the wizard window
 	 * @param title
@@ -212,18 +259,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @see #setInput(RefactoringHistory)
 	 */
 	public RefactoringHistoryWizard(final String caption, final String title, final String description) {
-		Assert.isNotNull(caption);
-		Assert.isNotNull(title);
-		Assert.isNotNull(description);
-		fOverviewTitle= title;
-		fOverviewDescription= description;
-		fErrorPage= new RefactoringHistoryErrorPage();
-		fErrorPage.setFilter(fStatusEntryFilter);
-		fPreviewPage= new RefactoringHistoryPreviewPage();
-		fPreviewPage.setFilter(fPreviewChangeFilter);
-		setNeedsProgressMonitor(true);
-		setWindowTitle(caption);
-		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
+		this(true, caption, title, description);
 	}
 
 	/**
@@ -300,8 +336,10 @@ public class RefactoringHistoryWizard extends Wizard {
 			addUserDefinedPages();
 			Assert.isNotNull(fRefactoringHistory);
 			Assert.isNotNull(fControlConfiguration);
-			fOverviewPage= new RefactoringHistoryOverviewPage(fRefactoringHistory, fOverviewTitle, fOverviewDescription, fControlConfiguration);
-			addPage(fOverviewPage);
+			if (fShowOverview) {
+				fOverviewPage= new RefactoringHistoryOverviewPage(fRefactoringHistory, fOverviewTitle, fOverviewDescription, fControlConfiguration);
+				addPage(fOverviewPage);
+			}
 			addPage(fErrorPage);
 			addPage(fPreviewPage);
 		} finally {
@@ -740,6 +778,15 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getStartingPage() {
+		if (!fShowOverview)
+			return getNextPage(fOverviewPage);
+		return super.getStartingPage();
+	}
+
+	/**
 	 * Hook method which is called when all refactorings of the history have
 	 * been executed. This method may be called from non-UI threads.
 	 * <p>
@@ -818,7 +865,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH) && proxies.length > 0) {
 				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), wizard.getShell().getText(), Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, getLabelAsText(IDialogConstants.FINISH_LABEL)), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
-				if (dialog.getReturnCode() == 1)
+				if (dialog.getReturnCode() == IDialogConstants.CANCEL_ID)
 					return false;
 			}
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
