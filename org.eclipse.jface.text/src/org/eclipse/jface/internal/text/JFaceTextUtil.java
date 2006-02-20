@@ -296,11 +296,11 @@ public final class JFaceTextUtil {
 	 */
 	public static boolean isShowingEntireContents(StyledText widget) {
 		if (widget.getTopPixel() != 0) // more efficient shortcut
-			return true;
+			return false;
 		
 		int lastVisiblePixel= computeLastVisiblePixel(widget);
 		int lastPossiblePixel= widget.getLinePixel(widget.getLineCount());
-		return lastPossiblePixel > lastVisiblePixel;
+		return lastPossiblePixel <= lastVisiblePixel;
 	}
 
 }
