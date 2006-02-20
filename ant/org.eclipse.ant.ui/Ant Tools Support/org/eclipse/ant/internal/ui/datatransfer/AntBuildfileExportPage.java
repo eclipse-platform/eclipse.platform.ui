@@ -326,7 +326,6 @@ public class AntBuildfileExportPage extends WizardPage {
         };
 
         try {
-            // NOTE: not cancelable, don't know why
             PlatformUI.getWorkbench().getProgressService().run(false, false, runnable);
         } catch (InvocationTargetException e) {
             AntUIPlugin.log(e);
@@ -423,7 +422,7 @@ public class AntBuildfileExportPage extends WizardPage {
 
     /**
      * Get list of projects which have already a buildfile that was not
-     * created by eclipse2ant.
+     * created by the buildfile export.
      * 
      * @param javaProjects list of IJavaProject objects
      * @return set of project names
@@ -436,7 +435,7 @@ public class AntBuildfileExportPage extends WizardPage {
             IJavaProject project = (IJavaProject) iter.next();
             String projectRoot = ExportUtil.getProjectRoot(project);
             if (ExportUtil.existsUserFile(projectRoot + '/'
-                    + BuildFileCreator.BUILD_XML))
+                    + buildfilenameText.getText()))
             {
                 result.add(project.getProject().getName());
             }
