@@ -476,6 +476,8 @@ public abstract class MarkerView extends TableView {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(getFiltersPreferenceName())) {
 					loadFiltersPreferences();
+					clearEnabledFilters();
+					refreshForFocusUpdate();
 				}
 			}
 		};
@@ -1124,8 +1126,7 @@ public abstract class MarkerView extends TableView {
 		boolean updateNeeded = updateNeeded(focusElements, elements);
 		if (updateNeeded) {
 			focusElements = elements;
-			updateFilterSelection(elements);
-			refreshViewer();
+			refreshForFocusUpdate();
 		}
 	}
 
@@ -1632,6 +1633,16 @@ public abstract class MarkerView extends TableView {
 		});
 
 		return tree;
+	}
+
+	/**
+	 * The focus elements have changed. Update accordingly.
+	 */
+	private void refreshForFocusUpdate() {
+		if (focusElements != null) {
+			updateFilterSelection(focusElements);
+			refreshViewer();
+		}
 	}
 
 }
