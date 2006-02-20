@@ -11,8 +11,9 @@
 
 package org.eclipse.debug.ui.actions;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IMarker;
@@ -87,11 +88,15 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 					}
 				}
 			}
-			memento.save(new FileWriter(fFileName));
+			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(fFileName), "UTF-8"); //$NON-NLS-1$
+			memento.save(osw);
+			osw.close();
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} catch (IOException e) {
 			throw new InvocationTargetException(e);
 		}
 	}
+	
+	
 }
