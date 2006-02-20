@@ -70,6 +70,7 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -637,9 +638,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         
         Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
         gridLayout = new GridLayout();
-        gridLayout.marginHeight = 0;
-        gridLayout.marginWidth = 0;
+        gridLayout.marginHeight = 5;
+        gridLayout.marginWidth = 5;
         viewFormContents.setLayout(gridLayout);
+        viewFormContents.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
         
 		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
@@ -693,6 +695,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		gd = new GridData(GridData.FILL_HORIZONTAL | SWT.BEGINNING);
 		gd.horizontalIndent = 5;
 		fFilteringLabel.setLayoutData(gd);
+		fFilteringLabel.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
 		refreshFilteringLabel();
 		
 		// confirmation requestors
