@@ -22,6 +22,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class provides information regarding the context structure and
@@ -39,6 +40,8 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     /**
      * Creates a <code>ZipFileStructureProvider</code>, which will operate
      * on the passed zip file.
+     * 
+     * @param sourceFile the zip file used to create this structure provider
      */
     public ZipFileStructureProvider(ZipFile sourceFile) {
         super();
@@ -110,6 +113,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
         try {
             return zipFile.getInputStream((ZipEntry) element);
         } catch (IOException e) {
+        	IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
             return null;
         }
     }
@@ -142,6 +146,8 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 
     /**
      * Returns the zip file that this provider provides structure for.
+     * 
+     * @return the zip file this provider provides structure for
      */
     public ZipFile getZipFile() {
         return zipFile;

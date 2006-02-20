@@ -141,9 +141,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 				if (projectArchiveFile != null) {
 					InputStream stream = provider
 							.getContents(projectArchiveFile);
-					newDescription = IDEWorkbenchPlugin.getPluginWorkspace()
-							.loadProjectDescription(stream);
-					stream.close();
+					if (stream != null){
+						newDescription = IDEWorkbenchPlugin.getPluginWorkspace()
+								.loadProjectDescription(stream);
+						stream.close();
+					}					
 				} else {
 					IPath path = new Path(projectSystemFile.getPath());
 					newDescription = IDEWorkbenchPlugin.getPluginWorkspace()

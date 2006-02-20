@@ -24,6 +24,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class provides information regarding the context structure and content
@@ -117,6 +118,7 @@ public class ZipLeveledStructureProvider implements
 		try {
 			return zipFile.getInputStream((ZipEntry) element);
 		} catch (IOException e) {
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
 			return null;
 		}
 	}

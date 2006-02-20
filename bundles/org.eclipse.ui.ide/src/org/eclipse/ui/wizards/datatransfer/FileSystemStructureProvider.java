@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+
 /**
  * This class provides information regarding the structure and
  * content of specified file system File objects.
@@ -57,6 +59,7 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         try {
             return new FileInputStream((File) element);
         } catch (FileNotFoundException e) {
+        	IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
             return null;
         }
     }
@@ -78,8 +81,7 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         String name = file.getName();
         if (name.length() == 0)
             return file.getPath();
-        else
-            return name;
+        return name;
     }
 
     /* (non-Javadoc)

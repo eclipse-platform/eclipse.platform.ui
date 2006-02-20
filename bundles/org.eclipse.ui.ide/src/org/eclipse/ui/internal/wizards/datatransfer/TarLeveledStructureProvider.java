@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class provides information regarding the context structure and content
@@ -116,8 +117,10 @@ public class TarLeveledStructureProvider implements
 		try {
 			return tarFile.getInputStream((TarEntry) element);
 		} catch (TarException e) {
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
 			return null;
 		} catch (IOException e) {
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
 			return null;
 		}
 	}
