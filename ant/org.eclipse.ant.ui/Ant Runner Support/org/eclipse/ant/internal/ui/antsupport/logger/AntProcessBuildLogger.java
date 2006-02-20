@@ -24,7 +24,6 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.util.FileUtils;
-import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.ExternalHyperlink;
@@ -245,10 +244,22 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	public void buildFinished(BuildEvent event) {
         String message= handleException(event);
         if (message != null) {
-            logMessage(message, event, Project.MSG_ERR);
-            int fileStart= message.indexOf(AntSupportMessages.NullBuildLogger_1);
-            fileStart= fileStart + AntSupportMessages.NullBuildLogger_1.length() + StringUtils.LINE_SEP.length();
-            AntUtil.linkBuildFailedMessage(message.substring(fileStart).trim(), getAntProcess(fProcessId));
+        	try {
+    			BufferedReader r = new BufferedReader(new StringReader(message));
+    			String line = r.readLine();
+    			logMessage(line, event, Project.MSG_ERR);
+    			line = r.readLine();
+    			AntProcess antProcess = getAntProcess(fProcessId);
+    			while (line != null) {
+    				logMessage(line, event, Project.MSG_ERR);
+    				if (!message.startsWith("Total time:")) { //$NON-NLS-1$
+    					AntUtil.linkBuildFailedMessage(line, antProcess);
+    				}
+    				line = r.readLine();
+    			}
+    			logMessage("", event, Project.MSG_ERR); //$NON-NLS-1$
+    		} catch (IOException e) {
+    		}
         }
 		fHandledException= null;
 		fBuildFileParent= null;
@@ -332,7 +343,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	}
 	
 	private boolean loggingToLogFile() {
-		//check if user has designated to log to a logfile
+		//check if user has designated to log to a log file
 		return getErrorPrintStream() != null && getErrorPrintStream() != System.err;
 	}
 }

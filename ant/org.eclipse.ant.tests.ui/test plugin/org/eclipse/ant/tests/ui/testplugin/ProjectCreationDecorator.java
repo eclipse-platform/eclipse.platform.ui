@@ -52,6 +52,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 			
 			createLaunchConfigurationForBoth("echoing");
+			createLaunchConfigurationForBoth("102282");
 			createLaunchConfigurationForBoth("74840");
             createLaunchConfigurationForBoth("failingTarget");
 			createLaunchConfiguration("build");

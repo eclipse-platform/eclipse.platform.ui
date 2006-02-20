@@ -97,6 +97,22 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		activateLink(link);
 	}
 	
+	 /**
+	 * Tests launching Ant and that build failed presents links to the failures when multi-line.
+	 */
+	public void testBuildFailedLinks() throws CoreException {
+		launch("102282");
+		try {
+			int offset= ConsoleLineTracker.getDocument().getLineOffset(9) + 10; //second line of build failed link
+			IHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+			assertNotNull("No hyperlink found at offset " + offset, link);
+			activateLink(link);
+			
+		} catch (BadLocationException e) {
+			assertTrue("failed getting offset of line", false);
+		}
+	}
+	
 	/**
 	 * Tests launching Ant and that the
 	 * correct colors are in the console doc
