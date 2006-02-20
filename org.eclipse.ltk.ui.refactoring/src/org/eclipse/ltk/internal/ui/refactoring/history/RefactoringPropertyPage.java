@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -69,7 +68,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	private final class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
 
 		/** Has any refactoring descriptor been deleted? */
-		private boolean fDeletions= false;
+		private boolean fDeletions= true;
 
 		/** Has the user already been warned, if enabled? */
 		private boolean fWarned= false;
@@ -91,16 +90,15 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			Assert.isNotNull(proxy);
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			MessageDialogWithToggle dialog= null;
-			if (!fWarned && !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
+			if (!fWarned) {
 				final String project= proxy.getProject();
-				dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, (project == null || "".equals(project)) ? RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_workspace_pattern : RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_project_pattern, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null); //$NON-NLS-1$
+				dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, (project == null || "".equals(project)) ? Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_workspace_pattern, proxy.getDescription()) : Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_project_pattern, proxy.getDescription()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null); //$NON-NLS-1$
 				store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
+				fDeletions= dialog.getReturnCode() == IDialogConstants.YES_ID;
 			}
 			fWarned= true;
-			if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID) {
-				fDeletions= true;
+			if (fDeletions)
 				return new RefactoringStatus();
-			}
 			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
 		}
 	}
@@ -213,11 +211,11 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							if (current != null)
 								comment= current;
 						}
-						final InputDialog dialog= new InputDialog(getShell(), RefactoringUIMessages.RefactoringPropertyPage_edit_caption, RefactoringUIMessages.RefactoringPropertyPage_edit_message, comment, null);
+						final EditCommentDialog dialog= new EditCommentDialog(getShell(), RefactoringUIMessages.RefactoringPropertyPage_edit_caption, RefactoringUIMessages.RefactoringPropertyPage_edit_message, comment);
 						if (dialog.open() == 0) {
-							service.setRefactoringComment(selection[0], dialog.getValue(), null);
+							service.setRefactoringComment(selection[0], dialog.getComment(), null);
 							control.setSelectedDescriptors(new RefactoringDescriptorProxy[0]);
-							control.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0]});
+							control.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0] });
 						}
 					} catch (CoreException exception) {
 						RefactoringUIPlugin.log(exception);
