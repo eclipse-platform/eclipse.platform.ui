@@ -29,7 +29,7 @@ package org.eclipse.debug.internal.ui.contexts.provisional;
 public interface ISuspendTriggerAdapter {
 	
     /**
-     * Registers the given listener for suspend notfications.
+     * Registers the given listener for suspend notifications.
      * 
      * @param listener suspend listener
      */
