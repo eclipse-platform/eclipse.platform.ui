@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -482,5 +483,15 @@ public class ProblemView extends MarkerView {
 	 */
 	boolean canBeEditable() {
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#initToolBar(org.eclipse.jface.action.IToolBarManager)
+	 */
+	protected void initToolBar(IToolBarManager tbm) {
+		tbm.add(getFilterAction());
+		tbm.update(false);
 	}
 }
