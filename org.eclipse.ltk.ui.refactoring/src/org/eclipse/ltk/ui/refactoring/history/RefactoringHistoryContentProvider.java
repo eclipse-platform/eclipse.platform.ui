@@ -80,6 +80,17 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	/**
 	 * Creates a new refactoring history content provider.
 	 * 
+	 * @param time
+	 *            <code>true</code> to structure with time information,
+	 *            <code>false</code> otherwise
+	 */
+	public RefactoringHistoryContentProvider(final boolean time) {
+		this(new RefactoringHistoryControlConfiguration(null, time, false));
+	}
+
+	/**
+	 * Creates a new refactoring history content provider.
+	 * 
 	 * @param configuration
 	 *            the refactoring history control configuration
 	 */

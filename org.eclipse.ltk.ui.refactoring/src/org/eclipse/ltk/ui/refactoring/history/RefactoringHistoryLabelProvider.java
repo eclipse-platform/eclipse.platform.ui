@@ -80,6 +80,17 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	/**
 	 * Creates a new refactoring history label provider.
 	 * 
+	 * @param time
+	 *            <code>true</code> to display time information,
+	 *            <code>false</code> otherwise
+	 */
+	public RefactoringHistoryLabelProvider(final boolean time) {
+		this(new RefactoringHistoryControlConfiguration(null, time, false));
+	}
+
+	/**
+	 * Creates a new refactoring history label provider.
+	 * 
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
@@ -204,23 +215,23 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 						switch (kind) {
 							case RefactoringHistoryNode.THIS_WEEK:
 								pattern= fControlConfiguration.getThisWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_week_format, locale); 
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_week_format, locale);
 								break;
 							case RefactoringHistoryNode.LAST_WEEK:
 								pattern= fControlConfiguration.getLastWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_week_format, locale); 
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_week_format, locale);
 								break;
 							case RefactoringHistoryNode.WEEK:
 								pattern= fControlConfiguration.getWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_week_format, locale); 
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_week_format, locale);
 								break;
 							case RefactoringHistoryNode.YEAR:
 								pattern= fControlConfiguration.getYearPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_year_format, locale); 
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_year_format, locale);
 								break;
 							case RefactoringHistoryNode.THIS_MONTH:
 								pattern= fControlConfiguration.getThisMonthPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format, locale); 
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format, locale);
 								break;
 							case RefactoringHistoryNode.LAST_MONTH:
 								pattern= fControlConfiguration.getLastMonthPattern();
@@ -228,13 +239,13 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 							case RefactoringHistoryNode.MONTH:
 								pattern= fControlConfiguration.getMonthPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format, locale); 
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format, locale);
 								break;
 							case RefactoringHistoryNode.DAY:
 								pattern= fControlConfiguration.getDayPattern();
 								final int type= node.getParent().getKind();
 								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK) {
-									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format, locale); 
+									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format, locale);
 									buffer.append(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
 								} else
 									format= DateFormat.getDateInstance();
