@@ -380,10 +380,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				}
 				return null;
 			}
+
+			public final void setTopCenter(final Control control) {
+				// No toolbar
+			}
 		};
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 		fCommentPane.setEnabled(false);
-		fSplitterControl.setWeights(new int[] { 80, 20});
+		fSplitterControl.setWeights(new int[] { 75, 25});
 
 		Dialog.applyDialogFont(this);
 	}
