@@ -111,14 +111,6 @@ public interface IRefactoringHistoryService {
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
 	 * </p>
-	 * <p>
-	 * Note that calling this method with a flag argument unequal to
-	 * <code>RefactoringDescriptor#NONE</code> may result in a performance
-	 * degradation, since the actual descriptors have to be eagerly resolved.
-	 * This in turn results in faster execution of any subsequent calls to
-	 * {@link RefactoringDescriptorProxy#requestDescriptor(IProgressMonitor)}
-	 * which try to request a descriptor from the returned refactoring history.
-	 * </p>
 	 * 
 	 * @param project
 	 *            the project, which must exist
