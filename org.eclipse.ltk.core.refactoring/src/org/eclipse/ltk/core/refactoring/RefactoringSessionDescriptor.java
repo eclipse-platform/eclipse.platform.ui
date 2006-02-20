@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.Assert;
  * information such as version information and comments.
  * <p>
  * Refactoring session descriptors are potentially heavy weight objects which
- * should not be held on to. Use refactoring descriptor handles
- * {@link RefactoringDescriptorProxy} to store refactoring information.
+ * should not be held on to. Use refactoring descriptor proxies implemented by
+ * class {@link RefactoringDescriptorProxy} to store refactoring information.
  * </p>
  * <p>
  * Note: this class is not indented to be subclassed outside the refactoring
