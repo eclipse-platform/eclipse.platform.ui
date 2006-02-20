@@ -16,9 +16,9 @@ import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.preferences.WorkingCopyManager;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
+import org.eclipse.ui.preferences.WorkingCopyManager;
 
 public class PreferenceDialogWrapper extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 

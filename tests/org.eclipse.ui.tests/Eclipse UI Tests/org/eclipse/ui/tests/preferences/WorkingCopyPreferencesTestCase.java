@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.preferences;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.ui.internal.preferences.WorkingCopyManager;
+import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.osgi.service.prefs.BackingStoreException;
 
