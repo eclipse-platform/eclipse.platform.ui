@@ -23,6 +23,8 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests for change validation
  */
 public class ChangeValidationTest extends ResourceTest {
+	private IResourceChangeDescriptionFactory factory;
+	private IProject project;
 
 	public static Test suite() {
 		return new TestSuite(ChangeValidationTest.class);
@@ -86,6 +88,11 @@ public class ChangeValidationTest extends ResourceTest {
 	protected void setUp() throws Exception {
 		TestModelProvider.enabled = true;
 		super.setUp();
+		project = getWorkspace().getRoot().getProject("Project");
+		IResource[] before = buildResources(project, new String[] {"c/", "c/b/", "c/a/", "c/x", "c/b/y", "c/b/z"});
+		ensureExistsInWorkspace(before, true);
+		assertExistsInWorkspace(before);
+		factory = createEmptyChangeDescription();
 	}
 
 	protected void tearDown() throws Exception {
@@ -93,97 +100,117 @@ public class ChangeValidationTest extends ResourceTest {
 		super.tearDown();
 	}
 
-	public void testSimpleChanges() {
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IResource[] before = buildResources(project, new String[] {"c/", "c/b/", "c/a/", "c/x", "c/b/y", "c/b/z"});
-		ensureExistsInWorkspace(before, true);
-		assertExistsInWorkspace(before);
-
-		// A project close
-		IResourceChangeDescriptionFactory factory = createEmptyChangeDescription();
-		factory.close(project);
+	public void testCopyReplaceDeletedFolder() {
+		// Copy folder to replace a deleted folder
+		final IResource folder = project.findMember("c/b/");
+		IFolder destination = project.getFolder("/c/a/");
+		factory.delete(destination);
+		factory.copy(folder, destination.getFullPath());
 		IStatus status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.CLOSED, project)});
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, folder),});
+	}
 
-		// A project deletion
-		factory = createEmptyChangeDescription();
-		factory.delete(project);
-		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project)});
+	public void testFileChanges() {
+		factory.change((IFile) project.findMember("c/x"));
+		factory.change((IFile) project.findMember("c/b/y"));
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/b/y"))});
+	}
 
-		// Some file deletions
-		factory = createEmptyChangeDescription();
+	public void testFileCopy() {
+		factory.copy(project.findMember("c/x"), new Path("c/x2"));
+		factory.copy(project.findMember("c/b/y"), new Path("c/y"));
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/y"))});
+	}
+	
+	public void testFileCreate() {
+		IFile file = project.getFile("file");
+		factory.create(file);
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.ADDED, file)});
+	}
+	
+	public void testFileInFolderCreate() {
+		IFolder folder = project.getFolder("folder");
+		IFile file = folder.getFile("file");
+		factory.create(folder);
+		factory.create(file);
+		IStatus status = validateChange(factory);
+		//this isn't very accurate, but ChangeDescription doesn't currently record recursive creates
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.ADDED, folder)});
+		
+	}
+
+	public void testFileDeletion() {
 		factory.delete(project.findMember("c/x"));
 		factory.delete(project.findMember("c/b/y"));
-		status = validateChange(factory);
+		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b/y"))});
+	}
 
-		// A folder deletion
-		factory = createEmptyChangeDescription();
-		final IResource folder = project.findMember("c/b/");
-		factory.delete(folder);
-		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b")),});
-
-		// A project move
-		factory = createEmptyChangeDescription();
-		factory.move(project, new Path("MovedProject"));
-		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, project)});
-
-		// some file moves
-		factory = createEmptyChangeDescription();
+	public void testFileMoves() {
 		factory.move(project.findMember("c/x"), new Path("c/x2"));
 		factory.move(project.findMember("c/b/y"), new Path("c/y"));
-		status = validateChange(factory);
+		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.MOVED, project.findMember("c/b/y"))});
+	}
 
-		// A folder move
-		factory = createEmptyChangeDescription();
+	public void testFolderCopy() {
+		final IResource folder = project.findMember("c/b/");
+		factory.copy(folder, new Path("c/d"));
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, folder),});
+	}
+
+	public void testFolderDeletion() {
+		final IResource folder = project.findMember("c/b/");
+		factory.delete(folder);
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project.findMember("c/b")),});
+	}
+
+	public void testFolderMove() {
+		final IResource folder = project.findMember("c/b/");
 		factory.move(folder, new Path("c/d"));
-		status = validateChange(factory);
+		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, folder),});
-		
+	}
+
+	public void testMoveReplaceDeletedFolder() {
 		// Move to replace a deleted folder
-		factory = createEmptyChangeDescription();
+		final IResource folder = project.findMember("c/b/");
 		IFolder destination = project.getFolder("/c/a/");
 		factory.delete(destination);
 		factory.move(folder, destination.getFullPath());
-		status = validateChange(factory);
+		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, folder),});
+	}
 
-		// Copy folder to replace a deleted folder
-		factory = createEmptyChangeDescription();
-		factory.delete(destination);
-		factory.copy(folder, destination.getFullPath());
-		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, folder),});
+	public void testProjectClose() {
+		factory.close(project);
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.CLOSED, project)});
+	}
 
+	public void testProjectCopy() {
 		// A project copy
-		factory = createEmptyChangeDescription();
 		factory.copy(project, new Path("MovedProject"));
-		status = validateChange(factory);
+		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project)});
+	}
 
-		// some file copy
-		factory = createEmptyChangeDescription();
-		factory.copy(project.findMember("c/x"), new Path("c/x2"));
-		factory.copy(project.findMember("c/b/y"), new Path("c/y"));
-		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/y"))});
+	public void testProjectDeletion() {
+		// A project deletion
+		factory.delete(project);
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project)});
+	}
 
-		// A folder copy
-		factory = createEmptyChangeDescription();
-		factory.copy(folder, new Path("c/d"));
-		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, folder),});
-
-		// some file changes
-		factory = createEmptyChangeDescription();
-		factory.change((IFile) project.findMember("c/x"));
-		factory.change((IFile) project.findMember("c/b/y"));
-		status = validateChange(factory);
-		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.CHANGED, project.findMember("c/b/y"))});
+	public void testProjectMove() {
+		factory.move(project, new Path("MovedProject"));
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.MOVED, project)});
 	}
 
 	private IStatus validateChange(IResourceChangeDescriptionFactory factory) {
