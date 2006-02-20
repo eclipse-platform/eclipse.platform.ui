@@ -707,8 +707,12 @@ public class JobManager implements IJobManager {
 			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
 			jobs = Collections.synchronizedSet(new HashSet(select(family, states)));
 			jobCount = jobs.size();
-			if (jobCount == 0)
+			if (jobCount == 0) {
+				//use up the monitor
+				monitor.beginTask(JobMessages.jobs_blocked0, 1);
+				monitor.done();
 				return;
+			}
 			//if there is only one blocking job, use it in the blockage callback below
 			if (jobCount == 1)
 				blocking = (Job) jobs.iterator().next();
