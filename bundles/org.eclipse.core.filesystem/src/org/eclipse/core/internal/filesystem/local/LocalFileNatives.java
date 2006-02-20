@@ -102,7 +102,7 @@ abstract class LocalFileNatives {
 
 	/** Set the extended attributes specified in the IResource attribute. Only attributes 
 	 * that the platform supports will be set. */
-	private static final native boolean internalSetFileInfo(byte[] fileName, IFileInfo attribute, int options);
+	private static final native boolean internalSetFileInfo(byte[] fileName, IFileInfo attribute);
 
 	/** Set the extended attributes specified in the IResource attribute object. Only 
 	 * attributes that the platform supports will be set. (Unicode version - should not 
@@ -132,7 +132,7 @@ abstract class LocalFileNatives {
 		if (isUnicode)
 			internalSetFileInfoW(fileName.toCharArray(), info, options);
 		else
-			internalSetFileInfo(Convert.toPlatformBytes(fileName), info, options);
+			internalSetFileInfo(Convert.toPlatformBytes(fileName), info);
 	}
 
 	/**
