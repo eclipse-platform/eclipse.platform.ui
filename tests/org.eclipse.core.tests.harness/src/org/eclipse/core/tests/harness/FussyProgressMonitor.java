@@ -76,6 +76,14 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		}
 		//Assert.assert(reason, condition);
 	}
+	
+	/**
+	 * Asserts that this progress monitor is all used up
+	 */
+	public void assertUsedUp() {
+		assertTrue("beginTask has not been called on ProgressMonitor", beginTaskCalled);
+		assertTrue("ProgressMonitor not used up", Math.round(workedSoFar) >= totalWork);
+	}
 
 	/**
 	 * @see IProgressMonitor#beginTask
