@@ -31,6 +31,7 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 
 	/**
 	 * Create a manager for the given subscriber and input.
+	 * @param name a human readable name for the scope
 	 * @param inputMappings the input mappings
 	 * @param subscriber the subscriber
 	 * @param consultModels whether models should be consulted when calculating the scope
@@ -41,6 +42,7 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 
 	/**
 	 * Create a manager for the given subscriber and input.
+	 * @param name a human readable name for the scope
 	 * @param inputMappings the input mappings
 	 * @param subscriber the subscriber
 	 * @param context a remote resource mapping conext for the subscriber
