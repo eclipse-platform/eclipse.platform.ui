@@ -140,8 +140,8 @@ public class ViewerComparator {
         if (name2 == null)
             name2 = "";//$NON-NLS-1$
 
-        // use a comparator to compare the strings
-        return comparator.compare(name1, name2);
+        // use the comparator to compare the strings
+        return getComparator().compare(name1, name2);
     }
 
     /**

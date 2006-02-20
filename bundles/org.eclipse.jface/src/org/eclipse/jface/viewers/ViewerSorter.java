@@ -56,44 +56,6 @@ public class ViewerSorter extends ViewerComparator{
         this.collator = collator;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-     */
-    public int compare(Viewer viewer, Object e1, Object e2) {
-        int cat1 = category(e1);
-        int cat2 = category(e2);
-
-        if (cat1 != cat2)
-            return cat1 - cat2;
-
-        String name1;
-        String name2;
-
-        if (viewer == null || !(viewer instanceof ContentViewer)) {
-            name1 = e1.toString();
-            name2 = e2.toString();
-        } else {
-            IBaseLabelProvider prov = ((ContentViewer) viewer)
-                    .getLabelProvider();
-            if (prov instanceof ILabelProvider) {
-                ILabelProvider lprov = (ILabelProvider) prov;
-                name1 = lprov.getText(e1);
-                name2 = lprov.getText(e2);
-            } else {
-                name1 = e1.toString();
-                name2 = e2.toString();
-            }
-        }
-        if (name1 == null)
-            name1 = "";//$NON-NLS-1$
-        if (name2 == null)
-            name2 = "";//$NON-NLS-1$
-        
-        // use a collator to compare the strings
-        return collator.compare(name1, name2);
-    }
-
     /**
      * Returns the collator used to sort strings.
      *
