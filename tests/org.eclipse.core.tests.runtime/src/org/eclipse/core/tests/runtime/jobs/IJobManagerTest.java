@@ -543,6 +543,21 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		assertEquals("15.0", NUM_JOBS, allJobs.size());
 		allJobs.clear();
 	}
+	
+	public void testJobFamilyJoinNothing() {
+		//test joining a bogus family, and the monitor should be used up
+		try {
+			final FussyProgressMonitor monitor = new FussyProgressMonitor();
+			monitor.prepare();
+			manager.join(new Object(), monitor);
+			monitor.sanityCheck();
+			monitor.assertUsedUp();
+		} catch (OperationCanceledException e) {
+			fail("4.99", e);
+		} catch (InterruptedException e) {
+			fail("4.99", e);
+		}
+	}
 
 	public void testJobFamilyJoin() {
 		//test the join method on a family of jobs
