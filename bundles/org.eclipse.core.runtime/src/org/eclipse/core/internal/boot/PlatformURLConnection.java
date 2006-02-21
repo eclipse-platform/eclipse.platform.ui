@@ -25,8 +25,6 @@ import org.eclipse.osgi.util.NLS;
  */
 public abstract class PlatformURLConnection extends URLConnection {
 
-	private static String os, ws, nl;
-
 	// URL access
 	private boolean isInCache = false;
 	private boolean isJar = false;
@@ -262,7 +260,6 @@ public abstract class PlatformURLConnection extends URLConnection {
 			}
 		} else {
 			file = url.getFile();
-			jarEntry = null;
 		}
 
 		// check for cached entry
@@ -292,7 +289,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 			}
 			isInCache = true;
 		} else {
-			// attemp to cache
+			// attempt to cache
 			int ix = file.lastIndexOf("/"); //$NON-NLS-1$
 			tmp = file.substring(ix + 1);
 			tmp = cacheLocation + filePrefix + Long.toString((new java.util.Date()).getTime()) + "_" + tmp; //$NON-NLS-1$
@@ -394,11 +391,6 @@ public abstract class PlatformURLConnection extends URLConnection {
 
 	//TODO consider splitting this method into two or more steps - it is too long 
 	static void startup(String location, String os, String ws, String nl) {
-
-		PlatformURLConnection.os = os;
-		PlatformURLConnection.ws = ws;
-		PlatformURLConnection.nl = nl;
-
 		verifyLocation(location); // check for platform location, ignore errors
 		String cacheProps = location.trim();
 		if (!cacheProps.endsWith(File.separator))
