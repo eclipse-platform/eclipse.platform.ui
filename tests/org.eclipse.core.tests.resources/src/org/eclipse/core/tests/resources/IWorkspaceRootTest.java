@@ -14,6 +14,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -88,8 +90,25 @@ public class IWorkspaceRootTest extends ResourceTest {
 		} catch (RuntimeException e) {
 			//expected
 		}
+		//linked folder that does not overlap a project location
+		IFolder otherLink = p1.getFolder("otherLink");
+		IFileStore linkStore = getTempStore();
+		URI location = linkStore.toURI();
+		try {
+			linkStore.mkdir(EFS.NONE, getMonitor());
+			otherLink.createLink(location, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("5.99", e);
+		}
+		result = root.findContainersForLocationURI(location);
+		assertResources("5.1", otherLink, result);
 		
-		// TODO add more tests
+		//child of linked folder
+		IFolder child = otherLink.getFolder("link-child");
+		URI childLocation = linkStore.getChild(child.getName()).toURI();
+		result = root.findContainersForLocationURI(childLocation);
+		assertResources("5.1", child, result);
+
 	}
 
 	/**
@@ -115,27 +134,39 @@ public class IWorkspaceRootTest extends ResourceTest {
 		//non-existing file
 		IFile nonExisting = project.getFile("nonExisting");
 		result = root.findFilesForLocation(nonExisting.getLocation());
-		assertResources("2.1", nonExisting, result);
+		assertResources("3.1", nonExisting, result);
 		result = root.findFilesForLocationURI(nonExisting.getLocationURI());
-		assertResources("2.2", nonExisting, result);
+		assertResources("3.2", nonExisting, result);
 		
 		//relative path
 		result = root.findFilesForLocation(existingFileLocation.makeRelative());
-		assertResources("3.0", existing, result);
+		assertResources("4.0", existing, result);
 		result = root.findFilesForLocation(nonExisting.getLocation().makeRelative());
-		assertResources("2.1", nonExisting, result);
+		assertResources("4.1", nonExisting, result);
 		
 		//existing file with different case
 		if (!isCaseSensitive(existing)) {
 			IPath differentCase = new Path(existingFileLocation.toOSString().toUpperCase());
 			result = root.findFilesForLocation(differentCase);
-			assertResources("2.0", existing, result);
+			assertResources("5.0", existing, result);
 			result = root.findFilesForLocationURI(existing.getLocationURI());
-			assertResources("2.1", existing, result);
+			assertResources("5.1", existing, result);
 		}
-
 		
-		// TODO add more tests
+		//linked resource
+		IFolder link = project.getFolder("link");
+		IFileStore linkStore = getTempStore();
+		URI location = linkStore.toURI();
+		try {
+			linkStore.mkdir(EFS.NONE, getMonitor());
+			link.createLink(location, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("5.99", e);
+		}
+		IFile child = link.getFile("link-child.txt");
+		URI childLocation = linkStore.getChild(child.getName()).toURI();
+		result = root.findFilesForLocationURI(childLocation);
+		assertResources("2.1", child, result);
 	}
 
 	/**
