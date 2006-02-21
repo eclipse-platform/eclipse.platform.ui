@@ -21,6 +21,15 @@ body {
 #root {
 	background-image : url(../graphics/root/brandmark.gif);	background-repeat : no-repeat;	background-position : bottom left;	min-height : 450px;	height : 100%;	height : expression(document.body.clientHeight < 450? "450px": "100%" );
 }
+
+/*
+ * We will not use the general-purpose group1 used in
+ * other pages for a curve image.
+ */
+
+#extra-group1 {
+	display : none;
+}
 /* 
  * Set up the navigation bar.  It should be centered in the middle
  * of the page

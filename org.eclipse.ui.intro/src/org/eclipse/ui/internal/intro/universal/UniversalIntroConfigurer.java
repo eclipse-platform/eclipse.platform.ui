@@ -118,8 +118,8 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 				return getNavLinks(pageId);
 			if (groupId.equals(DIV_CUSTOMIZE))
 				return getCustomizeContent(pageId);
-			if (groupId.equals(DIV_LAYOUT_LEFT) || groupId.equals(DIV_LAYOUT_RIGHT)
-					|| groupId.equals(DIV_LAYOUT_BOTTOM))
+			if (groupId.equals(DIV_LAYOUT_TOP_LEFT) || groupId.equals(DIV_LAYOUT_TOP_RIGHT)
+					|| groupId.equals(DIV_LAYOUT_BOTTOM_LEFT) || groupId.equals(DIV_LAYOUT_BOTTOM_RIGHT))
 				return getContent(pageId, groupId);
 		}
 		return new IntroElement[0];
@@ -259,7 +259,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 					id, "right"); //$NON-NLS-1$
 		return null;
 	}
-	
+
 	private String createPageURL(String id, boolean standby) {
 		String url = "http://org.eclipse.ui.intro/showPage?id=" + id; //$NON-NLS-1$
 		if (standby)
@@ -309,7 +309,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 		IntroElement img = new IntroElement("img"); //$NON-NLS-1$
 		img.setAttribute("id", imgId); //$NON-NLS-1$
 		img.setAttribute("style-id", "content-img"); //$NON-NLS-1$ //$NON-NLS-2$
-		//img.setAttribute("src", imgSrc); //$NON-NLS-1$
+		// img.setAttribute("src", imgSrc); //$NON-NLS-1$
 		img.setAttribute("alt", imgAlt); //$NON-NLS-1$
 		IntroElement text = new IntroElement("text"); //$NON-NLS-1$
 		text.setValue(imgText);

@@ -16,15 +16,26 @@ body {
 	/* To center in Moz (have to use text-align for IE) */
 	margin-left : auto;
 	margin-right : auto;
+	/*
 	width : 750px;
+	*/
 	margin-bottom : 30px;
 	float : none;
 	clear : both;
 	text-align : left;
 }
 
-.tutorials-link { 
+#top-left > .tutorials-group *, 
+#top-right > .tutorials-group *, 
+#bottom-left > .tutorials-group *, 
+#bottom-right > .tutorials-group * {
+	display: block; 
+}
+
+.tutorials-link {
+/*
 	width : 360px;
+	*/
 	text-align : left; 
 	margin-left : 5px;
 	margin-right : 5px;
@@ -59,7 +70,9 @@ p #group-description {
 
 .tutorials-link .link-label {
 	display : block;
+	/*
 	width : 300px;
+	*/
 	position : relative;
 	top : -50px;
 	left : 60px;
@@ -68,7 +81,9 @@ p #group-description {
 
 .tutorials-link p .text {
 	display : block;
+	/*
 	width : 300px;
+	*/
 	position : relative;
 	top : -45px;
 	left : 53px;

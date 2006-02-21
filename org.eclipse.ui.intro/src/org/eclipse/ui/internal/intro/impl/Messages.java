@@ -83,7 +83,6 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_available;
 	public static String WelcomeCustomizationPreferencePage_left;
 	public static String WelcomeCustomizationPreferencePage_right;
-	public static String WelcomeCustomizationPreferencePage_bottom;
 	public static String WelcomeCustomizationPreferencePage_background;
 	public static String WelcomeCustomizationPreferencePage_preview;
 	public static String WelcomeCustomizationPreferencePage_rootpages;
@@ -106,9 +105,10 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_down;
 	public static String WelcomeCustomizationPreferencePage_moveTo;
 	public static String WelcomeCustomizationPreferencePage_menu_available;
-	public static String WelcomeCustomizationPreferencePage_menu_left;
-	public static String WelcomeCustomizationPreferencePage_menu_right;
-	public static String WelcomeCustomizationPreferencePage_menu_bottom;
+	public static String WelcomeCustomizationPreferencePage_menu_top_left;
+	public static String WelcomeCustomizationPreferencePage_menu_top_right;
+	public static String WelcomeCustomizationPreferencePage_menu_bottom_left;
+	public static String WelcomeCustomizationPreferencePage_menu_bottom_right;	
 	public static String WelcomeCustomizationPreferencePage_browse;
 	public static String WelcomeCustomizationPreferencePage_browseTitle;
 	public static String SharedIntroConfigurer_customize_label;

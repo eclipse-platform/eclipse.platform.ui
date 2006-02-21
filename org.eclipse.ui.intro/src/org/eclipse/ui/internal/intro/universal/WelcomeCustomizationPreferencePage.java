@@ -101,9 +101,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private Composite pageContainer;
 	private TableViewer themes;
 	private TableViewer available;
-	private TableViewer left;
-	private TableViewer right;
-	private TableViewer bottom;
+	private TableViewer topLeft;
+	private TableViewer topRight;
+	private TableViewer bottomLeft;
+	private TableViewer bottomRight;
 	private CheckboxTableViewer rootPages;
 	private ArrayList introRootPages = new ArrayList();
 	private ArrayList themeList = new ArrayList();
@@ -512,32 +513,37 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		gd.horizontalSpan = 2;
 		available.getControl().setLayoutData(gd);
 
-		left = createTableViewer(pageContainer, "left"); //$NON-NLS-1$
+		topLeft = createTableViewer(pageContainer, "top-left"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_BOTH);
-		left.getControl().setLayoutData(gd);
+		topLeft.getControl().setLayoutData(gd);
 
-		right = createTableViewer(pageContainer, "right"); //$NON-NLS-1$
+		topRight = createTableViewer(pageContainer, "top-right"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_BOTH);
-		right.getControl().setLayoutData(gd);
+		topRight.getControl().setLayoutData(gd);
 
-		label = new Label(pageContainer, SWT.NULL);
-		label.setText(Messages.WelcomeCustomizationPreferencePage_bottom);
-		bottom = createTableViewer(pageContainer, "bottom"); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		gd.horizontalSpan = 2;
-		bottom.getControl().setLayoutData(gd);
+		//label = new Label(pageContainer, SWT.NULL);
+		//label.setText(Messages.WelcomeCustomizationPreferencePage_bottom);
+		bottomLeft = createTableViewer(pageContainer, "bottom-left"); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_BOTH);
+		bottomLeft.getControl().setLayoutData(gd);
+		
+		bottomRight = createTableViewer(pageContainer, "bottom-right"); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_BOTH);
+		bottomRight.getControl().setLayoutData(gd);
 	}
 
 	private void updatePageContainer(String pageId, PageData pd) {
 		if (pageId == null || pd == null)
 			return;
-		left.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_LEFT));
-		right.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_RIGHT));
-		bottom.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_BOTTOM));
+		topLeft.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_TOP_LEFT));
+		topRight.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_TOP_RIGHT));
+		bottomLeft.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_BOTTOM_LEFT));
+		bottomRight.setInput(pd.findGroup(ISharedIntroConstants.DIV_LAYOUT_BOTTOM_RIGHT));
 		available.setInput(pd.findGroup(ISharedIntroConstants.HIDDEN));
-		updateColumnSizes(left);
-		updateColumnSizes(right);
-		updateColumnSizes(bottom);
+		updateColumnSizes(topLeft);
+		updateColumnSizes(topRight);
+		updateColumnSizes(bottomLeft);
+		updateColumnSizes(bottomRight);
 		updateColumnSizes(available);
 	}
 
@@ -964,9 +970,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			MenuManager menu = new MenuManager(Messages.WelcomeCustomizationPreferencePage_moveTo);
 			addMoveToAction(menu, available, viewer,
 					Messages.WelcomeCustomizationPreferencePage_menu_available);
-			addMoveToAction(menu, left, viewer, Messages.WelcomeCustomizationPreferencePage_menu_left);
-			addMoveToAction(menu, right, viewer, Messages.WelcomeCustomizationPreferencePage_menu_right);
-			addMoveToAction(menu, bottom, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom);
+			addMoveToAction(menu, topLeft, viewer, Messages.WelcomeCustomizationPreferencePage_menu_top_left);
+			addMoveToAction(menu, topRight, viewer, Messages.WelcomeCustomizationPreferencePage_menu_top_right);
+			addMoveToAction(menu, bottomLeft, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom_left);
+			addMoveToAction(menu, bottomRight, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom_right);
 			manager.add(menu);
 		}
 	}
@@ -1022,12 +1029,14 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	private GroupData createTargetGd(Viewer target) {
 		GroupData targetGd = null;
-		if (target == left)
-			targetGd = new GroupData(PageData.P_LEFT, false);
-		else if (target == right)
-			targetGd = new GroupData(PageData.P_RIGHT, false);
-		else if (target == bottom)
-			targetGd = new GroupData(PageData.P_BOTTOM, false);
+		if (target == topLeft)
+			targetGd = new GroupData(PageData.P_TOP_LEFT, false);
+		else if (target == topRight)
+			targetGd = new GroupData(PageData.P_TOP_RIGHT, false);
+		else if (target == bottomLeft)
+			targetGd = new GroupData(PageData.P_BOTTOM_LEFT, false);
+		else if (target == bottomRight)
+			targetGd = new GroupData(PageData.P_BOTTOM_RIGHT, false);
 		else if (target == available)
 			targetGd = new GroupData(ISharedIntroConstants.HIDDEN, false);
 		else

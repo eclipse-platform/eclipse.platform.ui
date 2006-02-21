@@ -79,6 +79,10 @@ public class GroupData {
 		ExtensionData ed = new ExtensionData(id, name, importance, false);
 		add(ed);
 	}
+	
+	public int getExtensionCount() {
+		return extensions.size();
+	}
 
 	public ExtensionData[] getExtensions() {
 		return (ExtensionData[]) extensions.toArray(new ExtensionData[extensions.size()]);

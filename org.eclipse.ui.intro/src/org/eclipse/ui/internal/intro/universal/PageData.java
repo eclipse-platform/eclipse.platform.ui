@@ -10,9 +10,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class PageData {
-	public static final String P_LEFT = "page-content/left"; //$NON-NLS-1$
-	public static final String P_RIGHT = "page-content/right"; //$NON-NLS-1$
-	public static final String P_BOTTOM = "page-content/bottom"; //$NON-NLS-1$
+	public static final String P_TOP_LEFT = "page-content/top-left"; //$NON-NLS-1$
+	public static final String P_TOP_RIGHT = "page-content/top-right"; //$NON-NLS-1$
+	public static final String P_BOTTOM_LEFT = "page-content/bottom-left"; //$NON-NLS-1$
+	public static final String P_BOTTOM_RIGHT = "page-content/bottom-right"; //$NON-NLS-1$
 
 	private String id;
 	private ArrayList groups = new ArrayList();
@@ -106,20 +107,27 @@ public class PageData {
 		}
 		GroupData gd = findDefaultGroup();
 		if (gd==null && groups.size()==0) {
-			// add bottom as the default group
-			gd = new GroupData("page-content/bottom", true); //$NON-NLS-1$
+			// add bottoms as the default group
+			gd = new GroupData(P_BOTTOM_LEFT, true);
 			groups.add(gd);
+			groups.add(new GroupData(P_BOTTOM_RIGHT, true));
 		}
 		gd.addImplicitExtension(extensionId, name);
 	}
-	
+
 	private GroupData findDefaultGroup() {
+		GroupData defaultGroup = null;
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gd = (GroupData)groups.get(i);
-			if (gd.isDefault())
-				return gd;
+			if (gd.isDefault()) {
+				if (defaultGroup==null)
+					defaultGroup = gd;
+				else
+					if (defaultGroup.getExtensionCount()>gd.getExtensionCount())
+						defaultGroup = gd;
+			}
 		}
-		return null;
+		return defaultGroup;
 	}
 	
 	public String getId() {
