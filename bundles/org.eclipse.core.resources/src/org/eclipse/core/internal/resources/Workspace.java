@@ -1675,10 +1675,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @param rule the scheduling rule that describes what this operation intends to modify.
 	 */
 	public void prepareOperation(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
-		//make sure autobuild is not running
-		if (rule != null)
-			buildManager.interrupt();
-		getWorkManager().checkIn(rule, monitor);
+		try {
+			//make sure autobuild is not running
+			if (rule != null)
+				buildManager.interrupt();
+		} finally {
+			getWorkManager().checkIn(rule, monitor);
+		}
 		if (!isOpen()) {
 			String message = Messages.resources_workspaceClosed;
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
