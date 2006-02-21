@@ -80,17 +80,6 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	/**
 	 * Creates a new refactoring history label provider.
 	 * 
-	 * @param time
-	 *            <code>true</code> to display time information,
-	 *            <code>false</code> otherwise
-	 */
-	public RefactoringHistoryLabelProvider(final boolean time) {
-		this(new RefactoringHistoryControlConfiguration(null, time, false));
-	}
-
-	/**
-	 * Creates a new refactoring history label provider.
-	 * 
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
