@@ -155,14 +155,13 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 * {@inheritDoc}
 	 */
 	public boolean performFinish() {
-		final boolean result= super.performFinish();
 		if (fNewSettings) {
 			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
 			section= settings.addNewSection(DIALOG_SETTINGS_KEY);
 			setDialogSettings(section);
 		}
-		return result;
+		return super.performFinish();
 	}
 
 	/**

@@ -111,7 +111,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	}
 
 	/**
-	 * Retruns the selected refactoring descriptors.
+	 * Returns the selected refactoring descriptors.
 	 * 
 	 * @return the selected refactoring descriptors
 	 */
