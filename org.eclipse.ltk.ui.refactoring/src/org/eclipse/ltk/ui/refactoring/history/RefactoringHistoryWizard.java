@@ -48,6 +48,7 @@ import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringHistoryPreviewPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
@@ -60,8 +61,13 @@ import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryOverviewPage;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -70,6 +76,9 @@ import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.WizardPage;
+
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -101,6 +110,88 @@ import org.eclipse.osgi.util.NLS;
  * @since 3.2
  */
 public class RefactoringHistoryWizard extends Wizard {
+
+	/** The no overview wizard page */
+	private final class NoOverviewWizardPage extends WizardPage {
+
+		/** The no overview wizard page name */
+		private static final String PAGE_NAME= "NoOverviewWizardPage"; //$NON-NLS-1$
+
+		/**
+		 * Creates a new no overview wizard page.
+		 */
+		private NoOverviewWizardPage() {
+			super(PAGE_NAME);
+			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
+			if (proxies.length > 0)
+				setTitle(proxies[0], 1, proxies.length);
+			else
+				setTitle(fOverviewTitle);
+			setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_description);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public boolean canFlipToNextPage() {
+			return true;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void createControl(final Composite parent) {
+			final Composite composite= new Composite(parent, SWT.NULL);
+			composite.setLayout(new GridLayout());
+			composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+			setControl(composite);
+			Dialog.applyDialogFont(composite);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_PREVIEW_WIZARD_PAGE);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public IWizardPage getNextPage() {
+			return getWizard().getNextPage(this);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public IWizardPage getPreviousPage() {
+			return getWizard().getPreviousPage(this);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void setPageComplete(final boolean complete) {
+			super.setPageComplete(true);
+		}
+
+		/**
+		 * Sets the title of the page according to the refactoring.
+		 * 
+		 * @param descriptor
+		 *            the refactoring descriptor, or <code>null</code>
+		 * @param current
+		 *            the non-zero based index of the current refactoring
+		 * @param total
+		 *            the total number of refactorings
+		 */
+		public void setTitle(final RefactoringDescriptorProxy descriptor, final int current, final int total) {
+			final String message;
+			if (descriptor != null)
+				message= descriptor.getDescription();
+			else
+				message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
+			if (total > 1)
+				setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
+			else
+				setTitle(message);
+		}
+	}
 
 	/** Preference key for the show apply preference */
 	private static final String PREFERENCE_DO_NOT_SHOW_APPLY_ERROR= RefactoringUIPlugin.getPluginId() + ".do.not.show.apply.refactoring"; //$NON-NLS-1$;
@@ -154,6 +245,12 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/** Are we currently in method <code>addPages</code>? */
 	private boolean fInAddPages= false;
+
+	/**
+	 * The no overview wizard page, or <code>null</code> if an overview is
+	 * desired
+	 */
+	private NoOverviewWizardPage fNoOverviewPage;
 
 	/** The description of the overview page */
 	private final String fOverviewDescription;
@@ -339,6 +436,9 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (fShowOverview) {
 				fOverviewPage= new RefactoringHistoryOverviewPage(fRefactoringHistory, fOverviewTitle, fOverviewDescription, fControlConfiguration);
 				addPage(fOverviewPage);
+			} else {
+				fNoOverviewPage= new NoOverviewWizardPage();
+				addPage(fNoOverviewPage);
 			}
 			addPage(fErrorPage);
 			addPage(fPreviewPage);
@@ -537,7 +637,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public IWizardPage getNextPage(final IWizardPage page) {
-		if (page == fOverviewPage) {
+		if (page == fOverviewPage || page == fNoOverviewPage) {
 			fCurrentRefactoring= 0;
 			return getRefactoringPage();
 		} else if (page == fPreviewPage) {
@@ -778,15 +878,6 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public IWizardPage getStartingPage() {
-		if (!fShowOverview)
-			return getNextPage(fOverviewPage);
-		return super.getStartingPage();
-	}
-
-	/**
 	 * Hook method which is called when all refactorings of the history have
 	 * been executed. This method may be called from non-UI threads.
 	 * <p>
@@ -871,7 +962,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
 				protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
-					final RefactoringStatus[] result= { new RefactoringStatus() };
+					final RefactoringStatus[] result= { new RefactoringStatus()};
 					SafeRunner.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
@@ -886,7 +977,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 
 				protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus state) throws CoreException {
-					final Refactoring[] result= { null };
+					final Refactoring[] result= { null};
 					SafeRunner.run(new ISafeRunnable() {
 
 						public void handleException(final Throwable exception) {
