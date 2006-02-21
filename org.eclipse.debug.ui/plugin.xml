@@ -902,10 +902,10 @@
                tooltip="%SelectCodepagesAction.label"/>
          <action
                class="org.eclipse.debug.internal.ui.views.memory.SwitchMemoryBlockAction"
-               disabledIcon="icons/full/dlcl16/display_selected_mb.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/display_selected_mb.gif"
                helpContextId="switchMemoryBlockAction_context"
-               hoverIcon="icons/full/elcl16/display_selected_mb.gif"
-               icon="icons/full/elcl16/display_selected_mb.gif"
+               hoverIcon="$nl$/icons/full/elcl16/display_selected_mb.gif"
+               icon="$nl$/icons/full/elcl16/display_selected_mb.gif"
                id="org.eclipse.debug.ui.switchMemoryBlock"
                label="%switchMemoryBlock.label"
                toolbarPath="switchMonitorGroup"
@@ -1256,14 +1256,14 @@
         </action>
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ImportBreakpoints"
-              icon="icons/full/elcl16/import_brkpts.gif"
+              icon="$nl$/icons/full/elcl16/import_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.importBreakpointsContext"
               label="%importBreakpoints.label"
               menubarPath="additions"/>
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ExportBreakpoints"
               enablesFor="1+"
-              icon="icons/full/elcl16/export_brkpts.gif"
+              icon="$nl$/icons/full/elcl16/export_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.exportBreakpointsContext"
               label="%exportBreakpoints.label"
               menubarPath="additions"/>
@@ -1454,7 +1454,7 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockAction"
                helpContextId="resetMemoryMonitor_context"
-               icon="icons/full/elcl16/memoryreset_tsk.gif"
+               icon="$nl$/icons/full/elcl16/memoryreset_tsk.gif"
                id="org.eclipse.debug.ui.resetMemoryBlock"
                label="%resetMemoryMonitorAction.label"
                menubarPath="additions"/>
@@ -1533,8 +1533,8 @@
          point="org.eclipse.debug.ui.launchGroups">
       <launchGroup
             label="%DebugLaunchGroup.label"
-            bannerImage="icons/full/wizban/debug_wiz.gif"
-            image="icons/full/etool16/debug_exc.gif"
+            bannerImage="$nl$/icons/full/wizban/debug_wiz.gif"
+            image="$nl$/icons/full/etool16/debug_exc.gif"
             mode="debug"
             id="org.eclipse.debug.ui.launchGroup.debug"
             title="%DebugLaunchGroup.title">
@@ -1549,7 +1549,7 @@
       </launchGroup>
       <launchGroup
             label="%ProfileLaunchGroup.label"
-            bannerImage="icons/full/wizban/profile_wiz.gif"
+            bannerImage="$nl$/icons/full/wizban/profile_wiz.gif"
             image="$nl$/icons/full/etool16/profile_exc.gif"
             mode="profile"
             id="org.eclipse.debug.ui.launchGroup.profile"
@@ -2477,7 +2477,7 @@ M4 = Platform-specific fourth key
        <wizard
              category="org.eclipse.ui.Basic"
              class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
-             icon="icons/full/elcl16/import_brkpts.gif"
+             icon="$nl$/icons/full/elcl16/import_brkpts.gif"
              id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
              name="%exportBreakpoints.name">
           <description>
