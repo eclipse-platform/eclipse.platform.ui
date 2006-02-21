@@ -672,6 +672,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			perspectiveSwitcher.updatePerspectiveBar();
 			perspectiveSwitcher.updateBarParent();
 		}
+		
+		// It's time for a layout ... to insure that if TrimLayout
+		// is in play, it updates all of the trim it's responsible
+		// for.
+		getShell().layout();
+		
 		return result;
 	}
 
