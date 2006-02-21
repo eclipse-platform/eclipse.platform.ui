@@ -856,6 +856,11 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDE_sideEffectWarning;
 
 	public static String IDE_areYouSure;
+	
+	public static String SystemSettingsChange_title;
+	public static String SystemSettingsChange_message;
+	public static String SystemSettingsChange_yes;
+	public static String SystemSettingsChange_no;
 
 	static {
 		// load message values from bundle file
