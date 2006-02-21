@@ -371,7 +371,7 @@ public class CheatSheetParser {
 			parentNode = startNode.getParentNode();
 		}
 		String message;
-		if (nodeName == IParserTags.DESCRIPTION) {
+		if (IParserTags.DESCRIPTION.equals(nodeName)) {
 		    message = NLS.bind(Messages.WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT, (new Object[] {parentNode.getNodeName(), node.getNodeName()}));
 		} else {
 			message = NLS.bind(Messages.WARNING_PARSING_ON_COMPLETION_UNKNOWN_ELEMENT, (new Object[] {parentNode.getNodeName(), node.getNodeName()}));

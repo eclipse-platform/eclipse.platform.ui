@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.cheatsheets.ITaskGroup;
+import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 
 class TreeContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
@@ -28,6 +29,9 @@ class TreeContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
+		if (element instanceof  AbstractTask) {
+			return ((AbstractTask)element).getParent();
+		}
 		return null;
 	}
 

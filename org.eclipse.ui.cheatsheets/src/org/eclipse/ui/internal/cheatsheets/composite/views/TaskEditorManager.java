@@ -81,12 +81,14 @@ public class TaskEditorManager {
 		if (editorInfo != null) {
 			Bundle bundle = Platform.getBundle(editorInfo.getPluginId());
 			URL url = Platform.find(bundle, new Path(editorInfo.getIconPath()));
-			try {
-				url = Platform.resolve(url);
-				return ImageDescriptor.createFromURL(url);
-			} catch (IOException e) {
-				return null;
-			}		
+			if (url != null) {
+				try {
+					url = Platform.resolve(url);
+					return ImageDescriptor.createFromURL(url);
+				} catch (IOException e) {
+					return null;
+				}
+			}
 		}
 		return null;
 	}
