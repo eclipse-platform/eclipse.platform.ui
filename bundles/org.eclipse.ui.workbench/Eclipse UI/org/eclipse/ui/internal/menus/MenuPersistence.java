@@ -435,8 +435,8 @@ final class MenuPersistence extends RegistryPersistence {
 		}
 		
 		// Get the values (a return of 'null' will give a value of 'false'
-		boolean fillMajor = Boolean.valueOf(readOptional(layoutElement, ATT_FILL_MAJOR)).booleanValue();
-		boolean fillMinor = Boolean.valueOf(readOptional(layoutElement, ATT_FILL_MINOR)).booleanValue();
+		boolean fillMajor = readBoolean(layoutElement, ATT_FILL_MAJOR, false);
+		boolean fillMinor = readBoolean(layoutElement, ATT_FILL_MINOR, false);
 
 		return new SLayout(fillMajor, fillMinor);
 	}
@@ -670,27 +670,29 @@ final class MenuPersistence extends RegistryPersistence {
 		}
 
 		// Read the relativeTo attribute.
-		String relativeTo = orderingElement.getAttribute(ATT_RELATIVE_TO);
-
-		// If it's 'before' or 'after' then 'realtiveTo' must be defined
+		String relativeTo = null;
 		if ((positionInteger == SOrder.POSITION_AFTER)
 				|| (positionInteger == SOrder.POSITION_BEFORE)) {
+			relativeTo = readRequired(
+					parentElement,
+					ATT_RELATIVE_TO,
+					warningsToLog,
+					"A relativeTo attribute is required is the position is 'after' or 'before'", //$NON-NLS-1$
+					id);
 			if (relativeTo == null) {
-				addWarning(
-						warningsToLog,
-						"A relativeTo attribute is required if the position is 'after' or 'before'", //$NON-NLS-1$
-						parentElement, id);
 				return null;
 			}
-		} else if (relativeTo != null) {
-			// if it's 'start' or 'end' there should be -no- relativeTo attribute.
-			addWarning(
-					warningsToLog,
-					"A relativeTo attribute is unnecessary if the position is 'start' or 'end'", //$NON-NLS-1$
-					parentElement, id, "relativeTo", relativeTo); //$NON-NLS-1$
+		} else {
+			// There should be no relativeTo attribute.
+			relativeTo = readOptional(parentElement, ATT_RELATIVE_TO);
+			if (relativeTo != null) {
+				addWarning(
+						warningsToLog,
+						"relativeTo should not be specified unless the position is before or after", //$NON-NLS-1$
+						parentElement, id, ATT_RELATIVE_TO, relativeTo);
+				return null;
 
-			// Continue on but without the 'relativeTo' set
-			relativeTo = null;
+			}
 		}
 
 		final SOrder order = new SOrder(positionInteger, relativeTo);
