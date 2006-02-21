@@ -435,8 +435,8 @@ final class MenuPersistence extends RegistryPersistence {
 		}
 		
 		// Get the values (a return of 'null' will give a value of 'false'
-		boolean fillMajor = Boolean.parseBoolean(readOptional(layoutElement, ATT_FILL_MAJOR));
-		boolean fillMinor = Boolean.parseBoolean(readOptional(layoutElement, ATT_FILL_MINOR));
+		boolean fillMajor = Boolean.valueOf(readOptional(layoutElement, ATT_FILL_MAJOR)).booleanValue();
+		boolean fillMinor = Boolean.valueOf(readOptional(layoutElement, ATT_FILL_MINOR)).booleanValue();
 
 		return new SLayout(fillMajor, fillMinor);
 	}
