@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
@@ -115,10 +114,11 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	 */
 	public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			setContextBusy(monitor);
-			execute(monitor);
+			monitor.beginTask(null, 100);
+			setContextBusy(Policy.subMonitorFor(monitor, 5));
+			execute(Policy.subMonitorFor(monitor, 90));
 		} finally {
-			clearContextBusy(monitor);
+			clearContextBusy(Policy.subMonitorFor(monitor, 5));
 		}
 	}
 

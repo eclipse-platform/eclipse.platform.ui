@@ -16,14 +16,14 @@ import org.eclipse.ui.*;
  * synchronize participant. The groups adds the following:
  * <ul>
  * <li>A toolbar action for attempting an auto-merge
- * <li>Contetx menu merge actions that delegate to the 
+ * <li>Context menu merge actions that delegate to the 
  * model's merge action handlers.
  * <li>TODO a merge all and overwrite all menu item?
  * </ul>
  * <p>
  * Subclasses can configure the label and icons used for the merge actions
- * by overridding {@link #configureMergeAction(String, Action)} and can
- * configure where in the context menu the actions appear by overridding
+ * by overriding {@link #configureMergeAction(String, Action)} and can
+ * configure where in the context menu the actions appear by overriding
  * {@link #addToContextMenu(String, Action, IMenuManager)}.
  * 
  * @since 3.2
@@ -127,9 +127,9 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 	}
 	
 	/*
-	 * Method to add the merge actions to the contetx menu. This method
+	 * Method to add the merge actions to the context menu. This method
 	 * is called by the internal synchronization framework and should not
-	 * to be invoked by other clients. Subsclasses can configure the
+	 * to be invoked by other clients. Subclasses can configure the
 	 * merge actions by overriding {@link #configureMergeAction(String, Action)}
 	 * and can control where in the context menu the action appears by 
 	 * overriding {@link #addToContextMenu(String, Action, IMenuManager)}.
@@ -242,6 +242,8 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 			overwrite.dispose();
 		if (markAsMerged != null)
 			markAsMerged.dispose();
+		if (updateToolbarAction != null)
+			updateToolbarAction.dispose();
 		super.dispose();
 	}
 }

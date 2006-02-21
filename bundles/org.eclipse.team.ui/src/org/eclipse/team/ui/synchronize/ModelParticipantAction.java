@@ -167,11 +167,11 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 
 	/**
 	 * Convenience method that prompts if the currently active model is dirty
-	 * and eitehr saves or reverts the model depending on the users input.
+	 * and either saves or reverts the model depending on the users input.
 	 * @param shell a parent shell
 	 * @param targetModel the new model
 	 * @param activeModel the current model
-	 * @param allowCancel whether cancelling the action is an option
+	 * @param allowCancel whether canceling the action is an option
 	 * @param monitor a progress monitor
 	 * @throws CoreException
 	 * @throws InterruptedException
@@ -192,8 +192,8 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 	 * Convenience method that prompts to save changes in the given dirty model.
 	 * @param shell a shell
 	 * @param saveableModel a dirty saveable model
-	 * @param allowCancel whether cancelling the action is an option
-	 * @return whether the usr choose to save (<code>true</code>) or revert (<code>false</code>() the model
+	 * @param allowCancel whether canceling the action is an option
+	 * @return whether the user choose to save (<code>true</code>) or revert (<code>false</code>() the model
 	 * @throws InterruptedException thrown if the user choose to cancel
 	 */
 	public static boolean promptToSaveChanges(final Shell shell, final ISaveableCompareModel saveableModel, final boolean allowCancel) throws InterruptedException {
@@ -235,7 +235,7 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 
 	/**
 	 * Set the active buffer. By default to active buffer is stored with the
-	 * snchronize page configuration.
+	 * synchronize page configuration.
 	 * @param buffer the buffer that is now active (or <code>null</code> if
 	 * no buffer is active).
 	 */

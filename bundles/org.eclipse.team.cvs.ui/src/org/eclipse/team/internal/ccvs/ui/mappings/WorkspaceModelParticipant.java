@@ -13,9 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
@@ -25,7 +26,9 @@ import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.mapping.MergeAllActionHandler;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -49,6 +52,33 @@ public class WorkspaceModelParticipant extends
 		private WorkspaceCommitAction commitToolbar;
 		
 		public void initialize(ISynchronizePageConfiguration configuration) {
+			configuration.setProperty(MERGE_ALL_ACTION_ID, new MergeAllActionHandler(configuration) {
+				protected String getJobName() {
+					String name = getConfiguration().getParticipant().getName();
+					return NLS.bind("Updating all changes in {0}", Utils.shortenText(30, name));
+				}
+				
+				protected boolean promptToUpdate() {
+					final IResourceDiffTree tree = getMergeContext().getDiffTree();
+					if (tree.isEmpty()) {
+						return false;
+					}
+					final boolean[] result = new boolean[] {true};
+					TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+						public void run() {
+							String sizeString = Integer.toString(tree.size());
+							String message = tree.size() > 1 ? NLS.bind("Are you sure you want to update {0} resources?", new String[] { sizeString }) : 
+								NLS.bind("Are you sure you want to update {0} resource?", new String[] { sizeString });
+							result[0] = MessageDialog.openQuestion(getConfiguration().getSite().getShell(), 
+									NLS.bind("Confirm Update", new String[] { sizeString }), message); 					 
+						}
+					});
+					return result[0];
+				}
+				private IMergeContext getMergeContext() {
+					return ((IMergeContext)getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT));
+				}
+			});
 			super.initialize(configuration);
 			
 			int modes = configuration.getSupportedModes();
@@ -64,7 +94,7 @@ public class WorkspaceModelParticipant extends
 						ISynchronizePageConfiguration.P_TOOLBAR_MENU,
 						MERGE_ACTION_GROUP,
 						commitToolbar);
-				// TODO: let's leave off overide and commit for now
+				// TODO: let's leave off override and commit for now
 //				appendToGroup(
 //					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 //					CONTEXT_MENU_CONTRIBUTION_GROUP_2,

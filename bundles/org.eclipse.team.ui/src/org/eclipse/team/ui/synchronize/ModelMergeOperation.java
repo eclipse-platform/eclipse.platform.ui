@@ -49,20 +49,24 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 *         force a preview of the merge
 	 */
 	public static IStatus validateMerge(IMergeContext context, IProgressMonitor monitor) {
-		ModelProvider[] providers = context.getScope().getModelProviders();
-		monitor.beginTask(null, 100 * providers.length);
-		List notOK = new ArrayList();
-		for (int i = 0; i < providers.length; i++) {
-			ModelProvider provider = providers[i];
-			IStatus status = validateMerge(provider, context, Policy.subMonitorFor(monitor, 100));
-			if (!status.isOK())
-				notOK.add(status);
+		try {
+			ModelProvider[] providers = context.getScope().getModelProviders();
+			monitor.beginTask(null, 100 * providers.length);
+			List notOK = new ArrayList();
+			for (int i = 0; i < providers.length; i++) {
+				ModelProvider provider = providers[i];
+				IStatus status = validateMerge(provider, context, Policy.subMonitorFor(monitor, 100));
+				if (!status.isOK())
+					notOK.add(status);
+			}
+			if (notOK.isEmpty())
+				return Status.OK_STATUS;
+			if (notOK.size() == 1)
+				return (IStatus)notOK.get(0);
+			return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), TeamUIMessages.ResourceMappingMergeOperation_3, null);
+		} finally {
+			monitor.done();
 		}
-		if (notOK.isEmpty())
-			return Status.OK_STATUS;
-		if (notOK.size() == 1)
-			return (IStatus)notOK.get(0);
-		return new MultiStatus(TeamUIPlugin.ID, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), TeamUIMessages.ResourceMappingMergeOperation_3, null);
 	}
 	
 	/*
@@ -126,12 +130,12 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	}
 
 	/**
-	 * Perform a merge. This method is invoked frome
+	 * Perform a merge. This method is invoked from
 	 * {@link #execute(IProgressMonitor)} after the context has been
 	 * initialized. If there are changes in the context, they will be validating
 	 * by calling {@link #validateMerge(IMergeContext, IProgressMonitor)}. If
 	 * there are no validation problems, {@link #performMerge(IProgressMonitor)}
-	 * will then be called to perform the merge. If there are problems encounted
+	 * will then be called to perform the merge. If there are problems encountered
 	 * or if a preview was requested, {@link #handlePreviewRequest()} is called.
 	 * 
 	 * @param monitor a progress monitor
@@ -217,7 +221,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 
 	/**
 	 * Method invoked when the context contains unmergable changes.
-	 * By default, the user is promted to inform them that unmergeable changes were found.
+	 * By default, the user is prompted to inform them that unmergeable changes were found.
 	 * Subclasses may override.
 	 * @param status the status returned from the merger that reported the conflict
 	 */
@@ -232,7 +236,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 
 	/**
 	 * Method invoked when the context contains no changes.
-	 * By default, the user is promted to inform them that no changes were found.
+	 * By default, the user is prompted to inform them that no changes were found.
 	 * Subclasses may override.
 	 */
 	protected void handleNoChanges() {
@@ -250,7 +254,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * scope. The merger of the model providers are invoked in the order
 	 * determined by the {@link ModelOperation#sortByExtension(ModelProvider[])}
 	 * method. The method will stop on the first conflict encountered.
-	 * This method will gthrow a runtime exception
+	 * This method will throw a runtime exception
 	 * if the operation does not have a merge context.
 	 * 
 	 * @param monitor
@@ -336,7 +340,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	
 	/**
 	 * Return whether the context of this operation has changes that are
-	 * of interest to the operation. Sublcasses may override.
+	 * of interest to the operation. Subclasses may override.
 	 * @return whether the context of this operation has changes that are
 	 * of interest to the operation
 	 */

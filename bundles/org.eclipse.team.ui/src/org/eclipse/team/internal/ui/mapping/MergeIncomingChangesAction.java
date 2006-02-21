@@ -11,71 +11,63 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 
+import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.IMergeContext;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.mapping.ISaveableCompareModel;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * Action that performs an optimistic merge
  */
-public class MergeIncomingChangesAction extends ModelParticipantAction {
+public class MergeIncomingChangesAction extends ModelParticipantAction implements IHandlerListener {
 
+	IHandler handler;
+	
 	public MergeIncomingChangesAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
+		// TODO: We're past the API freeze so we need to access the property by string
+		handler = (IHandler)configuration.getProperty("org.eclipse.team.ui.mergeAll"); //$NON-NLS-1$
+		if (handler == null)
+			handler = new MergeAllActionHandler(configuration);
+		handler.addHandlerListener(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
+	public void runWithEvent(Event event) {
+		if (handler == null || !handler.isEnabled())
+			return;
 		try {
 			handleModelChange();
 		} catch (InvocationTargetException e) {
 			handle(e);
 			return;
 		} catch (InterruptedException e) {
-			// Cancelled so return
+			// Canceled so return
 			return;
 		}
-		final IMergeContext context = (IMergeContext)getSynchronizationContext();
 		try {
-			new SynchronizationOperation(getConfiguration(), context.getScope().getMappings()) {
-				public void execute(IProgressMonitor monitor) throws InvocationTargetException,
-						InterruptedException {
-					new ModelMergeOperation(getPart(), ((SynchronizationContext)context).getScopeManager()) {
-						public boolean isPreviewRequested() {
-							return false;
-						}
-						protected void initializeContext(IProgressMonitor monitor) throws CoreException {
-							// Context is already initialized
-						}
-						protected ISynchronizationContext getContext() {
-							return context;
-						}
-					}.run(monitor);
-				}
-				protected boolean canRunAsJob() {
-					return true;
-				}
-			}.run();
-		} catch (InvocationTargetException e) {
-			Utils.handle(e);
-		} catch (InterruptedException e) {
-			// Ignore
+			handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, event, null));
+		} catch (ExecutionException e) {
+			handle(e);
 		}
 	}
-
+	
 	private void handle(Throwable throwable) {
+		if (throwable instanceof ExecutionException) {
+			ExecutionException ee = (ExecutionException) throwable;
+			if (ee.getCause() != null) {
+				throwable = ee.getCause();
+			}
+		}
 		Utils.handle(throwable);
 	}
 
@@ -83,8 +75,7 @@ public class MergeIncomingChangesAction extends ModelParticipantAction {
 	 * @see org.eclipse.team.internal.ui.mapping.ModelProviderAction#isEnabledForSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean isEnabledForSelection(IStructuredSelection selection) {
-		// This action is always enabled
-		return true;
+		return handler.isEnabled();
 	}
 	
 	/* (non-Javadoc)
@@ -119,6 +110,17 @@ public class MergeIncomingChangesAction extends ModelParticipantAction {
 			});
 		}
 		setActiveModel(null);
+	}
+
+	public void dispose() {
+		handler.dispose();
+	}
+
+	/**
+	 * @param handlerEvent
+	 */
+	public void handlerChanged(HandlerEvent handlerEvent) {
+		setEnabled(handler.isEnabled());
 	}
 	
 }

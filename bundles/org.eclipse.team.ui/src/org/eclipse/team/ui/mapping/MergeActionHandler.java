@@ -46,7 +46,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 * needed.
 	 * @param mergeActionId the merge action id
 	 * @param configuration the synchronization page configuration
-	 * @return the default handler for the given nerge action or <code>null</code>
+	 * @return the default handler for the given merge action or <code>null</code>
 	 */
 	public static IHandler getDefaultHandler(String mergeActionId, ISynchronizePageConfiguration configuration) {
 		if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
@@ -61,7 +61,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 
 	/**
 	 * Create the handler.
-	 * @param configuration the configiuration for the synchronize page displaying the model.
+	 * @param configuration the configuration for the synchronize page displaying the model.
 	 */
 	public MergeActionHandler(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
@@ -124,7 +124,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	
 	/**
 	 * Set the enablement of this handler.
-	 * @param isEnabled whether the handelr is enabled
+	 * @param isEnabled whether the handler is enabled
 	 */
 	protected void setEnabled(boolean isEnabled) {
 		if (enabled != isEnabled) {
@@ -148,8 +148,8 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Return the synchronizatio operation that performs
-	 * the merge operaton.
+	 * Return the synchronization operation that performs
+	 * the merge operation.
 	 * @return a synchronization operation
 	 */
 	protected abstract SynchronizationOperation getOperation();
