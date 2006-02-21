@@ -25,14 +25,14 @@ body {
 	min-width : 230px;
 	/* since IE doesn't support min-width, use expression */
 	width:expression(document.body.clientWidth < 230? "230px": "auto" );
-	background-image : url(../graphics/rootpage/background.jpg);
+	background-image : url(../graphics/root/background.jpg);
 	background-repeat : no-repeat;
 	background-position : top left;
 	background-color : #7169D1;
 }
 
 .page { 
-	background-image : url(../graphics/rootpage/brandmark.gif);
+	background-image : url(../graphics/root/brandmark.gif);
 	background-repeat : no-repeat;
 	background-position : bottom left;
 	min-width : 230px;
@@ -84,6 +84,10 @@ body {
 
 }
 
+#page-links a .content-img {
+	visibility: hidden;
+}
+
 #page-links a img {
 	height : 52px;
 	width : 52px;
@@ -97,6 +101,8 @@ body {
 #page-links a:hover p,
 #page-links a:focus p,
 #page-links a:active p  { margin : 0px; padding : 0px; }
+
+#action-links a { visibility: hidden; }
 
 /* properties for each of the page-links  */
 a#overview img { background-image : url(../graphics/icons/etool/overview48.gif); }
@@ -114,8 +120,13 @@ a#samples:hover img,
 a#samples:focus img,
 a#samples:active img { background-image : url(../graphics/icons/ctool/samples48.gif); }
 
-a#news img { background-image : url(../graphics/icons/etool/whatsnew48.gif); }
-a#news:hover img,
-a#news:focus img,
-a#news:active img { background-image : url(../graphics/icons/ctool/whatsnew48.gif); }
+a#whatsnew img { background-image : url(../graphics/icons/etool/whatsnew48.gif); }
+a#whatsnew:hover img,
+a#whatsnew:focus img,
+a#whatsnew:active img { background-image : url(../graphics/icons/ctool/whatsnew48.gif); }
+
+a#workbench img { background-image : url(../graphics/icons/etool/wb48.gif); }
+a#workbench:hover img,
+a#workbench:focus img,
+a#workbench:active img { background-image : url(../graphics/icons/ctool/wb48.gif); }
 

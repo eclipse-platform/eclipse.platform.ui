@@ -192,46 +192,46 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 					Messages.SharedIntroConfigurer_overview_name,
 					createPageURL(id, standby),
 					id,
-					"overview_img", "$theme$/graphics/root/overview.png", Messages.SharedIntroConfigurer_overview_alt, //$NON-NLS-1$ //$NON-NLS-2$
-					Messages.SharedIntroConfigurer_overview_tooltip);
+					"overview_img", "$theme$/graphics/root/overview.gif", Messages.SharedIntroConfigurer_overview_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_overview_tooltip, "left"); //$NON-NLS-1$
 		if (id.equals(ID_FIRSTSTEPS))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_firststeps_name,
 					createPageURL(id, standby),
 					id,
-					"firststeps_img", "$theme$/graphics/root/firststeps.png", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
-					Messages.SharedIntroConfigurer_firststeps_tooltip);
+					"firststeps_img", "$theme$/graphics/root/firststeps.gif", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_firststeps_tooltip, "left"); //$NON-NLS-1$
 		if (id.equals(ID_TUTORIALS))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_tutorials_name,
 					createPageURL(id, standby),
 					id,
-					"tutorials_img", "$theme$/graphics/root/tutorials.png", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
-					Messages.SharedIntroConfigurer_tutorials_tooltip);
+					"tutorials_img", "$theme$/graphics/root/tutorials.gif", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_tutorials_tooltip, "left"); //$NON-NLS-1$
 		if (id.equals(ID_SAMPLES))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_samples_name,
 					createPageURL(id, standby),
 					id,
-					"samples_img", "$theme$/graphics/root/samples.png", Messages.SharedIntroConfigurer_samples_alt, Messages.SharedIntroConfigurer_samples_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
+					"samples_img", "$theme$/graphics/root/samples.gif", Messages.SharedIntroConfigurer_samples_alt, Messages.SharedIntroConfigurer_samples_tooltip, "right"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (id.equals(ID_WHATSNEW))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_whatsnew_name,
 					createPageURL(id, standby),
 					id,
-					"whatsnew_img", "$theme$/graphics/root/whatsnew.png", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
-					Messages.SharedIntroConfigurer_whatsnew_tooltip);
+					"whatsnew_img", "$theme$/graphics/root/whatsnew.gif", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_whatsnew_tooltip, "right"); //$NON-NLS-1$
 		if (id.equals(ID_MIGRATE))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_migrate_name,
 					createPageURL(id, standby),
 					id,
-					"migrate_img", "$theme$/graphics/root/migrate.png", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
+					"migrate_img", "$theme$/graphics/root/migrate.gif", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip, "right"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (id.equals(ID_WEBRESOURCES))
 			return createRootLink(Messages.SharedIntroConfigurer_webresources_name,
-					createPageURL(id, standby), id, "webresources_img", "css/graphics/root/webresources.png", //$NON-NLS-1$ //$NON-NLS-2$
+					createPageURL(id, standby), id, "webresources_img", "css/graphics/root/webresources.gif", //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_webresources_alt,
-					Messages.SharedIntroConfigurer_webresources_tooltip);
+					Messages.SharedIntroConfigurer_webresources_tooltip, "right"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -247,19 +247,19 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 					"left"); //$NON-NLS-1$
 		if (id.equals(ID_SAMPLES))
 			return createNavLink(Messages.SharedIntroConfigurer_samples_nav, createPageURL(id, false), id,
-					"left"); //$NON-NLS-1$
+					"right"); //$NON-NLS-1$
 		if (id.equals(ID_WHATSNEW))
 			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav, createPageURL(id, false), id,
-					"left"); //$NON-NLS-1$
+					"right"); //$NON-NLS-1$
 		if (id.equals(ID_MIGRATE))
 			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav, createPageURL(id, false), id,
-					"left"); //$NON-NLS-1$
+					"right"); //$NON-NLS-1$
 		if (id.equals(ID_WEBRESOURCES))
 			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav, createPageURL(id, false),
-					id, "left"); //$NON-NLS-1$
+					id, "right"); //$NON-NLS-1$
 		return null;
 	}
-
+	
 	private String createPageURL(String id, boolean standby) {
 		String url = "http://org.eclipse.ui.intro/showPage?id=" + id; //$NON-NLS-1$
 		if (standby)
@@ -300,15 +300,16 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 	}
 
 	private IntroElement createRootLink(String name, String url, String id, String imgId, String imgSrc,
-			String imgAlt, String imgText) {
+			String imgAlt, String imgText, String styleId) {
 		IntroElement element = new IntroElement("link"); //$NON-NLS-1$
 		element.setAttribute("label", name); //$NON-NLS-1$
 		element.setAttribute("url", url); //$NON-NLS-1$
 		element.setAttribute("id", id); //$NON-NLS-1$
+		element.setAttribute("style-id", styleId);//$NON-NLS-1$
 		IntroElement img = new IntroElement("img"); //$NON-NLS-1$
 		img.setAttribute("id", imgId); //$NON-NLS-1$
 		img.setAttribute("style-id", "content-img"); //$NON-NLS-1$ //$NON-NLS-2$
-		img.setAttribute("src", imgSrc); //$NON-NLS-1$
+		//img.setAttribute("src", imgSrc); //$NON-NLS-1$
 		img.setAttribute("alt", imgAlt); //$NON-NLS-1$
 		IntroElement text = new IntroElement("text"); //$NON-NLS-1$
 		text.setValue(imgText);

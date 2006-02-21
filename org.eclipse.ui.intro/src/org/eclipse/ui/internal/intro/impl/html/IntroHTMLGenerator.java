@@ -901,7 +901,8 @@ public class IntroHTMLGenerator {
             String imageClass, int indentLevel) {
         HTMLElement image = new FormattedHTMLElement(
             IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true, false);
-        if (Platform.getWS().equals(Platform.WS_WIN32) && imageSrc.toLowerCase().endsWith(".png")) { //$NON-NLS-1$
+        boolean pngOnWin32 = imageSrc!=null && Platform.getWS().equals(Platform.WS_WIN32) && imageSrc.toLowerCase().endsWith(".png"); //$NON-NLS-1$
+        if (imageSrc==null || pngOnWin32) {
         	// we must handle PNGs here - IE does not support alpha blanding well.
         	// We will set the alpha image loader and load the real image
         	// that way. The 'src' attribute in the image itself will
@@ -910,8 +911,10 @@ public class IntroHTMLGenerator {
                     IIntroHTMLConstants.IMAGE_SRC_BLANK, IIntroConstants.PLUGIN_ID);
             if (blankImageURL!=null) {
             	image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, blankImageURL);
-            	String style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+imageSrc+"', sizingMethod='scale')";  //$NON-NLS-1$//$NON-NLS-2$
-            	image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, style);
+            	if (pngOnWin32) {
+            		String style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+imageSrc+"', sizingMethod='scale')";  //$NON-NLS-1$//$NON-NLS-2$
+            		image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, style);
+            	}
             }
         }
         else 

@@ -663,6 +663,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			IWorkbenchWindow window = part.getIntroSite().getWorkbenchWindow();
 			boolean standby = manager.isIntroStandby(part);
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(part);
+			IntroPlugin.getDefault().resetVolatileImageRegistry();
 			part = PlatformUI.getWorkbench().getIntroManager().showIntro(window, standby);
 			if (part != null) {
 				StringBuffer url = new StringBuffer();

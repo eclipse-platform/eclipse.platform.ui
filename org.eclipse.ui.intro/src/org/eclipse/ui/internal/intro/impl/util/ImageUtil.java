@@ -134,11 +134,11 @@ public final class ImageUtil {
         // as the intro plug-in. It should be disposed when
         // presentation is disposed, otherwise images will
         // stay around once Inro has been loaded.
-        return IntroPlugin.getDefault().getImageRegistry().get(key);
+        return IntroPlugin.getDefault().getVolatileImageRegistry().get(key);
     }
 
     public static boolean hasImage(String key) {
-        ImageRegistry registry = IntroPlugin.getDefault().getImageRegistry();
+        ImageRegistry registry = IntroPlugin.getDefault().getVolatileImageRegistry();
         return (registry.getDescriptor(key) != null);
     }
 
@@ -150,7 +150,7 @@ public final class ImageUtil {
      * @param imageName
      */
     public static void registerImage(String key, String imageName) {
-        ImageRegistry registry = IntroPlugin.getDefault().getImageRegistry();
+        ImageRegistry registry = IntroPlugin.getDefault().getVolatileImageRegistry();
         if (registry.getDescriptor(key) != null)
             // key has already been registered. do nothing.
             return;
@@ -159,7 +159,7 @@ public final class ImageUtil {
 
     public static void registerImage(String key, Bundle bundle, String imageName) {
 
-        ImageRegistry registry = IntroPlugin.getDefault().getImageRegistry();
+        ImageRegistry registry = IntroPlugin.getDefault().getVolatileImageRegistry();
         if (registry.getDescriptor(key) != null)
             // key has already been registered. do nothing.
             return;
@@ -167,7 +167,7 @@ public final class ImageUtil {
     }
     
     public static void registerImage(String key, IPath base, String imageName) {
-        ImageRegistry registry = IntroPlugin.getDefault().getImageRegistry();
+        ImageRegistry registry = IntroPlugin.getDefault().getVolatileImageRegistry();
         if (registry.getDescriptor(key) != null)
             // key has already been registered. do nothing.
             return;

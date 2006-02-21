@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
@@ -35,6 +36,11 @@ public class IntroPlugin extends AbstractUIPlugin {
     // used for performance logging. Time when the constructor of
     // CustomizableIntroPart is called.
     private long uiCreationStartTime;
+    
+    // image registry that can be disposed while the
+    // plug-in is still active. This is important for
+    // switching themes after the plug-in has been loaded.
+    private ImageRegistry volatileImageRegistry;
 
 
 
@@ -50,6 +56,21 @@ public class IntroPlugin extends AbstractUIPlugin {
      */
     public static IntroPlugin getDefault() {
         return inst;
+    }
+    
+    public ImageRegistry getVolatileImageRegistry() {
+    	if (volatileImageRegistry==null) {
+    		volatileImageRegistry = createImageRegistry();
+    		initializeImageRegistry(volatileImageRegistry);
+    	}
+    	return volatileImageRegistry;
+    }
+    
+    public void resetVolatileImageRegistry() {
+    	if (volatileImageRegistry!=null) {
+    		volatileImageRegistry.dispose();
+    		volatileImageRegistry = null;
+    	}
     }
 
 
@@ -149,6 +170,7 @@ public class IntroPlugin extends AbstractUIPlugin {
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
+    	resetVolatileImageRegistry();
         super.stop(context);
     }
 
