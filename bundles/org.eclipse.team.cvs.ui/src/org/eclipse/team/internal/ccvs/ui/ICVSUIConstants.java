@@ -169,12 +169,12 @@ public interface ICVSUIConstants {
 	public final String PREF_ENABLE_MODEL_SYNC = "enableModelSync"; //$NON-NLS-1$
 	
 	// Wizard banners
-	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
-	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.gif";	 //$NON-NLS-1$
-	public final String IMG_WIZBAN_DIFF = "wizban/createpatch_wizban.gif";   //$NON-NLS-1$
-	public final String IMG_WIZBAN_KEYWORD = "wizban/keywordsub_wizban.gif"; //$NON-NLS-1$
-	public final String IMG_WIZBAN_NEW_LOCATION = "wizban/newlocation_wizban.gif"; //$NON-NLS-1$
-	public final String IMG_WIZBAN_CHECKOUT = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
+	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.png";	 //$NON-NLS-1$
+	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.png";	 //$NON-NLS-1$
+	public final String IMG_WIZBAN_DIFF = "wizban/createpatch_wizban.png";   //$NON-NLS-1$
+	public final String IMG_WIZBAN_KEYWORD = "wizban/keywordsub_wizban.png"; //$NON-NLS-1$
+	public final String IMG_WIZBAN_NEW_LOCATION = "wizban/newlocation_wizban.png"; //$NON-NLS-1$
+	public final String IMG_WIZBAN_CHECKOUT = "wizban/newconnect_wizban.png";	 //$NON-NLS-1$
 	
 	// Properties
 	public final String PROP_NAME = "cvs.name"; //$NON-NLS-1$

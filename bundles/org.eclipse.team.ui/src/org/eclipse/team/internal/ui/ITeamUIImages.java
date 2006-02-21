@@ -153,15 +153,15 @@ public interface ITeamUIImages {
 	/**
 	 * Share projects banner.
 	 */
-	public final String IMG_WIZBAN_SHARE = "wizban/share_wizban.gif"; //$NON-NLS-1$
+	public final String IMG_WIZBAN_SHARE = "wizban/share_wizban.png"; //$NON-NLS-1$
 	/**
 	 * Import project set banner.
 	 */
-	public final String IMG_PROJECTSET_IMPORT_BANNER = "wizban/import_projectset_wizban.gif"; //$NON-NLS-1$
+	public final String IMG_PROJECTSET_IMPORT_BANNER = "wizban/import_projectset_wizban.png"; //$NON-NLS-1$
 	/**
 	 * Export project set banner.
 	 */
-	public final String IMG_PROJECTSET_EXPORT_BANNER = "wizban/export_projectset_wizban.gif"; //$NON-NLS-1$
+	public final String IMG_PROJECTSET_EXPORT_BANNER = "wizban/export_projectset_wizban.png"; //$NON-NLS-1$
 	/**
 	 * Icon for authentication dialogs.
 	 */

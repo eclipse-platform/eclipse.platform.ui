@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbench;
  * the the file system provider. It is registered as a Team configuration wizard
  * in the plugin.xml and is invoked when a user chooses to create a File System
  * Repository Provider. One invoked, this wizard makes use of the <code>FileSystemMainPage</code>
- * in order to obtain a target locaton on disk.
+ * in order to obtain a target location on disk.
  */
 public class ConfigurationWizard extends Wizard implements IConfigurationWizard {
 	
