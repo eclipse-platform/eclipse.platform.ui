@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
@@ -26,9 +27,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.core.mapping.ISynchronizationScope;
-import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
-import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -165,12 +163,6 @@ public class CommitWizard extends ResizableWizard {
 		this.jobListener = jobListener;
 	}
 
-	public CommitWizard(Shell shell, IWorkbenchPart part, ISynchronizationScope scope) throws CVSException {
-		// TODO: should use scope to create appropriate model sync
-		this(scope.getRoots());
-		this.part = part;
-	}
-
 	private SyncInfoSet getAllOutOfSync() throws CVSException {
 		final SubscriberSyncInfoCollector syncInfoCollector = fParticipant.getSubscriberSyncInfoCollector();
             try {
@@ -302,11 +294,19 @@ public class CommitWizard extends ResizableWizard {
 		}
     }
 
-	public static void run(IWorkbenchPart part, Shell shell, ResourceMapping[] mappings) throws CVSException {
+	public static void run(IWorkbenchPart part, Shell shell, final ResourceMapping[] mappings) throws CVSException {
         try {
-        	ISynchronizationScope scope = buildScope(part, mappings);
-        	CommitWizard commitWizard = new CommitWizard(shell, part, scope);
-			run(shell, commitWizard);
+        	final IResource [][] resources = new IResource[][] { null };
+    		PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+    			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+    				try {
+    					resources[0] = getDeepResourcesToCommit(mappings, monitor);
+    				} catch (CoreException e) {
+    					throw new InvocationTargetException(e);
+    				}
+    			}
+    		});
+			run(shell, resources[0]);
 		} catch (OperationCanceledException e) {
 			// Ignore
 		} catch (InvocationTargetException e) {
@@ -315,36 +315,6 @@ public class CommitWizard extends ResizableWizard {
 			// Ignore
 		}
 	}
-	
-    private static ISynchronizationScope buildScope(final IWorkbenchPart part, final ResourceMapping[] mappings) throws InvocationTargetException, InterruptedException {
-    	final ISynchronizationScope[] scope = new ISynchronizationScope[] { null };
-		PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException,
-					InterruptedException {
-				try {
-					scope[0] = buildScope(part, mappings, monitor);
-				} catch (CVSException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		});
-		return scope[0];
-	}
-    
-    public static ISynchronizationScope buildScope(IWorkbenchPart part, ResourceMapping[] mappings, IProgressMonitor monitor) throws InterruptedException, CVSException {
-		ISynchronizationScopeManager manager = new SynchronizationScopeManager(CVSUIMessages.CommitWizardCommitPage_0, mappings, 
-				SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
-				true);
-		try {
-			manager.initialize(monitor);
-			return manager.getScope();
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		} finally {
-			if (manager != null)
-				manager.dispose();
-		}
-    }
 
 	private IWorkbenchPart getPart() {
     	if (part != null)
@@ -401,5 +371,44 @@ public class CommitWizard extends ResizableWizard {
         return cvsResource.isManaged();
     }
 
+    private static IResource[] getDeepResourcesToCommit(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+        List roots = new ArrayList();
+        for (int i = 0; i < mappings.length; i++) {
+            ResourceMapping mapping = mappings[i];
+            ResourceTraversal[] traversals = mapping.getTraversals(
+            		SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
+            		monitor);
+            for (int j = 0; j < traversals.length; j++) {
+                ResourceTraversal traversal = traversals[j];
+                IResource[] resources = traversal.getResources();
+                if (traversal.getDepth() == IResource.DEPTH_INFINITE) {
+                    roots.addAll(Arrays.asList(resources));
+                } else if (traversal.getDepth() == IResource.DEPTH_ZERO) {
+                    collectShallowFiles(resources, roots);
+                } else if (traversal.getDepth() == IResource.DEPTH_ONE) {
+                    collectShallowFiles(resources, roots);
+                    for (int k = 0; k < resources.length; k++) {
+                        IResource resource = resources[k];
+                        if (resource.getType() != IResource.FILE) {
+                            collectShallowFiles(members(resource), roots);
+                        }
+                    }
+                }
+            }
+        }
+        return (IResource[]) roots.toArray(new IResource[roots.size()]);
+    }
+
+    private static IResource[] members(IResource resource) throws CoreException {
+        return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().members(resource);
+    }
+
+    private static void collectShallowFiles(IResource[] resources, List roots) {
+        for (int k = 0; k < resources.length; k++) {
+            IResource resource = resources[k];
+            if (resource.getType() == IResource.FILE)
+                roots.add(resource);
+        }
+    }
 }    
 

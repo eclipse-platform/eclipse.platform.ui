@@ -11,21 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for checking in files to a CVS provider.
@@ -37,73 +30,17 @@ public class CommitAction extends WorkspaceTraversalAction {
 	 * @see CVSAction#execute(IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		
-		final IResource [][] resources = new IResource[][] { null };
-		 
-		PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					resources[0] = getDeepResourcesToCommit(monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		});
-
         run(new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
-            try {
-                CommitWizard.run(getShell(), resources[0]);
-
-            } catch (CoreException e) {
-                throw new InvocationTargetException(e);
-            }
-
+	            try {
+	                CommitWizard.run(getTargetPart(), getShell(), getCVSResourceMappings());
+	            } catch (CoreException e) {
+	                throw new InvocationTargetException(e);
+	            }
             }
         }, false, PROGRESS_BUSYCURSOR);
 	}
-    
-    private IResource[] getDeepResourcesToCommit(IProgressMonitor monitor) throws CoreException {
-        ResourceMapping[] mappings = getCVSResourceMappings();
-        List roots = new ArrayList();
-        for (int i = 0; i < mappings.length; i++) {
-            ResourceMapping mapping = mappings[i];
-            ResourceTraversal[] traversals = mapping.getTraversals(
-            		SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
-            		monitor);
-            for (int j = 0; j < traversals.length; j++) {
-                ResourceTraversal traversal = traversals[j];
-                IResource[] resources = traversal.getResources();
-                if (traversal.getDepth() == IResource.DEPTH_INFINITE) {
-                    roots.addAll(Arrays.asList(resources));
-                } else if (traversal.getDepth() == IResource.DEPTH_ZERO) {
-                    collectShallowFiles(resources, roots);
-                } else if (traversal.getDepth() == IResource.DEPTH_ONE) {
-                    collectShallowFiles(resources, roots);
-                    for (int k = 0; k < resources.length; k++) {
-                        IResource resource = resources[k];
-                        if (resource.getType() != IResource.FILE) {
-                            collectShallowFiles(members(resource), roots);
-                        }
-                    }
-                }
-            }
-        }
-        return (IResource[]) roots.toArray(new IResource[roots.size()]);
-    }
-
-    private IResource[] members(IResource resource) throws CoreException {
-        return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().members(resource);
-    }
-
-    private void collectShallowFiles(IResource[] resources, List roots) {
-        for (int k = 0; k < resources.length; k++) {
-            IResource resource = resources[k];
-            if (resource.getType() == IResource.FILE)
-                roots.add(resource);
-        }
-    }
     
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
