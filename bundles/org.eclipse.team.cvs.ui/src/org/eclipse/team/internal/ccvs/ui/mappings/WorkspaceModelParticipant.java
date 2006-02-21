@@ -16,6 +16,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
@@ -63,14 +64,16 @@ public class WorkspaceModelParticipant extends
 					if (tree.isEmpty()) {
 						return false;
 					}
+					final long count = tree.countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK) + tree.countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK);
+					if (count == 0)
+						return false;
 					final boolean[] result = new boolean[] {true};
 					TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 						public void run() {
-							String sizeString = Integer.toString(tree.size());
-							String message = tree.size() > 1 ? NLS.bind("Are you sure you want to update {0} resources?", new String[] { sizeString }) : 
-								NLS.bind("Are you sure you want to update {0} resource?", new String[] { sizeString });
-							result[0] = MessageDialog.openQuestion(getConfiguration().getSite().getShell(), 
-									NLS.bind("Confirm Update", new String[] { sizeString }), message); 					 
+							String sizeString = Long.toString(count);
+							String message = tree.size() > 1 ? NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateSeveral, new String[] { sizeString }) : NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateOne, new String[] { sizeString }); // 
+							result[0] = MessageDialog.openQuestion(getConfiguration().getSite().getShell(), NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateTitle, new String[] { sizeString }), message); 					 
+				 
 						}
 					});
 					return result[0];

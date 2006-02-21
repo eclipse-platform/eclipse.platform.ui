@@ -97,10 +97,13 @@ public class MergeAllActionHandler extends MergeActionHandler implements IDiffCh
 		if (tree.isEmpty()) {
 			return false;
 		}
+		final long count = tree.countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK) + tree.countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK);
+		if (count == 0)
+			return false;
 		final boolean[] result = new boolean[] {true};
 		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
-				String sizeString = Integer.toString(tree.size());
+				String sizeString = Long.toString(count);
 				String message = tree.size() > 1 ? NLS.bind("Are you sure you want to merge {0} resources?", new String[] { sizeString }) : 
 					NLS.bind("Are you sure you want to merge {0} resource?", new String[] { sizeString });
 				result[0] = MessageDialog.openQuestion(getConfiguration().getSite().getShell(), 
