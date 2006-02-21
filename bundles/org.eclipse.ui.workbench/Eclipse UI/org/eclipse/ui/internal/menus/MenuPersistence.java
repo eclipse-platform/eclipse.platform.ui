@@ -395,6 +395,53 @@ final class MenuPersistence extends RegistryPersistence {
 	}
 
 	/**
+	 * Reads the <code>layout</code> child element from the given
+	 * configuration element. Warnings will be appended to
+	 * <code>warningsToLog</code>.
+	 * 
+	 * @param parentElement
+	 *            The configuration element which might have a
+	 *            <code>layout</code> element as a child; never
+	 *            <code>null</code>.
+	 * @param id
+	 *            The identifier of the menu element whose <code>layout</code>
+	 *            elements are being read; never <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings while parsing the extension point; never
+	 *            <code>null</code>.
+	 * @return The layout for the <code>configurationElement</code>, if
+	 *         any; otherwise a default layout is returned.
+	 */
+	private static final SLayout readLayoutFromRegistry(
+			final IConfigurationElement parentElement, final String id,
+			final List warningsToLog) {
+		// Check to see if we have an activeWhen expression.
+		final IConfigurationElement[] layoutElements = parentElement
+				.getChildren(TAG_LOCATION);
+		
+		// If none is defined then return a default
+		if (layoutElements.length < 1) {
+			return new SLayout();
+		}
+
+		// Use the first one
+		IConfigurationElement layoutElement = layoutElements[0];
+		
+		// If more than one is defined then log a warning and use the first
+		if (layoutElements.length > 1) {
+			addWarning(warningsToLog,
+					"There should only be a single layout element for a widget", //$NON-NLS-1$
+					parentElement, id);
+		}
+		
+		// Get the values (a return of 'null' will give a value of 'false'
+		boolean fillMajor = Boolean.parseBoolean(readOptional(layoutElement, ATT_FILL_MAJOR));
+		boolean fillMinor = Boolean.parseBoolean(readOptional(layoutElement, ATT_FILL_MINOR));
+
+		return new SLayout(fillMajor, fillMinor);
+	}
+
+	/**
 	 * Reads the <code>location</code> child elements from the given
 	 * configuration element. Warnings will be appended to
 	 * <code>warningsToLog</code>.
@@ -880,8 +927,12 @@ final class MenuPersistence extends RegistryPersistence {
 			final SLocation[] locations = readLocationElementsFromRegistry(
 					configurationElement, id, warningsToLog);
 
+			// Read the (optional) trim layout info from the regsitry
+			final SLayout layout = readLayoutFromRegistry(
+					configurationElement, id, warningsToLog);
+					
 			final SWidget widget = menuService.getWidget(id);
-			widget.define(widgetClass, locations);
+			widget.define(widgetClass, locations, layout);
 			menuContributions.add(menuService.contributeMenu(widget,
 					visibleWhenExpression));
 		}

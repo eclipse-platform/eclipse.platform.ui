@@ -175,6 +175,16 @@ public interface IWorkbenchRegistryConstants {
 	public static String ATT_FILENAMES = "filenames";//$NON-NLS-1$
 
 	/**
+	 * Trim fill major attribute. Value <code>fillMajor</code>.
+	 */
+	public static String ATT_FILL_MAJOR = "fillMajor";//$NON-NLS-1$
+
+	/**
+	 * Trim fill minor attribute. Value <code>fillMinor</code>.
+	 */
+	public static String ATT_FILL_MINOR = "fillMinor";//$NON-NLS-1$
+
+	/**
 	 * Perspective fixed attribute. Value <code>fixed</code>.
 	 */
 	public static String ATT_FIXED = "fixed";//$NON-NLS-1$
@@ -1025,6 +1035,11 @@ public interface IWorkbenchRegistryConstants {
 	 * The name of the element storing a location.
 	 */
 	public static String TAG_LOCATION = "location"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element storing trim layout info for a widget.
+	 */
+	public static String TAG_LAYOUT = "layout"; //$NON-NLS-1$
 
 	/**
 	 * Mapping tag. Value <code>mapping</code>.
