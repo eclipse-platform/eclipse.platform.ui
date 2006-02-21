@@ -24,6 +24,7 @@ import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry
 import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
 
 /**
  * @since 1.0
@@ -114,6 +115,10 @@ public class ValidationErrorList extends ObservableList {
 			IObservableValue observableValue = (IObservableValue) it.next();
 			observableValue.removeChangeListener(markDirtyChangeListener);
 		}
+	}
+
+	public Object getElementType() {
+		return ValidationError.class;
 	}
 
 }

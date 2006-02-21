@@ -111,7 +111,7 @@ public class JavaBeanObservableList extends ObservableList {
 	/**
 	 * @return the elementType
 	 */
-	public Class getElementType() {
+	public Object getElementType() {
 		return elementType;
 	}
 

@@ -153,4 +153,9 @@ public interface IObservableList extends List, IObservable {
 	 * @TrackedGetter
 	 */
     public List subList(int fromIndex, int toIndex);
+
+	/**
+	 * @return the type of the elements
+	 */
+	Object getElementType();
 }

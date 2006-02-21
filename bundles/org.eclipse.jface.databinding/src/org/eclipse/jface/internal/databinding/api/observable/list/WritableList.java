@@ -22,13 +22,24 @@ import java.util.List;
  */
 public class WritableList extends ObservableList {
 
+	private final Object elementType;
+
 	/**
-	 * Creates an empty writable list. 
+	 * Creates an empty writable list containing elements of type Object. 
 	 */
 	public WritableList() {
-		super(new ArrayList());
+		this(Object.class);
 	}
 
+	/**
+	 * Creates an empty writable list containing elements of the given type. 
+	 * @param elementType 
+	 */
+	public WritableList(Object elementType) {
+		super(new ArrayList());
+		this.elementType = elementType;
+	}
+	
 	public Object set(int index, Object element) {
 		getterCalled();
 		Object oldElement = wrappedList.set(index, element);
@@ -138,5 +149,9 @@ public class WritableList extends ObservableList {
 		}
 		fireListChange(new ListDiff((ListDiffEntry[]) entries
 				.toArray(new ListDiffEntry[entries.size()])));
+	}
+
+	public Object getElementType() {
+		return elementType;
 	}
 }

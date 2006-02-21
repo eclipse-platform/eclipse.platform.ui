@@ -43,6 +43,10 @@ public interface SWTProperties {
 	 */
 	public static final String SELECTION = "selection"; //$NON-NLS-1$
 	/**
+	 * Applies to Spinner, Button
+	 */
+	public static final String SELECTION_INDEX = "index"; //$NON-NLS-1$
+	/**
 	 * Applies to Text, Label, Combo
 	 */
 	public static final String TEXT = "text"; //$NON-NLS-1$
