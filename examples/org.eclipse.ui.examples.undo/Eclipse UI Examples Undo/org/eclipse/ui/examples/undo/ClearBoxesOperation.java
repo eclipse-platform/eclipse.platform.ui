@@ -13,7 +13,6 @@ package org.eclipse.ui.examples.undo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,8 +38,7 @@ public class ClearBoxesOperation extends BoxOperation {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus execute(IProgressMonitor monitor, IAdaptable info){
 		savedBoxes = boxes.getBoxes();
 		boxes.clear();
 		canvas.redraw();
@@ -51,8 +49,7 @@ public class ClearBoxesOperation extends BoxOperation {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus redo(IProgressMonitor monitor, IAdaptable info) {
 		return execute(monitor, info);
 	}
 
@@ -60,8 +57,7 @@ public class ClearBoxesOperation extends BoxOperation {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus undo(IProgressMonitor monitor, IAdaptable info) {
 		boxes.setBoxes(savedBoxes);
 		canvas.redraw();
 		return Status.OK_STATUS;

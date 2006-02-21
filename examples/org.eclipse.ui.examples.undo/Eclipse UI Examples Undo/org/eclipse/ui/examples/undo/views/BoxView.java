@@ -436,7 +436,8 @@ public class BoxView extends ViewPart {
 	 * Initialize the workbench operation history for our undo context.
 	 */
 	private void initializeOperationHistory() {
-		// create a unique undo context to represent this view's undo history
+		// create a unique undo context to 
+		// represent this view's undo history
 		undoContext = new ObjectUndoContext(this);
 
 		// set the undo limit for this context based on the preference

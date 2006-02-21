@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.undo;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,55 +22,41 @@ import org.eclipse.swt.widgets.Canvas;
  */
 public class AddBoxOperation extends BoxOperation {
 
+	/**
+	 * Create a box
+	 * @param label
+	 * @param context
+	 * @param boxes
+	 * @param box
+	 * @param canvas
+	 */
 	public AddBoxOperation(String label, IUndoContext context, Boxes boxes, Box box, Canvas canvas) {
 		super(label, context, boxes, box, canvas);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
 		boxes.add(box);
 		canvas.redraw(box.x1, box.y1, box.x2, box.y2, false);
 		return Status.OK_STATUS;
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
-	 */
 	public boolean canUndo() {
 		return boxes.contains(box);
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
-	 */
-	public boolean canRedo() {
-		return !boxes.contains(box);
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return execute(monitor, info);
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus undo(IProgressMonitor monitor, IAdaptable info) {
 		boxes.remove(box);
 		canvas.redraw(box.x1, box.y1, box.x2, box.y2, false);
 		return Status.OK_STATUS;
 	}
+	
+	public boolean canRedo() {
+		return !boxes.contains(box);
+	}
+	public IStatus redo(IProgressMonitor monitor, IAdaptable info) {
+		return execute(monitor, info);
+	}
+
+
 
 }
