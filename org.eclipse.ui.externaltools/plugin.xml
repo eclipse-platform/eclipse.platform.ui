@@ -167,7 +167,7 @@
             label="%ExternalToolsLaunchGroup.label"
             bannerImage="$nl$/icons/full/wizban/ext_tools_wiz.gif"
             category="org.eclipse.ui.externaltools.builder"
-            image="icons/full/obj16/external_tools.gif"
+            image="$nl$/icons/full/obj16/external_tools.gif"
             public="false"
             mode="run"
             id="org.eclipse.ui.externaltools.launchGroup.builder">
