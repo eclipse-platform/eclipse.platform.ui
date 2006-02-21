@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
@@ -83,7 +84,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 			try {
 				URL url = bundle.getEntry(path);
 				if (url != null) {
-					URL localURL = Platform.asLocalURL(url);
+					URL localURL = FileLocator.toFileURL(url);
 					return localURL.toString();
 				}
 			} catch (IOException e) {
@@ -185,49 +186,50 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 	}
 
 	private IntroElement createRootPageLink(String id, boolean standby) {
-		
+
 		if (id.equals(ID_OVERVIEW))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_overview_name,
-					createPageURL(id, standby), id, 
-					"overview_img", "css/graphics/root/overview.png", Messages.SharedIntroConfigurer_overview_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					createPageURL(id, standby),
+					id,
+					"overview_img", "$theme$/graphics/root/overview.png", Messages.SharedIntroConfigurer_overview_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_overview_tooltip);
 		if (id.equals(ID_FIRSTSTEPS))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_firststeps_name,
-					createPageURL(id, standby), 
+					createPageURL(id, standby),
 					id,
-					"firststeps_img", "css/graphics/root/firststeps.png", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					"firststeps_img", "$theme$/graphics/root/firststeps.png", Messages.SharedIntroConfigurer_firststeps_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_firststeps_tooltip);
 		if (id.equals(ID_TUTORIALS))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_tutorials_name,
-					createPageURL(id, standby), 
+					createPageURL(id, standby),
 					id,
-					"tutorials_img", "css/graphics/root/tutorials.png", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					"tutorials_img", "$theme$/graphics/root/tutorials.png", Messages.SharedIntroConfigurer_tutorials_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_tutorials_tooltip);
 		if (id.equals(ID_SAMPLES))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_samples_name,
-					createPageURL(id, standby), id, 
-					"samples_img", "css/graphics/root/samples.png", Messages.SharedIntroConfigurer_samples_alt, Messages.SharedIntroConfigurer_samples_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
+					createPageURL(id, standby),
+					id,
+					"samples_img", "$theme$/graphics/root/samples.png", Messages.SharedIntroConfigurer_samples_alt, Messages.SharedIntroConfigurer_samples_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
 		if (id.equals(ID_WHATSNEW))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_whatsnew_name,
-					createPageURL(id, standby), 
+					createPageURL(id, standby),
 					id,
-					"whatsnew_img", "css/graphics/root/whatsnew.png", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
+					"whatsnew_img", "$theme$/graphics/root/whatsnew.png", Messages.SharedIntroConfigurer_whatsnew_alt, //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_whatsnew_tooltip);
 		if (id.equals(ID_MIGRATE))
 			return createRootLink(
 					Messages.SharedIntroConfigurer_migrate_name,
-					createPageURL(id, standby), id, 
-					"migrate_img", "css/graphics/root/migrate.png", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
+					createPageURL(id, standby),
+					id,
+					"migrate_img", "$theme$/graphics/root/migrate.png", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip); //$NON-NLS-1$ //$NON-NLS-2$
 		if (id.equals(ID_WEBRESOURCES))
-			return createRootLink(
-					Messages.SharedIntroConfigurer_webresources_name,
-					createPageURL(id, standby), 
-					id, "webresources_img", "css/graphics/root/webresources.png", //$NON-NLS-1$ //$NON-NLS-2$
+			return createRootLink(Messages.SharedIntroConfigurer_webresources_name,
+					createPageURL(id, standby), id, "webresources_img", "css/graphics/root/webresources.png", //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_webresources_alt,
 					Messages.SharedIntroConfigurer_webresources_tooltip);
 		return null;
@@ -235,33 +237,33 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 
 	private IntroElement createNavLink(String id, String pageId) {
 		if (id.equals(ID_OVERVIEW))
-			return createNavLink(Messages.SharedIntroConfigurer_overview_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$ 
+			return createNavLink(Messages.SharedIntroConfigurer_overview_nav, createPageURL(id, false), id,
+					"left"); //$NON-NLS-1$ 
 		if (id.equals(ID_FIRSTSTEPS))
-			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav, createPageURL(id, false), id,
+					"left"); //$NON-NLS-1$
 		if (id.equals(ID_TUTORIALS))
-			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav, createPageURL(id, false), id,
+					"left"); //$NON-NLS-1$
 		if (id.equals(ID_SAMPLES))
-			return createNavLink(Messages.SharedIntroConfigurer_samples_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_samples_nav, createPageURL(id, false), id,
+					"left"); //$NON-NLS-1$
 		if (id.equals(ID_WHATSNEW))
-			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav, createPageURL(id, false), id,
+					"left"); //$NON-NLS-1$
 		if (id.equals(ID_MIGRATE))
-			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav, createPageURL(id, false), id,
+					"left"); //$NON-NLS-1$
 		if (id.equals(ID_WEBRESOURCES))
-			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav, createPageURL(id, false),
+					id, "left"); //$NON-NLS-1$
 		return null;
 	}
-	
+
 	private String createPageURL(String id, boolean standby) {
 		String url = "http://org.eclipse.ui.intro/showPage?id=" + id; //$NON-NLS-1$
 		if (standby)
-			url+= "&standby=false"; //$NON-NLS-1$
+			url += "&standby=false"; //$NON-NLS-1$
 		return url;
 	}
 
@@ -358,7 +360,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 			String name = child.getAttribute("name"); //$NON-NLS-1$
 			if (name != null && name.equals(VAR_INTRO_DATA)) {
 				String value = child.getAttribute("value"); //$NON-NLS-1$
-				String bid = child.getDeclaringExtension().getNamespace();
+				String bid = child.getDeclaringExtension().getNamespaceIdentifier();
 				Bundle bundle = Platform.getBundle(bid);
 				if (bundle != null) {
 					String dataFile = resolveVariable(bundle, value);
@@ -387,19 +389,19 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 	}
 
 	public String resolvePath(String extensionId, String path) {
-		boolean extensionRelativePath=false;
+		boolean extensionRelativePath = false;
 		IPath ipath = new Path(path);
 		String pageId = ipath.segment(0);
 		String s2 = ipath.segment(1);
 		if (!s2.equals("@")) //$NON-NLS-1$
-			extensionRelativePath=true;
+			extensionRelativePath = true;
 		if (introData.size() > 0) {
 			// TODO getting the active product one only
 			// Eventually we should consult the data from all the products
 			IntroData idata = (IntroData) introData.get(0);
 			PageData pdata = idata.getPage(pageId);
 			if (pdata != null) {
-				String resolvedPath=pdata.resolvePath(extensionId);
+				String resolvedPath = pdata.resolvePath(extensionId);
 				if (extensionRelativePath) {
 					// not done - use the resolved extension path
 					// to complete the source path
@@ -407,14 +409,13 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 					IPath p1 = ipath.removeFirstSegments(2);
 					// remove the last anchor and append the
 					// relative path from the extension
-					resolvedPath = p2.removeLastSegments(1).append(p1).toString(); 
+					resolvedPath = p2.removeLastSegments(1).append(p1).toString();
 				}
 				return resolvedPath;
 			}
-		}
-		else {
+		} else {
 			// use fallback anchor
-			return pageId+DEFAULT_CONTENT_PATH;
+			return pageId + DEFAULT_CONTENT_PATH;
 		}
 		return null;
 	}

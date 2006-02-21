@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro.impl.util;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -71,7 +72,7 @@ public final class ImageUtil {
     public static ImageDescriptor createImageDescriptor(Bundle bundle,
             String imageName) {
         try {
-            URL imageUrl = Platform.find(bundle, new Path(imageName));
+            URL imageUrl = FileLocator.find(bundle, new Path(imageName), null);
             if (imageUrl != null) {
                 ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
                 return desc;

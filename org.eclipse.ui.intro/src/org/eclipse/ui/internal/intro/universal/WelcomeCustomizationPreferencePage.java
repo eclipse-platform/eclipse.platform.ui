@@ -87,6 +87,7 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
 import org.eclipse.ui.intro.config.IntroURLFactory;
+import org.osgi.framework.Bundle;
 
 
 public class WelcomeCustomizationPreferencePage extends PreferencePage implements IWorkbenchPreferencePage,
@@ -338,6 +339,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	class IntroTheme {
 		IConfigurationElement element;
+		Image previewImage;
 
 		public String getName() {
 			return element.getAttribute("name"); //$NON-NLS-1$
@@ -349,6 +351,28 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 		public IntroTheme(IConfigurationElement element) {
 			this.element = element;
+		}
+		
+		public Image getPreviewImage() {
+			if (previewImage==null) {
+				String path = element.getAttribute("previewImage"); //$NON-NLS-1$
+				if (path!=null) {
+				    String bid = element.getDeclaringExtension().getNamespaceIdentifier();
+				    Bundle bundle = Platform.getBundle(bid);
+				    if (bundle!=null) {
+				    	ImageDescriptor desc = ImageUtil.createImageDescriptor(bundle, path);
+				    	previewImage = desc.createImage();
+				    }
+				}
+			}
+			return previewImage;
+		}
+		
+		public void dispose() {
+			if (previewImage!=null) {
+				previewImage.dispose();
+				previewImage=null;
+			}
 		}
 	}
 
@@ -748,20 +772,20 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		*/
 		themePreview = new Canvas(container, SWT.NULL);
 		gd = new GridData();
-		gd.widthHint = 160;
-		gd.heightHint = 120;
+		gd.widthHint = 160+20;
+		gd.heightHint = 120+20;
 		themePreview.setLayoutData(gd);
 		themePreview.addPaintListener(new PaintListener() {
 
 			public void paintControl(PaintEvent e) {
 				if (introTheme == null)
 					return;
-				Image bgImage = null;
+				Image bgImage = introTheme.getPreviewImage();
 				if (bgImage == null)
 					return;
-				Rectangle carea = themePreview.getClientArea();
+				//Rectangle carea = themePreview.getClientArea();
 				Rectangle ibounds = bgImage.getBounds();
-				e.gc.drawImage(bgImage, 0, 0, ibounds.width, ibounds.height, 0, 0, carea.width, carea.height);
+				e.gc.drawImage(bgImage, 0, 0, ibounds.width, ibounds.height, 10, 10, 160, 120);
 			}
 		});
 		label = new Label(container, SWT.NULL);

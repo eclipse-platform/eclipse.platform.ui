@@ -34,12 +34,7 @@ public class IntroImage extends AbstractBaseIntroElement {
         this.element = element;
         this.base = base;
     }
-    
-    protected void loadFromParent() {
-    	// Resolve src.
-        src = BundleUtil.getResolvedResourceLocation(base, getSrcAsIs(), getBundle());
-    }
-
+ 
     /**
      * @return Returns the alt.
      */
@@ -61,6 +56,8 @@ public class IntroImage extends AbstractBaseIntroElement {
      * @return Returns the src value, already resolved as a local url.
      */
     public String getSrc() {
+    	if (src==null)// Resolve src.
+    		src = BundleUtil.getResolvedResourceLocation(base, getSrcAsIs(), getBundle());
         return src;
     }
 

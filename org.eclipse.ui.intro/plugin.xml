@@ -30,7 +30,7 @@
       <searchParticipant
             icon="icons/welcome_item.gif"
             id="org.eclipse.ui.intro"
-            name="Welcome"
+            name="%searchParticipant.name.welcome"
             participant="org.eclipse.ui.internal.intro.impl.model.IntroSearchParticipant"/>
    </extension>
    <extension
@@ -49,11 +49,13 @@
             introId="org.eclipse.ui.intro.universal">
          <presentation
                home-page-id="root" standby-page-id="standby">
+               <!--
               <implementation
-                  style="$theme$/shared.css"
+                  style="$theme$/html/shared.css"
                   kind="html"
                   os="win32,linux,macosx">
             </implementation>
+            -->
             <implementation
                   kind="swt">
             </implementation>
@@ -69,8 +71,13 @@
          point="org.eclipse.ui.intro.configExtension">
       <theme
             default="true"
-            id="org.eclipse.ui.intro.eclipse32"
-            name="Eclipse 3.2"
-            path="$nl$/universal/css"/>
+            id="org.eclipse.ui.intro.circles"
+            name="%theme.name.circles"
+            path="$nl$/themes/circles"/>
+      <theme
+            id="org.eclipse.ui.intro.purpleMesh"
+            name="%theme.name.purpleMesh"
+            path="$nl$/themes/purpleMesh"
+            previewImage="themes/purpleMesh/preview.png"/>
    </extension>
 </plugin>

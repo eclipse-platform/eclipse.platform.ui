@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
-	<page id="root" alt-style="$theme$/root_swt.properties" style="$theme$/root.css" style-id="page">
+	<page id="root" alt-style="$theme$/swt/root.properties" style="$theme$/html/root.css" style-id="page">
         <title style-id="intro-header">$introTitle$</title>
-        <group id="links-background" bgImage="css/graphics/root/circles.png">
+        <group id="links-background" bgImage="$theme$/graphics/root/circles.png">
            <group id="page-links" computed="true"/>
         </group>
         <group id="action-links">
             <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
-                <img id="workbench_img" style-id="content-img" src="css/graphics/root/workbench.png" alt="Go to the workbench">
+                <img id="workbench_img" style-id="content-img" src="$theme$/graphics/root/workbench.png" alt="Go to the workbench">
                 </img>
                 <text>Go to the workbench</text>
             </link>
@@ -15,7 +15,7 @@
         <group id="branding" style-id="branding" bgImage="$introBrandingImage$">
         </group>
     </page>
-    <page id="standby" alt-style="$theme$/standby_swt.properties" style="$theme$/standby_root.css" style-id="page">
+    <page id="standby" alt-style="$theme$/swt/standby.properties" style="$theme$/html/standby_root.css" style-id="page">
         <title style-id="intro-header">$introTitle$</title>
         <group id="links-background">
             <group id="page-links" computed="true">
@@ -23,7 +23,7 @@
         </group>
         <group id="action-links">
             <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
-                <img id="workbench_img" style-id="content-img" src="css/graphics/root/workbench.png" alt="Go to the workbench">
+                <img id="workbench_img" style-id="content-img" src="$theme$/graphics//root/workbench.png" alt="Go to the workbench">
                 </img>
                 <text>Go to the workbench</text>
             </link>
@@ -32,11 +32,11 @@
         </group>
     </page>    
     
-    <page id="overview" style="$theme$/overview/overview.css" alt-style="$theme$/overview/swt.properties" style-id="page">
-        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/ov_banner.jpg">
+    <page id="overview" style="$theme$/html/overview.css" alt-style="$theme$/swt/overview.properties" style-id="page">
+        <group id="navigation-links" filteredFrom="swt" bgImage="$theme$/graphics/ov_banner.jpg">
             <group id="page-links" computed="true">
             </group>
-            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <img id="banner-lines" src="$theme$/graphics/banner_left_lines.png"/>
             <group id="action-links">
             	<group id="customize" computed="true"/>
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
@@ -54,11 +54,11 @@
 			<group id="bottom" computed="true"/>
         </group>
     </page>
-	<page id="tutorials" style="$theme$/tutorials/tutorials.css" alt-style="$theme$/tutorials/swt.properties" style-id="page">
-        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/tu_banner.jpg">
+	<page id="tutorials" style="$theme$/html/tutorials.css" alt-style="$theme$/swt/tutorials.properties" style-id="page">
+        <group id="navigation-links" filteredFrom="swt" bgImage="$theme$/graphics/tu_banner.jpg">
             <group id="page-links" computed="true">
             </group>
-            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <img id="banner-lines" src="$theme$/graphics/banner_left_lines.png"/>
             <group id="action-links">
                	<group id="customize" computed="true"/>
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
@@ -76,11 +76,11 @@
 			<group id="bottom" computed="true"/>
         </group>
     </page>
-	 <page id="samples" style="$theme$/samples/samples.css" alt-style="$theme$/samples/swt.properties" style-id="page">
-        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/sa_banner.jpg">
+	 <page id="samples" style="$theme$/html/samples/samples.css" alt-style="$theme$/swt/samples.properties" style-id="page">
+        <group id="navigation-links" filteredFrom="swt" bgImage="$theme$/graphics/sa_banner.jpg">
             <group id="page-links" computed="true">
             </group>
-            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <img id="banner-lines" src="$theme$/graphics/banner_left_lines.png"/>
             <group id="action-links">
                	<group id="customize" computed="true"/>
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
@@ -99,11 +99,11 @@
         </group>
     </page>
 
-    <page id="whatsnew" style="$theme$/whatsnew/whatsnew.css" alt-style="$theme$/whatsnew/swt.properties" style-id="page">
-        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wn_banner.jpg">
+    <page id="whatsnew" style="$theme$/html/whatsnew.css" alt-style="$theme$/swt/whatsnew.properties" style-id="page">
+        <group id="navigation-links" filteredFrom="swt" bgImage="$theme$/graphics/wn_banner.jpg">
             <group id="page-links" computed="true">
             </group>
-            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <img id="banner-lines" src="$theme$/graphics/banner_left_lines.png"/>
             <group id="action-links">
             	<group id="customize" computed="true"/>            
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
@@ -121,11 +121,11 @@
         </group>
     </page>
     
-    <page id="firststeps" style="$theme$/firststeps/firststeps.css" alt-style="$theme$/firststeps/swt.properties" style-id="page">
-        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/fs_banner.jpg">
+    <page id="firststeps" style="$theme$/html/firststeps.css" alt-style="$theme$/swt/firststeps.properties" style-id="page">
+        <group id="navigation-links" filteredFrom="swt" bgImage="$theme$/graphics/fs_banner.jpg">
             <group id="page-links" computed="true">
             </group>
-            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <img id="banner-lines" src="$theme$/graphics/banner_left_lines.png"/>
             <group id="action-links">
             	<group id="customize" computed="true"/>
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
@@ -143,11 +143,11 @@
         </group>
     </page>
     
-    <page id="webresources" style="$theme$/webresources/webresources.css" alt-style="$theme$/webresources/swt.properties" style-id="page">
-        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/wr_banner.jpg">
+    <page id="webresources" style="$theme$/html/webresources.css" alt-style="$theme$/swt/webresources.properties" style-id="page">
+        <group id="navigation-links" filteredFrom="swt" bgImage="$theme$/graphics/wr_banner.jpg">
             <group id="page-links" computed="true">
             </group>
-            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <img id="banner-lines" src="$theme$/graphics/banner_left_lines.png"/>
             <group id="action-links">
             	<group id="customize" computed="true"/>
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
@@ -165,11 +165,11 @@
         </group>
     </page>
     
-    <page id="migrate" style="$theme$/migrate/migrate.css" alt-style="$theme$/migrate/swt.properties" style-id="page">
-        <group id="navigation-links" filteredFrom="swt" bgImage="css/graphics/mi_banner.jpg">
+    <page id="migrate" style="$theme$/html/migrate.css" alt-style="$theme$/swt/migrate.properties" style-id="page">
+        <group id="navigation-links" filteredFrom="swt" bgImage="$theme$/graphics/mi_banner.jpg">
             <group id="page-links" computed="true">
             </group>
-            <img id="banner-lines" src="css/graphics/banner_left_lines.png"/>
+            <img id="banner-lines" src="$theme$/graphics/banner_left_lines.png"/>
             <group id="action-links">
             	<group id="customize" computed="true"/>            
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">

@@ -250,7 +250,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
     
     private void loadTheme() {
     	Preferences pref = IntroPlugin.getDefault().getPluginPreferences();
-    	String themeId = pref.getString("INTRO_THEME"); //$NON-NLS-1$
+    	String pid = Platform.getProduct().getId();
+    	String themeId = pref.getString(pid+"_INTRO_THEME"); //$NON-NLS-1$
+    	if (themeId.length()==0)
+    		themeId = pref.getString("INTRO_THEME"); //$NON-NLS-1$
     	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
     	IConfigurationElement themeElement=null;
     	for (int i=0; i<elements.length; i++) {

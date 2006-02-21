@@ -167,6 +167,16 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="previewImage" type="string">
+            <annotation>
+               <documentation>
+                  an optional image of 4x3 ratio that will be used to preview this theme in the UI. Recommended size is 160x120.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
