@@ -142,16 +142,21 @@ public class AntTaskNode extends AntElementNode {
 		RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
 		Map attributeMap= wrapper.getAttributeMap();
 		Set keys= attributeMap.keySet();
+        boolean lookingForProperty= identifier.startsWith("${") && identifier.endsWith("}"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (Iterator iter = keys.iterator(); iter.hasNext(); ) {
 			String key= (String) iter.next();
 			String value= (String) attributeMap.get(key);
-			if (value.indexOf(identifier) != -1) {
+            if (lookingForProperty && (key.equals("if") || key.equals("unless"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                if (value.indexOf(identifier.substring(2, identifier.length() - 1)) != -1) {
+                    return true;
+                }
+            } else if (value.indexOf(identifier) != -1) {
 				return true;
 			}
 		}
 		StringBuffer text= wrapper.getText();
 		if (text.length() > 0) {
-			if (identifier.startsWith("${") && text.indexOf(identifier) != -1) { //$NON-NLS-1$
+			if (lookingForProperty && text.indexOf(identifier) != -1) {
 				return true; //property ref in text
 			}
 		}

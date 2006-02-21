@@ -45,7 +45,7 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
 	private void propertyOccurences(AntEditor editor, int offset) throws BadLocationException {
 		OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
 		List positions= finder.perform();
-		assertTrue("6 positions should have been found; found: " + positions.size(), positions.size() == 6);
+		assertTrue("7 positions should have been found; found: " + positions.size(), positions.size() == 7);
 		assertContainsPosition(positions, offset, 8);
 		offset = getOffsetWithinLine(editor, 34, 21);
 		assertContainsPosition(positions, offset, 8);

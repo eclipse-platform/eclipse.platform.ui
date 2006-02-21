@@ -45,4 +45,5 @@
 	</target>
 	
 	<target name="sameNameAsProp" unless="extendsDestBase" if="destBase"></target>
+	<fail unless="destBase" message="Property not set."/>
 </project>
