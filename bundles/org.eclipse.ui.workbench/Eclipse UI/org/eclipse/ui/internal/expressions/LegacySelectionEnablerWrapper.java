@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SelectionEnabler;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -35,6 +36,12 @@ import org.eclipse.ui.SelectionEnabler;
  */
 public final class LegacySelectionEnablerWrapper extends
 		WorkbenchWindowExpression {
+
+	/**
+	 * The seed for the hash code for all schemes.
+	 */
+	private static final int HASH_INITIAL = LegacySelectionEnablerWrapper.class
+			.getName().hashCode();
 
 	/**
 	 * The enabler for this expression; never <code>null</code>.
@@ -66,6 +73,16 @@ public final class LegacySelectionEnablerWrapper extends
 		info.markDefaultVariableAccessed();
 	}
 
+	public final boolean equals(final Object object) {
+		if (object instanceof LegacySelectionEnablerWrapper) {
+			final LegacySelectionEnablerWrapper that = (LegacySelectionEnablerWrapper) object;
+			return Util.equals(this.enabler, that.enabler)
+					&& Util.equals(this.getWindow(), that.getWindow());
+		}
+
+		return false;
+	}
+
 	public final EvaluationResult evaluate(final IEvaluationContext context)
 			throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
@@ -83,6 +100,22 @@ public final class LegacySelectionEnablerWrapper extends
 		}
 
 		return EvaluationResult.FALSE;
+	}
+
+	/**
+	 * Computes the hash code for this object based on the id.
+	 * 
+	 * @return The hash code for this object.
+	 */
+	public final int hashCode() {
+		if (hashCode == HASH_CODE_NOT_COMPUTED) {
+			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(getWindow());
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabler);
+			if (hashCode == HASH_CODE_NOT_COMPUTED) {
+				hashCode++;
+			}
+		}
+		return hashCode;
 	}
 
 	public final String toString() {

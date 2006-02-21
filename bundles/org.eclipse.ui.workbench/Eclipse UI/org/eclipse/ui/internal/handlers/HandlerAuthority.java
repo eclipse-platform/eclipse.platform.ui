@@ -11,21 +11,24 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.services.EvaluationResultCache;
+import org.eclipse.ui.internal.services.EvaluationResultCacheComparator;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
 
 /**
@@ -89,12 +92,15 @@ final class HandlerAuthority extends ExpressionAuthority {
 	private static final String TRACING_COMPONENT = "HANDLERS"; //$NON-NLS-1$
 
 	/**
-	 * A bucket sort of the handler activations based on source priority. Each
-	 * activation will appear only once per set, but may appear in multiple
-	 * sets. If no activations are defined for a particular priority level, then
-	 * the array at that index will only contain <code>null</code>.
+	 * A bucket sort of the handler activations based on source priority of its
+	 * expression. Each expression will appear only once per set, but may appear
+	 * in multiple sets. If no activations are defined for a particular priority
+	 * level, then the array at that index will only contain <code>null</code>.
+	 * This is an array of {@link Map}, where the maps contain instances of
+	 * {@link Collection} containing instances of {@link IHandlerActivation}
+	 * indexed by instances of {@link Expression}.
 	 */
-	private final Set[] activationsBySourcePriority = new Set[33];
+	private final Map[] activationsByExpressionBySourcePriority = new Map[33];
 
 	/**
 	 * The command service that should be updated when the handlers are
@@ -103,12 +109,11 @@ final class HandlerAuthority extends ExpressionAuthority {
 	private final ICommandService commandService;
 
 	/**
-	 * This is a map of handler activations (<code>Collection</code> of
+	 * This is a map of handler activations (<code>SortedSet</code> of
 	 * <code>IHandlerActivation</code>) sorted by command identifier (<code>String</code>).
 	 * If there is only one handler activation for a command, then the
-	 * <code>Collection</code> is replaced by a
-	 * <code>IHandlerActivation</code>. If there is no activation, the entry
-	 * should be removed entirely.
+	 * <code>SortedSet</code> is replaced by a <code>IHandlerActivation</code>.
+	 * If there is no activation, the entry should be removed entirely.
 	 */
 	private final Map handlerActivationsByCommandId = new HashMap();
 
@@ -140,8 +145,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 		// First we update the handlerActivationsByCommandId map.
 		final String commandId = activation.getCommandId();
 		final Object value = handlerActivationsByCommandId.get(commandId);
-		if (value instanceof Collection) {
-			final Collection handlerActivations = (Collection) value;
+		if (value instanceof SortedSet) {
+			final SortedSet handlerActivations = (SortedSet) value;
 			if (!handlerActivations.contains(activation)) {
 				handlerActivations.add(activation);
 				updateCommand(commandId, resolveConflicts(commandId,
@@ -149,7 +154,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 			}
 		} else if (value instanceof IHandlerActivation) {
 			if (value != activation) {
-				final Collection handlerActivations = new ArrayList(2);
+				final SortedSet handlerActivations = new TreeSet(
+						new EvaluationResultCacheComparator());
 				handlerActivations.add(value);
 				handlerActivations.add(activation);
 				handlerActivationsByCommandId
@@ -166,10 +172,19 @@ final class HandlerAuthority extends ExpressionAuthority {
 		final int sourcePriority = activation.getSourcePriority();
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
-				Set activations = activationsBySourcePriority[i];
+				Map activationsByExpression = activationsByExpressionBySourcePriority[i];
+				if (activationsByExpression == null) {
+					activationsByExpression = new HashMap(
+							ACTIVATIONS_BY_SOURCE_SIZE);
+					activationsByExpressionBySourcePriority[i] = activationsByExpression;
+				}
+
+				final Expression expression = activation.getExpression();
+				Collection activations = (Collection) activationsByExpression
+						.get(expression);
 				if (activations == null) {
-					activations = new HashSet(ACTIVATIONS_BY_SOURCE_SIZE);
-					activationsBySourcePriority[i] = activations;
+					activations = new HashSet();
+					activationsByExpression.put(expression, activations);
 				}
 				activations.add(activation);
 			}
@@ -187,8 +202,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 		// First we update the handlerActivationsByCommandId map.
 		final String commandId = activation.getCommandId();
 		final Object value = handlerActivationsByCommandId.get(commandId);
-		if (value instanceof Collection) {
-			final Collection handlerActivations = (Collection) value;
+		if (value instanceof SortedSet) {
+			final SortedSet handlerActivations = (SortedSet) value;
 			if (handlerActivations.contains(activation)) {
 				handlerActivations.remove(activation);
 				if (handlerActivations.isEmpty()) {
@@ -221,13 +236,21 @@ final class HandlerAuthority extends ExpressionAuthority {
 		final int sourcePriority = activation.getSourcePriority();
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
-				final Set activations = activationsBySourcePriority[i];
-				if (activations == null) {
+				final Map activationsByExpression = activationsByExpressionBySourcePriority[i];
+				if (activationsByExpression == null) {
 					continue;
 				}
+
+				final Expression expression = activation.getExpression();
+				final Collection activations = (Collection) activationsByExpression
+						.get(expression);
 				activations.remove(activation);
 				if (activations.isEmpty()) {
-					activationsBySourcePriority[i] = null;
+					activationsByExpression.remove(expression);
+				}
+
+				if (activationsByExpression.isEmpty()) {
+					activationsByExpressionBySourcePriority[i] = null;
 				}
 			}
 		}
@@ -260,25 +283,16 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *         <code>null</code>.
 	 */
 	private final IHandlerActivation resolveConflicts(final String commandId,
-			final Collection activations) {
+			final SortedSet activations) {
 		// If we don't have any, then there is no match.
 		if (activations.isEmpty()) {
 			return null;
 		}
-
-		/*
-		 * Prime the best activation pointer with the first element in the
-		 * collection.
-		 */
-		final Iterator activationItr = activations.iterator();
-		IHandlerActivation bestActivation = (IHandlerActivation) activationItr
-				.next();
-		if (!evaluate(bestActivation)) {
-			bestActivation = null; // only consider potentially active handlers
-		}
-		boolean conflict = false;
-
+		
 		// Cycle over the activations, remembered the current best.
+		final Iterator activationItr = activations.iterator();
+		IHandlerActivation bestActivation = null;
+		boolean conflict = false;
 		while (activationItr.hasNext()) {
 			final IHandlerActivation currentActivation = (IHandlerActivation) activationItr
 					.next();
@@ -305,6 +319,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 					conflict = true;
 				}
 
+			} else {
+				break;
 			}
 		}
 
@@ -353,36 +369,48 @@ final class HandlerAuthority extends ExpressionAuthority {
 		 * set for future processing. We add it to a set so that we avoid
 		 * handling any individual activation more than once.
 		 */
-		final Set activationsToRecompute = new HashSet(
+		final Collection changedCommandIds = new HashSet(
 				ACTIVATIONS_TO_RECOMPUTE_SIZE);
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
-				final Collection activations = activationsBySourcePriority[i];
-				if (activations != null) {
-					final Iterator activationItr = activations.iterator();
-					while (activationItr.hasNext()) {
-						activationsToRecompute.add(activationItr.next());
+				final Map activationsByExpression = activationsByExpressionBySourcePriority[i];
+				if (activationsByExpression != null) {
+					final Iterator activationByExpressionItr = activationsByExpression
+							.values().iterator();
+					while (activationByExpressionItr.hasNext()) {
+						final Collection activations = (Collection) activationByExpressionItr
+								.next();
+						final Iterator activationItr = activations.iterator();
+
+						// Check the first activation to see if it has changed.
+						if (activationItr.hasNext()) {
+							IHandlerActivation activation = (IHandlerActivation) activationItr
+									.next();
+							final boolean currentActive = evaluate(activation);
+							activation.clearResult();
+							final boolean newActive = evaluate(activation);
+							if (newActive != currentActive) {
+								changedCommandIds
+										.add(activation.getCommandId());
+
+								// Then add every other activation as well.
+								while (activationItr.hasNext()) {
+									activation = (IHandlerActivation) activationItr
+											.next();
+									// TODO After 3.2, consider making this API.
+									if (activation instanceof EvaluationResultCache) {
+										((EvaluationResultCache) activation)
+												.setResult(newActive);
+									} else {
+										activation.clearResult();
+									}
+									changedCommandIds.add(activation
+											.getCommandId());
+								}
+							}
+						}
 					}
 				}
-			}
-		}
-
-		/*
-		 * For every activation, we recompute its active state, and check
-		 * whether it has changed. If it has changed, then we take note of the
-		 * command identifier so we can update the command later.
-		 */
-		final Collection changedCommandIds = new ArrayList(
-				activationsToRecompute.size());
-		final Iterator activationItr = activationsToRecompute.iterator();
-		while (activationItr.hasNext()) {
-			final IHandlerActivation activation = (IHandlerActivation) activationItr
-					.next();
-			final boolean currentActive = evaluate(activation);
-			activation.clearResult();
-			final boolean newActive = evaluate(activation);
-			if (newActive != currentActive) {
-				changedCommandIds.add(activation.getCommandId());
 			}
 		}
 
@@ -398,9 +426,9 @@ final class HandlerAuthority extends ExpressionAuthority {
 				final IHandlerActivation activation = (IHandlerActivation) value;
 				updateCommand(commandId, (evaluate(activation) ? activation
 						: null));
-			} else if (value instanceof Collection) {
+			} else if (value instanceof SortedSet) {
 				final IHandlerActivation activation = resolveConflicts(
-						commandId, (Collection) value);
+						commandId, (SortedSet) value);
 				updateCommand(commandId, activation);
 			} else {
 				updateCommand(commandId, null);
@@ -410,10 +438,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 		// If tracing performance, then print the results.
 		if (DEBUG_PERFORMANCE) {
 			final long elapsedTime = System.currentTimeMillis() - startTime;
-			final int size = activationsToRecompute.size();
+			final int size = changedCommandIds.size();
 			if (size > 0) {
 				Tracing.printTrace(TRACING_COMPONENT, size
-						+ " activations recomputed in " + elapsedTime + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+						+ " command ids changed in " + elapsedTime + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

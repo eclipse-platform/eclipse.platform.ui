@@ -16,6 +16,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -31,6 +32,23 @@ import org.eclipse.swt.widgets.Shell;
 public final class ActiveShellExpression extends Expression {
 
 	/**
+	 * The constant integer hash code value meaning the hash code has not yet
+	 * been computed.
+	 */
+	private static final int HASH_CODE_NOT_COMPUTED = -1;
+
+	/**
+	 * A factor for computing the hash code for all schemes.
+	 */
+	private static final int HASH_FACTOR = 89;
+
+	/**
+	 * The seed for the hash code for all schemes.
+	 */
+	private static final int HASH_INITIAL = ActiveShellExpression.class
+			.getName().hashCode();
+
+	/**
 	 * The sources value to use with this expression.
 	 */
 	public static final int SOURCES = ISources.ACTIVE_SHELL
@@ -44,6 +62,12 @@ public final class ActiveShellExpression extends Expression {
 	private final Shell activeShell;
 
 	/**
+	 * The hash code for this object. This value is computed lazily, and marked
+	 * as invalid when one of the values on which it is based changes.
+	 */
+	private transient int hashCode = HASH_CODE_NOT_COMPUTED;
+
+	/**
 	 * Constructs a new instance of <code>ActiveShellExpression</code>
 	 * 
 	 * @param activeShell
@@ -52,6 +76,20 @@ public final class ActiveShellExpression extends Expression {
 	 */
 	public ActiveShellExpression(final Shell activeShell) {
 		this.activeShell = activeShell;
+	}
+
+	public final void collectExpressionInfo(final ExpressionInfo info) {
+		info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
+		info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+	}
+
+	public final boolean equals(final Object object) {
+		if (object instanceof ActiveShellExpression) {
+			final ActiveShellExpression that = (ActiveShellExpression) object;
+			return Util.equals(this.activeShell, that.activeShell);
+		}
+
+		return false;
 	}
 
 	/**
@@ -82,9 +120,19 @@ public final class ActiveShellExpression extends Expression {
 		return EvaluationResult.TRUE;
 	}
 
-	public final void collectExpressionInfo(final ExpressionInfo info) {
-		info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
-		info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+	/**
+	 * Computes the hash code for this object based on the id.
+	 * 
+	 * @return The hash code for this object.
+	 */
+	public final int hashCode() {
+		if (hashCode == HASH_CODE_NOT_COMPUTED) {
+			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(activeShell);
+			if (hashCode == HASH_CODE_NOT_COMPUTED) {
+				hashCode++;
+			}
+		}
+		return hashCode;
 	}
 
 	public final String toString() {

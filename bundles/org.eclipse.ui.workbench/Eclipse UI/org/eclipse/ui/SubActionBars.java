@@ -41,6 +41,24 @@ import org.eclipse.ui.services.IServiceLocator;
  * Generic implementation of the <code>IActionBars</code> interface.
  */
 public class SubActionBars extends EventManager implements IActionBars {
+
+	/**
+	 * The expression to use when contributing handlers through
+	 * {@link #setGlobalActionHandler(String, IAction)}}. This ensures that
+	 * handlers contributed through {@link SubActionBars} are given priority
+	 * over handlers contributed to the {@link IHandlerService}.
+	 */
+	private static final Expression EXPRESSION = new Expression() {
+		public final EvaluationResult evaluate(final IEvaluationContext context) {
+			return EvaluationResult.TRUE;
+		}
+
+		public final void collectExpressionInfo(final ExpressionInfo info) {
+			info
+					.addVariableNameAccess(SourcePriorityNameMapping.LEGACY_LEGACY_NAME);
+		}
+	};
+
 	/**
 	 * Property constant for changes to action handlers.
 	 */
@@ -459,18 +477,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 					final IHandler actionHandler = new ActionHandler(handler);
 					final IHandlerActivation activation = service
 							.activateHandler(commandId, actionHandler,
-									new Expression() {
-										public final EvaluationResult evaluate(
-												final IEvaluationContext context) {
-											return EvaluationResult.TRUE;
-										}
-
-										public final void collectExpressionInfo(
-												final ExpressionInfo info) {
-											info
-													.addVariableNameAccess(SourcePriorityNameMapping.LEGACY_LEGACY_NAME);
-										}
-									});
+									EXPRESSION);
 					activationsByActionId.put(actionID, activation);
 				}
 			}
