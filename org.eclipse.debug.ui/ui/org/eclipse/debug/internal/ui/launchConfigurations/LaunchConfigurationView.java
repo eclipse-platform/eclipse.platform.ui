@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,9 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -55,7 +55,24 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  */
 public class LaunchConfigurationView extends AbstractDebugView implements ILaunchConfigurationListener {
 	
+	/**
+	 * the viewer from the view
+	 */
 	private Viewer fViewer;
+	
+	/**
+	 * the filtering tree viewer
+	 * 
+	 * @since 3.2
+	 */
+	private LaunchConfigurationFilteredTree fTree;
+	
+	/**
+	 * a handle to the launch manager
+	 * 
+	 * @since 3.2
+	 */
+	private ILaunchManager fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
 	
 	/**
 	 * The launch group to display
@@ -68,6 +85,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private CreateLaunchConfigurationAction fCreateAction;
 	private DeleteLaunchConfigurationAction fDeleteAction;
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
+	
 	/**
 	 * Action for providing filtering to the Launch Configuraiton Dialog
 	 * @since 3.2
@@ -100,9 +118,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		FilteredTree tree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter());
-		tree.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
-		TreeViewer treeViewer = tree.getViewer();
+		fTree = new LaunchConfigurationFilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter());
+		fTree.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
+		TreeViewer treeViewer = fTree.getViewer();
 		treeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		treeViewer.setSorter(new WorkbenchViewerSorter());
 		treeViewer.setContentProvider(new LaunchConfigurationTreeContentProvider(fLaunchGroup.getMode(), parent.getShell()));
@@ -159,6 +177,20 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		return super.getAdapter(key);
 	}
 	
+	/**
+	 * gets the filtering text control from the viewer
+	 * @return the filtering text control
+	 * 
+	 * @since 3.2
+	 */
+	public Text getFilteringTextControl() {
+		return fTree.getFilterControl();
+	}
+	
+	/**
+	 * Computes the context id for this viewer
+	 * @return the context id
+	 */
 	private String computeContextId() {
 		try {
 			ISelection selection = getViewer().getSelection();
@@ -168,7 +200,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				ILaunchConfigurationType configType = null;
 				if (firstSelected instanceof ILaunchConfigurationType) {
 					configType = (ILaunchConfigurationType) firstSelected;
-				} else if (firstSelected instanceof ILaunchConfiguration) {
+				} 
+				else if (firstSelected instanceof ILaunchConfiguration) {
 					configType = ((ILaunchConfiguration) firstSelected).getType();
 				}
 				if (configType != null) {
@@ -178,9 +211,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 					}
 				}
 			}
-		} catch (CoreException ce) {
-			DebugUIPlugin.log(ce);
-		}
+		} 
+		catch (CoreException ce) {DebugUIPlugin.log(ce);}
 		return null;
 	}
 
@@ -394,8 +426,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		}
 	}
 	
-	
-
 	/**
 	 * @see org.eclipse.debug.ui.IDebugView#getViewer()
 	 */
@@ -403,8 +433,12 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		return fViewer;
 	}
 	
+	/**
+	 * returns the launch manager
+	 * @return
+	 */
 	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
+		return fLaunchManager;
 	}
 	
 	/**

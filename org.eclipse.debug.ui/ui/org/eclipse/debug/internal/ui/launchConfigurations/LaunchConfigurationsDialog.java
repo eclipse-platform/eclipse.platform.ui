@@ -692,9 +692,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         viewForm.setContent(viewFormContents);
 		
 		fFilteringLabel = new Label(viewFormContents, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL | SWT.BEGINNING);
-		gd.horizontalIndent = 5;
-		fFilteringLabel.setLayoutData(gd);
+		fFilteringLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | SWT.BEGINNING));
 		fFilteringLabel.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
 		refreshFilteringLabel();
 		
