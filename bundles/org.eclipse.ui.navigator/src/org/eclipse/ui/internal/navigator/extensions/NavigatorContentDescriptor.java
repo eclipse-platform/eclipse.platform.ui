@@ -163,8 +163,7 @@ public final class NavigatorContentDescriptor implements
 					CommonNavigatorMessages.Attribute_Missing_Warning,
 					new Object[] {
 							ATT_ID,
-							configElement.getDeclaringExtension()
-									.getUniqueIdentifier(),
+							id,
 							configElement.getDeclaringExtension()
 									.getNamespace() }));
 		}
@@ -181,8 +180,7 @@ public final class NavigatorContentDescriptor implements
 						CommonNavigatorMessages.Attribute_Missing_Warning,
 						new Object[] {
 								TAG_TRIGGER_POINTS,
-								configElement.getDeclaringExtension()
-										.getUniqueIdentifier(),
+								id,
 								configElement.getDeclaringExtension()
 										.getNamespace() }));
 			}
@@ -190,13 +188,12 @@ public final class NavigatorContentDescriptor implements
 			children = configElement.getChildren(TAG_POSSIBLE_CHILDREN);
 			if (children.length == 1) {
 				possibleChildren = new CustomAndExpression(children[0]);
-			} else {
+			} else if(children.length > 1){
 				throw new WorkbenchException(NLS.bind(
 						CommonNavigatorMessages.Attribute_Missing_Warning,
 						new Object[] {
 								TAG_POSSIBLE_CHILDREN,
-								configElement.getDeclaringExtension()
-										.getUniqueIdentifier(),
+								id,
 								configElement.getDeclaringExtension()
 										.getNamespace() }));
 			}
@@ -212,8 +209,7 @@ public final class NavigatorContentDescriptor implements
 					CommonNavigatorMessages.Attribute_Missing_Warning,
 					new Object[] {
 							TAG_ENABLEMENT,
-							configElement.getDeclaringExtension()
-									.getUniqueIdentifier(),
+							id,
 							configElement.getDeclaringExtension()
 									.getNamespace() }));
 		}
