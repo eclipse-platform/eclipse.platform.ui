@@ -19,14 +19,7 @@ import org.eclipse.swt.widgets.Shell;
  * Provides context for extensions including a valid shell, a selection
  * provider, and a unique identifer corresponding to the abstract viewer behind
  * the viewer site.
- * 
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ *  
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>

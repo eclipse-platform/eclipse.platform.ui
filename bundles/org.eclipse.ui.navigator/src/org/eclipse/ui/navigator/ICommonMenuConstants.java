@@ -19,12 +19,7 @@ package org.eclipse.ui.navigator;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ * Defines strings used for menu insertion points.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -32,13 +27,12 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * @since 3.2
  */
 public interface ICommonMenuConstants {
-	
 
 	/**
 	 * Pop-up menu: name of group for the top of the menu (value
 	 * <code>"group.top"</code>).
 	 */
-	public static final String GROUP_TOP = "group.top";  //$NON-NLS-1$ 
+	public static final String GROUP_TOP = "group.top"; //$NON-NLS-1$ 
 
 	/**
 	 * Pop-up menu: name of group for goto actions (value
@@ -89,16 +83,17 @@ public interface ICommonMenuConstants {
 	 * <li>Open With</li>
 	 * </ul>
 	 * </p>
+	 * 
 	 * @see #GROUP_OPEN_WITH
 	 */
 	public static final String GROUP_OPEN = "group.open"; //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: name of group for open actions (value
 	 * <code>"group.openWith"</code>).
 	 * <p>
 	 * Examples for open actions are:
-	 * <ul> 
+	 * <ul>
 	 * <li>Open With</li>
 	 * </ul>
 	 * </p>
@@ -174,7 +169,5 @@ public interface ICommonMenuConstants {
 	 * <code>"group.properties"</code>).
 	 */
 	public static final String GROUP_PROPERTIES = "group.properties"; //$NON-NLS-1$ 
-
-
 
 }

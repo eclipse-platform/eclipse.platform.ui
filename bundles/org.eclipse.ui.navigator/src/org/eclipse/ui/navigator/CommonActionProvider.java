@@ -32,13 +32,7 @@ import org.eclipse.ui.actions.ActionGroup;
  * &lt;navigatorContent /&gt; element, in which case they are considered to be
  * "associated" with that content extension. For more information, see the 
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
- * </p> 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ * </p>  
  * 
  * <p>
  * Clients may extend this class.

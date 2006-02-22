@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.navigator.extensions;
+package org.eclipse.ui.navigator;
 
 /**
  * A descriptive construct to relay information about a menu insertion point;
@@ -19,7 +19,7 @@ package org.eclipse.ui.internal.navigator.extensions;
  * @since 3.2
  * 
  */
-public class MenuInsertionPoint {
+public final class MenuInsertionPoint {
 	private String name;
 
 	private boolean isSeparator;

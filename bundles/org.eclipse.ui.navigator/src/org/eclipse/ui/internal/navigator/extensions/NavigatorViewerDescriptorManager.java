@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.navigator.MenuInsertionPoint;
 
 /**
  * <p>

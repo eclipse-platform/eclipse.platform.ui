@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
+import org.eclipse.ui.navigator.MenuInsertionPoint;
 import org.eclipse.ui.navigator.NavigatorActionService;
 
 /**

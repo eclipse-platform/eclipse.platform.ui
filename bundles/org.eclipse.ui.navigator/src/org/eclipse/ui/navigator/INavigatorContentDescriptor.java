@@ -15,7 +15,6 @@ import java.util.Set;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 
-
 /**
  * 
  * The descriptor provides a handle to a content extension. Information such as
@@ -24,21 +23,14 @@ import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
  * 
  * 
  * <p>
- * There is one {@link INavigatorContentExtension} for each content 
- * service. There is only one {@link INavigatorContentDescriptor}
- * for each extension.
+ * There is one {@link INavigatorContentExtension} for each content service.
+ * There is only one {@link INavigatorContentDescriptor} for each extension.
  * </p>
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
+ * This interface is not intended to be implemented by clients.
  * </p>
  * 
- *<p>
- * This interface is not intended to be implemented by clients.
- *</p>
  * @since 3.2
  * 
  */
@@ -65,7 +57,7 @@ public interface INavigatorContentDescriptor {
 	 *         if no priority was specified.
 	 */
 	int getPriority();
- 
+
 	/**
 	 * The enabledByDefault attribute specifies whether an extension should be
 	 * activated in the context of a viewer automatically. Users may override
@@ -73,8 +65,8 @@ public interface INavigatorContentDescriptor {
 	 * 
 	 * @return true if the extension is enabled by default.
 	 */
-	boolean isActiveByDefault(); 
- 
+	boolean isActiveByDefault();
+
 	/**
 	 * Determine if this content extension is enabled for the given element.
 	 * 
@@ -83,7 +75,7 @@ public interface INavigatorContentDescriptor {
 	 * @return True if and only if the extension is enabled for the element.
 	 */
 	boolean isTriggerPoint(Object anElement);
-	
+
 	/**
 	 * Determine if this content extension could provide the given element as a
 	 * child.
@@ -99,15 +91,17 @@ public interface INavigatorContentDescriptor {
 	 *         type as a child.
 	 */
 	boolean isPossibleChild(Object anElement);
-	
+
 	/**
-	 * A convenience method to check all elements in a selection. 
+	 * A convenience method to check all elements in a selection.
 	 * 
-	 * @param aSelection A non-null selection
-	 * @return True if and only if every element in the selection is a possible child.
+	 * @param aSelection
+	 *            A non-null selection
+	 * @return True if and only if every element in the selection is a possible
+	 *         child.
 	 */
 	boolean arePossibleChildren(IStructuredSelection aSelection);
-	
+
 	/**
 	 * @return Returns the suppressedExtensionId or null if none specified.
 	 */
@@ -118,12 +112,13 @@ public interface INavigatorContentDescriptor {
 	 *         override another extension.
 	 */
 	OverridePolicy getOverridePolicy();
-	
+
 	/**
-	 * @return The descriptor of the <code>suppressedExtensionId</code> if non-null.
+	 * @return The descriptor of the <code>suppressedExtensionId</code> if
+	 *         non-null.
 	 */
 	INavigatorContentDescriptor getOverriddenDescriptor();
-	
+
 	/**
 	 * 
 	 * Does not force the creation of the set of overriding extensions.
@@ -131,13 +126,11 @@ public interface INavigatorContentDescriptor {
 	 * @return True if this extension has overridding extensions.
 	 */
 	boolean hasOverridingExtensions();
-	
 
 	/**
 	 * @return The set of overridding extensions (of type
 	 *         {@link INavigatorContentDescriptor}
 	 */
 	Set getOverriddingExtensions();
-	
 
 }

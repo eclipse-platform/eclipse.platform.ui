@@ -176,7 +176,7 @@ public final class NavigatorContentDescriptor implements
 			children = configElement.getChildren(TAG_TRIGGER_POINTS);
 			if (children.length == 1) {
 				enablement = new CustomAndExpression(children[0]);
-			} else if (children.length > 1) {
+			} else {
 				throw new WorkbenchException(NLS.bind(
 						CommonNavigatorMessages.Attribute_Missing_Warning,
 						new Object[] {
@@ -190,7 +190,7 @@ public final class NavigatorContentDescriptor implements
 			children = configElement.getChildren(TAG_POSSIBLE_CHILDREN);
 			if (children.length == 1) {
 				possibleChildren = new CustomAndExpression(children[0]);
-			} else if (children.length > 1) {
+			} else {
 				throw new WorkbenchException(NLS.bind(
 						CommonNavigatorMessages.Attribute_Missing_Warning,
 						new Object[] {

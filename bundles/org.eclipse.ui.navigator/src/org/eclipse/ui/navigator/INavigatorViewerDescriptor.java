@@ -2,19 +2,11 @@ package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.ui.internal.navigator.extensions.MenuInsertionPoint;
 
 /**
  * Provides a basic metadata about the abstract viewer for a particular content
  * service.
  * 
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -158,6 +150,5 @@ public interface INavigatorViewerDescriptor {
 	 *         possible return value).
 	 */
 	boolean getBooleanConfigProperty(String aPropertyName);
-	 
-	
+
 }

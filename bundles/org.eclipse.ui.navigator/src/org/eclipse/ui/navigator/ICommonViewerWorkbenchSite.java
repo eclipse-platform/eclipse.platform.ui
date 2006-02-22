@@ -25,12 +25,6 @@ import org.eclipse.ui.IWorkbenchWindow;
  * window.
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -91,14 +85,14 @@ public interface ICommonViewerWorkbenchSite extends ICommonViewerSite {
 	 *         {@link CommonViewer}
 	 */
 	IWorkbenchWindow getWorkbenchWindow();
-	
+
 	/**
 	 * @return the IWorkbenchPart that this site is embedded within.
 	 */
 	IWorkbenchPart getPart();
-	 
+
 	/**
 	 * @return the IWorkbenchPartSite that this site is embedded within.
 	 */
-	IWorkbenchPartSite getSite();	
+	IWorkbenchPartSite getSite();
 }

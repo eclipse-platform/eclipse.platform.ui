@@ -13,17 +13,10 @@ import org.eclipse.ui.part.IPageSite;
 /**
  * Allows clients to create {@link ICommonViewerSite} for a variety of contexts.
  * The {@link ICommonViewerSite} may be used by the
- * {@link NavigatorActionService} to provide greater customization for any
+ * {@link NavigatorActionService} to allow customization for any
  * {@link CommonActionProvider} used by a particular instance of the Common
  * Navigator.
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
+ *  
  * 
  * @since 3.2
  */
@@ -35,7 +28,8 @@ public final class CommonViewerSiteFactory {
 	 *            contract of ICommonViewerSite.
 	 * @return An ICommonViewerSite that delegates to the given parameter.
 	 */
-	public static ICommonViewerWorkbenchSite createCommonViewerSite(IViewSite aViewSite) {
+	public static ICommonViewerWorkbenchSite createCommonViewerSite(
+			IViewSite aViewSite) {
 		return new CommonViewerSiteIViewSiteDelegate(aViewSite);
 	}
 
@@ -66,7 +60,8 @@ public final class CommonViewerSiteFactory {
 	 *            {@link ICommonViewerSite#getShell()}
 	 * @return An ICommonViewerSite that delegates to the given parameter.
 	 */
-	public static ICommonViewerSite createCommonViewerSite(String anId, ISelectionProvider aSelectionProvider, Shell aShell) {
+	public static ICommonViewerSite createCommonViewerSite(String anId,
+			ISelectionProvider aSelectionProvider, Shell aShell) {
 		return new CommonViewerSiteDelegate(anId, aSelectionProvider, aShell);
 	}
 

@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * </p>
  * <p>
  * The visibility of commonFilters is controlled through matching
- * <b>viewerContentBinding</b>s. That is like content extensions, the id of a
+ * <b>viewerContentBinding</b>s. That is, like content extensions, the id of a
  * commonFilter must match an includes expression for at least one
  * <b>viewerContentBinding</b> element for the corresponding
  * INavigatorContentService.
@@ -37,13 +37,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * Clients of this interface have control over when the persistence occurs. In
  * particular, clients should call {@link  #persistFilterActivationState()}
  * after each call to {@link #setActiveFilterIds(String[])}.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ * </p> 
  * 
  * <p>
  * This interface is not intended to be implemented by clients.

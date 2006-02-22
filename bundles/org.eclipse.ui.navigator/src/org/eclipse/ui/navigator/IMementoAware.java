@@ -14,15 +14,9 @@ import org.eclipse.ui.IMemento;
 
 /**
  * Clients may use mementos to persist interesting state between sessions.
- * Clients should ensure that the memento keys are unique; perhaps using the id
- * of the content extension as a prefix.
+ * Clients should ensure that the memento keys are unique; generally by using
+ * the id of the content extension as a prefix.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * <p>
  * Clients may implement this interface.
  * </p>

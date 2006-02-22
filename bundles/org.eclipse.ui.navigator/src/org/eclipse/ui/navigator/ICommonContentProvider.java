@@ -17,16 +17,16 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * The {@link ICommonContentProvider} allows extensions to vary their behavior
  * based on properties in the extension model and the given memento. The state
  * model should be initialized from values in the memento if necessary.
+ *  
+ * <p>
+ * Clients should refer to the <b>org.eclipse.ui.navigator.navigatorContent</b>
+ * extension point for more information on building a content extension.
+ * </p>
  * 
  * <p>
  * Clients may (but are not required to) implement this interface if there is no
  * cause to do so. {@link ITreeContentProvider} is respected by the Common
  * Navigator.
- * </p>
- * 
- * <p>
- * Clients should refer to the <b>org.eclipse.ui.navigator.navigatorContent</b>
- * extension point for more information on building a content extension.
  * </p>
  * 
  * @since 3.2

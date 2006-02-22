@@ -18,17 +18,13 @@ import org.eclipse.jface.viewers.ILabelProvider;
  * based on properties in the extension model and the given memento.
  * 
  * <p>
- * Clients need not implement this interface if there is no cause to do so.
- * {@link org.eclipse.jface.viewers.ILabelProvider}&nbsp;is respected by the
- * Common Navigator.
- * </p>
- * <p>
  * Clients should refer to the <b>org.eclipse.ui.navigator.navigatorContent</b>
  * extension point for more information on building a content extension.
  * </p>
- * 
  * <p>
- * Clients may implement this interface.
+ * Clients need not implement this interface if there is no cause to do so.
+ * {@link org.eclipse.jface.viewers.ILabelProvider} is respected by the Common
+ * Navigator.
  * </p>
  * 
  * 

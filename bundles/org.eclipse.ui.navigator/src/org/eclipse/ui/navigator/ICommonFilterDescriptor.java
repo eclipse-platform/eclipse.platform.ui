@@ -12,15 +12,8 @@
 package org.eclipse.ui.navigator;
 
 /**
- * Provides information about a commonFilter extension.
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
+ * Provides information about a <b>commonFilter</b> extension.
+ *  
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -29,6 +22,7 @@ package org.eclipse.ui.navigator;
  * 
  */
 public interface ICommonFilterDescriptor {
+	
 	/**
 	 * 
 	 * @return An identifier used to determine whether the filter is visible.

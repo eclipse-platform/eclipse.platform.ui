@@ -36,7 +36,6 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.actions.CommonActionDescriptorManager;
 import org.eclipse.ui.internal.navigator.actions.CommonActionProviderDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.CommonActionExtensionSite;
-import org.eclipse.ui.internal.navigator.extensions.MenuInsertionPoint;
 import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
 
 /**

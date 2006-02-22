@@ -10,7 +10,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * <p>
  * See the documentation of the <b>org.eclipse.ui.navigator.navigatorContent</b>
  * extension point and {@link CommonActionProvider} for more information on
- * declaring {@link CommonActionProvider}s.
+ * contributing actions.
  * </p> 
  * 
  * <p>
