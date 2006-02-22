@@ -17,6 +17,10 @@ import org.eclipse.jface.text.source.Annotation;
 /**
  * Quick assist processor for quick fixes and quick assists.
  * <p>
+ * A processor can provide just quick fixes, just quick assists
+ * or both.
+ * </p>
+ * <p>
  * This interface can be implemented by clients.</p>
  * 
  * @since 3.2
