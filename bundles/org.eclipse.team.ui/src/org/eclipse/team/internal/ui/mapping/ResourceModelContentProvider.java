@@ -143,9 +143,13 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		for (int i = 0; i < diffs.length; i++) {
 			IDiff diff = diffs[i];
 			IResource resource = diffTree.getResource(diff);
-			if (resource.getType() == IResource.FILE)
-				result.add(resource.getParent());
-			else if (resource.getType() == IResource.FOLDER)
+			if (resource.getType() == IResource.FILE) {
+				IContainer parent = resource.getParent();
+				if (parent.getType() == IResource.FOLDER)
+					result.add(parent);
+				else 
+					result.add(resource);
+			} else if (resource.getType() == IResource.FOLDER)
 				result.add(resource);
 		}
 		return result.toArray();
