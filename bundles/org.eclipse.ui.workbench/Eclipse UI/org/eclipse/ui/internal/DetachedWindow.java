@@ -220,9 +220,14 @@ public class DetachedWindow implements IDragOverListener {
             collectViewPanes(views, getChildren());
             Iterator itr = views.iterator();
             while (itr.hasNext()) {
-                ViewPane child = (ViewPane) itr.next();
-                page.hideView(child.getViewReference());
-            }
+				ViewPane child = (ViewPane) itr.next();
+
+				// Only close if closable...
+				if (child.isCloseable())
+					page.hideView(child.getViewReference());
+				else
+					page.attachView(child.getViewReference());
+			}
         }
 
         if (folder != null)

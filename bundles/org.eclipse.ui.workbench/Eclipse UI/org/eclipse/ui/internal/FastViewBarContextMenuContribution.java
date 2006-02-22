@@ -75,25 +75,25 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
         });
 
        
-        boolean selectingView = (selectedView != null);
+        // Set menu item enablement etc based on whether a view is selected
         WorkbenchPage page = bar.getWindow().getActiveWorkbenchPage();
         
-        if (selectingView) {
+        if (selectedView != null) {
         	restoreItem.setEnabled(page!=null && page.isMoveable(selectedView));
         } else {
         	restoreItem.setEnabled(false);
         }
         restoreItem.setSelection(true);
         
-        if (selectingView) {
+        if (selectedView != null) {
 			closeItem
 					.setEnabled(page != null && page.isCloseable(selectedView));
 		} else {
 			closeItem.setEnabled(false);
 		}
         
-        orientationItem.setEnabled(selectingView);
-        if (selectingView) {
+        orientationItem.setEnabled(selectedView != null);
+        if (selectedView != null) {
             // Set the new orientation, but avoid re-sending the event to our own
             // listener
             currentOrientation.set(bar.getOrientation(selectedView),
