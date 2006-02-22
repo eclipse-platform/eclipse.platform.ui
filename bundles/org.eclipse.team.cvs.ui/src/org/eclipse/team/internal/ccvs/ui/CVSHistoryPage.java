@@ -243,8 +243,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			public void run() {
 				if (isChecked())
 					updateFilterMode(LOCAL_MODE);
-				else
-					setChecked(true);
 			}
 		};
 		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip); 
@@ -255,8 +253,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			public void run() {
 				if (isChecked())
 					updateFilterMode(REMOTE_MODE);
-				else
-					setChecked(true);
 			}
 		};
 		remoteMode.setToolTipText(CVSUIMessages.CVSHistoryPage_RemoteModeTooltip); 
@@ -267,8 +263,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			public void run() {
 				if (isChecked())
 					updateFilterMode(REMOTE_LOCAL_MODE);
-				else
-					setChecked(true);
 			}
 		};
 		remoteLocalMode.setToolTipText(CVSUIMessages.CVSHistoryPage_CombinedModeTooltip); 
@@ -916,9 +910,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 	
 	private class RefreshCVSFileHistory extends Job {
+		private final static int NUMBER_OF_CATEGORIES = 4;
+		
 		private CVSFileHistory fileHistory;
 		private DateCVSHistoryCategory[] categories;
 		private boolean grouping;
+		private Object[] elementsToExpand;
 		
 		public RefreshCVSFileHistory() {
 			super(CVSUIMessages.HistoryView_fetchHistoryJob);
@@ -959,8 +956,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 							public void run() {
 								historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
 								historyTableProvider.setFile(fileHistory, file);
-								if (grouping)
+								if (grouping){
+									mapExpandedElements(treeViewer.getExpandedElements());
 									treeViewer.setInput(categories);
+									treeViewer.setExpandedElements(elementsToExpand);
+								}
 								else
 									treeViewer.setInput(fileHistory);
 							}
@@ -972,11 +972,31 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			} 
 		}
 
+		private void mapExpandedElements(Object[] expandedElements) {
+			//store the names of the currently expanded categories in a map
+			HashMap elementMap = new HashMap();
+			for (int i=0; i<expandedElements.length; i++){
+				elementMap.put(((DateCVSHistoryCategory)expandedElements[i]).getName(), null);
+			}
+			
+			//Go through the new categories and keep track of the previously expanded ones
+			ArrayList expandable = new ArrayList();
+			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){
+				//check to see if this category is currently expanded
+				if (elementMap.containsKey(categories[i].getName())){
+					expandable.add(categories[i]);
+				}
+			}
+			
+			elementsToExpand = new Object[expandable.size()];
+			elementsToExpand = (Object[]) expandable.toArray(new Object[expandable.size()]);
+		}
+
 		private void sortRevisions() {
 			IFileRevision[] fileRevision = fileHistory.getFileRevisions();
 			
 			//Create the 4 categories
-			categories = new DateCVSHistoryCategory[4];
+			categories = new DateCVSHistoryCategory[NUMBER_OF_CATEGORIES];
 			//Get a calendar instance initialized to the current time
 			Calendar currentCal = Calendar.getInstance();
 			categories[0] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
@@ -990,14 +1010,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			categories[2] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_LastWeek, lastWeekCal, yesterdayCal);
 			//Everything before after week is previous
 			categories[3] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, lastWeekCal);
-			
-			for (int i = 0; i<4; i++){
+		
+			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){
 				categories[i].collectFileRevisions(fileRevision, false);
 			}
-
-			
 		}
 	}
+	
 	
 	/**
 	 * A default content provider to prevent subclasses from
