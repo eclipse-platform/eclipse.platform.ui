@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@ package org.eclipse.help.ui.internal;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
 import org.eclipse.help.browser.IBrowser;
@@ -25,6 +26,7 @@ import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -361,14 +363,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 	private boolean useExternalBrowser(String url) {
 		// On non Windows platforms, use external when modal window is displayed
-		// Commented out for bug 95478
-		// if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
-		Display display = Display.getCurrent();
-		if (display != null) {
-			if (insideModalParent(display))
-				return true;
+		if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+			Display display = Display.getCurrent();
+			if (display != null) {
+				if (insideModalParent(display))
+					return true;
+			}
 		}
-		// }
 
 		// Use external when no help frames are to be displayed, otherwise no
 		// navigation buttons.

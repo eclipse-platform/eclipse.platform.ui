@@ -11,17 +11,41 @@
 
 package org.eclipse.help.ui.internal;
 
-import org.eclipse.help.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContext2;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -364,9 +388,8 @@ public class ContextHelpDialog {
 				context,
 				selectedTopic,
 				DefaultHelpUI.isDisplayModal(parentShell)
-//Commented out for bug 95478
-				/* && !Constants.OS_WIN32.equalsIgnoreCase(Platform
-								.getOS())*/);
+				&& !Constants.OS_WIN32.equalsIgnoreCase(Platform
+								.getOS()));
 	}
 	
 	private void openDynamicHelp() {

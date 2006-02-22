@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
-import org.eclipse.help.browser.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.swt.widgets.Display;
 /**
  * Web browser.
  */
@@ -58,16 +61,14 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	public EmbeddedBrowserAdapter() {
 	}
 	public Display getBrowserDisplay() {
-
-// Commented out for bug 95478
-//		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH
-//				&& Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
-//			if (secondThread == null) {
-//				secondThread = new UIThread2();
-//				secondThread.start();
-//			}
-//			return secondThread.getDisplay();
-//		}
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH
+				&& Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+			if (secondThread == null) {
+				secondThread = new UIThread2();
+				secondThread.start();
+			}
+			return secondThread.getDisplay();
+		}
 		return Display.getDefault();
 	}
 
