@@ -228,7 +228,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         vector.copyInto(filteredElements);
         // add the elements at the end children's vector.
         insertElementsBefore(filteredElements, getBundle(), base, children
-            .size());
+            .size(), null);
         loaded = true;
         // we cannot free DOM model element because a page's children may be
         // nulled when reflowing a content provider.
@@ -241,13 +241,14 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param childElements
      */
     protected void insertElementsBefore(Element[] childElements, Bundle bundle,
-            String base, int index) {
+            String base, int index, String mixinStyle) {
         for (int i = 0; i < childElements.length; i++) {
             Element childElement = childElements[i];
             AbstractIntroElement child = getModelChild(childElement, bundle,
                 base);
             if (child != null) {
                 child.setParent(this);
+                child.setMixinStyle(mixinStyle);
                 children.add(index, child);
                 // index is only incremented if we actually added a child.
                 index++;
@@ -262,12 +263,12 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param childElements
      */
     protected void insertElementsBefore(Element[] childElements, Bundle bundle,
-            String base, AbstractIntroElement child) {
+            String base, AbstractIntroElement child, String mixinStyle) {
         int childLocation = children.indexOf(child);
         if (childLocation == -1)
             // bad reference child.
             return;
-        insertElementsBefore(childElements, bundle, base, childLocation);
+        insertElementsBefore(childElements, bundle, base, childLocation, mixinStyle);
     }
 
 

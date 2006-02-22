@@ -71,6 +71,25 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IShared
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.intro.config.IntroConfigurer#getMixinStyle(java.lang.String)
+	 */
+	public String getMixinStyle(String pageId, String extensionId) {
+		if (introData.size()>0) {
+			// TODO getting the active product one only
+			// Eventually we should consult the data from all the products
+			IntroData idata = (IntroData) introData.get(0);
+			PageData pdata = idata.getPage(pageId);
+			if (pdata != null) {
+				ExtensionData ed = pdata.findExtension(extensionId, false);
+				int importance = ed.getImportance();
+				if (importance!=ExtensionData.HIDDEN)
+					return ExtensionData.IMPORTANCE_STYLE_TABLE[importance];
+			}
+		}
+		return null;
+	}
+
 	private String resolveVariable(Bundle bundle, String value) {
 		if (value != null) {
 			String path = null;

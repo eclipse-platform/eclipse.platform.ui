@@ -71,4 +71,20 @@ public abstract class IntroConfigurer {
 	 *         <code>null</code> if the path cannot be resolved or the extension should be hidden.
 	 */
 	public abstract String resolvePath(String extensionId, String path);
+
+	/**
+	 * Returns the style value that will be mixed in with the original style of the extension.
+	 * Themes can use this feature to render certain extensions differently.
+	 * 
+	 * @param pageId
+	 * 			the identifier of the target page that this extension
+	 * 			is contributed into
+	 * @param extensionId
+	 *            the identifier of the extension to provide the mixin style for.
+	 * @return the style to add to the original extension style or <code>null</code> if no mixin
+	 *         style is found for this extension.
+	 */
+	public String getMixinStyle(String pageId, String extensionId) {
+		return null;
+	}
 }

@@ -49,6 +49,7 @@
     
 	<!-- Overview page -->
     <page id="overview" style="$theme$/html/overview.css" alt-style="$theme$/swt/overview.properties" style-id="page">
+        <title style-id="intro-header">$introTitle$</title> 
         <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
@@ -67,6 +68,7 @@
             <text style-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
+			<group id="content-divider"/>
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -74,7 +76,10 @@
 		<group id="extra-group3" filteredFrom="swt"><anchor id="anchor"/></group>
 		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor"/></group>
     </page>
+    
+    <!-- Tutorials page -->
 	<page id="tutorials" style="$theme$/html/tutorials.css" alt-style="$theme$/swt/tutorials.properties" style-id="page">
+        <title style-id="intro-header">$introTitle$</title>	
         <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
@@ -93,6 +98,7 @@
             <text style-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
+			<group id="content-divider"/>
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -100,7 +106,10 @@
 		<group id="extra-group3" filteredFrom="swt"><anchor id="anchor"/></group>
 		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor"/></group>
     </page>
+    
+    <!-- Samples page -->
 	 <page id="samples" style="$theme$/html/samples/samples.css" alt-style="$theme$/swt/samples.properties" style-id="page">
+        <title style-id="intro-header">$introTitle$</title> 
         <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
@@ -119,6 +128,7 @@
             <text style-id="page-description" id="page-description">Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
+			<group id="content-divider"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -127,7 +137,9 @@
 		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor"/></group>		 
     </page>
 
+	<!-- What's New page -->
     <page id="whatsnew" style="$theme$/html/whatsnew.css" alt-style="$theme$/swt/whatsnew.properties" style-id="page">
+        <title style-id="intro-header">$introTitle$</title> 
         <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
@@ -145,6 +157,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">WHAT'S NEW</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
+			<group id="content-divider"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -153,7 +166,9 @@
 		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor"/></group>		
     </page>
     
+    <!-- First Steps page -->
     <page id="firststeps" style="$theme$/html/firststeps.css" alt-style="$theme$/swt/firststeps.properties" style-id="page">
+        <title style-id="intro-header">$introTitle$</title> 
         <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
@@ -171,6 +186,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">FIRST STEPS</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
+			<group id="content-divider"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -179,7 +195,9 @@
 		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor"/></group>		
     </page>
     
+    <!-- Web resources page -->
     <page id="webresources" style="$theme$/html/webresources.css" alt-style="$theme$/swt/webresources.properties" style-id="page">
+        <title style-id="intro-header">$introTitle$</title> 
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
             </group>
@@ -196,6 +214,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">WEB RESOURCE</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
+			<group id="content-divider"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -204,7 +223,10 @@
 		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor"/></group>		
     </page>
     
+    
+    <!-- Migrate page -->
     <page id="migrate" style="$theme$/html/migrate.css" alt-style="$theme$/swt/migrate.properties" style-id="page">
+        <title style-id="intro-header">$introTitle$</title> 
         <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
@@ -222,6 +244,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">MIGRATE</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
+			<group id="content-divider"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>

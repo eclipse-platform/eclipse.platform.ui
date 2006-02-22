@@ -26,6 +26,7 @@ public class IntroGroup extends AbstractIntroContainer {
     protected static final String TAG_GROUP = "group"; //$NON-NLS-1$
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
     private static final String ATT_COMPUTED = "computed"; //$NON-NLS-1$
+    private static final String ATT_EXPANDABLE = "expandable"; //$NON-NLS-1$
     private String label;
     /**
      * @param element
@@ -49,6 +50,11 @@ public class IntroGroup extends AbstractIntroContainer {
      */
     public int getType() {
         return AbstractIntroElement.GROUP;
+    }
+    
+    public boolean isExpandable() {
+    	String value=getAttribute(element, ATT_EXPANDABLE);
+    	return value!=null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
     }
     
     protected void loadChildren() {

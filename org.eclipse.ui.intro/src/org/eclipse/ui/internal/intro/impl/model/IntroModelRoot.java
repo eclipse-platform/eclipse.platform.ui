@@ -579,8 +579,24 @@ public class IntroModelRoot extends AbstractIntroContainer {
         AbstractIntroContainer anchorParent = (AbstractIntroContainer) anchor
             .getParent();
         // insert the elements of the extension before the anchor.
-        anchorParent.insertElementsBefore(extensionContent.getChildren(),
-            bundle, base, anchor);
+        String mixinStyle = getMixinStyle(extensionContent);
+        Element [] children = extensionContent.getChildren();
+        anchorParent.insertElementsBefore(children,
+            bundle, base, anchor, mixinStyle);
+    }
+    
+    private String getMixinStyle(IntroExtensionContent extensionContent) {
+    	String path = extensionContent.getPath();
+    	if (!path.endsWith("/@")) //$NON-NLS-1$
+    		return null;
+    	String pageId = path.substring(0, path.length()-2);
+    	IntroModelRoot modelRoot = getModelRoot();
+    	if (modelRoot==null)
+    		return null;
+    	IntroConfigurer configurer = modelRoot.getConfigurer();
+    	if (configurer==null)
+    		return null;
+   		return configurer.getMixinStyle(pageId, extensionContent.getId());
     }
 
 

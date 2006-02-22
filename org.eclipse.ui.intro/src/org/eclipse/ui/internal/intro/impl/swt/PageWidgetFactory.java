@@ -188,10 +188,13 @@ public class PageWidgetFactory {
     private Composite createGroup(Composite parent, IntroGroup group) {
         String label = group.getLabel();
         String description = styleManager.getDescription(group);
+        boolean expandable = group.isExpandable();
         Composite client = null;
         Composite control = null;
-        if (description != null || label != null) {
+        if (description != null || label != null || expandable) {
             int style = description != null ? Section.DESCRIPTION : SWT.NULL;
+            if (expandable)
+            	style |= Section.TWISTIE | Section.FOCUS_TITLE | Section.CLIENT_INDENT;
             Section section = toolkit.createSection(parent, style);
             if (label != null)
                 section.setText(label);

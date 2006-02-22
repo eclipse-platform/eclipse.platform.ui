@@ -8,6 +8,12 @@ public interface ISharedIntroConstants {
 	String CALLOUT = "callout"; //$NON-NLS-1$
 	String HIDDEN = "hidden"; //$NON-NLS-1$
 	String NEW = "new"; //$NON-NLS-1$
+	
+	String STYLE_LOW = "importance-low"; //$NON-NLS-1$
+	String STYLE_MEDIUM = "importance-medium"; //$NON-NLS-1$
+	String STYLE_HIGH = "importance-high"; //$NON-NLS-1$
+	String STYLE_CALLOUT = "importance-callout"; //$NON-NLS-1$
+	String STYLE_NEW = "importance-new"; //$NON-NLS-1$
 	String DEFAULT_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
 	String DEFAULT_CONTENT_PATH = "/page-content/bottom/"+DEFAULT_ANCHOR; //$NON-NLS-1$
 	// Page ids

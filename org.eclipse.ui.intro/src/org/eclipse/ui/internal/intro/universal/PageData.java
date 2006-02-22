@@ -89,7 +89,7 @@ public class PageData {
 		}
 		return null;
 	}
-
+	
 	private void addGroup(Element element, boolean hide) {
 		GroupData gd = new GroupData(element);
 		if (hide) hidden = gd;
@@ -98,7 +98,7 @@ public class PageData {
 	}
 	
 	public void addImplicitExtension(String extensionId, String name) {
-		ExtensionData ed = findExtension(extensionId);
+		ExtensionData ed = findExtension(extensionId, true);
 		if (ed!=null) {
 			// see if name needs to be supplied
 			if (ed.getName()==null || ed.getName().length()==0)
@@ -134,7 +134,7 @@ public class PageData {
 		return id;
 	}
 	
-	private ExtensionData findExtension(String extensionId) {
+	public ExtensionData findExtension(String extensionId, boolean checkHidden) {
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gdata = (GroupData)groups.get(i);
 			ExtensionData ed = gdata.find(extensionId);
@@ -142,7 +142,7 @@ public class PageData {
 				return ed;
 		}
 		// check the hidden
-		if (hidden!=null)
+		if (checkHidden && hidden!=null)
 			return hidden.find(extensionId);
 		return null;
 	}

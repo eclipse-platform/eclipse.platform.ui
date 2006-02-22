@@ -24,6 +24,10 @@ public class ExtensionData {
 			ISharedIntroConstants.LOW, ISharedIntroConstants.MEDIUM, ISharedIntroConstants.HIGH,
 			ISharedIntroConstants.NEW };
 	
+	public static final String[] IMPORTANCE_STYLE_TABLE = { ISharedIntroConstants.STYLE_CALLOUT,
+		ISharedIntroConstants.STYLE_LOW, ISharedIntroConstants.STYLE_MEDIUM, ISharedIntroConstants.STYLE_HIGH,
+		ISharedIntroConstants.STYLE_NEW };
+	
 	public static final String [] IMPORTANCE_NAME_TABLE = { Messages.ExtensionData_callout, 
 		Messages.ExtensionData_low, Messages.ExtensionData_medium, Messages.ExtensionData_high, Messages.ExtensionData_new };
 

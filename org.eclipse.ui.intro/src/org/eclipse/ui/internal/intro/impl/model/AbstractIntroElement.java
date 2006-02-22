@@ -175,6 +175,7 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
     private AbstractIntroElement parent;
     private IConfigurationElement cfgElement;
     private Bundle bundle;
+    private String mixinStyle;
 
 
     /**
@@ -441,6 +442,18 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+
+
+	
+	public String getMixinStyle() {
+		return mixinStyle;
+	}
+
+
+	
+	public void setMixinStyle(String mixinStyle) {
+		this.mixinStyle = mixinStyle;
+	}
 
 
 
