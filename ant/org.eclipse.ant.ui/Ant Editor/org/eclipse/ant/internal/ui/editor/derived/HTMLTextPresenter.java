@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * * @see org.eclipse.jdt.internal.ui.text.HTMLPresenter
+ * Derived from org.eclipse.jdt.internal.ui.text.HTMLTextPresenter
  */
 public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter, DefaultInformationControl.IInformationPresenterExtension {
 	

@@ -77,7 +77,7 @@ public class RunTargetAction extends Action implements IUpdate {
     /**
 	 * Launches the given Ant element node
 	 * @param node the node to use to launch
-	 * @see AntLaunchShortcut.launch(AntElementNode)
+	 * @see AntLaunchShortcut#launch(AntElementNode, String)
 	 */
 	public void launch(AntElementNode node) {
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();

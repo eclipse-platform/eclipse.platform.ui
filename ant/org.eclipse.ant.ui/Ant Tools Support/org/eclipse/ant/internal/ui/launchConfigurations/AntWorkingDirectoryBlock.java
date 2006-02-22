@@ -25,8 +25,8 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	private String fDefaultWorkingDirPath;
 
 	/**
-	 * gets the default working dir path
-	 * @return
+	 * Returns the default working directory path
+	 * @return the default working directory path
 	 */
 	public String getDefaultWorkingDirPath() {
 		return fDefaultWorkingDirPath;

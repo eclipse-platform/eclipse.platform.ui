@@ -154,7 +154,8 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	 * Start listening to an Ant build. Start a server connection that
 	 * the RemoteAntDebugBuildLogger can connect to.
 	 * 
-	 * @param port The port number to create the server connection on
+	 * @param eventPort The port number to create the server connection on
+     * @param requestPort The port number to use for sending requests to the remote logger
 	 */
 	public synchronized void startListening(int eventPort, int requestPort) {
 		super.startListening(eventPort);

@@ -100,6 +100,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * <li>AntTaskNodes: the owning target is executed</li>
 	 * </ul>
 	 * @param node the Ant node to use as the context for the launch
+     * @param mode the mode of the launch
 	 */
 	public void launch(AntElementNode node, String mode) {
 		String selectedTargetName= null;
@@ -234,10 +235,11 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Returns a unique name for a copy of the given launch configuration with the given
 	 * targets. The name seed is the same as the name for a new launch configuration with
-	 *   " [targetList]" appended to the end.
-	 * @param config
-	 * @param targetAttribute
-	 * @return
+	 *   &quot; [targetList]&quot; appended to the end.
+	 * @param filePath the path to the buildfile
+     * @param projectName the name of the project containing the buildfile or <code>null</code> if no project is known
+	 * @param targetAttribute the listing of targets to execute or <code>null</code> for default target execution
+	 * @return a unique name for the copy
 	 */
 	public static String getNewLaunchConfigurationName(IPath filePath, String projectName, String targetAttribute) {
 		StringBuffer buffer = new StringBuffer();

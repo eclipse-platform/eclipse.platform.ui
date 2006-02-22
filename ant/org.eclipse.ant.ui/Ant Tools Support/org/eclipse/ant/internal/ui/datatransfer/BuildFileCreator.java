@@ -886,10 +886,8 @@ public class BuildFileCreator
 
     /**
      * Add run targets.
-     * @throws ParserConfigurationException thrown if applet file could not get created
-     * @throws TransformerException thrown if applet file could not get created
+     * @throws CoreException thrown if problem accessing the launch configuration
      * @throws TransformerFactoryConfigurationError thrown if applet file could not get created
-     * @throws TransformerConfigurationException thrown if applet file could not get created
      * @throws UnsupportedEncodingException thrown if applet file could not get created
      */
     public void createRun() throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException
@@ -935,11 +933,11 @@ public class BuildFileCreator
 
     /**
      * Convert Java application launch configuration to ant target and add it to a document.
-     * @param variable2valueMap    adds Eclipse variables to this map,
+     * @param variable2value    adds Eclipse variables to this map,
      *                             if run configuration makes use of this feature
      * @param conf                 Java application launch configuration
      */
-    public void addJavaApplication(Map variable2valueMap, ILaunchConfiguration conf) throws CoreException
+    public void addJavaApplication(Map variable2value, ILaunchConfiguration conf) throws CoreException
     {
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", conf.getName()); //$NON-NLS-1$
@@ -948,7 +946,7 @@ public class BuildFileCreator
         javaElement.setAttribute("classname", conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "")); //$NON-NLS-1$ //$NON-NLS-2$
         javaElement.setAttribute("failonerror", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
-        ExportUtil.addVariable(variable2valueMap, dir, projectRoot);                
+        ExportUtil.addVariable(variable2value, dir, projectRoot);                
         if (!dir.equals("")) //$NON-NLS-1$
         {
             javaElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
@@ -959,8 +957,8 @@ public class BuildFileCreator
         }
         Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
         addElements(props, doc, javaElement, "env", "key", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         element.appendChild(javaElement);
         
         addRuntimeClasspath(conf, javaElement);
@@ -970,23 +968,21 @@ public class BuildFileCreator
 
     /**
      * Convert applet launch configuration to Ant target and add it to a document. 
-     * @param variable2valueMap    adds Eclipse variables to this map,
+     * @param variable2value    adds Eclipse variables to this map,
      *                             if run configuration makes use of this feature
      * @param conf                 applet configuration
-     * @throws ParserConfigurationException thrown if applet file could not get created 
-     * @throws TransformerException thrown if applet file could not get created
+     * @throws CoreException thrown if problem dealing with launch configuration or underlying resources 
      * @throws TransformerFactoryConfigurationError thrown if applet file could not get created 
-     * @throws TransformerConfigurationException thrown if applet file could not get created
      * @throws UnsupportedEncodingException thrown if applet file could not get created
      */
-    public void addApplet(Map variable2valueMap, ILaunchConfiguration conf) throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException
+    public void addApplet(Map variable2value, ILaunchConfiguration conf) throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException
     {
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
         if (dir.equals("")) //$NON-NLS-1$
         {
             dir = projectRoot;
         }
-        ExportUtil.addVariable(variable2valueMap, dir, projectRoot);
+        ExportUtil.addVariable(variable2value, dir, projectRoot);
         String value;
         try
         {
@@ -1031,9 +1027,9 @@ public class BuildFileCreator
         {
             javaElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
         }
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2valueMap, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2valueMap, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-        addElement(conf.getName() + ".html", doc, javaElement, "arg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2value, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2value, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        addElement(conf.getName() + ".html", doc, javaElement, "arg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         element.appendChild(javaElement);
         addRuntimeClasspath(conf, javaElement);
         addRuntimeBootClasspath(conf, javaElement);
@@ -1042,11 +1038,11 @@ public class BuildFileCreator
     
     /**
      * Convert JUnit launch configuration to JUnit task and add it to a document. 
-     * @param variable2valueMap    adds Eclipse variables to this map,
+     * @param variable2value    adds Eclipse variables to this map,
      *                             if run configuration makes use of this feature
      * @param conf                 applet configuration
      */
-    public void addJUnit(Map variable2valueMap, ILaunchConfiguration conf) throws CoreException
+    public void addJUnit(Map variable2value, ILaunchConfiguration conf) throws CoreException
     {
         // <target name="runtest">
         //     <mkdir dir="junit"/>
@@ -1070,7 +1066,7 @@ public class BuildFileCreator
         junitElement.setAttribute("fork", "yes"); //$NON-NLS-1$ //$NON-NLS-2$
         junitElement.setAttribute("printsummary", "withOutAndErr"); //$NON-NLS-1$ //$NON-NLS-2$
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
-        ExportUtil.addVariable(variable2valueMap, dir, projectRoot);                
+        ExportUtil.addVariable(variable2value, dir, projectRoot);                
         if (!dir.equals("")) //$NON-NLS-1$
         {
             junitElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
@@ -1107,7 +1103,7 @@ public class BuildFileCreator
         }
         Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
         addElements(props, doc, junitElement, "env", "key", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, junitElement, "jvmarg", "line", variable2valueMap, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, junitElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         element.appendChild(junitElement);
         addRuntimeClasspath(conf, junitElement);
         addRuntimeBootClasspath(conf, junitElement);

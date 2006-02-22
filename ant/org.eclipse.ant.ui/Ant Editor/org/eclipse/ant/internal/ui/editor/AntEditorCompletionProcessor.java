@@ -190,7 +190,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	
 	/**
 	 * The proposal mode for the current content assist
-     * @see determineProposalMode(IDocument, int, String)
+     * @see #determineProposalMode(IDocument, int, String)
      */
 	private int currentProposalMode= -1;
 	
@@ -201,7 +201,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	
 	/**
 	 * The current task string for content assist
-	 * @see determineProposalMode(IDocument, int, String)
+	 * @see #determineProposalMode(IDocument, int, String)
 	 */
 	protected String currentTaskString= null;
 

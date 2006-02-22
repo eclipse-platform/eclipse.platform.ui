@@ -433,8 +433,6 @@ public class EclipseClasspath
     
     /**
      * Check if given string is a reference.
-     * 
-     * @see #fillWithDirs(List, List, List, List)
      */
     public static boolean isReference(String s)
     {
@@ -445,8 +443,6 @@ public class EclipseClasspath
 
     /**
      * Check if given string is a project reference.
-     * 
-     * @see #fillWithDirs(List, List, List, List)
      */
     public static boolean isProjectReference(String s)
     {
@@ -455,9 +451,7 @@ public class EclipseClasspath
 
     /**
      * Resolves given project reference to a project.
-     * 
-     * @see #fillWithDirs(List, List, List, List)
-     * @return null if project is not resolvable
+     * @return <code>null</code> if project is not resolvable
      */
     public static IJavaProject resolveProjectReference(String s)
     {
@@ -467,8 +461,6 @@ public class EclipseClasspath
 
     /**
      * Check if given string is a user library reference.
-     * 
-     * @see #fillWithDirs(List, List, List, List)
      */
     public static boolean isUserLibraryReference(String s)
     {
@@ -478,8 +470,6 @@ public class EclipseClasspath
     /**
      * Check if given string is a user system library reference.
      * This library is added to the compiler boot classpath.
-     * 
-     * @see #fillWithDirs(List, List, List, List)
      */
     public static boolean isUserSystemLibraryReference(String s)
     {
@@ -490,7 +480,6 @@ public class EclipseClasspath
      * Check if given string is a library reference. e.g. Plug-in dependencies
      * are library references.
      * 
-     * @see #fillWithDirs(List, List, List, List)
      */
     public static boolean isLibraryReference(String s)
     {
@@ -533,8 +522,6 @@ public class EclipseClasspath
     
     /**
      * Resolves given linked resource to an absolute file location.
-     * 
-     * @see #fillWithDirs(List, List, List, List)
      */
     public String resolveLinkedResource(String s)
     {

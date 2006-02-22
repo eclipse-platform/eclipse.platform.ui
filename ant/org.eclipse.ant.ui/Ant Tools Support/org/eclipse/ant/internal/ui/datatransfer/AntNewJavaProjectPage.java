@@ -187,7 +187,6 @@ public class AntNewJavaProjectPage extends WizardPage {
 	 * Creates the project location specification controls.
 	 *
 	 * @param projectGroup the parent composite
-	 * @param boolean - the initial enabled state of the widgets created
 	 */
 	private void createUserSpecifiedProjectLocationGroup(Composite projectGroup) {
 		

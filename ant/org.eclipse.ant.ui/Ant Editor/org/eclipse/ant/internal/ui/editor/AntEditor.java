@@ -157,7 +157,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		/**
 		 * Removes this selection changed listener from the given selection provider.
 		 * 
-		 * @param selectionProviderstyle
+		 * @param selectionProvider
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
 			if (selectionProvider == null || getAntModel() == null) {

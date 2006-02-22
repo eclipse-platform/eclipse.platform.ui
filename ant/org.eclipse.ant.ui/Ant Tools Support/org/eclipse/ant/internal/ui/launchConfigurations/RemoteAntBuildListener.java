@@ -122,7 +122,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
      * Start listening to an Ant build. Start a server connection that
      * the RemoteAntBuildLogger can connect to.
      * 
-     * @param port The port number to create the server connection on
+     * @param eventPort The port number to create the server connection on
      */
     public synchronized void startListening(int eventPort){
         ServerConnection connection = new ServerConnection(eventPort);

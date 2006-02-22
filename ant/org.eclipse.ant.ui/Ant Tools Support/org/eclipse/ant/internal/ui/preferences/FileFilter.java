@@ -101,7 +101,7 @@ public class FileFilter extends ViewerFilter {
 	
 	/**
 	 * Sets whether this filter will filter based on extension.
-	 * @param considerExternsion whether to consider a file's extension when filtering
+	 * @param considerExtension whether to consider a file's extension when filtering
 	 */
 	public void considerExtension(boolean considerExtension) {
 	    fConsiderExtension= considerExtension;

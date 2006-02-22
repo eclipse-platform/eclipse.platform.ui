@@ -639,7 +639,7 @@ public final class AntUtil {
      * Opens the given editor on the buildfile of the provided node and selects that node in the editor.
      *
      * @param page the page to open the editor in
-     * @param editor the editor descriptor, or <code>null</code> for the system editor
+     * @param editorDescriptor the editor descriptor, or <code>null</code> for the system editor
      * @param node the node from the buildfile to open and then select in the editor
      */
     public static void openInEditor(IWorkbenchPage page, IEditorDescriptor editorDescriptor, AntElementNode node) {
