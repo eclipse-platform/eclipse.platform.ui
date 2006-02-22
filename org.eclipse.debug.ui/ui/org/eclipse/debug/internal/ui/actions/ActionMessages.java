@@ -169,4 +169,8 @@ public class ActionMessages extends NLS {
 	public static String RulerEnableDisableBreakpointAction_2;
 
 	public static String RulerEnableDisableBreakpointAction_3;
+
+	public static String RemoveAllExpressionsAction_0;
+
+	public static String RemoveAllExpressionsAction_1;
 }
