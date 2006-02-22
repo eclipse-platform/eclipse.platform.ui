@@ -58,11 +58,11 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 * init() is guaranteed to be called before any other method of the
 	 * ActionGroup super class.
 	 * 
-	 * @param aConfig
+	 * @param aSite
 	 *            The configuration information for the instantiated Common
 	 *            Action Provider.
 	 */
-	public abstract void init(ICommonActionExtensionSite aConfig);
+	public abstract void init(ICommonActionExtensionSite aSite);
 
 	/**
 	 * <p>
