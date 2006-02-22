@@ -18,6 +18,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
@@ -205,5 +207,41 @@ public class ModelMergeParticipant extends ModelSynchronizeParticipant {
 	 */
 	public String getName() {		
 		return NLS.bind(CVSUIMessages.CompareParticipant_0, new String[] { ((CVSMergeSubscriber)getSubscriber()).getName(), Utils.getScopeDescription(getContext().getScope()) });  
+	}
+	
+	/*
+	 * Returns a merge participant that exist and is configured with the given set of resources, start, and end tags.
+	 */
+	public static ModelMergeParticipant getMatchingParticipant(ResourceMapping[] mappings, CVSTag startTag, CVSTag endTag) {
+		ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		for (int i = 0; i < refs.length; i++) {
+			ISynchronizeParticipantReference reference = refs[i];
+			if (reference.getId().equals(ID)) {
+				ModelMergeParticipant p;
+				try {
+					p = (ModelMergeParticipant) reference.getParticipant();
+				} catch (TeamException e) {
+					continue;
+				}
+				ISynchronizationScope scope = p.getContext().getScope().asInputScope();
+				ResourceMapping[] roots = scope.getMappings();
+				if (roots.length == mappings.length) {
+					boolean match = true;
+					for (int j = 0; j < mappings.length; j++) {
+						
+						ResourceMapping mapping = mappings[j];
+						if (scope.getTraversals(mapping) == null) {
+							// The mapping is not in the scope so the participants don't match
+							match = false;
+							break;
+						}
+					}
+					if (match && p.getSubscriber().getStartTag().equals(startTag) && p.getSubscriber().getEndTag().equals(endTag)) {
+						return p;
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

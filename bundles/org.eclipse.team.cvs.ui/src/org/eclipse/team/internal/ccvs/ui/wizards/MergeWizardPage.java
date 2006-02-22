@@ -47,8 +47,8 @@ public class MergeWizardPage extends CVSWizardPage {
     private Button previewButton;
     private Button noPreviewButton;
     protected boolean preview = true;
-	private Button useModelSync;
-	private boolean isUseModelSync = false;
+	private Button onlyPreviewConflicts;
+	private boolean isOnlyPreviewConflicts = false;
 
     public MergeWizardPage(String pageName, String title, ImageDescriptor titleImage, String description, TagSource tagSource) {
         super(pageName, title, titleImage, description);
@@ -89,10 +89,10 @@ public class MergeWizardPage extends CVSWizardPage {
     	composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
     	
         previewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_0);
-        useModelSync = SWTUtils.createCheckBox(composite, CVSUIMessages.MergeWizardPage_14);
+        onlyPreviewConflicts = SWTUtils.createCheckBox(composite, CVSUIMessages.MergeWizardPage_14);
         GridData data = SWTUtils.createHFillGridData(1);
         data.horizontalIndent = 10;
-        useModelSync.setLayoutData(data);
+        onlyPreviewConflicts.setLayoutData(data);
         noPreviewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_1); 
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -101,14 +101,14 @@ public class MergeWizardPage extends CVSWizardPage {
             }
         };
         previewButton.setSelection(preview);
-        useModelSync.setEnabled(preview);
-        useModelSync.setSelection(isUseModelSync);
+        onlyPreviewConflicts.setEnabled(preview);
+        onlyPreviewConflicts.setSelection(isOnlyPreviewConflicts);
         noPreviewButton.setSelection(!preview);
         previewButton.addSelectionListener(selectionAdapter);
         noPreviewButton.addSelectionListener(selectionAdapter);
-        useModelSync.addSelectionListener(new SelectionAdapter() {
+        onlyPreviewConflicts.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				isUseModelSync = useModelSync.getSelection();
+				isOnlyPreviewConflicts = onlyPreviewConflicts.getSelection();
 			}
 		});
     }
@@ -260,7 +260,7 @@ public class MergeWizardPage extends CVSWizardPage {
     }
 
     private void updateEnablements() {
-    	useModelSync.setEnabled(preview);
+    	onlyPreviewConflicts.setEnabled(preview);
         if (endTag == null && endTagField.getText().length() > 0) {
             setErrorMessage(CVSUIMessages.MergeWizardPage_10); 
         } else if (startTag == null && startTagField.getText().length() > 0) {
@@ -298,7 +298,7 @@ public class MergeWizardPage extends CVSWizardPage {
         return preview;
     }
     
-    public boolean isModelSync() {
-        return isUseModelSync;
+    public boolean isOnlyPreviewConflicts() {
+        return isOnlyPreviewConflicts;
     }
 }

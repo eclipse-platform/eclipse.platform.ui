@@ -22,6 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ModelMergeOperation extends AbstractModelMergeOperation {
 
 	private final Subscriber subscriber;
+	private final boolean attempAutomerge;
 	
 	/**
 	 * Create a merge operation for the given subscriber. The merge operation will cancel the subscriber
@@ -29,8 +30,9 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 	 * @param part the part
 	 * @param mappings the mappings
 	 * @param subscriber the subscriber
+	 * @param attempAutomerge 
 	 */
-	public ModelMergeOperation(IWorkbenchPart part, ResourceMapping[] mappings, final CVSMergeSubscriber subscriber) {
+	public ModelMergeOperation(IWorkbenchPart part, ResourceMapping[] mappings, final CVSMergeSubscriber subscriber, boolean attempAutomerge) {
 		super(part, new SubscriberScopeManager(subscriber.getName(), mappings, subscriber, true){
 			public void dispose() {
 				subscriber.cancel();
@@ -38,6 +40,7 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 			}
 		}, true);
 		this.subscriber = subscriber;
+		this.attempAutomerge = attempAutomerge;
 	}
 
 	/* (non-Javadoc)
@@ -58,6 +61,7 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.mappings.AbstractModelMergeOperation#createParticipant()
 	 */
 	protected ModelSynchronizeParticipant createParticipant() {
+		setOwnsManager(false);
 		return new ModelMergeParticipant((MergeSubscriberContext)createMergeContext());
 	}
 	
@@ -66,7 +70,7 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 	}
 	
 	public boolean isPreviewRequested() {
-		return true;
+		return !attempAutomerge;
 	}
 
 }

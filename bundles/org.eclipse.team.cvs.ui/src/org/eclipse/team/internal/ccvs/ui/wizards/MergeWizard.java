@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
-
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -24,13 +23,10 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceTraversalAction;
 import org.eclipse.team.internal.ccvs.ui.mappings.ModelMergeOperation;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelMergeParticipant;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
-import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
-import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class MergeWizard extends Wizard {
@@ -54,9 +50,6 @@ public class MergeWizard extends Wizard {
 		addPage(page);
 	}
 
-	/*
-	 * @see IWizard#performFinish()
-	 */
 	public boolean performFinish() {
 		
 		CVSTag startTag = page.getStartTag();
@@ -73,32 +66,19 @@ public class MergeWizard extends Wizard {
                 // Ignore
             }
 		} else {
-		    if (page.isModelSync()){
+			ModelMergeParticipant participant = ModelMergeParticipant.getMatchingParticipant(mappings, startTag, endTag);
+			if(participant == null) {
 		    	CVSMergeSubscriber s = new CVSMergeSubscriber(getProjects(resources), startTag, endTag);
 		    	try {
-					new ModelMergeOperation(getPart(), mappings, s).run();
+					new ModelMergeOperation(getPart(), mappings, s, page.isOnlyPreviewConflicts()).run();
 				} catch (InvocationTargetException e) {
 					CVSUIPlugin.log(IStatus.ERROR, "Internal error", e.getTargetException()); //$NON-NLS-1$
 				} catch (InterruptedException e) {
 					// Ignore
 				}
-		    } else {
-				// First check if there is an existing matching participant, if so then re-use it
-	            try {
-	                resources = getAllResources(startTag, endTag);
-	            } catch (InvocationTargetException e) {
-	                // Log and continue with the original resources
-	                CVSUIPlugin.log(IStatus.ERROR, "An error occurred while detemrining if extra resources should be included in the merge", e.getTargetException()); //$NON-NLS-1$
-	            }
-				MergeSynchronizeParticipant participant = MergeSynchronizeParticipant.getMatchingParticipant(resources, startTag, endTag);
-				if(participant == null) {
-					CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
-					participant = new MergeSynchronizeParticipant(s);
-					TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
-				}
-				participant.refresh(resources, null, null, null);
-		    }
-
+			} else {
+				participant.refresh(null, mappings);
+			}
 		}
 		return true;
 	}
@@ -111,16 +91,6 @@ public class MergeWizard extends Wizard {
 		}
 		return (IResource[]) projects.toArray(new IResource[projects.size()]);
 	}
-
-	private IResource[] getAllResources(CVSTag startTag, CVSTag endTag) throws InvocationTargetException {
-        // Only do the extra work if the model is a logical model (i.e. not IResource)
-        if (!WorkspaceTraversalAction.isLogicalModel(mappings))
-            return resources;
-        CVSMergeSubscriber s = new CVSMergeSubscriber(WorkspaceTraversalAction.getProjects(resources), startTag, endTag);
-        IResource[] allResources = WorkspaceTraversalAction.getResourcesToCompare(mappings, s);
-        s.cancel();
-        return allResources;
-    }
 
     private Command.LocalOption[] getLocalOptions(CVSTag startTag, CVSTag endTag) {
         List options = new ArrayList();
