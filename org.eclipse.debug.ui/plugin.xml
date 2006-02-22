@@ -832,11 +832,11 @@
                helpContextId="PinMemoryBlockAction_context"
                icon="$nl$/icons/full/elcl16/pin.gif"
                id="org.eclipse.debug.ui.PinMemoryBlockAction"
-               label="%PinMemoryBlockAction.label "
+               label="%PinMemoryBlockAction.label"
                state="true"
                style="toggle"
                toolbarPath="additions"
-               tooltip="%PinMemoryBlockAction.label "/>
+               tooltip="%PinMemoryBlockAction.label"/>
          <action
                class="org.eclipse.debug.internal.ui.views.memory.NewMemoryViewAction"
                helpContextId="NewMemoryViewAction_context"
@@ -2251,7 +2251,7 @@ M4 = Platform-specific fourth key
      </context>  
      <context
            name="%Context.memoryview.name"
-           description="%Context.memoryview.description "
+           description="%Context.memoryview.description"
            id="org.eclipse.debug.ui.memoryview"
            parentId="org.eclipse.ui.contexts.window">
      </context>      
