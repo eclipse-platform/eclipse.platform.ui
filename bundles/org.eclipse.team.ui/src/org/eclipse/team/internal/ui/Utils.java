@@ -880,6 +880,16 @@ public class Utils {
 			return adapter.getName(mapping);
 		return pathString;
 	}
+	
+	public static String getLabel(ModelProvider provider) {
+		ResourceMapping mapping = Utils.getResourceMapping(provider);
+		if (mapping != null) {
+			String base = Utils.getLabel(mapping);
+			if (base != null && base.length() > 0)
+				return base;
+		}
+		return provider.getDescriptor().getLabel();
+	}
 
 	public static String getScopeDescription(ISynchronizationScope scope) {
 		ResourceMapping[] mappings = scope.getInputMappings();
