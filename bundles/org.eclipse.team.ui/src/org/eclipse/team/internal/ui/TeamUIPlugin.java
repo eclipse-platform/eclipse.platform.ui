@@ -127,6 +127,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	protected void initializeDefaultPluginPreferences() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, false);
+		store.setDefault(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT, IPreferenceIds.COMPRESSED_LAYOUT);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, TeamSynchronizingPerspective.ID);

@@ -155,7 +155,7 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#prepareInput(org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-			Utils.updateLabels(node, configuration);
+			Utils.updateLabels(node, configuration, monitor);
 			// We need to cache contents here as well
 			Object ancestor = getAncestor();
 			if (ancestor instanceof FileStateTypedElement) {

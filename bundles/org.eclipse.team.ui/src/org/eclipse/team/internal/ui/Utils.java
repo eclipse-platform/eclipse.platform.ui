@@ -323,7 +323,7 @@ public class Utils {
 		}
 	}
 	
-	public static void updateLabels(IDiff diff, CompareConfiguration config) {
+	public static void updateLabels(IDiff diff, CompareConfiguration config, IProgressMonitor monitor) {
 		final IFileRevision remote = getRemote(diff);
 		final IFileRevision base = getBase(diff);
 		String localContentId = getLocalContentId(diff);
@@ -342,6 +342,46 @@ public class Utils {
 		} else {
 			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); 
 		}
+		updateLabelsWithAuthor(diff, config, monitor);
+	}
+	
+    public static void updateLabelsWithAuthor(IDiff diff, CompareConfiguration config, IProgressMonitor monitor) {
+        // Add the author to the remote or base
+        if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
+	        if (diff != null) {
+	    		IFileRevision remote = getRemote(diff);
+	    		IFileRevision base = getBase(diff);
+	    		String remoteAuthor = null;
+	    		if (remote != null) {
+                    remote = getRevisionWithAuthor(remote, monitor);
+                    remoteAuthor = remote.getAuthor();
+                    if (remoteAuthor != null)
+                    	config.setRightLabel(NLS.bind("{0} ({1})", new String[] { remote.getContentIdentifier(), remoteAuthor })); 
+	    		}
+	    		if (base != null) {
+                    String baseAuthor;
+                    if (remoteAuthor != null && remote.getContentIdentifier().equals(base.getContentIdentifier())) {
+                        baseAuthor = remoteAuthor;
+                    } else {
+                    	base = getRevisionWithAuthor(base, monitor);
+                        baseAuthor = base.getAuthor();
+                    }
+                    if (baseAuthor != null)
+                    	config.setAncestorLabel(NLS.bind("{0} ({1})", new String[] { base.getContentIdentifier(), baseAuthor })); 
+	    		}
+	        }
+        }
+    }
+
+	private static IFileRevision getRevisionWithAuthor(IFileRevision remote, IProgressMonitor monitor) {
+		if (remote.getAuthor() == null && remote.isPropertyMissing()) {
+			try {
+				return remote.withAllProperties(monitor);
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+		return remote;
 	}
 
 	public static String getLocalContentId(IDiff diff) {

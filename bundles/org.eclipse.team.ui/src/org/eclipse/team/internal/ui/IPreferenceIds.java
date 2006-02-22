@@ -28,7 +28,7 @@ public interface IPreferenceIds {
 	
 	/*
 	 * Previous preference which is kept so it can be converted to the new preference (SYNCVIEW_DEFAULT_LAYOUT)
-	 * @depracated
+	 * @deprecated
 	 */
 	public static final String SYNCVIEW_COMPRESS_FOLDERS = PREFIX + "compress_folders"; //$NON-NLS-1$
 	
@@ -37,6 +37,11 @@ public interface IPreferenceIds {
 	 * preference is used automatically with {@link StructuredViewerAdvisor}.
 	 */
 	public static final String SYNCVIEW_VIEW_SYNCINFO_IN_LABEL = PREFIX + "view_syncinfo_in_label"; //$NON-NLS-1$
+	
+	/*
+	 * Preference to enable the presence of the author field in a compare editor
+	 */
+	public static final String SHOW_AUTHOR_IN_COMPARE_EDITOR = PREFIX + "show_author_in_compare_editor"; //$NON-NLS-1$
 	
 	/*
 	 * Preference to manage the perspective used to synchronize.

@@ -71,6 +71,12 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, TeamUIMessages.SyncViewerPreferencePage_19, SWT.NONE, getFieldEditorParent()); 
 		addField(showSyncInLabels);
 		
+		addField(new BooleanFieldEditor(
+		        SHOW_AUTHOR_IN_COMPARE_EDITOR, 
+		        "Show the &file author in compare editors", 
+				BooleanFieldEditor.DEFAULT, 
+				getFieldEditorParent()));
+		
 	    defaultLayout = new RadioGroupFieldEditor(SYNCVIEW_DEFAULT_LAYOUT, 
 	            TeamUIMessages.SyncViewerPreferencePage_0, 3,  
 	            new String[][] {
