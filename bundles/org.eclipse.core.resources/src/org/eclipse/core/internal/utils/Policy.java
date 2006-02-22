@@ -128,6 +128,14 @@ public class Policy {
 			message = ""; //$NON-NLS-1$
 		Platform.getLog(bundle).log(new Status(severity, ResourcesPlugin.PI_RESOURCES, 1, message, t));
 	}
+	
+	/**
+	 * Logs a throwable, assuming severity of error
+	 * @param t
+	 */
+	public static void log(Throwable t) {
+		log(IStatus.ERROR, "Internal Error", t); //$NON-NLS-1$
+	}
 
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 		return monitor == null ? new NullProgressMonitor() : monitor;
