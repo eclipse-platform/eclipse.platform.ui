@@ -133,10 +133,7 @@ public interface IProductConstants {
      * The value is a comma-separated list of four integer values, specifying
      * x, y, width, and height of the rectangle in pixel coordinates.
      * </p>
-	 * <p>This property is still experimental and may be renamed or removed
-	 * during the development of Eclipse 3.2.
-	 * </p>
-     * @since 3.2 <b>EXPERIMENTAL</b>
+     * @since 3.2
      * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
     public static final String STARTUP_PROGRESS_RECT = "startupProgressRect"; //$NON-NLS-1$
@@ -150,10 +147,7 @@ public interface IProductConstants {
      * The value is a comma-separated list of four integer values, specifying
      * x, y, width, and height of the rectangle in pixel coordinates.
      * </p> 
-	 * <p>This property is still experimental and may be renamed or removed
-	 * during the development of Eclipse 3.2.
-	 * </p>
-     * @since 3.2 <b>EXPERIMENTAL</b>
+     * @since 3.2
      * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
     public static final String STARTUP_MESSAGE_RECT = "startupMessageRect"; //$NON-NLS-1$
@@ -167,10 +161,7 @@ public interface IProductConstants {
      * specify the red component of the color, the next two digits the
      * green component, and the last two digits the blue component.
      * </p> 
-	 * <p>This property is still experimental and may be renamed or removed
-	 * during the development of Eclipse 3.2.
-	 * </p>
-     * @since 3.2 <b>EXPERIMENTAL</b>
+     * @since 3.2
      * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
     public static final String STARTUP_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
