@@ -670,7 +670,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					tagViewer.setInput(null);
 					return;
 				}
-				IFileRevision entry = (IFileRevision)ss.getFirstElement();
+				Object o = ss.getFirstElement();
+				if (o instanceof AbstractCVSHistoryCategory){
+					textViewer.setDocument(new Document("")); //$NON-NLS-1$
+					tagViewer.setInput(null);
+					return;
+				}
+				IFileRevision entry = (IFileRevision)o;
 				textViewer.setDocument(new Document(entry.getComment()));
 				tagViewer.setInput(entry.getTags());
 			}
@@ -688,6 +694,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					if (!(selection instanceof IStructuredSelection)) return;
 					IStructuredSelection ss = (IStructuredSelection)selection;
 					Object o = ss.getFirstElement();
+					
+					if (o instanceof AbstractCVSHistoryCategory)
+						return;
+					
 					currentSelection = (IFileRevision)o;
 					if(needsProgressDialog) {
 						PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {

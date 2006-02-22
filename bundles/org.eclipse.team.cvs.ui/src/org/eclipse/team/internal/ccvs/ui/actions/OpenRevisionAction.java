@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.internal.ccvs.ui.AbstractCVSHistoryCategory;
 import org.eclipse.team.internal.ccvs.ui.CVSHistoryPage;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -113,6 +114,10 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 		Object[] objArray = structSel.toArray();
 		
 		for (int i = 0; i < objArray.length; i++) {
+			//Don't bother showing if this a category
+			if (objArray[i] instanceof AbstractCVSHistoryCategory)
+				return false;
+			
 			IFileRevision revision = (IFileRevision) objArray[i];
 			//check to see if any of the selected revisions are deleted revisions
 			if (revision != null && !revision.exists())
