@@ -101,7 +101,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 *
 	 * <p>If the editor implements <code>ITextEditorExtension2</code>,
 	 * this method returns {@link ITextEditorExtension2#isEditorInputModifiable()};<br> else if the editor
-	 * implements <code>ITextEditorExtension2</code>, it returns {@link ITextEditorExtension#isEditorInputReadOnly()};<br>
+	 * implements <code>ITextEditorExtension</code>, it returns {@link ITextEditorExtension#isEditorInputReadOnly()};<br>
 	 * else, {@link ITextEditor#isEditable()} is returned, or <code>false</code> if the editor is <code>null</code>.</p>
 	 *
 	 * <p>There is only a difference to {@link #validateEditorInputState()} if the editor implements
