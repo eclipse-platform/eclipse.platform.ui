@@ -9,6 +9,8 @@
 
 package org.eclipse.ui.intro.config;
 
+import org.eclipse.ui.intro.IIntroSite;
+
 
 /**
  * Classes that extend this abstract class are used to configure <code>CustomizableIntroPart</code>.
@@ -20,6 +22,22 @@ package org.eclipse.ui.intro.config;
  */
 
 public abstract class IntroConfigurer {
+	/**
+	 * The identifier of the named group where the configurer can
+	 * contribute local tool bar actions.
+	 * 
+	 * @see #init(IIntroSite)
+	 */
+	public static final String TB_ADDITIONS = "additions"; //$NON-NLS-1$
+
+	/**
+	 * Provides the opportunity for the configurer to contribute to
+	 * the action bars. 
+	 * @param site
+	 *            the intro part's site
+	 */
+	public void init(IIntroSite site) {
+	}
 
 	/**
 	 * Returns the value of the variable defined by the configurer. This variable can appear in XML
@@ -77,8 +95,7 @@ public abstract class IntroConfigurer {
 	 * Themes can use this feature to render certain extensions differently.
 	 * 
 	 * @param pageId
-	 * 			the identifier of the target page that this extension
-	 * 			is contributed into
+	 *            the identifier of the target page that this extension is contributed into
 	 * @param extensionId
 	 *            the identifier of the extension to provide the mixin style for.
 	 * @return the style to add to the original extension style or <code>null</code> if no mixin

@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro.impl.presentations;
 
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -46,6 +47,7 @@ import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
+import org.eclipse.ui.intro.config.IntroConfigurer;
 
 /**
  * This is a UI Forms based implementation of an Intro Part Presentation.
@@ -250,6 +252,7 @@ public class FormIntroPartImplementation extends
             forwardAction);
         actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
             backAction);
+        toolBarManager.add(new Separator(IntroConfigurer.TB_ADDITIONS));
         toolBarManager.add(homeAction);
         toolBarManager.add(backAction);
         toolBarManager.add(forwardAction);
