@@ -275,7 +275,7 @@ class DeleteLineTarget {
 			resultOffset= document.getLineOffset(line);
 			int endOffset= offset + length;
 			IRegion endLineInfo= document.getLineInformationOfOffset(endOffset);
-			int endLine= endLine= document.getLineOfOffset(endLineInfo.getOffset()); 
+			int endLine= document.getLineOfOffset(endLineInfo.getOffset()); 
 			if (endLineInfo.getOffset() == endOffset && endLine > 0 && length > 0)
 				endLine= endLine - 1;
 			resultLength= document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
