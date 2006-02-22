@@ -14,11 +14,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -31,6 +34,7 @@ public class ResourceModelLabelProvider extends
 
 	private ILabelProvider provider = new WorkbenchLabelProvider();
 	private ResourceModelContentProvider contentProvider;
+	private Image compressedFolderImage;
 
 	public void init(ICommonContentExtensionSite site) {
 		ITreeContentProvider aContentProvider = site.getExtension().getContentProvider();
@@ -43,6 +47,8 @@ public class ResourceModelLabelProvider extends
 	
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		if (compressedFolderImage != null)
+			compressedFolderImage.dispose();
 		super.dispose();
 	}
 
@@ -137,5 +143,36 @@ public class ResourceModelLabelProvider extends
 				}
 			}, contentProvider.getStructuredViewer());
 		}
+	}
+	
+	private String getLayout() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
+	}
+	
+	protected String getDelegateText(Object element) {
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;			
+			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+				return resource.getProjectRelativePath().toString();
+			}
+			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.FILE) {
+				IPath parentPath = resource.getProjectRelativePath().removeLastSegments(1);
+				if (!parentPath.isEmpty())
+					return NLS.bind("{0} - {1}", resource.getName(), parentPath.toString());
+			}
+		}
+		return super.getDelegateText(element);
+	}
+	
+	protected Image getDelegateImage(Object element) {
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;			
+			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+				if (compressedFolderImage == null)
+					compressedFolderImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER).createImage();
+				return compressedFolderImage;
+			}
+		}
+		return super.getDelegateImage(element);
 	}
 }

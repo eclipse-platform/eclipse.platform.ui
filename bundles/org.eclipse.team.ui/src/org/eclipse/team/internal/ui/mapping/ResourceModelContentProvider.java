@@ -16,13 +16,15 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 /**
  * This content provider displays the mappings as a flat list 
@@ -90,11 +92,27 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
+	 */
+	public void init(ICommonContentExtensionSite site) {
+		super.init(site);
+		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#dispose()
 	 */
 	public void dispose() {
 		provider.dispose();
 		super.dispose();
+		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT)) {
+			refresh();
+		}
+		super.propertyChange(event);
 	}
 
 	/* (non-Javadoc)
@@ -103,34 +121,100 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
 		if (parent instanceof IResource) {
 			IResource resource = (IResource) parent;
-			
-			Set result = new HashSet();
-			for (int i = 0; i < children.length; i++) {
-				Object object = children[i];
-				result.add(object);
+			Object[] allChildren;
+			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
+				allChildren = getFlatChildren(context, resource);
+			} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.PROJECT) {
+				allChildren = getCompressedChildren(context, (IProject)resource, children);
+			} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+				allChildren = getCompressedChildren(context, (IFolder)resource, children);
+			} else {
+				allChildren = getTreeChildren(context, resource, children);
 			}
-			IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
-			for (int i = 0; i < childPaths.length; i++) {
-				IPath path = childPaths[i];
-				IDiff delta = context.getDiffTree().getDiff(path);
-				IResource child;
-				if (delta == null) {
-					// the path has descendent deltas so it must be a folder
-					if (path.segmentCount() == 1) {
-						child = ((IWorkspaceRoot)resource).getProject(path.lastSegment());
-					} else {
-						child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
-					}
-				} else {
-					child = context.getDiffTree().getResource(delta);
-				}
-				if (isInScope(context.getScope(), parent, child)) {
-					result.add(child);
-				}
-			}
-			return super.getChildrenInContext(context, parent, result.toArray(new Object[result.size()]));
+			return super.getChildrenInContext(context, parent, allChildren);
 		}
 		return super.getChildrenInContext(context, parent, children);
+	}
+
+	private Object[] getCompressedChildren(ISynchronizationContext context, IProject project, Object[] children) {
+		Set result = new HashSet();
+		IResourceDiffTree diffTree = context.getDiffTree();
+		IDiff[] diffs = diffTree.getDiffs(project, IResource.DEPTH_INFINITE);
+		for (int i = 0; i < diffs.length; i++) {
+			IDiff diff = diffs[i];
+			IResource resource = diffTree.getResource(diff);
+			if (resource.getType() == IResource.FILE)
+				result.add(resource.getParent());
+			else if (resource.getType() == IResource.FOLDER)
+				result.add(resource);
+		}
+		return result.toArray();
+	}
+
+	/*
+	 * Only return the files that are direct children of the folder
+	 */
+	private Object[] getCompressedChildren(ISynchronizationContext context, IFolder folder, Object[] children) {
+		Set result = new HashSet();
+		for (int i = 0; i < children.length; i++) {
+			Object object = children[i];
+			if (object instanceof IResource) {
+				IResource resource = (IResource) object;
+				if (resource.getType() == IResource.FILE)
+					result.add(resource);
+			}
+		}
+		IResourceDiffTree diffTree = context.getDiffTree();
+		IDiff[] diffs = diffTree.getDiffs(folder, IResource.DEPTH_ONE);
+		for (int i = 0; i < diffs.length; i++) {
+			IDiff diff = diffs[i];
+			IResource resource = diffTree.getResource(diff);
+			if (resource.getType() == IResource.FILE)
+				result.add(resource);
+		}
+		return result.toArray();
+	}
+
+	private Object[] getFlatChildren(ISynchronizationContext context, IResource resource) {
+		Object[] allChildren;
+		IResourceDiffTree diffTree = context.getDiffTree();
+		IDiff[] diffs = diffTree.getDiffs(resource, IResource.DEPTH_INFINITE);
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < diffs.length; i++) {
+			IDiff diff = diffs[i];
+			result.add(diffTree.getResource(diff));
+		}
+		allChildren = result.toArray();
+		return allChildren;
+	}
+
+	private Object[] getTreeChildren(ISynchronizationContext context, IResource resource, Object[] children) {
+		Set result = new HashSet();
+		for (int i = 0; i < children.length; i++) {
+			Object object = children[i];
+			result.add(object);
+		}
+		IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
+		for (int i = 0; i < childPaths.length; i++) {
+			IPath path = childPaths[i];
+			IDiff delta = context.getDiffTree().getDiff(path);
+			IResource child;
+			if (delta == null) {
+				// the path has descendent deltas so it must be a folder
+				if (path.segmentCount() == 1) {
+					child = ((IWorkspaceRoot)resource).getProject(path.lastSegment());
+				} else {
+					child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
+				}
+			} else {
+				child = context.getDiffTree().getResource(delta);
+			}
+			if (isInScope(context.getScope(), resource, child)) {
+				result.add(child);
+			}
+		}
+		Object[] allChildren = result.toArray(new Object[result.size()]);
+		return allChildren;
 	}
 
 	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object) {
@@ -268,5 +352,9 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	
 	protected StructuredViewer getStructuredViewer() {
 		return (StructuredViewer)getViewer();
+	}
+	
+	private String getLayout() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 	}
 }
