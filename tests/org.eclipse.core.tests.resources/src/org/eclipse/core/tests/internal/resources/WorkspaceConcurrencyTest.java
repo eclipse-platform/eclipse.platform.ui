@@ -21,7 +21,7 @@ import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
- * Tests concurrency issues when dealing with operations on the worspace
+ * Tests concurrency issues when dealing with operations on the workspace
  */
 public class WorkspaceConcurrencyTest extends ResourceTest {
 
@@ -41,6 +41,23 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			Thread.sleep(duration);
 		} catch (InterruptedException e) {
 			//ignore
+		}
+	}
+	
+	public void testEndRuleInWorkspaceOperation() {
+		try {
+			final IProject project = getWorkspace().getRoot().getProject("testEndRuleInWorkspaceOperation");
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					Platform.getJobManager().endRule(project);
+				}
+			}, project, IResource.NONE, getMonitor());
+			//should have failed
+			fail("1.0");
+		} catch (CoreException e) {
+			fail("1.99", e);
+		} catch (RuntimeException e) {
+			//expected
 		}
 	}
 
@@ -69,7 +86,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			//create a thread that modifies the workspace. This should 
-			//hang indefintely due to the misbehaving listener
+			//hang indefinitely due to the misbehaving listener
 			TestWorkspaceJob testJob = new TestWorkspaceJob(10);
 			testJob.setTouch(true);
 			testJob.setRule(getWorkspace().getRoot());
@@ -86,7 +103,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 					try {
 						getWorkspace().run(new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor) {
-								//noop
+								//no-op
 							}
 						}, new CancelingProgressMonitor());
 					} catch (CoreException e) {
@@ -205,7 +222,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						workspace.run(new IWorkspaceRunnable() {
-							public void run(IProgressMonitor monitor) throws CoreException {
+							public void run(IProgressMonitor monitor) {
 								//signal that this job has started
 								status[1] = TestBarrier.STATUS_RUNNING;
 								//let job one finish
@@ -267,7 +284,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			if (failure[0] != null)
 				fail("1.3", failure[0]);
 		} finally {
-			//esure listener is removed
+			//ensure listener is removed
 			workspace.removeResourceChangeListener(listener);
 		}
 	}
