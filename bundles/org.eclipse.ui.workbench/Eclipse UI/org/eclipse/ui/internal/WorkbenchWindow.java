@@ -168,11 +168,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	private FastViewBar fastViewBar;
 
-	private PerspectiveSwitcher perspectiveSwitcher;
+	private PerspectiveSwitcher perspectiveSwitcher = null;
 
 	private TrimLayout defaultLayout;
 
-	ProgressRegion progressRegion;
+	ProgressRegion progressRegion = null;
 
 	/**
 	 * The map of services maintained by the workbench window. These services
@@ -369,6 +369,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private boolean coolBarVisible = true;
 
 	private boolean perspectiveBarVisible = true;
+	
+	private boolean fastViewBarVisible = true;
 
 	private boolean statusLineVisible = true;
 
@@ -3085,6 +3087,35 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	public boolean getPerspectiveBarVisible() {
 		return perspectiveBarVisible;
 	}
+	
+	/**
+	 * Tell the workbench window a visible state for the fastview bar. This is
+	 * only applicable if the window configurer also wishes the fast view bar to
+	 * be visible.
+	 * 
+	 * @param visible
+	 *            <code>true</code> or <code>false</code>
+	 * @since 3.2
+	 */
+	public void setFastViewBarVisible(boolean visible) {
+		boolean oldValue = fastViewBarVisible;
+		fastViewBarVisible = visible;
+		if (oldValue != fastViewBarVisible) {
+			updateLayoutDataForContents();
+		}
+	}
+	
+	/**
+	 * The workbench window take on the fastview bar. This is only applicable if
+	 * the window configurer also wishes the fast view bar to be visible.
+	 * 
+	 * @return <code>true</code> if the workbench window thinks the fastview
+	 *         bar should be visible.
+	 * @since 3.2
+	 */
+	public boolean getFastViewBarVisible() {
+		return fastViewBarVisible;
+	}
 
 	/**
 	 * @param visible
@@ -3137,13 +3168,19 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			topBar.setVisible(false);
 		}
 
-		if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
-			int side = fastViewBar.getSide();
+		if (fastViewBar != null) {
+			if (getFastViewBarVisible()
+					&& getWindowConfigurer().getShowFastViewBars()) {
+				int side = fastViewBar.getSide();
 
-			if (defaultLayout.getTrim(fastViewBar.getId()) == null) {
-				defaultLayout.addTrim(side, fastViewBar);
+				if (defaultLayout.getTrim(fastViewBar.getId()) == null) {
+					defaultLayout.addTrim(side, fastViewBar);
+				}
+				fastViewBar.getControl().setVisible(true);
+			} else {
+				defaultLayout.removeTrim(fastViewBar);
+				fastViewBar.getControl().setVisible(false);
 			}
-			// LayoutUtil.resize(fastViewBar.getControl());
 		}
 
 		if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
@@ -3156,8 +3193,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			getStatusLineManager().getControl().setVisible(false);
 		}
 
-		if (getShowHeapStatus()) {
-			if (heapStatus != null) {
+		if (heapStatus != null) {
+			if (getShowHeapStatus()) {
 				if (heapStatus.getLayoutData() == null) {
 					heapStatusTrim.setWidthHint(heapStatus.computeSize(
 							SWT.DEFAULT, SWT.DEFAULT).x);
@@ -3170,31 +3207,33 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
 				}
 				heapStatus.setVisible(true);
-			}
-		} else {
-			if (heapStatus != null) {
+
+			} else {
+
 				defaultLayout.removeTrim(heapStatusTrim);
 				heapStatus.setVisible(false);
 			}
 		}
 
-		if (getWindowConfigurer().getShowProgressIndicator()) {
-			if (progressRegion.getControl().getLayoutData() == null) {
-				progressRegion.setWidthHint(progressRegion.getControl()
-						.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
-				progressRegion.setHeightHint(getStatusLineManager()
-						.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-			}
-			if (defaultLayout.getTrim(progressRegion.getId()) == null) {
-				defaultLayout.addTrim(SWT.BOTTOM, progressRegion);
-			}
-			progressRegion.getControl().setVisible(true);
-		} else {
-			if (progressRegion != null) {
+		if (progressRegion != null) {
+			if (getWindowConfigurer().getShowProgressIndicator()) {
+				if (progressRegion.getControl().getLayoutData() == null) {
+					progressRegion.setWidthHint(progressRegion.getControl()
+							.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
+					progressRegion
+							.setHeightHint(getStatusLineManager().getControl()
+									.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+				}
+				if (defaultLayout.getTrim(progressRegion.getId()) == null) {
+					defaultLayout.addTrim(SWT.BOTTOM, progressRegion);
+				}
+				progressRegion.getControl().setVisible(true);
+			} else {
 				defaultLayout.removeTrim(progressRegion);
 				progressRegion.getControl().setVisible(false);
 			}
 		}
+		
 		defaultLayout.setCenterControl(getPageComposite());
 	}
 

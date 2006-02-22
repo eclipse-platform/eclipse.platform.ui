@@ -374,6 +374,7 @@ public final class WorkbenchWindowConfigurer implements
      */
     public void setShowFastViewBars(boolean show) {
         showFastViewBars = show;
+        window.setFastViewBarVisible(show);
         // @issue need to be able to reconfigure after window's controls created
     }
 
