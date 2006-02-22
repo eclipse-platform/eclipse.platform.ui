@@ -20,10 +20,10 @@
                 allowsPlatformContributions="true"
                 id="org.eclipse.ui.navigator.resourceContent#PopupMenu">  
              <insertionPoint name="group.new"/>
-             <insertionPoint
-                   name="group.open"
-                   separator="true"/>
-             <insertionPoint name="group.openWith"/>             
+             <insertionPoint name="group.open" />
+             <insertionPoint name="group.openWith"/>   
+             <insertionPoint name="group.edit"
+                   separator="true"/>          
              <insertionPoint
                    name="group.port"
                    separator="true"/> 
@@ -33,6 +33,7 @@
              <insertionPoint
                    name="group.properties"
                    separator="true"/>
+             
           </popupMenu>
        </viewer>
        <viewerContentBinding 
@@ -110,6 +111,9 @@
               </or>
            </possibleDropTargets>
         </commonDropAdapter>
+        <actionProvider
+              class="org.eclipse.ui.internal.navigator.resources.actions.RefactorActionProvider"
+              id="org.eclipse.ui.navigator.resources.actions.RefactorActions"/>
       </navigatorContent>
       
       <!-- Action Providers -->
@@ -125,24 +129,15 @@
 		<actionProvider 
         		id="org.eclipse.ui.navigator.resources.PortingActions"
 				class="org.eclipse.ui.internal.navigator.resources.actions.PortingActionProvider">
-			<enablement>
-				<or> 	
-					<adapt type="org.eclipse.core.resources.IFolder" />
-         			<adapt type="org.eclipse.core.resources.IProject" /> 
-					<adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
-				</or>
+			<enablement> 
+					<adapt type="org.eclipse.core.resources.IResource" />	 
 			</enablement>
 		</actionProvider>
         <actionProvider
             	class="org.eclipse.ui.internal.navigator.resources.actions.NewActionProvider"
             	id="org.eclipse.ui.navigator.resources.NewActions"> 
-        	<enablement>
-				<or>
-					<adapt type="org.eclipse.core.resources.IFile" />	
-					<adapt type="org.eclipse.core.resources.IFolder" />
-         			<adapt type="org.eclipse.core.resources.IProject" /> 
-               		<adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
-				</or>
+        	<enablement> 
+					<adapt type="org.eclipse.core.resources.IResource" />	 
 	         </enablement>
 		</actionProvider>
       
