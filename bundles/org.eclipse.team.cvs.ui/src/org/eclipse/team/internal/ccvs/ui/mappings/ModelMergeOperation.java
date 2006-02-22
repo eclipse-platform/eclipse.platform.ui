@@ -16,6 +16,7 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ModelMergeOperation extends AbstractModelMergeOperation {
@@ -51,6 +52,21 @@ public class ModelMergeOperation extends AbstractModelMergeOperation {
 	 */
 	protected String getJobName() {
 		return CVSUIMessages.MergeUpdateAction_jobName;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.mappings.AbstractModelMergeOperation#createParticipant()
+	 */
+	protected ModelSynchronizeParticipant createParticipant() {
+		return new ModelMergeParticipant((MergeSubscriberContext)createMergeContext());
+	}
+	
+	protected boolean isPreviewInDialog() {
+		return false;
+	}
+	
+	public boolean isPreviewRequested() {
+		return true;
 	}
 
 }

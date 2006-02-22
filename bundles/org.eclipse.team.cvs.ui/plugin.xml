@@ -73,6 +73,12 @@
             id="org.eclipse.team.cvs.ui.modelCompareParticipant"
             name="%CVSCompareParticipant"
             persistent="false"/>
+      <participant
+            class="org.eclipse.team.internal.ccvs.ui.mappings.ModelMergeParticipant"
+            icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
+            id="org.eclipse.team.cvs.ui.modelMergeParticipant"
+            name="%CVSMergeParticipant"
+            persistent="true"/>
    </extension>
    
    <extension
@@ -112,6 +118,36 @@
              <insertionPoint
                    name="properties"
                    separator="true"/>
+          </popupMenu>
+       </viewer>
+       <viewer viewerId="org.eclipse.team.cvs.ui.mergeSynchronization">
+          <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.team.cvs.ui.mergeSynchronizationMenu">
+             <insertionPoint name="file"/>  
+             <insertionPoint name="edit" separator="true"/>          
+             <insertionPoint name="synchronize"/>
+             <insertionPoint
+                   name="navigate"
+                   separator="true"/>
+             <insertionPoint
+                   name="merge"
+                   separator="true"/>
+             <insertionPoint
+                   name="other"
+                   separator="true"/>
+             <insertionPoint
+                   name="otherActions1"
+                   separator="true"/>
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="properties"
+                   separator="true"/>   
           </popupMenu>
        </viewer>
    </extension>

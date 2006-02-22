@@ -29,6 +29,8 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 		mergeContext.initialize();
 		return mergeContext;
 	}
+
+	private boolean cancel = true;
 	
 	public MergeSubscriberContext(Subscriber subscriber, ISynchronizationScopeManager manager) {
 		super(subscriber, manager);
@@ -59,8 +61,13 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 	}
 	
 	public void dispose() {
-		((CVSMergeSubscriber)getSubscriber()).cancel();
+		if (cancel)
+			((CVSMergeSubscriber)getSubscriber()).cancel();
 		super.dispose();
+	}
+
+	public void setCancelSubscriber(boolean b) {
+		cancel  = b;
 	}
 
 }
