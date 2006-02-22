@@ -1401,6 +1401,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
+			} catch (Error e) {
+				//support to track down Bug 95089
+				Policy.log(e);
+				throw e;
+			} catch (RuntimeException e) {
+				//support to track down Bug 95089
+				Policy.log(e);
+				throw e;
 			} finally {
 				workspace.endOperation(rule, build, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
