@@ -123,7 +123,7 @@ public class BuilderUtils {
 	 * Returns an <code>ICommand</code> from the given launch configuration.
 	 * 
 	 * @param project the project the ICommand is relevant to
-	 * @param config, the launch configuration to create the command from
+	 * @param config the launch configuration to create the command from
 	 * @return the new command. <code>null</code> can be returned if problems occur during
 	 * the translation.
 	 */

@@ -133,7 +133,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * Creates the controls needed to edit the location
 	 * attribute of an external tool
 	 * 
-	 * @param group the composite to create the controls in
+	 * @param parent the composite to create the controls in
 	 */
 	protected void createLocationComponent(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
