@@ -63,15 +63,33 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 		}
 		
 		private static int getCompareKind(IDiff node) {
+			int kind = 0;
 			switch (node.getKind()) {
 			case IDiff.CHANGE:
-				return Differencer.CHANGE;
+				kind = Differencer.CHANGE;
+				break;
 			case IDiff.ADD:
-				return Differencer.ADDITION;
+				kind = Differencer.ADDITION;
+				break;
 			case IDiff.REMOVE:
-				return Differencer.DELETION;
+				kind = Differencer.DELETION;
+				break;
 			}
-			return 0;
+			if (node instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) node;
+				switch (twd.getDirection()) {
+				case IThreeWayDiff.INCOMING:
+					kind |= Differencer.RIGHT;
+					break;
+				case IThreeWayDiff.OUTGOING:
+					kind |= Differencer.LEFT;
+					break;
+				case IThreeWayDiff.CONFLICTING:
+					kind |= Differencer.CONFLICTING;
+					break;
+				}
+			}
+			return kind;
 		}
 		
 		private static ITypedElement getRightContributor(IDiff node) {
