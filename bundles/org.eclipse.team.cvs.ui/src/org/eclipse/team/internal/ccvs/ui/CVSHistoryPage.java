@@ -72,7 +72,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	protected CVSHistoryTableProvider historyTableProvider;
 
-	/* private */TableViewer tableViewer;
+	/* private */TreeViewer treeViewer;
 	protected TextViewer textViewer;
 	protected TableViewer tagViewer;
 
@@ -84,6 +84,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
 	private IAction toggleCompareAction;
+	private IAction toggleGroupingAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
@@ -127,6 +128,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static int REMOTE_MODE = 1;
 	public final static int LOCAL_MODE = 2;
 	
+	//grouping on
+	private boolean groupingOn = false; 
+	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
 	}
@@ -137,7 +141,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		tableViewer = createTable(sashForm);
+		treeViewer = createTree(sashForm);
 		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
 		tagViewer = createTagTable(innerSashForm);
 		textViewer = createText(innerSashForm);
@@ -149,8 +153,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		setViewerVisibility();
 		
 		IHistoryPageSite parentSite = getHistoryPageSite();
-		if (parentSite != null && parentSite instanceof DialogHistoryPageSite && tableViewer != null)
-			parentSite.setSelectionProvider(tableViewer);
+		if (parentSite != null && parentSite instanceof DialogHistoryPageSite && treeViewer != null)
+			parentSite.setSelectionProvider(treeViewer);
 		
 		resourceListener = new HistoryResourceListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
@@ -276,25 +280,25 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		// Click Compare action
 		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction);
-		tableViewer.getTable().addSelectionListener(new SelectionAdapter(){
+		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
-				compareAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
+				compareAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 			}
 		});
 		compareAction.setPage(this);
 		
 		openAction = new OpenRevisionAction(CVSUIMessages.CVSHistoryPage_OpenAction);
-		tableViewer.getTable().addSelectionListener(new SelectionAdapter(){
+		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
-				openAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
+				openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 			}
 		});
 		openAction.setPage(this);
 		
-		OpenStrategy handler = new OpenStrategy(tableViewer.getTable());
+		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
 		handler.addOpenListener(new IOpenEventListener() {
 		public void handleOpen(SelectionEvent e) {
-				Object tableSelection = ((StructuredSelection) tableViewer.getSelection()).getFirstElement();
+				Object tableSelection = ((StructuredSelection) treeViewer.getSelection()).getFirstElement();
 				if (compareMode){
 					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableSelection});
 					compareAction.selectionChanged(sel);
@@ -409,7 +413,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		};
 		tagWithExistingAction = getContextMenuAction(CVSUIMessages.HistoryView_tagWithExistingAction, false /* no progress */, new IWorkspaceRunnable() { 
 			public void run(IProgressMonitor monitor) throws CoreException {
-				tagActionDelegate.selectionChanged(tagWithExistingAction, tableViewer.getSelection());
+				tagActionDelegate.selectionChanged(tagWithExistingAction, treeViewer.getSelection());
 				tagActionDelegate.run(tagWithExistingAction);
 			}
 		});
@@ -453,24 +457,33 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		toggleCompareAction.setChecked(false);
+	
+		toggleGroupingAction = new Action(CVSUIMessages.CVSHistoryPage_GroupByDate){
+			public void run() {
+				groupingOn = !groupingOn;
+				toggleCompareAction.setChecked(groupingOn);
+				refresh();
+			}
+		};
+		toggleGroupingAction.setChecked(false);
 		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
-		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
+		Menu menu = menuMgr.createContextMenu(treeViewer.getTree());
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuMgr) {
 				fillTableMenu(menuMgr);
 			}
 		});
 		menuMgr.setRemoveAllWhenShown(true);
-		tableViewer.getTable().setMenu(menu);
+		treeViewer.getTree().setMenu(menu);
 		//Don't add the object contribution menu items if this page is hosted in a dialog
 		IHistoryPageSite parentSite = getHistoryPageSite();
 		if (!parentSite.isModal()) {
 			IWorkbenchPart part = parentSite.getPart();
 			if (part != null) {
 				IWorkbenchPartSite workbenchPartSite = part.getSite();
-				workbenchPartSite.registerContextMenu(menuMgr, tableViewer);
+				workbenchPartSite.registerContextMenu(menuMgr, treeViewer);
 			}
 			IPageSite pageSite = parentSite.getWorkbenchPageSite();
 			if (pageSite != null) {
@@ -478,6 +491,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				// Contribute toggle text visible to the toolbar drop-down
 				IMenuManager actionBarsMenu = actionBars.getMenuManager();
 				if (actionBarsMenu != null){
+					actionBarsMenu.add(toggleGroupingAction);
+					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleCompareAction);
 					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleTextWrapAction);
@@ -500,7 +515,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		cvsHistoryFilter = new CVSHistoryFilterAction(this);
 		cvsHistoryFilter.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
-		cvsHistoryFilter.init(tableViewer);
+		cvsHistoryFilter.init(treeViewer);
 		cvsHistoryFilter.setToolTipText(CVSUIMessages.CVSHistoryPage_FilterHistoryTooltip);
 		
 		//Create the local tool bar
@@ -549,7 +564,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (file != null &&
 		  !(file instanceof RemoteFile)) {
 			// Add the "Add to Workspace" action if 1 revision is selected.
-			ISelection sel = tableViewer.getSelection();
+			ISelection sel = treeViewer.getSelection();
 			if (!sel.isEmpty()) {
 				if (sel instanceof IStructuredSelection) {
 					IStructuredSelection tempSelection = (IStructuredSelection) sel;
@@ -586,21 +601,26 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 *            parent composite to contain the group
 	 * @return the group control
 	 */
-	protected TableViewer createTable(Composite parent) {
+	protected TreeViewer createTree(Composite parent) {
 
 		historyTableProvider = new CVSHistoryTableProvider();
-		TableViewer viewer = historyTableProvider.createTable(parent);
+		TreeViewer viewer = historyTableProvider.createTree(parent);
 
-		viewer.setContentProvider(new IStructuredContentProvider() {
+		viewer.setContentProvider(new ITreeContentProvider() {
 			public Object[] getElements(Object inputElement) {
 
 				// The entries of already been fetch so return them
 				if (entries != null)
 					return entries;
 				
-				if (!(inputElement instanceof IFileHistory))
+				if (!(inputElement instanceof IFileHistory) &&
+					!(inputElement instanceof AbstractCVSHistoryCategory[]))
 					return new Object[0];
 
+				if (inputElement instanceof AbstractCVSHistoryCategory[]){
+					return (AbstractCVSHistoryCategory[]) inputElement;
+				}
+				
 				final IFileHistory fileHistory = (IFileHistory) inputElement;
 				entries = fileHistory.getFileRevisions();
 				
@@ -612,6 +632,27 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				entries = null;
+			}
+
+			public Object[] getChildren(Object parentElement) {
+				if (parentElement instanceof AbstractCVSHistoryCategory){
+					return ((AbstractCVSHistoryCategory) parentElement).getRevisions();
+				}
+				
+				return null;
+			}
+
+			public Object getParent(Object element) {
+				return null;
+			}
+
+			public boolean hasChildren(Object element) {
+				if (element instanceof AbstractCVSHistoryCategory){
+					IFileRevision[] revs = ((AbstractCVSHistoryCategory) element).getRevisions();
+					if (revs != null)
+						return revs.length > 0;
+				}
+				return false;
 			}
 		});
 
@@ -643,7 +684,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			public void run() {
 				try {
 					if (file == null) return;
-					ISelection selection = tableViewer.getSelection();
+					ISelection selection = treeViewer.getSelection();
 					if (!(selection instanceof IStructuredSelection)) return;
 					IStructuredSelection ss = (IStructuredSelection)selection;
 					Object o = ss.getFirstElement();
@@ -674,7 +715,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 			
 			public boolean isEnabled() {
-				ISelection selection = tableViewer.getSelection();
+				ISelection selection = treeViewer.getSelection();
 				if (!(selection instanceof IStructuredSelection)) return false;
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				if(ss.size() != 1) return false;
@@ -723,7 +764,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
 		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
-		
+		refreshCVSFileHistoryJob.setGrouping(groupingOn);
 		IHistoryPageSite parentSite = getHistoryPageSite();
 		Utils.schedule(refreshCVSFileHistoryJob, getWorkbenchSite(parentSite));
 	}
@@ -753,7 +794,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 		if (entry != null) {
 			IStructuredSelection selection = new StructuredSelection(entry);
-			tableViewer.setSelection(selection, true);
+			treeViewer.setSelection(selection, true);
 		}
 	}
 	
@@ -791,7 +832,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(tagViewer.getTable());
 		} else {
-			sashForm.setMaximizedControl(tableViewer.getControl());
+			sashForm.setMaximizedControl(treeViewer.getControl());
 		}
 
 		boolean wrapText = toggleTextWrapAction.isChecked();
@@ -866,7 +907,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private class RefreshCVSFileHistory extends Job {
 		private CVSFileHistory fileHistory;
-	
+		private DateCVSHistoryCategory[] categories;
+		private boolean grouping;
+		
 		public RefreshCVSFileHistory() {
 			super(CVSUIMessages.HistoryView_fetchHistoryJob);
 		}
@@ -891,23 +934,58 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			this.fileHistory = fileHistory;
 		}
 	
+		public void setGrouping (boolean value){
+			this.grouping = value;
+		}
 
 		public IStatus run(IProgressMonitor monitor)  {
 			try {
 				if (fileHistory != null && !shutdown) {
 					fileHistory.refresh(monitor);
+					if (grouping)
+						sortRevisions();
+					
 					Utils.asyncExec(new Runnable() {
 							public void run() {
 								historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
 								historyTableProvider.setFile(fileHistory, file);
-								tableViewer.setInput(fileHistory);
+								if (grouping)
+									treeViewer.setInput(categories);
+								else
+									treeViewer.setInput(fileHistory);
 							}
-						}, tableViewer);
+						}, treeViewer);
 				}
 				return Status.OK_STATUS;
 			} catch (TeamException e) {
 				return e.getStatus();
 			} 
+		}
+
+		private void sortRevisions() {
+			IFileRevision[] fileRevision = fileHistory.getFileRevisions();
+			
+			//Create the 4 categories
+			categories = new DateCVSHistoryCategory[4];
+			//Get a calendar instance initialized to the current time
+			Calendar currentCal = Calendar.getInstance();
+			categories[0] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
+			//Get yesterday 
+			Calendar yesterdayCal = Calendar.getInstance();
+			yesterdayCal.roll(Calendar.DATE, -1);
+			categories[1] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
+			//Get last week
+			Calendar lastWeekCal = Calendar.getInstance();
+			lastWeekCal.roll(Calendar.DAY_OF_YEAR, -7);
+			categories[2] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_LastWeek, lastWeekCal, yesterdayCal);
+			//Everything before after week is previous
+			categories[3] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, lastWeekCal);
+			
+			for (int i = 0; i<4; i++){
+				categories[i].collectFileRevisions(fileRevision, false);
+			}
+
+			
 		}
 	}
 	
@@ -965,6 +1043,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		}
 	}
+		
 	public Control getControl() {
 		return sashForm;
 	}
@@ -1137,7 +1216,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			refreshHistory(false);
 	}
 
-	public TableViewer getTableViewer() {
-		return tableViewer;
+	public TreeViewer getTreeViewer() {
+		return treeViewer;
 	}
 }

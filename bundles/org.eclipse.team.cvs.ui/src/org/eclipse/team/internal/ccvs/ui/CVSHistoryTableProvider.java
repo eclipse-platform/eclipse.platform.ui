@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
@@ -34,7 +35,7 @@ public class CVSHistoryTableProvider {
 	private IFileHistory currentFileHistory;
 	private ICVSFile cvsFile;
 
-	/* private */TableViewer viewer;
+	/* private */TreeViewer viewer;
 	/* private */Font currentRevisionFont;
 	private boolean baseModified;
 
@@ -49,11 +50,35 @@ public class CVSHistoryTableProvider {
 	 * The history label provider.
 	 */
 	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider, IFontProvider {
+		
+		Image dateImage = null;
+		ImageDescriptor desc = null;
+	
+		public void dispose() {
+			if (dateImage != null){
+				JFaceResources.getResources().destroyImage(desc);
+				dateImage = null;
+			}
+		}
+		
 		public Image getColumnImage(Object element, int columnIndex) {
+			if (element instanceof AbstractCVSHistoryCategory &&
+				columnIndex == COL_REVISIONID){
+				desc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
+				return desc.createImage();
+			}
+			
 			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof AbstractCVSHistoryCategory){
+				if (columnIndex != COL_REVISIONID)
+					return ""; //$NON-NLS-1$
+				
+				return ((AbstractCVSHistoryCategory) element).getName();
+			}
+			
 			IFileRevision entry = adaptToFileRevision(element);
 			if (entry == null)
 				return ""; //$NON-NLS-1$
@@ -103,6 +128,9 @@ public class CVSHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
 		public Color getForeground(Object element) {
+			if (element instanceof AbstractCVSHistoryCategory)
+				return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE);
+			
 			IFileRevision entry = adaptToFileRevision(element);
 			if (!entry.exists()) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
@@ -123,6 +151,9 @@ public class CVSHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
 		public Font getFont(Object element) {
+			if (element instanceof AbstractCVSHistoryCategory)
+				return getCurrentRevisionFont();
+			
 			IFileRevision entry = adaptToFileRevision(element);
 			if (entry == null)
 				return null;
@@ -131,17 +162,21 @@ public class CVSHistoryTableProvider {
 			String tempCurrentRevision = getCurrentRevision();
 			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision) ||
 				comment.equals(CVSUIMessages.CVSHistoryTableProvider_currentVersion)) {
-				if (currentRevisionFont == null) {
-					Font defaultFont = JFaceResources.getDefaultFont();
-					FontData[] data = defaultFont.getFontData();
-					for (int i = 0; i < data.length; i++) {
-						data[i].setStyle(SWT.BOLD);
-					}
-					currentRevisionFont = new Font(viewer.getTable().getDisplay(), data);
-				}
-				return currentRevisionFont;
+				return getCurrentRevisionFont();
 			}
 			return null;
+		}
+
+		private Font getCurrentRevisionFont() {
+			if (currentRevisionFont == null) {
+				Font defaultFont = JFaceResources.getDefaultFont();
+				FontData[] data = defaultFont.getFontData();
+				for (int i = 0; i < data.length; i++) {
+					data[i].setStyle(SWT.BOLD);
+				}
+				currentRevisionFont = new Font(viewer.getTree().getDisplay(), data);
+			}
+			return currentRevisionFont;
 		}
 	}
 
@@ -174,6 +209,9 @@ public class CVSHistoryTableProvider {
 		 * then by subsequent columns, depending on the column sort order.
 		 */
 		public int compare(Viewer compareViewer, Object o1, Object o2) {
+			if (o1 instanceof AbstractCVSHistoryCategory || o2 instanceof AbstractCVSHistoryCategory)
+				return 0;
+			
 			IFileRevision e1 = adaptToFileRevision(o1);
 			IFileRevision e2 = adaptToFileRevision(o2);
 			int result = 0;
@@ -266,6 +304,8 @@ public class CVSHistoryTableProvider {
 			entry = (IFileRevision) element;
 		} else if (element instanceof IAdaptable) {
 			entry = (IFileRevision) ((IAdaptable) element).getAdapter(IFileRevision.class);
+		} else if (element instanceof AbstractCVSHistoryCategory){
+			entry = ((AbstractCVSHistoryCategory) element).getRevisions()[0];
 		}
 		return entry;
 	}
@@ -277,19 +317,20 @@ public class CVSHistoryTableProvider {
 	 * @param parent
 	 * @return TableViewer
 	 */
-	public TableViewer createTable(Composite parent) {
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+	public TreeViewer createTree(Composite parent) {
+		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
+		tree.setHeaderVisible(true);
+		tree.setLinesVisible(true);
+		
 		GridData data = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(data);
+		tree.setLayoutData(data);
 
 		TableLayout layout = new TableLayout();
-		table.setLayout(layout);
+		tree.setLayout(layout);
 
-		TableViewer viewer = new TableViewer(table);
+		TreeViewer viewer = new TreeViewer(tree);
 
-		createColumns(table, layout, viewer);
+		createColumns(tree, layout);
 
 		viewer.setLabelProvider(new HistoryLabelProvider());
 
@@ -300,7 +341,7 @@ public class CVSHistoryTableProvider {
 		sorter.setReversed(true);*/
 		viewer.setSorter(sorter);
 
-		table.addDisposeListener(new DisposeListener() {
+		tree.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				if (currentRevisionFont != null) {
 					currentRevisionFont.dispose();
@@ -315,37 +356,37 @@ public class CVSHistoryTableProvider {
 	/**
 	 * Creates the columns for the history table.
 	 */
-	private void createColumns(Table table, TableLayout layout, TableViewer viewer) {
+	private void createColumns(Tree tree, TableLayout layout) {
 		SelectionListener headerListener = getColumnListener(viewer);
 		// revision
-		TableColumn col = new TableColumn(table, SWT.NONE);
+		TreeColumn col = new TreeColumn(tree, SWT.NONE);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Revision);
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 		// tags
-		col = new TableColumn(table, SWT.NONE);
+		col = new TreeColumn(tree, SWT.NONE);
 		col.setResizable(true);
 		col.setText(CVSUIMessages.HistoryView_tags); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 		// creation date
-		col = new TableColumn(table, SWT.NONE);
+		col = new TreeColumn(tree, SWT.NONE);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_RevisionTime);
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 		// author
-		col = new TableColumn(table, SWT.NONE);
+		col = new TreeColumn(tree, SWT.NONE);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Author);
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 		//comment
-		col = new TableColumn(table, SWT.NONE);
+		col = new TreeColumn(tree, SWT.NONE);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Comment);
 		col.addSelectionListener(headerListener);
@@ -355,7 +396,7 @@ public class CVSHistoryTableProvider {
 	/**
 	 * Adds the listener that sets the sorter.
 	 */
-	private SelectionListener getColumnListener(final TableViewer tableViewer) {
+	private SelectionListener getColumnListener(final TreeViewer treeViewer) {
 		/**
 		 * This class handles selections of the column headers.
 		 * Selection of the column header will cause resorting
@@ -375,13 +416,13 @@ public class CVSHistoryTableProvider {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				// column selected - need to sort
-				int column = tableViewer.getTable().indexOf((TableColumn) e.widget);
-				HistorySorter oldSorter = (HistorySorter) tableViewer.getSorter();
+				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
+				HistorySorter oldSorter = (HistorySorter) treeViewer.getSorter();
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
-					tableViewer.refresh();
+					treeViewer.refresh();
 				} else {
-					tableViewer.setSorter(new HistorySorter(column));
+					treeViewer.setSorter(new HistorySorter(column));
 				}
 			}
 		};

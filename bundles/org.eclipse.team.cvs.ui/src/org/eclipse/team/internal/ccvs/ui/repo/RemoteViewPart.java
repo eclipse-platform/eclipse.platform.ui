@@ -275,11 +275,11 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		tbm.add(collapseAllAction);
 		tbm.update(false);
 
-		// Create the open action for double clicks
+		// Register the open handler
 		openAction = new OpenRemoteFileAction();
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent e) {
-				handleDoubleClick(e);
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(OpenEvent event) {
+				handleOpen(event);
 			}
 		});
 
@@ -361,10 +361,9 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		viewer.getControl().setRedraw(true);
 	}
 	/**
-	 * The mouse has been double-clicked in the tree, perform appropriate
-	 * behaviour.
+	 * Handle open request.
 	 */
-	private void handleDoubleClick(DoubleClickEvent e) {
+	private void handleOpen(OpenEvent e) {
 		// Only act on single selection
 		ISelection selection = e.getSelection();
 		if (selection instanceof IStructuredSelection) {

@@ -13,12 +13,12 @@ package org.eclipse.team.internal.ccvs.ui;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.*;
 
 public class CVSHistoryFilterAction extends Action {
-	private TableViewer viewer;
+	private TreeViewer viewer;
 	private CVSHistoryFilter filter;
 	private CVSHistoryPage page;
 
@@ -29,7 +29,7 @@ public class CVSHistoryFilterAction extends Action {
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
-	public void init(TableViewer viewer) {
+	public void init(TreeViewer viewer) {
 		this.viewer = viewer;
 	}
 
