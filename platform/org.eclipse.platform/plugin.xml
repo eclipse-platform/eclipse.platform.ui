@@ -115,12 +115,12 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.intro.config.ExtensionFactory:welcomeCustomization"
+            class="org.eclipse.ui.intro.universal.ExtensionFactory:welcomeCustomization"
             id="org.eclipse.platform.introCustomization"
             name="%introCustomizationPreference.name">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
    </extension>
--->
+ -->
 
 </plugin>
