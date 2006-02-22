@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+    
+<!-- ========== Extension Points ================= -->
+<!-- =============================================================================== -->
+<!-- Extension point: org.eclipse.ui.intro.config                                    -->
+<!-- Extension-point for contributing a configuration to a Customizable Intro Part.  -->
+<!--                                                                                 -->
+<!-- =============================================================================== -->
+<!-- ================================================================================= -->
+<!-- Extension point: org.eclipse.ui.intro.configExtension                             -->
+<!-- Extension-point for contributing an extension to an existing intro configuration  -->
+<!--                                                                                   -->
+<!-- ================================================================================= -->
+   
+   <extension
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            icon="$nl$/icons/welcome_item.gif"
+            id="org.eclipse.ui.intro.universal"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            configurer="org.eclipse.ui.internal.intro.universal.UniversalIntroConfigurer"
+            content="$nl$/introContent.xml"
+            id="org.eclipse.ui.intro.universalConfig"
+            introId="org.eclipse.ui.intro.universal">
+         <presentation
+               home-page-id="root" standby-page-id="standby">
+               <!-- -->
+              <implementation
+                  style="$theme$/html/shared.css"
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+            <!-- -->
+            <implementation
+                  kind="swt">
+            </implementation>
+            <launchBar
+               	location="fastview" 
+            	bg="#c6c3e8"
+            	computed="true">
+            </launchBar>
+         </presentation>
+      </config>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <theme
+            default="true"
+            id="org.eclipse.ui.intro.universal.circles"
+            name="%theme.name.circles"
+            path="$nl$/themes/circles"/>
+      <theme
+            id="org.eclipse.ui.intro.universal.purpleMesh"
+            name="%theme.name.purpleMesh"
+            path="$nl$/themes/purpleMesh"
+            previewImage="themes/purpleMesh/preview.png"/>
+   </extension>
+</plugin>
