@@ -193,7 +193,7 @@ public class EncodingActionGroup extends ActionGroup {
 
 		IFile file= ((IFileEditorInput)input).getFile();
 
-		String format= format= FILE_CONTENT_ENCODING_FORMAT;
+		String format= FILE_CONTENT_ENCODING_FORMAT;
 		String encoding;
 		try {
 			encoding= getEncodingFromContent(file);
