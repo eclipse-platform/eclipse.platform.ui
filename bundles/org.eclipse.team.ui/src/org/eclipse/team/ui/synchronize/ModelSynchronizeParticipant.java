@@ -213,7 +213,7 @@ public class ModelSynchronizeParticipant extends
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#run(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void run(IWorkbenchPart part) {
-		refresh(part != null ? part.getSite() : null, new ResourceMapping[0]);
+		refresh(part != null ? part.getSite() : null, context.getScope().getMappings());
 	}
 
 	/**
@@ -364,7 +364,7 @@ public class ModelSynchronizeParticipant extends
 				return new RefreshModelParticipantJob(ModelSynchronizeParticipant.this, 
 						TeamUIMessages.RefreshSchedule_14, 
 						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ModelSynchronizeParticipant.this.getName(), interval }),
-						new ResourceMapping[0],
+						context.getScope().getMappings(),
 						new RefreshUserNotificationPolicy(ModelSynchronizeParticipant.this));
 			}
 			public ISynchronizeParticipant getParticipant() {

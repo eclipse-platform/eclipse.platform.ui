@@ -51,11 +51,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 	
 	public RefreshModelParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, ResourceMapping[] mappings, IRefreshSubscriberListener listener) {
 		super(participant, jobName, taskName, listener);
-		ISynchronizationContext context = ((ModelSynchronizeParticipant)getParticipant()).getContext();
-		if (mappings.length == 0)
-			this.mappings = context.getScope().getMappings();
-		else 
-			this.mappings = mappings;
+		this.mappings = mappings;
 	}
 
 	protected void doRefresh(IChangeDescription changeListener,
