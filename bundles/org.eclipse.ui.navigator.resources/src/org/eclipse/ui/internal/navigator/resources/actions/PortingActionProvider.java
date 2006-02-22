@@ -159,7 +159,7 @@ public class PortingActionProvider extends CommonActionProvider {
 		}
 
 		IMenuManager submenu = new MenuManager(
-				WorkbenchNavigatorMessages.ImportResourcesMenu_text,
+				WorkbenchNavigatorMessages.PortingActionProvider_ImportResourcesMenu_label,
 				COMMON_NAVIGATOR_IMPORT_MENU);
 		importWizardActionGroup.fillContextMenu(submenu);
 
@@ -177,7 +177,7 @@ public class PortingActionProvider extends CommonActionProvider {
 			return;
 		}
 		IMenuManager submenu = new MenuManager(
-				WorkbenchNavigatorMessages.ExportResourcesMenu_text,
+				WorkbenchNavigatorMessages.PortingActionProvider_ExportResourcesMenu_label,
 				COMMON_NAVIGATOR_EXPORT_MENU);
 		exportWizardActionGroup.fillContextMenu(submenu);
 

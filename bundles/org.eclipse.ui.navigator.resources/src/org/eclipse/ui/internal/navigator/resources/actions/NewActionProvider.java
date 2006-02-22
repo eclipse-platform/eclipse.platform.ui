@@ -87,7 +87,7 @@ public class NewActionProvider extends CommonActionProvider {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		IMenuManager submenu = new MenuManager(
-				WorkbenchNavigatorMessages.Workbench_new,
+				WorkbenchNavigatorMessages.NewActionProvider_NewMenu_label,
 				ICommonMenuConstants.GROUP_NEW);
 		if(!contribute)
 			return;

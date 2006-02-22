@@ -91,7 +91,7 @@ public class OpenActionProvider extends CommonActionProvider {
 		if (openable != null) {
 			// Create a menu flyout.
 			IMenuManager submenu = new MenuManager(
-					WorkbenchNavigatorMessages.OpenWithMenu_label,
+					WorkbenchNavigatorMessages.OpenActionProvider_OpenWithMenu_label,
 					ICommonMenuConstants.GROUP_OPEN_WITH);
 			submenu.add(new GroupMarker(ICommonMenuConstants.GROUP_TOP));
 			submenu.add(new OpenWithMenu(viewSite.getPage(), openable)); 

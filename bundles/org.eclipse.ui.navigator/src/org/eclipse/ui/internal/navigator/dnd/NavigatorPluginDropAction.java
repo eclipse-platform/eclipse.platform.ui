@@ -10,28 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.dnd;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.part.IDropActionDelegate;
 import org.eclipse.ui.part.PluginTransferData;
 
 /**
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  * 
  */
 public class NavigatorPluginDropAction implements IDropActionDelegate {
 
+	private static final boolean DEBUG = false;
+
 	private static final String CN_PLUGIN_ACTION_ID = "org.eclipse.ui.navigator.PluginDropAction"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 * A default no-args constructor is required by the
+	 * <b>org.eclipse.ui.dropAdapters</b> extension point
 	 */
 	public NavigatorPluginDropAction() {
 		super();
@@ -45,7 +46,39 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 	 */
 	public boolean run(Object sourceData, Object target) {
 
-		// TODO Handle the callback for drop targets that cannot handle the drop
+		if (DEBUG)
+			System.out.println("NavigatorPluginDropAction.run (begin)"); //$NON-NLS-1$
+
+		String sourceViewerId = new String((byte[]) sourceData);
+
+		IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer
+				.getTransfer().getSelection();
+
+		INavigatorContentService contentService = NavigatorContentServiceTransfer
+				.getInstance().findService(sourceViewerId);
+
+		if (contentService == null)
+			return false;
+		try {
+			CommonDropAdapterAssistant[] assistants = contentService
+					.getDnDService().findCommonDropAdapterAssistants(target,
+							selection); 
+
+			IStatus valid = null;
+			for (int i = 0; i < assistants.length; i++) {
+				valid = assistants[i].validatePluginTransferDrop(selection, target);
+				if (valid != null && valid.isOK()) {
+					valid = assistants[i].handlePluginTransferDrop(selection, target);
+					return valid != null && valid.isOK();
+				}
+			}
+		} finally {
+			NavigatorContentServiceTransfer.getInstance()
+					.unregisterContentService(contentService);
+		}
+
+		if (DEBUG)
+			System.out.println("NavigatorPluginDropAction.run (exit)"); //$NON-NLS-1$
 
 		return false;
 	}
@@ -59,6 +92,8 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 	 */
 	public static PluginTransferData createTransferData(
 			INavigatorContentService aContentService) {
+		NavigatorContentServiceTransfer.getInstance().registerContentService(
+				aContentService);
 		return new PluginTransferData(CN_PLUGIN_ACTION_ID, aContentService
 				.getViewerId().getBytes());
 	}

@@ -11,9 +11,15 @@
 
 package org.eclipse.ui.internal.navigator.dnd;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.extensions.CommonDragAssistantDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
@@ -28,18 +34,27 @@ import org.eclipse.ui.navigator.INavigatorDnDService;
  * {@link CommonDropAdapterAssistant} for the associated
  * {@link INavigatorContentService}.
  * 
+ * <p>
+ * Clients may not extend, instantiate or directly reference this class.
+ * </p>
+ * 
  * @since 3.2
  * 
  */
 public class NavigatorDnDService implements INavigatorDnDService {
 
+	private static final CommonDropAdapterAssistant[] NO_ASSISTANTS = new CommonDropAdapterAssistant[0];
+
 	private NavigatorContentService contentService;
 
 	private CommonDragAdapterAssistant[] dragAssistants;
 
+	private final Map dropAssistants = new HashMap();
+
 	/**
 	 * 
-	 * @param aContentService The associated content service
+	 * @param aContentService
+	 *            The associated content service
 	 */
 	public NavigatorDnDService(NavigatorContentService aContentService) {
 		contentService = aContentService;
@@ -62,12 +77,81 @@ public class NavigatorDnDService implements INavigatorDnDService {
 		return dragAssistants;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.INavigatorDnDService#findCommonDropAdapterAssistants(java.lang.Object)
-	 */
-	public CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(Object aDropTarget) {
-		// TODO Implement the search routine
-		return null;
+	public CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
+			Object aDropTarget, TransferData aTransferType) {
+ 
+		// TODO Make sure descriptors are sorted by priority 
+		CommonDropAdapterDescriptor[] descriptors = CommonDropDescriptorManager
+				.getInstance().findCommonDropAdapterAssistants(aDropTarget,
+						contentService);
+
+		if (descriptors.length == 0)
+			return NO_ASSISTANTS;
+
+		if (LocalSelectionTransfer.getTransfer().isSupportedType(aTransferType)  
+						&& LocalSelectionTransfer.getTransfer().getSelection() instanceof IStructuredSelection) 
+			return getAssistantsBySelection(descriptors, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()); 
+		return getAssistantsByTransferData(descriptors, aTransferType);
+	}
+	
+
+	public CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
+			Object aDropTarget, IStructuredSelection theDragSelection) {
+ 
+		// TODO Make sure descriptors are sorted by priority 
+		CommonDropAdapterDescriptor[] descriptors = CommonDropDescriptorManager
+				.getInstance().findCommonDropAdapterAssistants(aDropTarget,
+						contentService);
+
+		if (descriptors.length == 0)
+			return NO_ASSISTANTS;
+
+		return getAssistantsBySelection(descriptors, theDragSelection);  
+	}
+
+	private CommonDropAdapterAssistant[] getAssistantsByTransferData(
+			CommonDropAdapterDescriptor[] descriptors,
+			TransferData aTransferType) {
+
+		Set assistants = new LinkedHashSet();
+		for (int i = 0; i < descriptors.length; i++) {
+			CommonDropAdapterAssistant asst = getAssistant(descriptors[i]);
+			if (asst.isSupportedType(aTransferType))
+				assistants.add(asst);
+		}
+		return (CommonDropAdapterAssistant[]) assistants
+				.toArray(new CommonDropAdapterAssistant[assistants.size()]);
+
+	}
+
+	private CommonDropAdapterAssistant[] getAssistantsBySelection(
+			CommonDropAdapterDescriptor[] descriptors, IStructuredSelection aSelection) {
+
+		Set assistants = new LinkedHashSet(); 
+			
+		for (int i = 0; i < descriptors.length; i++) 
+			if(descriptors[i].areDragElementsSupported(aSelection))
+				assistants.add(getAssistant(descriptors[i]));  
+
+		return (CommonDropAdapterAssistant[]) assistants
+				.toArray(new CommonDropAdapterAssistant[assistants.size()]);
+	}
+
+	private CommonDropAdapterAssistant getAssistant(
+			CommonDropAdapterDescriptor descriptor) {
+		CommonDropAdapterAssistant asst = (CommonDropAdapterAssistant) dropAssistants
+				.get(descriptor);
+		if (asst != null)
+			return asst;
+		synchronized (dropAssistants) {
+			asst = (CommonDropAdapterAssistant) dropAssistants.get(descriptor);
+			if (asst == null) {
+				dropAssistants.put(descriptor, (asst = descriptor
+						.createDropAssistant()));
+				asst.init(contentService);
+			}
+		}
+		return asst;
 	}
 
 }

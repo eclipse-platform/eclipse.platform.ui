@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.navigator.extensions;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.expressions.ElementHandler;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPluginContribution;
@@ -347,6 +349,8 @@ public final class NavigatorContentDescriptor implements
 		if ((enablement == null && possibleChildren == null)
 				|| anElement == null)
 			return false;
+		else if(anElement instanceof IStructuredSelection)
+			return arePossibleChildren((IStructuredSelection) anElement);
 
 		try {
 			if (possibleChildren != null)
@@ -359,6 +363,23 @@ public final class NavigatorContentDescriptor implements
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
 		return false;
+	}
+	
+	/**
+	 * A convenience method to check all elements in a selection. 
+	 * 
+	 * @param aSelection A non-null selection
+	 * @return True if and only if every element in the selection is a possible child.
+	 */
+	public boolean arePossibleChildren(IStructuredSelection aSelection) {
+		if(aSelection.isEmpty())
+			return false;
+		for (Iterator iter = aSelection.iterator(); iter.hasNext();) {
+			Object element = iter.next();
+			if(!isPossibleChild(element))
+				return false;			
+		}
+		return true;
 	}
 
 	/**

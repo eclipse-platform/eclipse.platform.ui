@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorPluginDropAction;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
@@ -46,9 +52,15 @@ import org.eclipse.ui.part.PluginTransfer;
  */
 public final class CommonDropAdapter extends PluginDropAdapter {
 
-	// private final StructuredViewer viewer;
+	private static final Transfer[] SUPPORTED_DROP_TRANSFERS = new Transfer[] {
+			LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance(),
+			PluginTransfer.getInstance() };
+
+	private static final boolean DEBUG = false;
 
 	private final INavigatorContentService contentService;
+
+	private final NavigatorDnDService dndService;
 
 	/**
 	 * Create a DropAdapter that handles a drop based on the given content
@@ -62,8 +74,22 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public CommonDropAdapter(INavigatorContentService aContentService,
 			StructuredViewer aStructuredViewer) {
 		super(aStructuredViewer);
-		// viewer = aStructuredViewer;
 		contentService = aContentService;
+		dndService = (NavigatorDnDService) contentService.getDnDService();
+	}
+
+	/**
+	 * 
+	 * @return An array of Transfers allowed by the CommonDropAdapter. Includes
+	 *         {@link LocalSelectionTransfer#getTransfer()},
+	 *         {@link FileTransfer#getInstance()},
+	 *         {@link PluginTransfer#getInstance()}.
+	 * @see LocalSelectionTransfer
+	 * @see FileTransfer
+	 * @see PluginTransfer
+	 */
+	public Transfer[] getSupportedDropTransfers() {
+		return SUPPORTED_DROP_TRANSFERS;
 	}
 
 	/*
@@ -74,22 +100,28 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public void dragEnter(DropTargetEvent event) {
 		super.dragEnter(event);
 
-		for (int i = 0; i < event.dataTypes.length; i++) {
+		for (int i = 0; i < event.dataTypes.length; i++)
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(
 					event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
 				return;
-			} else if (FileTransfer.getInstance().isSupportedType(
-					event.dataTypes[i])) {
+			}
+
+		for (int i = 0; i < event.dataTypes.length; i++)
+			if (FileTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
 				event.detail = DND.DROP_COPY;
 				return;
-			} else if (PluginTransfer.getInstance().isSupportedType(
-					event.dataTypes[i])) {
+			}
+
+		for (int i = 0; i < event.dataTypes.length; i++)
+
+			if (PluginTransfer.getInstance()
+					.isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
 				return;
 			}
-		}
+
 		event.detail = DND.DROP_NONE;
 
 	}
@@ -116,8 +148,27 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public void drop(DropTargetEvent event) {
 		if (PluginTransfer.getInstance().isSupportedType(event.currentDataType))
 			super.drop(event);
+		else {
 
-		// TODO Use the CommonDropAssistants to validate the drop.
+			CommonDropAdapterAssistant[] assistants = dndService
+					.findCommonDropAdapterAssistants(getCurrentTarget(),
+							getCurrentTransfer());
+
+			IStatus valid = null;
+			for (int i = 0; i < assistants.length; i++) {
+				try {
+					valid = assistants[i].validateDrop(getCurrentTarget(),
+							getCurrentOperation(), getCurrentTransfer());
+					if (valid != null && valid.isOK()) {
+						assistants[i].handleDrop(this, event,
+								getCurrentTarget());
+						return;
+					}
+				} catch (Throwable t) {
+					NavigatorPlugin.logError(0, t.getMessage(), t);
+				}
+			}
+		}
 	}
 
 	/*
@@ -126,20 +177,97 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object,
 	 *      int, org.eclipse.swt.dnd.TransferData)
 	 */
-	public boolean validateDrop(Object target, int operation,
-			TransferData transferType) {
-		/*
-		 * should be called first sense the currentTransfer field is set in the
-		 * parent in this method
-		 */
-		if (super.validateDrop(target, operation, transferType)) {
-			return true;
-		}
+	public boolean validateDrop(Object aDropTarget, int theDropOperation,
+			TransferData theTransferData) {
+
+		if (DEBUG)
+			System.out.println("CommonDropAdapter.validateDrop (begin)"); //$NON-NLS-1$
+
 		boolean result = false;
 
-		// TODO Use the CommonDropAssistants to validate the drop.
+		IStatus valid = null;
+
+		if (super.validateDrop(aDropTarget, theDropOperation, theTransferData))
+			result = true;
+		else if (FileTransfer.getInstance().isSupportedType(theTransferData))
+			// only allow copying when dragging from outside Eclipse
+			// result = theDropOperation != DND.DROP_COPY;
+			result = true;
+		else {
+			CommonDropAdapterAssistant[] assistants = dndService
+					.findCommonDropAdapterAssistants(aDropTarget,
+							theTransferData);
+
+			for (int i = 0; i < assistants.length; i++) {
+				try {
+					valid = assistants[i].validateDrop(aDropTarget,
+							theDropOperation, theTransferData);
+				} catch (Throwable t) {
+					NavigatorPlugin.logError(0, t.getMessage(), t);
+				}
+				if (valid != null && valid.isOK()) {
+					result = true;
+					break;
+				}
+			}
+		}
+
+		if (DEBUG)
+			System.out
+					.println("CommonDropAdapter.validateDrop (returning " + (valid != null ? valid.getSeverity() + ": " + valid.getMessage() : "" + result) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		return result;
+
+	}
+
+	/*
+	 * The visibility of the following methods is raised for downstream clients
+	 * (assistants).
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getBounds(org.eclipse.swt.widgets.Item)
+	 */
+	public Rectangle getBounds(Item item) {
+		return super.getBounds(item);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentLocation()
+	 */
+	public int getCurrentLocation() {
+		return super.getCurrentLocation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentOperation()
+	 */
+	public int getCurrentOperation() {
+		return super.getCurrentOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentTarget()
+	 */
+	public Object getCurrentTarget() {
+		return super.getCurrentTarget();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PluginDropAdapter#getCurrentTransfer()
+	 */
+	public TransferData getCurrentTransfer() {
+		return super.getCurrentTransfer();
 	}
 
 }

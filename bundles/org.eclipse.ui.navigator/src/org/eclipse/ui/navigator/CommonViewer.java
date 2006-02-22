@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -304,9 +305,7 @@ public class CommonViewer extends TreeViewer {
 	 * By default, the following Transfer types are supported:
 	 * <ul>
 	 * <li>LocalSelectionTransfer.getInstance(),
-	 * <li>PluginTransfer.getInstance(),
-	 * <li>FileTransfer.getInstance(), and
-	 * <li>ResourceTransfer.getInstance()
+	 * <li>PluginTransfer.getInstance()
 	 * </ul>
 	 * </p>
 	 * 
@@ -314,35 +313,19 @@ public class CommonViewer extends TreeViewer {
 	 * @see CommonDropAdapter
 	 */
 	protected void initDragAndDrop() {
-		
-		// TODO initDragAndDrop is in progress.
-		
-//		/* Handle Drag and Drop */
-//		int operations = DND.DROP_COPY | DND.DROP_MOVE;
-//
-//		CommonDragAdapterAssistant[] assistants = contentService
-//				.getDnDService().getCommonDragAssistants();
-//
-//		Set supportedTypes = new HashSet();
-//		supportedTypes.add(PluginTransfer.getInstance());
-//		supportedTypes.add(LocalSelectionTransfer.getInstance());
-//		Transfer[] transferTypes = null;
-//		for (int i = 0; i < assistants.length; i++) {
-//			transferTypes = assistants[i].getSupportedTransferTypes();
-//			for (int j = 0; j < transferTypes.length; j++) {
-//				if (transferTypes[j] != null)
-//					supportedTypes.add(transferTypes[j]);
-//			}
-//		}
-//
-//		Transfer[] transfers = (Transfer[]) supportedTypes
-//				.toArray(new Transfer[supportedTypes.size()]);
-//
-//		addDragSupport(operations, transfers, new CommonDragAdapter(
-//				contentService, this));
-//		// TODO Should the Transfers be the same here?
-//		addDropSupport(operations, transfers, new CommonDropAdapter(
-//				contentService, this));
+
+		/* Handle Drag and Drop */
+		int operations = DND.DROP_COPY | DND.DROP_MOVE;
+
+		CommonDragAdapter dragAdapter = new CommonDragAdapter(contentService,
+				this);
+		addDragSupport(operations, dragAdapter.getSupportDragTransfers(),
+				dragAdapter);
+
+		CommonDropAdapter dropAdapter = new CommonDropAdapter(contentService,
+				this);
+		addDropSupport(operations, dropAdapter.getSupportedDropTransfers(),
+				dropAdapter);
 
 	}
 

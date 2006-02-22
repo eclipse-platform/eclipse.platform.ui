@@ -101,7 +101,7 @@ public class TestContentProvider implements ITreeContentProvider,
 			try {
 				model.load(modelFile.getContents());
 				TestExtensionTreeData root = new TestExtensionTreeData(null,
-						MODEL_ROOT, model);
+						MODEL_ROOT, model, modelFile);
 				rootElements.put(modelFile, root);
 				return root;
 			} catch (IOException e) {

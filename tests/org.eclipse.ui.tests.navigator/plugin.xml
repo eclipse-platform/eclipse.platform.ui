@@ -156,6 +156,19 @@
             <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
          </includes>
       </viewerActionBinding>
+      <dragAssistant
+            class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
+            viewerId="org.eclipse.ui.tests.navigator.TestView"/>
    </extension>
  
+ 
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"
+            class="org.eclipse.ui.tests.navigator.extension.TestExtensionAdapterFactory">
+         <adapter type="org.eclipse.core.resources.IResource"/>
+         <adapter type="org.eclipse.core.resources.IFile"/>
+      </factory>
+   </extension>
 </plugin>

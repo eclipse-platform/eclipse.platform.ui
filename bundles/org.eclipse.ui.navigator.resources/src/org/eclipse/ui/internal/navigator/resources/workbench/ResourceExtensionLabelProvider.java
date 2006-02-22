@@ -40,13 +40,10 @@ public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider imple
 		return null;
 	}
 
-	public void restoreState(IMemento aMemento) {
-		// TODO Auto-generated method stub
+	public void restoreState(IMemento aMemento) { 
 		
 	}
 
-	public void saveState(IMemento aMemento) {
-		// TODO Auto-generated method stub
-		
+	public void saveState(IMemento aMemento) { 
 	}
 }

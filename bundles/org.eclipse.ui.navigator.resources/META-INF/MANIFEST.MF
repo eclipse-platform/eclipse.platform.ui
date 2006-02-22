@@ -9,7 +9,8 @@ Bundle-Localization: plugin
 Export-Package: .,
  org.eclipse.ui.internal.navigator.resources.actions,
  org.eclipse.ui.internal.navigator.resources.plugin,
- org.eclipse.ui.internal.navigator.resources.workbench
+ org.eclipse.ui.internal.navigator.resources.workbench,
+ org.eclipse.ui.navigator.resources
 Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.core.resources,
  org.eclipse.jface,

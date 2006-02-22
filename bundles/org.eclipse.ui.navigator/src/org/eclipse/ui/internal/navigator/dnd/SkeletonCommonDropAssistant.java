@@ -11,8 +11,11 @@
 
 package org.eclipse.ui.internal.navigator.dnd;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 
 /**
@@ -34,11 +37,12 @@ public class SkeletonCommonDropAssistant extends CommonDropAdapterAssistant {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#handleDrop(org.eclipse.swt.dnd.DropTargetEvent,
-	 *      java.lang.Object)
+	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#handleDrop(org.eclipse.ui.navigator.CommonDropAdapter,
+	 *      org.eclipse.swt.dnd.DropTargetEvent, java.lang.Object)
 	 */
-	public boolean handleDrop(DropTargetEvent aDropTargetEvent, Object aTarget) { 
-		return false;
+	public IStatus handleDrop(CommonDropAdapter aDropAdapter,
+			DropTargetEvent aDropTargetEvent, Object aTarget) {
+		return Status.CANCEL_STATUS;
 	}
 
 	/*
@@ -47,21 +51,21 @@ public class SkeletonCommonDropAssistant extends CommonDropAdapterAssistant {
 	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#validateDrop(java.lang.Object,
 	 *      int, org.eclipse.swt.dnd.TransferData)
 	 */
-	public boolean validateDrop(Object target, int operation,
+	public IStatus validateDrop(Object target, int operation,
 			TransferData transferType) {
-
-		return false;
+		return Status.CANCEL_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#findSupportedTransferData(org.eclipse.swt.dnd.TransferData[])
-	 */
-	public TransferData findSupportedTransferData(
-			TransferData[] theAvailableTransferData) {
-
-		return null;
-	}
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.ui.navigator.CommonDropAdapterAssistant#findSupportedTransferData(org.eclipse.swt.dnd.TransferData[])
+	// */
+	// public TransferData findSupportedTransferData(
+	// TransferData[] theAvailableTransferData) {
+	//
+	// return null;
+	// }
 
 }

@@ -120,10 +120,9 @@ public class NavigatorContentExtension implements IMementoAware,
 		return provider;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getContentProvider()
+	 * @return The internal content provider that is wrapped by this extension.
 	 */
 	public ITreeContentProvider internalGetContentProvider() {
 		if (contentProvider != null || contentProviderInitializationFailed)

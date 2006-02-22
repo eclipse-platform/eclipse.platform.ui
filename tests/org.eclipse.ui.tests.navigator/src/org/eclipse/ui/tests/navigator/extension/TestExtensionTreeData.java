@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+
 public class TestExtensionTreeData {
 
 	private final Map children = new HashMap();
@@ -27,11 +29,14 @@ public class TestExtensionTreeData {
 
 	private Properties model;
 
+	private IFile container;
+
 	public TestExtensionTreeData(TestExtensionTreeData aParent, String aName,
-			Properties theModel) {
+			Properties theModel, IFile aFile) {
 		parent = aParent;
 		name = aName;
 		model = theModel;
+		container = aFile;
 	}
 
 	public TestExtensionTreeData getParent() {
@@ -48,7 +53,7 @@ public class TestExtensionTreeData {
 					updatedChildren.add(children.get(childrenElements[i]));
 				} else {
 					TestExtensionTreeData newChild = new TestExtensionTreeData(
-							this, childrenElements[i], model);
+							this, childrenElements[i], model, container);
 					children.put(newChild.getName(), newChild);
 					updatedChildren.add(newChild);
 				}
@@ -85,6 +90,13 @@ public class TestExtensionTreeData {
 		}
 		toString.append("]");
 		return toString.toString();
+	}
+
+	/**
+	 * @return
+	 */
+	public IFile getFile() { 
+		return container;
 	}
 
 }

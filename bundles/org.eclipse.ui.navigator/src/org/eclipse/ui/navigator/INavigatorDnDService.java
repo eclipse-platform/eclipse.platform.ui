@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.navigator;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.dnd.TransferData;
+
 
 /**
  * 
@@ -66,24 +69,20 @@ public interface INavigatorDnDService {
 	 * content extensions that are <i>visible</i> and <i>active</i> for the
 	 * associated {@link INavigatorContentService}. The array is sorted by
 	 * priority, with overrides taken into account.
-	 * 
-	 * <p>
-	 * That is, if an extension X overrides extension Y (see
-	 * <b>org.eclipse.ui.navigator.navigatorContent/override</b>), then X will
-	 * occur before Y in the array. If X and Y override Z, but X has higher
-	 * priority than Y, then X will occur before Y, and Y will occur before Z.
-	 * </p>
+	 *  
 	 * <p>
 	 * The array should be processed from the first element to the last, asking
 	 * each extension to
 	 * {@link CommonDropAdapterAssistant#validateDrop(Object, int, org.eclipse.swt.dnd.TransferData)}.
 	 * The first to successfully validate the drop operation will have the
 	 * opportunity to
-	 * {@link CommonDropAdapterAssistant#handleDrop(org.eclipse.swt.dnd.DropTargetEvent, Object)}.
+	 * {@link CommonDropAdapterAssistant#handleDrop(CommonDropAdapter, org.eclipse.swt.dnd.DropTargetEvent, Object) handle the drop}
 	 * </p>
 	 * 
 	 * @param aDropTarget
-	 *            The target element in the viewer of the drop operation
+	 *            The target element in the viewer of the drop operation.
+	 * @param theTransferType 
+	 * 			  The transfer type of the current drop operation.
 	 * @return An array of {@link CommonDropAdapterAssistant}s that are defined
 	 *         by the set of
 	 *         <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b>
@@ -91,5 +90,33 @@ public interface INavigatorDnDService {
 	 *         that matches the given drop target.
 	 */
 	CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
-			Object aDropTarget);
+			Object aDropTarget, TransferData theTransferType);
+	
+	/**
+	 * 
+	 * This method returns an array of {@link CommonDropAdapterAssistant} from
+	 * content extensions that are <i>visible</i> and <i>active</i> for the
+	 * associated {@link INavigatorContentService}.  
+	 *  
+	 * <p>
+	 * The array should be processed from the first element to the last, asking
+	 * each extension to
+	 * {@link CommonDropAdapterAssistant#validateDrop(Object, int, org.eclipse.swt.dnd.TransferData)}.
+	 * The first to successfully validate the drop operation will have the
+	 * opportunity to
+	 * {@link CommonDropAdapterAssistant#handleDrop(CommonDropAdapter, org.eclipse.swt.dnd.DropTargetEvent, Object) handle the drop}
+	 * </p>
+	 * 
+	 * @param aDropTarget
+	 *            The target element in the viewer of the drop operation.
+	 * @param theDragSelection 
+	 * 			  The drag selection of the current drop operation.
+	 * @return An array of {@link CommonDropAdapterAssistant}s that are defined
+	 *         by the set of
+	 *         <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b>
+	 *         extensions that provide a <b>possibleChildren</b> expression
+	 *         that matches the given drop target.
+	 */
+	CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
+			Object aDropTarget, IStructuredSelection theDragSelection);
 }

@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.part.PluginTransfer;
 
 /**
@@ -29,11 +34,11 @@ import org.eclipse.ui.part.PluginTransfer;
  * Whenever a match is found, the assistant will be given an opportunity to
  * first {@link #validateDrop(Object, int, TransferData) }, and then if the
  * assistant returns true, the assist must
- * {@link #handleDrop(DropTargetEvent, Object) }. If multiple assistants match
- * the drop target, then the potential assistants are ordered based on priority
- * and their override relationships and given an opportunity to validate the
- * drop operation in turn. The first one to validate will have the opportunty to
- * carry out the drop.
+ * {@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object) }. If
+ * multiple assistants match the drop target, then the potential assistants are
+ * ordered based on priority and their override relationships and given an
+ * opportunity to validate the drop operation in turn. The first one to validate
+ * will have the opportunty to carry out the drop.
  * </p>
  * <p>
  * That is, if a content extension X overrides content extension Y (see
@@ -41,6 +46,28 @@ import org.eclipse.ui.part.PluginTransfer;
  * an opportunity before Y. If X and Y override Z, but X has higher priority
  * than Y, then X will have an opportunity before Y, and Y will have an
  * opportunity before Z.
+ * </p>
+ * 
+ * <p>
+ * Clients may handle DND operations that begin and end in the current viewer by
+ * overriding the following methods:
+ * <ul>
+ * <li>{@link #validateDrop(Object, int, TransferData)}: Indicate whether this
+ * assistant can handle a drop onto the current viewer.</li>
+ * <li>{@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object)}: Handle
+ * the drop operation onto the current viewer.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * If a user originates a drag operation to another viewer that cannot handle
+ * one of the available drag transfer types, drop assistants may handle the drop
+ * operation for the target viewer. Clients must override :
+ * <ul>
+ * <li>{@link #validatePluginTransferDrop(IStructuredSelection, Object)}:
+ * Indicate whether this assistant can handle the drop onto another viewer.
+ * <li>{@link #handlePluginTransferDrop(IStructuredSelection, Object)}: Handle
+ * the drop operation onto the other viewer.</li>
+ * </ul>
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -53,7 +80,8 @@ import org.eclipse.ui.part.PluginTransfer;
  * </p>
  * 
  * @see INavigatorDnDService
- * @see INavigatorDnDService#findCommonDropAdapterAssistants(Object)
+ * @see INavigatorDnDService#findCommonDropAdapterAssistants(Object,
+ *      TransferData)
  * @since 3.2
  * 
  */
@@ -76,7 +104,7 @@ public abstract class CommonDropAdapterAssistant {
 	}
 
 	/**
-	 * Override to perform any one-time intialization.
+	 * Override to perform any one-time initialization.
 	 */
 	protected void doInit() {
 
@@ -88,7 +116,7 @@ public abstract class CommonDropAdapterAssistant {
 	 * <p>
 	 * Subclasses must implement this method to define which drops make sense.
 	 * If clients return true, then they will be allowed to handle the drop in
-	 * {@link #handleDrop(DropTargetEvent, Object) }.
+	 * {@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object) }.
 	 * </p>
 	 * 
 	 * @param target
@@ -98,41 +126,81 @@ public abstract class CommonDropAdapterAssistant {
 	 *            the current drag operation (copy, move, etc.)
 	 * @param transferType
 	 *            the current transfer type
-	 * @return <code>true</code> if the drop is valid, and <code>false</code>
-	 *         otherwise
+	 * @return A status indicating whether the drop is valid.
 	 */
-	public abstract boolean validateDrop(Object target, int operation,
+	public abstract IStatus validateDrop(Object target, int operation,
 			TransferData transferType);
 
 	/**
-	 * Carry out the DND operation
+	 * Carry out the DND operation.
 	 * 
+	 * @param aDropAdapter
+	 *            The Drop Adapter contains information that has already been
+	 *            parsed from the drop event.
 	 * @param aDropTargetEvent
 	 *            The drop target event.
 	 * @param aTarget
 	 *            The object being dragged onto
-	 * @return True if the operation completed.
+	 * @return A status indicating whether the drop completed OK.
 	 */
-	public abstract boolean handleDrop(DropTargetEvent aDropTargetEvent,
-			Object aTarget);
+	public abstract IStatus handleDrop(CommonDropAdapter aDropAdapter,
+			DropTargetEvent aDropTargetEvent, Object aTarget);
 
 	/**
-	 * When a drop opportunity presents itself, the available TransferData types
-	 * will be supplied in the event. The DropAdapter must select one of these
-	 * TransferData types for the DragAdapter to provide. By default the Common
-	 * Navigator supports {@link LocalSelectionTransfer} and
-	 * {@link PluginTransfer}. Clients are required to indicate if they support
-	 * other TransferData types using this method.
+	 * Clients may extend the supported transfer types beyond the default
+	 * {@link LocalSelectionTransfer#getTransfer()} and
+	 * {@link PluginTransfer#getInstance()} transfer types. When a transfer type
+	 * other than one of these is encountered, the DND Service will query the
+	 * <b>visible</b> and <b>active</b> descriptors that are <b>enabled</b>
+	 * for the drop target of the current operation.
 	 * 
+	 * @param aTransferType
+	 *            The transfer data from the drop operation
+	 * @return True if the given TransferData can be understood by this
+	 *         assistant.
+	 */
+	public boolean isSupportedType(TransferData aTransferType) {
+		return LocalSelectionTransfer.getTransfer().isSupportedType(
+				aTransferType);
+	}
+
+	/**
+	 * 
+	 * Return true if the client can handle the drop onto the target viewer of
+	 * the drop operation.
 	 * <p>
-	 * If none of the given TransferData types are supported, return null.
+	 * The default behavior of this method is to return <b>Status.CANCEL_STATUS</b>.
 	 * </p>
 	 * 
-	 * @param theAvailableTransferData
-	 * @return The supported TransferData from the set.
+	 * @param aDragSelection
+	 *            The selection dragged from the viewer.
+	 * @param aDropTarget
+	 *            The target of the drop operation.
+	 * 
+	 * @return OK if the plugin transfer can be handled by this assistant.
 	 */
-	public abstract TransferData findSupportedTransferData(
-			TransferData[] theAvailableTransferData);
+	public IStatus validatePluginTransferDrop(
+			IStructuredSelection aDragSelection, Object aDropTarget) {
+		return Status.CANCEL_STATUS;
+	}
+
+	/**
+	 * Handle the drop operation for the target viewer.
+	 * <p>
+	 * The default behavior of this method is to return <b>Status.CANCEL_STATUS</b>.
+	 * </p>
+	 * 
+	 * @param aDragSelection
+	 *            The selection dragged from the viewer.
+	 * @param aDropTarget
+	 *            The target of the drop operation.
+	 * 
+	 * @return OK if the drop operation succeeded.
+	 */
+	public IStatus handlePluginTransferDrop(
+			IStructuredSelection aDragSelection, Object aDropTarget) {
+		return Status.CANCEL_STATUS;
+	}
 
 	/**
 	 * 
@@ -140,6 +208,15 @@ public abstract class CommonDropAdapterAssistant {
 	 */
 	protected INavigatorContentService getContentService() {
 		return contentService;
+	}
+
+	/**
+	 * 
+	 * @return A shell for the viewer currently used by the
+	 *         {@link INavigatorContentService}.
+	 */
+	protected final Shell getShell() {
+		return ((NavigatorContentService) contentService).getShell();
 	}
 
 }

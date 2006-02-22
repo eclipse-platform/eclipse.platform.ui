@@ -12,6 +12,7 @@ package org.eclipse.ui.navigator;
 
 import java.util.Set;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 
 
@@ -98,6 +99,14 @@ public interface INavigatorContentDescriptor {
 	 *         type as a child.
 	 */
 	boolean isPossibleChild(Object anElement);
+	
+	/**
+	 * A convenience method to check all elements in a selection. 
+	 * 
+	 * @param aSelection A non-null selection
+	 * @return True if and only if every element in the selection is a possible child.
+	 */
+	boolean arePossibleChildren(IStructuredSelection aSelection);
 	
 	/**
 	 * @return Returns the suppressedExtensionId or null if none specified.

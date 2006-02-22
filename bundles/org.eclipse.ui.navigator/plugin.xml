@@ -11,7 +11,7 @@
          point="org.eclipse.ui.dropActions">
       <action
             class="org.eclipse.ui.internal.navigator.dnd.NavigatorPluginDropAction"
-            id="org.eclipse.ui.navigator.internal.dnd.PluginDropAction">
+            id="org.eclipse.ui.navigator.PluginDropAction">
       </action>
    </extension>
    

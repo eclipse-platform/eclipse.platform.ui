@@ -84,8 +84,7 @@ public class INavigatorContentServiceTests extends TestCase {
 		contentService = viewer.getNavigatorContentService();
 	}
 
-	protected void tearDown() throws Exception {
-		// TODO Auto-generated method stub
+	protected void tearDown() throws Exception { 
 		super.tearDown();
 	}
 

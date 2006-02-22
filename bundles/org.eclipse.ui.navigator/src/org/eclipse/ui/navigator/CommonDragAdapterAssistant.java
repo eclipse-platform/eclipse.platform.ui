@@ -17,6 +17,9 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.part.PluginTransfer;
 
 /**
@@ -31,7 +34,7 @@ import org.eclipse.ui.part.PluginTransfer;
  * </p>
  * 
  * @see INavigatorDnDService
- * @see CommonDragAdapter 
+ * @see CommonDragAdapter
  * @see CommonDropAdapter
  * @see CommonDropAdapterAssistant
  * @see CommonViewer#initDragAndDrop()
@@ -46,6 +49,8 @@ import org.eclipse.ui.part.PluginTransfer;
  * 
  */
 public abstract class CommonDragAdapterAssistant {
+
+	private INavigatorContentService contentService;
 
 	/**
 	 * Extra TransferTypes allow the Navigator to generate different kinds of
@@ -80,5 +85,34 @@ public abstract class CommonDragAdapterAssistant {
 	 */
 	public abstract void setDragData(DragSourceEvent anEvent,
 			IStructuredSelection aSelection);
+
+	/**
+	 * Accept and remember the content service this assistant is associated
+	 * with.
+	 * 
+	 * @param aContentService
+	 */
+	public final void setContentService(INavigatorContentService aContentService) {
+		contentService = aContentService;
+	}
+
+	/**
+	 * 
+	 * @return The associated content service.
+	 */
+	public INavigatorContentService getContentService() {
+		return contentService;
+	}
+
+	/**
+	 * 
+	 * @return The shell for the viewer this assistant is associated with or the
+	 *         shell of the active workbench window.
+	 */
+	public final Shell getShell() {
+		if (contentService != null)
+			((NavigatorContentService) contentService).getShell();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	}
 
 }

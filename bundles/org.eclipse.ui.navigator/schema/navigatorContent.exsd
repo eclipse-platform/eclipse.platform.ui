@@ -86,7 +86,7 @@ Optionally, clients may also provide an action provider which can provide menu c
             <element ref="actionProvider" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="commonSorter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="override" minOccurs="0" maxOccurs="1"/>
-            <element ref="commonDropAdapter" minOccurs="0" maxOccurs="1"/>
+            <element ref="commonDropAdapter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -518,10 +518,19 @@ When clients provide their content through the pipeline, the contribution memory
    <element name="commonDropAdapter">
       <annotation>
          <documentation>
-            Provides a subclass of &lt;code&gt;org.eclipse.ui.navigator.CommonDropAdapterAssistant&lt;/code&gt; which can provide programatic validation for a drop operation, request additional transfer types, and handle the drop.
+            Provides a subclass of &lt;code&gt;org.eclipse.ui.navigator.CommonDropAdapterAssistant&lt;/code&gt; which can provide programatic validation for a drop operation, request additional transfer types, and handle the drop operation. 
+&lt;br&gt;&lt;br&gt;
+A &lt;b&gt;commonDropAdapter&lt;/b&gt; will be invoked whenever elements that are dragged match the &lt;b&gt;possibleChildren&lt;/b&gt; expression of the containing &lt;b&gt;navigatorContent&lt;/b&gt; extension &lt;i&gt;and&lt;/i&gt; the drop target of the operation is described by the &lt;b&gt;possibleDropTargets&lt;/b&gt; expression of the &lt;b&gt;commonDropAdapter&lt;/b&gt; element.
+&lt;br&gt;&lt;br&gt;
+An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;possibleDropTargets&lt;/b&gt; expressions. The first drop adapter found that matches the given drop target and returns an OK status for &lt;code&gt;CommonDropAdapterAssistant.validateDrop(...)&lt;/code&gt; will be given an opportunity to handle the drop. 
+&lt;br&gt;&lt;br&gt;
+ 
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="possibleDropTargets"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -539,6 +548,30 @@ When clients provide their content through the pipeline, the contribution memory
                </appInfo>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="possibleDropTargets">
+      <annotation>
+         <documentation>
+            Describe the possible drop targets that a particular &lt;b&gt;commonDropAdapter&lt;/b&gt; can handle.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </sequence>
       </complexType>
    </element>
 

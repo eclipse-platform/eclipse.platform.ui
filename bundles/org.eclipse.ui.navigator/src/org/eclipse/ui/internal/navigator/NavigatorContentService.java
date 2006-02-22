@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
@@ -914,9 +915,15 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			navigatorDnDService = new NavigatorDnDService(this);
 		return navigatorDnDService;
 	}
-
-	protected boolean isRootExtension(String anExtensionId) {
-		return assistant.isRootExtension(anExtensionId);
+	
+	/**
+	 * Non-API method to return a shell.
+	 * @return A shell associated with the current viewer (if any) or <b>null</b>.
+	 */
+	public Shell getShell() {
+		if(structuredViewerManager != null && structuredViewerManager.getViewer() != null)
+			return structuredViewerManager.getViewer().getControl().getShell();
+		return null;
 	}
 
 	/*
@@ -935,8 +942,12 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public String toString() {
 		return "ContentService[" + viewerDescriptor.getViewerId() + "]"; //$NON-NLS-1$//$NON-NLS-2$
+	} 
+	
+	protected boolean isRootExtension(String anExtensionId) {
+		return assistant.isRootExtension(anExtensionId);
 	}
-
+	
 	private void notifyListeners(NavigatorContentExtension aDescriptorInstance) {
 
 		if (listeners.size() == 0)

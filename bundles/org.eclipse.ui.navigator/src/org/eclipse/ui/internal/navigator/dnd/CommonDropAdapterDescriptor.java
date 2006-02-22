@@ -16,10 +16,12 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
 /**
  * @since 3.2
@@ -28,29 +30,24 @@ import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 public final class CommonDropAdapterDescriptor implements
 		INavigatorContentExtPtConstants {
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
-	private Expression dragExpr;
+	private final INavigatorContentDescriptor contentDescriptor;
 
 	private Expression dropExpr;
 
 	/* package */CommonDropAdapterDescriptor(
-			IConfigurationElement aConfigElement) {
+			IConfigurationElement aConfigElement,
+			INavigatorContentDescriptor aContentDescriptor) {
 		element = aConfigElement;
+		contentDescriptor = aContentDescriptor;
 		init();
 	}
 
 	private void init() {
-
-		IConfigurationElement[] children = element
-				.getChildren(TAG_DRAG_EXPRESSION);
-		if (children.length == 1)
-			dragExpr = new CustomAndExpression(children[0]);
-
-		children = element.getChildren(TAG_DROP_EXPRESSION);
+		IConfigurationElement[] children = element.getChildren(TAG_POSSIBLE_DROP_TARGETS);
 		if (children.length == 1)
 			dropExpr = new CustomAndExpression(children[0]);
-
 	}
 
 	/**
@@ -60,15 +57,21 @@ public final class CommonDropAdapterDescriptor implements
 	 * @return True if the element matches the drag expression from the
 	 *         extension.
 	 */
-	public boolean isDragElementSupported(Object anElement) {
-		if (dragExpr != null)
-			try {
-				return dragExpr
-						.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE;
-			} catch (CoreException e) {
-				NavigatorPlugin.logError(0, e.getMessage(), e);
-			}
-		return false;
+	public boolean isDragElementSupported(Object anElement) { 
+		return contentDescriptor.isPossibleChild(anElement); 
+	}
+
+	/**
+	 * 
+	 * @param aSelection
+	 *            The set of elements being dragged.
+	 * @return True if the element matches the drag expression from the
+	 *         extension.
+	 */
+	public boolean areDragElementsSupported(IStructuredSelection aSelection) {
+		if (aSelection.isEmpty())
+			return false;
+		return contentDescriptor.arePossibleChildren(aSelection);
 	}
 
 	/**
@@ -79,7 +82,7 @@ public final class CommonDropAdapterDescriptor implements
 	 *         extension.
 	 */
 	public boolean isDropElementSupported(Object anElement) {
-		if (dropExpr != null)
+		if (dropExpr != null && anElement != null)
 			try {
 				return dropExpr
 						.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE;
@@ -105,7 +108,14 @@ public final class CommonDropAdapterDescriptor implements
 			NavigatorPlugin.logError(0, re.getMessage(), re);
 		}
 		return SkeletonCommonDropAssistant.INSTANCE;
+	}
 
+	/**
+	 * 
+	 * @return The content descriptor that contains this drop descriptor.
+	 */
+	public INavigatorContentDescriptor getContentDescriptor() {
+		return contentDescriptor;
 	}
 
 }

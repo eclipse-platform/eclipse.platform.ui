@@ -16,26 +16,61 @@ import org.eclipse.osgi.util.NLS;
  * Utility class which helps managing messages
  * 
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * @since 3.2
  */
-public class WorkbenchNavigatorMessages extends NLS { 
-	public static final String BUNDLE_NAME = "messages"; //$NON-NLS-1$
+public class WorkbenchNavigatorMessages extends NLS {
+	/** The bundle properties file */
+	public static final String BUNDLE_NAME = "org.eclipse.ui.internal.navigator.resources.plugin.messages"; //$NON-NLS-1$
 
-	public static String ResourceExtensionFilterProvider_Hides;
-	public static String ImportResourcesMenu_text;
-	public static String ExportResourcesMenu_text;
+	/** Message key. */
+	public static String PortingActionProvider_ImportResourcesMenu_label;
+
+	/** Message key. */
+	public static String PortingActionProvider_ExportResourcesMenu_label;
+
+	/** Message key. */
+	public static String NewActionProvider_NewMenu_label;
+
+	/** Message key. */
+	public static String OpenActionProvider_OpenWithMenu_label;
+
+	/** Message key. */
+	public static String DropAdapter_title;
+
+	/** Message key. */
+	public static String DropAdapter_problemImporting;
+
+	/** Message key. */
+	public static String DropAdapter_problemsMoving;
+
+	/** Message key. */
+	public static String DropAdapter_question;
+
+	/** Message key. */
+	public static String DropAdapter_targetMustBeResource;
+
+	/** Message key. */
+	public static String DropAdapter_canNotDropIntoClosedProject;
+
+	/** Message key. */
+	public static String DropAdapter_resourcesCanNotBeSiblings;
+
+	/** Message key. */
+	public static String DropAdapter_ok;
+
+	/** Message key. */
+	public static String DropAdapter_overwriteQuery;
+
+	/** Message key. */
+	public static String DropAdapter_dropOperationErrorOther;
 	
 
-	public static String Workbench_new;
-	public static String OpenWithMenu_label;
-	
-	
+	/** Message key. */
+	public static String MoveResourceAction_title;
+
+	/** Message key. */
+	public static String MoveResourceAction_checkMoveMessage;
+
 	static {
 		initializeMessages(BUNDLE_NAME, WorkbenchNavigatorMessages.class);
 	}
