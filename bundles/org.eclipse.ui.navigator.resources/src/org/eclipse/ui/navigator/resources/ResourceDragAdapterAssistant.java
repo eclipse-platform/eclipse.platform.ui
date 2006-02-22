@@ -42,7 +42,7 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 public final class ResourceDragAdapterAssistant extends
 		CommonDragAdapterAssistant {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private static final Transfer[] SUPPORTED_TRANSFERS = new Transfer[] {
 			ResourceTransfer.getInstance(),
