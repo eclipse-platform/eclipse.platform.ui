@@ -180,7 +180,7 @@ public class ModelSynchronizeParticipant extends
 	protected void initializeConfiguration(
 			ISynchronizePageConfiguration configuration) {
 		if (isMergingEnabled()) {
-			// The contetx menu groups are defined by the org.eclipse.ui.navigator.viewer extension
+			// The context menu groups are defined by the org.eclipse.ui.navigator.viewer extension
 			configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ModelSynchronizeParticipantActionGroup.MERGE_ACTION_GROUP);
 			configuration.addActionContribution(createMergeActionGroup());
 		}
