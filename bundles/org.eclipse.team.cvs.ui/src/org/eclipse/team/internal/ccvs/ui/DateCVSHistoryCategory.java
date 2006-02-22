@@ -26,15 +26,15 @@ public class DateCVSHistoryCategory extends AbstractCVSHistoryCategory {
 	 * Creates a new instance of DateCVSHistoryCategory. 
 	 * 
 	 * @param name	the name of this category
-	 * @param lastWeekCal	the start date for this category or <code>null</code> if you want everything up to the end date
-	 * @param yesterdayCal	the end point for this category or <code>null</code> if you want just all entries in the
+	 * @param fromDate	the start date for this category or <code>null</code> if you want everything up to the end date
+	 * @param toDate	the end point for this category or <code>null</code> if you want just all entries in the
 	 * start date
 	 * @param mode	the comparison constant which indicated wheth
 	 */
-	public DateCVSHistoryCategory(String name, Calendar lastWeekCal, Calendar yesterdayCal){
+	public DateCVSHistoryCategory(String name, Calendar fromDate, Calendar toDate){
 		this.name = name;
-		this.fromDate = lastWeekCal;
-		this.toDate = yesterdayCal;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
 	}
 	
 	/* (non-Javadoc)
@@ -62,8 +62,8 @@ public class DateCVSHistoryCategory extends AbstractCVSHistoryCategory {
 			
 			if (fromDate == null){
 				//check to see if this revision is within the toDate range
-				if ((fileRevDay<toDate.get(Calendar.DAY_OF_YEAR)) &&
-					(fileRevYear <= toDate.get(Calendar.YEAR))){
+				if (((fileRevDay<toDate.get(Calendar.DAY_OF_YEAR)) && (fileRevYear == toDate.get(Calendar.YEAR))) ||
+					(fileRevYear < toDate.get(Calendar.YEAR))){
 					pertinentRevisions.add(fileRevisions[i]);
 				} else {
 					//revision is equal or later then the to date, add to rejects list
