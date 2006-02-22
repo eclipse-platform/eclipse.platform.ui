@@ -383,6 +383,9 @@
                    separator="true"/>
           </popupMenu>
        </viewer>
+       <dragAssistant
+             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
+             viewerId="org.eclipse.team.ui.navigatorViewer"/>
    </extension>
    
    <!-- *************** Synchronize View Participant **************** -->
