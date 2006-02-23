@@ -209,25 +209,25 @@ public class SelectSearchScopeDialog extends SelectionDialog {
         IResource[] members = null;
         try {
             members = container.members();
+            for (int i = members.length - 1; i >= 0; i--) {
+                IResource element = members[i];
+                boolean elementGrayChecked = fTree.getGrayed(element)
+                        || fTree.getChecked(element);
+
+                if (state) {
+                    fTree.setChecked(element, true);
+                    fTree.setGrayed(element, false);
+                } else {
+                    fTree.setGrayChecked(element, false);
+                }
+                // unchecked state only needs to be set when the container is 
+                // checked or grayed
+                if (element instanceof IContainer && (state || elementGrayChecked)) {
+                    setSubtreeChecked((IContainer) element, state, true);
+                }
+            }
         } catch (CoreException ex) {
         	SearchPlugin.log(ex.getStatus());
-        }
-        for (int i = members.length - 1; i >= 0; i--) {
-            IResource element = members[i];
-            boolean elementGrayChecked = fTree.getGrayed(element)
-                    || fTree.getChecked(element);
-
-            if (state) {
-                fTree.setChecked(element, true);
-                fTree.setGrayed(element, false);
-            } else {
-                fTree.setGrayChecked(element, false);
-            }
-            // unchecked state only needs to be set when the container is 
-            // checked or grayed
-            if (element instanceof IContainer && (state || elementGrayChecked)) {
-                setSubtreeChecked((IContainer) element, state, true);
-            }
         }
     }
 
@@ -248,14 +248,14 @@ public class SelectSearchScopeDialog extends SelectionDialog {
         IResource[] members = null;
         try {
             members = parent.members();
+            for (int i = members.length - 1; i >= 0; i--) {
+                if (fTree.getChecked(members[i]) || fTree.getGrayed(members[i])) {
+                    childChecked = true;
+                    break;
+                }
+            }
         } catch (CoreException ex) {
         	SearchPlugin.log(ex.getStatus());
-        }
-        for (int i = members.length - 1; i >= 0; i--) {
-            if (fTree.getChecked(members[i]) || fTree.getGrayed(members[i])) {
-                childChecked = true;
-                break;
-            }
         }
         fTree.setGrayChecked(parent, childChecked);
         updateParentState(parent);
