@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,7 +51,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public class HelpTray extends DialogTray implements IPageChangedListener {
 	
+	public static final int MINIMUM_HEIGHT = 450;
 	private static final int DEFAULT_WIDTH = 210;
+	
+	private int originalHeight;
+	private int heightAdded;
+	
 	private FormToolkit toolkit;
 	private ReusableHelpPart helpPart;
 	private Shell shell;
@@ -89,6 +95,9 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	 * @param parent the parent composite that will contain the tray
 	 */
 	protected Control createContents(Composite parent) {
+		// if the dialog is too short, make it taller
+		ensureMinimumHeight(parent.getShell());
+		
 		toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
 		toolkit.getColors().initializeSectionToolBarColors();
@@ -187,8 +196,43 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		hover.dispose();
 		toolkit.dispose();
 		helpPart.dispose();
+		
+		/*
+		 * Shell is about to be closed. Add a one-time-only listener
+		 * that will return the dialog height back to original.
+		 */
+		shell.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				shell.removeListener(SWT.Resize, this);
+				Point p = shell.getSize();
+				if (heightAdded > 0 && p.y > originalHeight) {
+					p.y = Math.max(p.y - heightAdded, originalHeight);
+					shell.setSize(p);
+				}
+			}
+		});
 	}
 
+	/**
+	 * Ensures that the dialog's height is sufficient to contain the help tray.
+	 * If the dialog is too short, its height is increased. When closing the tray,
+	 * the height is returned to original (see dispose()).
+	 * 
+	 * @param shell the dialog's shell
+	 */
+	private void ensureMinimumHeight(Shell shell) {
+		Point p = shell.getSize();
+		originalHeight = p.y;
+		if (p.y < MINIMUM_HEIGHT) {
+			heightAdded = MINIMUM_HEIGHT - p.y;
+			p.y = MINIMUM_HEIGHT;
+			shell.setSize(p);
+		}
+		else {
+			heightAdded = 0;
+		}
+	}
+	
 	/**
 	 * Returns the ReusableHelpPart contained in the tray.
 	 * 
@@ -209,6 +253,22 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		if (data instanceof IPageChangeProvider) {
 			((IPageChangeProvider)data).addPageChangedListener(this);
 		}
+	}
+
+	/**
+	 * Returns whether or not the help tray can handle the given shell. In some
+	 * cases the help tray is not appropriate for shells that are too short and
+	 * not resizable. In these cases infopops are used.
+	 * 
+	 * @param shell the shell to check
+	 * @return whether or not the help tray is appropriate for the hsell
+	 */
+	public static boolean isAppropriateFor(Shell shell) {
+		if (shell != null && !shell.isDisposed() && shell.isVisible()) {
+			Object data = shell.getData();
+			return (data instanceof TrayDialog && (shell.getSize().y >= MINIMUM_HEIGHT || (shell.getStyle() & SWT.RESIZE) != 0));
+		}
+		return false;
 	}
 
 	/**

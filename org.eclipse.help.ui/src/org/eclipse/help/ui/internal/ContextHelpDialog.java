@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.help.ui.internal;
 
 import org.eclipse.core.runtime.Platform;
@@ -17,7 +16,7 @@ import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.help.ui.internal.views.HelpTray;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
@@ -333,9 +332,8 @@ public class ContextHelpDialog {
 		}
 
 		// create dynamic help link if current context allows dynamic help
-		Object shellData = parentShell.getData();
 		IWorkbenchWindow wbWindow = HelpUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-		if (DefaultHelpUI.isActiveShell(parentShell, wbWindow) || shellData instanceof TrayDialog) {
+		if (DefaultHelpUI.isActiveShell(parentShell, wbWindow) || HelpTray.isAppropriateFor(parentShell)) {
 			// Create separator.
 			label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 			label.setBackground(backgroundColour);

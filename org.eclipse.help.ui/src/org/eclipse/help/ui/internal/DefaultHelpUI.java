@@ -278,12 +278,9 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			}
 		}
 		// check the dialog
-		if (activeShell != null) {
-			Object data = activeShell.getData();
-			if (data instanceof TrayDialog && (!dinfopop || noInfopop)) {
-				displayContextAsHelpTray(activeShell, context);
-				return;
-			}
+		if (HelpTray.isAppropriateFor(activeShell) && (!dinfopop || noInfopop)) {
+			displayContextAsHelpTray(activeShell, context);
+			return;
 		}
 		// we are here either as a fallback or because of the user preferences
 		displayContextAsInfopop(context, x, y);
