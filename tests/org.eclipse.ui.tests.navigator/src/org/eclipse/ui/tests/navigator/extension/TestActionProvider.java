@@ -7,7 +7,7 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.ui.tests.navigator.extension;
 
 import org.eclipse.jface.action.GroupMarker;
@@ -20,21 +20,24 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 public class TestActionProvider extends CommonActionProvider {
 
-	public static final String GROUP_TEST_MENU = "group.testMenu"; 
+	public static final String GROUP_TEST_MENU = "group.testMenu";
 
-	public static final String GROUP_TEST_DEPENDENCY = "group.testDependency"; 
-	
+	public static final String GROUP_TEST_DEPENDENCY = "group.testDependency";
+
 	private IAction action = null;
-	
-	public void init(ICommonActionExtensionSite aConfig) {
-		 action = new TestAction(aConfig.getViewSite().getShell());
+
+	public void init(ICommonActionExtensionSite aSite) {
+		action = new TestAction(aSite.getViewSite().getShell());
+		
+
 	}
-	
+
 	public void fillContextMenu(IMenuManager menu) {
 		IMenuManager submenu = new MenuManager("CN Test Menu", GROUP_TEST_MENU);
 		submenu.add(action);
 		submenu.add(new GroupMarker(GROUP_TEST_DEPENDENCY));
 		menu.insertAfter(ICommonMenuConstants.GROUP_ADDITIONS, submenu);
 	}
+
 
 }

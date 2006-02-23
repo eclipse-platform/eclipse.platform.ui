@@ -11,6 +11,7 @@
 package org.eclipse.ui.navigator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -389,13 +390,17 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 */
 	protected void handleDoubleClick(DoubleClickEvent anEvent) {
 
-		IStructuredSelection selection = (IStructuredSelection) anEvent
-				.getSelection();
-		Object element = selection.getFirstElement();
-
-		TreeViewer viewer = getCommonViewer();
-		if (viewer.isExpandable(element)) {
-			viewer.setExpandedState(element, !viewer.getExpandedState(element));
+		IAction openHandler = getViewSite().getActionBars().getGlobalActionHandler(ICommonActionConstants.OPEN);
+		
+		if(openHandler == null) {
+			IStructuredSelection selection = (IStructuredSelection) anEvent
+					.getSelection();
+			Object element = selection.getFirstElement();
+	
+			TreeViewer viewer = getCommonViewer();
+			if (viewer.isExpandable(element)) {
+				viewer.setExpandedState(element, !viewer.getExpandedState(element));
+			}
 		}
 	}
 

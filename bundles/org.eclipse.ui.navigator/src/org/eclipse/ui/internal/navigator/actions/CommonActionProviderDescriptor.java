@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
@@ -101,7 +102,7 @@ public class CommonActionProviderDescriptor implements
 			boolean nestedUnderNavigatorContent) {
 		super();
 		Assert.isTrue(TAG_ACTION_PROVIDER.equals(aConfigElement.getName()));
-		Assert.isTrue(TAG_TRIGGER_POINTS.equals(anEnablementExpression
+		Assert.isTrue(TAG_POSSIBLE_CHILDREN.equals(anEnablementExpression
 				.getName())
 				|| TAG_ENABLEMENT.equals(anEnablementExpression.getName()));
 		configurationElement = aConfigElement;
@@ -129,8 +130,7 @@ public class CommonActionProviderDescriptor implements
 			// if no child enablement is specified, and we have an override, use
 			// it
 			if (children.length == 0 && enablementElement != null) {
-				enablement = ElementHandler.getDefault().create(
-						ExpressionConverter.getDefault(), enablementElement);
+				enablement = new CustomAndExpression(enablementElement);
 				// otherwise the child enablement takes priority
 			} else if (children.length == 1) {
 				enablement = ElementHandler.getDefault().create(

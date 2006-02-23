@@ -202,7 +202,7 @@ public class CommonActionDescriptorManager {
 				IConfigurationElement[] enablement = anElement
 						.getChildren(TAG_ENABLEMENT);
 				if (enablement.length == 0)
-					enablement = anElement.getChildren(TAG_TRIGGER_POINTS);
+					enablement = anElement.getChildren(TAG_POSSIBLE_CHILDREN);
 				if (enablement.length == 1)
 					defaultEnablement = enablement[0];
 				for (int i = 0; i < actionProviders.length; i++)

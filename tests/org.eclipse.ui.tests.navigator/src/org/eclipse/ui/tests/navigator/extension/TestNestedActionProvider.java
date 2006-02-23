@@ -7,29 +7,83 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.ui.tests.navigator.extension;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonActionProvider;
+import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 public class TestNestedActionProvider extends CommonActionProvider {
 
-	public static final String GROUP_TEST_MENU = "group.testMenu"; 
+	public static final String GROUP_TEST_MENU = "group.testMenu";
 
-	public static final String GROUP_TEST_DEPENDENCY = "group.testDependency"; 
-	
+	public static final String GROUP_TEST_DEPENDENCY = "group.testDependency";
+
 	private IAction action = null;
-	
-	public void init(ICommonActionExtensionSite aConfig) {
-		 action = new TestAction(aConfig.getViewSite().getShell(), "Nested action (only visible if test ext active)");
+
+	private IAction openAction;
+
+	private ICommonActionExtensionSite site;
+
+	public void init(ICommonActionExtensionSite aSite) {
+		site = aSite;
+		action = new TestAction(aSite.getViewSite().getShell(),
+				"Nested action (only visible if test ext active)");
+
+		openAction = new Action() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			public void run() {
+
+				IStructuredSelection selection = (IStructuredSelection) getContext()
+						.getSelection();
+				if (selection.size() == 1) {
+					TestExtensionTreeData data = (TestExtensionTreeData) selection
+							.getFirstElement();
+					((TreeViewer) site.getStructuredViewer()).setExpandedState(
+							data, true);
+					try {
+						IDE
+								.openEditor(((ICommonViewerWorkbenchSite) site
+										.getViewSite()).getPage(), data
+										.getFile(), true);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
 	}
-	
-	public void fillContextMenu(IMenuManager menu) {  
+
+	public void fillContextMenu(IMenuManager menu) {
 		menu.insertAfter(ICommonMenuConstants.GROUP_ADDITIONS, action);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+	 */
+	public void fillActionBars(IActionBars actionBars) {
+		super.fillActionBars(actionBars);
+		
+		actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, openAction);
+
 	}
 
 }
