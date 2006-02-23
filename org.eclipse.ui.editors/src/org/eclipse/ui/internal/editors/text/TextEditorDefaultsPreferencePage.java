@@ -501,12 +501,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		String label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth;
 		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
 		IntegerDomain tabWidthDomain= new IntegerDomain(1, 16);
-		addTextField(appearanceComposite, tabWidth, tabWidthDomain, 2, 0);
+		addTextField(appearanceComposite, tabWidth, tabWidthDomain, 15, 0);
 
 		label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize;
 		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
 		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
-		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 5, 0);
+		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 15, 0);
 
 		label= TextEditorMessages.TextEditorPreferencePage_highlightCurrentLine;
 		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);
@@ -519,7 +519,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorPreferencePage_printMarginColumn;
 		Preference printMarginColumn= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, label, null);
 		IntegerDomain printMarginDomain= new IntegerDomain(20, 200);
-		Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 3, 20);
+		Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 15, 20);
 		createDependency(showPrintMarginButton, showPrintMargin, printMarginControls);
 
 		label= TextEditorMessages.TextEditorPreferencePage_showLineNumbers;
@@ -546,7 +546,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		// Text field for modifier string
 		label= TextEditorMessages.HyperlinkKeyModifier_label;
 		Preference hyperlinkModifier= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, label, null);
-		fHyperlinkKeyModifierText= (Text)addTextField(appearanceComposite, hyperlinkModifier, null, 20, 20)[1];
+		fHyperlinkKeyModifierText= (Text)addTextField(appearanceComposite, hyperlinkModifier, null, 15, 20)[1];
 
 		fHyperlinkKeyModifierText.addKeyListener(new KeyListener() {
 			private boolean isModifierCandidate;
