@@ -265,7 +265,7 @@ public/*final*/class WorkbenchImages {
                 PATH_EVIEW + "default_persp.gif", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
-                        + "new_wiz.gif", false); //$NON-NLS-1$
+                        + "new_wiz.png", false); //$NON-NLS-1$
 
 	// testing PNG images cross platform, allows designers to pickup nightly builds
 //        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
@@ -276,16 +276,16 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ, PATH_ETOOL
                         + "export_wiz.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN
-                        + "import_wiz.gif", false); //$NON-NLS-1$
+                        + "import_wiz.png", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN
-                        + "export_wiz.gif", false); //$NON-NLS-1$
+                        + "export_wiz.png", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_PREF_WIZ, PATH_WIZBAN
-                + "importpref_wiz.gif", false); //$NON-NLS-1$
+                + "importpref_wiz.png", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_PREF_WIZ, PATH_WIZBAN
-                + "exportpref_wiz.gif", false); //$NON-NLS-1$
+                + "exportpref_wiz.png", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ,
-                PATH_WIZBAN + "workset_wiz.gif", false); //$NON-NLS-1$
+                PATH_WIZBAN + "workset_wiz.png", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC,
                 PATH_EVIEW + "defaultview_misc.gif", false); //$NON-NLS-1$

@@ -106,7 +106,7 @@ public class FileSystemExportWizard extends Wizard implements IExportWizard {
         }
 
         setWindowTitle(DataTransferMessages.DataTransfer_export);
-        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.png"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

@@ -550,27 +550,27 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN
-						+ "newprj_wiz.gif", false); //$NON-NLS-1$
+						+ "newprj_wiz.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFOLDER_WIZ,
-				PATH_WIZBAN + "newfolder_wiz.gif", false); //$NON-NLS-1$
+				PATH_WIZBAN + "newfolder_wiz.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFILE_WIZ, PATH_WIZBAN
-						+ "newfile_wiz.gif", false); //$NON-NLS-1$
+						+ "newfile_wiz.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTDIR_WIZ,
-				PATH_WIZBAN + "importdir_wiz.gif", false); //$NON-NLS-1$
+				PATH_WIZBAN + "importdir_wiz.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTZIP_WIZ,
-				PATH_WIZBAN + "importzip_wiz.gif", false); //$NON-NLS-1$
+				PATH_WIZBAN + "importzip_wiz.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTDIR_WIZ,
-				PATH_WIZBAN + "exportdir_wiz.gif", false); //$NON-NLS-1$
+				PATH_WIZBAN + "exportdir_wiz.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTZIP_WIZ,
-				PATH_WIZBAN + "exportzip_wiz.gif", false); //$NON-NLS-1$
+				PATH_WIZBAN + "exportzip_wiz.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ,
@@ -578,7 +578,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN
-						+ "saveas_wiz.gif", false); //$NON-NLS-1$
+						+ "saveas_wiz.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJ_PROJECT,
 				PATH_OBJECT + "prj_obj.gif", true); //$NON-NLS-1$
