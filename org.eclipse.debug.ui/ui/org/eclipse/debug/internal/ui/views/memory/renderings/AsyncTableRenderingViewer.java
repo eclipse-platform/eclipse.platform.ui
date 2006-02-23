@@ -554,7 +554,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			fTableCursor.redraw();
 		}
 		
-		// TODO:  hack to get cursor to be selected properly during reload
+		// HACK:  hack to get cursor to be selected properly during reload
 		if (!hasPendingUpdates())
 		{
 			fPendingSelection = getSelectionKey();

@@ -129,7 +129,6 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 				}
 			}
 		} catch (DebugException e) {
-			// TODO:  hack to get the rendering to be notified of error
 			if (getTableViewer() != null)
 				getTableViewer().handlePresentationFailure(null, e.getStatus());
 		}

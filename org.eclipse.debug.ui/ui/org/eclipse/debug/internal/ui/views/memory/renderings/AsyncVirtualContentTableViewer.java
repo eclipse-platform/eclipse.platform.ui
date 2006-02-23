@@ -206,7 +206,6 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 		return topIndexKey;
 	}
 
-	// TODO:  do we need to push this down to async table viewer?
 	 protected void setChildren(final Widget widget, final List children)
 	 {
 		 preservingSelection(new Runnable() {
@@ -308,9 +307,6 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 		return fTopIndexKey;
 	}
 
-	/* 
-	 * TODO:  also push this to base table viewer?
-	 */
 	protected synchronized void preservingSelection(Runnable updateCode) {
 		Object oldTopIndexKey = null;
 		if (fPendingTopIndexKey == null) {
@@ -335,7 +331,6 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 
 	}
 	
-	// TODO:  base asyn table viewer can use this too?
 	public void addPresentationErrorListener(IPresentationErrorListener errorListener)
 	{
 		fPresentationErrorListeners.add(errorListener);

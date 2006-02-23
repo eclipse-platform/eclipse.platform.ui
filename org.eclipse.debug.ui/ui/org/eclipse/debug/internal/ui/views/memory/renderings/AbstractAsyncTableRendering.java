@@ -93,9 +93,7 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.UIJob;
 
 //TODO:  different representation in a rendering
-//TODO:  allow IMemoryBlock to contribute decorations
 //TODO:  show memory tab is busy updating
-//TODO:  pluggable update policy
 //TODO:  linux - cannot resize columns to preferred size
 //TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
 public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering {
