@@ -1374,7 +1374,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * the location path in the project description.  If this resource is a linked
 	 * resource in an open project, the returned path will be equal to the location
 	 * path supplied when the linked resource was created.  In all other cases, this
-	 * method returns the same value as <code>getLocation</code>.
+	 * method returns the same value as {@link #getLocation()}.
 	 * </p>
 	 * 
 	 * @return the raw path of this resource in the local file system,  or
@@ -1397,12 +1397,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * the location path in the project description.  If this resource is a linked
 	 * resource in an open project, the returned path will be equal to the location
 	 * path supplied when the linked resource was created.  In all other cases, this
-	 * method returns the same value as <code>getLocation</code>.
+	 * method returns the same value as {@link #getLocationURI()}.
 	 * </p>
 	 * 
 	 * @return the raw path of this resource in the file system,  or
 	 * <code>null</code> if no path can be determined
-	 * @see #getLocation()
+	 * @see #getLocationURI()
 	 * @see IFile#createLink(URI, int, IProgressMonitor)
 	 * @see IFolder#createLink(URI, int, IProgressMonitor)
 	 * @see IPathVariableManager
