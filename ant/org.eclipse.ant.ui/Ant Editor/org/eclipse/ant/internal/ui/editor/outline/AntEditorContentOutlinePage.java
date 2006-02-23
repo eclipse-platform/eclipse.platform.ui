@@ -303,6 +303,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		setSort(fSort);
 
 		viewer.setLabelProvider(new AntModelLabelProvider());
+		viewer.addFilter(new AntOutlineFilter());
 		if (fModel != null) {
 			setViewerInput(fModel);
 		}
@@ -338,7 +339,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 		});
 		
-		viewer.addFilter(new AntOutlineFilter());
 		site.getActionBars().setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 	}
 	
