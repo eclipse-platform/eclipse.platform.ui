@@ -23,16 +23,17 @@ import org.eclipse.ui.actions.ActionGroup;
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point for
  * top-level and nested &lt;actionProvider &gt; elements.
  * </p>
- * <p> 
+ * <p>
  * {@link CommonActionProvider}s are declared via the
- * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point. 
- * {@link CommonActionProvider}s may be declared as top-level elements in the extension point
- * (e.g. an &lt;actionProvider /&gt; element at the root of the extension point).
- * Alternatively, &lt;actionProvider /&gt; elements may be nested under a
- * &lt;navigatorContent /&gt; element, in which case they are considered to be
- * "associated" with that content extension. For more information, see the 
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
- * </p>  
+ * {@link CommonActionProvider}s may be declared as top-level elements in the
+ * extension point (e.g. an &lt;actionProvider /&gt; element at the root of the
+ * extension point). Alternatively, &lt;actionProvider /&gt; elements may be
+ * nested under a &lt;navigatorContent /&gt; element, in which case they are
+ * considered to be "associated" with that content extension. For more
+ * information, see the <b>org.eclipse.ui.navigator.navigatorContent</b>
+ * extension point.
+ * </p>
  * 
  * <p>
  * Clients may extend this class.
@@ -42,6 +43,8 @@ import org.eclipse.ui.actions.ActionGroup;
  */
 public abstract class CommonActionProvider extends ActionGroup implements
 		IMementoAware {
+
+	private ICommonActionExtensionSite actionSite;
 
 	/**
 	 * <p>
@@ -56,7 +59,9 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 *            The configuration information for the instantiated Common
 	 *            Action Provider.
 	 */
-	public abstract void init(ICommonActionExtensionSite aSite);
+	public void init(ICommonActionExtensionSite aSite) {
+		actionSite = aSite;
+	}
 
 	/**
 	 * <p>
@@ -94,6 +99,15 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 *            A memento that was given to the view part to save its state.
 	 */
 	public void saveState(IMemento aMemento) {
+	}
+
+	/**
+	 * 
+	 * @return The cached reference to the action site. Will only be non-null if
+	 *         the subclass calls super.init() first.
+	 */
+	protected final ICommonActionExtensionSite getActionSite() {
+		return actionSite;
 	}
 
 }
