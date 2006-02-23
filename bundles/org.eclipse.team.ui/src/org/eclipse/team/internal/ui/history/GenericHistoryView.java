@@ -89,6 +89,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	DropTarget dropTarget;
 	GenericHistoryDropAdapter dropAdapter;
 	
+	/**
+	 * Keeps track of the last selected element (either by selecting or opening an editor)
+	 */
+	private Object lastSelectedElement;
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -144,20 +148,23 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	private ISelectionListener selectionListener = new ISelectionListener() {
 
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-			if (!isLinkingEnabled()) {
-				return;
-			}
 
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection structSelection = (IStructuredSelection) selection;
 				//Always take the first element - this is not intended to work with multiple selection
-				Object firstElement = structSelection.getFirstElement();
-				if (firstElement != null){
-					Object resource = Utils.getAdapter(firstElement, IResource.class);
+				//Also, hang on to this selection for future use in case the history view is not visible
+				lastSelectedElement = structSelection.getFirstElement();
+				
+				if (!isLinkingEnabled()) {
+					return;
+				}
+				
+				if (lastSelectedElement != null){
+					Object resource = Utils.getAdapter(lastSelectedElement, IResource.class);
 					if (resource != null)
 						itemDropped((IResource) resource, false);
 					else
-						itemDropped(firstElement, false);
+						itemDropped(lastSelectedElement, false);
 				}
 			}
 		}
@@ -320,8 +327,19 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	}
 	
 	public void setFocus() {
-		//TODO: Add support for refreshing contents based on current selection when
-		//view regains focus
+		if (isLinkingEnabled()){
+			if (lastSelectedElement != null){
+				if (lastSelectedElement instanceof IEditorPart){
+					editorActivated((IEditorPart) lastSelectedElement);
+				} else {
+					Object resource = Utils.getAdapter(lastSelectedElement, IResource.class);
+					if (resource != null)
+						itemDropped((IResource) resource, false);
+					else
+						itemDropped(lastSelectedElement, false);
+				}
+			}
+		}
 	}
 
 	/**
@@ -410,11 +428,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	
 	public IHistoryPage itemDropped(Object object, boolean refresh) {
 		
-		//TODO: see #setFocus()
-		/*//check to see if history view is visible - if it's not, don't bother
+		//check to see if history view is visible - if it's not, don't bother
 		//going to the trouble of fetching the history
 		if (!this.getSite().getPage().isPartVisible(this))
-			return null;*/
+			return null;
 		
 		
 		IResource resource = Utils.getResource(object);
@@ -627,7 +644,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	 * @param editor the active editor
 	 */
 	protected void editorActivated(IEditorPart editor) {
-		// Only fetch contents if the view is shown in the current page.
+		//If this history view is not visible, keep track of this editor
+		//for future use
+		if (editor != null && !checkIfPageIsVisible())
+			lastSelectedElement = editor;
+		
+		//Only fetch contents if the view is shown in the current page.
 		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible() || isViewPinned()) {
 			return;
 		}
