@@ -125,5 +125,14 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 
 		theActionBars.updateActionBars();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
+	 */
+	public void dispose() { 
+		super.dispose();
+		if(toggleLinkingAction != null)
+			toggleLinkingAction.dispose();
+	}
 
 }

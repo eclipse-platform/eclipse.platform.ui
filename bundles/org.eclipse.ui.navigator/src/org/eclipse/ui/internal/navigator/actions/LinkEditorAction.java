@@ -40,13 +40,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * This action links the activate editor with the Navigator selection.
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
- * </p>
- * 
+ *  
  * @since 3.2
  */
 public class LinkEditorAction extends Action implements ISelectionChangedListener, IAction, IPropertyListener {
@@ -142,6 +136,18 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		 
 		
 		linkHelperRegistry = new LinkHelperRegistry(commonViewer.getNavigatorContentService());
+	}
+	
+	/**
+	 * 
+	 */
+	public void dispose() {
+		commonNavigator.removePropertyListener(this);
+		if(isChecked()) {
+			commonViewer.removeSelectionChangedListener(this);
+			commonNavigator.getSite().getPage().removePartListener(partListener);
+		}
+
 	}
 
 	/**
