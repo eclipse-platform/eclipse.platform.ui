@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.Viewer;
@@ -17,6 +20,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -31,13 +36,17 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		Utils.initAction(this, "action.pickModels."); //$NON-NLS-1$
 		this.configuration = configuration;
 		listener = new org.eclipse.jface.util.IPropertyChangeListener() {
-					public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
-						if (event.getProperty() == ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER) {
-							update();
-						}
-					}
-				};
+			public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
+				if (event.getProperty() == ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER) {
+					update();
+				}
+				if (event.getProperty().equals(ITeamContentProviderManager.PROP_ENABLED_MODEL_PROVIDERS)) {
+					rebuildMenu();
+				}
+			}
+		};
 		this.configuration.addPropertyChangeListener(listener);
+		TeamUI.getTeamContentProviderManager().addPropertyChangeListener(listener);
 		getSynchronizationContext().getScope().addScopeChangeListener(this);
 		showAllAction = new Action(TeamUIMessages.ModelSelectionDropDownAction_0) { 
 			public void run() {
@@ -68,6 +77,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		}
 		getSynchronizationContext().getScope().removeScopeChangeListener(this);
 		configuration.removePropertyChangeListener(listener);
+		TeamUI.getTeamContentProviderManager().removePropertyChangeListener(listener);
 	}
 
 	public Menu getMenu(Control parent) {
@@ -76,7 +86,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 			menuManager = new MenuManager();
 			fMenu = menuManager.createContextMenu(parent);
 			menuManager.add(showAllAction);
-			ModelProvider[] modelProviders = ((ModelSynchronizeParticipant)configuration.getParticipant()).getEnabledModelProviders();
+			ModelProvider[] modelProviders = getEnabledModelProviders();
 			if (modelProviders.length > 0)
 				menuManager.add(new Separator());
 			addModelsToMenu(modelProviders);
@@ -86,6 +96,19 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 			fMenu = menuManager.getMenu();
 		}
 		return fMenu;
+	}
+
+	private ModelProvider[] getEnabledModelProviders() {
+		Set result = new HashSet();
+		ModelProvider[] providers = ((ModelSynchronizeParticipant)configuration.getParticipant()).getEnabledModelProviders();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
+			if (desc != null && desc.isEnabled()) {
+				result.add(provider);
+			}
+		}
+		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
 	}
 
 	private void addModelsToMenu(ModelProvider[] modelProviders) {
@@ -164,16 +187,20 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 	 */
 	public void scopeChanged(ISynchronizationScope scope, ResourceMapping[] newMappings, ResourceTraversal[] newTraversals) {
 		if (newMappings.length > 0) {
-			Display display = TeamUIPlugin.getStandardDisplay();
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if(menuManager != null) {
-						menuManager.dispose();
-						menuManager = null;
-					}
-					update();
-				}
-			});
+			rebuildMenu();
 		}
+	}
+
+	private void rebuildMenu() {
+		Display display = TeamUIPlugin.getStandardDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if(menuManager != null) {
+					menuManager.dispose();
+					menuManager = null;
+				}
+				update();
+			}
+		});
 	}
 }

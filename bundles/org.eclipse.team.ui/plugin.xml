@@ -40,6 +40,11 @@
             id="org.eclipse.team.ui.IgnorePreferences">
             <keywordReference id="org.eclipse.team.ui.team"/>
       </page>
+      <page
+            category="org.eclipse.team.ui.TeamPreferences"
+            class="org.eclipse.team.internal.ui.mapping.ModelEnablementPreferencePage"
+            id="org.eclipse.team.ui.enabledModels"
+            name="%EnabledModels"/>
    </extension>
 <!-- ****************** POPUP ACTIONS *************** -->
    <extension

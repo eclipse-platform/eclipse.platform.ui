@@ -17,6 +17,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * A team content provider descriptor associates a model provider
@@ -30,6 +32,9 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 	private static final String ATT_CONTENT_EXTENSION_ID = "contentExtensionId"; //$NON-NLS-1$
 	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	private static final String ATT_PREFERENCE_PAGE = "preferencePage"; //$NON-NLS-1$
+	
+	private static final String PREF_TEAM_CONTENT_DESCRIPTORS = "teamContentDescriptors"; //$NON-NLS-1$
+	private static final String PREF_ENABLED = "enabled"; //$NON-NLS-1$
 
 	private String modelProviderId;
 	private String contentExtensionId;
@@ -111,6 +116,73 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 	 * @see org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor#isEnabled()
 	 */
 	public boolean isEnabled() {
-		return true;
+		if (!hasPreferences()) {
+			return true;
+		}
+		return getPreferences().getBoolean(PREF_ENABLED, true);
+	}
+
+	public void setEnabled(boolean enable) {
+		if (isEnabled() != enable) {
+			getPreferences().putBoolean(PREF_ENABLED, enable);
+			flushPreferences();
+		}
+	}
+	
+	public Preferences getParentPreferences() {
+		return TeamUIPlugin.getPlugin().getInstancePreferences().node(PREF_TEAM_CONTENT_DESCRIPTORS);
+	}
+	/*
+	 * Return the preferences node for this repository
+	 */
+	public Preferences getPreferences() {
+		if (!hasPreferences()) {
+			ensurePreferencesStored();
+		}
+		return internalGetPreferences();
+	}
+	
+	private Preferences internalGetPreferences() {
+		return getParentPreferences().node(getPreferenceName());
+	}
+	
+	private boolean hasPreferences() {
+		try {
+			return getParentPreferences().nodeExists(getPreferenceName());
+		} catch (BackingStoreException e) {
+			TeamUIPlugin.log(IStatus.ERROR, NLS.bind("Error accessing team content preference store for {0}", new String[] { getModelProviderId() }), e);  //$NON-NLS-1$
+			return false;
+		}
+	}
+	
+	/**
+	 * Return a unique name that identifies this location but
+	 * does not contain any slashes (/). Also, do not use ':'.
+	 * Although a valid path character, the initial core implementation
+	 * didn't handle it well.
+	 */
+	private String getPreferenceName() {
+		return getModelProviderId();
+	}
+
+	public void storePreferences() {
+		Preferences prefs = internalGetPreferences();
+		// Must store at least one preference in the node
+		prefs.putBoolean(PREF_ENABLED, true);
+		flushPreferences();
+	}
+	
+	private void flushPreferences() {
+		try {
+			internalGetPreferences().flush();
+		} catch (BackingStoreException e) {
+			TeamUIPlugin.log(IStatus.ERROR, NLS.bind("Error flushing team content preference store for {0}", new String[] { getModelProviderId() }), e);  //$NON-NLS-1$
+		}
+	}
+
+	private void ensurePreferencesStored() {
+		if (!hasPreferences()) {
+			storePreferences();
+		}
 	}
 }

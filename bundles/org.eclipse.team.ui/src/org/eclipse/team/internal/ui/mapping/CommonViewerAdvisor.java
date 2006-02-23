@@ -16,6 +16,8 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -37,7 +39,7 @@ import org.eclipse.ui.part.IPageSite;
 /**
  * Provides a Common Navigator based viewer for use by a {@link ModelSynchronizePage}.
  */
-public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements INavigatorContentServiceListener, IEmptyTreeListener {
+public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements INavigatorContentServiceListener, IEmptyTreeListener, IPropertyChangeListener {
 
 	public static final class NavigableCommonViewer extends CommonViewer implements ITreeViewerAccessor {
 		private final IEmptyTreeListener listener;
@@ -121,6 +123,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		final CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, listener);
 		v.setSorter(new TeamViewerSorter(new CommonViewerSorter()));
 		ISynchronizationScope scope = getScope(configuration);
+		bindTeamContentProviders(v);
 		scope.addScopeChangeListener(new ISynchronizationScopeChangeListener() {
 			public void scopeChanged(final ISynchronizationScope scope,
 					ResourceMapping[] newMappings, ResourceTraversal[] newTraversals) {
@@ -139,8 +142,18 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	}
 
 	private static void enableContentProviders(CommonViewer v, ISynchronizationScope scope) {
-		v.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
 		v.getNavigatorContentService().getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
+	}
+
+	private static void bindTeamContentProviders(CommonViewer v) {
+		ITeamContentProviderManager teamContentProviderManager = TeamUI.getTeamContentProviderManager();
+		ITeamContentProviderDescriptor[] descriptors = teamContentProviderManager.getDescriptors();
+		Set toBind = new HashSet();
+		for (int i = 0; i < descriptors.length; i++) {
+			ITeamContentProviderDescriptor descriptor = descriptors[i];
+			toBind.add(descriptor.getContentExtensionId());
+		}
+		v.getNavigatorContentService().bindExtensions((String[]) toBind.toArray(new String[toBind.size()]), true);
 	}
 	
 	private static ISynchronizationScope getScope(ISynchronizePageConfiguration configuration) {
@@ -155,6 +168,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	public CommonViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
 		super(configuration);
 		final CommonViewer viewer = CommonViewerAdvisor.createViewer(parent, configuration, this);
+		TeamUI.getTeamContentProviderManager().addPropertyChangeListener(this);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
         viewer.getNavigatorContentService().addListener(this);
@@ -261,6 +275,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 * @see org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor#dispose()
 	 */
 	public void dispose() {
+		TeamUI.getTeamContentProviderManager().removePropertyChangeListener(this);
 		actionService.dispose();
 		super.dispose();
 	}
@@ -303,6 +318,12 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	public void notEmpty(TreeViewer viewer) {
 		if (emptyTreeListener != null)
 			emptyTreeListener.notEmpty(viewer);
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(ITeamContentProviderManager.PROP_ENABLED_MODEL_PROVIDERS)) {
+			enableContentProviders((CommonViewer)getViewer(), getScope(getConfiguration()));
+		}
 	}
 
 }

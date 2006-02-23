@@ -17,6 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -379,5 +380,9 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		} catch (InterruptedException e2) {
 			// Nothing to be done
 		}
-	}	
+	}
+
+	public org.osgi.service.prefs.Preferences getInstancePreferences() {
+		return new InstanceScope().getNode(getBundle().getSymbolicName());
+	}
 }

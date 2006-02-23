@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.mapping.ModelEnablementPreferencePage;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
@@ -604,6 +605,7 @@ public class ModelSynchronizeParticipant extends
 			PreferencePage page = preferencePages[i];
 			pages.add(page);
 		}
+		pages.add(new ModelEnablementPreferencePage());
 		ITeamContentProviderDescriptor[] descriptors = TeamUI.getTeamContentProviderManager().getDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
 			ITeamContentProviderDescriptor descriptor = descriptors[i];

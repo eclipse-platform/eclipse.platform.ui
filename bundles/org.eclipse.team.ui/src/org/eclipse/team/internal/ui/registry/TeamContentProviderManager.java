@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
@@ -29,6 +30,8 @@ public class TeamContentProviderManager implements ITeamContentProviderManager {
 	private static ITeamContentProviderManager instance;
 	
 	Map descriptors;
+	
+	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 	
 	public static ITeamContentProviderManager getInstance() {
 		if (instance == null)
@@ -85,12 +88,29 @@ public class TeamContentProviderManager implements ITeamContentProviderManager {
 	}
 
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+		listeners.add(listener);
 	}
 
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+		listeners.remove(listener);
+	}
+	
+	private void firePropertyChange(final PropertyChangeEvent event) {
+		Object[] allListeners = listeners.getListeners();
+		for (int i = 0; i < allListeners.length; i++) {
+			final IPropertyChangeListener listener = (IPropertyChangeListener)allListeners[i];
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.propertyChange(event);
+				}
+				public void handleException(Throwable exception) {
+					// handler by runner
+				}
+			});
+		}
+	}
+	
+	public void enablementChanged(ITeamContentProviderDescriptor[] oldEnabled, ITeamContentProviderDescriptor[] newEnabled) {
+		firePropertyChange(new PropertyChangeEvent(this, PROP_ENABLED_MODEL_PROVIDERS, oldEnabled, newEnabled));
 	}
 }
