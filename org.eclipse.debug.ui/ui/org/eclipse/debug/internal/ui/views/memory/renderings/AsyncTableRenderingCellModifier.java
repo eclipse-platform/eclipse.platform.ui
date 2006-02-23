@@ -35,11 +35,20 @@ import org.eclipse.swt.widgets.TableItem;
 public class AsyncTableRenderingCellModifier implements ICellModifier {
 
     private boolean editActionInvoked = false;
-
     private AbstractAsyncTableRendering fRendering;
+    private boolean fMBSupportsValueModification = false;
 
     public AsyncTableRenderingCellModifier(AbstractAsyncTableRendering rendering) {
         fRendering = rendering;
+        
+        Job job = new Job("AsyncTableRenderingCellModifier"){ //$NON-NLS-1$
+
+			protected IStatus run(IProgressMonitor monitor) {
+				fMBSupportsValueModification = fRendering.getMemoryBlock().supportsValueModification();
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
     }
 
     /*
@@ -49,8 +58,6 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      *      java.lang.String)
      */
     public boolean canModify(Object element, String property) {
-    	// TODO:  should we make sure asking properties from MemoryByte is done
-    	// on non-UI thread?
     	
         boolean canModify = true;
         try {
@@ -60,8 +67,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             if (!editActionInvoked)
                 return false;
 
-            // 	TODO:  this needs to go on non-UI thread
-            if (fRendering.getMemoryBlock().supportsValueModification() == false) {
+            if (!isValueModificationSupported()) {
                 return false;
             }
 
@@ -253,6 +259,11 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      */
     public void setEditActionInvoked(boolean editActionInvoked) {
         this.editActionInvoked = editActionInvoked;
+    }
+    
+    private boolean isValueModificationSupported()
+    {
+    	return fMBSupportsValueModification;
     }
 
 }
