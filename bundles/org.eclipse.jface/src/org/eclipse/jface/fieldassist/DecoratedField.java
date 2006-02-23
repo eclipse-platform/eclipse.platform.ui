@@ -419,10 +419,6 @@ public class DecoratedField {
 			});
 			decDatas[i] = new FieldDecorationData(decoration, label, formData,
 					showOnFocus);
-			// since there has never been a decoration in this position, we
-			// need to determine if layout data should be set on the control.
-			updateControlAttachments(i, decDatas[i]);
-
 		} else {
 			label = decDatas[i].label;
 			formData = decDatas[i].data;
@@ -431,8 +427,12 @@ public class DecoratedField {
 		}
 		label.setImage(decDatas[i].decoration.getImage());
 		label.setData(decDatas[i]);
-		label.setVisible(!showOnFocus);
 		label.setLayoutData(formData);
+		label.setVisible(!showOnFocus);
+
+		// Since sizes may have changed or there could be a new position
+		// defined, we need to update layout data on the control.
+		updateControlAttachments(i, decDatas[i]);
 	}
 
 	/*
@@ -443,35 +443,64 @@ public class DecoratedField {
 	private void updateControlAttachments(int index, FieldDecorationData decData) {
 		FormData formData = (FormData) control.getLayoutData();
 		int newWidth = widthOf(decData.decoration.getImage());
+		int opposing;
 
 		switch (index) {
 		case LEFT_TOP:
-			if (decDatas[LEFT_BOTTOM] == null
-					|| decDatas[LEFT_BOTTOM].data.width < newWidth) {
-				formData.left = new FormAttachment(decData.label);
-			} else
-				formData = null;
-			break;
 		case LEFT_BOTTOM:
-			if (decDatas[LEFT_TOP] == null
-					|| decDatas[LEFT_TOP].data.width < newWidth) {
+			if (index == LEFT_TOP)
+				opposing = LEFT_BOTTOM;
+			else 
+				opposing = LEFT_TOP;
+			if (decDatas[opposing] == null) {
+				// No decorator on the opposing side.
+				// Attach the control to this decorator
 				formData.left = new FormAttachment(decData.label);
-			} else
+			} else if (decDatas[opposing].data.width < newWidth) {
+				// Decorator on opposing side is the smaller one. Attach
+				// control to the new one and center align the smaller one
+				formData.left = new FormAttachment(decData.label);
+				decDatas[opposing].data.left.alignment = SWT.CENTER;
+				decDatas[opposing].data.left.control = decData.label;
+			} else {
+				// The new decorator is the smaller one. Keep the
+				// control attached to the opposing one and horizontally center
+				// the smaller one.
 				formData = null;
+				decData.data.left.alignment = SWT.CENTER;
+				decData.data.left.control = decDatas[opposing].label;
+			}
 			break;
+		/*
+		 * The only real difference in right side cases is that we are attaching
+		 * the right side of the control to the wider decoration instead
+		 * of the left.  Other concerns (horizontally aligning the smaller
+		 * decoration) are the same.
+		 */
 		case RIGHT_TOP:
-			if (decDatas[RIGHT_BOTTOM] == null
-					|| decDatas[RIGHT_BOTTOM].data.width < newWidth) {
-				formData.right = new FormAttachment(decData.label);
-			} else
-				formData = null;
-			break;
 		case RIGHT_BOTTOM:
-			if (decDatas[RIGHT_TOP] == null
-					|| decDatas[RIGHT_TOP].data.width < newWidth) {
+			if (index == RIGHT_TOP)
+				opposing = RIGHT_BOTTOM;
+			else
+				opposing = RIGHT_TOP;
+			if (decDatas[opposing] == null) {
+				// No decorator on the opposing side.
+				// Attach the control to this decorator.
 				formData.right = new FormAttachment(decData.label);
-			} else
+			} else if (decDatas[opposing].data.width < newWidth) {
+				// Decorator on opposing side is the smaller one. Attach
+				// control to the new one and center align the smaller one
+				formData.right = new FormAttachment(decData.label);
+				decDatas[opposing].data.left.alignment = SWT.CENTER;
+				decDatas[opposing].data.left.control = decData.label;
+			} else {
+				// The new decorator is the smaller one. Keep the
+				// control attached to the opposing one and horizontally center
+				// the smaller one.
 				formData = null;
+				decData.data.left.alignment = SWT.CENTER;
+				decData.data.left.control = decDatas[opposing].label;
+			}
 			break;
 		default:
 			return;
