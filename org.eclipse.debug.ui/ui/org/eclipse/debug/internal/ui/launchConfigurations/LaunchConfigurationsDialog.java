@@ -29,7 +29,6 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -99,12 +98,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Keep track of the currently visible dialog instance
 	 */
 	private static ILaunchConfigurationDialog fgCurrentlyVisibleLaunchConfigurationDialog;
-	
-	/**
-	 * Default weights for the SashForm that specify how wide the selection and
-	 * edit areas are relative to each other.
-	 */
-	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {11, 30};	
 	
 	/**
 	 * Id for 'Launch' button.
@@ -262,6 +255,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private Label fFilteringLabel;
 	
 	/**
+	 * the current launch manager
+	 * 
+	 * @since 3.2
+	 */
+	private ILaunchManager fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
+	
+	/**
 	 * Filters for the LCD
 	 * @since 3.2
 	 */
@@ -282,7 +282,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
 	private static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
-	private static final String DIALOG_WIDTH = IDebugUIConstants.PLUGIN_ID + ".DIALOG_WIDTH"; //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -295,46 +294,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setLaunchGroup(group);
-	}
-
-	/**
-	 * About to start a long running operation triggered through
-	 * the dialog. Shows the progress monitor and disables the dialog's
-	 * buttons and controls.
-	 *
-	 * @return the saved UI state
-	 */
-	private Object aboutToStart() {
-		Map savedState = null;
-		if (getShell() != null) {
-			// Save focus control
-			Control focusControl = getShell().getDisplay().getFocusControl();
-			if (focusControl != null && focusControl.getShell() != getShell()) {
-				focusControl = null;
-			}
-			
-			// Set the busy cursor to all shells.
-			Display d = getShell().getDisplay();
-			waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-			setDisplayCursor(waitCursor);
-					
-			// Set the arrow cursor to the cancel component.
-			arrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
-			getProgressMonitorCancelButton().setCursor(arrowCursor);
-	
-			// Deactivate shell
-			savedState = saveUIState();
-			if (focusControl != null) {
-				savedState.put(FOCUS_CONTROL, focusControl);
-			}
-				
-			// Attach the progress monitor part to the cancel button
-			getProgressMonitorCancelButton().setEnabled(true);
-			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
-			getProgressMonitorPart().getParent().setVisible(true);
-			getProgressMonitorCancelButton().setFocus();
-		}
-		return savedState;
 	}
 	
 	/**
@@ -366,15 +325,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		sash.setLayoutData(gd);
 		sash.setFont(dialogComp.getFont());
 		sash.setVisible(true);
-		setSashForm(sash);
+		fSashForm = sash;
 		
 		// Build the launch configuration selection area and put it into the composite.
-		Control launchConfigSelectionArea = createLaunchConfigurationSelectionArea(getSashForm());
+		Control launchConfigSelectionArea = createLaunchConfigurationSelectionArea(fSashForm);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		launchConfigSelectionArea.setLayoutData(gd);
 		
 		// Build the launch configuration edit area and put it into the composite.
-		Composite editAreaComp = createLaunchConfigurationEditArea(getSashForm());
+		Composite editAreaComp = createLaunchConfigurationEditArea(fSashForm);
 		setEditArea(editAreaComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
@@ -408,26 +367,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
- 	 * Calculate & return a 2 element integer array that specifies the relative 
- 	 * weights of the selection area and the edit area, based on the specified
- 	 * increase in width of the owning shell.  The point of this method is calculate 
- 	 * sash weights such that when the shell gets wider, all of the increase in width
- 	 * is given to the edit area (tab folder), and the selection area (tree) stays
- 	 * the same width.
- 	 * 
- 	 * @return an array of the new sash weights
- 	 */
-	private int[] calculateNewSashWeights(int widthIncrease) {
-		int[] newWeights = new int[2];
-		newWeights[0] = getSelectionArea().getBounds().width;
-		if(newWeights[0] < 180) {
-			newWeights[0] = 180;
-		}
-		newWeights[1] = getEditArea().getBounds().width + widthIncrease;
-		return newWeights;
-	}
-	
-	/**
 	 * Return whether the current configuration can be discarded.  This involves determining
 	 * if it is dirty, and if it is, asking the user what to do.
 	 * 
@@ -447,7 +386,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	    if (!isSafeToClose()) {
 	        return false;
 	    }
-		persistSashWeights();
+	    persistSashWeights();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		getBannerImage().dispose();
 		getTabViewer().dispose();
@@ -484,10 +423,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected Control createButtonBar(Composite parent) {
 		Font font = parent.getFont();
-		Composite composite= new Composite(parent, SWT.NULL);
-		
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
@@ -509,16 +447,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		monitorComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		GridLayout pmLayout = new GridLayout();
-		setProgressMonitorPart(new ProgressMonitorPart(monitorComposite, pmLayout));
-		Button cancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_3, true); 
-		setProgressMonitorCancelButton(cancelButton);
-		getProgressMonitorCancelButton().setFont(font);
-		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		getProgressMonitorPart().setFont(font);
+		fProgressMonitorPart = new ProgressMonitorPart(monitorComposite, pmLayout);
+		fProgressMonitorPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fProgressMonitorPart.setFont(font);
+		
+		fProgressMonitorCancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_3, true);
+		fProgressMonitorCancelButton.setFont(font);
 		monitorComposite.setVisible(false);
 
-		/*
-		 * This code is duplicated from Dialog#createButtonBar. We do not want
+		
+		/* * This code is duplicated from Dialog#createButtonBar. We do not want
 		 * to call the TrayDialog implementation because it adds a help control.
 		 * Since this is a custom button bar, we explicitly added the help control
 		 * in an appropriate place above, and we use the Dialog implementation of
@@ -535,8 +473,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-				| GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setFont(composite.getFont());
 		
@@ -633,7 +570,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         viewForm.setTopLeft(toolBar);
         ToolBarManager toolBarManager= new ToolBarManager(toolBar);
         
-		setSelectionArea(viewForm);
+		fSelectionArea = viewForm;
         viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
@@ -739,13 +676,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void refreshFilteringLabel() {
 		try {
 			int total = 0;
-			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
+			ILaunchConfiguration[] configs = fLaunchManager.getLaunchConfigurations();
 			for(int i = 0; i < configs.length; i++) {
 				if(configs[i].supportsMode(getMode()) & !configs[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) & equalCategories(configs[i].getCategory(), getLaunchGroup().getCategory())) {
 					total++;
 				}
 			}
-			ILaunchConfigurationType[] types = getLaunchManager().getLaunchConfigurationTypes();
+			ILaunchConfigurationType[] types = fLaunchManager.getLaunchConfigurationTypes();
 			for(int i = 0; i < types.length; i++) {
 				if(types[i].supportsMode(getMode()) & types[i].isPublic() & equalCategories(types[i].getCategory(), getLaunchGroup().getCategory())) {
 					total++;
@@ -767,7 +704,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Set the initial selection in the tree.
 	 */
 	public void doInitialTreeSelection() {
-		fLaunchConfigurationView.getViewer().setSelection(getInitialSelection());
+		fLaunchConfigurationView.getViewer().setSelection(fInitialSelection);
 	}	
 	
 	/**
@@ -798,7 +735,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (name == null) {
 			name = ""; //$NON-NLS-1$
 		}
-		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+		return fLaunchManager.generateUniqueLaunchConfigurationNameFrom(name);
 	}
 	
 	/* (non-Javadoc)
@@ -910,30 +847,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG;
 	}
- 	
- 	/**
-	 * Returns the initial selection shown in this dialog when opened in
-	 * <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code> mode.
-	 * 
-	 * @return the initial selection of the dialog
-	 */
-	private IStructuredSelection getInitialSelection() {
-		return fInitialSelection;
-	}
- 	
- 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
-	protected Point getInitialSize() {		
-		IDialogSettings settings = getDialogSettings();
-		try {
-			settings.getInt(DIALOG_WIDTH); //we have a persisted setting
-			return super.getInitialSize();
-		} catch (NumberFormatException e) {
-		}
-		return DEFAULT_INITIAL_DIALOG_SIZE;
-	}
- 	
+ 
  	/**
 	 * Returns the status the dialog was opened on or <code>null</code> if none.
 	 * 
@@ -970,15 +884,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fGroup;
 	}
  	 	 	
- 	/**
-	 * Returns the launch manager.
-	 * 
-	 * @return the launch manager
-	 */
-	private ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
- 	
  	/* (non-Javadoc)
  	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getMode()
  	 */
@@ -1004,46 +909,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fOpenMode;
 	}
 	
-	/**
-	 * returns the progress monitor for the cancel button
-	 * 
-	 * @return the progress monitor for the cancel button
-	 */
-	private Button getProgressMonitorCancelButton() {
- 		return fProgressMonitorCancelButton;
- 	}
-	
-	/**
-	 * returns the local progress monitor part
-	 * 
-	 * @return the local progress monitor part
-	 */
-	private ProgressMonitorPart getProgressMonitorPart() {
- 		return fProgressMonitorPart;
- 	}
-			
-	/**
-	 * returns the sash form
-	 * @return the sash form
-	 */
-	private SashForm getSashForm() {
-		return fSashForm;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
 	 */
 	public Object getSelectedPage() {
 		return getActiveTab();
-	}
-	
-	/**
-	 * Returns the launch configuration selection area control.
-	 * 
-	 * @return control
-	 */
-	private Composite getSelectionArea() {
-		return fSelectionArea;
 	}
 	
 	/**
@@ -1126,7 +996,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  			}
  		}
  		ILaunchConfiguration original = getTabViewer().getOriginal();
- 		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
+ 		if (original != null && newInput == null && fLaunchManager.getMovedTo(original) != null) {
 			// the current config is about to be deleted ignore this change
 			return;
 		}
@@ -1138,7 +1008,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  				boolean renamed = false;
  				if (newInput instanceof ILaunchConfiguration) {
  					ILaunchConfiguration lc = (ILaunchConfiguration)newInput;
- 					renamed = getLaunchManager().getMovedFrom(lc) != null;
+ 					renamed = fLaunchManager.getMovedFrom(lc) != null;
  				}
 	 			if (getTabViewer().isDirty() && !deleted && !renamed) {
 	 				boolean canReplace = showUnsavedChangesDialog();
@@ -1228,9 +1098,22 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.window.Window#initializeBounds()
 	 */
 	protected void initializeBounds() {
-		super.initializeBounds();
-		initializeSashForm();
-		resize();			
+		if (fSashForm != null) {
+			super.initializeBounds();
+			IDialogSettings settings = getDialogSettings();
+			int w1, w2;
+			try {
+				w1 = settings.getInt(DIALOG_SASH_WEIGHTS_1);
+				w2 = settings.getInt(DIALOG_SASH_WEIGHTS_2);
+			}
+			catch(NumberFormatException nfe) {
+				w1 = fSelectionArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				w2 = fEditArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+			}
+			
+			fSashForm.setWeights(new int[] {w1, w2});
+		}
+		resize();
 	}
 
 	/**
@@ -1243,30 +1126,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			handleStatus(status);
 		}
 	}
-
-	/**
-	 * Initialize the relative weights (widths) of the 2 sides of the sash.
-	 */
-	private void initializeSashForm() {
-		if (getSashForm() != null) {
-			IDialogSettings settings = getDialogSettings();
-			int[] sashWeights;
-			try {
-				int w1, w2;
-				w1 = settings.getInt(DIALOG_SASH_WEIGHTS_1);
-				//just to make sure we are always visible for the toolbar
-				if(w1 < 270) {
-					w1 = 270;
-				}
-				w2 = settings.getInt(DIALOG_SASH_WEIGHTS_2);
-				sashWeights = new int[] {w1, w2};
-			} catch (NumberFormatException e) {
-				sashWeights = DEFAULT_SASH_WEIGHTS;
-			}
-			getSashForm().setWeights(sashWeights);
-		}
-	}
-
+	
 	/**
 	 * Compares two objects to determine their equality
 	 * 
@@ -1327,9 +1187,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void persistSashWeights() {
 		IDialogSettings settings = getDialogSettings();
-		SashForm sashForm = getSashForm();
-		if (sashForm != null) {
-			int[] sashWeights = getSashForm().getWeights();
+		if (fSashForm != null) {
+			int[] sashWeights = fSashForm.getWeights();
 			settings.put(DIALOG_SASH_WEIGHTS_1, sashWeights[0]);
 			settings.put(DIALOG_SASH_WEIGHTS_2, sashWeights[1]);
 		}
@@ -1354,82 +1213,41 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * resize the dialog to show all relevant content
 	 */
 	protected void resize() {
-		// determine the maximum tab dimensions
-		PixelConverter pixelConverter = new PixelConverter(getEditArea());
-		int runningTabWidth = 0;
-		ILaunchConfigurationTabGroup group = getTabGroup();
-		if (group == null) {
-			return;
-		}
-		ILaunchConfigurationTab[] tabs = group.getTabs();
-		Point contentSize = new Point(0, 0);
-		for (int i = 0; i < tabs.length; i++) {
-			String name = tabs[i].getName();
-			Image image = tabs[i].getImage();
-			runningTabWidth += pixelConverter.convertWidthInCharsToPixels(name.length() + 5);
-			if (image != null) {
-				runningTabWidth += image.getBounds().width;
-			}
-			Control control = tabs[i].getControl();
-			if (control != null) {
-				Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-				if (size.x > contentSize.x) {
-					contentSize.x = size.x;
-				}
-				if (size.y > contentSize.y) {
-					contentSize.y = size.y;
-				}
-			}
-		}
-	
-		// Determine if more space is needed to show all tab labels across the top of the
-		// tab folder.  If so, only increase size of dialog to some percent of the available
-		// screen real estate.
-		if (runningTabWidth > contentSize.x) {
+		if (getTabGroup() != null) {
+			Point contentSize = fTabViewer.getTabFolder().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int maxAllowedWidth = (int) (getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT);
-			int otherWidth = getSashForm().SASH_WIDTH + getSelectionArea().getBounds().width;
-			int totalWidth = runningTabWidth + otherWidth;
+			int otherWidth = fSashForm.SASH_WIDTH + fSelectionArea.getBounds().width;
+			int totalWidth = contentSize.x + otherWidth;
 			if (totalWidth > maxAllowedWidth) {
 				contentSize.x = maxAllowedWidth - otherWidth;
-			} else {
-				contentSize.x = runningTabWidth;
 			}
+			int maxAllowedHeight =(int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
+			contentSize.y = Math.min(contentSize.y, maxAllowedHeight);			
+			fEditArea.layout(true);
+			Rectangle rect = fTabViewer.getTabFolder().getClientArea();
+			Point containerSize = new Point(rect.width, rect.height);
+			int hdiff = contentSize.x - containerSize.x;
+			int vdiff = contentSize.y - containerSize.y;
+			if (hdiff > 0 || vdiff > 0) {
+				int[] newSashWeights = null;
+				if (hdiff > 0) {
+					newSashWeights = new int[2];
+					int lhs = fSelectionArea.getBounds().width;
+					if(lhs < 170) {
+						lhs = 190;
+					}
+					newSashWeights[0] = lhs;
+					newSashWeights[1] = fEditArea.getBounds().width+hdiff;
+				}
+				Point shellSize = getShell().getSize();
+				//padding for margins, etc.
+				int offset = fTabViewer.getTabGroup().getTabs().length*3;
+				setShellSize(shellSize.x + Math.max(0, hdiff) + offset, shellSize.y + Math.max(0, vdiff));
+				if (newSashWeights != null) {
+					fSashForm.setWeights(newSashWeights);
+				}
+			} 
 		}
-		
-		int maxAllowedHeight =(int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
-		contentSize.y = Math.min(contentSize.y, maxAllowedHeight);
-	
-		// Adjust the maximum tab dimensions to account for the extra space required for the tab labels
-		Rectangle tabFolderBoundingBox = getEditArea().computeTrim(0, 0, contentSize.x, contentSize.y);
-		contentSize.x = tabFolderBoundingBox.width;
-		contentSize.y = tabFolderBoundingBox.height;
-	
-		// Force recalculation of sizes
-		getEditArea().layout(true);
-	
-		// Calculate difference between required space for the tab folder's client area 
-		// and it's current size, then increase size of this dialog's Shell by that amount
-		Rectangle rect = getTabViewer().getTabFolder().getClientArea();
-		Point containerSize= new Point(rect.width, rect.height);
-		int hdiff= contentSize.x - containerSize.x;
-		int vdiff= contentSize.y - containerSize.y;
-		// Only increase size of dialog, never shrink it
-		if (hdiff > 0 || vdiff > 0) {
-			int[] newSashWeights = null;
-			if (hdiff > 0) {
-				newSashWeights = calculateNewSashWeights(hdiff);
-			}
-			hdiff= Math.max(0, hdiff);
-			vdiff= Math.max(0, vdiff);
-			Shell shell= getShell();
-			Point shellSize= shell.getSize();
-			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
-			// Adjust the sash weights so that all of the increase in width
-			// is given to the tab area
-			if (newSashWeights != null) {
-				getSashForm().setWeights(newSashWeights);
-			}
-		}  		
 	}
 	
 	/**
@@ -1444,8 +1262,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private void restoreEnableState(Control w, Map h, String key) {
 		if (w != null) {
 			Boolean b = (Boolean) h.get(key);
-			if (b != null)
+			if (b != null) {
 				w.setEnabled(b.booleanValue());
+			}
 		}
 	}
 
@@ -1479,17 +1298,44 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		if (isVisible()) {
-			// The operation can only be canceled if it is executed in a separate thread.
-			// Otherwise the UI is blocked anyway.
-			Object state = aboutToStart();
+			Map savedState = null;
+			if (getShell() != null) {
+				// Save focus control
+				Control focusControl = getShell().getDisplay().getFocusControl();
+				if (focusControl != null && focusControl.getShell() != getShell()) {
+					focusControl = null;
+				}
+				
+				// Set the busy cursor to all shells.
+				Display d = getShell().getDisplay();
+				waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
+				setDisplayCursor(waitCursor);
+						
+				// Set the arrow cursor to the cancel component.
+				arrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
+				fProgressMonitorCancelButton.setCursor(arrowCursor);
+				fProgressMonitorCancelButton.setEnabled(true);
+				
+				// Deactivate shell
+				savedState = saveUIState();
+				if (focusControl != null) {
+					savedState.put(FOCUS_CONTROL, focusControl);
+				}	
+				// Attach the progress monitor part to the cancel button
+				fProgressMonitorPart.attachToCancelComponent(fProgressMonitorCancelButton);
+				fProgressMonitorPart.getParent().setVisible(true);
+				fProgressMonitorCancelButton.setFocus();
+			}
 			fActiveRunningOperations++;
 			try {
 				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
-			} finally {
+			} 
+			finally {
 				fActiveRunningOperations--;
-				stopped(state);
+				stopped(savedState);
 			}
-		} else {
+		} 
+		else {
 			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 		}
 	}
@@ -1527,8 +1373,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Map savedState= new HashMap(4);
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_CLOSE_BUTTON), savedState, "close", false);//$NON-NLS-1$
-		if (getSelectionArea() != null) {
-			savedState.put("selectionarea", ControlEnableState.disable(getSelectionArea()));//$NON-NLS-1$
+		if (fSelectionArea != null) {
+			savedState.put("selectionarea", ControlEnableState.disable(fSelectionArea));//$NON-NLS-1$
 		}
 		savedState.put("editarea", ControlEnableState.disable(getEditArea()));//$NON-NLS-1$
 		return savedState;
@@ -1617,39 +1463,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setOpenMode(int mode) {
 		fOpenMode = mode;
 	}
-	
-	/**
-	 * Sets the progress monitor on the cancel button
-	 * 
-	 * @param button
-	 */
-	private void setProgressMonitorCancelButton(Button button) {
- 		fProgressMonitorCancelButton = button;
- 	}
-	
-	private void setProgressMonitorPart(ProgressMonitorPart part) {
- 		fProgressMonitorPart = part;
- 	}
-	
-	private void setSashForm(SashForm sashForm) {
-		fSashForm = sashForm;
-	}
-
-	/**
-	 * Sets the launch configuration selection area control.
-	 * 
-	 * @param selectionArea control
-	 */
-	private void setSelectionArea(Composite selectionArea) {
-		fSelectionArea = selectionArea;
-	}
 
 	/**
  	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
  	 * Do not increase the size of the Shell beyond the bounds of the Display.
  	 */
 	protected void setShellSize(int width, int height) {
-		Rectangle bounds = getShell().getDisplay().getBounds();
+		Rectangle bounds = getShell().getMonitor().getBounds();
 		getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
 	}
 
@@ -1718,7 +1538,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		//bug 124257
 		if(ret == 1) {
-			//1 is the index in of the 'No' button, from the specified index in the dialog above
+			//1 is the index of the 'No' button, from the specified index in the dialog above
 			return true;
 		}
 		return false;
@@ -1750,8 +1570,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private void stopped(Object savedState) {
 		if (getShell() != null) {
-			getProgressMonitorPart().getParent().setVisible(false);
-			getProgressMonitorPart().removeFromCancelComponent(getProgressMonitorCancelButton());
+			fProgressMonitorPart.getParent().setVisible(false);
+			fProgressMonitorPart.removeFromCancelComponent(fProgressMonitorCancelButton);
 			Map state = (Map)savedState;
 			restoreUIState(state);
 			setDisplayCursor(null);	
