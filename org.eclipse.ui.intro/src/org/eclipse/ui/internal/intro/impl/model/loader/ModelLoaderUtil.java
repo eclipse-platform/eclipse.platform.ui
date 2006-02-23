@@ -204,7 +204,7 @@ public class ModelLoaderUtil {
      * @return
      */
     public static StringBuffer createPathToElementKey(
-            AbstractIntroIdElement element) {
+            AbstractIntroIdElement element, boolean full) {
         if (element.getId() == null)
             return null;
         StringBuffer buffer = new StringBuffer(element.getId());
