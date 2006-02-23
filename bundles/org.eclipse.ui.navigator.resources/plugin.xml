@@ -139,8 +139,21 @@
         	<enablement> 
 					<adapt type="org.eclipse.core.resources.IResource" />	 
 	         </enablement>
-		</actionProvider>
-      
+		</actionProvider> 
+        <actionProvider
+              class="org.eclipse.ui.internal.navigator.resources.actions.PropertiesActionProvider"
+              id="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
+           <enablement>
+              <adapt type="org.eclipse.core.resources.IResource"/>
+           </enablement>
+        </actionProvider>
+        <actionProvider
+              class="org.eclipse.ui.internal.navigator.resources.actions.WorkManagementActionProvider"
+              id="org.eclipse.ui.navigator.resources.WorkManagementActionProvider">
+           <enablement>
+              <adapt type="org.eclipse.core.resources.IResource"/>
+           </enablement>
+        </actionProvider>
       <!-- Expression Filters -->  
       <commonFilter
             id="org.eclipse.ui.navigator.resources.filters.startsWithDot"
@@ -207,13 +220,6 @@
 				</or>
 	         </enablement>
 		</commonWizard>
-        <actionProvider
-              class="org.eclipse.ui.internal.navigator.resources.actions.PropertiesActionProvider"
-              id="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
-           <enablement>
-              <adapt type="org.eclipse.core.resources.IResource"/>
-           </enablement>
-        </actionProvider>
    </extension>
 
 </plugin> 

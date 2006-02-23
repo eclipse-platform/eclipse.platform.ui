@@ -77,8 +77,9 @@ public final class NavigatorActionService extends ActionGroup implements
 	private static final IContributionItem[] DEFAULT_GROUPS = new IContributionItem[] {
 			new Separator(ICommonMenuConstants.GROUP_NEW),
 			new GroupMarker(ICommonMenuConstants.GROUP_GOTO),
-			new Separator(ICommonMenuConstants.GROUP_OPEN),
-			new Separator(ICommonMenuConstants.GROUP_OPEN_WITH),
+			new GroupMarker(ICommonMenuConstants.GROUP_OPEN),
+			new GroupMarker(ICommonMenuConstants.GROUP_OPEN_WITH), 
+			new Separator(ICommonMenuConstants.GROUP_EDIT),
 			new GroupMarker(ICommonMenuConstants.GROUP_SHOW),
 			new GroupMarker(ICommonMenuConstants.GROUP_REORGANIZE),
 			new GroupMarker(ICommonMenuConstants.GROUP_PORT),

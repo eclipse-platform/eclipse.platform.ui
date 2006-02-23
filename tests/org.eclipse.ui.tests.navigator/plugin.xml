@@ -150,6 +150,7 @@
       <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
          <includes>
             <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
+            <actionExtension pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider"/>
          </includes>
       </viewerActionBinding>
       <dragAssistant

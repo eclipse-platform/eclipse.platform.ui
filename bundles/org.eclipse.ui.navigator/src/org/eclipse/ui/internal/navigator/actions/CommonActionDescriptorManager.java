@@ -55,6 +55,11 @@ public class CommonActionDescriptorManager {
 	protected void addActionDescriptor(
 			CommonActionProviderDescriptor aDescriptor) {
 
+		if(rootDescriptors.containsKey(aDescriptor.getId()) || dependentDescriptors.containsKey(aDescriptor.getId())) {
+			NavigatorPlugin.logError(0, "The id \""+aDescriptor.getId()+"\" is used for two different actionProviders", null);  //$NON-NLS-1$//$NON-NLS-2$
+			return;
+		}
+		
 		if (aDescriptor.getDependsOnId() == null)
 			rootDescriptors.put(aDescriptor.getId(), aDescriptor);
 		else
