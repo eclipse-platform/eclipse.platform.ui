@@ -1007,4 +1007,21 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	{
 		return fMBSupportsChangeManagement;
 	}
+	
+	public void refresh(boolean getContent)
+	{
+		if (getContent)
+			refresh();
+		else
+		{
+			preservingSelection(new Runnable() {
+
+				public void run() {
+					AsynchronousTableViewerContentManager mgr = getContentManager();
+					Object[] elements = mgr.getElements();
+					mgr.remove(elements);
+					mgr.add(elements);
+				}});
+		}
+	}
 }

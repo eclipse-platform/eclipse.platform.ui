@@ -335,7 +335,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			return;
 		}
 		
-		if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR))
+		if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR) ||
+			event.getProperty().equals(IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR) ||
+			event.getProperty().equals(IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR))
 		{
 			if (!fIsDisposed)
 			{

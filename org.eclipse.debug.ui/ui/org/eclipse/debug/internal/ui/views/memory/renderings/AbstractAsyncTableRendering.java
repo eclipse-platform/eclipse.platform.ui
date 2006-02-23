@@ -627,11 +627,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 		
 		if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR) || 
-			event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR))
+			event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR) ||
+			event.getProperty().equals(IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR) ||
+			event.getProperty().equals(IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR))
 		{
 			if (!fIsDisposed)
 			{
-				fTableViewer.refresh();
+				fTableViewer.refresh(false);
 			}
 			return;
 		}
