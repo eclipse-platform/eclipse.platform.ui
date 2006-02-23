@@ -37,12 +37,14 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -58,6 +60,7 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -77,6 +80,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -191,6 +195,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private boolean fIsShowAddressColumn = true;
 	
 	private PendingPropertyChanges fPendingSyncProperties;
+	
+	// context menu group ids
+	// empty groups have been added to allow clients to insert actions in the context menu
+	public static final String EMPTY_MEMORY_GROUP = "popUpBegin"; //$NON-NLS-1$
+	public static final String EMPTY_NAVIGATION_GROUP = "navigationGroup"; //$NON-NLS-1$
+	public static final String EMPTY_NON_AUTO_LOAD_GROUP = "nonAutoLoadGroup"; //$NON-NLS-1$
+	public static final String EMPTY_PROPERTY_GROUP = "propertyGroup"; //$NON-NLS-1$
 	
 	private ISelectionChangedListener fViewerSelectionChangedListener = new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -360,13 +371,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						// create context menu
 						// create pop up menu for the rendering
 						createActions();
-						createPopupMenu(fTableViewer.getControl());
-						createPopupMenu(fTableViewer.getCursor());
-						getPopupMenuManager().addMenuListener(new IMenuListener() {
+						IMenuListener listener = new IMenuListener() {
 							public void menuAboutToShow(IMenuManager mgr) {
 								fillContextMenu(mgr);
-								mgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-							}});
+							}};
+							
+						createPopupMenu(fTableViewer.getControl(), listener);
+						createPopupMenu(fTableViewer.getCursor(), listener);
 						
 						fTableViewer.addSelectionChangedListener(fViewerSelectionChangedListener);
 						fTableViewer.getTable().getVerticalBar().addSelectionListener(fScrollBarSelectionListener);
@@ -389,6 +400,30 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		job.schedule();
 	}
 	
+	private void createPopupMenu(Control control, IMenuListener menuListener)
+	{
+		IMemoryRenderingContainer container = getMemoryRenderingContainer();
+		MenuManager popupMenuMgr = getPopupMenuManager();
+		if (popupMenuMgr == null)
+		{
+			popupMenuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+			popupMenuMgr.setRemoveAllWhenShown(true);
+			IMemoryRenderingSite site = container.getMemoryRenderingSite();
+			String menuId = container.getId();
+						
+			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
+			
+			// must add additions seperator before registering the menu
+			// otherwise, we will get an error
+			popupMenuMgr.addMenuListener(menuListener);
+			
+			site.getSite().registerContextMenu(menuId, popupMenuMgr, selProvider);
+		}
+		
+		Menu popupMenu = popupMenuMgr.createContextMenu(control);
+		control.setMenu(popupMenu);
+	}
+
 	private BigInteger getInitialSelectedAddress() {
 		// figure out selected address 
 		BigInteger selectedAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
@@ -1697,14 +1732,15 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * 
 	 * @param menu menu to fill
 	 */
-	protected void fillContextMenu(IMenuManager menu) {
-	
-		menu.add(new Separator("topMenu")); //$NON-NLS-1$
+	protected void fillContextMenu(IMenuManager menu) {	
+		
+		menu.add(new Separator(EMPTY_MEMORY_GROUP));
+		menu.add(new Separator());
 		menu.add(fResetMemoryBlockAction);
 		menu.add(fGoToAddressAction);
-	
-		menu.add(new Separator());
+		menu.add(new Separator(EMPTY_NAVIGATION_GROUP));
 		
+		menu.add(new Separator());
 		menu.add(fFormatRenderingAction);
 
 		if (!isDynamicLoad())
@@ -1712,6 +1748,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			menu.add(new Separator());
 			menu.add(fPrevAction);
 			menu.add(fNextAction);
+			menu.add(new Separator(EMPTY_NON_AUTO_LOAD_GROUP));
 		}
 		
 		menu.add(new Separator());
@@ -1724,8 +1761,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		{
 			menu.add(new Separator());
 			menu.add(fPropertiesDialogAction);
+			menu.add(new Separator(EMPTY_PROPERTY_GROUP));
 		}
 		
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private int getPageSizeInUnits()
