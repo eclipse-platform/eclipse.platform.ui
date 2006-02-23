@@ -3,13 +3,28 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#news img, #navigation-links a#news:hover img { background-image : url(../graphics/icons/ctool/whatsnew48sel.gif); }
+#navigation-links a#whatsnew img, #navigation-links a#whatsnew:hover img { background-image : url(../graphics/icons/ctool/whatsnew48sel.gif); }
+
+iframe {
+	position:relative;
+	top:16px;
+	width:100%;
+	height:100%;
+	padding-left:10px;
+	}
+	
+/* mozilla scrollbar appearing off page fix */
+#page-content > iframe {
+	width: 98%;
+	padding-left: 2%;
+}	
+
 
 /* 
  * Set up the content of the Whats New page to be displayed in 
  * two columns that are centered in the middle of the page.
  */
-
+ 
 #noteworthy-links {
 	text-align : left;
 	width : 760px;
@@ -65,6 +80,9 @@ body {
 
 #noteworthy-links a img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
 #noteworthy-links a:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
+
+.content-link img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
+.content-link:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
 
 
 #news-links {

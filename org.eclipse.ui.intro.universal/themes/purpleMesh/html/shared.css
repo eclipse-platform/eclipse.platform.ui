@@ -267,17 +267,11 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 /* Page content bins */
 
 #page-content #top-left {
-  border: none; float: left; margin: 0; padding: 0; width: 50%;
-  /*
-  background-color: #ffc0c0;
-  */
+  border: none; float: left; margin: 0px; padding: 0px; width: 50%;
   clear: left;
 }
 #page-content #top-right {
-  border: none; float: right; margin: 0; padding: 0; width: 50%;
-  /*
-  background-color: #c0ffc0;
-  */
+  border: none; float: right; margin: 0px; padding: 0px; width: 50%;
   clear: right;
 }
 
@@ -285,25 +279,16 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
  * bottom boxes start at the same y
  */
 #page-content #content-divider {
-  border: none; float: none; margin: 0; padding: 0; width: 100%;
-  /*
-  background-color: #c0c0c0;
-  */
+  border: none; float: none; margin: 0; padding: 0px; width: 100%;
   clear: both;
 }
 
 #page-content #bottom-left {
-  border: none; float: left; margin: 0; padding: 0; width: 50%;
-  /*
-  background-color: #ffffc0;
-  */
+  border: none; float: left; margin: 0px; padding: 0px; width: 50%;
   clear: left;
 }
 #page-content #bottom-right {
-  border: none; float: right; margin: 0; padding: 0; width: 50%;
-  /*
-  background-color: #c0ffff;
-  */
+  border: none; float: right; margin: 0px; padding: 0px; width: 50%;
   clear: right;
 }
 
@@ -314,18 +299,18 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 }
 
 .importance-medium {
-	background-color: #ffdddd;
+	background-color: #ffeeee;
 }
 
 .importance-high {
-	background-color: #ffffdd;
+	background-color: #ffffee;
 }
 
 .importance-new {
 }
 
 .importance-callout {
-	background-color: #cccccc;
+	background-color: #eeeeee;
 }
 
 #page-content #content-header H4, .page-description {
@@ -378,8 +363,95 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 /* Special case for Mozilla, because the links are displayed
    in 1 vertical column instead of 2 centered columns */
+
 #page-content * > a { 	width : 700px; }
 #page-content * a > .link-label { width : 700px; }
 #page-content * a p > .text { width : 700px; }
 
 #page-content * a:hover { border-right : 5px; }
+
+
+/* The following rules are for extensions in all pages. Extensions should be placed in
+ * groups with the style 'content-group' and contain links with the style 'content-link'.
+ * Group is important so that importance mixin style can be applied to the group that
+ * uses block display. We need to see a solid rectangle around the extension, not 
+ * a tight polygon around the link perimeter.
+ */
+ 
+.content-group {
+	/* To center in Moz (have to use text-align for IE) */
+	margin-left : auto;
+	margin-right : auto;
+	/*
+	width : 750px;
+	*/
+	/*
+	margin-bottom : 30px;
+	*/
+	padding-left: 10px;
+	padding-right: 10px;
+	float : none;
+	clear : both;
+	text-align : left;
+}
+
+.content-link {
+/*
+	width : 360px;
+	*/
+	text-align : left; 
+	margin-left : 5px;
+	margin-right : 5px;
+	margin-top : 10px;
+	margin-bottom : -20px;
+	vertical-align : top;
+}
+
+.content-group > .content-link {
+	float : left;
+	/*
+	height : 150px;
+	*/
+	vertical-align : middle;
+}
+
+
+.content-link img  {
+	height : 57px;
+	width : 57px;
+	vertical-align : middle;
+}
+
+.content-group h4 {
+	float : none;
+	clear : both;
+}
+
+p #group-description {
+	padding-bottom : 10px;
+	float : none;
+	clear : both;
+}
+
+.content-link .link-label {
+	display : block;
+	/*
+	width : 300px;
+	*/
+	position : relative;
+	top : -50px;
+	left : 60px;
+}
+
+
+.content-link p .text {
+	display : block;
+	/*
+	width : 300px;
+	*/
+	position : relative;
+	top : -45px;
+	left : 53px;
+}
+
+.content-link:hover { border-right : 0px; }

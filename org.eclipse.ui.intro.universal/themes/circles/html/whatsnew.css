@@ -2,6 +2,9 @@ body {
 	background-image : url(../graphics/contentpage/whatsnew_wtr.jpg);
 }
 
+/* show the "selected" image for this page */
+#navigation-links a#whatsnew img, #navigation-links a#whatsnew:hover img { background-image : url(../graphics/icons/ctool/whatsnew48sel.gif); }
+
 iframe {
 	position:relative;
 	top:16px;
@@ -14,16 +17,14 @@ iframe {
 #page-content > iframe {
 	width: 98%;
 	padding-left: 2%;
-}
+}	
 
-/* show the "selected" image for this page */
-#navigation-links a#news img, #navigation-links a#news:hover img { background-image : url(../graphics/icons/ctool/whatsnew48sel.gif); }
 
 /* 
  * Set up the content of the Whats New page to be displayed in 
  * two columns that are centered in the middle of the page.
  */
-
+ 
 #noteworthy-links {
 	text-align : left;
 	width : 760px;
@@ -80,6 +81,9 @@ iframe {
 #noteworthy-links a img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
 #noteworthy-links a:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
 
+.content-link img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
+.content-link:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
+
 
 #news-links {
 	text-align : left;
@@ -133,14 +137,5 @@ iframe {
 #news-links a p > .text { width : 700px; }
 
 #news-links a:hover { border-right : 5px; }
-
-a#new-and-noteworthy img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
-a#new-and-noteworthy:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
-
-a#updates img { background-image : url(../graphics/icons/obj48/updates_obj.gif); }
-a#updates:hover img { background-image : url(../graphics/icons/obj48/updateshov_obj.gif); }
-
-a#eclipse img { background-image : url(../graphics/icons/obj48/community_obj.gif); }
-a#eclipse:hover img { background-image : url(../graphics/icons/obj48/communityhov_obj.gif); }
 
 

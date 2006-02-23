@@ -111,7 +111,7 @@
     </page>
     
     <!-- Samples page -->
-	 <page id="samples" style="$theme$/html/samples/samples.css" alt-style="$theme$/swt/samples.properties" style-id="page">
+	 <page id="samples" style="$theme$/html/samples.css" alt-style="$theme$/swt/samples.properties" style-id="page">
         <title style-id="intro-header">$introTitle$</title> 
         <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
@@ -198,6 +198,7 @@
     <!-- Web resources page -->
     <page id="webresources" style="$theme$/html/webresources.css" alt-style="$theme$/swt/webresources.properties" style-id="page">
         <title style-id="intro-header">$introTitle$</title> 
+        <group id="extra-group1" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links" computed="true">
             </group>
