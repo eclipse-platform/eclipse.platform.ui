@@ -44,7 +44,7 @@ public class EditableTaskParseStrategy implements ITaskParseStrategy {
 		return isElementHandled;
 	}
 
-	public void validate(IStatusContainer status) {
+	public void parsingComplete(AbstractTask parentTask, IStatusContainer status) {
 		// TODO Add validation
 	}
 

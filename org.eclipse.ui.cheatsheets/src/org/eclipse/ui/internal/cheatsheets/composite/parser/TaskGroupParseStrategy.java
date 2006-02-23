@@ -11,11 +11,19 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.parser;
 
+import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.w3c.dom.Node;
 
 public class TaskGroupParseStrategy implements ITaskParseStrategy {
 
+	private String kind;
+
+	public TaskGroupParseStrategy(String kind) {
+		this.kind = kind;
+	}
+	
 	public void init() {	
 	}
 	
@@ -26,8 +34,21 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 		return false;
 	}
 
-	public void validate(IStatusContainer status) {
-		// TODO Add validation
+	public void parsingComplete(AbstractTask parentTask, IStatusContainer status) {
+		if (ITaskGroup.SEQUENCE.equals(kind)) {
+			// Create dependencies between the children
+			ICompositeCheatSheetTask[] children  = parentTask.getSubtasks();
+			AbstractTask previous = null;
+			AbstractTask next = null;
+			for (int i = 0; i < children.length; i++) {
+				previous = next;
+				next = (AbstractTask)children[i];
+				if (previous != null) {
+					next.addRequiredTask(previous);
+					previous.addSuccessorTask(next);
+				}
+			}
+		}
 	}
 
 

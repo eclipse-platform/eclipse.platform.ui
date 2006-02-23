@@ -262,6 +262,8 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 				}
 			}
 		}	
+		// Check for missing attributes and add dependencies if this was a sequence
+		strategy.parsingComplete(parentTask, this);
 	}
 
 	private void parseDependency(Node taskNode, AbstractTask task, CompositeCheatSheetModel model) {

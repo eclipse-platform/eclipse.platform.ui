@@ -39,7 +39,7 @@ public interface ITaskParseStrategy {
 	/**
 	 * Called afer all the children have been parsed to check for missing children
 	 */
-	public void validate(IStatusContainer status);
+	public void parsingComplete(AbstractTask parentTask, IStatusContainer status);
 
 
 }

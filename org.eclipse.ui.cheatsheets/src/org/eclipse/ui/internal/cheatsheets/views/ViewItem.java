@@ -387,8 +387,7 @@ public abstract class ViewItem {
 		}
 	}
 
-	/*package*/
-	void setAsCurrentActiveItem() {
+	public void setAsCurrentActiveItem() {
 		setColorAsCurrent(true);
 		setButtonsExpanded();
 		setExpanded();

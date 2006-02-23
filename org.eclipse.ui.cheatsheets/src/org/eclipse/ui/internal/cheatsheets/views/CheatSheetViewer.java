@@ -253,9 +253,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 	private void showIntroItem() {
 		ViewItem item = getViewItemAtIndex(0);
-		item.setExpanded();
-		item.setBold(true);
-		item.getMainItemComposite().setFocus();
+		item.setAsCurrentActiveItem();
 	}
 
 	/*package*/ void advanceSubItem(ImageHyperlink link, boolean markAsCompleted, int subItemIndex) {
@@ -1150,6 +1148,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		resetItemState();
 		currentItemNum = 0;
 		collapseAllButCurrent(false);
+		IntroItem introItem = (IntroItem) getViewItemAtIndex(0);
+		introItem.setIncomplete();
 		showIntroItem();		
 	}
 

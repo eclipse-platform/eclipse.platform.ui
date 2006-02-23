@@ -24,7 +24,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	private static final String VARIABLE_BEGIN = "${"; //$NON-NLS-1$
 	private String cheatsheetID;
 	private List listeners;
-	private Hashtable dataTable = null;
+	private Map dataTable = null;
 	
 	public CheatSheetManager(CheatSheetElement element) {
 		cheatsheetID = element.getID();
@@ -34,7 +34,6 @@ public class CheatSheetManager implements ICheatSheetManager {
 			addListener(listener);
 		}
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#getCheatSheetID()
@@ -57,6 +56,14 @@ public class CheatSheetManager implements ICheatSheetManager {
 	 */
 	public Map getData() {
 		return dataTable;
+	}
+	
+	/**
+	 * Initialize all variables
+	 * @param data a map containg values for all variables
+	 */
+	public void setData(Map data) {
+		dataTable = data;
 	}
 
 	public String getData(String key) {

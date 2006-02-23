@@ -121,8 +121,12 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		return state;
 	}
 
-	public void complete() {
-		// Find out all successor tasks which were blocked
+	public void complete() { 
+		setState(COMPLETED);
+	}
+
+	private void updateSuccessorTasks(int newState) {
+		// Find out all successor tasks which were blocked before the state change
 		List blockedTasks = new ArrayList();
 		ICompositeCheatSheetTask[] successorTasks = getSuccessorTasks();
 		for (int i = 0; i < successorTasks.length; i++) {
@@ -130,6 +134,8 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 				blockedTasks.add(successorTasks[i]);
 			}
 		}
+		// Update the state of this task
+		this.state = newState;
 		// Did any tasks get unblocked
 		for (Iterator iter = blockedTasks.iterator(); iter.hasNext();) {
 			ICompositeCheatSheetTask nextTask = (ICompositeCheatSheetTask)iter.next();
@@ -137,7 +143,6 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 			    model.notifyStateChanged(nextTask);
 			}
 		}
-		setState(COMPLETED);
 	}
 
 	public boolean requiredTasksCompleted() {
@@ -150,6 +155,16 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		}
 		return startable;
 	}
+	
+	/**
+	 * Determine whether the candidate task is a required task for this task.
+	 * This function does not test for indirectly required tasks
+	 * @param candidateTask a task which may be a required task
+	 * @return true if candidateTask is in the list of required tasks.
+	 */
+	public boolean requiresTask(ICompositeCheatSheetTask candidateTask) {
+		return (requiredTasks.contains(candidateTask));
+	}
 
 	/**
 	 * Interface used when restoring state from a file. 
@@ -157,6 +172,9 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	 * @param state
 	 */
 	public void setState(int state) {
+		if (state == COMPLETED) {
+		    updateSuccessorTasks(state);
+		}
 		this.state = state;	
 		model.notifyStateChanged(this);
 		if (parent != null) {

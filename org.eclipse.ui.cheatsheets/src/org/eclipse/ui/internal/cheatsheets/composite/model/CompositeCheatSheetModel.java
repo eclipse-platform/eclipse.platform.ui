@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.net.URL;
+import java.util.Hashtable;
 import java.util.Observable;
 
 import org.eclipse.ui.IMemento;
@@ -132,9 +133,11 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	}
 
 	public void resetAllTasks() {
+        if (manager != null) {
+        	manager.setData(new Hashtable());
+        }
+        saveHelper.clearTaskMementos();	
 	    resetTask(getRootTask());
-        saveHelper.clearTaskMementos();
-		
 	}
 
 }

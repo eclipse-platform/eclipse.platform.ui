@@ -91,7 +91,7 @@ public class TaskDependencies {
 			 if (requiredTask == null) {
 					String message = NLS.bind(Messages.ERROR_PARSING_INVALID_ID, (new Object[] {dep.getRequiredTaskId()}));	
 					status.addStatus(IStatus.ERROR, message, null);
-			 } else {
+			 } else if (!sourceTask.requiresTask(requiredTask)) {
 				 sourceTask.addRequiredTask(requiredTask);
 				 requiredTask.addSuccessorTask(sourceTask);
 			 }
