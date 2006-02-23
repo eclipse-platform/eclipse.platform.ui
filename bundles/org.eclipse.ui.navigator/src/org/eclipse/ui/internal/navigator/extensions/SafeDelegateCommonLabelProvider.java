@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -21,7 +25,7 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
  * 
  * @since 3.2
  */
-public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider {
+public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider {
 
 	private final ILabelProvider delegateLabelProvider;
 
@@ -123,5 +127,32 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider {
 
 	public void saveState(IMemento aMemento) {
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
+	public Color getForeground(Object element) {
+		if(delegateLabelProvider instanceof IColorProvider)
+			return ((IColorProvider)delegateLabelProvider).getForeground(element);
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+	 */
+	public Color getBackground(Object element) {
+		if(delegateLabelProvider instanceof IColorProvider)
+			return ((IColorProvider)delegateLabelProvider).getBackground(element);
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+	 */
+	public Font getFont(Object element) {
+		if(delegateLabelProvider instanceof IFontProvider)
+			return ((IFontProvider)delegateLabelProvider).getFont(element);
+		return null;
 	}
 }

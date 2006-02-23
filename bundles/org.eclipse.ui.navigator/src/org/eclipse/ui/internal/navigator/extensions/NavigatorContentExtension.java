@@ -171,10 +171,6 @@ public class NavigatorContentExtension implements IMementoAware,
 
 					if (tempLabelProvider instanceof ICommonLabelProvider) {
 						labelProvider = (ICommonLabelProvider) tempLabelProvider;
-						if (internalGetContentProvider() instanceof SafeDelegateTreeContentProvider)
-							labelProvider.init(new CommonContentExtensionSite(
-									getId(), contentService, appliedMemento));
-						else
 							labelProvider.init(new CommonContentExtensionSite(
 									getId(), contentService, appliedMemento));
 					} else {

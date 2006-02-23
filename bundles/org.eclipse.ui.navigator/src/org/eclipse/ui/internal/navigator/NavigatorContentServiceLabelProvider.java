@@ -14,10 +14,14 @@ package org.eclipse.ui.internal.navigator;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -50,7 +54,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @see org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider
  */
 public class NavigatorContentServiceLabelProvider extends EventManager
-		implements ILabelProvider {
+		implements ILabelProvider, IColorProvider, IFontProvider {
 
 	private final ILabelDecorator decorator;
 	private final NavigatorContentService contentService;
@@ -112,6 +116,57 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		// decorate the element
 		return text == null ? "" : text; //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+	 */
+	public Font getFont(Object anElement) {
+		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
+		for (int i = 0; i < labelProviders.length; i++) {
+			ILabelProvider provider = labelProviders[i];
+			if (provider instanceof IFontProvider) {
+				IFontProvider fontProvider = (IFontProvider) provider;
+				Font font = fontProvider.getFont(anElement);
+				if (font != null)
+					return font;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
+	public Color getForeground(Object anElement) {
+		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
+		for (int i = 0; i < labelProviders.length; i++) {
+			ILabelProvider provider = labelProviders[i];
+			if (provider instanceof IColorProvider) {
+				IColorProvider colorProvider = (IColorProvider) provider;
+				Color color = colorProvider.getForeground(anElement);
+				if (color != null)
+					return color;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+	 */
+	public Color getBackground(Object anElement) {
+		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
+		for (int i = 0; i < labelProviders.length; i++) {
+			ILabelProvider provider = labelProviders[i];
+			if (provider instanceof IColorProvider) {
+				IColorProvider colorProvider = (IColorProvider) provider;
+				Color color = colorProvider.getBackground(anElement);
+				if (color != null)
+					return color;
+			}
+		}
+		return null;
+	}	
 
 	/**
 	 * <p>
