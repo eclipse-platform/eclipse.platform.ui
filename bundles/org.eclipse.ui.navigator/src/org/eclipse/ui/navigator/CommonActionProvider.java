@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -19,22 +20,37 @@ import org.eclipse.ui.actions.ActionGroup;
  * {@link org.eclipse.ui.IActionBars} contributions.
  * </p>
  * <p>
- * This abstract class should be subclassed by clients of the
+ * This abstract class should be extended by clients of the
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point for
- * top-level and nested &lt;actionProvider &gt; elements.
+ * top-level and nested <b>actionProvider </b> elements.
  * </p>
  * <p>
- * {@link CommonActionProvider}s are declared via the
- * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
  * {@link CommonActionProvider}s may be declared as top-level elements in the
- * extension point (e.g. an &lt;actionProvider /&gt; element at the root of the
- * extension point). Alternatively, &lt;actionProvider /&gt; elements may be
- * nested under a &lt;navigatorContent /&gt; element, in which case they are
+ * extension point (e.g. an <b>actionProvider</b> element at the root of the
+ * extension point). Alternatively, <b>actionProvider</b> elements may be
+ * nested under a <b>navigatorContent</b> element, in which case they are
  * considered to be "associated" with that content extension. For more
  * information, see the <b>org.eclipse.ui.navigator.navigatorContent</b>
  * extension point.
  * </p>
- * 
+ * <p>
+ * Each action provider will have the opportunity to contribute to the context
+ * menu when a user right clicks and also contribute to the {@link IActionBars}
+ * each time the selection changes. Clients should re-configure the
+ * {@link IActionBars} each time that {@link #fillActionBars(IActionBars)} is
+ * called (which is once per selection changes). {@link #updateActionBars()}
+ * will never be called from the {@link NavigatorActionService}. This behavior
+ * is required since each selection could determine a different set of
+ * retargetable actions. For instance, the "Delete" operation for a custom model
+ * element is likely to be different than for a resource.
+ * </p>
+ * <p>
+ * Therefore, each extension will have an opportunity to contribute to the
+ * IActionBars based on the <b>possibleChildren</b> expression of the enclosing
+ * <b>navigatorContent</b> extension or the <b>enablement</b> expression of
+ * the <b>actionProvider</b> (for both top-level <b>actionProvider</b>s and
+ * nested <b>actionProvider</b>s which only support a subset of the enclosing
+ * content extensions <b>possibleChildren</b> expression).
  * <p>
  * Clients may extend this class.
  * </p>
