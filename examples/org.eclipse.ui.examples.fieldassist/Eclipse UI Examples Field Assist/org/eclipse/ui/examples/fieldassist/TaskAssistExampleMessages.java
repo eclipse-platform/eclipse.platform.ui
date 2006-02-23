@@ -41,13 +41,27 @@ public class TaskAssistExampleMessages extends NLS {
 	public static String Preferences_ShowRequiredFieldColor;
 	public static String Preferences_Description;
 	public static String Preferences_ContentAssistDescription;
+	
 	public static String Decorator_Warning;
 	public static String Decorator_Error;
 	public static String Decorator_ContentAssist;
 
-    static {
-		// load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, TaskAssistExampleMessages.class);
-	}
+ 	public static String ExampleDialog_UserError;
+	public static String ExampleDialog_WarningName;
+	public static String ExampleDialog_UserWarning;
+	public static String ExampleDialog_AgeWarning;
+	public static String ExampleDialog_Title;
+	public static String ExampleDialog_SecurityGroup;
+	public static String ExampleDialog_UserName;
+	public static String ExampleDialog_ComboUserName;
+	public static String ExampleDialog_Age;
+	public static String ExampleDialog_Password;
+	public static String ExampleDialog_ProposalDescription;
+	
+	   static {
+			// load message values from bundle file
+			NLS.initializeMessages(BUNDLE_NAME, TaskAssistExampleMessages.class);
+		}
+
 
 }

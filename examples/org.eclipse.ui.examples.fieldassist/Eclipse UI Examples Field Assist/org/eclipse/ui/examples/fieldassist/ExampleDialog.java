@@ -150,15 +150,15 @@ public class ExampleDialog extends StatusDialog {
 		}
 
 		String getErrorMessage() {
-			return "User name must only contain letters";
+			return TaskAssistExampleMessages.ExampleDialog_UserError;
 		}
 
 		boolean isWarning() {
-			return getContents().equals("bob");
+			return getContents().equals(TaskAssistExampleMessages.ExampleDialog_WarningName);
 		}
 
 		String getWarningMessage() {
-			return "Bob is entirely too casual a name.";
+			return TaskAssistExampleMessages.ExampleDialog_UserWarning;
 		}
 	}
 
@@ -179,12 +179,12 @@ public class ExampleDialog extends StatusDialog {
 		}
 
 		String getWarningMessage() {
-			return "May be eligible for senior citizen user status";
+			return TaskAssistExampleMessages.ExampleDialog_AgeWarning;
 		}
 	}
 
-	private String[] validUsers = { "tom", "dick", "harry", "ferdinand", "tim",
-			"teresa", "tori", "daniela" };
+	private String[] validUsers = { "tom", "dick", "harry", "ferdinand", "tim", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"teresa", "tori", "daniela" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private String triggerKey;
 
@@ -198,7 +198,7 @@ public class ExampleDialog extends StatusDialog {
 
 	public ExampleDialog(Shell parent, String username) {
 		super(parent);
-		setTitle("Field Assist Example");
+		setTitle(TaskAssistExampleMessages.ExampleDialog_Title);
 		this.username = username;
 		getPreferenceValues();
 	}
@@ -206,7 +206,7 @@ public class ExampleDialog extends StatusDialog {
 	protected Control createDialogArea(Composite parent) {
 		Group main = new Group(parent, SWT.NONE);
 		main.setLayoutData(new GridData(GridData.FILL_BOTH));
-		main.setText("&Security info");
+		main.setText(TaskAssistExampleMessages.ExampleDialog_SecurityGroup);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -217,7 +217,7 @@ public class ExampleDialog extends StatusDialog {
 		applyDialogFont(main);
 
 		Label label = new Label(main, SWT.LEFT);
-		label.setText("&User name:");
+		label.setText(TaskAssistExampleMessages.ExampleDialog_UserName);
 
 		IPreferenceStore store = FieldAssistPlugin.getDefault()
 				.getPreferenceStore();
@@ -260,7 +260,7 @@ public class ExampleDialog extends StatusDialog {
 		field.getLayoutControl().setLayoutData(getDecoratedFieldGridData());
 
 		label = new Label(main, SWT.LEFT);
-		label.setText("&Combo user name:");
+		label.setText(TaskAssistExampleMessages.ExampleDialog_ComboUserName);
 
 		// Create a combo field representing a user name
 		field = new DecoratedField(main, SWT.BORDER | SWT.DROP_DOWN,
@@ -298,7 +298,7 @@ public class ExampleDialog extends StatusDialog {
 
 		// Create a spinner representing a user age
 		label = new Label(main, SWT.LEFT);
-		label.setText("&Age:");
+		label.setText(TaskAssistExampleMessages.ExampleDialog_Age);
 
 		field = new DecoratedField(main, SWT.BORDER, new IControlCreator() {
 			public Control createControl(Composite parent, int style) {
@@ -333,10 +333,10 @@ public class ExampleDialog extends StatusDialog {
 
 		// This field is not managed by a decorated field
 		label = new Label(main, SWT.LEFT);
-		label.setText("&Password:");
+		label.setText(TaskAssistExampleMessages.ExampleDialog_Password);
 		// We need to indent the field by the size of the decoration.
 		text = new Text(main, SWT.BORDER);
-		text.setText("******");
+		text.setText("******"); //$NON-NLS-1$
 		text.setLayoutData(getNonDecoratedFieldGridData());
 
 		return main;
@@ -432,7 +432,7 @@ public class ExampleDialog extends StatusDialog {
 		FieldDecoration dec = smartField.getErrorDecoration();
 		if (showErrorMessage) {
 			updateStatus(new Status(Status.ERROR,
-					"org.eclipse.examples.contentassist", 0, dec
+					"org.eclipse.examples.contentassist", 0, dec //$NON-NLS-1$
 							.getDescription(), null));
 		}
 		if (showErrorDecoration) {
@@ -524,7 +524,7 @@ public class ExampleDialog extends StatusDialog {
 							if (showSecondaryPopup)
 								return MessageFormat
 										.format(
-												"{0} is a wonderful choice and you should seriously consider it.",
+												TaskAssistExampleMessages.ExampleDialog_ProposalDescription,
 												new String[] { user });
 							return null;
 						}

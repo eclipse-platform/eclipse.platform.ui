@@ -73,3 +73,4 @@ public class FieldAssistPlugin extends AbstractUIPlugin {
 		decRegistry.registerFieldDecoration(DEC_WARNING, TaskAssistExampleMessages.Decorator_Warning, DEC_WARNING);
 	}
 }
+
