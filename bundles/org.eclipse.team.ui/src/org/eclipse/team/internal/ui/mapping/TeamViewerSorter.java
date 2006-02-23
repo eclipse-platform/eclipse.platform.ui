@@ -63,7 +63,7 @@ public class TeamViewerSorter extends TreePathViewerSorter {
 				return r1.getName().compareTo(r2.getName());
 			}
 		}
-		return sorter.compare(viewer, parentPath.getLastSegment(), e1, e2);
+		return sorter.compare(viewer, parentPath, e1, e2);
 	}
 	
 	private boolean isExtends(ModelProvider mp1, IModelProviderDescriptor desc) {
