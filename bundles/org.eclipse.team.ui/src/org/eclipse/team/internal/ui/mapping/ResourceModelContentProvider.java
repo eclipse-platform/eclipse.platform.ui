@@ -361,4 +361,47 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	private String getLayout() {
 		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 	}
+	
+	public Object[] getChildren(Object parent) {
+		if (parent instanceof ISynchronizationContext) {
+			// Put the resource projects directly under the context
+			parent = getModelRoot();
+		}
+		return super.getChildren(parent);
+	}
+	
+	public boolean hasChildren(Object element) {
+		if (element instanceof ISynchronizationContext) {
+			// Put the resource projects directly under the context
+			element = getModelRoot();
+		}
+		return super.hasChildren(element);
+	}
+	
+	public Object[] getElements(Object parent) {
+		if (parent instanceof ISynchronizationContext) {
+			// Put the resource projects directly under the context
+			parent = getModelRoot();
+		}
+		return super.getElements(parent);
+	}
+	
+	public Object getParent(Object element) {
+		if (element instanceof IProject) {
+			ISynchronizationContext context = getContext();
+			if (context != null)
+				return context;
+		}
+		return super.getParent(element);
+	}
+	
+	protected void refresh() {
+		Utils.syncExec(new Runnable() {
+			public void run() {
+				TreeViewer treeViewer = ((TreeViewer)getViewer());
+				treeViewer.refresh();
+			}
+		
+		}, getViewer().getControl());
+	}
 }

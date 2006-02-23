@@ -119,7 +119,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration, IEmptyTreeListener listener) {
 		final CommonViewer v = new NavigableCommonViewer(configuration.getViewerId(), parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, listener);
-		v.setSorter(new CommonViewerSorter());
+		v.setSorter(new TeamViewerSorter(new CommonViewerSorter()));
 		ISynchronizationScope scope = getScope(configuration);
 		scope.addScopeChangeListener(new ISynchronizationScopeChangeListener() {
 			public void scopeChanged(final ISynchronizationScope scope,

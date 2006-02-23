@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.internal.ui.mapping.TeamViewerSorter;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.ui.navigator.*;
@@ -56,7 +57,7 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
             createWrappingLabel(composite, description, 1);
         
         viewer = new CommonViewer(TEAM_NAVIGATOR_CONTENT, composite, SWT.BORDER);
-        viewer.setSorter(new CommonViewerSorter());
+        viewer.setSorter(new TeamViewerSorter(new CommonViewerSorter()));
         viewer.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
         viewer.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
         GridData data = new GridData(GridData.FILL_BOTH);
