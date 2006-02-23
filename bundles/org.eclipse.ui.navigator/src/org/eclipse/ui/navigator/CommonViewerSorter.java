@@ -11,10 +11,10 @@
 
 package org.eclipse.ui.navigator;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
@@ -28,10 +28,10 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
  * elements available in the set of <i>visible</i> content extensions.
  * 
  * <p>
- * The CommonViewerSorter must be assigned to a {@link CommonViewer}. This is required
- * so that the sorter has the correct content service and sorting service available
- * to guide it in sorting the elements from the viewer. No guarantees are made
- * for uses of this sorter class outside of a CommonViewer. 
+ * The CommonViewerSorter must be assigned to a {@link CommonViewer}. This is
+ * required so that the sorter has the correct content service and sorting
+ * service available to guide it in sorting the elements from the viewer. No
+ * guarantees are made for uses of this sorter class outside of a CommonViewer.
  * </p>
  * <p>
  * A CommonViewerSorter may not be attached to more than one CommonViewer.
@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
  * @since 3.2
  * 
  */
-public final class CommonViewerSorter extends TreeViewerSorter {
+public final class CommonViewerSorter extends TreePathViewerSorter {
 
 	private NavigatorContentService contentService;
 
@@ -67,7 +67,7 @@ public final class CommonViewerSorter extends TreeViewerSorter {
 	 */
 	protected void setContentService(NavigatorContentService aContentService) {
 		contentService = aContentService;
-		sorterService = contentService.getSorterService(); 
+		sorterService = contentService.getSorterService();
 	}
 
 	/*
@@ -83,39 +83,36 @@ public final class CommonViewerSorter extends TreeViewerSorter {
 				: Priority.NORMAL_PRIORITY_VALUE;
 	}
 
-	public void sort(final Viewer viewer, final Object parent, Object[] elements) {
-
-		Arrays.sort(elements, new Comparator() {
-			public int compare(Object a, Object b) {
-				return CommonViewerSorter.this.compare(viewer, parent, a, b);
-			}
-		});
-	}
-
-	public int compare(Viewer viewer, Object parent, Object e1, Object e2) {
+	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
 		INavigatorContentDescriptor sourceOfLvalue = getSource(e1);
 		INavigatorContentDescriptor sourceOfRvalue = getSource(e2);
 
 		// identity comparison
 		if (sourceOfLvalue != null && sourceOfLvalue == sourceOfRvalue) {
-			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
-			if(sorter != null)
+			Object parent;
+			if (parentPath == null) {
+				parent = viewer.getInput();
+			} else {
+				parent = parentPath.getLastSegment();
+			}
+			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue,
+					parent, e1, e2);
+			if (sorter != null)
 				return sorter.compare(viewer, e1, e2);
 		}
 		int categoryDelta = category(e1) - category(e2);
 		if (categoryDelta == 0) {
-			super.compare(viewer, e1, e2);
+			return super.compare(viewer, e1, e2);
 		}
 		return categoryDelta;
-	} 
+	}
 
 	private INavigatorContentDescriptor getSource(Object o) {
 		Set descriptors = contentService.findDescriptorsWithPossibleChild(o);
-		if(descriptors != null && descriptors.size() > 0) {
+		if (descriptors != null && descriptors.size() > 0) {
 			return (INavigatorContentDescriptor) descriptors.iterator().next();
 		}
-		return null;		 
+		return null;
 	}
-	
 
 }

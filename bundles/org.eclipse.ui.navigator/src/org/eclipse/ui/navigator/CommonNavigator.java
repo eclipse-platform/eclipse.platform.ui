@@ -197,7 +197,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	public void dispose() {
 		if (commonManager != null)
 			commonManager.dispose();
-		commonActionGroup.dispose();
+		if(commonActionGroup != null)
+			commonActionGroup.dispose();
 		super.dispose();
 	}
 

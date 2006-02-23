@@ -20,14 +20,12 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.navigator.DelegateTreeViewerSorter;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 
 /**
@@ -41,7 +39,7 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * <p>
  * Clients may extend this class.
  * </p>
- *  
+ * 
  * 
  * @since 3.2
  */
@@ -71,224 +69,7 @@ public class CommonViewer extends TreeViewer {
 	protected void removeWithoutRefresh(Object[] elements) {
 		super.remove(elements);
 	}
-
-	/**
-	 * Returns the sorted and filtered set of children of the given element. The
-	 * resulting array must not be modified, as it may come directly from the
-	 * model's internal state.
-	 * 
-	 * @param parent
-	 *            the parent element
-	 * @return a sorted and filtered array of child elements
-	 */
-	protected Object[] getSortedChildren(Object parent) {
-		Object[] result = getFilteredChildren(parent);
-		ViewerSorter sorter = getSorter();
-		if (sorter != null) {
-			// be sure we're not modifying the original array from the model
-			result = (Object[]) result.clone();
-			// safe caste due to setSorter();
-			((TreeViewerSorter) sorter).sort(this, parent, result);
-
-		}
-		return result;
-	}
-
-	/**
-	 * Adds the given child elements to this viewer as children of the given
-	 * parent element.
-	 * <p>
-	 * EXPERIMENTAL. Not to be used except by JDT. This method was added to
-	 * support JDT's explorations into grouping by working sets, which requires
-	 * viewers to support multiple equal elements. See bug 76482 for more
-	 * details. This support will likely be removed in Eclipse 3.2 in favour of
-	 * proper support for multiple equal elements.
-	 * </p>
-	 * 
-	 * @param widget
-	 *            the widget for the parent element
-	 * @param parentElement
-	 *            the parent element
-	 * @param childElements
-	 *            the child elements to add
-	 * @since 3.1
-	 */
-	protected void internalAdd(Widget widget, Object parentElement,
-			Object[] childElements) {
-
-		// optimization!
-		// if the widget is not expanded we just invalidate the subtree
-		if (widget instanceof Item) {
-			Item ti = (Item) widget;
-			if (!getExpanded(ti)) {
-				boolean needDummy = isExpandable(parentElement);
-				boolean haveDummy = false;
-				// remove all children
-				Item[] items = getItems(ti);
-				for (int i = 0; i < items.length; i++) {
-					if (items[i].getData() != null) {
-						disassociate(items[i]);
-						items[i].dispose();
-					} else {
-						if (needDummy && !haveDummy) {
-							haveDummy = true;
-						} else {
-							items[i].dispose();
-						}
-					}
-				}
-				// append a dummy if necessary
-				if (needDummy && !haveDummy)
-					newItem(ti, SWT.NULL, -1);
-				return;
-			}
-		}
-
-		if (childElements.length > 0) {
-			Object[] filtered = filter(childElements);
-			if (getSorter() != null)
-				((TreeViewerSorter) getSorter()).sort(this, parentElement,
-						filtered);
-			createAddedElements(widget, parentElement, filtered);
-		}
-	}
-
-	/**
-	 * See if element is the data of one of the elements in items.
-	 * 
-	 * @param items
-	 * @param element
-	 * @return <code>true</code> if the element matches.
-	 */
-	private boolean itemExists(Item[] items, Object element) {
-		if (usingElementMap())// if we can do a constant time lookup find it
-			return findItem(element) != null;
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].getData().equals(element))
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Create the new elements in the parent widget. If the child already exists
-	 * do nothing.
-	 * 
-	 * @param widget
-	 * @param elements
-	 *            Sorted list of elements to add.
-	 */
-	private void createAddedElements(Widget widget, Object parent,
-			Object[] elements) {
-
-		if (elements.length == 1) {
-			if (equals(elements[0], widget.getData()))
-				return;
-		}
-
-		// safe caste due to setSorter();
-		TreeViewerSorter sorter = (TreeViewerSorter) getSorter();
-		Item[] items = getChildren(widget);
-
-		// As the items are sorted already we optimize for a
-		// start position
-		int lastInsertion = 0;
-
-		// Optimize for the empty case
-		if (items.length == 0) {
-			for (int i = 0; i < elements.length; i++) {
-				createTreeItem(widget, elements[i], -1);
-			}
-			return;
-		}
-
-		for (int i = 0; i < elements.length; i++) {
-			boolean newItem = true;
-			Object element = elements[i];
-			int index;
-			if (getSorter() == null) {
-				if (itemExists(items, element)) {
-					refresh(element);
-					newItem = false;
-				}
-				index = -1;
-			} else {
-				lastInsertion = insertionPosition(items, lastInsertion, sorter,
-						parent, element);
-				// As we are only searching the original array we keep track of
-				// those positions only
-				if (lastInsertion == items.length)
-					index = -1;
-				else {// See if we should just refresh
-					while (lastInsertion < items.length
-							&& sorter.compare(this, parent, element,
-									items[lastInsertion].getData()) == 0) {
-						// As we cannot assume the sorter is consistent with
-						// equals() - therefore we can
-						// just check against the item prior to this index (if
-						// any)
-						if (items[lastInsertion].getData().equals(element)) {
-							// refresh the element in case it has new children
-							refresh(element);
-							newItem = false;
-						}
-						lastInsertion++;// We had an insertion so increment
-					}
-					// Did we get to the end?
-					if (lastInsertion == items.length)
-						index = -1;
-					else
-						index = lastInsertion + i; // Add the index as the
-					// array is growing
-				}
-			}
-			if (newItem)
-				createTreeItem(widget, element, index);
-		}
-	}
-
-	/**
-	 * Returns the index where the item should be inserted. It uses sorter to
-	 * determine the correct position, if sorter is not assigned, returns the
-	 * index of the element after the last.
-	 * 
-	 * @param items
-	 *            the items to search
-	 * @param lastInsertion
-	 *            the start index to start search for position from this allows
-	 *            optimising search for multiple elements that are sorted
-	 *            themself.
-	 * @param element
-	 *            element to find position for.
-	 * @return the index to use when inserting the element.
-	 * 
-	 */
-
-	private int insertionPosition(Item[] items, int lastInsertion,
-			TreeViewerSorter sorter, Object parent, Object element) {
-
-		int size = items.length;
-		if (getSorter() == null)
-			return size;
-		int min = lastInsertion, max = size - 1;
-
-		while (min <= max) {
-			int mid = (min + max) / 2;
-			Object data = items[mid].getData();
-			int compare = sorter.compare(this, parent, data, element);
-			if (compare == 0) {
-				return mid;// Return if we already match
-			}
-			if (compare < 0)
-				min = mid + 1;
-			else
-				max = mid - 1;
-		}
-		return min;
-
-	}
-
-	// End of pulled down code
+ 
 
 	/**
 	 * <p>
@@ -417,7 +198,7 @@ public class CommonViewer extends TreeViewer {
 		super(aParent, aStyle);
 		contentService = new NavigatorContentService(aViewerId, this);
 		init();
-	} 
+	}
 
 	/**
 	 * <p>
@@ -427,7 +208,7 @@ public class CommonViewer extends TreeViewer {
 	 */
 	public void dispose() {
 		if (contentService != null)
-			contentService.dispose(); 
+			contentService.dispose();
 	}
 
 	/**
@@ -441,14 +222,7 @@ public class CommonViewer extends TreeViewer {
 		if (sorter != null && sorter instanceof CommonViewerSorter)
 			((CommonViewerSorter) sorter).setContentService(contentService);
 
-		if (sorter == null || sorter instanceof TreeViewerSorter)
-			super.setSorter(sorter);
-		else
-			/*
-			 * we wrap the sorter for convenience (now we can always cast to
-			 * TreeViewerSorter)
-			 */
-			super.setSorter(new DelegateTreeViewerSorter(sorter));
+		super.setSorter(sorter);
 	}
 
 	/**
@@ -546,6 +320,15 @@ public class CommonViewer extends TreeViewer {
 	 */
 	public String toString() {
 		return contentService.toString() + " Viewer"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefresh(java.lang.Object, boolean)
+	 */
+	protected void internalRefresh(Object element, boolean updateLabels) {
+		if(element == null && getRoot() == null)
+			return;
+		super.internalRefresh(element, updateLabels);
 	}
 
 }
