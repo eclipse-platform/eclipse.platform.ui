@@ -90,9 +90,9 @@ public class DirectoryToc {
 		IPath iPath = new Path("$nl$/doc.zip"); //$NON-NLS-1$
 		Map override = new HashMap(1);
 		override.put("$nl$", locale); //$NON-NLS-1$
-		URL url = Platform.find(pluginDesc, iPath, override);
+		URL url = FileLocator.find(pluginDesc, iPath, override);
 		if (url == null) {
-			url = Platform.find(pluginDesc, new Path("doc.zip")); //$NON-NLS-1$
+			url = FileLocator.find(pluginDesc, new Path("doc.zip"), null); //$NON-NLS-1$
 		}
 		if (url != null) {
 			// collect topics from doc.zip file
@@ -120,7 +120,7 @@ public class DirectoryToc {
 		Map ret = new HashMap(0);
 		URL realZipURL;
 		try {
-			realZipURL = Platform.asLocalURL(Platform.resolve(url));
+			realZipURL = FileLocator.toFileURL(FileLocator.resolve(url));
 			if (realZipURL.toExternalForm().startsWith("jar:")) { //$NON-NLS-1$
 				// doc.zip not allowed in jarred plug-ins.
 				return ret;

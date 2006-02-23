@@ -284,8 +284,8 @@ public class EmbeddedBrowser {
 					if (product != null) {
 						Bundle productBundle = product.getDefiningBundle();
 						if (productBundle != null) {
-							imageURL = Platform.find(productBundle, new Path(
-									productImageURLs[i]));
+							imageURL = FileLocator.find(productBundle, new Path(
+									productImageURLs[i]), null);
 						}
 					}
 				}

@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -145,7 +146,7 @@ public abstract class LuceneSearchParticipant {
 		if (bundle == null)
 			return fileName;
 		URL url = ResourceLocator.find(bundle, new Path(fileName), prefix);
-		URL root = Platform.find(bundle, new Path("")); //$NON-NLS-1$
+		URL root = FileLocator.find(bundle, new Path(""), null); //$NON-NLS-1$
 		return url.toString().substring(root.toString().length());
 	}
 

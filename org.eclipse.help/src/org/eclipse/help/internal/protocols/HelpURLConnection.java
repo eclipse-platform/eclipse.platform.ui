@@ -304,7 +304,7 @@ public class HelpURLConnection extends URLConnection {
 					}
 					//
 
-					appserverImplPluginId = serverElement.getNamespace();
+					appserverImplPluginId = serverElement.getContributor().getName();
 
 				}
 			}

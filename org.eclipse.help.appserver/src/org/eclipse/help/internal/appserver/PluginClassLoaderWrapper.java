@@ -66,7 +66,7 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 							URL url = b.getEntry(path);
 							if (url != null)
 								try {
-									urls.add(Platform.asLocalURL(url));
+									urls.add(FileLocator.toFileURL(url));
 								} catch (IOException ioe) {
 								}
 						}
@@ -79,7 +79,7 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 							URL url = b.getEntry(devpaths[i]);
 							if (url != null)
 								try {
-									urls.add(Platform.asLocalURL(url));
+									urls.add(FileLocator.toFileURL(url));
 								} catch (IOException ioe) {
 								}
 						}

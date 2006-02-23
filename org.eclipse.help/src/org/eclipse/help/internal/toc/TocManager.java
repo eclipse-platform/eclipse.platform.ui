@@ -249,7 +249,7 @@ public class TocManager {
 		// get all extensions
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			String pluginId = extensions[i].getNamespace();
+			String pluginId = extensions[i].getContributor().getName();
 			if(!contributingPlugins2IndexPaths.containsKey(pluginId))
 				contributingPlugins2IndexPaths.put(pluginId, null);
 			IConfigurationElement[] configElements = extensions[i]

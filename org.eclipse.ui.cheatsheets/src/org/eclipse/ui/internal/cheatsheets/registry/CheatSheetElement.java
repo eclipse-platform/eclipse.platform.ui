@@ -151,7 +151,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 
 		Class extClass = null;
 		CheatSheetListener listener = null;
-		String pluginId = configurationElement.getNamespace();
+		String pluginId = configurationElement.getContributor().getName();
 
 		try {
 			Bundle bundle = Platform.getBundle(pluginId);
@@ -183,7 +183,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	}
 
 	public String getPluginId() {
-		return configurationElement.getNamespace();
+		return configurationElement.getContributor().getName();
 	}
 	
 	public void setComposite(boolean composite) {

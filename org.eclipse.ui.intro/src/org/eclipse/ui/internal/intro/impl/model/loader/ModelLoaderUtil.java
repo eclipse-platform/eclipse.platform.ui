@@ -96,7 +96,7 @@ public class ModelLoaderUtil {
         buffer.append(element.getDeclaringExtension()
             .getExtensionPointUniqueIdentifier());
         buffer.append(" in Bundle: "); //$NON-NLS-1$
-        buffer.append(element.getNamespace());
+        buffer.append(element.getContributor().getName());
 
 
         return buffer.toString();

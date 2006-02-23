@@ -262,7 +262,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	 */
 	public String getPluginId() {
 		return configurationElement == null ? pluginId : configurationElement
-				.getNamespace();
+				.getContributor().getName();
 	}
 
 	/**

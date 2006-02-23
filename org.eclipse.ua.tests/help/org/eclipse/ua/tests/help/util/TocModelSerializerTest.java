@@ -105,7 +105,7 @@ public class TocModelSerializerTest extends TestCase {
 		IExtensionPoint xpt = Platform.getExtensionRegistry().getExtensionPoint(HelpPlugin.PLUGIN_ID, "toc");
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i=0;i<extensions.length;i++) {
-			String pluginId = extensions[i].getNamespace();
+			String pluginId = extensions[i].getContributor().getName();
 			if (pluginId.equals("org.eclipse.ua.tests")) {
 				IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 				for (int j=0;j<configElements.length;j++) {

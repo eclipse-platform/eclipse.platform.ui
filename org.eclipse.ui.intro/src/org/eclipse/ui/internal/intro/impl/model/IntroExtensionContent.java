@@ -14,9 +14,9 @@ package org.eclipse.ui.internal.intro.impl.model;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.xhtml.DOMUtil;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
@@ -252,7 +252,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
     private void extractFileAndId(Bundle bundle) {
 		// look for the file
 		IPath resourcePath = new Path(base + content);
-		if (Platform.find(bundle, resourcePath) != null) {
+		if (FileLocator.find(bundle, resourcePath, null) != null) {
 			// found it, assume it's a file
 			contentFile = content;
 		}

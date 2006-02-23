@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.intro.impl.model.util;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -69,7 +70,7 @@ public class BundleUtil {
 
     public static Bundle getBundleFromConfigurationElement(
             IConfigurationElement cfg) {
-        return Platform.getBundle(cfg.getNamespace());
+        return Platform.getBundle(cfg.getContributor().getName());
     }
 
 
@@ -151,7 +152,7 @@ public class BundleUtil {
                 copyResource = NL_TAG + copyResource;
             }
             IPath resourcePath = new Path(copyResource);
-            localLocation = Platform.find(bundle, resourcePath);
+            localLocation = FileLocator.find(bundle, resourcePath, null);
             if (localLocation == null) {
                 // localLocation can be null if the passed resource could not
                 // be found relative to the plugin. log fact, return resource,
@@ -162,7 +163,7 @@ public class BundleUtil {
                 Log.warning(msg);
                 return resource;
             }
-            localLocation = Platform.asLocalURL(localLocation);
+            localLocation = FileLocator.toFileURL(localLocation);
             return localLocation.toExternalForm();
         } catch (Exception e) {
             String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
@@ -182,8 +183,8 @@ public class BundleUtil {
      */
     public static URL getResourceAsURL(String resource, String pluginId) {
         Bundle bundle = Platform.getBundle(pluginId);
-        URL localLocation = localLocation = Platform.find(bundle, new Path(
-            resource));
+        URL localLocation = FileLocator.find(bundle, new Path(
+            resource), null);
         return localLocation;
     }
 
@@ -203,7 +204,7 @@ public class BundleUtil {
             URL bundleLocation = bundle.getEntry(""); //$NON-NLS-1$
             if (bundleLocation == null)
                 return null;
-            bundleLocation = Platform.asLocalURL(bundleLocation);
+            bundleLocation = FileLocator.toFileURL(bundleLocation);
             return bundleLocation.toExternalForm();
         } catch (IllegalStateException e) {
             Log.error("Failed to access bundle: " //$NON-NLS-1$

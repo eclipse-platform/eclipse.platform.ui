@@ -52,7 +52,7 @@ public class EngineTypeDescriptor {
 			return image;
 		String icon = config.getAttribute(IHelpUIConstants.ATT_ICON);
 		if (icon!=null) {
-			String bundleId = config.getNamespace();
+			String bundleId = config.getContributor().getName();
 			HelpUIResources.getImageDescriptor(bundleId, icon);
 			return HelpUIResources.getImage(icon);
 		}

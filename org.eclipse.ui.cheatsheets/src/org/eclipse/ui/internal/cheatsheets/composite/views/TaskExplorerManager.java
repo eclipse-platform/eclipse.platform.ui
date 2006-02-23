@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -91,9 +92,9 @@ private static TaskExplorerManager instance;
 			return null;
 		}
 		Bundle bundle = Platform.getBundle(explorerInfo.getPluginId());
-		URL url = Platform.find(bundle, new Path(iconPath));
+		URL url = FileLocator.find(bundle, new Path(iconPath), null);
 		try {
-			url = Platform.resolve(url);
+			url = FileLocator.resolve(url);
 			return ImageDescriptor.createFromURL(url);
 		} catch (IOException e) {
 			return null;

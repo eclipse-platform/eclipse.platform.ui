@@ -39,7 +39,7 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 				continue;
 			String fileName = element.getAttribute("contentFile"); //$NON-NLS-1$
 			String id = element.getAttribute("id"); //$NON-NLS-1$
-			String pluginId = element.getNamespace();
+			String pluginId = element.getContributor().getName();
 			fileName = resolveVariables(pluginId, fileName, locale);
 			set.add("/" + pluginId + "/" + fileName + "?id=" + id); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -55,7 +55,7 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 			IConfigurationElement element = elements[i];
 			if (!element.getName().equals("cheatsheet")) //$NON-NLS-1$
 				continue;
-			set.add(element.getNamespace());
+			set.add(element.getContributor().getName());
 		}
 		return set;
 	}

@@ -60,7 +60,7 @@ public class ValidTest extends TestCase {
 			/*
 			 * Only use the ones from this test plugin.
 			 */
-			if (elements[i].getDeclaringExtension().getNamespace().equals(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName())) {
+			if (elements[i].getDeclaringExtension().getContributor().getName().equals(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName())) {
 				String content = elements[i].getAttribute("content");
 				String id = elements[i].getAttribute("id");
 				Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();

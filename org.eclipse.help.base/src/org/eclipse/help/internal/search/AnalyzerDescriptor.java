@@ -104,7 +104,7 @@ public class AnalyzerDescriptor {
 						.createExecutableExtension("class"); //$NON-NLS-1$
 				if (!(analyzer instanceof Analyzer))
 					continue;
-				String pluginId = configElements[i].getNamespace();
+				String pluginId = configElements[i].getContributor().getName();
 				String pluginVersion = (String) Platform
 						.getBundle(pluginId).getHeaders().get(
 								Constants.BUNDLE_VERSION);

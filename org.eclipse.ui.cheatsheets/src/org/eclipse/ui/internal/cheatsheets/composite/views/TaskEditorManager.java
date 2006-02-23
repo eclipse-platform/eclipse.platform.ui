@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -80,10 +81,10 @@ public class TaskEditorManager {
 			CheatSheetRegistryReader.getInstance().findTaskEditor(editorKind);
 		if (editorInfo != null) {
 			Bundle bundle = Platform.getBundle(editorInfo.getPluginId());
-			URL url = Platform.find(bundle, new Path(editorInfo.getIconPath()));
+			URL url = FileLocator.find(bundle, new Path(editorInfo.getIconPath()), null);
 			if (url != null) {
 				try {
-					url = Platform.resolve(url);
+					url = FileLocator.resolve(url);
 					return ImageDescriptor.createFromURL(url);
 				} catch (IOException e) {
 					return null;

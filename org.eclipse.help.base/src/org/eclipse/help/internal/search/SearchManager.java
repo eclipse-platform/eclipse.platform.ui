@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -125,11 +126,11 @@ public class SearchManager implements ITocsChangedListener {
 			String relativePath = element.getAttribute("icon"); //$NON-NLS-1$
 			if (relativePath == null)
 				return null;
-			String bundleId = element.getNamespace();
+			String bundleId = element.getContributor().getName();
 			Bundle bundle = Platform.getBundle(bundleId);
 			if (bundle == null)
 				return null;
-			return Platform.find(bundle, new Path(relativePath));
+			return FileLocator.find(bundle, new Path(relativePath), null);
 		}
 
 		public void clear() {
@@ -303,7 +304,7 @@ public class SearchManager implements ITocsChangedListener {
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("binding") || element.getName().equals("searchParticipant"))  //$NON-NLS-1$//$NON-NLS-2$
-				set.add(element.getNamespace());
+				set.add(element.getContributor().getName());
 		}
 		// must ask global search participants directly
 		LuceneSearchParticipant[] gps = getGlobalParticipants();
@@ -351,7 +352,7 @@ public class SearchManager implements ITocsChangedListener {
 		ArrayList binding = null;
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!element.getNamespace().equals(pluginId)) {
+			if (!element.getContributor().getName().equals(pluginId)) {
 				continue;
 			}
 			if (BINDING_XP_NAME.equals(element.getName())) {

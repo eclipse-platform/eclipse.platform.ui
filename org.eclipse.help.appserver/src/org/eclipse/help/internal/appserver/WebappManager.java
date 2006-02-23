@@ -116,15 +116,15 @@ public class WebappManager {
 
 		// Note: we just look for one webapp directory.
 		//       If needed, may want to use the locale specific path.
-		URL webappURL = Platform.find(bundle, path);
+		URL webappURL = FileLocator.find(bundle, path, null);
 		if (webappURL == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind(AppserverResources.Appserver_cannotFindPath, pluginId, path.toOSString()), null));
 		}
 
 		try {
-			String webappLocation = Platform.asLocalURL(
-					Platform.resolve(webappURL)).getFile();
+			String webappLocation = FileLocator.toFileURL(
+					FileLocator.resolve(webappURL)).getFile();
 			return new Path(webappLocation);
 		} catch (IOException ioe) {
 			throw new CoreException(new Status(IStatus.ERROR,

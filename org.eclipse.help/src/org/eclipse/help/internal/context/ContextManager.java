@@ -107,7 +107,7 @@ public class ContextManager implements IRegistryChangeListener {
 	 */
 	private Collection createContextFile(IExtension extension) {
 		Collection plugins = new HashSet();
-		String definingPlugin = extension.getNamespace();
+		String definingPlugin = extension.getContributor().getName();
 		IConfigurationElement[] contextContributions = extension
 				.getConfigurationElements();
 		for (int j = 0; j < contextContributions.length; j++) {

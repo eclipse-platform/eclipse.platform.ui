@@ -597,7 +597,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		String className = getAndCheckAttribute(element, ATT_CLASS);
 		String name = getAndCheckAttribute(element, ATT_NAME);
 		String id = getAndCheckAttribute(element, ATT_ID);
-		String pluginId = element.getNamespace();
+		String pluginId = element.getContributor().getName();
 		if (id != null && className != null && name != null ) {
 			TaskExplorerNode node = new TaskExplorerNode();
             node.setId(id);
@@ -613,7 +613,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		String icon = getAndCheckAttribute(element, ATT_ICON);
 		String className = getAndCheckAttribute(element, ATT_CLASS);
 		String id = getAndCheckAttribute(element, ATT_ID);
-		String pluginId = element.getNamespace();
+		String pluginId = element.getContributor().getName();
 		if (id != null && className != null && icon != null ) {
 			TaskEditorNode node = new TaskEditorNode();
             node.setId(id);

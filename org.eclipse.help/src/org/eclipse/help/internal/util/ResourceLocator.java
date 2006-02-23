@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -81,7 +82,7 @@ public class ResourceLocator {
 				} catch (CoreException ce) {
 					HelpPlugin
 							.logError(
-									"Exception occurred creating help content producer for plug-in " + config.getNamespace() + ".", ce); //$NON-NLS-1$ //$NON-NLS-2$
+									"Exception occurred creating help content producer for plug-in " + config.getContributor().getName() + ".", ce); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			return producer;
@@ -100,7 +101,7 @@ public class ResourceLocator {
 						CONTENTPRODUCER_XP_NAME);
 				for (int i = 0; i < deltas.length; i++) {
 					IExtension extension = deltas[i].getExtension();
-					String affectedPlugin = extension.getNamespace();
+					String affectedPlugin = extension.getContributor().getName();
 					// reset producer for the affected plugin,
 					// it will be recreated on demand
 					synchronized (contentProducers) {
@@ -159,7 +160,7 @@ public class ResourceLocator {
 		
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!elements[i].getNamespace().equals(pluginId)) {
+			if (!elements[i].getContributor().getName().equals(pluginId)) {
 				continue;
 			}
 			if (BINDING.equals(element.getName())) {
@@ -193,7 +194,7 @@ public class ResourceLocator {
 			if (CONTENTPRODUCER_XP_NAME.equals(elements[i].getName())) {
 				String id = elements[i].getDeclaringExtension().getUniqueIdentifier();
 				if (refId.equals(id)) {
-					Object obj = getProducerDescriptor(elements[i].getNamespace());
+					Object obj = getProducerDescriptor(elements[i].getContributor().getName());
 					if (obj instanceof ProducerDescriptor)
 						return (ProducerDescriptor)obj;
 				}
@@ -270,9 +271,9 @@ public class ResourceLocator {
 			Object cached = cache.get(pluginID + '/' + pathPrefix.get(i) + zip);
 			if (cached == null) {
 				try {
-					URL url = Platform.find(pluginDesc, new Path(pathPrefix.get(i) + zip));
+					URL url = FileLocator.find(pluginDesc, new Path(pathPrefix.get(i) + zip), null);
 					if (url != null) {
-						URL realZipURL = Platform.asLocalURL(Platform.resolve(url));
+						URL realZipURL = FileLocator.toFileURL(FileLocator.resolve(url));
 						cached = realZipURL.toExternalForm();
 					} else {
 						cached = ZIP_NOT_FOUND;
@@ -342,7 +343,7 @@ public class ResourceLocator {
 
 		// try to find the actual file.
 		for (int i = 0; i < pathPrefix.size(); i++) {
-			URL url = Platform.find(pluginDesc, new Path((String) pathPrefix.get(i) + flatFilePath));
+			URL url = FileLocator.find(pluginDesc, new Path((String) pathPrefix.get(i) + flatFilePath), null);
 			if (url != null)
 				return url;
 		}

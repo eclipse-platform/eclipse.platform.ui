@@ -20,6 +20,7 @@ import java.util.ListIterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -990,13 +991,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			Bundle bundle = null;
 			if(element != null && element.getConfigurationElement() != null)
 				try{
-					String pluginId = element.getConfigurationElement().getNamespace();
+					String pluginId = element.getConfigurationElement().getContributor().getName();
 					bundle = Platform.getBundle(pluginId);
 				} catch (Exception e) {
 					// do nothing
 				}
 			if (bundle != null) {
-				contentURL = Platform.find(bundle, new Path(element.getContentFile()));
+				contentURL = FileLocator.find(bundle, new Path(element.getContentFile()), null);
 			}
 	
 			if (contentURL == null) {

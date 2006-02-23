@@ -9,9 +9,9 @@
 
 package org.eclipse.help.internal.xhtml;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -87,7 +87,7 @@ public class UATopicExtension extends AbstractUAElement {
 	private void extractFileAndId(String content, Bundle bundle) {
 		// look for the file first
 		IPath resourcePath = new Path(content);
-		if (Platform.find(bundle, resourcePath) != null) {
+		if (FileLocator.find(bundle, resourcePath, null) != null) {
 			// found it, it's a file with no id
 			contentFile = content;
 		}

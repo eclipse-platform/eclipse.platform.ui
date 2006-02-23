@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -162,9 +162,9 @@ public class TreeLabelProvider extends LabelProvider {
 
 	private ImageDescriptor createImageDescriptor(String relativePath) {
 		Bundle bundle = CheatSheetPlugin.getPlugin().getBundle();
-		URL url = Platform.find(bundle, new Path(relativePath));
+		URL url = FileLocator.find(bundle, new Path(relativePath),null);
 		try {
-			url = Platform.resolve(url);
+			url = FileLocator.resolve(url);
 			return ImageDescriptor.createFromURL(url);
 		} catch (IOException e) {
 			return null;

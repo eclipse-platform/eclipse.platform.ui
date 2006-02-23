@@ -57,7 +57,7 @@ public abstract class RegistryReader {
 	private void logError(IConfigurationElement element, String text) {
 		IExtension extension = element.getDeclaringExtension();
 		StringBuffer buf = new StringBuffer();
-		buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
+		buf.append("Plugin " + extension.getContributor().getName() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text); //$NON-NLS-1$
 
 		IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, buf.toString(), null);
@@ -90,8 +90,8 @@ public abstract class RegistryReader {
 		// dependent in the order listed in the XML file.
 		Sorter sorter = new Sorter() {
 			public boolean compare(Object extension1, Object extension2) {
-				String s1 = ((IExtension) extension1).getNamespace().toUpperCase();
-				String s2 = ((IExtension) extension2).getNamespace().toUpperCase();
+				String s1 = ((IExtension) extension1).getContributor().getName().toUpperCase();
+				String s2 = ((IExtension) extension2).getContributor().getName().toUpperCase();
 				//Return true if elementTwo is 'greater than' elementOne
 				return s2.compareTo(s1) > 0;
 			}

@@ -73,11 +73,11 @@ public class IndexManager {
         
         IExtension[] extensions = xpt.getExtensions();
         for (int i = 0; i < extensions.length; i++) {
-            contributingPlugins.add(extensions[i].getNamespace());
+            contributingPlugins.add(extensions[i].getContributor().getName());
             IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
             for (int j = 0; j < configElements.length; j++) {
                 if (configElements[j].getName().equals("index")) { //$NON-NLS-1$
-                    String pluginId = configElements[j].getDeclaringExtension().getNamespace();
+                    String pluginId = configElements[j].getDeclaringExtension().getContributor().getName();
                     String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
                     if (href == null
                     		|| ignored.contains("/" + pluginId + "/" + href)) { //$NON-NLS-1$ //$NON-NLS-2$)

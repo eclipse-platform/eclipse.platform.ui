@@ -46,7 +46,7 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 			IConfigurationElement element = elements[i];
 			if (!element.getName().equals("config")) //$NON-NLS-1$
 				continue;
-			set.add(element.getNamespace());
+			set.add(element.getContributor().getName());
 		}
 		elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				"org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
@@ -54,7 +54,7 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 			IConfigurationElement element = elements[i];
 			if (!element.getName().equals("configExtension")) //$NON-NLS-1$
 				continue;
-			set.add(element.getNamespace());
+			set.add(element.getContributor().getName());
 		}
 		return set;
 	}

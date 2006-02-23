@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -74,7 +75,7 @@ public class PluginIndex {
 			String prefix = (String) availablePrefixes.get(i);
 			IPath prefixedPath = new Path(prefix + path);
 			// find index at this directory in plugin or fragments
-			URL url = Platform.find(bundle, prefixedPath);
+			URL url = FileLocator.find(bundle, prefixedPath, null);
 			if (url == null) {
 				continue;
 			}
@@ -84,7 +85,7 @@ public class PluginIndex {
 			}
 			URL resolved;
 			try {
-				resolved = Platform.resolve(url);
+				resolved = FileLocator.resolve(url);
 			} catch (IOException ioe) {
 				HelpBasePlugin.logError("Help index directory at " //$NON-NLS-1$
 						+ prefixedPath + " for plugin " //$NON-NLS-1$
@@ -102,7 +103,7 @@ public class PluginIndex {
 			} else {
 				try {
 					// extract index from jarred bundles
-					URL localURL = Platform.asLocalURL(url);
+					URL localURL = FileLocator.toFileURL(url);
 					if ("file".equals(localURL.getProtocol())) { //$NON-NLS-1$
 						indexIDs.add(getIndexId(prefix));
 						resolvedPaths.add(localURL.getFile());
@@ -129,8 +130,8 @@ public class PluginIndex {
 	}
 
 	private boolean isCompatible(Bundle bundle, IPath prefixedPath) {
-		URL url = Platform.find(bundle, prefixedPath
-				.append(SearchIndex.DEPENDENCIES_VERSION_FILENAME));
+		URL url = FileLocator.find(bundle, prefixedPath
+				.append(SearchIndex.DEPENDENCIES_VERSION_FILENAME), null);
 		if (url == null) {
 			HelpBasePlugin.logError(prefixedPath
 					.append(SearchIndex.DEPENDENCIES_VERSION_FILENAME)
@@ -175,7 +176,7 @@ public class PluginIndex {
 	}
 
 	private boolean isComplete(Bundle bundle, IPath prefixedPath) {
-		URL url = Platform.find(bundle, prefixedPath.append(COMPLETE_FILENAME));
+		URL url = FileLocator.find(bundle, prefixedPath.append(COMPLETE_FILENAME), null);
 		return url != null;
 	}
 

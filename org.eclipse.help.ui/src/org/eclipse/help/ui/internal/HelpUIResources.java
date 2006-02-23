@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -34,7 +35,7 @@ public class HelpUIResources {
 	 */
 	public static URL getImagePath(String name) {
 		IPath path = new Path("$nl$/icons/").append(name); //$NON-NLS-1$
-		return Platform.find(HelpUIPlugin.getDefault().getBundle(), path);
+		return FileLocator.find(HelpUIPlugin.getDefault().getBundle(), path, null);
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public class HelpUIResources {
 		if (desc==null) {
 			Bundle bundle = Platform.getBundle(bundleId);
 			if (bundle==null) return null;
-			URL url = Platform.find(bundle, new Path(name));			
+			URL url = FileLocator.find(bundle, new Path(name), null);			
 			desc = ImageDescriptor.createFromURL(url);
 			registry.put(name, desc);
 		}

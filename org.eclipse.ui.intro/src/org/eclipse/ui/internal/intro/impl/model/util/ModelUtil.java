@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -135,7 +136,7 @@ public class ModelUtil {
                 return;
             }
             for (int i = 0; i < parentFolderURLs.length; i++)
-                Platform.asLocalURL(parentFolderURLs[i]);
+            	FileLocator.toFileURL(parentFolderURLs[i]);
             if (Log.logPerformance) {
                 String msg = StringUtil.concat(
                     "extracting content folder ", contentFile, " (", //$NON-NLS-1$ //$NON-NLS-2$
