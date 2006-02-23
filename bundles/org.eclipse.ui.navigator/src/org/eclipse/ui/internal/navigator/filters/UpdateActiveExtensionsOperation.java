@@ -23,26 +23,23 @@ import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.NavigatorActivationService;
 
 /**
- * Ensures that a given set of content extensions is <i>active</i> and 
- * a second non-intersecting set of content extensions are not <i>active</i>.
+ * Ensures that a given set of content extensions is <i>active</i> and a second
+ * non-intersecting set of content extensions are not <i>active</i>.
  * 
  * <p>
- * This operation is smart enough not to force any change if each id in each
- * set is already in its desired state (<i>active</i> or <i>inactive</i>).
+ * This operation is smart enough not to force any change if each id in each set
+ * is already in its desired state (<i>active</i> or <i>inactive</i>).
  * </p>
+ * 
  * @since 3.2
- *
+ * 
  */
 public class UpdateActiveExtensionsOperation extends AbstractOperation {
 
-	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService
-			.getInstance();
-
 	private String[] contentExtensionsToActivate;
-  
+
 	private final CommonViewer commonViewer;
 
 	private final INavigatorContentService contentService;
@@ -50,25 +47,24 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 	/**
 	 * Create an operation to activate extensions and refresh the viewer.
 	 * 
-	 * p>
-	 * To use only one part of this operation (either "activate" or
+	 * p> To use only one part of this operation (either "activate" or
 	 * "deactivate", but not both), then supply <b>null</b> for the array state
-	 * you are not concerned with. 
+	 * you are not concerned with.
 	 * </p>
 	 * 
 	 * @param aCommonViewer
 	 *            The CommonViewer instance to update
 	 * @param theExtensionsToActivate
 	 *            An array of ids that correspond to the extensions that should
-	 *            be in the <i>active</i> state after this operation executes. 
+	 *            be in the <i>active</i> state after this operation executes.
 	 */
 	public UpdateActiveExtensionsOperation(CommonViewer aCommonViewer,
-			String[] theExtensionsToActivate ) {
+			String[] theExtensionsToActivate) {
 		super(
 				CommonNavigatorMessages.UpdateFiltersOperation_Update_CommonViewer_Filter_);
 		commonViewer = aCommonViewer;
 		contentService = commonViewer.getNavigatorContentService();
-		contentExtensionsToActivate = theExtensionsToActivate; 
+		contentExtensionsToActivate = theExtensionsToActivate;
 
 	}
 
@@ -81,35 +77,39 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
 
 		boolean updateExtensionActivation = false;
-		
+
 		// we sort the array in order to use Array.binarySearch();
 		Arrays.sort(contentExtensionsToActivate);
 
 		try {
 			commonViewer.getControl().setRedraw(false);
-			
 
-			INavigatorContentDescriptor[] visibleContentDescriptors = contentService.getVisibleExtensions();
-			  
+			INavigatorContentDescriptor[] visibleContentDescriptors = contentService
+					.getVisibleExtensions();
 
 			int indexofContentExtensionIdToBeActivated;
 			/* is there a delta? */
 			for (int i = 0; i < visibleContentDescriptors.length
 					&& !updateExtensionActivation; i++) {
-				indexofContentExtensionIdToBeActivated = Arrays.binarySearch(contentExtensionsToActivate, visibleContentDescriptors[i].getId());
-				/* Either we have a filter that should be active that isn't XOR 
+				indexofContentExtensionIdToBeActivated = Arrays.binarySearch(
+						contentExtensionsToActivate,
+						visibleContentDescriptors[i].getId());
+				/*
+				 * Either we have a filter that should be active that isn't XOR
 				 * a filter that shouldn't be active that is currently
 				 */
-				if(indexofContentExtensionIdToBeActivated >= 0 ^ contentService.isActive(visibleContentDescriptors[i].getId()))  
-					updateExtensionActivation = true;  
+				if (indexofContentExtensionIdToBeActivated >= 0
+						^ contentService.isActive(visibleContentDescriptors[i]
+								.getId()))
+					updateExtensionActivation = true;
 			}
 
 			/* If so, update */
 			if (updateExtensionActivation) {
-				contentService.activateExtensions(contentExtensionsToActivate, true);
-				NAVIGATOR_ACTIVATION_SERVICE
-						.persistExtensionActivations(contentService
-								.getViewerId());
+				contentService.getActivationService().activateExtensions(
+						contentExtensionsToActivate, true);
+				contentService.getActivationService()
+						.persistExtensionActivations();
 
 				// automatically calls viewer.refresh()
 				contentService.update();

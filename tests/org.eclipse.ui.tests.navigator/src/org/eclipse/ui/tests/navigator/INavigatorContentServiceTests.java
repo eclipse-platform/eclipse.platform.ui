@@ -90,7 +90,7 @@ public class INavigatorContentServiceTests extends TestCase {
 
 public void testFindValidExtensions() {
 
-		contentService.activateExtensions(new String[] { TEST_EXTENSION_ID,
+		contentService.getActivationService().activateExtensions(new String[] { TEST_EXTENSION_ID,
 				RESOURCE_EXTENSION_ID }, true);
 
 		ITreeContentProvider contentServiceContentProvider = contentService
@@ -139,7 +139,7 @@ public void testFindValidExtensions() {
 
 	}	public void testDeactivateTestExtension() {
 
-		contentService.activateExtensions(
+		contentService.getActivationService().activateExtensions(
 				new String[] { RESOURCE_EXTENSION_ID }, true);
 
 		ITreeContentProvider contentServiceContentProvider = contentService
@@ -169,7 +169,7 @@ public void testFindValidExtensions() {
 				.createContentService(COMMON_NAVIGATOR_INSTANCE_ID);
 		INavigatorContentDescriptor[] boundDescriptors = contentServiceWithProgrammaticBindings
 				.bindExtensions(new String[] { TEST_EXTENSION_2_ID }, false);
-		contentServiceWithProgrammaticBindings.activateExtensions(
+		contentServiceWithProgrammaticBindings.getActivationService().activateExtensions(
 				new String[] { RESOURCE_EXTENSION_ID, TEST_EXTENSION_ID,
 						TEST_EXTENSION_2_ID }, false);
 

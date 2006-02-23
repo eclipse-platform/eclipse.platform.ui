@@ -43,11 +43,12 @@ import org.eclipse.ui.IMemento;
  * configured through <b>viewerContentBinding</b>s. </li>
  * <li><i>active</i>: The active state may be set to a default using the
  * <i>activeByDefault</i> attribute of <b>navigatorContent</b>. Users may
- * toggle the 'active' state through the 'Available extensions' dialog. Clients
- * may also configure the active extensions using
- * {@link #activateExtensions(String[], boolean)} or
- * {@link #deactivateExtensions(String[], boolean)}. </li>
- * <li><i>enabled</i>: An extension is 'enabled' for an element if the
+ * toggle the <i>active</i> state through the "Available customizations"
+ * dialog. Clients may also configure the active extensions using
+ * {@link INavigatorActivationService#activateExtensions(String[], boolean)} or
+ * {@link INavigatorActivationService#deactivateExtensions(String[], boolean)}
+ * from the {@link #getActivationService() Activation Service} </li>
+ * <li><i>enabled</i>: An extension is <i>enabled</i> for an element if the
  * extension contributed that element or if the element is described in the
  * <i>triggerPoints</i> element of the <b>navigatorContent</b> extension. The
  * findXXX() methods search for 'enabled' extensions. </li>
@@ -245,9 +246,11 @@ public interface INavigatorContentService {
 	 * do not override declarative bindings.
 	 * <p>
 	 * Once a content extension has been bound to the INavigatorContentService,
-	 * clients may use {@link #activateExtensions(String[], boolean) } or
-	 * {@link #deactivateExtensions(String[], boolean) } to control the
-	 * <i>activation</i> state of the extension. See
+	 * clients may use
+	 * {@link INavigatorActivationService#activateExtensions(String[], boolean) }
+	 * or
+	 * {@link  INavigatorActivationService#deactivateExtensions(String[], boolean) }
+	 * to control the <i>activation</i> state of the extension. See
 	 * {@link INavigatorContentService} for more information on the difference
 	 * between <i>visible</i> and <i>active</i>.
 	 * </p>
@@ -261,48 +264,6 @@ public interface INavigatorContentService {
 	 */
 	INavigatorContentDescriptor[] bindExtensions(String[] extensionIds,
 			boolean isRoot);
-
-	/**
-	 * Activate the extensions specified by the extensionIds array. Clients may
-	 * also choose to disable all other extensions. The set of descriptors
-	 * returned is the set that were activated as a result of this call. In the
-	 * case of this method, that means that a descriptor will be returned for
-	 * each extensionId in the array, regardless of whether that extension is
-	 * already enabled.
-	 * 
-	 * @param extensionIds
-	 *            The list of extensions to activate
-	 * @param toDeactivateAllOthers
-	 *            True will deactivate all other extensions; False will leave
-	 *            the other activations as-is
-	 * @return A list of all INavigatorContentDescriptors that were activated as
-	 *         a result of this call. This will be the set of
-	 *         INavigatorContentDescriptors that corresponds exactly to the set
-	 *         of given extensionIds.
-	 */
-	INavigatorContentDescriptor[] activateExtensions(String[] extensionIds,
-			boolean toDeactivateAllOthers);
-
-	/**
-	 * Deactivate the extensions specified by the extensionIds. Clients may
-	 * choose to activate all other extensions which are not explicitly
-	 * disabled. If toActivateAllOthers is true, the array of returned
-	 * descriptors will be the collection of all extensions not specified in the
-	 * extensionIds array. If it is false, the array will be empty.
-	 * 
-	 * @param extensionIds
-	 *            The list of extensions to activate
-	 * @param toActivateAllOthers
-	 *            True will activate all other extensions; False will leave the
-	 *            other activations as-is
-	 * @return A list of all INavigatorContentDescriptors that were activated as
-	 *         a result of this call. If toActivateAllOthers is false, the
-	 *         result will be an empty array. Otherwise, it will be the set of
-	 *         all visible extensions minus those given in the 'extensionIds'
-	 *         parameter.
-	 */
-	INavigatorContentDescriptor[] deactivateExtensions(String[] extensionIds,
-			boolean toActivateAllOthers);
 
 	/**
 	 * 
@@ -430,5 +391,13 @@ public interface INavigatorContentService {
 	 *         for those extended Transfer Types.
 	 */
 	INavigatorDnDService getDnDService();
+
+	/**
+	 * The activation service is used to toggle whether certain extensions have
+	 * the opportunity to contribute content or actions.
+	 * 
+	 * @return The {@link INavigatorActivationService} for this content service.
+	 */
+	INavigatorActivationService getActivationService();
 
 }

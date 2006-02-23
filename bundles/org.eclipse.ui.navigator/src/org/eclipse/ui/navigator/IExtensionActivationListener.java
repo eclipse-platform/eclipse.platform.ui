@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+
 /**
  * 
  * An extension activation listener is notified whenever the activation state
@@ -23,15 +24,14 @@ package org.eclipse.ui.navigator;
  * consulting with the Platform/UI team.
  * </p>
  * 
- *<p>
+ * <p>
  * Clients may implement this interface.
- *</p> 
+ * </p>
+ * 
  * @since 3.2
- * @see NavigatorActivationService
- * @see NavigatorActivationService#addExtensionActivationListener(String,
- *      IExtensionActivationListener)
- * @see NavigatorActivationService#removeExtensionActivationListener(String,
- *      IExtensionActivationListener)
+ * @see INavigatorActivationService
+ * @see INavigatorActivationService#addExtensionActivationListener(IExtensionActivationListener)
+ * @see INavigatorActivationService#removeExtensionActivationListener(IExtensionActivationListener)
  */
 public interface IExtensionActivationListener {
 	/**

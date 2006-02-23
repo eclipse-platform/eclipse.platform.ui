@@ -17,10 +17,10 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ui.navigator.IExtensionActivationListener;
+import org.eclipse.ui.navigator.INavigatorActivationService;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
-import org.eclipse.ui.navigator.NavigatorActivationService;
 
 /**
  * Stores information about programmatic bindings and activation settings.
@@ -35,6 +35,8 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	private final Set programmaticRootBindings = new HashSet();
 
 	private final ListenerList listeners = new ListenerList();
+
+	private final INavigatorActivationService activationService;
 
 	/**
 	 * Notifies clients of changes in extension visibility or activation.
@@ -54,14 +56,16 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 * 
 	 * @param aViewerDescriptor
 	 *            A non-nullviewer descriptor.
+	 * @param anActivationService
+	 *            The activation service associated with the content service.
 	 */
-	public VisibilityAssistant(INavigatorViewerDescriptor aViewerDescriptor) {
+	public VisibilityAssistant(INavigatorViewerDescriptor aViewerDescriptor,
+			INavigatorActivationService anActivationService) {
 		Assert.isNotNull(aViewerDescriptor);
 		viewerDescriptor = aViewerDescriptor;
 
-		NavigatorActivationService.getInstance()
-				.addExtensionActivationListener(viewerDescriptor.getViewerId(),
-						this);
+		activationService = anActivationService;
+		activationService.addExtensionActivationListener(this);
 	}
 
 	/**
@@ -69,9 +73,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 * 
 	 */
 	public void dispose() {
-		NavigatorActivationService.getInstance()
-				.removeExtensionActivationListener(
-						viewerDescriptor.getViewerId(), this);
+		activationService.removeExtensionActivationListener(this);
 	}
 
 	/**
@@ -116,7 +118,6 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 		listeners.remove(aListener);
 	}
 
-	 
 	private void notifyClients() {
 		Object[] clients = listeners.getListeners();
 		for (int i = 0; i < clients.length; i++) {
@@ -127,7 +128,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	/**
 	 * 
 	 * @param aContentDescriptor
-	 *            The content descriptor of inquiry 
+	 *            The content descriptor of inquiry
 	 * @return True if and only if the content descriptor is <i>active</i> and
 	 *         <i>visible</i> for the viewer descriptor and enabled for the
 	 *         given element.
@@ -145,13 +146,12 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 * 
 	 * @see INavigatorContentService For more information on what <i>active</i>
 	 *      means.
-	 * @see INavigatorContentService#activateExtensions(String[], boolean)
-	 * @see INavigatorContentService#deactivateExtensions(String[], boolean)
+	 * @see INavigatorActivationService#activateExtensions(String[], boolean)
+	 * @see INavigatorActivationService#deactivateExtensions(String[], boolean)
 	 */
 	public boolean isActive(INavigatorContentDescriptor aContentDescriptor) {
-		return NavigatorActivationService.getInstance()
-				.isNavigatorExtensionActive(viewerDescriptor.getViewerId(),
-						aContentDescriptor.getId());
+		return activationService.isNavigatorExtensionActive(aContentDescriptor
+				.getId());
 	}
 
 	/**
@@ -161,13 +161,12 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 * @return True if and only if the given extension is <i>active</i>
 	 * @see INavigatorContentService For more information on what <i>active</i>
 	 *      means.
-	 * @see INavigatorContentService#activateExtensions(String[], boolean)
-	 * @see INavigatorContentService#deactivateExtensions(String[], boolean)
+	 * @see INavigatorActivationService#activateExtensions(String[], boolean)
+	 * @see INavigatorActivationService#deactivateExtensions(String[], boolean)
 	 */
 	public boolean isActive(String aContentExtensionId) {
-		return NavigatorActivationService.getInstance()
-				.isNavigatorExtensionActive(viewerDescriptor.getViewerId(),
-						aContentExtensionId);
+		return activationService
+				.isNavigatorExtensionActive(aContentExtensionId);
 	}
 
 	/**

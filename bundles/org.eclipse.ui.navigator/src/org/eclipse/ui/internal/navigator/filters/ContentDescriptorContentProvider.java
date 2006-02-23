@@ -17,12 +17,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.NavigatorActivationService;
 
 class ContentDescriptorContentProvider implements ITreeContentProvider {
-
-	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService
-			.getInstance();
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
@@ -106,9 +102,8 @@ class ContentDescriptorContentProvider implements ITreeContentProvider {
 			if (descriptorTableItems[i].getData() instanceof INavigatorContentDescriptor) {
 				descriptor = (INavigatorContentDescriptor) descriptorTableItems[i]
 						.getData();
-				enabled = NAVIGATOR_ACTIVATION_SERVICE
-						.isNavigatorExtensionActive(contentService
-								.getViewerId(), descriptor.getId());
+				enabled = contentService.getActivationService()
+						.isNavigatorExtensionActive(descriptor.getId());
 				talbleViewer.setChecked(descriptor, enabled);
 			}
 		}
