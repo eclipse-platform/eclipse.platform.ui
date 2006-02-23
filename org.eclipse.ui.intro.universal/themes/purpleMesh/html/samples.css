@@ -3,21 +3,9 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#samples img, #navigation-links a#samples:hover img { background-image : url(../graphics/icons/ctool/samples48sel.gif); }
-
-iframe {
-	position:relative;
-	top:16px;
-	width:100%;
-	height:100%;
-	padding-left:10px;
-	}
-	
-/* mozilla scrollbar appearing off page fix */
-#page-content > iframe {
-	width: 98%;
-	padding-left: 2%;
-}	
+#navigation-links a#samples img, #navigation-links a#samples:hover img { 
+	background-image : url(../graphics/icons/ctool/samples48sel.gif); 
+}
 
 
 

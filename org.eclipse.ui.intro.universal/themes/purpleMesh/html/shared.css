@@ -455,3 +455,18 @@ p #group-description {
 }
 
 .content-link:hover { border-right : 0px; }
+
+
+iframe {
+	position:relative;
+	top:16px;
+	width:100%;
+	height:100%;
+	padding-left:10px;
+	}
+
+/* mozilla scrollbar appearing off page fix */
+#page-content > iframe {
+	width: 98%;
+	padding-left: 2%;
+}	
