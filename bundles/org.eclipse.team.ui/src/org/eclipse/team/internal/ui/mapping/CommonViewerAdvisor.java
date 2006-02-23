@@ -140,7 +140,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 
 	private static void enableContentProviders(CommonViewer v, ISynchronizationScope scope) {
 		v.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
-		v.getNavigatorContentService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
+		v.getNavigatorContentService().getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
 	}
 	
 	private static ISynchronizationScope getScope(ISynchronizePageConfiguration configuration) {

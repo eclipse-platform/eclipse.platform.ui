@@ -13,10 +13,14 @@ package org.eclipse.team.internal.ui.mapping;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 
@@ -29,8 +33,15 @@ public class ShowModelProviderAction extends Action {
 		super(Utils.getLabel(provider), IAction.AS_RADIO_BUTTON);
 		this.configuration = configuration;
 		this.provider = provider;
+		setImageDescriptor(getImageDescriptor(provider));
 	}
 	
+	private ImageDescriptor getImageDescriptor(ModelProvider provider) {
+		ITeamContentProviderManager manager = TeamUI.getTeamContentProviderManager();
+		ITeamContentProviderDescriptor desc = manager.getDescriptor(provider.getId());
+		return desc.getImageDescriptor();
+	}
+
 	public void run() {
 		Viewer v = configuration.getPage().getViewer();
 		v.setInput(provider);
