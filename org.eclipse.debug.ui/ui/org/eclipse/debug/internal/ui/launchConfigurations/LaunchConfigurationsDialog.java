@@ -1099,7 +1099,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void initializeBounds() {
 		if (fSashForm != null) {
-			super.initializeBounds();
 			IDialogSettings settings = getDialogSettings();
 			int w1, w2;
 			try {
@@ -1113,7 +1112,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			
 			fSashForm.setWeights(new int[] {w1, w2});
 		}
-		resize();
+		super.initializeBounds();
 	}
 
 	/**
