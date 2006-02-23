@@ -8,7 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jface.internal.databinding;x-internal:=true,
  org.eclipse.jface.internal.databinding.beans;x-internal:=true,
- org.eclipse.jface.internal.databinding.swt,
+ org.eclipse.jface.internal.databinding.swt;x-friends:="org.eclipse.jface.examples.databinding",
  org.eclipse.jface.internal.databinding.viewers;x-internal:=true,
  org.eclipse.jface.internal.provisional.databinding,
  org.eclipse.jface.internal.provisional.databinding.beans,
@@ -24,4 +24,3 @@ Export-Package: org.eclipse.jface.internal.databinding;x-internal:=true,
 Require-Bundle: org.eclipse.jface,
  org.eclipse.core.runtime;resolution:=optional,
  org.eclipse.equinox.common;resolution:=optional
-Eclipse-LazyStart: true

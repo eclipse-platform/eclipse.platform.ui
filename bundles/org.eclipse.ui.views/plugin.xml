@@ -6,7 +6,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%Views.PropertySheet"
-            icon="icons/full/eview16/prop_ps.gif"
+            icon="$nl$/icons/full/eview16/prop_ps.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.properties.PropertySheet"
             id="org.eclipse.ui.views.PropertySheet">

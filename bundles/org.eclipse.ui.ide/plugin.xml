@@ -25,7 +25,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%Perspective.resourcePerspective"
-            icon="icons/full/eview16/resource_persp.gif"
+            icon="$nl$/icons/full/eview16/resource_persp.gif"
             class="org.eclipse.ui.internal.ide.ResourcePerspective"
             id="org.eclipse.ui.resourcePerspective">
       </perspective>
@@ -49,7 +49,7 @@
       
       <wizard
             name="%ImportWizards.Preferences"
-            icon="icons/full/obj16/importpref_obj.gif"
+            icon="$nl$/icons/full/obj16/importpref_obj.gif"
             id="org.eclipse.ui.wizards.import.Preferences"
             category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.ExtensionFactory:preferencesImportWizard">
@@ -59,7 +59,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.FileSystem"
-            icon="icons/full/etool16/importdir_wiz.gif"
+            icon="$nl$/icons/full/etool16/importdir_wiz.gif"
             category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
             id="org.eclipse.ui.wizards.import.FileSystem">
@@ -72,7 +72,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.ExternalProject"
-            icon="icons/full/etool16/newprj_wiz.gif"
+            icon="$nl$/icons/full/etool16/newprj_wiz.gif"
             category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard"
             id="org.eclipse.ui.wizards.import.ExternalProject">
@@ -82,7 +82,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.ZipFile"
-            icon="icons/full/etool16/importzip_wiz.gif"
+            icon="$nl$/icons/full/etool16/importzip_wiz.gif"
             category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
             id="org.eclipse.ui.wizards.import.ZipFile">
@@ -164,7 +164,7 @@
       </category>
       <wizard
             name="%NewWizards.project"
-            icon="icons/full/etool16/newprj_wiz.gif"
+            icon="$nl$/icons/full/etool16/newprj_wiz.gif"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
             project="true"
@@ -175,7 +175,7 @@
       </wizard>
       <wizard
             name="%NewWizards.folder"
-            icon="icons/full/etool16/newfolder_wiz.gif"
+            icon="$nl$/icons/full/etool16/newfolder_wiz.gif"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard"
             id="org.eclipse.ui.wizards.new.folder">
@@ -188,7 +188,7 @@
       </wizard>
       <wizard
             name="%NewWizards.file"
-            icon="icons/full/etool16/newfile_wiz.gif"
+            icon="$nl$/icons/full/etool16/newfile_wiz.gif"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard"
             id="org.eclipse.ui.wizards.new.file">
@@ -204,7 +204,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.WelcomeEditor"
-            icon="icons/full/obj16/welcome_editor.gif"
+            icon="$nl$/icons/full/obj16/welcome_editor.gif"
             class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
             contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
             id="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor">
@@ -235,7 +235,7 @@
             name="%WorkingSets.resource"
             pageClass="org.eclipse.ui.internal.ide.dialogs.ResourceWorkingSetPage"
             updaterClass="org.eclipse.ui.internal.ide.ResourceWorkingSetUpdater"
-            icon="icons/full/obj16/workset.gif"
+            icon="$nl$/icons/full/obj16/workset.gif"
             id="org.eclipse.ui.resourceWorkingSetPage">
       </workingSet>
    </extension>
@@ -249,7 +249,7 @@
          <action
                definitionId="org.eclipse.ui.navigate.goToResource"
                label="%GoToResourceAction.label"
-               icon="icons/full/elcl16/gotoobj_tsk.gif"
+               icon="$nl$/icons/full/elcl16/gotoobj_tsk.gif"
                menubarPath="navigate/goTo/"
                retarget="true"
                id="goToResource">
@@ -282,7 +282,7 @@
          <action
                class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
                definitionId="org.eclipse.ui.navigate.selectWorkingSets"
-               icon="icons/full/elcl16/workingsets.gif"
+               icon="$nl$/icons/full/elcl16/workingsets.gif"
                id="selectWorkingSets"
                label="%SelectWorkingSetsAction.label"
                menubarPath="window/additions"
@@ -471,7 +471,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%Views.Progress"
-            icon="icons/full/eview16/pview.gif"
+            icon="$nl$/icons/full/eview16/pview.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.progress.ProgressView"
             id="org.eclipse.ui.views.ProgressView">
@@ -485,21 +485,21 @@
       </view>
       <view
             name="%Views.Bookmark"
-            icon="icons/full/eview16/bkmrk_nav.gif"
+            icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.BookmarkView"
             id="org.eclipse.ui.views.BookmarkView">
       </view>
       <view
             name="%Views.Task"
-            icon="icons/full/eview16/tasks_tsk.gif"
+            icon="$nl$/icons/full/eview16/tasks_tsk.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.TaskView"
             id="org.eclipse.ui.views.TaskList">
       </view>
       <view
             name="%Views.Problem"
-            icon="icons/full/eview16/problems_view.gif"
+            icon="$nl$/icons/full/eview16/problems_view.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
@@ -701,7 +701,7 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.navigate.goToResource"
-            icon="icons/full/elcl16/gotoobj_tsk.gif" />
+            icon="$nl$/icons/full/elcl16/gotoobj_tsk.gif" />
    </extension>
    
    <extension
@@ -841,7 +841,7 @@
                class="org.eclipse.ui.internal.ide.update.ConfigurationManagerAction"
                definitionId="org.eclipse.ui.update.manageConfiguration"
                helpContextId="org.eclipse.update.ui.newUpdates"
-               icon="icons/full/elcl16/configs.gif"
+               icon="$nl$/icons/full/elcl16/configs.gif"
                id="org.eclipse.update.ui.configManager"
                label="%UpdateActionSet.configManager.label"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0">
@@ -850,7 +850,7 @@
                class="org.eclipse.ui.internal.ide.update.InstallWizardAction"
                definitionId="org.eclipse.ui.update.findAndInstallUpdates"
                helpContextId="org.eclipse.update.ui.newUpdates"
-               icon="icons/full/elcl16/usearch_obj.gif"
+               icon="$nl$/icons/full/elcl16/usearch_obj.gif"
                id="org.eclipse.update.ui.newUpdates"
                label="%UpdateActionSet.updates.label"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0">
