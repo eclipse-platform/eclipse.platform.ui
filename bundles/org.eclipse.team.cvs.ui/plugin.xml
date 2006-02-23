@@ -271,22 +271,24 @@
                id="org.eclipse.team.cvs.ui.showAnnotation">
          </action>
          <action
-               helpContextId="org.eclipse.team.cvs.ui.compare_with_revision_action_context"
-               label="%CompareWithRevisionAction.label"
-               definitionId="org.eclipse.team.cvs.ui.compareWithRevision"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
-               tooltip="%CompareWithRevisionAction.tooltip"
+               definitionId="org.eclipse.team.cvs.ui.compareWithRevision"
+               helpContextId="org.eclipse.team.cvs.ui.compare_with_revision_action_context"
+               id="org.eclipse.team.cvs.ui.compareWithRevision"
+               label="%CompareWithRevisionAction.label"
                menubarPath="compareWithMenu/compareWithGroup"
-               id="org.eclipse.team.cvs.ui.compareWithRevision">
+               overrideActionId="compareWithHistory"
+               tooltip="%CompareWithRevisionAction.tooltip">
          </action>
          <action
-               helpContextId="org.eclipse.team.cvs.ui.replace_with_revision_action_context"
-               label="%ReplaceWithRevisionAction.label"
-               definitionId="org.eclipse.team.cvs.ui.replaceWithRevision"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRevisionAction"
-               tooltip="%ReplaceWithRevisionAction.tooltip"
+               definitionId="org.eclipse.team.cvs.ui.replaceWithRevision"
+               helpContextId="org.eclipse.team.cvs.ui.replace_with_revision_action_context"
+               id="org.eclipse.team.cvs.ui.replaceWithRevision"
+               label="%ReplaceWithRevisionAction.label"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.eclipse.team.cvs.ui.replaceWithRevision">
+               overrideActionId="replaceFromHistory"
+               tooltip="%ReplaceWithRevisionAction.tooltip">
          </action>
          <action
                label="%EditAction.label"
