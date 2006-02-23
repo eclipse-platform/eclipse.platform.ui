@@ -958,8 +958,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 								historyTableProvider.setFile(fileHistory, file);
 								if (grouping){
 									mapExpandedElements(treeViewer.getExpandedElements());
+									treeViewer.getTree().setRedraw(false);
 									treeViewer.setInput(categories);
 									treeViewer.setExpandedElements(elementsToExpand);
+									treeViewer.getTree().setRedraw(true);
 								}
 								else
 									treeViewer.setInput(fileHistory);
