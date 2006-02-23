@@ -30,22 +30,26 @@ import org.eclipse.ui.part.PluginTransfer;
  * Each {@link CommonDropAdapterAssistant} is contained by single content
  * extension. The opportunity for each assistant to handle the drop operation is
  * determined by the <b>possibleChildren</b> expression of the
- * <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension.
+ * <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension;
+ * whenever every element in the drag set matches the <b>possibleChildren</b>
+ * expression of an extension, it is eligible to handle the drop operation. This
+ * initial set is further culled using the <b>possibleDropTargets</b>
+ * expression of the <b>commonDropAdapter</b> using the current drop target.
+ * </p>
+ * <p>
+ * If drag operations originate outside of Eclipse, then the set of eligible
+ * drop adapters is determined based on the drop target (using the
+ * <b>possibleDropTargets</b> expression). Each assistant can then indicate 
+ * whether {@link #isSupportedType(TransferData) the incoming type is supported}.
+ * <p>
  * Whenever a match is found, the assistant will be given an opportunity to
- * first {@link #validateDrop(Object, int, TransferData) }, and then if the
+ * first {@link #validateDrop(Object, int, TransferData)}, and then if the
  * assistant returns true, the assist must
- * {@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object) }. If
+ * {@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object)}. If
  * multiple assistants match the drop target, then the potential assistants are
  * ordered based on priority and their override relationships and given an
  * opportunity to validate the drop operation in turn. The first one to validate
  * will have the opportunty to carry out the drop.
- * </p>
- * <p>
- * That is, if a content extension X overrides content extension Y (see
- * <b>org.eclipse.ui.navigator.navigatorContent/override</b>), then X will have
- * an opportunity before Y. If X and Y override Z, but X has higher priority
- * than Y, then X will have an opportunity before Y, and Y will have an
- * opportunity before Z.
  * </p>
  * 
  * <p>
