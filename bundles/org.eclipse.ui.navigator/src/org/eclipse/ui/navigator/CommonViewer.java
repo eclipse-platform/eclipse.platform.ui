@@ -417,12 +417,7 @@ public class CommonViewer extends TreeViewer {
 		super(aParent, aStyle);
 		contentService = new NavigatorContentService(aViewerId, this);
 		init();
-	}
-
-	public boolean isExpandable(Object element) {
-
-		return getFilteredChildren(element).length != 0;
-	}
+	} 
 
 	/**
 	 * <p>
@@ -431,10 +426,8 @@ public class CommonViewer extends TreeViewer {
 	 * </p>
 	 */
 	public void dispose() {
-
 		if (contentService != null)
-			contentService.dispose();
-
+			contentService.dispose(); 
 	}
 
 	/**
