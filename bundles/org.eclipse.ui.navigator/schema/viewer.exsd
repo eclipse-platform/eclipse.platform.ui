@@ -20,11 +20,6 @@ extension bound to a viewer is described as &lt;i&gt;visible&lt;/i&gt;. A
 content service (&lt;code&gt;org.eclipse.ui.navigator.INavigatorContentService&lt;/code&gt;)
 will not return any extensions which are not visible for
 its viewer id.
-&lt;p&gt;
-&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
-part of a work in progress. There is a guarantee neither that this API will
-work nor that it will remain the same. Please do not use this API without
-consulting with the Platform/UI team.
       </documentation>
    </annotation>
 
@@ -98,9 +93,9 @@ consulting with the Platform/UI team.
       <annotation>
          <documentation>
             Clients must define one or more &lt;b&gt;viwerContentBinding&lt;/b&gt; elements to describe which content extensions and common filters are &lt;i&gt;visible&lt;/i&gt; to the viewer. A content extension or common filter is &lt;i&gt;visible&lt;/i&gt; if the id of the content extension or common filter matches an &lt;b&gt;includes&lt;/b&gt; statement under a &lt;b&gt;viewerContentBinding&lt;/b&gt; and is not excluded by an &lt;b&gt;excludes&lt;/b&gt; statement. If a content extension or common filter is not &lt;i&gt;visible&lt;/i&gt; to a viewer, then the extension will never be asked for content by a content service for that viewer or be presented to the user in the available filters dialog. 
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 Clients may define an &lt;b&gt;includes&lt;/b&gt; element to select which extensions are &lt;i&gt;visible&lt;/i&gt; to the viewer, and similarly an &lt;b&gt;excludes&lt;/b&gt; element for extensions that should not be made &lt;i&gt;visible&lt;/i&gt; to the viewer. Clients may further define the extensions that should be explicitly queried for root elements (through  ITreeContentProvider.getElements()) by the &quot;isRoot&quot; attribute. If one or more &lt;b&gt;contentExtension&lt;/b&gt; elements have &quot;isRoot&quot; set to true within the &lt;b&gt;includes&lt;/b&gt; statement, only those extensions will be queried for root elements. The &quot;isRoot&quot; attribute has no effect for exclusions.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 A viewer may have multiple viewerContentBindings defined, and their includes/excludes statements will be aggregated to produce the final behavior.
          </documentation>
       </annotation>
@@ -123,9 +118,9 @@ A viewer may have multiple viewerContentBindings defined, and their includes/exc
       <annotation>
          <documentation>
             Clients must define which action providers are visible to their viewer. Clients may define an &lt;b&gt;includes&lt;/b&gt; element to select which extensions are visible to the viewer, and  similarly an &lt;b&gt;excludes&lt;/b&gt; element for extensions that should not be made visible to the viewer. 
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 A viewer may have multiple &lt;b&gt;viewerActionBinding&lt;/b&gt;s defined, and their &lt;b&gt;includes&lt;/b&gt;/&lt;b&gt;excludes&lt;/b&gt; statements will be aggregated to produce the final behavior.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; definition, clients may specify a custom id. If clients do not specify an id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider&quot;. For clients that wish to pick up &lt;b&gt;actionProvider&lt;/b&gt;s with no specific id, clients must define a &lt;b&gt;viewerActionBinding&lt;/b&gt; for the default id. See the examples section for how this is done.
          </documentation>
       </annotation>
@@ -185,11 +180,11 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
          <documentation>
             Indicates the id (or matching pattern) of a content extension that should be queried by &lt;code&gt;ITreeContentProvider.getElements()&lt;/code&gt; or &lt;code&gt;ITreeContentProvider.getChildren()&lt;/code&gt;
 for the root of the viewer or a common filter that should be available to the user in the &quot;Available Filters&quot; dialog.
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 Clients may specify &quot;isRoot&quot; to select specific root extensions to override 
 the extensions which would otherwise be enabled for the viewer input element
 (based on the matching &lt;b&gt;triggerPoints&lt;/b&gt; expression for the viewer input element). 
-&lt;p&gt;   
+&lt;br&gt;&lt;br&gt;
 See the documentation for &lt;b&gt;viewerContentBinding&lt;/b&gt; for more information.
          </documentation>
       </annotation>
@@ -218,7 +213,7 @@ Patterns are regular expressions which match unique identifiers. Please see the 
          <documentation>
             Indicates that the action extension that should be given opportunities
 to contribute to the context menu and action bars. 
-&lt;p&gt;              
+&lt;br&gt;&lt;br&gt;          
 See the documentation for &lt;b&gt;viewerActionBinding&lt;/b&gt; for more information.
          </documentation>
       </annotation>
@@ -243,21 +238,21 @@ Patterns are regular expressions which match unique identifiers. Please see the 
          <documentation>
             A popupMenu element may only be defined if the &quot;popupMenuId&quot; attribute of the 
 &lt;b&gt;viewer&lt;/b&gt; element is not specified. 
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 The &lt;b&gt;popupMenu&lt;/b&gt; element allows further customization of the context menu associated 
 with the viewer. For the options to be applied correctly, an instance of the viewer
 must delegate to a &lt;code&gt;org.eclipse.ui.navigator.NavigatorActionService&lt;/code&gt;, which behaves
 like a normal &lt;code&gt;org.eclipse.ui.ActionGroup&lt;/code&gt;. See the documentation for this API class
 for more information on exploiting this functionality. For clients that use an 
 instance of &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt; do not need to do any extra work. 
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 A &lt;b&gt;popupMenu&lt;/b&gt; declares one or more &lt;b&gt;insertionPoints&lt;/b&gt; that will be used by contributors to 
 organize their contributions into a meaningful, more user-friendly, consistent list. 
-&lt;p&gt;
+&lt;br&gt;
 If clients only specify the &quot;popupMenuId&quot; attribute of the &lt;b&gt;viewer&lt;/b&gt; element, then the
 set of &lt;b&gt;insertionPoints&lt;/b&gt; used by the context menu will default to the following list 
 in the given order:
-&lt;p&gt;
+&lt;br&gt;
 &lt;pre&gt;
 &quot;group.new&quot;             separator=&quot;true&quot;
 &quot;group.goto&quot;            
@@ -273,13 +268,12 @@ in the given order:
 &quot;additions&quot;             separator=&quot;true&quot; 
 &quot;group.properties&quot;      separator=&quot;true&quot;
 &lt;/pre&gt;
-&lt;/p&gt;
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 Clients that wish to refer to these values programmatically may use the corresponding constants in &lt;code&gt;org.eclipse.ui.navigator.ICommonMenuConstants&lt;/code&gt;. 
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 Clients that wish to customize their menus are encouraged to start with this list and add or remove insertion points as necessary. Clients are also
 encouraged to follow the pattern of beginning each group name with &quot;group.&quot;. 
-&lt;p&gt;
+&lt;br&gt;&lt;br&gt;
 If the &lt;b&gt;popupMenu&lt;/b&gt; element is specified and contains NO &lt;b&gt;insertionPoint&lt;/b&gt; children elements, then the context menu will have no published insertion points. Of course, programmatic clients are not restricted from adding their own insertion points as necessary. Clients defining viewers are encouraged to publish their insertion points for documentation purposes and clarity for downstream extensions to their viewers/navigators, or to explicitly document which insertion points are considered API and which are considered internal.
          </documentation>
       </annotation>
@@ -347,7 +341,7 @@ If the &lt;b&gt;popupMenu&lt;/b&gt; element is specified and contains NO &lt;b&g
    <element name="property">
       <annotation>
          <documentation>
-            Provide a name=value pair. The value will be provided as-is to the viewer (so empty strings will be propagated as empty strings)
+            Provide a name=value pair. The value will be provided as-is to the viewer (so empty strings will be propagated as empty strings). See &lt;code&gt;org.eclipse.ui.navigator.INavigatorViewerDescriptor&lt;/code&gt; for the available properties and their descriptions.
          </documentation>
       </annotation>
       <complexType>
@@ -379,17 +373,17 @@ Clients should only define this extension in lightweight plugins with shallow de
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Provide an implementation of IDragAssistant.
+                  Provide an implementation of &lt;code&gt;org.eclipse.ui.navigator.CommonDragAdapterAssistant&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonDragAdapterAssistant"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="viewerId" type="string">
+         <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
                   Associate this drag assistant with a particular viewer id.
@@ -427,7 +421,7 @@ The following example configures the popup menu id for a viewer.
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;
-Since the &lt;b&gt;popupMenu child&lt;/b&gt; element of viewer is not used in the above example, the default set of
+Since the &lt;b&gt;popupMenu&lt;/b&gt; child element of viewer is not used in the above example, the default set of
 &lt;b&gt;insertionPoints&lt;/b&gt; will be used. This set is defined as follows. See the documentation for
 the &lt;b&gt;popupMenu&lt;/b&gt; element for more information.
 &lt;p&gt;
@@ -556,6 +550,41 @@ are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; element. The &lt;i&gt
             &lt;/includes&gt; 
        &lt;/viewerActionBinding&gt;
    &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+The following example demonstrates the standard properties available to the viewer.
+&lt;/p&gt;
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.navigator.viewer&quot;&gt;
+      &lt;viewer
+            popupMenuId=&quot;org.eclipse.ui.tests.navigator.TestView#PopupMenu&quot;
+            viewerId=&quot;org.eclipse.ui.tests.navigator.TestView&quot;&gt;
+         &lt;options&gt; 
+            &lt;!-- Hide the &quot;Available Extensions&quot; tab in the &quot;Available Customizations&quot; 
+                 dialog (available from the &quot;Filters&quot; action --&gt;
+            &lt;property
+                  name=&quot;org.eclipse.ui.navigator.hideAvailableExtensionsTab&quot;
+                  value=&quot;true&quot;/&gt;
+            &lt;!-- Hide the &quot;Available Customizations&quot; dialog completely. This includes hiding the 
+              filters and the available content extensions. --&gt;
+            &lt;property
+                  name=&quot;org.eclipse.ui.navigator.hideAvailableCustomizationsDialog&quot;
+                  value=&quot;true&quot;/&gt; 
+            &lt;!-- Hide the &quot;Link with Editor&quot; action from the toolbar of the viewer --&gt;
+            &lt;property
+                  name=&quot;org.eclipse.ui.navigator.hideLinkWithEditorAction&quot;
+                  value=&quot;true&quot;/&gt; 
+            &lt;!-- Hide the &quot;Collapse All&quot; action from the toolbar of the viewer --&gt;
+            &lt;property
+                  name=&quot;org.eclipse.ui.navigator.hideCollapseAllAction&quot;
+                  value=&quot;true&quot;/&gt;  
+         &lt;/options&gt;
+      &lt;/viewer&gt;
+   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

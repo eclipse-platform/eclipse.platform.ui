@@ -14,8 +14,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * 
- * The {@link ICommonLabelProvider} allows extensions to vary their behavior
- * based on properties in the extension model and the given memento.
+ * Allows extensions to vary their behavior based on properties in the extension
+ * model and the given memento.
  * 
  * <p>
  * Clients should refer to the <b>org.eclipse.ui.navigator.navigatorContent</b>

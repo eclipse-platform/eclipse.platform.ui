@@ -82,21 +82,10 @@ import org.eclipse.ui.part.ViewPart;
  *    
  * </pre>
  * 
- * </p>
- * <p>
- * In the event that a consumer of the Common Navigator does need to change the
- * actual behavior, methods are provided to override specific pieces of
- * functionality. Each of these methods begin with <i>create </i> and explain
- * what modular component they are responsible for creating. Each of these
- * pieces may take the instance of the Common Viewer (
- * {@link org.eclipse.ui.navigator.CommonViewer}) and have depedencies to that
- * object, but the instance of the Common Viewer should never assume more than
- * the standard Eclipse interfaces when working with these components.
- * </p>
- * <p>
+ * </p> 
  * Clients that wish to extend the view menu provided via the
- * <b>org.eclipse.ui.popupMenu</b>s extension may specify the the popupMenuId
- * specified by <b>org.eclipse.ui.navigator.viewer</b> of their target viewer
+ * <b>org.eclipse.ui.popupMenu</b>s extension may specify the the <i>popupMenuId</i>
+ * specified by <b>org.eclipse.ui.navigator.viewer</b> (or a nested <b>popupMenu</b> element) of their target viewer
  * as their target menu id.
  * 
  * <p>

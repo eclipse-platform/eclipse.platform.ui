@@ -28,10 +28,9 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
  * elements available in the set of <i>visible</i> content extensions.
  * 
  * <p>
- * The CommonViewerSorter must be assigned to a {@link CommonViewer}. This is
- * required so that the sorter has the correct content service and sorting
- * service available to guide it in sorting the elements from the viewer. No
- * guarantees are made for uses of this sorter class outside of a CommonViewer.
+ * The CommonViewerSorter must be assigned a {@link INavigatorContentService} to
+ * drive its sorting algorithm. Without a vaild content service, the sorter will
+ * return the default ordering.
  * </p>
  * <p>
  * A CommonViewerSorter may not be attached to more than one CommonViewer.
@@ -41,12 +40,6 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
  * Clients may not extend this class.
  * </p>
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * 
  * @since 3.2
@@ -76,6 +69,8 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 	 */
 	public int category(Object element) {
+		if(contentService == null) 
+			return 0;
 
 		NavigatorContentDescriptor source = contentService
 				.getSourceOfContribution(element);
@@ -84,6 +79,8 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	}
 
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
+		if(contentService == null)
+			return -1;
 		INavigatorContentDescriptor sourceOfLvalue = getSource(e1);
 		INavigatorContentDescriptor sourceOfRvalue = getSource(e2);
 

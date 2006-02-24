@@ -13,11 +13,11 @@ package org.eclipse.ui.navigator;
 
 /**
  * 
- * The activation service determines if an extension is <i>active</i> within
- * the context of a given viewer. If an extension is <i>active</i> then the
- * extension will contribute functionality to the viewer. If an extension is not
- * <i>active</i>, then the extension will not be given opportunities to
- * contribute functionality to the given viewer. See
+ * Determines if an extension is <i>active</i> within the context of a given
+ * viewer and manages the persistence of this information. If an extension is
+ * <i>active</i> then the extension will contribute functionality to the
+ * viewer. If an extension is not <i>active</i>, then the extension will not be
+ * given opportunities to contribute functionality to the given viewer. See
  * {@link INavigatorContentService} for more detail on what states are
  * associated with a content extension.
  * 
@@ -49,8 +49,8 @@ public interface INavigatorActivationService {
 	 *         INavigatorContentDescriptors that corresponds exactly to the set
 	 *         of given extensionIds.
 	 */
-	public INavigatorContentDescriptor[] activateExtensions(String[] extensionIds,
-			boolean toDeactivateAllOthers);
+	public INavigatorContentDescriptor[] activateExtensions(
+			String[] extensionIds, boolean toDeactivateAllOthers);
 
 	/**
 	 * Deactivate the extensions specified by the extensionIds. Clients may
@@ -75,8 +75,8 @@ public interface INavigatorActivationService {
 	 *         all visible extensions minus those given in the 'extensionIds'
 	 *         parameter.
 	 */
-	public INavigatorContentDescriptor[] deactivateExtensions(String[] extensionIds,
-			boolean toActivateAllOthers);
+	public INavigatorContentDescriptor[] deactivateExtensions(
+			String[] extensionIds, boolean toActivateAllOthers);
 
 	/**
 	 * 
@@ -106,7 +106,8 @@ public interface INavigatorActivationService {
 	 * @param aListener
 	 *            An implementation of {@link IExtensionActivationListener}
 	 */
-	public void addExtensionActivationListener(IExtensionActivationListener aListener);
+	public void addExtensionActivationListener(
+			IExtensionActivationListener aListener);
 
 	/**
 	 * No longer receive notification when activation state changes.

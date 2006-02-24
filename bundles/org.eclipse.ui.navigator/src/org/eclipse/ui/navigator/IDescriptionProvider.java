@@ -12,7 +12,7 @@ package org.eclipse.ui.navigator;
 
 /**
  * 
- * Label providers (as specified by the 'labelProvider' attribute of the
+ * Label providers (as specified by the <i>labelProvider</i> attribute of the
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point) may 
  * choose to also implement this interface in order to provide text for 
  * the status bar at the bottom of the Eclipse window. 

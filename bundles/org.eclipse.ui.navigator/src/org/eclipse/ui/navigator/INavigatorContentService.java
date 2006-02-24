@@ -21,9 +21,10 @@ import org.eclipse.ui.IMemento;
 
 /**
  * 
- * The INavigatorContentService manages extensions for extensible viewers. The
- * service can locate the appropriate providers (for contents or labels) for an
- * element and provide a ready-to-go {@link ITreeContentProvider} and
+ * Manages content extensions for extensible viewers and provides reusable
+ * services for filters, sorting, the activation of content extensions, and DND.
+ * The service can locate the appropriate providers (for contents or labels) for
+ * an element and provide a ready-to-go {@link ITreeContentProvider} and
  * {@link ILabelProvider} for viewers that wish to take advantage of the
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extensions defined for a
  * particular <i>viewerId</i>.
@@ -37,21 +38,23 @@ import org.eclipse.ui.IMemento;
  * <b>org.eclipse.ui.navigator.navigatorContent</b>. Each extension has three
  * states which determine whether the extension is used by the content service:
  * <ul>
- * <li><i>visible</i>: If a content extension id matches a
+ * <li><a name="visible"><i>visible</i>: If a content extension id matches a
  * <b>viewerContentBinding</b> for the <i>viewerId</i> of this content
- * service, then the extension is 'visible'. Visible extensions may only be
- * configured through <b>viewerContentBinding</b>s. </li>
- * <li><i>active</i>: The active state may be set to a default using the
+ * service, then the extension is <i>visible</i>. Visible extensions may only
+ * be configured through <b>viewerContentBinding</b>s. </li>
+ * 
+ * <li><a name="active"><i>active</i>: The active state may be set to a default using the
  * <i>activeByDefault</i> attribute of <b>navigatorContent</b>. Users may
  * toggle the <i>active</i> state through the "Available customizations"
  * dialog. Clients may also configure the active extensions using
  * {@link INavigatorActivationService#activateExtensions(String[], boolean)} or
  * {@link INavigatorActivationService#deactivateExtensions(String[], boolean)}
  * from the {@link #getActivationService() Activation Service} </li>
- * <li><i>enabled</i>: An extension is <i>enabled</i> for an element if the
+ * 
+ * <li><a name="enabled"><i>enabled</i>: An extension is <i>enabled</i> for an element if the
  * extension contributed that element or if the element is described in the
  * <i>triggerPoints</i> element of the <b>navigatorContent</b> extension. The
- * findXXX() methods search for 'enabled' extensions. </li>
+ * findXXX() methods search for <i>enabled</i> extensions. </li>
  * </ul>
  * </p>
  * <p>
@@ -84,13 +87,6 @@ import org.eclipse.ui.IMemento;
  * {@link #saveState(IMemento)} at the appropriate times for these extensions to
  * prepare themselves with the memento.
  * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -204,6 +200,8 @@ public interface INavigatorContentService {
 	INavigatorViewerDescriptor getViewerDescriptor();
 
 	/**
+	 * See <a href="#active">above</a> for the definition of <i>active</i>.
+	 * 
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>active</i> for
@@ -215,6 +213,8 @@ public interface INavigatorContentService {
 	boolean isActive(String anExtensionId);
 
 	/**
+	 *  See <a href="#visible">above</a> for the definition of <i>visible</i>.
+	 *  
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>visible</i> to
@@ -225,11 +225,21 @@ public interface INavigatorContentService {
 	boolean isVisible(String anExtensionId);
 
 	/**
+	 * Return the set of <i>visible</i> extension ids for this content service,
+	 * which includes those that are bound through <b>viewerContentBinding</b>s
+	 * and those that are bound through
+	 * {@link #bindExtensions(String[], boolean)}.
+	 * 
 	 * @return The set of <i>visible</i> extension ids for this content service
 	 */
 	String[] getVisibleExtensionIds();
 
 	/**
+	 * Return the set of <i>visible</i> content descriptors for this content
+	 * service, which includes those that are bound through
+	 * <b>viewerContentBinding</b>s and those that are bound through
+	 * {@link #bindExtensions(String[], boolean)}.
+	 * 
 	 * @return The set of <i>visible</i> content descriptors for this content
 	 *         service
 	 */
@@ -312,7 +322,8 @@ public interface INavigatorContentService {
 
 	/**
 	 * Search for extensions that declare the given element in their
-	 * <b>triggerPoints</b> expression.
+	 * <b>triggerPoints</b> expression or that indicate they should be bound as
+	 * a root extension.
 	 * 
 	 * @param anElement
 	 *            The element to use in the query
@@ -352,6 +363,8 @@ public interface INavigatorContentService {
 	Set findContentExtensionsWithPossibleChild(Object anElement);
 
 	/**
+	 * The filter service can provide the available filters for the viewer, and
+	 * manage which filters are <i>active</i>.
 	 * 
 	 * @return An {@link INavigatorFilterService} that can provide information
 	 *         to a viewer about what filters are <i>visible</i> and <i>active</i>.
@@ -359,9 +372,11 @@ public interface INavigatorContentService {
 	INavigatorFilterService getFilterService();
 
 	/**
-	 * By default, a {@link CommonViewer} uses the sorter service to sort
-	 * elements in the tree. Clients do not need to provide their own
-	 * {@link ViewerSorter} unless they wish to override this functionality.
+	 * The sorter service provides the appropriate sorter based on the current
+	 * items being sorted. By default, the CommonViewer uses
+	 * {@link CommonViewerSorter} which delegates to this service. Clients do
+	 * not need to provide their own {@link ViewerSorter} unless they wish to
+	 * override this functionality.
 	 * 
 	 * @return An {@link INavigatorSorterService} that can provide
 	 *         {@link ViewerSorter} based on the context of the parent.
@@ -394,7 +409,7 @@ public interface INavigatorContentService {
 
 	/**
 	 * The activation service is used to toggle whether certain extensions have
-	 * the opportunity to contribute content or actions.
+	 * the opportunity to contribute content and/or actions.
 	 * 
 	 * @return The {@link INavigatorActivationService} for this content service.
 	 */

@@ -37,7 +37,7 @@ import org.eclipse.swt.dnd.TransferData;
  * @see CommonDragAdapterAssistant
  * @see CommonDropAdapter
  * @see CommonDropAdapterAssistant
- * @see CommonViewer#initDragAndDrop()
+ * @see CommonViewer
  * @see INavigatorContentService#getDnDService()
  * @see <a
  *      href="http://www.eclipse.org/articles/Article-SWT-DND/DND-in-SWT.html">Drag
