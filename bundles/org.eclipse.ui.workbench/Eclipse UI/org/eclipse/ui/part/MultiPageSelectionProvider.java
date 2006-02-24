@@ -120,8 +120,9 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
         if (activeEditor != null) {
             ISelectionProvider selectionProvider = activeEditor.getSite()
                     .getSelectionProvider();
-            if (selectionProvider != null)
-                return selectionProvider.getSelection();
+            if (selectionProvider != null) {
+				return selectionProvider.getSelection();
+			}
         }
         return null;
     }
@@ -147,8 +148,9 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
         if (activeEditor != null) {
             ISelectionProvider selectionProvider = activeEditor.getSite()
                     .getSelectionProvider();
-            if (selectionProvider != null)
-                selectionProvider.setSelection(selection);
+            if (selectionProvider != null) {
+				selectionProvider.setSelection(selection);
+			}
         }
     }
 }

@@ -28,8 +28,9 @@ public final class SimpleWildcardTester {
             return true;
         } else if (pattern.startsWith("*")) {//$NON-NLS-1$
             if (pattern.endsWith("*")) {//$NON-NLS-1$
-                if (pattern.length() == 2)
-                    return true;
+                if (pattern.length() == 2) {
+					return true;
+				}
                 return str.indexOf(pattern.substring(1, pattern.length() - 1)) >= 0;
             }
             return str.endsWith(pattern.substring(1));
@@ -51,8 +52,9 @@ public final class SimpleWildcardTester {
     public static boolean testWildcardIgnoreCase(String pattern, String str) {
 
         //If str is null there was no extension to test
-        if (str == null)
-            return false;
+        if (str == null) {
+			return false;
+		}
         pattern = pattern.toLowerCase();
         str = str.toLowerCase();
         return testWildcard(pattern, str);

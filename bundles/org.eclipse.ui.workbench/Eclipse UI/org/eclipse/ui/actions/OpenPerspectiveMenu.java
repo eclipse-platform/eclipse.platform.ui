@@ -97,8 +97,9 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
      */
     private boolean canRun() {
         if (openPerspectiveSetting().equals(
-                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE))
-            return replaceEnabled;
+                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
+			return replaceEnabled;
+		}
         return true;
     }
 
@@ -167,8 +168,9 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
     public void setReplaceEnabled(boolean isEnabled) {
         if (replaceEnabled != isEnabled) {
             replaceEnabled = isEnabled;
-            if (canRun() && parentMenuManager != null)
-                parentMenuManager.update(true);
+            if (canRun() && parentMenuManager != null) {
+				parentMenuManager.update(true);
+			}
         }
     }
 }

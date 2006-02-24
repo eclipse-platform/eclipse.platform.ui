@@ -103,10 +103,11 @@ public class WorkbenchPreferenceInitializer extends
 		final String workbenchName = WorkbenchPlugin.getDefault().getBundle()
 				.getSymbolicName();
 		try {
-			if (rootNode.nodeExists(workbenchName))
+			if (rootNode.nodeExists(workbenchName)) {
 				((IEclipsePreferences) rootNode.node(workbenchName))
 						.addPreferenceChangeListener(PlatformUIPreferenceListener
 								.getSingleton());
+			}
 		} catch (BackingStoreException e) {
 			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin
 					.getDefault().getBundle().getSymbolicName(), IStatus.ERROR,

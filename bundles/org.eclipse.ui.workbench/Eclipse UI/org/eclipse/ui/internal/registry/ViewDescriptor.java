@@ -106,13 +106,15 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.IWorkbenchPartDescriptor#getImageDescriptor()
      */
     public ImageDescriptor getImageDescriptor() {
-        if (imageDescriptor != null)
-            return imageDescriptor;
+        if (imageDescriptor != null) {
+			return imageDescriptor;
+		}
         String iconName = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
         // If the icon attribute was omitted, use the default one
-        if (iconName == null)
-            return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+        if (iconName == null) {
+			return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
                     ISharedImages.IMG_DEF_VIEW);
+		}
         IExtension extension = configElement.getDeclaringExtension();
         String extendingPluginId = extension.getNamespace();
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
@@ -180,10 +182,12 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         if (ratio != null) {
             try {
                 fastViewWidthRatio = new Float(ratio).floatValue();
-                if (fastViewWidthRatio > IPageLayout.RATIO_MAX)
-                    fastViewWidthRatio = IPageLayout.RATIO_MAX;
-                if (fastViewWidthRatio < IPageLayout.RATIO_MIN)
-                    fastViewWidthRatio = IPageLayout.RATIO_MIN;
+                if (fastViewWidthRatio > IPageLayout.RATIO_MAX) {
+					fastViewWidthRatio = IPageLayout.RATIO_MAX;
+				}
+                if (fastViewWidthRatio < IPageLayout.RATIO_MIN) {
+					fastViewWidthRatio = IPageLayout.RATIO_MIN;
+				}
             } catch (NumberFormatException e) {
                 fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
             }

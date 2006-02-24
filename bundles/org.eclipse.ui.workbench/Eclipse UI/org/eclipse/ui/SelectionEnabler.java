@@ -235,20 +235,24 @@ public final class SelectionEnabler {
 		Object obj = sel;
 		int count = sel.isEmpty() ? 0 : 1;
 
-		if (verifySelectionCount(count) == false)
+		if (verifySelectionCount(count) == false) {
 			return false;
+		}
 
 		// Compare selection to enablement expression.
-		if (enablementExpression != null)
+		if (enablementExpression != null) {
 			return enablementExpression.isEnabledFor(obj);
+		}
 
 		// Compare selection to class requirements.
-		if (classes.isEmpty())
+		if (classes.isEmpty()) {
 			return true;
+		}
 		if (obj instanceof IAdaptable) {
 			IAdaptable element = (IAdaptable) obj;
-			if (verifyElement(element) == false)
+			if (verifyElement(element) == false) {
 				return false;
+			}
 		} else {
 			return false;
 		}
@@ -261,20 +265,24 @@ public final class SelectionEnabler {
 	 * the registry for this action.
 	 */
 	private boolean isEnabledFor(ISelection sel, int count) {
-		if (verifySelectionCount(count) == false)
+		if (verifySelectionCount(count) == false) {
 			return false;
+		}
 
 		// Compare selection to enablement expression.
-		if (enablementExpression != null)
+		if (enablementExpression != null) {
 			return enablementExpression.isEnabledFor(sel);
+		}
 
 		// Compare selection to class requirements.
-		if (classes.isEmpty())
+		if (classes.isEmpty()) {
 			return true;
+		}
 		for (int i = 0; i < classes.size(); i++) {
 			SelectionClass sc = (SelectionClass) classes.get(i);
-			if (verifyClass(sel, sc.className))
+			if (verifyClass(sel, sc.className)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -286,22 +294,26 @@ public final class SelectionEnabler {
 	private boolean isEnabledFor(IStructuredSelection ssel) {
 		int count = ssel.size();
 
-		if (verifySelectionCount(count) == false)
+		if (verifySelectionCount(count) == false) {
 			return false;
+		}
 
 		// Compare selection to enablement expression.
-		if (enablementExpression != null)
+		if (enablementExpression != null) {
 			return enablementExpression.isEnabledFor(ssel);
+		}
 
 		// Compare selection to class requirements.
-		if (classes.isEmpty())
+		if (classes.isEmpty()) {
 			return true;
+		}
 		for (Iterator elements = ssel.iterator(); elements.hasNext();) {
 			Object obj = elements.next();
 			if (obj instanceof IAdaptable) {
 				IAdaptable element = (IAdaptable) obj;
-				if (verifyElement(element) == false)
+				if (verifyElement(element) == false) {
 					return false;
+				}
 			} else {
 				return false;
 			}
@@ -377,20 +389,21 @@ public final class SelectionEnabler {
 		// Get enables for.
 		String enablesFor = config
 				.getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR);
-		if (enablesFor == null)
+		if (enablesFor == null) {
 			enablesFor = "*"; //$NON-NLS-1$
-		if (enablesFor.equals("*")) //$NON-NLS-1$
+		}
+		if (enablesFor.equals("*")) { //$NON-NLS-1$
 			mode = ANY_NUMBER;
-		else if (enablesFor.equals("?")) //$NON-NLS-1$
+		} else if (enablesFor.equals("?")) { //$NON-NLS-1$
 			mode = NONE_OR_ONE;
-		else if (enablesFor.equals("!")) //$NON-NLS-1$
+		} else if (enablesFor.equals("!")) { //$NON-NLS-1$
 			mode = NONE;
-		else if (enablesFor.equals("+")) //$NON-NLS-1$
+		} else if (enablesFor.equals("+")) { //$NON-NLS-1$
 			mode = ONE_OR_MORE;
-		else if (enablesFor.equals("multiple") //$NON-NLS-1$
-				|| enablesFor.equals("2+")) //$NON-NLS-1$
+		} else if (enablesFor.equals("multiple") //$NON-NLS-1$
+				|| enablesFor.equals("2+")) { //$NON-NLS-1$
 			mode = MULTIPLE;
-		else {
+		} else {
 			try {
 				mode = Integer.parseInt(enablesFor);
 			} catch (NumberFormatException e) {
@@ -448,8 +461,9 @@ public final class SelectionEnabler {
 					break;
 				}
 			}
-			if (match == true)
+			if (match == true) {
 				break;
+			}
 			// get the superclass
 			clazz = clazz.getSuperclass();
 		}
@@ -462,19 +476,23 @@ public final class SelectionEnabler {
 	 * match.
 	 */
 	private boolean verifyElement(IAdaptable element) {
-		if (classes.isEmpty())
+		if (classes.isEmpty()) {
 			return true;
+		}
 		for (int i = 0; i < classes.size(); i++) {
 			SelectionClass sc = (SelectionClass) classes.get(i);
-			if (verifyClass(element, sc.className) == false)
+			if (verifyClass(element, sc.className) == false) {
 				continue;
-			if (sc.nameFilter == null)
+			}
+			if (sc.nameFilter == null) {
 				return true;
+			}
 			IWorkbenchAdapter de = (IWorkbenchAdapter) element
 					.getAdapter(IWorkbenchAdapter.class);
 			if ((de != null)
-					&& verifyNameMatch(de.getLabel(element), sc.nameFilter))
+					&& verifyNameMatch(de.getLabel(element), sc.nameFilter)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -483,16 +501,21 @@ public final class SelectionEnabler {
 	 * Compare selection count with requirements.
 	 */
 	private boolean verifySelectionCount(int count) {
-		if (count > 0 && mode == NONE)
+		if (count > 0 && mode == NONE) {
 			return false;
-		if (count == 0 && mode == ONE_OR_MORE)
+		}
+		if (count == 0 && mode == ONE_OR_MORE) {
 			return false;
-		if (count > 1 && mode == NONE_OR_ONE)
+		}
+		if (count > 1 && mode == NONE_OR_ONE) {
 			return false;
-		if (count < 2 && mode == MULTIPLE)
+		}
+		if (count < 2 && mode == MULTIPLE) {
 			return false;
-		if (mode > 0 && count != mode)
+		}
+		if (mode > 0 && count != mode) {
 			return false;
+		}
 		return true;
 	}
 }

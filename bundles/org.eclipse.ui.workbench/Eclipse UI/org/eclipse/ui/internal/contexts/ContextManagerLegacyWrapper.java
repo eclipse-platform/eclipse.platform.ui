@@ -150,14 +150,17 @@ public final class ContextManagerLegacyWrapper implements
 
 	public void addContextManagerListener(
 			IContextManagerListener contextManagerListener) {
-		if (contextManagerListener == null)
+		if (contextManagerListener == null) {
 			throw new NullPointerException();
+		}
 
-		if (contextManagerListeners == null)
+		if (contextManagerListeners == null) {
 			contextManagerListeners = new ArrayList();
+		}
 
-		if (!contextManagerListeners.contains(contextManagerListener))
+		if (!contextManagerListeners.contains(contextManagerListener)) {
 			contextManagerListeners.add(contextManagerListener);
+		}
 	}
 
 	/*
@@ -195,13 +198,16 @@ public final class ContextManagerLegacyWrapper implements
 
 	protected void fireContextManagerChanged(
 			ContextManagerEvent contextManagerEvent) {
-		if (contextManagerEvent == null)
+		if (contextManagerEvent == null) {
 			throw new NullPointerException();
+		}
 
-		if (contextManagerListeners != null)
-			for (int i = 0; i < contextManagerListeners.size(); i++)
+		if (contextManagerListeners != null) {
+			for (int i = 0; i < contextManagerListeners.size(); i++) {
 				((IContextManagerListener) contextManagerListeners.get(i))
 						.contextManagerChanged(contextManagerEvent);
+			}
+		}
 	}
 
 	public IContext getContext(String contextId) {
@@ -220,11 +226,13 @@ public final class ContextManagerLegacyWrapper implements
 
 	public void removeContextManagerListener(
 			IContextManagerListener contextManagerListener) {
-		if (contextManagerListener == null)
+		if (contextManagerListener == null) {
 			throw new NullPointerException();
+		}
 
-		if (contextManagerListeners != null)
+		if (contextManagerListeners != null) {
 			contextManagerListeners.remove(contextManagerListener);
+		}
 	}
 
 	public void setEnabledContextIds(Set enabledContextIds) {

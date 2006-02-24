@@ -797,15 +797,17 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Read the action set identifier.
 			final String id = readRequired(element, ATT_ID, warningsToLog,
 					"Action sets need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			// Read the label.
 			final String label = readRequired(element, ATT_LABEL,
 					warningsToLog, "Actions set need a label", //$NON-NLS-1$
 					id);
-			if (label == null)
+			if (label == null) {
 				continue;
+			}
 
 			// Read the description.
 			final String description = readOptional(element, ATT_DESCRIPTION);
@@ -852,8 +854,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Read the editor contribution identifier.
 			final String id = readRequired(element, ATT_ID, warningsToLog,
 					"Editor contributions need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			/*
 			 * Read the target id. This is the identifier of the editor with
@@ -861,8 +864,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 */
 			final String targetId = readRequired(element, ATT_TARGET_ID,
 					warningsToLog, "Editor contributions need a target id", id); //$NON-NLS-1$
-			if (targetId == null)
+			if (targetId == null) {
 				continue;
+			}
 			final Expression visibleWhenExpression = new LegacyEditorContributionExpression(
 					targetId, null);
 
@@ -1076,15 +1080,17 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Read the object contribution identifier.
 			final String id = readRequired(element, ATT_ID, warningsToLog,
 					"Object contributions need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			// Read the object class. This influences the visibility.
 			final String objectClass = readRequired(element, ATT_OBJECTCLASS,
 					warningsToLog,
 					"Object contributions need an object class", id); //$NON-NLS-1$
-			if (objectClass == null)
+			if (objectClass == null) {
 				continue;
+			}
 
 			// TODO Read the name filter. This influences the visibility.
 			// final String nameFilter = readOptional(element,
@@ -1137,8 +1143,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Read the view contribution identifier.
 			final String id = readRequired(element, ATT_ID, warningsToLog,
 					"View contributions need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			/*
 			 * Read the target id. This is the identifier of the view with which
@@ -1146,8 +1153,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 */
 			final String targetId = readRequired(element, ATT_TARGET_ID,
 					warningsToLog, "View contributions need a target id", id); //$NON-NLS-1$
-			if (targetId == null)
+			if (targetId == null) {
 				continue;
+			}
 			final Expression visibleWhenExpression = new LegacyViewContributionExpression(
 					targetId, null);
 			final LegacyLocationInfo locationInfo = new LegacyLocationInfo(
@@ -1185,8 +1193,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Read the viewer contribution identifier.
 			final String id = readRequired(element, ATT_ID, warningsToLog,
 					"Viewer contributions need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			/*
 			 * Read the target id. This is the identifier of the view with which
@@ -1194,8 +1203,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			 */
 			final String targetId = readRequired(element, ATT_TARGET_ID,
 					warningsToLog, "Viewer contributions need a target id", id); //$NON-NLS-1$
-			if (targetId == null)
+			if (targetId == null) {
 				continue;
+			}
 			final LegacyLocationInfo locationInfo = new LegacyLocationInfo(
 					targetId, true);
 

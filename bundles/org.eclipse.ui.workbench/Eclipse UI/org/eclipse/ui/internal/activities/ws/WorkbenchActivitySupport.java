@@ -99,8 +99,9 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
                             lastEnabled = new HashSet(activityIds);
 
                             // abort if the workbench isn't running
-                            if (!PlatformUI.isWorkbenchRunning())
-                                return;
+                            if (!PlatformUI.isWorkbenchRunning()) {
+								return;
+							}
 
                             // refresh the managers on all windows.
                             final IWorkbench workbench = PlatformUI
@@ -181,21 +182,25 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
                                             IViewSite viewSite = part
                                                     .getViewSite();
                                             // check for badly behaving or badly initialized views
-                                            if (viewSite == null)
-                                                return;
+                                            if (viewSite == null) {
+												return;
+											}
                                             IActionBars bars = viewSite
                                                     .getActionBars();
                                             IContributionManager manager = bars
                                                     .getMenuManager();
-                                            if (manager != null)
-                                                updateManager(manager);
+                                            if (manager != null) {
+												updateManager(manager);
+											}
                                             manager = bars.getToolBarManager();
-                                            if (manager != null)
-                                                updateManager(manager);
+                                            if (manager != null) {
+												updateManager(manager);
+											}
                                             manager = bars
                                                     .getStatusLineManager();
-                                            if (manager != null)
-                                                updateManager(manager);
+                                            if (manager != null) {
+												updateManager(manager);
+											}
                                         }
 
                                         /**
@@ -207,20 +212,24 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
                                                 final WorkbenchWindow window) {
                                             IContributionManager manager = window
                                                     .getMenuBarManager();
-                                            if (manager != null)
-                                                updateManager(manager);
+                                            if (manager != null) {
+												updateManager(manager);
+											}
                                             manager = window
                                                     .getCoolBarManager2();
-                                            if (manager != null)
-                                                updateManager(manager);
+                                            if (manager != null) {
+												updateManager(manager);
+											}
                                             manager = window
                                                     .getToolBarManager2();
-                                            if (manager != null)
-                                                updateManager(manager);
+                                            if (manager != null) {
+												updateManager(manager);
+											}
                                             manager = window
                                                     .getStatusLineManager();
-                                            if (manager != null)
-                                                updateManager(manager);
+                                            if (manager != null) {
+												updateManager(manager);
+											}
                                         }
 
                                         /**
@@ -320,8 +329,9 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 		if (activity.isDefined()) {
 			ImageDescriptor descriptor = getActivityImageBindingRegistry()
 					.getImageDescriptor(activity.getId());
-			if (descriptor != null)
+			if (descriptor != null) {
 				return descriptor;
+			}
 		}
 		return WorkbenchImages
 				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);
@@ -334,8 +344,9 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 		if (category.isDefined()) {
 			ImageDescriptor descriptor = getCategoryImageBindingRegistry()
 					.getImageDescriptor(category.getId());
-			if (descriptor != null)
+			if (descriptor != null) {
 				return descriptor;
+			}
 		}
 		return WorkbenchImages
 				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);
@@ -409,8 +420,9 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	 * @since 3.1
 	 */
 	public ITriggerPointAdvisor getTriggerPointAdvisor() {
-		if (advisor != null)
+		if (advisor != null) {
 			return advisor;
+		}
 		
 		IProduct product = Platform.getProduct();
         if (product != null) {

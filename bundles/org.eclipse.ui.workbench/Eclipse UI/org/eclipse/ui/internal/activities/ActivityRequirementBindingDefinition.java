@@ -27,8 +27,9 @@ public final class ActivityRequirementBindingDefinition {
 
     static Map activityRequirementBindingDefinitionsByActivityId(
             Collection activityRequirementBindingDefinitions) {
-        if (activityRequirementBindingDefinitions == null)
-            throw new NullPointerException();
+        if (activityRequirementBindingDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         Map map = new HashMap();
         Iterator iterator = activityRequirementBindingDefinitions.iterator();
@@ -84,16 +85,18 @@ public final class ActivityRequirementBindingDefinition {
         if (compareTo == 0) {
             compareTo = Util.compare(activityId, castedObject.activityId);
 
-            if (compareTo == 0)
-                compareTo = Util.compare(sourceId, castedObject.sourceId);
+            if (compareTo == 0) {
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
+			}
         }
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof ActivityRequirementBindingDefinition))
-            return false;
+        if (!(object instanceof ActivityRequirementBindingDefinition)) {
+			return false;
+		}
 
         final ActivityRequirementBindingDefinition castedObject = (ActivityRequirementBindingDefinition) object;
         if (!Util.equals(requiredActivityId,
@@ -126,8 +129,9 @@ public final class ActivityRequirementBindingDefinition {
                     + Util.hashCode(requiredActivityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

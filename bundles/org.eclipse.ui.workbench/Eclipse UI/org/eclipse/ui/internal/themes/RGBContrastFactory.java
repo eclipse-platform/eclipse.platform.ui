@@ -61,10 +61,12 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
      */
     double voltage_to_intensity_srgb(double val) {
         /* Handle invalid values before doing a gamma transform. */
-        if (val < 0.0)
-            return 0.0;
-        if (val > 1.0)
-            return 1.0;
+        if (val < 0.0) {
+			return 0.0;
+		}
+        if (val > 1.0) {
+			return 1.0;
+		}
 
         if (val <= 0.04045) {
             return val / 12.92;
@@ -88,18 +90,21 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
         double s = (0.0177 * r) + (0.1095 * g) + (0.8729 * b);
         double lp, mp, sp;
 
-        if (l < 0.0)
-            lp = -Math.pow(-l, 0.43);
-        else
-            lp = Math.pow(l, 0.43);
-        if (m < 0.0)
-            mp = -Math.pow(-m, 0.43);
-        else
-            mp = Math.pow(m, 0.43);
-        if (s < 0.0)
-            sp = -Math.pow(-s, 0.43);
-        else
-            sp = Math.pow(s, 0.43);
+        if (l < 0.0) {
+			lp = -Math.pow(-l, 0.43);
+		} else {
+			lp = Math.pow(l, 0.43);
+		}
+        if (m < 0.0) {
+			mp = -Math.pow(-m, 0.43);
+		} else {
+			mp = Math.pow(m, 0.43);
+		}
+        if (s < 0.0) {
+			sp = -Math.pow(-s, 0.43);
+		} else {
+			sp = Math.pow(s, 0.43);
+		}
 
         return (0.4000 * lp) + (0.4000 * mp) + (0.2000 * sp);
     }

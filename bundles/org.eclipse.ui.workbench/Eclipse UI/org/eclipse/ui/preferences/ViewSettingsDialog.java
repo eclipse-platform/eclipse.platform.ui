@@ -41,8 +41,9 @@ public class ViewSettingsDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == DEFAULTS_BUTTON_ID)
+		if (buttonId == DEFAULTS_BUTTON_ID) {
 			performDefaults();
+		}
 		super.buttonPressed(buttonId);
 	}
 

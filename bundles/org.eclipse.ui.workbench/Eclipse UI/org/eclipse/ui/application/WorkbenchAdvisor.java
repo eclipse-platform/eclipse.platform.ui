@@ -469,16 +469,18 @@ public abstract class WorkbenchAdvisor {
      * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void openIntro(IWorkbenchWindowConfigurer configurer) {
-        if (introOpened)
-            return;
+        if (introOpened) {
+			return;
+		}
 
         introOpened = true;
 
         boolean showIntro = PrefUtil.getAPIPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.SHOW_INTRO);
 
-        if (!showIntro)
-            return;
+        if (!showIntro) {
+			return;
+		}
 
         if (getWorkbenchConfigurer().getWorkbench().getIntroManager()
                 .hasIntro()) {

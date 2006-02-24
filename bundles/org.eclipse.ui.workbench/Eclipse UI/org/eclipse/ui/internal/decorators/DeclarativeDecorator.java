@@ -71,8 +71,9 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
         if (descriptor == null) {
             URL url = BundleUtility.find(configElement.getDeclaringExtension()
                     .getNamespace(), iconLocation);
-            if (url == null)
-                return;
+            if (url == null) {
+				return;
+			}
             descriptor = ImageDescriptor.createFromURL(url);
         }
         decoration.addOverlay(descriptor);

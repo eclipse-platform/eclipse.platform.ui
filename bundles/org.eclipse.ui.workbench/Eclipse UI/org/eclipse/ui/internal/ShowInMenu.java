@@ -85,11 +85,13 @@ public class ShowInMenu extends ContributionItem {
     }
 
     public void fill(Menu menu, int index) {
-        if (getParent() instanceof MenuManager)
-            ((MenuManager) getParent()).addMenuListener(menuListener);
+        if (getParent() instanceof MenuManager) {
+			((MenuManager) getParent()).addMenuListener(menuListener);
+		}
 
-        if (!dirty)
-            return;
+        if (!dirty) {
+			return;
+		}
 
         MenuManager manager = new MenuManager();
         fillMenu(manager);

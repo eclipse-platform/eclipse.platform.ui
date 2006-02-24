@@ -189,8 +189,9 @@ public final class HandlerProxy extends AbstractHandler {
 	}
 
 	public final boolean isHandled() {
-		if (loadHandler())
+		if (loadHandler()) {
 			return handler.isHandled();
+		}
 
 		return false;
 	}

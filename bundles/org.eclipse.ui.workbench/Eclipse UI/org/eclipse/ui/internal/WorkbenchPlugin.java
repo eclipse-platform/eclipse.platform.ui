@@ -244,8 +244,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
                     }
                 }
             });
-            if (exc[0] != null)
-                throw exc[0];
+            if (exc[0] != null) {
+				throw exc[0];
+			}
             return ret[0];
 
         } catch (CoreException core) {
@@ -520,8 +521,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the shared image manager
      */
     public ISharedImages getSharedImages() {
-        if (sharedImages == null)
-            sharedImages = new SharedImages();
+        if (sharedImages == null) {
+			sharedImages = new SharedImages();
+		}
         return sharedImages;
     }
 
@@ -732,13 +734,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		int orientation = getCommandLineOrientation(commandLineArgs);
 		
-		if(orientation != SWT.NONE)
+		if(orientation != SWT.NONE) {
 			return orientation;
+		}
 		
 		orientation = getSystemPropertyOrientation();
 		
-		if(orientation != SWT.NONE)
+		if(orientation != SWT.NONE) {
 			return orientation;
+		}
 
 		return checkCommandLineLocale(); //Use the default value if there is nothing specified
 	}
@@ -763,15 +767,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		//Check if the user property is set. If not do not
 		//rely on the vm.
-		if(System.getProperty(NL_USER_PROPERTY) == null)
+		if(System.getProperty(NL_USER_PROPERTY) == null) {
 			return SWT.NONE;
+		}
 		
 		Locale locale = Locale.getDefault();
 		String lang = locale.getLanguage();
 
 		if ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			|| "ur".equals(lang)) //$NON-NLS-1$
+			|| "ur".equals(lang)) { //$NON-NLS-1$
 			return SWT.RIGHT_TO_LEFT;
+		}
 			
 		return SWT.NONE;
 	}
@@ -787,10 +793,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	private int getSystemPropertyOrientation() {
 		String orientation = System.getProperty(ORIENTATION_PROPERTY);
-		if(RIGHT_TO_LEFT.equals(orientation))
+		if(RIGHT_TO_LEFT.equals(orientation)) {
 			return SWT.RIGHT_TO_LEFT;
-		if(LEFT_TO_RIGHT.equals(orientation))
+		}
+		if(LEFT_TO_RIGHT.equals(orientation)) {
 			return SWT.LEFT_TO_RIGHT;
+		}
 		return SWT.NONE;
 	}
 
@@ -887,8 +895,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return ProductInfo the product info for the receiver
      */
     private ProductInfo getProductInfo() {
-        if (productInfo == null)
-            productInfo = new ProductInfo(Platform.getProduct());
+        if (productInfo == null) {
+			productInfo = new ProductInfo(Platform.getProduct());
+		}
         return productInfo;
     }
 
@@ -978,8 +987,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		} catch (InvalidSyntaxException e) {
 			return null;
 		}
-		if(ref==null)
+		if(ref==null) {
 			return null;
+		}
 		for (int i = 0; i < ref.length; i++) {
 			String name = (String) ref[i].getProperty("name"); //$NON-NLS-1$
 			if (name != null && name.equals("splashstream")) {  //$NON-NLS-1$

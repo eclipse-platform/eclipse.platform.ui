@@ -41,8 +41,9 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     private final IPropertyListener propListener = new IPropertyListener() {
         public void propertyChanged(Object source, int propId) {
             if (source == getActiveEditor()) {
-                if (propId == IEditorPart.PROP_DIRTY)
-                    updateState();
+                if (propId == IEditorPart.PROP_DIRTY) {
+					updateState();
+				}
             }
         }
     };
@@ -84,8 +85,9 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     private final IPropertyListener propListener2 = new IPropertyListener() {
         public void propertyChanged(Object source, int propId) {
             if (source == activeView) {
-                if (propId == IEditorPart.PROP_DIRTY)
-                    updateState();
+                if (propId == IEditorPart.PROP_DIRTY) {
+					updateState();
+				}
             }
         }
     };
@@ -146,10 +148,11 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
      * active page.
      */
     private void updateActiveView() {
-        if (getActivePage() == null)
-            setActiveView(null);
-        else
-            setActiveView(getActivePage().getActivePart());
+        if (getActivePage() == null) {
+			setActiveView(null);
+		} else {
+			setActiveView(getActivePage().getActivePart());
+		}
     }
 
     /**

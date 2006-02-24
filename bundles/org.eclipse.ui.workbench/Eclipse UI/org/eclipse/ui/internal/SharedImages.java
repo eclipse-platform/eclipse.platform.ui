@@ -25,8 +25,9 @@ public class SharedImages implements ISharedImages {
      */
     public Image getImage(String symbolicName) {
         Image image = WorkbenchImages.getImage(symbolicName);
-        if (image != null)
-            return image;
+        if (image != null) {
+			return image;
+		}
 
         //if there is a descriptor for it, add the image to the registry.
         ImageDescriptor desc = WorkbenchImages.getImageDescriptor(symbolicName);

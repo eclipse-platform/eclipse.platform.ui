@@ -38,8 +38,9 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
      * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#clearBlocked()
      */
     public void clearBlocked() {
-        if (nestingDepth == 0)
-            return;
+        if (nestingDepth == 0) {
+			return;
+		}
 
         nestingDepth--;
 
@@ -66,8 +67,9 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
         if (outerMonitor == null) {
             outerMonitor = blockingMonitor;
             //Try to get a name as best as possible
-            if (blockedName == null && parentShell != null)
-                blockedName = parentShell.getText();
+            if (blockedName == null && parentShell != null) {
+				blockedName = parentShell.getText();
+			}
             BlockedJobsDialog.createBlockedDialog(parentShell, blockingMonitor,
                     blockingStatus, blockedName);
         }

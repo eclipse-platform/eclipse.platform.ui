@@ -22,10 +22,11 @@ abstract class AbstractModifierKeyComparator implements Comparator {
         int modifierKeyLeftRank = rank(modifierKeyLeft);
         int modifierKeyRightRank = rank(modifierKeyRight);
 
-        if (modifierKeyLeftRank != modifierKeyRightRank)
-            return modifierKeyLeftRank - modifierKeyRightRank;
-        else
-            return modifierKeyLeft.compareTo(modifierKeyRight);
+        if (modifierKeyLeftRank != modifierKeyRightRank) {
+			return modifierKeyLeftRank - modifierKeyRightRank;
+		} else {
+			return modifierKeyLeft.compareTo(modifierKeyRight);
+		}
     }
 
     protected abstract int rank(ModifierKey modifierKey);

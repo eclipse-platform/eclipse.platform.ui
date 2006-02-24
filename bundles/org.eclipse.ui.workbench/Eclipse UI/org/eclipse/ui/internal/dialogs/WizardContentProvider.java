@@ -74,8 +74,9 @@ public class WizardContentProvider implements ITreeContentProvider {
             }
                 
             return list.toArray();
-        } else
-            return new Object[0];
+        } else {
+			return new Object[0];
+		}
     }
 
     /*
@@ -96,8 +97,9 @@ public class WizardContentProvider implements ITreeContentProvider {
         if (element instanceof WizardCollectionElement) {
             Object[] children = input.getChildren();
             for (int i = 0; i < children.length; i++) {
-                if (children[i].equals(element))
-                    return input;
+                if (children[i].equals(element)) {
+					return input;
+				}
             }
             return ((WizardCollectionElement) element).getParent(element);
         } 
@@ -113,8 +115,9 @@ public class WizardContentProvider implements ITreeContentProvider {
      */
     private void handleChild(Object element, ArrayList list) {
         if (element instanceof WizardCollectionElement) {
-            if (hasChildren(element))
-                list.add(element);
+            if (hasChildren(element)) {
+				list.add(element);
+			}
         } else {
             list.add(element);
         }
@@ -127,8 +130,9 @@ public class WizardContentProvider implements ITreeContentProvider {
      */
     public boolean hasChildren(Object element) {
         if (element instanceof WizardCollectionElement) {
-            if (getChildren(element).length > 0)
-                return true;
+            if (getChildren(element).length > 0) {
+				return true;
+			}
         }
         return false;
     }

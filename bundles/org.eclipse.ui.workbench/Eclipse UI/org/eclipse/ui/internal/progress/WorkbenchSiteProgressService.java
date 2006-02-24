@@ -102,20 +102,23 @@ public class WorkbenchSiteProgressService implements
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
             Control control = site.getPane().getControl();
-            if (control == null || control.isDisposed())
-                return Status.CANCEL_STATUS;
+            if (control == null || control.isDisposed()) {
+				return Status.CANCEL_STATUS;
+			}
             synchronized (lock) {
                 //Update cursors if we are doing that
                 if (useWaitCursor) {
                     Cursor cursor = null;
-                    if (busy)
-                        cursor = getWaitCursor(control.getDisplay());
+                    if (busy) {
+						cursor = getWaitCursor(control.getDisplay());
+					}
                     control.setCursor(cursor);
                 }
                 site.getPane().setBusy(busy);
                 IWorkbenchPart part = site.getPart();
-                 if (part instanceof WorkbenchPart)
-                    ((WorkbenchPart) part).showBusy(busy);
+                 if (part instanceof WorkbenchPart) {
+					((WorkbenchPart) part).showBusy(busy);
+				}
             }
             return Status.OK_STATUS;
         }
@@ -145,13 +148,15 @@ public class WorkbenchSiteProgressService implements
      *
      */
     public void dispose() {
-        if (updateJob != null)
-            updateJob.cancel();
+        if (updateJob != null) {
+			updateJob.cancel();
+		}
 
         ProgressManager.getInstance().removeListener(this);
 
-        if (waitCursor == null)
-            return;
+        if (waitCursor == null) {
+			return;
+		}
         waitCursor.dispose();
         waitCursor = null;
     }
@@ -246,17 +251,20 @@ public class WorkbenchSiteProgressService implements
      */
     public void decrementBusy(Job job) {
         synchronized (busyLock) {
-            if (!busyJobs.contains(job))
-                return;
+            if (!busyJobs.contains(job)) {
+				return;
+			}
             busyJobs.remove(job);
-            if (busyJobs.size() > 0)
-                return;
+            if (busyJobs.size() > 0) {
+				return;
+			}
         }
         if (PlatformUI.isWorkbenchRunning()) {
             updateJob.setBusy(false);
             updateJob.schedule(100);
-        } else
-            updateJob.cancel();
+        } else {
+			updateJob.cancel();
+		}
     }
 
     /*
@@ -266,18 +274,21 @@ public class WorkbenchSiteProgressService implements
      */
     public void incrementBusy(Job job) {
         synchronized (busyLock) {
-            if (busyJobs.contains(job))
-                return;
+            if (busyJobs.contains(job)) {
+				return;
+			}
             busyJobs.add(job);
             //If it is greater than one we already set busy
-            if (busyJobs.size() > 1)
-                return;
+            if (busyJobs.size() > 1) {
+				return;
+			}
         }
         if (PlatformUI.isWorkbenchRunning()) {
             updateJob.setBusy(true);
             updateJob.schedule(100);
-        } else
-            updateJob.cancel();
+        } else {
+			updateJob.cancel();
+		}
     }
 
     /*

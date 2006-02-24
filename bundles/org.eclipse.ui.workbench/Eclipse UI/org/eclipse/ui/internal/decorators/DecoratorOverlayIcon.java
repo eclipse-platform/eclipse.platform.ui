@@ -52,13 +52,15 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
 
         for (int i = 0; i < overlays.length; i++) {
             ImageDescriptor overlay = overlaysArray[i];
-            if (overlay == null)
-                continue;
+            if (overlay == null) {
+				continue;
+			}
             ImageData overlayData = overlay.getImageData();
             //Use the missing descriptor if it is not there.
-            if (overlayData == null)
-                overlayData = ImageDescriptor.getMissingImageDescriptor()
+            if (overlayData == null) {
+				overlayData = ImageDescriptor.getMissingImageDescriptor()
                         .getImageData();
+			}
             switch (i) {
             case LightweightDecoratorDefinition.TOP_LEFT:
                 drawImage(overlayData, 0, 0);
@@ -78,8 +80,9 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof DecoratorOverlayIcon))
-            return false;
+        if (!(o instanceof DecoratorOverlayIcon)) {
+			return false;
+		}
         DecoratorOverlayIcon other = (DecoratorOverlayIcon) o;
         return base.equals(other.base)
                 && Arrays.equals(overlays, other.overlays);
@@ -88,16 +91,18 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
     public int hashCode() {
         int code = base.hashCode();
         for (int i = 0; i < overlays.length; i++) {
-            if (overlays[i] != null)
-                code ^= overlays[i].hashCode();
+            if (overlays[i] != null) {
+				code ^= overlays[i].hashCode();
+			}
         }
         return code;
     }
 
     protected void drawCompositeImage(int width, int height) {
         ImageDescriptor underlay = overlays[LightweightDecoratorDefinition.UNDERLAY];
-        if (underlay != null)
-            drawImage(underlay.getImageData(), 0, 0);
+        if (underlay != null) {
+			drawImage(underlay.getImageData(), 0, 0);
+		}
         drawImage(base.getImageData(), 0, 0);
         drawOverlays(overlays);
     }

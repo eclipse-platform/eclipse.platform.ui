@@ -39,8 +39,9 @@ public class SystemMenuDetach extends Action implements ISelfUpdatingAction {
     }
     
     public boolean shouldBeVisible() {
-    	if(page != null)
-    		return page.getActivePerspective().getPresentation().canDetach();
+    	if(page != null) {
+			return page.getActivePerspective().getPresentation().canDetach();
+		}
     	return false;
     }
     

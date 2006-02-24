@@ -91,8 +91,9 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * Check if we have ticked in the last 800ms.
 			 */
             private void checkTicking() {
-            	if (triggerTime < 0)
-            		triggerTime = System.currentTimeMillis() + longOperationTime;
+            	if (triggerTime < 0) {
+					triggerTime = System.currentTimeMillis() + longOperationTime;
+				}
     			if (!dialogOpened && System.currentTimeMillis() > triggerTime) {
     				open();
     				dialogOpened = true;
@@ -180,8 +181,9 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#getProgressMonitor()
 	 */
     public IProgressMonitor getProgressMonitor() {
-        if (wrapperedMonitor == null)
-            createWrapperedMonitor();
+        if (wrapperedMonitor == null) {
+			createWrapperedMonitor();
+		}
         return wrapperedMonitor;
     }
     
@@ -207,8 +209,9 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
     		}
         };
         final Display display = PlatformUI.getWorkbench().getDisplay();
-        if (display == null)
-            return;
+        if (display == null) {
+			return;
+		}
         //show a busy cursor until the dialog opens
         BusyIndicator.showWhile(display, dialogWaitRunnable);
         if (invokes[0] != null) {

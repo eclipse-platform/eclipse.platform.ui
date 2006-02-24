@@ -84,8 +84,9 @@ public class ActionSetActionBars extends SubActionBars2 {
 	 */
 	public void dispose() {
 		super.dispose();
-		if (coolItemToolBarMgr == null)
+		if (coolItemToolBarMgr == null) {
 			return;
+		}
 		IContributionItem[] items = coolItemToolBarMgr.getItems();
 		// remove the action set's items from its action bar, don't use
 		// removeAll since other items from other actions sets may be in
@@ -143,8 +144,9 @@ public class ActionSetActionBars extends SubActionBars2 {
 		// look for starting point
 		while (insertIndex < items.length) {
 			IContributionItem item = items[insertIndex];
-			if (item.getId() != null && item.getId().equals(startId))
+			if (item.getId() != null && item.getId().equals(startId)) {
 				break;
+			}
 			++insertIndex;
 		}
 
@@ -153,12 +155,14 @@ public class ActionSetActionBars extends SubActionBars2 {
 			IContributionItem item = items[i];
 			String testId = item.getId();
 
-			if (item.isGroupMarker())
+			if (item.isGroupMarker()) {
 				break;
+			}
 
 			if (itemId != null && testId != null) {
-				if (itemId.compareTo(testId) < 1)
+				if (itemId.compareTo(testId) < 1) {
 					break;
+				}
 			}
 			insertIndex = i;
 		}
@@ -275,8 +279,9 @@ public class ActionSetActionBars extends SubActionBars2 {
 		super.setActive(set);
 
 		ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
-		if (coolBarManager == null)
+		if (coolBarManager == null) {
 			return;
+		}
 
 		// 1. Need to set visibility for all non-adjunct actions
 		if (coolItemToolBarMgr != null) {

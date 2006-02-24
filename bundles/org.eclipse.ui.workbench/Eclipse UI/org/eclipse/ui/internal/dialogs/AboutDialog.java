@@ -82,20 +82,24 @@ public class AboutDialog extends ProductInfoDialog {
         super(parentShell);
 
         product = Platform.getProduct();
-        if (product != null)
-            productName = product.getName();
-        if (productName == null)
-            productName = WorkbenchMessages.AboutDialog_defaultProductName;
+        if (product != null) {
+			productName = product.getName();
+		}
+        if (productName == null) {
+			productName = WorkbenchMessages.AboutDialog_defaultProductName;
+		}
 
         // create a descriptive object for each BundleGroup
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
         LinkedList groups = new LinkedList();
-        if (providers != null)
-            for (int i = 0; i < providers.length; ++i) {
+        if (providers != null) {
+			for (int i = 0; i < providers.length; ++i) {
                 IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
-                for (int j = 0; j < bundleGroups.length; ++j)
-                    groups.add(new AboutBundleGroupData(bundleGroups[j]));
+                for (int j = 0; j < bundleGroups.length; ++j) {
+					groups.add(new AboutBundleGroupData(bundleGroups[j]));
+				}
             }
+		}
         bundleGroupInfos = (AboutBundleGroupData[]) groups
                 .toArray(new AboutBundleGroupData[0]);
     }
@@ -158,8 +162,9 @@ public class AboutDialog extends ProductInfoDialog {
 
         // bug 64232: the feature details button should only be created if there
         // are features to show
-        if (bundleGroupInfos != null && bundleGroupInfos.length > 0)
-                createButton(parent, FEATURES_ID, WorkbenchMessages.AboutDialog_featureInfo, false); 
+        if (bundleGroupInfos != null && bundleGroupInfos.length > 0) {
+			createButton(parent, FEATURES_ID, WorkbenchMessages.AboutDialog_featureInfo, false);
+		} 
 
         createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutDialog_pluginInfo, false);
         createButton(parent, INFO_ID, WorkbenchMessages.AboutDialog_systemInfo, false); 
@@ -203,19 +208,22 @@ public class AboutDialog extends ProductInfoDialog {
         if (product != null) {
             ImageDescriptor imageDescriptor = ProductProperties
                     .getAboutImage(product);
-            if (imageDescriptor != null)
-                aboutImage = imageDescriptor.createImage();
+            if (imageDescriptor != null) {
+				aboutImage = imageDescriptor.createImage();
+			}
 
             // if the about image is small enough, then show the text
             if (aboutImage == null
                     || aboutImage.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
                 String aboutText = ProductProperties.getAboutText(product);
-                if (aboutText != null)
-                    setItem(scan(aboutText));
+                if (aboutText != null) {
+					setItem(scan(aboutText));
+				}
             }
 
-            if (aboutImage != null)
-                images.add(aboutImage);
+            if (aboutImage != null) {
+				images.add(aboutImage);
+			}
         }
 
         // create a composite which is the parent of the top area and the bottom
@@ -345,14 +353,16 @@ public class AboutDialog extends ProductInfoDialog {
         data.horizontalAlignment = GridData.FILL;
         featureContainer.setLayoutData(data);
 
-        for (int i = 0; i < bundleGroupInfos.length; i++)
-            createFeatureButton(featureContainer, bundleGroupInfos[i]);
+        for (int i = 0; i < bundleGroupInfos.length; i++) {
+			createFeatureButton(featureContainer, bundleGroupInfos[i]);
+		}
     }
 
     private Button createFeatureButton(Composite parent,
             final AboutBundleGroupData info) {
-        if (!buttonManager.add(info))
-            return null;
+        if (!buttonManager.add(info)) {
+			return null;
+		}
 
         ImageDescriptor desc = info.getFeatureImage();
         Image featureImage = null;

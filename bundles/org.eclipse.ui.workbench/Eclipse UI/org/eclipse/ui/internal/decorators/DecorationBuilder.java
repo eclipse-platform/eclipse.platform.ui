@@ -76,8 +76,9 @@ public class DecorationBuilder implements IDecoration {
 	 */
 	public void addOverlay(ImageDescriptor overlay) {
 		int quadrant = currentDefinition.getQuadrant();
-		if (descriptors[quadrant] == null)
+		if (descriptors[quadrant] == null) {
 			descriptors[quadrant] = overlay;
+		}
 		valueSet = true;
 	}
 
@@ -86,8 +87,9 @@ public class DecorationBuilder implements IDecoration {
 	 */
 	public void addOverlay(ImageDescriptor overlay, int quadrant) {
 		if (quadrant >= 0 && quadrant <= DECORATOR_ARRAY_SIZE) {
-			if (descriptors[quadrant] == null)
+			if (descriptors[quadrant] == null) {
 				descriptors[quadrant] = overlay;
+			}
 			valueSet = true;
 		} else {
 			WorkbenchPlugin
@@ -153,8 +155,9 @@ public class DecorationBuilder implements IDecoration {
 		ImageDescriptor[] resultDescriptors = result.getDescriptors();
 		if (resultDescriptors != null) {
 			for (int i = 0; i < descriptors.length; i++) {
-				if (resultDescriptors[i] != null)
+				if (resultDescriptors[i] != null) {
 					descriptors[i] = resultDescriptors[i];
+				}
 			}
 		}
 		

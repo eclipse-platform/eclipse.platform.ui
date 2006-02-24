@@ -155,10 +155,11 @@ public class DecoratorsPreferencePage extends PreferencePage implements
                                     .getSelection();
                             DecoratorDefinition definition = (DecoratorDefinition) sel
                                     .getFirstElement();
-                            if (definition == null)
-                                clearDescription();
-                            else
-                                showDescription(definition);
+                            if (definition == null) {
+								clearDescription();
+							} else {
+								showDescription(definition);
+							}
                         }
                     }
                 });
@@ -215,10 +216,11 @@ public class DecoratorsPreferencePage extends PreferencePage implements
             return;
         }
         String text = definition.getDescription();
-        if (text == null || text.length() == 0)
-            descriptionText.setText(WorkbenchMessages.PreferencePage_noDescription);
-        else
-            descriptionText.setText(text);
+        if (text == null || text.length() == 0) {
+			descriptionText.setText(WorkbenchMessages.PreferencePage_noDescription);
+		} else {
+			descriptionText.setText(text);
+		}
     }
 
     /**

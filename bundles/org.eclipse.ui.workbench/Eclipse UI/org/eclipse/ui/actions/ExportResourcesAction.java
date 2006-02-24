@@ -162,9 +162,10 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
                 .getDialogSettings();
         IDialogSettings wizardSettings = workbenchSettings
                 .getSection("ImportExportAction"); //$NON-NLS-1$
-        if (wizardSettings == null)
-            wizardSettings = workbenchSettings
+        if (wizardSettings == null) {
+			wizardSettings = workbenchSettings
                     .addNewSection("ImportExportAction"); //$NON-NLS-1$
+		}
         wizard.setDialogSettings(wizardSettings);
         wizard.setForcePreviousAndNextButtons(true);
 

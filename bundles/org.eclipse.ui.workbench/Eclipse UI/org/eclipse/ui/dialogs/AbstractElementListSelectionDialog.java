@@ -90,8 +90,9 @@ public abstract class AbstractElementListSelectionDialog extends
      * By default, the OK button is pressed.
      */
     protected void handleDefaultSelected() {
-        if (validateCurrentSelection())
-            buttonPressed(IDialogConstants.OK_ID);
+        if (validateCurrentSelection()) {
+			buttonPressed(IDialogConstants.OK_ID);
+		}
     }
 
     /**
@@ -185,10 +186,11 @@ public abstract class AbstractElementListSelectionDialog extends
      * @param filter the filter pattern.
      */
     public void setFilter(String filter) {
-        if (fFilterText == null)
-            fFilter = filter;
-        else
-            fFilterText.setText(filter);
+        if (fFilterText == null) {
+			fFilter = filter;
+		} else {
+			fFilterText.setText(filter);
+		}
     }
 
     /**
@@ -196,10 +198,11 @@ public abstract class AbstractElementListSelectionDialog extends
      * @return returns the current filter pattern or <code>null<code> if filter was not set.
      */
     public String getFilter() {
-        if (fFilteredList == null)
-            return fFilter;
-        else
-            return fFilteredList.getFilter();
+        if (fFilteredList == null) {
+			return fFilter;
+		} else {
+			return fFilteredList.getFilter();
+		}
     }
 
     /**
@@ -401,8 +404,9 @@ public abstract class AbstractElementListSelectionDialog extends
 
         text.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
-                if (e.keyCode == SWT.ARROW_DOWN)
-                    fFilteredList.setFocus();
+                if (e.keyCode == SWT.ARROW_DOWN) {
+					fFilteredList.setFocus();
+				}
             }
 
             public void keyReleased(KeyEvent e) {
@@ -468,7 +472,8 @@ public abstract class AbstractElementListSelectionDialog extends
      */
     protected void updateOkState() {
         Button okButton = getOkButton();
-        if (okButton != null)
-            okButton.setEnabled(getSelectedElements().length != 0);
+        if (okButton != null) {
+			okButton.setEnabled(getSelectedElements().length != 0);
+		}
     }
 }

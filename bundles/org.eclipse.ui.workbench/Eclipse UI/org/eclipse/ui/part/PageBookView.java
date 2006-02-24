@@ -277,14 +277,17 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			IPage currentPage = getCurrentPage();
 			// during workbench startup we may be in a state when
 			// there is no current page
-			if (currentPage == null)
+			if (currentPage == null) {
 				return StructuredSelection.EMPTY;
+			}
 			IPageSite site = getPageSite(currentPage);
-			if (site == null)
+			if (site == null) {
 				return StructuredSelection.EMPTY;
+			}
 			ISelectionProvider selProvider = site.getSelectionProvider();
-			if (selProvider != null)
+			if (selProvider != null) {
 				return selProvider.getSelection();
+			}
 			return StructuredSelection.EMPTY;
 		}
 
@@ -325,15 +328,18 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			IPage currentPage = getCurrentPage();
 			// during workbench startup we may be in a state when
 			// there is no current page
-			if (currentPage == null)
+			if (currentPage == null) {
 				return;
+			}
 			IPageSite site = getPageSite(currentPage);
-			if (site == null)
+			if (site == null) {
 				return;
+			}
 			ISelectionProvider selProvider = site.getSelectionProvider();
 			// and set its selection
-			if (selProvider != null)
+			if (selProvider != null) {
 				selProvider.setSelection(selection);
+			}
 		}
 
 		/*
@@ -561,14 +567,16 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		IPage page = getCurrentPage();
 		if (page instanceof IAdaptable) {
 			Object adapter = ((IAdaptable) page).getAdapter(key);
-			if (adapter != null)
+			if (adapter != null) {
 				return adapter;
+			}
 		}
 		// if the page did not find the adapter, look for one provided by
 		// this view before delegating to super.
 		Object adapter = getViewAdapter(key);
-		if (adapter != null)
+		if (adapter != null) {
 			return adapter;
+		}
 		// delegate to super
 		return super.getAdapter(key);
 	}
@@ -618,8 +626,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 *         if no part contributed the current page
 	 */
 	protected IWorkbenchPart getCurrentContributingPart() {
-		if (activeRec == null)
+		if (activeRec == null) {
 			return null;
+		}
 		return activeRec.part;
 	}
 
@@ -630,8 +639,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 * @return the currently visible page
 	 */
 	public IPage getCurrentPage() {
-		if (activeRec == null)
+		if (activeRec == null) {
 			return null;
+		}
 		return activeRec.page;
 	}
 
@@ -688,8 +698,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		Iterator itr = mapPartToRec.values().iterator();
 		while (itr.hasNext()) {
 			PageRec rec = (PageRec) itr.next();
-			if (rec.page == page)
+			if (rec.page == page) {
 				return rec;
+			}
 		}
 		return null;
 	}
@@ -722,13 +733,15 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		// Is this an important part? If not just return.
-		if (!isImportant(part))
+		if (!isImportant(part)) {
 			return;
+		}
 
 		// Create a page for the part.
 		PageRec rec = getPageRec(part);
-		if (rec == null)
+		if (rec == null) {
 			rec = createPage(part);
+		}
 
 		// Show the page.
 		if (rec != null) {
@@ -759,8 +772,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 		// Find and remove the part page.
 		PageRec rec = getPageRec(part);
-		if (rec != null)
+		if (rec != null) {
 			removePage(rec);
+		}
 	}
 
 	/**
@@ -838,8 +852,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 			// free the page
 			doDestroyPage(rec.part, rec);
-		} else
+		} else {
 			mapPageToNumRecs.put(rec.page, new Integer(newCount));
+		}
 	}
 
 	/*
@@ -866,8 +881,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		// forward this change from a page to our site's selection provider
 		SelectionProvider provider = (SelectionProvider) getSite()
 				.getSelectionProvider();
-		if (provider != null)
+		if (provider != null) {
 			provider.selectionChanged(event);
+		}
 	}
 
 	/**
@@ -879,8 +895,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		// forward this change from a page to our site's selection provider
 		SelectionProvider provider = (SelectionProvider) getSite()
 				.getSelectionProvider();
-		if (provider != null)
+		if (provider != null) {
 			provider.postSelectionChanged(event);
+		}
 	}
 
 	/**
@@ -888,8 +905,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	private void showBootstrapPart() {
 		IWorkbenchPart part = getBootstrapPart();
-		if (part != null)
+		if (part != null) {
 			partActivated(part);
+		}
 	}
 
 	/**
@@ -906,8 +924,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	protected void showPageRec(PageRec pageRec) {
 		// If already showing do nothing
-		if (activeRec == pageRec)
+		if (activeRec == pageRec) {
 			return;
+		}
 		// If the page is the same, just set activeRec to pageRec
 		if (activeRec != null && pageRec != null
 				&& activeRec.page == pageRec.page) {

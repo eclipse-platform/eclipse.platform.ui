@@ -245,10 +245,12 @@ public class SubActionBars extends EventManager implements IActionBars {
 			menuMgr.dispose();
 			menuMgr.disposeManager();
 		}
-		if (statusLineMgr != null)
+		if (statusLineMgr != null) {
 			statusLineMgr.disposeManager();
-		if (toolBarMgr != null)
+		}
+		if (toolBarMgr != null) {
 			toolBarMgr.disposeManager();
+		}
 		clearListeners();
 	}
 
@@ -297,8 +299,9 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *         <code>null</code> if none is registered.
 	 */
 	public IAction getGlobalActionHandler(String actionID) {
-		if (actionHandlers == null)
+		if (actionHandlers == null) {
 			return null;
+		}
 		return (IAction) actionHandlers.get(actionID);
 	}
 
@@ -411,14 +414,17 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 */
 	protected void setActive(boolean set) {
 		active = set;
-		if (menuMgr != null)
+		if (menuMgr != null) {
 			menuMgr.setVisible(set);
+		}
 
-		if (statusLineMgr != null)
+		if (statusLineMgr != null) {
 			statusLineMgr.setVisible(set);
+		}
 
-		if (toolBarMgr != null)
+		if (toolBarMgr != null) {
 			toolBarMgr.setVisible(set);
+		}
 	}
 
 	/**
@@ -433,8 +439,9 @@ public class SubActionBars extends EventManager implements IActionBars {
 	public void setGlobalActionHandler(String actionID, IAction handler) {
 		if (handler != null) {
 			// Update the action handlers.
-			if (actionHandlers == null)
+			if (actionHandlers == null) {
 				actionHandlers = new HashMap(11);
+			}
 			actionHandlers.put(actionID, handler);
 
 			// Add a mapping from this action id to the command id.
@@ -483,8 +490,9 @@ public class SubActionBars extends EventManager implements IActionBars {
 			}
 
 		} else {
-			if (actionHandlers != null)
+			if (actionHandlers != null) {
 				actionHandlers.remove(actionID);
+			}
 
 			// Remove the handler activation.
 			if (serviceLocator != null) {

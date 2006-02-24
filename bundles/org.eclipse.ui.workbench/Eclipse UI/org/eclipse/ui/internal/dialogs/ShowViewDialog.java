@@ -84,8 +84,9 @@ public class ShowViewDialog extends Dialog implements
      * This method is called if a button has been pressed.
      */
     protected void buttonPressed(int buttonId) {
-        if (buttonId == IDialogConstants.OK_ID)
-            saveWidgetValues();
+        if (buttonId == IDialogConstants.OK_ID) {
+			saveWidgetValues();
+		}
         super.buttonPressed(buttonId);
     }
 
@@ -174,8 +175,9 @@ public class ShowViewDialog extends Dialog implements
 		// if the tree has only one or zero views, disable the filter text control
 		if (hasAtMostOneView(filteredTree.getViewer())) {
 			Text filterText = filteredTree.getFilterControl();
-			if (filterText != null)
+			if (filterText != null) {
 				filterText.setEnabled(false);
+			}
 		}
 
 		applyDialogFont(filteredTree);
@@ -193,8 +195,9 @@ public class ShowViewDialog extends Dialog implements
 		Object[] children = contentProvider.getElements(tree.getInput());
 
 		if (children.length <= 1) {
-			if (children.length == 0)
+			if (children.length == 0) {
 				return true;
+			}
 			return !contentProvider.hasChildren(children[0]);
 		}
 		return false;
@@ -225,9 +228,10 @@ public class ShowViewDialog extends Dialog implements
                 .getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection(DIALOG_SETTING_SECTION_NAME);
-        if (section == null)
-            section = workbenchSettings
+        if (section == null) {
+			section = workbenchSettings
                     .addNewSection(DIALOG_SETTING_SECTION_NAME);
+		}
         return section;
     }
 
@@ -261,19 +265,22 @@ public class ShowViewDialog extends Dialog implements
 
         String[] expandedCategoryIds = settings
                 .getArray(STORE_EXPANDED_CATEGORIES_ID);
-        if (expandedCategoryIds == null)
-            return;
+        if (expandedCategoryIds == null) {
+			return;
+		}
 
         ViewRegistry reg = (ViewRegistry) viewReg;
         ArrayList categoriesToExpand = new ArrayList(expandedCategoryIds.length);
         for (int i = 0; i < expandedCategoryIds.length; i++) {
             IViewCategory category = reg.findCategory(expandedCategoryIds[i]);
-            if (category != null) // ie.- it still exists
-                categoriesToExpand.add(category);
+            if (category != null) {
+				categoriesToExpand.add(category);
+			}
         }
 
-        if (!categoriesToExpand.isEmpty())
-            filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
+        if (!categoriesToExpand.isEmpty()) {
+			filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
+		}
         
         String selectedViewId = settings.get(STORE_SELECTED_VIEW_ID);
         if (selectedViewId != null) {
@@ -294,8 +301,9 @@ public class ShowViewDialog extends Dialog implements
         // Collect the ids of the all expanded categories
         Object[] expandedElements = filteredTree.getViewer().getExpandedElements();
         String[] expandedCategoryIds = new String[expandedElements.length];
-        for (int i = 0; i < expandedElements.length; ++i)
-            expandedCategoryIds[i] = ((IViewCategory) expandedElements[i]).getId();
+        for (int i = 0; i < expandedElements.length; ++i) {
+			expandedCategoryIds[i] = ((IViewCategory) expandedElements[i]).getId();
+		}
 
         // Save them for next time.
         settings.put(STORE_EXPANDED_CATEGORIES_ID, expandedCategoryIds);

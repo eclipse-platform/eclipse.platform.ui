@@ -274,10 +274,11 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 	private void updateOverrideState(boolean override) {
 		IPreferenceStore store = getPreferenceStore();
-		if (store.getBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION) != override)
+		if (store.getBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION) != override) {
 			store
 					.setValue(IPreferenceConstants.OVERRIDE_PRESENTATION,
 							override);
+		}
 		// as we are no longer overriding the prefs should match the selected
 		// presentation
 		setPresentationPrefs(getSelectedPresentationID());
@@ -311,8 +312,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 			}
 
 			private void updateSettings() {
-				if (!overridePresButton.getSelection())
+				if (!overridePresButton.getSelection()) {
 					setPresentationPrefs(getSelectedPresentationID());
+				}
 			}
 		});
 
@@ -499,8 +501,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * 
 	 */
 	private void hookOverrideListener() {
-		if (overrideListener != null)
+		if (overrideListener != null) {
 			return;
+		}
 		final IPreferenceStore store = getPreferenceStore();
 		overrideListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -547,9 +550,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 			IConfigurationElement el = presentationFactories[i];
 			String name = el.getAttribute(IWorkbenchConstants.TAG_NAME);
 			if (!currentPresentationFactoryId.equals(el
-					.getAttribute(IWorkbenchConstants.TAG_ID)))
+					.getAttribute(IWorkbenchConstants.TAG_ID))) {
 				presentationCombo.add(name);
-			else {
+			} else {
 				presentationCombo
 					.add(NLS.bind(
 						WorkbenchMessages.ViewsPreference_currentPresentationFormat,
@@ -619,8 +622,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		String id = getSelectedPresentationID();
 
 		// if it hasn't changed then there's nothing to do
-		if (id.equals(currentPresentationFactoryId))
+		if (id.equals(currentPresentationFactoryId)) {
 			return false;
+		}
 
 		currentPresentationFactoryId = id;
 		// apply 2.1 prefs if needed
@@ -634,10 +638,11 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private void setPresentationPrefs(String id) {
-		if (R21PRESENTATION_ID.equals(id))
+		if (R21PRESENTATION_ID.equals(id)) {
 			setR21Preferences();
-		else if (R30PRESENTATION_ID.equals(id))
+		} else if (R30PRESENTATION_ID.equals(id)) {
 			setR30Preferences();
+		}
 	}
 
 	private String getSelectedPresentationID() {
@@ -688,8 +693,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		viewBottomButton.setSelection(viewAlignment == SWT.BOTTOM);
 
 		// view tabs should be set to default on OK or Apply
-		if (oldVal != viewAlignment)
+		if (oldVal != viewAlignment) {
 			viewAlignmentChanged = true;
+		}
 		viewAlignment = INITIAL_LOC_INT;
 	}
 
@@ -703,8 +709,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		editorBottomButton.setSelection(editorAlignment == SWT.BOTTOM);
 
 		// editor tabs should be set to default on OK or Apply
-		if (oldVal != editorAlignment)
+		if (oldVal != editorAlignment) {
 			editorAlignmentChanged = true;
+		}
 		editorAlignment = INITIAL_LOC_INT;
 	}
 
@@ -715,8 +722,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		editorAlignment = SWT.TOP;
 		editorTopButton.setSelection(editorAlignment == SWT.TOP);
 		editorBottomButton.setSelection(editorAlignment == SWT.BOTTOM);
-		if (oldVal != editorAlignment)
+		if (oldVal != editorAlignment) {
 			editorAlignmentChanged = true;
+		}
 
 		// view tabs on the bottom, really should associate this with the
 		// presentation
@@ -724,8 +732,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		viewAlignment = SWT.BOTTOM;
 		viewTopButton.setSelection(viewAlignment == SWT.TOP);
 		viewBottomButton.setSelection(viewAlignment == SWT.BOTTOM);
-		if (oldVal != viewAlignment)
+		if (oldVal != viewAlignment) {
 			viewAlignmentChanged = true;
+		}
 
 		// perspective switcher on the left, really should associate this with
 		// the presentation
@@ -1014,8 +1023,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 										WorkbenchMessages.ViewsPreference_presentationConfirm_yes,
 										WorkbenchMessages.ViewsPreference_presentationConfirm_no },
 								1).open();
-						if (really == Window.OK)
+						if (really == Window.OK) {
 							PlatformUI.getWorkbench().restart();
+						}
 						return Status.OK_STATUS;
 					}
 				};

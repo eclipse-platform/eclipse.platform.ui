@@ -99,16 +99,18 @@ public class BasicPartList extends AbstractTableInformationControl {
             AbstractTabItem item = folder.getTab(presentablePart);
             // if in single tab mode, do not use the bold font for non-visible tabs
             // if in multiple tab mode, use the bold for non-visible tabs only
-            if ((item!=null && item.isShowing()) || !hiddenTabsBold)
-                return folder.getTabFolder().getControl().getFont();
+            if ((item!=null && item.isShowing()) || !hiddenTabsBold) {
+				return folder.getTabFolder().getControl().getFont();
+			}
 
             if (boldFont == null) {
                 Control control = folder.getTabFolder().getControl();
                 Font originalFont = control.getFont();
                 FontData fontData[] = originalFont.getFontData();
                 // Adding the bold attribute
-                for (int i = 0; i < fontData.length; i++)
-                    fontData[i].setStyle(fontData[i].getStyle() | SWT.BOLD);
+                for (int i = 0; i < fontData.length; i++) {
+					fontData[i].setStyle(fontData[i].getStyle() | SWT.BOLD);
+				}
                 boldFont = new Font(control.getDisplay(), fontData);
             }
             return boldFont;
@@ -116,8 +118,9 @@ public class BasicPartList extends AbstractTableInformationControl {
 
         public void dispose() {
             super.dispose();
-            if (boldFont != null)
-                boldFont.dispose();
+            if (boldFont != null) {
+				boldFont.dispose();
+			}
         }
     }
 
@@ -138,8 +141,9 @@ public class BasicPartList extends AbstractTableInformationControl {
             int cat1 = category(e1);
             int cat2 = category(e2);
 
-            if (cat1 != cat2)
-                return cat1 - cat2;
+            if (cat1 != cat2) {
+				return cat1 - cat2;
+			}
 
             // cat1 == cat2
 
@@ -160,19 +164,23 @@ public class BasicPartList extends AbstractTableInformationControl {
                     // DefaultEditorPresentation.getLabelText which returns the name of dirty 
                     // files begining with dirty prefix, sorting should not take dirty prefix in consideration
                     String prefix = DefaultTabItem.DIRTY_PREFIX;
-                    if (name1.startsWith(prefix))
-                        name1 = name1.substring(prefix.length());
-                    if (name2.startsWith(prefix))
-                        name2 = name2.substring(prefix.length());
+                    if (name1.startsWith(prefix)) {
+						name1 = name1.substring(prefix.length());
+					}
+                    if (name2.startsWith(prefix)) {
+						name2 = name2.substring(prefix.length());
+					}
                 } else {
                     name1 = e1.toString();
                     name2 = e2.toString();
                 }
             }
-            if (name1 == null)
-                name1 = "";//$NON-NLS-1$
-            if (name2 == null)
-                name2 = "";//$NON-NLS-1$
+            if (name1 == null) {
+				name1 = "";//$NON-NLS-1$
+			}
+            if (name2 == null) {
+				name2 = "";//$NON-NLS-1$
+			}
             return collator.compare(name1, name2);
         }
 
@@ -184,8 +192,9 @@ public class BasicPartList extends AbstractTableInformationControl {
             IPresentablePart part = (IPresentablePart)element;
             AbstractTabItem tabItem = folder.getTab(part);
             
-            if (tabItem!=null && tabItem.isShowing())
-                return 1; // visible
+            if (tabItem!=null && tabItem.isShowing()) {
+				return 1; // visible
+			}
             return 0; // not visible
         }
     }
@@ -212,12 +221,14 @@ public class BasicPartList extends AbstractTableInformationControl {
                     // it redraw while we remove entries.  Some items in this table are
                     // being removed and may have icons which may have already been
                     // disposed elsewhere.
-                    if (usingMotif)
-                        getTable().setRedraw(false);
+                    if (usingMotif) {
+						getTable().setRedraw(false);
+					}
                     super.internalRefresh(element);
                 } finally {
-                    if (usingMotif)
-                        getTable().setRedraw(true);
+                    if (usingMotif) {
+						getTable().setRedraw(true);
+					}
                 }
             }
         };

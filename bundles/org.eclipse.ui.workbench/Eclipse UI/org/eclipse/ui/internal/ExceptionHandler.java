@@ -50,8 +50,9 @@ public final class ExceptionHandler implements Window.IExceptionHandler {
             // Check to avoid recursive errors
             exceptionCount++;
             if (exceptionCount > 2) {
-                if (t instanceof RuntimeException)
-                    throw (RuntimeException) t;
+                if (t instanceof RuntimeException) {
+					throw (RuntimeException) t;
+				}
                 throw (Error) t;
             }
 

@@ -67,11 +67,12 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
      * Makes the next page visible.
      */
     public void advanceToNextPageOrFinish() {
-    		if (canFlipToNextPage())
-    			getContainer().showPage(getNextPage());
-    		else if (canFinishEarly()) {
-    			if (getWizard().performFinish()) //the following is bad - we need methods on IWizardContainer to accomplish this
-    				((WizardDialog)getContainer()).close();
+    		if (canFlipToNextPage()) {
+				getContainer().showPage(getNextPage());
+			} else if (canFinishEarly()) {
+    			if (getWizard().performFinish()) {
+					((WizardDialog)getContainer()).close();
+				}
     		}
     }
 
@@ -103,8 +104,9 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
      */
     public boolean canFlipToNextPage() {
         // if the current page advertises that it does have pages then ask it via the super call
-    		if (hasPages)
-    			return super.canFlipToNextPage();
+    		if (hasPages) {
+				return super.canFlipToNextPage();
+			}
     		return false;
     }
 

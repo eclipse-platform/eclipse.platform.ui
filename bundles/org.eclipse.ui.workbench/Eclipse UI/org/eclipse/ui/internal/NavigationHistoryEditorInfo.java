@@ -51,8 +51,9 @@ public class NavigationHistoryEditorInfo {
     }
 
     void handlePartClosed() {
-        if (!isPersistable())
-            return;
+        if (!isPersistable()) {
+			return;
+		}
         if (memento == null) {
             IPersistableElement persistable = editorInput.getPersistable();
             memento = XMLMemento
@@ -67,8 +68,9 @@ public class NavigationHistoryEditorInfo {
     }
 
     void restoreEditor() {
-        if (memento == null)
-            return;
+        if (memento == null) {
+			return;
+		}
         String factoryID = memento
                 .getString(IWorkbenchConstants.TAG_FACTORY_ID);
         IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(

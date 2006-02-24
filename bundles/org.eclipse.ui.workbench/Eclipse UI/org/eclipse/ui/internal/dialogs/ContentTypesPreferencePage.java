@@ -98,15 +98,17 @@ public class ContentTypesPreferencePage extends PreferencePage implements
          */
         public String toString() {
             String toString;
-            if (name != null)
-                toString = name;
-            else
-                toString = "*." + ext; //$NON-NLS-1$
+            if (name != null) {
+				toString = name;
+			} else {
+				toString = "*." + ext; //$NON-NLS-1$
+			}
 
-            if (isPredefined)
-                toString = NLS.bind(
+            if (isPredefined) {
+				toString = NLS.bind(
                         WorkbenchMessages.ContentTypes_lockedFormat,
                         toString);
+			}
 
             return toString;
         }
@@ -229,8 +231,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             IContentType[] contentTypes = manager.getAllContentTypes();
             for (int i = 0; i < contentTypes.length; i++) {
                 IContentType type = contentTypes[i];
-                if (Util.equals(type.getBaseType(), baseType))
-                    elements.add(type);
+                if (Util.equals(type.getBaseType(), baseType)) {
+					elements.add(type);
+				}
             }
             return elements.toArray();
         }
@@ -344,8 +347,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             public void widgetSelected(SelectionEvent e) {
                 try {
                     String text = charsetField.getText().trim();
-                    if (text.length() == 0)
-                        text = null;
+                    if (text.length() == 0) {
+						text = null;
+					}
                     getSelectedContentType().setDefaultCharset(text);
                     setButton.setEnabled(false);
                 } catch (CoreException e1) {
@@ -364,8 +368,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             public void keyReleased(KeyEvent e) {
                 IContentType contentType = getSelectedContentType();
                 String charset = contentType.getDefaultCharset();
-                if (charset == null)
-                    charset = ""; //$NON-NLS-1$
+                if (charset == null) {
+					charset = ""; //$NON-NLS-1$
+				}
                 setButton.setEnabled(!charset.equals(charsetField.getText()));
             }
         });
@@ -408,8 +413,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                             List elements = selection.toList();
                             for (Iterator i = elements.iterator(); i.hasNext();) {
                                 Spec spec = (Spec) i.next();
-                                if (spec.isPredefined)
-                                    enabled = false;
+                                if (spec.isPredefined) {
+									enabled = false;
+								}
                             }
                             removeButton.setEnabled(enabled);
                         }
@@ -560,11 +566,13 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                             if (contentType != null) {
                                 String charset = contentType
                                         .getDefaultCharset();
-                                if (charset == null)
-                                    charset = ""; //$NON-NLS-1$
+                                if (charset == null) {
+									charset = ""; //$NON-NLS-1$
+								}
                                 charsetField.setText(charset);
-                            } else
-                                charsetField.setText(""); //$NON-NLS-1$
+                            } else {
+								charsetField.setText(""); //$NON-NLS-1$
+							}
 
                             charsetField.setEnabled(contentType != null);
                             addButton.setEnabled(contentType != null);

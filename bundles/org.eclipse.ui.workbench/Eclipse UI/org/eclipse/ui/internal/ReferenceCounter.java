@@ -85,8 +85,9 @@ public class ReferenceCounter {
      */
     public int addRef(Object id) {
         RefRec rec = (RefRec) mapIdToRec.get(id);
-        if (rec == null)
-            return 0;
+        if (rec == null) {
+			return 0;
+		}
         return rec.addRef();
     }
 
@@ -98,8 +99,9 @@ public class ReferenceCounter {
      */
     public Object get(Object id) {
         RefRec rec = (RefRec) mapIdToRec.get(id);
-        if (rec == null)
-            return null;
+        if (rec == null) {
+			return null;
+		}
         return rec.getValue();
     }
 
@@ -134,11 +136,13 @@ public class ReferenceCounter {
      */
     public int removeRef(Object id) {
         RefRec rec = (RefRec) mapIdToRec.get(id);
-        if (rec == null)
-            return 0;
+        if (rec == null) {
+			return 0;
+		}
         int newCount = rec.removeRef();
-        if (newCount <= 0)
-            mapIdToRec.remove(id);
+        if (newCount <= 0) {
+			mapIdToRec.remove(id);
+		}
         return newCount;
     }
 

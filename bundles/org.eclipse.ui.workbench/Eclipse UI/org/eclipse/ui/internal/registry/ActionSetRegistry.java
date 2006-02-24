@@ -128,8 +128,9 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
         Iterator i = children.iterator();
         while (i.hasNext()) {
             IActionSetDescriptor desc = (IActionSetDescriptor) i.next();
-            if (desc.getId().equals(id))
-                return desc;
+            if (desc.getId().equals(id)) {
+				return desc;
+			}
         }
         return null;
     }
@@ -159,17 +160,18 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
         
         // get the action set ids for this part
         ArrayList actionSetIds = (ArrayList) mapPartToActionSetIds.get(partId);
-        if (actionSetIds == null)
-            return new IActionSetDescriptor[0];
+        if (actionSetIds == null) {
+			return new IActionSetDescriptor[0];
+		}
         
         // resolve to action sets
         actionSets = new ArrayList(actionSetIds.size());
         for (Iterator i = actionSetIds.iterator(); i.hasNext();) {
             String actionSetId = (String) i.next();
             IActionSetDescriptor actionSet = findActionSet(actionSetId);
-            if (actionSet != null)
-                actionSets.add(actionSet);
-            else {
+            if (actionSet != null) {
+				actionSets.add(actionSet);
+			} else {
                WorkbenchPlugin.log("Unable to associate action set with part: " + //$NON-NLS-1$
                         partId + ". Action set " + actionSetId + " not found."); //$NON-NLS-2$ //$NON-NLS-1$
             }
@@ -300,11 +302,13 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
                 ActionSetPartAssociation association = (ActionSetPartAssociation) object;
                 String actionSetId = association.actionSetId;
                 ArrayList actionSets = (ArrayList) mapPartToActionSetIds.get(association.partId);
-                if (actionSets == null)
-                    return;
+                if (actionSets == null) {
+					return;
+				}
                 actionSets.remove(actionSetId);
-                if (actionSets.isEmpty())
-                    mapPartToActionSetIds.remove(association.partId);  
+                if (actionSets.isEmpty()) {
+					mapPartToActionSetIds.remove(association.partId);
+				}  
             }
         }
         // TODO: optimize
@@ -330,8 +334,9 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
                         .hasNext();) {
                     ArrayList list = (ArrayList) j.next();
                     list.remove(desc.getId());
-                    if (list.isEmpty())
-                        j.remove();
+                    if (list.isEmpty()) {
+						j.remove();
+					}
                 }
             }
         }

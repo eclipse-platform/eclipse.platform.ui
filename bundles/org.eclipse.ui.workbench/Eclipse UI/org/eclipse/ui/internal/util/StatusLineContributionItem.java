@@ -102,29 +102,33 @@ public class StatusLineContributionItem extends ContributionItem {
     }
 
     public void setText(String text) {
-        if (text == null)
-            throw new NullPointerException();
+        if (text == null) {
+			throw new NullPointerException();
+		}
 
         this.text = text;
 
-        if (label != null && !label.isDisposed())
-            label.setText(this.text);
+        if (label != null && !label.isDisposed()) {
+			label.setText(this.text);
+		}
 
         if (this.text.length() == 0) {
             if (isVisible()) {
                 setVisible(false);
                 IContributionManager contributionManager = getParent();
 
-                if (contributionManager != null)
-                    contributionManager.update(true);
+                if (contributionManager != null) {
+					contributionManager.update(true);
+				}
             }
         } else {
             if (!isVisible()) {
                 setVisible(true);
                 IContributionManager contributionManager = getParent();
 
-                if (contributionManager != null)
-                    contributionManager.update(true);
+                if (contributionManager != null) {
+					contributionManager.update(true);
+				}
             }
         }
     }

@@ -255,10 +255,12 @@ public class EditorList {
         editorsTable.setMenu(menuMgr.createContextMenu(editorsTable));
         editorsTable.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
-                if (e.character == SWT.ESC)
-                    destroyControl();
-                if (e.character == ' ' || e.character == SWT.CR)
-                    handleSelectionEvent(true);
+                if (e.character == SWT.ESC) {
+					destroyControl();
+				}
+                if (e.character == ' ' || e.character == SWT.CR) {
+					handleSelectionEvent(true);
+				}
             }
 
             public void keyReleased(KeyEvent e) {
@@ -621,8 +623,9 @@ public class EditorList {
                     - selectedItems.length);
             outerLoop: for (int i = 0; i < allItems.length; i++) {
                 for (int j = 0; j < selectedItems.length; j++) {
-                    if (allItems[i] == selectedItems[j])
-                        continue outerLoop;
+                    if (allItems[i] == selectedItems[j]) {
+						continue outerLoop;
+					}
                 }
                 invertedSelection.add(allItems[i]);
             }
@@ -639,8 +642,9 @@ public class EditorList {
             ArrayList cleanItems = new ArrayList(allItems.length);
             for (int i = 0; i < allItems.length; i++) {
                 Adapter editor = (Adapter) allItems[i].getData(editorListData);
-                if (!editor.isDirty())
-                    cleanItems.add(allItems[i]);
+                if (!editor.isDirty()) {
+					cleanItems.add(allItems[i]);
+				}
             }
             TableItem result[] = new TableItem[cleanItems.size()];
             cleanItems.toArray(result);

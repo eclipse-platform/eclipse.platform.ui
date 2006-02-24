@@ -84,8 +84,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 		 */
 		public IEditorDescriptor[] getRelatedObjects(IContentType type) {			
 			IEditorDescriptor[] relatedObjects = (IEditorDescriptor[]) contentTypeToEditorMappings.get(type);
-			if (relatedObjects == null)
+			if (relatedObjects == null) {
 				return EMPTY;
+			}
 			return relatedObjects;
 		}
 
@@ -96,8 +97,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 		 */
 		public IEditorDescriptor[] getRelatedObjects(String fileName) {
 			IFileEditorMapping mapping = getMappingFor(fileName);
-			if (mapping == null)
+			if (mapping == null) {
 				return EMPTY;
+			}
 			
 			return mapping.getEditors();
 		}
@@ -198,8 +200,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                             mapping);
                 }
                 mapping.addEditor(editor);
-                if (bDefault)
-                    mapping.setDefaultEditor(editor);
+                if (bDefault) {
+					mapping.setDefaultEditor(editor);
+				}
             }
         }
 
@@ -226,8 +229,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                             mapping);
                 }
                 mapping.addEditor(editor);
-                if (bDefault)
-                    mapping.setDefaultEditor(editor);
+                if (bDefault) {
+					mapping.setDefaultEditor(editor);
+				}
             }
         }
 		
@@ -395,8 +399,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * @return the mapping, or <code>null</code>
      */
     private FileEditorMapping getMappingFor(String ext) {
-        if (ext == null)
-            return null;
+        if (ext == null) {
+			return null;
+		}
         String key = mappingKeyFor(ext);
         return typeEditorMappings.get(key);
     }
@@ -572,8 +577,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * @param defaultEditors the default editors to set
      */
     private void setProductDefaults(String defaultEditors) {
-        if (defaultEditors == null || defaultEditors.length() == 0)
-            return;
+        if (defaultEditors == null || defaultEditors.length() == 0) {
+			return;
+		}
 
         StringTokenizer extEditors = new StringTokenizer(defaultEditors,
                 new Character(IPreferenceConstants.SEPARATOR).toString());
@@ -615,8 +621,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     private boolean readEditors(Map editorTable) {
         //Get the workbench plugin's working directory
         IPath workbenchStatePath = WorkbenchPlugin.getDefault().getDataLocation();
-        if(workbenchStatePath == null)
-        	return false;        
+        if(workbenchStatePath == null) {
+			return false;
+		}        
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         Reader reader = null;
@@ -660,20 +667,22 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                 } else { //This is either from a program or a user defined
                     // editor
                     ImageDescriptor descriptor;
-                    if (editor.getProgram() == null)
-                        descriptor = new ProgramImageDescriptor(editor
+                    if (editor.getProgram() == null) {
+						descriptor = new ProgramImageDescriptor(editor
                                 .getFileName(), 0);
-                    else
-                        descriptor = new ExternalProgramImageDescriptor(editor
+					} else {
+						descriptor = new ExternalProgramImageDescriptor(editor
                                 .getProgram());
+					}
                     editor.setImageDescriptor(descriptor);
                     editorTable.put(editor.getId(), editor);
                 }
             }
         } catch (IOException e) {
             try {
-                if (reader != null)
-                    reader.close();
+                if (reader != null) {
+					reader.close();
+				}
             } catch (IOException ex) {
                 e.printStackTrace();
             }
@@ -710,8 +719,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         for (int i = 0; i < extMementos.length; i++) {
             String name = extMementos[i]
                     .getString(IWorkbenchConstants.TAG_NAME);
-            if (name == null)
-                name = "*"; //$NON-NLS-1$
+            if (name == null) {
+				name = "*"; //$NON-NLS-1$
+			}
             String extension = extMementos[i]
                     .getString(IWorkbenchConstants.TAG_EXTENSION);
             IMemento[] idMementos = extMementos[i]
@@ -816,8 +826,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         while (i.hasNext()) {
             currentEditorDescriptor = (IEditorDescriptor) i.next();
             if (currentEditorDescriptor.getId()
-                    .equals(editorDescriptor.getId()))
-                return true;
+                    .equals(editorDescriptor.getId())) {
+				return true;
+			}
         }
         return false;
 
@@ -835,7 +846,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         //Get the workbench plugin's working directory
         IPath workbenchStatePath = WorkbenchPlugin.getDefault().getDataLocation();
         // XXX: nobody cares about this return value
-        if(workbenchStatePath == null) return false;
+        if(workbenchStatePath == null) {
+			return false;
+		}
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         Reader reader = null;
@@ -855,8 +868,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             readResources(editorTable, reader);
         } catch (IOException e) {
             try {
-                if (reader != null)
-                    reader.close();
+                if (reader != null) {
+					reader.close();
+				}
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -1002,8 +1016,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             store.setValue(IPreferenceConstants.RESOURCES, writer.toString());
         } catch (IOException e) {
             try {
-                if (writer != null)
-                    writer.close();
+                if (writer != null) {
+					writer.close();
+				}
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -1028,8 +1043,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             store.setValue(IPreferenceConstants.EDITORS, writer.toString());
         } catch (IOException e) {
             try {
-                if (writer != null)
-                    writer.close();
+                if (writer != null) {
+					writer.close();
+				}
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -1065,10 +1081,12 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     public void setDefaultEditor(String fileName, String editorId) {
         EditorDescriptor desc = (EditorDescriptor) findEditor(editorId);
         FileEditorMapping[] mapping = getMappingForFilename(fileName);
-        if (mapping[0] != null)
-            mapping[0].setDefaultEditor(desc);
-        if (mapping[1] != null)
-            mapping[1].setDefaultEditor(desc);
+        if (mapping[0] != null) {
+			mapping[0].setDefaultEditor(desc);
+		}
+        if (mapping[1] != null) {
+			mapping[1].setDefaultEditor(desc);
+		}
     }
 
     /**
@@ -1125,10 +1143,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
          */
         public void put(String key, FileEditorMapping value) {
             Object result = defaultMap.get(key);
-            if (value.equals(result))
-                map.remove(key);
-            else
-                map.put(key, value);
+            if (value.equals(result)) {
+				map.remove(key);
+			} else {
+				map.put(key, value);
+			}
         }
 
         /**
@@ -1142,8 +1161,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
          */
         public FileEditorMapping get(String key) {
             Object result = map.get(key);
-            if (result == null)
-                result = defaultMap.get(key);
+            if (result == null) {
+				result = defaultMap.get(key);
+			}
             return (FileEditorMapping) result;
         }
 
@@ -1233,11 +1253,12 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         while (iter.hasNext()) {
             mapping = (FileEditorMapping) iter.next();
             editors = mapping.getEditors();
-            for (int i = 0; i < editors.length; i++)
-                if (editors[i] == desc) {
+            for (int i = 0; i < editors.length; i++) {
+				if (editors[i] == desc) {
                     mapping.removeEditor((EditorDescriptor) editors[i]);
                     break;
                 }
+			}
             if (editors.length <= 0) {
                 map.remove(mapping);
                 break;
@@ -1272,8 +1293,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         IConfigurationElement[] elements = extension.getConfigurationElements();
         for (int i = 0; i < elements.length; i++) {
             String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            if (id != null && findEditor(id) != null)
-                continue;
+            if (id != null && findEditor(id) != null) {
+				continue;
+			}
             eReader.readElement(this, elements[i]);
         }
 	}
@@ -1318,15 +1340,17 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 	 * @see org.eclipse.ui.IEditorRegistry#getImageDescriptor(java.lang.String, org.eclipse.core.runtime.content.IContentType)
 	 */
 	public ImageDescriptor getImageDescriptor(String filename, IContentType contentType) {
-        if (filename == null)
-            return getDefaultImage();
+        if (filename == null) {
+			return getDefaultImage();
+		}
 
 		if (contentType != null) {
 			IEditorDescriptor desc = getEditorForContentType(filename, contentType);
 			if (desc != null) {
 				ImageDescriptor anImage = (ImageDescriptor) extensionImages.get(desc);	
-				if (anImage != null)
+				if (anImage != null) {
 					return anImage;
+				}
 				anImage = desc.getImageDescriptor();
 				extensionImages.put(desc, anImage);
 				return anImage;				
@@ -1335,8 +1359,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         // Lookup in the cache first...
         String key = mappingKeyFor(filename);
         ImageDescriptor anImage = (ImageDescriptor) extensionImages.get(key);
-        if (anImage != null)
-            return anImage;
+        if (anImage != null) {
+			return anImage;
+		}
 
         // See if we have a mapping for the filename or extension
         FileEditorMapping[] mapping = getMappingForFilename(filename);
@@ -1346,8 +1371,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                 String mappingKey = mappingKeyFor(mapping[i]);
                 ImageDescriptor mappingImage = (ImageDescriptor) extensionImages
                         .get(key);
-                if (mappingImage != null)
-                    return mappingImage;
+                if (mappingImage != null) {
+					return mappingImage;
+				}
                 // Create it and cache it
                 IEditorDescriptor editor = mapping[i].getDefaultEditor();
                 if (editor != null) {
@@ -1360,8 +1386,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 
         // Nothing - time to look externally for the icon
         anImage = getSystemExternalEditorImageDescriptor(filename);
-        if (anImage == null)
-            anImage = getDefaultImage();
+        if (anImage == null) {
+			anImage = getDefaultImage();
+		}
         //	for dynamic UI - comment out the next line
         //extensionImages.put(key, anImage);
         return anImage;
@@ -1394,8 +1421,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 					// we don't want to return duplicates
 					if (!allRelated.contains(related[i])) {
 						// if it's not filtered, add it to the list
-						if (!WorkbenchActivityHelper.filterItem(related[i]))
+						if (!WorkbenchActivityHelper.filterItem(related[i])) {
 							allRelated.add(related[i]);
+						}
 					}
 				}
 				
@@ -1415,8 +1443,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 						// we don't want to return duplicates
 						if (!allRelated.contains(related[i])) {
 							// if it's not filtered, add it to the list
-							if (!WorkbenchActivityHelper.filterItem(related[i]))
+							if (!WorkbenchActivityHelper.filterItem(related[i])) {
 								allRelated.add(related[i]);
+							}
 						}
 					}
 					nonDefaultFileEditors.addAll(Arrays.asList(mapping.getEditors()));
@@ -1431,8 +1460,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 				// we don't want to return duplicates
 				if (!allRelated.contains(related[i])) {
 					// if it's not filtered, add it to the list
-					if (!WorkbenchActivityHelper.filterItem(related[i]))
+					if (!WorkbenchActivityHelper.filterItem(related[i])) {
 						allRelated.add(related[i]);
+					}
 				}
 			}
 
@@ -1446,8 +1476,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 					// we don't want to return duplicates
 					if (!allRelated.contains(related[i])) {
 						// if it's not filtered, add it to the list
-						if (!WorkbenchActivityHelper.filterItem(related[i]))
+						if (!WorkbenchActivityHelper.filterItem(related[i])) {
 							allRelated.add(related[i]);
+						}
 					}
 				}
 			}
@@ -1456,8 +1487,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 		// add all non-default editors to the list
 		for (Iterator i = nonDefaultFileEditors.iterator(); i.hasNext();) {
 			IEditorDescriptor editor = (IEditorDescriptor) i.next();
-			if (!allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor))
+			if (!allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
 				allRelated.add(editor);
+			}
 		}
 		
 		return (IEditorDescriptor []) allRelated.toArray(new IEditorDescriptor [allRelated
@@ -1475,16 +1507,18 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 	 */
 	public IEditorDescriptor [] getEditorsForContentType(IContentType type) {
 		ArrayList allRelated = new ArrayList();
-		if (type == null) 
+		if (type == null) {
 			return new IEditorDescriptor [0];
+		}
 		
 		Object [] related = relatedRegistry.getRelatedObjects(type);
 		for (int i = 0; i < related.length; i++) {	
 			// we don't want to return duplicates
 			if (!allRelated.contains(related[i])) {
 				// if it's not filtered, add it to the list
-				if (!WorkbenchActivityHelper.filterItem(related[i]))
+				if (!WorkbenchActivityHelper.filterItem(related[i])) {
 					allRelated.add(related[i]);
+				}
 				
 			}
 		}
@@ -1496,8 +1530,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 				// we don't want to return duplicates
 				if (!allRelated.contains(related[i])) {
 					// if it's not filtered, add it to the list
-					if (!WorkbenchActivityHelper.filterItem(related[i]))
+					if (!WorkbenchActivityHelper.filterItem(related[i])) {
 						allRelated.add(related[i]);
+					}
 				}
 			}
 		}

@@ -71,14 +71,16 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
 			for (int i = 0; i < references.length; i++) {
 				IConfigurationElement page = references[i];
 				String id = page.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-				if (id != null)
+				if (id != null) {
 					list.add(id);
+				}
 			}
 
-			if (!list.isEmpty())
+			if (!list.isEmpty()) {
 				keywordReferences = list;
-			else
+			} else {
 				keywordReferences = Collections.EMPTY_SET;
+			}
 			
 		}
 		return keywordReferences;
@@ -90,8 +92,9 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
 	 * @return Collection of <code>String</code>.  Never <code>null</code>.
 	 */
 	public Collection getKeywordLabels() {
-		if (keywordLabelCache != null)
+		if (keywordLabelCache != null) {
 			return keywordLabelCache;
+		}
 		
 		Collection refs = getKeywordReferences();
 		
@@ -105,8 +108,9 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
 		while(referenceIterator.hasNext()){
 			Object label = KeywordRegistry.getInstance().getKeywordLabel(
 					(String) referenceIterator.next());
-			if(label != null)
+			if(label != null) {
 				keywordLabelCache.add(label);
+			}
 		}
 		
 		return keywordLabelCache;
@@ -136,8 +140,9 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
 	public Image getLabelImage() {		
         if (image == null) {
         	ImageDescriptor desc = getImageDescriptor();
-        	if (desc != null)
-        		image = imageDescriptor.createImage();
+        	if (desc != null) {
+				image = imageDescriptor.createImage();
+			}
         }
         return image;
     }
@@ -156,8 +161,9 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
      * @return the image descriptor
      */
     public ImageDescriptor getImageDescriptor() {
-    	if (imageDescriptor != null) 
-    		return imageDescriptor;
+    	if (imageDescriptor != null) {
+			return imageDescriptor;
+		}
     	
     	String imageName = getConfigurationElement().getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (imageName != null) {

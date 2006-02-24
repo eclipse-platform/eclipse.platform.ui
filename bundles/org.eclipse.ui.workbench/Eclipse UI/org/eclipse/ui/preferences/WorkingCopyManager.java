@@ -37,8 +37,9 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	 * @see org.eclipse.ui.preferences.IWorkingCopyManager#getWorkingCopy(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 	 */
 	public IEclipsePreferences getWorkingCopy(IEclipsePreferences original) {
-		if (original instanceof WorkingCopyPreferences)
+		if (original instanceof WorkingCopyPreferences) {
 			throw new IllegalArgumentException("Trying to get a working copy of a working copy"); //$NON-NLS-1$
+		}
 		String absolutePath = original.absolutePath();
 		IEclipsePreferences preferences = (IEclipsePreferences) workingCopies.get(absolutePath);
 		if (preferences == null) {
@@ -53,8 +54,9 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	 * @see org.eclipse.ui.preferences.IWorkingCopyManager#applyChanges()
 	 */
 	public void applyChanges() throws BackingStoreException {
-		for (Iterator i = workingCopies.values().iterator(); i.hasNext();)
+		for (Iterator i = workingCopies.values().iterator(); i.hasNext();) {
 			((WorkingCopyPreferences) i.next()).flush();
+		}
 	}
 
 }

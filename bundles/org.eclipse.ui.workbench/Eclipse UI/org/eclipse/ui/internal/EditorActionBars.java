@@ -53,10 +53,11 @@ public class EditorActionBars extends SubActionBars2 {
 		public Boolean getEnabled(IContributionItem item) {
 			if (((item instanceof ActionContributionItem) && (((ActionContributionItem) item)
 					.getAction() instanceof RetargetAction))
-					|| enabledAllowed)
+					|| enabledAllowed) {
 				return null;
-			else
+			} else {
 				return Boolean.FALSE;
+			}
 		}
 
 		public String getText(IContributionItem item) {
@@ -140,10 +141,12 @@ public class EditorActionBars extends SubActionBars2 {
 	 */
 	public void dispose() {
 		super.dispose();
-		if (editorContributor != null)
+		if (editorContributor != null) {
 			editorContributor.dispose();
-		if (extensionContributor != null)
+		}
+		if (extensionContributor != null) {
 			extensionContributor.dispose();
+		}
 
 		/*
 		 * Dispose of the contribution item, but also make sure that no one else
@@ -308,8 +311,9 @@ public class EditorActionBars extends SubActionBars2 {
 	 * @return <code>true</code> if the manager is visible
 	 */
 	private boolean isVisible() {
-		if (toolBarContributionItem != null)
+		if (toolBarContributionItem != null) {
 			return toolBarContributionItem.isVisible();
+		}
 		return false;
 	}
 
@@ -324,10 +328,12 @@ public class EditorActionBars extends SubActionBars2 {
 		if (part instanceof IEditorPart) {
 			IEditorPart editor = (IEditorPart) part;
 			setServiceLocator(editor.getEditorSite());
-			if (editorContributor != null)
+			if (editorContributor != null) {
 				editorContributor.setActiveEditor(editor);
-			if (extensionContributor != null)
+			}
+			if (extensionContributor != null) {
 				extensionContributor.setActiveEditor(editor);
+			}
 		}
 	}
 
@@ -348,12 +354,14 @@ public class EditorActionBars extends SubActionBars2 {
 	 */
 	private void setActive(boolean set, boolean forceVisibility) {
 		basicSetActive(set);
-		if (isSubMenuManagerCreated())
+		if (isSubMenuManagerCreated()) {
 			((EditorMenuManager) getMenuManager()).setVisible(set,
 					forceVisibility);
+		}
 
-		if (isSubStatusLineManagerCreated())
+		if (isSubStatusLineManagerCreated()) {
 			((SubStatusLineManager) getStatusLineManager()).setVisible(set);
+		}
 
 		setVisible(set, forceVisibility);
 	}
@@ -373,8 +381,9 @@ public class EditorActionBars extends SubActionBars2 {
 	 * @since 2.0
 	 */
 	private void setEnabledAllowed(boolean enabledAllowed) {
-		if (this.enabledAllowed == enabledAllowed)
+		if (this.enabledAllowed == enabledAllowed) {
 			return;
+		}
 		this.enabledAllowed = enabledAllowed;
 		if (coolItemToolBarMgr != null) {
 			IContributionItem[] items = coolItemToolBarMgr.getItems();
@@ -430,15 +439,17 @@ public class EditorActionBars extends SubActionBars2 {
 	private void setVisible(boolean visible, boolean forceVisibility) {
 		if (visible) {
 			setEnabledAllowed(true);
-			if (!isVisible())
+			if (!isVisible()) {
 				setVisible(true);
+			}
 		} else {
-			if (forceVisibility)
+			if (forceVisibility) {
 				// Remove the editor tool bar items
 				setVisible(false);
-			else
+			} else {
 				// Disabled the tool bar items.
 				setEnabledAllowed(false);
+			}
 		}
 
 		ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();

@@ -59,8 +59,9 @@ public class ProductProperties extends BrandingProperties implements
 
     private static String[] loadMappings() {
         IProduct product = Platform.getProduct();
-        if (product == null)
-            return new String[0];
+        if (product == null) {
+			return new String[0];
+		}
         URL location = Platform.find(product.getDefiningBundle(), new Path(
                 ABOUT_MAPPINGS));
         PropertyResourceBundle bundle = null;
@@ -74,8 +75,9 @@ public class ProductProperties extends BrandingProperties implements
                 bundle = null;
             } finally {
                 try {
-                    if (is != null)
-                        is.close();
+                    if (is != null) {
+						is.close();
+					}
                 } catch (IOException e) {
                     // do nothing if we fail to close
                 }
@@ -104,8 +106,9 @@ public class ProductProperties extends BrandingProperties implements
      * @param product must not be null
      */
     public ProductProperties(IProduct product) {
-        if (product == null)
-            throw new IllegalArgumentException();
+        if (product == null) {
+			throw new IllegalArgumentException();
+		}
         this.product = product;
     }
 
@@ -120,8 +123,9 @@ public class ProductProperties extends BrandingProperties implements
      * @see org.eclipse.swt.widgets.Display#setAppName
      */
     public String getAppName() {
-        if (appName == null)
-            appName = getAppName(product);
+        if (appName == null) {
+			appName = getAppName(product);
+		}
         return appName;
     }
 
@@ -131,8 +135,9 @@ public class ProductProperties extends BrandingProperties implements
      * have such text.
      */
     public String getAboutText() {
-        if (aboutText == null)
-            aboutText = getAboutText(product);
+        if (aboutText == null) {
+			aboutText = getAboutText(product);
+		}
         return aboutText;
     }
 
@@ -147,8 +152,9 @@ public class ProductProperties extends BrandingProperties implements
      * blurb beside it.
      */
     public ImageDescriptor getAboutImage() {
-        if (aboutImageDescriptor == null)
-            aboutImageDescriptor = getAboutImage(product);
+        if (aboutImageDescriptor == null) {
+			aboutImageDescriptor = getAboutImage(product);
+		}
         return aboutImageDescriptor;
     }
 
@@ -162,8 +168,9 @@ public class ProductProperties extends BrandingProperties implements
      * </p>
      */
     public ImageDescriptor[] getWindowImages() {
-        if (windowImageDescriptors == null)
-            windowImageDescriptors = getWindowImages(product);
+        if (windowImageDescriptors == null) {
+			windowImageDescriptors = getWindowImages(product);
+		}
         return windowImageDescriptors;
     }
 
@@ -175,8 +182,9 @@ public class ProductProperties extends BrandingProperties implements
      * org.eclipse.ui.intro extension point should be used instead.
      */
     public URL getWelcomePageUrl() {
-        if (welcomePageUrl == null)
-            welcomePageUrl = getWelcomePageUrl(product);
+        if (welcomePageUrl == null) {
+			welcomePageUrl = getWelcomePageUrl(product);
+		}
         return welcomePageUrl;
     }
 
@@ -185,8 +193,9 @@ public class ProductProperties extends BrandingProperties implements
      * This is shown in the window title and the About action.
      */
     public String getProductName() {
-        if (productName == null)
-            productName = getProductName(product);
+        if (productName == null) {
+			productName = getProductName(product);
+		}
         return productName;
     }
 
@@ -194,8 +203,9 @@ public class ProductProperties extends BrandingProperties implements
      * Returns the id for the product or <code>null</code> if none.
      */
     public String getProductId() {
-        if (productId == null)
-            productId = getProductId(product);
+        if (productId == null) {
+			productId = getProductId(product);
+		}
         return productId;
     }
 
@@ -215,10 +225,12 @@ public class ProductProperties extends BrandingProperties implements
      */
     public static String getAppName(IProduct product) {
         String property = product.getProperty(APP_NAME);
-        if (property == null)
-            return ""; //$NON-NLS-1$
-        if (property.indexOf('{') == -1)
-            return property;
+        if (property == null) {
+			return ""; //$NON-NLS-1$
+		}
+        if (property.indexOf('{') == -1) {
+			return property;
+		}
         return MessageFormat.format(property, mappings);
     }
 
@@ -233,10 +245,12 @@ public class ProductProperties extends BrandingProperties implements
      */
     public static String getAboutText(IProduct product) {
         String property = product.getProperty(ABOUT_TEXT);
-        if (property == null)
-            return ""; //$NON-NLS-1$
-        if (property.indexOf('{') == -1)
-            return property;
+        if (property == null) {
+			return ""; //$NON-NLS-1$
+		}
+        if (property.indexOf('{') == -1) {
+			return property;
+		}
         return MessageFormat.format(property, mappings);
     }
 
@@ -268,8 +282,9 @@ public class ProductProperties extends BrandingProperties implements
         String property = product.getProperty(WINDOW_IMAGES);
 
         // for compatibility with pre-3.0 plugins that may still use WINDOW_IMAGE
-        if (property == null)
-            property = product.getProperty(WINDOW_IMAGE);
+        if (property == null) {
+			property = product.getProperty(WINDOW_IMAGE);
+		}
 
         return getImages(property, product.getDefiningBundle());
     }

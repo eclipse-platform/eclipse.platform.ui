@@ -94,11 +94,12 @@ public class ListDialog extends SelectionDialog {
     }
 
     protected void createButtonsForButtonBar(Composite parent) {
-        if (!fAddCancelButton)
-            createButton(parent, IDialogConstants.OK_ID,
+        if (!fAddCancelButton) {
+			createButton(parent, IDialogConstants.OK_ID,
                     IDialogConstants.OK_LABEL, true);
-        else
-            super.createButtonsForButtonBar(parent);
+		} else {
+			super.createButtonsForButtonBar(parent);
+		}
     }
 
     protected Control createDialogArea(Composite container) {
@@ -110,14 +111,16 @@ public class ListDialog extends SelectionDialog {
         fTableViewer.setInput(fInput);
         fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
-                if (fAddCancelButton)
-                    okPressed();
+                if (fAddCancelButton) {
+					okPressed();
+				}
             }
         });
         List initialSelection = getInitialElementSelections();
-        if (initialSelection != null)
-            fTableViewer
+        if (initialSelection != null) {
+			fTableViewer
                     .setSelection(new StructuredSelection(initialSelection));
+		}
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.heightHint = convertHeightInCharsToPixels(heightInChars);
         gd.widthHint = convertWidthInCharsToPixels(widthInChars);

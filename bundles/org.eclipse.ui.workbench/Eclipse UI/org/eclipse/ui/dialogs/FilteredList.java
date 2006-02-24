@@ -144,10 +144,11 @@ public class FilteredList extends Composite {
 		 * @param image
 		 */
 		public Label(String newString, Image image) {
-			if (newString == null)
+			if (newString == null) {
 				this.string = Util.ZERO_LENGTH_STRING;
-			else
+			} else {
 				this.string = newString;
+			}
 			this.image = image;
 		}
 
@@ -158,16 +159,20 @@ public class FilteredList extends Composite {
 		 * @return boolean
 		 */
 		public boolean equals(Label label) {
-			if (label == null)
+			if (label == null) {
 				return false;
+			}
 			// If the string portions match (whether null or not), fall
 			// through and check the image portion.
-			if (string == null && label.string != null)
+			if (string == null && label.string != null) {
 				return false;
-			if ((string != null) && (!string.equals(label.string)))
+			}
+			if ((string != null) && (!string.equals(label.string))) {
 				return false;
-			if (image == null)
+			}
+			if (image == null) {
 				return label.image == null;
+			}
 			return image.equals(label.image);
 		}
 	}
@@ -191,8 +196,9 @@ public class FilteredList extends Composite {
 				value = fComparator
 						.compare(leftLabel.string, rightLabel.string);
 			}
-			if (value != 0)
+			if (value != 0) {
 				return value;
+			}
 			// images are allowed to be null
 			if (leftLabel.image == null) {
 				return (rightLabel.image == null) ? 0 : -1;
@@ -236,8 +242,9 @@ public class FilteredList extends Composite {
 		fList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				fLabelProvider.dispose();
-				if (fUpdateJob != null)
+				if (fUpdateJob != null) {
 					fUpdateJob.cancel();
+				}
 			}
 		});
 		fLabelProvider = labelProvider;
@@ -336,18 +343,19 @@ public class FilteredList extends Composite {
 	 *            an array of indices specifying the selection.
 	 */
 	public void setSelection(int[] selection) {
-		if (selection == null || selection.length == 0)
+		if (selection == null || selection.length == 0) {
 			fList.deselectAll();
-		else {
+		} else {
 			// If there is no working update job, or the update job is ready to
 			// accept selections, set the selection immediately.
 			if (fUpdateJob == null) {
 				fList.setSelection(selection);
 				fList.notifyListeners(SWT.Selection, new Event());
-			} else
+			} else {
 				// There is an update job doing the population of the list, so
 				// it should update the selection.
 				fUpdateJob.updateSelection(selection);
+			}
 		}
 	}
 
@@ -381,8 +389,9 @@ public class FilteredList extends Composite {
 			fList.deselectAll();
 			return;
 		}
-		if (fElements == null)
+		if (fElements == null) {
 			return;
+		}
 		// fill indices
 		int[] indices = new int[elements.length];
 		for (int i = 0; i != elements.length; i++) {
@@ -398,12 +407,14 @@ public class FilteredList extends Composite {
 						break;
 					}
 				}
-				if (l != max)
+				if (l != max) {
 					break;
+				}
 			}
 			// not found
-			if (j == fFoldedCount)
+			if (j == fFoldedCount) {
 				indices[i] = 0;
+			}
 		}
 		setSelection(indices);
 	}
@@ -417,12 +428,14 @@ public class FilteredList extends Composite {
 	 * @return returns the array of selected elements.
 	 */
 	public Object[] getSelection() {
-		if (fList.isDisposed() || (fList.getSelectionCount() == 0))
+		if (fList.isDisposed() || (fList.getSelectionCount() == 0)) {
 			return new Object[0];
+		}
 		int[] indices = fList.getSelectionIndices();
 		Object[] elements = new Object[indices.length];
-		for (int i = 0; i != indices.length; i++)
+		for (int i = 0; i != indices.length; i++) {
 			elements[i] = fElements[fFilteredIndices[fFoldedIndices[indices[i]]]];
+		}
 		return elements;
 	}
 
@@ -441,8 +454,9 @@ public class FilteredList extends Composite {
 	private void updateList() {
 		fFilteredCount = filter();
 		fFoldedCount = fold();
-		if (fUpdateJob != null)
+		if (fUpdateJob != null) {
 			fUpdateJob.cancel();
+		}
 		fUpdateJob = new TableUpdateJob(fList, fFoldedCount);
 		fUpdateJob.schedule();
 	}
@@ -465,14 +479,16 @@ public class FilteredList extends Composite {
 	 *         if index is out of range.
 	 */
 	public Object[] getFoldedElements(int index) {
-		if ((index < 0) || (index >= fFoldedCount))
+		if ((index < 0) || (index >= fFoldedCount)) {
 			return null;
+		}
 		int start = fFoldedIndices[index];
 		int count = (index == fFoldedCount - 1) ? fFilteredCount - start
 				: fFoldedIndices[index + 1] - start;
 		Object[] elements = new Object[count];
-		for (int i = 0; i != count; i++)
+		for (int i = 0; i != count; i++) {
 			elements[i] = fElements[fFilteredIndices[start + i]];
+		}
 		return elements;
 	}
 
@@ -483,8 +499,9 @@ public class FilteredList extends Composite {
 	 */
 	private int fold() {
 		if (fAllowDuplicates) {
-			for (int i = 0; i != fFilteredCount; i++)
+			for (int i = 0; i != fFilteredCount; i++) {
 				fFoldedIndices[i] = i; // identity mapping
+			}
 			return fFilteredCount;
 		}
 		int k = 0;
@@ -507,13 +524,15 @@ public class FilteredList extends Composite {
 	 */
 	private int filter() {
 		if (((fFilter == null) || (fFilter.length() == 0))
-				&& !fMatchEmptyString)
+				&& !fMatchEmptyString) {
 			return 0;
+		}
 		fFilterMatcher.setFilter(fFilter.trim(), fIgnoreCase, false);
 		int k = 0;
 		for (int i = 0; i != fElements.length; i++) {
-			if (fFilterMatcher.match(fElements[i]))
+			if (fFilterMatcher.match(fElements[i])) {
 				fFilteredIndices[k++] = i;
+			}
 		}
 		return k;
 	}
@@ -552,8 +571,9 @@ public class FilteredList extends Composite {
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 public IStatus runInUIThread(IProgressMonitor monitor) {
-            if (fTable.isDisposed())
-                return Status.CANCEL_STATUS;
+            if (fTable.isDisposed()) {
+				return Status.CANCEL_STATUS;
+			}
             int itemCount = fTable.getItemCount();
                         
             // Remove excess items
@@ -571,8 +591,9 @@ public IStatus runInUIThread(IProgressMonitor monitor) {
             // How many we are going to do this time.
             int iterations = Math.min(10, fCount - currentIndex);
             for (int i = 0; i < iterations; i++) {
-                if (monitor.isCanceled())
-                    return Status.CANCEL_STATUS;
+                if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
                 final TableItem item = (currentIndex < itemCount) ? fTable
                         .getItem(currentIndex)
                         : new TableItem(fTable, SWT.NONE);
@@ -581,11 +602,12 @@ public IStatus runInUIThread(IProgressMonitor monitor) {
                 item.setImage(label.image);
                 currentIndex++;
             }
-            if (monitor.isCanceled())
-                return Status.CANCEL_STATUS;
-            if (currentIndex < fCount)
-                schedule(100);
-            else {
+            if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+            if (currentIndex < fCount) {
+				schedule(100);
+			} else {
                 if (indicesToSelect == null) {
                  	// Make a default selection in the table if there is none.
                 	// If a selection has already been made, honor it.
@@ -641,8 +663,9 @@ public IStatus runInUIThread(IProgressMonitor monitor) {
 		private void selectAndNotify(final int[] indices) {
 			// It is possible that the table was disposed
 			// before the update finished. If so then leave
-			if (fTable.isDisposed())
+			if (fTable.isDisposed()) {
 				return;
+			}
 			fTable.setSelection(indices);
 			fTable.notifyListeners(SWT.Selection, new Event());
 		}

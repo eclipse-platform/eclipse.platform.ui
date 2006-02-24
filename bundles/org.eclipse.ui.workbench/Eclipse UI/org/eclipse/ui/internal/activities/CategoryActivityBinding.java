@@ -29,8 +29,9 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
     private transient String string;
 
     public CategoryActivityBinding(String activityId, String categoryId) {
-        if (activityId == null || categoryId == null)
-            throw new NullPointerException();
+        if (activityId == null || categoryId == null) {
+			throw new NullPointerException();
+		}
 
         this.activityId = activityId;
         this.categoryId = categoryId;
@@ -40,15 +41,17 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
         CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
         int compareTo = Util.compare(activityId, castedObject.activityId);
 
-        if (compareTo == 0)
-            compareTo = Util.compare(categoryId, castedObject.categoryId);
+        if (compareTo == 0) {
+			compareTo = Util.compare(categoryId, castedObject.categoryId);
+		}
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof CategoryActivityBinding))
-            return false;
+        if (!(object instanceof CategoryActivityBinding)) {
+			return false;
+		}
 
         final CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
         if (!Util.equals(activityId, castedObject.activityId)) {
@@ -70,8 +73,9 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
         if (hashCode == HASH_INITIAL){
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

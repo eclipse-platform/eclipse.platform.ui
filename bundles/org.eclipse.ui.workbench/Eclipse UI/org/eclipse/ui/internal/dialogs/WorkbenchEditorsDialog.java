@@ -115,10 +115,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
     private SelectionListener headerListener = new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
             int index = editorsTable.indexOf((TableColumn) e.widget);
-            if (index == sortColumn)
-                reverse = !reverse;
-            else
-                sortColumn = index;
+            if (index == sortColumn) {
+				reverse = !reverse;
+			} else {
+				sortColumn = index;
+			}
             updateItems();
         }
     };
@@ -151,8 +152,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
             array = s.getArray(COLUMNS);
             if (array != null) {
                 columnsWidth = new int[array.length];
-                for (int i = 0; i < columnsWidth.length; i++)
-                    columnsWidth[i] = new Integer(array[i]).intValue();
+                for (int i = 0; i < columnsWidth.length; i++) {
+					columnsWidth[i] = new Integer(array[i]).intValue();
+				}
             }
         }
     }
@@ -178,8 +180,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         createButton(parent, IDialogConstants.CANCEL_ID,
                 IDialogConstants.CANCEL_LABEL, false);
         Button button = getButton(IDialogConstants.CANCEL_ID);
-        if (button != null)
-            button.setText(WorkbenchMessages.WorkbenchEditorsDialog_close);
+        if (button != null) {
+			button.setText(WorkbenchMessages.WorkbenchEditorsDialog_close);
+		}
 
     }
 
@@ -418,16 +421,18 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         closeSelected.setEnabled(selectedItems.length > 0);
 
         Button ok = getOkButton();
-        if (ok != null)
-            ok.setEnabled(selectedItems.length == 1);
+        if (ok != null) {
+			ok.setEnabled(selectedItems.length == 1);
+		}
     }
 
     /**
      * Closes the specified editors
      */
     private void closeItems(TableItem items[]) {
-        if (items.length == 0)
-            return;
+        if (items.length == 0) {
+			return;
+		}
         for (int i = 0; i < items.length; i++) {
             Adapter e = (Adapter) items[i].getData();
             e.close();
@@ -439,8 +444,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
      * Saves the specified editors
      */
     private void saveItems(TableItem items[], IProgressMonitor monitor) {
-        if (items.length == 0)
-            return;
+        if (items.length == 0) {
+			return;
+		}
         ProgressMonitorDialog pmd = new ProgressMonitorJobsDialog(getShell());
         pmd.open();
         for (int i = 0; i < items.length; i++) {
@@ -456,13 +462,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
      * Returns all clean editors from items[];
      */
     private TableItem[] selectClean(TableItem items[]) {
-        if (items.length == 0)
-            return new TableItem[0];
+        if (items.length == 0) {
+			return new TableItem[0];
+		}
         ArrayList cleanItems = new ArrayList(items.length);
         for (int i = 0; i < items.length; i++) {
             Adapter editor = (Adapter) items[i].getData();
-            if (!editor.isDirty())
-                cleanItems.add(items[i]);
+            if (!editor.isDirty()) {
+				cleanItems.add(items[i]);
+			}
         }
         TableItem result[] = new TableItem[cleanItems.size()];
         cleanItems.toArray(result);
@@ -474,14 +482,16 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
      */
     private TableItem[] invertedSelection(TableItem allItems[],
             TableItem selectedItems[]) {
-        if (allItems.length == 0)
-            return allItems;
+        if (allItems.length == 0) {
+			return allItems;
+		}
         ArrayList invertedSelection = new ArrayList(allItems.length
                 - selectedItems.length);
         outerLoop: for (int i = 0; i < allItems.length; i++) {
             for (int j = 0; j < selectedItems.length; j++) {
-                if (allItems[i] == selectedItems[j])
-                    continue outerLoop;
+                if (allItems[i] == selectedItems[j]) {
+					continue outerLoop;
+				}
             }
             invertedSelection.add(allItems[i]);
         }
@@ -498,8 +508,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         item.setText(editor.getText());
         Image images[] = editor.getImage();
         for (int i = 0; i < images.length; i++) {
-            if (images[i] != null)
-                item.setImage(i, images[i]);
+            if (images[i] != null) {
+				item.setImage(i, images[i]);
+			}
         }
     }
 
@@ -524,8 +535,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         if (showAllPersp) {
             IWorkbenchWindow windows[] = window.getWorkbench()
                     .getWorkbenchWindows();
-            for (int i = 0; i < windows.length; i++)
-                updateEditors(windows[i].getPages());
+            for (int i = 0; i < windows.length; i++) {
+				updateEditors(windows[i].getPages());
+			}
         } else {
             IWorkbenchPage page = window.getActivePage();
             if (page != null) {
@@ -534,14 +546,16 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         }
         sort();
         Object selection = null;
-        if (window.getActivePage() != null)
-            selection = window.getActivePage().getActiveEditor();
+        if (window.getActivePage() != null) {
+			selection = window.getActivePage().getActiveEditor();
+		}
         for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
             Adapter e = (Adapter) iterator.next();
             TableItem item = new TableItem(editorsTable, SWT.NULL);
             updateItem(item, e);
-            if ((selection != null) && (selection == e.editorRef))
-                editorsTable.setSelection(new TableItem[] { item });
+            if ((selection != null) && (selection == e.editorRef)) {
+				editorsTable.setSelection(new TableItem[] { item });
+			}
         }
         // update the buttons, because the selection may have changed
         updateButtons();
@@ -552,8 +566,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
      */
     private void sort() {
         //Backward compatible. Table used to have 3 columns.
-        if (sortColumn > (editorsTable.getColumnCount() - 1))
-            sortColumn = 0;
+        if (sortColumn > (editorsTable.getColumnCount() - 1)) {
+			sortColumn = 0;
+		}
         Adapter a[] = new Adapter[elements.size()];
         elements.toArray(a);
         Arrays.sort(a);
@@ -595,8 +610,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         array[3] = String.valueOf(bounds.height);
         s.put(BOUNDS, array);
         array = new String[editorsTable.getColumnCount()];
-        for (int i = 0; i < array.length; i++)
-            array[i] = String.valueOf(editorsTable.getColumn(i).getWidth());
+        for (int i = 0; i < array.length; i++) {
+			array[i] = String.valueOf(editorsTable.getColumn(i).getWidth());
+		}
         s.put(COLUMNS, array);
     }
 
@@ -608,8 +624,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 .getDialogSettings();
         IDialogSettings thisSettings = settings
                 .getSection(getClass().getName());
-        if (thisSettings == null)
-            thisSettings = settings.addNewSection(getClass().getName());
+        if (thisSettings == null) {
+			thisSettings = settings.addNewSection(getClass().getName());
+		}
         return thisSettings;
     }
 
@@ -638,8 +655,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         }
 
         boolean isDirty() {
-            if (editorRef == null)
-                return false;
+            if (editorRef == null) {
+				return false;
+			}
             return editorRef.isDirty();
         }
 
@@ -648,30 +666,35 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         }
 
         void close() {
-            if (editorRef == null)
-                return;
+            if (editorRef == null) {
+				return;
+			}
             WorkbenchPage p = ((WorkbenchPartReference) editorRef).getPane()
                     .getPage();
             p.closeEditor(editorRef, true);
         }
 
         void save(IProgressMonitor monitor) {
-            if (editorRef == null)
-                return;
+            if (editorRef == null) {
+				return;
+			}
             IEditorPart editor = (IEditorPart) editorRef.getPart(true);
-            if (editor != null)
-                editor.doSave(monitor);
+            if (editor != null) {
+				editor.doSave(monitor);
+			}
         }
 
         String[] getText() {
-            if (text != null)
-                return text;
+            if (text != null) {
+				return text;
+			}
             text = new String[2];
             if (editorRef != null) {
-                if (editorRef.isDirty())
-                    text[0] = "*" + editorRef.getTitle(); //$NON-NLS-1$
-                else
-                    text[0] = editorRef.getTitle();
+                if (editorRef.isDirty()) {
+					text[0] = "*" + editorRef.getTitle(); //$NON-NLS-1$
+				} else {
+					text[0] = editorRef.getTitle();
+				}
                 text[1] = editorRef.getTitleToolTip();
             } else {
                 text[0] = input.getName();
@@ -681,8 +704,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         }
 
         Image[] getImage() {
-            if (images != null)
-                return images;
+            if (images != null) {
+				return images;
+			}
             images = new Image[2];
             if (editorRef != null) {
                 images[0] = editorRef.getTitleImage();
@@ -690,13 +714,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                         .getPane().getPage();
                 IPerspectiveDescriptor persp = p.getPerspective();
                 ImageDescriptor image = persp.getImageDescriptor();
-                if (image == null)
-                    image = WorkbenchImages
+                if (image == null) {
+					image = WorkbenchImages
                             .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
+				}
             } else {
                 ImageDescriptor image = null;
-                if (desc != null)
-                    image = desc.getImageDescriptor();
+                if (desc != null) {
+					image = desc.getImageDescriptor();
+				}
                 if (image == null) {
                     IEditorRegistry registry = WorkbenchPlugin.getDefault()
                             .getEditorRegistry();
@@ -729,8 +755,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 WorkbenchPage p = (WorkbenchPage) editor.getEditorSite()
                         .getPage();
                 Shell s = p.getWorkbenchWindow().getShell();
-                if (s.getMinimized())
-                    s.setMinimized(false);
+                if (s.getMinimized()) {
+					s.setMinimized(false);
+				}
                 s.moveAbove(null);
                 p.getWorkbenchWindow().setActivePage(p);
                 p.activate(editor);
@@ -754,8 +781,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 result = collator.compare(getText()[column],
                         adapter.getText()[column]);
             }
-            if (reverse)
-                return result * -1;
+            if (reverse) {
+				return result * -1;
+			}
             return result;
         }
     }

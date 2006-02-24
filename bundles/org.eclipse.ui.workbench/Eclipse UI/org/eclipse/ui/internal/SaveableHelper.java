@@ -85,8 +85,9 @@ public class SaveableHelper {
 	static boolean savePart(final ISaveablePart saveable, IWorkbenchPart part, 
 			IWorkbenchWindow window, boolean confirm) {
 		// Short circuit.
-		if (!saveable.isDirty())
+		if (!saveable.isDirty()) {
 			return true;
+		}
 
 		// If confirmation is required ..
 		if (confirm) {
@@ -152,8 +153,9 @@ public class SaveableHelper {
 				dirtyModels.add(model);
 			}
 		}
-		if (dirtyModels.isEmpty())
+		if (dirtyModels.isEmpty()) {
 			return true;
+		}
 		
 		// Create save block.
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
@@ -200,8 +202,9 @@ public class SaveableHelper {
 	static int savePart(final ISaveablePart2 saveable, 
 			IWorkbenchWindow window, boolean confirm) {
 		// Short circuit.
-		if (!saveable.isDirty())
+		if (!saveable.isDirty()) {
 			return ISaveablePart2.YES;
+		}
 
 		// If confirmation is required ..
 		if (confirm) {

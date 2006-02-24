@@ -48,8 +48,9 @@ class FullDecoratorDefinition extends DecoratorDefinition {
      * @return Returns a ILabelDecorator
      */
     protected ILabelDecorator internalGetDecorator() throws CoreException {
-        if (labelProviderCreationFailed)
-            return null;
+        if (labelProviderCreationFailed) {
+			return null;
+		}
 
         final CoreException[] exceptions = new CoreException[1];
 
@@ -70,16 +71,18 @@ class FullDecoratorDefinition extends DecoratorDefinition {
                             }
                         }
                     });
-        } else
-            return decorator;
+        } else {
+			return decorator;
+		}
 
         if (decorator == null) {
             this.labelProviderCreationFailed = true;
             setEnabled(false);
         }
 
-        if (exceptions[0] != null)
-            throw exceptions[0];
+        if (exceptions[0] != null) {
+			throw exceptions[0];
+		}
 
         return decorator;
     }
@@ -107,8 +110,9 @@ class FullDecoratorDefinition extends DecoratorDefinition {
         try {
             //Internal decorator might be null so be prepared
             ILabelDecorator currentDecorator = internalGetDecorator();
-            if (currentDecorator != null)
-                return currentDecorator.decorateImage(image, element);
+            if (currentDecorator != null) {
+				return currentDecorator.decorateImage(image, element);
+			}
 
         } catch (CoreException exception) {
             handleCoreException(exception);
@@ -126,8 +130,9 @@ class FullDecoratorDefinition extends DecoratorDefinition {
         try {
             //Internal decorator might be null so be prepared
             ILabelDecorator currentDecorator = internalGetDecorator();
-            if (currentDecorator != null)
-                return currentDecorator.decorateText(text, element);
+            if (currentDecorator != null) {
+				return currentDecorator.decorateText(text, element);
+			}
         } catch (CoreException exception) {
             handleCoreException(exception);
         }

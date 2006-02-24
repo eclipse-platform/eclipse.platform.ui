@@ -74,10 +74,11 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     public void fill(ToolBar parent, int index) {
         if (toolItem == null && parent != null && !parent.isDisposed()) {
 
-            if (index >= 0)
-                toolItem = new ToolItem(parent, SWT.CHECK, index);
-            else
-                toolItem = new ToolItem(parent, SWT.CHECK);
+            if (index >= 0) {
+				toolItem = new ToolItem(parent, SWT.CHECK, index);
+			} else {
+				toolItem = new ToolItem(parent, SWT.CHECK);
+			}
 
             if (image == null || image.isDisposed()) {
                 createImage();
@@ -120,8 +121,9 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     public void select() {
         if (workbenchPage.getPerspective() != perspective) {
             workbenchPage.setPerspective(perspective);
-        } else
-            toolItem.setSelection(true);
+        } else {
+			toolItem.setSelection(true);
+		}
     }
 
     public void update() {
@@ -132,11 +134,12 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                     .getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
                 if (apiPreferenceStore.getString(
                         IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR)
-                        .equals(IWorkbenchPreferenceConstants.TOP_LEFT))
-                    toolItem.setText(perspective.getLabel());
-                else
-                    toolItem.setText(shortenText(perspective.getLabel(),
+                        .equals(IWorkbenchPreferenceConstants.TOP_LEFT)) {
+					toolItem.setText(perspective.getLabel());
+				} else {
+					toolItem.setText(shortenText(perspective.getLabel(),
                             toolItem));
+				}
             } else {
                 toolItem.setText(""); //$NON-NLS-1$
             }
@@ -199,8 +202,9 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     // TODO review need for this method
     void setSelection(boolean b) {
-        if (toolItem != null && !toolItem.isDisposed())
-            toolItem.setSelection(b);
+        if (toolItem != null && !toolItem.isDisposed()) {
+			toolItem.setSelection(b);
+		}
     }
 
     static int getMaxWidth(Image image) {
@@ -210,8 +214,9 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     private static final String ellipsis = "..."; //$NON-NLS-1$
 
     protected String shortenText(String textValue, ToolItem item) {
-        if (textValue == null || toolItem == null || toolItem.isDisposed())
-            return null;
+        if (textValue == null || toolItem == null || toolItem.isDisposed()) {
+			return null;
+		}
         String returnText = textValue;
         GC gc = new GC(item.getParent());
         int maxWidth = getMaxWidth(item.getImage());

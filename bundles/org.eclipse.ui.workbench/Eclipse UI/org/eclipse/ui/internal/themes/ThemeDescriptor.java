@@ -57,8 +57,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param definition the definition to add
      */
     void add(ColorDefinition definition) {
-        if (colors.contains(definition))
-            return;
+        if (colors.contains(definition)) {
+			return;
+		}
         colors.add(definition);
     }
 
@@ -68,8 +69,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param definition the definition to add
      */
     void add(FontDefinition definition) {
-        if (fonts.contains(definition))
-            return;
+        if (fonts.contains(definition)) {
+			return;
+		}
         fonts.add(definition);
     }
 
@@ -80,8 +82,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param data the data
      */
     void setData(String key, Object data) {
-        if (dataMap.containsKey(key))
-            return;
+        if (dataMap.containsKey(key)) {
+			return;
+		}
             
         dataMap.put(key, data);
     }
@@ -131,8 +134,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * load the name if it is not already set.
      */
     void extractName(IConfigurationElement configElement) {
-        if (name == null)
-            name = configElement.getAttribute(ATT_NAME);
+        if (name == null) {
+			name = configElement.getAttribute(ATT_NAME);
+		}
     }
 
     /**
@@ -141,8 +145,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param description the description
      */
     void setDescription(String description) {
-        if (description == null)
-            this.description = description;
+        if (description == null) {
+			this.description = description;
+		}
     }
 
     /* (non-Javadoc)

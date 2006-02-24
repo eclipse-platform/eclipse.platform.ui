@@ -78,10 +78,11 @@ public class PreferencesPageContainer implements IPreferencePageContainer {
 			for (int i = 0; i < subnodes.length; i++) {
 				PreferenceEntry entry = createEntry(subnodes[i], subnodes[i]
 						.getLabelText(), offset + 1);
-				if (previous == null)
+				if (previous == null) {
 					entry.composite.moveBelow(this.composite);
-				else
+				} else {
 					entry.composite.moveBelow(previous.composite);
+				}
 				previous = entry;
 			}
 		}
@@ -164,12 +165,14 @@ public class PreferencesPageContainer implements IPreferencePageContainer {
 						Point contentSize = node.getPage().computeSize();
 						Rectangle totalArea = composite.getClientArea();
 
-						if (contentSize.x < totalArea.width)
+						if (contentSize.x < totalArea.width) {
 							contentSize.x = totalArea.width;
+						}
 
 						node.getPage().setSize(contentSize);
-						if (adjustScrollbars)
+						if (adjustScrollbars) {
 							adjustScrollbars(contentSize);
+						}
 
 						expandImage.setText("-");//$NON-NLS-1$
 

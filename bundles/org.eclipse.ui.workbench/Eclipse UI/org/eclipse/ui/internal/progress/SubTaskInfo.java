@@ -41,8 +41,9 @@ class SubTaskInfo extends JobTreeElement {
      * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
      */
     String getDisplayString() {
-        if (taskName == null)
-            return ProgressMessages.SubTaskInfo_UndefinedTaskName;
+        if (taskName == null) {
+			return ProgressMessages.SubTaskInfo_UndefinedTaskName;
+		}
         return taskName;
     }
 

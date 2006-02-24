@@ -255,14 +255,16 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
 
         // Icon.
         String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
-        if (strIcon == null)
-            return;
+        if (strIcon == null) {
+			return;
+		}
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                 configElement.getNamespace(), strIcon);
 
-        if (imageDescriptor == null)
-            return;
+        if (imageDescriptor == null) {
+			return;
+		}
 
         Image image = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
         titleImage = image;
@@ -277,8 +279,9 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
     protected void setTitleImage(Image titleImage) {
         Assert.isTrue(titleImage == null || !titleImage.isDisposed());
         //Do not send changes if they are the same
-        if (this.titleImage == titleImage)
-            return;
+        if (this.titleImage == titleImage) {
+			return;
+		}
         this.titleImage = titleImage;
         firePropertyChange(IIntroPart.PROP_TITLE);
     }

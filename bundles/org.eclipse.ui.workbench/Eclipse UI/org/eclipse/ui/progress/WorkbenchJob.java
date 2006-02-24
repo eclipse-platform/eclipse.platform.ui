@@ -62,11 +62,13 @@ public abstract class WorkbenchJob extends UIJob {
             public void done(IJobChangeEvent event) {
 
                 //Abort if it is not running
-                if (!PlatformUI.isWorkbenchRunning())
-                    return;
+                if (!PlatformUI.isWorkbenchRunning()) {
+					return;
+				}
 
-                if (event.getResult().getCode() == IStatus.OK)
-                    performDone(event);
+                if (event.getResult().getCode() == IStatus.OK) {
+					performDone(event);
+				}
             }
         });
     }

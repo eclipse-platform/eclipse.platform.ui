@@ -110,14 +110,17 @@ public class EditorHistoryItem {
      * Returns whether this item matches the given editor input.
      */
     public boolean matches(IEditorInput input) {
-        if (isRestored())
-            return input.equals(getInput());
+        if (isRestored()) {
+			return input.equals(getInput());
+		}
         // if not restored, compare name, tool tip text and factory id,
         // avoiding as much work as possible
-        if (!getName().equals(input.getName()))
-            return false;
-        if (!getToolTipText().equals(input.getToolTipText()))
-            return false;
+        if (!getName().equals(input.getName())) {
+			return false;
+		}
+        if (!getToolTipText().equals(input.getToolTipText())) {
+			return false;
+		}
         IPersistableElement persistable = input.getPersistable();
         String inputId = persistable == null ? null : persistable
                 .getFactoryId();

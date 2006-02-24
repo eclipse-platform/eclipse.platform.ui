@@ -76,8 +76,9 @@ final class JFaceUtil {
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 			 */
 			public void added(NodeChangeEvent event) {
-				if (!event.getChild().name().equals(workbenchName))
+				if (!event.getChild().name().equals(workbenchName)) {
 					return;
+				}
 				((IEclipsePreferences) event.getChild()).addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 
 			}

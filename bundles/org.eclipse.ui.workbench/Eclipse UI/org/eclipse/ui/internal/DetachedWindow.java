@@ -173,8 +173,9 @@ public class DetachedWindow implements IDragOverListener {
     public void add(ViewPane part) {
 
         Shell shell = getShell();
-        if (shell != null)
-            part.reparent(shell);
+        if (shell != null) {
+			part.reparent(shell);
+		}
         folder.add(part);
         
         // Ensure that the shell's minimum size is capable of showing the initial first tab
@@ -223,15 +224,17 @@ public class DetachedWindow implements IDragOverListener {
 				ViewPane child = (ViewPane) itr.next();
 
 				// Only close if closable...
-				if (child.isCloseable())
+				if (child.isCloseable()) {
 					page.hideView(child.getViewReference());
-				else
+				} else {
 					page.attachView(child.getViewReference());
+				}
 			}
         }
 
-        if (folder != null)
-            folder.dispose();
+        if (folder != null) {
+			folder.dispose();
+		}
         
         if (windowShell != null) {
             windowShell.removeListener(SWT.Resize, resizeListener);
@@ -367,8 +370,9 @@ public class DetachedWindow implements IDragOverListener {
         
         // Create the folder.
         IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_FOLDER);
-        if (childMem != null)
-            folder.restoreState(childMem);
+        if (childMem != null) {
+			folder.restoreState(childMem);
+		}
     }
 
     /**
@@ -402,8 +406,9 @@ public class DetachedWindow implements IDragOverListener {
      */
 	public int open() { 
 		 
-		if (getShell() == null) 
-			create(); 
+		if (getShell() == null) {
+			create();
+		} 
 		 
 		Rectangle bounds = getShell().getBounds(); 
         getShell().setVisible(true);

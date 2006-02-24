@@ -164,8 +164,9 @@ public class NewWizardAction extends Action implements
                 .getDialogSettings();
         IDialogSettings wizardSettings = workbenchSettings
                 .getSection("NewWizardAction"); //$NON-NLS-1$
-        if (wizardSettings == null)
-            wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$
+        if (wizardSettings == null) {
+			wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$
+		}
         wizard.setDialogSettings(wizardSettings);
         wizard.setForcePreviousAndNextButtons(true);
 

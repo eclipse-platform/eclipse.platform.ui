@@ -60,8 +60,9 @@ public class ThemeRegistry implements IThemeRegistry {
      * Add a descriptor to the registry.
      */
     void add(IThemeDescriptor desc) {
-        if (findTheme(desc.getId()) != null)
-            return;
+        if (findTheme(desc.getId()) != null) {
+			return;
+		}
         themes.add(desc);
     }
 
@@ -69,8 +70,9 @@ public class ThemeRegistry implements IThemeRegistry {
      * Add a descriptor to the registry.
      */
     void add(ColorDefinition desc) {
-        if (findColor(desc.getId()) != null)
-            return;
+        if (findColor(desc.getId()) != null) {
+			return;
+		}
         colors.add(desc);
     }
 
@@ -103,8 +105,9 @@ public class ThemeRegistry implements IThemeRegistry {
     private IThemeElementDefinition findDescriptor(
             IThemeElementDefinition[] descriptors, String id) {
         int idx = Arrays.binarySearch(descriptors, id, ID_COMPARATOR);
-        if (idx < 0)
-            return null;
+        if (idx < 0) {
+			return null;
+		}
         return descriptors[idx];
     }
 
@@ -135,8 +138,9 @@ public class ThemeRegistry implements IThemeRegistry {
      */
     public ColorDefinition[] getColorsFor(String themeId) {
         ColorDefinition[] defs = getColors();
-        if (themeId.equals(IThemeManager.DEFAULT_THEME))
-            return defs;
+        if (themeId.equals(IThemeManager.DEFAULT_THEME)) {
+			return defs;
+		}
 
         IThemeDescriptor desc = findTheme(themeId);
         ColorDefinition[] overrides = desc.getColors();
@@ -148,8 +152,9 @@ public class ThemeRegistry implements IThemeRegistry {
      */
     public FontDefinition[] getFontsFor(String themeId) {
         FontDefinition[] defs = getFonts();
-        if (themeId.equals(IThemeManager.DEFAULT_THEME))
-            return defs;
+        if (themeId.equals(IThemeManager.DEFAULT_THEME)) {
+			return defs;
+		}
 
         IThemeDescriptor desc = findTheme(themeId);
         FontDefinition[] overrides = desc.getFonts();
@@ -200,8 +205,9 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param definition
      */
     void add(FontDefinition definition) {
-        if (findFont(definition.getId()) != null)
-            return;
+        if (findFont(definition.getId()) != null) {
+			return;
+		}
         fonts.add(definition);
     }
 
@@ -227,8 +233,9 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param definition
      */
     void add(ThemeElementCategory definition) {
-        if (findCategory(definition.getId()) != null)
-            return;
+        if (findCategory(definition.getId()) != null) {
+			return;
+		}
         categories.add(definition);
     }
 
@@ -248,8 +255,9 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param value
      */
     void setData(String name, String value) {
-        if (dataMap.containsKey(name))
-            return;
+        if (dataMap.containsKey(name)) {
+			return;
+		}
         
         dataMap.put(name, value);
     }
@@ -269,8 +277,9 @@ public class ThemeRegistry implements IThemeRegistry {
     public void addData(Map otherData) {
         for (Iterator i = otherData.keySet().iterator(); i.hasNext();) {
             Object key = i.next();
-            if (dataMap.containsKey(key))
-                continue;
+            if (dataMap.containsKey(key)) {
+				continue;
+			}
             dataMap.put(key, otherData.get(key));
         }
     }

@@ -77,7 +77,8 @@ public class EditWorkingSetAction extends Action {
         }
         WizardDialog dialog = new WizardDialog(shell, wizard);
         dialog.create();
-        if (dialog.open() == Window.OK)
-            actionGroup.setWorkingSet(wizard.getSelection());
+        if (dialog.open() == Window.OK) {
+			actionGroup.setWorkingSet(wizard.getSelection());
+		}
     }
 }

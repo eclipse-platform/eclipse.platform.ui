@@ -165,8 +165,9 @@ public final class AboutSystemDialog extends ProductInfoDialog {
             if (obj instanceof ISystemSummarySection) {
                 ISystemSummarySection logSection = (ISystemSummarySection) obj;
                 logSection.write(writer);
-            } else
-                writer.println(WorkbenchMessages.SystemSummary_sectionError);
+            } else {
+				writer.println(WorkbenchMessages.SystemSummary_sectionError);
+			}
         }
     }
 
@@ -186,16 +187,19 @@ public final class AboutSystemDialog extends ProductInfoDialog {
                 String id1 = element1.getAttribute("id"); //$NON-NLS-1$
                 String id2 = element2.getAttribute("id"); //$NON-NLS-1$
 
-                if (id1 != null && id2 != null && !id1.equals(id2))
-                    return collator.compare(id1, id2);
+                if (id1 != null && id2 != null && !id1.equals(id2)) {
+					return collator.compare(id1, id2);
+				}
 
                 String title1 = element1.getAttribute("sectionTitle"); //$NON-NLS-1$ 
                 String title2 = element2.getAttribute("sectionTitle"); //$NON-NLS-1$
 
-                if (title1 == null)
-                    title1 = ""; //$NON-NLS-1$
-                if (title2 == null)
-                    title2 = ""; //$NON-NLS-1$
+                if (title1 == null) {
+					title1 = ""; //$NON-NLS-1$
+				}
+                if (title2 == null) {
+					title2 = ""; //$NON-NLS-1$
+				}
 
                 return collator.compare(title1, title2);
             }
@@ -259,8 +263,9 @@ public final class AboutSystemDialog extends ProductInfoDialog {
      */
     private File makeDisplayCopy(File file) {
         IPath path = WorkbenchPlugin.getDefault().getDataLocation();
-        if(path == null)
-        	return null;
+        if(path == null) {
+			return null;
+		}
         path = path.append(ERROR_LOG_COPY_FILENAME);
         File copy = path.toFile();
         FileReader in = null;
@@ -280,8 +285,12 @@ public final class AboutSystemDialog extends ProductInfoDialog {
 			return null;
 		} finally {
 			try {
-				if (in != null) in.close();
-				if (out != null) out.close();
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.close();
+				}
 			} catch (IOException e) {
 				return null;
 			}
@@ -291,8 +300,9 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     }
 
     private void runCopyToClipboard() {
-        if (text == null)
-            return;
+        if (text == null) {
+			return;
+		}
 
         Clipboard clipboard = null;
         try {
@@ -300,8 +310,9 @@ public final class AboutSystemDialog extends ProductInfoDialog {
             clipboard.setContents(new Object[] { text.getText() },
                     new Transfer[] { TextTransfer.getInstance() });
         } finally {
-            if (clipboard != null)
-                clipboard.dispose();
+            if (clipboard != null) {
+				clipboard.dispose();
+			}
         }
     }
 }

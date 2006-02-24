@@ -70,8 +70,9 @@ public class DefaultSaveableModel implements ISaveableModel {
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		Image image = part.getTitleImage();
-		if (image == null)
+		if (image == null) {
 			return null;
+		}
 		return ImageDescriptor.createFromImage(image);
 	}
 

@@ -67,8 +67,9 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 	boolean shouldBeEnabled() {
 		// make sure a context is set. If a part doesn't provide
 		// a context, then we should not enable.
-		if (undoContext == null)
+		if (undoContext == null) {
 			return false;
+		}
 		return getHistory().canRedo(undoContext);
 	}
 }

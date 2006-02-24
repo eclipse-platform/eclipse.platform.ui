@@ -77,8 +77,9 @@ public abstract class MultiEditor extends EditorPart {
         e.createPartControl(content);
         parent.addListener(SWT.Activate, new Listener() {
             public void handleEvent(Event event) {
-                if (event.type == SWT.Activate)
-                    activateEditor(e);
+                if (event.type == SWT.Activate) {
+					activateEditor(e);
+				}
             }
         });
         return content;
@@ -117,8 +118,9 @@ public abstract class MultiEditor extends EditorPart {
     public boolean isDirty() {
         for (int i = 0; i < innerEditors.length; i++) {
             IEditorPart e = innerEditors[i];
-            if (e.isDirty())
-                return true;
+            if (e.isDirty()) {
+				return true;
+			}
         }
         return false;
     }
@@ -185,8 +187,9 @@ public abstract class MultiEditor extends EditorPart {
      */
     protected int getIndex(IEditorPart editor) {
         for (int i = 0; i < innerEditors.length; i++) {
-            if (innerEditors[i] == editor)
-                return i;
+            if (innerEditors[i] == editor) {
+				return i;
+			}
         }
         return -1;
     }

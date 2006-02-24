@@ -158,8 +158,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
         Program[] programs = Program.getPrograms();
         for (int i = 0; i < programs.length; i++) {
-            if (programs[i].getName().equals(programName))
-                return programs[i];
+            if (programs[i].getName().equals(programName)) {
+				return programs[i];
+			}
         }
 
         return null;
@@ -181,8 +182,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         // Get the contributor class name.
         String className = configurationElement
                 .getAttribute(IWorkbenchRegistryConstants.ATT_CONTRIBUTOR_CLASS);
-        if (className == null)
-            return null;
+        if (className == null) {
+			return null;
+		}
 
         // Create the contributor object.
         IEditorActionBarContributor contributor = null;
@@ -315,8 +317,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @return the image file name
      */
     public String getImageFilename() {
-    	if (configurationElement == null)
-    		return imageFilename;
+    	if (configurationElement == null) {
+			return imageFilename;
+		}
     	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
     }
 
@@ -341,8 +344,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @return the launcher class name
      */
     public String getLauncher() {
-    	if (configurationElement == null)
-    		return launcherName;
+    	if (configurationElement == null) {
+			return launcherName;
+		}
     	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_LAUNCHER);
     }
 
@@ -352,8 +356,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @return the contributing plugin id
      */
     public String getPluginID() {
-    	if (configurationElement != null)
-    		return configurationElement.getNamespace();
+    	if (configurationElement != null) {
+			return configurationElement.getNamespace();
+		}
     	return pluginIdentifier;
     }
 
@@ -456,9 +461,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         memento.putString(IWorkbenchConstants.TAG_OPEN_IN_PLACE, String
                 .valueOf(isOpenInPlace()));
 
-        if (this.program != null)
-            memento.putString(IWorkbenchConstants.TAG_PROGRAM_NAME,
+        if (this.program != null) {
+			memento.putString(IWorkbenchConstants.TAG_PROGRAM_NAME,
                     this.program.getName());
+		}
     }
 
     /**
@@ -574,8 +580,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     /* package */void setProgram(Program newProgram) {
 
         this.program = newProgram;
-        if (editorName == null)
-            setName(newProgram.getName());
+        if (editorName == null) {
+			setName(newProgram.getName());
+		}
     }
 
     /**

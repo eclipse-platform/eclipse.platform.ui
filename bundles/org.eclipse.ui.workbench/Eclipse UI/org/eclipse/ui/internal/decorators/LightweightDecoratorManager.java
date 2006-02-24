@@ -185,8 +185,9 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
     private LightweightDecoratorDefinition getLightweightDecoratorDefinition(
             String decoratorId) {
     	int idx = getLightweightDecoratorDefinitionIdx(decoratorId);
-    	if (idx != -1) 
-    		return lightweightDefinitions[idx];
+    	if (idx != -1) {
+			return lightweightDefinitions[idx];
+		}
     	return null;
     }
     
@@ -200,8 +201,9 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
     private int getLightweightDecoratorDefinitionIdx(
             String decoratorId) {
         for (int i = 0; i < lightweightDefinitions.length; i++) {
-            if (lightweightDefinitions[i].getId().equals(decoratorId))
-                return i;
+            if (lightweightDefinitions[i].getId().equals(decoratorId)) {
+				return i;
+			}
         }
         return -1;
     }
@@ -213,8 +215,9 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
     LightweightDecoratorDefinition[] enabledDefinitions() {
         ArrayList result = new ArrayList();
         for (int i = 0; i < lightweightDefinitions.length; i++) {
-            if (lightweightDefinitions[i].isEnabled())
-                result.add(lightweightDefinitions[i]);
+            if (lightweightDefinitions[i].isEnabled()) {
+				result.add(lightweightDefinitions[i]);
+			}
         }
         LightweightDecoratorDefinition[] returnArray = new LightweightDecoratorDefinition[result
                 .size()];
@@ -228,8 +231,9 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
      */
     boolean hasEnabledDefinitions() {
         for (int i = 0; i < lightweightDefinitions.length; i++) {
-            if (lightweightDefinitions[i].isEnabled())
-                return true;
+            if (lightweightDefinitions[i].isEnabled()) {
+				return true;
+			}
         }
         return false;
     }
@@ -250,8 +254,9 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
         //Disable all fo the enabled decorators 
         //so as to force a dispose of thier decorators
         for (int i = 0; i < lightweightDefinitions.length; i++) {
-            if (lightweightDefinitions[i].isEnabled())
-                lightweightDefinitions[i].setEnabled(false);
+            if (lightweightDefinitions[i].isEnabled()) {
+				lightweightDefinitions[i].setEnabled(false);
+			}
         }
         overlayCache.disposeAll();
     }
@@ -263,8 +268,9 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
      */
     LightweightDecoratorDefinition getDecoratorDefinition(String decoratorId) {
         for (int i = 0; i < lightweightDefinitions.length; i++) {
-            if (lightweightDefinitions[i].getId().equals(decoratorId))
-                return lightweightDefinitions[i];
+            if (lightweightDefinitions[i].getId().equals(decoratorId)) {
+				return lightweightDefinitions[i];
+			}
         }
         return null;
     }
@@ -274,8 +280,9 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
      */
     LightweightDecoratorDefinition[] getDecoratorsFor(Object element) {
 
-        if (element == null)
-            return EMPTY_LIGHTWEIGHT_DEF;
+        if (element == null) {
+			return EMPTY_LIGHTWEIGHT_DEF;
+		}
 
         List elements = new ArrayList(1);
         elements.add(element);

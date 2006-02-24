@@ -97,8 +97,9 @@ public class LayoutTree implements ISizeProvider {
      * null if the child is not found.
      */
     public LayoutTree find(LayoutPart child) {
-        if (part != child)
-            return null;
+        if (part != child) {
+			return null;
+		}
         return this;
     }
 
@@ -108,8 +109,9 @@ public class LayoutTree implements ISizeProvider {
      * in <code>sashes</code>
      */
     public void findSashes(PartPane.Sashes sashes) {
-        if (getParent() == null)
-            return;
+        if (getParent() == null) {
+			return;
+		}
         getParent().findSashes(this, sashes);
     }
 
@@ -505,15 +507,17 @@ public class LayoutTree implements ISizeProvider {
      */
     public LayoutTree remove(LayoutPart child) {
         LayoutTree tree = find(child);
-        if (tree == null)
-            return this;
+        if (tree == null) {
+			return this;
+		}
         LayoutTreeNode oldParent = tree.getParent();
         if (oldParent == null) {
             //It was the root and the only child of this tree
             return null;
         }
-        if (oldParent.getParent() == null)
-            return oldParent.remove(tree);
+        if (oldParent.getParent() == null) {
+			return oldParent.remove(tree);
+		}
 
         oldParent.remove(tree);
         return this;

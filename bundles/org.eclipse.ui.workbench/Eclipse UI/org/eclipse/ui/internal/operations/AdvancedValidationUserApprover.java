@@ -74,12 +74,13 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 
 		public void run(IProgressMonitor pm) {
 			try {
-				if (undoing)
+				if (undoing) {
 					status = ((IAdvancedUndoableOperation) operation)
 							.computeUndoableStatus(pm);
-				else
+				} else {
 					status = ((IAdvancedUndoableOperation) operation)
 							.computeRedoableStatus(pm);
+				}
 			} catch (ExecutionException e) {
 				reportException(e, uiInfo);
 				status = IOperationHistory.OPERATION_INVALID_STATUS;
@@ -136,13 +137,15 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			IOperationHistory history, IAdaptable uiInfo, boolean undoing) {
 
 		// return immediately if the operation is not relevant
-		if (!operation.hasContext(context))
+		if (!operation.hasContext(context)) {
 			return Status.OK_STATUS;
+		}
 
 		// if the operation does not support advanced validation,
 		// then we assume it is valid.
-		if (!(operation instanceof IAdvancedUndoableOperation))
+		if (!(operation instanceof IAdvancedUndoableOperation)) {
 			return Status.OK_STATUS;
+		}
 
 		// Compute the undoable or redoable status
 		IStatus status = computeOperationStatus(operation, history, uiInfo,
@@ -213,8 +216,9 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			shell = new Shell();
 		}
 		ErrorDialog.openError(shell, title, message, status);
-		if (createdShell)
+		if (createdShell) {
 			shell.dispose();
+		}
 	}
 
 	/*
@@ -224,8 +228,9 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			IUndoableOperation operation, boolean undoing) {
 		// CANCEL status is assumed to be initiated by the user, so there
 		// is nothing to report.
-		if (status.getSeverity() == IStatus.CANCEL)
+		if (status.getSeverity() == IStatus.CANCEL) {
 			return status;
+		}
 
 		// Other status severities are reported with a message dialog.
 		// First obtain a shell and set up the dialog title.
@@ -245,16 +250,18 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			String warning, title;
 			if (undoing) {
 				warning = WorkbenchMessages.Operations_proceedWithNonOKUndoStatus;
-				if (status.getSeverity() == IStatus.INFO)
+				if (status.getSeverity() == IStatus.INFO) {
 					title = WorkbenchMessages.Operations_undoInfo;
-				else
+				} else {
 					title = WorkbenchMessages.Operations_undoWarning;
+				}
 			} else {
 				warning = WorkbenchMessages.Operations_proceedWithNonOKRedoStatus;
-				if (status.getSeverity() == IStatus.INFO)
+				if (status.getSeverity() == IStatus.INFO) {
 					title = WorkbenchMessages.Operations_redoInfo;
-				else
+				} else {
 					title = WorkbenchMessages.Operations_redoWarning;
+				}
 			}
 
 			String message = NLS.bind(warning, new Object [] {title, status.getMessage(), operation
@@ -267,8 +274,9 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			// if the user chooses to proceed anyway, map the status to OK so
 			// that the operation is considered approved. Otherwise leave
 			// the status as is to stop the operation.
-			if (proceed)
+			if (proceed) {
 				reportedStatus = Status.OK_STATUS;
+			}
 		} else {
 			String title, stopped;
 			if (undoing) {
@@ -292,8 +300,9 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			dialog.open();
 		}
 
-		if (createdShell)
+		if (createdShell) {
 			shell.dispose();
+		}
 
 		return reportedStatus;
 
@@ -306,8 +315,9 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 	Shell getShell(IAdaptable uiInfo) {
 		if (uiInfo != null) {
 			Shell shell = (Shell) uiInfo.getAdapter(Shell.class);
-			if (shell != null)
+			if (shell != null) {
 				return shell;
+			}
 		}
 		return null;
 	}

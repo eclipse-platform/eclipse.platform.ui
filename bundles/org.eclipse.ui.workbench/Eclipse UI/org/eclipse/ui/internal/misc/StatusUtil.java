@@ -42,13 +42,16 @@ public class StatusUtil {
                 IStatus currentChild = children[i];
                 if (currentChild.isMultiStatus()) {
                     Iterator childStatiiEnum = flatten(currentChild).iterator();
-                    while (childStatiiEnum.hasNext())
-                        result.add(childStatiiEnum.next());
-                } else
-                    result.add(currentChild);
+                    while (childStatiiEnum.hasNext()) {
+						result.add(childStatiiEnum.next());
+					}
+                } else {
+					result.add(currentChild);
+				}
             }
-        } else
-            result.add(aStatus);
+        } else {
+			result.add(aStatus);
+		}
 
         return result;
     }
@@ -163,10 +166,11 @@ public class StatusUtil {
 
         String statusMessage = message;
         if (message == null || message.trim().length() == 0) {
-            if (exception.getMessage() == null)
-                statusMessage = exception.toString();
-            else
-                statusMessage = exception.getMessage();
+            if (exception.getMessage() == null) {
+				statusMessage = exception.toString();
+			} else {
+				statusMessage = exception.getMessage();
+			}
         }
 
         return new Status(severity, WorkbenchPlugin.PI_WORKBENCH, severity,
@@ -186,8 +190,9 @@ public class StatusUtil {
         while (iter.hasNext()) {
             IStatus currentStatus = (IStatus) iter.next();
             Iterator childrenIter = flatten(currentStatus).iterator();
-            while (childrenIter.hasNext())
-                flatStatusCollection.add(childrenIter.next());
+            while (childrenIter.hasNext()) {
+				flatStatusCollection.add(childrenIter.next());
+			}
         }
 
         IStatus[] stati = new IStatus[flatStatusCollection.size()];

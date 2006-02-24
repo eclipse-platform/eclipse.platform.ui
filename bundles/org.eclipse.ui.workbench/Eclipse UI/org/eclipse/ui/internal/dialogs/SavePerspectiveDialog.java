@@ -271,14 +271,16 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
      */
     public void selectionChanged(SelectionChangedEvent event) {
         // If a selection is caused by modifyText ignore it.
-        if (ignoreSelection)
-            return;
+        if (ignoreSelection) {
+			return;
+		}
 
         // Get selection.
         IStructuredSelection sel = (IStructuredSelection) list.getSelection();
         persp = null;
-        if (!sel.isEmpty())
-            persp = (IPerspectiveDescriptor) sel.getFirstElement();
+        if (!sel.isEmpty()) {
+			persp = (IPerspectiveDescriptor) sel.getFirstElement();
+		}
 
         // Transfer selection to text field.
         if (persp != null) {

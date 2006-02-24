@@ -90,8 +90,9 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
         id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 
         configurationElement = configElement;
-        if (id == null || getLabel() == null)
-            throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
+        if (id == null || getLabel() == null) {
+			throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
+		}
     }
 
 
@@ -101,8 +102,9 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
      * @param element the element to add
      */
     public void addElement(Object element) {
-        if (elements == null)
-            elements = new ArrayList(5);
+        if (elements == null) {
+			elements = new ArrayList(5);
+		}
         elements.add(element);
     }
 
@@ -110,12 +112,13 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
      * Method declared on IAdaptable.
      */
     public Object getAdapter(Class adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return this;
-        else if (adapter == IConfigurationElement.class)
-            return configurationElement;
-        else
-            return null;
+        if (adapter == IWorkbenchAdapter.class) {
+			return this;
+		} else if (adapter == IConfigurationElement.class) {
+			return configurationElement;
+		} else {
+			return null;
+		}
     }
 
     /* (non-Javadoc)
@@ -163,8 +166,9 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
      * @return the parent path
      */
     public String[] getParentPath() {
-    	if (parentPath != null)
-    		return parentPath;
+    	if (parentPath != null) {
+			return parentPath;
+		}
     	
     	String unparsedPath = getRawParentPath();
         if (unparsedPath != null) {
@@ -195,8 +199,9 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
      */
     public String getRootPath() {
         String[] path = getParentPath();
-        if (path != null && path.length > 0)
-            return path[0];
+        if (path != null && path.length > 0) {
+			return path[0];
+		}
         
         return id;
     }
@@ -217,10 +222,12 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
      * @return whether the object is in this category
      */
     public boolean hasElement(Object o) {
-        if (elements == null)
-            return false;
-        if (elements.isEmpty())
-            return false;
+        if (elements == null) {
+			return false;
+		}
+        if (elements.isEmpty()) {
+			return false;
+		}
         return elements.contains(o);
     }
 
@@ -230,8 +237,9 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
      * @return whether this category has child elements
      */
     public boolean hasElements() {
-        if (elements != null)
-            return !elements.isEmpty();
+        if (elements != null) {
+			return !elements.isEmpty();
+		}
         
         return false;
     }

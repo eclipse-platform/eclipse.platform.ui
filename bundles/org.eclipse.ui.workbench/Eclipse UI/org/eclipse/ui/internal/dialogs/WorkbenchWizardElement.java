@@ -93,12 +93,14 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      *            IStructuredSelection
      */
     public IStructuredSelection adaptedSelection(IStructuredSelection selection) {
-        if (canHandleSelection(selection))
-            return selection;
+        if (canHandleSelection(selection)) {
+			return selection;
+		}
 
         IStructuredSelection adaptedSelection = convertToResources(selection);
-        if (canHandleSelection(adaptedSelection))
-            return adaptedSelection;
+        if (canHandleSelection(adaptedSelection)) {
+			return adaptedSelection;
+		}
 
         //Couldn't find one that works so just return
         return StructuredSelection.EMPTY;
@@ -158,8 +160,9 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
     	if (imageDescriptor == null) {
     		String iconName = configurationElement
                     .getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-	        if (iconName == null) 
-	        	return null;
+	        if (iconName == null) {
+				return null;
+			}
             imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                     configurationElement.getNamespaceIdentifier(), iconName);    
     	}
@@ -184,8 +187,9 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * Answer self's action enabler, creating it first iff necessary
      */
     protected SelectionEnabler getSelectionEnabler() {
-        if (selectionEnabler == null)
-            selectionEnabler = new SelectionEnabler(configurationElement);
+        if (selectionEnabler == null) {
+			selectionEnabler = new SelectionEnabler(configurationElement);
+		}
 
         return selectionEnabler;
     }
@@ -204,8 +208,9 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 			IStructuredSelection originalSelection) {
 		Object selectionService = PlatformUI.getWorkbench().getService(
 				ISelectionConversionService.class);
-		if (selectionService == null || originalSelection == null)
+		if (selectionService == null || originalSelection == null) {
 			return StructuredSelection.EMPTY;
+		}
 		return ((ISelectionConversionService) selectionService)
 				.convertToResources(originalSelection);
     }
@@ -233,8 +238,9 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
     public ImageDescriptor getDescriptionImage() {
     	if (descriptionImage == null) {
     		String descImage = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_DESCRIPTION_IMAGE);
-    		if (descImage == null)
-    			return null;
+    		if (descImage == null) {
+				return null;
+			}
             descriptionImage = AbstractUIPlugin.imageDescriptorFromPlugin(
                     configurationElement.getNamespaceIdentifier(), descImage);
     	}
@@ -329,8 +335,9 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	public boolean hasPages() {
 		String hasPagesString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_HAS_PAGES);
 		// default value is true
-		if (hasPagesString == null)
+		if (hasPagesString == null) {
 			return true;
+		}
 		return Boolean.valueOf(hasPagesString).booleanValue();
 	}
 }

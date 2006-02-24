@@ -348,8 +348,9 @@ public class PopupMenuExtender implements IMenuListener2,
 	 * Read static items for a particular menu id, into the context menu.
 	 */
     private void readStaticActionsFor(final String menuId) {
-		if ((bitSet & STATIC_ACTION_READ) != 0)
+		if ((bitSet & STATIC_ACTION_READ) != 0) {
 			return;
+		}
 
 		bitSet |= STATIC_ACTION_READ;
 

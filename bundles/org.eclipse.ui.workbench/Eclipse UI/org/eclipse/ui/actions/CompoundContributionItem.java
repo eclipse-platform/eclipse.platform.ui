@@ -58,8 +58,9 @@ public abstract class CompoundContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
      */
     public void fill(Menu menu, int index) {
-        if (index == -1)
-            index = menu.getItemCount();
+        if (index == -1) {
+			index = menu.getItemCount();
+		}
         if (!dirty && menu.getParentItem() != null) {
             // insert a dummy item so that the parent item is not disabled
             new MenuItem(menu, SWT.NONE, index);

@@ -115,8 +115,9 @@ public class WizardCollectionElement extends AdaptableList implements
         for (int i = 0; i < children.length; ++i) {
             WizardCollectionElement currentCategory = (WizardCollectionElement) children[i];
             if (currentCategory.getId().equals(searchString)) {
-                if (searchPath.segmentCount() == 1)
-                    return currentCategory;
+                if (searchPath.segmentCount() == 1) {
+					return currentCategory;
+				}
 
                 return currentCategory.findChildCollection(searchPath
                         .removeFirstSegments(1));
@@ -162,17 +163,20 @@ public class WizardCollectionElement extends AdaptableList implements
         Object[] wizards = getWizards();
         for (int i = 0; i < wizards.length; ++i) {
             WorkbenchWizardElement currentWizard = (WorkbenchWizardElement) wizards[i];
-            if (currentWizard.getId().equals(searchId))
-                return currentWizard;
+            if (currentWizard.getId().equals(searchId)) {
+				return currentWizard;
+			}
         }
-        if (!recursive)
-            return null;
+        if (!recursive) {
+			return null;
+		}
         for (Iterator iterator = children.iterator(); iterator.hasNext();) {
             WizardCollectionElement child = (WizardCollectionElement) iterator
                     .next();
             WorkbenchWizardElement result = child.findWizard(searchId, true);
-            if (result != null)
-                return result;
+            if (result != null) {
+				return result;
+			}
         }
         return null;
     }
@@ -215,8 +219,9 @@ public class WizardCollectionElement extends AdaptableList implements
      * @see org.eclipse.ui.wizards.IWizardCategory#getPath()
      */
     public IPath getPath() {
-        if (parent == null)
-            return new Path(""); //$NON-NLS-1$
+        if (parent == null) {
+			return new Path(""); //$NON-NLS-1$
+		}
 
         return parent.getPath().append(getId());
     }

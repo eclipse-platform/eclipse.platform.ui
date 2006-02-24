@@ -91,8 +91,9 @@ public class PluginTransfer extends ByteArrayTransfer {
      */
     protected void javaToNative(Object data, TransferData transferData) {
         PluginTransferData realData = (PluginTransferData) data;
-        if (data == null)
-            return;
+        if (data == null) {
+			return;
+		}
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             DataOutputStream dataOut = new DataOutputStream(out);

@@ -443,8 +443,9 @@ public final class TabbedStackPresentation extends StackPresentation {
     public Control[] getTabList(IPresentablePart part) {
         ArrayList list = new ArrayList();
         if (folder.getTabFolder().getTabPosition() == SWT.BOTTOM) {
-            if (part.getControl() != null)
-                list.add(part.getControl());
+            if (part.getControl() != null) {
+				list.add(part.getControl());
+			}
         }
 
         list.add(folder.getTabFolder().getControl());
@@ -454,8 +455,9 @@ public final class TabbedStackPresentation extends StackPresentation {
         }
         
         if (folder.getTabFolder().getTabPosition() == SWT.TOP) {
-            if (part.getControl() != null)
-                list.add(part.getControl());
+            if (part.getControl() != null) {
+				list.add(part.getControl());
+			}
         }
 
         return (Control[]) list.toArray(new Control[list.size()]);

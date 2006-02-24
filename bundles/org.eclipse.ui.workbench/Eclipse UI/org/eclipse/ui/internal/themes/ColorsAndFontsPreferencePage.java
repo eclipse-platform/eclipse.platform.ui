@@ -138,10 +138,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) parentElement;
 			String id = def.getId();
 			IHierarchalThemeElementDefinition[] defs;
-			if (def instanceof ColorDefinition)
+			if (def instanceof ColorDefinition) {
 				defs = registry.getColors();
-			else
+			} else {
 				defs = registry.getFonts();
+			}
 
 			for (int i = 0; i < defs.length; i++) {
 				if (id.equals(defs[i].getDefaultsTo())
@@ -149,8 +150,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 								((ICategorizedThemeElementDefinition) def)
 										.getCategoryId(),
 								((ICategorizedThemeElementDefinition) defs[i])
-										.getCategoryId()))
+										.getCategoryId())) {
 					list.add(defs[i]);
+				}
 			}
 			return list.toArray();
         }
@@ -166,8 +168,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                                 .getPresentationsBindingsFor(categories[i]);
                         if (bindings == null
                                 || bindings.contains(workbench
-                                        .getPresentationId()))
-                            list.add(categories[i]);
+                                        .getPresentationId())) {
+							list.add(categories[i]);
+						}
                     }
                 }
             }
@@ -175,15 +178,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 ColorDefinition[] colorDefinitions = themeRegistry
                         .getColorsFor(currentTheme.getId());
                 for (int i = 0; i < colorDefinitions.length; i++) {
-                    if (!colorDefinitions[i].isEditable())
-                        continue;
+                    if (!colorDefinitions[i].isEditable()) {
+						continue;
+					}
                     String catId = colorDefinitions[i].getCategoryId();
                     if ((catId == null && categoryId == null)
                             || (catId != null && categoryId != null && categoryId
                                     .equals(catId))) {
                         if (colorDefinitions[i].getDefaultsTo() != null
-                                && parentIsInSameCategory(colorDefinitions[i]))
-                            continue;
+                                && parentIsInSameCategory(colorDefinitions[i])) {
+							continue;
+						}
                         list.add(colorDefinitions[i]);
                     }
                 }
@@ -192,15 +197,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 FontDefinition[] fontDefinitions = themeRegistry
                         .getFontsFor(currentTheme.getId());
                 for (int i = 0; i < fontDefinitions.length; i++) {
-                    if (!fontDefinitions[i].isEditable())
-                        continue;
+                    if (!fontDefinitions[i].isEditable()) {
+						continue;
+					}
                     String catId = fontDefinitions[i].getCategoryId();
                     if ((catId == null && categoryId == null)
                             || (catId != null && categoryId != null && categoryId
                                     .equals(catId))) {
                         if (fontDefinitions[i].getDefaultsTo() != null
-                                && parentIsInSameCategory(fontDefinitions[i]))
-                            continue;
+                                && parentIsInSameCategory(fontDefinitions[i])) {
+							continue;
+						}
                         list.add(fontDefinitions[i]);
                     }
                 }
@@ -218,8 +225,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             for (int i = 0; i < defs.length; i++) {
                 if (defs[i].getId().equals(defaultsTo)
                         && ColorsAndFontsPreferencePage.equals(defs[i]
-                                .getCategoryId(), definition.getCategoryId()))
-                    return true;
+                                .getCategoryId(), definition.getCategoryId())) {
+					return true;
+				}
             }
             return false;
         }
@@ -234,8 +242,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             for (int i = 0; i < defs.length; i++) {
                 if (defs[i].getId().equals(defaultsTo)
                         && ColorsAndFontsPreferencePage.equals(defs[i]
-                                .getCategoryId(), definition.getCategoryId()))
-                    return true;
+                                .getCategoryId(), definition.getCategoryId())) {
+					return true;
+				}
             }
             return false;
         }
@@ -251,16 +260,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
          */
         public boolean hasChildren(Object element) {
-            if (element instanceof ThemeElementCategory)
+            if (element instanceof ThemeElementCategory) {
 				return true;
+			}
 
 			IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) element;
 			String id = def.getId();
 			IHierarchalThemeElementDefinition[] defs;
-			if (def instanceof ColorDefinition)
+			if (def instanceof ColorDefinition) {
 				defs = registry.getColors();
-			else
+			} else {
 				defs = registry.getFonts();
+			}
 
 			for (int i = 0; i < defs.length; i++) {
 				if (id.equals(defs[i].getDefaultsTo())
@@ -268,9 +279,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 								((ICategorizedThemeElementDefinition) def)
 										.getCategoryId(),
 								((ICategorizedThemeElementDefinition) defs[i])
-										.getCategoryId()))
-
+										.getCategoryId())) {
 					return true;
+				}
 			}
 
             return false;
@@ -292,8 +303,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     Set bindings = themeRegistry
                             .getPresentationsBindingsFor(categories[i]);
                     if (bindings == null
-                            || bindings.contains(workbench.getPresentationId()))
-                        list.add(categories[i]);
+                            || bindings.contains(workbench.getPresentationId())) {
+						list.add(categories[i]);
+					}
                 }
             }
             return list.toArray(new Object[list.size()]);
@@ -478,14 +490,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     String myCategory = ((ICategorizedThemeElementDefinition) themeElement)
                             .getCategoryId();
                     ICategorizedThemeElementDefinition def;
-                    if (element instanceof ColorDefinition)
-                        def = themeRegistry
+                    if (element instanceof ColorDefinition) {
+						def = themeRegistry
                                 .findColor(themeElement
                                         .getDefaultsTo());
-                    else
-                        def = themeRegistry
+					} else {
+						def = themeRegistry
                                 .findFont(themeElement
                                         .getDefaultsTo());
+					}
 
                     if (!ColorsAndFontsPreferencePage.equals(def
                             .getCategoryId(), myCategory)) {
@@ -514,10 +527,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          * @since 3.2
          */
 		private boolean isDefault(IThemeElementDefinition def) {
-			if (def instanceof FontDefinition)
+			if (def instanceof FontDefinition) {
 				return ColorsAndFontsPreferencePage.this.isDefault((FontDefinition)def);
-			else if (def instanceof ColorDefinition)
+			} else if (def instanceof ColorDefinition) {
 				return ColorsAndFontsPreferencePage.this.isDefault((ColorDefinition)def);
+			}
 			return false;
 		}
     }
@@ -652,12 +666,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * @return
      */
     private static boolean equals(String string, String string2) {
-        if ((string == null && string2 == null))
-            return true;
-        if (string == null || string2 == null)
-            return false;
-        if (string.equals(string2))
-            return true;
+        if ((string == null && string2 == null)) {
+			return true;
+		}
+        if (string == null || string2 == null) {
+			return false;
+		}
+        if (string.equals(string2)) {
+			return true;
+		}
 
         return false;
     }
@@ -705,8 +722,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     	
         parent.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
-                if (appliedDialogFont != null)
-                    appliedDialogFont.dispose();
+                if (appliedDialogFont != null) {
+					appliedDialogFont.dispose();
+				}
             }
         });
         Composite mainColumn = new Composite(parent, SWT.NONE);
@@ -825,8 +843,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
                         .getContentProvider()).getChildren(element);
                 if (children.length > 0
-                        && element instanceof ThemeElementCategory)
-                    return filter(viewer, element, children).length > 0;
+                        && element instanceof ThemeElementCategory) {
+					return filter(viewer, element, children).length > 0;
+				}
                 return false;
             }
         });
@@ -837,8 +856,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         tree.setLayoutData(data);
         myApplyDialogFont(tree.getViewer().getControl());
         Text filterText = tree.getFilterControl();
-        if (filterText != null)
-        	myApplyDialogFont(filterText);
+        if (filterText != null) {
+			myApplyDialogFont(filterText);
+		}
 
         tree.getViewer().setLabelProvider(labelProvider);
         tree.getViewer().setContentProvider(new ThemeContentProvider());
@@ -847,8 +867,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
              * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
              */
             public int category(Object element) {
-                if (element instanceof ThemeElementCategory)
-                    return 0;
+                if (element instanceof ThemeElementCategory) {
+					return 0;
+				}
                 return 1;
             }
         });
@@ -925,8 +946,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * Clear all previews.
      */
     private void clearPreviews() {
-        if (cascadingTheme != null)
-            cascadingTheme.dispose();
+        if (cascadingTheme != null) {
+			cascadingTheme.dispose();
+		}
 
         for (Iterator i = previewSet.iterator(); i.hasNext();) {
             IThemePreview preview = (IThemePreview) i.next();
@@ -952,8 +974,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      */
     private ColorDefinition getColorAncestor(ColorDefinition definition) {
         String defaultsTo = definition.getDefaultsTo();
-        if (defaultsTo == null)
-            return null;
+        if (defaultsTo == null) {
+			return null;
+		}
 
         return themeRegistry.findColor(defaultsTo);
     }
@@ -966,8 +989,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      */
     private RGB getColorAncestorValue(ColorDefinition definition) {
         ColorDefinition ancestor = getColorAncestor(definition);
-        if (ancestor == null)
-            return null;
+        if (ancestor == null) {
+			return null;
+		}
 
         return getColorValue(ancestor);
     }
@@ -984,8 +1008,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         RGB updatedRGB = (RGB) colorPreferencesToSet.get(id);
         if (updatedRGB == null) {
             updatedRGB = (RGB) colorValuesToSet.get(id);
-            if (updatedRGB == null)
-                updatedRGB = currentTheme.getColorRegistry().getRGB(id);
+            if (updatedRGB == null) {
+				updatedRGB = currentTheme.getColorRegistry().getRGB(id);
+			}
         }
         return updatedRGB;
     }
@@ -1022,8 +1047,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         Arrays.sort(sorted, new IThemeRegistry.HierarchyComparator(colors));
 
         for (int i = 0; i < sorted.length; i++) {
-            if (id.equals(sorted[i].getDefaultsTo()))
-                list.add(sorted[i]);
+            if (id.equals(sorted[i].getDefaultsTo())) {
+				list.add(sorted[i]);
+			}
         }
 
         return (ColorDefinition[]) list
@@ -1045,8 +1071,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         Arrays.sort(sorted, new IThemeRegistry.HierarchyComparator(fonts));
 
         for (int i = 0; i < sorted.length; i++) {
-            if (id.equals(sorted[i].getDefaultsTo()))
-                list.add(sorted[i]);
+            if (id.equals(sorted[i].getDefaultsTo())) {
+				list.add(sorted[i]);
+			}
         }
 
         return (FontDefinition[]) list.toArray(new FontDefinition[list.size()]);
@@ -1058,8 +1085,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      */
     private FontDefinition getFontAncestor(FontDefinition definition) {
         String defaultsTo = definition.getDefaultsTo();
-        if (defaultsTo == null)
-            return null;
+        if (defaultsTo == null) {
+			return null;
+		}
 
         return themeRegistry.findFont(defaultsTo);
     }
@@ -1070,11 +1098,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      */
     private FontData[] getFontAncestorValue(FontDefinition definition) {
         FontDefinition ancestor = getFontAncestor(definition);
-        if (ancestor == null)
-            return PreferenceConverter.getDefaultFontDataArray(
+        if (ancestor == null) {
+			return PreferenceConverter.getDefaultFontDataArray(
                     getPreferenceStore(), ThemeElementHelper
                             .createPreferenceKey(currentTheme, definition
                                     .getId()));
+		}
 
         return getFontValue(ancestor);
     }
@@ -1088,8 +1117,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         FontData[] updatedFD = (FontData[]) fontPreferencesToSet.get(id);
         if (updatedFD == null) {
             updatedFD = (FontData[]) fontValuesToSet.get(id);
-            if (updatedFD == null)
-                updatedFD = currentTheme.getFontRegistry().getFontData(id);
+            if (updatedFD == null) {
+				updatedFD = currentTheme.getFontRegistry().getFontData(id);
+			}
         }
         return updatedFD;
     }
@@ -1100,8 +1130,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     protected ColorDefinition getSelectedColorDefinition() {
         Object o = ((IStructuredSelection) tree.getViewer().getSelection())
                 .getFirstElement();
-        if (o instanceof ColorDefinition)
-            return (ColorDefinition) o;
+        if (o instanceof ColorDefinition) {
+			return (ColorDefinition) o;
+		}
         return null;
     }
 
@@ -1111,8 +1142,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     protected FontDefinition getSelectedFontDefinition() {
         Object o = ((IStructuredSelection) tree.getViewer().getSelection())
                 .getFirstElement();
-        if (o instanceof FontDefinition)
-            return (FontDefinition) o;
+        if (o instanceof FontDefinition) {
+			return (FontDefinition) o;
+		}
         return null;
     }
 
@@ -1188,8 +1220,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
              */
             public void widgetSelected(SelectionEvent e) {
                 ColorDefinition definition = getSelectedColorDefinition();
-                if (resetColor(definition))
-                    updateColorControls(definition);
+                if (resetColor(definition)) {
+					updateColorControls(definition);
+				}
             }
         });
 
@@ -1200,8 +1233,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
              */
             public void widgetSelected(SelectionEvent e) {
                 FontDefinition definition = getSelectedFontDefinition();
-                if (resetFont(definition))
-                    updateFontControls(definition);
+                if (resetFont(definition)) {
+					updateFontControls(definition);
+				}
             }
         });
 
@@ -1258,13 +1292,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         clearPreviews();
         categoryMap.clear();
 
-        if (labelProvider != null)
-            labelProvider.dispose(); // nuke the old cache
+        if (labelProvider != null) {
+			labelProvider.dispose(); // nuke the old cache
+		}
 
-        if (colorRegistry != null)
-            colorRegistry.dispose();
-        if (fontRegistry != null)
-            fontRegistry.dispose();
+        if (colorRegistry != null) {
+			colorRegistry.dispose();
+		}
+        if (fontRegistry != null) {
+			fontRegistry.dispose();
+		}
 
         currentTheme = manager.getCurrentTheme();
 
@@ -1278,8 +1315,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         colorPreferencesToSet.clear();
         colorValuesToSet.clear();
 
-        if (labelProvider != null)
-            labelProvider.hookListeners(); // rehook the listeners	    
+        if (labelProvider != null) {
+			labelProvider.hookListeners(); // rehook the listeners	    
+		}
     }
 
     /**
@@ -1295,24 +1333,28 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         if (colorPreferencesToSet.containsKey(id)) {
             if (definition.getValue() != null) { // value-based color
-                if (colorPreferencesToSet.get(id).equals(definition.getValue()))
-                    return true;
+                if (colorPreferencesToSet.get(id).equals(definition.getValue())) {
+					return true;
+				}
             } else {
                 if (colorPreferencesToSet.get(id).equals(
-                        getColorAncestorValue(definition)))
-                    return true;
+                        getColorAncestorValue(definition))) {
+					return true;
+				}
             }
         } else {
             if (definition.getValue() != null) { // value-based color
                 if (getPreferenceStore().isDefault(
                         ThemeElementHelper
-                                .createPreferenceKey(currentTheme, id)))
-                    return true;
+                                .createPreferenceKey(currentTheme, id))) {
+					return true;
+				}
             } else {
                 // a descendant is default if it's the same value as its ancestor
                 if (getColorValue(definition).equals(
-                        getColorAncestorValue(definition)))
-                    return true;
+                        getColorAncestorValue(definition))) {
+					return true;
+				}
             }
         }
         return false;
@@ -1328,28 +1370,33 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         if (fontPreferencesToSet.containsKey(id)) {
             if (definition.getValue() != null) { // value-based font
                 if (Arrays.equals((FontData[]) fontPreferencesToSet.get(id),
-                        definition.getValue()))
-                    return true;
+                        definition.getValue())) {
+					return true;
+				}
             } else {
                 FontData[] ancestor = getFontAncestorValue(definition);
                 if (Arrays.equals((FontData[]) fontPreferencesToSet.get(id),
-                        ancestor))
-                    return true;
+                        ancestor)) {
+					return true;
+				}
             }
         } else {
             if (definition.getValue() != null) { // value-based font
                 if (getPreferenceStore().isDefault(
                         ThemeElementHelper
-                                .createPreferenceKey(currentTheme, id)))
-                    return true;
+                                .createPreferenceKey(currentTheme, id))) {
+					return true;
+				}
             } else {
                 FontData[] ancestor = getFontAncestorValue(definition);
-                if (ancestor == null)
-                    return true;
+                if (ancestor == null) {
+					return true;
+				}
 
                 // a descendant is default if it's the same value as its ancestor
-                if (Arrays.equals(getFontValue(definition), ancestor))
-                    return true;
+                if (Arrays.equals(getFontValue(definition), ancestor)) {
+					return true;
+				}
             }
         }
         return false;
@@ -1377,8 +1424,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         FontDefinition fontDefinition = themeRegistry
                 .findFont(JFaceResources.DIALOG_FONT);
-        if (fontDefinition == null)
-            return;
+        if (fontDefinition == null) {
+			return;
+		}
 
         FontData[] newData = getFontValue(fontDefinition);
 
@@ -1388,8 +1436,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         getApplyButton().setFont(appliedDialogFont);
         getDefaultsButton().setFont(appliedDialogFont);
 
-        if (oldFont != null)
-            oldFont.dispose();
+        if (oldFont != null) {
+			oldFont.dispose();
+		}
     }
 
     /**
@@ -1407,8 +1456,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         Arrays.sort(definitionsCopy, new IThemeRegistry.HierarchyComparator(
                 definitions));
 
-        for (int i = 0; i < definitionsCopy.length; i++)
-            resetColor(definitionsCopy[i]);
+        for (int i = 0; i < definitionsCopy.length; i++) {
+			resetColor(definitionsCopy[i]);
+		}
 
         updateColorControls(getSelectedColorDefinition());
     }
@@ -1460,8 +1510,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         Arrays.sort(definitionsCopy, new IThemeRegistry.HierarchyComparator(
                 definitions));
 
-        for (int i = 0; i < definitionsCopy.length; i++)
-            resetFont(definitionsCopy[i]);
+        for (int i = 0; i < definitionsCopy.length; i++) {
+			resetFont(definitionsCopy[i]);
+		}
 
         updateFontControls(getSelectedFontDefinition());
     }
@@ -1496,8 +1547,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     	saveTreeExpansion();
     	saveTreeSelection();
         boolean result =  performColorOk() && performFontOk();
-        if(result)//Save all of the ones the platform defines
-        	 PrefUtil.savePrefs();
+        if(result) {
+			PrefUtil.savePrefs();
+		}
         return result;
     }
 
@@ -1711,14 +1763,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private IThemePreview getThemePreview(ThemeElementCategory category)
             throws CoreException {
         IThemePreview preview = category.createPreview();
-        if (preview != null)
-            return preview;
+        if (preview != null) {
+			return preview;
+		}
 
         if (category.getParentId() != null) {
             int idx = Arrays.binarySearch(themeRegistry.getCategories(),
                     category.getParentId(), IThemeRegistry.ID_COMPARATOR);
-            if (idx >= 0)
-                return getThemePreview(themeRegistry.getCategories()[idx]);
+            if (idx >= 0) {
+				return getThemePreview(themeRegistry.getCategories()[idx]);
+			}
         }
 
         return null;
@@ -1728,9 +1782,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * @return
      */
     private ITheme getCascadingTheme() {
-        if (cascadingTheme == null)
-            cascadingTheme = new CascadingTheme(currentTheme, colorRegistry,
+        if (cascadingTheme == null) {
+			cascadingTheme = new CascadingTheme(currentTheme, colorRegistry,
                     fontRegistry);
+		}
         return cascadingTheme;
     }
 
@@ -1831,12 +1886,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	private void restoreTreeExpansion() {
 		String expandedElementsString = getPreferenceStore().getString(
 				EXPANDED_ELEMENTS_PREF);
-		if (expandedElementsString == null)
+		if (expandedElementsString == null) {
 			return;
+		}
 
 		String[] expandedElementIDs = Util.getArrayFromList(expandedElementsString, EXPANDED_ELEMENTS_TOKEN);
-		if (expandedElementIDs.length == 0)
+		if (expandedElementIDs.length == 0) {
 			return;
+		}
 
 		List elements = new ArrayList(expandedElementIDs.length);
 		for (int i = 0; i < expandedElementIDs.length; i++) {
@@ -1859,8 +1916,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	 * @return the element, or <code>null</code>
 	 */
 	private IThemeElementDefinition findElementFromMarker(String string) {
-		if (string.length() < 2)
+		if (string.length() < 2) {
 			return null;
+		}
 
 		char marker = string.charAt(0);
 		String id = string.substring(1);
@@ -1903,8 +1961,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		for (Iterator i = elementIds.iterator(); i.hasNext();) {
 			String id = (String) i.next();
 			buffer.append(id);
-			if (i.hasNext())
+			if (i.hasNext()) {
 				buffer.append(EXPANDED_ELEMENTS_TOKEN);
+			}
 		}
 
 		getPreferenceStore()

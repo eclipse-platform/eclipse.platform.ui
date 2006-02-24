@@ -94,8 +94,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
      */
     private boolean processActionSet(IConfigurationElement element) {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id != null)
-            pageLayout.addActionSet(id);
+        if (id != null) {
+			pageLayout.addActionSet(id);
+		}
         return true;
     }
 
@@ -110,18 +111,19 @@ public class PerspectiveExtensionReader extends RegistryReader {
             String type = child.getName();
             if (includeTag(type)) {
                 boolean result = false;
-                if (type.equals(IWorkbenchRegistryConstants.TAG_ACTION_SET))
-                    result = processActionSet(child);
-                else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW))
-                    result = processView(child);
-                else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW_SHORTCUT))
-                    result = processViewShortcut(child);
-                else if (type.equals(IWorkbenchRegistryConstants.TAG_NEW_WIZARD_SHORTCUT))
-                    result = processWizardShortcut(child);
-                else if (type.equals(IWorkbenchRegistryConstants.TAG_PERSP_SHORTCUT))
-                    result = processPerspectiveShortcut(child);
-                else if (type.equals(IWorkbenchRegistryConstants.TAG_SHOW_IN_PART))
-                    result = processShowInPart(child);
+                if (type.equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
+					result = processActionSet(child);
+				} else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
+					result = processView(child);
+				} else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW_SHORTCUT)) {
+					result = processViewShortcut(child);
+				} else if (type.equals(IWorkbenchRegistryConstants.TAG_NEW_WIZARD_SHORTCUT)) {
+					result = processWizardShortcut(child);
+				} else if (type.equals(IWorkbenchRegistryConstants.TAG_PERSP_SHORTCUT)) {
+					result = processPerspectiveShortcut(child);
+				} else if (type.equals(IWorkbenchRegistryConstants.TAG_SHOW_IN_PART)) {
+					result = processShowInPart(child);
+				}
                 if (!result) {
                     WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
                             type
@@ -139,8 +141,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
      */
     private boolean processPerspectiveShortcut(IConfigurationElement element) {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id != null)
-            pageLayout.addPerspectiveShortcut(id);
+        if (id != null) {
+			pageLayout.addPerspectiveShortcut(id);
+		}
         return true;
     }
 
@@ -149,8 +152,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
      */
     private boolean processShowInPart(IConfigurationElement element) {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id != null)
-            pageLayout.addShowInPart(id);
+        if (id != null) {
+			pageLayout.addShowInPart(id);
+		}
         return true;
     }
 
@@ -198,28 +202,30 @@ public class PerspectiveExtensionReader extends RegistryReader {
                 return false;
             }
             // If the ratio is outside the allowable range, mark it as invalid.
-            if (ratio < IPageLayout.RATIO_MIN || ratio > IPageLayout.RATIO_MAX)
-                ratio = IPageLayout.INVALID_RATIO;
+            if (ratio < IPageLayout.RATIO_MIN || ratio > IPageLayout.RATIO_MAX) {
+				ratio = IPageLayout.INVALID_RATIO;
+			}
         }
 
         // Get relationship details.
         boolean stack = false;
         boolean fast = false;
         int intRelation = 0;
-        if (relationship.equals(VAL_LEFT))
-            intRelation = IPageLayout.LEFT;
-        else if (relationship.equals(VAL_RIGHT))
-            intRelation = IPageLayout.RIGHT;
-        else if (relationship.equals(VAL_TOP))
-            intRelation = IPageLayout.TOP;
-        else if (relationship.equals(VAL_BOTTOM))
-            intRelation = IPageLayout.BOTTOM;
-        else if (relationship.equals(VAL_STACK))
-            stack = true;
-        else if (relationship.equals(VAL_FAST))
-            fast = true;
-        else
-            return false;
+        if (relationship.equals(VAL_LEFT)) {
+			intRelation = IPageLayout.LEFT;
+		} else if (relationship.equals(VAL_RIGHT)) {
+			intRelation = IPageLayout.RIGHT;
+		} else if (relationship.equals(VAL_TOP)) {
+			intRelation = IPageLayout.TOP;
+		} else if (relationship.equals(VAL_BOTTOM)) {
+			intRelation = IPageLayout.BOTTOM;
+		} else if (relationship.equals(VAL_STACK)) {
+			stack = true;
+		} else if (relationship.equals(VAL_FAST)) {
+			fast = true;
+		} else {
+			return false;
+		}
 
         if (visible) {
         	// If adding a view (not just a placeholder), remove any existing placeholder.
@@ -229,10 +235,11 @@ public class PerspectiveExtensionReader extends RegistryReader {
         
         // If stack ..
         if (stack) {
-            if (visible)
-                pageLayout.stackView(id, relative);
-            else
-                pageLayout.stackPlaceholder(id, relative);
+            if (visible) {
+				pageLayout.stackView(id, relative);
+			} else {
+				pageLayout.stackPlaceholder(id, relative);
+			}
         }
 
         // If the view is a fast view...
@@ -248,8 +255,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
             // The view is a regular view.
             // If the ratio is not specified or is invalid, use the default ratio.
             if (ratio == IPageLayout.NULL_RATIO
-                    || ratio == IPageLayout.INVALID_RATIO)
-                ratio = IPageLayout.DEFAULT_VIEW_RATIO;
+                    || ratio == IPageLayout.INVALID_RATIO) {
+				ratio = IPageLayout.DEFAULT_VIEW_RATIO;
+			}
 
             if (visible) {
                 if (VAL_TRUE.equals(standalone)) {
@@ -286,8 +294,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
      */
     private boolean processViewShortcut(IConfigurationElement element) {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id != null)
-            pageLayout.addShowViewShortcut(id);
+        if (id != null) {
+			pageLayout.addShowViewShortcut(id);
+		}
         return true;
     }
 
@@ -296,8 +305,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
      */
     private boolean processWizardShortcut(IConfigurationElement element) {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id != null)
-            pageLayout.addNewWizardShortcut(id);
+        if (id != null) {
+			pageLayout.addNewWizardShortcut(id);
+		}
         return true;
     }
 
@@ -306,8 +316,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
         if (type.equals(IWorkbenchRegistryConstants.TAG_PERSPECTIVE_EXTENSION)) {
             String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
             if (targetID.equals(id)) {
-            	if (tracker != null)
-            		tracker.registerObject(element.getDeclaringExtension(), new DirtyPerspectiveMarker(id), IExtensionTracker.REF_STRONG);
+            	if (tracker != null) {
+					tracker.registerObject(element.getDeclaringExtension(), new DirtyPerspectiveMarker(id), IExtensionTracker.REF_STRONG);
+				}
                 return processExtension(element);
             }
             return true;

@@ -71,10 +71,11 @@ public class CycleEditorAction extends CyclePartAction {
         for (int i = refs.length - 1; i >= 0; i--) {
             TableItem item = null;
             item = new TableItem(table, SWT.NONE);
-            if (refs[i].isDirty())
-                item.setText("*" + refs[i].getTitle()); //$NON-NLS-1$
-            else
-                item.setText(refs[i].getTitle());
+            if (refs[i].isDirty()) {
+				item.setText("*" + refs[i].getTitle()); //$NON-NLS-1$
+			} else {
+				item.setText(refs[i].getTitle());
+			}
             item.setImage(refs[i].getTitleImage());
             item.setData(refs[i]);
         }

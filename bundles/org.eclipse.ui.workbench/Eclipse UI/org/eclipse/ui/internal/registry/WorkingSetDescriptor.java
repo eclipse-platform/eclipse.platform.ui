@@ -112,8 +112,9 @@ public class WorkingSetDescriptor implements IPluginContribution {
      * @return the page's icon
      */
     public ImageDescriptor getIcon() {
-        if (icon == null)
-            return null;
+        if (icon == null) {
+			return null;
+		}
 
         IExtension extension = configElement.getDeclaringExtension();
         String extendingPluginId = extension.getNamespace();
@@ -167,8 +168,9 @@ public class WorkingSetDescriptor implements IPluginContribution {
      *  updater has been declared
      */
     public IWorkingSetUpdater createWorkingSetUpdater() {
-    	if (updaterClassName == null)
-    		return null;
+    	if (updaterClassName == null) {
+			return null;
+		}
     	IWorkingSetUpdater result = null;
         try {
             result = (IWorkingSetUpdater)WorkbenchPlugin.createExtension(configElement, ATT_UPDATER_CLASS);

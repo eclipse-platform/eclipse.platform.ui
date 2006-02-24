@@ -69,8 +69,9 @@ public class EditorSashContainer extends PartSashContainer {
     protected void childAdded(LayoutPart child) {
     	super.childAdded(child);
     	
-        if (child instanceof EditorStack)
-            editorWorkbooks.add(child);
+        if (child instanceof EditorStack) {
+			editorWorkbooks.add(child);
+		}
     }
 
     /**
@@ -84,8 +85,9 @@ public class EditorSashContainer extends PartSashContainer {
     	
         if (child instanceof EditorStack) {
             editorWorkbooks.remove(child);
-            if (activeEditorWorkbook == child)
-                setActiveWorkbook(null, false);
+            if (activeEditorWorkbook == child) {
+				setActiveWorkbook(null, false);
+			}
         }
     }
 
@@ -129,10 +131,11 @@ public class EditorSashContainer extends PartSashContainer {
      */
     public EditorStack getActiveWorkbook() {
         if (activeEditorWorkbook == null) {
-            if (editorWorkbooks.size() < 1)
-                setActiveWorkbook(createDefaultWorkbook(), false);
-            else
-                setActiveWorkbook((EditorStack) editorWorkbooks.get(0), false);
+            if (editorWorkbooks.size() < 1) {
+				setActiveWorkbook(createDefaultWorkbook(), false);
+			} else {
+				setActiveWorkbook((EditorStack) editorWorkbooks.get(0), false);
+			}
         }
 
         return activeEditorWorkbook;
@@ -204,8 +207,9 @@ public class EditorSashContainer extends PartSashContainer {
      */
     public void removeEditor(EditorPane pane) {
         EditorStack workbook = pane.getWorkbook();
-        if (workbook == null)
-            return;
+        if (workbook == null) {
+			return;
+		}
         workbook.remove(pane);
 
         // remove the editor workbook if empty
@@ -232,12 +236,14 @@ public class EditorSashContainer extends PartSashContainer {
                 LayoutPart child = (LayoutPart) children.get(i);
                 if (child.getID() == DEFAULT_WORKBOOK_ID) {
                     defaultWorkbook = (EditorStack) child;
-                    if (defaultWorkbook.getItemCount() > 0)
-                        defaultWorkbook = null;
+                    if (defaultWorkbook.getItemCount() > 0) {
+						defaultWorkbook = null;
+					}
                 }
             }
-            if (defaultWorkbook != null)
-                remove(defaultWorkbook);
+            if (defaultWorkbook != null) {
+				remove(defaultWorkbook);
+			}
         }
 
         // Restore the relationship/layout
@@ -289,10 +295,11 @@ public class EditorSashContainer extends PartSashContainer {
                 LayoutPart refPart = (LayoutPart) mapIDtoPart.get(relativeID);
                 if (refPart != null) {
                     //$TODO pass in left and right
-                    if (left == 0 || right == 0)
-                        add(workbook, relationship, ratio, refPart);
-                    else
-                        add(workbook, relationship, left, right, refPart);
+                    if (left == 0 || right == 0) {
+						add(workbook, relationship, ratio, refPart);
+					} else {
+						add(workbook, relationship, left, right, refPart);
+					}
                 } else {
                     WorkbenchPlugin
                             .log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
@@ -354,10 +361,12 @@ public class EditorSashContainer extends PartSashContainer {
      */
     public void setActiveWorkbook(EditorStack newWorkbook, boolean hasFocus) {
         if (newWorkbook != null) {
-            if (newWorkbook.isDisposed())
-                return;
-            if (!editorWorkbooks.contains(newWorkbook))
-                return;
+            if (newWorkbook.isDisposed()) {
+				return;
+			}
+            if (!editorWorkbooks.contains(newWorkbook)) {
+				return;
+			}
         }
         EditorStack oldWorkbook = activeEditorWorkbook;
         activeEditorWorkbook = newWorkbook;
@@ -383,8 +392,9 @@ public class EditorSashContainer extends PartSashContainer {
     public void setActiveWorkbookFromID(String id) {
         for (int i = 0; i < editorWorkbooks.size(); i++) {
             EditorStack workbook = (EditorStack) editorWorkbooks.get(i);
-            if (workbook.getID().equals(id))
-                setActiveWorkbook(workbook, false);
+            if (workbook.getID().equals(id)) {
+				setActiveWorkbook(workbook, false);
+			}
         }
     }
     
@@ -512,8 +522,9 @@ public class EditorSashContainer extends PartSashContainer {
         for (Iterator i = getEditorWorkbooks().iterator(); i.hasNext();) {
             EditorStack workbook = (EditorStack) i.next();
             IMemento memento = workbook.getSavedPresentationState();
-            if (memento == null)
-                continue;
+            if (memento == null) {
+				continue;
+			}
             PresentationSerializer serializer = new PresentationSerializer(
                     workbook.getPresentableParts());
             workbook.getPresentation().restoreState(serializer, memento);

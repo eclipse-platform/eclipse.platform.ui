@@ -80,8 +80,9 @@ public class EditorAreaHelper {
      */
     private void closeEditor(EditorPane pane) {
         if (pane != null) {
-            if (!(pane instanceof MultiEditorInnerPane))
-                editorArea.removeEditor(pane);
+            if (!(pane instanceof MultiEditorInnerPane)) {
+				editorArea.removeEditor(pane);
+			}
         }
     }
 
@@ -97,8 +98,9 @@ public class EditorAreaHelper {
         // Reparent the part back to the main window
         //part.reparent(editorArea.getParent());
         // Update container.
-        if (oldContainer == null)
-            return;
+        if (oldContainer == null) {
+			return;
+		}
         oldContainer.remove(part);
         LayoutPart[] children = oldContainer.getChildren();
         if (children == null || children.length == 0) {
@@ -185,8 +187,9 @@ public class EditorAreaHelper {
     public void addEditor(EditorReference ref, String workbookId) {
         IEditorReference refs[] = editorArea.getPage().getEditorReferences();
         for (int i = 0; i < refs.length; i++) {
-            if (ref == refs[i])
-                return;
+            if (ref == refs[i]) {
+				return;
+			}
         }
         
         if (!(ref.getPane() instanceof MultiEditorInnerPane)) {
@@ -259,23 +262,26 @@ public class EditorAreaHelper {
         if (ref != visibleEditor) {
             IEditorPart part = (IEditorPart) ref.getPart(true);
             EditorPane pane = null;
-            if (part != null)
-                pane = (EditorPane) ((PartSite) part.getEditorSite()).getPane();
+            if (part != null) {
+				pane = (EditorPane) ((PartSite) part.getEditorSite()).getPane();
+			}
             if (pane != null) {
                 if (pane instanceof MultiEditorInnerPane) {
                     EditorPane parentPane = ((MultiEditorInnerPane) pane)
                             .getParentPane();
                     EditorStack activeWorkbook = parentPane.getWorkbook();
                     PartPane activePane = activeWorkbook.getSelection();
-                    if (activePane != parentPane)
-                        parentPane.getWorkbook().setSelection(parentPane);
-                    else
-                        return false;
+                    if (activePane != parentPane) {
+						parentPane.getWorkbook().setSelection(parentPane);
+					} else {
+						return false;
+					}
                 } else {
                     pane.getWorkbook().setSelection(pane);
                 }
-                if (setFocus)
-                    part.setFocus();
+                if (setFocus) {
+					part.setFocus();
+				}
                 return true;
             }
         }

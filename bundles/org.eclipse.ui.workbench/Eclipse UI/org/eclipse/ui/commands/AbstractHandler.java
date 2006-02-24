@@ -52,12 +52,15 @@ public abstract class AbstractHandler extends
      */
     public void addHandlerListener(
             org.eclipse.ui.commands.IHandlerListener handlerListener) {
-        if (handlerListener == null)
-            throw new NullPointerException();
-        if (handlerListeners == null)
-            handlerListeners = new ArrayList();
-        if (!handlerListeners.contains(handlerListener))
-            handlerListeners.add(handlerListener);
+        if (handlerListener == null) {
+			throw new NullPointerException();
+		}
+        if (handlerListeners == null) {
+			handlerListeners = new ArrayList();
+		}
+        if (!handlerListeners.contains(handlerListener)) {
+			handlerListeners.add(handlerListener);
+		}
     }
 
     /**
@@ -120,13 +123,15 @@ public abstract class AbstractHandler extends
     
     protected void fireHandlerChanged(
             final org.eclipse.ui.commands.HandlerEvent handlerEvent) {
-        if (handlerEvent == null)
-            throw new NullPointerException();
+        if (handlerEvent == null) {
+			throw new NullPointerException();
+		}
 
         if (handlerListeners != null) {
-            for (int i = 0; i < handlerListeners.size(); i++)
-                ((org.eclipse.ui.commands.IHandlerListener) handlerListeners
+            for (int i = 0; i < handlerListeners.size(); i++) {
+				((org.eclipse.ui.commands.IHandlerListener) handlerListeners
                         .get(i)).handlerChanged(handlerEvent);
+			}
         }
 
         if (super.hasListeners()) {
@@ -206,14 +211,16 @@ public abstract class AbstractHandler extends
      */
     public void removeHandlerListener(
             org.eclipse.ui.commands.IHandlerListener handlerListener) {
-        if (handlerListener == null)
-            throw new NullPointerException();
+        if (handlerListener == null) {
+			throw new NullPointerException();
+		}
         if (handlerListeners == null) {
             return;
         }
         
-        if (handlerListeners != null)
-            handlerListeners.remove(handlerListener);
+        if (handlerListeners != null) {
+			handlerListeners.remove(handlerListener);
+		}
         if (handlerListeners.isEmpty()) {
             handlerListeners = null;
         }

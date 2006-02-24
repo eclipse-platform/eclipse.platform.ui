@@ -101,8 +101,9 @@ public abstract class PluginAction extends Action implements
         } else {
             IConfigurationElement[] kids = configElement
                     .getChildren(IWorkbenchRegistryConstants.TAG_ENABLEMENT);
-            if (kids.length > 0)
-                enabler = new SelectionEnabler(configElement);
+            if (kids.length > 0) {
+				enabler = new SelectionEnabler(configElement);
+			}
         }
 
         // Give enabler or delegate a chance to adjust enable state
@@ -154,8 +155,9 @@ public abstract class PluginAction extends Action implements
      */
     protected IActionDelegate validateDelegate(Object obj)
             throws WorkbenchException {
-        if (obj instanceof IActionDelegate)
-            return (IActionDelegate) obj;
+        if (obj instanceof IActionDelegate) {
+			return (IActionDelegate) obj;
+		}
         
         throw new WorkbenchException(
                 "Action must implement IActionDelegate"); //$NON-NLS-1$
@@ -166,8 +168,9 @@ public abstract class PluginAction extends Action implements
      * Subclasses may override but must call this implementation first.
      */
     protected void initDelegate() {
-        if (delegate instanceof IActionDelegate2)
-            ((IActionDelegate2) delegate).init(this);
+        if (delegate instanceof IActionDelegate2) {
+			((IActionDelegate2) delegate).init(this);
+		}
     }
 
     /**
@@ -261,8 +264,9 @@ public abstract class PluginAction extends Action implements
     public void selectionChanged(ISelection newSelection) {
         // Update selection.
         selection = newSelection;
-        if (selection == null)
-            selection = StructuredSelection.EMPTY;
+        if (selection == null) {
+			selection = StructuredSelection.EMPTY;
+		}
 
         // The selection is passed to the delegate as-is without
         // modification. If the selection needs to be modified
@@ -270,10 +274,11 @@ public abstract class PluginAction extends Action implements
         
         // If the delegate can be loaded, do so.
         // Otherwise, just update the enablement.
-        if (delegate == null && isOkToCreateDelegate())
-            createDelegate();
-        else
-            refreshEnablement();
+        if (delegate == null && isOkToCreateDelegate()) {
+			createDelegate();
+		} else {
+			refreshEnablement();
+		}
     }
 
     /**

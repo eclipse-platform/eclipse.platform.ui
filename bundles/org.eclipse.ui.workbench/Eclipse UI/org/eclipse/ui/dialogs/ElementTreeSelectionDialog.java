@@ -145,8 +145,9 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
      * @param filter a filter.
      */
     public void addFilter(ViewerFilter filter) {
-        if (fFilters == null)
-            fFilters = new ArrayList(4);
+        if (fFilters == null) {
+			fFilters = new ArrayList(4);
+		}
 
         fFilters.add(filter);
     }
@@ -290,8 +291,9 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
         fViewer.setSorter(fSorter);
         if (fFilters != null) {
-            for (int i = 0; i != fFilters.size(); i++)
-                fViewer.addFilter((ViewerFilter) fFilters.get(i));
+            for (int i = 0; i != fFilters.size(); i++) {
+				fViewer.addFilter((ViewerFilter) fFilters.get(i));
+			}
         }
 
         if (fDoubleClickSelects) {
@@ -299,8 +301,9 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
             tree.addSelectionListener(new SelectionAdapter() {
                 public void widgetDefaultSelected(SelectionEvent e) {
                     updateOKStatus();
-                    if (fCurrStatus.isOK())
-                        access$superButtonPressed(IDialogConstants.OK_ID);
+                    if (fCurrStatus.isOK()) {
+						access$superButtonPressed(IDialogConstants.OK_ID);
+					}
                 }
             });
         }
@@ -315,10 +318,11 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
                     if (selection instanceof IStructuredSelection) {
                         Object item = ((IStructuredSelection) selection)
                                 .getFirstElement();
-                        if (fViewer.getExpandedState(item))
-                            fViewer.collapseToLevel(item, 1);
-                        else
-                            fViewer.expandToLevel(item, 1);
+                        if (fViewer.getExpandedState(item)) {
+							fViewer.collapseToLevel(item, 1);
+						} else {
+							fViewer.expandToLevel(item, 1);
+						}
                     }
                 }
             }
@@ -378,8 +382,9 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         super.handleShellCloseEvent();
 
         //Handle the closing of the shell by selecting the close icon
-        if (getReturnCode() == CANCEL)
-            setResult(null);
+        if (getReturnCode() == CANCEL) {
+			setResult(null);
+		}
     }
 
 }

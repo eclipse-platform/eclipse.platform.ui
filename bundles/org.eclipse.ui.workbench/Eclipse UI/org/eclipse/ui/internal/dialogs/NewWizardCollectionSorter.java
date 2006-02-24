@@ -45,16 +45,20 @@ class NewWizardCollectionSorter extends ViewerSorter {
      * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
      */
     public int category(Object element) {
-    	if (element instanceof WorkbenchWizardElement)
-    		return -1;
+    	if (element instanceof WorkbenchWizardElement) {
+			return -1;
+		}
     	if (element instanceof WizardCollectionElement){
     		String id = ((WizardCollectionElement)element).getId();
-    		if (WizardsRegistryReader.GENERAL_WIZARD_CATEGORY.equals(id))
-    			return 1;
-    		if (WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY.equals(id))
-    			return 3;
-    		if (WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY.equals(id))
-    			return 4;
+    		if (WizardsRegistryReader.GENERAL_WIZARD_CATEGORY.equals(id)) {
+				return 1;
+			}
+    		if (WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY.equals(id)) {
+				return 3;
+			}
+    		if (WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY.equals(id)) {
+				return 4;
+			}
     		return 2;
     	}
     	return super.category(element);	

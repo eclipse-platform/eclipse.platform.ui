@@ -216,10 +216,11 @@ public abstract class AbstractSelectionService implements ISelectionService {
      * Returns the selection.
      */
     public ISelection getSelection() {
-        if (activeProvider != null)
-            return activeProvider.getSelection();
-        else
-            return null;
+        if (activeProvider != null) {
+			return activeProvider.getSelection();
+		} else {
+			return null;
+		}
     }
 
     /*
@@ -238,8 +239,9 @@ public abstract class AbstractSelectionService implements ISelectionService {
      */
     public void setActivePart(IWorkbenchPart newPart) {
         // Optimize.
-        if (newPart == activePart)
-            return;
+        if (newPart == activePart) {
+			return;
+		}
         
         ISelectionProvider selectionProvider = null;
         
@@ -251,18 +253,20 @@ public abstract class AbstractSelectionService implements ISelectionService {
             }
         }
         
-        if (newPart == activePart)
-            return;
+        if (newPart == activePart) {
+			return;
+		}
         
         if (activePart != null) {
             if (activeProvider != null) {
                 activeProvider.removeSelectionChangedListener(selListener);
-                if (activeProvider instanceof IPostSelectionProvider)
-                    ((IPostSelectionProvider) activeProvider)
+                if (activeProvider instanceof IPostSelectionProvider) {
+					((IPostSelectionProvider) activeProvider)
                             .removePostSelectionChangedListener(postSelListener);
-                else
-                    activeProvider
+				} else {
+					activeProvider
                             .removeSelectionChangedListener(postSelListener);
+				}
                 activeProvider = null;
             }
             activePart = null;
@@ -276,11 +280,12 @@ public abstract class AbstractSelectionService implements ISelectionService {
             activeProvider.addSelectionChangedListener(selListener);
             ISelection sel = activeProvider.getSelection();
             fireSelection(newPart, sel);
-            if (activeProvider instanceof IPostSelectionProvider)
-                ((IPostSelectionProvider) activeProvider)
+            if (activeProvider instanceof IPostSelectionProvider) {
+				((IPostSelectionProvider) activeProvider)
                         .addPostSelectionChangedListener(postSelListener);
-            else
-                activeProvider.addSelectionChangedListener(postSelListener);
+			} else {
+				activeProvider.addSelectionChangedListener(postSelListener);
+			}
             firePostSelection(newPart, sel);
         } else {
             fireSelection(null, null);

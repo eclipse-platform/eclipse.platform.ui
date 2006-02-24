@@ -52,8 +52,9 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     public Object getAdapter(Class adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return this;
+        if (adapter == IWorkbenchAdapter.class) {
+			return this;
+		}
         return null;
     }
 

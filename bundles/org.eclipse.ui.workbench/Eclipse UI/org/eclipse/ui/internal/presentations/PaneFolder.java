@@ -657,13 +657,15 @@ public final class PaneFolder {
         CTabItem item = null, tempItem = null;
         for (int i = 0; i < numItems; i++) {
             tempItem = tabFolder.getItem(i);
-            if (tempItem.isShowing())
-                item = tempItem;
+            if (tempItem.isShowing()) {
+				item = tempItem;
+			}
         }
 
         // if we have no visible tabs, abort.
-        if (item == null)
-            return new Point(0, 0);
+        if (item == null) {
+			return new Point(0, 0);
+		}
 
         Rectangle itemBounds = item.getBounds();
         int x = itemBounds.x + itemBounds.width;

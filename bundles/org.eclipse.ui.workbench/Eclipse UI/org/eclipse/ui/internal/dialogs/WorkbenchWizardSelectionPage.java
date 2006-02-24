@@ -62,8 +62,9 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
         Object[] children = wizardElements.getChildren();
         for (int i = 0; i < children.length; ++i) {
             WorkbenchWizardElement currentWizard = (WorkbenchWizardElement) children[i];
-            if (currentWizard.getId().equals(searchId))
-                return currentWizard;
+            if (currentWizard.getId().equals(searchId)) {
+				return currentWizard;
+			}
         }
 
         return null;
@@ -95,8 +96,9 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
     public IWizardPage getNextPage() { 
         ITriggerPoint triggerPoint = getWorkbench().getActivitySupport()
         .getTriggerPointManager().getTriggerPoint(triggerPointId);
-        if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode()))
-            return super.getNextPage();
+        if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode())) {
+			return super.getNextPage();
+		}
         return null;
     }
 }

@@ -54,7 +54,8 @@ public class ClosePerspectiveAction extends PerspectiveAction {
 	 * @since 3.1
      */
     public static void closePerspective(WorkbenchPage page, Perspective persp) {
-        if (page != null && persp != null)
-            page.closePerspective(persp, true, true);
+        if (page != null && persp != null) {
+			page.closePerspective(persp, true, true);
+		}
     }
 }

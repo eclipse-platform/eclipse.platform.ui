@@ -64,8 +64,9 @@ public class SelectWorkingSetAction extends Action {
                 .createWorkingSetSelectionDialog(shell, false);
         IWorkingSet workingSet = actionGroup.getWorkingSet();
 
-        if (workingSet != null)
-            dialog.setSelection(new IWorkingSet[] { workingSet });
+        if (workingSet != null) {
+			dialog.setSelection(new IWorkingSet[] { workingSet });
+		}
 
         if (dialog.open() == Window.OK) {
             IWorkingSet[] result = dialog.getSelection();
@@ -75,7 +76,8 @@ public class SelectWorkingSetAction extends Action {
             } else {
                 actionGroup.setWorkingSet(null);
             }
-        } else
-            actionGroup.setWorkingSet(workingSet);
+        } else {
+			actionGroup.setWorkingSet(workingSet);
+		}
     }
 }

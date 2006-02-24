@@ -100,8 +100,9 @@ public class EditorSelectionDialog extends Dialog implements Listener {
      * This method is called if a button has been pressed.
      */
     protected void buttonPressed(int buttonId) {
-        if (buttonId == IDialogConstants.OK_ID)
-            saveWidgetValues();
+        if (buttonId == IDialogConstants.OK_ID) {
+			saveWidgetValues();
+		}
         super.buttonPressed(buttonId);
     }
 
@@ -240,8 +241,9 @@ public class EditorSelectionDialog extends Dialog implements Listener {
                 .getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("EditorSelectionDialog");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings.addNewSection("EditorSelectionDialog");//$NON-NLS-1$
+        if (section == null) {
+			section = workbenchSettings.addNewSection("EditorSelectionDialog");//$NON-NLS-1$
+		}
         return section;
     }
 
@@ -256,8 +258,9 @@ public class EditorSelectionDialog extends Dialog implements Listener {
             Control shell = getShell();
             if (!shell.isVisible()) {
                 Control topShell = shell.getParent();
-                if (topShell != null)
-                    shell = topShell;
+                if (topShell != null) {
+					shell = topShell;
+				}
             }
             Cursor busy = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
             shell.setCursor(busy);
@@ -282,11 +285,13 @@ public class EditorSelectionDialog extends Dialog implements Listener {
      * @return a filtered array of editors
      */
     protected IEditorDescriptor[] filterEditors(IEditorDescriptor[] editors) {
-        if ((editors == null) || (editors.length < 1))
-            return editors;
+        if ((editors == null) || (editors.length < 1)) {
+			return editors;
+		}
 
-        if ((editorsToFilter == null) || (editorsToFilter.length < 1))
-            return editors;
+        if ((editorsToFilter == null) || (editorsToFilter.length < 1)) {
+			return editors;
+		}
 
         ArrayList filteredList = new ArrayList();
         for (int i = 0; i < editors.length; i++) {
@@ -296,8 +301,9 @@ public class EditorSelectionDialog extends Dialog implements Listener {
                     add = false;
                 }
             }
-            if (add)
-                filteredList.add(editors[i]);
+            if (add) {
+				filteredList.add(editors[i]);
+			}
         }
 
         return (IEditorDescriptor[]) filteredList
@@ -466,8 +472,9 @@ public class EditorSelectionDialog extends Dialog implements Listener {
      */
     protected void updateOkButton() {
         // Buttons are null during dialog creation
-        if (okButton == null)
-            return;
+        if (okButton == null) {
+			return;
+		}
         // If there is no selection, do not enable OK button
         if (editorTable.getSelectionCount() == 0) {
             okButton.setEnabled(false);

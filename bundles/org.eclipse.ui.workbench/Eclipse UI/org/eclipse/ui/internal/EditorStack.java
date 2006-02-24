@@ -83,8 +83,9 @@ public class EditorStack extends PartStack {
      * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
      */
     public boolean supportsState(int state) {
-        if (page.isFixedLayout())
-            return false;
+        if (page.isFixedLayout()) {
+			return false;
+		}
 
         return true;
     }
@@ -131,24 +132,27 @@ public class EditorStack extends PartStack {
     public void removeAll() {
         LayoutPart[] children = getChildren();
 
-        for (int i = 0; i < children.length; i++)
-            remove(children[i]);
+        for (int i = 0; i < children.length; i++) {
+			remove(children[i]);
+		}
     }
 
     public boolean isActiveWorkbook() {
         EditorSashContainer area = getEditorArea();
 
-        if (area != null)
-            return area.isActiveWorkbook(this);
-        else
-            return false;
+        if (area != null) {
+			return area.isActiveWorkbook(this);
+		} else {
+			return false;
+		}
     }
 
     public void becomeActiveWorkbook(boolean hasFocus) {
         EditorSashContainer area = getEditorArea();
 
-        if (area != null)
-            area.setActiveWorkbook(this, hasFocus);
+        if (area != null) {
+			area.setActiveWorkbook(this, hasFocus);
+		}
     }
 
     public EditorPane[] getEditors() {

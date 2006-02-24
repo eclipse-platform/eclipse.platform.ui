@@ -124,8 +124,9 @@ public class Perspective {
             throws WorkbenchException {
         this(page);
         descriptor = desc;
-        if (desc != null)
-            createPresentation(desc);
+        if (desc != null) {
+			createPresentation(desc);
+		}
     }
 
     /**
@@ -151,15 +152,17 @@ public class Perspective {
             // Only remove the part from the presentation if it
             // is actually in the presentation.
             if (presentation.hasPlaceholder(ref.getId(), ref.getSecondaryId())
-                    || pane.getContainer() != null)
-                presentation.removePart(pane);
+                    || pane.getContainer() != null) {
+				presentation.removePart(pane);
+			}
             // We are drag-enabling the pane because it has been disabled
             // when it was removed from the perspective presentation.
             fastViews.add(ref);
             pane.setFast(true);
             Control ctrl = pane.getControl();
-            if (ctrl != null)
-                ctrl.setEnabled(false); // Remove focus support.
+            if (ctrl != null) {
+				ctrl.setEnabled(false); // Remove focus support.
+			}
         }
     }
 
@@ -198,8 +201,9 @@ public class Perspective {
     public boolean containsView(IViewPart view) {
         IViewSite site = view.getViewSite();
         IViewReference ref = findView(site.getId(), site.getSecondaryId());
-        if (ref == null)
-            return false;
+        if (ref == null) {
+			return false;
+		}
         return (view == ref.getPart(false));
     }
 
@@ -213,10 +217,11 @@ public class Perspective {
         while (iter.hasNext()) {
             String id = (String) iter.next();
             IActionSetDescriptor desc = reg.findActionSet(id);
-            if (desc != null)
-                outputList.add(desc);
-            else
-                WorkbenchPlugin.log("Unable to find Action Set: " + id);//$NON-NLS-1$
+            if (desc != null) {
+				outputList.add(desc);
+			} else {
+				WorkbenchPlugin.log("Unable to find Action Set: " + id);//$NON-NLS-1$
+			}
         }
     }
 
@@ -237,8 +242,9 @@ public class Perspective {
      */
     public void dispose() {
         // Get rid of presentation.
-        if (presentation == null)
-            return;
+        if (presentation == null) {
+			return;
+		}
 
         presentation.deactivate();
         presentation.dispose();
@@ -277,8 +283,9 @@ public class Perspective {
             IViewReference ref = refs[i];
             if (id.equals(ref.getId())
                     && (secondaryId == null ? ref.getSecondaryId() == null
-                            : secondaryId.equals(ref.getSecondaryId())))
-                return ref;
+                            : secondaryId.equals(ref.getSecondaryId()))) {
+				return ref;
+			}
         }
         return null;
     }
@@ -415,8 +422,9 @@ public class Perspective {
      */
     public IViewReference[] getViewReferences() {
         // Get normal views.
-        if (presentation == null)
-            return new IViewReference[0];
+        if (presentation == null) {
+			return new IViewReference[0];
+		}
 
         List panes = new ArrayList(5);
         presentation.collectViewPanes(panes);
@@ -446,8 +454,9 @@ public class Perspective {
      * Hide the editor area if visible
      */
     protected void hideEditorArea() {
-        if (!isEditorAreaVisible())
-            return;
+        if (!isEditorAreaVisible()) {
+			return;
+		}
 
         // Replace the editor area with a placeholder so we
         // know where to put it back on show editor area request.
@@ -485,12 +494,15 @@ public class Perspective {
         // Remove the view from the current presentation.
         if (isFastView(ref)) {
             fastViews.remove(ref);
-            if (pane != null)
-                pane.setFast(false); //force an update of the toolbar
-            if (activeFastView == ref)
-                setActiveFastView(null);
-            if (pane != null)
-                pane.getControl().setEnabled(true);
+            if (pane != null) {
+				pane.setFast(false); //force an update of the toolbar
+			}
+            if (activeFastView == ref) {
+				setActiveFastView(null);
+			}
+            if (pane != null) {
+				pane.getControl().setEnabled(true);
+			}
         } else {
             presentation.removePart(pane);
         }
@@ -635,8 +647,9 @@ public class Perspective {
 		/*
 		 * IPerspectiveFactory#createFactory() can return null
 		 */
-		if (factory == null)
-			throw new WorkbenchException(NLS.bind(WorkbenchMessages.Perspective_unableToLoad, persp.getId() ));		
+		if (factory == null) {
+			throw new WorkbenchException(NLS.bind(WorkbenchMessages.Perspective_unableToLoad, persp.getId() ));
+		}		
 		
 		
         // Create layout factory.
@@ -655,34 +668,38 @@ public class Perspective {
             String id = stickyViewDescriptor.getId();
             switch (stickyViewDescriptor.getLocation()) {
             case IPageLayout.RIGHT:
-                if (stickyFolderRight == null)
-                    stickyFolderRight = layout
+                if (stickyFolderRight == null) {
+					stickyFolderRight = layout
                             .createPlaceholderFolder(
                                     StickyViewDescriptor.STICKY_FOLDER_RIGHT,
                                     IPageLayout.RIGHT, .75f,
                                     IPageLayout.ID_EDITOR_AREA);
+				}
                 stickyFolderRight.addPlaceholder(id);
                 break;
             case IPageLayout.LEFT:
-                if (stickyFolderLeft == null)
-                    stickyFolderLeft = layout.createPlaceholderFolder(
+                if (stickyFolderLeft == null) {
+					stickyFolderLeft = layout.createPlaceholderFolder(
                             StickyViewDescriptor.STICKY_FOLDER_LEFT,
                             IPageLayout.LEFT, .25f, IPageLayout.ID_EDITOR_AREA);
+				}
                 stickyFolderLeft.addPlaceholder(id);
                 break;
             case IPageLayout.TOP:
-                if (stickyFolderTop == null)
-                    stickyFolderTop = layout.createPlaceholderFolder(
+                if (stickyFolderTop == null) {
+					stickyFolderTop = layout.createPlaceholderFolder(
                             StickyViewDescriptor.STICKY_FOLDER_TOP,
                             IPageLayout.TOP, .25f, IPageLayout.ID_EDITOR_AREA);
+				}
                 stickyFolderTop.addPlaceholder(id);
                 break;
             case IPageLayout.BOTTOM:
-                if (stickyFolderBottom == null)
-                    stickyFolderBottom = layout.createPlaceholderFolder(
+                if (stickyFolderBottom == null) {
+					stickyFolderBottom = layout.createPlaceholderFolder(
                             StickyViewDescriptor.STICKY_FOLDER_BOTTOM,
                             IPageLayout.BOTTOM, .75f,
                             IPageLayout.ID_EDITOR_AREA);
+				}
                 stickyFolderBottom.addPlaceholder(id);
                 break;
             }
@@ -725,8 +742,9 @@ public class Perspective {
         presentation = new PerspectiveHelper(page, container, this);
 
         // Hide editor area if requested by factory
-        if (!layout.isEditorAreaVisible())
-            hideEditorArea();
+        if (!layout.isEditorAreaVisible()) {
+			hideEditorArea();
+		}
 
     }
 
@@ -834,8 +852,9 @@ public class Perspective {
             ViewPane pane = getPane((IViewReference) fastViews.get(i));
             if (pane != null) {
                 Control ctrl = pane.getControl();
-                if (ctrl != null)
-                    ctrl.setEnabled(true); // Add focus support.
+                if (ctrl != null) {
+					ctrl.setEnabled(true); // Add focus support.
+				}
             }
         }
     }
@@ -846,8 +865,9 @@ public class Perspective {
     public void partActivated(IWorkbenchPart activePart) {
         // If a fastview is open close it.
         if (activeFastView != null
-                && activeFastView.getPart(false) != activePart)
-            setActiveFastView(null);
+                && activeFastView.getPart(false) != activePart) {
+			setActiveFastView(null);
+		}
     }
 
     /**
@@ -865,13 +885,15 @@ public class Perspective {
     public void removeFastView(IViewReference ref) {
         ViewPane pane = getPane(ref);
         if (isFastView(ref)) {
-            if (activeFastView == ref)
-                setActiveFastView(null);
+            if (activeFastView == ref) {
+				setActiveFastView(null);
+			}
             fastViews.remove(ref);
             pane.setFast(false);
             Control ctrl = pane.getControl();
-            if (ctrl != null)
-                ctrl.setEnabled(true); // Modify focus support.
+            if (ctrl != null) {
+				ctrl.setEnabled(true); // Modify focus support.
+			}
             // We are disabling the pane because it will be enabled when it
             // is added to the presentation. When a pane is enabled a drop
             // listener is added to it, and we do not want to have multiple
@@ -896,8 +918,9 @@ public class Perspective {
         PerspectiveDescriptor desc = (PerspectiveDescriptor) WorkbenchPlugin
                 .getDefault().getPerspectiveRegistry().findPerspectiveWithId(
                         descriptor.getId());
-        if (desc != null)
-            descriptor = desc;
+        if (desc != null) {
+			descriptor = desc;
+		}
 
         this.memento = memento;
         // Add the visible views.
@@ -921,8 +944,9 @@ public class Perspective {
             IMemento childMem = views[x];
             String id = childMem.getString(IWorkbenchConstants.TAG_ID);
             // skip creation of the intro reference -  it's handled elsewhere.
-            if (id.equals(IIntroConstants.INTRO_VIEW_ID))
-                continue;
+            if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
+				continue;
+			}
 
             String secondaryId = ViewFactory.extractSecondaryId(id);
             if (secondaryId != null) {
@@ -948,8 +972,9 @@ public class Perspective {
      * Note: This method should not modify the current state of the perspective.
      */
     public IStatus restoreState() {
-        if (this.memento == null)
-            return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+        if (this.memento == null) {
+			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+		}
 
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
@@ -997,8 +1022,9 @@ public class Perspective {
             }
 
             // skip the intro as it is restored higher up in workbench.
-            if (id.equals(IIntroConstants.INTRO_VIEW_ID))
-                continue;
+            if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
+				continue;
+			}
 
             // Create and open the view.
             IViewReference viewRef = viewFactory.getView(id, secondaryId);
@@ -1061,11 +1087,12 @@ public class Perspective {
                 if (ratio == null) {
                     Integer viewWidth = childMem
                             .getInteger(IWorkbenchConstants.TAG_WIDTH);
-                    if (viewWidth == null)
-                        ratio = new Float(IPageLayout.DEFAULT_FASTVIEW_RATIO);
-                    else
-                        ratio = new Float((float) viewWidth.intValue()
+                    if (viewWidth == null) {
+						ratio = new Float(IPageLayout.DEFAULT_FASTVIEW_RATIO);
+					} else {
+						ratio = new Float((float) viewWidth.intValue()
                                 / (float) getClientComposite().getSize().x);
+					}
                 }
                 ViewLayoutRec rec = getViewLayoutRec(viewRef, true);
                 rec.fastViewWidthRatio = ratio.floatValue();
@@ -1181,8 +1208,9 @@ public class Perspective {
         ArrayList extActionSets = getPerspectiveExtensionActionSets();
         for (int i = 0; i < extActionSets.size(); i++) {
             String actionSetID = (String) extActionSets.get(i);
-            if (knownActionSetIds.contains(actionSetID))
-                continue;
+            if (knownActionSetIds.contains(actionSetID)) {
+				continue;
+			}
             IActionSetDescriptor d = WorkbenchPlugin.getDefault()
                     .getActionSetRegistry().findActionSet(actionSetID);
             if (d != null) {
@@ -1444,8 +1472,9 @@ public class Perspective {
 
         if (errors > 0) {
             String message = WorkbenchMessages.Perspective_multipleErrors;
-            if (errors == 1)
-                message = WorkbenchMessages.Perspective_oneError;
+            if (errors == 1) {
+				message = WorkbenchMessages.Perspective_oneError;
+			}
             MessageDialog.openError(null,
                     WorkbenchMessages.Error, message); 
         }
@@ -1455,16 +1484,18 @@ public class Perspective {
         result.add(presentation.saveState(childMem));
 
         // Save the editor visibility state
-        if (isEditorAreaVisible())
-            memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
-        else
-            memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
+        if (isEditorAreaVisible()) {
+			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
+		} else {
+			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
+		}
 
         // Save the fixed state
-        if (fixed)
-            memento.putInteger(IWorkbenchConstants.TAG_FIXED, 1);
-        else
-            memento.putInteger(IWorkbenchConstants.TAG_FIXED, 0);
+        if (fixed) {
+			memento.putInteger(IWorkbenchConstants.TAG_FIXED, 1);
+		} else {
+			memento.putInteger(IWorkbenchConstants.TAG_FIXED, 0);
+		}
 
         return result;
     }
@@ -1503,8 +1534,9 @@ public class Perspective {
      * completely. Then, <code>view</code> becomes active and is shown.
      */
     /*package*/void setActiveFastView(IViewReference ref, int steps) {
-        if (activeFastView == ref)
-            return;
+        if (activeFastView == ref) {
+			return;
+		}
 
         if (activeFastView != null) {
             ViewPane pane = getPane(activeFastView);
@@ -1541,8 +1573,9 @@ public class Perspective {
         Iterator iter = fastViews.iterator();
         while (iter.hasNext()) {
             ViewPane pane = getPane((IViewReference) iter.next());
-            if (pane != null)
-                pane.setFast(visible);
+            if (pane != null) {
+				pane.setFast(visible);
+			}
         }
     }
 
@@ -1600,8 +1633,9 @@ public class Perspective {
      * Show the editor area if not visible
      */
     protected void showEditorArea() {
-        if (isEditorAreaVisible())
-            return;
+        if (isEditorAreaVisible()) {
+			return;
+		}
 
         // Replace the part holder with the editor area.
         presentation.getLayout().replace(editorHolder, editorArea);
@@ -1614,12 +1648,14 @@ public class Perspective {
      */
     boolean showFastView(IViewReference ref) {
         // Make sure the part is restored.
-        if (ref.getPart(true) == null)
-            return false;
+        if (ref.getPart(true) == null) {
+			return false;
+		}
 
         ViewPane pane = getPane(ref);
-        if (pane == null)
-            return false;
+        if (pane == null) {
+			return false;
+		}
 
         saveFastViewWidthRatio();
 
@@ -1721,8 +1757,9 @@ public class Perspective {
         //PR 6988
 
         //do nothing if views are the same
-        if (draggedView == destinationView)
-            return;
+        if (draggedView == destinationView) {
+			return;
+		}
 
         int insertIdx = fastViews.indexOf(destinationView);
 
@@ -1792,8 +1829,9 @@ public class Perspective {
      */
     public boolean isCloseable(IViewReference reference) {
         ViewLayoutRec rec = getViewLayoutRec(reference, false);
-        if (rec != null)
-            return rec.isCloseable;
+        if (rec != null) {
+			return rec.isCloseable;
+		}
         return true;
     }
 
@@ -1804,8 +1842,9 @@ public class Perspective {
      */
     public boolean isMoveable(IViewReference reference) {
         ViewLayoutRec rec = getViewLayoutRec(reference, false);
-        if (rec != null)
-            return rec.isMoveable;
+        if (rec != null) {
+			return rec.isMoveable;
+		}
         return true;
     }
 

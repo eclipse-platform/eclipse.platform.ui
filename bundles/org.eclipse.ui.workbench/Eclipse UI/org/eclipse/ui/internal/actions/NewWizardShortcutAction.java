@@ -104,10 +104,11 @@ public class NewWizardShortcutAction extends Action implements
 				IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
         
         // if the wizard can finish early and doesn't have any pages, just finish it.
-        if (wizardElement.canFinishEarly() && !wizardElement.hasPages())
-        		wizard.performFinish();
-        else
-        		dialog.open();
+        if (wizardElement.canFinishEarly() && !wizardElement.hasPages()) {
+			wizard.performFinish();
+		} else {
+			dialog.open();
+		}
     }
 
     /* (non-Javadoc)
@@ -115,8 +116,9 @@ public class NewWizardShortcutAction extends Action implements
      */
     public String getLocalId() {
     	IPluginContribution contribution = getPluginContribution();
-    	if (contribution != null)
-    		return contribution.getLocalId();
+    	if (contribution != null) {
+			return contribution.getLocalId();
+		}
     	return wizardElement.getId();
     }
 
@@ -125,8 +127,9 @@ public class NewWizardShortcutAction extends Action implements
      */
     public String getPluginId() {
     	IPluginContribution contribution = getPluginContribution();
-    	if (contribution != null)
-    		return contribution.getPluginId();
+    	if (contribution != null) {
+			return contribution.getPluginId();
+		}
     	return null;
     }
     

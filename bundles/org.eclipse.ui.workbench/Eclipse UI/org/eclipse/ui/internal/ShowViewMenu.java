@@ -55,8 +55,9 @@ public class ShowViewMenu extends ContributionItem {
 
 	private Comparator actionComparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
-			if (collator == null)
+			if (collator == null) {
 				collator = Collator.getInstance();
+			}
 			IAction a1 = (IAction) o1;
 			IAction a2 = (IAction) o2;
 			return collator.compare(a1.getText(), a2.getText());
@@ -147,12 +148,14 @@ public class ShowViewMenu extends ContributionItem {
 
 		// If no page disable all.
 		IWorkbenchPage page = window.getActivePage();
-		if (page == null)
+		if (page == null) {
 			return;
+		}
 
 		// If no active perspective disable all
-		if (page.getPerspective() == null)
+		if (page.getPerspective() == null) {
 			return;
+		}
 
 		// Get visible actions.
 		List viewIds = Arrays.asList(page.getShowViewShortcuts());
@@ -163,12 +166,14 @@ public class ShowViewMenu extends ContributionItem {
 		List actions = new ArrayList(viewIds.size());
 		for (Iterator i = viewIds.iterator(); i.hasNext();) {
 			String id = (String) i.next();
-			if (id.equals(IIntroConstants.INTRO_VIEW_ID))
+			if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
 				continue;
+			}
 			IAction action = getAction(id);
 			if (action != null) {
-				if (WorkbenchActivityHelper.filterItem(action))
+				if (WorkbenchActivityHelper.filterItem(action)) {
 					continue;
+				}
 				actions.add(action);
 			}
 		}
@@ -188,13 +193,15 @@ public class ShowViewMenu extends ContributionItem {
 
 		for (int i = 0; i < actions.size(); i++) {
 			Object element = actions.get(i);
-			if (result.indexOf(element) < 0)
+			if (result.indexOf(element) < 0) {
 				result.add(element);
+			}
 		}
 		for (int i = 0; i < views.size(); i++) {
 			Object element = views.get(i);
-			if (result.indexOf(element) < 0)
+			if (result.indexOf(element) < 0) {
 				result.add(element);
+			}
 		}
 		return result;
 	}
@@ -228,11 +235,13 @@ public class ShowViewMenu extends ContributionItem {
 	}
 
 	public void fill(Menu menu, int index) {
-		if (getParent() instanceof MenuManager)
+		if (getParent() instanceof MenuManager) {
 			((MenuManager) getParent()).addMenuListener(menuListener);
+		}
 
-		if (!dirty)
+		if (!dirty) {
 			return;
+		}
 
 		MenuManager manager = new MenuManager();
 		fillMenu(manager);

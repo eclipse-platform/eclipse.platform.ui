@@ -44,8 +44,9 @@ public class TaskInfo extends SubTaskInfo {
 	void addWork(double workIncrement) {
 
 		// Don't bother if we are indeterminate
-		if (totalWork == IProgressMonitor.UNKNOWN)
+		if (totalWork == IProgressMonitor.UNKNOWN) {
 			return;
+		}
 		preWork += workIncrement;
 
 	}
@@ -64,8 +65,9 @@ public class TaskInfo extends SubTaskInfo {
 	void addWork(double workIncrement, IProgressMonitor parentMonitor,
 			int parentTicks) {
 		// Don't bother if we are indeterminate
-		if (totalWork == IProgressMonitor.UNKNOWN)
+		if (totalWork == IProgressMonitor.UNKNOWN) {
 			return;
+		}
 
 		addWork(workIncrement);
 		parentMonitor.internalWorked(workIncrement * parentTicks / totalWork);
@@ -78,11 +80,13 @@ public class TaskInfo extends SubTaskInfo {
 	 */
 	String getDisplayString(boolean showProgress) {
 
-		if (totalWork == IProgressMonitor.UNKNOWN)
+		if (totalWork == IProgressMonitor.UNKNOWN) {
 			return unknownProgress();
+		}
 
-		if (taskName == null)
+		if (taskName == null) {
 			return getDisplayStringWithoutTask(showProgress);
+		}
 
 		if (showProgress) {
 			String[] messageValues = new String[3];
@@ -112,8 +116,9 @@ public class TaskInfo extends SubTaskInfo {
 	 */
 	String getDisplayStringWithoutTask(boolean showProgress) {
 
-		if (!showProgress || totalWork == IProgressMonitor.UNKNOWN)
+		if (!showProgress || totalWork == IProgressMonitor.UNKNOWN) {
 			return jobInfo.getJob().getName();
+		}
 
 		return NLS.bind(ProgressMessages.JobInfo_NoTaskNameDoneMessage, jobInfo
 				.getJob().getName(), String.valueOf(getPercentDone()));
@@ -126,8 +131,9 @@ public class TaskInfo extends SubTaskInfo {
 	 * @return int IProgressMonitor.UNKNOWN or a value between 0 and 100.
 	 */
 	int getPercentDone() {
-		if (totalWork == IProgressMonitor.UNKNOWN)
+		if (totalWork == IProgressMonitor.UNKNOWN) {
 			return IProgressMonitor.UNKNOWN;
+		}
 
 		return Math.min((int) (preWork * 100 / totalWork), 100);
 	}

@@ -36,7 +36,8 @@ public class CloseEditorAction extends ActiveEditorAction {
      */
     public void run() {
         IEditorPart part = getActiveEditor();
-        if (part != null)
-            getActivePage().closeEditor(part, true);
+        if (part != null) {
+			getActivePage().closeEditor(part, true);
+		}
     }
 }

@@ -140,8 +140,9 @@ public class PerspectiveHelper {
             }
 
             // If layout is modified always zoom out.
-            if (isZoomed())
-                zoomOut();
+            if (isZoomed()) {
+				zoomOut();
+			}
             // do a normal part detach
             detach(part, dragRectangle.x, dragRectangle.y);
         }
@@ -225,8 +226,9 @@ public class PerspectiveHelper {
 	 */
     public void activate(Composite parent) {
 
-        if (active)
-            return;
+        if (active) {
+			return;
+		}
 
         parentWidget = parent;
 
@@ -271,14 +273,16 @@ public class PerspectiveHelper {
             IViewReference ref = (IViewReference) pane.getPartReference();
             secondaryId = ref.getSecondaryId();
         }
-        if (secondaryId != null)
-            testPart = findPart(primaryId, secondaryId);
-        else
-            testPart = findPart(primaryId);
+        if (secondaryId != null) {
+			testPart = findPart(primaryId, secondaryId);
+		} else {
+			testPart = findPart(primaryId);
+		}
 
         // validate the testPart
-        if (testPart != null && testPart instanceof PartPlaceholder)
-            placeholder = (PartPlaceholder) testPart;
+        if (testPart != null && testPart instanceof PartPlaceholder) {
+			placeholder = (PartPlaceholder) testPart;
+		}
 
         // If there is no placeholder do a simple add. Otherwise, replace the
         // placeholder if its not a pattern matching placholder
@@ -315,8 +319,9 @@ public class PerspectiveHelper {
                     ViewPane pane = (ViewPane) part;
                     window.add(pane);
                     LayoutPart otherChildren[] = holder.getChildren();
-                    for (int i = 0; i < otherChildren.length; i++)
-                        part.getContainer().add(otherChildren[i]);
+                    for (int i = 0; i < otherChildren.length; i++) {
+						part.getContainer().add(otherChildren[i]);
+					}
                 } else {
 
                     // reconsistute parent if necessary
@@ -343,13 +348,15 @@ public class PerspectiveHelper {
 
                     // see if we should replace the placeholder
                     if (placeholder.hasWildCard()) {
-                        if (container instanceof PartSashContainer)
-                            ((PartSashContainer) container)
+                        if (container instanceof PartSashContainer) {
+							((PartSashContainer) container)
                                     .addChildForPlaceholder(part, placeholder);
-                        else
-                            container.add(part);
-                    } else
-                        container.replace(placeholder, part);
+						} else {
+							container.add(part);
+						}
+                    } else {
+						container.replace(placeholder, part);
+					}
                 }
             }
         }
@@ -400,25 +407,30 @@ public class PerspectiveHelper {
      */
     public boolean isPartVisible(IWorkbenchPartReference partRef) {
         LayoutPart foundPart;
-        if (partRef instanceof IViewReference) 
-            foundPart = findPart(partRef.getId(), ((IViewReference) partRef).getSecondaryId());
-        else
-            foundPart = findPart(partRef.getId());
-        if (foundPart == null)
-            return false;
-        if (foundPart instanceof PartPlaceholder)
-            return false;
+        if (partRef instanceof IViewReference) {
+			foundPart = findPart(partRef.getId(), ((IViewReference) partRef).getSecondaryId());
+		} else {
+			foundPart = findPart(partRef.getId());
+		}
+        if (foundPart == null) {
+			return false;
+		}
+        if (foundPart instanceof PartPlaceholder) {
+			return false;
+		}
 
         ILayoutContainer container = foundPart.getContainer();
         
-        if (container instanceof ContainerPlaceholder)
-            return false;
+        if (container instanceof ContainerPlaceholder) {
+			return false;
+		}
 
         if (container instanceof ViewStack) {
             ViewStack folder = (ViewStack) container;
             PartPane visiblePart = folder.getSelection();
-            if (visiblePart == null)
-                return false;
+            if (visiblePart == null) {
+				return false;
+			}
             return partRef.equals(visiblePart.getPartReference());
         }
         return true;
@@ -434,17 +446,20 @@ public class PerspectiveHelper {
 
     public boolean willPartBeVisible(String partId, String secondaryId) {
         LayoutPart part = findPart(partId, secondaryId);
-        if (part == null)
-            return false;
+        if (part == null) {
+			return false;
+		}
         ILayoutContainer container = part.getContainer();
-        if (container != null && container instanceof ContainerPlaceholder)
-            container = (ILayoutContainer) ((ContainerPlaceholder) container)
+        if (container != null && container instanceof ContainerPlaceholder) {
+			container = (ILayoutContainer) ((ContainerPlaceholder) container)
                     .getRealContainer();
+		}
 
         if (container != null && container instanceof ViewStack) {
             ViewStack folder = (ViewStack) container;
-            if (folder.getSelection() == null)
-                return false;
+            if (folder.getSelection() == null) {
+				return false;
+			}
             return part.getCompoundId().equals(
                     folder.getSelection().getCompoundId());
         }
@@ -551,8 +566,9 @@ public class PerspectiveHelper {
      * Hide the presentation.
      */
     public void deactivate() {
-        if (!active)
-            return;
+        if (!active) {
+			return;
+		}
 
         disableAllDrag();
 
@@ -617,8 +633,9 @@ public class PerspectiveHelper {
 	                    buf.append("dWindow ("); //$NON-NLS-1$
 	                    for(int j = 0; j < children.length; j++){
 	                        buf.append(((ViewPane)children[j]).getViewReference().getPartName());
-	                        if(j < (children.length - 1))
-	                            buf.append(", "); //$NON-NLS-1$
+	                        if(j < (children.length - 1)) {
+								buf.append(", "); //$NON-NLS-1$
+							}
 	                    }
 	                    buf.append(")"); //$NON-NLS-1$
 	                }
@@ -651,8 +668,9 @@ public class PerspectiveHelper {
         part.reparent(mainLayout.getParent());
 
         // Update container.
-        if (oldContainer == null)
-            return;
+        if (oldContainer == null) {
+			return;
+		}
 
         oldContainer.remove(part);
 
@@ -662,9 +680,11 @@ public class PerspectiveHelper {
             if (hasChildren) {
                 // make sure one is at least visible
                 int childVisible = 0;
-                for (int i = 0; i < children.length; i++)
-                    if (children[i].getControl() != null)
-                        childVisible++;
+                for (int i = 0; i < children.length; i++) {
+					if (children[i].getControl() != null) {
+						childVisible++;
+					}
+				}
 
                 // none visible, then reprarent and remove container
                 if (oldContainer instanceof ViewStack) {
@@ -741,8 +761,9 @@ public class PerspectiveHelper {
     private void detach(LayoutPart source, int x, int y) {
 
         // Detaching is disabled on some platforms ..
-        if (!detachable)
-            return;
+        if (!detachable) {
+			return;
+		}
 
         LayoutPart part = source.getPart();
         // Calculate detached window size.
@@ -899,8 +920,9 @@ public class PerspectiveHelper {
         LayoutPart part = (secondaryId != null) ? findPart(primaryId,
                 secondaryId, mainLayout.getChildren(), matchingParts)
                 : findPart(primaryId, mainLayout.getChildren(), matchingParts);
-        if (part != null)
-            return part;
+        if (part != null) {
+			return part;
+		}
 
         // check each detached windows.
         for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
@@ -908,8 +930,9 @@ public class PerspectiveHelper {
             part = (secondaryId != null) ? findPart(primaryId, secondaryId,
                     window.getChildren(), matchingParts) : findPart(primaryId,
                     window.getChildren(), matchingParts);
-            if (part != null)
-                return part;
+            if (part != null) {
+				return part;
+			}
         }
         for (int i = 0; i < detachedPlaceHolderList.size(); i++) {
             DetachedPlaceHolder holder = (DetachedPlaceHolder) detachedPlaceHolderList
@@ -917,8 +940,9 @@ public class PerspectiveHelper {
             part = (secondaryId != null) ? findPart(primaryId, secondaryId,
                     holder.getChildren(), matchingParts) : findPart(primaryId,
                     holder.getChildren(), matchingParts);
-            if (part != null)
-                return part;
+            if (part != null) {
+				return part;
+			}
         }
 
         // sort the matching parts
@@ -926,8 +950,9 @@ public class PerspectiveHelper {
             Collections.sort(matchingParts);
             MatchingPart mostSignificantPart = (MatchingPart) matchingParts
                     .get(0);
-            if (mostSignificantPart != null)
-                return mostSignificantPart.part;
+            if (mostSignificantPart != null) {
+				return mostSignificantPart.part;
+			}
         }
 
         // Not found.
@@ -947,8 +972,9 @@ public class PerspectiveHelper {
                     ViewPane pane = (ViewPane) part;
                     IViewReference ref = (IViewReference) pane
                             .getPartReference();
-                    if (ref.getSecondaryId() != null)
-                        continue;
+                    if (ref.getSecondaryId() != null) {
+						continue;
+					}
                 }
                 return part;
             }
@@ -956,16 +982,18 @@ public class PerspectiveHelper {
             else if (part instanceof PartPlaceholder
                     && ((PartPlaceholder) part).hasWildCard()) {
                 StringMatcher sm = new StringMatcher(part.getID(), true, false);
-                if (sm.match(id))
-                    matchingParts
+                if (sm.match(id)) {
+					matchingParts
                             .add(new MatchingPart(part.getID(), null, part));
+				}
             } else if (part instanceof EditorSashContainer) {
                 // Skip.
             } else if (part instanceof ILayoutContainer) {
                 part = findPart(id, ((ILayoutContainer) part).getChildren(),
                         matchingParts);
-                if (part != null)
-                    return part;
+                if (part != null) {
+					return part;
+				}
             }
         }
         return null;
@@ -984,8 +1012,9 @@ public class PerspectiveHelper {
             if (part instanceof ILayoutContainer) {
                 LayoutPart testPart = findPart(primaryId, secondaryId,
                         ((ILayoutContainer) part).getChildren(), matchingParts);
-                if (testPart != null)
-                    return testPart;
+                if (testPart != null) {
+					return testPart;
+				}
             }
             // check for view part equality
             if (part instanceof ViewPane) {
@@ -993,8 +1022,9 @@ public class PerspectiveHelper {
                 IViewReference ref = (IViewReference) pane.getPartReference();
                 if (ref.getId().equals(primaryId)
                         && ref.getSecondaryId() != null
-                        && ref.getSecondaryId().equals(secondaryId))
-                    return part;
+                        && ref.getSecondaryId().equals(secondaryId)) {
+					return part;
+				}
             }
             // check placeholders
             else if ((parts[i] instanceof PartPlaceholder)) {
@@ -1004,8 +1034,9 @@ public class PerspectiveHelper {
                 String phSecondaryId = ViewFactory.extractSecondaryId(id);
                 if (phSecondaryId == null) {
                     // but still need to check for wildcard case
-                    if (id.equals(PartPlaceholder.WILD_CARD))
-                        matchingParts.add(new MatchingPart(id, null, part));
+                    if (id.equals(PartPlaceholder.WILD_CARD)) {
+						matchingParts.add(new MatchingPart(id, null, part));
+					}
                     continue;
                 }
 
@@ -1044,10 +1075,11 @@ public class PerspectiveHelper {
      */
     public boolean hasPlaceholder(String primaryId, String secondaryId) {
         LayoutPart testPart;
-        if (secondaryId == null)
-            testPart = findPart(primaryId);
-        else
-            testPart = findPart(primaryId, secondaryId);
+        if (secondaryId == null) {
+			testPart = findPart(primaryId);
+		} else {
+			testPart = findPart(primaryId, secondaryId);
+		}
         return (testPart != null && testPart instanceof PartPlaceholder);
     }
 
@@ -1117,8 +1149,9 @@ public class PerspectiveHelper {
 
             // If the parent is root we're done. Do not try to replace
             // it with placeholder.
-            if (container == mainLayout)
-                return;
+            if (container == mainLayout) {
+				return;
+			}
 
             // If the parent is empty replace it with a placeholder.
             LayoutPart[] children = container.getChildren();
@@ -1140,8 +1173,9 @@ public class PerspectiveHelper {
                         
                         // PR 1GDFVBY: ViewStack not disposed when page
                         // closed.
-                        if (container instanceof ViewStack)
-                            ((ViewStack) container).dispose();
+                        if (container instanceof ViewStack) {
+							((ViewStack) container).dispose();
+						}
                         
                         // replace the real container with a
                         // ContainerPlaceholder

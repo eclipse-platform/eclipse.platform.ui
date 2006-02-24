@@ -205,14 +205,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 							.getSymbolicName());
 				} else if (eventType == BundleEvent.STARTED) {
 					progressCount++;
-					if (progressCount <= maximumProgressCount)
+					if (progressCount <= maximumProgressCount) {
 						progressMonitor.worked(1);
+					}
 					int index = starting.lastIndexOf(event.getBundle()
 							.getSymbolicName());
-					if (index >= 0)
+					if (index >= 0) {
 						starting.remove(index);
-					if (index != starting.size())
+					}
+					if (index != starting.size()) {
 						return; // not currently displayed
+					}
 					bundleName = index == 0 ? null : (String) starting
 							.get(index - 1);
 				} else {
@@ -222,11 +225,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			String taskName;
 
-			if (bundleName == null)
+			if (bundleName == null) {
 				taskName = WorkbenchMessages.Startup_Loading_Workbench;
-			else
+			} else {
 				taskName = NLS.bind(WorkbenchMessages.Startup_Loading,
 						bundleName);
+			}
 
 			progressMonitor.subTask(taskName);
 		}
@@ -437,10 +441,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Display newDisplay = null;
 		if (Policy.DEBUG_SWT_GRAPHICS || Policy.DEBUG_SWT_DEBUG) {
 			DeviceData data = new DeviceData();
-			if (Policy.DEBUG_SWT_GRAPHICS)
+			if (Policy.DEBUG_SWT_GRAPHICS) {
 				data.tracking = true;
-			if (Policy.DEBUG_SWT_DEBUG)
+			}
+			if (Policy.DEBUG_SWT_DEBUG) {
 				data.debug = true;
+			}
 			newDisplay = new Display(data);
 		} else {
 			newDisplay = new Display();
@@ -509,8 +515,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 					result[0] = l.preShutdown(Workbench.this, forced);
 				}
 			});
-			if (!result[0])
+			if (!result[0]) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -705,8 +712,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
 			public void run() {
-				if (isClosing || force)
+				if (isClosing || force) {
 					isClosing = windowManager.close();
+				}
 			}
 		});
 
@@ -762,8 +770,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 				if (dirtyParts.size() > 0) {
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
-					if (w == null)
+					if (w == null) {
 						w = windows[0];
+					}
 					result[0] = EditorManager.saveAll(dirtyParts, finalConfirm,
 							false, w);
 				}
@@ -856,8 +865,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Control shell = display.getActiveShell();
 		while (shell != null) {
 			Object data = shell.getData();
-			if (data instanceof IWorkbenchWindow)
+			if (data instanceof IWorkbenchWindow) {
 				return (IWorkbenchWindow) data;
+			}
 			shell = shell.getParent();
 		}
 
@@ -873,8 +883,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Shell shells[] = display.getShells();
 		for (int i = 0; i < shells.length; i++) {
 			Object data = shells[i].getData();
-			if (data instanceof IWorkbenchWindow)
+			if (data instanceof IWorkbenchWindow) {
 				return (IWorkbenchWindow) data;
+			}
 		}
 
 		// Can't find anything!
@@ -914,8 +925,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			if (windows[nX] instanceof WorkbenchWindow) {
 				WorkbenchWindow ww = (WorkbenchWindow) windows[nX];
 				int index = ww.getNumber() - 1;
-				if (index >= 0 && index < count)
+				if (index >= 0 && index < count) {
 					checkArray[index] = true;
+				}
 			}
 		}
 
@@ -923,8 +935,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// If no empty index was found then every slot is full.
 		// Return next index.
 		for (int index = 0; index < count; index++) {
-			if (!checkArray[index])
+			if (!checkArray[index]) {
 				return index + 1;
+			}
 		}
 		return count + 1;
 	}
@@ -979,8 +992,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private File getWorkbenchStateFile() {
 		IPath path = WorkbenchPlugin.getDefault().getDataLocation();
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		path = path.append(DEFAULT_WORKBENCH_STATE_FILENAME);
 		return path.toFile();
 	}
@@ -1128,10 +1142,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK
 				: OpenStrategy.DOUBLE_CLICK;
 		if (openOnSingleClick) {
-			if (selectOnHover)
+			if (selectOnHover) {
 				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
-			if (openAfterDelay)
+			}
+			if (openAfterDelay) {
 				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
+			}
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
@@ -1161,12 +1177,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private static void initializeImages() {
 		ImageDescriptor[] windowImages = WorkbenchPlugin.getDefault()
 				.getWindowImages();
-		if (windowImages == null)
+		if (windowImages == null) {
 			return;
+		}
 
 		Image[] images = new Image[windowImages.length];
-		for (int i = 0; i < windowImages.length; ++i)
+		for (int i = 0; i < windowImages.length; ++i) {
 			images[i] = windowImages[i].createImage();
+		}
 		Window.setDefaultImages(images);
 	}
 
@@ -1606,8 +1624,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			newWindow.open();
 			opened = true;
 		} finally {
-			if (!opened)
+			if (!opened) {
 				newWindow.close();
+			}
 		}
 
 		return newWindow;
@@ -1787,8 +1806,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		String[] commandLineArgs = Platform.getCommandLineArgs();
 		for (int i = 0; i < commandLineArgs.length; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
+			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) { //$NON-NLS-1$
 				avoidDeadlock = false;
+			}
 		}
 
 		if (avoidDeadlock) {
@@ -1924,9 +1944,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
 
 		// Save how many plug-ins were loaded while restoring the workbench
-		if (progressCount != -1)
+		if (progressCount != -1) {
 			memento.putInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT,
 					progressCount);
+		}
 
 		// Save the advisor state.
 		IMemento advisorState = memento
@@ -1953,8 +1974,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// Save it to a file.
 		// XXX: nobody currently checks the return value of this method.
 		File stateFile = getWorkbenchStateFile();
-		if (stateFile == null)
+		if (stateFile == null) {
 			return false;
+		}
 		try {
 			FileOutputStream stream = new FileOutputStream(stateFile);
 			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
@@ -2011,17 +2033,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 				WorkbenchPage page = win.getActiveWorkbenchPage();
 				if (page != null) {
 					boolean inputSame = false;
-					if (input == null)
+					if (input == null) {
 						inputSame = (page.getInput() == null);
-					else
+					} else {
 						inputSame = input.equals(page.getInput());
+					}
 					if (inputSame) {
 						Perspective persp = page.getActivePerspective();
 						if (perspectiveId.equals(persp.getDesc().getId())) {
 							Shell shell = win.getShell();
 							shell.open();
-							if (shell.getMinimized())
+							if (shell.getMinimized()) {
 								shell.setMinimized(false);
+							}
 							return page;
 						}
 					}
@@ -2041,8 +2065,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 			IWorkbenchPage page = win.getActiveWorkbenchPage();
 			IPerspectiveDescriptor persp = null;
-			if (page != null)
+			if (page != null) {
 				persp = page.getPerspective();
+			}
 
 			// Only open a new window if user preference is set and the window
 			// has an active perspective.
@@ -2054,17 +2079,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			IPerspectiveDescriptor desc = getPerspectiveRegistry()
 					.findPerspectiveWithId(perspectiveId);
-			if (desc == null)
+			if (desc == null) {
 				throw new WorkbenchException(
 						NLS
 								.bind(
 										WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
 										perspectiveId));
+			}
 			win.getShell().open();
-			if (page == null)
+			if (page == null) {
 				page = win.openPage(perspectiveId, input);
-			else
+			} else {
 				page.setPerspective(desc);
+			}
 			return page;
 		}
 
@@ -2091,10 +2118,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 			WorkbenchPage page = win.getActiveWorkbenchPage();
 			if (page != null) {
 				boolean inputSame = false;
-				if (input == null)
+				if (input == null) {
 					inputSame = (page.getInput() == null);
-				else
+				} else {
 					inputSame = input.equals(page.getInput());
+				}
 				if (inputSame) {
 					inputSameAsWindow = true;
 					IPerspectiveDescriptor perspectives[] = page
@@ -2120,10 +2148,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 				WorkbenchPage page = win.getActiveWorkbenchPage();
 				if (page != null) {
 					boolean inputSame = false;
-					if (input == null)
+					if (input == null) {
 						inputSame = (page.getInput() == null);
-					else
+					} else {
 						inputSame = input.equals(page.getInput());
+					}
 					if (inputSame) {
 						Perspective persp = page.getActivePerspective();
 						if (perspectiveId.equals(persp.getDesc().getId())) {
@@ -2151,17 +2180,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 				IWorkbenchPage page = win.getActiveWorkbenchPage();
 				IPerspectiveDescriptor desc = getPerspectiveRegistry()
 						.findPerspectiveWithId(perspectiveId);
-				if (desc == null)
+				if (desc == null) {
 					throw new WorkbenchException(
 							NLS
 									.bind(
 											WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
 											perspectiveId));
+				}
 				win.getShell().open();
-				if (page == null)
+				if (page == null) {
 					page = win.openPage(perspectiveId, input);
-				else
+				} else {
 					page.setPerspective(desc);
+				}
 				return page;
 			}
 		}
@@ -2171,22 +2202,25 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (win != null) {
 			IWorkbenchPage page = win.getActiveWorkbenchPage();
 			IPerspectiveDescriptor persp = null;
-			if (page != null)
+			if (page != null) {
 				persp = page.getPerspective();
+			}
 			if (persp == null) {
 				IPerspectiveDescriptor desc = getPerspectiveRegistry()
 						.findPerspectiveWithId(perspectiveId);
-				if (desc == null)
+				if (desc == null) {
 					throw new WorkbenchException(
 							NLS
 									.bind(
 											WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
 											perspectiveId));
+				}
 				win.getShell().open();
-				if (page == null)
+				if (page == null) {
 					page = win.openPage(perspectiveId, input);
-				else
+				} else {
 					page.setPerspective(desc);
+				}
 				return page;
 			}
 		}
@@ -2234,8 +2268,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		WorkbenchThemeManager.getInstance().dispose();
 		PropertyPageContributorManager.getManager().dispose();
 		ObjectActionContributorManager.getManager().dispose();
-		if (tracker != null)
+		if (tracker != null) {
 			tracker.close();
+		}
 	}
 
 	/**
@@ -2492,10 +2527,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 			final MenuManager menuManager = activeWorkbenchWindow
 					.getMenuManager();
 
-			if (textOnly)
+			if (textOnly) {
 				menuManager.update(IAction.TEXT);
-			else
+			} else {
 				menuManager.updateAll(true);
+			}
 		}
 
 		if (!actionSetsUpdated) {
@@ -2571,8 +2607,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			final IExtensionDelta[] deltas = event.getExtensionDeltas(
 					PlatformUI.PLUGIN_ID,
 					IWorkbenchRegistryConstants.PL_STARTUP);
-			if (deltas.length == 0)
+			if (deltas.length == 0) {
 				return;
+			}
 			final String disabledPlugins = PrefUtil
 					.getInternalPreferenceStore()
 					.getString(
@@ -2580,14 +2617,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			for (int i = 0; i < deltas.length; i++) {
 				IExtension extension = deltas[i].getExtension();
-				if (deltas[i].getKind() == IExtensionDelta.REMOVED)
+				if (deltas[i].getKind() == IExtensionDelta.REMOVED) {
 					continue;
+				}
 
 				// if the plugin is not in the set of disabled plugins,
 				// then
 				// execute the code to start it
-				if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
+				if (disabledPlugins.indexOf(extension.getNamespace()) == -1) {
 					SafeRunner.run(new EarlyStartupRunnable(extension));
+				}
 			}
 
 		}
@@ -2792,8 +2831,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// Restore advisor state.
 		IMemento advisorState = memento
 				.getChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
-		if (advisorState != null)
+		if (advisorState != null) {
 			status.add(getAdvisor().restoreState(advisorState));
+		}
 
 		// Get the child windows.
 		IMemento[] children = memento
@@ -2847,8 +2887,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	private void openWindowsAfterRestore() {
-		if (createdWindows == null)
+		if (createdWindows == null) {
 			return;
+		}
 		// now open the windows (except the ones that were nulled because we
 		// closed them above)
 		for (int i = 0; i < createdWindows.length; i++) {

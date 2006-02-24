@@ -98,14 +98,16 @@ public class CyclePartAction extends PageEventAction {
 	 */
 	public void activate(IWorkbenchPage page, Object selectedItem) {
 		if (selectedItem != null) {
-			if (selectedItem instanceof IEditorReference)
+			if (selectedItem instanceof IEditorReference) {
 				page.setEditorAreaVisible(true);
+			}
 
 			IWorkbenchPart part = ((IWorkbenchPartReference) selectedItem)
 					.getPart(true);
 
-			if (part != null)
+			if (part != null) {
 				page.activate(part);
+			}
 		}
 	}
 
@@ -198,17 +200,19 @@ public class CyclePartAction extends PageEventAction {
 					}
 				}
 
-				if (character == SWT.CR || character == SWT.LF)
+				if (character == SWT.CR || character == SWT.LF) {
 					ok(dialog, table);
-				else if (acceleratorForward) {
-					if (firstKey && e.stateMask != 0)
+				} else if (acceleratorForward) {
+					if (firstKey && e.stateMask != 0) {
 						quickReleaseMode = true;
+					}
 
 					int index = table.getSelectionIndex();
 					table.setSelection((index + 1) % table.getItemCount());
 				} else if (acceleratorBackward) {
-					if (firstKey && e.stateMask != 0)
+					if (firstKey && e.stateMask != 0) {
 						quickReleaseMode = true;
+					}
 
 					int index = table.getSelectionIndex();
 					table.setSelection(index >= 1 ? index - 1 : table
@@ -217,8 +221,9 @@ public class CyclePartAction extends PageEventAction {
 						&& keyCode != SWT.CTRL && keyCode != SWT.SHIFT
 						&& keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP
 						&& keyCode != SWT.ARROW_LEFT
-						&& keyCode != SWT.ARROW_RIGHT)
+						&& keyCode != SWT.ARROW_RIGHT) {
 					cancel(dialog);
+				}
 
 				firstKey = false;
 			}
@@ -241,8 +246,9 @@ public class CyclePartAction extends PageEventAction {
 				final boolean stickyCycle = store
 						.getBoolean(IPreferenceConstants.STICKY_CYCLE);
 				if ((!stickyCycle && (firstKey || quickReleaseMode))
-						&& keyCode == stateMask)
+						&& keyCode == stateMask) {
 					ok(dialog, table);
+				}
 			}
 		});
 	}
@@ -335,8 +341,9 @@ public class CyclePartAction extends PageEventAction {
 	private void ok(Shell dialog, final Table table) {
 		TableItem[] items = table.getSelection();
 
-		if (items != null && items.length == 1)
+		if (items != null && items.length == 1) {
 			selection = items[0].getData();
+		}
 
 		dialog.close();
 	}
@@ -447,12 +454,15 @@ public class CyclePartAction extends PageEventAction {
 			addKeyListener(table, dialog);
 			addTraverseListener(table);
 
-			while (!dialog.isDisposed())
-				if (!display.readAndDispatch())
+			while (!dialog.isDisposed()) {
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
+			}
 		} finally {
-			if (!dialog.isDisposed())
+			if (!dialog.isDisposed()) {
 				cancel(dialog);
+			}
 			contextService.unregisterShell(dialog);
 			forwardTriggerSequences = null;
 			backwardTriggerSequences = null;

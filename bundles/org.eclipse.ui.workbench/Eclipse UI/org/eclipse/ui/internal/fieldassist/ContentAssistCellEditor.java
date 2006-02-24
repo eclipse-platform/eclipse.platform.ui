@@ -83,10 +83,11 @@ public class ContentAssistCellEditor extends DecoratedFieldCellEditor {
 	 */
 	public void setEnabled(boolean enabled) {
 		adapter.setEnabled(enabled);
-		if (enabled)
+		if (enabled) {
 			getDecoratedField().showDecoration(getFieldDecoration());
-		else
+		} else {
 			getDecoratedField().hideDecoration(getFieldDecoration());
+		}
 	}
 
 	/*

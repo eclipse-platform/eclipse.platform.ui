@@ -144,10 +144,11 @@ public class EnablementDialog extends Dialog {
                  * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
                  */
                 public void checkStateChanged(CheckStateChangedEvent event) {
-                    if (event.getChecked())
-                        activitiesToEnable.add(event.getElement());
-                    else
-                        activitiesToEnable.remove(event.getElement());
+                    if (event.getChecked()) {
+						activitiesToEnable.add(event.getElement());
+					} else {
+						activitiesToEnable.remove(event.getElement());
+					}
 
                     getButton(Window.OK).setEnabled(
                             !activitiesToEnable.isEmpty());
@@ -261,10 +262,11 @@ public class EnablementDialog extends Dialog {
      * Set the label of the detail button based on whether we're currently showing the description text.
      */
     private void setDetailButtonLabel() {
-        if (!showDetails)
-            detailsButton.setText(RESOURCE_BUNDLE.getString("showDetails")); //$NON-NLS-1$
-        else
-            detailsButton.setText(RESOURCE_BUNDLE.getString("hideDetails")); //$NON-NLS-1$        
+        if (!showDetails) {
+			detailsButton.setText(RESOURCE_BUNDLE.getString("showDetails")); //$NON-NLS-1$
+		} else {
+			detailsButton.setText(RESOURCE_BUNDLE.getString("hideDetails")); //$NON-NLS-1$        
+		}
     }
 
     /* (non-Javadoc)

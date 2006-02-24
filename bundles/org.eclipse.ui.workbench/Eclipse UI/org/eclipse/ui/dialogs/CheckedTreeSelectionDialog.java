@@ -147,8 +147,9 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
      *            a filter.
      */
     public void addFilter(ViewerFilter filter) {
-        if (fFilters == null)
-            fFilters = new ArrayList(4);
+        if (fFilters == null) {
+			fFilters = new ArrayList(4);
+		}
         fFilters.add(filter);
     }
 
@@ -309,8 +310,9 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         });
         fViewer.setSorter(fSorter);
         if (fFilters != null) {
-            for (int i = 0; i != fFilters.size(); i++)
-                fViewer.addFilter((ViewerFilter) fFilters.get(i));
+            for (int i = 0; i != fFilters.size(); i++) {
+				fViewer.addFilter((ViewerFilter) fFilters.get(i));
+			}
         }
         fViewer.setInput(fInput);
         return fViewer;
@@ -348,11 +350,12 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 Object[] viewerElements = fContentProvider.getElements(fInput);
-                if (fContainerMode)
-                    fViewer.setCheckedElements(viewerElements);
-                else {
-                    for (int i = 0; i < viewerElements.length; i++)
-                        fViewer.setSubtreeChecked(viewerElements[i], true);
+                if (fContainerMode) {
+					fViewer.setCheckedElements(viewerElements);
+				} else {
+                    for (int i = 0; i < viewerElements.length; i++) {
+						fViewer.setSubtreeChecked(viewerElements[i], true);
+					}
                 }
                 updateOKStatus();
             }

@@ -195,8 +195,9 @@ public class WizardsRegistryReader extends RegistryReader {
         }
 
         // Defer for later processing.
-        if (deferCategories == null)
-            deferCategories = new ArrayList(20);
+        if (deferCategories == null) {
+			deferCategories = new ArrayList(20);
+		}
         deferCategories.add(category);
     }
 
@@ -205,8 +206,9 @@ public class WizardsRegistryReader extends RegistryReader {
      * Stores a wizard element for deferred addition.
      */
     private void deferWizard(WorkbenchWizardElement element) {
-        if (deferWizards == null)
-            deferWizards = new ArrayList(50);
+        if (deferWizards == null) {
+			deferWizards = new ArrayList(50);
+		}
         deferWizards.add(element);
     }
 
@@ -216,8 +218,9 @@ public class WizardsRegistryReader extends RegistryReader {
      */
     private void finishCategories() {
         // If no categories just return.
-        if (deferCategories == null)
-            return;
+        if (deferCategories == null) {
+			return;
+		}
 
         // Sort categories by flattened name.
         CategoryNode[] flatArray = new CategoryNode[deferCategories.size()];
@@ -260,12 +263,14 @@ public class WizardsRegistryReader extends RegistryReader {
 
         // If another category already exists with the same id ignore this one.
         Object test = getChildWithID(parent, category.getId());
-        if (test != null)
-            return;
+        if (test != null) {
+			return;
+		}
 
-        if (parent != null)
-            createCollectionElement(parent, (IConfigurationElement) category
+        if (parent != null) {
+			createCollectionElement(parent, (IConfigurationElement) category
 					.getAdapter(IConfigurationElement.class));
+		}
     }
 
 
@@ -320,9 +325,9 @@ public class WizardsRegistryReader extends RegistryReader {
             currentCollectionElement = tempCollectionElement;
         }
 
-        if (moveToOther)
-            moveElementToUncategorizedCategory(wizardElements, element);
-        else {
+        if (moveToOther) {
+			moveElementToUncategorizedCategory(wizardElements, element);
+		} else {
             currentCollectionElement.add(element);
             element.setParent(currentCollectionElement);
         }
@@ -350,8 +355,9 @@ public class WizardsRegistryReader extends RegistryReader {
      */
     protected String getCategoryStringFor(IConfigurationElement config) {
         String result = config.getAttribute(IWorkbenchRegistryConstants.TAG_CATEGORY);
-        if (result == null)
-            result = UNCATEGORIZED_WIZARD_CATEGORY;
+        if (result == null) {
+			result = UNCATEGORIZED_WIZARD_CATEGORY;
+		}
 
         return result;
     }
@@ -369,8 +375,9 @@ public class WizardsRegistryReader extends RegistryReader {
         Object[] children = parent.getChildren(null);
         for (int i = 0; i < children.length; ++i) {
             WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
-            if (currentChild.getId().equals(id))
-                return currentChild;
+            if (currentChild.getId().equals(id)) {
+				return currentChild;
+			}
         }
         return null;
     }
@@ -383,10 +390,11 @@ public class WizardsRegistryReader extends RegistryReader {
         WizardCollectionElement otherCategory = getChildWithID(root,
                 UNCATEGORIZED_WIZARD_CATEGORY);
 
-        if (otherCategory == null)
-            otherCategory = createCollectionElement(root,
+        if (otherCategory == null) {
+			otherCategory = createCollectionElement(root,
                     UNCATEGORIZED_WIZARD_CATEGORY, null,
                     UNCATEGORIZED_WIZARD_CATEGORY_LABEL);
+		}
 
         otherCategory.add(element);
         element.setParent(otherCategory);
@@ -401,8 +409,9 @@ public class WizardsRegistryReader extends RegistryReader {
             WizardCollectionElement child = (WizardCollectionElement) children[nX];
             pruneEmptyCategories(child);
             boolean shouldPrune = child.getId().equals(FULL_EXAMPLES_WIZARD_CATEGORY);
-            if (child.isEmpty() && shouldPrune)
-                parent.remove(child);
+            if (child.isEmpty() && shouldPrune) {
+				parent.remove(child);
+			}
         }
     }
 
@@ -414,17 +423,20 @@ public class WizardsRegistryReader extends RegistryReader {
             deferCategory(element);
             return true;
         } else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_PRIMARYWIZARD)) {
-            if (deferPrimary == null)
-                deferPrimary = new HashSet();
+            if (deferPrimary == null) {
+				deferPrimary = new HashSet();
+			}
             deferPrimary.add(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 
             return true;
         } else {
-            if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_WIZARD))
-                return false;
+            if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_WIZARD)) {
+				return false;
+			}
             WorkbenchWizardElement wizard = createWizardElement(element);
-            if (wizard != null)
-                addNewElementToResult(wizard, element);
+            if (wizard != null) {
+				addNewElementToResult(wizard, element);
+			}
             return true;
         }
     }
@@ -533,8 +545,9 @@ public class WizardsRegistryReader extends RegistryReader {
         for (int nX = 0; nX < wizards.length; nX++) {
             WizardCollectionElement collection = (WizardCollectionElement) wizards[nX];
             WorkbenchWizardElement element = collection.findWizard(id, true);
-            if (element != null)
-                return element;
+            if (element != null) {
+				return element;
+			}
         }
         return null;
     }

@@ -176,11 +176,13 @@ public abstract class DecoratorDefinition {
         IConfigurationElement[] elements = definingElement.getChildren(CHILD_ENABLEMENT);
         if (elements.length == 0) {
             String className = definingElement.getAttribute(ATT_OBJECT_CLASS);
-            if (className != null)
-                enablement = new ActionExpression(ATT_OBJECT_CLASS,
+            if (className != null) {
+				enablement = new ActionExpression(ATT_OBJECT_CLASS,
                         className);
-        } else
-        	enablement = new ActionExpression(elements[0]);
+			}
+        } else {
+			enablement = new ActionExpression(elements[0]);
+		}
     }
 
     /**
@@ -193,8 +195,9 @@ public abstract class DecoratorDefinition {
         try {
             //Internal decorator might be null so be prepared
             IBaseLabelProvider currentDecorator = internalGetLabelProvider();
-            if (currentDecorator != null)
-                currentDecorator.addListener(listener);
+            if (currentDecorator != null) {
+				currentDecorator.addListener(listener);
+			}
         } catch (CoreException exception) {
             handleCoreException(exception);
         }
@@ -210,8 +213,9 @@ public abstract class DecoratorDefinition {
     boolean isLabelProperty(Object element, String property) {
         try { //Internal decorator might be null so be prepared
             IBaseLabelProvider currentDecorator = internalGetLabelProvider();
-            if (currentDecorator != null)
-                return currentDecorator.isLabelProperty(element, property);
+            if (currentDecorator != null) {
+				return currentDecorator.isLabelProperty(element, property);
+			}
         } catch (CoreException exception) {
             handleCoreException(exception);
             return false;
@@ -273,8 +277,9 @@ public abstract class DecoratorDefinition {
     public boolean isEnabledFor(Object element) {
     	if(isEnabled()){
     		ActionExpression expression =  getEnablement();
-    		if(expression != null)
-    			 return expression.isEnabledFor(element);
+    		if(expression != null) {
+				return expression.isEnabledFor(element);
+			}
     		return true;//Always on if no expression
     	}
     	return false;

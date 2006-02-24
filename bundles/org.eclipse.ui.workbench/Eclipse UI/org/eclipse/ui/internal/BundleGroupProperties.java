@@ -57,8 +57,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * @param bundleGroup must not be null
      */
     public BundleGroupProperties(IBundleGroup bundleGroup) {
-        if (bundleGroup == null)
-            throw new IllegalArgumentException();
+        if (bundleGroup == null) {
+			throw new IllegalArgumentException();
+		}
         this.bundleGroup = bundleGroup;
     }
 
@@ -66,8 +67,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * An image which can be shown in an "about features" dialog (32x32).
      */
     public ImageDescriptor getFeatureImage() {
-        if (featureImageDescriptor == null)
-            featureImageDescriptor = getFeatureImage(bundleGroup);
+        if (featureImageDescriptor == null) {
+			featureImageDescriptor = getFeatureImage(bundleGroup);
+		}
         return featureImageDescriptor;
     }
 
@@ -75,8 +77,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * The URL to an image which can be shown in an "about features" dialog (32x32).
      */
     public URL getFeatureImageUrl() {
-        if (featureImageUrl == null)
-            featureImageUrl = getFeatureImageUrl(bundleGroup);
+        if (featureImageUrl == null) {
+			featureImageUrl = getFeatureImageUrl(bundleGroup);
+		}
         return featureImageUrl;
     }
 
@@ -84,8 +87,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * A help reference for the feature's tips and tricks page (optional).
      */
     public String getTipsAndTricksHref() {
-        if (tipsAndTricksHref == null)
-            tipsAndTricksHref = getTipsAndTricksHref(bundleGroup);
+        if (tipsAndTricksHref == null) {
+			tipsAndTricksHref = getTipsAndTricksHref(bundleGroup);
+		}
         return tipsAndTricksHref;
     }
 
@@ -95,8 +99,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * designed to run "headless" typically would not have such a page.
      */
     public URL getWelcomePageUrl() {
-        if (welcomePageUrl == null)
-            welcomePageUrl = getWelcomePageUrl(bundleGroup);
+        if (welcomePageUrl == null) {
+			welcomePageUrl = getWelcomePageUrl(bundleGroup);
+		}
         return welcomePageUrl;
     }
 
@@ -104,8 +109,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * The id of a perspective in which to show the welcome page (optional).
      */
     public String getWelcomePerspective() {
-        if (welcomePerspective == null)
-            welcomePerspective = getWelcomePerspective(bundleGroup);
+        if (welcomePerspective == null) {
+			welcomePerspective = getWelcomePerspective(bundleGroup);
+		}
         return welcomePerspective;
     }
 
@@ -113,8 +119,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * A URL for the feature's license page.
      */
     public URL getLicenseUrl() {
-        if (licenseUrl == null)
-            licenseUrl = getLicenseUrl(bundleGroup);
+        if (licenseUrl == null) {
+			licenseUrl = getLicenseUrl(bundleGroup);
+		}
         return licenseUrl;
     }
 
@@ -122,8 +129,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * Returns a label for the feature plugn, or <code>null</code>.
      */
     public String getFeatureLabel() {
-        if (featureLabel == null)
-            featureLabel = getFeatureLabel(bundleGroup);
+        if (featureLabel == null) {
+			featureLabel = getFeatureLabel(bundleGroup);
+		}
         return featureLabel;
     }
 
@@ -131,8 +139,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * Returns the id for this bundleGroup.
      */
     public String getFeatureId() {
-        if (featureId == null)
-            featureId = getFeatureId(bundleGroup);
+        if (featureId == null) {
+			featureId = getFeatureId(bundleGroup);
+		}
         return featureId;
     }
 
@@ -140,8 +149,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * Returns the provider name.
      */
     public String getProviderName() {
-        if (providerName == null)
-            providerName = getProviderName(bundleGroup);
+        if (providerName == null) {
+			providerName = getProviderName(bundleGroup);
+		}
         return providerName;
     }
 
@@ -149,8 +159,9 @@ public class BundleGroupProperties extends BrandingProperties implements
      * Returns the feature version id.
      */
     public String getFeatureVersion() {
-        if (versionId == null)
-            versionId = getFeatureVersion(bundleGroup);
+        if (versionId == null) {
+			versionId = getFeatureVersion(bundleGroup);
+		}
         return versionId;
     }
 

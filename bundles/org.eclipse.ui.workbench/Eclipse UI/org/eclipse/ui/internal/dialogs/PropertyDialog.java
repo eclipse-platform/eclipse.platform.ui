@@ -53,8 +53,9 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		PropertyPageManager pageManager = new PropertyPageManager();
 		String title = "";//$NON-NLS-1$
 
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		// load pages for the selection
 		// fill the manager with contributions from the matching contributors
 		PropertyPageContributorManager.getManager().contribute(pageManager,
@@ -75,8 +76,9 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager,
 				new StructuredSelection(element));
 
-		if (propertyPageId != null)
+		if (propertyPageId != null) {
 			propertyDialog.setSelectedNode(propertyPageId);
+		}
 		propertyDialog.create();
 
 		propertyDialog.getShell().setText(title);
@@ -104,8 +106,9 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 			adapter = (IWorkbenchAdapter) Platform.getAdapterManager()
 					.getAdapter(element, IWorkbenchAdapter.class);
 		}
-		if (adapter != null)
+		if (adapter != null) {
 			return adapter.getLabel(element);
+		}
 		return "";//$NON-NLS-1$
 	}
 

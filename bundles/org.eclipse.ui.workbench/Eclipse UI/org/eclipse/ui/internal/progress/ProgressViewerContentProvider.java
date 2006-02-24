@@ -47,8 +47,9 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			boolean debug, boolean showFinished) {
 		super(debug);
 		progressViewer = structured;
-		if (showFinished)
+		if (showFinished) {
 			FinishedJobs.getInstance().addListener(getKeptJobListener());
+		}
 	}
 
 	/**
@@ -88,20 +89,22 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			 */
 			public void removed(JobTreeElement jte) {
 				//null indicates they are all removed
-				if(jte == null)
+				if(jte == null) {
 					keptJobs.clear();
-				else
+				} else {
 					keptJobs.remove(jte);
+				}
 				final JobTreeElement element = jte;
 				Job updateJob = new WorkbenchJob("Remove finished") {//$NON-NLS-1$
 					/* (non-Javadoc)
 					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						if(element == null)
+						if(element == null) {
 							refresh();
-						else
+						} else {
 							ProgressViewerContentProvider.this.remove(new Object[] { element });
+						}
 						return Status.OK_STATUS;
 					}
 				};
@@ -143,28 +146,32 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	public Object[] getElements(Object inputElement) {
 		Object[] elements = super.getElements(inputElement);
 
-		if (keptJobs.size() == 0)
+		if (keptJobs.size() == 0) {
 			return elements;
-		if (elements.length == 0)
+		}
+		if (elements.length == 0) {
 			return keptJobs.toArray();
+		}
 
 		Set all = new HashSet();
 		
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			all.add(element);
-			if(keptJobs.contains(element))
+			if(keptJobs.contains(element)) {
 				keptJobs.remove(element);
+			}
 
 		}
 		
 		Iterator keptIterator = keptJobs.iterator();
 		while(keptIterator.hasNext()){
 			JobInfo next = (JobInfo) keptIterator.next();
-			if(next.getGroupInfo() == null)
+			if(next.getGroupInfo() == null) {
 				all.add(next);
-			else
+			} else {
 				all.add(next.getGroupInfo());
+			}
 		}
 		return all.toArray();
 	}
@@ -180,21 +187,24 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	 * @return Object[]
 	 */
 	private Object[] getRoots(Object[] elements, boolean subWithParent) {
-		if (elements.length == 0)
+		if (elements.length == 0) {
 			return elements;
+		}
 		HashSet roots = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
 			JobTreeElement element = (JobTreeElement) elements[i];
 			if (element.isJobInfo()) {
 				GroupInfo group = ((JobInfo) element).getGroupInfo();
-				if (group == null)
+				if (group == null) {
 					roots.add(element);
-				else {
-					if (subWithParent)
+				} else {
+					if (subWithParent) {
 						roots.add(group);
+					}
 				}
-			} else
+			} else {
 				roots.add(element);
+			}
 		}
 		return roots.toArray();
 	}
@@ -216,7 +226,8 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	 */
 	public void dispose() {
 		super.dispose();
-		if (keptJobListener != null)
+		if (keptJobListener != null) {
 			FinishedJobs.getInstance().removeListener(keptJobListener);
+		}
 	}
 }

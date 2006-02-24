@@ -89,8 +89,9 @@ public class ProgressRegion implements IWindowTrim {
             public void animationDone() {
                 //Add an extra refresh to the viewer in case
                 //of stale input if the controls are not disposed
-                if (viewer.getControl().isDisposed())
-                    return;
+                if (viewer.getControl().isDisposed()) {
+					return;
+				}
                 viewer.refresh();
             }
 

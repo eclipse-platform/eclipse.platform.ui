@@ -82,8 +82,9 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
                 String value = hintElements[i]
                         .getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
 
-                if (id != null && value != null)
-                    hints.put(id, value);
+                if (id != null && value != null) {
+					hints.put(id, value);
+				}
             }
         }
 

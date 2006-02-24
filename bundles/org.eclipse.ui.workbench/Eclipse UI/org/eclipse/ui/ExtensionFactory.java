@@ -135,32 +135,45 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
      * Creates the object referenced by the factory id obtained from the extension data.
      */
     public Object create() throws CoreException {
-        if (APPEARANCE_PREFERENCE_PAGE.equals(id))
-            return configure(new ViewsPreferencePage());
-        if (COLORS_AND_FONTS_PREFERENCE_PAGE.equals(id))
-            return configure(new ColorsAndFontsPreferencePage());
-        if (DECORATORS_PREFERENCE_PAGE.equals(id))
-            return configure(new DecoratorsPreferencePage());
-        if (EDITORS_PREFERENCE_PAGE.equals(id))
-            return configure(new EditorsPreferencePage());
-        if (FILE_ASSOCIATIONS_PREFERENCE_PAGE.equals(id))
-            return configure(new FileEditorsPreferencePage());
-        if (KEYS_PREFERENCE_PAGE.equals(id))
-            return configure(new KeysPreferencePage());
-        if (NEW_KEYS_PREFERENCE_PAGE.equals(id))
-        	return configure(new NewKeysPreferencePage());
-        if (PERSPECTIVES_PREFERENCE_PAGE.equals(id))
-            return configure(new PerspectivesPreferencePage());
-        if (PREFERENCES_EXPORT_WIZARD.equals(id))
-        	   return configure(new PreferencesExportWizard());
-        if (PREFERENCES_IMPORT_WIZARD.equals(id))
-        	   return configure(new PreferencesImportWizard());
-        if (PROGRESS_VIEW.equals(id)) 
-            return configure(new ProgressView());
-        if (WORKBENCH_PREFERENCE_PAGE.equals(id))
-            return configure(new WorkbenchPreferencePage());
-        if (CONTENT_TYPES_PREFERENCE_PAGE.equals(id))
+        if (APPEARANCE_PREFERENCE_PAGE.equals(id)) {
+			return configure(new ViewsPreferencePage());
+		}
+        if (COLORS_AND_FONTS_PREFERENCE_PAGE.equals(id)) {
+			return configure(new ColorsAndFontsPreferencePage());
+		}
+        if (DECORATORS_PREFERENCE_PAGE.equals(id)) {
+			return configure(new DecoratorsPreferencePage());
+		}
+        if (EDITORS_PREFERENCE_PAGE.equals(id)) {
+			return configure(new EditorsPreferencePage());
+		}
+        if (FILE_ASSOCIATIONS_PREFERENCE_PAGE.equals(id)) {
+			return configure(new FileEditorsPreferencePage());
+		}
+        if (KEYS_PREFERENCE_PAGE.equals(id)) {
+			return configure(new KeysPreferencePage());
+		}
+        if (NEW_KEYS_PREFERENCE_PAGE.equals(id)) {
+			return configure(new NewKeysPreferencePage());
+		}
+        if (PERSPECTIVES_PREFERENCE_PAGE.equals(id)) {
+			return configure(new PerspectivesPreferencePage());
+		}
+        if (PREFERENCES_EXPORT_WIZARD.equals(id)) {
+			return configure(new PreferencesExportWizard());
+		}
+        if (PREFERENCES_IMPORT_WIZARD.equals(id)) {
+			return configure(new PreferencesImportWizard());
+		}
+        if (PROGRESS_VIEW.equals(id)) {
+			return configure(new ProgressView());
+		}
+        if (WORKBENCH_PREFERENCE_PAGE.equals(id)) {
+			return configure(new WorkbenchPreferencePage());
+		}
+        if (CONTENT_TYPES_PREFERENCE_PAGE.equals(id)) {
 			return configure(new ContentTypesPreferencePage());
+		}
         	
         throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
                 0, "Unknown id in data argument for " + getClass(), null)); //$NON-NLS-1$
@@ -174,12 +187,13 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
      */
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) throws CoreException {
-        if (data instanceof String)
-            id = (String) data;
-        else
-            throw new CoreException(new Status(IStatus.ERROR,
+        if (data instanceof String) {
+			id = (String) data;
+		} else {
+			throw new CoreException(new Status(IStatus.ERROR,
                     PlatformUI.PLUGIN_ID, 0,
                     "Data argument must be a String for " + getClass(), null)); //$NON-NLS-1$
+		}
         this.config = config;
         this.propertyName = propertyName;
     }

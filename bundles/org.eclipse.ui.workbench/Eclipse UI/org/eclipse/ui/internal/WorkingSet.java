@@ -89,11 +89,13 @@ public class WorkingSet extends AbstractWorkingSet {
 	public boolean isEditable() {
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		String id= getId();
-		if (id == null)
+		if (id == null) {
 			return false;
+		}
 		WorkingSetDescriptor descriptor= registry.getWorkingSetDescriptor(id);
-		if (descriptor == null)
+		if (descriptor == null) {
 			return false;
+		}
 		return descriptor.isEditable();
 	}
     
@@ -121,8 +123,9 @@ public class WorkingSet extends AbstractWorkingSet {
                 .getWorkingSetRegistry();
         WorkingSetDescriptor descriptor = null;
 
-        if (editPageId == null)
+        if (editPageId == null) {
 			editPageId = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
+		}
 
 		descriptor = registry.getWorkingSetDescriptor(editPageId);
 		if (descriptor == null) {
@@ -235,8 +238,9 @@ public class WorkingSet extends AbstractWorkingSet {
 	}
 	
 	public boolean isSelfUpdating() {
-		if (editPageId == null)
+		if (editPageId == null) {
 			return false;
+		}
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		WorkingSetDescriptor descriptor= registry.getWorkingSetDescriptor(editPageId);
 		return descriptor != null && descriptor.getUpdaterClassName() != null;

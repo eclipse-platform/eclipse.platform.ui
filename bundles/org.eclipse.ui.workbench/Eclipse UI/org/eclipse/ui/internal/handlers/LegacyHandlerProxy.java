@@ -94,10 +94,11 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	 * @see IHandler#getAttributeValuesByName()
 	 */
 	public Map getAttributeValuesByName() {
-		if (loadHandler())
+		if (loadHandler()) {
 			return handler.getAttributeValuesByName();
-		else
+		} else {
 			return Collections.EMPTY_MAP;
+		}
 	}
 
 	/**

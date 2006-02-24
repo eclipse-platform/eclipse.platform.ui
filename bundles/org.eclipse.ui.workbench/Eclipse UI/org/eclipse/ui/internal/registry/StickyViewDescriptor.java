@@ -54,10 +54,11 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
             throws CoreException {
     	this.configurationElement = element;
     	id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id == null)
-            throw new CoreException(new Status(IStatus.ERROR, element
+        if (id == null) {
+			throw new CoreException(new Status(IStatus.ERROR, element
                     .getNamespace(), 0,
                     "Invalid extension (missing id) ", null));//$NON-NLS-1$
+		}
     }
     
 	/**
@@ -77,13 +78,14 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
     	
     	String location = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_LOCATION);
         if (location != null) {
-            if (location.equalsIgnoreCase("left")) //$NON-NLS-1$
-                direction = IPageLayout.LEFT;
-            else if (location.equalsIgnoreCase("top")) //$NON-NLS-1$
-                direction = IPageLayout.TOP;
-            else if (location.equalsIgnoreCase("bottom")) //$NON-NLS-1$
-                direction = IPageLayout.BOTTOM;
+            if (location.equalsIgnoreCase("left")) { //$NON-NLS-1$
+				direction = IPageLayout.LEFT;
+			} else if (location.equalsIgnoreCase("top")) { //$NON-NLS-1$
+				direction = IPageLayout.TOP;
+			} else if (location.equalsIgnoreCase("bottom")) { //$NON-NLS-1$
+				direction = IPageLayout.BOTTOM;
             //no else for right - it is the default value;
+			}
         }    	
         return direction;
     }

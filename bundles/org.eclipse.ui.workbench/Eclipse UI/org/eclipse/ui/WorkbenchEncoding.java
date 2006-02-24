@@ -70,8 +70,9 @@ public class WorkbenchEncoding {
 		 */
 		protected boolean readElement(IConfigurationElement element) {
 			String name = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-			if (name != null)
+			if (name != null) {
 				encodings.add(name);
+			}
 			return true;
 		}
 	}
@@ -103,8 +104,9 @@ public class WorkbenchEncoding {
 		List invalid = new ArrayList();
 		definedEncodings.toArray(encodings);
 		for (int i = 0; i < encodings.length; i++) {
-			if (!isSupported(encodings[i]))
+			if (!isSupported(encodings[i])) {
 				invalid.add(encodings[i]);
+			}
 		}
 
 		Iterator invalidIterator = invalid.iterator();

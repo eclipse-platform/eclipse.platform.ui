@@ -182,8 +182,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 		// can not finish initially, but don't want to start with an error
 		// message either
-		if (!(validDestination() && validateOptionsGroup() && validateSourceGroup()))
+		if (!(validDestination() && validateOptionsGroup() && validateSourceGroup())) {
 			setPageComplete(false);
+		}
 
 		setPreferenceTransfers();
 		setControl(composite);
@@ -241,8 +242,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * return the PreferenceTransgerElements specified
 	 */
 	protected PreferenceTransferElement[] getTransfers() {
-		if (transfers == null)
+		if (transfers == null) {
 			transfers = PreferenceTransferManager.getPreferenceTransfers();
+		}
 		return transfers;
 	}
 
@@ -344,8 +346,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 					TableItem item = transfersTable.getSelection()[0];
 					text.setText(((PreferenceTransferElement) item.getData())
 							.getDescription());
-				} else
+				} else {
 					text.setText(""); //$NON-NLS-1$
+				}
 			}
 		};
 
@@ -497,8 +500,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	protected boolean ensureDirectoryExists(File directory) {
 		if (!directory.exists()) {
-			if (!queryYesNoQuestion(PreferencesMessages.PreferencesExport_createTargetDirectory))
+			if (!queryYesNoQuestion(PreferencesMessages.PreferencesExport_createTargetDirectory)) {
 				return false;
+			}
 
 			if (!directory.mkdirs()) {
 				MessageDialog
@@ -544,14 +548,16 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 						.bind(
 								PreferencesMessages.WizardPreferencesExportPage1_overwrite,
 								file.getAbsolutePath());
-				if (!queryYesNoQuestion(msg))
+				if (!queryYesNoQuestion(msg)) {
 					return false;
+				}
 			}
 			file.delete();
 		} else if (!file.isDirectory()) {
 			File parent = file.getParentFile();
-			if (parent != null)
+			if (parent != null) {
 				file.getParentFile().mkdirs();
+			}
 		}
 		return true;
 	}
@@ -626,8 +632,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 					WorkbenchPlugin.log(e.getMessage(), e);
 				}
 			}
-		} else
+		} else {
 			filters = new IPreferenceFilter[0];
+		}
 
 		return filters;
 	}
@@ -668,8 +675,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	public void setPageComplete() {
 		boolean complete = true;
 
-		if (!determinePageCompletion())
+		if (!determinePageCompletion()) {
 			complete = false;
+		}
 
 		super.setPageComplete(complete);
 	}
@@ -694,10 +702,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 		// Avoid draw flicker by not clearing the error
 		// message unless all is valid.
-		if (complete)
+		if (complete) {
 			setErrorMessage(null);
-		else
+		} else {
 			setErrorMessage(currentMessage);
+		}
 
 		return complete;
 	}
@@ -720,8 +729,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			TableItem[] items = transfersTable.getItems();
 			for (int i = 0; i < items.length; i++) {
 				TableItem item = items[i];
-				if (item.getChecked())
+				if (item.getChecked()) {
 					return true;
+				}
 			}
 			currentMessage = getNoOptionsMessage();
 			return false;
@@ -780,8 +790,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		dialog.setFilterExtensions(new String[] { "*.epf" ,"*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 		String selectedFileName = dialog.open();
 
-		if (selectedFileName != null)
+		if (selectedFileName != null) {
 			setDestinationValue(selectedFileName);
+		}
 	}
 
 	protected abstract String getFileDialogTitle();
@@ -797,8 +808,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	public void handleEvent(Event e) {
 		Widget source = e.widget;
 
-		if (source == destinationBrowseButton)
+		if (source == destinationBrowseButton) {
 			handleDestinationBrowseButtonPressed();
+		}
 
 		updatePageCompletion();
 	}
@@ -824,8 +836,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		if (settings != null) {
 			String[] directoryNames = settings
 					.getArray(STORE_DESTINATION_NAMES_ID);
-			if (directoryNames == null)
+			if (directoryNames == null) {
 				directoryNames = new String[0];
+			}
 
 			directoryNames = addToHistory(directoryNames, getDestinationValue());
 			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
@@ -873,8 +886,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
         // since only one new item was added, we can be over the limit
         // by at most one item
-        if (history.size() > COMBO_HISTORY_LENGTH)
-            history.remove(COMBO_HISTORY_LENGTH);
+        if (history.size() > COMBO_HISTORY_LENGTH) {
+			history.remove(COMBO_HISTORY_LENGTH);
+		}
     }
 
 	/**
@@ -890,12 +904,14 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			if (directoryNames != null) {
 				// destination
 				setDestinationValue(directoryNames[0]);
-				for (int i = 0; i < directoryNames.length; i++)
+				for (int i = 0; i < directoryNames.length; i++) {
 					addDestinationItem(directoryNames[i]);
+				}
 
 				String current = settings.get(STORE_DESTINATION_ID);
-				if (current != null)
+				if (current != null) {
 					setDestinationValue(current);
+				}
 				// options
 				if (overwriteExistingFilesCheckbox != null) {
 					overwriteExistingFilesCheckbox.setSelection(settings
@@ -904,10 +920,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				all = settings.getBoolean(TRANSFER_ALL_PREFERENCES_ID);
 			}
 		}
-		if (all)
+		if (all) {
 			allButton.setSelection(true);
-		else
+		} else {
 			chooseImportsButton.setSelection(true);
+		}
 
 	}
 
@@ -937,8 +954,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	public void dispose() {
 		super.dispose();
-		if (imageTable == null)
+		if (imageTable == null) {
 			return;
+		}
 
 		for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
 			((Image) i.next()).dispose();
@@ -972,17 +990,17 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		String messageString;
 		// Break the message up if there is a file name and a directory
 		// and there are at least 2 segments.
-		if (path.getFileExtension() == null || path.segmentCount() < 2)
+		if (path.getFileExtension() == null || path.segmentCount() < 2) {
 			messageString = NLS.bind(
 					PreferencesMessages.WizardDataTransfer_existsQuestion,
 					pathString);
-
-		else
+		} else {
 			messageString = NLS
 					.bind(
 							PreferencesMessages.WizardDataTransfer_overwriteNameAndPathQuestion,
 							path.lastSegment(), path.removeLastSegments(1)
 									.toOSString());
+		}
 
 		final MessageDialog dialog = new MessageDialog(getContainer()
 				.getShell(), PreferencesMessages.Question, null, messageString,

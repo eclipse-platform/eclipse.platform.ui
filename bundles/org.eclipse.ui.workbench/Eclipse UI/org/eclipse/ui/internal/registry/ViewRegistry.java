@@ -63,8 +63,9 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
          */
         public IViewDescriptor[] getViews() {
             ArrayList elements = rawCategory.getElements();
-            if (elements == null)
-                return new IViewDescriptor[0];
+            if (elements == null) {
+				return new IViewDescriptor[0];
+			}
             return (IViewDescriptor[]) elements
                     .toArray(
                             new IViewDescriptor[elements.size()]);
@@ -82,8 +83,9 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
          */
         public IPath getPath() {
             String rawParentPath = rawCategory.getRawParentPath();
-            if (rawParentPath == null)
-                return new Path(""); //$NON-NLS-1$
+            if (rawParentPath == null) {
+				return new Path(""); //$NON-NLS-1$
+			}
             return new Path(rawParentPath);
         }
 
@@ -174,8 +176,9 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 			// Mark categories list as dirty
 			categories.add(desc);
 			IConfigurationElement element = (IConfigurationElement) desc.getAdapter(IConfigurationElement.class);
-			if (element == null)
+			if (element == null) {
 				return;
+			}
 			PlatformUI.getWorkbench().getExtensionTracker()
 					.registerObject(
 							element.getDeclaringExtension(),
@@ -253,8 +256,9 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
     public IViewCategory findCategory(String id) {
     	mapViewsToCategories();
         Category category = internalFindCategory(id);
-        if (category == null)
-            return null;
+        if (category == null) {
+			return null;
+		}
         return new ViewCategoryProxy(category);
     }
 

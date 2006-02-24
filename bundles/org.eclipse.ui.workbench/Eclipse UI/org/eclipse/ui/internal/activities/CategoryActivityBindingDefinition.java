@@ -27,8 +27,9 @@ public final class CategoryActivityBindingDefinition {
 
     static Map categoryActivityBindingDefinitionsByCategoryId(
             Collection categoryActivityBindingDefinitions) {
-        if (categoryActivityBindingDefinitions == null)
-            throw new NullPointerException();
+        if (categoryActivityBindingDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         Map map = new HashMap();
         Iterator iterator = categoryActivityBindingDefinitions.iterator();
@@ -83,16 +84,18 @@ public final class CategoryActivityBindingDefinition {
         if (compareTo == 0) {
             compareTo = Util.compare(categoryId, castedObject.categoryId);
 
-            if (compareTo == 0)
-                compareTo = Util.compare(sourceId, castedObject.sourceId);
+            if (compareTo == 0) {
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
+			}
         }
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof CategoryActivityBindingDefinition))
-            return false;
+        if (!(object instanceof CategoryActivityBindingDefinition)) {
+			return false;
+		}
 
         final CategoryActivityBindingDefinition castedObject = (CategoryActivityBindingDefinition) object;
         if (!Util.equals(activityId, castedObject.activityId)) {
@@ -123,8 +126,9 @@ public final class CategoryActivityBindingDefinition {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

@@ -77,12 +77,14 @@ public void paintControl(PaintEvent e) {
             e.gc.drawImage(handleImage, x, y);
             if (isHorizontal) {
                 x += ibounds.width;
-                if (x + ibounds.width > size.x - margin)
-                    break;
+                if (x + ibounds.width > size.x - margin) {
+					break;
+				}
             } else {
                 y += ibounds.height;
-                if (y + ibounds.height > size.y - margin)
-                    break;
+                if (y + ibounds.height > size.y - margin) {
+					break;
+				}
             }
         }
     }

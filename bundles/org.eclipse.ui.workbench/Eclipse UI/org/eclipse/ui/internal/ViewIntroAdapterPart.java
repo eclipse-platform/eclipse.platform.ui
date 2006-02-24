@@ -182,7 +182,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
 			window.setPerspectiveBarVisible(false);
 		}
 
-		if (layout)
+		if (layout) {
 			window.getShell().layout();
+		}
 	}
 }

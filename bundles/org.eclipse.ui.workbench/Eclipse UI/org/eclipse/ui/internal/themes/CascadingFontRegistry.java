@@ -50,8 +50,9 @@ public class CascadingFontRegistry extends FontRegistry {
      * @see org.eclipse.jface.resource.FontRegistry#get(java.lang.String)
      */
     public Font get(String symbolicName) {
-        if (super.hasValueFor(symbolicName))
-            return super.get(symbolicName);
+        if (super.hasValueFor(symbolicName)) {
+			return super.get(symbolicName);
+		}
         return parent.get(symbolicName);
     }
 
@@ -65,8 +66,9 @@ public class CascadingFontRegistry extends FontRegistry {
     }
 
     public FontData[] getFontData(String symbolicName) {
-        if (super.hasValueFor(symbolicName))
-            return super.getFontData(symbolicName);
+        if (super.hasValueFor(symbolicName)) {
+			return super.getFontData(symbolicName);
+		}
         return parent.getFontData(symbolicName);
     }
 

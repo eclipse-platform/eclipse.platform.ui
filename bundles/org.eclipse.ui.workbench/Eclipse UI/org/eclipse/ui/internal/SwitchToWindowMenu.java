@@ -61,12 +61,14 @@ public class SwitchToWindowMenu extends ContributionItem {
      */
     private String calcText(int number, IWorkbenchWindow window) {
         String suffix = window.getShell().getText();
-        if (suffix == null)
-            return null;
+        if (suffix == null) {
+			return null;
+		}
 
         StringBuffer sb = new StringBuffer();
-        if (number < 10)
-            sb.append('&');
+        if (number < 10) {
+			sb.append('&');
+		}
         sb.append(number);
         sb.append(' ');
         if (suffix.length() <= MAX_TEXT_LENGTH) {
@@ -88,14 +90,17 @@ public class SwitchToWindowMenu extends ContributionItem {
         IWorkbench workbench = workbenchWindow.getWorkbench();
         IWorkbenchWindow[] array = workbench.getWorkbenchWindows();
         // avoid showing the separator and list for 0 or 1 items
-        if (array.length < 2)
-            return;
+        if (array.length < 2) {
+			return;
+		}
 
-        if (getParent() instanceof MenuManager)
-            ((MenuManager) getParent()).addMenuListener(menuListener);
+        if (getParent() instanceof MenuManager) {
+			((MenuManager) getParent()).addMenuListener(menuListener);
+		}
 
-        if (!dirty)
-            return;
+        if (!dirty) {
+			return;
+		}
 
         // Add separator.
         if (showSeparator) {
@@ -118,8 +123,9 @@ public class SwitchToWindowMenu extends ContributionItem {
                     mi.addSelectionListener(new SelectionAdapter() {
                         public void widgetSelected(SelectionEvent e) {
                             Shell windowShell = window.getShell();
-                            if (windowShell.getMinimized())
-                                windowShell.setMinimized(false);
+                            if (windowShell.getMinimized()) {
+								windowShell.setMinimized(false);
+							}
                             windowShell.setActive();
                             windowShell.moveAbove(null);
                         }

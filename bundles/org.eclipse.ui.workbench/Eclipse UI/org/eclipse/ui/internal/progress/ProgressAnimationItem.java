@@ -111,8 +111,9 @@ public class ProgressAnimationItem extends AnimationItem implements
 		                            status);
 		                    JobTreeElement topElement = (JobTreeElement) ji
 		                            .getParent();
-		                    if (topElement == null)
-		                        topElement = ji;
+		                    if (topElement == null) {
+								topElement = ji;
+							}
 		                    FinishedJobs.getInstance().remove(topElement);
                         }
                         return;
@@ -121,14 +122,16 @@ public class ProgressAnimationItem extends AnimationItem implements
                     IAction action = null;
                     Object property = job
                             .getProperty(IProgressConstants.ACTION_PROPERTY);
-                    if (property instanceof IAction)
-                        action = (IAction) property;
+                    if (property instanceof IAction) {
+						action = (IAction) property;
+					}
                     if (action != null && action.isEnabled()) {
                         action.run();
                         JobTreeElement topElement = (JobTreeElement) ji
                                 .getParent();
-                        if (topElement == null)
-                            topElement = ji;
+                        if (topElement == null) {
+							topElement = ji;
+						}
                         FinishedJobs.getInstance().remove(topElement);
                         return;
                     }
@@ -146,19 +149,22 @@ public class ProgressAnimationItem extends AnimationItem implements
 
     private IAction getAction(Job job) {
         Object property = job.getProperty(IProgressConstants.ACTION_PROPERTY);
-        if (property instanceof IAction)
-            return (IAction) property;
+        if (property instanceof IAction) {
+			return (IAction) property;
+		}
         return null;
     }
 
     private void refresh() {
 
         // Abort the refresh if we are in the process of shutting down
-        if (!PlatformUI.isWorkbenchRunning())
-            return;
+        if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
 
-        if (toolbar == null || toolbar.isDisposed())
-            return;
+        if (toolbar == null || toolbar.isDisposed()) {
+			return;
+		}
 
         lastJobInfo = null;
 
@@ -183,8 +189,9 @@ public class ProgressAnimationItem extends AnimationItem implements
                     if (action != null && action.isEnabled()) {
                         // green arrow with exclamation mark
                         String tt = action.getToolTipText();
-                        if (tt == null || tt.trim().length() == 0)
-                            tt = NLS.bind(ProgressMessages.ProgressAnimationItem_ok, job.getName()); 
+                        if (tt == null || tt.trim().length() == 0) {
+							tt = NLS.bind(ProgressMessages.ProgressAnimationItem_ok, job.getName());
+						} 
                         initButton(okImage, tt);
                         return;
                     }
@@ -276,8 +283,9 @@ public class ProgressAnimationItem extends AnimationItem implements
             }
         });
 
-        if (isCarbon) // prevent that Mac growbox overlaps with toolbar item
-            new Label(top, SWT.NONE).setLayoutData(new GridData(4, 4));
+        if (isCarbon) {
+			new Label(top, SWT.NONE).setLayoutData(new GridData(4, 4));
+		}
 
         refresh();
 
@@ -301,8 +309,9 @@ public class ProgressAnimationItem extends AnimationItem implements
     void animationDone() {
         super.animationDone();
         animationRunning = false;
-        if (bar.isDisposed())
-            return;
+        if (bar.isDisposed()) {
+			return;
+		}
         bar.setVisible(false);
         refresh();
     }
@@ -315,8 +324,9 @@ public class ProgressAnimationItem extends AnimationItem implements
     void animationStart() {
         super.animationStart();
         animationRunning = true;
-        if (bar.isDisposed())
-            return;
+        if (bar.isDisposed()) {
+			return;
+		}
         bar.setVisible(true);
         refresh();
     }

@@ -102,8 +102,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	int areaId = getTrimArea(pos, 0);
         	
         	// If we are not inside a trim area...are we 'close' to one?
-        	if (areaId == SWT.NONE)
-        		areaId = getTrimArea(pos, TrimDragPreferences.getThreshold());
+        	if (areaId == SWT.NONE) {
+				areaId = getTrimArea(pos, TrimDragPreferences.getThreshold());
+			}
         	
         	// not inside any trim area
         	return areaId;
@@ -134,8 +135,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 						
 						if (pos.y >= trimRect.y &&
 							pos.y <= (trimRect.y+trimRect.height) &&
-							pos.x <= (trimRect.x+trimRect.width))
-								return areaIds[i];
+							pos.x <= (trimRect.x+trimRect.width)) {
+							return areaIds[i];
+						}
 						break;
 					case SWT.RIGHT:
 						trimRect.x -= extendedBoundaryWidth;
@@ -143,16 +145,18 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 						
 						if (pos.y >= trimRect.y &&
 							pos.y <= (trimRect.y+trimRect.height) &&
-							pos.x >= trimRect.x)
-								return areaIds[i];
+							pos.x >= trimRect.x) {
+							return areaIds[i];
+						}
 						break;
 					case SWT.TOP:
 						trimRect.height += extendedBoundaryWidth;
 						
 						if (pos.x >= trimRect.x &&
 							pos.x <= (trimRect.x+trimRect.width) &&
-							pos.y <= (trimRect.y+trimRect.height))
-								return areaIds[i];
+							pos.y <= (trimRect.y+trimRect.height)) {
+							return areaIds[i];
+						}
 						break;
 					case SWT.BOTTOM:
 						trimRect.y -= extendedBoundaryWidth;
@@ -160,8 +164,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 						
 						if (pos.x >= trimRect.x &&
 							pos.x <= (trimRect.x+trimRect.width) &&
-							pos.y >= trimRect.y)
-								return areaIds[i];
+							pos.y >= trimRect.y) {
+							return areaIds[i];
+						}
 						break;
 		        	}
 				}
@@ -188,19 +193,22 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 				TrimDescriptor desc = (TrimDescriptor) iter.next();
 				
 				// Skip ourselves
-				if (desc.getTrim() == draggedTrim)
+				if (desc.getTrim() == draggedTrim) {
 					continue;
+				}
 				
 				// Now, check
 				Rectangle bb = desc.getCache().getControl().getBounds();
 				Point center = Geometry.centerPoint(bb);
 				if (isHorizontal) {
-					if (pos.x < center.x)
+					if (pos.x < center.x) {
 						return desc.getTrim();
+					}
 				}
 				else {
-					if (pos.y < center.y)
+					if (pos.y < center.y) {
 						return desc.getTrim();
+					}
 				}
 			}
         	
@@ -247,10 +255,11 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	cursorAreaId = getTrimArea(pos);
 
         	// Provide tracking for the appropriate 'mode'
-        	if (cursorAreaId != SWT.NONE)
-        		trackInsideTrimArea(pos);
-        	else
-        		trackOutsideTrimArea(pos);
+        	if (cursorAreaId != SWT.NONE) {
+				trackInsideTrimArea(pos);
+			} else {
+				trackOutsideTrimArea(pos);
+			}
         }
        
         /**
@@ -292,8 +301,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
          */
         private void trackOutsideTrimArea(Point pos) {
         	// If we -were- docked then undock
-        	if (dockedArea != SWT.NONE)
-    			undock();
+        	if (dockedArea != SWT.NONE) {
+				undock();
+			}
     		
     		border.setLocation(pos, SWT.BOTTOM);
         }
@@ -306,8 +316,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
          */
         private int getValidSides() {
         	int result = draggedTrim.getValidSides();
-        	if (result == SWT.NONE)
-        		return result;
+        	if (result == SWT.NONE) {
+				return result;
+			}
 
         	// For now, if we can dock...we can dock -anywhere-
         	return SWT.TOP | SWT.BOTTOM | SWT.LEFT | SWT.RIGHT;
@@ -332,8 +343,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
          */
         public void drop() {
         	// If we aren't docked then restore the initial location
-        	if (dockedArea == SWT.NONE)
-        		redock();
+        	if (dockedArea == SWT.NONE) {
+				redock();
+			}
         }
 
         /**
@@ -377,8 +389,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
          */
         public Cursor getCursor() {
         	// If the trim isn't docked then show the 'no smoking' sign
-        	if (cursorAreaId == SWT.NONE)
-        		return windowComposite.getDisplay().getSystemCursor(SWT.CURSOR_NO);
+        	if (cursorAreaId == SWT.NONE) {
+				return windowComposite.getDisplay().getSystemCursor(SWT.CURSOR_NO);
+			}
         	
         	// It's docked; show the four-way arrow cursor
         	return windowComposite.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
@@ -440,13 +453,15 @@ import org.eclipse.ui.internal.layout.TrimLayout;
             Point position, final Rectangle dragRectangle) {
     	
     	// Have to be dragging trim
-    	if (!(draggedObject instanceof IWindowTrim))
-    		return null;
+    	if (!(draggedObject instanceof IWindowTrim)) {
+			return null;
+		}
     	
     	// OK, we're dragging trim. is it from -this- shell?
     	IWindowTrim trim = (IWindowTrim) draggedObject;
-    	if (trim.getControl().getShell() != windowComposite.getShell())
-    		return null;
+    	if (trim.getControl().getShell() != windowComposite.getShell()) {
+			return null;
+		}
     	
     	// If this is the -first- drag then inform the drop target
     	if (dropTarget.draggedTrim == null) {

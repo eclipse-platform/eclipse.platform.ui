@@ -71,8 +71,9 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
      */
     private File getWorkingSetStateFile() {
         IPath path = WorkbenchPlugin.getDefault().getDataLocation();
-        if(path == null)
-        	return null;
+        if(path == null) {
+			return null;
+		}
         path = path.append(WORKING_SET_STATE_FILENAME);
         return path.toFile();
     }
@@ -127,7 +128,9 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
         XMLMemento memento = XMLMemento
                 .createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
         File stateFile = getWorkingSetStateFile();
-        if(stateFile == null) return;
+        if(stateFile == null) {
+			return;
+		}
         saveWorkingSetState(memento);
         saveMruList(memento);
         try {

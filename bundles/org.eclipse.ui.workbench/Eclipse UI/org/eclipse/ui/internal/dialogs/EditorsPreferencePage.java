@@ -68,8 +68,9 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            if (event.getProperty().equals(FieldEditor.IS_VALID))
-                updateValidState();
+            if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				updateValidState();
+			}
         }
     };
 

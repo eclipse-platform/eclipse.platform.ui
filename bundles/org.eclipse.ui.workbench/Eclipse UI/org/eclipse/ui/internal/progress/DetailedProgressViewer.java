@@ -112,10 +112,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * Update for the progress being displayed.
 	 */
 	private void updateForShowingProgress() {
-		if (control.getChildren().length > 0)
+		if (control.getChildren().length > 0) {
 			scrolled.setContent(control);
-		else
+		} else {
 			scrolled.setContent(noEntryLabel);
+		}
 	}
 
 	/**
@@ -159,8 +160,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 				Control[] children = control.getChildren();
 				for (int i = 0; i < children.length; i++) {
 					ProgressInfoItem child = (ProgressInfoItem) children[i];
-					if (!item.equals(child))// Deselect the others
+					if (!item.equals(child)) {
 						child.selectWidgets(false);
+					}
 				}
 				item.selectWidgets(true);
 
@@ -181,10 +183,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			ProgressInfoItem child = (ProgressInfoItem) children[i];
 			if (item.equals(child)) {
 				ProgressInfoItem previous;
-				if (i == 0)
+				if (i == 0) {
 					previous = (ProgressInfoItem) children[children.length - 1];
-				else
+				} else {
 					previous = (ProgressInfoItem) children[i - 1];
+				}
 
 				item.selectWidgets(false);
 				previous.selectWidgets(true);
@@ -204,10 +207,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			ProgressInfoItem child = (ProgressInfoItem) children[i];
 			if (item.equals(child)) {
 				ProgressInfoItem next;
-				if (i == children.length - 1)
+				if (i == children.length - 1) {
 					next = (ProgressInfoItem) children[0];
-				else
+				} else {
 					next = (ProgressInfoItem) children[i + 1];
+				}
 				item.selectWidgets(false);
 				next.selectWidgets(true);
 
@@ -235,10 +239,12 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		Control[] existingChildren = control.getChildren();
 		for (int i = 0; i < existingChildren.length; i++) {
 			if (existingChildren[i].isDisposed()
-					|| existingChildren[i].getData() == null)
+					|| existingChildren[i].getData() == null) {
 				continue;
-			if (existingChildren[i].getData().equals(element))
+			}
+			if (existingChildren[i].getData().equals(element)) {
 				return existingChildren[i];
+			}
 		}
 		return null;
 	}
@@ -293,8 +299,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
 	 */
 	protected void internalRefresh(Object element) {
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 
 		if (element.equals(getRoot())) {
 			refreshAll();
@@ -326,8 +333,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 					&& FinishedJobs.getInstance().isFinished(
 							(JobInfo) elements[i])) {
 				Widget item = doFindItem(elements[i]);
-				if (item != null)
+				if (item != null) {
 					((ProgressInfoItem) item).refresh();
+				}
 
 			} else {
 				Widget item = doFindItem(elements[i]);

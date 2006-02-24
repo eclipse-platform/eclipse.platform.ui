@@ -54,14 +54,16 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      */
     public FileEditorMapping(String name, String extension) {
         super();
-        if (name == null || name.length() < 1)
-            setName("*");//$NON-NLS-1$
-        else
-            setName(name);
-        if (extension == null)
-            setExtension("");//$NON-NLS-1$
-        else
-            setExtension(extension);
+        if (name == null || name.length() < 1) {
+			setName("*");//$NON-NLS-1$
+		} else {
+			setName(name);
+		}
+        if (extension == null) {
+			setExtension("");//$NON-NLS-1$
+		} else {
+			setExtension(extension);
+		}
     }
 
     /**
@@ -91,18 +93,23 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof FileEditorMapping))
-            return false;
+        if (this == obj) {
+			return true;
+		}
+        if (!(obj instanceof FileEditorMapping)) {
+			return false;
+		}
         FileEditorMapping mapping = (FileEditorMapping) obj;
-        if (!this.name.equals(mapping.name))
-            return false;
-        if (!this.extension.equals(mapping.extension))
-            return false;
+        if (!this.name.equals(mapping.name)) {
+			return false;
+		}
+        if (!this.extension.equals(mapping.extension)) {
+			return false;
+		}
 
-        if (!compareList(this.editors, mapping.editors))
-            return false;
+        if (!compareList(this.editors, mapping.editors)) {
+			return false;
+		}
         return compareList(this.deletedEditors, mapping.deletedEditors);
     }
 
@@ -111,16 +118,18 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * are equals.
      */
     private boolean compareList(List l1, List l2) {
-        if (l1.size() != l2.size())
-            return false;
+        if (l1.size() != l2.size()) {
+			return false;
+		}
 
         Iterator i1 = l1.iterator();
         Iterator i2 = l2.iterator();
         while (i1.hasNext() && i2.hasNext()) {
             Object o1 = i1.next();
             Object o2 = i2.next();
-            if (!(o1 == null ? o2 == null : o1.equals(o2)))
-                return false;
+            if (!(o1 == null ? o2 == null : o1.equals(o2))) {
+				return false;
+			}
         }
         return true;
     }
@@ -130,8 +139,9 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      */
     public IEditorDescriptor getDefaultEditor() {
 
-        if (editors.size() == 0)
-            return null;
+        if (editors.size() == 0) {
+			return null;
+		}
         
         return (IEditorDescriptor) editors.get(0);
     }

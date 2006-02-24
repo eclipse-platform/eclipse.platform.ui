@@ -184,8 +184,9 @@ public class EditorInputTransfer extends ByteArrayTransfer {
     public Object nativeToJava(TransferData transferData) {
 
         byte[] bytes = (byte[]) super.nativeToJava(transferData);
-        if (bytes == null)
-            return null;
+        if (bytes == null) {
+			return null;
+		}
         DataInputStream in = new DataInputStream(
                 new ByteArrayInputStream(bytes));
         try {
@@ -215,8 +216,9 @@ public class EditorInputTransfer extends ByteArrayTransfer {
         String factoryId = dataIn.readUTF();
         String xmlString = dataIn.readUTF();
 
-        if (xmlString == null || xmlString.length() == 0)
-            return null;
+        if (xmlString == null || xmlString.length() == 0) {
+			return null;
+		}
 
         StringReader reader = new StringReader(xmlString);
 

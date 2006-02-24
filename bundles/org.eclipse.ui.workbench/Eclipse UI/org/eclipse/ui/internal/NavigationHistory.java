@@ -89,34 +89,38 @@ public class NavigationHistory implements INavigationHistory {
                     NavigationHistoryEditorInfo info = null;
                     NavigationHistoryEditorInfo currentInfo = null;
                     NavigationHistoryEntry current = getEntry(activeEntry);
-                    if (current != null)
-                        currentInfo = current.editorInfo;
+                    if (current != null) {
+						currentInfo = current.editorInfo;
+					}
                     while (e.hasNext()) {
                         info = (NavigationHistoryEditorInfo) e.next();
                         if (id.equals(info.editorID)
                                 && input.equals(info.editorInput)) {
-                            if (partClosed && info != currentInfo)
-                                info.handlePartClosed();
+                            if (partClosed && info != currentInfo) {
+								info.handlePartClosed();
+							}
                             break;
                         } else {
                             info = null;
                         }
                     }
-                    if (info == null)
-                        return;
+                    if (info == null) {
+						return;
+					}
                     e = history.iterator();
                     int i = 0;
                     while (e.hasNext()) {
                         NavigationHistoryEntry entry = (NavigationHistoryEntry) e
                                 .next();
-                        if (entry.editorInfo == info)
-                            if (!entry.handlePartClosed()) {
+                        if (entry.editorInfo == info) {
+							if (!entry.handlePartClosed()) {
                                 // update the active entry since we are removing an item
                                 if (i < activeEntry) {
                                     activeEntry--;
                                 } else if (i == activeEntry) {
-                                    if (i != 0)
-                                        activeEntry--;
+                                    if (i != 0) {
+										activeEntry--;
+									}
                                 } else {
                                     // activeEntry is before item we deleted
                                     i++;
@@ -126,6 +130,7 @@ public class NavigationHistory implements INavigationHistory {
                             } else {
                                 i++;
                             }
+						}
                     }
                     updateActions();
                 }
@@ -141,8 +146,9 @@ public class NavigationHistory implements INavigationHistory {
      * Adds an editor to the editor history without getting its location.
      */
     public void markEditor(final IEditorPart part) {
-        if (ignoreEntries > 0 || part == null)
-            return;
+        if (ignoreEntries > 0 || part == null) {
+			return;
+		}
         /* Ignore all entries until the async exec runs. Workaround to avoid 
          * extra entry when using Open Declaration (F3) that opens another editor. */
         ignoreEntries++;
@@ -151,12 +157,14 @@ public class NavigationHistory implements INavigationHistory {
                 ignoreEntries--;
                 EditorSite site = (EditorSite) (part.getEditorSite());
                 Control c = site.getPane().getControl();
-                if (c == null || c.isDisposed())
-                    return;
+                if (c == null || c.isDisposed()) {
+					return;
+				}
                 NavigationHistoryEntry e = getEntry(activeEntry);
                 if (e != null
-                        && part.getEditorInput() != e.editorInfo.editorInput)
-                    updateEntry(e);
+                        && part.getEditorInput() != e.editorInfo.editorInput) {
+					updateEntry(e);
+				}
                 addEntry(part, true);
             }
         });
@@ -254,8 +262,9 @@ public class NavigationHistory implements INavigationHistory {
      * Returns the history entry indexed by <code>index</code>
      */
     private NavigationHistoryEntry getEntry(int index) {
-        if (0 <= index && index < history.size())
-            return (NavigationHistoryEntry) history.get(index);
+        if (0 <= index && index < history.size()) {
+			return (NavigationHistoryEntry) history.get(index);
+		}
         return null;
     }
 
@@ -289,13 +298,15 @@ public class NavigationHistory implements INavigationHistory {
      * Adds a location to the history.
      */
     private void addEntry(IEditorPart part, boolean markLocation) {
-        if (ignoreEntries > 0 || part == null)
-            return;
+        if (ignoreEntries > 0 || part == null) {
+			return;
+		}
 
         INavigationLocation location = null;
-        if (markLocation && part instanceof INavigationLocationProvider)
-            location = ((INavigationLocationProvider) part)
+        if (markLocation && part instanceof INavigationLocationProvider) {
+			location = ((INavigationLocationProvider) part)
                     .createNavigationLocation();
+		}
 
         NavigationHistoryEntry current = getEntry(activeEntry);
         if (current != null && current.editorInfo.memento != null) {
@@ -350,18 +361,21 @@ public class NavigationHistory implements INavigationHistory {
      * Update the actions enable/disable and tooltip state.
      */
     private void updateActions() {
-        if (backwardAction != null)
-            backwardAction.update();
-        if (forwardAction != null)
-            forwardAction.update();
+        if (backwardAction != null) {
+			backwardAction.update();
+		}
+        if (forwardAction != null) {
+			forwardAction.update();
+		}
     }
 
     /*
      * Restore the specified entry
      */
     private void gotoEntry(NavigationHistoryEntry entry) {
-        if (entry == null)
-            return;
+        if (entry == null) {
+			return;
+		}
         try {
             ignoreEntries++;
             if (entry.editorInfo.memento != null) {
@@ -380,8 +394,9 @@ public class NavigationHistory implements INavigationHistory {
      * update the active entry
      */
     private void updateEntry(NavigationHistoryEntry activeEntry) {
-        if (activeEntry == null || activeEntry.location == null)
-            return;
+        if (activeEntry == null || activeEntry.location == null) {
+			return;
+		}
         activeEntry.location.update();
         printEntries("updateEntry"); //$NON-NLS-1$
     }
@@ -391,8 +406,9 @@ public class NavigationHistory implements INavigationHistory {
      * its context.
      */
     public void forward() {
-        if (canForward())
-            shiftEntry(true);
+        if (canForward()) {
+			shiftEntry(true);
+		}
     }
 
     /*
@@ -400,8 +416,9 @@ public class NavigationHistory implements INavigationHistory {
      * its context.
      */
     public void backward() {
-        if (canBackward())
-            shiftEntry(false);
+        if (canBackward()) {
+			shiftEntry(false);
+		}
     }
 
     /*
@@ -409,13 +426,15 @@ public class NavigationHistory implements INavigationHistory {
      */
     private void shiftEntry(boolean forward) {
         updateEntry(getEntry(activeEntry));
-        if (forward)
-            activeEntry++;
-        else
-            activeEntry--;
+        if (forward) {
+			activeEntry++;
+		} else {
+			activeEntry--;
+		}
         NavigationHistoryEntry entry = getEntry(activeEntry);
-        if (entry != null)
-            gotoEntry(entry);
+        if (entry != null) {
+			gotoEntry(entry);
+		}
     }
 
     /*
@@ -432,15 +451,17 @@ public class NavigationHistory implements INavigationHistory {
      */
     void saveState(IMemento memento) {
         NavigationHistoryEntry cEntry = getEntry(activeEntry);
-        if (cEntry == null || !cEntry.editorInfo.isPersistable())
-            return;
+        if (cEntry == null || !cEntry.editorInfo.isPersistable()) {
+			return;
+		}
 
         ArrayList editors = (ArrayList) this.editors.clone();
         for (Iterator iter = editors.iterator(); iter.hasNext();) {
             NavigationHistoryEditorInfo info = (NavigationHistoryEditorInfo) iter
                     .next();
-            if (!info.isPersistable())
-                iter.remove();
+            if (!info.isPersistable()) {
+				iter.remove();
+			}
         }
         IMemento editorsMem = memento
                 .createChild(IWorkbenchConstants.TAG_EDITORS);
@@ -456,16 +477,18 @@ public class NavigationHistory implements INavigationHistory {
         for (int i = 0; i < size; i++) {
             NavigationHistoryEntry entry = (NavigationHistoryEntry) history
                     .get(i);
-            if (entry.editorInfo.isPersistable())
-                list.add(entry);
+            if (entry.editorInfo.isPersistable()) {
+				list.add(entry);
+			}
         }
         size = list.size();
         for (int i = 0; i < size; i++) {
             NavigationHistoryEntry entry = (NavigationHistoryEntry) list.get(i);
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_ITEM);
-            if (entry == cEntry)
-                childMem.putString(IWorkbenchConstants.TAG_ACTIVE, "true"); //$NON-NLS-1$
+            if (entry == cEntry) {
+				childMem.putString(IWorkbenchConstants.TAG_ACTIVE, "true"); //$NON-NLS-1$
+			}
             entry.saveState(childMem, list);
             childMem.putInteger(IWorkbenchConstants.TAG_INDEX, editors
                     .indexOf(entry.editorInfo));
@@ -479,8 +502,9 @@ public class NavigationHistory implements INavigationHistory {
         IMemento editorsMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
         IMemento items[] = memento.getChildren(IWorkbenchConstants.TAG_ITEM);
         if (items.length == 0 || editorsMem == null) {
-            if (page.getActiveEditor() != null)
-                markLocation(page.getActiveEditor());
+            if (page.getActiveEditor() != null) {
+				markLocation(page.getActiveEditor());
+			}
             return;
         }
 
@@ -502,15 +526,17 @@ public class NavigationHistory implements INavigationHistory {
                     page, null, null);
             history.add(entry);
             entry.restoreState(item);
-            if (item.getString(IWorkbenchConstants.TAG_ACTIVE) != null)
-                activeEntry = i;
+            if (item.getString(IWorkbenchConstants.TAG_ACTIVE) != null) {
+				activeEntry = i;
+			}
         }
 
         NavigationHistoryEntry entry = getEntry(activeEntry);
         if (entry != null && entry.editorInfo.editorInput != null) {
             if (page.getActiveEditor() == page
-                    .findEditor(entry.editorInfo.editorInput))
-                gotoEntry(entry);
+                    .findEditor(entry.editorInfo.editorInput)) {
+				gotoEntry(entry);
+			}
         }
     }
 
@@ -538,28 +564,33 @@ public class NavigationHistory implements INavigationHistory {
     }
 
     public void disposeEntry(NavigationHistoryEntry entry) {
-        if (entry.editorInfo == null)
-            return;
+        if (entry.editorInfo == null) {
+			return;
+		}
         entry.editorInfo.refCount--;
-        if (entry.editorInfo.refCount == 0)
-            editors.remove(entry.editorInfo);
+        if (entry.editorInfo.refCount == 0) {
+			editors.remove(entry.editorInfo);
+		}
         entry.dispose();
     }
 
     void checkDuplicates(NavigationHistoryEditorInfo info) {
         NavigationHistoryEditorInfo dup = null;
-        if (info.editorInput == null) //failed to restore
-            return;
+        if (info.editorInput == null) {
+			return;
+		}
         for (Iterator iter = editors.iterator(); iter.hasNext();) {
             dup = (NavigationHistoryEditorInfo) iter.next();
             if (info != dup && info.editorID.equals(dup.editorID)
-                    && info.editorInput.equals(dup.editorInput))
-                break;
-            else
-                dup = null;
+                    && info.editorInput.equals(dup.editorInput)) {
+				break;
+			} else {
+				dup = null;
+			}
         }
-        if (dup == null)
-            return;
+        if (dup == null) {
+			return;
+		}
         for (Iterator iter = history.iterator(); iter.hasNext();) {
             NavigationHistoryEntry entry = (NavigationHistoryEntry) iter.next();
             if (entry.editorInfo == dup) {

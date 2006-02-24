@@ -97,17 +97,18 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 	 */
 	protected ILightweightLabelDecorator internalGetDecorator()
 			throws CoreException {
-		if (labelProviderCreationFailed)
+		if (labelProviderCreationFailed) {
 			return null;
+		}
 
 		final CoreException[] exceptions = new CoreException[1];
 
 		if (decorator == null) {
 
-			if (isDeclarative())
+			if (isDeclarative()) {
 				decorator = new DeclarativeDecorator(definingElement,
 						getIconLocation());
-			else {
+			} else {
 
 				Platform.run(new ISafeRunnable() {
 					public void run() {
@@ -130,16 +131,18 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 					}
 				});
 			}
-		} else
+		} else {
 			return decorator;
+		}
 
 		if (decorator == null) {
 			this.labelProviderCreationFailed = true;
 			setEnabled(false);
 		}
 
-		if (exceptions[0] != null)
+		if (exceptions[0] != null) {
 			throw exceptions[0];
+		}
 
 		return decorator;
 	}
@@ -207,17 +210,22 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 			IConfigurationElement element) {
 
 		// Backwards compatibility
-		if (locationDefinition == null)
+		if (locationDefinition == null) {
 			locationDefinition = element.getAttribute(ATT_QUADRANT);
+		}
 
-		if (TOP_RIGHT_STRING.equals(locationDefinition))
+		if (TOP_RIGHT_STRING.equals(locationDefinition)) {
 			return TOP_RIGHT;
-		if (TOP_LEFT_STRING.equals(locationDefinition))
+		}
+		if (TOP_LEFT_STRING.equals(locationDefinition)) {
 			return TOP_LEFT;
-		if (BOTTOM_LEFT_STRING.equals(locationDefinition))
+		}
+		if (BOTTOM_LEFT_STRING.equals(locationDefinition)) {
 			return BOTTOM_LEFT;
-		if (UNDERLAY_STRING.equals(locationDefinition))
+		}
+		if (UNDERLAY_STRING.equals(locationDefinition)) {
 			return UNDERLAY;
+		}
 		return BOTTOM_RIGHT;
 
 	}
@@ -231,8 +239,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		try {
 			// Internal decorator might be null so be prepared
 			ILightweightLabelDecorator currentDecorator = internalGetDecorator();
-			if(currentDecorator == null)
+			if(currentDecorator == null) {
 				return;
+			}
 			
 			if (isAdaptable()) {
 				String[] classes = getObjectClasses();
@@ -240,13 +249,15 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 					String className = classes[i];
 					Object adapted = LegacyResourceSupport.getAdapter(element,
 							className);
-					if (adapted != null)
-						currentDecorator.decorate(adapted, decoration);					
+					if (adapted != null) {
+						currentDecorator.decorate(adapted, decoration);
+					}					
 				}				
 			}
 			else{
-				if (currentDecorator != null && element != null)
+				if (currentDecorator != null && element != null) {
 					currentDecorator.decorate(element, decoration);
+				}
 			}
 		} catch (CoreException exception) {
 			handleCoreException(exception);
@@ -303,8 +314,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 	 *         registered
 	 */
 	public String[] getObjectClasses() {
-		if (objectClasses == null)// Make sure we have read the enablement
+		if (objectClasses == null) {
 			getEnablement();
+		}
 		return objectClasses;
 	}
 
@@ -316,8 +328,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 	protected void initializeEnablement() {
 		super.initializeEnablement();
 		ActionExpression expression = getEnablement();
-		if (expression != null)
+		if (expression != null) {
 			objectClasses = expression.extractObjectClasses();
+		}
 
 		// If the class is null set it to Object
 		if (objectClasses == null) {

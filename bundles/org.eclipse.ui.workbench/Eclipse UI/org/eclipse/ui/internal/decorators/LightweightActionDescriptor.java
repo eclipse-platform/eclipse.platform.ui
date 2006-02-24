@@ -66,8 +66,9 @@ public class LightweightActionDescriptor implements IAdaptable,
      * no such object can be found.
      */
     public Object getAdapter(Class adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return this;
+        if (adapter == IWorkbenchAdapter.class) {
+			return this;
+		}
         return null;
     }
 
@@ -102,8 +103,9 @@ public class LightweightActionDescriptor implements IAdaptable,
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
     public ImageDescriptor getImageDescriptor(Object o) {
-        if (o == this)
-            return getImageDescriptor();
+        if (o == this) {
+			return getImageDescriptor();
+		}
         return null;
     }
 
@@ -123,8 +125,9 @@ public class LightweightActionDescriptor implements IAdaptable,
         if (o == this) {
             String text = getLabel();
             int end = text.lastIndexOf('@');
-            if (end >= 0)
-                text = text.substring(0, end);
+            if (end >= 0) {
+				text = text.substring(0, end);
+			}
             return DialogUtil.removeAccel(text);
         }
         return o == null ? "" : o.toString();//$NON-NLS-1$

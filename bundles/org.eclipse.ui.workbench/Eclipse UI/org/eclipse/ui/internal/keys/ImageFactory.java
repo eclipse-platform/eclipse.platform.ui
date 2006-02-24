@@ -46,8 +46,9 @@ final class ImageFactory {
 			if (imageDescriptor != null) {
 				image = imageDescriptor.createImage(false);
 
-				if (image == null)
+				if (image == null) {
 					WorkbenchPlugin.log(ImageFactory.class +": error creating image for " + key); //$NON-NLS-1$
+				}
 
 				imageRegistry.put(key, image);
 			}
@@ -59,8 +60,9 @@ final class ImageFactory {
 	static ImageDescriptor getImageDescriptor(String key) {
 		ImageDescriptor imageDescriptor = (ImageDescriptor) map.get(key);
 
-		if (imageDescriptor == null)
+		if (imageDescriptor == null) {
 			WorkbenchPlugin.log(ImageFactory.class +": no image descriptor for " + key); //$NON-NLS-1$
+		}
 
 		return imageDescriptor;
 	}

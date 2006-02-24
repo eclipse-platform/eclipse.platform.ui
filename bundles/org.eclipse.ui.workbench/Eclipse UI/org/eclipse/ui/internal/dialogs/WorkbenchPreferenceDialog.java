@@ -151,8 +151,9 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	protected IPreferenceNode findNodeMatching(String nodeId) {
 		IPreferenceNode node = super.findNodeMatching(nodeId);
-		if (WorkbenchActivityHelper.filterItem(node))
+		if (WorkbenchActivityHelper.filterItem(node)) {
 			return null;
+		}
 		return node;
 	}
 	

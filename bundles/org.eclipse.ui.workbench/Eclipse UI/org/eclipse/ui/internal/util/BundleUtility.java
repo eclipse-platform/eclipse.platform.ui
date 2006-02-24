@@ -24,8 +24,9 @@ import org.osgi.framework.Bundle;
  */
 public class BundleUtility {
 	public static boolean isActive(Bundle bundle) {
-		if (bundle == null)
+		if (bundle == null) {
 			return false;
+		}
 		return bundle.getState() == Bundle.ACTIVE;
 	}
 
@@ -55,8 +56,9 @@ public class BundleUtility {
     }
 
     public static URL find(Bundle bundle, String path) {
-        if (bundle == null)
-            return null;
+        if (bundle == null) {
+			return null;
+		}
         return Platform.find(bundle, new Path(path));
     }
 
@@ -66,8 +68,9 @@ public class BundleUtility {
 
     public static void log(String bundleId, Throwable exception) {
         Bundle bundle = Platform.getBundle(bundleId);
-        if (bundle == null)
-            return;
+        if (bundle == null) {
+			return;
+		}
         IStatus status = new Status(IStatus.ERROR, bundleId, IStatus.ERROR,
                 exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
                 exception);

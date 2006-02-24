@@ -153,16 +153,18 @@ public class WorkbenchWindowAdvisor {
         IWorkbenchConfigurer wbConfig = getWindowConfigurer().getWorkbenchConfigurer();
         final String key = "introOpened"; //$NON-NLS-1$
         Boolean introOpened = (Boolean) wbConfig.getData(key);
-        if (introOpened != null && introOpened.booleanValue())
-            return;
+        if (introOpened != null && introOpened.booleanValue()) {
+			return;
+		}
 
         wbConfig.setData(key, Boolean.TRUE);
 
         boolean showIntro = PrefUtil.getAPIPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.SHOW_INTRO);
 
-        if (!showIntro)
-            return;
+        if (!showIntro) {
+			return;
+		}
 
         if (wbConfig.getWorkbench().getIntroManager()
                 .hasIntro()) {

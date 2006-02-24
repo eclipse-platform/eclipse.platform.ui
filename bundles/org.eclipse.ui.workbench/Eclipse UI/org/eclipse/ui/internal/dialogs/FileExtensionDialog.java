@@ -174,10 +174,12 @@ public class FileExtensionDialog extends TitleAreaDialog {
         // We need kernel api to validate the extension or a filename
 
         int index = filename.indexOf('.');
-        if (index == -1)
-            return ""; //$NON-NLS-1$
-        if (index == filename.length())
-            return ""; //$NON-NLS-1$
+        if (index == -1) {
+			return ""; //$NON-NLS-1$
+		}
+        if (index == filename.length()) {
+			return ""; //$NON-NLS-1$
+		}
         return filename.substring(index + 1, filename.length());
     }
 
@@ -190,10 +192,12 @@ public class FileExtensionDialog extends TitleAreaDialog {
         // We need kernel api to validate the extension or a filename
 
         int index = filename.indexOf('.');
-        if (index == -1)
-            return filename;
-        if (index == 0)
-            return "*"; //$NON-NLS-1$
+        if (index == -1) {
+			return filename;
+		}
+        if (index == 0) {
+			return "*"; //$NON-NLS-1$
+		}
         return filename.substring(0, index);
     }
 }

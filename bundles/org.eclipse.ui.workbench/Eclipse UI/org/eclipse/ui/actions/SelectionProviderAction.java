@@ -95,10 +95,11 @@ public abstract class SelectionProviderAction extends Action implements
      */
     public IStructuredSelection getStructuredSelection() {
         ISelection selection = provider.getSelection();
-        if (selection instanceof IStructuredSelection)
-            return (IStructuredSelection) selection;
-        else
-            return new StructuredSelection();
+        if (selection instanceof IStructuredSelection) {
+			return (IStructuredSelection) selection;
+		} else {
+			return new StructuredSelection();
+		}
     }
 
     /**
@@ -138,9 +139,10 @@ public abstract class SelectionProviderAction extends Action implements
      */
     public final void selectionChanged(SelectionChangedEvent event) {
         ISelection selection = event.getSelection();
-        if (selection instanceof IStructuredSelection)
-            selectionChanged((IStructuredSelection) selection);
-        else
-            selectionChanged(selection);
+        if (selection instanceof IStructuredSelection) {
+			selectionChanged((IStructuredSelection) selection);
+		} else {
+			selectionChanged(selection);
+		}
     }
 }

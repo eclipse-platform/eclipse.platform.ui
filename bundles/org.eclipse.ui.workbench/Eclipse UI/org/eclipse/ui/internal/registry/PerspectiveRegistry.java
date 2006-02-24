@@ -197,8 +197,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	 * @param desc
 	 */
 	public void addPerspective(PerspectiveDescriptor desc) {
-		if (desc == null)
+		if (desc == null) {
 			return;
+		}
 		add(desc);
 	}
 
@@ -228,10 +229,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	public PerspectiveDescriptor createPerspective(String label,
 			PerspectiveDescriptor originalDescriptor) {
 		// Sanity check to avoid invalid or duplicate labels.
-		if (!validateLabel(label))
+		if (!validateLabel(label)) {
 			return null;
-		if (findPerspectiveWithLabel(label) != null)
+		}
+		if (findPerspectiveWithLabel(label) != null) {
 			return null;
+		}
 
 		// Calculate ID.
 		String id = label.replace(' ', '_');
@@ -265,8 +268,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	 * @param perspToDelete
 	 */
 	public void deletePerspectives(ArrayList perspToDelete) {
-		for (int i = 0; i < perspToDelete.size(); i++)
+		for (int i = 0; i < perspToDelete.size(); i++) {
 			deletePerspective((IPerspectiveDescriptor) perspToDelete.get(i));
+		}
 	}
 
 	/**
@@ -341,8 +345,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	public IPerspectiveDescriptor findPerspectiveWithId(String id) {
 		for (Iterator i = perspectives.iterator(); i.hasNext();) {
 			PerspectiveDescriptor desc = (PerspectiveDescriptor) i.next();
-			if (desc.getId().equals(id))
+			if (desc.getId().equals(id)) {
 				return desc;
+			}
 		}
 
 		return null;
@@ -356,8 +361,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
 		for (Iterator i = perspectives.iterator(); i.hasNext();) {
 			PerspectiveDescriptor desc = (PerspectiveDescriptor) i.next();
-			if (desc.getLabel().equals(label))
+			if (desc.getLabel().equals(label)) {
 				return desc;
+			}
 		}
 		return null;
 	}
@@ -417,8 +423,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 		for (int i = 0; i < perspectivesList.length; i++) {
 			try {
 				String xmlString = store.getString(perspectivesList[i] + PERSP);
-				if (xmlString != null && xmlString.length() != 0)
+				if (xmlString != null && xmlString.length() != 0) {
 					reader = new StringReader(xmlString);
+				}
 
 				// Restore the layout state.
 				XMLMemento memento = XMLMemento.createReadRoot(reader);
@@ -427,8 +434,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 				newPersp.restoreState(memento);
 				String id = newPersp.getId();
 				IPerspectiveDescriptor oldPersp = findPerspectiveWithId(id);
-				if (oldPersp == null)
+				if (oldPersp == null) {
 					add(newPersp);
+				}
 				reader.close();
 			} catch (IOException e) {
 				unableToLoadPerspective(null);
@@ -441,8 +449,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 		// if -data @noDefault specified the state location may not be
 		// initialized
 		IPath path = WorkbenchPlugin.getDefault().getDataLocation();
-		if (path == null)
+		if (path == null) {
 			return;
+		}
 
 		File folder = path.toFile();
 
@@ -466,8 +475,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 						newPersp.restoreState(memento);
 						IPerspectiveDescriptor oldPersp = findPerspectiveWithId(newPersp
 								.getId());
-						if (oldPersp == null)
+						if (oldPersp == null) {
 							add(newPersp);
+						}
 
 						// save to the preference store
 						saveCustomPersp(newPersp, memento);
@@ -580,8 +590,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	 */
 	public boolean validateLabel(String label) {
 		label = label.trim();
-		if (label.length() <= 0)
+		if (label.length() <= 0) {
 			return false;
+		}
 		return true;
 	}
 
@@ -592,16 +603,19 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	private void verifyDefaultPerspective() {
 		// Step 1: Try current defPerspId value.
 		IPerspectiveDescriptor desc = null;
-		if (defaultPerspID != null)
+		if (defaultPerspID != null) {
 			desc = findPerspectiveWithId(defaultPerspID);
-		if (desc != null)
+		}
+		if (desc != null) {
 			return;
+		}
 
 		// Step 2. Read default value.
 		String str = PrefUtil.getAPIPreferenceStore().getString(
 				IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
-		if (str != null && str.length() > 0)
+		if (str != null && str.length() > 0) {
 			desc = findPerspectiveWithId(str);
+		}
 		if (desc != null) {
 			defaultPerspID = str;
 			return;
@@ -621,13 +635,15 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 			IPerspectiveDescriptor originalDescriptor) {
 
 		// Check for invalid labels
-		if (label == null || !(label.trim().length() > 0))
+		if (label == null || !(label.trim().length() > 0)) {
 			throw new IllegalArgumentException();
+		}
 
 		// Check for duplicates
 		IPerspectiveDescriptor desc = findPerspectiveWithId(id);
-		if (desc != null)
+		if (desc != null) {
 			throw new IllegalArgumentException();
+		}
 
 		// Create descriptor.
 		desc = new PerspectiveDescriptor(id, label,

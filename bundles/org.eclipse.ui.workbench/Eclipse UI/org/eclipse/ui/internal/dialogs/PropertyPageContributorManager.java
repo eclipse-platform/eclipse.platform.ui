@@ -53,9 +53,9 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		String getQualifiedName() {
 
 			if (qualifiedName == null) {
-				if (parent == null)
+				if (parent == null) {
 					qualifiedName = contributor.getPageName();
-				else {
+				} else {
 					StringBuffer nameBuffer = new StringBuffer();
 					nameBuffer.append(parent.getQualifiedName());
 					nameBuffer
@@ -122,8 +122,9 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
 		List result = getContributors(object);
 
-		if (result == null || result.size() == 0)
+		if (result == null || result.size() == 0) {
 			return false;
+		}
 
 		// Sort the results
 		List sortedResult = buildNodeList(result);
@@ -133,14 +134,17 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
 		// Allow each contributor to add its page to the manager.
 		boolean actualContributions = false;
-		while(resultIterator.hasNext())
-		for (int i = 0; i < sortedResult.size(); i++) {
-			CategorizedPageNode next = (CategorizedPageNode) resultIterator.next();
-			IPropertyPageContributor ppcont =  next.contributor;
-			if (!ppcont.isApplicableTo(object))
-				continue;
-			if (ppcont.contributePropertyPages(manager, object))
-				actualContributions = true;
+		while(resultIterator.hasNext()) {
+			for (int i = 0; i < sortedResult.size(); i++) {
+				CategorizedPageNode next = (CategorizedPageNode) resultIterator.next();
+				IPropertyPageContributor ppcont =  next.contributor;
+				if (!ppcont.isApplicableTo(object)) {
+					continue;
+				}
+				if (ppcont.contributePropertyPages(manager, object)) {
+					actualContributions = true;
+				}
+			}
 		}
 		return actualContributions;
 	}
@@ -164,11 +168,13 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		while(values.hasNext()){
 			CategorizedPageNode next = (CategorizedPageNode) values.next();
 			returnValue.add(next);
-			if(next.contributor.getCategory() == null)
+			if(next.contributor.getCategory() == null) {
 				continue;
+			}
 			Object parent = mapping.get(next.contributor.getCategory());
-			if(parent != null)
+			if(parent != null) {
 				next.setParent((CategorizedPageNode) parent);
+			}
 		}
 		return returnValue;
 	}
@@ -179,8 +185,9 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	 * @return PropertyPageContributorManager
 	 */
 	public static PropertyPageContributorManager getManager() {
-		if (sharedInstance == null)
+		if (sharedInstance == null) {
 			sharedInstance = new PropertyPageContributorManager();
+		}
 		return sharedInstance;
 	}
 

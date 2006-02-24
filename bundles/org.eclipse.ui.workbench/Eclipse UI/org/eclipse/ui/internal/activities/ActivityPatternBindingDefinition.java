@@ -27,8 +27,9 @@ public final class ActivityPatternBindingDefinition {
 
     static Map activityPatternBindingDefinitionsByActivityId(
             Collection activityPatternBindingDefinitions) {
-        if (activityPatternBindingDefinitions == null)
-            throw new NullPointerException();
+        if (activityPatternBindingDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         Map map = new HashMap();
         Iterator iterator = activityPatternBindingDefinitions.iterator();
@@ -81,16 +82,18 @@ public final class ActivityPatternBindingDefinition {
         if (compareTo == 0) {
             compareTo = Util.compare(pattern, castedObject.pattern);
 
-            if (compareTo == 0)
-                compareTo = Util.compare(sourceId, castedObject.sourceId);
+            if (compareTo == 0) {
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
+			}
         }
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof ActivityPatternBindingDefinition))
-            return false;
+        if (!(object instanceof ActivityPatternBindingDefinition)) {
+			return false;
+		}
 
         final ActivityPatternBindingDefinition castedObject = (ActivityPatternBindingDefinition) object;
         if (!Util.equals(activityId, castedObject.activityId)) {
@@ -121,8 +124,9 @@ public final class ActivityPatternBindingDefinition {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

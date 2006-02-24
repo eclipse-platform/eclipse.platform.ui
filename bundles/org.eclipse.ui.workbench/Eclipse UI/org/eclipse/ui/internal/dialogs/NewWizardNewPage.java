@@ -152,14 +152,16 @@ class NewWizardNewPage implements ISelectionChangedListener {
         IWizardDescriptor [] wizards = category.getWizards();
         for (int i = 0; i < wizards.length; i++) {
             IWizardDescriptor wizard = wizards[i];
-            if (WorkbenchActivityHelper.filterItem(wizard))
-                return false;
+            if (WorkbenchActivityHelper.filterItem(wizard)) {
+				return false;
+			}
         }
 
         IWizardCategory [] children = category.getCategories();
         for (int i = 0; i < children.length; i++) {
-            if (!allActivityEnabled(children[i]))
-                return false;
+            if (!allActivityEnabled(children[i])) {
+				return false;
+			}
         }
 
         return true;
@@ -171,12 +173,14 @@ class NewWizardNewPage implements ISelectionChangedListener {
     private void trimPrimaryWizards() {
         ArrayList newPrimaryWizards = new ArrayList(primaryWizards.length);
 
-        if (wizardCategories == null)
-            return;//No categories so nothing to trim
+        if (wizardCategories == null) {
+			return;//No categories so nothing to trim
+		}
 
         for (int i = 0; i < primaryWizards.length; i++) {
-            if (wizardCategories.findWizard(primaryWizards[i].getId()) != null)
-                newPrimaryWizards.add(primaryWizards[i]);
+            if (wizardCategories.findWizard(primaryWizards[i].getId()) != null) {
+				newPrimaryWizards.add(primaryWizards[i]);
+			}
         }
 
         primaryWizards = (WorkbenchWizardElement[]) newPrimaryWizards
@@ -191,14 +195,16 @@ class NewWizardNewPage implements ISelectionChangedListener {
         IWizardDescriptor [] wizards = category.getWizards();
         for (int i = 0; i < wizards.length; i++) {
         	IWizardDescriptor wizard = wizards[i];
-            if (!isPrimary(wizard))
-                return false;
+            if (!isPrimary(wizard)) {
+				return false;
+			}
         }
 
         IWizardCategory [] children = category.getCategories();
         for (int i = 0; i < children.length; i++) {
-            if (!allPrimary(children[i]))
-                return false;
+            if (!allPrimary(children[i])) {
+				return false;
+			}
         }
 
         return true;
@@ -210,8 +216,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
      */
     private boolean isPrimary(IWizardDescriptor wizard) {
         for (int j = 0; j < primaryWizards.length; j++) {
-            if (primaryWizards[j].equals(wizard))
-                return true;
+            if (primaryWizards[j].equals(wizard)) {
+				return true;
+			}
         }
 
         return false;
@@ -325,8 +332,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
         }
 
         // ensure the category is expanded.  If there is a remembered expansion it will be set later.
-        if (expandTop)
-        	treeViewer.setAutoExpandLevel(2);
+        if (expandTop) {
+			treeViewer.setAutoExpandLevel(2);
+		}
 
         AdaptableList input = new AdaptableList(inputArray);
 
@@ -360,8 +368,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
         
         treeViewer.addFilter(filter);
         
-        if (projectsOnly) 
-        	treeViewer.addFilter(projectFilter);
+        if (projectsOnly) {
+			treeViewer.addFilter(projectFilter);
+		}
 
 		Dialog.applyDialogFont(filterTree);
 		return filterTree;
@@ -405,8 +414,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
                         if (showAll) {
                         	filteredTree.getViewer().resetFilters();
                         	filteredTree.getViewer().addFilter(filteredTreeFilter);
-                            if (projectsOnly) 
-                            	filteredTree.getViewer().addFilter(projectFilter);
+                            if (projectsOnly) {
+								filteredTree.getViewer().addFilter(projectFilter);
+							}
 
                             // restore the expanded elements that were present
                             // in the last show all state but not in the 'no
@@ -422,8 +432,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
                             filteredTree.getViewer().setExpandedElements(expanded);
                         } else {
                         	filteredTree.getViewer().addFilter(filter);
-                            if (projectsOnly) 
-                            	filteredTree.getViewer().addFilter(projectFilter);
+                            if (projectsOnly) {
+								filteredTree.getViewer().addFilter(projectFilter);
+							}
                         }
                         filteredTree.getViewer().refresh(false);
 
@@ -437,8 +448,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
                             deltaList.removeAll(Arrays.asList(newExpanded));
                         }
                     } finally {
-                        if (showAll)
-                        	filteredTree.getViewer().getControl().setRedraw(true);
+                        if (showAll) {
+							filteredTree.getViewer().getControl().setRedraw(true);
+						}
                     }
                 }
             });
@@ -451,8 +463,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
         helpButton.setImage(buttonImage);
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
                 | GridData.VERTICAL_ALIGN_END);
-        if (!needShowAll)
-            data.horizontalSpan = 2;
+        if (!needShowAll) {
+			data.horizontalSpan = 2;
+		}
         toolBar.setLayoutData(data);
 
         helpButton.addSelectionListener(new SelectionAdapter() {
@@ -502,8 +515,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
     protected void expandPreviouslyExpandedCategories() {
         String[] expandedCategoryPaths = settings
                 .getArray(STORE_EXPANDED_CATEGORIES_ID);
-        if (expandedCategoryPaths == null || expandedCategoryPaths.length == 0)
-            return;
+        if (expandedCategoryPaths == null || expandedCategoryPaths.length == 0) {
+			return;
+		}
 
         List categoriesToExpand = new ArrayList(expandedCategoryPaths.length);
 
@@ -511,13 +525,15 @@ class NewWizardNewPage implements ISelectionChangedListener {
             for (int i = 0; i < expandedCategoryPaths.length; i++) {
                 IWizardCategory category = wizardCategories
                         .findCategory(new Path(expandedCategoryPaths[i]));
-                if (category != null) // ie.- it still exists
-                    categoriesToExpand.add(category);
+                if (category != null) {
+					categoriesToExpand.add(category);
+				}
             }
         }
 
-        if (!categoriesToExpand.isEmpty())
-        	filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
+        if (!categoriesToExpand.isEmpty()) {
+			filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
+		}
 
     }
 
@@ -564,8 +580,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
                 .getSelection());
 
         if (selectedObject instanceof IWizardDescriptor) {
-            if (selectedObject == selectedElement)
-                return;
+            if (selectedObject == selectedElement) {
+				return;
+			}
             updateWizardSelection((IWizardDescriptor) selectedObject);
         } else {
             selectedElement = null;
@@ -583,11 +600,13 @@ class NewWizardNewPage implements ISelectionChangedListener {
      */
     protected void selectPreviouslySelected() {
         String selectedId = settings.get(STORE_SELECTED_ID);
-        if (selectedId == null)
-            return;
+        if (selectedId == null) {
+			return;
+		}
 
-        if (wizardCategories == null)
-            return;
+        if (wizardCategories == null) {
+			return;
+		}
 
         Object selected = wizardCategories.findCategory(new Path(
                 selectedId));
@@ -595,9 +614,10 @@ class NewWizardNewPage implements ISelectionChangedListener {
         if (selected == null) {
             selected = wizardCategories.findWizard(selectedId);
 
-            if (selected == null)
-                // if we cant find either a category or a wizard, abort.
+            if (selected == null) {
+				// if we cant find either a category or a wizard, abort.
                 return;
+			}
         }
 
         //work around for 62039
@@ -627,10 +647,11 @@ class NewWizardNewPage implements ISelectionChangedListener {
         Object[] expandedElements = filteredTree.getViewer().getExpandedElements();
         List expandedElementPaths = new ArrayList(expandedElements.length);
         for (int i = 0; i < expandedElements.length; ++i) {
-            if (expandedElements[i] instanceof IWizardCategory)
-                expandedElementPaths
+            if (expandedElements[i] instanceof IWizardCategory) {
+				expandedElementPaths
                         .add(((IWizardCategory) expandedElements[i])
                                 .getPath().toString());
+			}
         }
         settings.put(STORE_EXPANDED_CATEGORIES_ID,
                 (String[]) expandedElementPaths
@@ -646,14 +667,15 @@ class NewWizardNewPage implements ISelectionChangedListener {
         		.getViewer().getSelection());
 
         if (selected != null) {
-            if (selected instanceof IWizardCategory)
-                settings.put(STORE_SELECTED_ID,
+            if (selected instanceof IWizardCategory) {
+				settings.put(STORE_SELECTED_ID,
                         ((IWizardCategory) selected).getPath()
                                 .toString());
-            else
-                // else its a wizard
+			} else {
+				// else its a wizard
                 settings.put(STORE_SELECTED_ID,
                         ((IWizardDescriptor) selected).getId());
+			}
         }
     }
 
@@ -665,8 +687,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
      */
     private void updateDescription(IWizardDescriptor selectedObject) {
         String string = ""; //$NON-NLS-1$
-        if (selectedObject != null)
-            string = selectedObject.getDescription();
+        if (selectedObject != null) {
+			string = selectedObject.getDescription();
+		}
 
         page.setDescription(string);
 
@@ -717,11 +740,13 @@ class NewWizardNewPage implements ISelectionChangedListener {
      * @return whether the given wizard has an associated image
      */
     private boolean hasImage(IWizardDescriptor selectedObject) {
-        if (selectedObject == null)
-            return false;
+        if (selectedObject == null) {
+			return false;
+		}
 
-        if (selectedObject.getDescriptionImage() != null)
-            return true;
+        if (selectedObject.getDescriptionImage() != null) {
+			return true;
+		}
 
         return false;
     }

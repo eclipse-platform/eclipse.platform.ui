@@ -130,8 +130,9 @@ final class MenuPersistence extends RegistryPersistence {
 			// Read the menu identifier.
 			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Action sets need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			// Read the label.
 			final String label = readRequired(configurationElement,
@@ -288,8 +289,9 @@ final class MenuPersistence extends RegistryPersistence {
 			// Read the menu identifier.
 			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Groups need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			// Read whether the separators are visible.
 			final boolean separatorsVisible = readBoolean(configurationElement,
@@ -359,8 +361,9 @@ final class MenuPersistence extends RegistryPersistence {
 			// Read the item identifier.
 			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Items need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			// Read the parameterized command.
 			final ParameterizedCommand command = readParameterizedCommand(
@@ -584,8 +587,9 @@ final class MenuPersistence extends RegistryPersistence {
 			// Read the menu identifier.
 			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Menus need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			// Read the label.
 			final String label = readOptional(configurationElement,
@@ -906,8 +910,9 @@ final class MenuPersistence extends RegistryPersistence {
 			// Read the widget identifier.
 			final String id = readRequired(configurationElement, ATT_ID,
 					warningsToLog, "Widgets need an id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			// Read the widget class.
 			if (!checkClass(configurationElement, warningsToLog,

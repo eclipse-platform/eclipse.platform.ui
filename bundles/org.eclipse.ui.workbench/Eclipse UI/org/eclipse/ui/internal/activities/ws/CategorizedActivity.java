@@ -68,9 +68,10 @@ public class CategorizedActivity implements IActivity {
      */
     public boolean equals(Object o) {
         if (o instanceof CategorizedActivity) {
-            if (((CategorizedActivity) o).getCategory().equals(getCategory()))
-                return ((CategorizedActivity) o).getActivity().equals(
+            if (((CategorizedActivity) o).getCategory().equals(getCategory())) {
+				return ((CategorizedActivity) o).getActivity().equals(
                         getActivity());
+			}
         }
         return false;
     }

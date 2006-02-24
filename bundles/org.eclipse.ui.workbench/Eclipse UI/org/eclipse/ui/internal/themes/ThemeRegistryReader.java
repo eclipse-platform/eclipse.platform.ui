@@ -111,8 +111,9 @@ public class ThemeRegistryReader extends RegistryReader {
         IConfigurationElement[] descriptions = element
                 .getChildren(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 
-        if (descriptions.length > 0)
-            description = descriptions[0].getValue();
+        if (descriptions.length > 0) {
+			description = descriptions[0].getValue();
+		}
 
         return new ThemeElementCategory(name, id, parentId, description,
                 element.getNamespace(), element);
@@ -156,8 +157,9 @@ public class ThemeRegistryReader extends RegistryReader {
         IConfigurationElement[] descriptions = element
                 .getChildren(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 
-        if (descriptions.length > 0)
-            description = descriptions[0].getValue();
+        if (descriptions.length > 0) {
+			description = descriptions[0].getValue();
+		}
 
         return new ColorDefinition(name, id, defaultMapping, value, categoryId,
                 isEditable, description, element.getDeclaringExtension()
@@ -172,8 +174,9 @@ public class ThemeRegistryReader extends RegistryReader {
      * @return the color string
      */
     private String getColorValue(IConfigurationElement element) {
-        if (element == null)
-            return null;
+        if (element == null) {
+			return null;
+		}
 
         String value = element.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
         if (value == null) {
@@ -276,10 +279,10 @@ public class ThemeRegistryReader extends RegistryReader {
             }
             return true;
         } else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_THEME)) {
-            if (themeDescriptor != null)
-                logError(element, RESOURCE_BUNDLE
+            if (themeDescriptor != null) {
+				logError(element, RESOURCE_BUNDLE
                         .getString("Themes.badNesting")); //$NON-NLS-1$
-            else {
+			} else {
                 themeDescriptor = readTheme(element);
                 if (themeDescriptor != null) {
                     readElementChildren(element);
@@ -301,8 +304,9 @@ public class ThemeRegistryReader extends RegistryReader {
                     themeDescriptor.setData(name, value);
                 } else {
                     themeRegistry.setData(name, value);
-                    if (!dataMap.containsKey(name))                         
-                    	dataMap.put(name, value);
+                    if (!dataMap.containsKey(name)) {
+						dataMap.put(name, value);
+					}
                 }
             }
             return true;
@@ -354,8 +358,9 @@ public class ThemeRegistryReader extends RegistryReader {
         IConfigurationElement[] descriptions = element
                 .getChildren(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 
-        if (descriptions.length > 0)
-            description = descriptions[0].getValue();
+        if (descriptions.length > 0) {
+			description = descriptions[0].getValue();
+		}
 
         return new FontDefinition(name, id, defaultMapping, value, categoryId,
                 isEditable, description);
@@ -379,8 +384,9 @@ public class ThemeRegistryReader extends RegistryReader {
      * @return the font string
      */
     private String getFontValue(IConfigurationElement element) {
-        if (element == null)
-            return null;
+        if (element == null) {
+			return null;
+		}
 
         return element.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
     }
@@ -418,8 +424,9 @@ public class ThemeRegistryReader extends RegistryReader {
         ThemeDescriptor desc = null;
 
         String id = element.getAttribute(ThemeDescriptor.ATT_ID);
-        if (id == null)
-            return null;
+        if (id == null) {
+			return null;
+		}
         //see if the theme has already been created in another extension
         desc = (ThemeDescriptor) themeRegistry.findTheme(id);
         //if not, create it

@@ -69,8 +69,9 @@ public abstract class Key implements Comparable {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public final boolean equals(final Object object) {
-		if (!(object instanceof Key))
+		if (!(object instanceof Key)) {
 			return false;
+		}
 
 		return key == ((Key) object).key;
 	}

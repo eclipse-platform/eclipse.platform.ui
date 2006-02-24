@@ -44,8 +44,9 @@ public class DecorationResult {
         suffixes = suffixList;
 
         //Don't set the field if there are no entries
-        if (hasOverlays(imageDescriptors))
-            descriptors = imageDescriptors;
+        if (hasOverlays(imageDescriptors)) {
+			descriptors = imageDescriptors;
+		}
         foregroundColor = resultForegroundColor;
         backgroundColor = resultBackgroundColor;
         font = resultFont;
@@ -60,8 +61,9 @@ public class DecorationResult {
      */
     private boolean hasOverlays(ImageDescriptor[] imageDescriptors) {
         for (int i = 0; i < imageDescriptors.length; i++) {
-            if (imageDescriptors[i] != null)
-                return true;
+            if (imageDescriptors[i] != null) {
+				return true;
+			}
         }
         return false;
     }
@@ -75,8 +77,9 @@ public class DecorationResult {
     Image decorateWithOverlays(Image image, OverlayCache overlayCache) {
 
         //Do not try to do anything if there is no source or overlays
-        if (image == null || descriptors == null)
-            return image;
+        if (image == null || descriptors == null) {
+			return image;
+		}
 
         return overlayCache.applyDescriptors(image, descriptors);
     }
@@ -90,8 +93,9 @@ public class DecorationResult {
      */
     public String decorateWithText(String text) {
 
-        if (prefixes.isEmpty() && suffixes.isEmpty())
-            return text;
+        if (prefixes.isEmpty() && suffixes.isEmpty()) {
+			return text;
+		}
 
         StringBuffer result = new StringBuffer();
 

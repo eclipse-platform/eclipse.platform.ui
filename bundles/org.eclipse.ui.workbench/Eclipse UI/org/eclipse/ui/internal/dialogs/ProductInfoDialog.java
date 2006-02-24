@@ -118,12 +118,13 @@ public abstract class ProductInfoDialog extends TrayDialog {
                 } catch (IllegalArgumentException ex) {
                     // leave value as -1
                 }
-                if (offset == -1)
-                    text.setCursor(null);
-                else if (item != null && item.isLinkAt(offset))
-                    text.setCursor(handCursor);
-                else
-                    text.setCursor(null);
+                if (offset == -1) {
+					text.setCursor(null);
+				} else if (item != null && item.isLinkAt(offset)) {
+					text.setCursor(handCursor);
+				} else {
+					text.setCursor(null);
+				}
             }
         });
 
@@ -160,8 +161,9 @@ public abstract class ProductInfoDialog extends TrayDialog {
                     //Previously traverse out in the forward direction?
                     Point previousSelection = text.getSelection();
                     if ((previousSelection.x == 0)
-                            && (previousSelection.y == 0))
-                        text.setSelection(text.getCharCount());
+                            && (previousSelection.y == 0)) {
+						text.setSelection(text.getCharCount());
+					}
                     StyleRange previousRange = findPreviousRange(text);
                     if (previousRange == null) {
                         // Next time in start at the end, also used by 
@@ -280,8 +282,9 @@ public abstract class ProductInfoDialog extends TrayDialog {
         int currentSelectionEnd = text.getSelection().y;
 
         for (int i = 0; i < ranges.length; i++) {
-            if (ranges[i].start >= currentSelectionEnd)
-                return ranges[i];
+            if (ranges[i].start >= currentSelectionEnd) {
+				return ranges[i];
+			}
         }
         return null;
     }
@@ -294,8 +297,9 @@ public abstract class ProductInfoDialog extends TrayDialog {
         int currentSelectionStart = text.getSelection().x;
 
         for (int i = ranges.length - 1; i > -1; i--) {
-            if ((ranges[i].start + ranges[i].length - 1) < currentSelectionStart)
-                return ranges[i];
+            if ((ranges[i].start + ranges[i].length - 1) < currentSelectionStart) {
+				return ranges[i];
+			}
         }
         return null;
     }
@@ -350,10 +354,11 @@ public abstract class ProductInfoDialog extends TrayDialog {
     private String urlEncodeForSpaces(char[] input) {
        StringBuffer retu = new StringBuffer(input.length);
        for (int i = 0; i < input.length; i++) {
-           if (input[i] == ' ')
-               retu.append("%20"); //$NON-NLS-1$
-           else
-               retu.append(input[i]);
+           if (input[i] == ' ') {
+			retu.append("%20"); //$NON-NLS-1$
+		} else {
+			retu.append(input[i]);
+		}
        }
        return retu.toString();
     }
@@ -366,14 +371,16 @@ public abstract class ProductInfoDialog extends TrayDialog {
      * @return true if the url was successfully displayed and false otherwise
      */
     protected boolean openBrowser(URL url) {
-        if (url != null)
-            try {
+        if (url != null) {
+			try {
                 url = Platform.asLocalURL(url);
             } catch (IOException e) {
                 return false;
             }
-        if (url == null)
-            return false;
+		}
+        if (url == null) {
+			return false;
+		}
         openLink(url.toString());
         return true;
     }
@@ -418,8 +425,9 @@ public abstract class ProductInfoDialog extends TrayDialog {
             while (!found && i < max) {
                 found = Character.isWhitespace(s.charAt(i++));
             }
-            if (i != max)
-                i--;
+            if (i != max) {
+				i--;
+			}
             linkRanges.add(new int[] { start, i - start });
             links.add(s.substring(start, i));
             i = s.indexOf(ATT_HTTP, i);

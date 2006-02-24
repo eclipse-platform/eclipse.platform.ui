@@ -108,12 +108,14 @@ public final class CommandEvent {
             boolean descriptionChanged, boolean handledChanged,
             boolean keySequenceBindingsChanged, boolean nameChanged,
             Map previousAttributeValuesByName) {
-        if (command == null)
-            throw new NullPointerException();
+        if (command == null) {
+			throw new NullPointerException();
+		}
 
         if (!attributeValuesByNameChanged
-                && previousAttributeValuesByName != null)
-            throw new IllegalArgumentException();
+                && previousAttributeValuesByName != null) {
+			throw new IllegalArgumentException();
+		}
 
         if (attributeValuesByNameChanged) {
         	if (previousAttributeValuesByName == null) {

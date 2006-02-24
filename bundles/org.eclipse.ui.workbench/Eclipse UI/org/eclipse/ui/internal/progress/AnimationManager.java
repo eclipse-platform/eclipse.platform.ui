@@ -39,8 +39,9 @@ public class AnimationManager {
     WorkbenchJob animationUpdateJob;
 
     public static AnimationManager getInstance() {
-        if (singleton == null)
-            singleton = new AnimationManager();
+        if (singleton == null) {
+			singleton = new AnimationManager();
+		}
         return singleton;
     }
 
@@ -71,10 +72,11 @@ public class AnimationManager {
              */
             public IStatus runInUIThread(IProgressMonitor monitor) {
 
-                if (animated)
-                    animationProcessor.animationStarted();
-                else
-                    animationProcessor.animationFinished();
+                if (animated) {
+					animationProcessor.animationStarted();
+				} else {
+					animationProcessor.animationFinished();
+				}
                 return Status.OK_STATUS;
             }
         };
@@ -147,10 +149,11 @@ public class AnimationManager {
              */
             public void refreshJobInfo(JobInfo info) {
                 int state = info.getJob().getState();
-                if (state == Job.RUNNING)
-                    addJob(info);
-                else
-                    removeJob(info);
+                if (state == Job.RUNNING) {
+					addJob(info);
+				} else {
+					removeJob(info);
+				}
             }
 
             /*
@@ -188,10 +191,12 @@ public class AnimationManager {
 
             private void incrementJobCount(JobInfo info) {
                 //Don't count the animate job itself
-                if (isNotTracked(info))
-                    return;
-                if (jobs.isEmpty())
-                    setAnimated(true);
+                if (isNotTracked(info)) {
+					return;
+				}
+                if (jobs.isEmpty()) {
+					setAnimated(true);
+				}
                 jobs.add(info.getJob());
             }
 
@@ -200,8 +205,9 @@ public class AnimationManager {
              */
             private void decrementJobCount(Job job) {
                 jobs.remove(job);
-                if (jobs.isEmpty())
-                    setAnimated(false);
+                if (jobs.isEmpty()) {
+					setAnimated(false);
+				}
             }
 
             /**

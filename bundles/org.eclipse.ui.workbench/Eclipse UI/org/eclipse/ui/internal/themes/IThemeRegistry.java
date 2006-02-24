@@ -53,14 +53,17 @@ public interface IThemeRegistry {
                     : ((IHierarchalThemeElementDefinition) arg1)
                             .getDefaultsTo();
 
-            if (def0 == null && def1 == null)
-                return 0;
+            if (def0 == null && def1 == null) {
+				return 0;
+			}
 
-            if (def0 == null)
-                return -1;
+            if (def0 == null) {
+				return -1;
+			}
 
-            if (def1 == null)
-                return 1;
+            if (def1 == null) {
+				return 1;
+			}
 
             return compare(getDefaultsTo(def0), getDefaultsTo(def1));
         }
@@ -72,8 +75,9 @@ public interface IThemeRegistry {
          */
         private IHierarchalThemeElementDefinition getDefaultsTo(String id) {
             int idx = Arrays.binarySearch(definitions, id, ID_COMPARATOR);
-            if (idx >= 0)
-                return definitions[idx];
+            if (idx >= 0) {
+				return definitions[idx];
+			}
             return null;
         }
     }
@@ -102,10 +106,11 @@ public interface IThemeRegistry {
          * @return <code>String</code> representation of the object.
          */
         private String getCompareString(Object object) {
-            if (object instanceof String)
-                return (String) object;
-            else if (object instanceof IThemeElementDefinition)
-                return ((IThemeElementDefinition) object).getId();
+            if (object instanceof String) {
+				return (String) object;
+			} else if (object instanceof IThemeElementDefinition) {
+				return ((IThemeElementDefinition) object).getId();
+			}
             return ""; //$NON-NLS-1$
         }
     };

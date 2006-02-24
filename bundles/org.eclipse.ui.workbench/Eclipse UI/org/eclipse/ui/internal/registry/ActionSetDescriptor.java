@@ -59,8 +59,9 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
         label = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
         description = configElement.getAttribute(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
         String str = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
-        if (str != null && str.equals("true"))//$NON-NLS-1$
-            visible = true;
+        if (str != null && str.equals("true")) { //$NON-NLS-1$
+			visible = true;
+		}
 
         // Sanity check.
         if (label == null) {
@@ -86,8 +87,9 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
      * no such object can be found.
      */
     public Object getAdapter(Class adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return this;
+        if (adapter == IWorkbenchAdapter.class) {
+			return this;
+		}
         return null;
     }
 
@@ -95,8 +97,9 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
      * @see IWorkbenchAdapter#getChildren
      */
     public Object[] getChildren(Object o) {
-        if (o == this)
-            return (new PluginActionSetReader()).readActionDescriptors(this);
+        if (o == this) {
+			return (new PluginActionSetReader()).readActionDescriptors(this);
+		}
 
         return NO_CHILDREN;
     }
@@ -144,8 +147,9 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
      * @see IWorkbenchAdapter#getLabel
      */
     public String getLabel(Object o) {
-        if (o == this)
-            return getLabel();
+        if (o == this) {
+			return getLabel();
+		}
         return "Unknown Label";//$NON-NLS-1$
     }
 
@@ -153,12 +157,14 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
      * Returns whether this action set is initially visible.
      */
     public boolean isInitiallyVisible() {
-        if (id == null)
-            return visible;
+        if (id == null) {
+			return visible;
+		}
         Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
         String prefId = INITIALLY_HIDDEN_PREF_ID_PREFIX + getId();
-        if (prefs.getBoolean(prefId))
-            return false;
+        if (prefs.getBoolean(prefId)) {
+			return false;
+		}
         return visible;
     }
 
@@ -169,8 +175,9 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
      * @since 3.0
      */
     public void setInitiallyVisible(boolean newValue) {
-        if (id == null)
-            return;
+        if (id == null) {
+			return;
+		}
         Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
         String prefId = INITIALLY_HIDDEN_PREF_ID_PREFIX + getId();
         prefs.setValue(prefId, !newValue);

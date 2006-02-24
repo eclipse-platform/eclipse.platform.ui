@@ -256,12 +256,14 @@ public class FilteredTree extends Composite {
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if(treeViewer.getControl().isDisposed())
+				if(treeViewer.getControl().isDisposed()) {
 					return Status.CANCEL_STATUS;
+				}
 				
 				String text = getFilterString();
-				if (text == null)	// filter text not being used
+				if (text == null) {
 					return Status.OK_STATUS;
+				}
 				
 		        boolean initial = initialText != null && initialText.equals(text); 
 		        if (initial) {
@@ -276,8 +278,9 @@ public class FilteredTree extends Composite {
 		        if (text.length() > 0 && !initial) {
 		            treeViewer.expandAll();
 		            TreeItem[] items = getViewer().getTree().getItems();
-		            if (items.length > 0)
-		            	treeViewer.getTree().showItem(items[0]);	// to prevent scrolling
+		            if (items.length > 0) {
+						treeViewer.getTree().showItem(items[0]);	// to prevent scrolling
+					}
 		            
 		            // enabled toolbar - there is text to clear
 		            // and the list is currently being filtered		
@@ -296,8 +299,9 @@ public class FilteredTree extends Composite {
 	}
 
 	protected void updateToolbar(boolean visible){
-		if (filterToolBar != null)
-        	filterToolBar.getControl().setVisible(visible);
+		if (filterToolBar != null) {
+			filterToolBar.getControl().setVisible(visible);
+		}
 	}
 	
 	/**
@@ -316,9 +320,9 @@ public class FilteredTree extends Composite {
 						String filterTextString = filterText.getText();
 						if(filterTextString.length() == 0){
 							e.result = initialText;
-						}
-						else
+						} else {
 							e.result = filterTextString;
+						}
 					}
 				});
 
@@ -415,10 +419,12 @@ public class FilteredTree extends Composite {
      */
     public void setBackground(Color background) {
         super.setBackground(background);
-        if (filterComposite != null)
-        	filterComposite.setBackground(background);
-        if (filterToolBar != null && filterToolBar.getControl() != null)
-        	filterToolBar.getControl().setBackground(background);
+        if (filterComposite != null) {
+			filterComposite.setBackground(background);
+		}
+        if (filterToolBar != null && filterToolBar.getControl() != null) {
+			filterToolBar.getControl().setBackground(background);
+		}
     }
 
     /**
@@ -527,8 +533,9 @@ public class FilteredTree extends Composite {
      *
      */
 	protected void selectAll() {
-		if (filterText != null)
+		if (filterText != null) {
 			filterText.selectAll();
+		}
 	}
 
 	/**
@@ -557,8 +564,9 @@ public class FilteredTree extends Composite {
 			PatternFilter filter) {
 		String filterText = tree.getFilterString();
 
-		if (filterText == null)	// filter text not being used
+		if (filterText == null) {
 			return null;
+		}
 		
 		// Do nothing if it's empty string
 		String initialText = tree.getInitialText();

@@ -91,10 +91,11 @@ public class ListSelectionDialog extends SelectionDialog {
         inputElement = input;
         this.contentProvider = contentProvider;
         this.labelProvider = labelProvider;
-        if (message != null)
-            setMessage(message);
-        else
-            setMessage(WorkbenchMessages.ListSelection_message); 
+        if (message != null) {
+			setMessage(message);
+		} else {
+			setMessage(WorkbenchMessages.ListSelection_message);
+		} 
     }
 
     /**
@@ -142,8 +143,9 @@ public class ListSelectionDialog extends SelectionDialog {
     private void checkInitialSelections() {
         Iterator itemsToCheck = getInitialElementSelections().iterator();
 
-        while (itemsToCheck.hasNext())
-            listViewer.setChecked(itemsToCheck.next(), true);
+        while (itemsToCheck.hasNext()) {
+			listViewer.setChecked(itemsToCheck.next(), true);
+		}
     }
 
     /*
@@ -183,8 +185,9 @@ public class ListSelectionDialog extends SelectionDialog {
         initializeViewer();
 
         // initialize page
-        if (!getInitialElementSelections().isEmpty())
-            checkInitialSelections();
+        if (!getInitialElementSelections().isEmpty()) {
+			checkInitialSelections();
+		}
 
         return composite;
     }
@@ -220,8 +223,9 @@ public class ListSelectionDialog extends SelectionDialog {
             ArrayList list = new ArrayList();
             for (int i = 0; i < children.length; ++i) {
                 Object element = children[i];
-                if (listViewer.getChecked(element))
-                    list.add(element);
+                if (listViewer.getChecked(element)) {
+					list.add(element);
+				}
             }
             setResult(list);
         }

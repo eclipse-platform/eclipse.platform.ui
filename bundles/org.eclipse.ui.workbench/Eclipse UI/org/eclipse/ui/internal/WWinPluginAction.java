@@ -75,10 +75,11 @@ public class WWinPluginAction extends PluginAction implements
             String label = actionElement
                     .getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 
-            if (allowLabelUpdate != null && Boolean.valueOf(allowLabelUpdate).booleanValue())
-                retargetAction = new LabelRetargetAction(id, label, style);
-            else
-                retargetAction = new RetargetAction(id, label, style);
+            if (allowLabelUpdate != null && Boolean.valueOf(allowLabelUpdate).booleanValue()) {
+				retargetAction = new LabelRetargetAction(id, label, style);
+			} else {
+				retargetAction = new RetargetAction(id, label, style);
+			}
             retargetAction
                     .addPropertyChangeListener(new IPropertyChangeListener() {
                         public void propertyChange(PropertyChangeEvent event) {
@@ -111,8 +112,9 @@ public class WWinPluginAction extends PluginAction implements
             setEnabled(false);
             window.getPartService().addPartListener(retargetAction);
             IWorkbenchPart activePart = window.getPartService().getActivePart();
-            if (activePart != null)
-                retargetAction.partActivated(activePart);
+            if (activePart != null) {
+				retargetAction.partActivated(activePart);
+			}
         } else {
             // if we retarget the handler will look after selection changes
             window.getSelectionService().addSelectionListener(this);
@@ -123,14 +125,17 @@ public class WWinPluginAction extends PluginAction implements
         super.setHelpListener(new HelpListener() {
             public void helpRequested(HelpEvent e) {
                 HelpListener listener = null;
-                if (retargetAction != null)
-                    listener = retargetAction.getHelpListener();
-                if (listener == null)
-                    // use our own help listener
+                if (retargetAction != null) {
+					listener = retargetAction.getHelpListener();
+				}
+                if (listener == null) {
+					// use our own help listener
                     listener = localHelpListener;
-                if (listener != null)
-                    // pass on the event
+				}
+                if (listener != null) {
+					// pass on the event
                     listener.helpRequested(e);
+				}
             }
         });
     }
@@ -168,8 +173,9 @@ public class WWinPluginAction extends PluginAction implements
      */
     protected IActionDelegate validateDelegate(Object obj)
             throws WorkbenchException {
-        if (obj instanceof IWorkbenchWindowActionDelegate)
-            return (IWorkbenchWindowActionDelegate) obj;
+        if (obj instanceof IWorkbenchWindowActionDelegate) {
+			return (IWorkbenchWindowActionDelegate) obj;
+		}
         
         throw new WorkbenchException(
                 "Action must implement IWorkbenchWindowActionDelegate"); //$NON-NLS-1$
@@ -224,10 +230,11 @@ public class WWinPluginAction extends PluginAction implements
             return;
         }
 
-        if (event != null)
-            retargetAction.runWithEvent(event);
-        else
-            retargetAction.run();
+        if (event != null) {
+			retargetAction.runWithEvent(event);
+		} else {
+			retargetAction.run();
+		}
     }
 
     /**
@@ -255,8 +262,9 @@ public class WWinPluginAction extends PluginAction implements
         // This call may come from the SWT control event handler
         // itself, so notify the retarget action to keep things
         // in sync.
-        if (retargetAction != null)
-            retargetAction.setChecked(checked);
+        if (retargetAction != null) {
+			retargetAction.setChecked(checked);
+		}
     }
 
     /**

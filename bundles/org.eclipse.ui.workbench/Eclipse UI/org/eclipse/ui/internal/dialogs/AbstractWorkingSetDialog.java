@@ -357,9 +357,10 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 		IWorkingSet selectedWorkingSet = null;
 		if (hasSelection) {
 			hasSingleSelection = selection.size() == 1;
-			if (hasSingleSelection)
+			if (hasSingleSelection) {
 				selectedWorkingSet = (IWorkingSet) selection
 						.get(0);
+			}
 		}
 		detailsButton.setEnabled(hasSingleSelection
 				&& selectedWorkingSet.isEditable());

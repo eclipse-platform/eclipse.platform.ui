@@ -104,8 +104,9 @@ public final class MutableActivityManager extends AbstractActivityManager
      * @param activityRegistry the activity registry
      */
     public MutableActivityManager(IActivityRegistry activityRegistry) {
-        if (activityRegistry == null)
-            throw new NullPointerException();
+        if (activityRegistry == null) {
+			throw new NullPointerException();
+		}
 
         this.activityRegistry = activityRegistry;
 
@@ -116,8 +117,9 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     public IActivity getActivity(String activityId) {
-        if (activityId == null)
-            throw new NullPointerException();
+        if (activityId == null) {
+			throw new NullPointerException();
+		}
 
         Activity activity = (Activity) activitiesById.get(activityId);
 
@@ -131,8 +133,9 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     public ICategory getCategory(String categoryId) {
-        if (categoryId == null)
-            throw new NullPointerException();
+        if (categoryId == null) {
+			throw new NullPointerException();
+		}
 
         Category category = (Category) categoriesById.get(categoryId);
 
@@ -158,8 +161,9 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     public IIdentifier getIdentifier(String identifierId) {
-        if (identifierId == null)
-            throw new NullPointerException();
+        if (identifierId == null) {
+			throw new NullPointerException();
+		}
 
         Identifier identifier = (Identifier) identifiersById.get(identifierId);
 
@@ -202,8 +206,9 @@ public final class MutableActivityManager extends AbstractActivityManager
             ActivityEvent activityEvent = (ActivityEvent) entry.getValue();
             Activity activity = (Activity) activitiesById.get(activityId);
 
-            if (activity != null)
-                activity.fireActivityChanged(activityEvent);
+            if (activity != null) {
+				activity.fireActivityChanged(activityEvent);
+			}
         }
     }
 
@@ -215,8 +220,9 @@ public final class MutableActivityManager extends AbstractActivityManager
             CategoryEvent categoryEvent = (CategoryEvent) entry.getValue();
             Category category = (Category) categoriesById.get(categoryId);
 
-            if (category != null)
-                category.fireCategoryChanged(categoryEvent);
+            if (category != null) {
+				category.fireCategoryChanged(categoryEvent);
+			}
         }
     }
 
@@ -230,8 +236,9 @@ public final class MutableActivityManager extends AbstractActivityManager
             Identifier identifier = (Identifier) identifiersById
                     .get(identifierId);
 
-            if (identifier != null)
-                identifier.fireIdentifierChanged(identifierEvent);
+            if (identifier != null) {
+				identifier.fireIdentifierChanged(identifierEvent);
+			}
         }
     }
 
@@ -250,8 +257,9 @@ public final class MutableActivityManager extends AbstractActivityManager
                     .next();
             String name = activityDefinition.getName();
 
-            if (name == null || name.length() == 0)
-                iterator.remove();
+            if (name == null || name.length() == 0) {
+				iterator.remove();
+			}
         }
 
         Collection categoryDefinitions = new ArrayList();
@@ -265,8 +273,9 @@ public final class MutableActivityManager extends AbstractActivityManager
                     .next();
             String name = categoryDefinition.getName();
 
-            if (name == null || name.length() == 0)
-                iterator.remove();
+            if (name == null || name.length() == 0) {
+				iterator.remove();
+			}
         }
 
         Map activityRequirementBindingDefinitionsByActivityId = ActivityRequirementBindingDefinition
@@ -283,8 +292,8 @@ public final class MutableActivityManager extends AbstractActivityManager
                 Collection activityRequirementBindingDefinitions = (Collection) entry
                         .getValue();
 
-                if (activityRequirementBindingDefinitions != null)
-                    for (Iterator iterator2 = activityRequirementBindingDefinitions
+                if (activityRequirementBindingDefinitions != null) {
+					for (Iterator iterator2 = activityRequirementBindingDefinitions
                             .iterator(); iterator2.hasNext();) {
                         ActivityRequirementBindingDefinition activityRequirementBindingDefinition = (ActivityRequirementBindingDefinition) iterator2
                                 .next();
@@ -309,6 +318,7 @@ public final class MutableActivityManager extends AbstractActivityManager
                                     .add(activityRequirementBinding);
                         }
                     }
+				}
             }
         }
 
@@ -326,8 +336,8 @@ public final class MutableActivityManager extends AbstractActivityManager
                 Collection activityPatternBindingDefinitions = (Collection) entry
                         .getValue();
 
-                if (activityPatternBindingDefinitions != null)
-                    for (Iterator iterator2 = activityPatternBindingDefinitions
+                if (activityPatternBindingDefinitions != null) {
+					for (Iterator iterator2 = activityPatternBindingDefinitions
                             .iterator(); iterator2.hasNext();) {
                         ActivityPatternBindingDefinition activityPatternBindingDefinition = (ActivityPatternBindingDefinition) iterator2
                                 .next();
@@ -349,6 +359,7 @@ public final class MutableActivityManager extends AbstractActivityManager
                             activityPatternBindings.add(activityPatternBinding);
                         }
                     }
+				}
             }
         }
 
@@ -366,8 +377,8 @@ public final class MutableActivityManager extends AbstractActivityManager
                 Collection categoryActivityBindingDefinitions = (Collection) entry
                         .getValue();
 
-                if (categoryActivityBindingDefinitions != null)
-                    for (Iterator iterator2 = categoryActivityBindingDefinitions
+                if (categoryActivityBindingDefinitions != null) {
+					for (Iterator iterator2 = categoryActivityBindingDefinitions
                             .iterator(); iterator2.hasNext();) {
                         CategoryActivityBindingDefinition categoryActivityBindingDefinition = (CategoryActivityBindingDefinition) iterator2
                                 .next();
@@ -390,6 +401,7 @@ public final class MutableActivityManager extends AbstractActivityManager
                                     .add(categoryActivityBinding);
                         }
                     }
+				}
             }
         }
 
@@ -439,20 +451,24 @@ public final class MutableActivityManager extends AbstractActivityManager
                 .keySet());
 
         if (definedActivityIdsChanged || definedCategoryIdsChanged
-                || enabledActivityIdsChanged)
-            fireActivityManagerChanged(new ActivityManagerEvent(this,
+                || enabledActivityIdsChanged) {
+			fireActivityManagerChanged(new ActivityManagerEvent(this,
                     definedActivityIdsChanged, definedCategoryIdsChanged,
                     enabledActivityIdsChanged, previouslyDefinedActivityIds,
                     previouslyDefinedCategoryIds, previouslyEnabledActivityIds));
+		}
 
-        if (activityEventsByActivityId != null)
-            notifyActivities(activityEventsByActivityId);
+        if (activityEventsByActivityId != null) {
+			notifyActivities(activityEventsByActivityId);
+		}
 
-        if (categoryEventsByCategoryId != null)
-            notifyCategories(categoryEventsByCategoryId);
+        if (categoryEventsByCategoryId != null) {
+			notifyCategories(categoryEventsByCategoryId);
+		}
 
-        if (identifierEventsByIdentifierId != null)
-            notifyIdentifiers(identifierEventsByIdentifierId);
+        if (identifierEventsByIdentifierId != null) {
+			notifyIdentifiers(identifierEventsByIdentifierId);
+		}
 
         if (setDefaults) {
             setEnabledActivityIds(new HashSet(activityRegistry
@@ -499,15 +515,18 @@ public final class MutableActivityManager extends AbstractActivityManager
         if (activityManagerChanged) {
             Map identifierEventsByIdentifierId = updateIdentifiers(identifiersById
                     .keySet());
-            if (identifierEventsByIdentifierId != null)
-                notifyIdentifiers(identifierEventsByIdentifierId);
+            if (identifierEventsByIdentifierId != null) {
+				notifyIdentifiers(identifierEventsByIdentifierId);
+			}
         }
-        if (activityEventsByActivityId != null)
-            notifyActivities(activityEventsByActivityId);
+        if (activityEventsByActivityId != null) {
+			notifyActivities(activityEventsByActivityId);
+		}
 
-        if (activityManagerChanged)
-            fireActivityManagerChanged(new ActivityManagerEvent(this, false,
+        if (activityManagerChanged) {
+			fireActivityManagerChanged(new ActivityManagerEvent(this, false,
                     false, true, null, null, previouslyEnabledActivityIds));
+		}
     }
 
     private Map updateActivities(Collection activityIds) {
@@ -520,8 +539,9 @@ public final class MutableActivityManager extends AbstractActivityManager
             if (activity != null) {
                 ActivityEvent activityEvent = updateActivity(activity);
 
-                if (activityEvent != null)
-                    activityEventsByActivityId.put(activityId, activityEvent);
+                if (activityEvent != null) {
+					activityEventsByActivityId.put(activityId, activityEvent);
+				}
             }
         }
 
@@ -556,11 +576,12 @@ public final class MutableActivityManager extends AbstractActivityManager
         if (activityRequirementBindingsChanged
                 || activityPatternBindingsChanged || definedChanged
                 || enabledChanged || nameChanged || descriptionChanged 
-                || defaultEnabledChanged)
-            return new ActivityEvent(activity,
+                || defaultEnabledChanged) {
+			return new ActivityEvent(activity,
                     activityRequirementBindingsChanged,
                     activityPatternBindingsChanged, definedChanged,
                     descriptionChanged, enabledChanged, nameChanged, defaultEnabledChanged);
+		}
         
         return null;
     }
@@ -575,8 +596,9 @@ public final class MutableActivityManager extends AbstractActivityManager
             if (category != null) {
                 CategoryEvent categoryEvent = updateCategory(category);
 
-                if (categoryEvent != null)
-                    categoryEventsByCategoryId.put(categoryId, categoryEvent);
+                if (categoryEvent != null) {
+					categoryEventsByCategoryId.put(categoryId, categoryEvent);
+				}
             }
         }
 
@@ -601,9 +623,10 @@ public final class MutableActivityManager extends AbstractActivityManager
                         .getDescription() : null);
 
         if (categoryActivityBindingsChanged || definedChanged || nameChanged
-                || descriptionChanged)
-            return new CategoryEvent(category, categoryActivityBindingsChanged,
+                || descriptionChanged) {
+			return new CategoryEvent(category, categoryActivityBindingsChanged,
                     definedChanged, descriptionChanged, nameChanged);
+		}
         
         return null;
     }
@@ -627,9 +650,10 @@ public final class MutableActivityManager extends AbstractActivityManager
             identifier.setActivityIds(Collections.EMPTY_SET);
             deferredIdentifiers.add(identifier);
             getUpdateJob().schedule();
-            if (enabledChanged)
-                return new IdentifierEvent(identifier, activityIdsChanged,
+            if (enabledChanged) {
+				return new IdentifierEvent(identifier, activityIdsChanged,
                         enabledChanged);
+			}
         }
         else {
             boolean matchesAtLeastOneEnabled = false;
@@ -641,10 +665,11 @@ public final class MutableActivityManager extends AbstractActivityManager
     
                 if (activity.isMatch(id)) {
                     activityIds.add(activityId);
-                    if (activity.isEnabled()) 
-                        matchesAtLeastOneEnabled = true;
-                    else
-                        matchesAtLeastOneDisabled = true;
+                    if (activity.isEnabled()) {
+						matchesAtLeastOneEnabled = true;
+					} else {
+						matchesAtLeastOneDisabled = true;
+					}
                 }
             }
             
@@ -653,9 +678,10 @@ public final class MutableActivityManager extends AbstractActivityManager
             activityIdsChanged = identifier.setActivityIds(activityIds);
             enabledChanged = identifier.setEnabled(enabled);
     
-            if (activityIdsChanged || enabledChanged)
-                return new IdentifierEvent(identifier, activityIdsChanged,
+            if (activityIdsChanged || enabledChanged) {
+				return new IdentifierEvent(identifier, activityIdsChanged,
                         enabledChanged);
+			}
         }
         return null;
     }
@@ -671,9 +697,10 @@ public final class MutableActivityManager extends AbstractActivityManager
             if (identifier != null) {
                 IdentifierEvent identifierEvent = updateIdentifier(identifier);
 
-                if (identifierEvent != null)
-                    identifierEventsByIdentifierId.put(identifierId,
+                if (identifierEvent != null) {
+					identifierEventsByIdentifierId.put(identifierId,
                             identifierEvent);
+				}
             }
         }
 

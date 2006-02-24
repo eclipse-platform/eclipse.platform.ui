@@ -59,21 +59,25 @@ final class Activity implements IActivity {
     private boolean defaultEnabled;
 
     Activity(String id) {
-        if (id == null)
-            throw new NullPointerException();
+        if (id == null) {
+			throw new NullPointerException();
+		}
 
         this.id = id;
     }
 
     public void addActivityListener(IActivityListener activityListener) {
-        if (activityListener == null)
-            throw new NullPointerException();
+        if (activityListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityListeners == null)
-            activityListeners = new ArrayList();
+        if (activityListeners == null) {
+			activityListeners = new ArrayList();
+		}
 
-        if (!activityListeners.contains(activityListener))
-            activityListeners.add(activityListener);
+        if (!activityListeners.contains(activityListener)) {
+			activityListeners.add(activityListener);
+		}
 
         strongReferences.add(this);
     }
@@ -99,8 +103,9 @@ final class Activity implements IActivity {
                     if (compareTo == 0) {
                         compareTo = Util.compare(id, castedObject.id);
 
-                        if (compareTo == 0)
-                            compareTo = Util.compare(name, castedObject.name);
+                        if (compareTo == 0) {
+							compareTo = Util.compare(name, castedObject.name);
+						}
                     }
                 }
             }
@@ -110,8 +115,9 @@ final class Activity implements IActivity {
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof Activity))
-            return false;
+        if (!(object instanceof Activity)) {
+			return false;
+		}
 
         final Activity castedObject = (Activity) object;
 
@@ -141,13 +147,16 @@ final class Activity implements IActivity {
     }
 
     void fireActivityChanged(ActivityEvent activityEvent) {
-        if (activityEvent == null)
-            throw new NullPointerException();
+        if (activityEvent == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityListeners != null)
-            for (int i = 0; i < activityListeners.size(); i++)
-                ((IActivityListener) activityListeners.get(i))
+        if (activityListeners != null) {
+			for (int i = 0; i < activityListeners.size(); i++) {
+				((IActivityListener) activityListeners.get(i))
                         .activityChanged(activityEvent);
+			}
+		}
     }
 
     public Set getActivityRequirementBindings() {
@@ -163,8 +172,9 @@ final class Activity implements IActivity {
     }
 
     public String getName() throws NotDefinedException {
-        if (!defined)
-            throw new NotDefinedException();
+        if (!defined) {
+			throw new NotDefinedException();
+		}
 
         return name;
     }
@@ -179,8 +189,9 @@ final class Activity implements IActivity {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;
@@ -195,28 +206,33 @@ final class Activity implements IActivity {
     }
 
     public boolean isMatch(String string) {
-        if (isDefined())
-            for (Iterator iterator = activityPatternBindings.iterator(); iterator
+        if (isDefined()) {
+			for (Iterator iterator = activityPatternBindings.iterator(); iterator
                     .hasNext();) {
                 ActivityPatternBinding activityPatternBinding = (ActivityPatternBinding) iterator
                         .next();
 
-                if (activityPatternBinding.isMatch(string))
-                    return true;
+                if (activityPatternBinding.isMatch(string)) {
+					return true;
+				}
             }
+		}
 
         return false;
     }
 
     public void removeActivityListener(IActivityListener activityListener) {
-        if (activityListener == null)
-            throw new NullPointerException();
+        if (activityListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityListeners != null)
-            activityListeners.remove(activityListener);
+        if (activityListeners != null) {
+			activityListeners.remove(activityListener);
+		}
 
-        if (activityListeners.isEmpty())
-            strongReferences.remove(this);
+        if (activityListeners.isEmpty()) {
+			strongReferences.remove(this);
+		}
     }
 
     boolean setActivityRequirementBindings(Set activityRequirementBindings) {
@@ -324,8 +340,9 @@ final class Activity implements IActivity {
      * @see org.eclipse.ui.activities.IActivity#getDescription()
      */
     public String getDescription() throws NotDefinedException {
-        if (!defined)
-            throw new NotDefinedException();
+        if (!defined) {
+			throw new NotDefinedException();
+		}
 
         return description;
     }

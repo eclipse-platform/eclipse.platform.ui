@@ -50,8 +50,9 @@ public class NavigationHistoryEntry {
         }
         // ensure that the historyText is initialized to something
         if (historyText == null || historyText.length() == 0) {
-            if (part != null)
-                historyText = part.getTitle();
+            if (part != null) {
+				historyText = part.getTitle();
+			}
         }
     }
 
@@ -65,9 +66,10 @@ public class NavigationHistoryEntry {
                 IEditorPart editor = page.openEditor(editorInfo.editorInput,
                         editorInfo.editorID, true);
                 if (location == null) {
-                    if (editor instanceof INavigationLocationProvider)
-                        location = ((INavigationLocationProvider) editor)
+                    if (editor instanceof INavigationLocationProvider) {
+						location = ((INavigationLocationProvider) editor)
                                 .createEmptyNavigationLocation();
+					}
                 }
 
                 if (location != null) {
@@ -111,8 +113,9 @@ public class NavigationHistoryEntry {
      * Returns true if possible otherwise returns false.
      */
     boolean handlePartClosed() {
-        if (!editorInfo.isPersistable())
-            return false;
+        if (!editorInfo.isPersistable()) {
+			return false;
+		}
         if (location != null) {
             locationMemento = XMLMemento
                     .createWriteRoot(IWorkbenchConstants.TAG_POSITION);
@@ -158,8 +161,9 @@ public class NavigationHistoryEntry {
      * Disposes this entry and its location.
      */
     void dispose() {
-        if (location != null)
-            location.dispose();
+        if (location != null) {
+			location.dispose();
+		}
         editorInfo = null;
     }
 

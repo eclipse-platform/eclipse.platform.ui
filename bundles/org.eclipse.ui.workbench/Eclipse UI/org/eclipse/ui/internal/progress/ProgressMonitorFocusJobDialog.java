@@ -119,11 +119,13 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			public void done(IJobChangeEvent event) {
 				//first of all, make sure this listener is removed
 				event.getJob().removeJobChangeListener(this);
-				if (!PlatformUI.isWorkbenchRunning())
+				if (!PlatformUI.isWorkbenchRunning()) {
 					return;
+				}
 				//nothing to do if the dialog is already closed
-				if (getShell() == null)
+				if (getShell() == null) {
 					return;
+				}
 				WorkbenchJob closeJob = new WorkbenchJob(
 						ProgressMessages.ProgressMonitorFocusJobDialog_CLoseDialogJob) {
 					/*
@@ -133,8 +135,9 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						Shell currentShell = getShell();
-						if (currentShell == null || currentShell.isDisposed())
+						if (currentShell == null || currentShell.isDisposed()) {
 							return Status.CANCEL_STATUS;
+						}
 						finishedRun();
 						return Status.OK_STATUS;
 					}
@@ -245,26 +248,30 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 */
 			private void runAsync(final Runnable runnable) {
 
-				if (alreadyClosed)
+				if (alreadyClosed) {
 					return;
+				}
 				Shell currentShell = getShell();
 
 				Display display;
-				if (currentShell == null)
+				if (currentShell == null) {
 					display = Display.getDefault();
-				else
+				} else {
 					display = currentShell.getDisplay();
+				}
 
 				display.asyncExec(new Runnable(){
 					/* (non-Javadoc)
 					 * @see java.lang.Runnable#run()
 					 */
 					public void run() {
-						if (alreadyClosed)
+						if (alreadyClosed) {
 							return;//Check again as the async  may come too late
+						}
 						Shell shell = getShell();
-						if(shell != null && shell.isDisposed())
+						if(shell != null && shell.isDisposed()) {
 							return;
+						}
 						
 						runnable.run();
 					}
@@ -419,12 +426,14 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 				//now open the progress dialog if nothing else is
 				if (!ProgressManagerUtil
-						.safeToOpen(ProgressMonitorFocusJobDialog.this,originatingShell))
+						.safeToOpen(ProgressMonitorFocusJobDialog.this,originatingShell)) {
 					return Status.CANCEL_STATUS;
+				}
 
 				//Do not bother if the parent is disposed
-				if (getParentShell() != null && getParentShell().isDisposed())
+				if (getParentShell() != null && getParentShell().isDisposed()) {
 					return Status.CANCEL_STATUS;
+				}
 
 				open();
 

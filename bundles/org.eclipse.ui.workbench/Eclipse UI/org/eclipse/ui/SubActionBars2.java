@@ -90,8 +90,9 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	 */
 	protected void setActive(boolean value) {
 		super.setActive(value);
-		if (coolBarMgr != null)
+		if (coolBarMgr != null) {
 			coolBarMgr.setVisible(value);
+		}
 	}
 
 	/*
@@ -101,7 +102,8 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	 */
 	public void dispose() {
 		super.dispose();
-		if (coolBarMgr != null)
+		if (coolBarMgr != null) {
 			coolBarMgr.removeAll();
+		}
 	}
 }

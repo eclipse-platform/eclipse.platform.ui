@@ -74,12 +74,14 @@ public final class HandlerEvent {
      */
     public HandlerEvent(IHandler handler, boolean attributeValuesByNameChanged,
             Map previousAttributeValuesByName) {
-        if (handler == null)
-            throw new NullPointerException();
+        if (handler == null) {
+			throw new NullPointerException();
+		}
 
         if (!attributeValuesByNameChanged
-                && previousAttributeValuesByName != null)
-            throw new IllegalArgumentException();
+                && previousAttributeValuesByName != null) {
+			throw new IllegalArgumentException();
+		}
 
         if (attributeValuesByNameChanged) {
             this.originalPreviousAttributeValuesByName = previousAttributeValuesByName;

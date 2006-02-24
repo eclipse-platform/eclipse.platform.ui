@@ -81,17 +81,19 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
             writer.print('=');
 
             // some types of properties have special characters embedded
-            if (key.startsWith(ECLIPSE_PROPERTY_PREFIX))
-                printEclipseProperty(writer, value);
-            else
-                writer.println(value);
+            if (key.startsWith(ECLIPSE_PROPERTY_PREFIX)) {
+				printEclipseProperty(writer, value);
+			} else {
+				writer.println(value);
+			}
         }
     }
 
     private static void printEclipseProperty(PrintWriter writer, String value) {
         String[] lines = Util.getArrayFromList(value, "\n"); //$NON-NLS-1$
-        for (int i = 0; i < lines.length; ++i)
-            writer.println(lines[i]);
+        for (int i = 0; i < lines.length; ++i) {
+			writer.println(lines[i]);
+		}
     }
 
     /**
@@ -103,12 +105,14 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
         LinkedList groups = new LinkedList();
-        if (providers != null)
-            for (int i = 0; i < providers.length; ++i) {
+        if (providers != null) {
+			for (int i = 0; i < providers.length; ++i) {
                 IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
-                for (int j = 0; j < bundleGroups.length; ++j)
-                    groups.add(new AboutBundleGroupData(bundleGroups[j]));
+                for (int j = 0; j < bundleGroups.length; ++j) {
+					groups.add(new AboutBundleGroupData(bundleGroups[j]));
+				}
             }
+		}
         AboutBundleGroupData[] bundleGroupInfos = (AboutBundleGroupData[]) groups
                 .toArray(new AboutBundleGroupData[0]);
 
@@ -132,8 +136,9 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         Bundle[] bundles = WorkbenchPlugin.getDefault().getBundles();
         AboutBundleData[] bundleInfos = new AboutBundleData[bundles.length];
 
-        for (int i = 0; i < bundles.length; ++i)
-            bundleInfos[i] = new AboutBundleData(bundles[i]);
+        for (int i = 0; i < bundles.length; ++i) {
+			bundleInfos[i] = new AboutBundleData(bundles[i]);
+		}
 
         AboutData.sortById(false, bundleInfos);
 
@@ -172,8 +177,9 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
             while (true) {
                 int read = reader.read(chars);
-                if (read <= 0)
-                    break;
+                if (read <= 0) {
+					break;
+				}
                 writer.write(chars, 0, read);
             }
         } catch (IOException e) {

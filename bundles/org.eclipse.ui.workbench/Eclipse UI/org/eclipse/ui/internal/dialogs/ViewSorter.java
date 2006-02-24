@@ -49,17 +49,21 @@ public class ViewSorter extends ViewerSorter {
         } else if (e1 instanceof IViewCategory) {
         	IViewCategory generalCategory = viewReg.findCategory(ViewRegistryReader.GENERAL_VIEW_ID);
         	if (generalCategory != null){
-        		if (((IViewCategory)e1).getId().equals(generalCategory.getId()))
-        			return -1;
-        		if (((IViewCategory)e2).getId().equals(generalCategory.getId()))
-        			return 1;
+        		if (((IViewCategory)e1).getId().equals(generalCategory.getId())) {
+					return -1;
+				}
+        		if (((IViewCategory)e2).getId().equals(generalCategory.getId())) {
+					return 1;
+				}
         	}
 			Category miscCategory = viewReg.getMiscCategory();
 			if(miscCategory != null){
-				if (((IViewCategory)e1).getId().equals(miscCategory.getId()))
+				if (((IViewCategory)e1).getId().equals(miscCategory.getId())) {
 					return 1;
-				if (((IViewCategory)e2).getId().equals(miscCategory.getId()))
-						return -1;
+				}
+				if (((IViewCategory)e2).getId().equals(miscCategory.getId())) {
+					return -1;
+				}
 			}
             String str1 = DialogUtil.removeAccel(((IViewCategory) e1).getLabel());
             String str2 = DialogUtil.removeAccel(((IViewCategory) e2).getLabel());

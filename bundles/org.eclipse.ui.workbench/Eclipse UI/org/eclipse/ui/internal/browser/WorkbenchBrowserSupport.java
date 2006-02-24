@@ -116,8 +116,9 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			loadActiveSupport();
 		}
 		// ensure we always have an active instance
-		if (activeSupport == null)
+		if (activeSupport == null) {
 			activeSupport = new DefaultWorkbenchBrowserSupport();
+		}
 		return activeSupport;
 	}
     
@@ -144,12 +145,14 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
                                 IWorkbenchRegistryConstants.PL_BROWSER_SUPPORT);
 				IConfigurationElement elementToUse = null;
                 
-                if (desiredBrowserSupportId != null)
-                    elementToUse = findDesiredElement(elements);
-                else 
-                    elementToUse = getElementToUse(elements);
-				if (elementToUse != null)
+                if (desiredBrowserSupportId != null) {
+					elementToUse = findDesiredElement(elements);
+				} else {
+					elementToUse = getElementToUse(elements);
+				}
+				if (elementToUse != null) {
 					initialized = initializePluggableBrowserSupport(elementToUse);
+				}
 			}
 
             /**
@@ -162,8 +165,9 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
              */
             private IConfigurationElement findDesiredElement(IConfigurationElement [] elements) {
                 for (int i = 0; i < elements.length; i++) {
-                    if (desiredBrowserSupportId.equals(elements[i].getDeclaringExtension().getUniqueIdentifier()))
-                        return elements[i];
+                    if (desiredBrowserSupportId.equals(elements[i].getDeclaringExtension().getUniqueIdentifier())) {
+						return elements[i];
+					}
                 }
                 return null;
             }
@@ -188,17 +192,20 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_SUPPORT)) {
 						String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
 						if (def != null && Boolean.valueOf(def).booleanValue()) { 
-							if (defaultElement == null)
+							if (defaultElement == null) {
 								defaultElement = element;
+							}
 						} else {
 							// non-default
-							if (choice == null)
+							if (choice == null) {
 								choice = element;
+							}
 						}
 					}
 				}
-				if (choice == null)
+				if (choice == null) {
 					choice = defaultElement;
+				}
 				return choice;
 			}
 

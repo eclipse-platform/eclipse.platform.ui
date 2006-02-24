@@ -62,8 +62,9 @@ public class WorkbookEditorsAction extends Action implements
         if (page != null) {
             WorkbenchPage wbp = (WorkbenchPage) page;
             EditorAreaHelper eah = wbp.getEditorPresentation();
-            if (eah != null)
-                eah.displayEditorList();
+            if (eah != null) {
+				eah.displayEditorList();
+			}
         }
     }
 
@@ -81,8 +82,9 @@ public class WorkbookEditorsAction extends Action implements
      */
     public void updateState() {
         IWorkbenchPage page = null;
-        if (workbenchWindow != null)
-            page = workbenchWindow.getActivePage();
+        if (workbenchWindow != null) {
+			page = workbenchWindow.getActivePage();
+		}
         if (page == null) {
             setEnabled(false);
             return;

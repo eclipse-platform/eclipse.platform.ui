@@ -116,8 +116,9 @@ public class HeapStatus extends Composite {
         
 		ImageDescriptor imageDesc = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/trash.gif"); //$NON-NLS-1$
 		gcImage = imageDesc.createImage();
-		if (gcImage != null)
+		if (gcImage != null) {
 			imgBounds = gcImage.getBounds();
+		}
 		Display display = getDisplay();
 		usedMemCol = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		lowMemCol = new Color(display, 255, 70, 70);  // medium red 
@@ -156,10 +157,11 @@ public class HeapStatus extends Composite {
                     break;
                 case SWT.MouseDown:
                     if (event.button == 1) {
-	                    if (event.widget == HeapStatus.this)
-	                        setMark();
-	                    else if (event.widget == button)
-	                        arm(true);
+	                    if (event.widget == HeapStatus.this) {
+							setMark();
+						} else if (event.widget == button) {
+							arm(true);
+						}
                     }
                     break;
                 case SWT.MouseExit:
@@ -215,13 +217,16 @@ public class HeapStatus extends Composite {
 
 	private void doDispose() {
         prefStore.removePropertyChangeListener(prefListener);
-    	if (gcImage != null)
-    		gcImage.dispose();
+    	if (gcImage != null) {
+			gcImage.dispose();
+		}
        
-        if (lowMemCol != null)
-        	lowMemCol.dispose();
-        if (freeMemCol != null)
-        	freeMemCol.dispose();
+        if (lowMemCol != null) {
+			lowMemCol.dispose();
+		}
+        if (freeMemCol != null) {
+			freeMemCol.dispose();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -235,8 +240,9 @@ public class HeapStatus extends Composite {
 	}
 	
     private void arm(boolean armed) {
-        if (this.armed == armed)
-            return;
+        if (this.armed == armed) {
+			return;
+		}
         this.armed = armed;
         button.redraw();
         button.update();
@@ -315,10 +321,11 @@ public class HeapStatus extends Composite {
     }
 
     private void paintComposite(GC gc) {
-		if (showMax && maxMemKnown)
+		if (showMax && maxMemKnown) {
 			paintCompositeMaxKnown(gc);
-		else
+		} else {
 			paintCompositeMaxUnknown(gc);
+		}
     }
     
     private void paintCompositeMaxUnknown(GC gc) {

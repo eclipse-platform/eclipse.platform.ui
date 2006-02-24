@@ -37,11 +37,13 @@ public class AboutFeaturesButtonManager {
         }
 
         public boolean equals(Object o) {
-            if (!(o instanceof Key))
-                return false;
+            if (!(o instanceof Key)) {
+				return false;
+			}
             Key other = (Key) o;
-            if (!providerName.equals(other.providerName))
-                return false;
+            if (!providerName.equals(other.providerName)) {
+				return false;
+			}
             return crc.equals(other.crc);
         }
 
@@ -57,8 +59,9 @@ public class AboutFeaturesButtonManager {
     public boolean add(AboutBundleGroupData info) {
         // no button for features without an image
         Long crc = info.getFeatureImageCrc();
-        if (crc == null)
-            return false;
+        if (crc == null) {
+			return false;
+		}
 
         String providerName = info.getProviderName();
         Key key = new Key(providerName, crc);
@@ -82,15 +85,17 @@ public class AboutFeaturesButtonManager {
     public AboutBundleGroupData[] getRelatedInfos(AboutBundleGroupData info) {
         // if there's no image, then there won't be a button
         Long crc = info.getFeatureImageCrc();
-        if (crc == null)
-            return new AboutBundleGroupData[0];
+        if (crc == null) {
+			return new AboutBundleGroupData[0];
+		}
 
         String providerName = info.getProviderName();
         Key key = new Key(providerName, crc);
 
         List infoList = (List) providerMap.get(key);
-        if (infoList == null)
-            return new AboutBundleGroupData[0];
+        if (infoList == null) {
+			return new AboutBundleGroupData[0];
+		}
 
         return (AboutBundleGroupData[]) infoList
                 .toArray(new AboutBundleGroupData[0]);

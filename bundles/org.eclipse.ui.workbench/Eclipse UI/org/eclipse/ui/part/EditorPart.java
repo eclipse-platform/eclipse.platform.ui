@@ -141,10 +141,11 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * @return the tool tip text
      */
     public String getTitleToolTip() {
-        if (editorInput == null)
-            return super.getTitleToolTip();
-        else
-            return editorInput.getToolTipText();
+        if (editorInput == null) {
+			return super.getTitleToolTip();
+		} else {
+			return editorInput.getToolTipText();
+		}
     }
 
     /* (non-Javadoc)

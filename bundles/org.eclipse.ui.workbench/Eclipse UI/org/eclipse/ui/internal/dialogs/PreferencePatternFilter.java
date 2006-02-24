@@ -90,16 +90,18 @@ public class PreferencePatternFilter extends PatternFilter {
 	public boolean isElementVisible(Viewer viewer, Object element) {
 		// Preference nodes are not differentiated based on category since 
 		// categories are selectable nodes.
-		if (isLeafMatch(viewer, element))
+		if (isLeafMatch(viewer, element)) {
 			return true;
+		}
 
 		ITreeContentProvider contentProvider = (ITreeContentProvider) ((TreeViewer) viewer)
 				.getContentProvider();
 		IPreferenceNode node = (IPreferenceNode) element;
 		Object[] children = contentProvider.getChildren(node);
 		// Will return true if any subnode of the element matches the search
-		if (filter(viewer, element, children).length > 0)
-			return true;		
+		if (filter(viewer, element, children).length > 0) {
+			return true;
+		}		
 		return false;
 	}
 
@@ -111,14 +113,16 @@ public class PreferencePatternFilter extends PatternFilter {
 		IPreferenceNode node = (IPreferenceNode) element;
 		String text = node.getLabelText();
 
-		if (wordMatches(text))
+		if (wordMatches(text)) {
 			return true;
+		}
 
 		// Also need to check the keywords
 		String[] keywords = getKeywords(node);
 		for (int i = 0; i < keywords.length; i++){
-			if (wordMatches(keywords[i]))
+			if (wordMatches(keywords[i])) {
 				return true;
+			}
 		}
 		return false;
 	}

@@ -172,13 +172,15 @@ public abstract class WorkbenchWizardListSelectionPage extends
     private void restoreWidgetValues() {
 
         IDialogSettings settings = getDialogSettings();
-        if (settings == null)
-            return;
+        if (settings == null) {
+			return;
+		}
 
         String wizardId = settings.get(STORE_SELECTED_WIZARD_ID);
         WorkbenchWizardElement wizard = findWizard(wizardId);
-        if (wizard == null)
-            return;
+        if (wizard == null) {
+			return;
+		}
 
         StructuredSelection selection = new StructuredSelection(wizard);
         viewer.setSelection(selection);

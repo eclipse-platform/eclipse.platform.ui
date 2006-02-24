@@ -97,8 +97,9 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                     IPreferenceFilter filter = matches[i];
                     for (int j = 0; j < transfers.length; j++) {
                         PreferenceTransferElement element = transfers[j];
-                        if (element.getFilter().equals(filter))
-                            returnTransfers[index++] = element;                        
+                        if (element.getFilter().equals(filter)) {
+							returnTransfers[index++] = element;
+						}                        
                     }
                 }
 
@@ -133,10 +134,11 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
     protected void setPreferenceTransfers() {
     	super.setPreferenceTransfers();	
     	
-		if(validFromFile() && (transfersTable.getItemCount() == 0))
+		if(validFromFile() && (transfersTable.getItemCount() == 0)) {
 			text.setText(PreferencesMessages.WizardPreferences_noSpecificPreferenceDescription);
-		else
+		} else {
 			text.setText(""); //$NON-NLS-1$
+		}
 	}
   
     /* (non-Javadoc)
@@ -185,13 +187,14 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                 }
             }
         } finally {
-            if (fis != null)
-                try {
+            if (fis != null) {
+				try {
                     fis.close();
                 } catch (IOException e) {
                 	WorkbenchPlugin.log(e.getMessage(), e);
                 	MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
                 }
+			}
         }
         return true;
     }
@@ -203,8 +206,9 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
      *            Event
      */
     public void handleEvent(Event e) {
-        if (e.widget == destinationNameField)
-            setPreferenceTransfers();
+        if (e.widget == destinationNameField) {
+			setPreferenceTransfers();
+		}
 
         super.handleEvent(e);
     }

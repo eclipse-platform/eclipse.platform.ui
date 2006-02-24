@@ -46,12 +46,14 @@ public class OverlayIcon extends CompositeImageDescriptor {
      */
     protected void drawCompositeImage(int width, int height) {
         ImageData bg;
-        if (fBase == null || (bg = fBase.getImageData()) == null)
-            bg = DEFAULT_IMAGE_DATA;
+        if (fBase == null || (bg = fBase.getImageData()) == null) {
+			bg = DEFAULT_IMAGE_DATA;
+		}
         drawImage(bg, 0, 0);
 
-        if (fOverlay != null)
-            drawTopRight(fOverlay);
+        if (fOverlay != null) {
+			drawTopRight(fOverlay);
+		}
     }
 
     /**
@@ -59,8 +61,9 @@ public class OverlayIcon extends CompositeImageDescriptor {
      * to be drawn on top of the main image
      */
     protected void drawTopRight(ImageDescriptor overlay) {
-        if (overlay == null)
-            return;
+        if (overlay == null) {
+			return;
+		}
         int x = getSize().x;
         ImageData id = overlay.getImageData();
         x -= id.width;
@@ -86,8 +89,9 @@ public class OverlayIcon extends CompositeImageDescriptor {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        if (!(obj instanceof OverlayIcon))
-            return false;
+        if (!(obj instanceof OverlayIcon)) {
+			return false;
+		}
         OverlayIcon overlayIcon = (OverlayIcon) obj;
         return Util.equals(this.fBase, overlayIcon.fBase)
                 && Util.equals(this.fOverlay, overlayIcon.fOverlay)

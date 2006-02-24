@@ -53,13 +53,15 @@ public class PreferenceNodeFilter extends ViewerFilter {
 	 * has an id in the ids.
 	 */
 	private boolean checkNodeAndChildren(IPreferenceNode node) {
-		if(ids.contains(node.getId()))
+		if(ids.contains(node.getId())) {
 			return true;
+		}
 		
 		IPreferenceNode[] subNodes = node.getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
-			if(checkNodeAndChildren(subNodes[i]))
+			if(checkNodeAndChildren(subNodes[i])) {
 				return true;
+			}
 			
 		}
 		return false;

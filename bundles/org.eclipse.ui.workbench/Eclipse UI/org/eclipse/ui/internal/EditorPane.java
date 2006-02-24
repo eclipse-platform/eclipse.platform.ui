@@ -82,8 +82,9 @@ public class EditorPane extends PartPane {
     public void requestActivation() {
         // By clearing the active workbook if its not the one
         // associated with the editor, we reduce draw flicker
-        if (!workbook.isActiveWorkbook())
-            workbook.getEditorArea().setActiveWorkbook(null, false);
+        if (!workbook.isActiveWorkbook()) {
+			workbook.getEditorArea().setActiveWorkbook(null, false);
+		}
 
         super.requestActivation();
     }
@@ -122,12 +123,13 @@ public class EditorPane extends PartPane {
      * Indicate focus in part.
      */
     public void showFocus(boolean inFocus) {
-        if (inFocus)
-            this.workbook.becomeActiveWorkbook(true);
-        else
-            this.workbook
+        if (inFocus) {
+			this.workbook.becomeActiveWorkbook(true);
+		} else {
+			this.workbook
                     .setActive(this.workbook.isActiveWorkbook() ? StackPresentation.AS_ACTIVE_NOFOCUS
                             : StackPresentation.AS_INACTIVE);
+		}
     }
 
     /**

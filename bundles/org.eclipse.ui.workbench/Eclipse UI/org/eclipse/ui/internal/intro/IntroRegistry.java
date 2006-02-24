@@ -56,8 +56,9 @@ public class IntroRegistry implements IIntroRegistry {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
 						IWorkbenchRegistryConstants.PL_INTRO);
-		if (point == null)
+		if (point == null) {
 			return new IIntroDescriptor[0];
+		}
 
 		IExtension[] extensions = point.getExtensions();
 		extensions = RegistryReader.orderExtensions(extensions);
@@ -95,15 +96,17 @@ public class IntroRegistry implements IIntroRegistry {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
 						IWorkbenchRegistryConstants.PL_INTRO);
-		if (point == null)
+		if (point == null) {
 			return null;
+		}
 
 		IExtension[] extensions = point.getExtensions();
 		extensions = RegistryReader.orderExtensions(extensions);
 
 		String targetIntroId = getIntroForProduct(targetProductId, extensions);
-		if (targetIntroId == null)
+		if (targetIntroId == null) {
 			return null;
+		}
 
 		IIntroDescriptor descriptor = null;
 
@@ -162,8 +165,9 @@ public class IntroRegistry implements IIntroRegistry {
 		IIntroDescriptor[] intros = getIntros();
 		for (int i = 0; i < intros.length; i++) {
 			IIntroDescriptor desc = intros[i];
-			if (desc.getId().equals(id))
+			if (desc.getId().equals(id)) {
 				return desc;
+			}
 		}
 		return null;
 	}

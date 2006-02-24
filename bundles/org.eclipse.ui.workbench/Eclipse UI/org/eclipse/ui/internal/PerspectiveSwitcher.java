@@ -135,8 +135,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
     class ChangeListener extends PerspectiveAdapter implements IPageListener {
         public void perspectiveOpened(IWorkbenchPage page,
                 IPerspectiveDescriptor perspective) {
-        	if (findPerspectiveShortcut(perspective, page) == null)
-        		addPerspectiveShortcut(perspective, page);
+        	if (findPerspectiveShortcut(perspective, page) == null) {
+				addPerspectiveShortcut(perspective, page);
+			}
         }
         public void perspectiveClosed(IWorkbenchPage page,
                 IPerspectiveDescriptor perspective) {
@@ -200,12 +201,15 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	}
 
 	private static int convertLocation(String preference) {
-		if (IWorkbenchPreferenceConstants.TOP_RIGHT.equals(preference))
+		if (IWorkbenchPreferenceConstants.TOP_RIGHT.equals(preference)) {
 			return TOP_RIGHT;
-		if (IWorkbenchPreferenceConstants.TOP_LEFT.equals(preference))
+		}
+		if (IWorkbenchPreferenceConstants.TOP_LEFT.equals(preference)) {
 			return TOP_LEFT;
-		if (IWorkbenchPreferenceConstants.LEFT.equals(preference))
+		}
+		if (IWorkbenchPreferenceConstants.LEFT.equals(preference)) {
 			return LEFT;
+		}
 
 		return TOP_RIGHT;
 	}
@@ -224,8 +228,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 
 	private void addPerspectiveShortcut(IPerspectiveDescriptor perspective,
 			IWorkbenchPage workbenchPage) {
-		if (perspectiveBar == null)
+		if (perspectiveBar == null) {
 			return;
+		}
 
 		PerspectiveBarContributionItem item = new PerspectiveBarContributionItem(
 				perspective, workbenchPage);
@@ -233,8 +238,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		setCoolItemSize(coolItem);
 		// This is need to update the vertical size of the tool bar on GTK+ when
 		// using large fonts.
-		if (perspectiveBar != null)
+		if (perspectiveBar != null) {
 			perspectiveBar.update(true);
+		}
 	}
 
 	/**
@@ -246,8 +252,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	 */
 	public IContributionItem findPerspectiveShortcut(
 			IPerspectiveDescriptor perspective, IWorkbenchPage page) {
-		if (perspectiveBar == null)
+		if (perspectiveBar == null) {
 			return null;
+		}
 
 		IContributionItem[] items = perspectiveBar.getItems();
 		int length = items.length;
@@ -255,22 +262,25 @@ public class PerspectiveSwitcher implements IWindowTrim {
 			IContributionItem item = items[i];
 			if (item instanceof PerspectiveBarContributionItem
 					&& ((PerspectiveBarContributionItem) item).handles(
-							perspective, page))
+							perspective, page)) {
 				return item;
+			}
 		}
 		return null;
 	}
 
 	private void removePerspectiveShortcut(IPerspectiveDescriptor perspective,
 			IWorkbenchPage page) {
-		if (perspectiveBar == null)
+		if (perspectiveBar == null) {
 			return;
+		}
 
 		IContributionItem item = findPerspectiveShortcut(perspective, page);
 		if (item != null) {
-			if (item instanceof PerspectiveBarContributionItem)
+			if (item instanceof PerspectiveBarContributionItem) {
 				perspectiveBar
 						.removeItem((PerspectiveBarContributionItem) item);
+			}
 			item.dispose();
 			perspectiveBar.update(false);
 			setCoolItemSize(coolItem);
@@ -284,11 +294,13 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	public void setPerspectiveBarLocation(String preference) {
 		// return if the control has not been created. createControl(...) will
 		// handle updating the state in that case
-		if (parent == null)
+		if (parent == null) {
 			return;
+		}
 		int newLocation = convertLocation(preference);
-		if (newLocation == currentLocation)
+		if (newLocation == currentLocation) {
 			return;
+		}
 		createControlForLocation(newLocation);
 		currentLocation = newLocation;
 		showPerspectiveBar();
@@ -331,8 +343,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	 * @param force
 	 */
 	public void update(boolean force) {
-		if (perspectiveBar == null)
+		if (perspectiveBar == null) {
 			return;
+		}
 
 		perspectiveBar.update(force);
 
@@ -368,8 +381,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	private void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc,
 			IPerspectiveDescriptor newDesc, IWorkbenchPage page) {
 		IContributionItem item = findPerspectiveShortcut(oldDesc, page);
-		if (item != null && (item instanceof PerspectiveBarContributionItem))
+		if (item != null && (item instanceof PerspectiveBarContributionItem)) {
 			((PerspectiveBarContributionItem) item).update(newDesc);
+		}
 	}
 
 	/**
@@ -436,11 +450,13 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		// if there is a control, then perhaps it can be reused
 		if (perspectiveBar != null && perspectiveBar.getControl() != null
 				&& !perspectiveBar.getControl().isDisposed()) {
-			if (newLocation == LEFT && currentLocation == LEFT)
+			if (newLocation == LEFT && currentLocation == LEFT) {
 				return;
+			}
 			if ((newLocation == TOP_LEFT || newLocation == TOP_RIGHT)
-					&& (currentLocation == TOP_LEFT || currentLocation == TOP_RIGHT))
+					&& (currentLocation == TOP_LEFT || currentLocation == TOP_RIGHT)) {
 				return;
+			}
 		}
 
 		if (perspectiveBar != null) {
@@ -453,10 +469,11 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		window.getTrimManager().removeTrim(this);
 
 		disposeChildControls();
-		if (newLocation == LEFT)
+		if (newLocation == LEFT) {
 			createControlForLeft();
-		else
+		} else {
 			createControlForTop();
+		}
 		hookDragSupport();
 
 		perspectiveBar.getControl().addDisposeListener(toolBarListener);
@@ -469,8 +486,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	private void unhookDragSupport() {
 		ToolBar bar = perspectiveBar.getControl();
 
-		if (bar == null || bar.isDisposed() || dragListener == null)
+		if (bar == null || bar.isDisposed() || dragListener == null) {
 			return;
+		}
 		PresentationUtil.removeDragListener(bar, dragListener);
 		DragUtil.removeDragTarget(perspectiveBar.getControl(), dragTarget);
 		DragUtil.removeDragTarget(null, externalDragTarget);
@@ -494,8 +512,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
                 
                 if (item != null) {
                 	//ignore the first item, which remains in position Zero
-                    if (item.getData() instanceof PerspectiveBarNewContributionItem)
-                    	return;
+                    if (item.getData() instanceof PerspectiveBarNewContributionItem) {
+						return;
+					}
                     
                 	Rectangle bounds = item.getBounds();
                 	Rectangle parentBounds = toolbar.getBounds();
@@ -551,23 +570,27 @@ public class PerspectiveSwitcher implements IWindowTrim {
 					ToolBar toolBar = perspectiveBar.getControl();
 					ToolItem item = toolBar.getItem(toolBar.getDisplay().map(
 							null, toolBar, location));
-					if (toolBar.getItem(0) == item)
+					if (toolBar.getItem(0) == item) {
 						return;
+					}
 					ToolItem[] items = toolBar.getItems();
 					ToolItem droppedItem = null;
 					int dropIndex = -1;
 					for (int i = 0; i < items.length; i++) {
-						if (item == items[i])
+						if (item == items[i]) {
 							dropIndex = i;
-						if (items[i].getData() == perspective)
+						}
+						if (items[i].getData() == perspective) {
 							droppedItem = items[i];
+						}
 					}
 					if (dropIndex != -1 && droppedItem != null && (droppedItem != item)) {
 						PerspectiveBarContributionItem barItem = (PerspectiveBarContributionItem) droppedItem.getData();
 						// policy is to insert at the beginning so mirror the value when indicating a 
 						// new position for the perspective
-						if (reorderListener != null)
+						if (reorderListener != null) {
 							reorderListener.reorder(barItem.getPerspective(), Math.abs(dropIndex - (items.length - 1)));
+						}
 
 						perspectiveBar.relocate(barItem, dropIndex);
 					}
@@ -612,8 +635,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 						perspectiveDropTarget.update(draggedObject, position);
 					}
 					// do not support drag to perspective bars between shells.
-					if (!perspectiveDropTarget.sameShell())
-							return null;
+					if (!perspectiveDropTarget.sameShell()) {
+						return null;
+					}
 					
 					return perspectiveDropTarget;
 				}// else if (draggedObject instanceof IPerspectiveBar) {
@@ -735,8 +759,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
                         .equals(propertyChangeEvent.getProperty())) {
-                    if (perspectiveBar == null)
-                        return;
+                    if (perspectiveBar == null) {
+						return;
+					}
                     updatePerspectiveBar();
                     updateBarParent();
                 }
@@ -807,12 +832,14 @@ public class PerspectiveSwitcher implements IWindowTrim {
      */
     private void setCoolItemSize(final CoolItem coolItem) {
         // there is no coolItem when the bar is on the left
-        if (currentLocation == LEFT)
-            return;
+        if (currentLocation == LEFT) {
+			return;
+		}
 
         ToolBar toolbar = perspectiveBar.getControl();
-        if (toolbar == null)
-            return;
+        if (toolbar == null) {
+			return;
+		}
 
         int rowHeight = 0;
         ToolItem[] toolItems = toolbar.getItems();
@@ -838,8 +865,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
     }
 
     private void showPerspectiveBarPopup(Point pt) {
-        if (perspectiveBar == null)
-            return;
+        if (perspectiveBar == null) {
+			return;
+		}
 
         // Get the tool item under the mouse.
         ToolBar toolBar = perspectiveBar.getControl();
@@ -876,8 +904,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
             return;
         }
 
-        if (data == null || !(data instanceof PerspectiveBarContributionItem))
-            return;
+        if (data == null || !(data instanceof PerspectiveBarContributionItem)) {
+			return;
+		}
 
         PerspectiveBarContributionItem pbci = (PerspectiveBarContributionItem) data;
         IPerspectiveDescriptor selectedPerspective = pbci.getPerspective();
@@ -1121,8 +1150,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 
         showtextMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (perspectiveBar == null)
-                    return;
+                if (perspectiveBar == null) {
+					return;
+				}
 
                 boolean preference = showtextMenuItem.getSelection();
                 PrefUtil
@@ -1146,8 +1176,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
         		IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
         customizeMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (perspectiveBar == null)
-                    return;
+                if (perspectiveBar == null) {
+					return;
+				}
                 EditActionSetsAction editAction=new EditActionSetsAction(window);
                 editAction.setEnabled(true);
                 editAction.run();
@@ -1162,8 +1193,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
         		IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
         saveasMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (perspectiveBar == null)
-                    return;
+                if (perspectiveBar == null) {
+					return;
+				}
                 SavePerspectiveAction saveAction=new SavePerspectiveAction(window);
                 saveAction.setEnabled(true);
                 saveAction.run();
@@ -1178,8 +1210,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
         		IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
         resetMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (perspectiveBar == null)
-                    return;
+                if (perspectiveBar == null) {
+					return;
+				}
                 ResetPerspectiveAction resetAction=new ResetPerspectiveAction(window);
                 resetAction.setEnabled(true);
                 resetAction.run(); 
@@ -1197,10 +1230,11 @@ public class PerspectiveSwitcher implements IWindowTrim {
                 .createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
 
         int x;
-        if (currentLocation == TOP_RIGHT && topBar != null)
-            x = topBar.getRightWidth();
-        else
-            x = DEFAULT_RIGHT_X;
+        if (currentLocation == TOP_RIGHT && topBar != null) {
+			x = topBar.getRightWidth();
+		} else {
+			x = DEFAULT_RIGHT_X;
+		}
 
         childMem.putString(IWorkbenchConstants.TAG_X, Integer.toString(x));
     }
@@ -1210,20 +1244,23 @@ public class PerspectiveSwitcher implements IWindowTrim {
      * @param memento 
      */
     public void restoreState(IMemento memento) {
-        if (memento == null)
-            return;
+        if (memento == null) {
+			return;
+		}
         // restore the width of the perspective bar
         IMemento attributes = memento
                 .getChild(IWorkbenchConstants.TAG_PERSPECTIVE_BAR);
         IMemento size = null;
-        if (attributes != null)
-            size = attributes.getChild(IWorkbenchConstants.TAG_ITEM_SIZE);
+        if (attributes != null) {
+			size = attributes.getChild(IWorkbenchConstants.TAG_ITEM_SIZE);
+		}
         if (size != null && currentLocation == TOP_RIGHT && topBar != null) {
             Integer x = size.getInteger(IWorkbenchConstants.TAG_X);
-            if (x != null)
-                topBar.setRightWidth(x.intValue());
-            else
-                topBar.setRightWidth(DEFAULT_RIGHT_X);
+            if (x != null) {
+				topBar.setRightWidth(x.intValue());
+			} else {
+				topBar.setRightWidth(DEFAULT_RIGHT_X);
+			}
         }
     }
 
@@ -1233,8 +1270,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
     void updatePerspectiveBar() {
         // Update each item as the text may have to be shortened.
         IContributionItem[] items = perspectiveBar.getItems();
-        for (int i = 0; i < items.length; i++)
-            items[i].update();
+        for (int i = 0; i < items.length; i++) {
+			items[i].update();
+		}
         // make sure the selected item is visible
         perspectiveBar.arrangeToolbar();
         setCoolItemSize(coolItem);
@@ -1246,8 +1284,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
      * is docked on the top right
      */
     public void updateBarParent() {
-        if (perspectiveBar == null || perspectiveBar.getControl() == null)
-            return;
+        if (perspectiveBar == null || perspectiveBar.getControl() == null) {
+			return;
+		}
 
         // TOP_LEFT and LEFT need only relayout in this case, however TOP_RIGHT
         // will need to set the minimum height of the CBanner as it might have changed.

@@ -91,8 +91,9 @@ public class EditorSite extends PartSite implements IEditorSite {
      */
     public IEditorActionBarContributor getActionBarContributor() {
         EditorActionBars bars = (EditorActionBars) getActionBars();
-        if (bars != null)
-            return bars.getEditorContributor();
+        if (bars != null) {
+			return bars.getEditorContributor();
+		}
         
         return null;
     }
@@ -102,8 +103,9 @@ public class EditorSite extends PartSite implements IEditorSite {
      */
     public IEditorActionBarContributor getExtensionActionBarContributor() {
         EditorActionBars bars = (EditorActionBars) getActionBars();
-        if (bars != null)
-            return bars.getExtensionContributor();
+        if (bars != null) {
+			return bars.getExtensionContributor();
+		}
         
         return null;
     }

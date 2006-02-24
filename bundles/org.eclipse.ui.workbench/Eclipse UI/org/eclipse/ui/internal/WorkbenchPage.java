@@ -169,14 +169,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
             if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)) {
-            		if(event.getOldValue().equals(workingSet))
-            			setWorkingSet(null);
+            		if(event.getOldValue().equals(workingSet)) {
+						setWorkingSet(null);
+					}
             		
             		// room for optimization here
             		List newList = new ArrayList(Arrays.asList(workingSets));
-            		if (newList.remove(event.getOldValue()))
-            			setWorkingSets((IWorkingSet []) newList
+            		if (newList.remove(event.getOldValue())) {
+						setWorkingSets((IWorkingSet []) newList
 								.toArray(new IWorkingSet [newList.size()]));
+					}
             }
         }
     };
@@ -204,30 +206,36 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof DirtyPerspectiveMarker) {
 					String id = ((DirtyPerspectiveMarker)objects[i]).perspectiveId;
-					if (!dirtyPerspectives.remove(id)) //if we are dirty, cancel the dirty state
+					if (!dirtyPerspectives.remove(id)) {
 						dirtyPerspectives.add(id); // otherwise we will be dirty
+					}
 					PerspectiveDescriptor persp = (PerspectiveDescriptor) getPerspective();
-					if (persp == null || persp.hasCustomDefinition())
+					if (persp == null || persp.hasCustomDefinition()) {
 						continue;
-					if (persp.getId().equals(id))
+					}
+					if (persp.getId().equals(id)) {
 						suggestReset = true;
+					}
 				}
 			}
-			if (suggestReset)
+			if (suggestReset) {
 				suggestReset();
+			}
 		}
         
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
          */
         public void addExtension(IExtensionTracker tracker, IExtension extension) {
-            if (WorkbenchPage.this != getWorkbenchWindow().getActivePage()) 
-                return;
+            if (WorkbenchPage.this != getWorkbenchWindow().getActivePage()) {
+				return;
+			}
             
             // Get the current perspective.
             PerspectiveDescriptor persp = (PerspectiveDescriptor) getPerspective();
-            if (persp == null)
-                return;
+            if (persp == null) {
+				return;
+			}
             String currentId = persp.getId();
             IConfigurationElement[] elements = extension.getConfigurationElements();
             boolean suggestReset = false;
@@ -238,8 +246,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 // perspective extension registry will be rebuilt anyway so
                 // just ignore it.
                 String id = elements[i].getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
-                if (id == null)
-                    continue;
+                if (id == null) {
+					continue;
+				}
                 if (id.equals(currentId) && !persp.hasCustomDefinition()) {
                     suggestReset = true;
                 }
@@ -249,8 +258,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 DirtyPerspectiveMarker marker = new DirtyPerspectiveMarker(id);
                 tracker.registerObject(extension, marker, IExtensionTracker.REF_STRONG);
             }
-            if (suggestReset) 
-                suggestReset();
+            if (suggestReset) {
+				suggestReset();
+			}
 
         }
 	};
@@ -278,14 +288,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          *            the new active part, may be <code>null</code>
          */
         public void updateActivePart(IWorkbenchPart newPart) {
-            if (activePart == newPart)
-                return;
+            if (activePart == newPart) {
+				return;
+			}
 
             boolean isNewPartAnEditor = newPart instanceof IEditorPart;
             if (isNewPartAnEditor) {
                 String oldId = null;
-                if (topEditor != null)
-                    oldId = topEditor.getSite().getId();
+                if (topEditor != null) {
+					oldId = topEditor.getSite().getId();
+				}
                 String newId = newPart.getSite().getId();
 
                 // if the active part is an editor and the new editor
@@ -299,44 +311,51 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
                 // remove the contributions of the old editor
                 // if it is a different kind of editor
-                if (oldId != null && !oldId.equals(newId))
-                    deactivateContributions(topEditor, true);
+                if (oldId != null && !oldId.equals(newId)) {
+					deactivateContributions(topEditor, true);
+				}
 
                 // if a view was the active part, disable its contributions
-                if (activePart != null && activePart != topEditor)
-                    deactivateContributions(activePart, true);
+                if (activePart != null && activePart != topEditor) {
+					deactivateContributions(activePart, true);
+				}
 
                 // show (and enable) the contributions of the new editor
                 // if it is a different kind of editor or if the
                 // old active part was a view
-                if (!newId.equals(oldId) || activePart != topEditor)
-                    activateContributions(newPart, true);
+                if (!newId.equals(oldId) || activePart != topEditor) {
+					activateContributions(newPart, true);
+				}
 
             } else if (newPart == null) {
-                if (activePart != null)
-                    // remove all contributions
+                if (activePart != null) {
+					// remove all contributions
                     deactivateContributions(activePart, true);
+				}
             } else {
                 // new part is a view
 
                 // if old active part is a view, remove all contributions,
                 // but if old part is an editor only disable
-                if (activePart != null)
-                    deactivateContributions(activePart,
+                if (activePart != null) {
+					deactivateContributions(activePart,
                             activePart instanceof IViewPart);
+				}
 
                 activateContributions(newPart, true);
             }
 
             ArrayList newActionSets = null;
             if (isNewPartAnEditor
-                    || (activePart == topEditor && newPart == null))
-                newActionSets = calculateActionSets(newPart, null);
-            else
-                newActionSets = calculateActionSets(newPart, topEditor);
+                    || (activePart == topEditor && newPart == null)) {
+				newActionSets = calculateActionSets(newPart, null);
+			} else {
+				newActionSets = calculateActionSets(newPart, topEditor);
+			}
 
-            if (!updateActionSets(newActionSets))
-                updateActionBars();
+            if (!updateActionSets(newActionSets)) {
+				updateActionBars();
+			}
 
             if (isNewPartAnEditor) {
                 topEditor = (IEditorPart) newPart;
@@ -356,8 +375,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          *            the new top editor, may be <code>null</code>
          */
         public void updateTopEditor(IEditorPart newEditor) {
-            if (topEditor == newEditor)
-                return;
+            if (topEditor == newEditor) {
+				return;
+			}
 
             if (activePart == topEditor) {
             	updateActivePart(newEditor);
@@ -365,11 +385,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
             
             String oldId = null;
-            if (topEditor != null)
-                oldId = topEditor.getSite().getId();
+            if (topEditor != null) {
+				oldId = topEditor.getSite().getId();
+			}
             String newId = null;
-            if (newEditor != null)
-                newId = newEditor.getSite().getId();
+            if (newEditor != null) {
+				newId = newEditor.getSite().getId();
+			}
             if (oldId == null ? newId == null : oldId.equals(newId)) {
                 // we don't have to change anything
                 topEditor = newEditor;
@@ -377,16 +399,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
 
             // Remove the contributions of the old editor
-            if (topEditor != null)
-                deactivateContributions(topEditor, true);
+            if (topEditor != null) {
+				deactivateContributions(topEditor, true);
+			}
 
             // Show (disabled) the contributions of the new editor
-            if (newEditor != null)
-                activateContributions(newEditor, false);
+            if (newEditor != null) {
+				activateContributions(newEditor, false);
+			}
 
             ArrayList newActionSets = calculateActionSets(activePart, newEditor);
-            if (!updateActionSets(newActionSets))
-                updateActionBars();
+            if (!updateActionSets(newActionSets)) {
+				updateActionBars();
+			}
 
             topEditor = newEditor;
         }
@@ -464,8 +489,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * @return <code>true</code> if the action sets changed
          */
         private boolean updateActionSets(ArrayList newActionSets) {
-            if (oldActionSets.equals(newActionSets))
-                return false;
+            if (oldActionSets.equals(newActionSets)) {
+				return false;
+			}
 
             // show the new
             for (int i = 0; i < newActionSets.size(); i++) {
@@ -507,8 +533,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input)
             throws WorkbenchException {
         super();
-        if (layoutID == null)
-            throw new WorkbenchException(WorkbenchMessages.WorkbenchPage_UndefinedPerspective);
+        if (layoutID == null) {
+			throw new WorkbenchException(WorkbenchMessages.WorkbenchPage_UndefinedPerspective);
+		}
         init(w, layoutID, input);
     }
 
@@ -536,11 +563,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void activate(IWorkbenchPart part) {
         // Sanity check.
-        if (!certifyPart(part))
-            return;
+        if (!certifyPart(part)) {
+			return;
+		}
 
-        if (window.isClosing())
-            return;
+        if (window.isClosing()) {
+			return;
+		}
 
         // If zoomed, unzoom.
         zoomOutIfNecessary(part);
@@ -581,8 +610,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void addFastView(IViewReference ref) {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return;
+        if (persp == null) {
+			return;
+		}
 
         if (persp.isFastView(ref)) {
             return;
@@ -743,8 +773,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public void bringToTop(IWorkbenchPart part) {
         // Sanity check.
         Perspective persp = getActivePerspective();
-        if (persp == null || !certifyPart(part))
-            return;
+        if (persp == null || !certifyPart(part)) {
+			return;
+		}
 
         String label = null; // debugging only
         if (UIStats.isDebugging(UIStats.BRING_PART_TO_TOP)) {
@@ -804,14 +835,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
         //try to prevent intro flicker.
-        if (introFullScreen)
-            window.getShell().setRedraw(false);
+        if (introFullScreen) {
+			window.getShell().setRedraw(false);
+		}
 
         try {
 
             // Always unzoom
-            if (isZoomed())
-                zoomOut();
+            if (isZoomed()) {
+				zoomOut();
+			}
 
             // Get the current perspective.
             // This describes the working layout of the page and differs from
@@ -825,12 +858,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     .getPerspectiveRegistry();
             PerspectiveDescriptor desc = (PerspectiveDescriptor) reg
                     .findPerspectiveWithId(oldPersp.getDesc().getId());
-            if (desc == null)
-                desc = (PerspectiveDescriptor) reg
+            if (desc == null) {
+				desc = (PerspectiveDescriptor) reg
                         .findPerspectiveWithId(((PerspectiveDescriptor) oldPersp
                                 .getDesc()).getOriginalId());
-            if (desc == null)
-                return;
+			}
+            if (desc == null) {
+				return;
+			}
 
             // Notify listeners that we are doing a reset.
             window.firePerspectiveChanged(this, desc, CHANGE_RESET);
@@ -864,8 +899,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 try {
                     // ensure that the intro is visible in the new perspective
                     showView(IIntroConstants.INTRO_VIEW_ID);
-                    if (introFullScreen)
-                        toggleZoom(introPane.getPartReference());
+                    if (introFullScreen) {
+						toggleZoom(introPane.getPartReference());
+					}
                 } catch (PartInitException e) {
                     WorkbenchPlugin.log("Could not restore intro", //$NON-NLS-1$
                             WorkbenchPlugin.getStatus(e));
@@ -879,11 +915,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         } finally {
             // reset the handling of zoom events (possibly for the second time) in case there was 
             // an exception thrown
-            if (introViewAdapter != null)
-                introViewAdapter.setHandleZoomEvents(true);
+            if (introViewAdapter != null) {
+				introViewAdapter.setHandleZoomEvents(true);
+			}
 
-            if (introFullScreen)
-                window.getShell().setRedraw(true);
+            if (introFullScreen) {
+				window.getShell().setRedraw(true);
+			}
         }
 
     }
@@ -906,8 +944,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             newPersp = findPerspective(realDesc);
             if (newPersp == null) {
                 newPersp = createPerspective(realDesc, true);
-                if (newPersp == null)
-                    return;
+                if (newPersp == null) {
+					return;
+				}
             }
 
             // Change layout.
@@ -925,14 +964,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private IViewPart busyShowView(String viewID, String secondaryID, int mode)
             throws PartInitException {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return null;
+        if (persp == null) {
+			return null;
+		}
 
         // If this view is already visible just return.
         IViewReference ref = persp.findView(viewID, secondaryID);
         IViewPart view = null;
-        if (ref != null)
-            view = ref.getView(true);
+        if (ref != null) {
+			view = ref.getView(true);
+		}
         if (view != null) {
             busyShowView(view, mode);
             return view;
@@ -959,20 +1000,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Performs showing of the view in the given mode.
      */
     private void busyShowView(IViewPart part, int mode) {
-        if (mode == VIEW_ACTIVATE)
-            activate(part);
-        else if (mode == VIEW_VISIBLE) {
+        if (mode == VIEW_ACTIVATE) {
+			activate(part);
+		} else if (mode == VIEW_VISIBLE) {
             IWorkbenchPartReference ref = getActivePartReference();
             // if there is no active part or it's not a view, bring to top
-            if (ref == null || !(ref instanceof IViewReference))
-                bringToTop(part);
-            else {
+            if (ref == null || !(ref instanceof IViewReference)) {
+				bringToTop(part);
+			} else {
                 // otherwise check to see if the we're in the same stack as the active view
                 IViewReference activeView = (IViewReference) ref;
                 IViewReference[] viewStack = getViewReferenceStack(part);
                 for (int i = 0; i < viewStack.length; i++) {
-                    if (viewStack[i].equals(activeView))
-                        return;
+                    if (viewStack[i].equals(activeView)) {
+						return;
+					}
                 }
                 bringToTop(part);
             }
@@ -984,8 +1026,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     private boolean certifyPart(IWorkbenchPart part) {
         //Workaround for bug 22325
-        if (part != null && !(part.getSite() instanceof PartSite))
-            return false;
+        if (part != null && !(part.getSite() instanceof PartSite)) {
+			return false;
+		}
 
         if (part instanceof IEditorPart) {
             IEditorReference ref = (IEditorReference) getReference(part);
@@ -1026,8 +1069,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
         }
         //there are no unsaved editors
-        if (j == 0)
-            return true;
+        if (j == 0) {
+			return true;
+		}
         IEditorReference[] newSaved = new IEditorReference[j];
         System.arraycopy(savedEditors, 0, newSaved, 0, j);
         return closeEditors(newSaved, false);
@@ -1192,8 +1236,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             // Save parts, exit the method if cancel is pressed.
             if (intersect.size() > 0) {
                 if (!EditorManager.saveAll(intersect, true, true,
-                        getWorkbenchWindow()))
-                    return false;
+                        getWorkbenchWindow())) {
+					return false;
+				}
             }
         }
 
@@ -1293,8 +1338,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void closePerspective(IPerspectiveDescriptor desc, boolean saveEditors, boolean closePage) {
         Perspective persp = findPerspective(desc);
-        if (persp != null)
-            closePerspective(persp, saveEditors, closePage);
+        if (persp != null) {
+			closePerspective(persp, saveEditors, closePage);
+		}
     }
 
     /**
@@ -1310,23 +1356,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     void closePerspective(Perspective persp, boolean saveEditors, boolean closePage) {
 
         // Always unzoom
-        if (isZoomed())
-            zoomOut();
+        if (isZoomed()) {
+			zoomOut();
+		}
 
         // Close all editors on last perspective close
         if (perspList.size() == 1 && getEditorManager().getEditorCount() > 0) {
             // Close all editors
-            if (!closeAllEditors(saveEditors))
-                return;
+            if (!closeAllEditors(saveEditors)) {
+				return;
+			}
         }
 
         // Dispose of the perspective
         boolean isActive = (perspList.getActive() == persp);
-        if (isActive)
-            setPerspective(perspList.getNextActive());
+        if (isActive) {
+			setPerspective(perspList.getNextActive());
+		}
         disposePerspective(persp, true);
-        if (closePage && perspList.size() == 0)
-            close();
+        if (closePage && perspList.size() == 0) {
+			close();
+		}
     }
 
     /**
@@ -1334,16 +1384,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
 
-        if (perspList.isEmpty())
-            return;
+        if (perspList.isEmpty()) {
+			return;
+		}
 
         // Always unzoom
-        if (isZoomed())
-            zoomOut();
+        if (isZoomed()) {
+			zoomOut();
+		}
 
         // Close all editors
-        if (!closeAllEditors(saveEditors))
-            return;
+        if (!closeAllEditors(saveEditors)) {
+			return;
+		}
 
         // Deactivate the active perspective and part
         setPerspective((Perspective) null);
@@ -1352,8 +1405,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         PerspectiveList oldList = perspList;
         perspList = new PerspectiveList();
         Iterator itr = oldList.iterator();
-        while (itr.hasNext())
-            closePerspective((Perspective) itr.next(), false, false);
+        while (itr.hasNext()) {
+			closePerspective((Perspective) itr.next(), false, false);
+		}
         if (closePage) {
             close();
         }
@@ -1387,8 +1441,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
             //if the perspective is fresh and uncustomzied then it is not dirty
             //no reset will be prompted for
-            if (!desc.hasCustomDefinition())
-            	dirtyPerspectives.remove(desc.getId());
+            if (!desc.hasCustomDefinition()) {
+				dirtyPerspectives.remove(desc.getId());
+			}
             return persp;
         } catch (WorkbenchException e) {
             if (!((Workbench) window.getWorkbench()).isStarting()) {
@@ -1411,8 +1466,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void openTracker(ViewPane pane) {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            persp.openTracker(pane);
+        if (persp != null) {
+			persp.openTracker(pane);
+		}
     }
 
     /**
@@ -1458,8 +1514,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public void detachView(IViewReference ref){
 		Perspective persp = getActivePerspective();
-		if(persp == null)
+		if(persp == null) {
 			return;
+		}
 		
 		PerspectiveHelper presentation = persp.getPresentation();		
 		presentation.detachPart(ref);
@@ -1479,8 +1536,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public void dispose() {
 
         // Always unzoom
-        if (isZoomed())
-            zoomOut();
+        if (isZoomed()) {
+			zoomOut();
+		}
 
         makeActiveEditor(null);
         makeActive(null);
@@ -1532,8 +1590,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         stickyPerspectives.clear();
         
-        if (tracker != null) 
-            tracker.close();
+        if (tracker != null) {
+			tracker.close();
+		}
         
         // if we're destroying a window in a non-shutdown situation then we should
         // clean up the working set we made.
@@ -1573,8 +1632,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public boolean editActionSets() {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return false;
+        if (persp == null) {
+			return false;
+		}
 
         // Create list dialog.
         CustomizePerspectiveDialog dlg = window.createCustomizePerspectiveDialog(persp);
@@ -1597,8 +1657,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         Iterator itr = perspList.iterator();
         while (itr.hasNext()) {
             Perspective mgr = (Perspective) itr.next();
-            if (desc.getId().equals(mgr.getDesc().getId()))
-                return mgr;
+            if (desc.getId().equals(mgr.getDesc().getId())) {
+				return mgr;
+			}
         }
         return null;
     }
@@ -1608,8 +1669,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewPart findView(String id) {
         IViewReference ref = findViewReference(id);
-        if (ref == null)
-            return null;
+        if (ref == null) {
+			return null;
+		}
         return ref.getView(true);
     }
 
@@ -1629,8 +1691,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewReference findViewReference(String viewId, String secondaryId) {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return null;
+        if (persp == null) {
+			return null;
+		}
         return persp.findView(viewId, secondaryId);
     }
 
@@ -1663,8 +1726,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Returns the action bars.
      */
     public IActionBars getActionBars() {
-        if (actionBars == null)
-            actionBars = new WWinActionBars(window);
+        if (actionBars == null) {
+			actionBars = new WWinActionBars(window);
+		}
         return actionBars;
     }
 
@@ -1736,8 +1800,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Answer the perspective presentation.
      */
     public PerspectiveHelper getPerspectivePresentation() {
-        if (getActivePerspective() != null)
-            return getActivePerspective().getPresentation();
+        if (getActivePerspective() != null) {
+			return getActivePerspective().getPresentation();
+		}
         return null;
     }
 
@@ -1760,8 +1825,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             public void run() {
                 for (int i = 0; i < refs.length; i++) {
                     IWorkbenchPart part = refs[i].getPart(true);
-                    if (part != null)
-                        result.add(part);
+                    if (part != null) {
+						result.add(part);
+					}
                 }
             }
         });
@@ -1817,10 +1883,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewReference[] getFastViews() {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getFastViews();
-        else
-            return new IViewReference[0];
+        if (persp != null) {
+			return persp.getFastViews();
+		} else {
+			return new IViewReference[0];
+		}
     }
 
     /**
@@ -1839,14 +1906,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (input != null) {
             IWorkbenchAdapter adapter = (IWorkbenchAdapter) input
                     .getAdapter(IWorkbenchAdapter.class);
-            if (adapter != null)
-                label = adapter.getLabel(input);
+            if (adapter != null) {
+				label = adapter.getLabel(input);
+			}
         }
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            label = NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,  label, persp.getDesc().getLabel());
-        else if (deferredActivePersp != null)
-            label = NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,label, deferredActivePersp.getLabel()); 
+        if (persp != null) {
+			label = NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,  label, persp.getDesc().getLabel());
+		} else if (deferredActivePersp != null) {
+			label = NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,label, deferredActivePersp.getLabel());
+		} 
         return label;
     }
 
@@ -1854,13 +1923,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Returns the perspective.
      */
     public IPerspectiveDescriptor getPerspective() {
-        if (deferredActivePersp != null)
-            return deferredActivePersp;
+        if (deferredActivePersp != null) {
+			return deferredActivePersp;
+		}
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getDesc();
-        else
-            return null;
+        if (persp != null) {
+			return persp.getDesc();
+		} else {
+			return null;
+		}
     }
 
     /*
@@ -1883,10 +1954,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public ArrayList getShowInPartIds() {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getShowInPartIds();
-        else
-            return new ArrayList();
+        if (persp != null) {
+			return persp.getShowInPartIds();
+		} else {
+			return new ArrayList();
+		}
     }
 
     /**
@@ -1939,10 +2011,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewReference[] getViewReferences() {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getViewReferences();
-        else
-            return new IViewReference[0];
+        if (persp != null) {
+			return persp.getViewReferences();
+		} else {
+			return new IViewReference[0];
+		}
     }
 
     /**
@@ -1960,16 +2033,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @since 3.1
 	 */
 	/*package*/IViewPart[] getViews(Perspective persp, boolean restore) {			
-        if (persp == null)
+        if (persp == null) {
 			persp = getActivePerspective();
+		}
 		
         if (persp != null) {
             IViewReference refs[] = persp.getViewReferences();
             ArrayList parts = new ArrayList(refs.length);
             for (int i = 0; i < refs.length; i++) {
                 IWorkbenchPart part = refs[i].getPart(restore);
-                if (part != null)
-                    parts.add(part);
+                if (part != null) {
+					parts.add(part);
+				}
             }
             IViewPart[] result = new IViewPart[parts.size()];
             return (IViewPart[]) parts.toArray(result);
@@ -2016,12 +2091,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public void hideView(IViewReference ref) {
         
         // Sanity check.
-        if (ref == null)
-            return;
+        if (ref == null) {
+			return;
+		}
 
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return;
+        if (persp == null) {
+			return;
+		}
 
         IViewPart view = ref.getView(false);
         if (view != null) {
@@ -2031,8 +2108,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
             
             // Confirm.
-            if (!persp.canCloseView(view))
-                return;
+            if (!persp.canCloseView(view)) {
+				return;
+			}
         }
         
         // Notify interested listeners before the hide
@@ -2098,12 +2176,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             PerspectiveDescriptor desc = (PerspectiveDescriptor) WorkbenchPlugin
                     .getDefault().getPerspectiveRegistry()
                     .findPerspectiveWithId(layoutID);
-            if (desc == null)
-                throw new WorkbenchException(
-                        NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,layoutID )); 
+            if (desc == null) {
+				throw new WorkbenchException(
+                        NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,layoutID ));
+			} 
             Perspective persp = createPerspective(desc, true);
-            if (persp == null)
-                return;
+            if (persp == null) {
+				return;
+			}
             perspList.setActive(persp);
             window.firePerspectiveActivated(this, desc);
         }
@@ -2128,8 +2208,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public boolean isEditorAreaVisible() {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return false;
+        if (persp == null) {
+			return false;
+		}
         return persp.isEditorAreaVisible();
     }
 
@@ -2138,10 +2219,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public boolean isFastView(IViewReference ref) {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.isFastView(ref);
-        else
-            return false;
+        if (persp != null) {
+			return persp.isFastView(ref);
+		} else {
+			return false;
+		}
     }
     
     /**
@@ -2153,8 +2235,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public boolean isCloseable(IViewReference ref) {
 		Perspective persp = getActivePerspective();
-		if (persp != null)
+		if (persp != null) {
 			return persp.isCloseable(ref);
+		}
 		return false;
 	}
 
@@ -2167,8 +2250,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public boolean isMoveable(IViewReference ref) {
 		Perspective persp = getActivePerspective();
-		if (persp != null)
+		if (persp != null) {
 			return persp.isMoveable(ref);
+		}
 		return false;
 	}
 
@@ -2178,10 +2262,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public boolean isFixedLayout() {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.isFixedLayout();
-        else
-            return false;
+        if (persp != null) {
+			return persp.isFixedLayout();
+		} else {
+			return false;
+		}
     }
 
     /**
@@ -2190,10 +2275,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewReference getActiveFastView() {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getActiveFastView();
-        else
-            return null;
+        if (persp != null) {
+			return persp.getActiveFastView();
+		} else {
+			return null;
+		}
     }
 
     /**
@@ -2217,10 +2303,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
    public boolean isZoomed() {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return false;
-        if (persp.getPresentation() == null)
-            return false;
+        if (persp == null) {
+			return false;
+		}
+        if (persp.getPresentation() == null) {
+			return false;
+		}
         return persp.getPresentation().isZoomed();
     }
 
@@ -2243,8 +2331,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     protected void onDeactivate() {
     	makeActiveEditor(null);
         makeActive(null);
-        if (getActivePerspective() != null)
-            getActivePerspective().onDeactivate();
+        if (getActivePerspective() != null) {
+			getActivePerspective().onDeactivate();
+		}
         composite.setVisible(false);
     }
 
@@ -2306,8 +2395,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         }
                     }
                 });
-        if (ex[0] != null)
-            throw ex[0];
+        if (ex[0] != null) {
+			throw ex[0];
+		}
         return result[0];
     }
 
@@ -2395,10 +2485,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (editor != null) {
             setEditorAreaVisible(true);
             if (activate) {
-                if (editor instanceof MultiEditor)
-                    activate(((MultiEditor) editor).getActiveEditor());
-                else
-                    activate(editor);
+                if (editor instanceof MultiEditor) {
+					activate(((MultiEditor) editor).getActiveEditor());
+				} else {
+					activate(editor);
+				}
             } else {
                 bringToTop(editor);
             }
@@ -2437,8 +2528,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     private boolean partChangeAffectsZoom(IWorkbenchPartReference ref) {
         PartPane pane = ((WorkbenchPartReference) ref).getPane();
-        if (pane instanceof MultiEditorInnerPane)
-            pane = ((MultiEditorInnerPane) pane).getParentPane();
+        if (pane instanceof MultiEditorInnerPane) {
+			pane = ((MultiEditorInnerPane) pane).getParentPane();
+		}
         return getActivePerspective().getPresentation().partChangeAffectsZoom(
                 pane);
     }
@@ -2448,8 +2540,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void removeFastView(IViewReference ref) {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return;
+        if (persp == null) {
+			return;
+		}
 
         if (!persp.isFastView(ref)) {
             return;
@@ -2532,8 +2625,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void requestActivation(IWorkbenchPart part) {        
         // Sanity check.
-        if (!certifyPart(part))
-            return;
+        if (!certifyPart(part)) {
+			return;
+		}
 
         if (part instanceof MultiEditor) {
             part = ((MultiEditor) part).getActiveEditor();
@@ -2585,8 +2679,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     
             try {
                 UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPage" + label); //$NON-NLS-1$
-                if (pageName == null)
-                    pageName = ""; //$NON-NLS-1$
+                if (pageName == null) {
+					pageName = ""; //$NON-NLS-1$
+				}
                 MultiStatus result = new MultiStatus(
                         PlatformUI.PLUGIN_ID,
                         IStatus.OK,
@@ -2612,8 +2707,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 						IWorkingSet set = getWorkbenchWindow().getWorkbench()
 								.getWorkingSetManager().getWorkingSet(
 										workingSetChildren[i].getID());
-						if (set != null)
+						if (set != null) {
 							workingSetList.add(set);
+						}
 					}
 
 					workingSets = (IWorkingSet[]) workingSetList
@@ -2625,16 +2721,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	            IWorkingSet setWithId = window.getWorkbench().getWorkingSetManager().getWorkingSet(aggregateWorkingSetId);
 	            
 	            // check to see if the set has already been made and assign it if it has
-	            if (setWithId instanceof AggregateWorkingSet)
-	            		aggregateWorkingSet = (AggregateWorkingSet) setWithId;
+	            if (setWithId instanceof AggregateWorkingSet) {
+					aggregateWorkingSet = (AggregateWorkingSet) setWithId;
+				}
                 // Restore editor manager.
                 IMemento childMem = memento
                         .getChild(IWorkbenchConstants.TAG_EDITORS);
                 result.merge(getEditorManager().restoreState(childMem));
     
                 childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
-                if (childMem != null)
-                    result.merge(getViewFactory().restoreState(childMem));
+                if (childMem != null) {
+					result.merge(getViewFactory().restoreState(childMem));
+				}
     
                 // Get persp block.
                 childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
@@ -2660,20 +2758,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         Perspective persp = new Perspective(null, this);
                         result.merge(persp.restoreState(perspMems[i]));
                         IPerspectiveDescriptor desc = persp.getDesc();
-                        if (desc.equals(activeDescriptor))
-                            activePerspective = persp;
-                        else if ((activePerspective == null)
-                                && desc.getId().equals(activePerspectiveID))
-                            activePerspective = persp;
+                        if (desc.equals(activeDescriptor)) {
+							activePerspective = persp;
+						} else if ((activePerspective == null)
+                                && desc.getId().equals(activePerspectiveID)) {
+							activePerspective = persp;
+						}
                         perspList.add(persp);
                         window.firePerspectiveOpened(this, desc);
                     } catch (WorkbenchException e) {
                     }
                 }
                 boolean restoreActivePerspective = false;
-                if (activeDescriptor == null)
-                    restoreActivePerspective = true;
-                else if (activePerspective != null
+                if (activeDescriptor == null) {
+					restoreActivePerspective = true;
+				} else if (activePerspective != null
                         && activePerspective.getDesc().equals(activeDescriptor)) {
                     restoreActivePerspective = true;
                 } else {
@@ -2700,8 +2799,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     perspList.setActive(activePerspective);
                     result.merge(activePerspective.restoreState());
                 }
-                if (activePerspective != null && restoreActivePerspective)
-                    result.merge(activePerspective.restoreState());
+                if (activePerspective != null && restoreActivePerspective) {
+					result.merge(activePerspective.restoreState());
+				}
     
                 if (activePerspective != null) {
                     window.firePerspectiveActivated(this, activePerspective
@@ -2720,10 +2820,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     
                 childMem = memento
                         .getChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY);
-                if (childMem != null)
-                    navigationHistory.restoreState(childMem);
-                else if (getActiveEditor() != null)
-                    navigationHistory.markEditor(getActiveEditor());
+                if (childMem != null) {
+					navigationHistory.restoreState(childMem);
+				} else if (getActiveEditor() != null) {
+					navigationHistory.markEditor(getActiveEditor());
+				}
                 
                 IMemento stickyState = memento
 						.getChild(IWorkbenchConstants.TAG_STICKY_STATE);
@@ -2789,12 +2890,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void savePerspective() {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return;
+        if (persp == null) {
+			return;
+		}
 
         // Always unzoom.
-        if (isZoomed())
-            zoomOut();
+        if (isZoomed()) {
+			zoomOut();
+		}
 
         persp.saveDesc();
     }
@@ -2804,13 +2907,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return;
+        if (persp == null) {
+			return;
+		}
         IPerspectiveDescriptor oldDesc = persp.getDesc();
 
         // Always unzoom.
-        if (isZoomed())
-            zoomOut();
+        if (isZoomed()) {
+			zoomOut();
+		}
 
         persp.saveDescAs(newDesc);
         window.firePerspectiveSavedAs(this, oldDesc, newDesc);
@@ -2821,8 +2926,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IStatus saveState(IMemento memento) {
         // We must unzoom to get correct layout.
-        if (isZoomed())
-            zoomOut();
+        if (isZoomed()) {
+			zoomOut();
+		}
 
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
@@ -2840,9 +2946,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         // Create persp block.
         childMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-        if (getPerspective() != null)
-            childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE,
+        if (getPerspective() != null) {
+			childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE,
                     getPerspective().getId());
+		}
         if (getActivePart() != null) {
             if (getActivePart() instanceof IViewPart) {
                 IViewReference ref = (IViewReference) getReference(getActivePart());
@@ -2877,8 +2984,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					workingSets[i].getName());
 		}
 		
-		if (aggregateWorkingSetId != null)
+		if (aggregateWorkingSetId != null) {
 			memento.putString(ATT_AGGREGATE_WORKING_SET_ID, aggregateWorkingSetId);
+		}
 
         navigationHistory.saveState(memento
                 .createChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY));
@@ -2952,8 +3060,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             UIStats.start(UIStats.ACTIVATE_PART, label);
             // Notify perspective. It may deactivate fast view.
             Perspective persp = getActivePerspective();
-            if (persp != null)
-                persp.partActivated(newPart);
+            if (persp != null) {
+				persp.partActivated(newPart);
+			}
 
             // Deactivate old part
             IWorkbenchPart oldPart = getActivePart();
@@ -2985,13 +3094,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void setEditorAreaVisible(boolean showEditorArea) {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return;
-        if (showEditorArea == persp.isEditorAreaVisible())
-            return;
+        if (persp == null) {
+			return;
+		}
+        if (showEditorArea == persp.isEditorAreaVisible()) {
+			return;
+		}
         // If parts change always update zoom.
-        if (isZoomed())
-            zoomOut();
+        if (isZoomed()) {
+			zoomOut();
+		}
         // Update editor area visibility.
         if (showEditorArea) {
             persp.showEditorArea();
@@ -3013,8 +3125,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private void setPerspective(Perspective newPersp) {
         // Don't do anything if already active layout
         Perspective oldPersp = getActivePerspective();
-        if (oldPersp == newPersp)
-            return;
+        if (oldPersp == newPersp) {
+			return;
+		}
 
         window.largeUpdateStart();
         try {
@@ -3086,11 +3199,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
         } finally {
             window.largeUpdateEnd();
-            if (newPersp == null)
-            	return;
+            if (newPersp == null) {
+				return;
+			}
             IPerspectiveDescriptor desc = newPersp.getDesc();
-            if (desc == null)
-            	return;
+            if (desc == null) {
+				return;
+			}
             if (dirtyPerspectives.remove(desc.getId())) {
             	suggestReset();
             }
@@ -3174,8 +3289,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             getClientComposite().setRedraw(true);
             mgr.getControl2().setRedraw(true);
             IWorkbenchPart part = getActivePart();
-            if (part != null)
-                part.setFocus();
+            if (part != null) {
+				part.setFocus();
+			}
         }
     }
     
@@ -3259,11 +3375,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         if (secondaryID != null) {
             if (secondaryID.length() == 0
-                    || secondaryID.indexOf(ViewFactory.ID_SEP) != -1)
-                throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId); 
+                    || secondaryID.indexOf(ViewFactory.ID_SEP) != -1) {
+				throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
+			} 
         }
-        if (!certifyMode(mode))
-            throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
+        if (!certifyMode(mode)) {
+			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
+		}
 
         // Run op in busy cursor.
         final Object[] result = new Object[1];
@@ -3276,12 +3394,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 }
             }
         });
-        if (result[0] instanceof IViewPart)
-            return (IViewPart) result[0];
-        else if (result[0] instanceof PartInitException)
-            throw (PartInitException) result[0];
-        else
-            throw new PartInitException(WorkbenchMessages.WorkbenchPage_AbnormalWorkbenchCondition); 
+        if (result[0] instanceof IViewPart) {
+			return (IViewPart) result[0];
+		} else if (result[0] instanceof PartInitException) {
+			throw (PartInitException) result[0];
+		} else {
+			throw new PartInitException(WorkbenchMessages.WorkbenchPage_AbnormalWorkbenchCondition);
+		} 
     }
 
     /**
@@ -3327,10 +3446,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         .getPreviouslyActive();
                 IEditorPart activeEditor = getActiveEditor();
                 if (activeEditor != null
-                        && previouslyActive instanceof IEditorPart)
-                    setActivePart(activeEditor);
-                else
-                    setActivePart(previouslyActive);
+                        && previouslyActive instanceof IEditorPart) {
+					setActivePart(activeEditor);
+				} else {
+					setActivePart(previouslyActive);
+				}
             }
         }
     }
@@ -3343,8 +3463,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void setState(IWorkbenchPartReference ref, int newState) {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return;
+        if (persp == null) {
+			return;
+		}
 
         PartPane pane = ((WorkbenchPartReference) ref).getPane();
 
@@ -3396,8 +3517,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     int getState(IWorkbenchPartReference ref) {
         Perspective persp = getActivePerspective();
-        if (persp == null)
-            return IStackPresentationSite.STATE_RESTORED;
+        if (persp == null) {
+			return IStackPresentationSite.STATE_RESTORED;
+		}
 
         PartPane pane = ((WorkbenchPartReference) ref).getPane();
     	
@@ -3469,8 +3591,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public void zoomOut() {
         Perspective persp = getActivePerspective();
-        if (persp != null)
-            persp.getPresentation().zoomOut();
+        if (persp != null) {
+			persp.getPresentation().zoomOut();
+		}
     }
 
     /**
@@ -3481,8 +3604,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *            the part to be made viewable
      */
     private void zoomOutIfNecessary(IWorkbenchPart part) {
-        if (isZoomed() && partChangeAffectsZoom(((PartSite)part.getSite()).getPartReference()))
-            zoomOut();
+        if (isZoomed() && partChangeAffectsZoom(((PartSite)part.getSite()).getPartReference())) {
+			zoomOut();
+		}
     }
 
     /**
@@ -3550,9 +3674,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	/*package*/Perspective getFirstPerspectiveWithView(IViewPart part) {
 		Perspective [] perspectives = perspList.getSortedPerspectives();
-		for (int i=0; i<perspectives.length; i++)
-			if (perspectives[i].containsView(part))
+		for (int i=0; i<perspectives.length; i++) {
+			if (perspectives[i].containsView(part)) {
 				return perspectives[i];
+			}
+		}
 		// we should never get here
 		return null;
 	}
@@ -3609,12 +3735,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * Add/Move the active part to end of the list;
          */
         void setActive(IWorkbenchPart part) {
-            if (parts.size() <= 0)
+            if (parts.size() <= 0) {
 				return;
+			}
 			IWorkbenchPartReference ref = getReference(part);
 			if (ref != null) {
-				if (ref == parts.get(parts.size() - 1))
+				if (ref == parts.get(parts.size() - 1)) {
 					return;
+				}
 				parts.remove(ref);
 				parts.add(ref);
 			}
@@ -3628,8 +3756,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             ILayoutContainer targetContainer = getContainer(ref);
             
             int newIndex = lastIndexOfContainer(targetContainer);
-            if (ref == parts.get(newIndex))
-                return;
+            if (ref == parts.get(newIndex)) {
+				return;
+			}
             parts.remove(ref);
             parts.add(newIndex, ref);
         }
@@ -3662,8 +3791,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * Add the active part to the beginning of the list.
          */
         void add(IWorkbenchPartReference ref) {
-            if (parts.indexOf(ref) >= 0)
-                return;
+            if (parts.indexOf(ref) >= 0) {
+				return;
+			}
 
             IWorkbenchPart part = ref.getPart(false);
             if (part != null) {
@@ -3681,8 +3811,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * Return the active part. Filter fast views.
          */
         IWorkbenchPart getActive() {
-            if (parts.isEmpty())
-                return null;
+            if (parts.isEmpty()) {
+				return null;
+			}
             return getActive(parts.size() - 1);
         }
 
@@ -3690,8 +3821,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * Return the previously active part. Filter fast views.
          */
         IWorkbenchPart getPreviouslyActive() {
-            if (parts.size() < 2)
-                return null;
+            if (parts.size() < 2) {
+				return null;
+			}
             return getActive(parts.size() - 2);
         }
 
@@ -3896,8 +4028,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 			}
 			
-			if (oldLocation == newLoc)
+			if (oldLocation == newLoc) {
 				return;
+			}
 			
 			openedList.remove(oldLocation);
 			openedList.add(newLoc, movedPerspective);
@@ -3961,8 +4094,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             int oldIndex = openedList.indexOf(oldPerspective);
             int newIndex = openedList.indexOf(newPerspective);
 
-            if (oldIndex < 0 || newIndex < 0)
-                return;
+            if (oldIndex < 0 || newIndex < 0) {
+				return;
+			}
 
             openedList.set(oldIndex, newPerspective);
             openedList.set(newIndex, oldPerspective);
@@ -3987,15 +4121,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          */
         public Perspective getNextActive() {
             if (active == null) {
-                if (usedList.isEmpty())
-                    return null;
-                else
-                    return (Perspective) usedList.get(usedList.size() - 1);
+                if (usedList.isEmpty()) {
+					return null;
+				} else {
+					return (Perspective) usedList.get(usedList.size() - 1);
+				}
             } else {
-                if (usedList.size() < 2)
-                    return null;
-                else
-                    return (Perspective) usedList.get(usedList.size() - 2);
+                if (usedList.size() < 2) {
+					return null;
+				} else {
+					return (Perspective) usedList.get(usedList.size() - 2);
+				}
             }
         }
 
@@ -4011,8 +4147,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * list.
          */
         public void setActive(Perspective perspective) {
-            if (perspective == active)
-                return;
+            if (perspective == active) {
+				return;
+			}
 
             updateActionSets(active, perspective);
             active = perspective;
@@ -4080,8 +4217,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private IViewReference[] getViewReferenceStack(IViewPart part) {
         // Sanity check.
         Perspective persp = getActivePerspective();
-        if (persp == null || !certifyPart(part))
-            return null;
+        if (persp == null || !certifyPart(part)) {
+			return null;
+		}
 
         ILayoutContainer container = ((PartSite) part.getSite()).getPane()
                 .getContainer();
@@ -4093,8 +4231,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 if (layoutPart instanceof ViewPane) {
                     IViewReference view = ((ViewPane) layoutPart)
                             .getViewReference();
-                    if (view != null)
-                        list.add(view);
+                    if (view != null) {
+						list.add(view);
+					}
                 }
             }
 
@@ -4125,8 +4264,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewPart[] getViewStack(IViewPart part) {
         IViewReference[] refStack = getViewReferenceStack(part);
-        if (refStack == null)
-            return null;
+        if (refStack == null) {
+			return null;
+		}
 
         List result = new ArrayList();
        
@@ -4226,8 +4366,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private void findSashParts(LayoutTree tree, PartPane.Sashes sashes,
             SashInfo info) {
         LayoutTree parent = tree.getParent();
-        if (parent == null)
-            return;
+        if (parent == null) {
+			return;
+		}
 
         if (parent.part instanceof LayoutPartSash) {
             // get the layout part sash from this tree node
@@ -4386,8 +4527,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 
 				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
                 if (window == null) {
-                    if (workbench.getWorkbenchWindowCount() == 0)
-                        return;
+                    if (workbench.getWorkbenchWindowCount() == 0) {
+						return;
+					}
                     window = workbench.getWorkbenchWindows()[0];
                 }
 
@@ -4399,8 +4541,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                                 WorkbenchMessages.Dynamic_resetPerspectiveTitle, 
                                 WorkbenchMessages.Dynamic_resetPerspectiveMessage)) { 
                     IWorkbenchPage page = window.getActivePage();
-                    if (page == null)
-                        return;
+                    if (page == null) {
+						return;
+					}
                     page.resetPerspective();
                 }
             }
@@ -4424,8 +4567,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	public void setWorkingSets(IWorkingSet[] newWorkingSets) {
-		if (newWorkingSets == null)
+		if (newWorkingSets == null) {
 			newWorkingSets = new IWorkingSet[0];
+		}
 
 		IWorkingSet[] oldWorkingSets = workingSets;
 		
@@ -4433,8 +4577,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (newWorkingSets.length > 1) {	
 			Set setOfSets = new HashSet();
 			for (int i = 0; i < newWorkingSets.length; i++) {
-				if (newWorkingSets[i] == null)
+				if (newWorkingSets[i] == null) {
 					throw new IllegalArgumentException();
+				}
 				setOfSets.add(newWorkingSets[i]);
 			}
 			newWorkingSets = (IWorkingSet[]) setOfSets

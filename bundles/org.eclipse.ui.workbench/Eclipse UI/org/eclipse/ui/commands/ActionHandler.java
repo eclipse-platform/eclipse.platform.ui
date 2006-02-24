@@ -94,8 +94,9 @@ public final class ActionHandler extends AbstractHandler {
      *            the action. Must not be <code>null</code>.
      */
     public ActionHandler(IAction action) {
-        if (action == null)
-            throw new NullPointerException();
+        if (action == null) {
+			throw new NullPointerException();
+		}
 
         this.action = action;
     }
@@ -134,10 +135,11 @@ public final class ActionHandler extends AbstractHandler {
                         Map previousAttributeValuesByName = attributeValuesByName;
                         attributeValuesByName = getAttributeValuesByNameFromAction();
                         if (!attributeValuesByName
-                                .equals(previousAttributeValuesByName))
-                            fireHandlerChanged(new HandlerEvent(
+                                .equals(previousAttributeValuesByName)) {
+							fireHandlerChanged(new HandlerEvent(
                                     ActionHandler.this, true,
                                     previousAttributeValuesByName));
+						}
                     }
                 }
             };
@@ -176,8 +178,9 @@ public final class ActionHandler extends AbstractHandler {
      */
     public Object execute(Map parameterValuesByName) throws ExecutionException {
         if ((action.getStyle() == IAction.AS_CHECK_BOX)
-                || (action.getStyle() == IAction.AS_RADIO_BUTTON))
-            action.setChecked(!action.isChecked());
+                || (action.getStyle() == IAction.AS_RADIO_BUTTON)) {
+			action.setChecked(!action.isChecked());
+		}
         try {
             action.runWithEvent(new Event());
         } catch (Exception e) {

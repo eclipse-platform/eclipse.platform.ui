@@ -46,8 +46,9 @@ public class MultiEditorInnerPane extends EditorPane {
         if (multiEditor != null) {
             IEditorPart part = (IEditorPart) this.getEditorReference().getPart(
                     true);
-            if (part != null)
-                multiEditor.updateGradient(part);
+            if (part != null) {
+				multiEditor.updateGradient(part);
+			}
         }
     }
 

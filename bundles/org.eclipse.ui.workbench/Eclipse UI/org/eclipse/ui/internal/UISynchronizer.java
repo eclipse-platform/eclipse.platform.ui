@@ -40,8 +40,9 @@ public class UISynchronizer extends Synchronizer {
             //even if the UI was not blocked earlier, it might become blocked
             //before it can serve the asyncExec to do the pending work
             do {
-                if (lockListener.isUIWaiting())
-                    lockListener.interruptUI();
+                if (lockListener.isUIWaiting()) {
+					lockListener.interruptUI();
+				}
             } while (!work.acquire(1000));
         } catch (InterruptedException e) {
         }

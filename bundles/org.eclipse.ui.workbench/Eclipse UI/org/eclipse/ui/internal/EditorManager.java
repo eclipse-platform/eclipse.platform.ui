@@ -190,8 +190,9 @@ public class EditorManager implements IExtensionChangeHandler {
 					if (event.getProperty().equals(
 							IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 						IEditorReference[] editors = getEditors();
-						for (int i = 0; i < editors.length; i++)
+						for (int i = 0; i < editors.length; i++) {
 							((EditorReference) editors[i]).pinStatusUpdated();
+						}
 					}
 				}
 			};
@@ -261,8 +262,9 @@ public class EditorManager implements IExtensionChangeHandler {
 		IEditorReference[] editors = page.getEditorReferences();
 		for (int i = 0; i < editors.length; i++) {
 			IEditorPart part = (IEditorPart) editors[i].getPart(false);
-			if (part != null && part.isDirty())
+			if (part != null && part.isDirty()) {
 				result.add(part);
+			}
 
 		}
 		return result;
@@ -274,8 +276,9 @@ public class EditorManager implements IExtensionChangeHandler {
 	public boolean containsEditor(IEditorReference ref) {
 		IEditorReference[] editors = page.getEditorReferences();
 		for (int i = 0; i < editors.length; i++) {
-			if (ref == editors[i])
+			if (ref == editors[i]) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -501,11 +504,13 @@ public class EditorManager implements IExtensionChangeHandler {
 		// if the editor reference's factory id and name match.
 		String name = input.getName();
 		IPersistableElement persistable = input.getPersistable();
-		if (name == null || persistable == null)
+		if (name == null || persistable == null) {
 			return;
+		}
 		String id = persistable.getFactoryId();
-		if (id == null)
+		if (id == null) {
 			return;
+		}
 		for (Iterator i = editorList.iterator(); i.hasNext();) {
 			EditorReference editor = (EditorReference) i.next();
 			if (name.equals(editor.getName())
@@ -565,8 +570,9 @@ public class EditorManager implements IExtensionChangeHandler {
 	 */
 	public IEditorPart getVisibleEditor() {
 		IEditorReference ref = editorPresentation.getVisibleEditor();
-		if (ref == null)
+		if (ref == null) {
 			return null;
+		}
 		return (IEditorPart) ref.getPart(true);
 	}
 
@@ -577,8 +583,9 @@ public class EditorManager implements IExtensionChangeHandler {
 		IEditorReference[] editors = page.getEditorReferences();
 		for (int i = 0; i < editors.length; i++) {
 			IEditorReference ed = editors[i];
-			if (ed.isDirty())
+			if (ed.isDirty()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -594,11 +601,13 @@ public class EditorManager implements IExtensionChangeHandler {
 				.getPreferenceStore();
 		boolean reuse = store
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
-		if (!reuse)
+		if (!reuse) {
 			return null;
+		}
 
-		if (editors.length < page.getEditorReuseThreshold())
+		if (editors.length < page.getEditorReuseThreshold()) {
 			return null;
+		}
 
 		IEditorReference dirtyEditor = null;
 
@@ -607,23 +616,27 @@ public class EditorManager implements IExtensionChangeHandler {
 			IEditorReference editor = editors[i];
 			// if(editor == activePart)
 			// continue;
-			if (editor.isPinned())
+			if (editor.isPinned()) {
 				continue;
+			}
 			if (editor.isDirty()) {
-				if (dirtyEditor == null) // ensure least recently used
+				if (dirtyEditor == null) {
 					dirtyEditor = editor;
+				}
 				continue;
 			}
 			return editor;
 		}
-		if (dirtyEditor == null)
+		if (dirtyEditor == null) {
 			return null;
+		}
 
 		/* fix for 11122 */
 		boolean reuseDirty = store
 				.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS);
-		if (!reuseDirty)
+		if (!reuseDirty) {
 			return null;
+		}
 
 		MessageDialog dialog = new MessageDialog(window.getShell(),
 				WorkbenchMessages.EditorManager_reuseEditorDialogTitle,
@@ -782,10 +795,11 @@ public class EditorManager implements IExtensionChangeHandler {
 		for (int i = 0; i < editorArray.length; i++) {
 			EditorDescriptor innerDesc = (EditorDescriptor) reg
 					.findEditor(editorArray[i]);
-			if (innerDesc == null)
+			if (innerDesc == null) {
 				throw new PartInitException(NLS.bind(
 						WorkbenchMessages.EditorManager_unknownEditorIDMessage,
 						editorArray[i]));
+			}
 			descArray[i] = innerDesc;
 			InnerEditor innerRef = new InnerEditor(ref, inputArray[i],
 					descArray[i]);
@@ -813,11 +827,11 @@ public class EditorManager implements IExtensionChangeHandler {
 			final EditorDescriptor desc, final IEditorInput input)
 			throws PartInitException {
 		EditorSite site = new EditorSite(ref, part, page, desc);
-		if (desc != null)
+		if (desc != null) {
 			site.setActionBars(createEditorActionBars(desc, site));
-		else
-
+		} else {
 			site.setActionBars(createEmptyEditorActionBars(site));
+		}
 		final String label = part.getTitle(); // debugging only
 		try {
 			try {
@@ -828,16 +842,18 @@ public class EditorManager implements IExtensionChangeHandler {
 			}
 
 			// Sanity-check the site
-			if (part.getSite() != site || part.getEditorSite() != site)
+			if (part.getSite() != site || part.getEditorSite() != site) {
 				throw new PartInitException(NLS.bind(
 						WorkbenchMessages.EditorManager_siteIncorrect, desc
 								.getId()));
+			}
 
 		} catch (Exception e) {
 			disposeEditorActionBars((EditorActionBars) site.getActionBars());
 			site.dispose();
-			if (e instanceof PartInitException)
+			if (e instanceof PartInitException) {
 				throw (PartInitException) e;
+			}
 
 			throw new PartInitException(
 					WorkbenchMessages.EditorManager_errorInInit, e);
@@ -984,14 +1000,16 @@ public class EditorManager implements IExtensionChangeHandler {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				// Update each workbook with its visible editor.
-				for (int i = 0; i < visibleEditors.size(); i++)
+				for (int i = 0; i < visibleEditors.size(); i++) {
 					setVisibleEditor((IEditorReference) visibleEditors.get(i),
 							false);
+				}
 
 				// Update the active workbook
-				if (activeWorkbookID[0] != null)
+				if (activeWorkbookID[0] != null) {
 					editorPresentation
 							.setActiveEditorWorkbookFromID(activeWorkbookID[0]);
+				}
 
 				if (activeEditor[0] != null) {
 					IWorkbenchPart editor = activeEditor[0].getPart(true);
@@ -1024,8 +1042,9 @@ public class EditorManager implements IExtensionChangeHandler {
 		// Get the list of dirty editors and views. If it is
 		// empty just return.
 		ISaveablePart[] parts = page.getDirtyParts();
-		if (parts.length == 0)
+		if (parts.length == 0) {
 			return true;
+		}
 		// saveAll below expects a mutable list
 		List dirtyParts = new ArrayList(parts.length);
 		for (int i = 0; i < parts.length; i++) {
@@ -1104,8 +1123,9 @@ public class EditorManager implements IExtensionChangeHandler {
 						if (partsWindow != partsWindow.getWorkbench()
 								.getActiveWorkbenchWindow()) {
 							Shell shell = partsWindow.getShell();
-							if (shell.getMinimized())
+							if (shell.getMinimized()) {
 								shell.setMinimized(false);
+							}
 							shell.setActive();
 						}
 						page.bringToTop(part);
@@ -1149,8 +1169,9 @@ public class EditorManager implements IExtensionChangeHandler {
             modelsToSave = convertToModels(dirtyParts, closing);
             
             // If nothing to save, return.
-            if (modelsToSave.isEmpty())
-            	return true;
+            if (modelsToSave.isEmpty()) {
+				return true;
+			}
             // Use a simpler dialog if there's only one
             if (modelsToSave.size() == 1) {
             	ISaveableModel model = (ISaveableModel) modelsToSave.get(0);
@@ -1191,8 +1212,9 @@ public class EditorManager implements IExtensionChangeHandler {
 	            if (SaveableHelper.testGetAutomatedResponse()==SaveableHelper.USER_RESPONSE) {
 	            	int result = dlg.open();
 	                //Just return false to prevent the operation continuing
-	                if (result == IDialogConstants.CANCEL_ID)
-	                    return false;
+	                if (result == IDialogConstants.CANCEL_ID) {
+						return false;
+					}
 	
 	                modelsToSave = Arrays.asList(dlg.getResult());
 	            }
@@ -1203,8 +1225,9 @@ public class EditorManager implements IExtensionChangeHandler {
 		}
 
         // If the editor list is empty return.
-        if (modelsToSave.isEmpty())
-            return true;
+        if (modelsToSave.isEmpty()) {
+			return true;
+		}
 		
 		// Create save block.
         final List finalModels = modelsToSave;
@@ -1225,8 +1248,9 @@ public class EditorManager implements IExtensionChangeHandler {
 					} catch (CoreException e) {
 						ErrorDialog.openError(window.getShell(), WorkbenchMessages.Error, e.getMessage(), e.getStatus());
 					}
-					if (monitorWrap.isCanceled())
+					if (monitorWrap.isCanceled()) {
 						break;
+					}
 				}
 				monitorWrap.done();
 			}
@@ -1443,8 +1467,9 @@ public class EditorManager implements IExtensionChangeHandler {
 
 		String strActivePart = editorMem
 				.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
-		if ("true".equals(strActivePart)) //$NON-NLS-1$
+		if ("true".equals(strActivePart)) { //$NON-NLS-1$
 			activeEditor[0] = e;
+		}
 
 		String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
 		boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
@@ -1461,16 +1486,18 @@ public class EditorManager implements IExtensionChangeHandler {
 		final IMemento memento = mem;
 		final MultiStatus result = res;
 		final EditorSite site = (EditorSite) editor.getEditorSite();
-		if (site.getPane() instanceof MultiEditorInnerPane)
+		if (site.getPane() instanceof MultiEditorInnerPane) {
 			return;
+		}
 
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				// Get the input.
 				IEditorInput input = editor.getEditorInput();
 				IPersistableElement persistable = input.getPersistable();
-				if (persistable == null)
+				if (persistable == null) {
 					return;
+				}
 
 				// Save editor.
 				IMemento editorMem = memento
@@ -1487,26 +1514,30 @@ public class EditorManager implements IExtensionChangeHandler {
 				editorMem.putString(IWorkbenchConstants.TAG_PART_NAME,
 						editorRef.getPartName());
 
-				if (editorRef.isPinned())
+				if (editorRef.isPinned()) {
 					editorMem.putString(IWorkbenchConstants.TAG_PINNED, "true"); //$NON-NLS-1$
+				}
 
 				EditorPane editorPane = (EditorPane) ((EditorSite) editor
 						.getEditorSite()).getPane();
 				editorMem.putString(IWorkbenchConstants.TAG_WORKBOOK,
 						editorPane.getWorkbook().getID());
 
-				if (editor == page.getActivePart())
+				if (editor == page.getActivePart()) {
 					editorMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,
 							"true"); //$NON-NLS-1$
+				}
 
-				if (editorPane == editorPane.getWorkbook().getSelection())
+				if (editorPane == editorPane.getWorkbook().getSelection()) {
 					editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
+				}
 
 				if (input instanceof IPathEditorInput) {
 					IPath path = ((IPathEditorInput) input).getPath();
-					if (path != null)
+					if (path != null) {
 						editorMem.putString(IWorkbenchConstants.TAG_PATH, path
 								.toString());
+					}
 				}
 
 				// Save input.
@@ -1533,8 +1564,9 @@ public class EditorManager implements IExtensionChangeHandler {
 
 	// for dynamic UI
 	public IMemento getMemento(IEditorReference e) {
-		if (e instanceof EditorReference)
+		if (e instanceof EditorReference) {
 			return ((EditorReference) e).getMemento();
+		}
 		return null;
 	}
 

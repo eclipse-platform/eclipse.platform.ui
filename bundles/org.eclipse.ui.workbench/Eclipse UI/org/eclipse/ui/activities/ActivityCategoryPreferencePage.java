@@ -295,8 +295,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 Object element) {
             ICategory category = (ICategory) element;
             if (WorkbenchActivityHelper.getActivityIdsForCategory(category)
-                    .isEmpty())
-                return false;
+                    .isEmpty()) {
+				return false;
+			}
             return true;
         }
     }
@@ -509,9 +510,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 					}
 					Set activitySet = WorkbenchActivityHelper
 							.getActivityIdsForCategory(category);
-					if (tableItem.getChecked())
+					if (tableItem.getChecked()) {
 						activitySet.addAll(workingCopy.getEnabledActivityIds());
-					else {
+					} else {
 						HashSet newSet = new HashSet(workingCopy
 								.getEnabledActivityIds());
 						newSet.removeAll(activitySet);

@@ -41,11 +41,13 @@ public final class KeySequenceBinding implements IKeySequenceBinding {
     private transient String string;
 
     public KeySequenceBinding(KeySequence keySequence, int match) {
-        if (keySequence == null)
-            throw new NullPointerException();
+        if (keySequence == null) {
+			throw new NullPointerException();
+		}
 
-        if (match < 0)
-            throw new IllegalArgumentException();
+        if (match < 0) {
+			throw new IllegalArgumentException();
+		}
 
         this.keySequence = keySequence;
         this.match = match;
@@ -55,15 +57,17 @@ public final class KeySequenceBinding implements IKeySequenceBinding {
         KeySequenceBinding castedObject = (KeySequenceBinding) object;
         int compareTo = Util.compare(match, castedObject.match);
 
-        if (compareTo == 0)
-            compareTo = Util.compare(keySequence, castedObject.keySequence);
+        if (compareTo == 0) {
+			compareTo = Util.compare(keySequence, castedObject.keySequence);
+		}
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof KeySequenceBinding))
-            return false;
+        if (!(object instanceof KeySequenceBinding)) {
+			return false;
+		}
 
         final KeySequenceBinding castedObject = (KeySequenceBinding) object;
         if (!Util.equals(keySequence, castedObject.keySequence)) {

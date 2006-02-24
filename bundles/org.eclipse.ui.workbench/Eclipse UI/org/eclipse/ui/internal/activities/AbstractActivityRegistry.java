@@ -37,21 +37,25 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 
     public void addActivityRegistryListener(
             IActivityRegistryListener activityRegistryListener) {
-        if (activityRegistryListener == null)
-            throw new NullPointerException();
+        if (activityRegistryListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityRegistryListeners == null)
-            activityRegistryListeners = new ArrayList();
+        if (activityRegistryListeners == null) {
+			activityRegistryListeners = new ArrayList();
+		}
 
-        if (!activityRegistryListeners.contains(activityRegistryListener))
-            activityRegistryListeners.add(activityRegistryListener);
+        if (!activityRegistryListeners.contains(activityRegistryListener)) {
+			activityRegistryListeners.add(activityRegistryListener);
+		}
     }
 
     protected void fireActivityRegistryChanged() {
         if (activityRegistryListeners != null) {
             for (int i = 0; i < activityRegistryListeners.size(); i++) {
-                if (activityRegistryEvent == null)
-                    activityRegistryEvent = new ActivityRegistryEvent(this);
+                if (activityRegistryEvent == null) {
+					activityRegistryEvent = new ActivityRegistryEvent(this);
+				}
 
                 ((IActivityRegistryListener) activityRegistryListeners.get(i))
                         .activityRegistryChanged(activityRegistryEvent);
@@ -81,11 +85,13 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 
     public void removeActivityRegistryListener(
             IActivityRegistryListener activityRegistryListener) {
-        if (activityRegistryListener == null)
-            throw new NullPointerException();
+        if (activityRegistryListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityRegistryListeners != null)
-            activityRegistryListeners.remove(activityRegistryListener);
+        if (activityRegistryListeners != null) {
+			activityRegistryListeners.remove(activityRegistryListener);
+		}
     }
 
     public List getDefaultEnabledActivities() {

@@ -71,8 +71,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		if (viewer != null)
+		if (viewer != null) {
 			viewer.setFocus();
+		}
 	}
 
 	/**
@@ -94,8 +95,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
 				JobInfo info = getSelectedInfo();
-				if (info == null)
+				if (info == null) {
 					return;
+				}
 			}
 		});
 		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -136,8 +138,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 	private IStructuredSelection getSelection() {
 		// If the provider has not been set yet move on.
 		ISelectionProvider provider = getSite().getSelectionProvider();
-		if (provider == null)
+		if (provider == null) {
 			return null;
+		}
 		ISelection currentSelection = provider.getSelection();
 		if (currentSelection instanceof IStructuredSelection) {
 			return (IStructuredSelection) currentSelection;
@@ -156,8 +159,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 		if (selection != null && selection.size() == 1) {
 			JobTreeElement element = (JobTreeElement) selection
 					.getFirstElement();
-			if (element.isJobInfo())
+			if (element.isJobInfo()) {
 				return (JobInfo) element;
+			}
 		}
 		return null;
 	}
@@ -198,12 +202,14 @@ public class ProgressView extends ViewPart implements IViewPart {
 				.setToolTipText(ProgressMessages.NewProgressView_RemoveAllJobsToolTip);
 		ImageDescriptor id = WorkbenchImages
 				.getWorkbenchImageDescriptor("/elcl16/progress_remall.gif"); //$NON-NLS-1$
-		if (id != null)
+		if (id != null) {
 			clearAllAction.setImageDescriptor(id);
+		}
 		id = WorkbenchImages
 				.getWorkbenchImageDescriptor("/dlcl16/progress_remall.gif"); //$NON-NLS-1$
-		if (id != null)
+		if (id != null) {
 			clearAllAction.setDisabledImageDescriptor(id);
+		}
 	}
 
 }

@@ -221,8 +221,9 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
             for (Iterator i = categoryIds.iterator(); i.hasNext();) {
                 String categoryId = (String) i.next();
                 ICategory category = manager.getCategory(categoryId);
-				if (getCategoryActivities(category).length > 0)
-                	categories.add(category);
+				if (getCategoryActivities(category).length > 0) {
+					categories.add(category);
+				}
             }
             return categories.toArray();
         } else if (parentElement instanceof ICategory) {
@@ -252,8 +253,9 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
      * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
      */
     public boolean hasChildren(Object element) {
-        if (element instanceof IActivityManager || element instanceof ICategory)
-            return true;
+        if (element instanceof IActivityManager || element instanceof ICategory) {
+			return true;
+		}
         return false;
     }
 

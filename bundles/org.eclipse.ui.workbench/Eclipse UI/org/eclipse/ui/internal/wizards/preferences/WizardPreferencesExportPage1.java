@@ -129,8 +129,9 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 				filters[0] = element.getFilter();
 				matches = service.matches((IEclipsePreferences) service
 						.getRootNode().node("instance"), filters); //$NON-NLS-1$
-				if (matches.length > 0)
+				if (matches.length > 0) {
 					returnElements[count++] = element;
+				}
 			}
 			elements = new PreferenceTransferElement[count];
 			System.arraycopy(returnElements, 0, elements, 0, count);
@@ -172,7 +173,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 				}
 			}
 		} finally {
-			if (fos != null)
+			if (fos != null) {
 				try {
 					fos.close();
 				} catch (IOException e) {
@@ -180,6 +181,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
 					return false;
 				}
+			}
 		}
 		return true;
 	}

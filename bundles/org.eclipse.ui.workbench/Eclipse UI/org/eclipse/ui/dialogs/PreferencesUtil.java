@@ -38,12 +38,14 @@ public final class PreferencesUtil {
 		if (data != null) {
 			dialog.setPageData(data);
 			IPreferencePage page = dialog.getCurrentPage();
-			if (page instanceof PreferencePage)
+			if (page instanceof PreferencePage) {
 				((PreferencePage) page).applyData(data);
+			}
 		}
 
-		if (displayedIds != null)
+		if (displayedIds != null) {
 			dialog.showOnly(displayedIds);
+		}
 	}
 
 	/**
@@ -124,8 +126,9 @@ public final class PreferencesUtil {
 		FilteredPreferenceDialog dialog = PropertyDialog.createDialogOn(shell, propertyPageId,
 				element);
 
-		if (dialog == null)
+		if (dialog == null) {
 			return null;
+		}
 
 		applyOptions(data, displayedIds, dialog);
 

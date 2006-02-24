@@ -87,8 +87,9 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	Object findNode(String id) {
 		for (int i = 0; i < nodes.size(); i++) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodes.get(i);
-			if (node.getId().equals(id))
+			if (node.getId().equals(id)) {
 				return node;
+			}
 		}
 		return null;
 	}
@@ -100,8 +101,9 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		IPreferenceNode[] subNodes = ((WorkbenchPreferenceNode) parent).getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) subNodes[i];
-			if (node.getId().equals(currentToken))
+			if (node.getId().equals(currentToken)) {
 				return node;
+			}
 		}
 		return null;
 	}
@@ -158,11 +160,13 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * Read preference page element.
 	 */
 	protected boolean readElement(IConfigurationElement element) {
-		if (element.getName().equals(TAG_PAGE) == false)
+		if (element.getName().equals(TAG_PAGE) == false) {
 			return false;
+		}
 		WorkbenchPreferenceNode node = createNode(element);
-		if (node != null)
+		if (node != null) {
 			nodes.add(node);
+		}
 		return true;
 	}
 

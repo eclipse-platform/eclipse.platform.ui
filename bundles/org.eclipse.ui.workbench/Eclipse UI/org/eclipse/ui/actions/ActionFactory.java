@@ -98,17 +98,20 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null)
-                throw new IllegalArgumentException();
+            if (window == null) {
+				throw new IllegalArgumentException();
+			}
             IWorkbenchAction action = new AboutAction(window);
             action.setId(getId());
 
             IProduct product = Platform.getProduct();
             String productName = null;
-            if (product != null)
-                productName = product.getName();
-            if (productName == null)
-                productName = ""; //$NON-NLS-1$
+            if (product != null) {
+				productName = product.getName();
+			}
+            if (productName == null) {
+				productName = ""; //$NON-NLS-1$
+			}
 
             action.setText(NLS.bind(WorkbenchMessages.AboutAction_text, productName )); 
             action.setToolTipText(NLS.bind(WorkbenchMessages.AboutAction_toolTip,  productName ));

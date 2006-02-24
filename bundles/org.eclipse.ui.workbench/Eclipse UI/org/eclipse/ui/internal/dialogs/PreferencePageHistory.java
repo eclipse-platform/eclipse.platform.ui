@@ -93,8 +93,9 @@ class PreferencePageHistory {
 	 *         history index
 	 */
 	private PreferenceHistoryEntry getHistoryEntry(int index) {
-		if (index >= 0 && index < history.size())
+		if (index >= 0 && index < history.size()) {
 			return (PreferenceHistoryEntry) history.get(index);
+		}
 		return null;
 	}
 
@@ -223,8 +224,9 @@ class PreferencePageHistory {
 
 			public boolean isEnabled() {
 				boolean enabled = historyIndex > 0;
-				if (enabled)
-					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName,getHistoryEntry(historyIndex - 1).getLabel() )); 
+				if (enabled) {
+					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName,getHistoryEntry(historyIndex - 1).getLabel() ));
+				} 
 				return enabled;
 			}
 
@@ -256,8 +258,9 @@ class PreferencePageHistory {
 
 			public boolean isEnabled() {
 				boolean enabled = historyIndex < history.size() - 1;
-				if (enabled)
-					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName, getHistoryEntry(historyIndex + 1).getLabel() )); 
+				if (enabled) {
+					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName, getHistoryEntry(historyIndex + 1).getLabel() ));
+				} 
 				return enabled;
 			}
 

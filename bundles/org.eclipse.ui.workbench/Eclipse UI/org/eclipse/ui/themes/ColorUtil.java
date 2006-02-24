@@ -109,8 +109,9 @@ public final class ColorUtil {
 	 * @return the RGB value
 	 */
 	public static RGB getColorValue(String rawValue) {
-		if (rawValue == null)
+		if (rawValue == null) {
 			return null;
+		}
 
 		rawValue = rawValue.trim();
 

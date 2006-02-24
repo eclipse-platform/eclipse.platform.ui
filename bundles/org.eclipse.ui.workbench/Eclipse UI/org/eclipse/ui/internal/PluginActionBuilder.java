@@ -56,8 +56,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
      */
     public final void contribute(IMenuManager menu, IToolBarManager toolbar,
             boolean appendIfMissing) {
-        if (cache == null)
-            return;
+        if (cache == null) {
+			return;
+		}
 
         for (int i = 0; i < cache.size(); i++) {
             BasicContribution contribution = (BasicContribution) cache.get(i);
@@ -130,15 +131,17 @@ public abstract class PluginActionBuilder extends RegistryReader {
             if (targetID != null) {
                 // Ignore contributions not matching target id
                 String id = getTargetID(element);
-                if (id == null || !id.equals(targetID))
-                    return true;
+                if (id == null || !id.equals(targetID)) {
+					return true;
+				}
             }
 
             // Read its sub-elements
             currentContribution = createContribution();
             readElementChildren(element);
-            if (cache == null)
-                cache = new ArrayList(4);
+            if (cache == null) {
+				cache = new ArrayList(4);
+			}
             cache.add(currentContribution);
             currentContribution = null;
             return true;
@@ -174,8 +177,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
          * @param element the element to base the menu on
          */
         public void addMenu(IConfigurationElement element) {
-            if (menus == null)
-                menus = new ArrayList(1);
+            if (menus == null) {
+				menus = new ArrayList(1);
+			}
             menus.add(element);
         }
 
@@ -185,8 +189,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
          * @param desc the descriptor
          */
         public void addAction(ActionDescriptor desc) {
-            if (actions == null)
-                actions = new ArrayList(3);
+            if (actions == null) {
+				actions = new ArrayList(3);
+			}
             actions.add(desc);
         }
 
@@ -213,11 +218,13 @@ public abstract class PluginActionBuilder extends RegistryReader {
             if (actions != null) {
                 for (int i = 0; i < actions.size(); i++) {
                     ActionDescriptor ad = (ActionDescriptor) actions.get(i);
-                    if (menu != null)
-                        contributeMenuAction(ad, menu, menuAppendIfMissing);
-                    if (toolbar != null)
-                        contributeToolbarAction(ad, toolbar,
+                    if (menu != null) {
+						contributeMenuAction(ad, menu, menuAppendIfMissing);
+					}
+                    if (toolbar != null) {
+						contributeToolbarAction(ad, toolbar,
                                 toolAppendIfMissing);
+					}
                 }
             }
         }
@@ -267,13 +274,14 @@ public abstract class PluginActionBuilder extends RegistryReader {
             }
 
             // Find reference group.
-            if (group == null)
-                group = IWorkbenchActionConstants.MB_ADDITIONS;
+            if (group == null) {
+				group = IWorkbenchActionConstants.MB_ADDITIONS;
+			}
             IContributionItem sep = parent.find(group);
             if (sep == null) {
-                if (appendIfMissing)
-                    addGroup(parent, group);
-                else {
+                if (appendIfMissing) {
+					addGroup(parent, group);
+				} else {
                     WorkbenchPlugin
                             .log("Invalid Menu Extension (Group is invalid): " + id); //$NON-NLS-1$
                     return;
@@ -282,8 +290,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
             // If the menu does not exist create it.
             IMenuManager newMenu = parent.findMenuUsingPath(id);
-            if (newMenu == null)
-                newMenu = new MenuManager(label, id);
+            if (newMenu == null) {
+				newMenu = new MenuManager(label, id);
+			}
 
             // Add the menu
             try {
@@ -297,8 +306,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
             // the separators and group markers below will not be wrapped
             // properly if the menu was just created.
             newMenu = parent.findMenuUsingPath(id);
-            if (newMenu == null)
-                WorkbenchPlugin.log("Could not find new menu: " + id); //$NON-NLS-1$
+            if (newMenu == null) {
+				WorkbenchPlugin.log("Could not find new menu: " + id); //$NON-NLS-1$
+			}
 
             // Create separators.
             IConfigurationElement[] children = menuElement.getChildren();
@@ -320,8 +330,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
             // Get config data.
             String mpath = ad.getMenuPath();
             String mgroup = ad.getMenuGroup();
-            if (mpath == null && mgroup == null)
-                return;
+            if (mpath == null && mgroup == null) {
+				return;
+			}
 
             // Find parent menu.
             IMenuManager parent = menu;
@@ -335,13 +346,14 @@ public abstract class PluginActionBuilder extends RegistryReader {
             }
 
             // Find reference group.
-            if (mgroup == null)
-                mgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+            if (mgroup == null) {
+				mgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+			}
             IContributionItem sep = parent.find(mgroup);
             if (sep == null) {
-                if (appendIfMissing)
-                    addGroup(parent, mgroup);
-                else {
+                if (appendIfMissing) {
+					addGroup(parent, mgroup);
+				} else {
                     WorkbenchPlugin
                             .log("Invalid Menu Extension (Group is invalid): " + ad.getId()); //$NON-NLS-1$
                     return;
@@ -364,11 +376,13 @@ public abstract class PluginActionBuilder extends RegistryReader {
         protected void contributeSeparator(IMenuManager menu,
                 IConfigurationElement element) {
             String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-            if (id == null || id.length() <= 0)
-                return;
+            if (id == null || id.length() <= 0) {
+				return;
+			}
             IContributionItem sep = menu.find(id);
-            if (sep != null)
-                return;
+            if (sep != null) {
+				return;
+			}
             insertMenuGroup(menu, new Separator(id));
         }
 
@@ -379,11 +393,13 @@ public abstract class PluginActionBuilder extends RegistryReader {
         protected void contributeGroupMarker(IMenuManager menu,
                 IConfigurationElement element) {
             String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-            if (id == null || id.length() <= 0)
-                return;
+            if (id == null || id.length() <= 0) {
+				return;
+			}
             IContributionItem marker = menu.find(id);
-            if (marker != null)
-                return;
+            if (marker != null) {
+				return;
+			}
             insertMenuGroup(menu, new GroupMarker(id));
         }
 
@@ -395,12 +411,14 @@ public abstract class PluginActionBuilder extends RegistryReader {
             // Get config data.
             String tId = ad.getToolbarId();
             String tgroup = ad.getToolbarGroupId();
-            if (tId == null && tgroup == null)
-                return;
+            if (tId == null && tgroup == null) {
+				return;
+			}
 
             // Find reference group.
-            if (tgroup == null)
-                tgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+            if (tgroup == null) {
+				tgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+			}
             IContributionItem sep = null;
             sep = toolbar.find(tgroup);
             if (sep == null) {

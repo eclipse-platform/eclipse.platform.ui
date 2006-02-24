@@ -35,8 +35,9 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
     }
 
     public ActivityPatternBinding(String activityId, Pattern pattern) {
-        if (pattern == null)
-            throw new NullPointerException();
+        if (pattern == null) {
+			throw new NullPointerException();
+		}
 
         this.activityId = activityId;
         this.pattern = pattern;
@@ -46,16 +47,18 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
         int compareTo = Util.compare(activityId, castedObject.activityId);
 
-        if (compareTo == 0)
-            compareTo = Util.compare(pattern.pattern(), castedObject.pattern
+        if (compareTo == 0) {
+			compareTo = Util.compare(pattern.pattern(), castedObject.pattern
                     .pattern());
+		}
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof ActivityPatternBinding))
-            return false;
+        if (!(object instanceof ActivityPatternBinding)) {
+			return false;
+		}
 
         final ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
         if (!Util.equals(activityId, castedObject.activityId)) {
@@ -77,8 +80,9 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

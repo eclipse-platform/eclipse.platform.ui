@@ -54,8 +54,9 @@ public class ExternalEditor {
             String path = ""; //$NON-NLS-1$
             if (filePath != null) {
                 path = filePath.toOSString();
-                if (program.execute(path))
-                    return;
+                if (program.execute(path)) {
+					return;
+				}
             }
             throw new CoreException(
                     new Status(
@@ -92,18 +93,20 @@ public class ExternalEditor {
                     URL localName = Platform.asLocalURL(entry);
                     File file = new File(localName.getFile());
                     //Check that it exists before we assert it is valid
-                    if (file.exists())
-                        programFileName = file.getAbsolutePath();
+                    if (file.exists()) {
+						programFileName = file.getAbsolutePath();
+					}
                 }
             } catch (IOException e) {
                 // Program file is not in the plugin directory
             }
         }
 
-        if (programFileName == null)
-            // Program file is not in the plugin directory therefore
+        if (programFileName == null) {
+			// Program file is not in the plugin directory therefore
             // assume it is on the path
             programFileName = descriptor.getFileName();
+		}
 
         // Get the full path of the file to open
         if (filePath == null) {

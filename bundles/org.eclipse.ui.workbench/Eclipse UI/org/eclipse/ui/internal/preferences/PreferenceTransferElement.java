@@ -105,8 +105,9 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
     public ImageDescriptor getImageDescriptor() {
     	if (imageDescriptor == null) {
     		String iconName = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-	        if (iconName == null) 
-	        	return null;
+	        if (iconName == null) {
+				return null;
+			}
             imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                     configurationElement.getNamespace(), iconName);    
     	}
@@ -148,8 +149,9 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
         public Map getMapping(String scope) {
             for (int i = 0; i < scopes.length; i++) {
                 String item = scopes[i];
-                if (item.equals(scope))
-                    return maps[i];                
+                if (item.equals(scope)) {
+					return maps[i];
+				}                
             }
             return null;
         }

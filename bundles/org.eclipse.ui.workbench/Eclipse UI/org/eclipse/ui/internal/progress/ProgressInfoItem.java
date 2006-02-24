@@ -225,13 +225,16 @@ class ProgressInfoItem extends Composite {
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
 			public void handleEvent(Event event) {
-				if (indexListener == null)
+				if (indexListener == null) {
 					return;
+				}
 				int detail = event.detail;
-				if (detail == SWT.TRAVERSE_ARROW_NEXT)
+				if (detail == SWT.TRAVERSE_ARROW_NEXT) {
 					indexListener.selectNext();
-				if (detail == SWT.TRAVERSE_ARROW_PREVIOUS)
+				}
+				if (detail == SWT.TRAVERSE_ARROW_PREVIOUS) {
 					indexListener.selectPrevious();
+				}
 
 			}
 		});
@@ -252,8 +255,9 @@ class ProgressInfoItem extends Composite {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDown(MouseEvent e) {
-				if (indexListener != null)
+				if (indexListener != null) {
 					indexListener.select();
+				}
 			}
 		};
 		addMouseListener(mouseListener);
@@ -295,8 +299,9 @@ class ProgressInfoItem extends Composite {
 
 		if (FinishedJobs.getInstance().isFinished(info)) {
 			FinishedJobs.getInstance().remove(info);
-		} else
+		} else {
 			info.cancel();
+		}
 
 	}
 
@@ -307,8 +312,9 @@ class ProgressInfoItem extends Composite {
 	 */
 	private Image getInfoImage() {
 
-		if (!info.isJobInfo())// Groups
+		if (!info.isJobInfo()) {
 			return JFaceResources.getImage(DEFAULT_JOB_KEY);
+		}
 
 		JobInfo jobInfo = (JobInfo) info;
 
@@ -323,14 +329,15 @@ class ProgressInfoItem extends Composite {
 		}
 
 		Image image = null;
-		if (descriptor == null)
+		if (descriptor == null) {
 			image = ProgressManager.getInstance().getIconFor(jobInfo.getJob());
-		else {
+		} else {
 			image = JFaceResources.getResources().createImageWithDefault(
 					descriptor);
 		}
-		if (image == null)
+		if (image == null) {
 			image = JFaceResources.getImage(DEFAULT_JOB_KEY);
+		}
 		return image;
 	}
 
@@ -340,10 +347,12 @@ class ProgressInfoItem extends Composite {
 	 * @return String
 	 */
 	private String getMainTitle() {
-		if (info.isJobInfo())
+		if (info.isJobInfo()) {
 			return getJobNameAndStatus();
-		if (info.hasChildren())
+		}
+		if (info.hasChildren()) {
 			return ((GroupInfo) info).getTaskName();
+		}
 		return info.getDisplayString();
 
 	}
@@ -360,11 +369,13 @@ class ProgressInfoItem extends Composite {
 
 		String name = job.getName();
 
-		if (job.isSystem())
+		if (job.isSystem()) {
 			name = NLS.bind(ProgressMessages.JobInfo_System, name);
+		}
 
-		if (jobInfo.isCanceled())
+		if (jobInfo.isCanceled()) {
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, name);
+		}
 
 		if (jobInfo.isBlocked()) {
 			IStatus blockedStatus = jobInfo.getBlockedStatus();
@@ -376,8 +387,9 @@ class ProgressInfoItem extends Composite {
 		case Job.RUNNING:
 			return name;
 		case Job.SLEEPING: {// if it is sleeping and has a result show it
-			if (job.getResult() == null)
+			if (job.getResult() == null) {
 				return NLS.bind(ProgressMessages.JobInfo_Sleeping, name);
+			}
 			return getJobInfoFinishedString(job, true);
 		}
 		case Job.NONE: // Only happens for kept jobs
@@ -397,11 +409,13 @@ class ProgressInfoItem extends Composite {
 	 */
 	String getJobInfoFinishedString(Job job, boolean withTime) {
 		String time = null;
-		if (withTime)
+		if (withTime) {
 			time = getTimeString();
-		if (time != null)
+		}
+		if (time != null) {
 			return NLS.bind(ProgressMessages.JobInfo_FinishedAt, job.getName(),
 					time);
+		}
 		return NLS.bind(ProgressMessages.JobInfo_Finished, job.getName());
 	}
 
@@ -413,8 +427,9 @@ class ProgressInfoItem extends Composite {
 	 */
 	private String getTimeString() {
 		Date date = FinishedJobs.getInstance().getFinishDate(info);
-		if (date != null)
+		if (date != null) {
 			return DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
+		}
 		return null;
 	}
 
@@ -424,8 +439,9 @@ class ProgressInfoItem extends Composite {
 	 */
 	void refresh() {
 
-		if (isDisposed())
+		if (isDisposed()) {
 			return;
+		}
 
 		progressLabel.setText(getMainTitle());
 		int percentDone = getPercentDone();
@@ -480,17 +496,19 @@ class ProgressInfoItem extends Composite {
 				String taskString = jobInfo.getTaskInfo().getTaskName();
 				String subTaskString = null;
 				Object[] jobChildren = jobInfo.getChildren();
-				if (jobChildren.length > 0)
+				if (jobChildren.length > 0) {
 					subTaskString = ((JobTreeElement) jobChildren[0])
 							.getDisplayString();
+				}
 
 				if (subTaskString != null) {
-					if (taskString == null)
+					if (taskString == null) {
 						taskString = subTaskString;
-					else
+					} else {
 						taskString = NLS.bind(
 								ProgressMessages.JobInfo_DoneNoProgressMessage,
 								taskString, subTaskString);
+					}
 				}
 				if (taskString != null) {
 					setLinkText(infos[i].getJob(), taskString, taskCount);
@@ -501,8 +519,9 @@ class ProgressInfoItem extends Composite {
 				if (job.getResult() != null) {
 					IStatus result = job.getResult();
 					String message = EMPTY_STRING;
-					if (result != null)
+					if (result != null) {
 						message = result.getMessage();
+					}
 					setLinkText(job, message, i);
 					taskCount++;
 				}
@@ -529,8 +548,9 @@ class ProgressInfoItem extends Composite {
 
 		JobInfo[] infos = getJobInfos();
 		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getJob().getResult() == null)// No result not done
+			if (infos[i].getJob().getResult() == null) {
 				return false;
+			}
 		}
 		// Only completed if there are any jobs
 		return infos.length > 0;
@@ -542,8 +562,9 @@ class ProgressInfoItem extends Composite {
 	 * @return JobInfo[]
 	 */
 	private JobInfo[] getJobInfos() {
-		if (info.isJobInfo())
+		if (info.isJobInfo()) {
 			return new JobInfo[] { (JobInfo) info };
+		}
 		Object[] children = info.getChildren();
 		JobInfo[] infos = new JobInfo[children.length];
 		System.arraycopy(children, 0, infos, 0, children.length);
@@ -559,8 +580,9 @@ class ProgressInfoItem extends Composite {
 		JobInfo[] infos = getJobInfos();
 		for (int i = 0; i < infos.length; i++) {
 			int state = infos[i].getJob().getState();
-			if (state == Job.RUNNING)
+			if (state == Job.RUNNING) {
 				continue;
+			}
 			return false;
 		}
 		// Only completed if there are any jobs
@@ -573,15 +595,17 @@ class ProgressInfoItem extends Composite {
 	 * @return int
 	 */
 	private int getPercentDone() {
-		if (info.isJobInfo())
+		if (info.isJobInfo()) {
 			return ((JobInfo) info).getPercentDone();
+		}
 
 		if (info.hasChildren()) {
 			Object[] roots = ((GroupInfo) info).getChildren();
 			if (roots.length == 1 && roots[0] instanceof JobTreeElement) {
 				TaskInfo ti = ((JobInfo) roots[0]).getTaskInfo();
-				if (ti != null)
+				if (ti != null) {
 					return ti.getPercentDone();
+				}
 			}
 			return ((GroupInfo) info).getPercentDone();
 		}
@@ -667,8 +691,9 @@ class ProgressInfoItem extends Composite {
 			FormData linkData = new FormData();
 			if (index == 0) {
 				Control top = progressBar;
-				if (top == null)
+				if (top == null) {
 					top = progressLabel;
+				}
 				linkData.top = new FormAttachment(top,
 						IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(top, 0, SWT.LEFT);
@@ -695,8 +720,9 @@ class ProgressInfoItem extends Composite {
 				}
 			});
 			taskEntries.add(link);
-		} else
+		} else {
 			link = (Link) taskEntries.get(index);
+		}
 
 		// check for action property
 		Object property = linkJob
@@ -728,12 +754,13 @@ class ProgressInfoItem extends Composite {
 			return;
 		}
 
-		if (i % 2 == 0)
+		if (i % 2 == 0) {
 			setAllBackgrounds(JFaceResources.getColorRegistry().get(
 					DARK_COLOR_KEY));
-		else
+		} else {
 			setAllBackgrounds(getDisplay().getSystemColor(
 					SWT.COLOR_LIST_BACKGROUND));
+		}
 		setAllForegrounds(getDisplay()
 				.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 	}
@@ -787,8 +814,9 @@ class ProgressInfoItem extends Composite {
 	 *            boolean that indicates whether or not to show selection.
 	 */
 	void selectWidgets(boolean select) {
-		if (select)
+		if (select) {
 			setButtonFocus();
+		}
 		selected = select;
 		setColor(currentIndex);
 	}

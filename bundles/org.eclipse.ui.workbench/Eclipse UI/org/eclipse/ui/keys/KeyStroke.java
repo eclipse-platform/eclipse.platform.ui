@@ -88,8 +88,9 @@ public final class KeyStroke implements Comparable {
      */
     public static KeyStroke getInstance(ModifierKey modifierKey,
             NaturalKey naturalKey) {
-        if (modifierKey == null)
-            throw new NullPointerException();
+        if (modifierKey == null) {
+			throw new NullPointerException();
+		}
 
         return new KeyStroke(
                 new TreeSet(Collections.singletonList(modifierKey)), naturalKey);
@@ -155,8 +156,9 @@ public final class KeyStroke implements Comparable {
      *             parsed to a valid key stroke.
      */
     public static KeyStroke getInstance(String string) throws ParseException {
-        if (string == null)
-            throw new NullPointerException();
+        if (string == null) {
+			throw new NullPointerException();
+		}
 
         SortedSet modifierKeys = new TreeSet();
         NaturalKey naturalKey = null;
@@ -173,10 +175,11 @@ public final class KeyStroke implements Comparable {
                     ModifierKey modifierKey = (ModifierKey) ModifierKey.modifierKeysByName
                             .get(token);
 
-                    if (modifierKey == null || !modifierKeys.add(modifierKey))
-                        throw new ParseException(
+                    if (modifierKey == null || !modifierKeys.add(modifierKey)) {
+						throw new ParseException(
                                 "Cannot create key stroke with duplicate or non-existent modifier key: " //$NON-NLS-1$
                                         + token);
+					}
                 } else if (token.length() == 1) {
                     naturalKey = CharacterKey.getInstance(token.charAt(0));
                     break;
@@ -185,14 +188,16 @@ public final class KeyStroke implements Comparable {
                     naturalKey = (NaturalKey) CharacterKey.characterKeysByName
                             .get(token);
 
-                    if (naturalKey == null)
-                        naturalKey = (NaturalKey) SpecialKey.specialKeysByName
+                    if (naturalKey == null) {
+						naturalKey = (NaturalKey) SpecialKey.specialKeysByName
                                 .get(token);
+					}
 
-                    if (naturalKey == null)
-                        throw new ParseException(
+                    if (naturalKey == null) {
+						throw new ParseException(
                                 "Cannot create key stroke with invalid natural key: " //$NON-NLS-1$
                                         + token);
+					}
                 }
             }
 
@@ -263,8 +268,9 @@ public final class KeyStroke implements Comparable {
         int compareTo = Util.compare(modifierKeysAsArray,
                 castedObject.modifierKeysAsArray);
 
-        if (compareTo == 0)
-            compareTo = Util.compare(naturalKey, castedObject.naturalKey);
+        if (compareTo == 0) {
+			compareTo = Util.compare(naturalKey, castedObject.naturalKey);
+		}
 
         return compareTo;
     }
@@ -273,13 +279,15 @@ public final class KeyStroke implements Comparable {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object object) {
-        if (!(object instanceof KeyStroke))
-            return false;
+        if (!(object instanceof KeyStroke)) {
+			return false;
+		}
 
         KeyStroke castedObject = (KeyStroke) object;
         
-        if (!modifierKeys.equals(castedObject.modifierKeys))
-        	return false;
+        if (!modifierKeys.equals(castedObject.modifierKeys)) {
+			return false;
+		}
         return Util.equals(naturalKey, castedObject.naturalKey);
     }
 

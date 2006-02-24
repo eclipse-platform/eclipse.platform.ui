@@ -120,9 +120,10 @@ public class PageLayout implements IPageLayout {
         try {
             // Create the part.
             LayoutPart newPart = createView(ID_EDITOR_AREA);
-            if (newPart == null)
-                // this should never happen as long as newID is the editor ID.
+            if (newPart == null) {
+				// this should never happen as long as newID is the editor ID.
                 return;
+			}
 
             setRefPart(ID_EDITOR_AREA, newPart);
 
@@ -156,8 +157,9 @@ public class PageLayout implements IPageLayout {
      * @see org.eclipse.ui.IPageLayout#addFastView(java.lang.String, float)
      */
     public void addFastView(String id, float ratio) {
-        if (checkPartInLayout(id))
-            return;
+        if (checkPartInLayout(id)) {
+			return;
+		}
         if (id != null) {
             try {
 				IViewDescriptor viewDescriptor = viewFactory.getViewRegistry()
@@ -250,8 +252,9 @@ public class PageLayout implements IPageLayout {
         // If the referenced part is inside a folder,
         // then use the folder as the reference part.
         LayoutPart refPart = getFolderPart(refId);
-        if (refPart == null)
-            refPart = getRefPart(refId);
+        if (refPart == null) {
+			refPart = getRefPart(refId);
+		}
 
         // Add it to the layout.
         if (refPart != null) {
@@ -357,8 +360,9 @@ public class PageLayout implements IPageLayout {
      */
     private void addView(String viewId, int relationship, float ratio,
             String refId, boolean standalone, boolean showTitle) {
-        if (checkPartInLayout(viewId))
-            return;
+        if (checkPartInLayout(viewId)) {
+			return;
+		}
 
         try {
             // Create the part.
@@ -408,9 +412,10 @@ public class PageLayout implements IPageLayout {
      */
     public IFolderLayout createFolder(String folderId, int relationship,
             float ratio, String refId) {
-        if (checkPartInLayout(folderId))
-            return new FolderLayout(this, (ViewStack) getRefPart(folderId),
+        if (checkPartInLayout(folderId)) {
+			return new FolderLayout(this, (ViewStack) getRefPart(folderId),
                     viewFactory);
+		}
 
         // Create the folder.
         ViewStack folder = new ViewStack(rootLayoutContainer.page);
@@ -426,9 +431,10 @@ public class PageLayout implements IPageLayout {
      */
     public IPlaceholderFolderLayout createPlaceholderFolder(String folderId,
             int relationship, float ratio, String refId) {
-        if (checkPartInLayout(folderId))
-            return new PlaceholderFolderLayout(this,
+        if (checkPartInLayout(folderId)) {
+			return new PlaceholderFolderLayout(this,
                     (ContainerPlaceholder) getRefPart(folderId));
+		}
 
         // Create the folder.
         ContainerPlaceholder folder = new ContainerPlaceholder(null);
@@ -455,8 +461,9 @@ public class PageLayout implements IPageLayout {
         }
 		IViewDescriptor viewDescriptor = viewFactory.getViewRegistry()
 		        .find(ViewFactory.extractPrimaryId(partID));
-		if (WorkbenchActivityHelper.filterItem(viewDescriptor))
-		    return null;
+		if (WorkbenchActivityHelper.filterItem(viewDescriptor)) {
+			return null;
+		}
 		return LayoutHelper.createView(getViewFactory(), partID);
     }
 
@@ -583,10 +590,12 @@ public class PageLayout implements IPageLayout {
      * @return the normalized ratio.
      */
     private float normalizeRatio(float in) {
-        if (in < RATIO_MIN)
-            in = RATIO_MIN;
-        if (in > RATIO_MAX)
-            in = RATIO_MAX;
+        if (in < RATIO_MIN) {
+			in = RATIO_MIN;
+		}
+        if (in > RATIO_MAX) {
+			in = RATIO_MAX;
+		}
         return in;
     }
 
@@ -603,8 +612,9 @@ public class PageLayout implements IPageLayout {
         int count = array.length;
         for (int nX = 0; nX < count; nX++) {
             IActionSetDescriptor desc = array[nX];
-            if (desc.isInitiallyVisible())
-                addActionSet(desc.getId());
+            if (desc.isInitiallyVisible()) {
+				addActionSet(desc.getId());
+			}
         }
     }
 
@@ -718,8 +728,9 @@ public class PageLayout implements IPageLayout {
      * @param refId the reference ID.
      */
     public void stackPlaceholder(String viewId, String refId) {
-        if (checkPartInLayout(viewId))
-            return;
+        if (checkPartInLayout(viewId)) {
+			return;
+		}
 
         // Create the placeholder.
         PartPlaceholder newPart = new PartPlaceholder(viewId);
@@ -740,8 +751,9 @@ public class PageLayout implements IPageLayout {
      * @param refId the reference ID.
      */
     public void stackView(String viewId, String refId) {
-        if (checkPartInLayout(viewId))
-            return;
+        if (checkPartInLayout(viewId)) {
+			return;
+		}
 
         // Create the new part.
         try {
@@ -749,8 +761,9 @@ public class PageLayout implements IPageLayout {
             if (newPart == null) {
                 stackPlaceholder(viewId, refId);
                 LayoutHelper.addViewActivator(this, viewId);
-            } else
-                stackPart(newPart, viewId, refId);
+            } else {
+				stackPart(newPart, viewId, refId);
+			}
         } catch (PartInitException e) {
             WorkbenchPlugin.log(getClass(), "stackView", e); //$NON-NLS-1$
         }
@@ -809,8 +822,9 @@ public class PageLayout implements IPageLayout {
 		ContainerPlaceholder folder = new ContainerPlaceholder(null);
 		folder.setContainer(rootLayoutContainer);
 		int appearance = PresentationFactoryUtil.ROLE_STANDALONE;
-		if (!showTitle)
+		if (!showTitle) {
 			appearance = PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE;
+		}
 		folder.setRealContainer(new ViewStack(rootLayoutContainer.page, true,
 				appearance, null));
 		folder.setID(stackId);

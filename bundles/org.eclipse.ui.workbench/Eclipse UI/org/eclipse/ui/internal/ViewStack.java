@@ -124,8 +124,9 @@ public class ViewStack extends PartStack {
      * @see org.eclipse.ui.internal.PartStack#supportsState(int)
      */
     protected boolean supportsState(int newState) {
-        if (page.isFixedLayout())
-            return false;
+        if (page.isFixedLayout()) {
+			return false;
+		}
         return allowStateChanges;
     }
 

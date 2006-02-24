@@ -93,8 +93,9 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		super(control, controlContentAdapter, proposalProvider,
 				null, autoActivationCharacters);
 		this.commandId = commandId;
-		if (commandId == null)
+		if (commandId == null) {
 			this.commandId = CONTENT_PROPOSAL_COMMAND;
+		}
 
 		// If no autoactivation characters were specified, set them to the empty
 		// array

@@ -128,11 +128,13 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * (non-Javadoc) Fills the menu with perspective items.
      */
     public void fill(Menu menu, int index) {
-        if (getParent() instanceof MenuManager)
-            ((MenuManager) getParent()).addMenuListener(menuListener);
+        if (getParent() instanceof MenuManager) {
+			((MenuManager) getParent()).addMenuListener(menuListener);
+		}
 
-        if (!dirty)
-            return;
+        if (!dirty) {
+			return;
+		}
 
         final MenuManager manager = new MenuManager();
         fillMenu(manager);
@@ -177,8 +179,9 @@ public abstract class PerspectiveMenu extends ContributionItem {
                     .next();
             final IAction action = getAction(descriptor.getId());
             if (action != null) {
-                if (WorkbenchActivityHelper.filterItem(action))
-                    continue;
+                if (WorkbenchActivityHelper.filterItem(action)) {
+					continue;
+				}
                 actions.add(action);
             }
         }
@@ -229,16 +232,18 @@ public abstract class PerspectiveMenu extends ContributionItem {
         ArrayList list = new ArrayList();
 
         IWorkbenchPage page = window.getActivePage();
-        if (page == null)
-            return list;
+        if (page == null) {
+			return list;
+		}
 
         String[] ids = page.getPerspectiveShortcuts();
 
         for (int i = 0; i < ids.length; i++) {
             IPerspectiveDescriptor desc = reg.findPerspectiveWithId(ids[i]);
             if (desc != null && !list.contains(desc)) {
-                if (WorkbenchActivityHelper.filterItem(desc))
-                    continue;
+                if (WorkbenchActivityHelper.filterItem(desc)) {
+					continue;
+				}
                 list.add(desc);
             }
         }
@@ -339,8 +344,9 @@ public abstract class PerspectiveMenu extends ContributionItem {
         SelectPerspectiveDialog dlg = new SelectPerspectiveDialog(window
                 .getShell(), reg);
         dlg.open();
-        if (dlg.getReturnCode() == Window.CANCEL)
-            return;
+        if (dlg.getReturnCode() == Window.CANCEL) {
+			return;
+		}
         IPerspectiveDescriptor desc = dlg.getSelection();
         if (desc != null) {
             run(desc, event);

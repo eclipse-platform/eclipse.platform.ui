@@ -54,8 +54,9 @@ public class ResetPerspectiveAction extends PerspectiveAction {
         MessageDialog d = new MessageDialog(getWindow().getShell(),
                 WorkbenchMessages.ResetPerspective_title,
                 null, message, MessageDialog.QUESTION, buttons, 0);
-        if (d.open() == 0)
-            page.resetPerspective();
+        if (d.open() == 0) {
+			page.resetPerspective();
+		}
     }
 
 }

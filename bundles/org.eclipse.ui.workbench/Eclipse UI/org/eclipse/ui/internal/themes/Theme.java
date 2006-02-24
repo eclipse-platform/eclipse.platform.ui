@@ -114,8 +114,9 @@ public class Theme extends EventManager implements ITheme {
                             Theme.this, event.getProperty());
                     String key = split[1];
                     String theme = split[0];
-                    if (key.equals(IWorkbenchPreferenceConstants.CURRENT_THEME_ID))
-                        return;
+                    if (key.equals(IWorkbenchPreferenceConstants.CURRENT_THEME_ID)) {
+						return;
+					}
                     try {
                         if (themeColorRegistry != null) { // we're using cascading registries
                             if (getColorRegistry().hasValueFor(key)
@@ -234,16 +235,18 @@ public class Theme extends EventManager implements ITheme {
     }
 
     public ColorRegistry getColorRegistry() {
-		if (themeColorRegistry != null)
+		if (themeColorRegistry != null) {
 			return themeColorRegistry;
+		}
 
 		return WorkbenchThemeManager.getInstance()
 				.getDefaultThemeColorRegistry();
 	}
 
     public FontRegistry getFontRegistry() {
-		if (themeFontRegistry != null)
+		if (themeFontRegistry != null) {
 			return themeFontRegistry;
+		}
 
 		return WorkbenchThemeManager.getInstance()
 				.getDefaultThemeFontRegistry();
@@ -303,8 +306,9 @@ public class Theme extends EventManager implements ITheme {
      * @see org.eclipse.ui.themes.ITheme#getString(java.lang.String)
      */
     public String getString(String key) {
-        if (dataMap != null)
-            return (String) dataMap.get(key);
+        if (dataMap != null) {
+			return (String) dataMap.get(key);
+		}
         return (String) themeRegistry.getData().get(key);
     }
 
@@ -312,8 +316,9 @@ public class Theme extends EventManager implements ITheme {
      * @see org.eclipse.ui.themes.ITheme#keySet()
      */
     public Set keySet() {
-        if (dataMap != null)
-            return dataMap.keySet();
+        if (dataMap != null) {
+			return dataMap.keySet();
+		}
 
         return themeRegistry.getData().keySet();
     }
@@ -323,8 +328,9 @@ public class Theme extends EventManager implements ITheme {
      */
     public int getInt(String key) {
         String string = getString(key);
-        if (string == null)
-            return 0;
+        if (string == null) {
+			return 0;
+		}
         try {
             return Integer.parseInt(string);
         } catch (NumberFormatException e) {
@@ -337,8 +343,9 @@ public class Theme extends EventManager implements ITheme {
      */
     public boolean getBoolean(String key) {
         String string = getString(key);
-        if (string == null)
-            return false;
+        if (string == null) {
+			return false;
+		}
 
         return Boolean.valueOf(getString(key)).booleanValue();
     }

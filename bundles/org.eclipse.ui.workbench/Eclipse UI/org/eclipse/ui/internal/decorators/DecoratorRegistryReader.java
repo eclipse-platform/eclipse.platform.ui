@@ -45,8 +45,9 @@ public class DecoratorRegistryReader extends RegistryReader {
 
     	DecoratorDefinition desc = getDecoratorDefinition(element);
     	
-    	if (desc == null)
-    		return false;
+    	if (desc == null) {
+			return false;
+		}
     	
         values.add(desc);
 

@@ -183,8 +183,9 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     		SortedSet visibleSubset = new TreeSet(WorkingSetComparator.INSTANCE);
     		for (Iterator i = workingSets.iterator(); i.hasNext();) {
 				IWorkingSet workingSet = (IWorkingSet) i.next();
-				if (workingSet.isVisible()) 
+				if (workingSet.isVisible()) {
 					visibleSubset.add(workingSet);
+				}
 			}
         return (IWorkingSet[]) visibleSubset.toArray(new IWorkingSet[visibleSubset.size()]);
     }
@@ -197,14 +198,16 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * @see org.eclipse.ui.IWorkingSetManager
      */
     public IWorkingSet getWorkingSet(String name) {
-        if (name == null || workingSets == null)
-            return null;
+        if (name == null || workingSets == null) {
+			return null;
+		}
 
         Iterator iter = workingSets.iterator();
         while (iter.hasNext()) {
             IWorkingSet workingSet = (IWorkingSet) iter.next();
-            if (name.equals(workingSet.getName()))
-                return workingSet;
+            if (name.equals(workingSet.getName())) {
+				return workingSet;
+			}
         }
         return null;
     }
@@ -226,8 +229,9 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * 	used working sets.
      */
     protected void internalAddRecentWorkingSet(IWorkingSet workingSet) {
-    		if (!workingSet.isVisible())
-    			return;
+    		if (!workingSet.isVisible()) {
+				return;
+			}
         recentWorkingSets.remove(workingSet);
         recentWorkingSets.add(0, workingSet);
         if (recentWorkingSets.size() > MRU_SIZE) {
@@ -248,8 +252,9 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         if (this == object) {
             return true;
         }
-        if (!getClass().getName().equals(object.getClass().getName()))
-        	return false;
+        if (!getClass().getName().equals(object.getClass().getName())) {
+			return false;
+		}
         AbstractWorkingSetManager other= (AbstractWorkingSetManager)object;
         return other.workingSets.equals(workingSets);
     }
@@ -297,8 +302,9 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
             Object newValue) {
         final Object[] listeners = getListeners();
 		
-        if (listeners.length == 0)
+        if (listeners.length == 0) {
 			return;
+		}
 		
         final PropertyChangeEvent event = new PropertyChangeEvent(this,
                 changeId, oldValue, newValue);
@@ -357,10 +363,11 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         ArrayList aggregateSets = new ArrayList();
         while (iterator.hasNext()) {
         		IWorkingSet set = (IWorkingSet) iterator.next();
-        		if (set instanceof AggregateWorkingSet) // do we need an isAggregate method?  would it otherwise be useful?
-        			aggregateSets.add(set);
-        		else
-        			standardSets.add(set);
+        		if (set instanceof AggregateWorkingSet) {
+					aggregateSets.add(set);
+				} else {
+					standardSets.add(set);
+				}
         }
 
         saveWorkingSetState(memento, standardSets);
@@ -532,32 +539,37 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	 */
     public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds) {
          WorkingSetDescriptor[] descriptors= getSupportedEditableDescriptors(workingSetIds);
-         if (descriptors.length == 0)
-                 return null;
+         if (descriptors.length == 0) {
+			return null;
+		}
          return new WorkingSetNewWizard(descriptors);
 }
 
     //---- working set delta handling -------------------------------------------------
     
 	public void bundleChanged(BundleEvent event) {
-		if (event.getBundle().getState() != Bundle.ACTIVE)
-				return;		
-		// If the workbench isn't running anymore simply return.
-		if (!Workbench.getInstance().isRunning())
+		if (event.getBundle().getState() != Bundle.ACTIVE) {
 			return;
+		}		
+		// If the workbench isn't running anymore simply return.
+		if (!Workbench.getInstance().isRunning()) {
+			return;
+		}
 		WorkingSetDescriptor[] descriptors= WorkbenchPlugin.getDefault()
         	.getWorkingSetRegistry().getDescriptorsForNamespace(event.getBundle().getSymbolicName());
 		synchronized(updaters) {
 			for (int i= 0; i < descriptors.length; i++) {
 				WorkingSetDescriptor descriptor= descriptors[i];
 				List workingSets= getWorkingSetsForId(descriptor.getId());
-				if (workingSets.size() == 0)
+				if (workingSets.size() == 0) {
 					continue;
+				}
 				IWorkingSetUpdater updater= getUpdater(descriptor);
 				for (Iterator iter= workingSets.iterator(); iter.hasNext();) {
 					IWorkingSet workingSet= (IWorkingSet)iter.next();
-					if (!updater.contains(workingSet))
+					if (!updater.contains(workingSet)) {
 						updater.add(workingSet);
+					}
 				}
 			}
 		}
@@ -567,8 +579,9 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		List result= new ArrayList();
     	for (Iterator iter= workingSets.iterator(); iter.hasNext();) {
     		IWorkingSet ws= (IWorkingSet)iter.next();
-    		if (id.equals(ws.getId()))
-    			result.add(ws);
+    		if (id.equals(ws.getId())) {
+				result.add(ws);
+			}
 		}
     	return result;
 	}
@@ -576,12 +589,14 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     private void addToUpdater(IWorkingSet workingSet) {
     	WorkingSetDescriptor descriptor= WorkbenchPlugin.getDefault()
 			.getWorkingSetRegistry().getWorkingSetDescriptor(workingSet.getId());
-    	if (descriptor == null || !descriptor.isDeclaringPluginActive())
-    		return;
+    	if (descriptor == null || !descriptor.isDeclaringPluginActive()) {
+			return;
+		}
 		synchronized(updaters) {
 	    	IWorkingSetUpdater updater= getUpdater(descriptor);
-	    	if (!updater.contains(workingSet))
-	    		updater.add(workingSet);
+	    	if (!updater.contains(workingSet)) {
+				updater.add(workingSet);
+			}
 		}
     }
     

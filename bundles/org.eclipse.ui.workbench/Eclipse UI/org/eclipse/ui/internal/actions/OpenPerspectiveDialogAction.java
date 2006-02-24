@@ -60,8 +60,9 @@ public class OpenPerspectiveDialogAction extends Action implements
         SelectPerspectiveDialog dlg = new SelectPerspectiveDialog(workbenchWindow
                 .getShell(), workbenchWindow.getWorkbench().getPerspectiveRegistry());
         dlg.open();
-        if (dlg.getReturnCode() == Window.CANCEL)
-            return;
+        if (dlg.getReturnCode() == Window.CANCEL) {
+			return;
+		}
         IPerspectiveDescriptor desc = dlg.getSelection();
         if (desc != null) {
             try {

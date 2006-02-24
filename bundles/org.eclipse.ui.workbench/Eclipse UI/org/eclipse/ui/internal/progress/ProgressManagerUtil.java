@@ -109,15 +109,17 @@ public class ProgressManagerUtil {
      */
     static void openProgressView(WorkbenchWindow window) {
         IWorkbenchPage page = window.getActivePage();
-        if (page == null)
-            return;
+        if (page == null) {
+			return;
+		}
         try {
         	IViewDescriptor reference =
         		WorkbenchPlugin.getDefault()
         			.getViewRegistry().find(IProgressConstants.PROGRESS_VIEW_ID);
         	
-            if(reference == null)
-            	return;
+            if(reference == null) {
+				return;
+			}
             page.showView(IProgressConstants.PROGRESS_VIEW_ID);
         } catch (PartInitException exception) {
             logException(exception);
@@ -134,8 +136,9 @@ public class ProgressManagerUtil {
      * @return String
      */
     static String shortenText(String textValue, Control control) {
-        if (textValue == null)
-            return null;
+        if (textValue == null) {
+			return null;
+		}
         GC gc = new GC(control);
         int maxWidth = control.getBounds().width - 5;
         if (gc.textExtent(textValue).x < maxWidth) {
@@ -188,8 +191,9 @@ public class ProgressManagerUtil {
             }
         }
         //If we didn't find it once don't continue
-        if (firstCharacter == 0)
-            return 0;
+        if (firstCharacter == 0) {
+			return 0;
+		}
         //Initialize to firstCharacter in case there is no more whitespace
         int secondCharacter = firstCharacter;
         //Find the second whitespace
@@ -202,8 +206,9 @@ public class ProgressManagerUtil {
         //Check that we haven't gone over max width. Throw
         //out an index that is too high
         if (gc.textExtent(textValue.substring(0, secondCharacter)).x > maxWidth) {
-            if (gc.textExtent(textValue.substring(0, firstCharacter)).x > maxWidth)
-                return 0;
+            if (gc.textExtent(textValue.substring(0, firstCharacter)).x > maxWidth) {
+				return 0;
+			}
             return firstCharacter;
         }
         return secondCharacter;
@@ -219,8 +224,9 @@ public class ProgressManagerUtil {
      */
     public static boolean rescheduleIfModalShellOpen(Job openJob) {
         Shell modal = getModalShellExcluding(null);
-        if (modal == null)
-            return false;
+        if (modal == null) {
+			return false;
+		}
 
         //try again in a few seconds
         openJob.schedule(PlatformUI.getWorkbench().getProgressService()
@@ -240,8 +246,9 @@ public class ProgressManagerUtil {
      */
     public static boolean safeToOpen(ProgressMonitorJobsDialog dialog, Shell excludedShell) {
         Shell modal = getModalShellExcluding(excludedShell);
-        if (modal == null)
-            return true;
+        if (modal == null) {
+			return true;
+		}
 
         dialog.watchTicks();
         return false;
@@ -261,8 +268,9 @@ public class ProgressManagerUtil {
         int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
                 | SWT.PRIMARY_MODAL;
         for (int i = 0; i < shells.length; i++) {
-        	if(shells[i].equals(shell))
-        		break;
+        	if(shells[i].equals(shell)) {
+				break;
+			}
             //Do not worry about shells that will not block the user.
             if (shells[i].isVisible()) {
                 int style = shells[i].getStyle();
@@ -284,8 +292,9 @@ public class ProgressManagerUtil {
      */
     public static Shell getDefaultParent() {
         Shell modal = getModalShellExcluding(null);
-        if (modal != null)
-            return modal;
+        if (modal != null) {
+			return modal;
+		}
 
         return getNonModalShell();
     }
@@ -298,8 +307,9 @@ public class ProgressManagerUtil {
     public static Shell getNonModalShell() {
         IWorkbenchWindow window = PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
-        if (window != null)
-            return window.getShell();
+        if (window != null) {
+			return window.getShell();
+		}
 
         return null;
     }
@@ -314,13 +324,15 @@ public class ProgressManagerUtil {
     public static void animateDown(Rectangle startPosition) {
         IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
-        if (currentWindow == null)
-            return;
+        if (currentWindow == null) {
+			return;
+		}
         WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
 		
 		ProgressRegion progressRegion = internalWindow.getProgressRegion();
-		if (progressRegion == null)
+		if (progressRegion == null) {
 			return;
+		}
         Rectangle endPosition = progressRegion.getControl().getBounds();
 		
         Point windowLocation = internalWindow.getShell().getLocation();
@@ -341,14 +353,16 @@ public class ProgressManagerUtil {
     public static void animateUp(Rectangle endPosition) {
         IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
-        if (currentWindow == null)
-            return;
+        if (currentWindow == null) {
+			return;
+		}
         WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
         Point windowLocation = internalWindow.getShell().getLocation();
 		
 		ProgressRegion progressRegion = internalWindow.getProgressRegion();
-		if (progressRegion == null)
+		if (progressRegion == null) {
 			return;
+		}
         Rectangle startPosition = progressRegion.getControl().getBounds();
 		startPosition.x += windowLocation.x;
 		startPosition.y += windowLocation.y;

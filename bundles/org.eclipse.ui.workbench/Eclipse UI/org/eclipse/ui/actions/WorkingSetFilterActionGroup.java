@@ -92,8 +92,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		IWorkbenchPage page = workbenchWindow.getActivePage();
 		if (page == null) {
 			IWorkbenchPage[] pages = workbenchWindow.getPages();
-			if (pages.length > 0)
+			if (pages.length > 0) {
 				page = pages[0];
+			}
 		}
     }
 
@@ -128,8 +129,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
      * @see ActionGroup#dispose()
      */
     public void dispose() {
-        if (menuManager != null)
-            menuManager.removeMenuListener(menuListener);
+        if (menuManager != null) {
+			menuManager.removeMenuListener(menuListener);
+		}
         super.dispose();
     }
 
@@ -172,8 +174,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
      * @param menuManager menu manager to remove actions from
      */
     private void removePreviousMruWorkingSetActions(IMenuManager menuManager) {
-        for (int i = 1; i <= mruMenuCount; i++)
-            menuManager.remove(WorkingSetMenuContributionItem.getId(i));
+        for (int i = 1; i <= mruMenuCount; i++) {
+			menuManager.remove(WorkingSetMenuContributionItem.getId(i));
+		}
     }
 
     /**

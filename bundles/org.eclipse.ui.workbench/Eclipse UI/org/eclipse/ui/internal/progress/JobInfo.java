@@ -65,12 +65,14 @@ class JobInfo extends JobTreeElement {
      * @param workIncrement
      */
     void addWork(double workIncrement) {
-        if (taskInfo == null)
-            return;
-        if (parent == null || ticks < 1)
-            taskInfo.addWork(workIncrement);
-        else
-            taskInfo.addWork(workIncrement, parent, ticks);
+        if (taskInfo == null) {
+			return;
+		}
+        if (parent == null || ticks < 1) {
+			taskInfo.addWork(workIncrement);
+		} else {
+			taskInfo.addWork(workIncrement, parent, ticks);
+		}
     }
 
     /**
@@ -124,28 +126,33 @@ class JobInfo extends JobTreeElement {
 
         //User jobs have top priority
         if (job.isUser()) {
-            if (!job2.isUser())
-                return -1;
+            if (!job2.isUser()) {
+				return -1;
+			}
         } else {
-            if (job2.isUser())
-                return 1;
+            if (job2.isUser()) {
+				return 1;
+			}
         }
 
         //Show the blocked ones last
         if (isBlocked()) {
-            if (!jobInfo.isBlocked())
-                return 1;
+            if (!jobInfo.isBlocked()) {
+				return 1;
+			}
         } else {
-            if (jobInfo.isBlocked())
-                return -1;
+            if (jobInfo.isBlocked()) {
+				return -1;
+			}
         }
 
         if (job.getPriority() == job2.getPriority()) {
             return job.getName().compareTo(job2.getName());
         }
 
-        if (job.getPriority() > job2.getPriority())
-            return -1;
+        if (job.getPriority() > job2.getPriority()) {
+			return -1;
+		}
         return 1;
     }
 
@@ -156,19 +163,23 @@ class JobInfo extends JobTreeElement {
      */
     public int compareTo(Object arg0) {
 
-        if (!(arg0 instanceof JobInfo))
-            return super.compareTo(arg0);
+        if (!(arg0 instanceof JobInfo)) {
+			return super.compareTo(arg0);
+		}
         JobInfo element = (JobInfo) arg0;
 
         //If the receiver is cancelled then it is lowest priority
-        if (isCanceled() && !element.isCanceled())
-            return 1;
+        if (isCanceled() && !element.isCanceled()) {
+			return 1;
+		}
 
-        if (element.getJob().getState() == getJob().getState())
-            return compareJobs(element);
+        if (element.getJob().getState() == getJob().getState()) {
+			return compareJobs(element);
+		}
 
-        if (getJob().getState() == Job.RUNNING)
-            return -1;
+        if (getJob().getState() == Job.RUNNING) {
+			return -1;
+		}
         return 1;
 
     }
@@ -177,8 +188,9 @@ class JobInfo extends JobTreeElement {
      * Dispose of the receiver.
      */
     void dispose() {
-        if (parent != null)
-            parent.removeJobInfo(this);
+        if (parent != null) {
+			parent.removeJobInfo(this);
+		}
     }
 
     /**
@@ -206,8 +218,9 @@ class JobInfo extends JobTreeElement {
      */
     String getCondensedDisplayString() {
     	TaskInfo info = getTaskInfo();
-        if (info != null)
-            return info.getDisplayStringWithoutTask(true);
+        if (info != null) {
+			return info.getDisplayStringWithoutTask(true);
+		}
         return getJob().getName();
     }
 
@@ -221,13 +234,16 @@ class JobInfo extends JobTreeElement {
         if (done > 0) {
             return super.getDisplayImage();
         }
-        if (isBlocked())
-            return JFaceResources.getImage(ProgressManager.BLOCKED_JOB_KEY);
+        if (isBlocked()) {
+			return JFaceResources.getImage(ProgressManager.BLOCKED_JOB_KEY);
+		}
         int state = getJob().getState();
-        if (state == Job.SLEEPING)
-            return JFaceResources.getImage(ProgressManager.SLEEPING_JOB_KEY);
-        if (state == Job.WAITING)
-            return JFaceResources.getImage(ProgressManager.WAITING_JOB_KEY);
+        if (state == Job.SLEEPING) {
+			return JFaceResources.getImage(ProgressManager.SLEEPING_JOB_KEY);
+		}
+        if (state == Job.WAITING) {
+			return JFaceResources.getImage(ProgressManager.WAITING_JOB_KEY);
+		}
         //By default return the first progress image
         return super.getDisplayImage();
 
@@ -244,8 +260,9 @@ class JobInfo extends JobTreeElement {
      */
     String getDisplayString(boolean showProgress) {
         String name = getDisplayStringWithStatus(showProgress);
-        if (job.isSystem())
+        if (job.isSystem()) {
 			return NLS.bind(ProgressMessages.JobInfo_System, (new Object[] { name }));
+		}
         return name;
     }
 
@@ -258,18 +275,22 @@ class JobInfo extends JobTreeElement {
      * @return String
      */
     private String getDisplayStringWithStatus(boolean showProgress) {
-        if (isCanceled())
+        if (isCanceled()) {
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, (new Object[] { getJob().getName() }));
-        if (isBlocked())
+		}
+        if (isBlocked()) {
 			return NLS.bind(ProgressMessages.JobInfo_Blocked, (new Object[] { getJob().getName(),
 			blockedStatus.getMessage() }));
+		}
         if (getJob().getState() == Job.RUNNING) {
-            if (taskInfo == null)
-                return getJob().getName();
+            if (taskInfo == null) {
+				return getJob().getName();
+			}
             return taskInfo.getDisplayString(showProgress);
         }
-        if (getJob().getState() == Job.SLEEPING)
+        if (getJob().getState() == Job.SLEEPING) {
 			return NLS.bind(ProgressMessages.JobInfo_Sleeping, (new Object[] { getJob().getName() }));
+		}
 
         return NLS.bind(ProgressMessages.JobInfo_Waiting, (new Object[] { getJob().getName() }));
 
@@ -281,8 +302,9 @@ class JobInfo extends JobTreeElement {
      * @return GroupInfo or <code>null</code>.
      */
     GroupInfo getGroupInfo() {
-        if (parent != null && parent.isActive())
-            return parent;
+        if (parent != null && parent.isActive()) {
+			return parent;
+		}
         return null;
     }
 
@@ -313,10 +335,12 @@ class JobInfo extends JobTreeElement {
     int getPercentDone() {
     	TaskInfo info = getTaskInfo();
         if (info != null){
-        	if(info.totalWork == IProgressMonitor.UNKNOWN)
-        		return IProgressMonitor.UNKNOWN;
-        	if(info.totalWork == 0)
-        		return 0;
+        	if(info.totalWork == IProgressMonitor.UNKNOWN) {
+				return IProgressMonitor.UNKNOWN;
+			}
+        	if(info.totalWork == 0) {
+				return 0;
+			}
             return (int) info.preWork * 100 / info.totalWork;
         }
         return IProgressMonitor.UNKNOWN;

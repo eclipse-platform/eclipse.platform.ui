@@ -74,20 +74,23 @@ public abstract class AbstractTableInformationControl {
         public boolean select(Viewer viewer, Object parentElement,
                 Object element) {
             StringMatcher matcher = getMatcher();
-            if (matcher == null || !(viewer instanceof TableViewer))
-                return true;
+            if (matcher == null || !(viewer instanceof TableViewer)) {
+				return true;
+			}
             TableViewer tableViewer = (TableViewer) viewer;
 
             String matchName = ((ILabelProvider) tableViewer.getLabelProvider())
                     .getText(element);
             
-            if(matchName == null)
-            	return false;
+            if(matchName == null) {
+				return false;
+			}
             // A dirty editor's label will start with dirty prefix, this prefix 
             // should not be taken in consideration when matching with a pattern
             String prefix = DefaultTabItem.DIRTY_PREFIX;
-            if (matchName.startsWith(prefix))
-                matchName = matchName.substring(prefix.length());
+            if (matchName.startsWith(prefix)) {
+				matchName = matchName.substring(prefix.length());
+			}
             return matchName != null && matcher.match(matchName);
         }
     }
@@ -101,8 +104,9 @@ public abstract class AbstractTableInformationControl {
          * Creates a fill layout with a border.
          */
         public BorderFillLayout(int borderSize) {
-            if (borderSize < 0)
-                throw new IllegalArgumentException();
+            if (borderSize < 0) {
+				throw new IllegalArgumentException();
+			}
             fBorderSize = borderSize;
         }
 
@@ -215,9 +219,9 @@ public abstract class AbstractTableInformationControl {
         final Table table = fTableViewer.getTable();
         table.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
-                if (e.character == SWT.ESC)
-                    dispose();
-                else if (e.character == SWT.DEL) {
+                if (e.character == SWT.ESC) {
+					dispose();
+				} else if (e.character == SWT.DEL) {
                     removeSelectedItems();
                     e.character = SWT.NONE;
                     e.doit = false;
@@ -260,7 +264,9 @@ public abstract class AbstractTableInformationControl {
             Point tableLoc = table.toDisplay(0,0);
             int divCount = 0;
             public void mouseMove(MouseEvent e) {
-                if (divCount == ignoreEventCount) divCount = 0;
+                if (divCount == ignoreEventCount) {
+					divCount = 0;
+				}
                 if (table.equals(e.getSource()) & ++divCount == ignoreEventCount) {
                     Object o = table.getItem(new Point(e.x, e.y));
                     if (o instanceof TableItem && lastY != e.y) {
@@ -290,16 +296,19 @@ public abstract class AbstractTableInformationControl {
     
         table.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e) {
-                if (table.getSelectionCount() < 1)
-                    return;
+                if (table.getSelectionCount() < 1) {
+					return;
+				}
 
-                if (e.button == 1)
-                    if (table.equals(e.getSource())) {
+                if (e.button == 1) {
+					if (table.equals(e.getSource())) {
                         Object o = table.getItem(new Point(e.x, e.y));
                         TableItem selection = table.getSelection()[0];
-                        if (selection.equals(o))
-                            gotoSelectedElement();
+                        if (selection.equals(o)) {
+							gotoSelectedElement();
+						}
                     }
+				}
                 if (e.button == 3) {
                     TableItem tItem = fTableViewer.getTable().getItem(
                             new Point(e.x, e.y));
@@ -336,10 +345,12 @@ public abstract class AbstractTableInformationControl {
             return;
         }
         fTableViewer.refresh();
-        if (selInd >= fTableViewer.getTable().getItemCount())
-            selInd = fTableViewer.getTable().getItemCount() - 1;
-        if (selInd >= 0)
-            fTableViewer.getTable().setSelection(selInd);
+        if (selInd >= fTableViewer.getTable().getItemCount()) {
+			selInd = fTableViewer.getTable().getItemCount() - 1;
+		}
+        if (selInd >= 0) {
+			fTableViewer.getTable().setSelection(selInd);
+		}
     }
 
     protected abstract TableViewer createTableViewer(Composite parent, int style);
@@ -365,8 +376,9 @@ public abstract class AbstractTableInformationControl {
 
         fFilterText.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
-                if (e.keyCode == 0x0D) // return
-                    gotoSelectedElement();
+                if (e.keyCode == 0x0D) {
+					gotoSelectedElement();
+				}
                 if (e.keyCode == SWT.ARROW_DOWN) {
                     fTableViewer.getTable().setFocus();
                     fTableViewer.getTable().setSelection(0);
@@ -376,8 +388,9 @@ public abstract class AbstractTableInformationControl {
                     fTableViewer.getTable().setSelection(
                             fTableViewer.getTable().getItemCount() - 1);
                 }
-                if (e.character == 0x1B) // ESC
-                    dispose();
+                if (e.character == 0x1B) {
+					dispose();
+				}
             }
 
             public void keyReleased(KeyEvent e) {
@@ -478,10 +491,11 @@ public abstract class AbstractTableInformationControl {
     protected void selectFirstMatch() {
         Table table = fTableViewer.getTable();
         Object element = findElement(table.getItems());
-        if (element != null)
-            fTableViewer.setSelection(new StructuredSelection(element), true);
-        else
-            fTableViewer.setSelection(StructuredSelection.EMPTY);
+        if (element != null) {
+			fTableViewer.setSelection(new StructuredSelection(element), true);
+		} else {
+			fTableViewer.setSelection(StructuredSelection.EMPTY);
+		}
     }
 
     private Object findElement(TableItem[] items) {
@@ -489,19 +503,23 @@ public abstract class AbstractTableInformationControl {
                 .getLabelProvider();
         for (int i = 0; i < items.length; i++) {
             Object element = items[i].getData();
-            if (fStringMatcher == null)
-                return element;
+            if (fStringMatcher == null) {
+				return element;
+			}
 
             if (element != null) {
                 String label = labelProvider.getText(element);
-                if(label == null)
-                	return null;
+                if(label == null) {
+					return null;
+				}
                 // remove the dirty prefix from the editor's label
                 String prefix = DefaultTabItem.DIRTY_PREFIX;
-                if (label.startsWith(prefix))
-                    label = label.substring(prefix.length());
-                if (fStringMatcher.match(label))
-                    return element;
+                if (label.startsWith(prefix)) {
+					label = label.substring(prefix.length());
+				}
+                if (fStringMatcher.match(label)) {
+					return element;
+				}
             }
         }
         return null;
@@ -533,8 +551,9 @@ public abstract class AbstractTableInformationControl {
 
     public void dispose() {
         if (fShell != null) {
-            if (!fShell.isDisposed())
-                fShell.dispose();
+            if (!fShell.isDisposed()) {
+				fShell.dispose();
+			}
             fShell = null;
             fTableViewer = null;
             fComposite = null;

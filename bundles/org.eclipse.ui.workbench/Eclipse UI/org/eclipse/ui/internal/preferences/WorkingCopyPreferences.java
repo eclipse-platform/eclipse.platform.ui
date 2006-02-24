@@ -104,13 +104,15 @@ public class WorkingCopyPreferences extends EventManager implements
 
 		// clear all values (long way so people get notified)
 		String[] keys = keys();
-		for (int i = 0; i < keys.length; i++)
+		for (int i = 0; i < keys.length; i++) {
 			remove(keys[i]);
+		}
 
 		// remove children
 		String[] childNames = childrenNames();
-		for (int i = 0; i < childNames.length; i++)
+		for (int i = 0; i < childNames.length; i++) {
 			node(childNames[i]).removeNode();
+		}
 
 		// mark as removed
 		removed = true;
@@ -130,11 +132,13 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void accept(IPreferenceNodeVisitor visitor) throws BackingStoreException {
 		checkRemoved();
-		if (!visitor.visit(this))
+		if (!visitor.visit(this)) {
 			return;
+		}
 		String[] childNames = childrenNames();
-		for (int i = 0; i < childNames.length; i++)
+		for (int i = 0; i < childNames.length; i++) {
 			((IEclipsePreferences) node(childNames[i])).accept(visitor);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -142,25 +146,30 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void put(String key, String value) {
 		checkRemoved();
-		if (key == null || value == null)
+		if (key == null || value == null) {
 			throw new NullPointerException();
+		}
 		String oldValue = null;
-		if (temporarySettings.containsKey(key))
+		if (temporarySettings.containsKey(key)) {
 			oldValue = (String) temporarySettings.get(key);
-		else
+		} else {
 			oldValue = getOriginal().get(key, null);
+		}
 		temporarySettings.put(key, value);
-		if (!value.equals(oldValue))
+		if (!value.equals(oldValue)) {
 			firePropertyChangeEvent(key, oldValue, value);
+		}
 	}
 
 	private void firePropertyChangeEvent(String key, Object oldValue, Object newValue) {
 		Object[] listeners = getListeners();
-		if (listeners.length == 0)
+		if (listeners.length == 0) {
 			return;
+		}
 		PreferenceChangeEvent event = new PreferenceChangeEvent(this, key, oldValue, newValue);
-		for (int i = 0; i < listeners.length; i++)
+		for (int i = 0; i < listeners.length; i++) {
 			((IPreferenceChangeListener) listeners[i]).preferenceChange(event);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -172,8 +181,9 @@ public class WorkingCopyPreferences extends EventManager implements
 	}
 
 	private String internalGet(String key, String defaultValue) {
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException();
+		}
 		if (temporarySettings.containsKey(key)) {
 			Object value = temporarySettings.get(key);
 			return value == null ? defaultValue : (String) value;
@@ -186,16 +196,18 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void remove(String key) {
 		checkRemoved();
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException();
+		}
 		Object oldValue = null;
 		if (temporarySettings.containsKey(key)) {
 			oldValue = temporarySettings.get(key);
 		} else {
 			oldValue = original.get(key, null);
 		}
-		if (oldValue == null)
+		if (oldValue == null) {
 			return;
+		}
 		temporarySettings.put(key, null);
 		firePropertyChangeEvent(key, oldValue, null);
 	}
@@ -220,17 +232,20 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void putInt(String key, int value) {
 		checkRemoved();
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException();
+		}
 		String oldValue = null;
-		if (temporarySettings.containsKey(key))
+		if (temporarySettings.containsKey(key)) {
 			oldValue = (String) temporarySettings.get(key);
-		else
+		} else {
 			oldValue = getOriginal().get(key, null);
+		}
 		String newValue = Integer.toString(value);
 		temporarySettings.put(key, newValue);
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
 			firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -240,12 +255,13 @@ public class WorkingCopyPreferences extends EventManager implements
 		checkRemoved();
 		String value = internalGet(key, null);
 		int result = defaultValue;
-		if (value != null)
+		if (value != null) {
 			try {
 				result = Integer.parseInt(value);
 			} catch (NumberFormatException e) {
 				// use default
 			}
+		}
 		return result;
 	}
 
@@ -254,17 +270,20 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void putLong(String key, long value) {
 		checkRemoved();
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException();
+		}
 		String oldValue = null;
-		if (temporarySettings.containsKey(key))
+		if (temporarySettings.containsKey(key)) {
 			oldValue = (String) temporarySettings.get(key);
-		else
+		} else {
 			oldValue = getOriginal().get(key, null);
+		}
 		String newValue = Long.toString(value);
 		temporarySettings.put(key, newValue);
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
 			firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -274,12 +293,13 @@ public class WorkingCopyPreferences extends EventManager implements
 		checkRemoved();
 		String value = internalGet(key, null);
 		long result = defaultValue;
-		if (value != null)
+		if (value != null) {
 			try {
 				result = Long.parseLong(value);
 			} catch (NumberFormatException e) {
 				// use default
 			}
+		}
 		return result;
 	}
 
@@ -288,17 +308,20 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void putBoolean(String key, boolean value) {
 		checkRemoved();
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException();
+		}
 		String oldValue = null;
-		if (temporarySettings.containsKey(key))
+		if (temporarySettings.containsKey(key)) {
 			oldValue = (String) temporarySettings.get(key);
-		else
+		} else {
 			oldValue = getOriginal().get(key, null);
+		}
 		String newValue = String.valueOf(value);
 		temporarySettings.put(key, newValue);
-		if (!newValue.equalsIgnoreCase(oldValue))
+		if (!newValue.equalsIgnoreCase(oldValue)) {
 			firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -315,17 +338,20 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void putFloat(String key, float value) {
 		checkRemoved();
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException();
+		}
 		String oldValue = null;
-		if (temporarySettings.containsKey(key))
+		if (temporarySettings.containsKey(key)) {
 			oldValue = (String) temporarySettings.get(key);
-		else
+		} else {
 			oldValue = getOriginal().get(key, null);
+		}
 		String newValue = Float.toString(value);
 		temporarySettings.put(key, newValue);
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
 			firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -335,12 +361,13 @@ public class WorkingCopyPreferences extends EventManager implements
 		checkRemoved();
 		String value = internalGet(key, null);
 		float result = defaultValue;
-		if (value != null)
+		if (value != null) {
 			try {
 				result = Float.parseFloat(value);
 			} catch (NumberFormatException e) {
 				// use default
 			}
+		}
 		return result;
 	}
 
@@ -349,17 +376,20 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void putDouble(String key, double value) {
 		checkRemoved();
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException();
+		}
 		String oldValue = null;
-		if (temporarySettings.containsKey(key))
+		if (temporarySettings.containsKey(key)) {
 			oldValue = (String) temporarySettings.get(key);
-		else
+		} else {
 			oldValue = getOriginal().get(key, null);
+		}
 		String newValue = Double.toString(value);
 		temporarySettings.put(key, newValue);
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
 			firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -369,12 +399,13 @@ public class WorkingCopyPreferences extends EventManager implements
 		checkRemoved();
 		String value = internalGet(key, null);
 		double result = defaultValue;
-		if (value != null)
+		if (value != null) {
 			try {
 				result = Double.parseDouble(value);
 			} catch (NumberFormatException e) {
 				// use default
 			}
+		}
 		return result;
 	}
 
@@ -383,17 +414,20 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public void putByteArray(String key, byte[] value) {
 		checkRemoved();
-		if (key == null || value == null)
+		if (key == null || value == null) {
 			throw new NullPointerException();
+		}
 		String oldValue = null;
-		if (temporarySettings.containsKey(key))
+		if (temporarySettings.containsKey(key)) {
 			oldValue = (String) temporarySettings.get(key);
-		else
+		} else {
 			oldValue = getOriginal().get(key, null);
+		}
 		String newValue = new String(Base64.encode(value));
 		temporarySettings.put(key, newValue);
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
 			firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -436,8 +470,9 @@ public class WorkingCopyPreferences extends EventManager implements
 	 */
 	public boolean nodeExists(String pathName) throws BackingStoreException {
 		// short circuit for this node
-		if (pathName.length() == 0)
+		if (pathName.length() == 0) {
 			return removed ? false : getOriginal().nodeExists(pathName);
+		}
 		return getOriginal().nodeExists(pathName);
 	}
 
@@ -468,10 +503,11 @@ public class WorkingCopyPreferences extends EventManager implements
 		for (Iterator i = temporarySettings.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
 			String value = (String) temporarySettings.get(key);
-			if (value == null)
+			if (value == null) {
 				getOriginal().remove(key);
-			else
+			} else {
 				getOriginal().put(key, value);
+			}
 		}
 		// clear our settings
 		temporarySettings.clear();

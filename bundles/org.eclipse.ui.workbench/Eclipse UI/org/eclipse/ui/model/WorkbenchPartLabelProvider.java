@@ -58,8 +58,9 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         	ISaveableModel model = (ISaveableModel) element;
         	ImageDescriptor imageDesc = model.getImageDescriptor();
         	// convert from ImageDescriptor to Image
-        	if (imageDesc == null)
-        		return null;
+        	if (imageDesc == null) {
+				return null;
+			}
         	Image image = (Image) images.get(imageDesc);
         	if (image == null) {
         		try {

@@ -38,18 +38,21 @@ public class AboutAction extends Action implements
      * @param window the window
      */
     public AboutAction(IWorkbenchWindow window) {
-        if (window == null)
-            throw new IllegalArgumentException();
+        if (window == null) {
+			throw new IllegalArgumentException();
+		}
 
         this.workbenchWindow = window;
 
         // use message with no fill-in
         IProduct product = Platform.getProduct();
         String productName = null;
-        if (product != null)
-            productName = product.getName();
-        if (productName == null)
-            productName = ""; //$NON-NLS-1$
+        if (product != null) {
+			productName = product.getName();
+		}
+        if (productName == null) {
+			productName = ""; //$NON-NLS-1$
+		}
         setText(NLS.bind(WorkbenchMessages.AboutAction_text,productName)); 
         setToolTipText(NLS.bind(WorkbenchMessages.AboutAction_toolTip, productName));
         setId("about"); //$NON-NLS-1$
@@ -63,8 +66,9 @@ public class AboutAction extends Action implements
      */
     public void run() {
         // make sure action is not disposed
-        if (workbenchWindow != null)
-            new AboutDialog(workbenchWindow.getShell()).open();
+        if (workbenchWindow != null) {
+			new AboutDialog(workbenchWindow.getShell()).open();
+		}
     }
 
     /*

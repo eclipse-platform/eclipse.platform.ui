@@ -187,8 +187,9 @@ public class EditorReference extends WorkbenchPartReference implements
         if (editor != null) {
             IPersistableElement persistable = editor.getEditorInput()
                     .getPersistable();
-            if (persistable != null)
-                return persistable.getFactoryId();
+            if (persistable != null) {
+				return persistable.getFactoryId();
+			}
             return null;
         }
         return factoryId;
@@ -203,8 +204,9 @@ public class EditorReference extends WorkbenchPartReference implements
     }
 
     public String getName() {
-        if (part != null)
-            return getEditor(false).getEditorInput().getName();
+        if (part != null) {
+			return getEditor(false).getEditorInput().getName();
+		}
         return name;
     }
 
@@ -327,8 +329,9 @@ public class EditorReference extends WorkbenchPartReference implements
      */
     public ImageDescriptor computeImageDescriptor() {
         ImageDescriptor descriptor = super.computeImageDescriptor();
-        if (!isPinned())
-            return descriptor;
+        if (!isPinned()) {
+			return descriptor;
+		}
 
         // Check if the pinned preference is set
         IPreferenceStore prefStore = WorkbenchPlugin.getDefault()
@@ -336,12 +339,14 @@ public class EditorReference extends WorkbenchPartReference implements
         boolean bUsePin = prefStore
                 .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
 
-        if (!bUsePin)
-            return descriptor;
+        if (!bUsePin) {
+			return descriptor;
+		}
 
         ImageDescriptor pinDesc = this.manager.getEditorPinImageDesc();
-        if (pinDesc == null)
-            return descriptor;
+        if (pinDesc == null) {
+			return descriptor;
+		}
 
         return new OverlayIcon(descriptor, pinDesc, new Point(16, 16));
     }

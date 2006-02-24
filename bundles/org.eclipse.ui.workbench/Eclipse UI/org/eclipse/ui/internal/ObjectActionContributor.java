@@ -79,8 +79,9 @@ public class ObjectActionContributor extends PluginActionBuilder implements
      * Method declared on IObjectActionContributor.
      */
     public void contributeObjectActionIdOverrides(List actionIdOverrides) {
-        if (!configRead)
-            readConfigElement();
+        if (!configRead) {
+			readConfigElement();
+		}
 
         // Easy case out if no actions
         if (currentContribution.actions != null) {
@@ -88,8 +89,9 @@ public class ObjectActionContributor extends PluginActionBuilder implements
                 ActionDescriptor ad = (ActionDescriptor) currentContribution.actions
                         .get(i);
                 String id = ad.getAction().getOverrideActionId();
-                if (id != null)
-                    actionIdOverrides.add(id);
+                if (id != null) {
+					actionIdOverrides.add(id);
+				}
             }
         }
     }
@@ -100,25 +102,29 @@ public class ObjectActionContributor extends PluginActionBuilder implements
     public boolean contributeObjectActions(IWorkbenchPart part,
             IMenuManager menu, ISelectionProvider selProv,
             List actionIdOverrides) {
-        if (!configRead)
-            readConfigElement();
+        if (!configRead) {
+			readConfigElement();
+		}
 
         // Easy case out if no actions
-        if (currentContribution.actions == null)
-            return false;
+        if (currentContribution.actions == null) {
+			return false;
+		}
 
         // Get a structured selection.	
         ISelection sel = selProv.getSelection();
-        if ((sel == null) || !(sel instanceof IStructuredSelection))
-            return false;
+        if ((sel == null) || !(sel instanceof IStructuredSelection)) {
+			return false;
+		}
         IStructuredSelection selection = (IStructuredSelection) sel;
         
         if(canAdapt()) {        	
            IStructuredSelection newSelection = LegacyResourceSupport.adaptSelection(selection, getObjectClass());     
            if(newSelection.size() != selection.size()) {
-        	   if (Policy.DEBUG_CONTRIBUTIONS)
-        		   WorkbenchPlugin.log("Error adapting selection to " + getObjectClass() +  //$NON-NLS-1$
+        	   if (Policy.DEBUG_CONTRIBUTIONS) {
+				WorkbenchPlugin.log("Error adapting selection to " + getObjectClass() +  //$NON-NLS-1$
             			". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$            	
+			}
             	return false;
            }
            selection = newSelection;
@@ -147,17 +153,20 @@ public class ObjectActionContributor extends PluginActionBuilder implements
 	 */
     public boolean contributeObjectMenus(IMenuManager menu,
             ISelectionProvider selProv) {
-        if (!configRead)
-            readConfigElement();
+        if (!configRead) {
+			readConfigElement();
+		}
 
         // Easy case out if no menus
-        if (currentContribution.menus == null)
-            return false;
+        if (currentContribution.menus == null) {
+			return false;
+		}
 
         // Get a structured selection.	
         ISelection sel = selProv.getSelection();
-        if ((sel == null) || !(sel instanceof IStructuredSelection))
-            return false;
+        if ((sel == null) || !(sel instanceof IStructuredSelection)) {
+			return false;
+		}
 
         // Generate menu.
         for (int i = 0; i < currentContribution.menus.size(); i++) {
@@ -188,27 +197,30 @@ public class ObjectActionContributor extends PluginActionBuilder implements
      * or the current selection matches the filter.
      */
     public boolean isApplicableTo(Object object) {
-        if (!configRead)
-            readConfigElement();
+        if (!configRead) {
+			readConfigElement();
+		}
 
         // Perform all tests with an instance of the objectClass and not
         // the actual selected object.
         if (canAdapt()) {
 			Object adapted = LegacyResourceSupport.getAdapter(object, getObjectClass());
 			if (adapted == null) {
-				if (Policy.DEBUG_CONTRIBUTIONS)
+				if (Policy.DEBUG_CONTRIBUTIONS) {
 					WorkbenchPlugin
 							.log("Error adapting " + object.getClass().getName() + //$NON-NLS-1$
 									" to " //$NON-NLS-1$
 									+ getObjectClass()
 									+ ". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			} else {
 				object = adapted;
 			}
 		}
 			
-        if (!testName(object))
-            return false;
+        if (!testName(object)) {
+			return false;
+		}
 
         return ((ObjectContribution) currentContribution)
                 .isApplicableTo(object);
@@ -257,15 +269,17 @@ public class ObjectActionContributor extends PluginActionBuilder implements
      */
     private boolean testName(Object object) {
         String nameFilter = config.getAttribute(IWorkbenchRegistryConstants.ATT_NAME_FILTER);
-        if (nameFilter == null)
-            return true;
+        if (nameFilter == null) {
+			return true;
+		}
         String objectName = null;
         if (object instanceof IAdaptable) {
             IAdaptable element = (IAdaptable) object;
             IWorkbenchAdapter de = (IWorkbenchAdapter) element
                     .getAdapter(IWorkbenchAdapter.class);
-            if (de != null)
-                objectName = de.getLabel(element);
+            if (de != null) {
+				objectName = de.getLabel(element);
+			}
         }
         if (objectName == null) {
             objectName = object.toString();
@@ -290,8 +304,9 @@ public class ObjectActionContributor extends PluginActionBuilder implements
          * @param element the element
          */
         public void addFilterTest(IConfigurationElement element) {
-            if (filterTest == null)
-                filterTest = new ObjectFilterTest();
+            if (filterTest == null) {
+				filterTest = new ObjectFilterTest();
+			}
             filterTest.addFilterElement(element);
         }
 
@@ -328,12 +343,14 @@ public class ObjectActionContributor extends PluginActionBuilder implements
             boolean result = true;
             if (visibilityTest != null) {
                 result = result && visibilityTest.isEnabledFor(object);
-                if (!result)
-                    return result;
+                if (!result) {
+					return result;
+				}
             } else if (filterTest != null) {
                 result = result && filterTest.matches(object, true);
-                if (!result)
-                    return result;
+                if (!result) {
+					return result;
+				}
             }
             if (enablement != null) {
                 try {
@@ -341,8 +358,9 @@ public class ObjectActionContributor extends PluginActionBuilder implements
                             object);
                     context.addVariable("selection", object); //$NON-NLS-1$
                     EvaluationResult evalResult = enablement.evaluate(context);
-                    if (evalResult == EvaluationResult.FALSE)
-                        return false;
+                    if (evalResult == EvaluationResult.FALSE) {
+						return false;
+					}
                 } catch (CoreException e) {
                     enablement = null;
                     WorkbenchPlugin.getDefault().getLog().log(e.getStatus());

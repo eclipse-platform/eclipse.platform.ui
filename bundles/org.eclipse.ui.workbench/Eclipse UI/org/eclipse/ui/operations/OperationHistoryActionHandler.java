@@ -151,8 +151,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 								// not all flushes will trigger an update so
 								// force it here
 								update();
-							} else
+							} else {
 								update();
+							}
 						}
 					});
 				}
@@ -215,8 +216,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			history.removeOperationHistoryListener(historyListener);
 		}
 		
-		if (isInvalid())
+		if (isInvalid()) {
 			return;
+		}
 
 		site.getPage().removePartListener(partListener);
 		site = null;
@@ -243,8 +245,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the operation history we are using.
 	 */
 	IOperationHistory getHistory() {
-		if (PlatformUI.getWorkbench() == null)
+		if (PlatformUI.getWorkbench() == null) {
 			return null;
+		}
 		
 		return PlatformUI.getWorkbench().getOperationSupport()
 				.getOperationHistory();
@@ -261,8 +264,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
 	 */
 	public final void run() {
-		if  (isInvalid())
+		if  (isInvalid()) {
 			return;
+		}
 
 		Shell parent = getWorkbenchWindow().getShell();
 		progressDialog = new TimeTriggeredProgressMonitorDialog(parent,
@@ -274,8 +278,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				try {
 					runCommand(pm);
 				} catch (ExecutionException e) {
-					if (pruning)
+					if (pruning) {
 						flush();
+					}
 					throw new InvocationTargetException(e);
 				}
 			}
@@ -307,8 +312,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			return undoContext;
 		}
 		if (adapter.equals(IProgressMonitor.class)) {
-			if (progressDialog != null)
+			if (progressDialog != null) {
 				return progressDialog.getProgressMonitor();
+			}
 		}
 		if (site != null) {
 			if (adapter.equals(Shell.class)) {
@@ -323,8 +329,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			// Refer all other requests to the part itself.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=108144
 			IWorkbenchPart part = site.getPart();
-			if (part != null)
+			if (part != null) {
 				return part.getAdapter(adapter);
+			}
 		}
 		return null;
 	}
@@ -333,8 +340,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the workbench window for this action handler
 	 */
 	private IWorkbenchWindow getWorkbenchWindow() {
-		if (site != null)
+		if (site != null) {
 			return site.getWorkbenchWindow();
+		}
 		return null;
 	}
 
@@ -377,8 +385,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * operation history.
 	 */
 	public void update() {
-		if (isInvalid())
+		if (isInvalid()) {
 			return;
+		}
 		
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
@@ -396,8 +405,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			 * if there is nothing to do and we are pruning the history, flush
 			 * the history of this context.
 			 */
-			if (undoContext != null && pruning)
+			if (undoContext != null && pruning) {
 				flush();
+			}
 		}
 		setText(text);
 		setToolTipText(tooltipText);

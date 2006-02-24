@@ -130,8 +130,9 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
      *         otherwise.
      */
     protected Label createLabel(Composite parent, String name) {
-        if (name == null)
-            return null;
+        if (name == null) {
+			return null;
+		}
         Label label = new Label(parent, SWT.NONE);
         label.setText(name);
         label.setFont(parent.getFont());
@@ -187,8 +188,9 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
      * @see AbstractElementListSelectionDialog#handleDefaultSelected()
      */
     protected void handleDefaultSelected() {
-        if (validateCurrentSelection() && (getLowerSelectedElement() != null))
-            buttonPressed(IDialogConstants.OK_ID);
+        if (validateCurrentSelection() && (getLowerSelectedElement() != null)) {
+			buttonPressed(IDialogConstants.OK_ID);
+		}
     }
 
     /**
@@ -203,10 +205,11 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
         fLowerList.removeAll();
         if (index >= 0) {
 	        fQualifierElements = getFoldedElements(index);
-	        if (fQualifierElements == null)
-	            updateLowerListWidget(new Object[] {});
-	        else
-	            updateLowerListWidget(fQualifierElements);
+	        if (fQualifierElements == null) {
+				updateLowerListWidget(new Object[] {});
+			} else {
+				updateLowerListWidget(fQualifierElements);
+			}
         }
         validateCurrentSelection();
     }
@@ -220,16 +223,20 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
      * @param element
      */
     protected void setLowerSelectedElement(Object element) {
-        if (fQualifierElements == null)
-            return;
+        if (fQualifierElements == null) {
+			return;
+		}
         // find matching index
         int i;
-        for (i = 0; i != fQualifierElements.length; i++)
-            if (fQualifierElements[i].equals(element))
-                break;
+        for (i = 0; i != fQualifierElements.length; i++) {
+			if (fQualifierElements[i].equals(element)) {
+				break;
+			}
+		}
         // set selection
-        if (i != fQualifierElements.length)
-            fLowerList.setSelection(i);
+        if (i != fQualifierElements.length) {
+			fLowerList.setSelection(i);
+		}
     }
 
     /**
@@ -238,8 +245,9 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
      */
     protected Object getLowerSelectedElement() {
         int index = fLowerList.getSelectionIndex();
-        if (index >= 0)
-            return fQualifierElements[index];
+        if (index >= 0) {
+			return fQualifierElements[index];
+		}
         return null;
     }
 
@@ -248,8 +256,9 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
         String[] qualifiers = new String[length];
         for (int i = 0; i != length; i++){
         	String text = fQualifierRenderer.getText(elements[i]);
-        	if(text == null)
-        		text = ""; //$NON-NLS-1$
+        	if(text == null) {
+				text = ""; //$NON-NLS-1$
+			}
             qualifiers[i] = text;
         }
         TwoArrayQuickSorter sorter = new TwoArrayQuickSorter(isCaseIgnored());
@@ -259,8 +268,9 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
             item.setText(qualifiers[i]);
             item.setImage(fQualifierRenderer.getImage(elements[i]));
         }
-        if (fLowerList.getItemCount() > 0)
-            fLowerList.setSelection(0);
+        if (fLowerList.getItemCount() > 0) {
+			fLowerList.setSelection(0);
+		}
     }
 
     /*

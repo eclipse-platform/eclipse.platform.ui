@@ -246,8 +246,9 @@ public class SelectPerspectiveDialog extends Dialog implements
         IStructuredSelection sel = (IStructuredSelection) event.getSelection();
         if (!sel.isEmpty()) {
             Object obj = sel.getFirstElement();
-            if (obj instanceof IPerspectiveDescriptor)
-                perspDesc = (IPerspectiveDescriptor) obj;
+            if (obj instanceof IPerspectiveDescriptor) {
+				perspDesc = (IPerspectiveDescriptor) obj;
+			}
         }
     }
 
@@ -258,7 +259,8 @@ public class SelectPerspectiveDialog extends Dialog implements
         ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
                 .getActivitySupport().getTriggerPointManager().getTriggerPoint(
                         WorkbenchTriggerPoints.OPEN_PERSPECITVE_DIALOG);
-        if (WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelection()))
-            super.okPressed();
+        if (WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelection())) {
+			super.okPressed();
+		}
     }
 }

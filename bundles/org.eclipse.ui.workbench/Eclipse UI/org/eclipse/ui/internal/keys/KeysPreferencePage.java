@@ -520,8 +520,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	public void applyData(Object data) {
-		if(data instanceof Binding)
+		if(data instanceof Binding) {
 			editBinding((Binding) data);
+		}
 	}
 	protected final Control createContents(final Composite parent) {
 		
@@ -1098,8 +1099,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final String[] categoryNames = comboCategory.getItems();
 		int i = 0;
 		for (; i < categoryNames.length; i++) {
-			if (categoryName.equals(categoryNames[i]))
+			if (categoryName.equals(categoryNames[i])) {
 				break;
+			}
 		}
 		if (i >= comboCategory.getItemCount()) {
 			// Couldn't find the category, so abort.
@@ -1606,11 +1608,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 		if (schemeUniqueName != null) {
 			final String items[] = comboScheme.getItems();
 
-			for (int i = 0; i < items.length; i++)
+			for (int i = 0; i < items.length; i++) {
 				if (schemeUniqueName.equals(items[i])) {
 					comboScheme.select(i);
 					break;
 				}
+			}
 		}
 	}
 
@@ -1723,7 +1726,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 					Context context = (Context) iterator2.next();
 					contextIdsByUniqueName.put(name, context.getId());
 					contextUniqueNamesById.put(context.getId(), name);
-				} else
+				} else {
 					while (iterator2.hasNext()) {
 						Context context = (Context) iterator2.next();
 						String uniqueName = MessageFormat.format(
@@ -1733,6 +1736,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 						contextIdsByUniqueName.put(uniqueName, context.getId());
 						contextUniqueNamesById.put(context.getId(), uniqueName);
 					}
+				}
 			}
 
 			categoryIdsByUniqueName = new HashMap();
@@ -1749,7 +1753,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 					Category category = (Category) iterator2.next();
 					categoryIdsByUniqueName.put(name, category.getId());
 					categoryUniqueNamesById.put(category.getId(), name);
-				} else
+				} else {
 					while (iterator2.hasNext()) {
 						Category category = (Category) iterator2.next();
 						String uniqueName = MessageFormat.format(
@@ -1761,6 +1765,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 						categoryUniqueNamesById.put(category.getId(),
 								uniqueName);
 					}
+				}
 			}
 
 			schemeIdsByUniqueName = new HashMap();
@@ -1777,7 +1782,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 					Scheme scheme = (Scheme) iterator2.next();
 					schemeIdsByUniqueName.put(name, scheme.getId());
 					schemeUniqueNamesById.put(scheme.getId(), name);
-				} else
+				} else {
 					while (iterator2.hasNext()) {
 						Scheme scheme = (Scheme) iterator2.next();
 						String uniqueName = MessageFormat.format(
@@ -1787,6 +1792,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 						schemeIdsByUniqueName.put(uniqueName, scheme.getId());
 						schemeUniqueNamesById.put(scheme.getId(), uniqueName);
 					}
+				}
 			}
 
 			Scheme activeScheme = bindingService.getActiveScheme();
@@ -1992,8 +1998,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 				.toArray(new String[contextNames.size()]));
 		setContextId(contextId);
 
-		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
+		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty()) {
 			comboContext.select(0);
+		}
 	}
 
 	/**
@@ -2105,8 +2112,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 */
 	private final void updateSelection(final Table table,
 			final String contextId, final TriggerSequence triggerSequence) {
-		if (table.getSelectionCount() > 1)
+		if (table.getSelectionCount() > 1) {
 			table.deselectAll();
+		}
 
 		final TableItem[] items = table.getItems();
 		int selection = -1;

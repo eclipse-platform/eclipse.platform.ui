@@ -85,8 +85,9 @@ public class UIStats {
 
         for (int i = 0; i <= LAST_VALUE; i++) {
         	//don't log any performance events if the general performance stats is disabled
-        	if (events[i] != null && PerformanceStats.ENABLED)
-        		debug[i] = PerformanceStats.isEnabled(events[i]);
+        	if (events[i] != null && PerformanceStats.ENABLED) {
+				debug[i] = PerformanceStats.isEnabled(events[i]);
+			}
         }
     }
 
@@ -108,8 +109,9 @@ public class UIStats {
      * @param label The event label
      */
     public static void start(int event, String label) {
-        if (debug[event])
-            operations.put(event + label, new Long(System.currentTimeMillis()));
+        if (debug[event]) {
+			operations.put(event + label, new Long(System.currentTimeMillis()));
+		}
     }
 
     /**
@@ -123,8 +125,9 @@ public class UIStats {
    	public static void end(int event, Object blame, String label) {
         if (debug[event]) {
             Long startTime = (Long) operations.remove(event + label);
-            if (startTime == null)
-            	return;
+            if (startTime == null) {
+				return;
+			}
             final long elapsed = System.currentTimeMillis() - startTime.longValue();
 //			System.out.println("Time - " + //$NON-NLS-1$
 //                    elapsed + events[event] + label);
@@ -140,11 +143,13 @@ public class UIStats {
    		// We use a runtime debug option here for backwards compatibility (bug 96672)
 		// Note that this value is only relevant if the workspace chooser is not used.
    		String option = Platform.getDebugOption(Platform.PI_RUNTIME + "/debug"); //$NON-NLS-1$
-		if (option == null || !"true".equalsIgnoreCase(option)) //$NON-NLS-1$
+		if (option == null || !"true".equalsIgnoreCase(option)) { //$NON-NLS-1$
 			return;
+		}
 		String startString = System.getProperty("eclipse.startTime"); //$NON-NLS-1$
-		if (startString == null)
+		if (startString == null) {
 			return;
+		}
 		try {
 			long start = Long.parseLong(startString);
 			long end = System.currentTimeMillis();

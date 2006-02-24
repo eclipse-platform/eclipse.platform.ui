@@ -120,8 +120,9 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements
 
         for (;;) {
             try {
-                if (!disp.readAndDispatch())
-                    break;
+                if (!disp.readAndDispatch()) {
+					break;
+				}
             } catch (Throwable e) {//Handle the exception the same way as the workbench
                 handler.handleException(e);
                 break;
@@ -166,8 +167,9 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements
      */
     public void subTask(String name) {
         //Be prepared in case the first task was null
-        if (taskName == null)
-            taskName = name;
+        if (taskName == null) {
+			taskName = name;
+		}
         super.subTask(name);
         runEventLoop();
     }

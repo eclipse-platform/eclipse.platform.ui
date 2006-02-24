@@ -61,8 +61,9 @@ public class PropertyPageManager extends PreferenceManager {
 		
 		IPreferenceNode [] subNodes = top.getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
-			if(addToDeep(category, node, subNodes[i]))
-				return true;			
+			if(addToDeep(category, node, subNodes[i])) {
+				return true;
+			}			
 		}
 		
 		return false;

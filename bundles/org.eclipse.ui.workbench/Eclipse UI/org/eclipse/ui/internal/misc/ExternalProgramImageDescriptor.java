@@ -44,9 +44,9 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
 
         //See if there is a name - compare it if so and compare the programs if not
         String otherName = other.program.getName();
-        if (otherName == null)
-            return other.program.equals(program);
-        else {
+        if (otherName == null) {
+			return other.program.equals(program);
+		} else {
             return otherName.equals(program.getName());
         }
     }
@@ -67,16 +67,19 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
         ImageData data = null;
         ImageData defaultImage = WorkbenchImages.getImageDescriptor(
                 ISharedImages.IMG_OBJ_FILE).getImageData();
-        if (defaultImage == null)
-            return null;
+        if (defaultImage == null) {
+			return null;
+		}
 
-        if (program == null || ((data = program.getImageData()) == null))
-            return defaultImage;
+        if (program == null || ((data = program.getImageData()) == null)) {
+			return defaultImage;
+		}
 
         //The images in GNOME are too big. Scaling them does not give nice result so return defaultImage;
         if (data.height > defaultImage.height
-                || data.width > defaultImage.width)
-            return defaultImage;
+                || data.width > defaultImage.width) {
+			return defaultImage;
+		}
 
         return data;
     }
@@ -86,9 +89,10 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
      */
     public int hashCode() {
         String programName = program.getName();
-        if (programName == null)
-            return program.hashCode();
-        else
-            return programName.hashCode();
+        if (programName == null) {
+			return program.hashCode();
+		} else {
+			return programName.hashCode();
+		}
     }
 }

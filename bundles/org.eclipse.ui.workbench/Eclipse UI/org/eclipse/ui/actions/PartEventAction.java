@@ -105,8 +105,9 @@ public abstract class PartEventAction extends Action implements IPartListener {
      * recalculated.
      */
     public void partClosed(IWorkbenchPart part) {
-        if (part == activePart)
-            activePart = null;
+        if (part == activePart) {
+			activePart = null;
+		}
     }
 
     /**

@@ -201,8 +201,9 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 * @see SWT#NONE
 	 */
 	private int getOrientation(IEditorPart editor) {
-		if (editor instanceof IWorkbenchPartOrientation)
+		if (editor instanceof IWorkbenchPartOrientation) {
 			return ((IWorkbenchPartOrientation) editor).getOrientation();
+		}
 		return getOrientation();
 	}
 
@@ -339,8 +340,9 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 */
 	protected IEditorPart getActiveEditor() {
 		int index = getActivePage();
-		if (index != -1)
+		if (index != -1) {
 			return getEditor(index);
+		}
 		return null;
 	}
 
@@ -355,8 +357,9 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 */
 	protected int getActivePage() {
 		CTabFolder tabFolder = getTabFolder();
-		if (tabFolder != null && !tabFolder.isDisposed())
+		if (tabFolder != null && !tabFolder.isDisposed()) {
 			return tabFolder.getSelectionIndex();
+		}
 		return -1;
 	}
 
@@ -439,8 +442,9 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	protected int getPageCount() {
 		CTabFolder folder = getTabFolder();
 		// May not have been created yet, or may have been disposed.
-		if (folder != null && !folder.isDisposed())
+		if (folder != null && !folder.isDisposed()) {
 			return folder.getItemCount();
+		}
 		return 0;
 	}
 

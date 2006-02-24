@@ -693,14 +693,18 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 
 		// Adjust the trim sizes to incorporate the margins for sides that
 		// don't currently have trim
-		if (trim_top == 0)
+		if (trim_top == 0) {
 			trim_top = marginHeight;
-		if (trim_bottom == 0)
+		}
+		if (trim_bottom == 0) {
 			trim_bottom = marginHeight;
-		if (trim_left == 0)
+		}
+		if (trim_left == 0) {
 			trim_left = marginWidth;
-		if (trim_right == 0)
+		}
+		if (trim_right == 0) {
 			trim_right = marginWidth;
+		}
 
 		Rectangle trimRect = new Rectangle(0, 0, 0, 0);
 		switch (areaId) {

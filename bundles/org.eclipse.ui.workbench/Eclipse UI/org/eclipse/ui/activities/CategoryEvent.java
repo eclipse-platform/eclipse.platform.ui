@@ -52,8 +52,9 @@ public final class CategoryEvent {
     public CategoryEvent(ICategory category,
             boolean categoryActivityBindingsChanged, boolean definedChanged,
             boolean descriptionChanged, boolean nameChanged) {
-        if (category == null)
-            throw new NullPointerException();
+        if (category == null) {
+			throw new NullPointerException();
+		}
 
         this.category = category;
         this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;

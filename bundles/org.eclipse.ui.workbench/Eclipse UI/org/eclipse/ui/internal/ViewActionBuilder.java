@@ -52,14 +52,16 @@ public class ViewActionBuilder extends PluginActionBuilder {
      * Return all extended actions.
      */
     public ActionDescriptor[] getExtendedActions() {
-        if (cache == null)
-            return new ActionDescriptor[0];
+        if (cache == null) {
+			return new ActionDescriptor[0];
+		}
 
         ArrayList results = new ArrayList();
         for (int i = 0; i < cache.size(); i++) {
             BasicContribution bc = (BasicContribution) cache.get(i);
-            if (bc.actions != null)
-                results.addAll(bc.actions);
+            if (bc.actions != null) {
+				results.addAll(bc.actions);
+			}
         }
         return (ActionDescriptor[]) results
                 .toArray(new ActionDescriptor[results.size()]);

@@ -203,8 +203,9 @@ public class ActionPresentation {
      */
     private boolean containsRegistration(Object[] existingRegistrations, IActionSetDescriptor set) {
         for (int i = 0; i < existingRegistrations.length; i++) {
-            if (existingRegistrations[i] == set)
-                return true;
+            if (existingRegistrations[i] == set) {
+				return true;
+			}
         }
         return false;
     }
@@ -216,8 +217,9 @@ public class ActionPresentation {
         IActionSet result[] = new IActionSet[setRecCollection.size()];
         int i = 0;
         for (Iterator iterator = setRecCollection.iterator(); iterator
-                .hasNext(); i++)
-            result[i] = ((SetRec) iterator.next()).set;
+                .hasNext(); i++) {
+			result[i] = ((SetRec) iterator.next()).set;
+		}
         return result;
     }
 }

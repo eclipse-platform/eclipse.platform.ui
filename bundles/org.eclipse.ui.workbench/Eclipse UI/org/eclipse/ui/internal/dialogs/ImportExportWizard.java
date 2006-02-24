@@ -55,12 +55,14 @@ public class ImportExportWizard extends Wizard {
      * Creates the wizard's pages lazily.
      */
     public void addPages() {
-    	if (page.equals(IMPORT))
-    		importExportPage = new ImportPage(this.workbench, this.selection);
-    	else if (page.equals(EXPORT))
-    		importExportPage = new ExportPage(this.workbench, this.selection);
-        if (importExportPage != null)
-        	addPage(importExportPage);
+    	if (page.equals(IMPORT)) {
+			importExportPage = new ImportPage(this.workbench, this.selection);
+		} else if (page.equals(EXPORT)) {
+			importExportPage = new ExportPage(this.workbench, this.selection);
+		}
+        if (importExportPage != null) {
+			addPage(importExportPage);
+		}
     }
 
     /**
@@ -85,8 +87,9 @@ public class ImportExportWizard extends Wizard {
                     .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ);
         	setWindowTitle(WorkbenchMessages.ExportWizard_title);
         }
-        if (wizardBannerImage != null)
-        	setDefaultPageImageDescriptor(wizardBannerImage);
+        if (wizardBannerImage != null) {
+			setDefaultPageImageDescriptor(wizardBannerImage);
+		}
         setNeedsProgressMonitor(true);
     }
 }

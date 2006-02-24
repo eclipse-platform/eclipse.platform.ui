@@ -51,8 +51,9 @@ public class PartListenerList2 extends EventManager {
     		UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
     	}
     	Platform.run(runnable);
-    	if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS))
-    		UIStats.end(UIStats.NOTIFY_PART_LISTENERS, listener, label);
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+			UIStats.end(UIStats.NOTIFY_PART_LISTENERS, listener, label);
+		}
 	}
 
     /**
@@ -137,10 +138,11 @@ public class PartListenerList2 extends EventManager {
         Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l;
-            if (array[i] instanceof IPartListener2)
-                l = (IPartListener2) array[i];
-            else
-                continue;
+            if (array[i] instanceof IPartListener2) {
+				l = (IPartListener2) array[i];
+			} else {
+				continue;
+			}
 
             fireEvent(new SafeRunnable() {
                 public void run() {
@@ -157,10 +159,11 @@ public class PartListenerList2 extends EventManager {
         Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l;
-            if (array[i] instanceof IPartListener2)
-                l = (IPartListener2) array[i];
-            else
-                continue;
+            if (array[i] instanceof IPartListener2) {
+				l = (IPartListener2) array[i];
+			} else {
+				continue;
+			}
 
             fireEvent(new SafeRunnable() {
                 public void run() {
@@ -177,10 +180,11 @@ public class PartListenerList2 extends EventManager {
         Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l;
-            if (array[i] instanceof IPartListener2)
-                l = (IPartListener2) array[i];
-            else
-                continue;
+            if (array[i] instanceof IPartListener2) {
+				l = (IPartListener2) array[i];
+			} else {
+				continue;
+			}
 
             fireEvent(new SafeRunnable() {
                 public void run() {

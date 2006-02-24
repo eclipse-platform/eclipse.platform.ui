@@ -89,13 +89,15 @@ public class JobErrorDialog extends ErrorDialog {
      */
     void refresh() {
     	
-    	if(AUTOMATED_MODE)//Nothing to refresh if we never opened it
-    		return;
+    	if(AUTOMATED_MODE) {
+			return;
+		}
     	
     	//Do not refresh if we are in the process of 
     	//opening or shutting down
-    	if(dialogArea == null || dialogArea.isDisposed())
-    		return;
+    	if(dialogArea == null || dialogArea.isDisposed()) {
+			return;
+		}
     
         if (isMultipleJobErrors()) {
             if (jobListViewer == null ) {
@@ -190,8 +192,9 @@ public class JobErrorDialog extends ErrorDialog {
 
     private IAction getGotoAction() {
         Object property = selectedError.getJob().getProperty(IProgressConstants.ACTION_PROPERTY);
-        if (property instanceof IAction)
-            return (IAction)property;
+        if (property instanceof IAction) {
+			return (IAction)property;
+		}
         return null;
     }
 
@@ -204,8 +207,9 @@ public class JobErrorDialog extends ErrorDialog {
     private void setMessage(String messageString) {
         //must not set null text in a label
         message = messageString == null ? "" : messageString; //$NON-NLS-1$
-        if (messageLabel == null || messageLabel.isDisposed())
-            return;
+        if (messageLabel == null || messageLabel.isDisposed()) {
+			return;
+		}
         messageLabel.setText(message);
     }
     
@@ -305,8 +309,9 @@ public class JobErrorDialog extends ErrorDialog {
              */
             public void inputChanged(Viewer viewer, Object oldInput,
                     Object newInput) {
-                if (newInput != null)
-                    refreshJobList();
+                if (newInput != null) {
+					refreshJobList();
+				}
             }
         };
         jobListViewer.setContentProvider(provider);
@@ -437,8 +442,9 @@ public class JobErrorDialog extends ErrorDialog {
         if (rawSelection != null
                 && rawSelection instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection) rawSelection;
-            if (selection.size() == 1)
-                return (ErrorInfo) selection.getFirstElement();
+            if (selection.size() == 1) {
+				return (ErrorInfo) selection.getFirstElement();
+			}
         }
         return null;
     }

@@ -152,14 +152,16 @@ public class LabelRetargetAction extends RetargetAction {
      * allowed to change the accelerator).
      */
     private String appendAccelerator(String newText) {
-        if (newText == null)
-            return null;
+        if (newText == null) {
+			return null;
+		}
 
         // Remove any accelerator
         String str = removeAcceleratorText(newText);
         // Append our accelerator
-        if (acceleratorText != null)
-            str = str + acceleratorText;
+        if (acceleratorText != null) {
+			str = str + acceleratorText;
+		}
         return str;
     }
 

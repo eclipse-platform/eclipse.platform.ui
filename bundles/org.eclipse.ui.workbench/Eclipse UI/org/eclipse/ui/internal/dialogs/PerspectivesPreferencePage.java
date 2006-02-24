@@ -232,8 +232,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		openEmbedButton.setFont(font);
 
 		// Open view as float no longer supported
-		if (openViewMode == IPreferenceConstants.OVM_FLOAT)
+		if (openViewMode == IPreferenceConstants.OVM_FLOAT) {
 			openViewMode = IPreferenceConstants.OVM_FAST;
+		}
 
 		openFastButton = new Button(buttonComposite, SWT.RADIO);
 		openFastButton.setText(OVM_FAST);
@@ -297,8 +298,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		// Populate the perspectivesTable
 		IPerspectiveDescriptor[] persps = perspectiveRegistry.getPerspectives();
 		perspectives = new ArrayList(persps.length);
-		for (int i = 0; i < persps.length; i++)
+		for (int i = 0; i < persps.length; i++) {
 			perspectives.add(i, persps[i]);
+		}
 		Collections.sort(perspectives, comparator);
 		defaultPerspectiveId = perspectiveRegistry.getDefaultPerspective();
 		updatePerspectivesTable();
@@ -423,8 +425,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		openViewMode = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		// Open view as float no longer supported
-		if (openViewMode == IPreferenceConstants.OVM_FLOAT)
+		if (openViewMode == IPreferenceConstants.OVM_FLOAT) {
 			openViewMode = IPreferenceConstants.OVM_FAST;
+		}
 		openEmbedButton
 				.setSelection(openViewMode == IPreferenceConstants.OVM_EMBED);
 		openFastButton
@@ -450,8 +453,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
                 IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 		
 		IPerspectiveDescriptor desc = null;
-        if (newDefault != null)
-           desc = workbench.getPerspectiveRegistry().findPerspectiveWithId(newDefault);
+        if (newDefault != null) {
+			desc = workbench.getPerspectiveRegistry().findPerspectiveWithId(newDefault);
+		}
         if (desc == null) {
         	newDefault = workbench.getPerspectiveRegistry().getDefaultPerspective();
         }
@@ -467,15 +471,17 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	 * @return int -1 if it cannot be found
 	 */
 	private int indexOf(String perspectiveId) {
-		if (perspectiveId == null)
+		if (perspectiveId == null) {
 			return -1;
+		}
 		PerspectiveDescriptor[] descriptors =
 			new PerspectiveDescriptor[perspectives.size()];
 		perspectives.toArray(descriptors);
 		for (int i = 0; i < descriptors.length; i++) {
 			PerspectiveDescriptor descriptor = descriptors[i];
-			if(descriptor.getId().equals(perspectiveId))
+			if(descriptor.getId().equals(perspectiveId)) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -519,8 +525,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		}
 		
 		//Delete the perspective
-		if(perspectives.size()<perspectiveRegistry.getPerspectives().length)
-        	perspectiveRegistry.deletePerspectives(perspToDelete);
+		if(perspectives.size()<perspectiveRegistry.getPerspectives().length) {
+			perspectiveRegistry.deletePerspectives(perspToDelete);
+		}
 				
         // Revert the perspectives
 		perspectiveRegistry.revertPerspectives(perspToRevert);
@@ -550,8 +557,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// Map it to the perspective descriptor
 		PerspectiveDescriptor desc = null;
-		if (index > -1)
+		if (index > -1) {
 			desc = (PerspectiveDescriptor) perspectives.get(index);
+		}
 
 		// Do enable.
 		if (desc != null) {
@@ -617,10 +625,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// Map it to the perspective descriptor
 		PerspectiveDescriptor desc = null;
-		if (index > -1)
+		if (index > -1) {
 			desc = (PerspectiveDescriptor) perspectives.get(index);
-		else
+		} else {
 			return;
+		}
 
 		// Take action.
 		if (button == revertButton) {

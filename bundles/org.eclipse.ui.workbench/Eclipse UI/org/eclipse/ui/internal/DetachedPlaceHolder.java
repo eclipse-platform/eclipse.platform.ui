@@ -34,8 +34,9 @@ public class DetachedPlaceHolder extends PartPlaceholder implements
      * Add a child to the container.
      */
     public void add(LayoutPart newPart) {
-        if (!(newPart instanceof PartPlaceholder))
-            return;
+        if (!(newPart instanceof PartPlaceholder)) {
+			return;
+		}
         children.add(newPart);
     }
 

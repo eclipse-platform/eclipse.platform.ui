@@ -26,8 +26,9 @@ public class WorkingSetFactory implements IElementFactory {
     public IAdaptable createElement(IMemento memento) {
         String workingSetName = memento.getString(IWorkbenchConstants.TAG_NAME);
         String label = memento.getString(IWorkbenchConstants.TAG_LABEL);
-        if (label == null)
-        		label = workingSetName;
+        if (label == null) {
+			label = workingSetName;
+		}
         String workingSetEditPageId = memento
                 .getString(IWorkbenchConstants.TAG_EDIT_PAGE_ID);
         String aggregateString = memento
@@ -35,15 +36,17 @@ public class WorkingSetFactory implements IElementFactory {
 		boolean isAggregate = aggregateString != null
 				&& Boolean.valueOf(aggregateString).booleanValue();
 
-		if (workingSetName == null)
-            return null;
+		if (workingSetName == null) {
+			return null;
+		}
 
         AbstractWorkingSet workingSet = null;
         
-        if (isAggregate)
+        if (isAggregate) {
 			workingSet = new AggregateWorkingSet(workingSetName, label, memento);
-		else
+		} else {
 			workingSet = new WorkingSet(workingSetName, label, memento);
+		}
         
         if (workingSetEditPageId != null) {
             workingSet.setId(workingSetEditPageId);

@@ -55,8 +55,9 @@ public class PluginActionContributionItem extends ActionContributionItem
                 .addActivityManagerListener(this);
         // set up the identifier if necessary
         IIdentifier id = getIdentifier();
-        if (id != null)
-            id.addIdentifierListener(this);
+        if (id != null) {
+			id.addIdentifierListener(this);
+		}
     }
     
     /**
@@ -69,8 +70,9 @@ public class PluginActionContributionItem extends ActionContributionItem
                 .removeActivityManagerListener(this);
 
         IIdentifier id = getIdentifier();
-        if (id != null)
-            id.removeIdentifierListener(this);
+        if (id != null) {
+			id.removeIdentifierListener(this);
+		}
     }
     
     /* (non-Javadoc)
@@ -79,13 +81,15 @@ public class PluginActionContributionItem extends ActionContributionItem
     public void setParent(IContributionManager parent) {
         IContributionManager oldParent = getParent();
         super.setParent(parent);
-        if (oldParent == parent) // don't redo the work if we're setting the parent to the same value
-            return;
+        if (oldParent == parent) {
+			return;
+		}
         
-        if (parent == null) 
-            unhookListeners();
-        else 
-            hookListeners();
+        if (parent == null) {
+			unhookListeners();
+		} else {
+			hookListeners();
+		}
     }
     
     /**
@@ -94,8 +98,9 @@ public class PluginActionContributionItem extends ActionContributionItem
      * @since 3.0
      */
     private IIdentifier getIdentifier() {
-        if (!WorkbenchActivityHelper.isFiltering())
-            return null;
+        if (!WorkbenchActivityHelper.isFiltering()) {
+			return null;
+		}
         
         if (identifier == null) {
             IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
@@ -141,8 +146,9 @@ public class PluginActionContributionItem extends ActionContributionItem
      * @see org.eclipse.jface.action.ActionContributionItem#isVisible()
      */
     public boolean isVisible() {
-        if (identifier != null && !identifier.isEnabled())
-            return false;
+        if (identifier != null && !identifier.isEnabled()) {
+			return false;
+		}
         return super.isVisible();
     }
 
@@ -160,8 +166,9 @@ public class PluginActionContributionItem extends ActionContributionItem
      */
     private void invalidateParent() {
         IContributionManager parent = getParent();
-        if (parent != null)
-            parent.markDirty();
+        if (parent != null) {
+			parent.markDirty();
+		}
     }
 
     /* (non-Javadoc)

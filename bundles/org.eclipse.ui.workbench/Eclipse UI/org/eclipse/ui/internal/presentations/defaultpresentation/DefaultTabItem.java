@@ -182,17 +182,20 @@ public class DefaultTabItem extends WidgetTabItem {
 
             String titleTooltip = info.toolTip.trim();
 
-            if (titleTooltip.endsWith(info.name))
-                titleTooltip = titleTooltip.substring(0,
+            if (titleTooltip.endsWith(info.name)) {
+				titleTooltip = titleTooltip.substring(0,
                         titleTooltip.lastIndexOf(info.name)).trim();
+			}
 
-            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
-                titleTooltip = titleTooltip.substring(0,
+            if (titleTooltip.endsWith("\\")) { //$NON-NLS-1$
+				titleTooltip = titleTooltip.substring(0,
                         titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
+			}
 
-            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
-                titleTooltip = titleTooltip.substring(0,
+            if (titleTooltip.endsWith("/")) { //$NON-NLS-1$
+				titleTooltip = titleTooltip.substring(0,
                         titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
+			}
 
             contentDescription = titleTooltip;
         }

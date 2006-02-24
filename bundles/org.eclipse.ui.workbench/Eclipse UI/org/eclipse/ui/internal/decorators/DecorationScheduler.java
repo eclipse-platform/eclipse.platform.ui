@@ -95,8 +95,9 @@ public class DecorationScheduler {
 
 		DecorationResult decoration = getResult(element, adaptedElement, context);
 
-		if (decoration == null)
+		if (decoration == null) {
 			return text;
+		}
 
 		return decoration.decorateWithText(text);
 
@@ -133,10 +134,12 @@ public class DecorationScheduler {
 			reference.setUndecoratedText(undecoratedText);
 			awaitingDecorationValues.put(element, reference);
 			awaitingDecoration.add(element);
-			if (shutdown)
+			if (shutdown) {
 				return;
-			if (decorationJob.getState() == Job.SLEEPING)
+			}
+			if (decorationJob.getState() == Job.SLEEPING) {
 				decorationJob.wakeUp();
+			}
 			decorationJob.schedule();
 		}
 
@@ -158,8 +161,9 @@ public class DecorationScheduler {
 
 		DecorationResult decoration = getResult(element, adaptedElement, context);
 
-		if (decoration == null)
+		if (decoration == null) {
 			return image;
+		}
 		return decoration.decorateWithOverlays(image, decoratorManager
 				.getLightweightManager().getOverlayCache());
 	}
@@ -179,8 +183,9 @@ public class DecorationScheduler {
 	private DecorationResult getResult(Object element, Object adaptedElement, IDecorationContext context) {
 
 		// We do not support decoration of null
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 
 		DecorationResult decoration = internalGetResult(element, context);
 
@@ -194,8 +199,9 @@ public class DecorationScheduler {
 	
 	private DecorationResult internalGetResult(Object element, IDecorationContext context) {
 		Map results = (Map)resultCache.get(context);
-		if (results != null)
+		if (results != null) {
 			return (DecorationResult)results.get(element);
+		}
 		return null;
 	}
 	
@@ -214,8 +220,9 @@ public class DecorationScheduler {
 	void decorated() {
 
 		// Don't bother if we are shutdown now
-		if (shutdown)
+		if (shutdown) {
 			return;
+		}
 
 		// Lazy initialize the job
 		if (updateJob == null) {
@@ -262,8 +269,9 @@ public class DecorationScheduler {
 			 */
 			public IStatus run(IProgressMonitor monitor) {
 
-				if (shutdown)// Cancelled on shutdown
+				if (shutdown) {
 					return Status.CANCEL_STATUS;
+				}
 				
 				while(updatesPending()){
 					
@@ -384,10 +392,12 @@ public class DecorationScheduler {
 	 * to be served
 	 */
 	protected boolean updatesPending() {
-		if(updateJob != null && updateJob.getState() != Job.NONE)
+		if(updateJob != null && updateJob.getState() != Job.NONE) {
 			return true;
-		if(clearJob != null && clearJob.getState() != Job.NONE)
+		}
+		if(clearJob != null && clearJob.getState() != Job.NONE) {
 			return true;
+		}
 		return false;
 	}
 
@@ -396,8 +406,9 @@ public class DecorationScheduler {
 	 * likely obsolete now.
 	 */
 	void clearResults() {
-		if(clearJob == null)
+		if(clearJob == null) {
 			clearJob = getClearJob();
+		}
 		clearJob.schedule();
 	}
 
@@ -445,8 +456,9 @@ public class DecorationScheduler {
 			
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-				if (shutdown)// Cancelled on shutdown
+				if (shutdown) {
 					return Status.CANCEL_STATUS;
+				}
 
 				// If this is the first one check again in case 
 				// someone has already cleared it out.
@@ -465,16 +477,18 @@ public class DecorationScheduler {
 				
 				monitor.worked(5);
 				
-				if(listeners.length == 0)
+				if(listeners.length == 0) {
 					return Status.OK_STATUS;
+				}
 				
 				//If it was removed in the meantime then leave.
 				ILabelProviderListener listener = listeners[currentIndex];
 				currentIndex ++;
 				
-				if(!removedListeners.contains(listener))
+				if(!removedListeners.contains(listener)) {
 					decoratorManager.
 						fireListener(labelProviderChangedEvent,listener);
+				}
 				
 				monitor.done();
 				
@@ -482,18 +496,20 @@ public class DecorationScheduler {
 					// Other decoration requests may have occured due to
 					// updates. Only clear the results if there are none
 					// pending.
-					if (awaitingDecoration.isEmpty())
+					if (awaitingDecoration.isEmpty()) {
 						resultCache.clear();
+					}
 				
 
-					if (!pendingUpdate.isEmpty())
+					if (!pendingUpdate.isEmpty()) {
 						decorated();
+					}
 					currentIndex = NEEDS_INIT;//Reset
 					labelProviderChangedEvent = null;
 					removedListeners.clear();
-				}
-				else
+				} else {
 					schedule();//Reschedule if we are not done
+				}
 				return Status.OK_STATUS;
 			}
 
@@ -555,8 +571,9 @@ public class DecorationScheduler {
 	public Color getBackgroundColor(Object element, Object adaptedElement) {
 		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
 
-		if (decoration == null)
+		if (decoration == null) {
 			return null;
+		}
 		return decoration.getBackgroundColor();
 	}
 
@@ -573,8 +590,9 @@ public class DecorationScheduler {
 	public Font getFont(Object element, Object adaptedElement) {
 		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
 
-		if (decoration == null)
+		if (decoration == null) {
 			return null;
+		}
 		return decoration.getFont();
 	}
 
@@ -591,8 +609,9 @@ public class DecorationScheduler {
 	public Color getForegroundColor(Object element, Object adaptedElement) {
 		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
 
-		if (decoration == null)
+		if (decoration == null) {
 			return null;
+		}
 		return decoration.getForegroundColor();
 	}
 
@@ -614,8 +633,9 @@ public class DecorationScheduler {
 		if(updatesPending()){//Only keep track of them if there are updates pending
 			removedListeners.add(listener);
 		}
-		if(!updatesPending())//Check again in case of race condition.
+		if(!updatesPending()) {
 			removedListeners.remove(listener);
+		}
 		
 	}
 }

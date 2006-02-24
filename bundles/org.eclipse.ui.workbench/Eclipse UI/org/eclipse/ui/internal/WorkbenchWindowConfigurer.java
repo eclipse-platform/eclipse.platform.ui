@@ -174,11 +174,13 @@ public final class WorkbenchWindowConfigurer implements
          */
         /* package */boolean containsCoolItem(String id) {
             ICoolBarManager cbManager = getCoolBarManager();
-            if (cbManager == null)
-                return false;
+            if (cbManager == null) {
+				return false;
+			}
             IContributionItem cbItem = cbManager.find(id);
-            if (cbItem == null)
-                return false;
+            if (cbItem == null) {
+				return false;
+			}
             //@ issue: maybe we should check if cbItem is visible?
             return true;
         }

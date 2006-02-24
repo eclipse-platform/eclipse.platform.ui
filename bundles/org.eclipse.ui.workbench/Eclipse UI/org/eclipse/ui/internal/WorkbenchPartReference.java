@@ -366,8 +366,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     public final String getId() {
         if (part != null) {
             IWorkbenchPartSite site = part.getSite();
-            if (site != null)
-                return site.getId();
+            if (site != null) {
+				return site.getId();
+			}
         }
         return Util.safeString(id);
     }
@@ -446,8 +447,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public boolean isDirty() {
-        if (!(part instanceof ISaveablePart))
-            return false;
+        if (!(part instanceof ISaveablePart)) {
+			return false;
+		}
         return ((ISaveablePart) part).isDirty();
     }
 

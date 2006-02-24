@@ -54,8 +54,9 @@ public class PatternFilter extends ViewerFilter {
      * @see org.eclipse.jface.viewers.ViewerFilter#filter(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object[])
      */
     public final Object[] filter(Viewer viewer, Object parent, Object[] elements) {
-        if (matcher == null)
-            return elements;
+        if (matcher == null) {
+			return elements;
+		}
 
         Object[] filtered = (Object[]) cache.get(parent);
         if (filtered == null) {
@@ -93,9 +94,9 @@ public class PatternFilter extends ViewerFilter {
      */
     public void setPattern(String patternString) {
         cache.clear();
-        if (patternString == null || patternString.equals("")) //$NON-NLS-1$
-            matcher = null;
-        else {
+        if (patternString == null || patternString.equals("")) { //$NON-NLS-1$
+			matcher = null;
+		} else {
 			String pattern = patternString + "*"; //$NON-NLS-1$
 			if (includeLeadingWildcard) {
 				pattern = "*" + pattern; //$NON-NLS-1$
@@ -112,8 +113,9 @@ public class PatternFilter extends ViewerFilter {
      * @return whether the string matches the pattern
      */
     private boolean match(String string) {
-    	if (matcher == null)	// pattern string to match is null or empty
-    		return true;
+    	if (matcher == null) {
+			return true;
+		}
         return matcher.match(string);
     }
     
@@ -163,8 +165,9 @@ public class PatternFilter extends ViewerFilter {
         Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
                 .getContentProvider()).getChildren(element);
 
-        if ((children != null) && (children.length > 0))
-            return filter(viewer, element, children).length > 0;	
+        if ((children != null) && (children.length > 0)) {
+			return filter(viewer, element, children).length > 0;
+		}	
         return false;
     }
     
@@ -182,8 +185,9 @@ public class PatternFilter extends ViewerFilter {
         String labelText = ((ILabelProvider) ((StructuredViewer) viewer)
                 .getLabelProvider()).getText(element);
         
-        if(labelText == null)
-        	return false;
+        if(labelText == null) {
+			return false;
+		}
         return wordMatches(labelText);  
     }
     
@@ -209,8 +213,9 @@ public class PatternFilter extends ViewerFilter {
 		int i = iter.first();
 		while (i != java.text.BreakIterator.DONE && i < text.length()) {
 			int j = iter.following(i);
-			if (j == java.text.BreakIterator.DONE)
+			if (j == java.text.BreakIterator.DONE) {
 				j = text.length();
+			}
 			// match the word
 			if (Character.isLetterOrDigit(text.charAt(i))) {
 				String word = text.substring(i, j);
@@ -230,19 +235,22 @@ public class PatternFilter extends ViewerFilter {
 	 * 					satisifes the match criteria.
 	 */
 	protected boolean wordMatches(String text) {
-		if (text == null)
+		if (text == null) {
 			return false;
+		}
 		
 		//If the whole text matches we are all set
-		if(match(text))
+		if(match(text)) {
 			return true;
+		}
 		
 		// Otherwise check if any of the words of the text matches
 		String[] words = getWords(text);
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			if (match(word))
+			if (match(word)) {
 				return true;
+			}
 		}
 
 		return false;

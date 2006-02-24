@@ -160,9 +160,10 @@ public class WorkbenchLayout extends Layout {
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				// If we're doing a 'real' workbench layout then delegate to the
 				// appropriate trim area
-				if (WorkbenchLayout.layoutComposite != null)
+				if (WorkbenchLayout.layoutComposite != null) {
 					return WorkbenchLayout.this.computeSize(TRIMID_CMD_PRIMARY,
 							wHint);
+				}
 
 				return super.computeSize(wHint, hHint, changed);
 			}
@@ -182,9 +183,10 @@ public class WorkbenchLayout extends Layout {
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				// If we're doing a 'real' workbench layout then delegate to the
 				// appropriate trim area
-				if (WorkbenchLayout.layoutComposite != null)
+				if (WorkbenchLayout.layoutComposite != null) {
 					return WorkbenchLayout.this.computeSize(
 							TRIMID_CMD_SECONDARY, wHint);
+				}
 
 				return super.computeSize(wHint, hHint, changed);
 			}
@@ -214,10 +216,12 @@ public class WorkbenchLayout extends Layout {
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
 		Point size = new Point(wHint, hHint);
-		if (size.x == SWT.DEFAULT)
+		if (size.x == SWT.DEFAULT) {
 			size.x = 300;
-		if (size.y == SWT.DEFAULT)
+		}
+		if (size.y == SWT.DEFAULT) {
 			size.y = 300;
+		}
 		return size;
 	}
 
@@ -312,16 +316,21 @@ public class WorkbenchLayout extends Layout {
 	 * @return The TrimArea that matches the given areaId
 	 */
 	private TrimArea getTrimArea(String areaId) {
-		if (TRIMID_CMD_PRIMARY.equals(areaId))
+		if (TRIMID_CMD_PRIMARY.equals(areaId)) {
 			return cmdPrimaryTrimArea;
-		if (TRIMID_CMD_SECONDARY.equals(areaId))
+		}
+		if (TRIMID_CMD_SECONDARY.equals(areaId)) {
 			return cmdSecondaryTrimArea;
-		if (TRIMID_VERTICAL1.equals(areaId))
+		}
+		if (TRIMID_VERTICAL1.equals(areaId)) {
 			return leftTrimArea;
-		if (TRIMID_VERTICAL2.equals(areaId))
+		}
+		if (TRIMID_VERTICAL2.equals(areaId)) {
 			return rightTrimArea;
-		if (TRIMID_STATUS.equals(areaId))
+		}
+		if (TRIMID_STATUS.equals(areaId)) {
 			return bottomTrimArea;
+		}
 
 		return null;
 	}
@@ -337,16 +346,18 @@ public class WorkbenchLayout extends Layout {
 		Control[] children = layoutComposite.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			// Skip any disposed or invisible widgets
-			if (children[i].isDisposed() || !children[i].getVisible())
+			if (children[i].isDisposed() || !children[i].getVisible()) {
 				continue;
+			}
 
 			// Only accept children that want to be layed out in a particular
 			// trim area
 			if (children[i].getLayoutData() instanceof TrimLayoutData) {
 				TrimLayoutData tlData = (TrimLayoutData) children[i]
 						.getLayoutData();
-				if (tlData.areaId.equals(areaId))
+				if (tlData.areaId.equals(areaId)) {
 					trimContents.add(children[i]);
+				}
 			}
 		}
 
@@ -362,8 +373,9 @@ public class WorkbenchLayout extends Layout {
 						- (leftTrimArea.areaBounds.width + rightTrimArea.areaBounds.width),
 				clientRect.height - (topMax + bottomTrimArea.areaBounds.height));
 
-		if (centerComposite != null)
+		if (centerComposite != null) {
 			centerComposite.setBounds(areaBounds);
+		}
 	}
 
 	private Point computeSize(String areaId, int majorHint) {
@@ -416,25 +428,28 @@ public class WorkbenchLayout extends Layout {
 			TrimLayoutData td = (TrimLayoutData) control.getLayoutData();
 
 			Point prefSize;
-			if (horizontal)
+			if (horizontal) {
 				prefSize = control.computeSize(majorHint, SWT.DEFAULT);
-			else
+			} else {
 				prefSize = control.computeSize(SWT.DEFAULT, majorHint);
+			}
 
 			// Will this control fit onto the current line?
 			int curTileSize = horizontal ? prefSize.x : prefSize.y;
 
 			// every control except the first one needs to include the 'spacing'
 			// in the calc
-			if (curLine.controls.size() > 0)
+			if (curLine.controls.size() > 0) {
 				curTileSize += spacing;
+			}
 
 			// If the control can be re-positioned then we have to add a drag
 			// handle to it
 			// we have to include the space that it'll occupy in the calcs
-			if (td.listener != null)
+			if (td.listener != null) {
 				curTileSize += horizontal ? horizontalHandleSize
 						: verticalHandleSize;
+			}
 
 			// Place the control into the 'current' line if it'll fit (or if
 			// it's the
@@ -447,8 +462,9 @@ public class WorkbenchLayout extends Layout {
 
 				// Cache the maximum amount of 'minor' space needed
 				int minorSize = horizontal ? prefSize.y : prefSize.x;
-				if (minorSize > curLine.minorMax)
+				if (minorSize > curLine.minorMax) {
 					curLine.minorMax = minorSize;
+				}
 
 				tilePos += curTileSize;
 			} else {
@@ -463,15 +479,17 @@ public class WorkbenchLayout extends Layout {
 
 				// Cache the maximum amount of 'minor' space needed
 				int minorSize = horizontal ? prefSize.y : prefSize.x;
-				if (minorSize > curLine.minorMax)
+				if (minorSize > curLine.minorMax) {
 					curLine.minorMax = minorSize;
+				}
 
 				tilePos = curTileSize;
 			}
 
 			// Count how many 'resizable' controls there are
-			if ((td.flags & TrimLayoutData.GROWABLE) != 0)
+			if ((td.flags & TrimLayoutData.GROWABLE) != 0) {
 				curLine.resizableCount++;
+			}
 		}
 
 		// Remember how much space was left on the current line
@@ -501,8 +519,9 @@ public class WorkbenchLayout extends Layout {
 			// preferred 'major' size is actually > the 'major' size for the
 			// trim area
 			int resizePadding = 0;
-			if (curLine.resizableCount > 0 && curLine.extraSpace > 0)
+			if (curLine.resizableCount > 0 && curLine.extraSpace > 0) {
 				resizePadding = curLine.extraSpace / curLine.resizableCount;
+			}
 
 			// Tile each line
 			int tilePosMajor = horizontal ? areaBounds.x : areaBounds.y;
@@ -516,30 +535,34 @@ public class WorkbenchLayout extends Layout {
 
 				// Ensure that controls that are too wide for the area get
 				// 'clipped'
-				if (major > areaMajor)
+				if (major > areaMajor) {
 					major = areaMajor;
+				}
 
 				// If desired, extend the 'minor' size of the control to fill
 				// the area
-				if ((td.flags & TrimLayoutData.GRAB_EXCESS_MINOR) != 0)
+				if ((td.flags & TrimLayoutData.GRAB_EXCESS_MINOR) != 0) {
 					minor = curLine.minorMax;
+				}
 
 				// If desired, extend the 'major' size of the control to fill
 				// the area
-				if ((td.flags & TrimLayoutData.GROWABLE) != 0)
+				if ((td.flags & TrimLayoutData.GROWABLE) != 0) {
 					major += resizePadding;
+				}
 
 				// If we have to show a drag handle then do it here
 				if (td.listener != null) {
 					TrimCommonUIHandle handle = getDragHandle(trimArea.orientation);
 //					handle.setControl(control);
 
-					if (horizontal)
+					if (horizontal) {
 						handle.setBounds(tilePosMajor, tilePosMinor,
 								getHandleSize(true), curLine.minorMax);
-					else
+					} else {
 						handle.setBounds(tilePosMinor, tilePosMajor,
 								curLine.minorMax, getHandleSize(false));
+					}
 
 					tilePosMajor += horizontal ? getHandleSize(true)
 							: getHandleSize(false);
@@ -602,16 +625,21 @@ public class WorkbenchLayout extends Layout {
 	}
 
 	public static int getOrientation(String areaId) {
-		if (TRIMID_CMD_PRIMARY.equals(areaId))
+		if (TRIMID_CMD_PRIMARY.equals(areaId)) {
 			return SWT.TOP;
-		if (TRIMID_CMD_SECONDARY.equals(areaId))
+		}
+		if (TRIMID_CMD_SECONDARY.equals(areaId)) {
 			return SWT.TOP;
-		if (TRIMID_VERTICAL1.equals(areaId))
+		}
+		if (TRIMID_VERTICAL1.equals(areaId)) {
 			return SWT.LEFT;
-		if (TRIMID_VERTICAL2.equals(areaId))
+		}
+		if (TRIMID_VERTICAL2.equals(areaId)) {
 			return SWT.RIGHT;
-		if (TRIMID_STATUS.equals(areaId))
+		}
+		if (TRIMID_STATUS.equals(areaId)) {
 			return SWT.BOTTOM;
+		}
 
 		return SWT.NONE;
 	}
@@ -624,11 +652,13 @@ public class WorkbenchLayout extends Layout {
 	 */
 	private int getHandleSize(boolean horizontal) {
 		// Do we already have a 'cached' value?
-		if (horizontal && horizontalHandleSize != -1)
+		if (horizontal && horizontalHandleSize != -1) {
 			return horizontalHandleSize;
+		}
 
-		if (!horizontal && verticalHandleSize != -1)
+		if (!horizontal && verticalHandleSize != -1) {
 			return verticalHandleSize;
+		}
 
 		// Must be the first time, calculate the value
 		CoolBar bar = new CoolBar(layoutComposite, horizontal ? SWT.HORIZONTAL

@@ -41,8 +41,9 @@ public final class ThemeElementHelper {
         if (!theme.getId().equals(IThemeManager.DEFAULT_THEME)) {
             definitions = addDefaulted(definitions);
             //compute the defaults only if we're setting preferences at this time
-            if (store != null)
-                defaults = getDefaults(definitions);
+            if (store != null) {
+				defaults = getDefaults(definitions);
+			}
         }
 
         copyOfDefinitions = new FontDefinition[definitions.length];
@@ -99,13 +100,13 @@ public final class ThemeElementHelper {
         FontData[] prefFont = store != null ? PreferenceConverter
                 .getFontDataArray(store, key) : null;
         FontData[] defaultFont = null;
-        if (definition.getValue() != null)
-            defaultFont = definition.getValue();
-        else if (definition.getDefaultsTo() != null)
-            defaultFont = registry.filterData(registry
+        if (definition.getValue() != null) {
+			defaultFont = definition.getValue();
+		} else if (definition.getDefaultsTo() != null) {
+			defaultFont = registry.filterData(registry
                     .getFontData(definition.getDefaultsTo()), Workbench
                     .getInstance().getDisplay());
-        else {
+		} else {
             // values pushed in from jface property files.  Very ugly.
             defaultFont = registry.bestDataArray(registry.getFontData(key),
                     Workbench.getInstance().getDisplay());
@@ -139,8 +140,9 @@ public final class ThemeElementHelper {
         if (!theme.getId().equals(IThemeManager.DEFAULT_THEME)) {
             definitions = addDefaulted(definitions);
             //compute defaults only if we're setting preferences
-            if (store != null)
-                defaults = getDefaults(definitions);
+            if (store != null) {
+				defaults = getDefaults(definitions);
+			}
         }
 
         copyOfDefinitions = new ColorDefinition[definitions.length];
@@ -224,8 +226,9 @@ public final class ThemeElementHelper {
         for (int i = 0; i < allDefs.length; i++) {
             IHierarchalThemeElementDefinition def = allDefs[i];
             if (def.getDefaultsTo() != null) {
-                if (set.contains(def.getDefaultsTo()))
-                    set.add(def);
+                if (set.contains(def.getDefaultsTo())) {
+					set.add(def);
+				}
             }
         }
         return set;
@@ -255,10 +258,11 @@ public final class ThemeElementHelper {
         RGB prefColor = store != null ? PreferenceConverter
                 .getColor(store, key) : null;
         RGB defaultColor = null;
-        if (definition.getValue() != null)
-            defaultColor = definition.getValue();
-        else
-            defaultColor = registry.getRGB(definition.getDefaultsTo());
+        if (definition.getValue() != null) {
+			defaultColor = definition.getValue();
+		} else {
+			defaultColor = registry.getRGB(definition.getDefaultsTo());
+		}
 
         if (setInRegistry) {
             if (prefColor == null
@@ -283,8 +287,9 @@ public final class ThemeElementHelper {
      */
     public static String createPreferenceKey(ITheme theme, String id) {
         String themeId = theme.getId();
-        if (themeId.equals(IThemeManager.DEFAULT_THEME))
-            return id;
+        if (themeId.equals(IThemeManager.DEFAULT_THEME)) {
+			return id;
+		}
 
         return themeId + '.' + id;
     }
@@ -296,8 +301,9 @@ public final class ThemeElementHelper {
      */
     public static String[] splitPropertyName(Theme theme, String property) {
         String themeId = theme.getId();
-        if (themeId.equals(IThemeManager.DEFAULT_THEME))
-            return new String[] { null, property };
+        if (themeId.equals(IThemeManager.DEFAULT_THEME)) {
+			return new String[] { null, property };
+		}
 
         if (property.startsWith(themeId + '.')) {
             return new String[] { property.substring(0, themeId.length()),

@@ -310,15 +310,18 @@ public final class LegacyResourceSupport {
      * @since 3.1
      */
     private static boolean isInstanceOf(Class clazz, String type) {
-		if (clazz.getName().equals(type))
+		if (clazz.getName().equals(type)) {
 			return true;
+		}
 		Class superClass= clazz.getSuperclass();
-		if (superClass != null && isInstanceOf(superClass, type))
+		if (superClass != null && isInstanceOf(superClass, type)) {
 			return true;
+		}
 		Class[] interfaces= clazz.getInterfaces();
 		for (int i= 0; i < interfaces.length; i++) {
-			if (isInstanceOf(interfaces[i], type))
+			if (isInstanceOf(interfaces[i], type)) {
 				return true;
+			}
 		} 
 		return false;
 	}
@@ -431,8 +434,9 @@ public final class LegacyResourceSupport {
 
 	            Method m = contributorResourceAdapter2Class.getDeclaredMethod("getAdaptedResourceMapping", new Class[]{IAdaptable.class}); //$NON-NLS-1$
 	            Object result = m.invoke(resourceMappingAdapter, new Object[]{adaptable});
-	            if (result != null)
-	                return result;
+	            if (result != null) {
+					return result;
+				}
 
             } catch (Exception e) {
                 // shouldn't happen - but play it safe
@@ -473,8 +477,9 @@ public final class LegacyResourceSupport {
 		for (Iterator it = selection.iterator(); it.hasNext();) {
 			Object element = it.next();
 			Object adaptedElement = getAdapter(element, objectClass);		
-			if (adaptedElement != null)
+			if (adaptedElement != null) {
 				newSelection.add(adaptedElement);
+			}
 		}
 		return new StructuredSelection(newSelection);
 	}

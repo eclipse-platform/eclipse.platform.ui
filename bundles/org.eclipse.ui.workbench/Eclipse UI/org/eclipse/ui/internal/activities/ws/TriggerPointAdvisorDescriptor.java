@@ -40,8 +40,9 @@ public final class TriggerPointAdvisorDescriptor {
 		id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 		if (id == null
 				|| RegistryReader.getClassValue(element,
-						IWorkbenchRegistryConstants.ATT_CLASS) == null)
+						IWorkbenchRegistryConstants.ATT_CLASS) == null) {
 			throw new IllegalArgumentException();
+		}
 		this.element = element;
 	}
 

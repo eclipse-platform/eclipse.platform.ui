@@ -101,9 +101,10 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 	 *            The cached result to use.
 	 */
 	public final void setResult(final boolean result) {
-		if (result)
+		if (result) {
 			evaluationResult = EvaluationResult.TRUE;
-		else
+		} else {
 			evaluationResult = EvaluationResult.FALSE;
+		}
 	}
 }

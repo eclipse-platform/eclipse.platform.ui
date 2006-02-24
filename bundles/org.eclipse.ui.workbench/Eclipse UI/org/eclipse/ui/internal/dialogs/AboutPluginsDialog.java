@@ -131,8 +131,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         Map map = new HashMap();
         for (int i = 0; i < bundles.length; ++i) {
             AboutBundleData data = new AboutBundleData(bundles[i]);
-            if (BundleUtility.isReady(data.getState()) && !map.containsKey(data.getVersionedId()))
-                map.put(data.getVersionedId(), data);
+            if (BundleUtility.isReady(data.getState()) && !map.containsKey(data.getVersionedId())) {
+				map.put(data.getVersionedId(), data);
+			}
         }
         bundleInfos = (AboutBundleData[]) map.values().toArray(
                 new AboutBundleData[0]);
@@ -159,11 +160,13 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        if (title == null && productName != null)
-            title = NLS.bind(WorkbenchMessages.AboutPluginsDialog_shellTitle, productName );
+        if (title == null && productName != null) {
+			title = NLS.bind(WorkbenchMessages.AboutPluginsDialog_shellTitle, productName );
+		}
 
-        if (title != null)
-            newShell.setText(title);
+        if (title != null) {
+			newShell.setText(title);
+		}
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				helpContextId);
@@ -277,16 +280,18 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      */
     private boolean selectionHasInfo() {
         TableItem[] items = vendorInfo.getSelection();
-        if (items.length <= 0)
-            return false;
+        if (items.length <= 0) {
+			return false;
+		}
 
         AboutBundleData bundleInfo = bundleInfos[vendorInfo.getSelectionIndex()];
         URL infoURL = getMoreInfoURL(bundleInfo, false);
 
         // only report ini problems if the -debug command line argument is used
-        if (infoURL == null && WorkbenchPlugin.DEBUG)
-            WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
+        if (infoURL == null && WorkbenchPlugin.DEBUG) {
+			WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
                     + bundleInfo.getName());
+		}
 
         return infoURL != null;
     }
@@ -305,20 +310,24 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      * for the selected bundle or an error dialog if the browser cannot be opened.
      */
     protected void handleMoreInfoPressed() {
-        if (vendorInfo == null)
-            return;
+        if (vendorInfo == null) {
+			return;
+		}
 
         TableItem[] items = vendorInfo.getSelection();
-        if (items.length <= 0)
-            return;
+        if (items.length <= 0) {
+			return;
+		}
 
         AboutBundleData bundleInfo = (AboutBundleData) items[0].getData();
-        if (bundleInfo == null)
-            return;
+        if (bundleInfo == null) {
+			return;
+		}
 
-        if (!openBrowser(getMoreInfoURL(bundleInfo, true)))
-            MessageDialog.openError(getShell(), WorkbenchMessages.AboutPluginsDialog_errorTitle,
+        if (!openBrowser(getMoreInfoURL(bundleInfo, true))) {
+			MessageDialog.openError(getShell(), WorkbenchMessages.AboutPluginsDialog_errorTitle,
                     NLS.bind(WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,PLUGININFO, bundleInfo.getId()));
+		}
     }
 
     /**
@@ -328,19 +337,21 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      *            index of table column selected as sort criteria
      */
     private void sort(int column) {
-        if (lastColumnChosen == column)
-            reverseSort = !reverseSort;
-        else {
+        if (lastColumnChosen == column) {
+			reverseSort = !reverseSort;
+		} else {
             reverseSort = false;
             lastColumnChosen = column;
         }
 
-        if (vendorInfo.getItemCount() <= 1)
-            return;
+        if (vendorInfo.getItemCount() <= 1) {
+			return;
+		}
 
         int sel = vendorInfo.getSelectionIndex();
-        if (sel != -1)
-            lastSelection = bundleInfos[sel];
+        if (sel != -1) {
+			lastSelection = bundleInfos[sel];
+		}
 
         switch (column) {
         case 0:
@@ -377,9 +388,11 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         int sel = -1;
         if (lastSelection != null) {
             String oldId = lastSelection.getId();
-            for (int k = 0; k < bundleInfos.length; k++)
-                if (oldId.equalsIgnoreCase(bundleInfos[k].getId()))
-                    sel = k;
+            for (int k = 0; k < bundleInfos.length; k++) {
+				if (oldId.equalsIgnoreCase(bundleInfos[k].getId())) {
+					sel = k;
+				}
+			}
 
             vendorInfo.setSelection(sel);
             vendorInfo.showSelection();
@@ -411,8 +424,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      */
     private URL getMoreInfoURL(AboutBundleData bundleInfo, boolean makeLocal) {
         Bundle bundle = Platform.getBundle(bundleInfo.getId());
-        if (bundle == null)
-            return null;
+        if (bundle == null) {
+			return null;
+		}
 
         URL aboutUrl = Platform.find(bundle, baseNLPath.append(PLUGININFO), null);
         if (!makeLocal) {
@@ -426,8 +440,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 				    // This is needed to handle jar'ed plug-ins.
 				    // See Bug 88240 [About] About dialog needs to extract subdirs.
 					URL about = new URL(aboutUrl, "about_files"); //$NON-NLS-1$
-					if (about != null)
+					if (about != null) {
 						Platform.asLocalURL(about);
+					}
 				} catch (IOException e) {
 					// skip the about dir if its not found or there are other problems.
 				}

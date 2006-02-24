@@ -172,8 +172,9 @@ public final class CommandImageManager extends EventManager {
 	 *            <code>null</code>.
 	 */
 	private final void fireManagerChanged(final CommandImageManagerEvent event) {
-		if (event == null)
+		if (event == null) {
 			throw new NullPointerException();
+		}
 
 		final Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {
@@ -268,8 +269,9 @@ public final class CommandImageManager extends EventManager {
 	 */
 	public final ImageDescriptor getImageDescriptor(final String commandId,
 			final int type, final String style) {
-		if (commandId == null)
+		if (commandId == null) {
 			throw new NullPointerException();
+		}
 
 		final Object[] images = (Object[]) imagesById.get(commandId);
 		if (images == null) {

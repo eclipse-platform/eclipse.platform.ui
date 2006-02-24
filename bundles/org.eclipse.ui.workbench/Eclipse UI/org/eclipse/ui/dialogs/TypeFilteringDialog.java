@@ -142,13 +142,14 @@ public class TypeFilteringDialog extends SelectionDialog {
         while (tokenizer.hasMoreTokens()) {
             String currentExtension = tokenizer.nextToken().trim();
             if (!currentExtension.equals("")) { //$NON-NLS-1$
-                if (currentExtension.startsWith("*."))//$NON-NLS-1$
-                    result.add(currentExtension.substring(2));
-                else {
-                    if (currentExtension.startsWith("."))//$NON-NLS-1$
-                        result.add(currentExtension.substring(1));
-                    else
-                        result.add(currentExtension);
+                if (currentExtension.startsWith("*.")) { //$NON-NLS-1$
+					result.add(currentExtension.substring(2));
+				} else {
+                    if (currentExtension.startsWith(".")) { //$NON-NLS-1$
+						result.add(currentExtension.substring(1));
+					} else {
+						result.add(currentExtension);
+					}
                 }
             }
         }
@@ -183,8 +184,9 @@ public class TypeFilteringDialog extends SelectionDialog {
             if (!selectedMappings.contains(nextExtension)) {
                 entries.append(nextExtension);
                 //Only add a comma if we are not at the end
-                if (initialIterator.hasNext())
-                    entries.append(',');
+                if (initialIterator.hasNext()) {
+					entries.append(',');
+				}
             }
         }
         this.userDefinedText.setText(entries.toString());
@@ -222,8 +224,9 @@ public class TypeFilteringDialog extends SelectionDialog {
         createUserEntryGroup(composite);
         initializeViewer();
         // initialize page
-        if (this.initialSelections != null && !this.initialSelections.isEmpty())
-            checkInitialSelections();
+        if (this.initialSelections != null && !this.initialSelections.isEmpty()) {
+			checkInitialSelections();
+		}
         return composite;
     }
 
@@ -264,8 +267,9 @@ public class TypeFilteringDialog extends SelectionDialog {
             IFileEditorMapping[] allMappings = ((EditorRegistry)PlatformUI.getWorkbench()
                     .getEditorRegistry()).getUnifiedMappings();
             for (int i = 0; i < allMappings.length; i++) {
-                if (allMappings[i].getName().equals("*"))//$NON-NLS-1$
-                    wildcardEditors.add(allMappings[i]);
+                if (allMappings[i].getName().equals("*")) { //$NON-NLS-1$
+					wildcardEditors.add(allMappings[i]);
+				}
             }
             currentInput = new IFileEditorMapping[wildcardEditors.size()];
             wildcardEditors.toArray(currentInput);
@@ -292,8 +296,9 @@ public class TypeFilteringDialog extends SelectionDialog {
         // Build a list of selected children.
         for (int i = 0; i < children.length; ++i) {
             IFileEditorMapping element = children[i];
-            if (listViewer.getChecked(element))
-                list.add(element.getExtension());
+            if (listViewer.getChecked(element)) {
+				list.add(element.getExtension());
+			}
         }
         addUserDefinedEntries(list);
         setResult(list);

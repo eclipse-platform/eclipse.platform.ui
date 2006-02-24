@@ -56,8 +56,9 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
         IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("PreferencesImportWizard");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings.addNewSection("PreferencesImportWizard");//$NON-NLS-1$
+        if (section == null) {
+			section = workbenchSettings.addNewSection("PreferencesImportWizard");//$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 

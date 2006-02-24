@@ -80,8 +80,9 @@ public abstract class ProgressContentProvider implements
      * (system) jobs are being shown.
      */
     public boolean debug(){
-    	if(!canShowDebug)
-    		return false;
+    	if(!canShowDebug) {
+			return false;
+		}
     	return ProgressViewUpdater.getSingleton().debug;
     	
     }

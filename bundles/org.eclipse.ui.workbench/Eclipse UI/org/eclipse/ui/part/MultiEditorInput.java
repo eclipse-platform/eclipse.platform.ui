@@ -105,10 +105,12 @@ public class MultiEditorInput implements IEditorInput {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof MultiEditorInput))
-            return false;
+        if (this == obj) {
+			return true;
+		}
+        if (!(obj instanceof MultiEditorInput)) {
+			return false;
+		}
         MultiEditorInput other = (MultiEditorInput) obj;
         return Arrays.equals(this.editors, other.editors) && Arrays.equals(this.input, other.input);
     }

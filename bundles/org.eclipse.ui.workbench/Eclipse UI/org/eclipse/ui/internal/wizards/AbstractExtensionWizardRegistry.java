@@ -61,8 +61,9 @@ public abstract class AbstractExtensionWizardRegistry extends
 
 		// handle the primary wizards
 		WorkbenchWizardElement[] additionalPrimary = reader.getPrimaryWizards();
-		if (additionalPrimary.length == 0)
+		if (additionalPrimary.length == 0) {
 			return;
+		}
 		IWizardDescriptor[] localPrimaryWizards = getPrimaryWizards();
 		WorkbenchWizardElement[] newPrimary = new WorkbenchWizardElement[additionalPrimary.length
 				+ localPrimaryWizards.length];
@@ -145,9 +146,10 @@ public abstract class AbstractExtensionWizardRegistry extends
 		for (int i = 0; i < collections.length; i++) {
 			IConfigurationElement configurationElement = collections[i]
 					.getConfigurationElement();
-			if (configurationElement != null)
+			if (configurationElement != null) {
 				register(configurationElement.getDeclaringExtension(),
 						collections[i]);
+			}
 			registerWizards(collections[i]);
 		}
 	}
@@ -170,8 +172,9 @@ public abstract class AbstractExtensionWizardRegistry extends
 	 */
 	public void removeExtension(IExtension extension, Object[] objects) {
 		if (!extension.getExtensionPointUniqueIdentifier().equals(
-				getExtensionPointFilter().getUniqueIdentifier()))
+				getExtensionPointFilter().getUniqueIdentifier())) {
 			return;
+		}
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof WizardCollectionElement) {
@@ -181,8 +184,9 @@ public abstract class AbstractExtensionWizardRegistry extends
 			} else if (object instanceof WorkbenchWizardElement) {
 				WorkbenchWizardElement wizard = (WorkbenchWizardElement) object;
 				WizardCollectionElement parent = wizard.getCollectionElement();
-				if (parent != null)
+				if (parent != null) {
 					parent.remove(wizard);
+				}
 				IWizardDescriptor[] primaryWizards = getPrimaryWizards();
 				for (int j = 0; j < primaryWizards.length; j++) {
 					if (primaryWizards[j] == wizard) {

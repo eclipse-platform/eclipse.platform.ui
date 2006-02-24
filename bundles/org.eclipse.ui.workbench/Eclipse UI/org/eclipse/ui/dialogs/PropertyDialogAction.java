@@ -119,8 +119,9 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 *         otherwise
 	 */
 	public boolean isApplicableForSelection() {
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return false;
+		}
 		return isApplicableForSelection(getStructuredSelection());
 	}
 
@@ -151,8 +152,9 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	public void run() {
 
 		PreferenceDialog dialog = createDialog();
-		if (dialog != null)
+		if (dialog != null) {
 			dialog.open();
+		}
 	}
 
 	/**
@@ -166,8 +168,9 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	public PreferenceDialog createDialog() {
 
 		Object element = getStructuredSelection().getFirstElement();
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		return PropertyDialog
 				.createDialogOn(shellProvider.getShell(), initialPageId, element);
 	}

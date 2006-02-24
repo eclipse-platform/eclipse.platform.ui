@@ -91,13 +91,15 @@ public class RetargetAction extends PartEventAction implements
                 if (handler != null) {
                     // if we have a handler, see if it has a help listener
                     listener = handler.getHelpListener();
-                    if (listener == null)
-                        // use our own help listener
+                    if (listener == null) {
+						// use our own help listener
                         listener = localHelpListener;
+					}
                 }
-                if (listener != null)
-                    // pass on the event
+                if (listener != null) {
+					// pass on the event
                     listener.helpRequested(e);
+				}
             }
         });
     }
@@ -132,8 +134,9 @@ public class RetargetAction extends PartEventAction implements
      * part to hook the accelerator.
      */
     public int getAccelerator() {
-        if (enableAccelerator)
-            return super.getAccelerator();
+        if (enableAccelerator) {
+			return super.getAccelerator();
+		}
         return 0;
     }
 
@@ -158,12 +161,14 @@ public class RetargetAction extends PartEventAction implements
      */
     public void partClosed(IWorkbenchPart part) {
         IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
-        if (activePart != null)
-            // We are going to get a part activated message so don't bother setting the 
+        if (activePart != null) {
+			// We are going to get a part activated message so don't bother setting the 
             // action handler to null. This prevents enablement flash in the toolbar
             return;
-        if (part == getActivePart())
-            setActionHandler(null);
+		}
+        if (part == getActivePart()) {
+			setActionHandler(null);
+		}
         super.partClosed(part);
     }
 
@@ -179,10 +184,11 @@ public class RetargetAction extends PartEventAction implements
         bars.removePropertyChangeListener(propertyChangeListener);
 
         IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
-        if (activePart != null)
-            // We are going to get a part activated message so don't bother setting the 
+        if (activePart != null) {
+			// We are going to get a part activated message so don't bother setting the 
             // action handler to null. This prevents enablement flash in the toolbar
             return;
+		}
 
         setActionHandler(null);
     }
@@ -210,16 +216,18 @@ public class RetargetAction extends PartEventAction implements
      * Invoked when an action occurs. 
      */
     public void run() {
-        if (handler != null)
-            handler.run();
+        if (handler != null) {
+			handler.run();
+		}
     }
 
     /**
      * Invoked when an action occurs. 
      */
     public void runWithEvent(Event event) {
-        if (handler != null)
-            handler.runWithEvent(event);
+        if (handler != null) {
+			handler.runWithEvent(event);
+		}
     }
 
     /**
@@ -242,8 +250,9 @@ public class RetargetAction extends PartEventAction implements
      */
     protected void setActionHandler(IAction newHandler) {
         // Optimize.
-        if (newHandler == handler)
-            return;
+        if (newHandler == handler) {
+			return;
+		}
 
         // Clear old action.
         if (handler != null) {
@@ -280,8 +289,9 @@ public class RetargetAction extends PartEventAction implements
         // This call may come from the SWT control event handler
         // itself, so notify the handler action to keep things
         // in sync.
-        if (handler != null)
-            handler.setChecked(checked);
+        if (handler != null) {
+			handler.setChecked(checked);
+		}
     }
 
     /** 

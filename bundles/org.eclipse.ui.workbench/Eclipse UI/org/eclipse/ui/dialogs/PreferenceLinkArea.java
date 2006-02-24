@@ -61,10 +61,10 @@ public class PreferenceLinkArea extends Object {
 
         IPreferenceNode node = getPreferenceNode(pageId);
         String result;
-        if (node == null)
-            result = NLS.bind(
+        if (node == null) {
+			result = NLS.bind(
                     WorkbenchMessages.PreferenceNode_NotFound, pageId);
-        else {
+		} else {
             result = MessageFormat.format(message, new String[] { node
                     .getLabelText() });
             
@@ -95,8 +95,9 @@ public class PreferenceLinkArea extends Object {
                 .getElements(PreferenceManager.PRE_ORDER).iterator();
         while (iterator.hasNext()) {
             IPreferenceNode next = (IPreferenceNode) iterator.next();
-            if (next.getId().equals(pageId))
-                return next;
+            if (next.getId().equals(pageId)) {
+				return next;
+			}
         }
         return null;
     }

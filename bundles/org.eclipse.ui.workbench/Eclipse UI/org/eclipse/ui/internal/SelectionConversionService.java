@@ -64,15 +64,17 @@ public class SelectionConversionService implements ISelectionConversionService {
 			} else if (currentElement instanceof IAdaptable) {
 				Object adapter = ((IAdaptable) currentElement)
 						.getAdapter(resourceClass);
-				if (resourceClass.isInstance(adapter))
+				if (resourceClass.isInstance(adapter)) {
 					result.add(adapter); // add the converted resource
+				}
 
 			}
 		}
 
 		// all that can be converted are done, answer new selection
-		if (result.isEmpty())
+		if (result.isEmpty()) {
 			return StructuredSelection.EMPTY;
+		}
 		return new StructuredSelection(result.toArray());
 	}
 

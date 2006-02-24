@@ -84,9 +84,10 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		}
 		internalSetElements((IAdaptable[]) elements
 				.toArray(new IAdaptable[elements.size()]));
-		if (fireEvent)
+		if (fireEvent) {
 			fireWorkingSetChanged(
 				IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
+		}
 	}
 
 	public String getId() {
@@ -204,8 +205,9 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			IMemento setReference = workingSetReferences[i];
 			String setId = setReference.getID();
 			IWorkingSet set = manager.getWorkingSet(setId);
-			if (set != null)
+			if (set != null) {
 				list.add(set);
+			}
 		}
 		internalSetComponents((IWorkingSet[]) list
 				.toArray(new IWorkingSet[list.size()]));
@@ -231,11 +233,13 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	}
 	
 	public boolean isSelfUpdating() {
-		if (components == null || components.length == 0)
+		if (components == null || components.length == 0) {
 			return false;
+		}
 		for (int i= 0; i < components.length; i++) {
-			if (!components[i].isSelfUpdating())
+			if (!components[i].isSelfUpdating()) {
 				return false;
+			}
 		}
 		return true;
 	}

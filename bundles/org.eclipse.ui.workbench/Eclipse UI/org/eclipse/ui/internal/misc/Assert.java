@@ -53,8 +53,9 @@ public final class Assert {
      * @exception IllegalArgumentException if the legality test failed
      */
     public static boolean isLegal(boolean expression, String message) {
-        if (!expression)
-            throw new IllegalArgumentException();
+        if (!expression) {
+			throw new IllegalArgumentException();
+		}
         return expression;
     }
 
@@ -77,8 +78,9 @@ public final class Assert {
      * @exception IllegalArgumentException if the object is <code>null</code>
      */
     public static void isNotNull(Object object, String message) {
-        if (object == null)
-            throw new AssertionFailedException("null argument;" + message);//$NON-NLS-1$
+        if (object == null) {
+			throw new AssertionFailedException("null argument;" + message);//$NON-NLS-1$
+		}
     }
 
     /** Asserts that the given boolean is <code>true</code>. If this
@@ -102,8 +104,9 @@ public final class Assert {
      *    if the check fails)
      */
     public static boolean isTrue(boolean expression, String message) {
-        if (!expression)
-            throw new AssertionFailedException("assertion failed; " + message);//$NON-NLS-1$
+        if (!expression) {
+			throw new AssertionFailedException("assertion failed; " + message);//$NON-NLS-1$
+		}
         return expression;
     }
 }

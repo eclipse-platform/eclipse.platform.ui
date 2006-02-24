@@ -447,8 +447,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         children.add(newChild);
         
         // Fix for bug 78470:
-        if(!(newChild.getContainer() instanceof ContainerPlaceholder))
-        	newChild.setContainer(this);
+        if(!(newChild.getContainer() instanceof ContainerPlaceholder)) {
+			newChild.setContainer(this);
+		}
         
         showPart(newChild, cookie);
     }
@@ -584,8 +585,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         Assert.isTrue(isDisposed());
 
-        if (presentationSite.getPresentation() != null)
-            return;
+        if (presentationSite.getPresentation() != null) {
+			return;
+		}
 
         presentationSite.setPresentation(presentation);
 
@@ -655,8 +657,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     public void dispose() {
 
-        if (isDisposed())
-            return;
+        if (isDisposed()) {
+			return;
+		}
 
         savePresentationState();
 
@@ -836,8 +839,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void reparent(Composite newParent) {
 
         Control control = getControl();
-        if ((control == null) || (control.getParent() == newParent) || !control.isReparentable())
-            return;
+        if ((control == null) || (control.getParent() == newParent) || !control.isReparentable()) {
+			return;
+		}
 
         super.reparent(newParent);
 
@@ -857,8 +861,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         //subtract the number of placeholders still existing in the list 
         //before this one - they wont have parts.
         for (int i = 0; i < idx; i++) {
-            if (children.get(i) instanceof PartPlaceholder)
-                numPlaceholders++;
+            if (children.get(i) instanceof PartPlaceholder) {
+				numPlaceholders++;
+			}
         }
         Integer cookie = new Integer(idx - numPlaceholders);
         children.add(idx, newChild);
@@ -965,8 +970,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         boolean useShortcut = makeVisible || !isActive;
         
         if (!SwtUtil.isDisposed(ctrl) && useShortcut) {
-            if (makeVisible == ctrl.getVisible())
-                return;
+            if (makeVisible == ctrl.getVisible()) {
+				return;
+			}
         }        
         
         if (makeVisible) {
@@ -1001,9 +1007,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public IStatus saveState(IMemento memento) {
 
         // Save the active tab.
-        if (requestedCurrent != null)
-            memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID, requestedCurrent
+        if (requestedCurrent != null) {
+			memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID, requestedCurrent
                     .getCompoundId());
+		}
 
         Iterator iter = children.iterator();
         while (iter.hasNext()) {

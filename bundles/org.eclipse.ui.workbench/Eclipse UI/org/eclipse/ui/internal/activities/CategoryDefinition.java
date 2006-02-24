@@ -27,8 +27,9 @@ public final class CategoryDefinition implements Comparable {
 
     static Map categoryDefinitionsById(Collection categoryDefinitions,
             boolean allowNullIds) {
-        if (categoryDefinitions == null)
-            throw new NullPointerException();
+        if (categoryDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         Map map = new HashMap();
         Iterator iterator = categoryDefinitions.iterator();
@@ -39,8 +40,9 @@ public final class CategoryDefinition implements Comparable {
             CategoryDefinition categoryDefinition = (CategoryDefinition) object;
             String id = categoryDefinition.getId();
 
-            if (allowNullIds || id != null)
-                map.put(id, categoryDefinition);
+            if (allowNullIds || id != null) {
+				map.put(id, categoryDefinition);
+			}
         }
 
         return map;
@@ -48,8 +50,9 @@ public final class CategoryDefinition implements Comparable {
 
     static Map categoryDefinitionsByName(Collection categoryDefinitions,
             boolean allowNullNames) {
-        if (categoryDefinitions == null)
-            throw new NullPointerException();
+        if (categoryDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         Map map = new HashMap();
         Iterator iterator = categoryDefinitions.iterator();
@@ -102,16 +105,18 @@ public final class CategoryDefinition implements Comparable {
         if (compareTo == 0) {
             compareTo = Util.compare(name, castedObject.name);
 
-            if (compareTo == 0)
-                compareTo = Util.compare(sourceId, castedObject.sourceId);
+            if (compareTo == 0) {
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
+			}
         }
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof CategoryDefinition))
-            return false;
+        if (!(object instanceof CategoryDefinition)) {
+			return false;
+		}
 
         final CategoryDefinition castedObject = (CategoryDefinition) object;
         if (!Util.equals(id, castedObject.id)) {
@@ -142,8 +147,9 @@ public final class CategoryDefinition implements Comparable {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            if (hashCode == HASH_INITIAL) 
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

@@ -52,8 +52,9 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 			if (element.getName().equals(tag)) {
 				String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 				String file = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-				if (file == null || id == null)
+				if (file == null || id == null) {
 					continue; //ignore - malformed
+				}
 				if (registry.getDescriptor(id) == null) { // first come, first serve
 					ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element.getNamespace(), file);
 					if (descriptor != null) {

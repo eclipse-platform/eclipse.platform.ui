@@ -72,8 +72,9 @@ public class ShowFastViewContribution extends ContributionItem {
     public void fill(ToolBar parent, int index) {
         // Get page.
         WorkbenchPage page = (WorkbenchPage) window.getActivePage();
-        if (page == null)
-            return;
+        if (page == null) {
+			return;
+		}
 
         // Get views.
         IViewReference[] refs = page.getFastViews();

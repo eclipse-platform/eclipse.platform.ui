@@ -57,29 +57,34 @@ public class NavigationHistoryAction extends PageEventAction {
             dispose();
             historyMenu = new Menu(parent);
             IWorkbenchPage page = getWorkbenchWindow().getActivePage();
-            if (page == null)
-                return historyMenu;
+            if (page == null) {
+				return historyMenu;
+			}
 
             final NavigationHistory history = (NavigationHistory) getWorkbenchWindow()
                     .getActivePage().getNavigationHistory();
             NavigationHistoryEntry[] entries;
-            if (forward)
-                entries = history.getForwardEntries();
-            else
-                entries = history.getBackwardEntries();
+            if (forward) {
+				entries = history.getForwardEntries();
+			} else {
+				entries = history.getBackwardEntries();
+			}
             int entriesCount[] = new int[entries.length];
-            for (int i = 0; i < entriesCount.length; i++)
-                entriesCount[i] = 1;
+            for (int i = 0; i < entriesCount.length; i++) {
+				entriesCount[i] = 1;
+			}
             entries = colapseEntries(entries, entriesCount);
             for (int i = 0; i < entries.length; i++) {
-                if (i > MAX_HISTORY_LENGTH)
-                    break;
+                if (i > MAX_HISTORY_LENGTH) {
+					break;
+				}
                 String text = entries[i].getHistoryText();
                 if (text != null) {
                     MenuItem item = new MenuItem(historyMenu, SWT.NONE);
                     item.setData(entries[i]);
-                    if (entriesCount[i] > 1)
-                        text = NLS.bind(WorkbenchMessages.NavigationHistoryAction_locations,text, new Integer(entriesCount[i]));
+                    if (entriesCount[i] > 1) {
+						text = NLS.bind(WorkbenchMessages.NavigationHistoryAction_locations,text, new Integer(entriesCount[i]));
+					}
                     item.setText(text);
                     item.addSelectionListener(new SelectionAdapter() {
                         public void widgetSelected(SelectionEvent e) {
@@ -202,8 +207,9 @@ public class NavigationHistoryAction extends PageEventAction {
         // Set the enabled state of the action and set the tool tip text.  The tool tip
         // text is set to reflect the item that one will move back/forward to.
         WorkbenchPage page = (WorkbenchPage) getActivePage();
-        if (page == null)
-            return;
+        if (page == null) {
+			return;
+		}
         NavigationHistory history = (NavigationHistory) page
                 .getNavigationHistory();
         NavigationHistoryEntry[] entries;

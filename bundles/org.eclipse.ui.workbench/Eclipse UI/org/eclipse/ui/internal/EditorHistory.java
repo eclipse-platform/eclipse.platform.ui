@@ -91,8 +91,9 @@ public class EditorHistory {
             EditorHistoryItem item = (EditorHistoryItem) iter.next();
             if (item.isRestored()) {
                 IEditorInput input = item.getInput();
-                if (input != null && !input.exists())
-                    iter.remove();
+                if (input != null && !input.exists()) {
+					iter.remove();
+				}
             }
         }
     }

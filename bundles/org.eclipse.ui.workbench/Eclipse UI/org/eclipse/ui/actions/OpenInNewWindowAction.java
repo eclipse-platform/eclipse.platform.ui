@@ -94,11 +94,12 @@ public class OpenInNewWindowAction extends Action implements
             String perspId;
 
             IWorkbenchPage page = workbenchWindow.getActivePage();
-            if (page != null && page.getPerspective() != null)
-                perspId = page.getPerspective().getId();
-            else
-                perspId = workbenchWindow.getWorkbench()
+            if (page != null && page.getPerspective() != null) {
+				perspId = page.getPerspective().getId();
+			} else {
+				perspId = workbenchWindow.getWorkbench()
                         .getPerspectiveRegistry().getDefaultPerspective();
+			}
 
             workbenchWindow.getWorkbench().openWorkbenchWindow(perspId,
                     pageInput);

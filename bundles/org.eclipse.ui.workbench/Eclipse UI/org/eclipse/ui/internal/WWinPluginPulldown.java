@@ -186,11 +186,12 @@ public class WWinPluginPulldown extends WWinPluginAction {
      */
     protected IActionDelegate validateDelegate(Object obj)
             throws WorkbenchException {
-        if (obj instanceof IWorkbenchWindowPulldownDelegate)
-            return (IWorkbenchWindowPulldownDelegate) obj;
-        else
-            throw new WorkbenchException(
+        if (obj instanceof IWorkbenchWindowPulldownDelegate) {
+			return (IWorkbenchWindowPulldownDelegate) obj;
+		} else {
+			throw new WorkbenchException(
                     "Action must implement IWorkbenchWindowPulldownDelegate"); //$NON-NLS-1$
+		}
     }
 
     /**

@@ -131,8 +131,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
      */
     private void handleMoreInfoPressed() {
         TableItem[] items = table.getSelection();
-        if (items.length <= 0)
-            return;
+        if (items.length <= 0) {
+			return;
+		}
 
         AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
         if (info == null || !openBrowser(info.getLicenseUrl())) {
@@ -147,8 +148,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
      */
     private void handlePluginInfoPressed() {
         TableItem[] items = table.getSelection();
-        if (items.length <= 0)
-            return;
+        if (items.length <= 0) {
+			return;
+		}
 
         AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
         IBundleGroup bundleGroup = info.getBundleGroup();
@@ -184,8 +186,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        if (productName != null)
-            newShell.setText(NLS.bind(WorkbenchMessages.AboutFeaturesDialog_shellTitle,productName));
+        if (productName != null) {
+			newShell.setText(NLS.bind(WorkbenchMessages.AboutFeaturesDialog_shellTitle,productName));
+		}
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
@@ -215,8 +218,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         b.setFocus();
 
         TableItem[] items = table.getSelection();
-        if (items.length > 0)
-            updateButtons((AboutBundleGroupData) items[0].getData());
+        if (items.length > 0) {
+			updateButtons((AboutBundleGroupData) items[0].getData());
+		}
     }
 
     /**
@@ -232,10 +236,12 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         setBusyCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT));
         getShell().addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
-                if (getHandCursor() != null)
-                    getHandCursor().dispose();
-                if (getBusyCursor() != null)
-                    getBusyCursor().dispose();
+                if (getHandCursor() != null) {
+					getHandCursor().dispose();
+				}
+                if (getBusyCursor() != null) {
+					getBusyCursor().dispose();
+				}
             }
         });
 
@@ -283,8 +289,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         addListeners(text);
 
         TableItem[] items = table.getSelection();
-        if (items.length > 0)
-            updateInfoArea((AboutBundleGroupData) items[0].getData());
+        if (items.length > 0) {
+			updateInfoArea((AboutBundleGroupData) items[0].getData());
+		}
     }
 
     /**
@@ -334,8 +341,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         String selId = lastSelection == null ? null : lastSelection.getId();
         int sel = 0;
         for (int i = 0; i < bundleGroupInfos.length; i++) {
-            if (bundleGroupInfos[i].getId().equals(selId))
-                sel = i;
+            if (bundleGroupInfos[i].getId().equals(selId)) {
+				sel = i;
+			}
 
             TableItem item = new TableItem(table, SWT.NULL);
             item.setText(createRow(bundleGroupInfos[i]));
@@ -408,12 +416,13 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
         String aboutText = info.getAboutText();
         setItem(null);
-        if (aboutText != null)
-            setItem(scan(aboutText));
+        if (aboutText != null) {
+			setItem(scan(aboutText));
+		}
 
-        if (getItem() == null)
-            text.setText(WorkbenchMessages.AboutFeaturesDialog_noInformation); 
-        else {
+        if (getItem() == null) {
+			text.setText(WorkbenchMessages.AboutFeaturesDialog_noInformation);
+		} else {
             text.setText(getItem().getText());
             text.setCursor(null);
             setLinkRanges(text, getItem().getLinkRanges());
@@ -436,20 +445,22 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
      *            index of table column selected as sort criteria
      */
     private void sort(int column) {
-        if (lastColumnChosen == column)
-            reverseSort = !reverseSort;
-        else {
+        if (lastColumnChosen == column) {
+			reverseSort = !reverseSort;
+		} else {
             reverseSort = false;
             lastColumnChosen = column;
         }
 
-        if (table.getItemCount() <= 1)
-            return;
+        if (table.getItemCount() <= 1) {
+			return;
+		}
 
         // Remember the last selection
         int sel = table.getSelectionIndex();
-        if (sel != -1)
-            lastSelection = bundleGroupInfos[sel];
+        if (sel != -1) {
+			lastSelection = bundleGroupInfos[sel];
+		}
 
         switch (column) {
         case 0:
@@ -486,9 +497,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         int sel = -1;
         if (lastSelection != null) {
             String oldId = lastSelection.getId();
-            for (int k = 0; k < bundleGroupInfos.length; k++)
-                if (oldId.equalsIgnoreCase(bundleGroupInfos[k].getId()))
-                    sel = k;
+            for (int k = 0; k < bundleGroupInfos.length; k++) {
+				if (oldId.equalsIgnoreCase(bundleGroupInfos[k].getId())) {
+					sel = k;
+				}
+			}
 
             table.setSelection(sel);
             table.showSelection();

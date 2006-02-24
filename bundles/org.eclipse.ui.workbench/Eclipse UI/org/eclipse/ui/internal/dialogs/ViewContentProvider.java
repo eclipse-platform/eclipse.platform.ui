@@ -76,8 +76,9 @@ public class ViewContentProvider implements ITreeContentProvider {
 
             ArrayList filtered = new ArrayList();
             for (int i = 0; i < categories.length; i++) {
-                if (!hasChildren(categories[i]))
-                    continue;
+                if (!hasChildren(categories[i])) {
+					continue;
+				}
 
                 filtered.add(categories[i]);
             }
@@ -95,8 +96,9 @@ public class ViewContentProvider implements ITreeContentProvider {
                 ArrayList filtered = new ArrayList();
                 for (int i = 0; i < views.length; i++) {
                     Object o = views[i];
-                    if (WorkbenchActivityHelper.filterItem(o))
-                        continue;
+                    if (WorkbenchActivityHelper.filterItem(o)) {
+						continue;
+					}
                     filtered.add(o);
                 }
                 return removeIntroView(filtered).toArray();
@@ -148,11 +150,12 @@ public class ViewContentProvider implements ITreeContentProvider {
      * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
      */
     public boolean hasChildren(java.lang.Object element) {
-        if (element instanceof IViewRegistry)
-            return true;
-        else if (element instanceof IViewCategory) {
-            if (getChildren(element).length > 0)
-                return true;
+        if (element instanceof IViewRegistry) {
+			return true;
+		} else if (element instanceof IViewCategory) {
+            if (getChildren(element).length > 0) {
+				return true;
+			}
         }
         return false;
     }

@@ -54,8 +54,9 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
         IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("PreferencesExportWizard");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings.addNewSection("PreferencesExportWizard");//$NON-NLS-1$
+        if (section == null) {
+			section = workbenchSettings.addNewSection("PreferencesExportWizard");//$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 

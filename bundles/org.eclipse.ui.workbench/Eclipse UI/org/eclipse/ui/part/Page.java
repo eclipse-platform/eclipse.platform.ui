@@ -68,8 +68,9 @@ public abstract class Page implements IPageBookViewPage {
      */
     public void dispose() {
         Control ctrl = getControl();
-        if (ctrl != null && !ctrl.isDisposed())
-            ctrl.dispose();
+        if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.dispose();
+		}
     }
 
     /**

@@ -67,8 +67,9 @@ final class ActivityPersistanceHelper {
                 loadEnabledStates(activityManagerEvent
                         .getActivityManager().getEnabledActivityIds(), delta);
             }
-            if (activityManagerEvent.haveEnabledActivityIdsChanged())
-                saveEnabledStates();
+            if (activityManagerEvent.haveEnabledActivityIdsChanged()) {
+				saveEnabledStates();
+			}
         }
     };
     
@@ -214,8 +215,9 @@ final class ActivityPersistanceHelper {
      * @param activityIdsToProcess the activity ids to process
      */
     protected void loadEnabledStates(Set previouslyEnabledActivities, Set activityIdsToProcess) {
-        if (activityIdsToProcess.isEmpty())
-            return;
+        if (activityIdsToProcess.isEmpty()) {
+			return;
+		}
         
         Set enabledActivities = new HashSet(previouslyEnabledActivities);
         IPreferenceStore store = WorkbenchPlugin.getDefault()
@@ -231,17 +233,19 @@ final class ActivityPersistanceHelper {
             String activityId = (String) i.next();
             try {
                 IActivity activity = activityManager.getActivity(activityId);
-                if (activity.isDefaultEnabled())
-                    store.setDefault(createPreferenceKey(activityId), true);
+                if (activity.isDefaultEnabled()) {
+					store.setDefault(createPreferenceKey(activityId), true);
+				}
 
             } catch (NotDefinedException e) {
                 // can't happen - we're iterating over defined activities
             }
 
-            if (store.getBoolean(createPreferenceKey(activityId)))
-                enabledActivities.add(activityId);
-            else 
-                enabledActivities.remove(activityId);
+            if (store.getBoolean(createPreferenceKey(activityId))) {
+				enabledActivities.add(activityId);
+			} else {
+				enabledActivities.remove(activityId);
+			}
         }
 
         support.setEnabledActivityIds(enabledActivities);

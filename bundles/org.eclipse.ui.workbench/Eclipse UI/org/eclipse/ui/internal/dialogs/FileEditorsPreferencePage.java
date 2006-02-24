@@ -132,10 +132,11 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 return;
             }
 
-            if (result < 0)
-                found = true;
-            else
-                i++;
+            if (result < 0) {
+				found = true;
+			} else {
+				i++;
+			}
         }
 
         // Create the new type and insert it
@@ -319,8 +320,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 // Check if it is the default editor
                 String defaultString = null;
                 if (resourceType != null) {
-                    if (resourceType.getDefaultEditor() == editor && resourceType.isDeclaredDefaultEditor(editor))
-                        defaultString = WorkbenchMessages.FileEditorPreference_defaultLabel;
+                    if (resourceType.getDefaultEditor() == editor && resourceType.isDeclaredDefaultEditor(editor)) {
+						defaultString = WorkbenchMessages.FileEditorPreference_defaultLabel;
+					}
                 }
 
                 if (defaultString != null) {
@@ -414,12 +416,14 @@ public class FileEditorsPreferencePage extends PreferencePage implements
     }
 
     protected IEditorDescriptor[] getAssociatedEditors() {
-        if (getSelectedResourceType() == null)
-            return null;
+        if (getSelectedResourceType() == null) {
+			return null;
+		}
         if (editorTable.getItemCount() > 0) {
             ArrayList editorList = new ArrayList();
-            for (int i = 0; i < editorTable.getItemCount(); i++)
-                editorList.add(editorTable.getItem(i).getData(DATA_EDITOR));
+            for (int i = 0; i < editorTable.getItemCount(); i++) {
+				editorList.add(editorTable.getItem(i).getData(DATA_EDITOR));
+			}
 
             return (IEditorDescriptor[]) editorList
                     .toArray(new IEditorDescriptor[editorList.size()]);
@@ -461,8 +465,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
     protected TableItem newResourceTableItem(IFileEditorMapping mapping,
             int index, boolean selected) {
         Image image = mapping.getImageDescriptor().createImage(false);
-        if (image != null)
-            imagesToDispose.add(image);
+        if (image != null) {
+			imagesToDispose.add(image);
+		}
 
         TableItem item = new TableItem(resourceTypeTable, SWT.NULL, index);
         if (image != null) {
@@ -515,18 +520,20 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 boolean isEmpty = i < 1;
                 TableItem item = new TableItem(editorTable, SWT.NULL, i);
                 item.setData(DATA_EDITOR, editor);
-                if (isEmpty)
-                    item
+                if (isEmpty) {
+					item
                             .setText(editor.getLabel()
                                     + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
-                else
-                    item.setText(editor.getLabel());
+				} else {
+					item.setText(editor.getLabel());
+				}
                 item.setImage(getImage(editor));
                 editorTable.setSelection(i);
                 editorTable.setFocus();
                 getSelectedResourceType().addEditor(editor);
-				if (isEmpty)
+				if (isEmpty) {
 					getSelectedResourceType().setDefaultEditor(editor);
+				}
                 updateSelectedResourceType(); //in case of new default
             }
         }
@@ -561,13 +568,15 @@ public class FileEditorsPreferencePage extends PreferencePage implements
             // explicitly set the new editor first editor to default
             getSelectedResourceType().setDefaultEditor(
 					(EditorDescriptor) item.getData(DATA_EDITOR));
-            if (item != null)
-                item
+            if (item != null) {
+				item
                         .setText(((EditorDescriptor) (item.getData(DATA_EDITOR)))
                                 .getLabel()
                                 + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
-			if (!isEditorRemovable(item))
+			}
+			if (!isEditorRemovable(item)) {
 				setLockedItemText(item, item.getText());
+			}
 		}
 
     }
@@ -596,8 +605,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                     .setText(((EditorDescriptor) oldDefaultItem.getData(DATA_EDITOR))
                             .getLabel());
             // update the label to reflect the locked state
-            if (!isEditorRemovable(oldDefaultItem))
-            		setLockedItemText(oldDefaultItem, oldDefaultItem.getText());
+            if (!isEditorRemovable(oldDefaultItem)) {
+				setLockedItemText(oldDefaultItem, oldDefaultItem.getText());
+			}
             // Now set the new default
             EditorDescriptor editor = (EditorDescriptor) items[0].getData(DATA_EDITOR);
             getSelectedResourceType().setDefaultEditor(editor);
@@ -605,14 +615,16 @@ public class FileEditorsPreferencePage extends PreferencePage implements
             items[0].dispose(); //Table is single selection
             TableItem item = new TableItem(editorTable, SWT.NULL, 0);
             item.setData(DATA_EDITOR, editor);
-            if (fromContentType != null)
-            		item.setData(DATA_FROM_CONTENT_TYPE, fromContentType);
+            if (fromContentType != null) {
+				item.setData(DATA_FROM_CONTENT_TYPE, fromContentType);
+			}
             item
                     .setText(editor.getLabel()
                             + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
             item.setImage(getImage(editor));
-            if (!isEditorRemovable(item))
+            if (!isEditorRemovable(item)) {
 				setLockedItemText(item, item.getText());
+			}
 			editorTable.setSelection(new TableItem[] { item });
         }
     }
@@ -641,8 +653,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 	 */
     private boolean isEditorRemovable() {
 		TableItem[] items = editorTable.getSelection();
-		if (items.length > 0) 
+		if (items.length > 0) {
 			return isEditorRemovable(items[0]);
+		}
 		return false;
 	}
     

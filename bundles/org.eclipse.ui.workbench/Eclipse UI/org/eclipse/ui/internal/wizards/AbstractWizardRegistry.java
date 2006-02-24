@@ -105,8 +105,9 @@ public abstract class AbstractWizardRegistry implements IWizardRegistry {
 	 * Read the contents of the registry if necessary.
 	 */
 	protected final synchronized void initialize() {
-		if (isInitialized())
+		if (isInitialized()) {
 			return;
+		}
 
 		initialized = true;
 		doInitialize();

@@ -85,10 +85,11 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 			Set newList = new HashSet(Arrays.asList(window.getActivePage()
 					.getWorkingSets()));
 
-			if (isChecked())
+			if (isChecked()) {
 				newList.add(set);
-			else
+			} else {
 				newList.remove(set);
+			}
 
 			window.getActivePage().setWorkingSets(
 					(IWorkingSet[]) newList.toArray(new IWorkingSet[newList
@@ -141,16 +142,18 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 	}
 
 	public Menu getMenu(Control parent) {
-		if (toolbarMenu != null)
+		if (toolbarMenu != null) {
 			toolbarMenu.dispose();
+		}
 		toolbarMenu = new Menu(parent);
 		initMenu(toolbarMenu);
 		return toolbarMenu;
 	}
 
 	public Menu getMenu(Menu parent) {
-		if (menubarMenu != null)
+		if (menubarMenu != null) {
 			menubarMenu.dispose();
+		}
 		menubarMenu = new Menu(parent);
 		initMenu(menubarMenu);
 		return menubarMenu;
@@ -180,8 +183,9 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 	private boolean isWorkingSetEnabled(IWorkingSet set) {
 		IWorkingSet[] enabledSets = getEnabledSets();
 		for (int i = 0; i < enabledSets.length; i++) {
-			if (enabledSets[i].equals(set))
+			if (enabledSets[i].equals(set)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -217,8 +221,9 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 		for (int i = 0; i < allSets.length; i++) {
 			String setType = allSets[i].getId();
 			if (WorkbenchActivityHelper.filterItem(registry
-					.getWorkingSetDescriptor(setType)))
+					.getWorkingSetDescriptor(setType))) {
 				continue;
+			}
 			List setsOfType = (List) map.get(setType);
 			if (setsOfType == null) {
 				setsOfType = new ArrayList();
@@ -306,8 +311,9 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 
 	protected List getSelectedWorkingSets() {
 		ISelection selection = viewer.getSelection();
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			return ((IStructuredSelection) selection).toList();
+		}
 		return null;
 	}
 

@@ -74,8 +74,9 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
      * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
      */
     String getDisplayString() {
-        if (total < 0)
-            return taskName;
+        if (total < 0) {
+			return taskName;
+		}
         String[] messageValues = new String[2];
         messageValues[0] = taskName;
         messageValues[1] = String.valueOf(getPercentDone());

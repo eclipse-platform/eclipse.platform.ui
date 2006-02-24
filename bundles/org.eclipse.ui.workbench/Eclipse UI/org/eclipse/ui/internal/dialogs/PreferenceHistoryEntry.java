@@ -65,8 +65,9 @@ final class PreferenceHistoryEntry {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		if (argument == null)
+		if (argument == null) {
 			return id;
+		}
 		return id + "(" + argument + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/*

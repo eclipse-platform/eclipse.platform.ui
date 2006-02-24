@@ -63,15 +63,17 @@ public class DialogPageContextComputer implements IContextComputer {
         }
 
         Object[] contexts;
-        if (object instanceof IContextComputer)
-            // get local contexts
+        if (object instanceof IContextComputer) {
+			// get local contexts
             contexts = ((IContextComputer) object).getLocalContexts(event);
-        else
-            contexts = (Object[]) object;
+		} else {
+			contexts = (Object[]) object;
+		}
 
         // copy the contexts into our list	
-        for (int i = 0; i < contexts.length; i++)
-            contextList.add(contexts[i]);
+        for (int i = 0; i < contexts.length; i++) {
+			contextList.add(contexts[i]);
+		}
     }
 
     /**
@@ -84,9 +86,10 @@ public class DialogPageContextComputer implements IContextComputer {
         // See if there is are help contexts on the control
         Object object = WorkbenchHelp.getHelp(control);
 
-        if (object == null || object == this)
-            // We need to check for this in order to avoid recursion
+        if (object == null || object == this) {
+			// We need to check for this in order to avoid recursion
             return;
+		}
 
         addContexts(object, event);
     }

@@ -43,14 +43,16 @@ public class WizardPatternFilter extends PatternFilter {
 	 * @see org.eclipse.ui.internal.dialogs.PatternFilter#isElementMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
 	 */
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
-		if (element instanceof WizardCollectionElement)
+		if (element instanceof WizardCollectionElement) {
 			return false;
+		}
 		
 		if (element instanceof WorkbenchWizardElement) {
 			WorkbenchWizardElement desc = (WorkbenchWizardElement) element;
 			String text = desc.getLabel();
-			if (wordMatches(text))
+			if (wordMatches(text)) {
 				return true;
+			}
 		}
 		return false;
 	}

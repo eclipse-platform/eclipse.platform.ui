@@ -122,8 +122,9 @@ public class NativeStackPresentation extends StackPresentation {
     private IPropertyListener childPropertyChangeListener = new IPropertyListener() {
         public void propertyChanged(Object source, int property) {
 
-            if (isDisposed())
-                return;
+            if (isDisposed()) {
+				return;
+			}
 
             if (source instanceof IPresentablePart) {
                 IPresentablePart part = (IPresentablePart) source;
@@ -252,8 +253,9 @@ public class NativeStackPresentation extends StackPresentation {
      * Set the size of a page in the folder.
      */
     private void setControlSize() {
-        if (current == null || tabFolder == null)
-            return;
+        if (current == null || tabFolder == null) {
+			return;
+		}
         //		Rectangle bounds;
         // @issue as above, the mere presence of a theme should not change the behaviour
         //		if ((mapTabToPart.size() > 1)
@@ -266,8 +268,9 @@ public class NativeStackPresentation extends StackPresentation {
     }
 
     public static Rectangle calculatePageBounds(TabFolder folder) {
-        if (folder == null)
-            return new Rectangle(0, 0, 0, 0);
+        if (folder == null) {
+			return new Rectangle(0, 0, 0, 0);
+		}
         Rectangle bounds = folder.getBounds();
         Rectangle offset = folder.getClientArea();
         bounds.x += offset.x;
@@ -461,12 +464,15 @@ public class NativeStackPresentation extends StackPresentation {
      */
     public Control[] getTabList(IPresentablePart part) {
         ArrayList list = new ArrayList();
-        if (getControl() != null)
-            list.add(getControl());
-        if (part.getToolBar() != null)
-            list.add(part.getToolBar());
-        if (part.getControl() != null)
-            list.add(part.getControl());
+        if (getControl() != null) {
+			list.add(getControl());
+		}
+        if (part.getToolBar() != null) {
+			list.add(part.getToolBar());
+		}
+        if (part.getControl() != null) {
+			list.add(part.getControl());
+		}
         return (Control[]) list.toArray(new Control[list.size()]);
     }
 

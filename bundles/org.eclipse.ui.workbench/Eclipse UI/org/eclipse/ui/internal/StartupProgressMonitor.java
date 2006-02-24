@@ -144,10 +144,12 @@ import org.eclipse.ui.branding.IProductConstants;
 			foregroundColor = product
 					.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR);
 		}
-		if (progressRect == null)
+		if (progressRect == null) {
 			progressRect = "10,10,300,15"; //$NON-NLS-1$
-		if (messageRect == null)
+		}
+		if (messageRect == null) {
 			messageRect = "10,35,300,15"; //$NON-NLS-1$
+		}
 		int foregroundColorInteger;
 		try {
 			foregroundColorInteger = Integer.parseInt(foregroundColor, 16);

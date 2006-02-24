@@ -62,8 +62,9 @@ public class ThemeElementCategory implements IPluginContribution,
      */
     public IThemePreview createPreview() throws CoreException {
         String classString = element.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
-        if (classString == null || "".equals(classString)) //$NON-NLS-1$
-            return null;
+        if (classString == null || "".equals(classString)) { //$NON-NLS-1$
+			return null;
+		}
         return (IThemePreview) WorkbenchPlugin.createExtension(element,
                 IWorkbenchRegistryConstants.ATT_CLASS);
     }

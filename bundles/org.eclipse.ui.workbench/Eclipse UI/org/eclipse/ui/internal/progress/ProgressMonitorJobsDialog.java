@@ -217,8 +217,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
         composite.setLayoutData(data);
         composite.setFont(parent.getFont());
         // Add the buttons to the button bar.
-        if (arrowCursor == null)
-            arrowCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_ARROW);
+        if (arrowCursor == null) {
+			arrowCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_ARROW);
+		}
         createButtonsForButtonBar(composite);
         return composite;
     }
@@ -243,8 +244,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
     protected void updateForSetBlocked(IStatus reason) {
         super.updateForSetBlocked(reason);
         enableDetails(true);
-        if (viewer == null) //Open the viewer if there is a block
-            handleDetailsButtonSelect();
+        if (viewer == null) {
+			handleDetailsButtonSelect();
+		}
     }
 
     /*
@@ -271,10 +273,11 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
      *            a boolean to indicate the preferred' state
      */
     protected void enableDetails(boolean enableState) {
-        if (detailsButton == null)
-            enableDetailsButton = enableState;
-        else
-            detailsButton.setEnabled(enableState);
+        if (detailsButton == null) {
+			enableDetailsButton = enableState;
+		} else {
+			detailsButton.setEnabled(enableState);
+		}
     }
 
     /**
@@ -310,8 +313,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
              * Check if we have ticked in the last 800ms.
              */
             private void checkTicking() {
-                if (watchTime < 0)
-                    return;
+                if (watchTime < 0) {
+					return;
+				}
                 if ((System.currentTimeMillis() - watchTime) > ProgressManager
                         .getInstance().getLongOperationTime()) {
                     watchTime = -1;
@@ -323,8 +327,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
              * Open the dialog in the ui Thread
              */
             private void openDialog() {
-                if (!PlatformUI.isWorkbenchRunning())
-                    return;
+                if (!PlatformUI.isWorkbenchRunning()) {
+					return;
+				}
 
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     /* (non-Javadoc)
@@ -337,8 +342,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 							  return;
 						 }
 			                 
-                        if (!alreadyClosed)
-                            open();
+                        if (!alreadyClosed) {
+							open();
+						}
                     }
                 });
             }
@@ -421,9 +427,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
              */
             public void clearBlocked() {
                 //We want to open on blocking too
-                if (superMonitor instanceof IProgressMonitorWithBlocking)
-                    ((IProgressMonitorWithBlocking) superMonitor)
+                if (superMonitor instanceof IProgressMonitorWithBlocking) {
+					((IProgressMonitorWithBlocking) superMonitor)
                             .clearBlocked();
+				}
 
             }
 
@@ -434,9 +441,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
              */
             public void setBlocked(IStatus reason) {
                 openDialog();
-                if (superMonitor instanceof IProgressMonitorWithBlocking)
-                    ((IProgressMonitorWithBlocking) superMonitor)
+                if (superMonitor instanceof IProgressMonitorWithBlocking) {
+					((IProgressMonitorWithBlocking) superMonitor)
                             .setBlocked(reason);
+				}
 
             }
 
@@ -449,8 +457,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#getProgressMonitor()
      */
     public IProgressMonitor getProgressMonitor() {
-        if (wrapperedMonitor == null)
-            createWrapperedMonitor();
+        if (wrapperedMonitor == null) {
+			createWrapperedMonitor();
+		}
         return wrapperedMonitor;
     }
 

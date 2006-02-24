@@ -56,14 +56,16 @@ class LayoutHelper {
      */
     public static final void addViewActivator(PageLayout pageLayout,
             final String viewId) {
-        if (viewId == null)
-            return;
+        if (viewId == null) {
+			return;
+		}
 
         ViewFactory viewFactory = pageLayout.getViewFactory();
 
         final IWorkbenchPage partPage = viewFactory.getWorkbenchPage();
-        if (partPage == null)
-            return;
+        if (partPage == null) {
+			return;
+		}
 
         final IPerspectiveDescriptor partPerspective = pageLayout
                 .getDescriptor();
@@ -72,8 +74,9 @@ class LayoutHelper {
                 .getActivitySupport();
 
         IViewDescriptor descriptor = viewFactory.getViewRegistry().find(viewId);
-        if (!(descriptor instanceof IPluginContribution))
-            return;
+        if (!(descriptor instanceof IPluginContribution)) {
+			return;
+		}
 
         IIdentifier identifier = support.getActivityManager().getIdentifier(
                 WorkbenchActivityHelper

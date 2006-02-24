@@ -62,8 +62,9 @@ public abstract class AboutData {
     }
 
     public String getVersionedId() {
-        if (versionedId == null)
-            versionedId = getId() + "_" + getVersion(); //$NON-NLS-1$
+        if (versionedId == null) {
+			versionedId = getId() + "_" + getVersion(); //$NON-NLS-1$
+		}
         return versionedId;
     }
 
@@ -74,8 +75,9 @@ public abstract class AboutData {
     private static void reverse(AboutData[] infos) {
         List infoList = Arrays.asList(infos);
         Collections.reverse(infoList);
-        for (int i = 0; i < infos.length; ++i)
-            infos[i] = (AboutData) infoList.get(i);
+        for (int i = 0; i < infos.length; ++i) {
+			infos[i] = (AboutData) infoList.get(i);
+		}
     }
 
     /**
@@ -106,8 +108,9 @@ public abstract class AboutData {
                 String provider1 = info1.getProviderName();
                 String provider2 = info2.getProviderName();
 
-                if (!provider1.equals(provider2))
-                    return collator.compare(provider1, provider2);
+                if (!provider1.equals(provider2)) {
+					return collator.compare(provider1, provider2);
+				}
 
                 return collator.compare(info1.getName(), info2.getName());
             }
@@ -170,8 +173,9 @@ public abstract class AboutData {
                 String version1 = info1.getVersion();
                 String version2 = info2.getVersion();
 
-                if (!version1.equals(version2))
-                    return collator.compare(version1, version2);
+                if (!version1.equals(version2)) {
+					return collator.compare(version1, version2);
+				}
 
                 return collator.compare(info1.getName(), info2.getName());
             }
@@ -206,8 +210,9 @@ public abstract class AboutData {
                 String id1 = info1.getId();
                 String id2 = info2.getId();
 
-                if (!id1.equals(id2))
-                    return collator.compare(id1, id2);
+                if (!id1.equals(id2)) {
+					return collator.compare(id1, id2);
+				}
 
                 return collator.compare(info1.getName(), info2.getName());
             }
@@ -216,8 +221,9 @@ public abstract class AboutData {
 
     protected static URL getURL(String value) {
         try {
-            if (value != null)
-                return new URL(value);
+            if (value != null) {
+				return new URL(value);
+			}
         } catch (IOException e) {
             // do nothing
         }

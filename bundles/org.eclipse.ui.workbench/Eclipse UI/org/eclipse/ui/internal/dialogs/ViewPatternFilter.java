@@ -44,15 +44,17 @@ public class ViewPatternFilter extends PatternFilter {
 	 * @see org.eclipse.ui.dialogs.PatternFilter#isElementMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
 	 */
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
-		if (element instanceof IViewCategory)
+		if (element instanceof IViewCategory) {
 			return false;
+		}
 
 		String text = null;
 		if (element instanceof IViewDescriptor) {
 			IViewDescriptor desc = (IViewDescriptor) element;
 			text = desc.getLabel();
-			if (wordMatches(text))
+			if (wordMatches(text)) {
 				return true;
+			}
 		}
 
 		return false;

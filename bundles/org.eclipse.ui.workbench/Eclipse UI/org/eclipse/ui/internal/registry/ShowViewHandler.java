@@ -47,12 +47,14 @@ public final class ShowViewHandler extends AbstractHandler {
 	public final Object execute(final ExecutionEvent event) {
 		final IWorkbenchWindow activeWorkbenchWindow = PlatformUI
 				.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow == null)
+		if (activeWorkbenchWindow == null) {
 			return null;
+		}
 
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-		if (activePage == null)
+		if (activePage == null) {
 			return null;
+		}
 
 		try {
 			activePage.showView(viewId);

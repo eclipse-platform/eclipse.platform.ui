@@ -69,8 +69,9 @@ import org.eclipse.jface.util.Assert;
             return;
         }
 
-        if (keys.length <= 1)
-            return;
+        if (keys.length <= 1) {
+			return;
+		}
 
         internalSort(keys, values, 0, keys.length - 1);
     }
@@ -82,11 +83,13 @@ import org.eclipse.jface.util.Assert;
 
         Object mid = keys[(left + right) / 2];
         do {
-            while (fComparator.compare(keys[left], mid) < 0)
-                left++;
+            while (fComparator.compare(keys[left], mid) < 0) {
+				left++;
+			}
 
-            while (fComparator.compare(mid, keys[right]) < 0)
-                right--;
+            while (fComparator.compare(mid, keys[right]) < 0) {
+				right--;
+			}
 
             if (left <= right) {
                 swap(keys, left, right);
@@ -96,11 +99,13 @@ import org.eclipse.jface.util.Assert;
             }
         } while (left <= right);
 
-        if (original_left < right)
-            internalSort(keys, values, original_left, right);
+        if (original_left < right) {
+			internalSort(keys, values, original_left, right);
+		}
 
-        if (left < original_right)
-            internalSort(keys, values, left, original_right);
+        if (left < original_right) {
+			internalSort(keys, values, left, original_right);
+		}
     }
 
     /*

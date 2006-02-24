@@ -24,8 +24,9 @@ public final class ProxyActivityManager extends AbstractActivityManager {
     private IActivityManager activityManager;
 
     public ProxyActivityManager(IActivityManager activityManager) {
-        if (activityManager == null)
-            throw new NullPointerException();
+        if (activityManager == null) {
+			throw new NullPointerException();
+		}
 
         this.activityManager = activityManager;
 

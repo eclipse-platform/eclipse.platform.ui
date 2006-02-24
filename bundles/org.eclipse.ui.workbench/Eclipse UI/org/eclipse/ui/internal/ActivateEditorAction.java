@@ -68,9 +68,10 @@ public class ActivateEditorAction extends PageEventAction {
             } else {
                 IWorkbenchPartReference ref = page.getActivePartReference();
                 if (ref instanceof IViewReference) {
-                    if (((WorkbenchPage) page).isFastView((IViewReference) ref))
-                        ((WorkbenchPage) page)
+                    if (((WorkbenchPage) page).isFastView((IViewReference) ref)) {
+						((WorkbenchPage) page)
                                 .toggleFastView((IViewReference) ref);
+					}
                 }
             }
         }

@@ -55,13 +55,15 @@ final class Persistence {
 
     static ActivityRequirementBindingDefinition readActivityRequirementBindingDefinition(
             IMemento memento, String sourceIdOverride) {
-        if (memento == null)
-            throw new NullPointerException();
+        if (memento == null) {
+			throw new NullPointerException();
+		}
 
         String childActivityId = memento.getString(TAG_REQUIRED_ACTIVITY_ID);
         String parentActivityId = memento.getString(TAG_ACTIVITY_ID);
-        if (childActivityId == null || parentActivityId == null)
-            return null;
+        if (childActivityId == null || parentActivityId == null) {
+			return null;
+		}
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new ActivityRequirementBindingDefinition(childActivityId,
@@ -70,47 +72,55 @@ final class Persistence {
 
     static List readActivityRequirementBindingDefinitions(IMemento memento,
             String name, String sourceIdOverride) {
-        if (memento == null || name == null)
-            throw new NullPointerException();
+        if (memento == null || name == null) {
+			throw new NullPointerException();
+		}
 
         IMemento[] mementos = memento.getChildren(name);
 
-        if (mementos == null)
-            throw new NullPointerException();
+        if (mementos == null) {
+			throw new NullPointerException();
+		}
 
         List list = new ArrayList(mementos.length);
 
         for (int i = 0; i < mementos.length; i++) {
             ActivityRequirementBindingDefinition binding = readActivityRequirementBindingDefinition(mementos[i],
                     sourceIdOverride);
-            if (binding != null)
-                list.add(binding);
+            if (binding != null) {
+				list.add(binding);
+			}
         }
 
         return list;
     }
 
     static String readDefaultEnablement(IMemento memento) {
-        if (memento == null)
-            throw new NullPointerException();
+        if (memento == null) {
+			throw new NullPointerException();
+		}
 
         return memento.getString(TAG_ID);
     }
 
     static ActivityDefinition readActivityDefinition(IMemento memento,
             String sourceIdOverride) {
-        if (memento == null)
-            throw new NullPointerException();
+        if (memento == null) {
+			throw new NullPointerException();
+		}
 
         String id = memento.getString(TAG_ID);
-        if (id == null)
-            return null;
+        if (id == null) {
+			return null;
+		}
         String name = memento.getString(TAG_NAME);
-        if (name == null)
-            return null;
+        if (name == null) {
+			return null;
+		}
         String description = memento.getString(TAG_DESCRIPTION);
-        if (description == null)
-            description = ""; //$NON-NLS-1$
+        if (description == null) {
+			description = ""; //$NON-NLS-1$
+		}
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new ActivityDefinition(id, name, sourceId, description);
@@ -118,20 +128,23 @@ final class Persistence {
 
     static List readActivityDefinitions(IMemento memento, String name,
             String sourceIdOverride) {
-        if (memento == null || name == null)
-            throw new NullPointerException();
+        if (memento == null || name == null) {
+			throw new NullPointerException();
+		}
 
         IMemento[] mementos = memento.getChildren(name);
 
-        if (mementos == null)
-            throw new NullPointerException();
+        if (mementos == null) {
+			throw new NullPointerException();
+		}
 
         List list = new ArrayList(mementos.length);
 
         for (int i = 0; i < mementos.length; i++) {
             ActivityDefinition definition = readActivityDefinition(mementos[i], sourceIdOverride);
-            if (definition != null)
-                list.add(definition);
+            if (definition != null) {
+				list.add(definition);
+			}
         }
 
         return list;
@@ -139,15 +152,18 @@ final class Persistence {
 
     static ActivityPatternBindingDefinition readActivityPatternBindingDefinition(
             IMemento memento, String sourceIdOverride) {
-        if (memento == null)
-            throw new NullPointerException();
+        if (memento == null) {
+			throw new NullPointerException();
+		}
 
         String activityId = memento.getString(TAG_ACTIVITY_ID);
-        if (activityId == null)
-            return null;
+        if (activityId == null) {
+			return null;
+		}
         String pattern = memento.getString(TAG_PATTERN);
-        if (pattern == null)
-        	return null;
+        if (pattern == null) {
+			return null;
+		}
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new ActivityPatternBindingDefinition(activityId, pattern,
@@ -156,21 +172,24 @@ final class Persistence {
 
     static List readActivityPatternBindingDefinitions(IMemento memento,
             String name, String sourceIdOverride) {
-        if (memento == null || name == null)
-            throw new NullPointerException();
+        if (memento == null || name == null) {
+			throw new NullPointerException();
+		}
 
         IMemento[] mementos = memento.getChildren(name);
 
-        if (mementos == null)
-            throw new NullPointerException();
+        if (mementos == null) {
+			throw new NullPointerException();
+		}
 
         List list = new ArrayList(mementos.length);
 
         for (int i = 0; i < mementos.length; i++) {
             ActivityPatternBindingDefinition definition = readActivityPatternBindingDefinition(mementos[i],
                     sourceIdOverride);
-            if (definition != null)
-                list.add(definition);
+            if (definition != null) {
+				list.add(definition);
+			}
         }
 
         return list;
@@ -178,15 +197,18 @@ final class Persistence {
 
     static CategoryActivityBindingDefinition readCategoryActivityBindingDefinition(
             IMemento memento, String sourceIdOverride) {
-        if (memento == null)
-            throw new NullPointerException();
+        if (memento == null) {
+			throw new NullPointerException();
+		}
 
         String activityId = memento.getString(TAG_ACTIVITY_ID);
-        if (activityId == null)
-            return null;
+        if (activityId == null) {
+			return null;
+		}
         String categoryId = memento.getString(TAG_CATEGORY_ID);
-        if (categoryId == null)
-            return null;
+        if (categoryId == null) {
+			return null;
+		}
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new CategoryActivityBindingDefinition(activityId, categoryId,
@@ -195,21 +217,24 @@ final class Persistence {
 
     static List readCategoryActivityBindingDefinitions(IMemento memento,
             String name, String sourceIdOverride) {
-        if (memento == null || name == null)
-            throw new NullPointerException();
+        if (memento == null || name == null) {
+			throw new NullPointerException();
+		}
 
         IMemento[] mementos = memento.getChildren(name);
 
-        if (mementos == null)
-            throw new NullPointerException();
+        if (mementos == null) {
+			throw new NullPointerException();
+		}
 
         List list = new ArrayList(mementos.length);
 
         for (int i = 0; i < mementos.length; i++) {
             CategoryActivityBindingDefinition definition = readCategoryActivityBindingDefinition(mementos[i],
                     sourceIdOverride);
-            if (definition != null)
-                list.add(definition);
+            if (definition != null) {
+				list.add(definition);
+			}
         }
 
         return list;
@@ -217,18 +242,22 @@ final class Persistence {
 
     static CategoryDefinition readCategoryDefinition(IMemento memento,
             String sourceIdOverride) {
-        if (memento == null)
-            throw new NullPointerException();
+        if (memento == null) {
+			throw new NullPointerException();
+		}
 
         String id = memento.getString(TAG_ID);
-        if (id == null)
-            return null;
+        if (id == null) {
+			return null;
+		}
         String name = memento.getString(TAG_NAME);
-        if (name == null)
-            return null;
+        if (name == null) {
+			return null;
+		}
         String description = memento.getString(TAG_DESCRIPTION);
-        if (description == null)
-            description = ""; //$NON-NLS-1$
+        if (description == null) {
+			description = ""; //$NON-NLS-1$
+		}
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new CategoryDefinition(id, name, sourceId, description);
@@ -236,20 +265,23 @@ final class Persistence {
 
     static List readCategoryDefinitions(IMemento memento, String name,
             String sourceIdOverride) {
-        if (memento == null || name == null)
-            throw new NullPointerException();
+        if (memento == null || name == null) {
+			throw new NullPointerException();
+		}
 
         IMemento[] mementos = memento.getChildren(name);
 
-        if (mementos == null)
-            throw new NullPointerException();
+        if (mementos == null) {
+			throw new NullPointerException();
+		}
 
         List list = new ArrayList(mementos.length);
 
         for (int i = 0; i < mementos.length; i++) {
             CategoryDefinition definition = readCategoryDefinition(mementos[i], sourceIdOverride);
-            if (definition != null)
-                list.add(definition);
+            if (definition != null) {
+				list.add(definition);
+			}
         }
 
         return list;
@@ -258,8 +290,9 @@ final class Persistence {
     static void writeActivityRequirementBindingDefinition(
             IMemento memento,
             ActivityRequirementBindingDefinition activityRequirementBindingDefinition) {
-        if (memento == null || activityRequirementBindingDefinition == null)
-            throw new NullPointerException();
+        if (memento == null || activityRequirementBindingDefinition == null) {
+			throw new NullPointerException();
+		}
 
         memento.putString(TAG_REQUIRED_ACTIVITY_ID,
                 activityRequirementBindingDefinition.getRequiredActivityId());
@@ -272,29 +305,33 @@ final class Persistence {
     static void writeActivityRequirementBindingDefinitions(IMemento memento,
             String name, List activityRequirementBindingDefinitions) {
         if (memento == null || name == null
-                || activityRequirementBindingDefinitions == null)
-            throw new NullPointerException();
+                || activityRequirementBindingDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         activityRequirementBindingDefinitions = new ArrayList(
                 activityRequirementBindingDefinitions);
         Iterator iterator = activityRequirementBindingDefinitions.iterator();
 
-        while (iterator.hasNext())
-            Util.assertInstance(iterator.next(),
+        while (iterator.hasNext()) {
+			Util.assertInstance(iterator.next(),
                     ActivityRequirementBindingDefinition.class);
+		}
 
         iterator = activityRequirementBindingDefinitions.iterator();
 
-        while (iterator.hasNext())
-            writeActivityRequirementBindingDefinition(
+        while (iterator.hasNext()) {
+			writeActivityRequirementBindingDefinition(
                     memento.createChild(name),
                     (ActivityRequirementBindingDefinition) iterator.next());
+		}
     }
 
     static void writeActivityDefinition(IMemento memento,
             ActivityDefinition activityDefinition) {
-        if (memento == null || activityDefinition == null)
-            throw new NullPointerException();
+        if (memento == null || activityDefinition == null) {
+			throw new NullPointerException();
+		}
 
         memento.putString(TAG_ID, activityDefinition.getId());
         memento.putString(TAG_NAME, activityDefinition.getName());
@@ -303,26 +340,30 @@ final class Persistence {
 
     static void writeActivityDefinitions(IMemento memento, String name,
             List activityDefinitions) {
-        if (memento == null || name == null || activityDefinitions == null)
-            throw new NullPointerException();
+        if (memento == null || name == null || activityDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         activityDefinitions = new ArrayList(activityDefinitions);
         Iterator iterator = activityDefinitions.iterator();
 
-        while (iterator.hasNext())
-            Util.assertInstance(iterator.next(), ActivityDefinition.class);
+        while (iterator.hasNext()) {
+			Util.assertInstance(iterator.next(), ActivityDefinition.class);
+		}
 
         iterator = activityDefinitions.iterator();
 
-        while (iterator.hasNext())
-            writeActivityDefinition(memento.createChild(name),
+        while (iterator.hasNext()) {
+			writeActivityDefinition(memento.createChild(name),
                     (ActivityDefinition) iterator.next());
+		}
     }
 
     static void writeActivityPatternBindingDefinition(IMemento memento,
             ActivityPatternBindingDefinition activityPatternBindingDefinition) {
-        if (memento == null || activityPatternBindingDefinition == null)
-            throw new NullPointerException();
+        if (memento == null || activityPatternBindingDefinition == null) {
+			throw new NullPointerException();
+		}
 
         memento.putString(TAG_ACTIVITY_ID, activityPatternBindingDefinition
                 .getActivityId());
@@ -335,28 +376,32 @@ final class Persistence {
     static void writeActivityPatternBindingDefinitions(IMemento memento,
             String name, List activityPatternBindingDefinitions) {
         if (memento == null || name == null
-                || activityPatternBindingDefinitions == null)
-            throw new NullPointerException();
+                || activityPatternBindingDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         activityPatternBindingDefinitions = new ArrayList(
                 activityPatternBindingDefinitions);
         Iterator iterator = activityPatternBindingDefinitions.iterator();
 
-        while (iterator.hasNext())
-            Util.assertInstance(iterator.next(),
+        while (iterator.hasNext()) {
+			Util.assertInstance(iterator.next(),
                     ActivityPatternBindingDefinition.class);
+		}
 
         iterator = activityPatternBindingDefinitions.iterator();
 
-        while (iterator.hasNext())
-            writeActivityPatternBindingDefinition(memento.createChild(name),
+        while (iterator.hasNext()) {
+			writeActivityPatternBindingDefinition(memento.createChild(name),
                     (ActivityPatternBindingDefinition) iterator.next());
+		}
     }
 
     static void writeCategoryActivityBindingDefinition(IMemento memento,
             CategoryActivityBindingDefinition categoryActivityBindingDefinition) {
-        if (memento == null || categoryActivityBindingDefinition == null)
-            throw new NullPointerException();
+        if (memento == null || categoryActivityBindingDefinition == null) {
+			throw new NullPointerException();
+		}
 
         memento.putString(TAG_ACTIVITY_ID, categoryActivityBindingDefinition
                 .getActivityId());
@@ -369,28 +414,32 @@ final class Persistence {
     static void writeCategoryActivityBindingDefinitions(IMemento memento,
             String name, List categoryActivityBindingDefinitions) {
         if (memento == null || name == null
-                || categoryActivityBindingDefinitions == null)
-            throw new NullPointerException();
+                || categoryActivityBindingDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         categoryActivityBindingDefinitions = new ArrayList(
                 categoryActivityBindingDefinitions);
         Iterator iterator = categoryActivityBindingDefinitions.iterator();
 
-        while (iterator.hasNext())
-            Util.assertInstance(iterator.next(),
+        while (iterator.hasNext()) {
+			Util.assertInstance(iterator.next(),
                     CategoryActivityBindingDefinition.class);
+		}
 
         iterator = categoryActivityBindingDefinitions.iterator();
 
-        while (iterator.hasNext())
-            writeCategoryActivityBindingDefinition(memento.createChild(name),
+        while (iterator.hasNext()) {
+			writeCategoryActivityBindingDefinition(memento.createChild(name),
                     (CategoryActivityBindingDefinition) iterator.next());
+		}
     }
 
     static void writeCategoryDefinition(IMemento memento,
             CategoryDefinition categoryDefinition) {
-        if (memento == null || categoryDefinition == null)
-            throw new NullPointerException();
+        if (memento == null || categoryDefinition == null) {
+			throw new NullPointerException();
+		}
 
         memento.putString(TAG_ID, categoryDefinition.getId());
         memento.putString(TAG_NAME, categoryDefinition.getName());
@@ -399,20 +448,23 @@ final class Persistence {
 
     static void writeCategoryDefinitions(IMemento memento, String name,
             List categoryDefinitions) {
-        if (memento == null || name == null || categoryDefinitions == null)
-            throw new NullPointerException();
+        if (memento == null || name == null || categoryDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         categoryDefinitions = new ArrayList(categoryDefinitions);
         Iterator iterator = categoryDefinitions.iterator();
 
-        while (iterator.hasNext())
-            Util.assertInstance(iterator.next(), CategoryDefinition.class);
+        while (iterator.hasNext()) {
+			Util.assertInstance(iterator.next(), CategoryDefinition.class);
+		}
 
         iterator = categoryDefinitions.iterator();
 
-        while (iterator.hasNext())
-            writeCategoryDefinition(memento.createChild(name),
+        while (iterator.hasNext()) {
+			writeCategoryDefinition(memento.createChild(name),
                     (CategoryDefinition) iterator.next());
+		}
     }
 
     private Persistence() {

@@ -136,8 +136,9 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     public boolean canGoInto() {
         IStructuredSelection oSelection = (IStructuredSelection) fChildTree
                 .getSelection();
-        if (oSelection == null || oSelection.size() != 1)
-            return false;
+        if (oSelection == null || oSelection.size() != 1) {
+			return false;
+		}
         Object anElement = oSelection.getFirstElement();
         return canExpand(anElement);
     }
@@ -149,8 +150,9 @@ public class DrillDownAdapter implements ISelectionChangedListener {
      */
     private void createActions() {
         // Only do this once.
-        if (homeAction != null)
-            return;
+        if (homeAction != null) {
+			return;
+		}
 
         // Home.	
         homeAction = new Action(WorkbenchMessages.GoHome_text) {
@@ -231,9 +233,10 @@ public class DrillDownAdapter implements ISelectionChangedListener {
         expand(oFrame.getExpansion());
         // if there was a selection, it should have been preserved,
         // but if not, select the element that was drilled into
-        if (fChildTree.getSelection().isEmpty())
-            fChildTree
+        if (fChildTree.getSelection().isEmpty()) {
+			fChildTree
                     .setSelection(new StructuredSelection(currentInput), true);
+		}
         updateNavigationButtons();
     }
 
@@ -253,9 +256,10 @@ public class DrillDownAdapter implements ISelectionChangedListener {
         expand(oFrame.getExpansion());
         // if there was a selection, it should have been preserved,
         // but if not, select the element that was last drilled into
-        if (fChildTree.getSelection().isEmpty())
-            fChildTree
+        if (fChildTree.getSelection().isEmpty()) {
+			fChildTree
                     .setSelection(new StructuredSelection(currentInput), true);
+		}
         updateNavigationButtons();
     }
 

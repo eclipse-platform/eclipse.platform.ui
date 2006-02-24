@@ -125,12 +125,13 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         }
 
         ActionDescriptor desc = null;
-        if (pullDownStyle)
-            desc = new ActionDescriptor(element,
+        if (pullDownStyle) {
+			desc = new ActionDescriptor(element,
                     ActionDescriptor.T_WORKBENCH_PULLDOWN, window);
-        else
-            desc = new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH,
+		} else {
+			desc = new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH,
                     window);
+		}
         WWinPluginAction action = (WWinPluginAction) desc.getAction();
         action.setActionSetId(actionSet.getDesc().getId());
         actionSet.addPluginAction(action);
@@ -164,17 +165,20 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         // Find the reference item.
         int insertIndex = 0;
         while (insertIndex < items.length) {
-            if (startId.equals(items[insertIndex].getId()))
-                break;
+            if (startId.equals(items[insertIndex].getId())) {
+				break;
+			}
             ++insertIndex;
         }
-        if (insertIndex >= items.length)
-            return null;
+        if (insertIndex >= items.length) {
+			return null;
+		}
 
         // Calculate startVsEnd comparison value.
         int compareMetric = 0;
-        if (startVsEnd)
-            compareMetric = 1;
+        if (startVsEnd) {
+			compareMetric = 1;
+		}
 
         // Find the insertion point for the new item.
         // We do this by iterating through all of the previous
@@ -189,8 +193,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                 if (sortId != null) {
                     String testId = ((IActionSetContributionItem) item)
                             .getActionSetId();
-                    if (sortId.compareTo(testId) < compareMetric)
-                        break;
+                    if (sortId.compareTo(testId) < compareMetric) {
+						break;
+					}
                 }
                 insertIndex = nX;
             } else {
@@ -344,8 +349,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             if (actions != null) {
                 for (int i = 0; i < actions.size(); i++) {
                     ActionDescriptor ad = (ActionDescriptor) actions.get(i);
-                    if (menuMgr != null)
-                        contributeMenuAction(ad, menuMgr, menuAppendIfMissing);
+                    if (menuMgr != null) {
+						contributeMenuAction(ad, menuMgr, menuAppendIfMissing);
+					}
                     if (toolBarMgr != null) {
                         if (bars instanceof ActionSetActionBars) {
                             contributeCoolbarAction(ad,
@@ -406,8 +412,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                 ActionSetActionBars bars) {
             String toolBarId = ad.getToolbarId();
             String toolGroupId = ad.getToolbarGroupId();
-            if (toolBarId == null && toolGroupId == null)
-                return;
+            if (toolBarId == null && toolGroupId == null) {
+				return;
+			}
 
             String contributingId = bars.getActionSetId();
 
@@ -453,8 +460,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         private boolean isValidCoolItemId(String id, WorkbenchWindow window) {
             ActionSetRegistry registry = WorkbenchPlugin.getDefault()
                     .getActionSetRegistry();
-            if (registry.findActionSet(id) != null)
-                return true;
+            if (registry.findActionSet(id) != null) {
+				return true;
+			}
             if (window != null) {
                 return window.isWorkbenchCoolItemId(id);
             }
@@ -497,16 +505,18 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             // look for starting point
             while (insertIndex < items.length) {
                 IContributionItem item = items[insertIndex];
-                if (startId != null && startId.equals(item.getId()))
-                    break;
+                if (startId != null && startId.equals(item.getId())) {
+					break;
+				}
                 ++insertIndex;
             }
 
             // Find the index that this item should be inserted in
             for (int i = insertIndex + 1; i < items.length; i++) {
                 IContributionItem item = items[i];
-                if (item.isGroupMarker())
-                    break;
+                if (item.isGroupMarker()) {
+					break;
+				}
 
                 String testId = null;
                 if (item instanceof PluginActionCoolBarContributionItem) {
@@ -518,8 +528,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                 }
 
                 if (itemId != null && testId != null) {
-                    if (itemId.compareTo(testId) < 1)
-                        break;
+                    if (itemId.compareTo(testId) < 1) {
+						break;
+					}
                 }
                 insertIndex = i;
             }
@@ -584,8 +595,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
             // remove a coolitem for the toolbar id if it exists 			
             IContributionItem cbItem = coolBarMgr.find(toolBarId);
-            if (cbItem != null)
-                coolBarMgr.remove(cbItem);
+            if (cbItem != null) {
+				coolBarMgr.remove(cbItem);
+			}
 
             //			activeManager = cbItem.getToolBarManager();	
             //			activeManager.remove(contributingId);	
@@ -607,24 +619,28 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             IContributionItem[] items = menuMgr.getItems();
             ArrayList itemsToRemove = new ArrayList();
             String id;
-            for (int i = 0; i < items.length; i++)
-                if (items[i] instanceof IMenuManager) {
+            for (int i = 0; i < items.length; i++) {
+				if (items[i] instanceof IMenuManager) {
                     revokeActionSetFromMenu((IMenuManager) items[i],
                             actionsetId);
                 } else if (items[i] instanceof ActionSetContributionItem) {
                     id = ((ActionSetContributionItem) items[i])
                             .getActionSetId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 } else if (items[i] instanceof Separator) {
                     id = ((Separator) items[i]).getId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 } else if (items[i] instanceof GroupMarker) {
                     id = ((GroupMarker) items[i]).getId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 }
+			}
             Iterator iter = itemsToRemove.iterator();
             while (iter.hasNext()) {
                 IContributionItem item = (IContributionItem) iter.next();
@@ -650,17 +666,20 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                             actionsetId);
                 } else if (items[i] instanceof IToolBarContributionItem) {
                     id = ((IToolBarContributionItem) items[i]).getId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 } else if (items[i] instanceof GroupMarker) {
                     id = ((GroupMarker) items[i]).getId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 }
             }
             Iterator iter = itemsToRemove.iterator();
-            while (iter.hasNext())
-                coolbarMgr.remove((IContributionItem) iter.next());
+            while (iter.hasNext()) {
+				coolbarMgr.remove((IContributionItem) iter.next());
+			}
             coolbarMgr.update(true);
         }
 
@@ -679,21 +698,25 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                 if (items[i] instanceof PluginActionCoolBarContributionItem) {
                     id = ((PluginActionCoolBarContributionItem) items[i])
                             .getActionSetId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 } else if (items[i] instanceof ActionContributionItem) {
                     id = ((ActionContributionItem) items[i]).getId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 } else if (items[i] instanceof GroupMarker) {
                     id = ((GroupMarker) items[i]).getId();
-                    if (actionsetId.equals(id))
-                        itemsToRemove.add(items[i]);
+                    if (actionsetId.equals(id)) {
+						itemsToRemove.add(items[i]);
+					}
                 }
             }
             Iterator iter = itemsToRemove.iterator();
-            while (iter.hasNext())
-                toolbarMgr.remove((IContributionItem) iter.next());
+            while (iter.hasNext()) {
+				toolbarMgr.remove((IContributionItem) iter.next());
+			}
             toolbarMgr.update(true);
         }
     }

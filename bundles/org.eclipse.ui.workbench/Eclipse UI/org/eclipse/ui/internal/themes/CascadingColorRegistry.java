@@ -50,8 +50,9 @@ public class CascadingColorRegistry extends ColorRegistry {
      * @see org.eclipse.jface.resource.ColorRegistry#get(java.lang.String)
      */
     public Color get(String symbolicName) {
-        if (super.hasValueFor(symbolicName))
-            return super.get(symbolicName);
+        if (super.hasValueFor(symbolicName)) {
+			return super.get(symbolicName);
+		}
         
         return parent.get(symbolicName);
     }
@@ -69,8 +70,9 @@ public class CascadingColorRegistry extends ColorRegistry {
      * @see org.eclipse.jface.resource.ColorRegistry#getRGB(java.lang.String)
      */
     public RGB getRGB(String symbolicName) {
-        if (super.hasValueFor(symbolicName))
-            return super.getRGB(symbolicName);
+        if (super.hasValueFor(symbolicName)) {
+			return super.getRGB(symbolicName);
+		}
         
         return parent.getRGB(symbolicName);
     }

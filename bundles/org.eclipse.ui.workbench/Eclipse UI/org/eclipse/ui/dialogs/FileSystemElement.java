@@ -105,8 +105,9 @@ public class FileSystemElement implements IAdaptable {
         this.name = name;
         this.parent = parent;
         this.isDirectory = isDirectory;
-        if (parent != null)
-            parent.addChild(this);
+        if (parent != null) {
+			parent.addChild(this);
+		}
     }
 
     /**
@@ -117,12 +118,14 @@ public class FileSystemElement implements IAdaptable {
      */
     public void addChild(FileSystemElement child) {
         if (child.isDirectory()) {
-            if (folders == null)
-                folders = new AdaptableList(1);
+            if (folders == null) {
+				folders = new AdaptableList(1);
+			}
             folders.add(child);
         } else {
-            if (files == null)
-                files = new AdaptableList(1);
+            if (files == null) {
+				files = new AdaptableList(1);
+			}
             files.add(child);
         }
     }
@@ -211,8 +214,9 @@ public class FileSystemElement implements IAdaptable {
      * @param child The child to remove.
      */
     public void removeFolder(FileSystemElement child) {
-        if (folders == null)
-            return;
+        if (folders == null) {
+			return;
+		}
         folders.remove(child);
         child.setParent(null);
     }

@@ -85,8 +85,9 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
         }		
 		
 		//If it's a non-interactive point activate all activities
-		if (!triggerPoint.getBooleanHint(ITriggerPoint.HINT_INTERACTIVE))
+		if (!triggerPoint.getBooleanHint(ITriggerPoint.HINT_INTERACTIVE)) {
 			return identifier.getActivityIds();
+		}
 		
         EnablementDialog dialog = new EnablementDialog(PlatformUI
                 .getWorkbench().getDisplay().getActiveShell(), identifier

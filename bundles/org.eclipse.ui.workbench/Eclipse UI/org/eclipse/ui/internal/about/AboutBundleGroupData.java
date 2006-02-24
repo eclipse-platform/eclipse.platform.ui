@@ -46,33 +46,38 @@ public class AboutBundleGroupData extends AboutData {
     }
 
     public URL getLicenseUrl() {
-        if (licenseUrl == null)
-            licenseUrl = getURL(bundleGroup
+        if (licenseUrl == null) {
+			licenseUrl = getURL(bundleGroup
                     .getProperty(IBundleGroupConstants.LICENSE_HREF));
+		}
 
         return licenseUrl;
     }
 
     public URL getFeatureImageUrl() {
-        if (featureImageUrl == null)
-            featureImageUrl = getURL(bundleGroup
+        if (featureImageUrl == null) {
+			featureImageUrl = getURL(bundleGroup
                     .getProperty(IBundleGroupConstants.FEATURE_IMAGE));
+		}
         return featureImageUrl;
     }
 
     public ImageDescriptor getFeatureImage() {
-        if (featureImage == null)
-            featureImage = getImage(getFeatureImageUrl());
+        if (featureImage == null) {
+			featureImage = getImage(getFeatureImageUrl());
+		}
         return featureImage;
     }
 
     public Long getFeatureImageCrc() {
-        if (featureImageCrc != null)
-            return featureImageCrc;
+        if (featureImageCrc != null) {
+			return featureImageCrc;
+		}
 
         URL url = getFeatureImageUrl();
-        if (url == null)
-            return null;
+        if (url == null) {
+			return null;
+		}
 
         // Get the image bytes
         InputStream in = null;
@@ -82,9 +87,11 @@ public class AboutBundleGroupData extends AboutData {
 
             // the contents don't matter, the read just needs a place to go
             byte[] sink = new byte[1024];
-            while (true)
-                if (in.read(sink) <= 0)
-                    break;
+            while (true) {
+				if (in.read(sink) <= 0) {
+					break;
+				}
+			}
 
             featureImageCrc = new Long(checksum.getValue());
             return featureImageCrc;
@@ -92,12 +99,13 @@ public class AboutBundleGroupData extends AboutData {
         } catch (IOException e) {
             return null;
         } finally {
-            if (in != null)
-                try {
+            if (in != null) {
+				try {
                     in.close();
                 } catch (IOException e) {
                     // do nothing
                 }
+			}
         }
     }
 

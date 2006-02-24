@@ -82,8 +82,9 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
      */
     public Object getFirstResult() {
         Object[] result = getResult();
-        if (result == null || result.length == 0)
-            return null;
+        if (result == null || result.length == 0) {
+			return null;
+		}
         return result[0];
     }
 
@@ -108,8 +109,9 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        if (fImage != null)
-            shell.setImage(fImage);
+        if (fImage != null) {
+			shell.setImage(fImage);
+		}
     }
 
     /**
@@ -132,8 +134,9 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
      */
     protected void updateButtonsEnableState(IStatus status) {
         Button okButton = getOkButton();
-        if (okButton != null && !okButton.isDisposed())
-            okButton.setEnabled(!status.matches(IStatus.ERROR));
+        if (okButton != null && !okButton.isDisposed()) {
+			okButton.setEnabled(!status.matches(IStatus.ERROR));
+		}
     }
 
     /*
@@ -149,8 +152,9 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
      */
     public void create() {
         super.create();
-        if (fLastStatus != null)
-            updateStatus(fLastStatus);
+        if (fLastStatus != null) {
+			updateStatus(fLastStatus);
+		}
     }
 
     /*

@@ -69,8 +69,9 @@ public class EarlyStartupRunnable extends SafeRunnable {
         }
 
         // if no startup tags were found, then try the plugin object
-        if (!foundAtLeastOne)
-            runEarlyStartup(getPluginForCompatibility());
+        if (!foundAtLeastOne) {
+			runEarlyStartup(getPluginForCompatibility());
+		}
     }
 
     public void handleException(Throwable exception) {
@@ -82,9 +83,9 @@ public class EarlyStartupRunnable extends SafeRunnable {
 
     private void runEarlyStartup(Object executableExtension) {
         if (executableExtension != null
-                && executableExtension instanceof IStartup)
-            ((IStartup) executableExtension).earlyStartup();
-        else {
+                && executableExtension instanceof IStartup) {
+			((IStartup) executableExtension).earlyStartup();
+		} else {
             IStatus status = new Status(IStatus.ERROR,
                     extension.getNamespace(), 0,
                     "startup class must implement org.eclipse.ui.IStartup", //$NON-NLS-1$
@@ -108,8 +109,9 @@ public class EarlyStartupRunnable extends SafeRunnable {
 
         // if class attribute is absent then try to use the compatibility
         // bundle to return the plugin object
-        if (classname == null || classname.length() <= 0)
-            return getPluginForCompatibility();
+        if (classname == null || classname.length() <= 0) {
+			return getPluginForCompatibility();
+		}
 
         // otherwise the 3.0 runtime should be able to do it
         return WorkbenchPlugin.createExtension(element,
@@ -124,8 +126,9 @@ public class EarlyStartupRunnable extends SafeRunnable {
     private Object getPluginForCompatibility() {
         // make sure the compatibility bundle is available
         Bundle compatBundle = Platform.getBundle(PI_RUNTIME_COMPATIBILITY);
-        if (compatBundle == null)
-            return null;
+        if (compatBundle == null) {
+			return null;
+		}
 
         // use reflection to try to access the plugin object
         try {
@@ -135,8 +138,9 @@ public class EarlyStartupRunnable extends SafeRunnable {
             Method getDescMethod = extensionClass.getDeclaredMethod(
                     GET_DESC_METHOD, new Class[0]);
             Object pluginDesc = getDescMethod.invoke(extension, new Object[0]);
-            if (pluginDesc == null)
-                return null;
+            if (pluginDesc == null) {
+				return null;
+			}
 
             // Plugin plugin = pluginDesc.getPlugin();
             Class pluginDescClass = pluginDesc.getClass();

@@ -55,11 +55,13 @@ public class NewWizard extends Wizard {
             while (familyTokenizer.hasMoreElements()) {
                 categories = getChildWithID(categories, familyTokenizer
                         .nextToken());
-                if (categories == null)
-                    break;
+                if (categories == null) {
+					break;
+				}
             }
-            if (categories != null)
-                root = categories;
+            if (categories != null) {
+				root = categories;
+			}
         }
 
         mainPage = new NewWizardSelectionPage(workbench, selection, root,
@@ -86,8 +88,9 @@ public class NewWizard extends Wizard {
         IWizardCategory [] children = parent.getCategories();
         for (int i = 0; i < children.length; ++i) {
         	IWizardCategory currentChild = children[i];
-            if (currentChild.getId().equals(id))
-                return currentChild;
+            if (currentChild.getId().equals(id)) {
+				return currentChild;
+			}
         }
         return null;
     }
@@ -102,10 +105,11 @@ public class NewWizard extends Wizard {
         this.workbench = aWorkbench;
         this.selection = currentSelection;
 
-        if (projectsOnly)
-            setWindowTitle(WorkbenchMessages.NewProject_title); 
-        else
-            setWindowTitle(WorkbenchMessages.NewWizard_title); 
+        if (projectsOnly) {
+			setWindowTitle(WorkbenchMessages.NewProject_title);
+		} else {
+			setWindowTitle(WorkbenchMessages.NewWizard_title);
+		} 
         setDefaultPageImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
         setNeedsProgressMonitor(true);
@@ -157,8 +161,9 @@ public class NewWizard extends Wizard {
     public boolean canFinish() {
          // we can finish if the first page is current and the the page can finish early.
 	    	if (getContainer().getCurrentPage() == mainPage) {
-	    		if (mainPage.canFinishEarly()) 
-	    			return true;
+	    		if (mainPage.canFinishEarly()) {
+					return true;
+				}
 	    	}
 	    	return super.canFinish();
     }

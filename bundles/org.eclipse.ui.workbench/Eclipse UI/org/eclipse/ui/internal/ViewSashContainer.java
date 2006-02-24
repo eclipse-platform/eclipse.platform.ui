@@ -110,9 +110,9 @@ public class ViewSashContainer extends PartSashContainer {
 
             // Create the part.
             LayoutPart part = null;
-            if (strFolder == null)
-                part = new PartPlaceholder(partID);
-            else {
+            if (strFolder == null) {
+				part = new PartPlaceholder(partID);
+			} else {
                 ViewStack folder = new ViewStack(page);
                 folder.setID(partID);
                 result.add(folder.restoreState(childMem
@@ -131,10 +131,11 @@ public class ViewSashContainer extends PartSashContainer {
             } else {
                 LayoutPart refPart = (LayoutPart) mapIDtoPart.get(relativeID);
                 if (refPart != null) {
-                    if (left != 0)
-                        add(part, relationship, left, right, refPart);
-                    else
-                        add(part, relationship, ratio, refPart);
+                    if (left != 0) {
+						add(part, relationship, left, right, refPart);
+					} else {
+						add(part, relationship, ratio, refPart);
+					}
                 } else {
                     WorkbenchPlugin
                             .log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
@@ -191,8 +192,9 @@ public class ViewSashContainer extends PartSashContainer {
             } else if (info.part instanceof ContainerPlaceholder) {
                 LayoutPart part = ((ContainerPlaceholder) info.part)
                         .getRealContainer();
-                if (part instanceof ViewStack)
-                    folder = (ViewStack) part;
+                if (part instanceof ViewStack) {
+					folder = (ViewStack) part;
+				}
             }
 
             // If this is a folder save the contents.

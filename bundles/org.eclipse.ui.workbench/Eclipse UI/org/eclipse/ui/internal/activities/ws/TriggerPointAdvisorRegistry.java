@@ -59,8 +59,9 @@ public class TriggerPointAdvisorRegistry {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
 						IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
-		if (point == null)
+		if (point == null) {
 			return new TriggerPointAdvisorDescriptor[0];
+		}
 
 		IExtension[] extensions = point.getExtensions();
 		extensions = RegistryReader.orderExtensions(extensions);
@@ -102,15 +103,17 @@ public class TriggerPointAdvisorRegistry {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
 						IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
-		if (point == null)
+		if (point == null) {
 			return null;
+		}
 
 		IExtension[] extensions = point.getExtensions();
 		extensions = RegistryReader.orderExtensions(extensions);
 
 		String targetIntroId = getAdvisorForProduct(productId, extensions);
-		if (targetIntroId == null)
+		if (targetIntroId == null) {
 			return null;
+		}
 
 		TriggerPointAdvisorDescriptor[] advisors = getAdvisors();
 		for (int i = 0; i < advisors.length; i++) {

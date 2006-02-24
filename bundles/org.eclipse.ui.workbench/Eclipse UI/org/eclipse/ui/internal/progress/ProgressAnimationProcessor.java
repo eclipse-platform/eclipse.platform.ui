@@ -48,10 +48,12 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
         // Create an off-screen image to draw on, and a GC to draw with.
         // Both are disposed after the animation.
-        if (items.size() == 0)
-            return;
-        if (!PlatformUI.isWorkbenchRunning())
-            return;
+        if (items.size() == 0) {
+			return;
+		}
+        if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
 
         while (manager.isAnimated() && !monitor.isCanceled()) {
             //Do nothing while animation is happening

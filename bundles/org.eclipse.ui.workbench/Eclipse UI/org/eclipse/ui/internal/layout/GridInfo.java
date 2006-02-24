@@ -126,8 +126,9 @@ class GridInfo {
     public int getNumRows(boolean isRow) {
         if (isRow) {
             return rows;
-        } else
-            return cols;
+        } else {
+			return cols;
+		}
     }
 
     public void getRow(int[] result, int rowId, boolean horizontal) {
@@ -138,8 +139,9 @@ class GridInfo {
 
                 if (prev == next) {
                     result[colIdx] = -1;
-                } else
-                    result[colIdx] = next;
+                } else {
+					result[colIdx] = next;
+				}
 
                 prev = next;
             }
@@ -150,8 +152,9 @@ class GridInfo {
 
                 if (prev == next) {
                     result[rowIdx] = -1;
-                } else
-                    result[rowIdx] = next;
+                } else {
+					result[rowIdx] = next;
+				}
 
                 prev = next;
             }

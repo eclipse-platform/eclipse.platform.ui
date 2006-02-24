@@ -38,15 +38,18 @@ public class ObjectFilterTest {
      */
     public boolean addFilterElement(IConfigurationElement element) {
         String name = element.getAttribute("name");//$NON-NLS-1$
-        if (name == null)
-            return false;
+        if (name == null) {
+			return false;
+		}
 
         // Get positive property.
         String value = element.getAttribute("value");//$NON-NLS-1$
-        if (value == null)
-            return false;
-        if (filterElements == null)
-            filterElements = new HashMap();
+        if (value == null) {
+			return false;
+		}
+        if (filterElements == null) {
+			filterElements = new HashMap();
+		}
         filterElements.put(name, value);
         return true;
     }
@@ -66,12 +69,14 @@ public class ObjectFilterTest {
      */
     public boolean matches(Object object, boolean adaptable) {
         // Optimize it.
-        if (filterElements == null)
-            return true;
+        if (filterElements == null) {
+			return true;
+		}
 
         // Try out the object.
-        if (this.preciselyMatches(object))
-            return true;
+        if (this.preciselyMatches(object)) {
+			return true;
+		}
         return false;
     }
 
@@ -81,21 +86,24 @@ public class ObjectFilterTest {
     private boolean preciselyMatches(Object object) {
         // Get the action filter.
         IActionFilter filter = null;
-        if (object instanceof IActionFilter)
-            filter = (IActionFilter) object;
-        else if (object instanceof IAdaptable)
-            filter = (IActionFilter) ((IAdaptable) object)
+        if (object instanceof IActionFilter) {
+			filter = (IActionFilter) object;
+		} else if (object instanceof IAdaptable) {
+			filter = (IActionFilter) ((IAdaptable) object)
                     .getAdapter(IActionFilter.class);
-        if (filter == null)
-            return false;
+		}
+        if (filter == null) {
+			return false;
+		}
 
         // Run the action filter.
         Iterator iter = filterElements.keySet().iterator();
         while (iter.hasNext()) {
             String name = (String) iter.next();
             String value = (String) filterElements.get(name);
-            if (!filter.testAttribute(object, name, value))
-                return false;
+            if (!filter.testAttribute(object, name, value)) {
+				return false;
+			}
         }
         return true;
     }

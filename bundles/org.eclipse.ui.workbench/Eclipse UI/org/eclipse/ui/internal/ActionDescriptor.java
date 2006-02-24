@@ -145,8 +145,9 @@ public class ActionDescriptor implements IPluginContribution {
                 mpath = null;
             }
         }
-        if (targetType == T_POPUP && mgroup == null)
-            mgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+        if (targetType == T_POPUP && mgroup == null) {
+			mgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+		}
         if (tpath != null) {
             int loc = tpath.lastIndexOf('/');
             if (loc != -1) {
@@ -159,36 +160,42 @@ public class ActionDescriptor implements IPluginContribution {
         }
         menuPath = mpath;
         menuGroup = mgroup;
-        if ((tpath != null) && tpath.equals("Normal")) //$NON-NLS-1$
-            tpath = ""; //$NON-NLS-1$
+        if ((tpath != null) && tpath.equals("Normal")) { //$NON-NLS-1$
+			tpath = ""; //$NON-NLS-1$
+		}
         toolbarId = tpath;
         toolbarGroupId = tgroup;
 
         // Create action.
         action = createAction(targetType, actionElement, target, style);
-        if (action.getText() == null) // may have been set by delegate
-            action.setText(label);
-        if (action.getToolTipText() == null && tooltip != null) // may have been set by delegate
-            action.setToolTipText(tooltip);
+        if (action.getText() == null) {
+			action.setText(label);
+		}
+        if (action.getToolTipText() == null && tooltip != null) {
+			action.setToolTipText(tooltip);
+		}
         if (helpContextId != null) {
             String fullID = helpContextId;
-            if (helpContextId.indexOf(".") == -1) //$NON-NLS-1$
-                // For backward compatibility we auto qualify the id if it is not
+            if (helpContextId.indexOf(".") == -1) { //$NON-NLS-1$
+				// For backward compatibility we auto qualify the id if it is not
                 // qualified)
                 fullID = actionElement.getNamespace()
                         + "." + helpContextId;//$NON-NLS-1$
+			}
             PlatformUI.getWorkbench().getHelpSystem().setHelp(action, fullID);
         }
-        if (description != null)
-            action.setDescription(description);
+        if (description != null) {
+			action.setDescription(description);
+		}
 
         if (style != null) {
             // Since 2.1, the "state" and "pulldown" attributes means something different
             // when the new "style" attribute has been set. See doc for more info.
             String state = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_STATE);
             if (state != null) {
-                if (style.equals(STYLE_RADIO) || style.equals(STYLE_TOGGLE))
-                    action.setChecked(state.equals("true"));//$NON-NLS-1$
+                if (style.equals(STYLE_RADIO) || style.equals(STYLE_TOGGLE)) {
+					action.setChecked(state.equals("true"));//$NON-NLS-1$
+				}
             }
         } else {
             // Keep for backward compatibility for actions not using the
@@ -217,8 +224,9 @@ public class ActionDescriptor implements IPluginContribution {
                                     disabledIcon));
         }
 
-        if (accelerator != null)
-            processAccelerator(action, accelerator);
+        if (accelerator != null) {
+			processAccelerator(action, accelerator);
+		}
     }
 
     /**
@@ -334,8 +342,9 @@ public class ActionDescriptor implements IPluginContribution {
      */
     private void processAccelerator(IAction action, String acceleratorText) {
 
-        if (acceleratorText.length() == 0)
-            return;
+        if (acceleratorText.length() == 0) {
+			return;
+		}
 
         //Is it a numeric definition?
         if (Character.isDigit(acceleratorText.charAt(0))) {
@@ -345,8 +354,9 @@ public class ActionDescriptor implements IPluginContribution {
             } catch (NumberFormatException e) {
                 WorkbenchPlugin.log("Invalid accelerator declaration for action: " + id, e); //$NON-NLS-1$
             }
-        } else
-            action.setAccelerator(Action.convertAccelerator(acceleratorText));
+        } else {
+			action.setAccelerator(Action.convertAccelerator(acceleratorText));
+		}
     }
 
     /* (non-Javadoc)

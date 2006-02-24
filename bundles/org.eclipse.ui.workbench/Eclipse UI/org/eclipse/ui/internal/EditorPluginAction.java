@@ -30,8 +30,9 @@ public final class EditorPluginAction extends PartPluginAction {
     public EditorPluginAction(IConfigurationElement actionElement,
             IEditorPart part, String id, int style) {
         super(actionElement, id, style);
-        if (part != null)
-            editorChanged(part);
+        if (part != null) {
+			editorChanged(part);
+		}
     }
 
     /* (non-Javadoc)
@@ -39,11 +40,12 @@ public final class EditorPluginAction extends PartPluginAction {
      */
     protected IActionDelegate validateDelegate(Object obj)
             throws WorkbenchException {
-        if (obj instanceof IEditorActionDelegate)
-            return (IEditorActionDelegate) obj;
-        else
-            throw new WorkbenchException(
+        if (obj instanceof IEditorActionDelegate) {
+			return (IEditorActionDelegate) obj;
+		} else {
+			throw new WorkbenchException(
                     "Action must implement IEditorActionDelegate"); //$NON-NLS-1$
+		}
     }
 
     /* (non-Javadoc)
@@ -60,18 +62,22 @@ public final class EditorPluginAction extends PartPluginAction {
      * changes and updating IEditorActionDelegate.
      */
     public void editorChanged(IEditorPart part) {
-        if (currentEditor != null)
-            unregisterSelectionListener(currentEditor);
+        if (currentEditor != null) {
+			unregisterSelectionListener(currentEditor);
+		}
 
         currentEditor = part;
 
-        if (getDelegate() == null && isOkToCreateDelegate())
-            createDelegate();
-        if (getDelegate() != null)
-            ((IEditorActionDelegate) getDelegate()).setActiveEditor(this, part);
+        if (getDelegate() == null && isOkToCreateDelegate()) {
+			createDelegate();
+		}
+        if (getDelegate() != null) {
+			((IEditorActionDelegate) getDelegate()).setActiveEditor(this, part);
+		}
 
-        if (part != null)
-            registerSelectionListener(part);
+        if (part != null) {
+			registerSelectionListener(part);
+		}
     }
 	
 	/* (non-Javadoc)

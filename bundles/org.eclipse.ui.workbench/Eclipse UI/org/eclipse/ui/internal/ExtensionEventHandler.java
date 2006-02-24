@@ -59,11 +59,13 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             IExtensionPoint extPt;
             IWorkbenchWindow[] win = PlatformUI.getWorkbench()
                     .getWorkbenchWindows();
-            if (win.length == 0)
-                return;
+            if (win.length == 0) {
+				return;
+			}
             Display display = win[0].getShell().getDisplay();
-            if (display == null)
-                return;
+            if (display == null) {
+				return;
+			}
             ArrayList appearList = new ArrayList(5);
             ArrayList revokeList = new ArrayList(5);
             String id = null;
@@ -76,13 +78,14 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             for (int i = 0; i < delta.length; i++) {
                 id = delta[i].getExtensionPoint().getSimpleIdentifier();
                 if (delta[i].getKind() == IExtensionDelta.ADDED) {
-                    if (id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS))
-                        appearList.add(0, delta[i]);
-                    else if (!id.equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES)
+                    if (id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS)) {
+						appearList.add(0, delta[i]);
+					} else if (!id.equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES)
                             && !id.equals(IWorkbenchRegistryConstants.PL_VIEWS)
-                            && !id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS))
-                        appearList.add(appearList.size() - numPerspectives,
+                            && !id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS)) {
+						appearList.add(appearList.size() - numPerspectives,
                                 delta[i]);
+					}
                 } else {
                     if (delta[i].getKind() == IExtensionDelta.REMOVED) {
                         if (id
@@ -90,10 +93,11 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                             revokeList.add(0, delta[i]);
                             numActionSetPartAssoc++;
                         } else if (id
-                                .equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES))
-                            revokeList.add(numActionSetPartAssoc, delta[i]);
-                        else
-                            revokeList.add(delta[i]);
+                                .equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES)) {
+							revokeList.add(numActionSetPartAssoc, delta[i]);
+						} else {
+							revokeList.add(delta[i]);
+						}
                     }
                 }
             }
@@ -156,8 +160,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault()
                 .getThemeRegistry());
         IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++)
-            reader.readElement(elements[i]);
+        for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);
+		}
 
         Collection fonts = reader.getFontDefinitions();
         FontDefinition[] fontDefs = (FontDefinition[]) fonts
@@ -174,8 +179,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                 .getThemeRegistry();
         reader.setRegistry(registry);
         IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++)
-            reader.readElement(elements[i]);
+        for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);
+		}
 
         Collection colors = reader.getColorDefinitions();
         ColorDefinition[] colorDefs = (ColorDefinition[]) colors
@@ -197,8 +203,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
     }
 
     private void resetCurrentPerspective(Display display) {
-        if (changeList.isEmpty())
-            return;
+        if (changeList.isEmpty()) {
+			return;
+		}
 
         final StringBuffer message = new StringBuffer(
                 ExtensionEventHandlerMessages.ExtensionEventHandler_following_changes);
@@ -214,8 +221,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                 Shell parentShell = null;
                 IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
                 if (window == null) {
-                    if (workbench.getWorkbenchWindowCount() == 0)
-                        return;
+                    if (workbench.getWorkbenchWindowCount() == 0) {
+						return;
+					}
                     window = workbench.getWorkbenchWindows()[0];
                 }
 
@@ -226,8 +234,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                                 parentShell,
                                 ExtensionEventHandlerMessages.ExtensionEventHandler_reset_perspective, message.toString())) {
                     IWorkbenchPage page = window.getActivePage();
-                    if (page == null)
-                        return;
+                    if (page == null) {
+						return;
+					}
                     page.resetPerspective();
                 }
             }
@@ -240,7 +249,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 				.getWorkingSetRegistry();
         WorkingSetRegistryReader reader = new WorkingSetRegistryReader(wReg);
         IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++)
-            reader.readElement(elements[i]);
+        for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);
+		}
     }
 }

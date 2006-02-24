@@ -56,8 +56,9 @@ public class PerspectiveListenerList extends EventManager {
     		UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
     	}
     	Platform.run(runnable);
-    	if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS))
-    		UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, listener, label);
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+			UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, listener, label);
+		}
 	}
 
     /**

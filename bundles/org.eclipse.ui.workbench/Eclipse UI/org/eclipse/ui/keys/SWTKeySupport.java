@@ -40,17 +40,21 @@ public final class SWTKeySupport {
         final SortedSet modifierKeys = new TreeSet();
         NaturalKey naturalKey = null;
 
-        if ((accelerator & SWT.ALT) != 0)
-            modifierKeys.add(ModifierKey.ALT);
+        if ((accelerator & SWT.ALT) != 0) {
+			modifierKeys.add(ModifierKey.ALT);
+		}
 
-        if ((accelerator & SWT.COMMAND) != 0)
-            modifierKeys.add(ModifierKey.COMMAND);
+        if ((accelerator & SWT.COMMAND) != 0) {
+			modifierKeys.add(ModifierKey.COMMAND);
+		}
 
-        if ((accelerator & SWT.CTRL) != 0)
-            modifierKeys.add(ModifierKey.CTRL);
+        if ((accelerator & SWT.CTRL) != 0) {
+			modifierKeys.add(ModifierKey.CTRL);
+		}
 
-        if ((accelerator & SWT.SHIFT) != 0)
-            modifierKeys.add(ModifierKey.SHIFT);
+        if ((accelerator & SWT.SHIFT) != 0) {
+			modifierKeys.add(ModifierKey.SHIFT);
+		}
 
         if (((accelerator & SWT.KEY_MASK) == 0) && (accelerator != 0)) {
             // There were only accelerators
@@ -327,65 +331,67 @@ public final class SWTKeySupport {
         while (iterator.hasNext()) {
             final ModifierKey modifierKey = (ModifierKey) iterator.next();
 
-            if (modifierKey == ModifierKey.ALT)
-                accelerator |= SWT.ALT;
-            else if (modifierKey == ModifierKey.COMMAND)
-                accelerator |= SWT.COMMAND;
-            else if (modifierKey == ModifierKey.CTRL)
-                accelerator |= SWT.CTRL;
-            else if (modifierKey == ModifierKey.SHIFT)
-                accelerator |= SWT.SHIFT;
+            if (modifierKey == ModifierKey.ALT) {
+				accelerator |= SWT.ALT;
+			} else if (modifierKey == ModifierKey.COMMAND) {
+				accelerator |= SWT.COMMAND;
+			} else if (modifierKey == ModifierKey.CTRL) {
+				accelerator |= SWT.CTRL;
+			} else if (modifierKey == ModifierKey.SHIFT) {
+				accelerator |= SWT.SHIFT;
+			}
         }
 
         final NaturalKey naturalKey = keyStroke.getNaturalKey();
 
-        if (naturalKey instanceof CharacterKey)
-            accelerator |= ((CharacterKey) naturalKey).getCharacter();
-        else if (naturalKey instanceof SpecialKey) {
+        if (naturalKey instanceof CharacterKey) {
+			accelerator |= ((CharacterKey) naturalKey).getCharacter();
+		} else if (naturalKey instanceof SpecialKey) {
             final SpecialKey specialKey = (SpecialKey) naturalKey;
 
-            if (specialKey == SpecialKey.ARROW_DOWN)
-                accelerator |= SWT.ARROW_DOWN;
-            else if (specialKey == SpecialKey.ARROW_LEFT)
-                accelerator |= SWT.ARROW_LEFT;
-            else if (specialKey == SpecialKey.ARROW_RIGHT)
-                accelerator |= SWT.ARROW_RIGHT;
-            else if (specialKey == SpecialKey.ARROW_UP)
-                accelerator |= SWT.ARROW_UP;
-            else if (specialKey == SpecialKey.END)
-                accelerator |= SWT.END;
-            else if (specialKey == SpecialKey.F1)
-                accelerator |= SWT.F1;
-            else if (specialKey == SpecialKey.F10)
-                accelerator |= SWT.F10;
-            else if (specialKey == SpecialKey.F11)
-                accelerator |= SWT.F11;
-            else if (specialKey == SpecialKey.F12)
-                accelerator |= SWT.F12;
-            else if (specialKey == SpecialKey.F2)
-                accelerator |= SWT.F2;
-            else if (specialKey == SpecialKey.F3)
-                accelerator |= SWT.F3;
-            else if (specialKey == SpecialKey.F4)
-                accelerator |= SWT.F4;
-            else if (specialKey == SpecialKey.F5)
-                accelerator |= SWT.F5;
-            else if (specialKey == SpecialKey.F6)
-                accelerator |= SWT.F6;
-            else if (specialKey == SpecialKey.F7)
-                accelerator |= SWT.F7;
-            else if (specialKey == SpecialKey.F8)
-                accelerator |= SWT.F8;
-            else if (specialKey == SpecialKey.F9)
-                accelerator |= SWT.F9;
-            else if (specialKey == SpecialKey.HOME)
-                accelerator |= SWT.HOME;
-            else if (specialKey == SpecialKey.INSERT)
-                accelerator |= SWT.INSERT;
-            else if (specialKey == SpecialKey.PAGE_DOWN)
-                accelerator |= SWT.PAGE_DOWN;
-            else if (specialKey == SpecialKey.PAGE_UP)
-                accelerator |= SWT.PAGE_UP;
+            if (specialKey == SpecialKey.ARROW_DOWN) {
+				accelerator |= SWT.ARROW_DOWN;
+			} else if (specialKey == SpecialKey.ARROW_LEFT) {
+				accelerator |= SWT.ARROW_LEFT;
+			} else if (specialKey == SpecialKey.ARROW_RIGHT) {
+				accelerator |= SWT.ARROW_RIGHT;
+			} else if (specialKey == SpecialKey.ARROW_UP) {
+				accelerator |= SWT.ARROW_UP;
+			} else if (specialKey == SpecialKey.END) {
+				accelerator |= SWT.END;
+			} else if (specialKey == SpecialKey.F1) {
+				accelerator |= SWT.F1;
+			} else if (specialKey == SpecialKey.F10) {
+				accelerator |= SWT.F10;
+			} else if (specialKey == SpecialKey.F11) {
+				accelerator |= SWT.F11;
+			} else if (specialKey == SpecialKey.F12) {
+				accelerator |= SWT.F12;
+			} else if (specialKey == SpecialKey.F2) {
+				accelerator |= SWT.F2;
+			} else if (specialKey == SpecialKey.F3) {
+				accelerator |= SWT.F3;
+			} else if (specialKey == SpecialKey.F4) {
+				accelerator |= SWT.F4;
+			} else if (specialKey == SpecialKey.F5) {
+				accelerator |= SWT.F5;
+			} else if (specialKey == SpecialKey.F6) {
+				accelerator |= SWT.F6;
+			} else if (specialKey == SpecialKey.F7) {
+				accelerator |= SWT.F7;
+			} else if (specialKey == SpecialKey.F8) {
+				accelerator |= SWT.F8;
+			} else if (specialKey == SpecialKey.F9) {
+				accelerator |= SWT.F9;
+			} else if (specialKey == SpecialKey.HOME) {
+				accelerator |= SWT.HOME;
+			} else if (specialKey == SpecialKey.INSERT) {
+				accelerator |= SWT.INSERT;
+			} else if (specialKey == SpecialKey.PAGE_DOWN) {
+				accelerator |= SWT.PAGE_DOWN;
+			} else if (specialKey == SpecialKey.PAGE_UP) {
+				accelerator |= SWT.PAGE_UP;
+			}
         }
 
         return accelerator;
@@ -420,8 +426,9 @@ public final class SWTKeySupport {
         boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
 
         if (ctrlDown && event.character != event.keyCode
-                && event.character < 0x20)
-            character += 0x40;
+                && event.character < 0x20) {
+			character += 0x40;
+		}
 
         return character;
     }

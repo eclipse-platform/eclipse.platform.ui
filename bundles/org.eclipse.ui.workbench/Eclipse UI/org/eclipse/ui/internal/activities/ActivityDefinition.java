@@ -27,8 +27,9 @@ public final class ActivityDefinition implements Comparable {
 
     static Map activityDefinitionsById(Collection activityDefinitions,
             boolean allowNullIds) {
-        if (activityDefinitions == null)
-            throw new NullPointerException();
+        if (activityDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         Map map = new HashMap();
         Iterator iterator = activityDefinitions.iterator();
@@ -39,8 +40,9 @@ public final class ActivityDefinition implements Comparable {
             ActivityDefinition activityDefinition = (ActivityDefinition) object;
             String id = activityDefinition.getId();
 
-            if (allowNullIds || id != null)
-                map.put(id, activityDefinition);
+            if (allowNullIds || id != null) {
+				map.put(id, activityDefinition);
+			}
         }
 
         return map;
@@ -48,8 +50,9 @@ public final class ActivityDefinition implements Comparable {
 
     static Map activityDefinitionsByName(Collection activityDefinitions,
             boolean allowNullNames) {
-        if (activityDefinitions == null)
-            throw new NullPointerException();
+        if (activityDefinitions == null) {
+			throw new NullPointerException();
+		}
 
         Map map = new HashMap();
         Iterator iterator = activityDefinitions.iterator();
@@ -102,16 +105,18 @@ public final class ActivityDefinition implements Comparable {
         if (compareTo == 0) {
             compareTo = Util.compare(name, castedObject.name);
 
-            if (compareTo == 0)
-                compareTo = Util.compare(sourceId, castedObject.sourceId);
+            if (compareTo == 0) {
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
+			}
         }
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof ActivityDefinition))
-            return false;
+        if (!(object instanceof ActivityDefinition)) {
+			return false;
+		}
 
         final ActivityDefinition castedObject = (ActivityDefinition) object;
         if (!Util.equals(id, castedObject.id)) {
@@ -142,8 +147,9 @@ public final class ActivityDefinition implements Comparable {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

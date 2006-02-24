@@ -238,14 +238,16 @@ public abstract class WorkbenchPart extends EventManager implements
 
         // Icon.
         String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
-        if (strIcon == null)
-            return;
+        if (strIcon == null) {
+			return;
+		}
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                 configElement.getNamespace(), strIcon);
 
-        if (imageDescriptor == null)
-            return;
+        if (imageDescriptor == null) {
+			return;
+		}
 
         titleImage = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
     }
@@ -289,8 +291,9 @@ public abstract class WorkbenchPart extends EventManager implements
         title = Util.safeString(title);
 
         //Do not send changes if they are the same
-        if (Util.equals(this.title, title))
-            return;
+        if (Util.equals(this.title, title)) {
+			return;
+		}
         this.title = title;
         firePropertyChange(IWorkbenchPart.PROP_TITLE);
     }
@@ -303,8 +306,9 @@ public abstract class WorkbenchPart extends EventManager implements
     protected void setTitleImage(Image titleImage) {
         Assert.isTrue(titleImage == null || !titleImage.isDisposed());
         //Do not send changes if they are the same
-        if (this.titleImage == titleImage)
-            return;
+        if (this.titleImage == titleImage) {
+			return;
+		}
         this.titleImage = titleImage;
         firePropertyChange(IWorkbenchPart.PROP_TITLE);
         if (imageDescriptor != null) {
@@ -322,8 +326,9 @@ public abstract class WorkbenchPart extends EventManager implements
     protected void setTitleToolTip(String toolTip) {
         toolTip = Util.safeString(toolTip);
         //Do not send changes if they are the same
-        if (Util.equals(this.toolTip, toolTip))
-            return;
+        if (Util.equals(this.toolTip, toolTip)) {
+			return;
+		}
         this.toolTip = toolTip;
         firePropertyChange(IWorkbenchPart.PROP_TITLE);
     }
@@ -425,8 +430,9 @@ public abstract class WorkbenchPart extends EventManager implements
         Assert.isNotNull(description);
 
         //Do not send changes if they are the same
-        if (Util.equals(contentDescription, description))
-            return;
+        if (Util.equals(contentDescription, description)) {
+			return;
+		}
         this.contentDescription = description;
 
         firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
@@ -438,8 +444,9 @@ public abstract class WorkbenchPart extends EventManager implements
         Assert.isNotNull(partName);
 
         //Do not send changes if they are the same
-        if (Util.equals(this.partName, partName))
-            return;
+        if (Util.equals(this.partName, partName)) {
+			return;
+		}
         this.partName = partName;
 
         firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);

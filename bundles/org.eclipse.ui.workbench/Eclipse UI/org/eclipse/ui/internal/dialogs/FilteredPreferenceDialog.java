@@ -114,9 +114,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		 * @see org.eclipse.ui.dialogs.FilteredTree#updateToolbar(boolean)
 		 */
 		protected void updateToolbar(boolean visible) {			
-        	if (filterToolBar != null)
-            	filterToolBar.getControl().setVisible(
+        	if (filterToolBar != null) {
+				filterToolBar.getControl().setVisible(
 						viewerFilter != null || visible);
+			}
 		}
 
 		/* (non-Javadoc)
@@ -173,8 +174,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 */
 	protected IPreferenceNode findNodeMatching(String nodeId) {
 		IPreferenceNode node = super.findNodeMatching(nodeId);
-		if (WorkbenchActivityHelper.filterItem(node))
+		if (WorkbenchActivityHelper.filterItem(node)) {
 			return null;
+		}
 		return node;
 	}
 
@@ -198,8 +200,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		//if the tree has only one or zero pages, make the combo area disable
 		if(hasAtMostOnePage(tree)){
 			Text filterText = filteredTree.getFilterControl();
-			if (filterText != null)
+			if (filterText != null) {
 				filteredTree.getFilterControl().setEnabled(false);
+			}
 		}		
 		
 		tree.addFilter(new CapabilityFilter());
@@ -231,8 +234,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		Object[] children= contentProvider.getElements(tree.getInput());
 		
 		if(children.length <= 1){
-			if(children.length == 0)
+			if(children.length == 0) {
 				return true;
+			}
 			return !contentProvider.hasChildren(children[0]);				
 		}
 		return false;
@@ -310,12 +314,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	protected void createPage(IPreferenceNode node) {
 
 		super.createPage(node);
-		if (this.pageData == null)
+		if (this.pageData == null) {
 			return;
+		}
 		//Apply the data if it has been set.
 		IPreferencePage page = node.getPage();
-		if (page instanceof PreferencePage)
+		if (page instanceof PreferencePage) {
 			((PreferencePage) page).applyData(this.pageData);
+		}
 
 	}
 	
@@ -333,8 +339,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		setPageData(data);
 		setCurrentPageId(pageId);
 		IPreferencePage page = getCurrentPage();
-		if (page instanceof PreferencePage)
+		if (page instanceof PreferencePage) {
 			((PreferencePage) page).applyData(data);
+		}
 		return true;
 	}
 
@@ -369,16 +376,18 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	protected void okPressed() {
 		super.okPressed();
 		
-		if(getReturnCode() == FAILED)
+		if(getReturnCode() == FAILED) {
 			return;
+		}
 		
-		if (workingCopyManager != null)
+		if (workingCopyManager != null) {
 			try {
 				workingCopyManager.applyChanges();
 			} catch (BackingStoreException e) {
 				String msg = e.getMessage();
-				if (msg == null)
+				if (msg == null) {
 					msg = WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed;
+				}
 				IStatus errorStatus = new Status(IStatus.ERROR,
 						WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, msg, e);
 				ErrorDialog
@@ -388,6 +397,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 								WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
 								errorStatus);
 			}
+		}
 
 		// Run the update jobs
 		Iterator updateIterator = updateJobs.iterator();
@@ -473,8 +483,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		if(getTreeViewer().getTree().getItemCount() > 1) {
 			//unfortunately super will force focus to the list but we want the type ahead combo to get it.
 			Text filterText = filteredTree.getFilterControl();
-			if (filterText != null)
+			if (filterText != null) {
 				filterText.setFocus();
+			}
 		}
 	}
 	

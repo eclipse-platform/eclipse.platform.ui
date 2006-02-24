@@ -73,8 +73,9 @@ public abstract class UIJob extends Job {
      *      runInUIThread() instead.
      */
     public final IStatus run(final IProgressMonitor monitor) {
-        if (monitor.isCanceled())
-            return Status.CANCEL_STATUS;
+        if (monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
         Display asyncDisplay = getDisplay();
         if (asyncDisplay == null || asyncDisplay.isDisposed()) {
             return Status.CANCEL_STATUS;
@@ -86,20 +87,21 @@ public abstract class UIJob extends Job {
                     //As we are in the UI Thread we can
                     //always know what to tell the job.
                     setThread(Thread.currentThread());
-                    if (monitor.isCanceled())
-                        result = Status.CANCEL_STATUS;
-                    else {
+                    if (monitor.isCanceled()) {
+						result = Status.CANCEL_STATUS;
+					} else {
                        	UIStats.start(UIStats.UI_JOB, getName());
                         result = runInUIThread(monitor);
                     }
 
                 } finally {
                		UIStats.end(UIStats.UI_JOB, UIJob.this, getName());
-                    if (result == null)
-                        result = new Status(IStatus.ERROR,
+                    if (result == null) {
+						result = new Status(IStatus.ERROR,
                                 PlatformUI.PLUGIN_ID, IStatus.ERROR,
                                 ProgressMessages.Error,
                                 null);
+					}
                     done(result);
                 }
             }
@@ -139,8 +141,9 @@ public abstract class UIJob extends Job {
      */
     public Display getDisplay() {
         //If it was not set get it from the workbench
-        if (cachedDisplay == null && PlatformUI.isWorkbenchRunning())
-            return PlatformUI.getWorkbench().getDisplay();
+        if (cachedDisplay == null && PlatformUI.isWorkbenchRunning()) {
+			return PlatformUI.getWorkbench().getDisplay();
+		}
         return cachedDisplay;
     }
 }

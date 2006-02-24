@@ -124,10 +124,11 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         while (allDefinitions.hasNext()) {
             DecoratorDefinition nextDefinition = (DecoratorDefinition) allDefinitions
                     .next();
-            if (nextDefinition.isFull())
-                full.add(nextDefinition);
-            else
-                lightweight.add(nextDefinition);
+            if (nextDefinition.isFull()) {
+				full.add(nextDefinition);
+			} else {
+				lightweight.add(nextDefinition);
+			}
                         
 			configurationElementTracker.registerObject(nextDefinition.getConfigurationElement().getDeclaringExtension(), nextDefinition, IExtensionTracker.REF_WEAK);
         }
@@ -189,8 +190,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         ArrayList decorators = new ArrayList();
 
         for (int i = 0; i < enabledDefinitions.length; i++) {
-            if (enabledDefinitions[i].isEnabledFor(element))
-                decorators.add(enabledDefinitions[i]);
+            if (enabledDefinitions[i].isEnabledFor(element)) {
+				decorators.add(enabledDefinitions[i]);
+			}
         }
 
         return decorators;
@@ -264,8 +266,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
     void fireListenersInUIThread(final LabelProviderChangedEvent event) {
 
         //No updates if there is no UI
-        if (!PlatformUI.isWorkbenchRunning())
-            return;
+        if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
 
         //Only bother with the job if in the UI Thread
         if (Thread.currentThread() == PlatformUI.getWorkbench().getDisplay()
@@ -309,8 +312,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
             if (decorators[i].isEnabledFor(element)) {
                 String newResult = safeDecorateText(element, result,
                         decorators[i]);
-                if (newResult != null)
-                    result = newResult;
+                if (newResult != null) {
+					result = newResult;
+				}
             }
         }
 
@@ -321,8 +325,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
                         && decorators[i].isEnabledFor(adapted)) {
                     String newResult = safeDecorateText(adapted, result,
                             decorators[i]);
-                    if (newResult != null)
-                        result = newResult;
+                    if (newResult != null) {
+						result = newResult;
+					}
                 }
             }
         }
@@ -366,8 +371,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
             if (decorators[i].isEnabledFor(element)) {
                 Image newResult = safeDecorateImage(element, result,
                         decorators[i]);
-                if (newResult != null)
-                    result = newResult;
+                if (newResult != null) {
+					result = newResult;
+				}
             }
         }
 
@@ -380,8 +386,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
                         && decorators[i].isEnabledFor(adapted)) {
                     Image newResult = safeDecorateImage(adapted, result,
                             decorators[i]);
-                    if (newResult != null)
-                        result = newResult;
+                    if (newResult != null) {
+						result = newResult;
+					}
                 }
             }
         }
@@ -450,25 +457,29 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         boolean fullCheck = isLabelProperty(element, property,
                 getDecoratorsFor(element));
 
-        if (fullCheck)
-            return fullCheck;
+        if (fullCheck) {
+			return fullCheck;
+		}
 
         boolean lightweightCheck = isLabelProperty(element, property,
                 getLightweightManager().getDecoratorsFor(element));
 
-        if (lightweightCheck)
-            return true;
+        if (lightweightCheck) {
+			return true;
+		}
 
         if (checkAdapted) {
             //Get any adaptions to IResource
             Object adapted = getResourceAdapter(element);
-            if (adapted == null || adapted == element)
-                return false;
+            if (adapted == null || adapted == element) {
+				return false;
+			}
 
             fullCheck = isLabelProperty(adapted, property,
                     getDecoratorsFor(adapted));
-            if (fullCheck)
-                return fullCheck;
+            if (fullCheck) {
+				return fullCheck;
+			}
 
             return isLabelProperty(adapted, property, lightweightManager
                     .getDecoratorsFor(adapted));
@@ -480,8 +491,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
             DecoratorDefinition[] decorators) {
         for (int i = 0; i < decorators.length; i++) {
             if (decorators[i].isEnabledFor(element)
-                    && decorators[i].isLabelProperty(element, property))
-                return true;
+                    && decorators[i].isLabelProperty(element, property)) {
+				return true;
+			}
         }
 
         return false;
@@ -496,12 +508,14 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         FullDecoratorDefinition[] full = getFullDefinitions();
         //As this are a deprecated data type optimize for
         //the undefined case.
-        if(full.length == 0) 
-        	return full;
+        if(full.length == 0) {
+			return full;
+		}
         ArrayList result = new ArrayList();
         for (int i = 0; i < full.length; i++) {
-            if (full[i].isEnabled())
-                result.add(full[i]);
+            if (full[i].isEnabled()) {
+				result.add(full[i]);
+			}
         }
         FullDecoratorDefinition[] returnArray = new FullDecoratorDefinition[result
                 .size()];
@@ -561,9 +575,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         Object[] elements = event.getElements();
         scheduler.clearResults();
         //If the elements are not specified send out a general update
-        if (elements == null)
-            fireListeners(event);
-        else {
+        if (elements == null) {
+			fireListeners(event);
+		} else {
             //Assume that someone is going to care about the 
             //decoration result and just start it right away
             for (int i = 0; i < elements.length; i++) {
@@ -594,10 +608,11 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         for (int i = 0; i < definitions.length; i++) {
             enabledIds.append(definitions[i].getId());
             enabledIds.append(VALUE_SEPARATOR);
-            if (definitions[i].isEnabled())
-                enabledIds.append(P_TRUE);
-            else
-                enabledIds.append(P_FALSE);
+            if (definitions[i].isEnabled()) {
+				enabledIds.append(P_TRUE);
+			} else {
+				enabledIds.append(P_FALSE);
+			}
 
             enabledIds.append(PREFERENCE_SEPARATOR);
         }
@@ -624,20 +639,22 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
             //Strip out the true or false to get the id
             String id = nextValuePair.substring(0, nextValuePair
                     .indexOf(VALUE_SEPARATOR));
-            if (nextValuePair.endsWith(P_TRUE))
-                enabledIds.add(id);
-            else
-                disabledIds.add(id);
+            if (nextValuePair.endsWith(P_TRUE)) {
+				enabledIds.add(id);
+			} else {
+				disabledIds.add(id);
+			}
         }
 
         FullDecoratorDefinition[] full = getFullDefinitions();
         for (int i = 0; i < full.length; i++) {
             String id = full[i].getId();
-            if (enabledIds.contains(id))
-            	full[i].setEnabled(true);
-            else {
-                if (disabledIds.contains(id))
-                	full[i].setEnabled(false);
+            if (enabledIds.contains(id)) {
+				full[i].setEnabled(true);
+			} else {
+                if (disabledIds.contains(id)) {
+					full[i].setEnabled(false);
+				}
             }
         }
 
@@ -645,11 +662,12 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
                 .getDefinitions();
         for (int i = 0; i < lightweightDefinitions.length; i++) {
             String id = lightweightDefinitions[i].getId();
-            if (enabledIds.contains(id))
-                lightweightDefinitions[i].setEnabled(true);
-            else {
-                if (disabledIds.contains(id))
-                    lightweightDefinitions[i].setEnabled(false);
+            if (enabledIds.contains(id)) {
+				lightweightDefinitions[i].setEnabled(true);
+			} else {
+                if (disabledIds.contains(id)) {
+					lightweightDefinitions[i].setEnabled(false);
+				}
             }
         }
 
@@ -665,11 +683,13 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         //so as to force a dispose of thier decorators
     	FullDecoratorDefinition[] full = getFullDefinitions();
         for (int i = 0; i < full.length; i++) {
-            if (full[i].isEnabled())
-                full[i].setEnabled(false);
+            if (full[i].isEnabled()) {
+				full[i].setEnabled(false);
+			}
         }
-        if(lightweightManager != null)//Do not create if not required
-        	getLightweightManager().shutdown();
+        if(lightweightManager != null) {
+			getLightweightManager().shutdown();
+		}
         scheduler.shutdown();
         dispose();
     }
@@ -680,8 +700,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
      */
     public boolean getEnabled(String decoratorId) {
         DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
-        if (definition == null)
-            return false;
+        if (definition == null) {
+			return false;
+		}
         return definition.isEnabled();
     }
 
@@ -709,8 +730,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
      */
     public IBaseLabelProvider getBaseLabelProvider(String decoratorId) {
         IBaseLabelProvider fullProvider = getLabelDecorator(decoratorId);
-        if (fullProvider == null)
-            return getLightweightLabelDecorator(decoratorId);
+        if (fullProvider == null) {
+			return getLightweightLabelDecorator(decoratorId);
+		}
         return fullProvider;
     }
 
@@ -748,8 +770,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
      */
     private DecoratorDefinition getDecoratorDefinition(String decoratorId) {
         DecoratorDefinition returnValue = getFullDecoratorDefinition(decoratorId);
-        if (returnValue == null)
-            return getLightweightManager().getDecoratorDefinition(decoratorId);
+        if (returnValue == null) {
+			return getLightweightManager().getDecoratorDefinition(decoratorId);
+		}
         return returnValue;
     }
 
@@ -761,8 +784,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
     private FullDecoratorDefinition getFullDecoratorDefinition(
             String decoratorId) {
     	int idx = getFullDecoratorDefinitionIdx(decoratorId);
-    	if (idx != -1)
-    		return getFullDefinitions()[idx];
+    	if (idx != -1) {
+			return getFullDefinitions()[idx];
+		}
     	return null;
     }
     
@@ -777,8 +801,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
     		String decoratorId) {
     	FullDecoratorDefinition[] full = getFullDefinitions();
         for (int i = 0; i < full.length; i++) {
-            if (full[i].getId().equals(decoratorId))
-                return i;
+            if (full[i].getId().equals(decoratorId)) {
+				return i;
+			}
         }    	
     	return -1;
     }
@@ -791,8 +816,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
      */
     private FullDecoratorDefinition[] getDecoratorsFor(Object element) {
 
-        if (element == null)
-            return EMPTY_FULL_DEF;
+        if (element == null) {
+			return EMPTY_FULL_DEF;
+		}
 
           Collection decorators = getDecoratorsFor(element,
                 enabledFullDefinitions());
@@ -812,8 +838,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
      * @return LightweightDecoratorManager
      */
     public LightweightDecoratorManager getLightweightManager() {
-    	if(lightweightManager == null)
-    		initializeDecoratorDefinitions();
+    	if(lightweightManager == null) {
+			initializeDecoratorDefinitions();
+		}
         return lightweightManager;
     }
 
@@ -840,8 +867,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         // Force an update if there is a text already
         boolean force = true;
         //If not then do not force as the undecorated value is fine
-        if(originalText == null || originalText.length() == 0)
-        	force = false;
+        if(originalText == null || originalText.length() == 0) {
+			force = false;
+		}
         
         // Queue the decoration.
         scheduler.queueForDecoration(element, getResourceAdapter(element),
@@ -885,8 +913,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
 	 * @return FullDecoratorDefinition[]
 	 */
 	private FullDecoratorDefinition[] getFullDefinitions() {
-		if(fullDefinitions == null)
+		if(fullDefinitions == null) {
 			initializeDecoratorDefinitions();
+		}
 		return fullDefinitions;
 	}
 
@@ -928,9 +957,10 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
                                         idx);                   
                         shouldClear = true;
                     }
-                } else 
-                    shouldClear |= getLightweightManager().removeDecorator(
-                            (LightweightDecoratorDefinition) definition);         
+                } else {
+					shouldClear |= getLightweightManager().removeDecorator(
+                            (LightweightDecoratorDefinition) definition);
+				}         
             }    
         }
         

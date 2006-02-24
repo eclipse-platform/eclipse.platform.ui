@@ -236,11 +236,13 @@ public class TrimCommonUIHandle extends Composite {
 	 */
 	private int getHandleSize() {
 		// Do we already have a 'cached' value?
-		if (orientation == SWT.HORIZONTAL && horizontalHandleSize != -1)
+		if (orientation == SWT.HORIZONTAL && horizontalHandleSize != -1) {
 			return horizontalHandleSize;
+		}
 				
-		if (orientation == SWT.VERTICAL && verticalHandleSize != -1)
+		if (orientation == SWT.VERTICAL && verticalHandleSize != -1) {
 			return verticalHandleSize;
+		}
 				
 		// Must be the first time, calculate the value
 		CoolBar bar = new CoolBar (trim.getControl().getParent(), orientation);
@@ -319,18 +321,27 @@ public class TrimCommonUIHandle extends Composite {
    		
     	// Can this trim change sides ??
     	int sideCount = 0;
-    	if ((validSides & SWT.TOP) != 0)    sideCount++;
-    	if ((validSides & SWT.BOTTOM) != 0) sideCount++;
-    	if ((validSides & SWT.LEFT) != 0)   sideCount++;
-    	if ((validSides & SWT.RIGHT) != 0)  sideCount++;
+    	if ((validSides & SWT.TOP) != 0) {
+			sideCount++;
+		}
+    	if ((validSides & SWT.BOTTOM) != 0) {
+			sideCount++;
+		}
+    	if ((validSides & SWT.LEFT) != 0) {
+			sideCount++;
+		}
+    	if ((validSides & SWT.RIGHT) != 0) {
+			sideCount++;
+		}
     	
     	Cursor dragCursor;
     	if (sideCount == 1) {
     		// If there's only one valid side then 'curSide' must be it...
-        	if (curSide == SWT.TOP || curSide == SWT.BOTTOM)
-    			dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEWE);
-    		else
-    			dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZENS);
+        	if (curSide == SWT.TOP || curSide == SWT.BOTTOM) {
+				dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEWE);
+			} else {
+				dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZENS);
+			}
     	}
     	else {
     		dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
@@ -343,12 +354,14 @@ public class TrimCommonUIHandle extends Composite {
 	 * @see org.eclipse.swt.widgets.Control#computeSize(int, int)
 	 */
 	public Point computeSize(int wHint, int hHint) {
-		if (wHint != SWT.DEFAULT || hHint != SWT.DEFAULT)
+		if (wHint != SWT.DEFAULT || hHint != SWT.DEFAULT) {
 			return super.computeSize(wHint, hHint);
+		}
 
 		Point ctrlPrefSize = trim.getControl().computeSize(wHint, hHint);
-		if (orientation == SWT.HORIZONTAL)
+		if (orientation == SWT.HORIZONTAL) {
 			return new Point(getHandleSize(), ctrlPrefSize.y);
+		}
 		
 		// Must be vertical....
 		return new Point(ctrlPrefSize.x, getHandleSize());
@@ -410,14 +423,18 @@ public class TrimCommonUIHandle extends Composite {
     					radioButtons = new RadioMenu(sidesMenu, radioVal);
     					
     					int validSides = trim.getValidSides();
-    					if ((validSides & SWT.TOP) != 0)
-    						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Top, new Integer(SWT.TOP)); 
-    					if ((validSides & SWT.BOTTOM) != 0)
-    						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Bottom, new Integer(SWT.BOTTOM)); 
-    					if ((validSides & SWT.LEFT) != 0)
-    						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Left, new Integer(SWT.LEFT)); 
-    					if ((validSides & SWT.RIGHT) != 0)
-    						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Right, new Integer(SWT.RIGHT)); 
+    					if ((validSides & SWT.TOP) != 0) {
+							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Top, new Integer(SWT.TOP));
+						} 
+    					if ((validSides & SWT.BOTTOM) != 0) {
+							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Bottom, new Integer(SWT.BOTTOM));
+						} 
+    					if ((validSides & SWT.LEFT) != 0) {
+							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Left, new Integer(SWT.LEFT));
+						} 
+    					if ((validSides & SWT.RIGHT) != 0) {
+							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Right, new Integer(SWT.RIGHT));
+						} 
     					
     					dockCascade.setMenu(sidesMenu);
     				}
@@ -425,8 +442,9 @@ public class TrimCommonUIHandle extends Composite {
     		    	// if the radioVal changes it means that the User wants to change the docking location
     		    	radioVal.addChangeListener(new IChangeListener() {
     					public void update(boolean changed) {
-    						if (changed)
-    							handleShowOnChange();
+    						if (changed) {
+								handleShowOnChange();
+							}
     					}
     		    	});
     				

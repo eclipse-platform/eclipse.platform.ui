@@ -86,15 +86,17 @@ public final class ShowViewHandler extends AbstractHandler {
 		final IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		final IWorkbenchPage page = window.getActivePage();
-		if (page == null)
+		if (page == null) {
 			return;
+		}
 		
 		final ShowViewDialog dialog = new ShowViewDialog(window.getShell(),
 				WorkbenchPlugin.getDefault().getViewRegistry());
 		dialog.open();
 		
-		if (dialog.getReturnCode() == Window.CANCEL)
+		if (dialog.getReturnCode() == Window.CANCEL) {
 			return;
+		}
 		
 		final IViewDescriptor[] descriptors = dialog.getSelection();
 		for (int i = 0; i < descriptors.length; ++i) {

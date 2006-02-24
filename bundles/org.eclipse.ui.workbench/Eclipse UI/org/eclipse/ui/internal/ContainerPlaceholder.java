@@ -29,8 +29,9 @@ public class ContainerPlaceholder extends PartPlaceholder implements
      * add method comment.
      */
     public void add(LayoutPart child) {
-        if (!(child instanceof PartPlaceholder))
-            return;
+        if (!(child instanceof PartPlaceholder)) {
+			return;
+		}
         realContainer.add(child);
     }
 
@@ -73,8 +74,9 @@ public class ContainerPlaceholder extends PartPlaceholder implements
      * remove method comment.
      */
     public void remove(LayoutPart child) {
-        if (!(child instanceof PartPlaceholder))
-            return;
+        if (!(child instanceof PartPlaceholder)) {
+			return;
+		}
         realContainer.remove(child);
     }
 
@@ -83,8 +85,9 @@ public class ContainerPlaceholder extends PartPlaceholder implements
      */
     public void replace(LayoutPart oldChild, LayoutPart newChild) {
         if (!(oldChild instanceof PartPlaceholder)
-                && !(newChild instanceof PartPlaceholder))
-            return;
+                && !(newChild instanceof PartPlaceholder)) {
+			return;
+		}
         realContainer.replace(oldChild, newChild);
     }
 

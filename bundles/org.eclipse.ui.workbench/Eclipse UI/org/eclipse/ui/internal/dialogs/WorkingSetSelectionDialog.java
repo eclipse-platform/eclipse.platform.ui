@@ -299,8 +299,9 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      */
     protected List getSelectedWorkingSets() {
         ISelection selection = listViewer.getSelection();
-        if (selection instanceof IStructuredSelection)
-            return ((IStructuredSelection) selection).toList();
+        if (selection instanceof IStructuredSelection) {
+			return ((IStructuredSelection) selection).toList();
+		}
         return null;
     }
 

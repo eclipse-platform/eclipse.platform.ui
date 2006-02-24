@@ -95,8 +95,9 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 							Process p = openWebBrowser(encodedLocalHref);
 							webBrowserOpened = true;
 							try {
-								if (p != null)
+								if (p != null) {
 									p.waitFor();
+								}
 							} catch (InterruptedException e) {
 								openWebBrowserError(d);
 							} finally {
@@ -131,10 +132,11 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 	private String urlEncodeForSpaces(char[] input) {
 		StringBuffer retu = new StringBuffer(input.length);
 		for (int i = 0; i < input.length; i++) {
-			if (input[i] == ' ')
+			if (input[i] == ' ') {
 				retu.append("%20"); //$NON-NLS-1$
-			else
+			} else {
 				retu.append(input[i]);
+			}
 		}
 		return retu.toString();
 	}

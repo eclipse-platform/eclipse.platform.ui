@@ -74,7 +74,8 @@ public class MessagePage extends Page {
      */
     public void setMessage(String message) {
         this.message = message;
-        if (msgLabel != null)
-            msgLabel.setText(message);
+        if (msgLabel != null) {
+			msgLabel.setText(message);
+		}
     }
 }

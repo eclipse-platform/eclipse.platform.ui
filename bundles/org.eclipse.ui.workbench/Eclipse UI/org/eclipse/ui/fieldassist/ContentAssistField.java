@@ -95,10 +95,11 @@ public class ContentAssistField extends DecoratedField {
 	 */
 	public void setEnabled(boolean enabled) {
 		adapter.setEnabled(enabled);
-		if (enabled)
+		if (enabled) {
 			showDecoration(getFieldDecoration());
-		else
+		} else {
 			hideDecoration(getFieldDecoration());
+		}
 	}
 
 	/*

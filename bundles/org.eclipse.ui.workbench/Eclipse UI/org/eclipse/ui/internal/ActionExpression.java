@@ -131,8 +131,9 @@ public class ActionExpression {
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
 				AbstractExpression expr = (AbstractExpression) iter.next();
-				if (!expr.isEnabledFor(object))
+				if (!expr.isEnabledFor(object)) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -157,18 +158,20 @@ public class ActionExpression {
 			super();
 
 			IConfigurationElement[] children = element.getChildren();
-			if (children.length == 0)
+			if (children.length == 0) {
 				throw new IllegalStateException(
 						"Composite expression cannot be empty"); //$NON-NLS-1$
+			}
 
 			list = new ArrayList(children.length);
 			for (int i = 0; i < children.length; i++) {
 				String tag = children[i].getName();
 				AbstractExpression expr = createExpression(children[i]);
-				if (EXP_TYPE_OBJECT_CLASS.equals(tag))
+				if (EXP_TYPE_OBJECT_CLASS.equals(tag)) {
 					list.add(0, expr);
-				else
+				} else {
 					list.add(expr);
+				}
 			}
 		}
 
@@ -184,15 +187,17 @@ public class ActionExpression {
 				AbstractExpression next = (AbstractExpression) iterator.next();
 				String[] objectClasses = next.extractObjectClasses();
 				if (objectClasses != null) {
-					if (classNames == null)
+					if (classNames == null) {
 						classNames = new ArrayList();
+					}
 					for (int i = 0; i < objectClasses.length; i++) {
 						classNames.add(objectClasses[i]);
 					}
 				}
 			}
-			if (classNames == null)
+			if (classNames == null) {
 				return null;
+			}
 
 			String[] returnValue = new String[classNames.size()];
 			classNames.toArray(returnValue);
@@ -222,8 +227,9 @@ public class ActionExpression {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
 				AbstractExpression next = (AbstractExpression) iterator.next();
-				if (next.isEnabledForExpression(object, expressionType))
+				if (next.isEnabledForExpression(object, expressionType)) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -240,10 +246,11 @@ public class ActionExpression {
 				AbstractExpression next = (AbstractExpression) iterator.next();
 				Collection values = next.valuesForExpression(expressionType);
 				if (values != null) {
-					if (allValues == null)
+					if (allValues == null) {
 						allValues = values;
-					else
+					} else {
 						allValues.addAll(values);
+					}
 				}
 
 			}
@@ -298,9 +305,10 @@ public class ActionExpression {
 			super();
 
 			className = element.getAttribute(ATT_NAME);
-			if (className == null)
+			if (className == null) {
 				throw new IllegalStateException(
 						"Object class expression missing name attribute"); //$NON-NLS-1$
+			}
 		}
 
 		/**
@@ -312,11 +320,12 @@ public class ActionExpression {
 		public ObjectClassExpression(String className) {
 			super();
 
-			if (className != null)
+			if (className != null) {
 				this.className = className;
-			else
+			} else {
 				throw new IllegalStateException(
 						"Object class expression must have class name"); //$NON-NLS-1$
+			}
 		}
 
 		/**
@@ -329,12 +338,14 @@ public class ActionExpression {
 		 *         matches className, <code>false</code> otherwise.
 		 */
 		private boolean checkInterfaceHierarchy(Class interfaceToCheck) {
-			if (interfaceToCheck.getName().equals(className))
+			if (interfaceToCheck.getName().equals(className)) {
 				return true;
+			}
 			Class[] superInterfaces = interfaceToCheck.getInterfaces();
 			for (int i = 0; i < superInterfaces.length; i++) {
-				if (checkInterfaceHierarchy(superInterfaces[i]))
+				if (checkInterfaceHierarchy(superInterfaces[i])) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -380,22 +391,26 @@ public class ActionExpression {
 		 * (non-Javadoc) Method declared on AbstractExpression.
 		 */
 		public boolean isEnabledFor(Object object) {
-			if (object == null)
+			if (object == null) {
 				return false;
-			if (extracted)
+			}
+			if (extracted) {
 				return true;
+			}
 
 			Class clazz = object.getClass();
 			while (clazz != null) {
 				// test the class itself
-				if (clazz.getName().equals(className))
+				if (clazz.getName().equals(className)) {
 					return true;
+				}
 
 				// test all the interfaces the class implements
 				Class[] interfaces = clazz.getInterfaces();
 				for (int i = 0; i < interfaces.length; i++) {
-					if (checkInterfaceHierarchy(interfaces[i]))
+					if (checkInterfaceHierarchy(interfaces[i])) {
 						return true;
+					}
 				}
 
 				// get the superclass
@@ -410,8 +425,9 @@ public class ActionExpression {
 		 */
 		public boolean isEnabledForExpression(Object object,
 				String expressionType) {
-			if (expressionType.equals(EXP_TYPE_OBJECT_CLASS))
+			if (expressionType.equals(EXP_TYPE_OBJECT_CLASS)) {
 				return isEnabledFor(object);
+			}
 			return false;
 		}
 	}
@@ -438,9 +454,10 @@ public class ActionExpression {
 
 			name = element.getAttribute(ATT_NAME);
 			value = element.getAttribute(ATT_VALUE);
-			if (name == null || value == null)
+			if (name == null || value == null) {
 				throw new IllegalStateException(
 						"Object state expression missing attribute"); //$NON-NLS-1$
+			}
 		}
 
 		public final boolean equals(final Object object) {
@@ -455,11 +472,12 @@ public class ActionExpression {
 
 		private IActionFilter getActionFilter(Object object) {
 			IActionFilter filter = null;
-			if (object instanceof IActionFilter)
+			if (object instanceof IActionFilter) {
 				filter = (IActionFilter) object;
-			else if (object instanceof IAdaptable)
+			} else if (object instanceof IAdaptable) {
 				filter = (IActionFilter) ((IAdaptable) object)
 						.getAdapter(IActionFilter.class);
+			}
 			return filter;
 		}
 
@@ -506,8 +524,9 @@ public class ActionExpression {
 			if (object instanceof IAdaptable) {
 				res = ((IAdaptable) object).getAdapter(resourceClass);
 			}
-			if (res == null)
+			if (res == null) {
 				return false;
+			}
 
 			return preciselyMatches(res);
 
@@ -516,8 +535,9 @@ public class ActionExpression {
 		private boolean preciselyMatches(Object object) {
 			// Get the action filter.
 			IActionFilter filter = getActionFilter(object);
-			if (filter == null)
+			if (filter == null) {
 				return false;
+			}
 
 			// Run the action filter.
 			return filter.testAttribute(object, name, value);
@@ -573,8 +593,9 @@ public class ActionExpression {
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
 				AbstractExpression expr = (AbstractExpression) iter.next();
-				if (expr.isEnabledFor(object))
+				if (expr.isEnabledFor(object)) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -602,9 +623,10 @@ public class ActionExpression {
 
 			id = element.getAttribute(ATT_ID);
 			value = element.getAttribute(ATT_VALUE);
-			if (id == null || value == null)
+			if (id == null || value == null) {
 				throw new IllegalStateException(
 						"Plugin state expression missing attribute"); //$NON-NLS-1$
+			}
 		}
 
 		public final boolean equals(final Object object) {
@@ -638,12 +660,15 @@ public class ActionExpression {
 		 */
 		public boolean isEnabledFor(Object object) {
 			Bundle bundle = Platform.getBundle(id);
-			if (!BundleUtility.isReady(bundle))
+			if (!BundleUtility.isReady(bundle)) {
 				return false;
-			if (value.equals(PLUGIN_INSTALLED))
+			}
+			if (value.equals(PLUGIN_INSTALLED)) {
 				return true;
-			if (value.equals(PLUGIN_ACTIVATED))
+			}
+			if (value.equals(PLUGIN_ACTIVATED)) {
 				return BundleUtility.isActivated(bundle);
+			}
 			return false;
 		}
 	}
@@ -665,11 +690,12 @@ public class ActionExpression {
 				throws IllegalStateException {
 			super();
 
-			if (expression != null)
+			if (expression != null) {
 				child = expression;
-			else
+			} else {
 				throw new IllegalStateException(
 						"Single expression must contain 1 expression"); //$NON-NLS-1$
+			}
 		}
 
 		/**
@@ -687,9 +713,10 @@ public class ActionExpression {
 			super();
 
 			IConfigurationElement[] children = element.getChildren();
-			if (children.length != 1)
+			if (children.length != 1) {
 				throw new IllegalStateException(
 						"Single expression does not contain only 1 expression"); //$NON-NLS-1$
+			}
 			child = createExpression(children[0]);
 		}
 
@@ -774,9 +801,10 @@ public class ActionExpression {
 
 			name = element.getAttribute(ATT_NAME);
 			value = element.getAttribute(ATT_VALUE);
-			if (name == null || value == null)
+			if (name == null || value == null) {
 				throw new IllegalStateException(
 						"System property expression missing attribute"); //$NON-NLS-1$
+			}
 		}
 
 		/*
@@ -784,8 +812,9 @@ public class ActionExpression {
 		 */
 		public boolean isEnabledFor(Object object) {
 			String str = System.getProperty(name);
-			if (str == null)
+			if (str == null) {
 				return false;
+			}
 			return value.equals(str);
 		}
 
@@ -907,20 +936,27 @@ public class ActionExpression {
 	private static AbstractExpression createExpression(
 			IConfigurationElement element) throws IllegalStateException {
 		String tag = element.getName();
-		if (tag.equals(EXP_TYPE_OR))
+		if (tag.equals(EXP_TYPE_OR)) {
 			return new OrExpression(element);
-		if (tag.equals(EXP_TYPE_AND))
+		}
+		if (tag.equals(EXP_TYPE_AND)) {
 			return new AndExpression(element);
-		if (tag.equals(EXP_TYPE_NOT))
+		}
+		if (tag.equals(EXP_TYPE_NOT)) {
 			return new NotExpression(element);
-		if (tag.equals(EXP_TYPE_OBJECT_STATE))
+		}
+		if (tag.equals(EXP_TYPE_OBJECT_STATE)) {
 			return new ObjectStateExpression(element);
-		if (tag.equals(EXP_TYPE_OBJECT_CLASS))
+		}
+		if (tag.equals(EXP_TYPE_OBJECT_CLASS)) {
 			return new ObjectClassExpression(element);
-		if (tag.equals(EXP_TYPE_PLUG_IN_STATE))
+		}
+		if (tag.equals(EXP_TYPE_PLUG_IN_STATE)) {
 			return new PluginStateExpression(element);
-		if (tag.equals(EXP_TYPE_SYSTEM_PROPERTY))
+		}
+		if (tag.equals(EXP_TYPE_SYSTEM_PROPERTY)) {
 			return new SystemPropertyExpression(element);
+		}
 
 		throw new IllegalStateException(
 				"Action expression unrecognized element: " + tag); //$NON-NLS-1$
@@ -1012,16 +1048,19 @@ public class ActionExpression {
 	 * @return boolean whether the expression is valid for the selection.
 	 */
 	public boolean isEnabledFor(IStructuredSelection selection) {
-		if (root == null)
+		if (root == null) {
 			return false;
+		}
 
-		if (selection == null || selection.isEmpty())
+		if (selection == null || selection.isEmpty()) {
 			return root.isEnabledFor(null);
+		}
 
 		Iterator elements = selection.iterator();
 		while (elements.hasNext()) {
-			if (!isEnabledFor(elements.next()))
+			if (!isEnabledFor(elements.next())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -1034,8 +1073,9 @@ public class ActionExpression {
 	 * @return boolean whether the expression is valid for the object.
 	 */
 	public boolean isEnabledFor(Object object) {
-		if (root == null)
+		if (root == null) {
 			return false;
+		}
 		return root.isEnabledFor(object);
 	}
 
@@ -1052,8 +1092,9 @@ public class ActionExpression {
 	 *         object.
 	 */
 	public boolean isEnabledForExpression(Object object, String expressionType) {
-		if (root == null)
+		if (root == null) {
 			return false;
+		}
 		return root.isEnabledForExpression(object, expressionType);
 	}
 

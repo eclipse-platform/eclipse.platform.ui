@@ -31,14 +31,17 @@ public class WizardActivityFilter extends ViewerFilter {
     public boolean select(Viewer viewer, Object parentElement, Object element) {
         Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
                 .getContentProvider()).getChildren(element);
-        if (children.length > 0)
-            return filter(viewer, element, children).length > 0;
+        if (children.length > 0) {
+			return filter(viewer, element, children).length > 0;
+		}
 
-        if (parentElement.getClass().equals(AdaptableList.class))
-            return true; //top-level ("primary") wizards should always be returned
+        if (parentElement.getClass().equals(AdaptableList.class)) {
+			return true; //top-level ("primary") wizards should always be returned
+		}
 
-        if (WorkbenchActivityHelper.filterItem(element))
-            return false;
+        if (WorkbenchActivityHelper.filterItem(element)) {
+			return false;
+		}
 
         return true;
     }

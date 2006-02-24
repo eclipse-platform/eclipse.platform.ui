@@ -188,8 +188,9 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
                 for (int i = 0; i < itemCount; i++) {
                     String string = labelProvider.getText(displayedItems[i]);
-                    if(string == null)
-                    	string = "";//$NON-NLS-1$
+                    if(string == null) {
+						string = "";//$NON-NLS-1$
+					}
                     gc.drawString(string, 2, yOffset
                             + (i * fontMetrics.getHeight()), true);
                 }
@@ -222,10 +223,12 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
         int maxHeight = display.getBounds().height / 6;
         int fontWidth = charWidth * maxCharacterWidth;
         int fontHeight = charHeight * numShowItems;
-        if (maxWidth < fontWidth)
-            fontWidth = maxWidth;
-        if (maxHeight < fontHeight)
-            fontHeight = maxHeight;
+        if (maxWidth < fontWidth) {
+			fontWidth = maxWidth;
+		}
+        if (maxHeight < fontHeight) {
+			fontHeight = maxHeight;
+		}
         gc.dispose();
         return new Point(fontWidth, fontHeight);
     }

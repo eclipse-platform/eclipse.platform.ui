@@ -43,11 +43,12 @@ public final class ViewPluginAction extends PartPluginAction {
      */
     protected IActionDelegate validateDelegate(Object obj)
             throws WorkbenchException {
-        if (obj instanceof IViewActionDelegate)
-            return (IViewActionDelegate) obj;
-        else
-            throw new WorkbenchException(
+        if (obj instanceof IViewActionDelegate) {
+			return (IViewActionDelegate) obj;
+		} else {
+			throw new WorkbenchException(
                     "Action must implement IViewActionDelegate"); //$NON-NLS-1$
+		}
     }
 
     /* (non-Javadoc)

@@ -29,8 +29,9 @@ public class ViewLabelProvider extends LabelProvider {
     private HashMap images;
 
     Image cacheImage(ImageDescriptor desc) {
-        if (images == null)
-            images = new HashMap(21);
+        if (images == null) {
+			images = new HashMap(21);
+		}
         Image image = (Image) images.get(desc);
         if (image == null) {
             image = desc.createImage();
@@ -59,8 +60,9 @@ public class ViewLabelProvider extends LabelProvider {
         if (element instanceof IViewDescriptor) {
             ImageDescriptor desc = ((IViewDescriptor) element)
                     .getImageDescriptor();
-            if (desc != null)
-                return cacheImage(desc);
+            if (desc != null) {
+				return cacheImage(desc);
+			}
         } else if (element instanceof IViewCategory) {
             ImageDescriptor desc = WorkbenchImages
                     .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
@@ -74,10 +76,11 @@ public class ViewLabelProvider extends LabelProvider {
      */
     public String getText(Object element) {
         String label = WorkbenchMessages.ViewLabel_unknown;
-        if (element instanceof IViewCategory)
-            label = ((IViewCategory) element).getLabel();
-        else if (element instanceof IViewDescriptor)
-            label = ((IViewDescriptor) element).getLabel();
+        if (element instanceof IViewCategory) {
+			label = ((IViewCategory) element).getLabel();
+		} else if (element instanceof IViewDescriptor) {
+			label = ((IViewDescriptor) element).getLabel();
+		}
         return DialogUtil.removeAccel(label);
     }
 }

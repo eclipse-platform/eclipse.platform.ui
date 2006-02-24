@@ -51,8 +51,9 @@ public class PageListenerList extends EventManager {
     		UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
     	}
     	Platform.run(runnable);
-    	if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS))
-    		UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, listener, label);
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+			UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, listener, label);
+		}
 	}
 
     /**

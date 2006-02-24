@@ -233,8 +233,9 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public boolean getVisible() {
         Control ctrl = getControl();
-        if (!SwtUtil.isDisposed(ctrl))
-            return ctrl.getVisible();
+        if (!SwtUtil.isDisposed(ctrl)) {
+			return ctrl.getVisible();
+		}
         return false;    
     }
     
@@ -244,8 +245,9 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public boolean isVisible() {
         Control ctrl = getControl();
-        if (ctrl != null && !ctrl.isDisposed())
-            return ctrl.isVisible();
+        if (ctrl != null && !ctrl.isDisposed()) {
+			return ctrl.isVisible();
+		}
         return false;
     }
 
@@ -255,8 +257,9 @@ abstract public class LayoutPart implements ISizeProvider {
     public void setVisible(boolean makeVisible) {
         Control ctrl = getControl();
         if (!SwtUtil.isDisposed(ctrl)) {
-            if (makeVisible == ctrl.getVisible())
-                return;
+            if (makeVisible == ctrl.getVisible()) {
+				return;
+			}
 
             if (!makeVisible && isFocusAncestor(ctrl)) {
                 // Workaround for Bug 60970 [EditorMgmt] setActive() called on an editor when it does not have focus.
@@ -287,8 +290,9 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public void setBounds(Rectangle r) {
         Control ctrl = getControl();
-        if (!SwtUtil.isDisposed(ctrl))
-            ctrl.setBounds(r);
+        if (!SwtUtil.isDisposed(ctrl)) {
+			ctrl.setBounds(r);
+		}
     }
 
     /**

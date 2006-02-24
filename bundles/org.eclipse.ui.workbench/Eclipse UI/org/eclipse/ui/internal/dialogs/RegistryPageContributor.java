@@ -78,8 +78,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         	mng.addToRoot(node);
         	return true;
         }
-        if(!mng.addToDeep(getCategory(),node))
-        	mng.addToRoot(node);
+        if(!mng.addToDeep(getCategory(),node)) {
+			mng.addToRoot(node);
+		}
     
         return true;
     }
@@ -110,10 +111,11 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
            }
         }
         
-        if(adapted instanceof IAdaptable)
-        	ppage.setElement((IAdaptable) adapted);
-        else
-        	ppage.setElement(new AdaptableForwarder(adapted));
+        if(adapted instanceof IAdaptable) {
+			ppage.setElement((IAdaptable) adapted);
+		} else {
+			ppage.setElement(new AdaptableForwarder(adapted));
+		}
 
         return ppage;
     }
@@ -125,8 +127,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
      */
     public ImageDescriptor getPageIcon() {
     	String iconName = pageElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-        if (iconName == null)
-            return null;
+        if (iconName == null) {
+			return null;
+		}
         return AbstractUIPlugin.imageDescriptorFromPlugin(pageElement
                 .getNamespaceIdentifier(), iconName);
     }
@@ -170,13 +173,15 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
                     }
                 }
             }
-            if (!SelectionEnabler.verifyNameMatch(objectName, nameFilter))
-                return false;
+            if (!SelectionEnabler.verifyNameMatch(objectName, nameFilter)) {
+				return false;
+			}
         }
 
         // Test custom filter	
-        if (getFilterProperties() == null)
-            return true;
+        if (getFilterProperties() == null) {
+			return true;
+		}
         IActionFilter filter = null;
 
         // Do the free IResource adapting
@@ -192,8 +197,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
                     .getAdapter(IActionFilter.class);
         }
 
-        if (filter != null) 
-            return testCustom(object, filter);
+        if (filter != null) {
+			return testCustom(object, filter);
+		}
 
         return true;
     }
@@ -205,14 +211,16 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
     private boolean testCustom(Object object, IActionFilter filter) {
         Map filterProperties = getFilterProperties();
 		
-        if (filterProperties == null)
-            return false;
+        if (filterProperties == null) {
+			return false;
+		}
         Iterator iter = filterProperties.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String) iter.next();
             String value = (String) filterProperties.get(key);
-            if (!filter.testAttribute(object, key, value))
-                return false;
+            if (!filter.testAttribute(object, key, value)) {
+				return false;
+			}
         }
         return true;
     }
@@ -280,8 +288,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 		Iterator iterator = subPages.iterator();
 		while(iterator.hasNext()){
 			RegistryPageContributor next = (RegistryPageContributor) iterator.next();
-			if(next.getPageId().equals(id))
+			if(next.getPageId().equals(id)) {
 				return next;
+			}
 		}
 		return null;
 	}
@@ -296,8 +305,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         if (tag.equals(PropertyPagesRegistryReader.TAG_FILTER)) {
             String key = element.getAttribute(PropertyPagesRegistryReader.ATT_FILTER_NAME);
             String value = element.getAttribute(PropertyPagesRegistryReader.ATT_FILTER_VALUE);
-            if (key == null || value == null)
-                return;
+            if (key == null || value == null) {
+				return;
+			}
             map.put(key, value);
         }
     }

@@ -51,8 +51,9 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
             IMenuManager popupMenu, ISelectionProvider selProv) {
         // Get a selection.	
         ISelection selection = selProv.getSelection();
-        if (selection == null)
-            return false;
+        if (selection == null) {
+			return false;
+		}
 
         // Convert the selection into an element vector.
         // According to the dictionary, a selection is "one that
@@ -68,8 +69,9 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
         List contributors = getContributors(elements);
        
-        if (contributors.isEmpty())
-            return false;
+        if (contributors.isEmpty()) {
+			return false;
+		}
 
         // First pass, add the menus and collect the overrides. Prune from the
         // list any non-applicable contributions.
@@ -81,8 +83,9 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
             	it.remove();            
                 continue;
             }
-            if (contributor.contributeObjectMenus(popupMenu, selProv))
-                actualContributions = true;
+            if (contributor.contributeObjectMenus(popupMenu, selProv)) {
+				actualContributions = true;
+			}
             contributor.contributeObjectActionIdOverrides(overrides);
         }
         
@@ -91,8 +94,9 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         for (Iterator it = contributors.iterator(); it.hasNext();) {
 			IObjectActionContributor contributor = (IObjectActionContributor) it.next();        
             if (contributor.contributeObjectActions(part, popupMenu, selProv,
-                    overrides))
-                actualContributions = true;
+                    overrides)) {
+				actualContributions = true;
+			}
         }
         return actualContributions;
     }

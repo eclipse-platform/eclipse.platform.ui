@@ -57,19 +57,21 @@ public class EditorMenuManager extends SubMenuManager {
         public Boolean getEnabled(IContributionItem item) {
             if (((item instanceof ActionContributionItem) && (((ActionContributionItem) item)
                     .getAction() instanceof RetargetAction))
-                    || enabledAllowed)
-                return null;
-            else
-                return Boolean.FALSE;
+                    || enabledAllowed) {
+				return null;
+			} else {
+				return Boolean.FALSE;
+			}
         }
 
         public Integer getAccelerator(IContributionItem item) {
-            if (getEnabled(item) == null)
-                return getParentMenuManager().getOverrides().getAccelerator(
+            if (getEnabled(item) == null) {
+				return getParentMenuManager().getOverrides().getAccelerator(
                         item);
-            else
-                // no acclerator if the item is disabled
+			} else {
+				// no acclerator if the item is disabled
                 return new Integer(0);
+			}
         }
 
         public String getAcceleratorText(IContributionItem item) {
@@ -148,21 +150,25 @@ public class EditorMenuManager extends SubMenuManager {
         if (visible) {
             if (forceVisibility) {
                 // Make the items visible 
-                if (!enabledAllowed)
-                    setEnabledAllowed(true);
+                if (!enabledAllowed) {
+					setEnabledAllowed(true);
+				}
             } else {
-                if (enabledAllowed)
-                    setEnabledAllowed(false);
+                if (enabledAllowed) {
+					setEnabledAllowed(false);
+				}
             }
-            if (!isVisible())
-                setVisible(true);
+            if (!isVisible()) {
+				setVisible(true);
+			}
         } else {
-            if (forceVisibility)
-                // Remove the editor menu items
+            if (forceVisibility) {
+				// Remove the editor menu items
                 setVisible(false);
-            else
-                // Disable the editor menu items.
+			} else {
+				// Disable the editor menu items.
                 setEnabledAllowed(false);
+			}
         }
     }
 
@@ -173,8 +179,9 @@ public class EditorMenuManager extends SubMenuManager {
      * @since 2.0
      */
     public void setEnabledAllowed(boolean enabledAllowed) {
-        if (this.enabledAllowed == enabledAllowed)
-            return;
+        if (this.enabledAllowed == enabledAllowed) {
+			return;
+		}
         this.enabledAllowed = enabledAllowed;
         overrides.updateEnabledAllowed();
     }
@@ -183,8 +190,9 @@ public class EditorMenuManager extends SubMenuManager {
      * Method declared on SubMenuManager.
      */
     protected SubMenuManager wrapMenu(IMenuManager menu) {
-        if (wrappers == null)
-            wrappers = new ArrayList();
+        if (wrappers == null) {
+			wrappers = new ArrayList();
+		}
         EditorMenuManager manager = new EditorMenuManager(menu);
         wrappers.add(manager);
         return manager;
@@ -198,10 +206,12 @@ public class EditorMenuManager extends SubMenuManager {
 
     protected void getAllContributedActions(HashSet set) {
         IContributionItem[] items = super.getItems();
-        for (int i = 0; i < items.length; i++)
-            getAllContributedActions(set, items[i]);
-        if (wrappers == null)
-            return;
+        for (int i = 0; i < items.length; i++) {
+			getAllContributedActions(set, items[i]);
+		}
+        if (wrappers == null) {
+			return;
+		}
         for (Iterator iter = wrappers.iterator(); iter.hasNext();) {
             EditorMenuManager element = (EditorMenuManager) iter.next();
             element.getAllContributedActions(set);
@@ -211,8 +221,9 @@ public class EditorMenuManager extends SubMenuManager {
     protected void getAllContributedActions(HashSet set, IContributionItem item) {
         if (item instanceof MenuManager) {
             IContributionItem subItems[] = ((MenuManager) item).getItems();
-            for (int j = 0; j < subItems.length; j++)
-                getAllContributedActions(set, subItems[j]);
+            for (int j = 0; j < subItems.length; j++) {
+				getAllContributedActions(set, subItems[j]);
+			}
         } else if (item instanceof ActionContributionItem) {
             set.add(((ActionContributionItem) item).getAction());
         }

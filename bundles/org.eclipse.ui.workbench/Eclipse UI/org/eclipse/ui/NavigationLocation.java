@@ -38,8 +38,9 @@ public abstract class NavigationLocation implements INavigationLocation {
      * @return IEditorPart
      */
     protected IEditorPart getEditorPart() {
-        if (input == null)
-            return null;
+        if (input == null) {
+			return null;
+		}
         return page.findEditor(input);
     }
 
@@ -57,8 +58,9 @@ public abstract class NavigationLocation implements INavigationLocation {
      */
     public String getText() {
         IEditorPart part = getEditorPart();
-        if (part == null)
-            return new String();
+        if (part == null) {
+			return new String();
+		}
         return part.getTitle();
     }
 

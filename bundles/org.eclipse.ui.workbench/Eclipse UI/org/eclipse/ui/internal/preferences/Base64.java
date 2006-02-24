@@ -33,11 +33,13 @@ class Base64 {
 	 * @return the decoded byte array
 	 */
 	public static byte[] decode(byte[] data) {
-		if (data.length == 0)
+		if (data.length == 0) {
 			return data;
+		}
 		int lastRealDataIndex = data.length - 1;
-		while (data[lastRealDataIndex] == equalSign)
+		while (data[lastRealDataIndex] == equalSign) {
 			lastRealDataIndex--;
+		}
 		// original data digit is 8 bits long, but base64 digit is 6 bits long
 		int padBytes = data.length - 1 - lastRealDataIndex;
 		int byteLength = data.length * 6 / 8 - padBytes;
@@ -51,8 +53,9 @@ class Base64 {
 		for (int i = 0; i < resultChunks; i++) {
 			allBits = 0;
 			// Loop 4 times gathering input bits (4 * 6 = 24)
-			for (int j = 0; j < 4; j++)
+			for (int j = 0; j < 4; j++) {
 				allBits = (allBits << 6) | decodeDigit(data[dataIndex++]);
+			}
 			// Loop 3 times generating output bits (3 * 8 = 24)
 			for (int j = resultIndex + 2; j >= resultIndex; j--) {
 				result[j] = (byte) (allBits & 0xff); // Bottom 8 bits
@@ -69,8 +72,9 @@ class Base64 {
 				// Or: 2 bytes of result data
 				allBits = 0;
 				// Loop 3 times gathering input bits
-				for (int j = 0; j < 3; j++)
+				for (int j = 0; j < 3; j++) {
 					allBits = (allBits << 6) | decodeDigit(data[dataIndex++]);
+				}
 				// NOTE - The code below ends up being equivalent to allBits =
 				// allBits>>>2
 				// But we code it in a non-optimized way for clarity
@@ -91,8 +95,9 @@ class Base64 {
 				// Or: 1 byte of result data
 				allBits = 0;
 				// Loop 2 times gathering input bits
-				for (int j = 0; j < 2; j++)
+				for (int j = 0; j < 2; j++) {
 					allBits = (allBits << 6) | decodeDigit(data[dataIndex++]);
+				}
 				// NOTE - The code below ends up being equivalent to allBits =
 				// allBits>>>4
 				// But we code it in a non-optimized way for clarity
@@ -118,12 +123,15 @@ class Base64 {
 	 */
 	static int decodeDigit(byte data) {
 		char charData = (char) data;
-		if (charData <= 'Z' && charData >= 'A')
+		if (charData <= 'Z' && charData >= 'A') {
 			return charData - 'A';
-		if (charData <= 'z' && charData >= 'a')
+		}
+		if (charData <= 'z' && charData >= 'a') {
 			return charData - 'a' + 26;
-		if (charData <= '9' && charData >= '0')
+		}
+		if (charData <= '9' && charData >= '0') {
 			return charData - '0' + 52;
+		}
 		switch (charData) {
 			case '+' :
 				return 62;
@@ -153,8 +161,9 @@ class Base64 {
 		for (int i = 0; i < sourceChunks; i++) {
 			allBits = 0;
 			// Loop 3 times gathering input bits (3 * 8 = 24)
-			for (int j = 0; j < 3; j++)
+			for (int j = 0; j < 3; j++) {
 				allBits = (allBits << 8) | (data[dataIndex++] & 0xff);
+			}
 			// Loop 4 times generating output bits (4 * 6 = 24)
 			for (int j = resultIndex + 3; j >= resultIndex; j--) {
 				result[j] = (byte) digits[(allBits & 0x3f)]; // Bottom

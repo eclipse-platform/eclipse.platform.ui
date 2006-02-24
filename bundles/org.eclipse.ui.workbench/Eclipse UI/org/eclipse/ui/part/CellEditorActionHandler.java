@@ -114,13 +114,15 @@ public class CellEditorActionHandler {
             switch (event.type) {
             case SWT.Activate:
                 activeEditor = (CellEditor) controlToEditor.get(event.widget);
-                if (activeEditor != null)
-                    activeEditor.addPropertyChangeListener(cellListener);
+                if (activeEditor != null) {
+					activeEditor.addPropertyChangeListener(cellListener);
+				}
                 updateActionsEnableState();
                 break;
             case SWT.Deactivate:
-                if (activeEditor != null)
-                    activeEditor.removePropertyChangeListener(cellListener);
+                if (activeEditor != null) {
+					activeEditor.removePropertyChangeListener(cellListener);
+				}
                 activeEditor = null;
                 updateActionsEnableState();
                 break;
@@ -140,8 +142,9 @@ public class CellEditorActionHandler {
         }
 
         public void propertyChange(PropertyChangeEvent event) {
-            if (activeEditor != null)
-                return;
+            if (activeEditor != null) {
+				return;
+			}
             if (event.getProperty().equals(IAction.ENABLED)) {
                 Boolean bool = (Boolean) event.getNewValue();
                 actionHandler.setEnabled(bool.booleanValue());
@@ -152,8 +155,9 @@ public class CellEditorActionHandler {
 
     private class CellChangeListener implements IPropertyChangeListener {
         public void propertyChange(PropertyChangeEvent event) {
-            if (activeEditor == null)
-                return;
+            if (activeEditor == null) {
+				return;
+			}
             if (event.getProperty().equals(CellEditor.CUT)) {
                 cellCutAction.setEnabled(activeEditor.isCutEnabled());
                 return;
@@ -474,8 +478,9 @@ public class CellEditorActionHandler {
      * @param editor the <code>CellEditor</code>
      */
     public void addCellEditor(CellEditor editor) {
-        if (editor == null)
-            return;
+        if (editor == null) {
+			return;
+		}
 
         Control control = editor.getControl();
         Assert.isNotNull(control);
@@ -513,8 +518,9 @@ public class CellEditorActionHandler {
         }
         controlToEditor.clear();
 
-        if (activeEditor != null)
-            activeEditor.removePropertyChangeListener(cellListener);
+        if (activeEditor != null) {
+			activeEditor.removePropertyChangeListener(cellListener);
+		}
         activeEditor = null;
 
     }
@@ -527,8 +533,9 @@ public class CellEditorActionHandler {
      * @param editor the <code>CellEditor</code>
      */
     public void removeCellEditor(CellEditor editor) {
-        if (editor == null)
-            return;
+        if (editor == null) {
+			return;
+		}
 
         if (activeEditor == editor) {
             activeEditor.removePropertyChangeListener(cellListener);
@@ -554,16 +561,19 @@ public class CellEditorActionHandler {
      *    Copy action, or <code>null</code> if not interested.
      */
     public void setCopyAction(IAction action) {
-        if (copyAction == action)
-            return;
+        if (copyAction == action) {
+			return;
+		}
 
-        if (copyAction != null)
-            copyAction.removePropertyChangeListener(copyActionListener);
+        if (copyAction != null) {
+			copyAction.removePropertyChangeListener(copyActionListener);
+		}
 
         copyAction = action;
 
-        if (copyAction != null)
-            copyAction.addPropertyChangeListener(copyActionListener);
+        if (copyAction != null) {
+			copyAction.addPropertyChangeListener(copyActionListener);
+		}
 
         cellCopyAction.updateEnabledState();
     }
@@ -577,16 +587,19 @@ public class CellEditorActionHandler {
      *    Cut action, or <code>null</code> if not interested.
      */
     public void setCutAction(IAction action) {
-        if (cutAction == action)
-            return;
+        if (cutAction == action) {
+			return;
+		}
 
-        if (cutAction != null)
-            cutAction.removePropertyChangeListener(cutActionListener);
+        if (cutAction != null) {
+			cutAction.removePropertyChangeListener(cutActionListener);
+		}
 
         cutAction = action;
 
-        if (cutAction != null)
-            cutAction.addPropertyChangeListener(cutActionListener);
+        if (cutAction != null) {
+			cutAction.addPropertyChangeListener(cutActionListener);
+		}
 
         cellCutAction.updateEnabledState();
     }
@@ -600,16 +613,19 @@ public class CellEditorActionHandler {
      *    Delete action, or <code>null</code> if not interested.
      */
     public void setDeleteAction(IAction action) {
-        if (deleteAction == action)
-            return;
+        if (deleteAction == action) {
+			return;
+		}
 
-        if (deleteAction != null)
-            deleteAction.removePropertyChangeListener(deleteActionListener);
+        if (deleteAction != null) {
+			deleteAction.removePropertyChangeListener(deleteActionListener);
+		}
 
         deleteAction = action;
 
-        if (deleteAction != null)
-            deleteAction.addPropertyChangeListener(deleteActionListener);
+        if (deleteAction != null) {
+			deleteAction.addPropertyChangeListener(deleteActionListener);
+		}
 
         cellDeleteAction.updateEnabledState();
     }
@@ -623,16 +639,19 @@ public class CellEditorActionHandler {
      *    Find action, or <code>null</code> if not interested.
      */
     public void setFindAction(IAction action) {
-        if (findAction == action)
-            return;
+        if (findAction == action) {
+			return;
+		}
 
-        if (findAction != null)
-            findAction.removePropertyChangeListener(findActionListener);
+        if (findAction != null) {
+			findAction.removePropertyChangeListener(findActionListener);
+		}
 
         findAction = action;
 
-        if (findAction != null)
-            findAction.addPropertyChangeListener(findActionListener);
+        if (findAction != null) {
+			findAction.addPropertyChangeListener(findActionListener);
+		}
 
         cellFindAction.updateEnabledState();
     }
@@ -646,16 +665,19 @@ public class CellEditorActionHandler {
      *    Paste action, or <code>null</code> if not interested.
      */
     public void setPasteAction(IAction action) {
-        if (pasteAction == action)
-            return;
+        if (pasteAction == action) {
+			return;
+		}
 
-        if (pasteAction != null)
-            pasteAction.removePropertyChangeListener(pasteActionListener);
+        if (pasteAction != null) {
+			pasteAction.removePropertyChangeListener(pasteActionListener);
+		}
 
         pasteAction = action;
 
-        if (pasteAction != null)
-            pasteAction.addPropertyChangeListener(pasteActionListener);
+        if (pasteAction != null) {
+			pasteAction.addPropertyChangeListener(pasteActionListener);
+		}
 
         cellPasteAction.updateEnabledState();
     }
@@ -669,16 +691,19 @@ public class CellEditorActionHandler {
      *    Redo action, or <code>null</code> if not interested.
      */
     public void setRedoAction(IAction action) {
-        if (redoAction == action)
-            return;
+        if (redoAction == action) {
+			return;
+		}
 
-        if (redoAction != null)
-            redoAction.removePropertyChangeListener(redoActionListener);
+        if (redoAction != null) {
+			redoAction.removePropertyChangeListener(redoActionListener);
+		}
 
         redoAction = action;
 
-        if (redoAction != null)
-            redoAction.addPropertyChangeListener(redoActionListener);
+        if (redoAction != null) {
+			redoAction.addPropertyChangeListener(redoActionListener);
+		}
 
         cellRedoAction.updateEnabledState();
     }
@@ -692,17 +717,20 @@ public class CellEditorActionHandler {
      *    Select All action, or <code>null</code> if not interested.
      */
     public void setSelectAllAction(IAction action) {
-        if (selectAllAction == action)
-            return;
+        if (selectAllAction == action) {
+			return;
+		}
 
-        if (selectAllAction != null)
-            selectAllAction
+        if (selectAllAction != null) {
+			selectAllAction
                     .removePropertyChangeListener(selectAllActionListener);
+		}
 
         selectAllAction = action;
 
-        if (selectAllAction != null)
-            selectAllAction.addPropertyChangeListener(selectAllActionListener);
+        if (selectAllAction != null) {
+			selectAllAction.addPropertyChangeListener(selectAllActionListener);
+		}
 
         cellSelectAllAction.updateEnabledState();
     }
@@ -716,16 +744,19 @@ public class CellEditorActionHandler {
      *    Undo action, or <code>null</code> if not interested.
      */
     public void setUndoAction(IAction action) {
-        if (undoAction == action)
-            return;
+        if (undoAction == action) {
+			return;
+		}
 
-        if (undoAction != null)
-            undoAction.removePropertyChangeListener(undoActionListener);
+        if (undoAction != null) {
+			undoAction.removePropertyChangeListener(undoActionListener);
+		}
 
         undoAction = action;
 
-        if (undoAction != null)
-            undoAction.addPropertyChangeListener(undoActionListener);
+        if (undoAction != null) {
+			undoAction.addPropertyChangeListener(undoActionListener);
+		}
 
         cellUndoAction.updateEnabledState();
     }

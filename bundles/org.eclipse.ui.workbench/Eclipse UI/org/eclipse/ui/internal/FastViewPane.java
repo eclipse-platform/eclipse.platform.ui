@@ -138,8 +138,9 @@ public class FastViewPane {
          * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
          */
         public void dragStart(Point initialPosition, boolean keyboard) {
-            if (!isPartMoveable())
-                return;
+            if (!isPartMoveable()) {
+				return;
+			}
 
             PartPane pane = currentPane.getPane();
 
@@ -181,8 +182,9 @@ public class FastViewPane {
         }
 
         private boolean isPartMoveable() {
-            if (currentPane == null)
-                return false;
+            if (currentPane == null) {
+				return false;
+			}
             Perspective perspective = currentPane.getPane().getPage()
                     .getActivePerspective();
             if (perspective == null) {
@@ -199,10 +201,12 @@ public class FastViewPane {
         }
 
         public boolean supportsState(int newState) {
-            if (currentPane == null)
-                return false;
-            if (currentPane.getPane().getPage().isFixedLayout())
-                return false;
+            if (currentPane == null) {
+				return false;
+			}
+            if (currentPane.getPane().getPage().isFixedLayout()) {
+				return false;
+			}
             return true;
         }
 
@@ -237,8 +241,9 @@ public class FastViewPane {
                     // Ignore mouse down on actual tool bar buttons
                     Point pt = new Point(event.x, event.y);
                     ToolBar toolBar = (ToolBar) event.widget;
-                    if (toolBar.getItem(pt) != null)
-                        return;
+                    if (toolBar.getItem(pt) != null) {
+						return;
+					}
                 }
 
                 Point loc = DragUtil.getEventLoc(event);

@@ -133,8 +133,9 @@ public class LayoutTreeNode extends LayoutTree {
      */
     public LayoutTree find(LayoutPart child) {
         LayoutTree node = children[0].find(child);
-        if (node != null)
-            return node;
+        if (node != null) {
+			return node;
+		}
         node = children[1].find(child);
         return node;
     }
@@ -143,8 +144,9 @@ public class LayoutTreeNode extends LayoutTree {
      * Find the part that is in the bottom right position.
      */
     public LayoutPart findBottomRight() {
-        if (children[1].isVisible())
-            return children[1].findBottomRight();
+        if (children[1].isVisible()) {
+			return children[1].findBottomRight();
+		}
         return children[0].findBottomRight();
     }
 
@@ -162,14 +164,18 @@ public class LayoutTreeNode extends LayoutTree {
      */
     LayoutTreeNode findCommonParent(LayoutPart child1, LayoutPart child2,
             boolean foundChild1, boolean foundChild2) {
-        if (!foundChild1)
-            foundChild1 = find(child1) != null;
-        if (!foundChild2)
-            foundChild2 = find(child2) != null;
-        if (foundChild1 && foundChild2)
-            return this;
-        if (parent == null)
-            return null;
+        if (!foundChild1) {
+			foundChild1 = find(child1) != null;
+		}
+        if (!foundChild2) {
+			foundChild2 = find(child2) != null;
+		}
+        if (foundChild1 && foundChild2) {
+			return this;
+		}
+        if (parent == null) {
+			return null;
+		}
         return parent
                 .findCommonParent(child1, child2, foundChild1, foundChild2);
     }
@@ -179,14 +185,17 @@ public class LayoutTreeNode extends LayoutTree {
      * null if the sash is not found.
      */
     public LayoutTreeNode findSash(LayoutPartSash sash) {
-        if (this.getSash() == sash)
-            return this;
+        if (this.getSash() == sash) {
+			return this;
+		}
         LayoutTreeNode node = children[0].findSash(sash);
-        if (node != null)
-            return node;
+        if (node != null) {
+			return node;
+		}
         node = children[1].findSash(sash);
-        if (node != null)
-            return node;
+        if (node != null) {
+			return node;
+		}
         return null;
     }
 
@@ -205,24 +214,29 @@ public class LayoutTreeNode extends LayoutTree {
             //is in the rigth and so on.
             if (leftOrTop) {
                 if (partSash.isVertical()) {
-                    if (sashes.right == null)
-                        sashes.right = sash;
+                    if (sashes.right == null) {
+						sashes.right = sash;
+					}
                 } else {
-                    if (sashes.bottom == null)
-                        sashes.bottom = sash;
+                    if (sashes.bottom == null) {
+						sashes.bottom = sash;
+					}
                 }
             } else {
                 if (partSash.isVertical()) {
-                    if (sashes.left == null)
-                        sashes.left = sash;
+                    if (sashes.left == null) {
+						sashes.left = sash;
+					}
                 } else {
-                    if (sashes.top == null)
-                        sashes.top = sash;
+                    if (sashes.top == null) {
+						sashes.top = sash;
+					}
                 }
             }
         }
-        if (getParent() != null)
-            getParent().findSashes(this, sashes);
+        if (getParent() != null) {
+			getParent().findSashes(this, sashes);
+		}
     }
 
     /**
@@ -255,10 +269,11 @@ public class LayoutTreeNode extends LayoutTree {
         }
 
         LayoutTreeNode oldParent = parent;
-        if (children[0] == child)
-            oldParent.replaceChild(this, children[1]);
-        else
-            oldParent.replaceChild(this, children[0]);
+        if (children[0] == child) {
+			oldParent.replaceChild(this, children[1]);
+		} else {
+			oldParent.replaceChild(this, children[0]);
+		}
         return oldParent;
     }
 
@@ -266,13 +281,15 @@ public class LayoutTreeNode extends LayoutTree {
      * Replace a child with a new child and sets the new child's parent.
      */
     void replaceChild(LayoutTree oldChild, LayoutTree newChild) {
-        if (children[0] == oldChild)
-            children[0] = newChild;
-        else if (children[1] == oldChild)
-            children[1] = newChild;
+        if (children[0] == oldChild) {
+			children[0] = newChild;
+		} else if (children[1] == oldChild) {
+			children[1] = newChild;
+		}
         newChild.setParent(this);
-        if (!children[0].isVisible() || !children[0].isVisible())
-            getSash().dispose();
+        if (!children[0].isVisible() || !children[0].isVisible()) {
+			getSash().dispose();
+		}
 
         flushCache();
     }
@@ -283,15 +300,19 @@ public class LayoutTreeNode extends LayoutTree {
      */
     public boolean sameDirection(boolean isVertical, LayoutTreeNode subTree) {
         boolean treeVertical = getSash().isVertical();
-        if (treeVertical != isVertical)
-            return false;
+        if (treeVertical != isVertical) {
+			return false;
+		}
         while (subTree != null) {
-            if (this == subTree)
-                return true;
+            if (this == subTree) {
+				return true;
+			}
             if (subTree.children[0].isVisible()
-                    && subTree.children[1].isVisible())
-                if (subTree.getSash().isVertical() != isVertical)
-                    return false;
+                    && subTree.children[1].isVisible()) {
+				if (subTree.getSash().isVertical() != isVertical) {
+					return false;
+				}
+			}
             subTree = subTree.getParent();
         }
         return true;
@@ -540,10 +561,12 @@ public class LayoutTreeNode extends LayoutTree {
     public int getCompressionBias() {
         boolean left = children[0].isCompressible();
         boolean right = children[1].isCompressible();
-        if (left == right)
-            return 0;
-        if (right)
-            return -1;
+        if (left == right) {
+			return 0;
+		}
+        if (right) {
+			return -1;
+		}
         return 1;
     }
 	
@@ -580,18 +603,21 @@ public class LayoutTreeNode extends LayoutTree {
      */
     public String toString() {
         String s = "<null>\n";//$NON-NLS-1$
-        if (part.getControl() != null)
-            s = "<@" + part.getControl().hashCode() + ">\n";//$NON-NLS-2$//$NON-NLS-1$
+        if (part.getControl() != null) {
+			s = "<@" + part.getControl().hashCode() + ">\n";//$NON-NLS-2$//$NON-NLS-1$
+		}
         String result = "["; //$NON-NLS-1$
-        if (children[0].getParent() != this)
-            result = result + "{" + children[0] + "}" + s;//$NON-NLS-2$//$NON-NLS-1$
-        else
-            result = result + children[0] + s;
+        if (children[0].getParent() != this) {
+			result = result + "{" + children[0] + "}" + s;//$NON-NLS-2$//$NON-NLS-1$
+		} else {
+			result = result + children[0] + s;
+		}
 
-        if (children[1].getParent() != this)
-            result = result + "{" + children[1] + "}]";//$NON-NLS-2$//$NON-NLS-1$
-        else
-            result = result + children[1] + "]";//$NON-NLS-1$
+        if (children[1].getParent() != this) {
+			result = result + "{" + children[1] + "}]";//$NON-NLS-2$//$NON-NLS-1$
+		} else {
+			result = result + children[1] + "]";//$NON-NLS-1$
+		}
         return result;
     }
     

@@ -31,8 +31,9 @@ public final class ActivityRequirementBinding implements
 
     public ActivityRequirementBinding(String requiredActivityId,
             String activityId) {
-        if (requiredActivityId == null || activityId == null)
-            throw new NullPointerException();
+        if (requiredActivityId == null || activityId == null) {
+			throw new NullPointerException();
+		}
 
         this.requiredActivityId = requiredActivityId;
         this.activityId = activityId;
@@ -43,15 +44,17 @@ public final class ActivityRequirementBinding implements
         int compareTo = Util.compare(requiredActivityId,
                 castedObject.requiredActivityId);
 
-        if (compareTo == 0)
-            compareTo = Util.compare(activityId, castedObject.activityId);
+        if (compareTo == 0) {
+			compareTo = Util.compare(activityId, castedObject.activityId);
+		}
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof ActivityRequirementBinding))
-            return false;
+        if (!(object instanceof ActivityRequirementBinding)) {
+			return false;
+		}
 
         final ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
         if (!Util.equals(requiredActivityId, castedObject.requiredActivityId)) {
@@ -74,8 +77,9 @@ public final class ActivityRequirementBinding implements
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(requiredActivityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;

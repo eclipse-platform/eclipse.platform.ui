@@ -76,8 +76,9 @@ public class WorkbenchIntroManager implements IIntroManager {
      * @see org.eclipse.ui.IWorkbench#closeIntro(org.eclipse.ui.intro.IIntroPart)
      */
     public boolean closeIntro(IIntroPart part) {
-        if (introPart == null || !introPart.equals(part))
-            return false;
+        if (introPart == null || !introPart.equals(part)) {
+			return false;
+		}
 
         IViewPart introView = getViewIntroAdapterPart();
         if (introView != null) {
@@ -105,11 +106,13 @@ public class WorkbenchIntroManager implements IIntroManager {
      */
     public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
             boolean standby) {
-        if (preferredWindow == null)
-            preferredWindow = this.workbench.getActiveWorkbenchWindow();
+        if (preferredWindow == null) {
+			preferredWindow = this.workbench.getActiveWorkbenchWindow();
+		}
 
-        if (preferredWindow == null)
-            return null;
+        if (preferredWindow == null) {
+			return null;
+		}
 
         ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
         if (viewPart == null) {
@@ -139,8 +142,9 @@ public class WorkbenchIntroManager implements IIntroManager {
      */
     /*package*/boolean isIntroInWindow(IWorkbenchWindow testWindow) {
         ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
-        if (viewPart == null)
-            return false;
+        if (viewPart == null) {
+			return false;
+		}
 
         IWorkbenchWindow window = viewPart.getSite().getWorkbenchWindow();
         if (window.equals(testWindow)) {
@@ -156,12 +160,14 @@ public class WorkbenchIntroManager implements IIntroManager {
      * @param preferredWindow the window to create the intro in.
      */
     private void createIntro(IWorkbenchWindow preferredWindow) {
-        if (this.workbench.getIntroDescriptor() == null)
-            return;
+        if (this.workbench.getIntroDescriptor() == null) {
+			return;
+		}
 
         IWorkbenchPage workbenchPage = preferredWindow.getActivePage();
-        if (workbenchPage == null)
-            return;
+        if (workbenchPage == null) {
+			return;
+		}
         try {
             workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);
         } catch (PartInitException e) {
@@ -175,12 +181,14 @@ public class WorkbenchIntroManager implements IIntroManager {
      * @see org.eclipse.ui.IWorkbench#setIntroStandby(org.eclipse.ui.intro.IIntroPart, boolean)
      */
     public void setIntroStandby(IIntroPart part, boolean standby) {
-        if (introPart == null || !introPart.equals(part))
-            return;
+        if (introPart == null || !introPart.equals(part)) {
+			return;
+		}
 
         ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
-        if (viewIntroAdapterPart == null)
-            return;
+        if (viewIntroAdapterPart == null) {
+			return;
+		}
 
         PartPane pane = ((PartSite) viewIntroAdapterPart.getSite()).getPane();
         if (standby == !pane.isZoomed()) {
@@ -199,12 +207,14 @@ public class WorkbenchIntroManager implements IIntroManager {
 	 * @see org.eclipse.ui.IWorkbench#isIntroStandby(org.eclipse.ui.intro.IIntroPart)
 	 */
     public boolean isIntroStandby(IIntroPart part) {
-        if (introPart == null || !introPart.equals(part))
-            return false;
+        if (introPart == null || !introPart.equals(part)) {
+			return false;
+		}
 
         ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
-        if (viewIntroAdapterPart == null)
-            return false;
+        if (viewIntroAdapterPart == null) {
+			return false;
+		}
 
         return !((PartSite) viewIntroAdapterPart.getSite()).getPane()
                 .isZoomed();
@@ -236,8 +246,9 @@ public class WorkbenchIntroManager implements IIntroManager {
                         .findView(IIntroConstants.INTRO_VIEW_ID);
                 if (reference != null) {
                     IViewPart part = reference.getView(false);
-                    if (part != null && part instanceof ViewIntroAdapterPart)
-                        return (ViewIntroAdapterPart) part;
+                    if (part != null && part instanceof ViewIntroAdapterPart) {
+						return (ViewIntroAdapterPart) part;
+					}
                 }
             }
         }

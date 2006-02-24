@@ -118,8 +118,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 		IViewRegistry reg = this.factory.viewReg;
 		IViewDescriptor desc = reg.find(getId());
-		if (desc != null)
+		if (desc != null) {
 			return desc.getLabel();
+		}
 		return getTitle();
 	}
 
@@ -353,8 +354,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 							IAction action = actionDescriptors[i].getAction();
 
 							if (action != null
-									&& action.getActionDefinitionId() != null)
+									&& action.getActionDefinitionId() != null) {
 								keyBindingService.registerAction(action);
+							}
 						}
 					}
 				}
@@ -379,8 +381,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 						IExtensionTracker.REF_WEAK);
 			}
 		} catch (Throwable e) {
-			if ((e instanceof Error) && !(e instanceof LinkageError))
+			if ((e instanceof Error) && !(e instanceof LinkageError)) {
 				throw (Error) e;
+			}
 			
 			// An exception occurred. First deallocate anything we've allocated
 			// in the try block (see the top

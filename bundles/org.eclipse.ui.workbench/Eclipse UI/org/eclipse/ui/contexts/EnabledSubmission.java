@@ -93,8 +93,9 @@ public final class EnabledSubmission implements Comparable {
      */
     public EnabledSubmission(String activePartId, Shell activeShell,
             IWorkbenchPartSite activeWorkbenchPartSite, String contextId) {
-        if (contextId == null)
-            throw new NullPointerException();
+        if (contextId == null) {
+			throw new NullPointerException();
+		}
 
         this.activePartId = activePartId;
         this.activeShell = activeShell;
@@ -116,8 +117,9 @@ public final class EnabledSubmission implements Comparable {
             if (compareTo == 0) {
                 compareTo = Util.compare(activeShell, castedObject.activeShell);
 
-                if (compareTo == 0)
-                    compareTo = Util.compare(contextId, castedObject.contextId);
+                if (compareTo == 0) {
+					compareTo = Util.compare(contextId, castedObject.contextId);
+				}
             }
         }
 

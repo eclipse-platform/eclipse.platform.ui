@@ -43,8 +43,9 @@ public final class IdentifierEvent {
      */
     public IdentifierEvent(IIdentifier identifier, boolean activityIdsChanged,
             boolean enabledChanged) {
-        if (identifier == null)
-            throw new NullPointerException();
+        if (identifier == null) {
+			throw new NullPointerException();
+		}
 
         this.identifier = identifier;
         this.activityIdsChanged = activityIdsChanged;

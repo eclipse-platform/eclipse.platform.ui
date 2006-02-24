@@ -79,10 +79,12 @@ public final class WorkbenchActivityHelper {
 	 *         enablement.
 	 */
 	public static boolean allowUseOf(ITriggerPoint triggerPoint, Object object) {
-		if (!isFiltering())
+		if (!isFiltering()) {
 			return true;
-		if (triggerPoint == null)
+		}
+		if (triggerPoint == null) {
 			return true;
+		}
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
 			IIdentifier identifier = getIdentifier(contribution);
@@ -111,8 +113,9 @@ public final class WorkbenchActivityHelper {
 		ITriggerPointAdvisor advisor = ((WorkbenchActivitySupport) PlatformUI
 				.getWorkbench().getActivitySupport()).getTriggerPointAdvisor();
 		Set activitiesToEnable = advisor.allow(triggerPoint, identifier);
-		if (activitiesToEnable == null)
+		if (activitiesToEnable == null) {
 			return false;
+		}
 
 		enableActivities(activitiesToEnable);
 		return true;
@@ -132,8 +135,9 @@ public final class WorkbenchActivityHelper {
 	 * @return the unified id
 	 */
 	public static final String createUnifiedId(IPluginContribution contribution) {
-		if (contribution.getPluginId() != null)
+		if (contribution.getPluginId() != null) {
 			return contribution.getPluginId() + '/' + contribution.getLocalId();
+		}
 		return contribution.getLocalId();
 	}
 
@@ -171,8 +175,9 @@ public final class WorkbenchActivityHelper {
 			IIdentifier identifier = workbenchActivitySupport
 					.getActivityManager().getIdentifier(
 							createUnifiedId(contribution));
-			if (!identifier.isEnabled())
+			if (!identifier.isEnabled()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -205,24 +210,28 @@ public final class WorkbenchActivityHelper {
 	public static Set getEnabledCategories(IActivityManager activityManager,
 			String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
-		if (!category.isDefined())
+		if (!category.isDefined()) {
 			return Collections.EMPTY_SET;
+		}
 
 		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
 		Set otherEnabledCategories = new HashSet();
 		Set definedCategoryIds = activityManager.getDefinedCategoryIds();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String otherCategoryId = (String) i.next();
-			if (otherCategoryId.equals(categoryId))
+			if (otherCategoryId.equals(categoryId)) {
 				continue;
+			}
 			ICategory otherCategory = activityManager
 					.getCategory(otherCategoryId);
 			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 			if (activityManager.getEnabledActivityIds().containsAll(
-					otherCategoryActivityIds))
+					otherCategoryActivityIds)) {
 				continue;
-			if (activities.containsAll(otherCategoryActivityIds))
+			}
+			if (activities.containsAll(otherCategoryActivityIds)) {
 				otherEnabledCategories.add(otherCategoryId);
+			}
 
 		}
 		return otherEnabledCategories;
@@ -260,11 +269,13 @@ public final class WorkbenchActivityHelper {
 		IActivityManager manager = PlatformUI.getWorkbench()
 				.getActivitySupport().getActivityManager();
 		IActivity activity = manager.getActivity(activityId);
-		if (!activity.isDefined())
+		if (!activity.isDefined()) {
 			return Collections.EMPTY_SET;
+		}
 		Set requirementBindings = activity.getActivityRequirementBindings();
-		if (requirementBindings.isEmpty())
+		if (requirementBindings.isEmpty()) {
 			return Collections.EMPTY_SET;
+		}
 
 		Set requiredActivities = new HashSet(3);
 		for (Iterator i = requirementBindings.iterator(); i.hasNext();) {
@@ -313,29 +324,34 @@ public final class WorkbenchActivityHelper {
 	public static Set getDisabledCategories(IActivityManager activityManager,
 			String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
-		if (!category.isDefined())
+		if (!category.isDefined()) {
 			return Collections.EMPTY_SET;
+		}
 
 		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
 		Set otherDisabledCategories = new HashSet();
 		Set definedCategoryIds = activityManager.getDefinedCategoryIds();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String otherCategoryId = (String) i.next();
-			if (otherCategoryId.equals(categoryId))
+			if (otherCategoryId.equals(categoryId)) {
 				continue;
+			}
 			ICategory otherCategory = activityManager
 					.getCategory(otherCategoryId);
 			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 
-			if (otherCategoryActivityIds.isEmpty())
+			if (otherCategoryActivityIds.isEmpty()) {
 				continue;
+			}
 
-			if (!activities.containsAll(otherCategoryActivityIds))
+			if (!activities.containsAll(otherCategoryActivityIds)) {
 				continue;
+			}
 
 			if (activityManager.getEnabledActivityIds().containsAll(
-					otherCategoryActivityIds))
+					otherCategoryActivityIds)) {
 				otherDisabledCategories.add(otherCategoryId);
+			}
 
 		}
 		return otherDisabledCategories;
@@ -356,25 +372,29 @@ public final class WorkbenchActivityHelper {
 	public static final Set getContainedCategories(
 			IActivityManager activityManager, String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
-		if (!category.isDefined())
+		if (!category.isDefined()) {
 			return Collections.EMPTY_SET;
+		}
 
 		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
 		Set containedCategories = new HashSet();
 		Set definedCategoryIds = activityManager.getDefinedCategoryIds();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String otherCategoryId = (String) i.next();
-			if (otherCategoryId.equals(categoryId))
+			if (otherCategoryId.equals(categoryId)) {
 				continue;
+			}
 			ICategory otherCategory = activityManager
 					.getCategory(otherCategoryId);
 			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 
-			if (otherCategoryActivityIds.isEmpty())
+			if (otherCategoryActivityIds.isEmpty()) {
 				continue;
+			}
 
-			if (activities.containsAll(otherCategoryActivityIds))
+			if (activities.containsAll(otherCategoryActivityIds)) {
 				containedCategories.add(otherCategoryId);
+			}
 
 		}
 		return containedCategories;
@@ -396,8 +416,9 @@ public final class WorkbenchActivityHelper {
 		Set enabledCategories = new HashSet();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
-			if (isEnabled(activityManager, categoryId))
+			if (isEnabled(activityManager, categoryId)) {
 				enabledCategories.add(categoryId);
+			}
 		}
 		return enabledCategories;
 	}
@@ -416,8 +437,9 @@ public final class WorkbenchActivityHelper {
 		Set partialCategories = new HashSet();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
-			if (isPartiallyEnabled(activityManager, categoryId))
+			if (isPartiallyEnabled(activityManager, categoryId)) {
 				partialCategories.add(categoryId);
+			}
 		}
 
 		return partialCategories;
@@ -468,8 +490,9 @@ public final class WorkbenchActivityHelper {
 			String categoryId = (String) i.next();
 			if (getActivityIdsForCategory(
 					activityManager.getCategory(categoryId)).contains(
-					activityId))
+					activityId)) {
 				enabledCategoriesForActivity.add(categoryId);
+			}
 		}
 		return enabledCategoriesForActivity;
 	}
@@ -490,8 +513,9 @@ public final class WorkbenchActivityHelper {
 
 		Set activityIds = getActivityIdsForCategory(activityManager
 				.getCategory(categoryId));
-		if (activityManager.getEnabledActivityIds().containsAll(activityIds))
+		if (activityManager.getEnabledActivityIds().containsAll(activityIds)) {
 			return true;
+		}
 
 		return false;
 	}

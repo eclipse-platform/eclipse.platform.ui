@@ -44,21 +44,25 @@ final class Identifier implements IIdentifier {
     private transient String string;
 
     Identifier(String id) {
-        if (id == null)
-            throw new NullPointerException();
+        if (id == null) {
+			throw new NullPointerException();
+		}
 
         this.id = id;
     }
 
     public void addIdentifierListener(IIdentifierListener identifierListener) {
-        if (identifierListener == null)
-            throw new NullPointerException();
+        if (identifierListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (identifierListeners == null)
-            identifierListeners = new ArrayList();
+        if (identifierListeners == null) {
+			identifierListeners = new ArrayList();
+		}
 
-        if (!identifierListeners.contains(identifierListener))
-            identifierListeners.add(identifierListener);
+        if (!identifierListeners.contains(identifierListener)) {
+			identifierListeners.add(identifierListener);
+		}
 
         strongReferences.add(this);
     }
@@ -71,16 +75,18 @@ final class Identifier implements IIdentifier {
         if (compareTo == 0) {
             compareTo = Util.compare(enabled, castedObject.enabled);
 
-            if (compareTo == 0)
-                compareTo = Util.compare(id, castedObject.id);
+            if (compareTo == 0) {
+				compareTo = Util.compare(id, castedObject.id);
+			}
         }
 
         return compareTo;
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof Identifier))
-            return false;
+        if (!(object instanceof Identifier)) {
+			return false;
+		}
 
         final Identifier castedObject = (Identifier) object;
         if (!Util.equals(activityIds, castedObject.activityIds)) {
@@ -95,13 +101,16 @@ final class Identifier implements IIdentifier {
     }
 
     void fireIdentifierChanged(IdentifierEvent identifierEvent) {
-        if (identifierEvent == null)
-            throw new NullPointerException();
+        if (identifierEvent == null) {
+			throw new NullPointerException();
+		}
 
-        if (identifierListeners != null)
-            for (int i = 0; i < identifierListeners.size(); i++)
-                ((IIdentifierListener) identifierListeners.get(i))
+        if (identifierListeners != null) {
+			for (int i = 0; i < identifierListeners.size(); i++) {
+				((IIdentifierListener) identifierListeners.get(i))
                         .identifierChanged(identifierEvent);
+			}
+		}
     }
 
     public Set getActivityIds() {
@@ -117,8 +126,9 @@ final class Identifier implements IIdentifier {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;
@@ -129,14 +139,17 @@ final class Identifier implements IIdentifier {
     }
 
     public void removeIdentifierListener(IIdentifierListener identifierListener) {
-        if (identifierListener == null)
-            throw new NullPointerException();
+        if (identifierListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (identifierListeners != null)
-            identifierListeners.remove(identifierListener);
+        if (identifierListeners != null) {
+			identifierListeners.remove(identifierListener);
+		}
 
-        if (identifierListeners.isEmpty())
-            strongReferences.remove(this);
+        if (identifierListeners.isEmpty()) {
+			strongReferences.remove(this);
+		}
     }
 
     boolean setActivityIds(Set activityIds) {

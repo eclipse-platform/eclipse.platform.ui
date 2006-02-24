@@ -44,8 +44,9 @@ public class PerspectiveBarManager extends ToolBarManager {
     public ToolBar createControl(Composite parent) {
         ToolBar control = super.createControl(parent);
 
-        if (control != null && !control.isDisposed())
-            control.setFont(getFont());
+        if (control != null && !control.isDisposed()) {
+			control.setFont(getFont());
+		}
 
         return control;
     }
@@ -53,8 +54,9 @@ public class PerspectiveBarManager extends ToolBarManager {
     public PerspectiveBarManager(ToolBar toolbar) {
         super(toolbar);
 
-        if (toolbar != null && !toolbar.isDisposed())
-            toolbar.setFont(getFont());
+        if (toolbar != null && !toolbar.isDisposed()) {
+			toolbar.setFont(getFont());
+		}
     }
 
     // TODO begin refactor this out? it is not good that we know we are inside a
@@ -76,8 +78,9 @@ public class PerspectiveBarManager extends ToolBarManager {
         CoolItem item = (CoolItem) event.widget;
         //ToolBar toolbar = (ToolBar)getControl();
         Control control = getControl();
-        if (!(control instanceof ToolBar))
-            return; // currently we only deal with toolbar items
+        if (!(control instanceof ToolBar)) {
+			return; // currently we only deal with toolbar items
+		}
         /* Retrieve the current bounding rectangle for the selected cool item. */
         Rectangle itemBounds = item.getBounds();
         /* Convert to display coordinates (i.e. was relative to CoolBar). */
@@ -109,8 +112,9 @@ public class PerspectiveBarManager extends ToolBarManager {
              * the tool is at least partially hidden, and all remaining tools
              * are completely hidden.
              */
-            if (!intersection.equals(toolBounds))
-                break;
+            if (!intersection.equals(toolBounds)) {
+				break;
+			}
             i++;
         }
         /* Create a pop-up menu with items for each of the hidden buttons. */
@@ -119,8 +123,9 @@ public class PerspectiveBarManager extends ToolBarManager {
         for (int j = i; j < toolCount; j++) {
             ToolItem tool = tools[j];
             MenuItem menuItem = new MenuItem(popup, SWT.NONE);
-            if (tool.getSelection())
-                menuItem.setEnabled(false);
+            if (tool.getSelection()) {
+				menuItem.setEnabled(false);
+			}
             
             // Show the full text of the perspective name in the chevron menu.
 			if (tool.getData() instanceof PerspectiveBarContributionItem) {
@@ -158,8 +163,9 @@ public class PerspectiveBarManager extends ToolBarManager {
         popup.setVisible(true);
         Display display = coolBar.getDisplay();
         while (popup != null && !popup.isDisposed() && popup.isVisible()) {
-            if (!display.readAndDispatch())
-                display.sleep();
+            if (!display.readAndDispatch()) {
+				display.sleep();
+			}
         }
         if (popup != null) {
             popup.dispose();
@@ -173,8 +179,9 @@ public class PerspectiveBarManager extends ToolBarManager {
     protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
         super.relayout(toolBar, oldCount, newCount);
 
-        if (getControl() != null)
-            LayoutUtil.resize(getControl());
+        if (getControl() != null) {
+			LayoutUtil.resize(getControl());
+		}
     }
 
     void setParent(CoolBar cool) {
@@ -193,8 +200,9 @@ public class PerspectiveBarManager extends ToolBarManager {
      * @param contribItem the PerspectiveBarContributionItem to select
      */
     void select(PerspectiveBarContributionItem contribItem) {
-        if (contribItem.getToolItem() == null)
-            return;
+        if (contribItem.getToolItem() == null) {
+			return;
+		}
         // check if not visible and ensure visible
         if (getControl().isVisible()
                 && !isItemVisible(contribItem.getToolItem())) {
@@ -257,13 +265,15 @@ public class PerspectiveBarManager extends ToolBarManager {
      */
     public void arrangeToolbar() {
         // check if the tool bar is visible
-        if (!getControl().isVisible())
-            return;
+        if (!getControl().isVisible()) {
+			return;
+		}
 
         // the tool bar should contain at least the new perspective button 
         // and 2 other buttons
-        if (getControl().getItemCount() < 3)
-            return;
+        if (getControl().getItemCount() < 3) {
+			return;
+		}
 
         // Find the selected item and make sure it is visible.
         IContributionItem[] items = getItems();

@@ -103,8 +103,9 @@ public final class KeySequence implements Comparable {
      */
     public static KeySequence getInstance(KeySequence keySequence,
             KeyStroke keyStroke) {
-        if (keySequence == null || keyStroke == null)
-            throw new NullPointerException();
+        if (keySequence == null || keyStroke == null) {
+			throw new NullPointerException();
+		}
 
         List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
         keyStrokes.add(keyStroke);
@@ -190,15 +191,17 @@ public final class KeySequence implements Comparable {
      *             parsed to a valid key sequence.
      */
     public static KeySequence getInstance(String string) throws ParseException {
-        if (string == null)
-            throw new NullPointerException();
+        if (string == null) {
+			throw new NullPointerException();
+		}
 
         List keyStrokes = new ArrayList();
         StringTokenizer stringTokenizer = new StringTokenizer(string,
                 KEY_STROKE_DELIMITERS);
 
-        while (stringTokenizer.hasMoreTokens())
-            keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
+        while (stringTokenizer.hasMoreTokens()) {
+			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
+		}
 
         try {
             return new KeySequence(keyStrokes);
@@ -243,8 +246,9 @@ public final class KeySequence implements Comparable {
         for (int i = 0; i < this.keyStrokes.size() - 1; i++) {
             KeyStroke keyStroke = (KeyStroke) this.keyStrokes.get(i);
 
-            if (!keyStroke.isComplete())
-                throw new IllegalArgumentException();
+            if (!keyStroke.isComplete()) {
+				throw new IllegalArgumentException();
+			}
         }
     }
 
@@ -270,8 +274,9 @@ public final class KeySequence implements Comparable {
      *         key sequence.
      */
     public boolean endsWith(KeySequence keySequence, boolean equals) {
-        if (keySequence == null)
-            throw new NullPointerException();
+        if (keySequence == null) {
+			throw new NullPointerException();
+		}
 
         return Util.endsWith(keyStrokes, keySequence.keyStrokes, equals);
     }
@@ -280,8 +285,9 @@ public final class KeySequence implements Comparable {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object object) {
-        if (!(object instanceof KeySequence))
-            return false;
+        if (!(object instanceof KeySequence)) {
+			return false;
+		}
 
         return keyStrokes.equals(((KeySequence) object).keyStrokes);
     }
@@ -355,8 +361,9 @@ public final class KeySequence implements Comparable {
      *         this key sequence.
      */
     public boolean startsWith(KeySequence keySequence, boolean equals) {
-        if (keySequence == null)
-            throw new NullPointerException();
+        if (keySequence == null) {
+			throw new NullPointerException();
+		}
 
         return Util.startsWith(keyStrokes, keySequence.keyStrokes, equals);
     }

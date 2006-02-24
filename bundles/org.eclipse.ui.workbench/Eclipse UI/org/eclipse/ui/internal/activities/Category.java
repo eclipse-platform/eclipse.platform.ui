@@ -49,21 +49,25 @@ final class Category implements ICategory {
     private String description;
 
     Category(String id) {
-        if (id == null)
-            throw new NullPointerException();
+        if (id == null) {
+			throw new NullPointerException();
+		}
 
         this.id = id;
     }
 
     public void addCategoryListener(ICategoryListener categoryListener) {
-        if (categoryListener == null)
-            throw new NullPointerException();
+        if (categoryListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (categoryListeners == null)
-            categoryListeners = new ArrayList();
+        if (categoryListeners == null) {
+			categoryListeners = new ArrayList();
+		}
 
-        if (!categoryListeners.contains(categoryListener))
-            categoryListeners.add(categoryListener);
+        if (!categoryListeners.contains(categoryListener)) {
+			categoryListeners.add(categoryListener);
+		}
 
         strongReferences.add(this);
     }
@@ -80,8 +84,9 @@ final class Category implements ICategory {
             if (compareTo == 0) {
                 compareTo = Util.compare(id, castedObject.id);
 
-                if (compareTo == 0)
-                    compareTo = Util.compare(name, castedObject.name);
+                if (compareTo == 0) {
+					compareTo = Util.compare(name, castedObject.name);
+				}
             }
         }
 
@@ -89,8 +94,9 @@ final class Category implements ICategory {
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof Category))
-            return false;
+        if (!(object instanceof Category)) {
+			return false;
+		}
 
         final Category castedObject = (Category) object;
         if (!Util.equals(categoryActivityBindings,
@@ -110,13 +116,16 @@ final class Category implements ICategory {
     }
 
     void fireCategoryChanged(CategoryEvent categoryEvent) {
-        if (categoryEvent == null)
-            throw new NullPointerException();
+        if (categoryEvent == null) {
+			throw new NullPointerException();
+		}
 
-        if (categoryListeners != null)
-            for (int i = 0; i < categoryListeners.size(); i++)
-                ((ICategoryListener) categoryListeners.get(i))
+        if (categoryListeners != null) {
+			for (int i = 0; i < categoryListeners.size(); i++) {
+				((ICategoryListener) categoryListeners.get(i))
                         .categoryChanged(categoryEvent);
+			}
+		}
     }
 
     public Set getCategoryActivityBindings() {
@@ -128,8 +137,9 @@ final class Category implements ICategory {
     }
 
     public String getName() throws NotDefinedException {
-        if (!defined)
-            throw new NotDefinedException();
+        if (!defined) {
+			throw new NotDefinedException();
+		}
 
         return name;
     }
@@ -141,8 +151,9 @@ final class Category implements ICategory {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-            if (hashCode == HASH_INITIAL)
-                hashCode++;
+            if (hashCode == HASH_INITIAL) {
+				hashCode++;
+			}
         }
 
         return hashCode;
@@ -153,14 +164,17 @@ final class Category implements ICategory {
     }
 
     public void removeCategoryListener(ICategoryListener categoryListener) {
-        if (categoryListener == null)
-            throw new NullPointerException();
+        if (categoryListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (categoryListeners != null)
-            categoryListeners.remove(categoryListener);
+        if (categoryListeners != null) {
+			categoryListeners.remove(categoryListener);
+		}
 
-        if (categoryListeners.isEmpty())
-            strongReferences.remove(this);
+        if (categoryListeners.isEmpty()) {
+			strongReferences.remove(this);
+		}
     }
 
     boolean setCategoryActivityBindings(Set categoryActivityBindings) {
@@ -225,8 +239,9 @@ final class Category implements ICategory {
      * @see org.eclipse.ui.activities.ICategory#getDescription()
      */
     public String getDescription() throws NotDefinedException {
-        if (!defined)
-            throw new NotDefinedException();
+        if (!defined) {
+			throw new NotDefinedException();
+		}
 
         return description;
     }

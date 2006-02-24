@@ -147,8 +147,9 @@ public class WorkbenchThemeManager extends EventManager implements
         if (currentTheme == null) {			
             String themeId = PrefUtil.getAPIPreferenceStore()
                     .getString(IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
-            if (themeId.equals("")) //$NON-NLS-1$
-                themeId = IThemeManager.DEFAULT_THEME;
+            if (themeId.equals("")) { //$NON-NLS-1$
+				themeId = IThemeManager.DEFAULT_THEME;
+			}
 
             setCurrentTheme(themeId);
             if (currentTheme == null) { // bad preference
@@ -189,12 +190,14 @@ public class WorkbenchThemeManager extends EventManager implements
      * @see org.eclipse.ui.themes.IThemeManager#getTheme(java.lang.String)
      */
     public ITheme getTheme(String id) {
-        if (id.equals(IThemeManager.DEFAULT_THEME))
-            return getTheme((IThemeDescriptor) null);
+        if (id.equals(IThemeManager.DEFAULT_THEME)) {
+			return getTheme((IThemeDescriptor) null);
+		}
 
         IThemeDescriptor td = getThemeRegistry().findTheme(id);
-        if (td == null)
-            return null;
+        if (td == null) {
+			return null;
+		}
         return getTheme(td);
     }
 
@@ -223,8 +226,9 @@ public class WorkbenchThemeManager extends EventManager implements
         if (WorkbenchThemeManager.getInstance().doSetCurrentTheme(id)) {
             firePropertyChange(CHANGE_CURRENT_THEME, oldTheme,
                     getCurrentTheme());
-            if (oldTheme != null)
-                oldTheme.removePropertyChangeListener(currentThemeListener);
+            if (oldTheme != null) {
+				oldTheme.removePropertyChangeListener(currentThemeListener);
+			}
             currentTheme.addPropertyChangeListener(currentThemeListener);
 
             // update the preference if required.

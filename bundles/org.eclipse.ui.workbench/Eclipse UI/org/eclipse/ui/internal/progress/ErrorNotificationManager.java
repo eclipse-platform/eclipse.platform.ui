@@ -115,8 +115,9 @@ public class ErrorNotificationManager {
                     // Delay prompting if the job property is set
                     Object noPromptProperty = errorInfo.getJob().getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
                     boolean prompt= true;
-                    if (noPromptProperty instanceof Boolean) 
-                        prompt = !((Boolean)noPromptProperty).booleanValue();
+                    if (noPromptProperty instanceof Boolean) {
+						prompt = !((Boolean)noPromptProperty).booleanValue();
+					}
                     
                     if (prompt) {
                         return openErrorDialog(null /* use default title */, null /* use default message */, errorInfo);
@@ -150,8 +151,9 @@ public class ErrorNotificationManager {
 
         //Abort on shutdown
         if (workbench instanceof Workbench
-                && ((Workbench) workbench).isClosing())
-            return Status.CANCEL_STATUS;
+                && ((Workbench) workbench).isClosing()) {
+			return Status.CANCEL_STATUS;
+		}
         dialog = new JobErrorDialog(ProgressManagerUtil.getDefaultParent(), title, msg, errorInfo, IStatus.OK
                 | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
         
@@ -184,8 +186,9 @@ public class ErrorNotificationManager {
 		for (int i = 0; i < infos.length; i++) {
 			if(infos[i].isJobInfo()){
 				JobInfo info = (JobInfo) infos[i];
-				if(errorStatuses.contains(info.getJob().getResult()))
+				if(errorStatuses.contains(info.getJob().getResult())) {
 					FinishedJobs.getInstance().remove(info);
+				}
 			}
 		}
 		

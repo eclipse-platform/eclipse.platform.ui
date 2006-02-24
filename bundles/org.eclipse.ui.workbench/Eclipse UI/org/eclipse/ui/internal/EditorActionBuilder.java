@@ -108,8 +108,9 @@ public class EditorActionBuilder extends PluginActionBuilder {
             ArrayList results = new ArrayList();
             for (int i = 0; i < cache.size(); i++) {
                 EditorContribution ec = (EditorContribution) cache.get(i);
-                if (ec.actions != null)
-                    results.addAll(ec.actions);
+                if (ec.actions != null) {
+					results.addAll(ec.actions);
+				}
             }
             return (ActionDescriptor[]) results
                     .toArray(new ActionDescriptor[results.size()]);

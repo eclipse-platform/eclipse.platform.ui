@@ -137,8 +137,9 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
                     IWorkbenchRegistryConstants.TAG_TRIGGERPOINT)) {
                 String id = element
                         .getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-                if (id == null)
-                    continue;
+                if (id == null) {
+					continue;
+				}
                 RegistryTriggerPoint triggerPoint = new RegistryTriggerPoint(
                         id, element);
                 triggerMap.put(id, triggerPoint);

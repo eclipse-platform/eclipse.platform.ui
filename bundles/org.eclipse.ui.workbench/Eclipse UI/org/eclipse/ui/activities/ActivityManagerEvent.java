@@ -101,17 +101,21 @@ public final class ActivityManagerEvent {
             final Set previouslyDefinedActivityIds,
             final Set previouslyDefinedCategoryIds,
             final Set previouslyEnabledActivityIds) {
-        if (activityManager == null)
-            throw new NullPointerException();
+        if (activityManager == null) {
+			throw new NullPointerException();
+		}
 
-        if (!definedActivityIdsChanged && previouslyDefinedActivityIds != null)
-            throw new IllegalArgumentException();
+        if (!definedActivityIdsChanged && previouslyDefinedActivityIds != null) {
+			throw new IllegalArgumentException();
+		}
 
-        if (!definedCategoryIdsChanged && previouslyDefinedCategoryIds != null)
-            throw new IllegalArgumentException();
+        if (!definedCategoryIdsChanged && previouslyDefinedCategoryIds != null) {
+			throw new IllegalArgumentException();
+		}
 
-        if (!enabledActivityIdsChanged && previouslyEnabledActivityIds != null)
-            throw new IllegalArgumentException();
+        if (!enabledActivityIdsChanged && previouslyEnabledActivityIds != null) {
+			throw new IllegalArgumentException();
+		}
 
         if (definedActivityIdsChanged) {
             this.previouslyDefinedActivityIds = Util.safeCopy(

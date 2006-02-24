@@ -291,12 +291,15 @@ public class FastViewBar implements IWindowTrim {
         String loc = PrefUtil.getAPIPreferenceStore().getString(
                 IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION);
 
-        if (IWorkbenchPreferenceConstants.BOTTOM.equals(loc))
-            return SWT.BOTTOM;
-        if (IWorkbenchPreferenceConstants.LEFT.equals(loc))
-            return SWT.LEFT;
-        if (IWorkbenchPreferenceConstants.RIGHT.equals(loc))
-            return SWT.RIGHT;
+        if (IWorkbenchPreferenceConstants.BOTTOM.equals(loc)) {
+			return SWT.BOTTOM;
+		}
+        if (IWorkbenchPreferenceConstants.LEFT.equals(loc)) {
+			return SWT.LEFT;
+		}
+        if (IWorkbenchPreferenceConstants.RIGHT.equals(loc)) {
+			return SWT.RIGHT;
+		}
 
         Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
         if (bundle != null) {

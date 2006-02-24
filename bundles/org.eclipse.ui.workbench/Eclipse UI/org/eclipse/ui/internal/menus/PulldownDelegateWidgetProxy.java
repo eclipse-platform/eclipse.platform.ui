@@ -230,10 +230,11 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	public final void fill(final Menu parent, final int index) {
 		// Create the menu item.
 		final MenuItem menuItem;
-		if (index >= 0)
+		if (index >= 0) {
 			menuItem = new MenuItem(parent, SWT.CASCADE, index);
-		else
+		} else {
 			menuItem = new MenuItem(parent, SWT.CASCADE);
+		}
 		menuItem.setData(this);
 		widget = menuItem;
 
@@ -263,10 +264,11 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	public void fill(ToolBar parent, int index) {
 		// Create the menu item.
 		final ToolItem toolItem;
-		if (index >= 0)
+		if (index >= 0) {
 			toolItem = new ToolItem(parent, SWT.DROP_DOWN, index);
-		else
+		} else {
 			toolItem = new ToolItem(parent, SWT.DROP_DOWN);
+		}
 		widget = toolItem;
 		toolItem.setData(this);
 

@@ -91,8 +91,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 		 */
 		String getDisplayString() {
-			if (blockedTaskName == null)
+			if (blockedTaskName == null) {
 				return ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement;
+			}
 			return blockedTaskName;
 		}
 
@@ -184,19 +185,22 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	public static BlockedJobsDialog createBlockedDialog(Shell parentShell,
 			IProgressMonitor blockedMonitor, IStatus reason, String taskName) {
 		// use an existing dialog if available
-		if (singleton != null)
+		if (singleton != null) {
 			return singleton;
+		}
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
 
 		if (taskName == null) {
 			if (singleton.getParentShell() != null) {
 				String shellText = singleton.getParentShell().getText();
-				if (shellText.length() == 0)
+				if (shellText.length() == 0) {
 					shellText = ProgressMessages.BlockedJobsDialog_BlockedTitle;
+				}
 				singleton.setBlockedTaskName(shellText);
 			}
-		} else
+		} else {
 			singleton.setBlockedTaskName(taskName);
+		}
 
 		/**
 		 * If there is no parent shell we have not been asked for a parent so we
@@ -212,10 +216,12 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 				 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					if (singleton == null)
+					if (singleton == null) {
 						return Status.CANCEL_STATUS;
-					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+					}
+					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this)) {
 						return Status.CANCEL_STATUS;
+					}
 					singleton.open();
 					return Status.OK_STATUS;
 				}
@@ -225,8 +231,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			dialogJob.setSystem(true);
 			dialogJob.schedule(PlatformUI.getWorkbench().getProgressService()
 					.getLongOperationTime());
-		} else
+		} else {
 			singleton.open();
+		}
 
 		return singleton;
 	}
@@ -238,8 +245,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            The monitor that is now cleared.
 	 */
 	public static void clear(IProgressMonitor monitor) {
-		if (singleton == null)
+		if (singleton == null) {
 			return;
+		}
 		singleton.close(monitor);
 
 	}
@@ -343,10 +351,12 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	private void clearCursors() {
 		clearCursor(cancelSelected);
 		clearCursor(getShell());
-		if (arrowCursor != null)
+		if (arrowCursor != null) {
 			arrowCursor.dispose();
-		if (waitCursor != null)
+		}
+		if (waitCursor != null) {
 			waitCursor.dispose();
+		}
 		arrowCursor = null;
 		waitCursor = null;
 	}
@@ -370,8 +380,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(ProgressMessages.BlockedJobsDialog_BlockedTitle);
-		if (waitCursor == null)
+		if (waitCursor == null) {
 			waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
+		}
 		shell.setCursor(waitCursor);
 	}
 
@@ -384,8 +395,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	private void setMessage(String messageString) {
 		// must not set null text in a label
 		message = messageString == null ? "" : messageString; //$NON-NLS-1$
-		if (messageLabel == null || messageLabel.isDisposed())
+		if (messageLabel == null || messageLabel.isDisposed()) {
 			return;
+		}
 		messageLabel.setText(message);
 	}
 
@@ -417,8 +429,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	public boolean close(IProgressMonitor monitor) {
 		// ignore requests to close the dialog from all but the first monitor
-		if (blockingMonitor != monitor)
+		if (blockingMonitor != monitor) {
 			return false;
+		}
 		return close();
 	}
 

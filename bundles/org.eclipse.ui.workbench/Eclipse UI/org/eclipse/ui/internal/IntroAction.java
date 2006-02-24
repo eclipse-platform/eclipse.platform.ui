@@ -78,9 +78,10 @@ public class IntroAction extends Action implements
             MessageDialog.openWarning(event.display.getActiveShell(),
                     IntroMessages.Intro_missing_product_title,
                     IntroMessages.Intro_missing_product_message);
-        } else
-            workbenchWindow.getWorkbench().getIntroManager().showIntro(
+        } else {
+			workbenchWindow.getWorkbench().getIntroManager().showIntro(
                     workbenchWindow, false);
+		}
     }
 
     /* (non-Javadoc)
@@ -89,8 +90,9 @@ public class IntroAction extends Action implements
     public ImageDescriptor getImageDescriptor() {
         IntroDescriptor introDescriptor = ((Workbench) workbenchWindow
                 .getWorkbench()).getIntroDescriptor();
-        if (introDescriptor == null)
-            return null;
+        if (introDescriptor == null) {
+			return null;
+		}
         return introDescriptor.getImageDescriptor();
     }
 }

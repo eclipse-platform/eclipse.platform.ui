@@ -53,10 +53,12 @@ public class DefaultPartList implements ISystemMenu {
 
         Monitor mon = folder.getTabFolder().getControl().getMonitor();
         Rectangle bounds = mon.getClientArea();
-        if (x + size.x > bounds.x + bounds.width)
-            x = bounds.x + bounds.width - size.x;
-        if (y + size.y > bounds.y + bounds.height)
-            y = bounds.y + bounds.height - size.y;
+        if (x + size.x > bounds.x + bounds.width) {
+			x = bounds.x + bounds.width - size.x;
+		}
+        if (y + size.y > bounds.y + bounds.height) {
+			y = bounds.y + bounds.height - size.y;
+		}
         editorList.setLocation(new Point(x, y));
         editorList.setVisible(true);
         editorList.setFocus();

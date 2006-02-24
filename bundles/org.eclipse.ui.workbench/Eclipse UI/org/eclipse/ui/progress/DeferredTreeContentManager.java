@@ -88,8 +88,9 @@ public class DeferredTreeContentManager {
         this(provider, viewer);
         Object siteService = site
                 .getAdapter(IWorkbenchSiteProgressService.class);
-        if (siteService != null)
-            progressService = (IWorkbenchSiteProgressService) siteService;
+        if (siteService != null) {
+			progressService = (IWorkbenchSiteProgressService) siteService;
+		}
     }
 
     /**
@@ -134,8 +135,9 @@ public class DeferredTreeContentManager {
      */
     public Object[] getChildren(final Object parent) {
         IDeferredWorkbenchAdapter element = getAdapter(parent);
-        if (element == null)
-            return null;
+        if (element == null) {
+			return null;
+		}
         PendingUpdateAdapter placeholder = createPendingUpdateAdapter();
         startFetchingDeferredChildren(parent, element, placeholder);
         return new Object[] { placeholder };
@@ -161,14 +163,17 @@ public class DeferredTreeContentManager {
      * @return IDeferredWorkbenchAdapter or <code>null</code>
      */
     protected IDeferredWorkbenchAdapter getAdapter(Object element) {
-        if (element instanceof IDeferredWorkbenchAdapter)
-            return (IDeferredWorkbenchAdapter) element;
-        if (!(element instanceof IAdaptable))
-            return null;
+        if (element instanceof IDeferredWorkbenchAdapter) {
+			return (IDeferredWorkbenchAdapter) element;
+		}
+        if (!(element instanceof IAdaptable)) {
+			return null;
+		}
         Object adapter = ((IAdaptable) element)
                 .getAdapter(IDeferredWorkbenchAdapter.class);
-        if (adapter == null)
-            return null;
+        if (adapter == null) {
+			return null;
+		}
         return (IDeferredWorkbenchAdapter) adapter;
     }
 
@@ -200,8 +205,9 @@ public class DeferredTreeContentManager {
              */
             public IStatus run(IProgressMonitor monitor) {
                 adapter.fetchDeferredChildren(parent, collector, monitor);
-                if(monitor.isCanceled())
-                	return Status.CANCEL_STATUS;
+                if(monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
 				return Status.OK_STATUS;
             }
 
@@ -212,8 +218,9 @@ public class DeferredTreeContentManager {
             public boolean belongsTo(Object family) {
             	if (family instanceof DeferredContentFamily) {
             		DeferredContentFamily contentFamily = (DeferredContentFamily) family;
-            		if (contentFamily.manager == DeferredTreeContentManager.this)
-            			return isParent(contentFamily, parent);
+            		if (contentFamily.manager == DeferredTreeContentManager.this) {
+						return isParent(contentFamily, parent);
+					}
             	}
                 return false;
                
@@ -232,14 +239,17 @@ public class DeferredTreeContentManager {
              * 			  parents are the same as the element of the family.
              */
             private boolean isParent(DeferredContentFamily family, Object child) {
-                if (family.element.equals(child))
-                    return true;
+                if (family.element.equals(child)) {
+					return true;
+				}
                 IWorkbenchAdapter workbenchAdapter = getWorkbenchAdapter(child);
-                if (workbenchAdapter == null)
-                    return false;
+                if (workbenchAdapter == null) {
+					return false;
+				}
                 Object elementParent = workbenchAdapter.getParent(child);
-                if (elementParent == null)
-                    return false;
+                if (elementParent == null) {
+					return false;
+				}
                 return isParent(family, elementParent);
             }
 
@@ -250,14 +260,17 @@ public class DeferredTreeContentManager {
              *            The object we are adapting to.
              */
             private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
-                if (element instanceof IWorkbenchAdapter)
-                    return (IWorkbenchAdapter) element;
-                if (!(element instanceof IAdaptable))
-                    return null;
+                if (element instanceof IWorkbenchAdapter) {
+					return (IWorkbenchAdapter) element;
+				}
+                if (!(element instanceof IAdaptable)) {
+					return null;
+				}
                 Object workbenchAdapter = ((IAdaptable) element)
                         .getAdapter(IWorkbenchAdapter.class);
-                if (workbenchAdapter == null)
-                    return null;
+                if (workbenchAdapter == null) {
+					return null;
+				}
                 return (IWorkbenchAdapter) workbenchAdapter;
             }
         };
@@ -272,10 +285,11 @@ public class DeferredTreeContentManager {
             }
         });
         job.setRule(adapter.getRule(parent));
-        if (progressService == null)
-            job.schedule();
-        else
-            progressService.schedule(job);
+        if (progressService == null) {
+			job.schedule();
+		} else {
+			progressService.schedule(job);
+		}
     }
     
     /**
@@ -310,8 +324,9 @@ public class DeferredTreeContentManager {
              */
             public IStatus runInUIThread(IProgressMonitor updateMonitor) {
                 //Cancel the job if the tree viewer got closed
-                if (treeViewer.getControl().isDisposed())
-                    return Status.CANCEL_STATUS;
+                if (treeViewer.getControl().isDisposed()) {
+					return Status.CANCEL_STATUS;
+				}
                 treeViewer.add(parent, children);
                 return Status.OK_STATUS;
             }
@@ -341,8 +356,9 @@ public class DeferredTreeContentManager {
      * @param placeholder
      */
     protected void runClearPlaceholderJob(final PendingUpdateAdapter placeholder) {
-        if (placeholder.isRemoved() || !PlatformUI.isWorkbenchRunning())
-            return;
+        if (placeholder.isRemoved() || !PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
         //Clear the placeholder if it is still there
         WorkbenchJob clearJob = new WorkbenchJob(ProgressMessages.DeferredTreeContentManager_ClearJob) {
             /*
@@ -353,8 +369,9 @@ public class DeferredTreeContentManager {
             public IStatus runInUIThread(IProgressMonitor monitor) {
                 if (!placeholder.isRemoved()) {
                     Control control = treeViewer.getControl();
-                    if (control.isDisposed())
-                        return Status.CANCEL_STATUS;
+                    if (control.isDisposed()) {
+						return Status.CANCEL_STATUS;
+					}
                     treeViewer.remove(placeholder);
                     placeholder.setRemoved(true);
                 }
@@ -372,8 +389,9 @@ public class DeferredTreeContentManager {
      * @param parent
      */
     public void cancel(Object parent) {
-    	if(parent == null)
-    		return;
+    	if(parent == null) {
+			return;
+		}
     	
         Platform.getJobManager().cancel(new DeferredContentFamily(this, parent));
     }

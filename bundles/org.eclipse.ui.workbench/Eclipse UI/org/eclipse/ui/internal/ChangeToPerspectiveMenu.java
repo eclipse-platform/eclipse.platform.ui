@@ -72,8 +72,9 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
         int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
         IWorkbenchPage page = getWindow().getActivePage();
         IPerspectiveDescriptor persp = null;
-        if (page != null)
-            persp = page.getPerspective();
+        if (page != null) {
+			persp = page.getPerspective();
+		}
 
         // Only open a new window if user preference is set and the window
         // has an active perspective.

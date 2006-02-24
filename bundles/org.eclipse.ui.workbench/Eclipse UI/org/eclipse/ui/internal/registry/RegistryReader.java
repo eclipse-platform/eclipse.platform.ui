@@ -135,8 +135,9 @@ public abstract class RegistryReader {
      */
     protected void readElements(IConfigurationElement[] elements) {
         for (int i = 0; i < elements.length; i++) {
-            if (!readElement(elements[i]))
-                logUnknownElement(elements[i]);
+            if (!readElement(elements[i])) {
+				logUnknownElement(elements[i]);
+			}
         }
     }
 
@@ -160,12 +161,14 @@ public abstract class RegistryReader {
             String extensionPoint) {
         IExtensionPoint point = registry.getExtensionPoint(pluginId,
                 extensionPoint);
-        if (point == null)
-            return;
+        if (point == null) {
+			return;
+		}
         IExtension[] extensions = point.getExtensions();
         extensions = orderExtensions(extensions);
-        for (int i = 0; i < extensions.length; i++)
-            readExtension(extensions[i]);
+        for (int i = 0; i < extensions.length; i++) {
+			readExtension(extensions[i]);
+		}
     }
     
     /**
@@ -197,11 +200,13 @@ public abstract class RegistryReader {
 	 */
     public static String getClassValue(IConfigurationElement configElement, String classAttributeName) {
     	String className = configElement.getAttribute(classAttributeName);
-    	if (className != null) 
-    		return className;
+    	if (className != null) {
+			return className;
+		}
 		IConfigurationElement [] candidateChildren = configElement.getChildren(classAttributeName);
-		if (candidateChildren.length == 0) 
+		if (candidateChildren.length == 0) {
 			return null;
+		}
 	
 		return candidateChildren[0].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
     }

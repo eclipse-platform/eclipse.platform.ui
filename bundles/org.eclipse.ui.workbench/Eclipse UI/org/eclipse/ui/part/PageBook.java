@@ -36,8 +36,9 @@ public class PageBook extends Composite {
 
         protected Point computeSize(Composite composite, int wHint, int hHint,
                 boolean flushCache) {
-            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-                return new Point(wHint, hHint);
+            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+				return new Point(wHint, hHint);
+			}
 
             Point result = null;
             if (currentPage != null) {
@@ -47,10 +48,12 @@ public class PageBook extends Composite {
                 //result= new Point(rect.width, rect.height);
                 result = new Point(0, 0);
             }
-            if (wHint != SWT.DEFAULT)
-                result.x = wHint;
-            if (hHint != SWT.DEFAULT)
-                result.y = hHint;
+            if (wHint != SWT.DEFAULT) {
+				result.x = wHint;
+			}
+            if (hHint != SWT.DEFAULT) {
+				result.y = hHint;
+			}
             return result;
         }
 
@@ -85,10 +88,12 @@ public class PageBook extends Composite {
      */
     public void showPage(Control page) {
 
-        if (page == currentPage)
-            return;
-        if (page.getParent() != this)
-            return;
+        if (page == currentPage) {
+			return;
+		}
+        if (page.getParent() != this) {
+			return;
+		}
 
         Control oldPage = currentPage;
         currentPage = page;
@@ -104,7 +109,8 @@ public class PageBook extends Composite {
         }
 
         // hide old *after* new page has been made visible in order to avoid flashing
-        if (oldPage != null && !oldPage.isDisposed())
-            oldPage.setVisible(false);
+        if (oldPage != null && !oldPage.isDisposed()) {
+			oldPage.setVisible(false);
+		}
     }
 }

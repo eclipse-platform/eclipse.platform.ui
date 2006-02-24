@@ -209,8 +209,9 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		Iterator iterator = pages.iterator();
 		while(iterator.hasNext()){
 			RegistryPageContributor next = (RegistryPageContributor) iterator.next();
-			if(next.getPageId().equals(id))
+			if(next.getPageId().equals(id)) {
 				return next;
+			}
 		}
 		return null;
 	}

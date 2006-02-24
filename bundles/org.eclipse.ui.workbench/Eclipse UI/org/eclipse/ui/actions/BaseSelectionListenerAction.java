@@ -133,10 +133,11 @@ public abstract class BaseSelectionListenerAction extends Action implements
      */
     public final void selectionChanged(SelectionChangedEvent event) {
         ISelection selection = event.getSelection();
-        if (selection instanceof IStructuredSelection)
-            selectionChanged((IStructuredSelection) selection);
-        else
-            selectionChanged(StructuredSelection.EMPTY);
+        if (selection instanceof IStructuredSelection) {
+			selectionChanged((IStructuredSelection) selection);
+		} else {
+			selectionChanged(StructuredSelection.EMPTY);
+		}
     }
 
     /**

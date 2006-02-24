@@ -92,9 +92,9 @@ public class DragBorder {
     	}
     	else if (alignment == SWT.TOP) {
     		border.setLocation(newPos.x, newPos.y);
-    	}
-    	else
-    		border.setLocation(newPos.x, newPos.y - border.getSize().y);
+    	} else {
+			border.setLocation(newPos.x, newPos.y - border.getSize().y);
+		}
     	
     	// Force the control to remain inside the shell
 		Rectangle bb = border.getBounds();

@@ -72,8 +72,9 @@ public final class ComponentSupport {
         Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
 
         // it's not our job to activate the plug-in
-        if (!BundleUtility.isActivated(bundle))
-            return null;
+        if (!BundleUtility.isActivated(bundle)) {
+			return null;
+		}
 
         try {
             Class c = bundle
@@ -98,8 +99,9 @@ public final class ComponentSupport {
                         "findProgramID", new Class[] { String.class }); //$NON-NLS-1$
                 strName = (String) findMethod.invoke(null,
                         new Object[] { strName });
-                if (strName.length() > 0)
-                    return true;
+                if (strName.length() > 0) {
+					return true;
+				}
             } catch (ClassNotFoundException exception) {
                 //Couldn't ask so return false
                 return false;

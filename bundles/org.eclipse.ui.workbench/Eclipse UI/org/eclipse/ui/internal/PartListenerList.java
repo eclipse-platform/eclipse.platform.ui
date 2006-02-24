@@ -55,8 +55,9 @@ public class PartListenerList extends EventManager {
     		UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
     	}
     	Platform.run(runnable);
-    	if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS))
-    		UIStats.end(UIStats.NOTIFY_PART_LISTENERS, listener, label);
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+			UIStats.end(UIStats.NOTIFY_PART_LISTENERS, listener, label);
+		}
 	}
 
     /**

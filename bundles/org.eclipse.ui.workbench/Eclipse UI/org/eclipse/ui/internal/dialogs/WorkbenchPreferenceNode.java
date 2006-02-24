@@ -55,8 +55,9 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 		}
 
 		page.init(PlatformUI.getWorkbench());
-		if (getLabelImage() != null)
+		if (getLabelImage() != null) {
 			page.setImageDescriptor(getImageDescriptor());
+		}
 		page.setTitle(getLabelText());
 		setPage(page);
 	}

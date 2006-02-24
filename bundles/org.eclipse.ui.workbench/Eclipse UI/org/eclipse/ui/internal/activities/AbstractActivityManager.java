@@ -26,33 +26,41 @@ public abstract class AbstractActivityManager implements IActivityManager {
 
     public void addActivityManagerListener(
             IActivityManagerListener activityManagerListener) {
-        if (activityManagerListener == null)
-            throw new NullPointerException();
+        if (activityManagerListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityManagerListeners == null)
-            activityManagerListeners = new ArrayList();
+        if (activityManagerListeners == null) {
+			activityManagerListeners = new ArrayList();
+		}
 
-        if (!activityManagerListeners.contains(activityManagerListener))
-            activityManagerListeners.add(activityManagerListener);
+        if (!activityManagerListeners.contains(activityManagerListener)) {
+			activityManagerListeners.add(activityManagerListener);
+		}
     }
 
     protected void fireActivityManagerChanged(
             ActivityManagerEvent activityManagerEvent) {
-        if (activityManagerEvent == null)
-            throw new NullPointerException();
+        if (activityManagerEvent == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityManagerListeners != null)
-            for (int i = 0; i < activityManagerListeners.size(); i++)
-                ((IActivityManagerListener) activityManagerListeners.get(i))
+        if (activityManagerListeners != null) {
+			for (int i = 0; i < activityManagerListeners.size(); i++) {
+				((IActivityManagerListener) activityManagerListeners.get(i))
                         .activityManagerChanged(activityManagerEvent);
+			}
+		}
     }
 
     public void removeActivityManagerListener(
             IActivityManagerListener activityManagerListener) {
-        if (activityManagerListener == null)
-            throw new NullPointerException();
+        if (activityManagerListener == null) {
+			throw new NullPointerException();
+		}
 
-        if (activityManagerListeners != null)
-            activityManagerListeners.remove(activityManagerListener);
+        if (activityManagerListeners != null) {
+			activityManagerListeners.remove(activityManagerListener);
+		}
     }
 }

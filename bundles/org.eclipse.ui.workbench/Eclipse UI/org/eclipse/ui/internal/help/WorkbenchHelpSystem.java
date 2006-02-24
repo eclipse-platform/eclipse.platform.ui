@@ -294,8 +294,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		public String getTitle() {
 			if (context instanceof IContext2) {
 				String ctitle = ((IContext2)context).getTitle();
-				if (ctitle!=null)
+				if (ctitle!=null) {
 					return ctitle;
+				}
 			}
 			return title;
 		}
@@ -442,8 +443,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 					elementToUse = findElement(desiredHelpSystemId, extensions);
 				}
 
-				if (elementToUse != null)
+				if (elementToUse != null) {
 					ret[0] = initializePluggableHelpUI(elementToUse);
+				}
 			}
 
 			private IConfigurationElement findElement(

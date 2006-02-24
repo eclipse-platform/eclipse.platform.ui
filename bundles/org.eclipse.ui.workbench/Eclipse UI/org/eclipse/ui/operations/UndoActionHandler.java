@@ -68,8 +68,9 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 
 	boolean shouldBeEnabled() {
 		// if a context was not supplied, do not enable.
-		if (undoContext == null)
+		if (undoContext == null) {
 			return false;
+		}
 		return getHistory().canUndo(undoContext);
 	}
 }

@@ -68,8 +68,9 @@ public class HelpSearchContributionItem extends ControlContribution {
 		combo.setToolTipText(WorkbenchMessages.WorkbenchWindow_searchCombo_toolTip); 
 		String[] items = WorkbenchPlugin.getDefault().getDialogSettings()
 				.getArray(ID);
-		if (items != null)
+		if (items != null) {
 			combo.setItems(items);
+		}
 		combo.setText(WorkbenchMessages.WorkbenchWindow_searchCombo_text); 
 		combo.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -81,8 +82,9 @@ public class HelpSearchContributionItem extends ControlContribution {
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = combo.getSelectionIndex();
-				if (index != -1)
+				if (index != -1) {
 					doSearch(combo.getItem(index), false);
+				}
 			}
 		});
 		return combo;
@@ -111,8 +113,9 @@ public class HelpSearchContributionItem extends ControlContribution {
 			}
 			if (!exists) {
 				combo.add(phrase, 0);
-				if (combo.getItemCount() > MAX_ITEM_COUNT)
+				if (combo.getItemCount() > MAX_ITEM_COUNT) {
 					combo.remove(combo.getItemCount() - 1);
+				}
 				WorkbenchPlugin.getDefault().getDialogSettings().put(ID,
 						combo.getItems());
 			}

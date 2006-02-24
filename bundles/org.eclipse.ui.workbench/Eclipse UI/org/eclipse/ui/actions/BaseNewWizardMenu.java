@@ -179,10 +179,11 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 				actions.put(id, action);
 				IConfigurationElement element = (IConfigurationElement) wizardDesc
 						.getAdapter(IConfigurationElement.class);
-				if (element != null)
+				if (element != null) {
 					workbenchWindow.getExtensionTracker().registerObject(
 							element.getDeclaringExtension(), action,
 							IExtensionTracker.REF_WEAK);
+				}
             }
         }
         return action;

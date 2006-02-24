@@ -49,8 +49,9 @@ public class CascadingMap {
      * @return the value
      */
     public Object get(Object key) {
-        if (override.containsKey(key))
-            return override.get(key);
+        if (override.containsKey(key)) {
+			return override.get(key);
+		}
         return base.get(key);
     }
 }

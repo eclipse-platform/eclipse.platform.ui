@@ -219,8 +219,9 @@ public abstract class PartSashContainer extends LayoutPart implements
             return;
         }
         LayoutTree part = root.find(pane);
-        if (part == null)
-            return;
+        if (part == null) {
+			return;
+		}
         part.findSashes(sashes);
     }
 
@@ -228,8 +229,9 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Add a part.
      */
     public void add(LayoutPart child) {
-        if (child == null)
-            return;
+        if (child == null) {
+			return;
+		}
 
         addEnhanced(child, SWT.RIGHT, 0.5f, findBottomRight());
     }
@@ -369,8 +371,9 @@ public abstract class PartSashContainer extends LayoutPart implements
                     || info.relationship == IPageLayout.TOP;
             LayoutPartSash sash = new LayoutPartSash(this, vertical);
             sash.setSizes(info.left, info.right);
-            if ((parent != null) && !(child instanceof PartPlaceholder))
-                sash.createControl(parent);
+            if ((parent != null) && !(child instanceof PartPlaceholder)) {
+				sash.createControl(parent);
+			}
             root = root.insert(child, left, sash, info.relative);
         }
 
@@ -458,8 +461,9 @@ public abstract class PartSashContainer extends LayoutPart implements
     public RelationshipInfo[] computeRelation() {
         LayoutTree treeRoot = root;
         ArrayList list = new ArrayList();
-        if (treeRoot == null)
-            return new RelationshipInfo[0];
+        if (treeRoot == null) {
+			return new RelationshipInfo[0];
+		}
         RelationshipInfo r = new RelationshipInfo();
         r.part = treeRoot.computeRelation(list);
         list.add(0, r);
@@ -546,8 +550,9 @@ public abstract class PartSashContainer extends LayoutPart implements
      * @see LayoutPart#getControl
      */
     public void createControl(Composite parentWidget) {
-        if (this.parent != null)
-            return;
+        if (this.parent != null) {
+			return;
+		}
 
         parent = createParent(parentWidget);
 
@@ -570,8 +575,9 @@ public abstract class PartSashContainer extends LayoutPart implements
      * @see LayoutPart#dispose
      */
     public void dispose() {
-        if (parent == null)
-            return;
+        if (parent == null) {
+			return;
+		}
 
         if (children != null) {
             for (int i = 0, length = children.size(); i < length; i++) {
@@ -579,8 +585,9 @@ public abstract class PartSashContainer extends LayoutPart implements
 
                 // In PartSashContainer dispose really means deactivate, so we
                 // only dispose PartTabFolders.
-                if (child instanceof PartStack)
-                    child.dispose();
+                if (child instanceof PartStack) {
+					child.dispose();
+				}
             }
         }
         disposeParent();
@@ -627,8 +634,9 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Return the most bottom right part or null if none.
      */
     public LayoutPart findBottomRight() {
-        if (root == null)
-            return null;
+        if (root == null) {
+			return null;
+		}
         return root.findBottomRight();
     }
 
@@ -707,11 +715,13 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Remove a part.
      */
     public void remove(LayoutPart child) {
-        if (child == getZoomedPart())
-            childRequestZoomOut();
+        if (child == getZoomedPart()) {
+			childRequestZoomOut();
+		}
 
-        if (!isChild(child))
-            return;
+        if (!isChild(child)) {
+			return;
+		}
 
         children.remove(child);
         if (root != null) {
@@ -784,8 +794,9 @@ public abstract class PartSashContainer extends LayoutPart implements
 
     private void resizeSashes() {
     	layoutDirty = false;
-        if (!active)
-            return;
+        if (!active) {
+			return;
+		}
         
         if (isZoomed()) {
             getZoomedPart().setBounds(parent.getClientArea());
@@ -847,8 +858,9 @@ public abstract class PartSashContainer extends LayoutPart implements
      */
     private void zoomIn(LayoutPart part) {
         // Sanity check.
-        if (isZoomed())
-            return;
+        if (isZoomed()) {
+			return;
+		}
         
         // Hide the sashes
         root.disposeSashes();
@@ -949,8 +961,9 @@ public abstract class PartSashContainer extends LayoutPart implements
      */
     private void zoomOut() {
         // Sanity check.
-        if (!isZoomed())
-            return;
+        if (!isZoomed()) {
+			return;
+		}
                
         LayoutPart zoomedPart = this.zoomedPart;
         this.zoomedPart = null;
@@ -1294,13 +1307,16 @@ public abstract class PartSashContainer extends LayoutPart implements
     void add(LayoutPart child, int relationship, int left, int right,
             LayoutPart relative) {
 
-        if (child == null)
-            return;
-        if (relative != null && !isChild(relative))
-            return;
+        if (child == null) {
+			return;
+		}
+        if (relative != null && !isChild(relative)) {
+			return;
+		}
         if (relationship < IPageLayout.LEFT
-                || relationship > IPageLayout.BOTTOM)
-            relationship = IPageLayout.LEFT;
+                || relationship > IPageLayout.BOTTOM) {
+			relationship = IPageLayout.LEFT;
+		}
 
         // store info about relative positions
         RelationshipInfo info = new RelationshipInfo();

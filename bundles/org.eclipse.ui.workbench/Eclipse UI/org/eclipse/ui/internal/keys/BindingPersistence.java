@@ -184,8 +184,9 @@ final class BindingPersistence extends PreferencePersistence {
 	private static final KeySequence convert2_1Sequence(int[] r21KeySequence) {
 		final int r21KeySequenceLength = r21KeySequence.length;
 		final KeyStroke[] keyStrokes = new KeyStroke[r21KeySequenceLength];
-		for (int i = 0; i < r21KeySequenceLength; i++)
+		for (int i = 0; i < r21KeySequenceLength; i++) {
 			keyStrokes[i] = convert2_1Stroke(r21KeySequence[i]);
+		}
 
 		return KeySequence.getInstance(keyStrokes);
 	}
@@ -231,8 +232,9 @@ final class BindingPersistence extends PreferencePersistence {
 		final int length = stringTokenizer.countTokens();
 		final int[] strokes = new int[length];
 
-		for (int i = 0; i < length; i++)
+		for (int i = 0; i < length; i++) {
 			strokes[i] = parse2_1Stroke(stringTokenizer.nextToken());
+		}
 
 		return strokes;
 	}
@@ -262,10 +264,11 @@ final class BindingPersistence extends PreferencePersistence {
 			final Integer integer = (Integer) r2_1KeysByName.get(token
 					.toUpperCase());
 
-			if (integer != null)
+			if (integer != null) {
 				value = integer.intValue();
-			else if (token.length() == 1)
+			} else if (token.length() == 1) {
 				value = token.toUpperCase().charAt(0);
+			}
 
 			if (value != 0) {
 				for (int i = 0; i < size - 1; i++) {
@@ -307,8 +310,9 @@ final class BindingPersistence extends PreferencePersistence {
 
 						}
 
-					} else if (!KeyStroke.KEY_DELIMITER.equals(token))
+					} else if (!KeyStroke.KEY_DELIMITER.equals(token)) {
 						return 0;
+					}
 				}
 			}
 		}

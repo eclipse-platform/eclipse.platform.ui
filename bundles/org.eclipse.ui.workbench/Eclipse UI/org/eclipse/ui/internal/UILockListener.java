@@ -50,9 +50,9 @@ public class UILockListener extends LockListener {
         private void grow() {
             int newSize = elements.length * 2;
             Semaphore[] newElements = new Semaphore[newSize];
-            if (tail >= head)
-                System.arraycopy(elements, head, newElements, head, size());
-            else {
+            if (tail >= head) {
+				System.arraycopy(elements, head, newElements, head, size());
+			} else {
                 int newHead = newSize - (elements.length - head);
                 System.arraycopy(elements, 0, newElements, 0, tail + 1);
                 System.arraycopy(elements, head, newElements, newHead,
@@ -71,8 +71,9 @@ public class UILockListener extends LockListener {
          * @return
          */
         public synchronized Semaphore remove() {
-            if (tail == head)
-                return null;
+            if (tail == head) {
+				return null;
+			}
             Semaphore result = elements[head];
             elements[head] = null;
             head = increment(head);
@@ -107,8 +108,9 @@ public class UILockListener extends LockListener {
     }
 
     public void aboutToRelease() {
-        if (isUI())
-            ui = null;
+        if (isUI()) {
+			ui = null;
+		}
     }
 
     public boolean aboutToWait(Thread lockOwner) {
@@ -116,8 +118,9 @@ public class UILockListener extends LockListener {
             // If a syncExec was executed from the current operation, it
             // has already acquired the lock. So, just return true.
             if (currentWork != null
-                    && currentWork.getOperationThread() == lockOwner)
-                return true;
+                    && currentWork.getOperationThread() == lockOwner) {
+				return true;
+			}
             ui = Thread.currentThread();
             try {
                 doPendingWork();
@@ -146,8 +149,9 @@ public class UILockListener extends LockListener {
             try {
                 currentWork = work;
                 Runnable runnable = work.getRunnable();
-                if (runnable != null)
-                    runnable.run();
+                if (runnable != null) {
+					runnable.run();
+				}
 
             } finally {
                 currentWork = oldWork;

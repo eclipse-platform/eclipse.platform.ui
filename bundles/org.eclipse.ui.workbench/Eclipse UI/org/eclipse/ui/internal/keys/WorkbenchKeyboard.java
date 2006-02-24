@@ -508,8 +508,9 @@ public final class WorkbenchKeyboard {
 		 * Only process key strokes containing natural keys to trigger key
 		 * bindings.
 		 */
-		if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
+		if ((event.keyCode & SWT.MODIFIER_MASK) != 0) {
 			return;
+		}
 
 		// Allow special key out-of-order processing.
 		List keyStrokes = generatePossibleKeyStrokes(event);

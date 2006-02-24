@@ -77,10 +77,11 @@ public class ViewPane extends PartPane {
     		Integer newValue = (Integer)event.getNewValue();
 	       	if (IToolBarManager2.PROP_LAYOUT.equals(property)) {
 	       		toolBarResized(toolBar, newValue != null ? newValue.intValue() : 0);	
-	       		if (toolBar instanceof Composite)
-	       			((Composite)toolBar).layout();
-	       		else
-	       			toolBar.getParent().layout();
+	       		if (toolBar instanceof Composite) {
+					((Composite)toolBar).layout();
+				} else {
+					toolBar.getParent().layout();
+				}
 	       	}
 	    }
     }
@@ -120,8 +121,9 @@ public class ViewPane extends PartPane {
      */
     public void createControl(Composite parent) {
         // Only do this once.
-        if (getControl() != null && !getControl().isDisposed())
-            return;
+        if (getControl() != null && !getControl().isDisposed()) {
+			return;
+		}
 
         super.createControl(parent);
     }
@@ -175,8 +177,9 @@ public class ViewPane extends PartPane {
             public void mouseDoubleClick(MouseEvent event) {
                 if (event.widget instanceof ToolBar) {
                 
-                    if (((ToolBar)event.widget).getItem(new Point(event.x, event.y)) == null)
-                        doZoom();
+                    if (((ToolBar)event.widget).getItem(new Point(event.x, event.y)) == null) {
+						doZoom();
+					}
                 }
             }
         });
@@ -286,8 +289,9 @@ public class ViewPane extends PartPane {
      */
     public String getCompoundId() {
         IViewReference ref = getViewReference();
-        if (ref != null)
-            return ViewFactory.getKey(ref);
+        if (ref != null) {
+			return ViewFactory.getKey(ref);
+		}
         
         return super.getCompoundId();
     }
@@ -303,8 +307,9 @@ public class ViewPane extends PartPane {
      * @see ViewActionBars
      */
     public MenuManager getMenuManager() {
-        if (isvMenuMgr == null)
-            isvMenuMgr = new PaneMenuManager();
+        if (isvMenuMgr == null) {
+			isvMenuMgr = new PaneMenuManager();
+		}
         return isvMenuMgr;
     }
 
@@ -408,12 +413,14 @@ public class ViewPane extends PartPane {
     }
 
     public void showViewMenu(Point location) {
-        if (!hasViewMenu())
-            return;
+        if (!hasViewMenu()) {
+			return;
+		}
 
         // If this is a fast view, it may have been minimized. Do nothing in this case.
-        if (isFastView() && (page.getActiveFastView() != getViewReference()))
-            return;
+        if (isFastView() && (page.getActiveFastView() != getViewReference())) {
+			return;
+		}
 
         Menu aMenu = isvMenuMgr.createContextMenu(getControl().getParent());
         aMenu.setLocation(location.x, location.y);
@@ -429,10 +436,12 @@ public class ViewPane extends PartPane {
      * @see ViewActionBars
      */
     public void updateActionBars() {
-        if (isvMenuMgr != null)
-            isvMenuMgr.updateAll(false);
-        if (isvToolBarMgr != null)
-            isvToolBarMgr.update(false);
+        if (isvMenuMgr != null) {
+			isvMenuMgr.updateAll(false);
+		}
+        if (isvToolBarMgr != null) {
+			isvToolBarMgr.update(false);
+		}
 
     }
 
@@ -447,16 +456,18 @@ public class ViewPane extends PartPane {
      * @see org.eclipse.ui.internal.PartPane#addSizeMenuItem(org.eclipse.swt.widgets.Menu)
      */
     public void addSizeMenuItem(Menu menu, int index) {
-        if (isMoveable())
-            super.addSizeMenuItem(menu, index);
+        if (isMoveable()) {
+			super.addSizeMenuItem(menu, index);
+		}
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.PartPane#doZoom()
      */
     protected void doZoom() {
-        if (isMoveable())
-            super.doZoom();
+        if (isMoveable()) {
+			super.doZoom();
+		}
     }
 
     /* (non-Javadoc)

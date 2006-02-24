@@ -429,8 +429,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 
 			// if none of the new sets are marked as initially visible, abort.
-			if (setsToActivate.isEmpty())
+			if (setsToActivate.isEmpty()) {
 				return;
+			}
 
 			IActionSetDescriptor[] descriptors = (IActionSetDescriptor[]) setsToActivate
 					.toArray(new IActionSetDescriptor[setsToActivate.size()]);
@@ -625,8 +626,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		}
 
-		if (windowClosed && tracker != null)
+		if (windowClosed && tracker != null) {
 			tracker.close();
+		}
 
 		return windowClosed;
 	}
@@ -739,8 +741,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			firePageClosed(page);
 			page.dispose();
 		}
-		if (!closing)
+		if (!closing) {
 			showEmptyWindowContents();
+		}
 	}
 
 	/**
@@ -749,8 +752,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	public void closeAllPages(boolean save) {
 		if (save) {
 			boolean ret = saveAllPages(true);
-			if (!ret)
+			if (!ret) {
 				return;
+			}
 		}
 		closeAllPages();
 	}
@@ -760,20 +764,23 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	protected boolean closePage(IWorkbenchPage in, boolean save) {
 		// Validate the input.
-		if (!pageList.contains(in))
+		if (!pageList.contains(in)) {
 			return false;
+		}
 		WorkbenchPage oldPage = (WorkbenchPage) in;
 
 		// Save old perspective.
 		if (save && oldPage.isSaveNeeded()) {
-			if (!oldPage.saveAllEditors(true))
+			if (!oldPage.saveAllEditors(true)) {
 				return false;
+			}
 		}
 
 		// If old page is activate deactivate.
 		boolean oldIsActive = (oldPage == getActiveWorkbenchPage());
-		if (oldIsActive)
+		if (oldIsActive) {
 			setActivePage(null);
+		}
 
 		// Close old page.
 		pageList.remove(oldPage);
@@ -783,11 +790,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Activate new page.
 		if (oldIsActive) {
 			IWorkbenchPage newPage = pageList.getNextActive();
-			if (newPage != null)
+			if (newPage != null) {
 				setActivePage(newPage);
+			}
 		}
-		if (!closing && pageList.isEmpty())
+		if (!closing && pageList.isEmpty()) {
 			showEmptyWindowContents();
+		}
 		return true;
 	}
 
@@ -898,8 +907,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 *            true for a square banner and false otherwise
 	 */
 	public void setBannerCurve(boolean square) {
-		if (topBar != null)
+		if (topBar != null) {
 			topBar.setSimple(square);
+		}
 	}
 
 	/**
@@ -1059,8 +1069,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 *            the location to place the bar
 	 */
 	public void setPerspectiveBarLocation(String location) {
-		if (perspectiveSwitcher != null)
+		if (perspectiveSwitcher != null) {
 			perspectiveSwitcher.setPerspectiveBarLocation(location);
+		}
 	}
 
 	/**
@@ -1421,12 +1432,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		if (IWorkbenchActionConstants.TOOLBAR_FILE
-				.equalsIgnoreCase(actionSetId))
+				.equalsIgnoreCase(actionSetId)) {
 			return WorkbenchMessages.WorkbenchWindow_FileToolbar;
+		}
 
 		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE
-				.equalsIgnoreCase(actionSetId))
+				.equalsIgnoreCase(actionSetId)) {
 			return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
+		}
 
 		return null;
 	}
@@ -1527,9 +1540,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	public boolean okToClose() {
 		// Save all of the editors.
-		if (!getWorkbenchImpl().isClosing())
-			if (!saveAllPages(true))
+		if (!getWorkbenchImpl().isClosing()) {
+			if (!saveAllPages(true)) {
 				return false;
+			}
+		}
 		return true;
 	}
 
@@ -1559,13 +1574,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		});
 
-		if (result[0] instanceof IWorkbenchPage)
+		if (result[0] instanceof IWorkbenchPage) {
 			return (IWorkbenchPage) result[0];
-		else if (result[0] instanceof WorkbenchException)
+		} else if (result[0] instanceof WorkbenchException) {
 			throw (WorkbenchException) result[0];
-		else
+		} else {
 			throw new WorkbenchException(
 					WorkbenchMessages.WorkbenchWindow_exceptionMessage);
+		}
 	}
 
 	/**
@@ -1600,8 +1616,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	private IStatus unableToRestorePage(IMemento pageMem) {
 		String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
-		if (pageName == null)
+		if (pageName == null) {
 			pageName = ""; //$NON-NLS-1$
+		}
 		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, NLS.bind(
 				WorkbenchMessages.WorkbenchWindow_unableToRestorePerspective,
 				pageName), null);
@@ -1617,15 +1634,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Restore the window advisor state.
 		IMemento windowAdvisorState = memento
 				.getChild(IWorkbenchConstants.TAG_WORKBENCH_WINDOW_ADVISOR);
-		if (windowAdvisorState != null)
+		if (windowAdvisorState != null) {
 			result.add(getWindowAdvisor().restoreState(windowAdvisorState));
+		}
 
 		// Restore actionbar advisor state.
 		IMemento actionBarAdvisorState = memento
 				.getChild(IWorkbenchConstants.TAG_ACTION_BAR_ADVISOR);
-		if (actionBarAdvisorState != null)
+		if (actionBarAdvisorState != null) {
 			result.add(getActionBarAdvisor()
 					.restoreState(actionBarAdvisorState));
+		}
 
 		// Read window's bounds and state.
 		Rectangle displayBounds = getShell().getDisplay().getBounds();
@@ -1662,8 +1681,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		// restore the width of the perspective bar
-		if (perspectiveSwitcher != null)
+		if (perspectiveSwitcher != null) {
 			perspectiveSwitcher.restoreState(memento);
+		}
 
 		// Restore the cool bar order by creating all the tool bar contribution
 		// items
@@ -1848,8 +1868,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		for (int i = 0; i < pageArray.length; i++) {
 			IMemento pageMem = pageArray[i];
 			String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
-			if (strFocus == null || strFocus.length() == 0)
+			if (strFocus == null || strFocus.length() == 0) {
 				continue;
+			}
 
 			// Get the input factory.
 			IAdaptable input = null;
@@ -1903,8 +1924,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				continue;
 			}
 
-			if (strFocus != null && strFocus.length() > 0)
+			if (strFocus != null && strFocus.length() > 0) {
 				newActivePage = newPage;
+			}
 		}
 
 		// If there are no pages create a default.
@@ -1933,8 +1955,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		// Set active page.
-		if (newActivePage == null)
+		if (newActivePage == null) {
 			newActivePage = pageList.getNextActive();
+		}
 
 		setActivePage(newActivePage);
 
@@ -2119,25 +2142,29 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Get the Wrap indicies
 		IMemento[] wraps = memento
 				.getChildren(IWorkbenchConstants.TAG_ITEM_WRAP_INDEX);
-		if (wraps == null)
+		if (wraps == null) {
 			return false;
+		}
 		for (int i = 0; i < wraps.length; i++) {
 			IMemento wrapMem = wraps[i];
 			Integer index = wrapMem.getInteger(IWorkbenchConstants.TAG_INDEX);
-			if (index == null)
+			if (index == null) {
 				return false;
+			}
 			wrapIndicies.add(index);
 		}
 		// Get the Item ids
 		IMemento[] savedItems = memento
 				.getChildren(IWorkbenchConstants.TAG_ITEM);
-		if (savedItems == null)
+		if (savedItems == null) {
 			return false;
+		}
 		for (int i = 0; i < savedItems.length; i++) {
 			IMemento savedMem = savedItems[i];
 			String id = savedMem.getString(IWorkbenchConstants.TAG_ID);
-			if (id == null)
+			if (id == null) {
 				return false;
+			}
 			itemIds.add(id);
 		}
 		return true;
@@ -2164,8 +2191,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// look for starting point
 		while (insertIndex < items.length) {
 			IContributionItem item = items[insertIndex];
-			if (item.getId() != null && item.getId().equals(startId))
+			if (item.getId() != null && item.getId().equals(startId)) {
 				break;
+			}
 			++insertIndex;
 		}
 
@@ -2174,12 +2202,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			IContributionItem item = items[i];
 			String testId = item.getId();
 
-			if (item.isGroupMarker())
+			if (item.isGroupMarker()) {
 				break;
+			}
 
 			if (itemId != null && testId != null) {
-				if (itemId.compareTo(testId) < 1)
+				if (itemId.compareTo(testId) < 1) {
 					break;
+				}
 			}
 			insertIndex = i;
 		}
@@ -2210,27 +2240,33 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				: perspectiveBarControl.getEnabled();
 
 		try {
-			if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
+			if (fastViewBarControl != null && !fastViewBarControl.isDisposed()) {
 				fastViewBarControl.setEnabled(false);
+			}
 
 			if (perspectiveBarControl != null
-					&& !perspectiveBarControl.isDisposed())
+					&& !perspectiveBarControl.isDisposed()) {
 				perspectiveBarControl.setEnabled(false);
+			}
 
-			if (keyFilterEnabled)
+			if (keyFilterEnabled) {
 				contextSupport.setKeyFilterEnabled(false);
+			}
 
 			super.run(fork, cancelable, runnable);
 		} finally {
-			if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
+			if (fastViewBarControl != null && !fastViewBarControl.isDisposed()) {
 				fastViewBarControl.setEnabled(fastViewBarWasEnabled);
+			}
 
 			if (perspectiveBarControl != null
-					&& !perspectiveBarControl.isDisposed())
+					&& !perspectiveBarControl.isDisposed()) {
 				perspectiveBarControl.setEnabled(perspectiveBarWasEnabled);
+			}
 
-			if (keyFilterEnabled)
+			if (keyFilterEnabled) {
 				contextSupport.setKeyFilterEnabled(true);
+			}
 		}
 	}
 
@@ -2495,8 +2531,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 *            active page
 	 */
 	public void setActivePage(final IWorkbenchPage in) {
-		if (getActiveWorkbenchPage() == in)
+		if (getActiveWorkbenchPage() == in) {
 			return;
+		}
 
 		// 1FVGTNR: ITPUI:WINNT - busy cursor for switching perspectives
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
@@ -2508,8 +2545,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				}
 
 				// Activate new persp.
-				if (in == null || pageList.contains(in))
+				if (in == null || pageList.contains(in)) {
 					pageList.setActive(in);
+				}
 				WorkbenchPage newPage = pageList.getActive();
 				Composite parent = getPageComposite();
 				StackLayout layout = (StackLayout) parent.getLayout();
@@ -2519,9 +2557,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					hideEmptyWindowContents();
 					newPage.onActivate();
 					firePageActivated(newPage);
-					if (newPage.getPerspective() != null)
+					if (newPage.getPerspective() != null) {
 						firePerspectiveActivated(newPage, newPage
 								.getPerspective());
+					}
 				} else {
 					layout.topControl = null;
 					parent.layout();
@@ -2529,8 +2568,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 				updateFastViewBar();
 
-				if (isClosing())
+				if (isClosing()) {
 					return;
+				}
 
 				updateDisabled = false;
 
@@ -2538,8 +2578,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				updateActionSets();
 				submitGlobalActions();
 
-				if (perspectiveSwitcher != null)
+				if (perspectiveSwitcher != null) {
 					perspectiveSwitcher.update(false);
+				}
 
 				getMenuManager().update(IAction.TEXT);
 			}
@@ -2624,12 +2665,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			private void saveBounds() {
 				Shell shell = getShell();
-				if (shell == null)
+				if (shell == null) {
 					return;
-				if (shell.isDisposed())
+				}
+				if (shell.isDisposed()) {
 					return;
-				if (shell.getMinimized())
+				}
+				if (shell.getMinimized()) {
 					return;
+				}
 				if (shell.getMaximized()) {
 					asMaximizedState = true;
 					return;
@@ -2708,13 +2752,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * prespective.
 	 */
 	public void updateActionSets() {
-		if (updateDisabled)
+		if (updateDisabled) {
 			return;
+		}
 
 		WorkbenchPage currentPage = getActiveWorkbenchPage();
-		if (currentPage == null)
+		if (currentPage == null) {
 			getActionPresentation().clearActionSets();
-		else {
+		} else {
 			ICoolBarManager2 coolBarManager = (ICoolBarManager2) getCoolBarManager2();
 			if (coolBarManager != null) {
 				coolBarManager.refresh();
@@ -2731,8 +2776,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		IMenuManager manager = getMenuBarManager().findMenuUsingPath(path);
 		IContributionItem item = getMenuBarManager().findUsingPath(path);
 
-		if (manager == null || item == null)
+		if (manager == null || item == null) {
 			return;
+		}
 		item.setVisible(manager.getItems().length >= 2);
 		// there is a separator for the additions group thus >= 2
 	}
@@ -2819,8 +2865,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		public boolean remove(Object object) {
-			if (active == object)
+			if (active == object) {
 				active = null;
+			}
 			pageInActivationOrder.remove(object);
 			return pagesInCreationOrder.remove(object);
 		}
@@ -2837,8 +2884,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		public void setActive(Object page) {
-			if (active == page)
+			if (active == page) {
 				return;
+			}
 
 			active = page;
 
@@ -2854,15 +2902,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		public WorkbenchPage getNextActive() {
 			if (active == null) {
-				if (pageInActivationOrder.isEmpty())
+				if (pageInActivationOrder.isEmpty()) {
 					return null;
+				}
 
 				return (WorkbenchPage) pageInActivationOrder
 						.get(pageInActivationOrder.size() - 1);
 			}
 
-			if (pageInActivationOrder.size() < 2)
+			if (pageInActivationOrder.size() < 2) {
 				return null;
+			}
 
 			return (WorkbenchPage) pageInActivationOrder
 					.get(pageInActivationOrder.size() - 2);
@@ -3151,8 +3201,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.0
 	 */
 	private void updateLayoutDataForContents() {
-		if (defaultLayout == null)
+		if (defaultLayout == null) {
 			return;
+		}
 
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
 		// separately configurable
@@ -3281,9 +3332,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
     		getWindowConfigurer().getPresentationFactory();
     	if (presentationFactory instanceof IActionBarPresentationFactory) {
         	actionBarPresentation = ((IActionBarPresentationFactory) presentationFactory);
-    	}
-    	else 
-    		actionBarPresentation = new DefaultActionBarPresentationFactory();      
+    	} else {
+			actionBarPresentation = new DefaultActionBarPresentationFactory();
+		}      
     	
     	return actionBarPresentation;        	
     }
@@ -3447,8 +3498,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @param listener
 	 */
 	public void addPerspectiveReorderListener(IReorderListener listener) {
-		if (perspectiveSwitcher != null)
+		if (perspectiveSwitcher != null) {
 			perspectiveSwitcher.addReorderListener(listener);
+		}
 	}
 
 	/**

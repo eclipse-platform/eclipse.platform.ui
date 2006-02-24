@@ -85,8 +85,9 @@ public class ImportWizard extends Wizard {
 		WizardCollectionElement otherCategory = (WizardCollectionElement) root
 				.findCategory(new Path(
 						WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
-		if (otherCategory == null)
+		if (otherCategory == null) {
 			return new AdaptableList();
+		}
 		return otherCategory.getWizardAdaptableList();
     }
 

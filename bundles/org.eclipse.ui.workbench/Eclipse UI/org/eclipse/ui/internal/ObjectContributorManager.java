@@ -116,8 +116,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
         for (Iterator classes = types.iterator(); classes.hasNext();) {
             Class clazz = (Class) classes.next();
             List contributorList = (List) contributors.get(clazz.getName());
-            if (contributorList != null)
-                result.addAll(contributorList);
+            if (contributorList != null) {
+				result.addAll(contributorList);
+			}
         }
     }
 
@@ -167,8 +168,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * Cache the real adapter class contributor search path.
      */
     private void cacheResourceAdapterLookup(Class adapterClass, List results) {
-        if (resourceAdapterLookup == null)
-            resourceAdapterLookup = new HashMap();
+        if (resourceAdapterLookup == null) {
+			resourceAdapterLookup = new HashMap();
+		}
         resourceAdapterLookup.put(adapterClass, results);
     }
     
@@ -176,8 +178,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * Cache the real adapter class contributor search path.
      */
     private void cacheAdaptableLookup(String adapterClass, List results) {
-        if (adaptableLookup == null)
-        	adaptableLookup = new HashMap();
+        if (adaptableLookup == null) {
+			adaptableLookup = new HashMap();
+		}
         adaptableLookup.put(adapterClass, results);
     }
 
@@ -185,8 +188,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * Cache the object class contributor search path.
      */
     private void cacheObjectLookup(Class objectClass, List results) {
-        if (objectLookup == null)
-            objectLookup = new HashMap();
+        if (objectLookup == null) {
+			objectLookup = new HashMap();
+		}
         objectLookup.put(objectClass, results);
     }
 
@@ -245,9 +249,10 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
                 newInterfaces.add(interfac);
             }
         }
-        for (Iterator newList = newInterfaces.iterator(); newList.hasNext();)
-            internalComputeInterfaceOrder(((Class) newList.next())
+        for (Iterator newList = newInterfaces.iterator(); newList.hasNext();) {
+			internalComputeInterfaceOrder(((Class) newList.next())
                     .getInterfaces(), result, seen);
+		}
     }
 
     /**
@@ -264,8 +269,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
             IObjectContributor contributor) {
         Iterator elements = selection.iterator();
         while (elements.hasNext()) {
-            if (contributor.isApplicableTo(elements.next()) == false)
-                return false;
+            if (contributor.isApplicableTo(elements.next()) == false) {
+				return false;
+			}
         }
         return true;
     }
@@ -284,8 +290,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
     public boolean isApplicableTo(List list, IObjectContributor contributor) {
         Iterator elements = list.iterator();
         while (elements.hasNext()) {
-            if (contributor.isApplicableTo(elements.next()) == false)
-                return false;
+            if (contributor.isApplicableTo(elements.next()) == false) {
+				return false;
+			}
         }
         return true;
     }
@@ -310,8 +317,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
         if (contributor instanceof IAdaptable) {
         	IConfigurationElement element = (IConfigurationElement) ((IAdaptable) contributor)
 					.getAdapter(IConfigurationElement.class);
-			if (element == null)
+			if (element == null) {
 				return;
+			}
 			ContributorRecord contributorRecord = new ContributorRecord(
 					contributor, targetType);
 			contributorRecordSet.add(contributorRecord);
@@ -338,11 +346,13 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
     public void unregisterContributor(IObjectContributor contributor,
             String targetType) {    	
         List contributorList = (List) contributors.get(targetType);
-        if (contributorList == null)
-            return;
+        if (contributorList == null) {
+			return;
+		}
         contributorList.remove(contributor);
-        if (contributorList.isEmpty()) // if we've removed the last one clean out the list
-        	contributors.remove(targetType);
+        if (contributorList.isEmpty()) {
+			contributors.remove(targetType);
+		}
         flushLookup();
     }
 
@@ -368,8 +378,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
     	// Calculate the contributors for this object class
         List contributors = getObjectContributors(object.getClass());
         // Calculate the contributors for resource classes
-        if(resource != null)
-        	contributors.addAll(getResourceContributors(resource.getClass()));
+        if(resource != null) {
+			contributors.addAll(getResourceContributors(resource.getClass()));
+		}
         // Calculate the contributors for each adapter type
     	if(adapters != null) {
     		for (Iterator it = adapters.iterator(); it.hasNext();) {
@@ -398,8 +409,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		}
 		if (objectList == null) {
 			objectList = addContributorsFor(objectClass);
-			if (objectList.size() == 0)
+			if (objectList.size() == 0) {
 				objectList = Collections.EMPTY_LIST;
+			}
 			cacheObjectLookup(objectClass, objectList);
 		}
 		// return a shallow copy of the contributors, ensure that the caller
@@ -425,10 +437,11 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		}
 		if (resourceList == null) {
 			resourceList = addContributorsFor(resourceClass);
-			if (resourceList.size() == 0)
+			if (resourceList.size() == 0) {
 				resourceList = Collections.EMPTY_LIST;
-			else
+			} else {
 				resourceList = filterOnlyAdaptableContributors(resourceList);
+			}
 			cacheResourceAdapterLookup(resourceClass, resourceList);
 		}
 		// return a shallow copy of the contributors, ensure that the caller
@@ -457,13 +470,15 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 			adaptableList = new ArrayList(contributors.size());
 			// ignore resource adapters because these must be adapted via the
 			// IContributorResourceAdapter.
-			if (LegacyResourceSupport.isResourceType(adapterType) || LegacyResourceSupport.isResourceMappingType(adapterType))
+			if (LegacyResourceSupport.isResourceType(adapterType) || LegacyResourceSupport.isResourceMappingType(adapterType)) {
 				return Collections.EMPTY_LIST;
+			}
 			adaptableList = (List) contributors.get(adapterType);
-			if (adaptableList == null || adaptableList.size() == 0)
+			if (adaptableList == null || adaptableList.size() == 0) {
 				adaptableList = Collections.EMPTY_LIST;
-			else
+			} else {
 				adaptableList = filterOnlyAdaptableContributors(adaptableList);
+			}
 			cacheAdaptableLookup(adapterType, adaptableList);
 		}
 		// return a shallow copy of the contributors, ensure that the caller
@@ -543,8 +558,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * @since 3.1
      */
     public void dispose() {
-    	if(canHandleExtensionTracking())
-    		PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
+    	if(canHandleExtensionTracking()) {
+			PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
+		}
     }
     
     /**
@@ -573,8 +589,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
             for (int i = 0; i < commonClasses.size(); i++) {
                 List results = getObjectContributors((Class) commonClasses
                         .get(i));
-                if (results != null)
-                    contributors.addAll(results);
+                if (results != null) {
+					contributors.addAll(results);
+				}
             }
         }
         // Add the resource mappings explicitly to avoid possible duplication
@@ -605,8 +622,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * for the given collection of objects.
      */
     private List getCommonClasses(List objects, List commonAdapters) {
-        if (objects == null || objects.size() == 0)
-            return null;
+        if (objects == null || objects.size() == 0) {
+			return null;
+		}
 
         // Compute all the super classes, interfaces, and adapters 
         // for the first element.
@@ -640,8 +658,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
             // Compute all the adapters provided for the calculated
             // classes and interfaces for this element.
             List classesAndInterfaces = new ArrayList(otherClasses);
-            if (otherInterfaces != null)
-                classesAndInterfaces.addAll(otherInterfaces);
+            if (otherInterfaces != null) {
+				classesAndInterfaces.addAll(otherInterfaces);
+			}
             List otherAdapters = computeAdapterOrder(classesAndInterfaces);
 
             // Compute common adapters
@@ -655,8 +674,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
             } else {
                 if (adapters.isEmpty()) {
                     removeNonCommonAdapters(otherAdapters, lastCommonTypes);
-                    if (!otherAdapters.isEmpty())
-                        adapters.addAll(otherAdapters);
+                    if (!otherAdapters.isEmpty()) {
+						adapters.addAll(otherAdapters);
+					}
                 } else {
                     // Remove any adapters of the first element that
                     // are not in the current element's adapter list.
@@ -737,8 +757,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
             if (o != null) {
                 Class clazz = (Class) o;
                 String name = clazz.getName();
-                if (adapters.contains(name))
-                    return;
+                if (adapters.contains(name)) {
+					return;
+				}
             }
         }
         adapters.clear();
@@ -863,25 +884,29 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * collection of objects.
      */
     private Class getCommonClass(List objects) {
-        if (objects == null || objects.size() == 0)
-            return null;
+        if (objects == null || objects.size() == 0) {
+			return null;
+		}
         Class commonClass = objects.get(0).getClass();
         // try easy
-        if (objects.size() == 1)
-            return commonClass;
+        if (objects.size() == 1) {
+			return commonClass;
         // try harder
+		}
 
         for (int i = 1; i < objects.size(); i++) {
             Object object = objects.get(i);
             Class newClass = object.getClass();
             // try the short cut
-            if (newClass.equals(commonClass))
-                continue;
+            if (newClass.equals(commonClass)) {
+				continue;
+			}
             // compute common class
             commonClass = getCommonClass(commonClass, newClass);
             // give up
-            if (commonClass == null)
-                return null;
+            if (commonClass == null) {
+				return null;
+			}
         }
         return commonClass;
     }
@@ -897,8 +922,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
             for (int j = 0; j < list2.size(); j++) {
                 Class candidate1 = (Class) list1.get(i);
                 Class candidate2 = (Class) list2.get(j);
-                if (candidate1.equals(candidate2))
-                    return candidate1;
+                if (candidate1.equals(candidate2)) {
+					return candidate1;
+				}
             }
         }
         // no common class

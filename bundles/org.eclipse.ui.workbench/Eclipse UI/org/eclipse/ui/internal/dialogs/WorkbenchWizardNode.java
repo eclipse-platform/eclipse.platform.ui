@@ -96,8 +96,9 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
     public String getLocalId() {
     	IPluginContribution contribution = (IPluginContribution) wizardElement
 				.getAdapter(IPluginContribution.class);
-		if (contribution != null)
+		if (contribution != null) {
 			return contribution.getLocalId();
+		}
 		return wizardElement.getId();
     }
 
@@ -107,8 +108,9 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
     public String getPluginId() {
        	IPluginContribution contribution = (IPluginContribution) wizardElement
 				.getAdapter(IPluginContribution.class);
-		if (contribution != null)
+		if (contribution != null) {
 			return contribution.getLocalId();
+		}
 		return null;
     }
 
@@ -116,8 +118,9 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
      * @see org.eclipse.jface.wizard.IWizardNode#getWizard()
      */
     public IWizard getWizard() {
-        if (wizard != null)
-            return wizard; // we've already created it
+        if (wizard != null) {
+			return wizard; // we've already created it
+		}
 
         final IWorkbenchWizard[] workbenchWizard = new IWorkbenchWizard[1];
         final IStatus statuses[] = new IStatus[1];

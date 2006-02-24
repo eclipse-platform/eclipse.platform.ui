@@ -80,8 +80,9 @@ public abstract class MultiPageEditor extends EditorPart {
      */
     protected void addSyncroPageBook(PageBook pageBook) {
         // Add the page.
-        if (syncVector == null)
-            syncVector = new ArrayList(1);
+        if (syncVector == null) {
+			syncVector = new ArrayList(1);
+		}
         syncVector.add(pageBook);
 
         // Set the visible page.
@@ -130,8 +131,9 @@ public abstract class MultiPageEditor extends EditorPart {
      * @see #addSyncroPageBook(PageBook)
      */
     protected void removeSyncroPageBook(PageBook pageBook) {
-        if (syncVector != null)
-            syncVector.remove(pageBook);
+        if (syncVector != null) {
+			syncVector.remove(pageBook);
+		}
         pageBook.dispose();
     }
 
@@ -158,7 +160,8 @@ public abstract class MultiPageEditor extends EditorPart {
         int pos = tabFolder.getSelectionIndex();
         Control children[] = pageBook.getChildren();
         int size = children.length;
-        if (pos < size)
-            pageBook.showPage(children[pos]);
+        if (pos < size) {
+			pageBook.showPage(children[pos]);
+		}
     }
 }

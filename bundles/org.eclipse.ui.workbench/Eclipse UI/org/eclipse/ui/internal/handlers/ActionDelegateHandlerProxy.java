@@ -516,8 +516,9 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	private final void selectionChanged(final ISelection selection) {
 		// Update selection.
 		currentSelection = selection;
-		if (currentSelection == null)
+		if (currentSelection == null) {
 			currentSelection = StructuredSelection.EMPTY;
+		}
 
 		// The selection is passed to the delegate as-is without
 		// modification. If the selection needs to be modified

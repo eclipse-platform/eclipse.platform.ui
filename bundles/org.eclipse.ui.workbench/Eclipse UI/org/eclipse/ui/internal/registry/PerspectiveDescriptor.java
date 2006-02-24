@@ -143,13 +143,14 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
         }
 
         // otherwise try to create the executable extension
-        if (configElement != null)
-            try {
+        if (configElement != null) {
+			try {
                 return (IPerspectiveFactory) configElement
                             .createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
             } catch (CoreException e) {
                 // do nothing
             }
+		}
 
         return null;
     }
@@ -217,8 +218,9 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @return the original id of this descriptor
      */
     public String getOriginalId() {
-        if (originalId == null)
-            return getId();
+        if (originalId == null) {
+			return getId();
+		}
         return originalId;
     }
 
@@ -238,8 +240,9 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @return whether this perspective wants to be default
      */
     public boolean hasDefaultFlag() {
-        if (configElement == null)
-            return false;
+        if (configElement == null) {
+			return false;
+		}
         
         return Boolean.valueOf(configElement.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT)).booleanValue();
     }
@@ -284,9 +287,10 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 					.getPerspectiveRegistry().findPerspectiveWithId(
 							getOriginalId());
 
-            if (descriptor != null)
-                //Copy the state from the registred descriptor.	
+            if (descriptor != null) {
+				//Copy the state from the registred descriptor.	
                 image = descriptor.getImageDescriptor();
+			}
         }
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
@@ -296,8 +300,9 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * Does nothing if this descriptor is user defined.
      */
     public void revertToPredefined() {
-        if (isPredefined())
-            deleteCustomDefinition();
+        if (isPredefined()) {
+			deleteCustomDefinition();
+		}
     }
 
     /**
@@ -311,12 +316,14 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
         IMemento childMem = memento
                 .createChild(IWorkbenchConstants.TAG_DESCRIPTOR);
         childMem.putString(IWorkbenchConstants.TAG_ID, getId());
-        if (originalId != null)
-            childMem.putString(IWorkbenchConstants.TAG_DESCRIPTOR, originalId);
+        if (originalId != null) {
+			childMem.putString(IWorkbenchConstants.TAG_DESCRIPTOR, originalId);
+		}
         childMem.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
         childMem.putString(IWorkbenchConstants.TAG_CLASS, getClassName());
-        if (singleton)
-            childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
+        if (singleton) {
+			childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
+		}
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 

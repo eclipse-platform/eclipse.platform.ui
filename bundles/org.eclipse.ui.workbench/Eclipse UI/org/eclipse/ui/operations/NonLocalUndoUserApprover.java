@@ -109,8 +109,9 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 			IOperationHistory history, IAdaptable uiInfo) {
 
 		// return immediately if the operation is not relevant
-		if (!requiresApproval(operation, uiInfo))
+		if (!requiresApproval(operation, uiInfo)) {
 			return Status.OK_STATUS;
+		}
 
 		String message = NLS.bind(
 				WorkbenchMessages.Operations_nonLocalRedoWarning, operation
@@ -129,8 +130,9 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 			IOperationHistory history, IAdaptable uiInfo) {
 
 		// return immediately if the operation is not relevant
-		if (!requiresApproval(operation, uiInfo))
+		if (!requiresApproval(operation, uiInfo)) {
 			return Status.OK_STATUS;
+		}
 
 		String message = NLS.bind(
 				WorkbenchMessages.Operations_nonLocalUndoWarning, operation
@@ -149,8 +151,9 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 
 		// if the operation cannot tell us about its modified elements, there's
 		// nothing we can do.
-		if (!(operation instanceof IAdvancedUndoableOperation))
+		if (!(operation instanceof IAdvancedUndoableOperation)) {
 			return Status.OK_STATUS;
+		}
 
 		// Obtain the operation's affected objects.
 		Object[] modifiedElements = ((IAdvancedUndoableOperation) operation)
@@ -189,13 +192,15 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 					}
 					// if the element did not match the affected objects, no
 					// need to check any others.
-					if (!local)
+					if (!local) {
 						break;
+					}
 				}
 			}
 		}
-		if (local)
+		if (local) {
 			return Status.OK_STATUS;
+		}
 
 		// The operation affects more than just our element.  Find out if
 		// we should proceed, cancel, or discard the undo.
@@ -223,12 +228,14 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 			IAdaptable uiInfo) {
 		// no approval is required if the operation doesn't have our undo
 		// context
-		if (!(operation.hasContext(context)))
+		if (!(operation.hasContext(context))) {
 			return false;
+		}
 
 		// no approval is required if the operation only has our context
-		if (operation.getContexts().length == 1)
+		if (operation.getContexts().length == 1) {
 			return false;
+		}
 
 		// no approval is required if we can ascertain that the operation did
 		// not originate
@@ -237,8 +244,9 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 			IUndoContext originatingContext = (IUndoContext) uiInfo
 					.getAdapter(IUndoContext.class);
 			if (originatingContext != null
-					&& !(originatingContext.matches(context)))
+					&& !(originatingContext.matches(context))) {
 				return false;
+			}
 		}
 
 		return true;
@@ -249,8 +257,9 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 * adapters contains the specified object.
 	 */
 	private boolean elementsContains(Object someObject) {
-		if (elements == null)
+		if (elements == null) {
 			return false;
+		}
 		if (elementsAndAdapters == null) {
 			// Compute a list of not just the elements, but any adapters they
 			// may provide on the preferred class if they are not instances of
@@ -264,14 +273,16 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 						&& element instanceof IAdaptable) {
 					Object adapter = ((IAdaptable) element)
 							.getAdapter(affectedObjectsClass);
-					if (adapter != null)
+					if (adapter != null) {
 						elementsAndAdapters.add(adapter);
+					}
 				}
 			}
 		}
 		for (int i = 0; i < elementsAndAdapters.size(); i++) {
-			if (elementsAndAdapters.get(i).equals(someObject))
+			if (elementsAndAdapters.get(i).equals(someObject)) {
 				return true;
+			}
 		}
 		return false;
 	}

@@ -72,8 +72,9 @@ public abstract class SelectionDialog extends TrayDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		if (title != null)
+		if (title != null) {
 			shell.setText(title);
+		}
 	}
 
 	/*
@@ -113,10 +114,11 @@ public abstract class SelectionDialog extends TrayDialog {
 	 * @return the list of initial selected elements or null
 	 */
 	protected List getInitialSelections() {
-		if (initialSelections.isEmpty())
+		if (initialSelections.isEmpty()) {
 			return null;
-		else
+		} else {
 			return getInitialElementSelections();
+		}
 	}
 
 	/**
@@ -167,8 +169,9 @@ public abstract class SelectionDialog extends TrayDialog {
 	 */
 	public void setInitialSelections(Object[] selectedElements) {
 		initialSelections = new ArrayList(selectedElements.length);
-		for (int i = 0; i < selectedElements.length; i++)
+		for (int i = 0; i < selectedElements.length; i++) {
 			initialSelections.add(selectedElements[i]);
+		}
 	}
 
 	/**

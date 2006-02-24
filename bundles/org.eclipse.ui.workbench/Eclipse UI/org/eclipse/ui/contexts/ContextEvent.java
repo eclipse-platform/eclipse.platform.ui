@@ -66,8 +66,9 @@ public final class ContextEvent {
      */
     public ContextEvent(IContext context, boolean definedChanged,
             boolean enabledChanged, boolean nameChanged, boolean parentIdChanged) {
-        if (context == null)
-            throw new NullPointerException();
+        if (context == null) {
+			throw new NullPointerException();
+		}
 
         this.context = context;
         this.definedChanged = definedChanged;

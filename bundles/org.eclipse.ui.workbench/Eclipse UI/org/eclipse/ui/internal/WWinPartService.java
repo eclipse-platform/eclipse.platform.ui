@@ -145,8 +145,9 @@ public class WWinPartService implements IPartService {
      */
     void pageActivated(IWorkbenchPage newPage) {
         // Optimize.
-        if (newPage == activePage)
-            return;
+        if (newPage == activePage) {
+			return;
+		}
 
         // Fire events in the following order:
 

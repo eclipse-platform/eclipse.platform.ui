@@ -69,11 +69,13 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      * @see org.eclipse.ui.IIntroDescriptor#getImageDescriptor()
      */
     public ImageDescriptor getImageDescriptor() {
-        if (imageDescriptor != null)
-            return imageDescriptor;        
+        if (imageDescriptor != null) {
+			return imageDescriptor;
+		}        
 		String iconName = element.getAttribute(ATT_ICON);
-		if (iconName == null)
-            return null;
+		if (iconName == null) {
+			return null;
+		}
         
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element
                 .getNamespace(), iconName);

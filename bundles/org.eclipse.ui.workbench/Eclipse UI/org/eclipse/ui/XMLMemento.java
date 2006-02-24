@@ -88,14 +88,16 @@ public final class XMLMemento implements IMemento {
                     .newInstance();
             DocumentBuilder parser = factory.newDocumentBuilder();
             InputSource source = new InputSource(reader);
-            if (baseDir != null)
-                source.setSystemId(baseDir);
+            if (baseDir != null) {
+				source.setSystemId(baseDir);
+			}
             Document document = parser.parse(source);
             NodeList list = document.getChildNodes();
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
-                if (node instanceof Element)
-                    return new XMLMemento(document, (Element) node);
+                if (node instanceof Element) {
+					return new XMLMemento(document, (Element) node);
+				}
             }
         } catch (ParserConfigurationException e) {
             exception = e;
@@ -109,11 +111,13 @@ public final class XMLMemento implements IMemento {
         }
 
         String problemText = null;
-        if (exception != null)
-            problemText = exception.getMessage();
-        if (problemText == null || problemText.length() == 0)
-            problemText = errorMessage != null ? errorMessage
-                    : WorkbenchMessages.XMLMemento_noElement; 
+        if (exception != null) {
+			problemText = exception.getMessage();
+		}
+        if (problemText == null || problemText.length() == 0) {
+			problemText = errorMessage != null ? errorMessage
+                    : WorkbenchMessages.XMLMemento_noElement;
+		} 
         throw new WorkbenchException(problemText, exception);
     }
 
@@ -191,16 +195,18 @@ public final class XMLMemento implements IMemento {
         // Get the nodes.
         NodeList nodes = element.getChildNodes();
         int size = nodes.getLength();
-        if (size == 0)
-            return null;
+        if (size == 0) {
+			return null;
+		}
 
         // Find the first node which is a child of this node.
         for (int nX = 0; nX < size; nX++) {
             Node node = nodes.item(nX);
             if (node instanceof Element) {
                 Element element = (Element) node;
-                if (element.getNodeName().equals(type))
-                    return new XMLMemento(factory, element);
+                if (element.getNodeName().equals(type)) {
+					return new XMLMemento(factory, element);
+				}
             }
         }
 
@@ -216,8 +222,9 @@ public final class XMLMemento implements IMemento {
         // Get the nodes.
         NodeList nodes = element.getChildNodes();
         int size = nodes.getLength();
-        if (size == 0)
-            return new IMemento[0];
+        if (size == 0) {
+			return new IMemento[0];
+		}
 
         // Extract each node with given type.
         ArrayList list = new ArrayList(size);
@@ -225,8 +232,9 @@ public final class XMLMemento implements IMemento {
             Node node = nodes.item(nX);
             if (node instanceof Element) {
                 Element element = (Element) node;
-                if (element.getNodeName().equals(type))
-                    list.add(element);
+                if (element.getNodeName().equals(type)) {
+					list.add(element);
+				}
             }
         }
 
@@ -244,8 +252,9 @@ public final class XMLMemento implements IMemento {
      */
     public Float getFloat(String key) {
         Attr attr = element.getAttributeNode(key);
-        if (attr == null)
-            return null;
+        if (attr == null) {
+			return null;
+		}
         String strValue = attr.getValue();
         try {
             return new Float(strValue);
@@ -268,8 +277,9 @@ public final class XMLMemento implements IMemento {
      */
     public Integer getInteger(String key) {
         Attr attr = element.getAttributeNode(key);
-        if (attr == null)
-            return null;
+        if (attr == null) {
+			return null;
+		}
         String strValue = attr.getValue();
         try {
             return new Integer(strValue);
@@ -286,8 +296,9 @@ public final class XMLMemento implements IMemento {
      */
     public String getString(String key) {
         Attr attr = element.getAttributeNode(key);
-        if (attr == null)
-            return null;
+        if (attr == null) {
+			return null;
+		}
         return attr.getValue();
     }
 
@@ -313,8 +324,9 @@ public final class XMLMemento implements IMemento {
         // Get the nodes.
         NodeList nodes = element.getChildNodes();
         int size = nodes.getLength();
-        if (size == 0)
-            return null;
+        if (size == 0) {
+			return null;
+		}
         for (int nX = 0; nX < size; nX++) {
             Node node = nodes.item(nX);
             if (node instanceof Text) {
@@ -381,8 +393,9 @@ public final class XMLMemento implements IMemento {
      * Method declared in IMemento.
      */
     public void putString(String key, String value) {
-        if (value == null)
-            return;
+        if (value == null) {
+			return;
+		}
         element.setAttribute(key, value);
     }
 
@@ -525,8 +538,9 @@ public final class XMLMemento implements IMemento {
 
     	private static String getEscaped(String s) {
     		StringBuffer result = new StringBuffer(s.length() + 10);
-    		for (int i = 0; i < s.length(); ++i)
-    			appendEscapedChar(result, s.charAt(i));
+    		for (int i = 0; i < s.length(); ++i) {
+				appendEscapedChar(result, s.charAt(i));
+			}
     		return result.toString();
     	}
 

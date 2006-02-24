@@ -70,8 +70,9 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 		public String getFlatCategory() {
 			if (flatCategory == null) {
 				initialize();
-				if (flatCategory == null)
+				if (flatCategory == null) {
 					flatCategory = getLabelText();
+				}
 			}
 			return flatCategory;
 		}
@@ -88,8 +89,9 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 		 */
 		private void initialize() {
 			String category = reader.getCategory(getNode());
-			if (category == null)
+			if (category == null) {
 				return;
+			}
 
 			StringBuffer sb = new StringBuffer();
 			StringTokenizer stok = new StringTokenizer(category, PREFERENCE_SEPARATOR);
@@ -97,15 +99,18 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 			while (stok.hasMoreTokens()) {
 				String pathID = stok.nextToken();
 				immediateParent = this.reader.findNode(pathID);
-				if (immediateParent == null)
+				if (immediateParent == null) {
 					return;
-				if (sb.length() > 0)
+				}
+				if (sb.length() > 0) {
 					sb.append(PREFERENCE_SEPARATOR);
+				}
 				sb.append(getLabelText(immediateParent));
 			}
 
-			if (sb.length() > 0)
+			if (sb.length() > 0) {
 				sb.append(PREFERENCE_SEPARATOR);
+			}
 			sb.append(getLabelText());
 			flatCategory = sb.toString();
 		}
@@ -174,10 +179,11 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 			while (tokenizer.hasMoreElements()) {
 				currentToken = tokenizer.nextToken();
 				Object child = null;
-				if (parent == null)
+				if (parent == null) {
 					child = findNode(currentToken);
-				else
+				} else {
 					child = findNode(parent, currentToken);
+				}
 				if (child == null) {
 					parent = null;
 					break;

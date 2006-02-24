@@ -203,8 +203,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			keyBindingService.dispose();
 		 }
 
-		if (progressService != null)
+		if (progressService != null) {
 			progressService.dispose();
+		}
 
 		if (serviceLocator != null) {
 			serviceLocator.dispose();
@@ -357,8 +358,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * Get the registered popup menu identifiers
 	 */
 	public String[] getContextMenuIds() {
-		if (menuExtenders == null)
+		if (menuExtenders == null) {
 			return new String[0];
+		}
 		ArrayList menuIds = new ArrayList(menuExtenders.size());
 		for (Iterator iter = menuExtenders.iterator(); iter.hasNext();) {
 			final PopupMenuExtender extender = (PopupMenuExtender) iter.next();
@@ -387,8 +389,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		// Get extension name.
 		String name = configElement.getAttribute("name"); //$NON-NLS-1$
-		if (name != null)
+		if (name != null) {
 			extensionName = name;
+		}
 	}
 
 	protected void setPluginId(String pluginId) {
@@ -455,8 +458,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 										.getAction();
 
 								if (action != null
-										&& action.getActionDefinitionId() != null)
+										&& action.getActionDefinitionId() != null) {
 									keyBindingService.registerAction(action);
+								}
 							}
 						}
 					}
@@ -504,8 +508,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @return WorkbenchSiteProgressService
 	 */
 	private WorkbenchSiteProgressService getSiteProgressService() {
-		if (progressService == null)
+		if (progressService == null) {
 			progressService = new WorkbenchSiteProgressService(this);
+		}
 		return progressService;
 	}
 

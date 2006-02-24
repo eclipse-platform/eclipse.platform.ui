@@ -105,11 +105,13 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
      * Implement this method to read element attributes.
      */
     public boolean readElement(IConfigurationElement element) {
-        if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_TRANSFER))
-            return false;
+        if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_TRANSFER)) {
+			return false;
+		}
         PreferenceTransferElement transfer = createPreferenceTransferElement(element);
-        if (transfer != null)
-            addNewElementToResult(transfer, element);
+        if (transfer != null) {
+			addNewElementToResult(transfer, element);
+		}
         return true;
     }
 
@@ -151,8 +153,9 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
      */
     public static Map getEntry(IConfigurationElement element) {
         IConfigurationElement[] entries = element.getChildren(IWorkbenchRegistryConstants.TAG_ENTRY);
-        if (entries.length == 0)
-            return null;
+        if (entries.length == 0) {
+			return null;
+		}
         Map map = new HashMap(entries.length);
         for (int i = 0; i < entries.length; i++) {
             IConfigurationElement entry = entries[i];

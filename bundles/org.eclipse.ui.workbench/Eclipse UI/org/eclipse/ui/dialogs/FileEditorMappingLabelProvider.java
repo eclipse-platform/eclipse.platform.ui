@@ -102,8 +102,9 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements
      * Method declared on ILabelProvider.
      */
     public String getText(Object element) {
-        if (element instanceof IFileEditorMapping)
-            return ((IFileEditorMapping) element).getLabel();
+        if (element instanceof IFileEditorMapping) {
+			return ((IFileEditorMapping) element).getLabel();
+		}
 
         return null;
     }

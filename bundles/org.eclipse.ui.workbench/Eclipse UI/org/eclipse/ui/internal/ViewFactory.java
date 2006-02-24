@@ -79,8 +79,9 @@ import org.eclipse.ui.views.IViewRegistry;
      */
     static String extractPrimaryId(String compoundId) {
         int i = compoundId.lastIndexOf(ID_SEP);
-        if (i == -1)
-            return compoundId;
+        if (i == -1) {
+			return compoundId;
+		}
         return compoundId.substring(0, i);
     }
 
@@ -91,8 +92,9 @@ import org.eclipse.ui.views.IViewRegistry;
      */
     static String extractSecondaryId(String compoundId) {
         int i = compoundId.lastIndexOf(ID_SEP);
-        if (i == -1)
-            return null;
+        if (i == -1) {
+			return null;
+		}
         return compoundId.substring(i + 1);
     }
 
@@ -147,8 +149,9 @@ import org.eclipse.ui.views.IViewRegistry;
             throws PartInitException {
         IViewDescriptor desc = viewReg.find(id);
         // ensure that the view id is valid
-        if (desc == null)
-            throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,  id ));
+        if (desc == null) {
+			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,  id ));
+		}
         // ensure that multiple instances are allowed if a secondary id is given
         if (secondaryId != null) {
             if (!desc.getAllowMultiple()) {
@@ -230,8 +233,9 @@ import org.eclipse.ui.views.IViewRegistry;
     public void releaseView(IViewReference viewRef) {
         String key = getKey(viewRef);
         IViewReference ref = (IViewReference) counter.get(key);
-        if (ref == null)
-            return;
+        if (ref == null) {
+			return;
+		}
         int count = counter.removeRef(key);
         if (count <= 0) {
             getWorkbenchPage().partRemoved((ViewReference)ref);

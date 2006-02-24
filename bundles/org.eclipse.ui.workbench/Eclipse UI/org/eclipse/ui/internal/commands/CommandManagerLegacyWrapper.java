@@ -72,12 +72,14 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	public static String DEBUG_HANDLERS_COMMAND_ID = null;
 
 	static boolean validateKeySequence(KeySequence keySequence) {
-		if (keySequence == null)
+		if (keySequence == null) {
 			return false;
+		}
 		List keyStrokes = keySequence.getKeyStrokes();
 		int size = keyStrokes.size();
-		if (size == 0 || size > 4 || !keySequence.isComplete())
+		if (size == 0 || size > 4 || !keySequence.isComplete()) {
 			return false;
+		}
 		return true;
 	}
 
@@ -240,12 +242,15 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 
 	private void fireCommandManagerChanged(
 			CommandManagerEvent commandManagerEvent) {
-		if (commandManagerEvent == null)
+		if (commandManagerEvent == null) {
 			throw new NullPointerException();
-		if (commandManagerListeners != null)
-			for (int i = 0; i < commandManagerListeners.size(); i++)
+		}
+		if (commandManagerListeners != null) {
+			for (int i = 0; i < commandManagerListeners.size(); i++) {
 				((ICommandManagerListener) commandManagerListeners.get(i))
 						.commandManagerChanged(commandManagerEvent);
+			}
+		}
 	}
 
 	public Set getActiveContextIds() {

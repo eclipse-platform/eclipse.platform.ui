@@ -48,8 +48,9 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
     public Image getImage(Object element) {
     	try {
     		ImageDescriptor descriptor = getDescriptor(element);	        
-	        if (descriptor != null)
-	        	return manager.createImage(descriptor);
+	        if (descriptor != null) {
+				return manager.createImage(descriptor);
+			}
     	}
     	catch (DeviceResourceException e) {
     		//ignore 
@@ -59,8 +60,9 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
     
     private ImageDescriptor getDescriptor(Object element) {
     	ImageDescriptor descriptor = (ImageDescriptor) descriptorMap.get(element);
-    	if (descriptor != null)
-    		return descriptor;
+    	if (descriptor != null) {
+			return descriptor;
+		}
         
     	if (element instanceof ICategory) {
         	ICategory category = (ICategory) element;

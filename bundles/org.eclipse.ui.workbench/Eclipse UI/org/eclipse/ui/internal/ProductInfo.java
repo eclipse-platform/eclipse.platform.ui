@@ -43,8 +43,9 @@ public class ProductInfo {
      * @return the product name, or <code>null</code>
      */
     public String getProductName() {
-        if (productName == null && product != null)
-            productName = product.getName();
+        if (productName == null && product != null) {
+			productName = product.getName();
+		}
         return productName;
     }
 
@@ -61,8 +62,9 @@ public class ProductInfo {
      * @see org.eclipse.swt.widgets.Display#setAppName
      */
     public String getAppName() {
-        if (appName == null && product != null)
-            appName = ProductProperties.getAppName(product);
+        if (appName == null && product != null) {
+			appName = ProductProperties.getAppName(product);
+		}
         return appName;
     }
 
@@ -74,8 +76,9 @@ public class ProductInfo {
      * @return the descriptor for an about image, or <code>null</code> if none
      */
     public ImageDescriptor getAboutImage() {
-        if (aboutImage == null && product != null)
-            aboutImage = ProductProperties.getAboutImage(product);
+        if (aboutImage == null && product != null) {
+			aboutImage = ProductProperties.getAboutImage(product);
+		}
         return aboutImage;
     }
 
@@ -89,8 +92,9 @@ public class ProductInfo {
      *         <code>null</code> if none
      */
     public ImageDescriptor[] getWindowImages() {
-        if (windowImages == null && product != null)
-            windowImages = ProductProperties.getWindowImages(product);
+        if (windowImages == null && product != null) {
+			windowImages = ProductProperties.getWindowImages(product);
+		}
         return windowImages;
     }
 
@@ -101,8 +105,9 @@ public class ProductInfo {
      * @return the about text, or <code>null</code> if none
      */
     public String getAboutText() {
-        if (aboutText == null && product != null)
-            aboutText = ProductProperties.getAboutText(product);
+        if (aboutText == null && product != null) {
+			aboutText = ProductProperties.getAboutText(product);
+		}
         return aboutText;
     }
 }

@@ -48,8 +48,9 @@ public class EditorRegistryReader extends RegistryReader {
      * processes one configuration element.
      */
     protected boolean readElement(IConfigurationElement element) {
-        if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR))
-            return false;
+        if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR)) {
+			return false;
+		}
 
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id == null) {
@@ -99,15 +100,17 @@ public class EditorRegistryReader extends RegistryReader {
 		IConfigurationElement [] bindings = element.getChildren(IWorkbenchRegistryConstants.TAG_CONTENT_TYPE_BINDING);
 		for (int i = 0; i < bindings.length; i++) {
 			String contentTypeId = bindings[i].getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_TYPE_ID);
-			if (contentTypeId == null)
+			if (contentTypeId == null) {
 				continue;
+			}
 			contentTypeVector.add(contentTypeId);
 		}
 		
         // Is this the default editor?
         String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
-        if (def != null)
-            defaultEditor = Boolean.valueOf(def).booleanValue();
+        if (def != null) {
+			defaultEditor = Boolean.valueOf(def).booleanValue();
+		}
 
         // Add the editor to the manager.	
         editorRegistry.addEditorFromPlugin(editor, extensionsVector,

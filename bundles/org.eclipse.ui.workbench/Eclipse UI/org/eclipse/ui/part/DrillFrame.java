@@ -47,12 +47,14 @@ import java.util.List;
      */
     public boolean equals(Object obj) {
         // Compare handles.
-        if (this == obj)
-            return true;
+        if (this == obj) {
+			return true;
+		}
 
         // Compare class.
-        if (!(obj instanceof DrillFrame))
-            return false;
+        if (!(obj instanceof DrillFrame)) {
+			return false;
+		}
 
         // Compare contents.
         DrillFrame oOther = (DrillFrame) obj;

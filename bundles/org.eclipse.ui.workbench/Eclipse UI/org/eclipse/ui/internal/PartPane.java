@@ -84,7 +84,9 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
                     Control parentControl = parent.getControl();
                     if (parentControl != null && !parentControl.isDisposed()) {
                         e.doit = parentControl.traverse(e.detail);
-                        if (e.doit) e.detail = SWT.TRAVERSE_NONE;
+                        if (e.doit) {
+							e.detail = SWT.TRAVERSE_NONE;
+						}
                     }
                 }
             }
@@ -125,8 +127,9 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
      * 
      */
     public void createControl(Composite parent) {
-        if (getControl() != null)
-            return;
+        if (getControl() != null) {
+			return;
+		}
 
         partReference.addPropertyListener(this);
         // Create view form.	
@@ -182,8 +185,9 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
      * Zooms in on the part contained in this pane.
      */
     protected void doZoom() {
-        if (isDocked())
-            page.toggleZoom(partReference);
+        if (isDocked()) {
+			page.toggleZoom(partReference);
+		}
     }
 
     /**
@@ -229,8 +233,9 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
      * Move the control over another one.
      */
     public void moveAbove(Control refControl) {
-        if (getControl() != null)
-            getControl().moveAbove(refControl);
+        if (getControl() != null) {
+			getControl().moveAbove(refControl);
+		}
     }
 
     /**
@@ -317,8 +322,9 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
      * Set whether the pane is zoomed or not
      */
     public void setZoomed(boolean isZoomed) {
-        if (this.isZoomed == isZoomed)
-            return; // do nothing if we're already in the right state.
+        if (this.isZoomed == isZoomed) {
+			return; // do nothing if we're already in the right state.
+		}
 
         super.setZoomed(isZoomed);
 
@@ -416,8 +422,9 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
         final KeyListener listener = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.character == SWT.ESC || e.character == '\r') {
-                    if (toGetFocusWhenDone != null)
-                        toGetFocusWhenDone.setFocus();
+                    if (toGetFocusWhenDone != null) {
+						toGetFocusWhenDone.setFocus();
+					}
                 }
             }
         };

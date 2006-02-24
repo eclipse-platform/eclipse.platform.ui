@@ -47,8 +47,9 @@ public class ViewerActionBuilder extends PluginActionBuilder {
      */
     protected ActionDescriptor createActionDescriptor(
             IConfigurationElement element) {
-        if (part instanceof IViewPart)
+        if (part instanceof IViewPart) {
 			return new ActionDescriptor(element, ActionDescriptor.T_VIEW, part);
+		}
 		return new ActionDescriptor(element, ActionDescriptor.T_EDITOR, part);
     }
 
@@ -155,9 +156,10 @@ public class ViewerActionBuilder extends PluginActionBuilder {
                 }
             }
 
-            if (visible)
-                super.contribute(menu, menuAppendIfMissing, toolbar,
+            if (visible) {
+				super.contribute(menu, menuAppendIfMissing, toolbar,
                         toolAppendIfMissing);
+			}
         }
 		
 		/* (non-Javadoc)

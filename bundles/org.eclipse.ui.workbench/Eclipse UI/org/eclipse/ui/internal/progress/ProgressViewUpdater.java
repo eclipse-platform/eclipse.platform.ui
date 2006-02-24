@@ -104,8 +104,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
                 JobTreeElement treeElement = (JobTreeElement) additionsIterator
                         .next();
                 if (!treeElement.isActive()) {
-                    if (deletions.contains(treeElement))
-                        staleAdditions.add(treeElement);
+                    if (deletions.contains(treeElement)) {
+						staleAdditions.add(treeElement);
+					}
                 }
             }
 
@@ -117,8 +118,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
                 JobTreeElement treeElement = (JobTreeElement) refreshIterator
                         .next();
                 if (deletions.contains(treeElement)
-                        || additions.contains(treeElement))
-                    obsoleteRefresh.add(treeElement);
+                        || additions.contains(treeElement)) {
+					obsoleteRefresh.add(treeElement);
+				}
                 
                 //Also check for groups that are being added
                Object parent = treeElement.getParent();
@@ -145,8 +147,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * @return ProgressViewUpdater
      */
    static ProgressViewUpdater getSingleton() {
-        if (singleton == null)
-            singleton = new ProgressViewUpdater();
+        if (singleton == null) {
+			singleton = new ProgressViewUpdater();
+		}
         return singleton;
     }
 
@@ -162,8 +165,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
     }
 
     static void clearSingleton() {
-        if (singleton != null)
-            ProgressManager.getInstance().removeListener(singleton);
+        if (singleton != null) {
+			ProgressManager.getInstance().removeListener(singleton);
+		}
         singleton = null;
     }
 
@@ -199,16 +203,18 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
     void removeCollector(IProgressUpdateCollector provider) {
         HashSet newCollectors = new HashSet();
         for (int i = 0; i < collectors.length; i++) {
-            if (!collectors[i].equals(provider))
-                newCollectors.add(collectors[i]);
+            if (!collectors[i].equals(provider)) {
+				newCollectors.add(collectors[i]);
+			}
         }
         IProgressUpdateCollector[] newArray = new IProgressUpdateCollector[newCollectors
                 .size()];
         newCollectors.toArray(newArray);
         collectors = newArray;
         //Remove ourselves if there is nothing to update
-        if (collectors.length == 0)
-            clearSingleton();
+        if (collectors.length == 0) {
+			clearSingleton();
+		}
     }
 
     /**
@@ -234,8 +240,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
             public IStatus runInUIThread(IProgressMonitor monitor) {
 
                 //Abort the job if there isn't anything
-                if (collectors.length == 0)
-                    return Status.CANCEL_STATUS;
+                if (collectors.length == 0) {
+					return Status.CANCEL_STATUS;
+				}
 
                 if (currentInfo.updateAll) {
                     synchronized (updateLock) {
@@ -263,12 +270,15 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
                     for (int v = 0; v < collectors.length; v++) {
                         IProgressUpdateCollector collector = collectors[v];
 
-                        if (updateItems.length > 0)
-                            collector.refresh(updateItems);
-                        if (additionItems.length > 0)
-                            collector.add(additionItems);
-                        if (deletionItems.length > 0)
-                            collector.remove(deletionItems);
+                        if (updateItems.length > 0) {
+							collector.refresh(updateItems);
+						}
+                        if (additionItems.length > 0) {
+							collector.add(additionItems);
+						}
+                        if (deletionItems.length > 0) {
+							collector.remove(deletionItems);
+						}
                     }
                 }
 
@@ -295,14 +305,16 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      */
     public void refresh(JobInfo info) {
 
-        if (isUpdateJob(info.getJob()))
-            return;
+        if (isUpdateJob(info.getJob())) {
+			return;
+		}
 
         synchronized (updateLock) {
             currentInfo.refresh(info);
             GroupInfo group = info.getGroupInfo();
-            if (group != null)
-                currentInfo.refresh(group);
+            if (group != null) {
+				currentInfo.refresh(group);
+			}
         }
         //Add in a 100ms delay so as to keep priority low
         scheduleUpdate();
@@ -314,8 +326,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      */
     public void refreshJobInfo(JobInfo info) {
 
-        if (isUpdateJob(info.getJob()))
-            return;
+        if (isUpdateJob(info.getJob())) {
+			return;
+		}
 
         synchronized (updateLock) {
             currentInfo.refresh(info);
@@ -372,15 +385,16 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      */
     public void addJob(JobInfo info) {
 
-        if (isUpdateJob(info.getJob()))
-            return;
+        if (isUpdateJob(info.getJob())) {
+			return;
+		}
 
         synchronized (updateLock) {
             GroupInfo group = info.getGroupInfo();
 
-            if (group == null)
-                currentInfo.add(info);
-            else {
+            if (group == null) {
+				currentInfo.add(info);
+			} else {
                 currentInfo.refresh(group);
             }
         }
@@ -395,14 +409,15 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      */
     public void removeJob(JobInfo info) {
 
-        if (isUpdateJob(info.getJob()))
-            return;
+        if (isUpdateJob(info.getJob())) {
+			return;
+		}
 
         synchronized (updateLock) {
             GroupInfo group = info.getGroupInfo();
-            if (group == null)
-                currentInfo.remove(info);
-            else {
+            if (group == null) {
+				currentInfo.remove(info);
+			} else {
                 group.removeJobInfo(info);
                 currentInfo.refresh(group);
             }

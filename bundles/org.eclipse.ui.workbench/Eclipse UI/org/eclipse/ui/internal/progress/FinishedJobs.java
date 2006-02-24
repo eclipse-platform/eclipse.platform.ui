@@ -111,19 +111,22 @@ class FinishedJobs extends EventManager {
         if (job != null) {
             Object prop = job.getProperty(ProgressManagerUtil.KEEP_PROPERTY);
             if (prop instanceof Boolean) {
-                if (((Boolean) prop).booleanValue())
-                    return true;
+                if (((Boolean) prop).booleanValue()) {
+					return true;
+				}
             }
 
             prop = job.getProperty(ProgressManagerUtil.KEEPONE_PROPERTY);
             if (prop instanceof Boolean) {
-                if (((Boolean) prop).booleanValue())
-                    return true;
+                if (((Boolean) prop).booleanValue()) {
+					return true;
+				}
             }
 
             IStatus status = job.getResult();
-            if (status != null && status.getSeverity() == IStatus.ERROR)
-                return true;
+            if (status != null && status.getSeverity() == IStatus.ERROR) {
+				return true;
+			}
         }
         return false;
     }
@@ -145,8 +148,9 @@ class FinishedJobs extends EventManager {
     private void checkForDuplicates(GroupInfo info) {
         Object[] objects = info.getChildren();
         for (int i = 0; i < objects.length; i++) {
-            if (objects[i] instanceof JobInfo)
-                checkForDuplicates((JobInfo) objects[i]);
+            if (objects[i] instanceof JobInfo) {
+				checkForDuplicates((JobInfo) objects[i]);
+			}
         }
     }
 
@@ -198,8 +202,9 @@ class FinishedJobs extends EventManager {
             if (job != null) {
                 Object prop = job
                         .getProperty(IProgressConstants.ACTION_PROPERTY);
-                if (prop instanceof ActionFactory.IWorkbenchAction)
-                    ((ActionFactory.IWorkbenchAction) prop).dispose();
+                if (prop instanceof ActionFactory.IWorkbenchAction) {
+					((ActionFactory.IWorkbenchAction) prop).dispose();
+				}
             }
         }
     }
@@ -208,12 +213,13 @@ class FinishedJobs extends EventManager {
 
         if (info.isJobInfo()) {
             Job myJob = null;
-            if (info instanceof JobInfo)
-                myJob = ((JobInfo) info).getJob();
-            else if (info instanceof SubTaskInfo) {
+            if (info instanceof JobInfo) {
+				myJob = ((JobInfo) info).getJob();
+			} else if (info instanceof SubTaskInfo) {
                 JobInfo parent = (JobInfo) ((SubTaskInfo) info).getParent();
-                if (parent != null)
-                    myJob = parent.getJob();
+                if (parent != null) {
+					myJob = parent.getJob();
+				}
             }
 
             if (myJob != null) {
@@ -236,15 +242,17 @@ class FinishedJobs extends EventManager {
                             Job job = ji.getJob();
                             if (job != null && job != myJob
                                     && job.belongsTo(myJob)) {
-                                if (found == null)
-                                    found = new ArrayList();
+                                if (found == null) {
+									found = new ArrayList();
+								}
                                 found.add(otherRoot);
                             }
                         }
                     }
-                    if (found != null)
-                        return (JobTreeElement[]) found
+                    if (found != null) {
+						return (JobTreeElement[]) found
                                 .toArray(new JobTreeElement[found.size()]);
+					}
                 }
             }
         }
@@ -253,8 +261,9 @@ class FinishedJobs extends EventManager {
 
     private static Object getRoot(JobTreeElement jte) {
         Object parent;
-        while ((parent = jte.getParent()) != null)
-            jte = (JobTreeElement) parent;
+        while ((parent = jte.getParent()) != null) {
+			jte = (JobTreeElement) parent;
+		}
         return jte;
     }
 
@@ -309,8 +318,9 @@ class FinishedJobs extends EventManager {
                             .getParent();
                     if (parent != null) {
                         if (parent == jte || parent.getParent() == jte) {
-                            if (keptjobinfos.remove(jtes[i]))
-                                disposeAction(jtes[i]);
+                            if (keptjobinfos.remove(jtes[i])) {
+								disposeAction(jtes[i]);
+							}
                             finishedTime.remove(jtes[i]);
                         }
                     }
@@ -335,8 +345,9 @@ class FinishedJobs extends EventManager {
      */
     JobTreeElement[] getJobInfos() {
         JobTreeElement[] all;
-		if(keptjobinfos.isEmpty())
+		if(keptjobinfos.isEmpty()) {
 			return EMPTY_INFOS;
+		}
 		
         synchronized (keptjobinfos) {
             all = (JobTreeElement[]) keptjobinfos
@@ -346,10 +357,12 @@ class FinishedJobs extends EventManager {
             public int compare(Object o1, Object o2) {
                 long t1 = getFinishedDateAsLong((JobTreeElement) o1);
                 long t2 = getFinishedDateAsLong((JobTreeElement) o2);
-                if (t1 < t2)
-                    return -1;
-                if (t1 > t2)
-                    return 1;
+                if (t1 < t2) {
+					return -1;
+				}
+                if (t1 > t2) {
+					return 1;
+				}
                 return 0;
             }
         });
@@ -358,8 +371,9 @@ class FinishedJobs extends EventManager {
 
     private long getFinishedDateAsLong(JobTreeElement jte) {
         Object o = finishedTime.get(jte);
-        if (o instanceof Long)
-            return ((Long) o).longValue();
+        if (o instanceof Long) {
+			return ((Long) o).longValue();
+		}
         return 0;
     }
 
@@ -370,8 +384,9 @@ class FinishedJobs extends EventManager {
      */
     public Date getFinishDate(JobTreeElement jte) {
         Object o = finishedTime.get(jte);
-        if (o instanceof Long)
-            return new Date(((Long) o).longValue());
+        if (o instanceof Long) {
+			return new Date(((Long) o).longValue());
+		}
         return null;
     }
 
@@ -391,8 +406,9 @@ class FinishedJobs extends EventManager {
         synchronized (keptjobinfos) {
             JobTreeElement[] all = (JobTreeElement[]) keptjobinfos
                     .toArray(new JobTreeElement[keptjobinfos.size()]);
-            for (int i = 0; i < all.length; i++)
-                disposeAction(all[i]);
+            for (int i = 0; i < all.length; i++) {
+				disposeAction(all[i]);
+			}
             keptjobinfos.clear();
             finishedTime.clear();
         }

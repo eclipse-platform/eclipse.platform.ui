@@ -91,8 +91,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	        outerContainer.setFont(font);
 
 	        Label messageLabel = new Label(outerContainer, SWT.NONE);
-	        if (message != null)
-	        	messageLabel.setText(message);
+	        if (message != null) {
+				messageLabel.setText(message);
+			}
 	        messageLabel.setFont(font);
 
 	        createFilteredTree(outerContainer);
@@ -133,8 +134,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	        }
 
 	        // ensure the category is expanded.  If there is a remembered expansion it will be set later.
-	        if (expandTop)
-	            viewer.setAutoExpandLevel(2);
+	        if (expandTop) {
+				viewer.setAutoExpandLevel(2);
+			}
 
 	        AdaptableList input = new AdaptableList(inputArray);
 	        
@@ -229,8 +231,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 		if (v.isExpandable(element)) {
 		    v.setExpandedState(element, !v.getExpandedState(element));
 		} else if (element instanceof WorkbenchWizardElement) {
-			if (canFlipToNextPage())
+			if (canFlipToNextPage()) {
 				getContainer().showPage(getNextPage());
+			}
 		}    	
         getContainer().showPage(getNextPage());   			
     }
@@ -266,9 +269,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
             else{
             	setSelectedNode(null);
             }
-    	}
-    	else 
-    		setMessage(null);
+    	} else {
+			setMessage(null);
+		}
     }
     
     /*
@@ -283,9 +286,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
         if (sel instanceof WorkbenchWizardElement){
 	        WorkbenchWizardElement currentWizardSelection = (WorkbenchWizardElement) sel;        
 	        updateSelectedNode(currentWizardSelection);
-        }
-        else
-        	updateSelectedNode(null);
+        } else {
+			updateSelectedNode(null);
+		}
     }
 
     /*
@@ -315,8 +318,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
     protected void expandPreviouslyExpandedCategories(String setting, IWizardCategory wizardCategories, TreeViewer viewer) {
         String[] expandedCategoryPaths =  getDialogSettings()
                 .getArray(setting);
-        if (expandedCategoryPaths == null || expandedCategoryPaths.length == 0)
-            return;
+        if (expandedCategoryPaths == null || expandedCategoryPaths.length == 0) {
+			return;
+		}
 
         List categoriesToExpand = new ArrayList(expandedCategoryPaths.length);
 
@@ -324,13 +328,15 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
             for (int i = 0; i < expandedCategoryPaths.length; i++) {
                 IWizardCategory category = wizardCategories
                         .findCategory(new Path(expandedCategoryPaths[i]));
-                if (category != null) // ie.- it still exists
-                    categoriesToExpand.add(category);
+                if (category != null) {
+					categoriesToExpand.add(category);
+				}
             }
         }
 
-        if (!categoriesToExpand.isEmpty())
-            viewer.setExpandedElements(categoriesToExpand.toArray());
+        if (!categoriesToExpand.isEmpty()) {
+			viewer.setExpandedElements(categoriesToExpand.toArray());
+		}
 
     }
 
@@ -341,11 +347,13 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
      */
     protected void selectPreviouslySelected(String setting, IWizardCategory wizardCategories, final TreeViewer viewer) {
         String selectedId = getDialogSettings().get(setting);
-        if (selectedId == null)
-            return;
+        if (selectedId == null) {
+			return;
+		}
 
-        if (wizardCategories == null)
-            return;
+        if (wizardCategories == null) {
+			return;
+		}
 
         Object selected = wizardCategories.findCategory(new Path(
                 selectedId));
@@ -353,9 +361,10 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
         if (selected == null) {
             selected = wizardCategories.findWizard(selectedId);
 
-            if (selected == null)
-                // if we cant find either a category or a wizard, abort.
+            if (selected == null) {
+				// if we cant find either a category or a wizard, abort.
                 return;
+			}
         }
 
         viewer.setSelection(new StructuredSelection(selected), true);
@@ -370,10 +379,11 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
         Object[] expandedElements = viewer.getExpandedElements();
         List expandedElementPaths = new ArrayList(expandedElements.length);
         for (int i = 0; i < expandedElements.length; ++i) {
-            if (expandedElements[i] instanceof IWizardCategory)
-                expandedElementPaths
+            if (expandedElements[i] instanceof IWizardCategory) {
+				expandedElementPaths
                         .add(((IWizardCategory) expandedElements[i])
                                 .getPath().toString());
+			}
         }
         getDialogSettings().put(setting,
                 (String[]) expandedElementPaths
@@ -389,14 +399,15 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
                 .getSelection()).getFirstElement();
 
         if (selected != null) {
-            if (selected instanceof IWizardCategory)
-                getDialogSettings().put(setting,
+            if (selected instanceof IWizardCategory) {
+				getDialogSettings().put(setting,
                         ((IWizardCategory) selected).getPath()
                                 .toString());
-            else
-                // else its a wizard
+			} else {
+				// else its a wizard
             	getDialogSettings().put(setting,
                         ((IWizardDescriptor) selected).getId());
+			}
         }
     }
     
@@ -416,8 +427,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
     public IWizardPage getNextPage() { 
     	ITriggerPoint triggerPoint = getTriggerPoint();
         
-        if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode()))
-            return super.getNextPage();
+        if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode())) {
+			return super.getNextPage();
+		}
         return null;
     }
 

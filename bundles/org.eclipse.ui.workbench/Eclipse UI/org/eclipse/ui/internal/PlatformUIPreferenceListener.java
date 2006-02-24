@@ -41,8 +41,9 @@ public class PlatformUIPreferenceListener implements
 	private static PlatformUIPreferenceListener singleton;
 	
 	public static IEclipsePreferences.IPreferenceChangeListener getSingleton(){
-		if(singleton == null)
+		if(singleton == null) {
 			singleton = new PlatformUIPreferenceListener();
+		}
 	    return singleton;
 	}
 
@@ -87,10 +88,11 @@ public class PlatformUIPreferenceListener implements
 					.getWorkbenchWindows();
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
-				if (window instanceof WorkbenchWindow)
+				if (window instanceof WorkbenchWindow) {
 					((WorkbenchWindow) window)
 							.setPerspectiveBarLocation(apiStore
 									.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+				}
 			}
 			return;
 		}
@@ -106,8 +108,9 @@ public class PlatformUIPreferenceListener implements
 					.getWorkbenchWindows();
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
-				if (window instanceof WorkbenchWindow)
+				if (window instanceof WorkbenchWindow) {
 					((WorkbenchWindow) window).setBannerCurve(newValue);
+				}
 			}
 			return;
 		}

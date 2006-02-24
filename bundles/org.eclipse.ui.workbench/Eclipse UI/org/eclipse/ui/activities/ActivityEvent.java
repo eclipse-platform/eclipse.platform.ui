@@ -104,8 +104,9 @@ public final class ActivityEvent {
             boolean descriptionChanged, boolean enabledChanged,
             boolean nameChanged,
             boolean defaultEnabledChanged) {
-        if (activity == null)
-            throw new NullPointerException();
+        if (activity == null) {
+			throw new NullPointerException();
+		}
 
         this.activity = activity;
         this.activityRequirementBindingsChanged = activityRequirementBindingsChanged;

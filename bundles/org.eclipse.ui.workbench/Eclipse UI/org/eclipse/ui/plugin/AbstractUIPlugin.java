@@ -200,11 +200,13 @@ public abstract class AbstractUIPlugin extends Plugin {
     protected ImageRegistry createImageRegistry() {
     	
     	//If we are in the UI Thread use that
-    	if(Display.getCurrent() != null)
-    		 return new ImageRegistry(Display.getCurrent());
+    	if(Display.getCurrent() != null) {
+			return new ImageRegistry(Display.getCurrent());
+		}
     	
-    	if(PlatformUI.isWorkbenchRunning())
-    		return new ImageRegistry(PlatformUI.getWorkbench().getDisplay());
+    	if(PlatformUI.isWorkbenchRunning()) {
+			return new ImageRegistry(PlatformUI.getWorkbench().getDisplay());
+		}
     	
     	//Invalid thread access if it is not the UI Thread 
     	//and the workbench is not created.
@@ -226,8 +228,9 @@ public abstract class AbstractUIPlugin extends Plugin {
      * @return the dialog settings
      */
     public IDialogSettings getDialogSettings() {
-        if (dialogSettings == null)
-            loadDialogSettings();
+        if (dialogSettings == null) {
+			loadDialogSettings();
+		}
         return dialogSettings;
     }
 
@@ -417,8 +420,9 @@ public abstract class AbstractUIPlugin extends Plugin {
 
         // otherwise look for bundle specific dialog settings
         URL dsURL = BundleUtility.find(getBundle(), FN_DIALOG_SETTINGS);
-        if (dsURL == null)
-            return;
+        if (dsURL == null) {
+			return;
+		}
 
         InputStream is = null;
         try {
@@ -431,8 +435,9 @@ public abstract class AbstractUIPlugin extends Plugin {
             dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
         } finally {
             try {
-                if (is != null)
-                    is.close();
+                if (is != null) {
+					is.close();
+				}
             } catch (IOException e) {
                 // do nothing
             }
@@ -469,8 +474,9 @@ public abstract class AbstractUIPlugin extends Plugin {
      */
     protected void refreshPluginActions() {
         // If the workbench is not started yet, or is no longer running, do nothing.
-        if (!PlatformUI.isWorkbenchRunning())
-            return;
+        if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
 
         // startup() is not guaranteed to be called in the UI thread,
         // but refreshPluginActions must run in the UI thread, 
@@ -493,7 +499,9 @@ public abstract class AbstractUIPlugin extends Plugin {
 
         try {
         	IPath path = getStateLocationOrNull();
-        	if(path == null) return;
+        	if(path == null) {
+				return;
+			}
             String readWritePath = path
                     .append(FN_DIALOG_SETTINGS).toOSString();
             dialogSettings.save(readWritePath);
@@ -656,8 +664,9 @@ public abstract class AbstractUIPlugin extends Plugin {
 
         // if the bundle is not ready then there is no image
         Bundle bundle = Platform.getBundle(pluginId);
-        if (!BundleUtility.isReady(bundle))
-            return null;
+        if (!BundleUtility.isReady(bundle)) {
+			return null;
+		}
 
         // look for the image (this will check both the plugin and fragment folders
         URL fullPathString = BundleUtility.find(bundle, imageFilePath);
@@ -669,8 +678,9 @@ public abstract class AbstractUIPlugin extends Plugin {
             }
         }
 
-        if (fullPathString == null)
-            return null;
+        if (fullPathString == null) {
+			return null;
+		}
         return ImageDescriptor.createFromURL(fullPathString);
     }
     

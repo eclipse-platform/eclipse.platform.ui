@@ -40,8 +40,9 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
     private IExtensionRegistry extensionRegistry;
 
     ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
-        if (extensionRegistry == null)
-            throw new NullPointerException();
+        if (extensionRegistry == null) {
+			throw new NullPointerException();
+		}
 
         this.extensionRegistry = extensionRegistry;
 
@@ -53,11 +54,12 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                                 .getExtensionDeltas(Persistence.PACKAGE_PREFIX,
                                         Persistence.PACKAGE_BASE);
 
-                        if (extensionDeltas.length != 0)
-                            try {
+                        if (extensionDeltas.length != 0) {
+							try {
                                 load();
                             } catch (IOException eIO) {
                             }
+						}
                     }
                 });
 
@@ -73,43 +75,50 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
         if (configurationElement != null) {
             IExtension extension = configurationElement.getDeclaringExtension();
 
-            if (extension != null)
-                namespace = extension.getNamespace();
+            if (extension != null) {
+				namespace = extension.getNamespace();
+			}
         }
 
         return namespace;
     }
 
     private void load() throws IOException {
-        if (activityRequirementBindingDefinitions == null)
-            activityRequirementBindingDefinitions = new ArrayList();
-        else
-            activityRequirementBindingDefinitions.clear();
+        if (activityRequirementBindingDefinitions == null) {
+			activityRequirementBindingDefinitions = new ArrayList();
+		} else {
+			activityRequirementBindingDefinitions.clear();
+		}
 
-        if (activityDefinitions == null)
-            activityDefinitions = new ArrayList();
-        else
-            activityDefinitions.clear();
+        if (activityDefinitions == null) {
+			activityDefinitions = new ArrayList();
+		} else {
+			activityDefinitions.clear();
+		}
 
-        if (activityPatternBindingDefinitions == null)
-            activityPatternBindingDefinitions = new ArrayList();
-        else
-            activityPatternBindingDefinitions.clear();
+        if (activityPatternBindingDefinitions == null) {
+			activityPatternBindingDefinitions = new ArrayList();
+		} else {
+			activityPatternBindingDefinitions.clear();
+		}
 
-        if (categoryActivityBindingDefinitions == null)
-            categoryActivityBindingDefinitions = new ArrayList();
-        else
-            categoryActivityBindingDefinitions.clear();
+        if (categoryActivityBindingDefinitions == null) {
+			categoryActivityBindingDefinitions = new ArrayList();
+		} else {
+			categoryActivityBindingDefinitions.clear();
+		}
 
-        if (categoryDefinitions == null)
-            categoryDefinitions = new ArrayList();
-        else
-            categoryDefinitions.clear();
+        if (categoryDefinitions == null) {
+			categoryDefinitions = new ArrayList();
+		} else {
+			categoryDefinitions.clear();
+		}
 
-        if (defaultEnabledActivities == null)
-            defaultEnabledActivities = new ArrayList();
-        else
-            defaultEnabledActivities.clear();
+        if (defaultEnabledActivities == null) {
+			defaultEnabledActivities = new ArrayList();
+		} else {
+			defaultEnabledActivities.clear();
+		}
 
         IConfigurationElement[] configurationElements = extensionRegistry
                 .getConfigurationElementsFor(Persistence.PACKAGE_FULL);
@@ -118,18 +127,19 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
             IConfigurationElement configurationElement = configurationElements[i];
             String name = configurationElement.getName();
 
-            if (Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING.equals(name))
-                readActivityRequirementBindingDefinition(configurationElement);
-            else if (Persistence.TAG_ACTIVITY.equals(name))
-                readActivityDefinition(configurationElement);
-            else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name))
-                readActivityPatternBindingDefinition(configurationElement);
-            else if (Persistence.TAG_CATEGORY_ACTIVITY_BINDING.equals(name))
-                readCategoryActivityBindingDefinition(configurationElement);
-            else if (Persistence.TAG_CATEGORY.equals(name))
-                readCategoryDefinition(configurationElement);
-            else if (Persistence.TAG_DEFAULT_ENABLEMENT.equals(name))
-                readDefaultEnablement(configurationElement);
+            if (Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING.equals(name)) {
+				readActivityRequirementBindingDefinition(configurationElement);
+			} else if (Persistence.TAG_ACTIVITY.equals(name)) {
+				readActivityDefinition(configurationElement);
+			} else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name)) {
+				readActivityPatternBindingDefinition(configurationElement);
+			} else if (Persistence.TAG_CATEGORY_ACTIVITY_BINDING.equals(name)) {
+				readCategoryActivityBindingDefinition(configurationElement);
+			} else if (Persistence.TAG_CATEGORY.equals(name)) {
+				readCategoryDefinition(configurationElement);
+			} else if (Persistence.TAG_DEFAULT_ENABLEMENT.equals(name)) {
+				readDefaultEnablement(configurationElement);
+			}
         }
 
         boolean activityRegistryChanged = false;
@@ -173,8 +183,9 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
             activityRegistryChanged = true;
         }
 
-        if (activityRegistryChanged)
-            fireActivityRegistryChanged();
+        if (activityRegistryChanged) {
+			fireActivityRegistryChanged();
+		}
     }
 
     private void readDefaultEnablement(
@@ -183,8 +194,9 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                 .readDefaultEnablement(new ConfigurationElementMemento(
                         configurationElement));
 
-        if (enabledActivity != null)
-            defaultEnabledActivities.add(enabledActivity);
+        if (enabledActivity != null) {
+			defaultEnabledActivities.add(enabledActivity);
+		}
 
     }
 
@@ -195,9 +207,10 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                         new ConfigurationElementMemento(configurationElement),
                         getNamespace(configurationElement));
 
-        if (activityRequirementBindingDefinition != null)
-            activityRequirementBindingDefinitions
+        if (activityRequirementBindingDefinition != null) {
+			activityRequirementBindingDefinitions
                     .add(activityRequirementBindingDefinition);
+		}
     }
 
     private void readActivityDefinition(
@@ -207,8 +220,9 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                         configurationElement),
                         getNamespace(configurationElement));
 
-        if (activityDefinition != null)
-            activityDefinitions.add(activityDefinition);
+        if (activityDefinition != null) {
+			activityDefinitions.add(activityDefinition);
+		}
     }
 
     private void readActivityPatternBindingDefinition(
@@ -218,9 +232,10 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                         new ConfigurationElementMemento(configurationElement),
                         getNamespace(configurationElement));
 
-        if (activityPatternBindingDefinition != null)
-            activityPatternBindingDefinitions
+        if (activityPatternBindingDefinition != null) {
+			activityPatternBindingDefinitions
                     .add(activityPatternBindingDefinition);
+		}
     }
 
     private void readCategoryActivityBindingDefinition(
@@ -230,9 +245,10 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                         new ConfigurationElementMemento(configurationElement),
                         getNamespace(configurationElement));
 
-        if (categoryActivityBindingDefinition != null)
-            categoryActivityBindingDefinitions
+        if (categoryActivityBindingDefinition != null) {
+			categoryActivityBindingDefinitions
                     .add(categoryActivityBindingDefinition);
+		}
     }
 
     private void readCategoryDefinition(
@@ -242,7 +258,8 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                         configurationElement),
                         getNamespace(configurationElement));
 
-        if (categoryDefinition != null)
-            categoryDefinitions.add(categoryDefinition);
+        if (categoryDefinition != null) {
+			categoryDefinitions.add(categoryDefinition);
+		}
     }
 }

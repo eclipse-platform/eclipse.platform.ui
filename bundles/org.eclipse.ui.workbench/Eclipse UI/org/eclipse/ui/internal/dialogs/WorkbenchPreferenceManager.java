@@ -116,8 +116,9 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 		for (int i = 0; i < elements.length; i++) {
 			WorkbenchPreferenceNode node = PreferencePageRegistryReader
 					.createNode(elements[i]);
-			if (node == null)
+			if (node == null) {
 				continue;
+			}
 			registerNode(node);
 			String category = node.getCategory();
 			if (category == null) {
@@ -179,19 +180,22 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	 */
 	private boolean deepRemove(IPreferenceNode parent,
 			IPreferenceNode nodeToRemove) {
-		if (parent == nodeToRemove)
+		if (parent == nodeToRemove) {
 			if (parent == getRoot()) {
 				removeAll(); // we're removing the root
 				return true;
 			}
+		}
 
-		if (parent.remove(nodeToRemove))
+		if (parent.remove(nodeToRemove)) {
 			return true;
+		}
 
 		IPreferenceNode[] subNodes = parent.getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
-			if (deepRemove(subNodes[i], nodeToRemove))
+			if (deepRemove(subNodes[i], nodeToRemove)) {
 				return true;
+			}
 		}
 		return false;
 	}
