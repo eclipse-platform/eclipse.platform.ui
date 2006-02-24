@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers;
 
+import java.nio.charset.UnmappableCharacterException;
+
 /**
  * This interface provides the list of status codes that are used by the file
  * buffer plug-in when it throws {@link org.eclipse.core.runtime.CoreException}.
@@ -30,4 +32,17 @@ public interface IFileBufferStatusCodes {
 	 * Creation of file buffer failed.
 	 */
 	int CREATION_FAILED= 2;
+	
+	/**
+	 * File buffer Status code indicating that an operation failed
+	 * because a character could not be mapped using the given
+	 * charset.
+	 * <p>
+	 * Value: {@value}</p>
+	 * 
+	 * @see UnmappableCharacterException
+	 * @since 3.2
+	 */
+	public static final int CHARSET_MAPPING_FAILED= 3;
+	
 }

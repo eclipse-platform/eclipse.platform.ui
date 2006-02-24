@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
@@ -92,7 +93,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
-	private static final IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.FileBuffer_status_error, null);
+	private static final IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_error, null);
 	/**
 	 * Constant denoting UTF-8 encoding.
 	 */
@@ -442,7 +443,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		} catch (CharacterCodingException ex) {
 			Assert.isTrue(ex instanceof UnmappableCharacterException);
 			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_charset_mapping_failed_message_arg, encoding);
-			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, FileBuffers.CHARSET_MAPPING_FAILED, message, null);
+			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CHARSET_MAPPING_FAILED, message, null);
 			throw new CoreException(s);
 		}
 

@@ -13,7 +13,6 @@ package org.eclipse.core.filebuffers;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.charset.UnmappableCharacterException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -163,20 +162,5 @@ public final class FileBuffers {
 			}
 		}
 		return null;
-	}
-
-	// --------------- Status codes for this plug-in ---------------
-
-	/**
-	 * File buffer Status code indicating that an operation failed
-	 * because a character could not be mapped using the given
-	 * charset.
-	 * <p>
-	 * Value: {@value}</p>
-	 * 
-	 * @see UnmappableCharacterException
-	 * @since 3.2
-	 */
-	public static final int CHARSET_MAPPING_FAILED= 1;
-
+	}	
 }
