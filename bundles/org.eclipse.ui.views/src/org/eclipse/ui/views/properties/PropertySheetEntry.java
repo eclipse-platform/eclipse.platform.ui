@@ -89,12 +89,13 @@ public class PropertySheetEntry extends EventManager implements
     private ICellEditorListener cellEditorListener = new ICellEditorListener() {
         public void editorValueChanged(boolean oldValidState,
                 boolean newValidState) {
-            if (!newValidState)
-                // currently not valid so show an error message
+            if (!newValidState) {
+				// currently not valid so show an error message
                 setErrorText(editor.getErrorMessage());
-            else
-                // currently valid 
+			} else {
+				// currently valid 
                 setErrorText(null);
+			}
         }
 
         public void cancelEditor() {
@@ -118,8 +119,9 @@ public class PropertySheetEntry extends EventManager implements
      * Method declared on IPropertySheetEntry.
      */
     public void applyEditorValue() {
-        if (editor == null)
-            return;
+        if (editor == null) {
+			return;
+		}
 
         // Check if editor has a valid value
         if (!editor.isValueValid()) {
@@ -135,14 +137,17 @@ public class PropertySheetEntry extends EventManager implements
         if (values.length > 1) {
             changed = true;
         } else if (editValue == null) {
-            if (newValue != null)
-                changed = true;
-        } else if (!editValue.equals(newValue))
-            changed = true;
+            if (newValue != null) {
+				changed = true;
+			}
+        } else if (!editValue.equals(newValue)) {
+			changed = true;
+		}
 
         // Set the editor value
-        if (changed)
-            setValue(newValue);
+        if (changed) {
+			setValue(newValue);
+		}
     }
 
     /**
@@ -151,8 +156,9 @@ public class PropertySheetEntry extends EventManager implements
      * @return List
      */
     private List computeMergedPropertyDescriptors() {
-        if (values.length == 0)
-            return new ArrayList(0);
+        if (values.length == 0) {
+			return new ArrayList(0);
+		}
 
         IPropertySource firstSource = getPropertySource(values[0]);
         if (firstSource == null) {
@@ -188,8 +194,9 @@ public class PropertySheetEntry extends EventManager implements
                         ||
                         // see if the descriptors (which have the same id) are compatible
                         !((IPropertyDescriptor) intersection.get(ids[j]))
-                                .isCompatibleWith((IPropertyDescriptor) object))
-                    intersection.remove(ids[j]);
+                                .isCompatibleWith((IPropertyDescriptor) object)) {
+					intersection.remove(ids[j]);
+				}
             }
         }
 
@@ -270,14 +277,16 @@ public class PropertySheetEntry extends EventManager implements
         // recursive call to dispose children
         PropertySheetEntry[] entriesToDispose = childEntries;
         childEntries = null;
-        if (entriesToDispose != null)
-            for (int i = 0; i < entriesToDispose.length; i++) {
+        if (entriesToDispose != null) {
+			for (int i = 0; i < entriesToDispose.length; i++) {
                 // an error in a property source may cause refreshChildEntries
                 // to fail. Since the Workbench handles such errors we
                 // can be left in a state where a child entry is null.
-                if (entriesToDispose[i] != null)
-                    entriesToDispose[i].dispose();
+                if (entriesToDispose[i] != null) {
+					entriesToDispose[i].dispose();
+				}
             }
+		}
     }
 
     /**
@@ -328,8 +337,9 @@ public class PropertySheetEntry extends EventManager implements
      * Method declared on IPropertySheetEntry.
      */
     public IPropertySheetEntry[] getChildEntries() {
-        if (childEntries == null)
-            createChildEntries();
+        if (childEntries == null) {
+			createChildEntries();
+		}
         return childEntries;
     }
 
@@ -417,8 +427,9 @@ public class PropertySheetEntry extends EventManager implements
      */
     public Image getImage() {
         ILabelProvider provider = descriptor.getLabelProvider();
-        if (provider == null)
-            return null;
+        if (provider == null) {
+			return null;
+		}
         return provider.getImage(editValue);
     }
 
@@ -441,17 +452,19 @@ public class PropertySheetEntry extends EventManager implements
      * @since 3.1 (was previously private)
      */
     protected IPropertySource getPropertySource(Object object) {
-        if (sources.containsKey(object))
-            return (IPropertySource) sources.get(object);
+        if (sources.containsKey(object)) {
+			return (IPropertySource) sources.get(object);
+		}
 
         IPropertySource result = null;
-        if (propertySourceProvider != null)
-            result = propertySourceProvider.getPropertySource(object);
-        else if (object instanceof IPropertySource)
-            result = (IPropertySource) object;
-        else if (object instanceof IAdaptable)
-            result = (IPropertySource) ((IAdaptable) object)
+        if (propertySourceProvider != null) {
+			result = propertySourceProvider.getPropertySource(object);
+		} else if (object instanceof IPropertySource) {
+			result = (IPropertySource) object;
+		} else if (object instanceof IAdaptable) {
+			result = (IPropertySource) ((IAdaptable) object)
                     .getAdapter(IPropertySource.class);
+		}
 
         sources.put(object, result);
         return result;
@@ -461,14 +474,17 @@ public class PropertySheetEntry extends EventManager implements
      * Method declared on IPropertySheetEntry.
      */
     public String getValueAsString() {
-        if (editValue == null)
-            return "";//$NON-NLS-1$
+        if (editValue == null) {
+			return "";//$NON-NLS-1$
+		}
         ILabelProvider provider = descriptor.getLabelProvider();
-        if (provider == null)
-            return editValue.toString();
+        if (provider == null) {
+			return editValue.toString();
+		}
         String text = provider.getText(editValue);
-        if(text == null)
-        	return "";//$NON-NLS-1$
+        if(text == null) {
+			return "";//$NON-NLS-1$
+		}
         return text;
     }
 
@@ -486,8 +502,9 @@ public class PropertySheetEntry extends EventManager implements
      * Method declared on IPropertySheetEntry.
      */
     public boolean hasChildEntries() {
-        if (childEntries != null && childEntries.length > 0)
-            return true;
+        if (childEntries != null && childEntries.length > 0) {
+			return true;
+		}
         // see if we could have entires if we were asked
         return computeMergedPropertyDescriptors().size() > 0;
     }
@@ -499,9 +516,10 @@ public class PropertySheetEntry extends EventManager implements
      * old entry).
      */
     private void refreshChildEntries() {
-        if (childEntries == null)
-            // no children to refresh
+        if (childEntries == null) {
+			// no children to refresh
             return;
+		}
 
         // get the current descriptors
         List descriptors = computeMergedPropertyDescriptors();
@@ -548,8 +566,9 @@ public class PropertySheetEntry extends EventManager implements
         // only assign if successful
         this.childEntries = newEntries;
         
-        if (entriesChanged)
-            fireChildEntriesChanged();
+        if (entriesChanged) {
+			fireChildEntriesChanged();
+		}
 
         //Dispose of entries which are no longer needed		
         for (int i = 0; i < entriesToDispose.size(); i++) {
@@ -563,10 +582,11 @@ public class PropertySheetEntry extends EventManager implements
      * @since 3.1 (was previously private)
      */
     protected void refreshFromRoot() {
-        if (parent == null)
-            refreshChildEntries();
-        else
-            parent.refreshFromRoot();
+        if (parent == null) {
+			refreshChildEntries();
+		} else {
+			parent.refreshFromRoot();
+		}
     }
 
     /**
@@ -602,9 +622,10 @@ public class PropertySheetEntry extends EventManager implements
      * Method declared on IPropertySheetEntry.
      */
     public void resetPropertyValue() {
-        if (parent == null)
-            // root does not have a default value
+        if (parent == null) {
+			// root does not have a default value
             return;
+		}
 
         //	Use our parent's values to reset our values.
         boolean change = false;
@@ -617,15 +638,17 @@ public class PropertySheetEntry extends EventManager implements
                     IPropertySource2 extendedSource = (IPropertySource2) source;
                     // continue with next if property is not resettable
                     if (!extendedSource
-                            .isPropertyResettable(descriptor.getId()))
-                        continue;
+                            .isPropertyResettable(descriptor.getId())) {
+						continue;
+					}
                 }
                 source.resetPropertyValue(descriptor.getId());
                 change = true;
             }
         }
-        if (change)
-            refreshFromRoot();
+        if (change) {
+			refreshFromRoot();
+		}
     }
 
     /**
@@ -711,16 +734,17 @@ public class PropertySheetEntry extends EventManager implements
         values = objects;
         sources = new HashMap(values.length * 2 + 1);
 
-        if (values.length == 0)
-            editValue = null;
-        else {
+        if (values.length == 0) {
+			editValue = null;
+		} else {
             // set the first value object as the entry's value
             Object newValue = values[0];
 
             // see if we should convert the value to an editable value
             IPropertySource source = getPropertySource(newValue);
-            if (source != null)
-                newValue = source.getEditableValue();
+            if (source != null) {
+				newValue = source.getEditableValue();
+			}
             editValue = newValue;
         }
 
@@ -752,7 +776,8 @@ public class PropertySheetEntry extends EventManager implements
         }
 
         // inform our parent
-        if (parent != null)
-            parent.valueChanged(this);
+        if (parent != null) {
+			parent.valueChanged(this);
+		}
     }
 }

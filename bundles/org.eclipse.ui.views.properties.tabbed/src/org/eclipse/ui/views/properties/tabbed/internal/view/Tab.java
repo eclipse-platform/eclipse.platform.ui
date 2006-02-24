@@ -44,9 +44,11 @@ public class Tab {
      * @return the section index.
      */
     public int getSectionIndex(ISection section) {
-        for (int i = 0; i < sections.length; i++)
-            if (section == sections[i])
-                return i;
+        for (int i = 0; i < sections.length; i++) {
+			if (section == sections[i]) {
+				return i;
+			}
+		}
         return -1;
     }
 
@@ -56,8 +58,9 @@ public class Tab {
      * @return the section.
      */
     public ISection getSectionAtIndex(int i) {
-        if (i >= 0 && i < sections.length)
-            return sections[i];
+        if (i >= 0 && i < sections.length) {
+			return sections[i];
+		}
         return null;
     }
 

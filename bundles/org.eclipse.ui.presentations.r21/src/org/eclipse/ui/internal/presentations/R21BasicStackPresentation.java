@@ -113,8 +113,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 						.toControl(globalPos));
 				if (newItem != null) {
 					CTabItem oldItem = paneFolder.getSelection();
-					if (newItem != oldItem)
+					if (newItem != oldItem) {
 						return;
+					}
 				}
 				if (current != null) {
 					current.setFocus();
@@ -138,8 +139,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 				Point globalPos = ctrl.toDisplay(new Point(0, titleLabel
 						.getBounds().height));
 
-				if ((e.button == 1) && overImage(e.x))
+				if ((e.button == 1) && overImage(e.x)) {
 					showSystemMenu(globalPos);
+				}
 			}
 		}
 	};
@@ -167,11 +169,12 @@ public class R21BasicStackPresentation extends StackPresentation {
 			if (tabUnderPointer == null) {
 				if (paneFolder.getTabPosition() == SWT.BOTTOM
 						&& localPos.y < paneFolder.getControl().getBounds().height
-								- paneFolder.getTabHeight())
+								- paneFolder.getTabHeight()) {
 					tabUnderPointer = paneFolder.getSelection();
-				else if (paneFolder.getTabPosition() == SWT.TOP
-						&& localPos.y > paneFolder.getTabHeight())
+				} else if (paneFolder.getTabPosition() == SWT.TOP
+						&& localPos.y > paneFolder.getTabHeight()) {
 					tabUnderPointer = paneFolder.getSelection();
+				}
 			}
 
 			// Not in a tab, not in a title area, must be dragging the whole
@@ -493,8 +496,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 	 */
 	protected void updateGradient() {
 
-		if (isDisposed())
+		if (isDisposed()) {
 			return;
+		}
 
 		Color fgColor;
 		Color[] bgColors;
@@ -578,8 +582,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 		// paneFolder.setSelectionForeground(fgColor);
 		// paneFolder.setSelectionBackground(bgColors, percentages, vertical);
 
-		if (titleLabel == null || viewToolBar == null)
+		if (titleLabel == null || viewToolBar == null) {
 			return;
+		}
 
 		titleLabel.setBackground(bgColors, percentages, vertical);
 		titleLabel.setForeground(fgColor);
@@ -708,8 +713,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 		Control ctrl = getControl();
 		if (ctrl != null) {
 			Object data = ctrl.getShell().getData();
-			if (data instanceof Window)
+			if (data instanceof Window) {
 				return (Window) data;
+			}
 		}
 		return null;
 	}
@@ -719,8 +725,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 
 		int style = SWT.NONE;
 
-		if (getSite().isCloseable(part))
+		if (getSite().isCloseable(part)) {
 			style |= SWT.CLOSE;
+		}
 
 		tabItem = paneFolder.createItem(style, tabIndex);
 
@@ -748,8 +755,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 		}
 
 		// a close button is needed, so if its already there, we're done
-		if (closeButton != null)
+		if (closeButton != null) {
 			return;
+		}
 
 		// otherwise create it
 		closeButton = new ToolItem(viewToolBar, SWT.PUSH);
@@ -984,8 +992,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 
 		// This drop target only deals with tabs... if we're not dragging over
 		// a tab, exit.
-		if (tabUnderPointer == null)
+		if (tabUnderPointer == null) {
 			return null;
+		}
 
 		// workaround when left tab is dragged over next
 		int dragOverIndex = paneFolder.indexOf(tabUnderPointer);
@@ -1043,19 +1052,25 @@ public class R21BasicStackPresentation extends StackPresentation {
 	public Control[] getTabList(IPresentablePart part) {
 		ArrayList list = new ArrayList();
 		if (paneFolder.getTabPosition() == SWT.BOTTOM) {
-			if (part.getToolBar() != null)
+			if (part.getToolBar() != null) {
 				list.add(part.getToolBar());
-			if (part.getControl() != null)
+			}
+			if (part.getControl() != null) {
 				list.add(part.getControl());
-			if (getPaneFolder() != null)
+			}
+			if (getPaneFolder() != null) {
 				list.add(getPaneFolder().getControl());
+			}
 		} else {
-			if (getPaneFolder() != null)
+			if (getPaneFolder() != null) {
 				list.add(getPaneFolder().getControl());
-			if (part.getToolBar() != null)
+			}
+			if (part.getToolBar() != null) {
 				list.add(part.getToolBar());
-			if (part.getControl() != null)
+			}
+			if (part.getControl() != null) {
 				list.add(part.getControl());
+			}
 		}
 		return (Control[]) list.toArray(new Control[list.size()]);
 	}

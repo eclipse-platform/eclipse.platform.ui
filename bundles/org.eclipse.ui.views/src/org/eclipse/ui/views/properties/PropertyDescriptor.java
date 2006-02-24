@@ -205,10 +205,11 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      * @see #setLabelProvider
      */
     public ILabelProvider getLabelProvider() {
-        if (labelProvider != null)
-            return labelProvider;
-        else
-            return new LabelProvider();
+        if (labelProvider != null) {
+			return labelProvider;
+		} else {
+			return new LabelProvider();
+		}
     }
 
     /**
@@ -238,22 +239,26 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      * returns false
      */
     public boolean isCompatibleWith(IPropertyDescriptor anotherProperty) {
-        if (getAlwaysIncompatible())
-            return false;
+        if (getAlwaysIncompatible()) {
+			return false;
+		}
 
         // Compare id		
         Object id1 = getId();
         Object id2 = anotherProperty.getId();
-        if (!id1.equals(id2))
-            return false;
+        if (!id1.equals(id2)) {
+			return false;
+		}
 
         // Compare Category (may be null)
         if (getCategory() == null) {
-            if (anotherProperty.getCategory() != null)
-                return false;
+            if (anotherProperty.getCategory() != null) {
+				return false;
+			}
         } else {
-            if (!getCategory().equals(anotherProperty.getCategory()))
-                return false;
+            if (!getCategory().equals(anotherProperty.getCategory())) {
+				return false;
+			}
         }
 
         return true;

@@ -122,16 +122,20 @@ public class TabbedPropertyTitle
 		Point tsize = null;
 		Point labelSize = null;
 		int twidth = bounds.width - marginWidth - marginWidth;
-		if (label != null)
+		if (label != null) {
 			labelSize = label.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		if (labelSize != null)
+		}
+		if (labelSize != null) {
 			twidth -= labelSize.x + 4;
+		}
 		int tvmargin = 4;
 		int theight = getHeight();
-		if (tsize != null)
+		if (tsize != null) {
 			theight += Math.max(theight, tsize.y);
-		if (labelSize != null)
+		}
+		if (labelSize != null) {
 			theight = Math.max(theight, labelSize.y);
+		}
 		theight += tvmargin + tvmargin;
 		int midpoint = (theight * 66) / 100;
 		int rem = theight - midpoint;

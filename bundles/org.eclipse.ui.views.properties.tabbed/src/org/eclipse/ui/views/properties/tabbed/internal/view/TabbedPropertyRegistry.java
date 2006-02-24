@@ -226,8 +226,9 @@ public class TabbedPropertyRegistry {
 	 */
 	public TabDescriptor[] getTabDescriptors(IWorkbenchPart part,
 			ISelection selection) {
-		if (selection == null || selection.isEmpty())
+		if (selection == null || selection.isEmpty()) {
 			return EMPTY_DESCRIPTOR_ARRAY;
+		}
 
 		TabDescriptor[] allDescriptors = getAllTabDescriptors();
 		TabDescriptor[] result = filterTabDescriptors(allDescriptors, part,
@@ -249,8 +250,9 @@ public class TabbedPropertyRegistry {
 				result.add(descriptor);
 			}
 		}
-		if (result.size() == 0)
+		if (result.size() == 0) {
 			return EMPTY_DESCRIPTOR_ARRAY;
+		}
 		return (TabDescriptor[]) result
 			.toArray(new TabDescriptor[result.size()]);
 	}

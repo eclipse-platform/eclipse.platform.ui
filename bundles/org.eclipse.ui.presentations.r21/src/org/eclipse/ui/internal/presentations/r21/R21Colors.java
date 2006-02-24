@@ -209,8 +209,9 @@ public class R21Colors {
      * This list comes from the designers.
      */
     private static void initWorkbenchColors(Display d) {
-        if (workbenchColors != null)
-            return;
+        if (workbenchColors != null) {
+			return;
+		}
 
         workbenchColors = new Color[] {
         //Product pallet
@@ -248,8 +249,9 @@ public class R21Colors {
      * be disposed.
      */
     static public void shutdown() {
-        if (!init)
-            return;
+        if (!init) {
+			return;
+		}
 
         disposeWorkbenchColors();
 
@@ -270,8 +272,9 @@ public class R21Colors {
      * Initializes the colors.
      */
     static public void startup() {
-        if (init)
-            return;
+        if (init) {
+			return;
+		}
 
         // Initialize the caches first.
         init = true;

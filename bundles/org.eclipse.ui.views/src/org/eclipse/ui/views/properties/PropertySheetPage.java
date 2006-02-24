@@ -159,9 +159,10 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         if (rootEntry == null) {
             // create a new root
             PropertySheetEntry root = new PropertySheetEntry();
-            if (provider != null)
-                // set the property source provider
+            if (provider != null) {
+				// set the property source provider
                 root.setPropertySourceProvider(provider);
+			}
             rootEntry = root;
         }
         viewer.setRootEntry(rootEntry);
@@ -219,10 +220,11 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                         }
                         IWorkbenchHelpSystem help = getSite().getWorkbenchWindow().getWorkbench().getHelpSystem();
                         // Ignore all but the first element in the array
-                        if (contexts[0] instanceof IContext)
-                        	help.displayHelp((IContext) contexts[0]);
-                        else
-                        	help.displayHelp((String) contexts[0]);
+                        if (contexts[0] instanceof IContext) {
+							help.displayHelp((IContext) contexts[0]);
+						} else {
+							help.displayHelp((String) contexts[0]);
+						}
                         return;
                     }
                 }
@@ -288,13 +290,15 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         if (cellEditorActivationListener == null) {
             cellEditorActivationListener = new ICellEditorActivationListener() {
                 public void cellEditorActivated(CellEditor cellEditor) {
-                    if (cellEditorActionHandler != null)
-                        cellEditorActionHandler.addCellEditor(cellEditor);
+                    if (cellEditorActionHandler != null) {
+						cellEditorActionHandler.addCellEditor(cellEditor);
+					}
                 }
 
                 public void cellEditorDeactivated(CellEditor cellEditor) {
-                    if (cellEditorActionHandler != null)
-                        cellEditorActionHandler.removeCellEditor(cellEditor);
+                    if (cellEditorActionHandler != null) {
+						cellEditorActionHandler.removeCellEditor(cellEditor);
+					}
                 }
             };
         }
@@ -305,8 +309,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
      * Method declared on IPage (and Page).
      */
     public Control getControl() {
-        if (viewer == null)
-            return null;
+        if (viewer == null) {
+			return null;
+		}
         return viewer.getControl();
     }
 
@@ -357,8 +362,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         // Get the selected property
         IStructuredSelection selection = (IStructuredSelection) viewer
                 .getSelection();
-        if (selection.isEmpty())
-            return;
+        if (selection.isEmpty()) {
+			return;
+		}
         // Assume single selection
         IPropertySheetEntry entry = (IPropertySheetEntry) selection
                 .getFirstElement();
@@ -441,8 +447,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
      * </p>
      */
     public void refresh() {
-        if (viewer == null)
-            return;
+        if (viewer == null) {
+			return;
+		}
         // calling setInput on the viewer will cause the model to refresh
         viewer.setInput(viewer.getInput());
     }
@@ -451,8 +458,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
      * Method declared on ISelectionListener.
      */
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-        if (viewer == null)
-            return;
+        if (viewer == null) {
+			return;
+		}
 
         if (sourcePart != null) {
         	sourcePart.getSite().getPage().removePartListener(partListener);
@@ -517,9 +525,10 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
      */
     public void setRootEntry(IPropertySheetEntry entry) {
         rootEntry = entry;
-        if (viewer != null)
-            // the following will trigger an update
+        if (viewer != null) {
+			// the following will trigger an update
             viewer.setRootEntry(rootEntry);
+		}
     }
 
     /**
@@ -538,8 +547,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         	viewer.setSorter(sorter);
         	
         	// the following will trigger an update
-        	if(null != viewer.getRootEntry())
-        		viewer.setRootEntry(rootEntry);
+        	if(null != viewer.getRootEntry()) {
+				viewer.setRootEntry(rootEntry);
+			}
         }
 	}
 

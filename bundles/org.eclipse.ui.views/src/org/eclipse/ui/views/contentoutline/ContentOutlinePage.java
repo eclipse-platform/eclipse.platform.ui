@@ -106,8 +106,9 @@ public abstract class ContentOutlinePage extends Page implements
      * Method declared on IPage (and Page).
      */
     public Control getControl() {
-        if (treeViewer == null)
-            return null;
+        if (treeViewer == null) {
+			return null;
+		}
         return treeViewer.getControl();
     }
 
@@ -115,8 +116,9 @@ public abstract class ContentOutlinePage extends Page implements
      * Method declared on ISelectionProvider.
      */
     public ISelection getSelection() {
-        if (treeViewer == null)
-            return StructuredSelection.EMPTY;
+        if (treeViewer == null) {
+			return StructuredSelection.EMPTY;
+		}
         return treeViewer.getSelection();
     }
 
@@ -166,7 +168,8 @@ public abstract class ContentOutlinePage extends Page implements
      * Method declared on ISelectionProvider.
      */
     public void setSelection(ISelection selection) {
-        if (treeViewer != null)
-            treeViewer.setSelection(selection);
+        if (treeViewer != null) {
+			treeViewer.setSelection(selection);
+		}
     }
 }

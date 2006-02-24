@@ -67,23 +67,27 @@ public abstract class QuickMenuAction extends Action {
 	 */
 	public void run() {
 		Display display = Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			return;
+		}
 		Control focus = display.getFocusControl();
-		if (focus == null || focus.isDisposed())
+		if (focus == null || focus.isDisposed()) {
 			return;
+		}
 
 		MenuManager menu = new MenuManager();
 		fillMenu(menu);
 		final Menu widget = menu.createContextMenu(focus.getShell());
 		Point location = computeMenuLocation(focus, widget);
-		if (location == null)
+		if (location == null) {
 			return;
+		}
 		widget.setLocation(location);
 		widget.setVisible(true);
 		while (!widget.isDisposed() && widget.isVisible()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 		if (!widget.isDisposed()) {
 			widget.dispose();
@@ -159,8 +163,9 @@ public abstract class QuickMenuAction extends Action {
 	protected Point computeMenuLocation(StyledText text) {
 		Point result = text.getLocationAtOffset(text.getCaretOffset());
 		result.y += text.getLineHeight();
-		if (!text.getClientArea().contains(result))
+		if (!text.getClientArea().contains(result)) {
 			return null;
+		}
 		return result;
 	}
 
@@ -194,8 +199,9 @@ public abstract class QuickMenuAction extends Action {
 				}
 				Point cursorLocation = tree.getDisplay().getCursorLocation();
 				Point result = findBestLocation(getIncludedPositions(rectangles, clientArea), tree.toControl(cursorLocation));
-				if (result != null)
+				if (result != null) {
 					result.x = result.x + getAvarageCharWith(tree) * CHAR_INDENT;
+				}
 				return result;
 		}
 	}
@@ -234,8 +240,9 @@ public abstract class QuickMenuAction extends Action {
 				Rectangle iBounds = items[0].getImageBounds(0);
 				Point cursorLocation = table.getDisplay().getCursorLocation();
 				Point result = findBestLocation(getIncludedPositions(rectangles, clientArea), table.toControl(cursorLocation));
-				if (result != null)
+				if (result != null) {
 					result.x = result.x + iBounds.width + getAvarageCharWith(table) * CHAR_INDENT;
+				}
 				return result;
 			}
 		}
@@ -285,8 +292,9 @@ public abstract class QuickMenuAction extends Action {
 			gc = new GC(control);
 			return gc.getFontMetrics().getAverageCharWidth();
 		} finally {
-			if (gc != null)
+			if (gc != null) {
 				gc.dispose();
+			}
 		}
 	}
 }

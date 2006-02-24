@@ -45,8 +45,9 @@ public class RenameResourceAction implements IActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (this.renameAction == null)
+		if (this.renameAction == null) {
 			this.renameAction = new org.eclipse.ui.actions.RenameResourceAction(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		}
 		this.renameAction.run();
 
 	}
@@ -58,8 +59,9 @@ public class RenameResourceAction implements IActionDelegate {
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (this.renameAction == null)
+		if (this.renameAction == null) {
 			this.renameAction = new org.eclipse.ui.actions.RenameResourceAction(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		}
 
 		this.renameAction.selectionChanged((IStructuredSelection) selection);
 	}

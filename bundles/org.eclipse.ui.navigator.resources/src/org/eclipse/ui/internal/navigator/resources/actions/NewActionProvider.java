@@ -89,8 +89,9 @@ public class NewActionProvider extends CommonActionProvider {
 		IMenuManager submenu = new MenuManager(
 				WorkbenchNavigatorMessages.NewActionProvider_NewMenu_label,
 				ICommonMenuConstants.GROUP_NEW);
-		if(!contribute)
+		if(!contribute) {
 			return;
+		}
 		// Add new project wizard shortcut
 		submenu.add(newProjectAction);
 		submenu.add(new Separator());

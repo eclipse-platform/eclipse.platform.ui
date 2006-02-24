@@ -250,8 +250,9 @@ public final class R21PaneFolder {
      */
     public void layout(boolean flushCache) {
         // Flush the cached sizes if necessary
-        if (flushCache)
-            flush();
+        if (flushCache) {
+			flush();
+		}
 
         Rectangle tabFolderClientArea = tabFolder.getClientArea();
 

@@ -128,8 +128,9 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
         Object obj = part.getAdapter(IContentOutlinePage.class);
         if (obj instanceof IContentOutlinePage) {
             IContentOutlinePage page = (IContentOutlinePage) obj;
-            if (page instanceof IPageBookViewPage)
-                initPage((IPageBookViewPage) page);
+            if (page instanceof IPageBookViewPage) {
+				initPage((IPageBookViewPage) page);
+			}
             page.createControl(getPageBook());
             return new PageRec(part, page);
         }
@@ -150,12 +151,13 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
      * Method declared on IAdaptable.
      */
     public Object getAdapter(Class key) {
-        if (key == IContributedContentsView.class)
-            return new IContributedContentsView() {
+        if (key == IContributedContentsView.class) {
+			return new IContributedContentsView() {
                 public IWorkbenchPart getContributingPart() {
                     return getContributingEditor();
                 }
             };
+		}
         return super.getAdapter(key);
     }
 
@@ -164,8 +166,9 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
      */
     protected IWorkbenchPart getBootstrapPart() {
         IWorkbenchPage page = getSite().getPage();
-        if (page != null)
-            return page.getActiveEditor();
+        if (page != null) {
+			return page.getActiveEditor();
+		}
 
         return null;
     }
@@ -237,10 +240,11 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     protected void showPageRec(PageRec pageRec) {
         IPageSite pageSite = getPageSite(pageRec.page);
         ISelectionProvider provider = pageSite.getSelectionProvider();
-        if (provider == null && (pageRec.page instanceof IContentOutlinePage))
-            // This means that the page did not set a provider during its initialization 
+        if (provider == null && (pageRec.page instanceof IContentOutlinePage)) {
+			// This means that the page did not set a provider during its initialization 
             // so for backward compatibility we will set the page itself as the provider.
             pageSite.setSelectionProvider((IContentOutlinePage) pageRec.page);
+		}
         super.showPageRec(pageRec);
     }
 }

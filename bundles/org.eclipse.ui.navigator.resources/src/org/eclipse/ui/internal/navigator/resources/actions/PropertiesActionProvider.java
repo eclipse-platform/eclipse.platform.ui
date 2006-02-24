@@ -87,8 +87,9 @@ public class PropertiesActionProvider extends CommonActionProvider {
 		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 		 */
 		public Object getAdapter(Class adapter) {
-			if (adapter.isInstance(delegate))
+			if (adapter.isInstance(delegate)) {
 				return delegate;
+			}
 			return Platform.getAdapterManager().getAdapter(delegate, adapter);
 		}
 	}
@@ -121,8 +122,9 @@ public class PropertiesActionProvider extends CommonActionProvider {
 			if (delegate.getSelection() instanceof IStructuredSelection) {
 				IStructuredSelection sSel = (IStructuredSelection) delegate
 						.getSelection();
-				if (sSel.getFirstElement() instanceof IAdaptable)
+				if (sSel.getFirstElement() instanceof IAdaptable) {
 					return sSel;
+				}
 
 				return new StructuredSelection(new DelegateIAdaptable(sSel
 						.getFirstElement()));

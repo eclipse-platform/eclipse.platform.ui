@@ -403,15 +403,17 @@ public class TabbedPropertyList
 			public void focusGained(FocusEvent e) {
 				focus = true;
 				int i = getSelectionIndex();
-				if (i >= 0)
+				if (i >= 0) {
 					elements[i].redraw();
+				}
 			}
 
 			public void focusLost(FocusEvent e) {
 				focus = false;
 				int i = getSelectionIndex();
-				if (i >= 0)
+				if (i >= 0) {
 					elements[i].redraw();
+				}
 			}
 		});
 		this.addControlListener(new ControlAdapter() {

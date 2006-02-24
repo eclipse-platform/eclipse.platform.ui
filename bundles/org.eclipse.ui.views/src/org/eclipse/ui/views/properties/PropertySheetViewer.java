@@ -153,9 +153,10 @@ class PropertySheetViewer extends Viewer {
         // Note that the editor parent must be the Tree control
         cellEditor = activeEntry.getEditor(tree);
 
-        if (cellEditor == null)
-            // unable to create the editor
+        if (cellEditor == null) {
+			// unable to create the editor
             return;
+		}
 
         // activate the cell editor
         cellEditor.activate();
@@ -211,10 +212,11 @@ class PropertySheetViewer extends Viewer {
             String string = columnLabels[i];
             if (string != null) {
                 TreeColumn column;
-                if (i < columns.length)
-                    column = columns[i];
-                else
-                    column = new TreeColumn(tree, 0);
+                if (i < columns.length) {
+					column = columns[i];
+				} else {
+					column = new TreeColumn(tree, 0);
+				}
                 column.setText(string);
             }
         }
@@ -240,8 +242,9 @@ class PropertySheetViewer extends Viewer {
     private void applyEditorValue() {
         TreeItem treeItem = treeEditor.getItem();
         // treeItem can be null when view is opened
-        if (treeItem == null || treeItem.isDisposed())
-            return;
+        if (treeItem == null || treeItem.isDisposed()) {
+			return;
+		}
         IPropertySheetEntry entry = (IPropertySheetEntry) treeItem.getData();
         entry.applyEditorValue();
     }
@@ -258,9 +261,10 @@ class PropertySheetViewer extends Viewer {
 
         if (childItems.length > 0) {
             Object data = childItems[0].getData();
-            if (data != null)
-                // children already there!
+            if (data != null) {
+				// children already there!
                 return;
+			}
             // remove the dummy
             childItems[0].dispose();
         }
@@ -268,9 +272,10 @@ class PropertySheetViewer extends Viewer {
         // get the children and create their tree items
         Object node = widget.getData();
         List children = getChildren(node);
-        if (children.isEmpty())
-            // this item does't actually have any children
+        if (children.isEmpty()) {
+			// this item does't actually have any children
             return;
+		}
         for (int i = 0; i < children.size(); i++) {
             // create a new tree item
             createItem(children.get(i), widget, i);
@@ -304,20 +309,22 @@ class PropertySheetViewer extends Viewer {
         entryListener = new IPropertySheetEntryListener() {
             public void childEntriesChanged(IPropertySheetEntry entry) {
                 // update the children of the given entry
-                if (entry == rootEntry)
-                    updateChildrenOf(entry, tree);
-                else {
+                if (entry == rootEntry) {
+					updateChildrenOf(entry, tree);
+				} else {
                     TreeItem item = findItem(entry);
-                    if (item != null)
-                        updateChildrenOf(entry, item);
+                    if (item != null) {
+						updateChildrenOf(entry, item);
+					}
                 }
             }
 
             public void valueChanged(IPropertySheetEntry entry) {
                 // update the given entry
                 TreeItem item = findItem(entry);
-                if (item != null)
-                    updateEntry(entry, item);
+                if (item != null) {
+					updateEntry(entry, item);
+				}
             }
 
             public void errorMessageChanged(IPropertySheetEntry entry) {
@@ -341,24 +348,27 @@ class PropertySheetViewer extends Viewer {
     private void createItem(Object node, Widget parent, int index) {
         // create the item
         TreeItem item;
-        if (parent instanceof TreeItem)
-            item = new TreeItem((TreeItem) parent, SWT.NONE, index);
-        else
-            item = new TreeItem((Tree) parent, SWT.NONE, index);
+        if (parent instanceof TreeItem) {
+			item = new TreeItem((TreeItem) parent, SWT.NONE, index);
+		} else {
+			item = new TreeItem((Tree) parent, SWT.NONE, index);
+		}
 
         // set the user data field
         item.setData(node);
 
         // add our listener
-        if (node instanceof IPropertySheetEntry)
-            ((IPropertySheetEntry) node)
+        if (node instanceof IPropertySheetEntry) {
+			((IPropertySheetEntry) node)
                     .addPropertySheetEntryListener(entryListener);
+		}
 
         // update the visual presentation
-        if (node instanceof IPropertySheetEntry)
-            updateEntry((IPropertySheetEntry) node, item);
-        else
-            updateCategory((PropertySheetCategory) node, item);
+        if (node instanceof IPropertySheetEntry) {
+			updateEntry((IPropertySheetEntry) node, item);
+		} else {
+			updateCategory((PropertySheetCategory) node, item);
+		}
     }
 
     /**
@@ -403,8 +413,9 @@ class PropertySheetViewer extends Viewer {
         for (int i = 0; i < items.length; i++) {
             TreeItem item = items[i];
             TreeItem findItem = findItem(entry, item);
-            if (findItem != null)
-                return findItem;
+            if (findItem != null) {
+				return findItem;
+			}
         }
         return null;
     }
@@ -423,16 +434,18 @@ class PropertySheetViewer extends Viewer {
      */
     private TreeItem findItem(IPropertySheetEntry entry, TreeItem item) {
         // compare with current item
-        if (entry == item.getData())
-            return item;
+        if (entry == item.getData()) {
+			return item;
+		}
 
         // recurse over children
         TreeItem[] items = item.getItems();
         for (int i = 0; i < items.length; i++) {
             TreeItem childItem = items[i];
             TreeItem findItem = findItem(entry, childItem);
-            if (findItem != null)
-                return findItem;
+            if (findItem != null) {
+				return findItem;
+			}
         }
         return null;
     }
@@ -500,17 +513,19 @@ class PropertySheetViewer extends Viewer {
         // cast the entry or category
         IPropertySheetEntry entry = null;
         PropertySheetCategory category = null;
-        if (node instanceof IPropertySheetEntry)
-            entry = (IPropertySheetEntry) node;
-        else
-            category = (PropertySheetCategory) node;
+        if (node instanceof IPropertySheetEntry) {
+			entry = (IPropertySheetEntry) node;
+		} else {
+			category = (PropertySheetCategory) node;
+		}
 
         // get the child entries or categories
         List children;
-        if (category == null)
-            children = getChildren(entry);
-        else
-            children = getChildren(category);
+        if (category == null) {
+			children = getChildren(entry);
+		} else {
+			children = getChildren(category);
+		}
 
         return children;
     }
@@ -530,8 +545,9 @@ class PropertySheetViewer extends Viewer {
             if (categories.length > 1
                     || (categories.length == 1 && !categories[0]
                             .getCategoryName().equals(
-                                    MISCELLANEOUS_CATEGORY_NAME)))
-                return Arrays.asList(categories);
+                                    MISCELLANEOUS_CATEGORY_NAME))) {
+				return Arrays.asList(categories);
+			}
         }
 
         // return the sorted & filtered child entries
@@ -566,8 +582,9 @@ class PropertySheetViewer extends Viewer {
      */
     private List getFilteredEntries(IPropertySheetEntry[] entries) {
         // if no filter just return all entries
-        if (isShowingExpertProperties)
-            return Arrays.asList(entries);
+        if (isShowingExpertProperties) {
+			return Arrays.asList(entries);
+		}
 
         // check each entry for the filter
         List filteredEntries = new ArrayList(entries.length);
@@ -584,8 +601,9 @@ class PropertySheetViewer extends Viewer {
                         }
                     }
                 }
-                if (!expert)
-                    filteredEntries.add(entry);
+                if (!expert) {
+					filteredEntries.add(entry);
+				}
             }
         }
         return filteredEntries;
@@ -636,15 +654,17 @@ class PropertySheetViewer extends Viewer {
      * </p>
      */
     public ISelection getSelection() {
-        if (tree.getSelectionCount() == 0)
-            return StructuredSelection.EMPTY;
+        if (tree.getSelectionCount() == 0) {
+			return StructuredSelection.EMPTY;
+		}
         TreeItem[] sel = tree.getSelection();
         List entries = new ArrayList(sel.length);
         for (int i = 0; i < sel.length; i++) {
             TreeItem ti = sel[i];
             Object data = ti.getData();
-            if (data instanceof IPropertySheetEntry)
-                entries.add(data);
+            if (data instanceof IPropertySheetEntry) {
+				entries.add(data);
+			}
         }
         return new StructuredSelection(entries);
     }
@@ -748,8 +768,9 @@ class PropertySheetViewer extends Viewer {
             public void widgetSelected(SelectionEvent e) {
             	// The viewer only owns the status line when there is
             	// no 'active' cell editor
-            	if (cellEditor == null || !cellEditor.isActivated())
-            		updateStatusLine(e.item);
+            	if (cellEditor == null || !cellEditor.isActivated()) {
+					updateStatusLine(e.item);
+				}
 			}
 
 			/* (non-Javadoc)
@@ -786,11 +807,12 @@ class PropertySheetViewer extends Viewer {
         // Refresh the tree when F5 pressed
         tree.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                if (e.character == SWT.ESC)
-                    deactivateCellEditor();
-                else if (e.keyCode == SWT.F5)
-                    // The following will simulate a reselect
+                if (e.character == SWT.ESC) {
+					deactivateCellEditor();
+				} else if (e.keyCode == SWT.F5) {
+					// The following will simulate a reselect
                     setInput(getInput());
+				}
             }
         });
     }
@@ -810,10 +832,11 @@ class PropertySheetViewer extends Viewer {
     			
     			// For entries, show the description if any, else show the label
     			String desc = psEntry.getDescription();
-    			if (desc != null && desc.length() > 0)
-    				setMessage(psEntry.getDescription());
-    			else
-	    			setMessage(psEntry.getDisplayName());
+    			if (desc != null && desc.length() > 0) {
+					setMessage(psEntry.getDescription());
+				} else {
+					setMessage(psEntry.getDisplayName());
+				}
     		}
     			
     		else if (item.getData() instanceof PropertySheetCategory) {
@@ -858,9 +881,10 @@ class PropertySheetViewer extends Viewer {
      */
     private void removeItem(TreeItem item) {
         Object data = item.getData();
-        if (data instanceof IPropertySheetEntry)
-            ((IPropertySheetEntry) data)
+        if (data instanceof IPropertySheetEntry) {
+			((IPropertySheetEntry) data)
                     .removePropertySheetEntryListener(entryListener);
+		}
         item.setData(null);
         item.dispose();
     }
@@ -874,8 +898,9 @@ class PropertySheetViewer extends Viewer {
 
         // Iterate over entries and reset them
         Iterator itr = selection.iterator();
-        while (itr.hasNext())
-            ((IPropertySheetEntry) itr.next()).resetPropertyValue();
+        while (itr.hasNext()) {
+			((IPropertySheetEntry) itr.next()).resetPropertyValue();
+		}
     }
 
     /**
@@ -886,8 +911,9 @@ class PropertySheetViewer extends Viewer {
      */
     private void setErrorMessage(String errorMessage) {
         // show the error message
-        if (statusLineManager != null)
-            statusLineManager.setErrorMessage(errorMessage);
+        if (statusLineManager != null) {
+			statusLineManager.setErrorMessage(errorMessage);
+		}
     }
 
     /**
@@ -909,8 +935,9 @@ class PropertySheetViewer extends Viewer {
 
         // set the new input to the root entry
         input = (Object[]) newInput;
-        if (input == null)
-            input = new Object[0];
+        if (input == null) {
+			input = new Object[0];
+		}
 
         if (rootEntry != null) {
             rootEntry.setValues(input);
@@ -928,8 +955,9 @@ class PropertySheetViewer extends Viewer {
      */
     private void setMessage(String message) {
         // show the message
-        if (statusLineManager != null)
-            statusLineManager.setMessage(message);
+        if (statusLineManager != null) {
+			statusLineManager.setMessage(message);
+		}
     }
 
     /**
@@ -941,8 +969,9 @@ class PropertySheetViewer extends Viewer {
      */
     public void setRootEntry(IPropertySheetEntry root) {
         // If we have a root entry, remove our entry listener
-        if (rootEntry != null)
-            rootEntry.removePropertySheetEntryListener(entryListener);
+        if (rootEntry != null) {
+			rootEntry.removePropertySheetEntryListener(entryListener);
+		}
 
         rootEntry = root;
 
@@ -977,8 +1006,9 @@ class PropertySheetViewer extends Viewer {
      * @since 3.1
 	 */
 	public void setSorter(PropertySheetSorter sorter) {
-		if (null == sorter)
+		if (null == sorter) {
 			sorter = new PropertySheetSorter();
+		}
 		this.sorter = sorter;
 	}
 
@@ -1015,8 +1045,9 @@ class PropertySheetViewer extends Viewer {
      */
     private void updateCategories() {
         // lazy initialize
-        if (categories == null)
-            categories = new PropertySheetCategory[0];
+        if (categories == null) {
+			categories = new PropertySheetCategory[0];
+		}
 
         // get all the filtered child entries of the root
         List childEntries = getFilteredEntries(rootEntry.getChildEntries());
@@ -1040,8 +1071,9 @@ class PropertySheetViewer extends Viewer {
         // Determine the categories
         PropertySheetCategory misc = (PropertySheetCategory) categoryCache
                 .get(MISCELLANEOUS_CATEGORY_NAME);
-        if (misc == null)
-            misc = new PropertySheetCategory(MISCELLANEOUS_CATEGORY_NAME);
+        if (misc == null) {
+			misc = new PropertySheetCategory(MISCELLANEOUS_CATEGORY_NAME);
+		}
         boolean addMisc = false;
 
         for (int i = 0; i < childEntries.size(); i++) {
@@ -1066,8 +1098,9 @@ class PropertySheetViewer extends Viewer {
         }
 
         // Add the PSE_MISC category if it has entries
-        if (addMisc)
-            categoryCache.put(MISCELLANEOUS_CATEGORY_NAME, misc);
+        if (addMisc) {
+			categoryCache.put(MISCELLANEOUS_CATEGORY_NAME, misc);
+		}
         
         // Sort the categories.
         // Rather than just sorting categoryCache.values(), we'd like the original order to be preserved
@@ -1143,10 +1176,11 @@ class PropertySheetViewer extends Viewer {
         // cast the entry or category
         IPropertySheetEntry entry = null;
         PropertySheetCategory category = null;
-        if (node instanceof IPropertySheetEntry)
-            entry = (IPropertySheetEntry) node;
-        else
-            category = (PropertySheetCategory) node;
+        if (node instanceof IPropertySheetEntry) {
+			entry = (IPropertySheetEntry) node;
+		} else {
+			category = (PropertySheetCategory) node;
+		}
 
         // get the current child tree items
         TreeItem[] childItems = getChildItems(widget);
@@ -1182,9 +1216,10 @@ class PropertySheetViewer extends Viewer {
         }
 
         // get the child entries or categories
-        if (node == rootEntry && isShowingCategories)
-            // update the categories
+        if (node == rootEntry && isShowingCategories) {
+			// update the categories
             updateCategories();
+		}
         List children = getChildren(node);
 
         // remove items
@@ -1207,15 +1242,17 @@ class PropertySheetViewer extends Viewer {
 
         // WORKAROUND
         int oldCnt = -1;
-        if (widget == tree)
-            oldCnt = tree.getItemCount();
+        if (widget == tree) {
+			oldCnt = tree.getItemCount();
+		}
 
         // add new items
         int newSize = children.size();
         for (int i = 0; i < newSize; i++) {
             Object el = children.get(i);
-            if (!set.contains(el))
-                createItem(el, widget, i);
+            if (!set.contains(el)) {
+				createItem(el, widget, i);
+			}
         }
 
         // WORKAROUND
@@ -1232,9 +1269,9 @@ class PropertySheetViewer extends Viewer {
         // are showing the correct values.
         for (int i = 0; i < newSize; i++) {
             Object el = children.get(i);
-            if (el instanceof IPropertySheetEntry)
-                updateEntry((IPropertySheetEntry) el, childItems[i]);
-            else {
+            if (el instanceof IPropertySheetEntry) {
+				updateEntry((IPropertySheetEntry) el, childItems[i]);
+			} else {
                 updateCategory((PropertySheetCategory) el, childItems[i]);
                 updateChildrenOf(el, childItems[i]);
             }
@@ -1260,8 +1297,9 @@ class PropertySheetViewer extends Viewer {
         item.setText(0, entry.getDisplayName());
         item.setText(1, entry.getValueAsString());
         Image image = entry.getImage();
-        if (item.getImage(1) != image)
-            item.setImage(1, image);
+        if (item.getImage(1) != image) {
+			item.setImage(1, image);
+		}
 
         // update the "+" icon
         updatePlus(entry, item);
@@ -1278,10 +1316,11 @@ class PropertySheetViewer extends Viewer {
         // cast the entry or category
         IPropertySheetEntry entry = null;
         PropertySheetCategory category = null;
-        if (node instanceof IPropertySheetEntry)
-            entry = (IPropertySheetEntry) node;
-        else
-            category = (PropertySheetCategory) node;
+        if (node instanceof IPropertySheetEntry) {
+			entry = (IPropertySheetEntry) node;
+		} else {
+			category = (PropertySheetCategory) node;
+		}
 
         boolean hasPlus = item.getItemCount() > 0;
         boolean needsPlus = category != null || entry.hasChildEntries();

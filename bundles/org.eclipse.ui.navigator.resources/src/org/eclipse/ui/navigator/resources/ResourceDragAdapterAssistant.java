@@ -73,15 +73,17 @@ public final class ResourceDragAdapterAssistant extends
 		if (LocalSelectionTransfer.getInstance().isSupportedType(
 				anEvent.dataType)) {
 			anEvent.data = aSelection;
-			if (DEBUG)
+			if (DEBUG) {
 				System.out
 						.println("ResourceDragAdapterAssistant.dragSetData set LocalSelectionTransfer"); //$NON-NLS-1$
+			}
 		} else if (ResourceTransfer.getInstance().isSupportedType(
 				anEvent.dataType)) {
 			anEvent.data = getSelectedResources(aSelection);
-			if (DEBUG)
+			if (DEBUG) {
 				System.out
 						.println("ResourceDragAdapterAssistant.dragSetData set ResourceTransfer"); //$NON-NLS-1$
+			}
 
 		} else if (FileTransfer.getInstance().isSupportedType(anEvent.dataType)) {
 
@@ -94,23 +96,27 @@ public final class ResourceDragAdapterAssistant extends
 			for (int i = 0; i < length; i++) {
 				IPath location = resources[i].getLocation();
 				// location may be null. See bug 29491.
-				if (location != null)
+				if (location != null) {
 					fileNames[actualLength++] = location.toOSString();
+				}
 			}
-			if (actualLength == 0)
+			if (actualLength == 0) {
 				return;
+			}
 			// was one or more of the locations null?
 			if (actualLength < length) {
 				String[] tempFileNames = fileNames;
 				fileNames = new String[actualLength];
-				for (int i = 0; i < actualLength; i++)
+				for (int i = 0; i < actualLength; i++) {
 					fileNames[i] = tempFileNames[i];
+				}
 			}
 			anEvent.data = fileNames;
 
-			if (DEBUG)
+			if (DEBUG) {
 				System.out
 						.println("ResourceDragAdapterAssistant.dragSetData set FileTransfer"); //$NON-NLS-1$
+			}
 
 		}
 
@@ -122,23 +128,24 @@ public final class ResourceDragAdapterAssistant extends
 		for (Iterator iter = aSelection.iterator(); iter.hasNext();) {
 			Object selected = iter.next();
 			resource = adaptToResource(selected);
-			if (resource != null)
-
+			if (resource != null) {
 				resources.add(resource);
+			}
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}
 
 	private IResource adaptToResource(Object selected) {
 		IResource resource;
-		if (selected instanceof IResource)
+		if (selected instanceof IResource) {
 			resource = (IResource) selected;
-		else if (selected instanceof IAdaptable)
+		} else if (selected instanceof IAdaptable) {
 			resource = (IResource) ((IAdaptable) selected)
 					.getAdapter(IRESOURCE_TYPE);
-		else
+		} else {
 			resource = (IResource) Platform.getAdapterManager().getAdapter(
 					selected, IRESOURCE_TYPE);
+		}
 		return resource;
 	}
 

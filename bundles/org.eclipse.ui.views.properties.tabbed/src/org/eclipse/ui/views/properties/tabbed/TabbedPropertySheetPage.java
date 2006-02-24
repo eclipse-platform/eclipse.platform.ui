@@ -194,8 +194,9 @@ public class TabbedPropertySheetPage
 				// but different section depending on the selection
 				tab = (Tab) descriptorToTab.get(descriptor);
 
-				if (tab != currentTab)
+				if (tab != currentTab) {
 					hideTab(currentTab);
+				}
 
 				Composite tabComposite = (Composite) tabToComposite.get(tab);
 				if (tabComposite == null) {
@@ -212,8 +213,9 @@ public class TabbedPropertySheetPage
 				// store tab selection
 				storeCurrentTabSelection(descriptor.getLabel());
 
-				if (tab != currentTab)
+				if (tab != currentTab) {
 					showTab(tab);
+				}
 
 				tab.refresh();
 			}
@@ -221,8 +223,9 @@ public class TabbedPropertySheetPage
 			currentTab = tab;
 			resizeScrolledComposite();
 
-			if (descriptor != null)
+			if (descriptor != null) {
 				handleTabSelection(descriptor);
+			}
 		}
 
 		/**
@@ -600,8 +603,9 @@ public class TabbedPropertySheetPage
 			Tab tab = (Tab) descriptorToTab.remove(descriptors[i]);
 
 			if (tab != null && tab.controlsHaveBeenCreated()) {
-				if (tab == currentTab)
+				if (tab == currentTab) {
 					disposingCurrentTab = false;
+				}
 			} else {
 				tab = (descriptors[i]).createTab();
 			}

@@ -221,10 +221,12 @@ public class ViewForm extends Composite {
         size.x += 2 * marginWidth;
         size.y += 2 * marginHeight;
 
-        if (wHint != SWT.DEFAULT)
-            size.x = wHint;
-        if (hHint != SWT.DEFAULT)
-            size.y = hHint;
+        if (wHint != SWT.DEFAULT) {
+			size.x = wHint;
+		}
+        if (hHint != SWT.DEFAULT) {
+			size.y = hHint;
+		}
 
         Rectangle trim = computeTrim(0, 0, size.x, size.y);
         return new Point(trim.width, trim.height);
@@ -533,12 +535,15 @@ public class ViewForm extends Composite {
      */
     public void setFont(Font f) {
         super.setFont(f);
-        if (topLeft != null && !topLeft.isDisposed())
-            topLeft.setFont(f);
-        if (topCenter != null && !topCenter.isDisposed())
-            topCenter.setFont(f);
-        if (topRight != null && !topRight.isDisposed())
-            topRight.setFont(f);
+        if (topLeft != null && !topLeft.isDisposed()) {
+			topLeft.setFont(f);
+		}
+        if (topCenter != null && !topCenter.isDisposed()) {
+			topCenter.setFont(f);
+		}
+        if (topRight != null && !topRight.isDisposed()) {
+			topRight.setFont(f);
+		}
 
         layout();
     }
@@ -650,8 +655,9 @@ public class ViewForm extends Composite {
      */
     public void setBorderVisible(boolean show) {
         checkWidget();
-        if (showBorder == show)
-            return;
+        if (showBorder == show) {
+			return;
+		}
 
         showBorder = show;
         if (showBorder) {

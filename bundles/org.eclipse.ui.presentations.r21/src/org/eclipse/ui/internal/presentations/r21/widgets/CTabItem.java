@@ -121,8 +121,9 @@ public class CTabItem extends Item {
     }
 
     public void dispose() {
-        if (isDisposed())
-            return;
+        if (isDisposed()) {
+			return;
+		}
         parent.destroyItem(this);
         super.dispose();
         parent = null;
@@ -162,8 +163,9 @@ public class CTabItem extends Item {
     }
 
     public Display getDisplay() {
-        if (parent == null)
-            SWT.error(SWT.ERROR_WIDGET_DISPOSED);
+        if (parent == null) {
+			SWT.error(SWT.ERROR_WIDGET_DISPOSED);
+		}
         return parent.getDisplay();
     }
 
@@ -208,8 +210,9 @@ public class CTabItem extends Item {
      */
     void onPaint(GC gc, boolean isSelected) {
 
-        if (width == 0 || height == 0)
-            return;
+        if (width == 0 || height == 0) {
+			return;
+		}
 
         Display display = getDisplay();
         Color highlightShadow = display
@@ -245,20 +248,23 @@ public class CTabItem extends Item {
                 // draw a gradient behind the text
                 Color oldBackground = gc.getBackground();
                 if (parent.gradientColors.length == 1) {
-                    if (parent.gradientColors[0] != null)
-                        gc.setBackground(parent.gradientColors[0]);
+                    if (parent.gradientColors[0] != null) {
+						gc.setBackground(parent.gradientColors[0]);
+					}
                     gc.fillRectangle(bounds.x, bounds.y, bounds.width,
                             bounds.height);
                 } else {
                     Color oldForeground = gc.getForeground();
                     Color lastColor = parent.gradientColors[0];
-                    if (lastColor == null)
-                        lastColor = oldBackground;
+                    if (lastColor == null) {
+						lastColor = oldBackground;
+					}
                     for (int i = 0, pos = 0; i < parent.gradientPercents.length; ++i) {
                         gc.setForeground(lastColor);
                         lastColor = parent.gradientColors[i + 1];
-                        if (lastColor == null)
-                            lastColor = oldBackground;
+                        if (lastColor == null) {
+							lastColor = oldBackground;
+						}
                         gc.setBackground(lastColor);
                         int gradientWidth = (parent.gradientPercents[i]
                                 * bounds.width / 100)
@@ -444,8 +450,9 @@ public class CTabItem extends Item {
     }
 
     private static String shortenText(GC gc, String text, int width) {
-        if (gc.textExtent(text, SWT.DRAW_MNEMONIC).x <= width)
-            return text;
+        if (gc.textExtent(text, SWT.DRAW_MNEMONIC).x <= width) {
+			return text;
+		}
 
         int ellipseWidth = gc.textExtent(ellipsis, SWT.DRAW_MNEMONIC).x;
         int length = text.length();
@@ -467,8 +474,9 @@ public class CTabItem extends Item {
     int preferredHeight(GC gc) {
         Image image = getImage();
         int height = 0;
-        if (image != null)
-            height = image.getBounds().height;
+        if (image != null) {
+			height = image.getBounds().height;
+		}
         String text = getText();
         height = Math.max(height, gc.textExtent(text, SWT.DRAW_MNEMONIC).y);
         return height + TOP_MARGIN + BOTTOM_MARGIN;
@@ -480,16 +488,19 @@ public class CTabItem extends Item {
     int preferredWidth(GC gc) {
         int width = 0;
         Image image = getImage();
-        if (image != null)
-            width += image.getBounds().width;
+        if (image != null) {
+			width += image.getBounds().width;
+		}
         String text = getText();
         if (text != null) {
-            if (image != null)
-                width += INTERNAL_SPACING;
+            if (image != null) {
+				width += INTERNAL_SPACING;
+			}
             width += gc.textExtent(text, SWT.DRAW_MNEMONIC).x;
         }
-        if (parent.showClose)
-            width += INTERNAL_SPACING + preferredHeight(gc); // closebar will be square and will fill preferred height
+        if (parent.showClose) {
+			width += INTERNAL_SPACING + preferredHeight(gc); // closebar will be square and will fill preferred height
+		}
         return width + LEFT_MARGIN + RIGHT_MARGIN;
     }
 
@@ -511,10 +522,12 @@ public class CTabItem extends Item {
     public void setControl(Control control) {
         checkWidget();
         if (control != null) {
-            if (control.isDisposed())
-                SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-            if (control.getParent() != parent)
-                SWT.error(SWT.ERROR_INVALID_PARENT);
+            if (control.isDisposed()) {
+				SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+			}
+            if (control.getParent() != parent) {
+				SWT.error(SWT.ERROR_INVALID_PARENT);
+			}
         }
         if (this.control != null && !this.control.isDisposed()) {
             this.control.setVisible(false);
@@ -533,8 +546,9 @@ public class CTabItem extends Item {
 
     public void setImage(Image image) {
         checkWidget();
-        if (image != null && image.equals(getImage()))
-            return;
+        if (image != null && image.equals(getImage())) {
+			return;
+		}
         super.setImage(image);
         parent.resetTabSize(true);
     }
@@ -552,8 +566,9 @@ public class CTabItem extends Item {
      */
     public void setDisabledImage(Image image) {
         checkWidget();
-        if (image != null && image.equals(getDisabledImage()))
-            return;
+        if (image != null && image.equals(getDisabledImage())) {
+			return;
+		}
         disabledImage = image;
         parent.redraw();
     }
@@ -576,8 +591,9 @@ public class CTabItem extends Item {
      */
     public void setText(String string) {
         checkWidget();
-        if (string.equals(getText()))
-            return;
+        if (string.equals(getText())) {
+			return;
+		}
         super.setText(string);
         shortenedText = null;
         shortenedTextWidth = 0;

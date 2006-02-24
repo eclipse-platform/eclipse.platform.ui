@@ -35,8 +35,9 @@ public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider imple
  
 	public String getDescription(Object anElement) {
 
-		if (anElement instanceof IResource)
+		if (anElement instanceof IResource) {
 			return ((IResource) anElement).getFullPath().makeRelative().toString();
+		}
 		return null;
 	}
 

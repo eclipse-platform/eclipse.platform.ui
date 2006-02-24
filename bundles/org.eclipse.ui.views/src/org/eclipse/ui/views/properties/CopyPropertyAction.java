@@ -52,8 +52,9 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
         // Get the selected property
         IStructuredSelection selection = (IStructuredSelection) getPropertySheet()
                 .getSelection();
-        if (selection.isEmpty())
-            return;
+        if (selection.isEmpty()) {
+			return;
+		}
         // Assume single selection
         IPropertySheetEntry entry = (IPropertySheetEntry) selection
                 .getFirstElement();
@@ -83,12 +84,14 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
                     .getInstance() };
             clipboard.setContents(data, transferTypes);
         } catch (SWTError e) {
-            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
-                throw e;
+            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
+				throw e;
+			}
             if (MessageDialog.openQuestion(getPropertySheet().getControl()
                     .getShell(), PropertiesMessages.CopyToClipboardProblemDialog_title,
-                    PropertiesMessages.CopyToClipboardProblemDialog_message))
-                setClipboard(text);
+                    PropertiesMessages.CopyToClipboardProblemDialog_message)) {
+				setClipboard(text);
+			}
         }
     }
 }

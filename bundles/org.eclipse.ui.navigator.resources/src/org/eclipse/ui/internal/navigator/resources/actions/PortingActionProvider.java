@@ -94,8 +94,9 @@ public class PortingActionProvider extends CommonActionProvider {
 	 * Extends the superclass implementation to dispose the subgroups.
 	 */
 	public void dispose() {
-		if(!contribute)
+		if(!contribute) {
 			return;
+		}
 		importWizardActionGroup.dispose();
 		exportWizardActionGroup.dispose();
 		importAction = null;
@@ -104,8 +105,9 @@ public class PortingActionProvider extends CommonActionProvider {
 	}
 
 	public void fillActionBars(IActionBars theActionBars) {
-		if(!contribute)
+		if(!contribute) {
 			return;
+		}
 
 		Assert.isTrue(!disposed);
 
@@ -117,17 +119,18 @@ public class PortingActionProvider extends CommonActionProvider {
 	}
 
 	public void fillContextMenu(IMenuManager aMenu) {
-		if(!contribute)
+		if(!contribute) {
 			return;
+		}
 
 		Assert.isTrue(!disposed);
 
 		ISelection selection = getContext().getSelection();
-		if (selection.isEmpty() || !(selection instanceof IStructuredSelection))
+		if (selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
 			addSimplePortingMenus(aMenu);
-		else if (((IStructuredSelection) selection).size() > 1)
+		} else if (((IStructuredSelection) selection).size() > 1) {
 			addSimplePortingMenus(aMenu);
-		else {
+		} else {
 			addImportMenu(aMenu);
 			addExportMenu(aMenu);
 		}
@@ -140,8 +143,9 @@ public class PortingActionProvider extends CommonActionProvider {
 		String iconPath = "icons/full/"; //$NON-NLS-1$ 
 		URL url = WorkbenchNavigatorPlugin.getDefault().find(
 				new Path(iconPath + relativePath));
-		if (url == null)
+		if (url == null) {
 			return ImageDescriptor.getMissingImageDescriptor();
+		}
 		return ImageDescriptor.createFromURL(url);
 	}
 

@@ -124,8 +124,9 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
 					.loadAdapter(part, IPropertySheetPage.class.getName());
 		}
         if (page != null) {
-            if (page instanceof IPageBookViewPage)
-                initPage((IPageBookViewPage) page);
+            if (page instanceof IPageBookViewPage) {
+				initPage((IPageBookViewPage) page);
+			}
             page.createControl(getPageBook());
             return new PageRec(part, page);
         }
@@ -182,18 +183,21 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
         IContributedContentsView view = (IContributedContentsView) part
                 .getAdapter(IContributedContentsView.class);
         IWorkbenchPart source = null;
-        if (view != null)
-            source = view.getContributingPart();
-        if (source != null)
-            super.partActivated(source);
-        else
-            super.partActivated(part);
+        if (view != null) {
+			source = view.getContributingPart();
+		}
+        if (source != null) {
+			super.partActivated(source);
+		} else {
+			super.partActivated(part);
+		}
 
         // When the view is first opened, pass the selection to the page		
         if (bootstrapSelection != null) {
             IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
-            if (page != null)
-                page.selectionChanged(part, bootstrapSelection);
+            if (page != null) {
+				page.selectionChanged(part, bootstrapSelection);
+			}
             bootstrapSelection = null;
         }
     }
@@ -204,13 +208,15 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
      */
     public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         // we ignore our own selection or null selection
-        if (part == this || sel == null)
-            return;
+        if (part == this || sel == null) {
+			return;
+		}
 
         // pass the selection to the page		
         IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
-        if (page != null)
-            page.selectionChanged(part, sel);
+        if (page != null) {
+			page.selectionChanged(part, sel);
+		}
     }
     
     /**

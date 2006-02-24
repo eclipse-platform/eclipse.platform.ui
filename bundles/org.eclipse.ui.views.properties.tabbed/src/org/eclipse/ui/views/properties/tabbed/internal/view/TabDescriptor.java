@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.properties.tabbed.ITabItem;
 import org.eclipse.ui.views.properties.tabbed.ISection;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
+import org.eclipse.ui.views.properties.tabbed.ITabItem;
 import org.eclipse.ui.views.properties.tabbed.internal.TabbedPropertyViewPlugin;
 import org.eclipse.ui.views.properties.tabbed.internal.TabbedPropertyViewStatusCodes;
 import org.eclipse.ui.views.properties.tabbed.internal.l10n.TabbedPropertyMessages;
@@ -257,8 +257,9 @@ public class TabDescriptor
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {
-		if (this == object)
+		if (this == object) {
 			return true;
+		}
 
 		if (this.getClass() == object.getClass()) {
 			TabDescriptor descriptor = (TabDescriptor) object;
@@ -276,8 +277,9 @@ public class TabDescriptor
 				while (i.hasNext()) {
 					ISectionDescriptor source = (ISectionDescriptor) i.next();
 					ISectionDescriptor target = (ISectionDescriptor) j.next();
-					if (!source.getId().equals(target.getId()))
+					if (!source.getId().equals(target.getId())) {
 						return false;
+					}
 				}
 
 				return true;

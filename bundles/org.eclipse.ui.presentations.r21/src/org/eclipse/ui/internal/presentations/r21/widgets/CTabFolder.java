@@ -311,8 +311,9 @@ public class CTabFolder extends Composite {
         style = style & mask;
         // TOP and BOTTOM are mutually exlusive.
         // TOP is the default
-        if ((style & SWT.TOP) != 0)
-            style = style & ~(SWT.TOP | SWT.BOTTOM) | SWT.TOP;
+        if ((style & SWT.TOP) != 0) {
+			style = style & ~(SWT.TOP | SWT.BOTTOM) | SWT.TOP;
+		}
         // reduce the flash by not redrawing the entire area on a Resize event
         style |= SWT.NO_REDRAW_RESIZE;
         return style;
@@ -357,8 +358,9 @@ public class CTabFolder extends Composite {
      */
     public void addCTabFolderListener(CTabFolderListener listener) {
         checkWidget();
-        if (listener == null)
-            SWT.error(SWT.ERROR_NULL_ARGUMENT);
+        if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
         // add to array
         CTabFolderListener[] newTabListeners = new CTabFolderListener[tabListeners.length + 1];
         System.arraycopy(tabListeners, 0, newTabListeners, 0,
@@ -370,8 +372,9 @@ public class CTabFolder extends Composite {
     }
 
     private void closeNotify(CTabItem item, int time) {
-        if (item == null)
-            return;
+        if (item == null) {
+			return;
+		}
 
         CTabFolderEvent event = new CTabFolderEvent(this);
         event.widget = this;
@@ -409,15 +412,19 @@ public class CTabFolder extends Composite {
                 minHeight = Math.max(minHeight, size.y);
             }
         }
-        if (minWidth == 0)
-            minWidth = DEFAULT_WIDTH;
-        if (minHeight == 0)
-            minHeight = DEFAULT_HEIGHT;
+        if (minWidth == 0) {
+			minWidth = DEFAULT_WIDTH;
+		}
+        if (minHeight == 0) {
+			minHeight = DEFAULT_HEIGHT;
+		}
 
-        if (wHint != SWT.DEFAULT)
-            minWidth = wHint;
-        if (hHint != SWT.DEFAULT)
-            minHeight = hHint;
+        if (wHint != SWT.DEFAULT) {
+			minWidth = wHint;
+		}
+        if (hHint != SWT.DEFAULT) {
+			minHeight = hHint;
+		}
 
         Rectangle trim = computeTrim(0, 0, minWidth, minHeight);
         return new Point(trim.width, trim.height);
@@ -426,8 +433,9 @@ public class CTabFolder extends Composite {
     public Rectangle computeTrim(int x, int y, int width, int height) {
         checkWidget();
         if (items.length == 0) {
-            if (!showBorders)
-                return new Rectangle(x, y, width, height);
+            if (!showBorders) {
+				return new Rectangle(x, y, width, height);
+			}
             int trimX = x - borderRight - 1;
             int trimY = y - borderBottom - 1;
             int trimWidth = width + borderRight + 2;
@@ -536,8 +544,9 @@ public class CTabFolder extends Composite {
             public void handleEvent(Event event) {
                 if (inactiveItem != null) {
                     Rectangle itemBounds = inactiveItem.getBounds();
-                    if (itemBounds.contains(event.x, event.y))
-                        return;
+                    if (itemBounds.contains(event.x, event.y)) {
+						return;
+					}
                 }
                 inactiveCloseBar.setVisible(false);
                 inactiveItem = null;
@@ -550,12 +559,14 @@ public class CTabFolder extends Composite {
      * Destroy the specified item.
      */
     void destroyItem(CTabItem item) {
-        if (inDispose)
-            return;
+        if (inDispose) {
+			return;
+		}
 
         int index = indexOf(item);
-        if (index == -1)
-            return; // should this trigger an error?
+        if (index == -1) {
+			return; // should this trigger an error?
+		}
 
         insertionIndex = -2;
 
@@ -569,8 +580,9 @@ public class CTabFolder extends Composite {
                 control.setVisible(false);
             }
             closeBar.setVisible(false);
-            if (!fixedTabHeight)
-                tabHeight = 0;
+            if (!fixedTabHeight) {
+				tabHeight = 0;
+			}
             redraw();
             return;
         }
@@ -603,8 +615,9 @@ public class CTabFolder extends Composite {
     }
 
     private void onKeyDown(Event e) {
-        if (e.keyCode != SWT.ARROW_LEFT && e.keyCode != SWT.ARROW_RIGHT)
-            return;
+        if (e.keyCode != SWT.ARROW_LEFT && e.keyCode != SWT.ARROW_RIGHT) {
+			return;
+		}
         int leadKey = (getStyle() & SWT.MIRRORED) != 0 ? SWT.ARROW_RIGHT
                 : SWT.ARROW_LEFT;
         if (e.keyCode == leadKey) {
@@ -644,30 +657,36 @@ public class CTabFolder extends Composite {
             label = null;
         }
 
-        if (arrowLeftImage != null)
-            arrowLeftImage.dispose();
+        if (arrowLeftImage != null) {
+			arrowLeftImage.dispose();
+		}
         arrowLeftImage = null;
-        if (arrowRightImage != null)
-            arrowRightImage.dispose();
+        if (arrowRightImage != null) {
+			arrowRightImage.dispose();
+		}
         arrowRightImage = null;
-        if (closeImage != null)
-            closeImage.dispose();
+        if (closeImage != null) {
+			closeImage.dispose();
+		}
         closeImage = null;
 
         gradientColors = null;
         gradientPercents = null;
         backgroundImage = null;
 
-        if (borderColor1 != null)
-            borderColor1.dispose();
+        if (borderColor1 != null) {
+			borderColor1.dispose();
+		}
         borderColor1 = null;
 
-        if (borderColor2 != null)
-            borderColor2.dispose();
+        if (borderColor2 != null) {
+			borderColor2.dispose();
+		}
         borderColor2 = null;
 
-        if (borderColor3 != null)
-            borderColor3.dispose();
+        if (borderColor3 != null) {
+			borderColor3.dispose();
+		}
         borderColor3 = null;
     }
 
@@ -743,8 +762,9 @@ public class CTabFolder extends Composite {
         checkWidget();
         Point size = getSize();
         if (items.length == 0) {
-            if (!showBorders)
-                return super.getClientArea();
+            if (!showBorders) {
+				return super.getClientArea();
+			}
             int width = size.x - borderRight - 2;
             int height = size.y - borderBottom - 2;
             return new Rectangle(borderRight + 1, borderBottom + 1, width,
@@ -779,8 +799,9 @@ public class CTabFolder extends Composite {
      */
     public CTabItem getItem(int index) {
         //checkWidget();
-        if (index < 0 || index >= items.length)
-            SWT.error(SWT.ERROR_INVALID_RANGE);
+        if (index < 0 || index >= items.length) {
+			SWT.error(SWT.ERROR_INVALID_RANGE);
+		}
         return items[index];
     }
 
@@ -792,14 +813,16 @@ public class CTabFolder extends Composite {
      */
     public CTabItem getItem(Point pt) {
         //checkWidget();
-        if (items.length == 0)
-            return null;
+        if (items.length == 0) {
+			return null;
+		}
         int lastItem = getLastItem();
         lastItem = Math.min(items.length - 1, lastItem + 1);
         for (int i = topTabIndex; i <= lastItem; i++) {
             Rectangle bounds = items[i].getBounds();
-            if (bounds.contains(pt))
-                return items[i];
+            if (bounds.contains(pt)) {
+				return items[i];
+			}
         }
         return null;
     }
@@ -827,21 +850,25 @@ public class CTabFolder extends Composite {
     }
 
     private int getLastItem() {
-        if (items.length == 0)
-            return -1;
+        if (items.length == 0) {
+			return -1;
+		}
         Rectangle area = getClientArea();
-        if (area.width <= 0)
-            return 0;
+        if (area.width <= 0) {
+			return 0;
+		}
         Rectangle toolspace = getToolSpace();
-        if (toolspace.width == 0)
-            return items.length - 1;
+        if (toolspace.width == 0) {
+			return items.length - 1;
+		}
         int width = area.width - toolspace.width;
         int index = topTabIndex;
         int tabWidth = items[index].width;
         while (index < items.length - 1) {
             tabWidth += items[index + 1].width;
-            if (tabWidth > width)
-                break;
+            if (tabWidth > width) {
+				break;
+			}
             index++;
         }
         return index;
@@ -855,8 +882,9 @@ public class CTabFolder extends Composite {
      */
     public CTabItem getSelection() {
         //checkWidget();
-        if (selectedIndex == -1)
-            return null;
+        if (selectedIndex == -1) {
+			return null;
+		}
         return items[selectedIndex];
     }
 
@@ -873,14 +901,16 @@ public class CTabFolder extends Composite {
 
     private Rectangle getToolSpace() {
         boolean showArrows = scroll_leftVisible() || scroll_rightVisible();
-        if (!showArrows && topRight == null)
-            return new Rectangle(0, 0, 0, 0);
+        if (!showArrows && topRight == null) {
+			return new Rectangle(0, 0, 0, 0);
+		}
         Rectangle toolspace;
         if (showArrows) {
             toolspace = arrowBar.getBounds();
             toolspace.width += borderRight;
-            if (topRight != null)
-                toolspace.width += topRight.getSize().x;
+            if (topRight != null) {
+				toolspace.width += topRight.getSize().x;
+			}
         } else {
             toolspace = topRight.getBounds();
             toolspace.width += borderRight;
@@ -922,8 +952,9 @@ public class CTabFolder extends Composite {
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
         }
         for (int i = 0; i < items.length; i++) {
-            if (items[i] == item)
-                return i;
+            if (items[i] == item) {
+				return i;
+			}
         }
         return -1;
     }
@@ -1160,21 +1191,24 @@ public class CTabFolder extends Composite {
     }
 
     private boolean setItemLocation() {
-        if (items.length == 0)
-            return false;
+        if (items.length == 0) {
+			return false;
+		}
         Rectangle area = super.getClientArea();
         int x = area.x;
         int y = area.y + borderTop;
-        if (onBottom)
-            y = Math.max(0, area.y + area.height - borderBottom - tabHeight);
+        if (onBottom) {
+			y = Math.max(0, area.y + area.height - borderBottom - tabHeight);
+		}
 
         boolean changed = false;
         for (int i = topTabIndex - 1; i >= 0; i--) {
             // if the first visible tab is not the first tab
             CTabItem tab = items[i];
             x -= tab.width;
-            if (!changed && (tab.x != x || tab.y != y))
-                changed = true;
+            if (!changed && (tab.x != x || tab.y != y)) {
+				changed = true;
+			}
             // layout tab items from right to left thus making them invisible
             tab.x = x;
             tab.y = y;
@@ -1193,11 +1227,13 @@ public class CTabFolder extends Composite {
     }
 
     private void setLastItem(int index) {
-        if (index < 0 || index > items.length - 1)
-            return;
+        if (index < 0 || index > items.length - 1) {
+			return;
+		}
         Rectangle area = getClientArea();
-        if (area.width <= 0)
-            return;
+        if (area.width <= 0) {
+			return;
+		}
         int maxWidth = area.width;
         Rectangle toolspace = getToolSpace();
         if (toolspace.width > 0) {
@@ -1206,8 +1242,9 @@ public class CTabFolder extends Composite {
         int tabWidth = items[index].width;
         while (index > 0) {
             tabWidth += items[index - 1].width;
-            if (tabWidth > maxWidth)
-                break;
+            if (tabWidth > maxWidth) {
+				break;
+			}
             index--;
         }
         topTabIndex = index;
@@ -1220,8 +1257,9 @@ public class CTabFolder extends Composite {
      */
     boolean setItemBounds() {
         boolean changed = false;
-        if (isDisposed())
-            return changed;
+        if (isDisposed()) {
+			return changed;
+		}
         Rectangle area = super.getClientArea();
 
         xClient = area.x + borderLeft + marginWidth;
@@ -1232,8 +1270,9 @@ public class CTabFolder extends Composite {
             // +1 is for the line at the bottom of the tabs
         }
 
-        if (area.width <= 0 || area.height <= 0 || items.length == 0)
-            return changed;
+        if (area.width <= 0 || area.height <= 0 || items.length == 0) {
+			return changed;
+		}
 
         int[] widths = new int[items.length];
         GC gc = new GC(this);
@@ -1269,8 +1308,9 @@ public class CTabFolder extends Composite {
         int totalWidth = 0;
         for (int i = 0; i < items.length; i++) {
             CTabItem tab = items[i];
-            if (tab.height != tabHeight || tab.width != widths[i])
-                changed = true;
+            if (tab.height != tabHeight || tab.width != widths[i]) {
+				changed = true;
+			}
             tab.height = tabHeight;
             tab.width = widths[i];
             totalWidth += widths[i];
@@ -1280,12 +1320,14 @@ public class CTabFolder extends Composite {
         if (totalWidth <= areaWidth) {
             topTabIndex = 0;
         }
-        if (setItemLocation())
-            changed = true;
+        if (setItemLocation()) {
+			changed = true;
+		}
 
         // Is there a gap after last item showing
-        if (correctLastItem())
-            changed = true;
+        if (correctLastItem()) {
+			changed = true;
+		}
         return changed;
     }
 
@@ -1403,8 +1445,9 @@ public class CTabFolder extends Composite {
         int x = 0, y = 0, width = 0, height = 0;
         if (index == -1) {
             Rectangle area = super.getClientArea();
-            if (area.width == 0 || area.height == 0)
-                return;
+            if (area.width == 0 || area.height == 0) {
+				return;
+			}
             width = area.x + area.width - borderLeft - borderRight;
             height = tabHeight + 1; // +1 causes top line between content and tabs to be redrawn
             x = area.x + borderLeft;
@@ -1454,10 +1497,12 @@ public class CTabFolder extends Composite {
      */
     public void removeCTabFolderListener(CTabFolderListener listener) {
         checkWidget();
-        if (listener == null)
-            SWT.error(SWT.ERROR_NULL_ARGUMENT);
-        if (tabListeners.length == 0)
-            return;
+        if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+        if (tabListeners.length == 0) {
+			return;
+		}
         int index = -1;
         for (int i = 0; i < tabListeners.length; i++) {
             if (listener == tabListeners[i]) {
@@ -1465,8 +1510,9 @@ public class CTabFolder extends Composite {
                 break;
             }
         }
-        if (index == -1)
-            return;
+        if (index == -1) {
+			return;
+		}
         if (tabListeners.length == 1) {
             tabListeners = new CTabFolderListener[0];
             showClose = false;
@@ -1502,11 +1548,13 @@ public class CTabFolder extends Composite {
                 redraw();
             } else {
                 int x1 = Math.min(size.x, oldSize.x);
-                if (size.x != oldSize.x)
-                    x1 -= 10;
+                if (size.x != oldSize.x) {
+					x1 -= 10;
+				}
                 int y1 = Math.min(size.y, oldSize.y);
-                if (size.y != oldSize.y)
-                    y1 -= 10;
+                if (size.y != oldSize.y) {
+					y1 -= 10;
+				}
                 int x2 = Math.max(size.x, oldSize.x);
                 int y2 = Math.max(size.y, oldSize.y);
                 redraw(0, y1, x2 + 10, y2 - y1, false);
@@ -1534,8 +1582,9 @@ public class CTabFolder extends Composite {
         arrowBar.setBackground(color);
 
         //init topRight control
-        if (topRight != null)
-            topRight.setBackground(color);
+        if (topRight != null) {
+			topRight.setBackground(color);
+		}
 
         // init close button
         if (gradientColors == null) {
@@ -1601,18 +1650,21 @@ public class CTabFolder extends Composite {
                     } else {
                         same = gradientColors[i].equals(colors[i]);
                     }
-                    if (!same)
-                        break;
+                    if (!same) {
+						break;
+					}
                 }
                 if (same) {
                     for (int i = 0; i < gradientPercents.length; i++) {
                         same = gradientPercents[i] == percents[i];
-                        if (!same)
-                            break;
+                        if (!same) {
+							break;
+						}
                     }
                 }
-                if (same)
-                    return;
+                if (same) {
+					return;
+				}
             }
         } else {
             backgroundImage = null;
@@ -1624,21 +1676,25 @@ public class CTabFolder extends Composite {
             closeBar.setBackground(background);
         } else {
             gradientColors = new Color[colors.length];
-            for (int i = 0; i < colors.length; ++i)
-                gradientColors[i] = colors[i];
+            for (int i = 0; i < colors.length; ++i) {
+				gradientColors[i] = colors[i];
+			}
             gradientPercents = new int[percents.length];
-            for (int i = 0; i < percents.length; ++i)
-                gradientPercents[i] = percents[i];
-            if (getDisplay().getDepth() < 15)
-                closeBar.setBackground(background);
-            else
-                closeBar
+            for (int i = 0; i < percents.length; ++i) {
+				gradientPercents[i] = percents[i];
+			}
+            if (getDisplay().getDepth() < 15) {
+				closeBar.setBackground(background);
+			} else {
+				closeBar
                         .setBackground(gradientColors[gradientColors.length - 1]);
+			}
         }
 
         // Refresh with the new settings
-        if (selectedIndex > -1)
-            redrawTabArea(selectedIndex);
+        if (selectedIndex > -1) {
+			redrawTabArea(selectedIndex);
+		}
     }
 
     /**
@@ -1653,8 +1709,9 @@ public class CTabFolder extends Composite {
      */
     public void setSelectionBackground(Image image) {
         checkWidget();
-        if (image == backgroundImage)
-            return;
+        if (image == backgroundImage) {
+			return;
+		}
         if (image != null) {
             gradientColors = null;
             gradientPercents = null;
@@ -1694,8 +1751,9 @@ public class CTabFolder extends Composite {
 
     public void setFont(Font font) {
         checkWidget();
-        if (font != null && font.equals(getFont()))
-            return;
+        if (font != null && font.equals(getFont())) {
+			return;
+		}
         super.setFont(font);
         oldFont = getFont();
         resetTabSize(true);
@@ -1713,10 +1771,12 @@ public class CTabFolder extends Composite {
      */
     public void setSelectionForeground(Color color) {
         checkWidget();
-        if (selectionForeground == color)
-            return;
-        if (color == null)
-            color = getForeground();
+        if (selectionForeground == color) {
+			return;
+		}
+        if (color == null) {
+			color = getForeground();
+		}
         selectionForeground = color;
         if (selectedIndex > -1) {
             redrawTabArea(selectedIndex);
@@ -1772,14 +1832,17 @@ public class CTabFolder extends Composite {
             index = after ? index : --index;
         }
 
-        if (insertionIndex == index)
-            return;
+        if (insertionIndex == index) {
+			return;
+		}
         int oldIndex = insertionIndex;
         insertionIndex = index;
-        if (index > -1)
-            redrawTabArea(index);
-        if (oldIndex > 1)
-            redrawTabArea(oldIndex);
+        if (index > -1) {
+			redrawTabArea(index);
+		}
+        if (oldIndex > 1) {
+			redrawTabArea(oldIndex);
+		}
     }
 
     /**
@@ -1794,10 +1857,12 @@ public class CTabFolder extends Composite {
      */
     public void setSelection(int index) {
         checkWidget();
-        if (index < 0 || index >= items.length)
-            return;
-        if (selectedIndex == index)
-            return;
+        if (index < 0 || index >= items.length) {
+			return;
+		}
+        if (selectedIndex == index) {
+			return;
+		}
 
         int oldIndex = selectedIndex;
         selectedIndex = index;
@@ -1865,10 +1930,12 @@ public class CTabFolder extends Composite {
      */
     public void showItem(CTabItem item) {
         checkWidget();
-        if (item == null)
-            SWT.error(SWT.ERROR_NULL_ARGUMENT);
-        if (item.isDisposed())
-            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+        if (item == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+        if (item.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
 
         int index = indexOf(item);
         if (index < topTabIndex) {
@@ -1887,8 +1954,9 @@ public class CTabFolder extends Composite {
         if (rect.width > 0) {
             rightEdge -= rect.width;
         }
-        if (item.x + item.width < rightEdge)
-            return;
+        if (item.x + item.width < rightEdge) {
+			return;
+		}
         setLastItem(index);
     }
 
@@ -1921,12 +1989,15 @@ public class CTabFolder extends Composite {
         int index = 0;
         int length = string.length();
         do {
-            while ((index < length) && (string.charAt(index) != '&'))
-                index++;
-            if (++index >= length)
-                return '\0';
-            if (string.charAt(index) != '&')
-                return string.charAt(index);
+            while ((index < length) && (string.charAt(index) != '&')) {
+				index++;
+			}
+            if (++index >= length) {
+				return '\0';
+			}
+            if (string.charAt(index) != '&') {
+				return string.charAt(index);
+			}
             index++;
         } while (index < length);
         return '\0';
@@ -1945,8 +2016,9 @@ public class CTabFolder extends Composite {
      */
     public void setSelection(CTabItem item) {
         checkWidget();
-        if (item == null)
-            SWT.error(SWT.ERROR_NULL_ARGUMENT);
+        if (item == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
         int index = indexOf(item);
         setSelection(index);
     }
@@ -1986,31 +2058,40 @@ public class CTabFolder extends Composite {
         //Temporary code - need a better way to determine toolBar trim
         int toolbarTrim = 4;
         String platform = SWT.getPlatform();
-        if ("photon".equals(platform))toolbarTrim = 6; //$NON-NLS-1$
-        if ("gtk".equals(platform))toolbarTrim = 8; //$NON-NLS-1$
+        if ("photon".equals(platform)) { //$NON-NLS-1$
+			toolbarTrim = 6;
+		}
+        if ("gtk".equals(platform)) { //$NON-NLS-1$
+			toolbarTrim = 8;
+		}
 
         int maxHeight = tabHeight - CTabItem.TOP_MARGIN
                 - CTabItem.BOTTOM_MARGIN - toolbarTrim;
-        if (maxHeight < 3)
-            return;
+        if (maxHeight < 3) {
+			return;
+		}
         int imageHeight = (maxHeight < 9) ? 9 : maxHeight;
 
-        if (closeImage != null && closeImage.getBounds().height == imageHeight)
-            return;
+        if (closeImage != null && closeImage.getBounds().height == imageHeight) {
+			return;
+		}
 
-        if (closeBar != null)
-            closeBar.dispose();
+        if (closeBar != null) {
+			closeBar.dispose();
+		}
         closeBar = null;
-        if (inactiveCloseBar != null)
-            inactiveCloseBar.dispose();
+        if (inactiveCloseBar != null) {
+			inactiveCloseBar.dispose();
+		}
         inactiveCloseBar = null;
         createCloseBar();
 
         ToolItem closeItem = closeBar.getItems()[0];
         ToolItem inactiveCloseItem = inactiveCloseBar.getItems()[0];
 
-        if (closeImage != null)
-            closeImage.dispose();
+        if (closeImage != null) {
+			closeImage.dispose();
+		}
 
         Display display = getDisplay();
         Color foreground = getForeground();
@@ -2052,24 +2133,31 @@ public class CTabFolder extends Composite {
         //Temporary code - need a better way to determine toolBar trim
         int toolbarTrim = 6; // Windows needs 6, photon needs 6, gtk needs 8
         String platform = SWT.getPlatform();
-        if ("gtk".equals(platform))toolbarTrim = 8; //$NON-NLS-1$
+        if ("gtk".equals(platform)) { //$NON-NLS-1$
+			toolbarTrim = 8;
+		}
 
         int maxHeight = tabHeight - toolbarTrim;
-        if (maxHeight < 3)
-            return;
+        if (maxHeight < 3) {
+			return;
+		}
         int imageHeight = (maxHeight < 9) ? 9 : maxHeight;
 
         if (arrowLeftImage != null
-                && arrowLeftImage.getBounds().height == imageHeight)
-            return;
+                && arrowLeftImage.getBounds().height == imageHeight) {
+			return;
+		}
 
-        if (arrowBar != null)
-            arrowBar.dispose();
+        if (arrowBar != null) {
+			arrowBar.dispose();
+		}
         arrowBar = null;
-        if (arrowLeftImage != null)
-            arrowLeftImage.dispose();
-        if (arrowRightImage != null)
-            arrowRightImage.dispose();
+        if (arrowLeftImage != null) {
+			arrowLeftImage.dispose();
+		}
+        if (arrowRightImage != null) {
+			arrowRightImage.dispose();
+		}
 
         createArrowBar();
         ToolItem[] items = arrowBar.getItems();
@@ -2146,8 +2234,9 @@ public class CTabFolder extends Composite {
                 }
                 forceFocus();
                 setSelection(i, true);
-                if (isFocusControl())
-                    setFocus();
+                if (isFocusControl()) {
+					setFocus();
+				}
                 return;
             }
         }
@@ -2155,20 +2244,23 @@ public class CTabFolder extends Composite {
 
     private void onMouseExit(Event event) {
         Rectangle inactiveBounds = inactiveCloseBar.getBounds();
-        if (inactiveBounds.contains(event.x, event.y))
-            return;
+        if (inactiveBounds.contains(event.x, event.y)) {
+			return;
+		}
         inactiveCloseBar.setVisible(false);
         inactiveItem = null;
 
         showToolTip = false;
         toolTipItem = null;
-        if (tip != null && !tip.isDisposed() && tip.isVisible())
-            tip.setVisible(false);
+        if (tip != null && !tip.isDisposed() && tip.isVisible()) {
+			tip.setVisible(false);
+		}
     }
 
     private void onMouseHover(Event event) {
-        if (tip == null || tip.isDisposed())
-            return;
+        if (tip == null || tip.isDisposed()) {
+			return;
+		}
         showToolTip = true;
         showToolTip(event.x, event.y);
     }
@@ -2176,8 +2268,9 @@ public class CTabFolder extends Composite {
     private void showToolTip(int x, int y) {
         CTabItem item = getItem(new Point(x, y));
         if (item != null) {
-            if (item == toolTipItem)
-                return;
+            if (item == toolTipItem) {
+				return;
+			}
             toolTipItem = item;
             String tooltip = item.getToolTipText();
             if (tooltip != null && tooltip.length() > 0) {
@@ -2218,8 +2311,9 @@ public class CTabFolder extends Composite {
         }
 
         toolTipItem = null;
-        if (tip != null && !tip.isDisposed() && tip.isVisible())
-            tip.setVisible(false);
+        if (tip != null && !tip.isDisposed() && tip.isVisible()) {
+			tip.setVisible(false);
+		}
     }
 
     private void onMouseMove(Event event) {
@@ -2227,8 +2321,9 @@ public class CTabFolder extends Composite {
             showToolTip(event.x, event.y);
         }
 
-        if (!showClose)
-            return;
+        if (!showClose) {
+			return;
+		}
 
         CTabItem item = null;
         for (int i = 0; i < items.length; i++) {
@@ -2238,14 +2333,16 @@ public class CTabFolder extends Composite {
                 break;
             }
         }
-        if (item == inactiveItem)
-            return;
+        if (item == inactiveItem) {
+			return;
+		}
 
         inactiveCloseBar.setVisible(false);
         inactiveItem = null;
 
-        if (item == null || item == getSelection())
-            return;
+        if (item == null || item == getSelection()) {
+			return;
+		}
 
         int toolbarHeight = tabHeight - CTabItem.TOP_MARGIN
                 - CTabItem.BOTTOM_MARGIN + 2; // +2 to ignore gap between focus rectangle
@@ -2273,22 +2370,25 @@ public class CTabFolder extends Composite {
             break;
         case SWT.TRAVERSE_MNEMONIC:
             event.doit = onMnemonic(event);
-            if (event.doit)
-                event.detail = SWT.TRAVERSE_NONE;
+            if (event.doit) {
+				event.detail = SWT.TRAVERSE_NONE;
+			}
             break;
         case SWT.TRAVERSE_PAGE_NEXT:
         case SWT.TRAVERSE_PAGE_PREVIOUS:
             event.doit = onPageTraversal(event);
-            if (event.doit)
-                event.detail = SWT.TRAVERSE_NONE;
+            if (event.doit) {
+				event.detail = SWT.TRAVERSE_NONE;
+			}
             break;
         }
     }
 
     private boolean onPageTraversal(Event event) {
         int count = getItemCount();
-        if (count == 0)
-            return false;
+        if (count == 0) {
+			return false;
+		}
         int index = getSelectionIndex();
         if (index == -1) {
             index = 0;
@@ -2315,12 +2415,14 @@ public class CTabFolder extends Composite {
     private boolean scroll_rightVisible() {
         // only show Scroll buttons if there is more than one item
         // and if we are not already at the last item
-        if (items.length < 2)
-            return false;
+        if (items.length < 2) {
+			return false;
+		}
         Rectangle area = getClientArea();
         int rightEdge = area.x + area.width;
-        if (rightEdge <= 0)
-            return false;
+        if (rightEdge <= 0) {
+			return false;
+		}
         if (topTabIndex > 0) {
             rightEdge -= arrowBar.getSize().x;
         }
@@ -2335,8 +2437,9 @@ public class CTabFolder extends Composite {
      * Scroll the tab items to the left.
      */
     private void scroll_scrollLeft() {
-        if (items.length == 0)
-            return;
+        if (items.length == 0) {
+			return;
+		}
         setLastItem(topTabIndex - 1);
     }
 
@@ -2354,8 +2457,9 @@ public class CTabFolder extends Composite {
     private boolean correctLastItem() {
         Rectangle area = getClientArea();
         int rightEdge = area.x + area.width;
-        if (rightEdge <= 0)
-            return false;
+        if (rightEdge <= 0) {
+			return false;
+		}
         Rectangle toolspace = getToolSpace();
         if (toolspace.width > 0) {
             rightEdge -= toolspace.width;
@@ -2387,8 +2491,9 @@ public class CTabFolder extends Composite {
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
         fixedTabHeight = true;
-        if (tabHeight == height)
-            return;
+        if (tabHeight == height) {
+			return;
+		}
         tabHeight = height;
         oldSize = null;
         notifyListeners(SWT.Resize, new Event());
@@ -2403,9 +2508,10 @@ public class CTabFolder extends Composite {
                 tempHeight = Math.max(tempHeight, items[i].preferredHeight(gc));
             }
             gc.dispose();
-            if (topRight != null)
-                tempHeight = Math.max(tempHeight, topRight.computeSize(
+            if (topRight != null) {
+				tempHeight = Math.max(tempHeight, topRight.computeSize(
                         SWT.DEFAULT, SWT.DEFAULT).y);
+			}
             tabHeight = tempHeight;
         }
 
@@ -2452,8 +2558,9 @@ public class CTabFolder extends Composite {
     }
 
     public int getTabPosition() {
-        if (onBottom)
-            return SWT.BOTTOM;
+        if (onBottom) {
+			return SWT.BOTTOM;
+		}
         return SWT.TOP;
     }
 

@@ -48,8 +48,9 @@ public class TextPropertyDescriptor extends PropertyDescriptor {
      */
     public CellEditor createPropertyEditor(Composite parent) {
         CellEditor editor = new TextCellEditor(parent);
-        if (getValidator() != null)
-            editor.setValidator(getValidator());
+        if (getValidator() != null) {
+			editor.setValidator(getValidator());
+		}
         return editor;
     }
 }

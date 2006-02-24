@@ -110,25 +110,29 @@ import org.eclipse.ui.part.ResourceTransfer;
         for (int i = 0; i < length; i++) {
             IPath location = resources[i].getLocation();
             // location may be null. See bug 29491.
-            if (location != null)
-                fileNames[actualLength++] = location.toOSString();
-            if (i > 0)
-                buf.append("\n"); //$NON-NLS-1$
+            if (location != null) {
+				fileNames[actualLength++] = location.toOSString();
+			}
+            if (i > 0) {
+				buf.append("\n"); //$NON-NLS-1$
+			}
             buf.append(resources[i].getName());
         }
         // was one or more of the locations null?
         if (actualLength < length) {
             String[] tempFileNames = fileNames;
             fileNames = new String[actualLength];
-            for (int i = 0; i < actualLength; i++)
-                fileNames[i] = tempFileNames[i];
+            for (int i = 0; i < actualLength; i++) {
+				fileNames[i] = tempFileNames[i];
+			}
         }
         setClipboard(resources, fileNames, buf.toString());
 
         // update the enablement of the paste action
         // workaround since the clipboard does not suppot callbacks
-        if (pasteAction != null && pasteAction.getStructuredSelection() != null)
-            pasteAction.selectionChanged(pasteAction.getStructuredSelection());
+        if (pasteAction != null && pasteAction.getStructuredSelection() != null) {
+			pasteAction.selectionChanged(pasteAction.getStructuredSelection());
+		}
     }
 
     /**
@@ -154,14 +158,16 @@ import org.eclipse.ui.part.ResourceTransfer;
                                 TextTransfer.getInstance() });
             }
         } catch (SWTError e) {
-            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
-                throw e;
+            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
+				throw e;
+			}
             if (MessageDialog
                     .openQuestion(
                             shell,
                             "Problem with copy title", // TODO ResourceNavigatorMessages.CopyToClipboardProblemDialog_title,  //$NON-NLS-1$
-                            "Problem with copy.")) // TODO ResourceNavigatorMessages.CopyToClipboardProblemDialog_message)) //$NON-NLS-1$
-                setClipboard(resources, fileNames, names);
+                            "Problem with copy.")) { //$NON-NLS-1$
+				setClipboard(resources, fileNames, names);
+			}
         }
     }
 
@@ -171,40 +177,48 @@ import org.eclipse.ui.part.ResourceTransfer;
      * one or more resources of compatible types are selected.
      */
     protected boolean updateSelection(IStructuredSelection selection) {
-        if (!super.updateSelection(selection))
-            return false;
+        if (!super.updateSelection(selection)) {
+			return false;
+		}
 
-        if (getSelectedNonResources().size() > 0)
-            return false;
+        if (getSelectedNonResources().size() > 0) {
+			return false;
+		}
 
         List selectedResources = getSelectedResources();
-        if (selectedResources.size() == 0)
-            return false;
+        if (selectedResources.size() == 0) {
+			return false;
+		}
 
         boolean projSelected = selectionIsOfType(IResource.PROJECT);
         boolean fileFoldersSelected = selectionIsOfType(IResource.FILE
                 | IResource.FOLDER);
-        if (!projSelected && !fileFoldersSelected)
-            return false;
+        if (!projSelected && !fileFoldersSelected) {
+			return false;
+		}
 
         // selection must be homogeneous
-        if (projSelected && fileFoldersSelected)
-            return false;
+        if (projSelected && fileFoldersSelected) {
+			return false;
+		}
 
         // must have a common parent	
         IContainer firstParent = ((IResource) selectedResources.get(0))
                 .getParent();
-        if (firstParent == null)
-            return false;
+        if (firstParent == null) {
+			return false;
+		}
 
         Iterator resourcesEnum = selectedResources.iterator();
         while (resourcesEnum.hasNext()) {
             IResource currentResource = (IResource) resourcesEnum.next();
-            if (!currentResource.getParent().equals(firstParent))
-                return false;
+            if (!currentResource.getParent().equals(firstParent)) {
+				return false;
+			}
             // resource location must exist
-            if (currentResource.getLocation() == null)
-                return false;
+            if (currentResource.getLocation() == null) {
+				return false;
+			}
         }
 
         return true;
