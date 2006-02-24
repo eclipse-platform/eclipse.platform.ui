@@ -189,11 +189,13 @@ public abstract class Viewer implements IInputSelectionProvider {
      */
     public Object getData(String key) {
         Assert.isNotNull(key);
-        if (keys == null)
-            return null;
+        if (keys == null) {
+			return null;
+		}
         for (int i = 0; i < keys.length; i++) {
-            if (keys[i].equals(key))
-                return values[i];
+            if (keys[i].equals(key)) {
+				return values[i];
+			}
         }
         return null;
     }
@@ -314,13 +316,16 @@ public abstract class Viewer implements IInputSelectionProvider {
         Assert.isNotNull(key);
         /* Remove the key/value pair */
         if (value == null) {
-            if (keys == null)
-                return;
+            if (keys == null) {
+				return;
+			}
             int index = 0;
-            while (index < keys.length && !keys[index].equals(key))
-                index++;
-            if (index == keys.length)
-                return;
+            while (index < keys.length && !keys[index].equals(key)) {
+				index++;
+			}
+            if (index == keys.length) {
+				return;
+			}
             if (keys.length == 1) {
                 keys = null;
                 values = null;

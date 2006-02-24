@@ -57,8 +57,9 @@ public class ControlEnableState {
          *  
          */
         public void restore() {
-            if (item == null || item.isDisposed())
-                return;
+            if (item == null || item.isDisposed()) {
+				return;
+			}
             item.setEnabled(state);
         }
     }
@@ -127,8 +128,9 @@ public class ControlEnableState {
      * @param control Control
      */
     private void readStateForAndDisable(Control control) {
-        if ((exceptions != null && exceptions.contains(control)))
-            return;
+        if ((exceptions != null && exceptions.contains(control))) {
+			return;
+		}
         if (control instanceof Composite) {
             Composite c = (Composite) control;
             Control[] children = c.getChildren();

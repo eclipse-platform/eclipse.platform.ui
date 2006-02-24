@@ -914,10 +914,11 @@ public final class KeySequenceText {
 	 *            <code>INFINITE</code>.
 	 */
 	public void setKeyStrokeLimit(int keyStrokeLimit) {
-		if (keyStrokeLimit > 0 || keyStrokeLimit == INFINITE)
+		if (keyStrokeLimit > 0 || keyStrokeLimit == INFINITE) {
 			this.maxStrokes = keyStrokeLimit;
-		else
+		} else {
 			throw new IllegalArgumentException();
+		}
 
 		// Make sure we are obeying the new limit.
 		setKeySequence(getKeySequence());

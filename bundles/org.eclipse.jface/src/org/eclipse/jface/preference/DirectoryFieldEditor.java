@@ -50,11 +50,13 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
      */
     protected String changePressed() {
         File f = new File(getTextControl().getText());
-        if (!f.exists())
-            f = null;
+        if (!f.exists()) {
+			f = null;
+		}
         File d = getDirectory(f);
-        if (d == null)
-            return null;
+        if (d == null) {
+			return null;
+		}
 
         return d.getAbsolutePath();
     }
@@ -66,8 +68,9 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
     protected boolean doCheckState() {
         String fileName = getTextControl().getText();
         fileName = fileName.trim();
-        if (fileName.length() == 0 && isEmptyStringAllowed())
-            return true;
+        if (fileName.length() == 0 && isEmptyStringAllowed()) {
+			return true;
+		}
         File file = new File(fileName);
         return file.isDirectory();
     }
@@ -81,13 +84,15 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
     private File getDirectory(File startingDirectory) {
 
         DirectoryDialog fileDialog = new DirectoryDialog(getShell(), SWT.OPEN);
-        if (startingDirectory != null)
-            fileDialog.setFilterPath(startingDirectory.getPath());
+        if (startingDirectory != null) {
+			fileDialog.setFilterPath(startingDirectory.getPath());
+		}
         String dir = fileDialog.open();
         if (dir != null) {
             dir = dir.trim();
-            if (dir.length() > 0)
-                return new File(dir);
+            if (dir.length() > 0) {
+				return new File(dir);
+			}
         }
 
         return null;

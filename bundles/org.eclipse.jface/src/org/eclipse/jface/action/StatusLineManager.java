@@ -109,8 +109,9 @@ public class StatusLineManager extends ContributionManager implements
      * contribution items. Use <code>removeAll</code> for that purpose.
      */
     public void dispose() {
-        if (statusLineExist())
-            statusLine.dispose();
+        if (statusLineExist()) {
+			statusLine.dispose();
+		}
         statusLine = null;
 
         IContributionItem items[] = getItems();
@@ -184,8 +185,9 @@ public class StatusLineManager extends ContributionManager implements
              */
             public void setCanceled(boolean value) {
                 //Don't bother updating for disposed status
-                if (statusLine.isDisposed())
-                    return;
+                if (statusLine.isDisposed()) {
+					return;
+				}
                 progressDelegate.setCanceled(value);
 
             }
@@ -240,40 +242,45 @@ public class StatusLineManager extends ContributionManager implements
      * Method declared on IStatueLineManager
      */
     public void setCancelEnabled(boolean enabled) {
-        if (statusLineExist())
-            ((StatusLine) statusLine).setCancelEnabled(enabled);
+        if (statusLineExist()) {
+			((StatusLine) statusLine).setCancelEnabled(enabled);
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
     public void setErrorMessage(String message) {
-        if (statusLineExist())
-            ((StatusLine) statusLine).setErrorMessage(message);
+        if (statusLineExist()) {
+			((StatusLine) statusLine).setErrorMessage(message);
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
     public void setErrorMessage(Image image, String message) {
-        if (statusLineExist())
-            ((StatusLine) statusLine).setErrorMessage(image, message);
+        if (statusLineExist()) {
+			((StatusLine) statusLine).setErrorMessage(image, message);
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
     public void setMessage(String message) {
-        if (statusLineExist())
-            ((StatusLine) statusLine).setMessage(message);
+        if (statusLineExist()) {
+			((StatusLine) statusLine).setMessage(message);
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
     public void setMessage(Image image, String message) {
-        if (statusLineExist())
-            ((StatusLine) statusLine).setMessage(image, message);
+        if (statusLineExist()) {
+			((StatusLine) statusLine).setMessage(image, message);
+		}
     }
 
     /**

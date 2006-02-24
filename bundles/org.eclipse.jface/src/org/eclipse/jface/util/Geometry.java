@@ -701,15 +701,17 @@ public class Geometry {
 	 */
 	public static void moveInside(Rectangle inner, Rectangle outer) {
 		// adjust X
-		if (inner.x < outer.x)
+		if (inner.x < outer.x) {
 			inner.x = outer.x;
+		}
 		if ((inner.x + inner.width) > (outer.x + outer.width)) {
 			inner.x -= (inner.x + inner.width) - (outer.x + outer.width);
 		}
 
 		// Adjust Y
-		if (inner.y < outer.y)
+		if (inner.y < outer.y) {
 			inner.y = outer.y;
+		}
 		if ((inner.y + inner.height) > (outer.y + outer.height)) {
 			inner.y -= (inner.y + inner.height) - (outer.y + outer.height);
 		}

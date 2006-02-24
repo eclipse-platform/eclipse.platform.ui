@@ -39,8 +39,9 @@ public class BooleanPropertyAction extends Action {
             throws IllegalArgumentException {
         super(title, AS_CHECK_BOX);
 
-        if (preferenceStore == null || property == null)
-            throw new IllegalArgumentException();
+        if (preferenceStore == null || property == null) {
+			throw new IllegalArgumentException();
+		}
 
         this.preferenceStore = preferenceStore;
         this.property = property;
@@ -49,8 +50,9 @@ public class BooleanPropertyAction extends Action {
         preferenceStore
                 .addPropertyChangeListener(new IPropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent event) {
-                        if (finalProprety.equals(event.getProperty()))
-                            setChecked(Boolean.TRUE.equals(event.getNewValue()));
+                        if (finalProprety.equals(event.getProperty())) {
+							setChecked(Boolean.TRUE.equals(event.getNewValue()));
+						}
                     }
                 });
 

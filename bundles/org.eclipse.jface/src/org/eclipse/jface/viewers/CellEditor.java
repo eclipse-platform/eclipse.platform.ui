@@ -243,8 +243,9 @@ public abstract class CellEditor {
      * cell editor is not visible.
      */
     public void deactivate() {
-        if (control != null && !control.isDisposed())
-            control.setVisible(false);
+        if (control != null && !control.isDisposed()) {
+			control.setVisible(false);
+		}
     }
 
     /**
@@ -441,8 +442,9 @@ public abstract class CellEditor {
      *   if the cell editor does not contain a valid value
      */
     public final Object getValue() {
-        if (!valid)
-            return null;
+        if (!valid) {
+			return null;
+		}
 
         return doGetValue();
     }
@@ -486,8 +488,9 @@ public abstract class CellEditor {
      */
     protected boolean isCorrect(Object value) {
         errorMessage = null;
-        if (validator == null)
-            return true;
+        if (validator == null) {
+			return true;
+		}
 
         errorMessage = validator.isValid(value);
         return (errorMessage == null || errorMessage.equals(""));//$NON-NLS-1$

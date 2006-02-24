@@ -207,12 +207,15 @@ final class CachedBindingSet {
 
 		final CachedBindingSet other = (CachedBindingSet) object;
 		
-		if (!Util.equals(activeContextTree, other.activeContextTree))
+		if (!Util.equals(activeContextTree, other.activeContextTree)) {
 			return false;
-		if (!Util.equals(locales, other.locales))
+		}
+		if (!Util.equals(locales, other.locales)) {
 			return false;
-		if (!Util.equals(platforms, other.platforms))
+		}
+		if (!Util.equals(platforms, other.platforms)) {
 			return false;
+		}
 		return Util.equals(schemeIds, other.schemeIds);
 	}
 

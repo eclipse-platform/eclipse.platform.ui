@@ -206,8 +206,9 @@ public class ErrorDialog extends IconAndMessageDialog {
         if (this.dialogArea instanceof Composite) {
             //Create a label if there are no children to force a smaller layout
             Composite dialogComposite = (Composite) dialogArea;
-            if (dialogComposite.getChildren().length == 0)
-                new Label(dialogComposite, SWT.NULL);
+            if (dialogComposite.getChildren().length == 0) {
+				new Label(dialogComposite, SWT.NULL);
+			}
         }
     }
 
@@ -217,10 +218,12 @@ public class ErrorDialog extends IconAndMessageDialog {
      */
     protected Image getImage() {
         if (status != null) {
-            if (status.getSeverity() == IStatus.WARNING)
-                return getWarningImage();
-            if (status.getSeverity() == IStatus.INFO)
-                return getInfoImage();
+            if (status.getSeverity() == IStatus.WARNING) {
+				return getWarningImage();
+			}
+            if (status.getSeverity() == IStatus.INFO) {
+				return getInfoImage();
+			}
         }
         //If it was not a warning or an error then return the error image
         return getErrorImage();
@@ -397,16 +400,18 @@ public class ErrorDialog extends IconAndMessageDialog {
 	            sb.append(NESTING_INDENT);
 	        }
 	        String message = t.getLocalizedMessage();
-	        if (message == null)
-	        	message = t.toString();
+	        if (message == null) {
+				message = t.toString();
+			}
 	        	
 	        sb.append(message);
 	        listToPopulate.add(sb.toString());
 	        incrementNesting= true;
         }
         
-        if (incrementNesting) 
-	        nesting++;
+        if (incrementNesting) {
+			nesting++;
+		}
         
         // Look for a nested core exception
         if (isCoreException) {
@@ -443,8 +448,9 @@ public class ErrorDialog extends IconAndMessageDialog {
             return status.matches(mask);
         }
         for (int i = 0; i < children.length; i++) {
-            if (children[i].matches(mask))
-                return true;
+            if (children[i].matches(mask)) {
+				return true;
+			}
         }
         return false;
     }
@@ -506,8 +512,9 @@ public class ErrorDialog extends IconAndMessageDialog {
      * Copy the contents of the statuses to the clipboard.
      */
     private void copyToClipboard() {
-        if (clipboard != null)
-            clipboard.dispose();
+        if (clipboard != null) {
+			clipboard.dispose();
+		}
         StringBuffer statusBuffer = new StringBuffer();
         populateCopyBuffer(status, statusBuffer, 0);
         clipboard = new Clipboard(list.getDisplay());
@@ -521,8 +528,9 @@ public class ErrorDialog extends IconAndMessageDialog {
      * @see org.eclipse.jface.window.Window#close()
      */
     public boolean close() {
-        if (clipboard != null)
-            clipboard.dispose();
+        if (clipboard != null) {
+			clipboard.dispose();
+		}
         return super.close();
     }
     
@@ -538,8 +546,9 @@ public class ErrorDialog extends IconAndMessageDialog {
     protected final void showDetailsArea() {
         if (!listCreated) {
             Control control = getContents();
-            if (control != null && ! control.isDisposed())
-                toggleDetailsArea();
+            if (control != null && ! control.isDisposed()) {
+				toggleDetailsArea();
+			}
         }
     }
     

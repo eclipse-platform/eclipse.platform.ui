@@ -89,10 +89,11 @@ public class InputDialog extends Dialog {
         super(parentShell);
         this.title = dialogTitle;
         message = dialogMessage;
-        if (initialValue == null)
-            value = "";//$NON-NLS-1$
-        else
-            value = initialValue;
+        if (initialValue == null) {
+			value = "";//$NON-NLS-1$
+		} else {
+			value = initialValue;
+		}
         this.validator = validator;
     }
 
@@ -115,8 +116,9 @@ public class InputDialog extends Dialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        if (title != null)
-            shell.setText(title);
+        if (title != null) {
+			shell.setText(title);
+		}
     }
 
     /*
@@ -253,8 +255,9 @@ public class InputDialog extends Dialog {
         // Access the ok button by id, in case clients have overridden button creation.
         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
         Control button = getButton(IDialogConstants.OK_ID);
-        if (button != null)
-        	button.setEnabled(errorMessage == null);
+        if (button != null) {
+			button.setEnabled(errorMessage == null);
+		}
 
     }
 }

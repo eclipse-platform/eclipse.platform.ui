@@ -87,9 +87,10 @@ class FileImageDescriptor extends ImageDescriptor {
             try {
                 result = new ImageData(in);
             } catch (SWTException e) {
-                if (e.code != SWT.ERROR_INVALID_IMAGE)
-                    throw e;
+                if (e.code != SWT.ERROR_INVALID_IMAGE) {
+					throw e;
                 // fall through otherwise
+				}
             } finally {
                 try {
                     in.close();
@@ -122,10 +123,11 @@ class FileImageDescriptor extends ImageDescriptor {
                 return null;
             }
         }
-        if (is == null)
-            return null;
-        else
-            return new BufferedInputStream(is);
+        if (is == null) {
+			return null;
+		} else {
+			return new BufferedInputStream(is);
+		}
     }
 
     /* (non-Javadoc)

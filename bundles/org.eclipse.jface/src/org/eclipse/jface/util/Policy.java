@@ -86,8 +86,9 @@ public class Policy {
      * @since 3.1
      */
     public static ILogger getLog() {
-        if (log == null)
-            log = getDummyLog();
+        if (log == null) {
+			log = getDummyLog();
+		}
         return log;
     }
     
@@ -121,8 +122,9 @@ public class Policy {
      * @since 3.2 
      */
     public static Comparator getComparator(){
-    	if (viewerComparator == null)
-    		viewerComparator = getDefaultComparator();
+    	if (viewerComparator == null) {
+			viewerComparator = getDefaultComparator();
+		}
     	return viewerComparator;
     }
     

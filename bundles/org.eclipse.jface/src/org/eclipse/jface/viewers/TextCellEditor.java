@@ -154,8 +154,9 @@ public class TextCellEditor extends CellEditor {
 
                 // as a result of processing the above call, clients may have
                 // disposed this cell editor
-                if ((getControl() == null) || getControl().isDisposed())
-                    return;
+                if ((getControl() == null) || getControl().isDisposed()) {
+					return;
+				}
                 checkSelection(); // see explaination below
                 checkDeleteable();
                 checkSelectable();
@@ -240,14 +241,16 @@ public class TextCellEditor extends CellEditor {
      */
     protected void editOccured(ModifyEvent e) {
         String value = text.getText();
-        if (value == null)
-            value = "";//$NON-NLS-1$
+        if (value == null) {
+			value = "";//$NON-NLS-1$
+		}
         Object typedValue = value;
         boolean oldValidState = isValueValid();
         boolean newValidState = isCorrect(typedValue);
-        if (typedValue == null && newValidState)
-            Assert.isTrue(false,
+        if (typedValue == null && newValidState) {
+			Assert.isTrue(false,
                     "Validator isn't limiting the cell editor's type range");//$NON-NLS-1$
+		}
         if (!newValidState) {
             // try to insert the current value into the error message.
             setErrorMessage(MessageFormat.format(getErrorMessage(),
@@ -298,8 +301,9 @@ public class TextCellEditor extends CellEditor {
      * the current selection is not empty.
      */
     public boolean isCopyEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
+        if (text == null || text.isDisposed()) {
+			return false;
+		}
         return text.getSelectionCount() > 0;
     }
 
@@ -309,8 +313,9 @@ public class TextCellEditor extends CellEditor {
      * the current selection is not empty.
      */
     public boolean isCutEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
+        if (text == null || text.isDisposed()) {
+			return false;
+		}
         return text.getSelectionCount() > 0;
     }
 
@@ -321,8 +326,9 @@ public class TextCellEditor extends CellEditor {
      * at the end of the text.
      */
     public boolean isDeleteEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
+        if (text == null || text.isDisposed()) {
+			return false;
+		}
         return text.getSelectionCount() > 0
                 || text.getCaretPosition() < text.getCharCount();
     }
@@ -332,8 +338,9 @@ public class TextCellEditor extends CellEditor {
      * <code>CellEditor</code> method always returns <code>true</code>.
      */
     public boolean isPasteEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
+        if (text == null || text.isDisposed()) {
+			return false;
+		}
         return true;
     }
 
@@ -342,8 +349,9 @@ public class TextCellEditor extends CellEditor {
      * <code>CellEditor</code> method always returns <code>true</code>.
      */
     public boolean isSaveAllEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
+        if (text == null || text.isDisposed()) {
+			return false;
+		}
         return true;
     }
 
@@ -361,8 +369,9 @@ public class TextCellEditor extends CellEditor {
      *  <code>false</code> otherwise
      */
     public boolean isSelectAllEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
+        if (text == null || text.isDisposed()) {
+			return false;
+		}
         return text.getCharCount() > 0;
     }
 
@@ -427,10 +436,10 @@ public class TextCellEditor extends CellEditor {
      * the character next character from the current position. 
      */
     public void performDelete() {
-        if (text.getSelectionCount() > 0)
-            // remove the contents of the current selection
+        if (text.getSelectionCount() > 0) {
+			// remove the contents of the current selection
             text.insert(""); //$NON-NLS-1$
-        else {
+		} else {
             // remove the next character
             int pos = text.getCaretPosition();
             if (pos < text.getCharCount()) {

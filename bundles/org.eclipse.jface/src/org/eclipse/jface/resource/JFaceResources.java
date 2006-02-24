@@ -160,8 +160,9 @@ public class JFaceResources {
      * @since 3.0
      */
     public static ColorRegistry getColorRegistry() {
-        if (colorRegistry == null)
-            colorRegistry = new ColorRegistry();
+        if (colorRegistry == null) {
+			colorRegistry = new ColorRegistry();
+		}
         return colorRegistry;
     }
 
@@ -305,8 +306,9 @@ public class JFaceResources {
      * </p>
      */
     public static ImageRegistry getImageRegistry() {
-        if (imageRegistry == null)
-            imageRegistry = new ImageRegistry(getResources(Display.getCurrent()));
+        if (imageRegistry == null) {
+			imageRegistry = new ImageRegistry(getResources(Display.getCurrent()));
+		}
         return imageRegistry;
     }
 
@@ -338,8 +340,9 @@ public class JFaceResources {
         Assert.isNotNull(keys);
         int length = keys.length;
         String[] result = new String[length];
-        for (int i = 0; i < length; i++)
-            result[i] = getString(keys[i]);
+        for (int i = 0; i < length; i++) {
+			result[i] = getString(keys[i]);
+		}
         return result;
     }
 

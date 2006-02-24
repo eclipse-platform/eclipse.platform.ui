@@ -114,8 +114,9 @@ public class ViewerComparator {
         int cat1 = category(e1);
         int cat2 = category(e2);
 
-        if (cat1 != cat2)
-            return cat1 - cat2;
+        if (cat1 != cat2) {
+			return cat1 - cat2;
+		}
     	
         String name1;
         String name2;
@@ -135,10 +136,12 @@ public class ViewerComparator {
                 name2 = e2.toString();
             }
         }
-        if (name1 == null)
-            name1 = "";//$NON-NLS-1$
-        if (name2 == null)
-            name2 = "";//$NON-NLS-1$
+        if (name1 == null) {
+			name1 = "";//$NON-NLS-1$
+		}
+        if (name2 == null) {
+			name2 = "";//$NON-NLS-1$
+		}
 
         // use the comparator to compare the strings
         return getComparator().compare(name1, name2);

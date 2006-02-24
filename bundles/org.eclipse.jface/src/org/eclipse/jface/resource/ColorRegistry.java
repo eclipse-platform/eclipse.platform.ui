@@ -109,8 +109,9 @@ public class ColorRegistry extends ResourceRegistry {
     public ColorRegistry(Display display, boolean cleanOnDisplayDisposal) {
         Assert.isNotNull(display);
         this.display = display;
-        if (cleanOnDisplayDisposal)
-        	hookDisplayDispose();
+        if (cleanOnDisplayDisposal) {
+			hookDisplayDispose();
+		}
     }
 
     /**
@@ -148,14 +149,16 @@ public class ColorRegistry extends ResourceRegistry {
 
         Assert.isNotNull(symbolicName);
         Object result = stringToColor.get(symbolicName);
-        if (result != null)
-            return (Color) result;
+        if (result != null) {
+			return (Color) result;
+		}
 
         Color color = null;
 
         result = stringToRGB.get(symbolicName);
-        if (result == null)
-            return null;
+        if (result == null) {
+			return null;
+		}
 
         color = createColor((RGB) result);
 
@@ -254,15 +257,18 @@ public class ColorRegistry extends ResourceRegistry {
         Assert.isNotNull(colorData);
 
         RGB existing = (RGB) stringToRGB.get(symbolicName);
-        if (colorData.equals(existing))
-            return;
+        if (colorData.equals(existing)) {
+			return;
+		}
 
         Color oldColor = (Color) stringToColor.remove(symbolicName);
         stringToRGB.put(symbolicName, colorData);
-        if (update)
-            fireMappingChanged(symbolicName, existing, colorData);
+        if (update) {
+			fireMappingChanged(symbolicName, existing, colorData);
+		}
 
-        if (oldColor != null)
-            staleColors.add(oldColor);
+        if (oldColor != null) {
+			staleColors.add(oldColor);
+		}
     }
 }

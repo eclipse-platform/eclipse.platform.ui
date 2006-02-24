@@ -48,8 +48,9 @@ public abstract class ViewerFilter {
         ArrayList out = new ArrayList(size);
         for (int i = 0; i < size; ++i) {
             Object element = elements[i];
-            if (select(viewer, parent, element))
-                out.add(element);
+            if (select(viewer, parent, element)) {
+				out.add(element);
+			}
         }
         return out.toArray();
     }

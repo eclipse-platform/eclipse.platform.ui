@@ -152,8 +152,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
      */
     private String getLabelProviderText(ILabelProvider labelProvider, Object element){
     	String text = labelProvider.getText(element);
-        if(text == null)
-        	return "";//$NON-NLS-1$
+        if(text == null) {
+			return "";//$NON-NLS-1$
+		}
         return text;
     }
 
@@ -180,8 +181,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
      * Since SWT.List doesn't use items we always return the List itself.
      */
     protected Widget doFindInputItem(Object element) {
-        if (element != null && equals(element, getRoot()))
-            return getControl();
+        if (element != null && equals(element, getRoot())) {
+			return getControl();
+		}
         return null;
     }
 
@@ -191,8 +193,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
      */
     protected Widget doFindItem(Object element) {
         if (element != null) {
-            if (listMap.contains(element))
-                return getControl();
+            if (listMap.contains(element)) {
+				return getControl();
+			}
         }
         return null;
     }
@@ -224,8 +227,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
      *   index is out of range
      */
     public Object getElementAt(int index) {
-        if (index >= 0 && index < listMap.size())
-            return listMap.get(index);
+        if (index >= 0 && index < listMap.size()) {
+			return listMap.get(index);
+		}
         return null;
     }
 
@@ -249,8 +253,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
         ArrayList list = new ArrayList(ixs.length);
         for (int i = 0; i < ixs.length; i++) {
             Object e = getElementAt(ixs[i]);
-            if (e != null)
-                list.add(e);
+            if (e != null) {
+				list.add(e);
+			}
         }
         return list;
     }
@@ -260,8 +265,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
      */
     protected int indexForElement(Object element) {
         ViewerSorter sorter = getSorter();
-        if (sorter == null)
-            return listGetItemCount();
+        if (sorter == null) {
+			return listGetItemCount();
+		}
         int count = listGetItemCount();
         int min = 0, max = count - 1;
         while (min <= max) {
@@ -280,10 +286,11 @@ public abstract class AbstractListViewer extends StructuredViewer {
                 }
                 return mid;
             }
-            if (compare < 0)
-                min = mid + 1;
-            else
-                max = mid - 1;
+            if (compare < 0) {
+				min = mid + 1;
+			} else {
+				max = mid - 1;
+			}
         }
         return min;
     }
@@ -315,8 +322,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
         Control list = getControl();
         if (element == null || equals(element, getRoot())) {
             // the parent
-            if (listMap != null)
-                listMap.clear();
+            if (listMap != null) {
+				listMap.clear();
+			}
             unmapAllElements();
             List selection = getSelectionFromWidget();
 
@@ -427,8 +435,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
             for (int i = 0; i < n; ++i) {
                 Object el = in.get(i);
                 int ix = listMap.indexOf(el);
-                if (ix >= 0)
-                    ixs[count++] = ix;
+                if (ix >= 0) {
+					ixs[count++] = ix;
+				}
             }
             if (count < n) {
                 System.arraycopy(ixs, 0, ixs = new int[count], 0, count);

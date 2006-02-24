@@ -153,10 +153,12 @@ public class PreferenceStore extends EventManager implements
      */
     private boolean getBoolean(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return BOOLEAN_DEFAULT_DEFAULT;
-        if (value.equals(IPreferenceStore.TRUE))
-            return true;
+        if (value == null) {
+			return BOOLEAN_DEFAULT_DEFAULT;
+		}
+        if (value.equals(IPreferenceStore.TRUE)) {
+			return true;
+		}
         return false;
     }
 
@@ -218,8 +220,9 @@ public class PreferenceStore extends EventManager implements
      */
     private double getDouble(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return DOUBLE_DEFAULT_DEFAULT;
+        if (value == null) {
+			return DOUBLE_DEFAULT_DEFAULT;
+		}
         double ival = DOUBLE_DEFAULT_DEFAULT;
         try {
             ival = new Double(value).doubleValue();
@@ -243,8 +246,9 @@ public class PreferenceStore extends EventManager implements
      */
     private float getFloat(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return FLOAT_DEFAULT_DEFAULT;
+        if (value == null) {
+			return FLOAT_DEFAULT_DEFAULT;
+		}
         float ival = FLOAT_DEFAULT_DEFAULT;
         try {
             ival = new Float(value).floatValue();
@@ -268,8 +272,9 @@ public class PreferenceStore extends EventManager implements
      */
     private int getInt(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return INT_DEFAULT_DEFAULT;
+        if (value == null) {
+			return INT_DEFAULT_DEFAULT;
+		}
         int ival = 0;
         try {
             ival = Integer.parseInt(value);
@@ -293,8 +298,9 @@ public class PreferenceStore extends EventManager implements
      */
     private long getLong(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return LONG_DEFAULT_DEFAULT;
+        if (value == null) {
+			return LONG_DEFAULT_DEFAULT;
+		}
         long ival = LONG_DEFAULT_DEFAULT;
         try {
             ival = Long.parseLong(value);
@@ -318,8 +324,9 @@ public class PreferenceStore extends EventManager implements
      */
     private String getString(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return STRING_DEFAULT_DEFAULT;
+        if (value == null) {
+			return STRING_DEFAULT_DEFAULT;
+		}
         return value;
     }
 
@@ -360,8 +367,9 @@ public class PreferenceStore extends EventManager implements
      *                if there is a problem loading this store
      */
     public void load() throws IOException {
-        if (filename == null)
-            throw new IOException("File name not specified");//$NON-NLS-1$
+        if (filename == null) {
+			throw new IOException("File name not specified");//$NON-NLS-1$
+		}
         FileInputStream in = new FileInputStream(filename);
         load(in);
         in.close();
@@ -429,15 +437,17 @@ public class PreferenceStore extends EventManager implements
      *                if there is a problem saving this store
      */
     public void save() throws IOException {
-        if (filename == null)
-            throw new IOException("File name not specified");//$NON-NLS-1$
+        if (filename == null) {
+			throw new IOException("File name not specified");//$NON-NLS-1$
+		}
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(filename);
             save(out, null);
         } finally {
-            if (out != null)
-                out.close();
+            if (out != null) {
+				out.close();
+			}
         }
     }
 
@@ -523,8 +533,9 @@ public class PreferenceStore extends EventManager implements
         properties.remove(name);
         dirty = true;
         Object newValue = null;
-        if (defaultProperties != null)
-            newValue = defaultProperties.get(name);
+        if (defaultProperties != null) {
+			newValue = defaultProperties.get(name);
+		}
         firePropertyChangeEvent(name, oldValue, newValue);
     }
 

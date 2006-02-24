@@ -76,17 +76,20 @@ public class PathEditor extends ListEditor {
     protected String getNewInputObject() {
 
         DirectoryDialog dialog = new DirectoryDialog(getShell());
-        if (dirChooserLabelText != null)
-            dialog.setMessage(dirChooserLabelText);
+        if (dirChooserLabelText != null) {
+			dialog.setMessage(dirChooserLabelText);
+		}
         if (lastPath != null) {
-            if (new File(lastPath).exists())
-                dialog.setFilterPath(lastPath);
+            if (new File(lastPath).exists()) {
+				dialog.setFilterPath(lastPath);
+			}
         }
         String dir = dialog.open();
         if (dir != null) {
             dir = dir.trim();
-            if (dir.length() == 0)
-                return null;
+            if (dir.length() == 0) {
+				return null;
+			}
             lastPath = dir;
         }
         return dir;

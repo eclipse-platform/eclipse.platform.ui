@@ -75,8 +75,9 @@ public final class KeyFormatterFactory {
      *            the default key formatter. Must not be <code>null</code>.
      */
     public static final void setDefault(final IKeyFormatter defaultKeyFormatter) {
-        if (defaultKeyFormatter == null)
-            throw new NullPointerException();
+        if (defaultKeyFormatter == null) {
+			throw new NullPointerException();
+		}
 
         KeyFormatterFactory.defaultKeyFormatter = defaultKeyFormatter;
     }

@@ -50,8 +50,9 @@ public final class ActionHandler extends AbstractHandler {
 	 *            the action. Must not be <code>null</code>.
 	 */
 	public ActionHandler(final IAction action) {
-		if (action == null)
+		if (action == null) {
 			throw new NullPointerException();
+		}
 
 		this.action = action;
 	}
@@ -109,8 +110,9 @@ public final class ActionHandler extends AbstractHandler {
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		if ((action.getStyle() == IAction.AS_CHECK_BOX)
-				|| (action.getStyle() == IAction.AS_RADIO_BUTTON))
+				|| (action.getStyle() == IAction.AS_RADIO_BUTTON)) {
 			action.setChecked(!action.isChecked());
+		}
 		final Object trigger = event.getTrigger();
 		try {
 			if (trigger instanceof Event) {

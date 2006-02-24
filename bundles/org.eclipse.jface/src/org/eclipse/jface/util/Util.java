@@ -68,13 +68,15 @@ public final class Util {
 	 */
 	private static final void assertInstance(final Object object,
 			final Class c, final boolean allowNull) {
-		if (object == null && allowNull)
+		if (object == null && allowNull) {
 			return;
+		}
 
-		if (object == null || c == null)
+		if (object == null || c == null) {
 			throw new NullPointerException();
-		else if (!c.isInstance(object))
+		} else if (!c.isInstance(object)) {
 			throw new IllegalArgumentException();
+		}
 	}
 
 	/**
@@ -118,14 +120,15 @@ public final class Util {
 	 */
 	public static final int compare(final Comparable left,
 			final Comparable right) {
-		if (left == null && right == null)
+		if (left == null && right == null) {
 			return 0;
-		else if (left == null)
+		} else if (left == null) {
 			return -1;
-		else if (right == null)
+		} else if (right == null) {
 			return 1;
-		else
+		} else {
 			return left.compareTo(right);
+		}
 	}
 
 	/**
@@ -142,24 +145,26 @@ public final class Util {
 	 */
 	public static final int compare(final Comparable[] left,
 			final Comparable[] right) {
-		if (left == null && right == null)
+		if (left == null && right == null) {
 			return 0;
-		else if (left == null)
+		} else if (left == null) {
 			return -1;
-		else if (right == null)
+		} else if (right == null) {
 			return 1;
-		else {
+		} else {
 			int l = left.length;
 			int r = right.length;
 
-			if (l != r)
+			if (l != r) {
 				return l - r;
+			}
 
 			for (int i = 0; i < l; i++) {
 				int compareTo = compare(left[i], right[i]);
 
-				if (compareTo != 0)
+				if (compareTo != 0) {
 					return compareTo;
+				}
 			}
 
 			return 0;
@@ -181,25 +186,27 @@ public final class Util {
 	 *         than a longer list.
 	 */
 	public static final int compare(final List left, final List right) {
-		if (left == null && right == null)
+		if (left == null && right == null) {
 			return 0;
-		else if (left == null)
+		} else if (left == null) {
 			return -1;
-		else if (right == null)
+		} else if (right == null) {
 			return 1;
-		else {
+		} else {
 			int l = left.size();
 			int r = right.size();
 
-			if (l != r)
+			if (l != r) {
 				return l - r;
+			}
 
 			for (int i = 0; i < l; i++) {
 				int compareTo = compare((Comparable) left.get(i),
 						(Comparable) right.get(i));
 
-				if (compareTo != 0)
+				if (compareTo != 0) {
 					return compareTo;
+				}
 			}
 
 			return 0;
@@ -221,18 +228,22 @@ public final class Util {
 	 */
 	public static final boolean endsWith(final Object[] left,
 			final Object[] right, final boolean equals) {
-		if (left == null || right == null)
+		if (left == null || right == null) {
 			return false;
+		}
 
 		int l = left.length;
 		int r = right.length;
 
-		if (r > l || !equals && r == l)
+		if (r > l || !equals && r == l) {
 			return false;
+		}
 
-		for (int i = 0; i < r; i++)
-			if (!equals(left[l - i - 1], right[r - i - 1]))
+		for (int i = 0; i < r; i++) {
+			if (!equals(left[l - i - 1], right[r - i - 1])) {
 				return false;
+			}
+		}
 
 		return true;
 	}
@@ -362,18 +373,22 @@ public final class Util {
 	 */
 	public static final boolean startsWith(final Object[] left,
 			final Object[] right, final boolean equals) {
-		if (left == null || right == null)
+		if (left == null || right == null) {
 			return false;
+		}
 
 		int l = left.length;
 		int r = right.length;
 
-		if (r > l || !equals && r == l)
+		if (r > l || !equals && r == l) {
 			return false;
+		}
 
-		for (int i = 0; i < r; i++)
-			if (!equals(left[i], right[i]))
+		for (int i = 0; i < r; i++) {
+			if (!equals(left[i], right[i])) {
 				return false;
+			}
+		}
 
 		return true;
 	}
@@ -427,15 +442,17 @@ public final class Util {
 	public static final String translateString(
 			final ResourceBundle resourceBundle, final String key,
 			final String defaultString) {
-		if (resourceBundle != null && key != null)
+		if (resourceBundle != null && key != null) {
 			try {
 				final String translatedString = resourceBundle.getString(key);
 
-				if (translatedString != null)
+				if (translatedString != null) {
 					return translatedString;
+				}
 			} catch (MissingResourceException eMissingResource) {
 				// Such is life. We'll return the key
 			}
+		}
 
 		return defaultString;
 	}

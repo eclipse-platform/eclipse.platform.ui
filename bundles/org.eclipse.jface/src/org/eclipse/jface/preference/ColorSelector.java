@@ -193,8 +193,9 @@ public class ColorSelector extends EventManager {
         GC gc = new GC(fImage);
         gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
         gc.drawRectangle(0, 2, fExtent.x - 1, fExtent.y - 4);
-        if (fColor != null)
-            fColor.dispose();
+        if (fColor != null) {
+			fColor.dispose();
+		}
         fColor = new Color(display, fColorValue);
         gc.setBackground(fColor);
         gc.fillRectangle(1, 3, fExtent.x - 2, fExtent.y - 5);

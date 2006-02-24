@@ -147,10 +147,11 @@ public class DialogMessageArea extends Object {
         Image newImage = null;
         switch (newType) {
         case IMessageProvider.NONE:
-            if (newMessage == null)
-                restoreTitle();
-            else
-                showTitle(newMessage, null);
+            if (newMessage == null) {
+				restoreTitle();
+			} else {
+				showTitle(newMessage, null);
+			}
             return;
         case IMessageProvider.INFORMATION:
             newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
@@ -172,8 +173,9 @@ public class DialogMessageArea extends Object {
         String shortText = Dialog.shortenText(newMessage,messageText);
         if (newMessage.equals(messageText.getToolTipText())
                 && newImage == messageImageLabel.getImage()
-                	&& shortText.equals(messageText.getText()))
-            return;
+                	&& shortText.equals(messageText.getText())) {
+			return;
+		}
         messageImageLabel.setImage(newImage);
         messageText.setText(Dialog.shortenText(newMessage,messageText));
         messageText.setToolTipText(newMessage);
@@ -188,9 +190,10 @@ public class DialogMessageArea extends Object {
      *  
      */
     public void clearErrorMessage() {
-        if (lastMessageText == null)
-            restoreTitle();
-        else
-            updateText(lastMessageText, lastMessageType);
+        if (lastMessageText == null) {
+			restoreTitle();
+		} else {
+			updateText(lastMessageText, lastMessageType);
+		}
     }
 }

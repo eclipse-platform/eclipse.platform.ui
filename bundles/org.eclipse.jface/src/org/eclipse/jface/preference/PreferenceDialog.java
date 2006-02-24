@@ -84,8 +84,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	private class PageLayout extends Layout {
 		public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
-			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
+			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
+			}
 			int x = minimumPageSize.x;
 			int y = minimumPageSize.y;
 			Control[] children = composite.getChildren();
@@ -103,10 +104,12 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				y = Math.max(y, size.y);
 			}
 			
-			if (wHint != SWT.DEFAULT)
+			if (wHint != SWT.DEFAULT) {
 				x = wHint;
-			if (hHint != SWT.DEFAULT)
+			}
+			if (hHint != SWT.DEFAULT) {
 				y = hHint;
+			}
 			return new Point(x, y);
 		}
 
@@ -246,8 +249,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			if (getPage(node) != null) {
 				SafeRunnable.run(new SafeRunnable() {
 					public void run() {
-						if (!getPage(node).performCancel())
+						if (!getPage(node).performCancel()) {
 							return;
+						}
 					}
 				});
 			}
@@ -288,8 +292,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		newShell.setText(JFaceResources.getString("PreferenceDialog.title")); //$NON-NLS-1$
 		newShell.addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent e) {
-				if (lastShellSize == null)
+				if (lastShellSize == null) {
 					lastShellSize = getShell().getSize();
+				}
 			}
 
 		});
@@ -304,8 +309,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	protected void constrainShellSize() {
 		super.constrainShellSize();
 		// record opening shell size
-		if (lastShellSize == null)
+		if (lastShellSize == null) {
 			lastShellSize = getShell().getSize();
+		}
 	}
 
 	/*
@@ -424,13 +430,15 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
 			public void handleEvent(Event event) {
-				if (event.detail == SWT.DRAG)
+				if (event.detail == SWT.DRAG) {
 					return;
+				}
 				int shift = event.x - sash.getBounds().x;
 				GridData data = (GridData) rightControl.getLayoutData();
 				int newWidthHint = data.widthHint + shift;
-				if (newWidthHint < 20)
+				if (newWidthHint < 20) {
 					return;
+				}
 				Point computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				Point currentSize = getShell().getSize();
 				// if the dialog wasn't of a custom size we know we can shrink
@@ -443,11 +451,13 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				// if the dialog was of a custom size then increase it only if
 				// necessary.
-				if (customSize)
+				if (customSize) {
 					computedSize.x = Math.max(computedSize.x, currentSize.x);
+				}
 				computedSize.y = Math.max(computedSize.y, currentSize.y);
-				if (computedSize.equals(currentSize))
+				if (computedSize.equals(currentSize)) {
 					return;
+				}
 				setShellSize(computedSize.x, computedSize.y);
 				lastShellSize = getShell().getSize();
 			}
@@ -531,15 +541,17 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (JFaceResources.BANNER_FONT.equals(event.getProperty()))
+				if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
 					updateMessage();
+				}
 				if (JFaceResources.DIALOG_FONT.equals(event.getProperty())) {
 					updateMessage();
 					Font dialogFont = JFaceResources.getDialogFont();
 					updateTreeFont(dialogFont);
 					Control[] children = ((Composite) buttonBar).getChildren();
-					for (int i = 0; i < children.length; i++)
+					for (int i = 0; i < children.length; i++) {
 						children[i].setFont(dialogFont);
+					}
 				}
 			}
 		};
@@ -640,8 +652,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		((Tree) viewer.getControl()).addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(final SelectionEvent event) {
 				ISelection selection = viewer.getSelection();
-				if (selection.isEmpty())
+				if (selection.isEmpty()) {
 					return;
+				}
 				IPreferenceNode singleSelection = getSingleSelection(selection);
 				boolean expanded = viewer.getExpandedState(singleSelection);
 				viewer.setExpandedState(singleSelection, !expanded);
@@ -671,8 +684,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		List nodes = preferenceManager.getElements(PreferenceManager.POST_ORDER);
 		for (Iterator i = nodes.iterator(); i.hasNext();) {
 			IPreferenceNode node = (IPreferenceNode) i.next();
-			if (node.getId().equals(nodeId))
+			if (node.getId().equals(nodeId)) {
 				return node;
+			}
 		}
 		return null;
 	}
@@ -721,8 +735,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	protected IPreferenceNode getSingleSelection(ISelection selection) {
 		if (!selection.isEmpty()) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
-			if (structured.getFirstElement() instanceof IPreferenceNode)
+			if (structured.getFirstElement() instanceof IPreferenceNode) {
 				return (IPreferenceNode) structured.getFirstElement();
+			}
 		}
 		return null;
 	}
@@ -807,8 +822,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 *         current page
 	 */
 	protected boolean isCurrentPageValid() {
-		if (currentPage == null)
+		if (currentPage == null) {
 			return true;
+		}
 		return currentPage.isValid();
 	}
 
@@ -867,10 +883,11 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 						return;
 					}
 					
-					if (!errorOccurred)
-						 //Give subclasses the choice to save the state of the
+					if (!errorOccurred) {
+						//Give subclasses the choice to save the state of the
 					    //preference pages.
 						handleSave();
+					}
 					setReturnCode(OK);
 					close();
 				}
@@ -899,8 +916,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * page hierarchy.
 	 */
 	void selectCurrentPageAgain() {
-		if (lastSuccessfulNode == null)
+		if (lastSuccessfulNode == null) {
 			return;
+		}
 		getTreeViewer().setSelection(new StructuredSelection(lastSuccessfulNode));
 		currentPage.setVisible(true);
 	}
@@ -913,8 +931,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		IPreferenceNode node = findNodeMatching(getSelectedNodePreference());
 		if (node == null) {
 			IPreferenceNode[] nodes = preferenceManager.getRoot().getSubNodes();
-			if (nodes.length > 0)
+			if (nodes.length > 0) {
 				node = nodes[0];
+			}
 		}
 		if (node != null) {
 			getTreeViewer().setSelection(new StructuredSelection(node), true);
@@ -932,10 +951,11 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 *            the errorMessage to display or <code>null</code>
 	 */
 	public void setErrorMessage(String newErrorMessage) {
-		if (newErrorMessage == null)
+		if (newErrorMessage == null) {
 			messageArea.clearErrorMessage();
-		else
+		} else {
 			messageArea.updateText(newErrorMessage, IMessageProvider.ERROR);
+		}
 	}
 
 	/**
@@ -1087,19 +1107,24 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 *         <code>false</code> is unsuccessful
 	 */
 	protected boolean showPage(IPreferenceNode node) {
-		if (node == null)
+		if (node == null) {
 			return false;
+		}
 		// Create the page if nessessary
-		if (node.getPage() == null)
+		if (node.getPage() == null) {
 			createPage(node);
-		if (node.getPage() == null)
+		}
+		if (node.getPage() == null) {
 			return false;
+		}
 		IPreferencePage newPage = getPage(node);
-		if (newPage == currentPage)
+		if (newPage == currentPage) {
 			return true;
+		}
 		if (currentPage != null) {
-			if (!currentPage.okToLeave())
+			if (!currentPage.okToLeave()) {
 				return false;
+			}
 		}
 		IPreferencePage oldPage = currentPage;
 		currentPage = newPage;
@@ -1118,8 +1143,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					createPageControl(currentPage, pageContainer);
 				}
 			});
-			if (failed[0])
+			if (failed[0]) {
 				return false;
+			}
 			// the page is responsible for ensuring the created control is
 			// accessable
 			// via getControl.
@@ -1138,8 +1164,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				size[0] = currentPage.computeSize();
 			}
 		});
-		if (size[0].equals(failed))
+		if (size[0].equals(failed)) {
 			return false;
+		}
 		Point contentSize = size[0];
 		// Do we need resizing. Computation not needed if the
 		// first page is inserted since computing the dialog's
@@ -1157,11 +1184,13 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					vdiff = Math.max(0, vdiff);
 					setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
 					lastShellSize = shell.getSize();
-					if (currentPage.getControl().getSize().x == 0)
+					if (currentPage.getControl().getSize().x == 0) {
 						currentPage.getControl().setSize(containerSize);
+					}
 				
-			} else //Set the size to be sure we use the result of computeSize
+			} else {
 				currentPage.setSize(containerSize);
+			}
 		}
 		// Ensure that all other pages are invisible
 		// (including ones that triggered an exception during
@@ -1169,13 +1198,15 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		Control[] children = pageContainer.getChildren();
 		Control currentControl = currentPage.getControl();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i] != currentControl)
+			if (children[i] != currentControl) {
 				children[i].setVisible(false);
+			}
 		}
 		// Make the new page visible
 		currentPage.setVisible(true);
-		if (oldPage != null)
+		if (oldPage != null) {
 			oldPage.setVisible(false);
+		}
 		// update the dialog controls
 		update();
 		return true;
@@ -1248,8 +1279,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			errorMessage = currentPage.getErrorMessage();
 		}
 		int messageType = IMessageProvider.NONE;
-		if (message != null && currentPage instanceof IMessageProvider)
+		if (message != null && currentPage instanceof IMessageProvider) {
 			messageType = ((IMessageProvider) currentPage).getMessageType();
+		}
 
 		if (errorMessage == null){
 			if (showingError) {
@@ -1274,8 +1306,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
 	 */
 	public void updateTitle() {
-		if(currentPage == null)
+		if(currentPage == null) {
 			return;
+		}
 		messageArea.showTitle(currentPage.getTitle(), currentPage.getImage());
 	}
 

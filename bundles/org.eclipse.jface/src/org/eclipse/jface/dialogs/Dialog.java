@@ -378,8 +378,9 @@ public abstract class Dialog extends Window {
 	 * @since 3.0
 	 */
 	public static String shortenText(String textValue, Control control) {
-		if (textValue == null)
+		if (textValue == null) {
 			return null;
+		}
 		GC gc = new GC(control);
 		int maxWidth = control.getBounds().width - 5;
 		if (gc.textExtent(textValue).x < maxWidth) {
@@ -455,12 +456,13 @@ public abstract class Dialog extends Window {
 	 */
 	protected Dialog(Shell parentShell) {
 		this(new SameShellProvider(parentShell));
-		if (parentShell == null && Policy.DEBUG_DIALOG_NO_PARENT)
+		if (parentShell == null && Policy.DEBUG_DIALOG_NO_PARENT) {
 			Policy.getLog().log(
 					new Status(IStatus.INFO, Policy.JFACE, IStatus.INFO, this
 							.getClass()
 							+ " created with no shell",//$NON-NLS-1$
 							new Exception()));
+		}
 	}
 
 	/**
@@ -494,10 +496,11 @@ public abstract class Dialog extends Window {
 	 *            <code>IDialogConstants.*_ID</code> constants)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (IDialogConstants.OK_ID == buttonId)
+		if (IDialogConstants.OK_ID == buttonId) {
 			okPressed();
-		else if (IDialogConstants.CANCEL_ID == buttonId)
+		} else if (IDialogConstants.CANCEL_ID == buttonId) {
 			cancelPressed();
+		}
 	}
 
 	/**
@@ -530,8 +533,9 @@ public abstract class Dialog extends Window {
 	 */
 	protected int convertHeightInCharsToPixels(int chars) {
 		// test for failure to initialize for backward compatibility
-		if (fontMetrics == null)
+		if (fontMetrics == null) {
 			return 0;
+		}
 		return convertHeightInCharsToPixels(fontMetrics, chars);
 	}
 
@@ -552,8 +556,9 @@ public abstract class Dialog extends Window {
 	 */
 	protected int convertHorizontalDLUsToPixels(int dlus) {
 		// test for failure to initialize for backward compatibility
-		if (fontMetrics == null)
+		if (fontMetrics == null) {
 			return 0;
+		}
 		return convertHorizontalDLUsToPixels(fontMetrics, dlus);
 	}
 
@@ -574,8 +579,9 @@ public abstract class Dialog extends Window {
 	 */
 	protected int convertVerticalDLUsToPixels(int dlus) {
 		// test for failure to initialize for backward compatibility
-		if (fontMetrics == null)
+		if (fontMetrics == null) {
 			return 0;
+		}
 		return convertVerticalDLUsToPixels(fontMetrics, dlus);
 	}
 
@@ -596,8 +602,9 @@ public abstract class Dialog extends Window {
 	 */
 	protected int convertWidthInCharsToPixels(int chars) {
 		// test for failure to initialize for backward compatibility
-		if (fontMetrics == null)
+		if (fontMetrics == null) {
 			return 0;
+		}
 		return convertWidthInCharsToPixels(fontMetrics, chars);
 	}
 
@@ -726,8 +733,9 @@ public abstract class Dialog extends Window {
 			if (shell != null) {
 				Button defaultButton = shell.getDefaultButton();
 				if (defaultButton != null
-						&& isContained(buttonBar, defaultButton))
+						&& isContained(buttonBar, defaultButton)) {
 					defaultButton.moveBelow(null);
+				}
 			}
 		}
 		
@@ -752,8 +760,9 @@ public abstract class Dialog extends Window {
 	private boolean isContained(Control container, Control control) {
 		Composite parent;
 		while ((parent = control.getParent()) != null) {
-			if (parent == container)
+			if (parent == container) {
 				return true;
+			}
 			control = parent;
 		}
 		return false;
@@ -988,8 +997,9 @@ public abstract class Dialog extends Window {
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-		if (getShell() != null && !getShell().isDisposed())
+		if (getShell() != null && !getShell().isDisposed()) {
 			saveDialogBounds(getShell());
+		}
 		
 		removeRestoreSizeMouseListeners();
 
@@ -1012,8 +1022,9 @@ public abstract class Dialog extends Window {
 	 *            happens.
 	 */
 	public static void applyDialogFont(Control control) {
-		if (control == null || dialogFontIsDefault())
+		if (control == null || dialogFontIsDefault()) {
 			return;
+		}
 		Font dialogFont = JFaceResources.getDialogFont();
 		applyDialogFont(control, dialogFont);
 	}
@@ -1029,12 +1040,14 @@ public abstract class Dialog extends Window {
 	 *            the dialog font to set
 	 */
 	private static void applyDialogFont(Control control, Font dialogFont) {
-		if (hasDefaultFont(control))
+		if (hasDefaultFont(control)) {
 			control.setFont(dialogFont);
+		}
 		if (control instanceof Composite) {
 			Control[] children = ((Composite) control).getChildren();
-			for (int i = 0; i < children.length; i++)
+			for (int i = 0; i < children.length; i++) {
 				applyDialogFont(children[i], dialogFont);
+			}
 		}
 	}
 
@@ -1050,8 +1063,9 @@ public abstract class Dialog extends Window {
 		FontData[] defaultFontData = getDefaultFont(control).getFontData();
 		if (controlFontData.length == defaultFontData.length) {
 			for (int i = 0; i < controlFontData.length; i++) {
-				if (controlFontData[i].equals(defaultFontData[i]))
+				if (controlFontData[i].equals(defaultFontData[i])) {
 					continue;
+				}
 				return false;
 			}
 			return true;
@@ -1067,8 +1081,9 @@ public abstract class Dialog extends Window {
 	 */
 	private static Font getDefaultFont(Control control) {
 		String fontName = "DEFAULT_FONT_" + control.getClass().getName(); //$NON-NLS-1$
-		if (JFaceResources.getFontRegistry().hasValueFor(fontName))
+		if (JFaceResources.getFontRegistry().hasValueFor(fontName)) {
 			return JFaceResources.getFontRegistry().get(fontName);
+		}
 		Font cached = control.getFont();
 		control.setFont(null);
 		Font defaultFont = control.getFont();
@@ -1215,11 +1230,13 @@ public abstract class Dialog extends Window {
 				try {
 					// Get the stored width and height.
 					int width = settings.getInt(DIALOG_WIDTH);
-					if (width != DIALOG_DEFAULT_BOUNDS)
+					if (width != DIALOG_DEFAULT_BOUNDS) {
 						result.x = width;
+					}
 					int height = settings.getInt(DIALOG_HEIGHT);
-					if (height != DIALOG_DEFAULT_BOUNDS)
+					if (height != DIALOG_DEFAULT_BOUNDS) {
 						result.y = height;
+					}
 	
 				} catch (NumberFormatException e) {
 				}
@@ -1291,8 +1308,9 @@ public abstract class Dialog extends Window {
 				control = control.getParent();
 			}
 		}
-		if (dialogContents != null)
+		if (dialogContents != null) {
 			dialogContents.addMouseListener(restoreSizeMouseListener);
+		}
 	}
 	
 	/**
@@ -1310,8 +1328,9 @@ public abstract class Dialog extends Window {
 				control = control.getParent();
 			}
 		}
-		if (dialogContents != null && !dialogContents.isDisposed())
+		if (dialogContents != null && !dialogContents.isDisposed()) {
 			dialogContents.removeMouseListener(restoreSizeMouseListener);
+		}
 	}
 	
 	/**
@@ -1323,16 +1342,18 @@ public abstract class Dialog extends Window {
 	private void restoreDialogToComputedSize() {
 		// The computed size was never stored.  This should not typically
 		// happen, but could if a client completely override the bounds initialization.
-		if (computedSize == null)
+		if (computedSize == null) {
 			return;
+		}
 		
 		Shell shell = getShell();
 		Point shellSize = shell.getSize();
 		Point shellLocation = shell.getLocation();
 
 		// If the size has not changed, do nothing
-		if (shellSize.equals(computedSize))
+		if (shellSize.equals(computedSize)) {
 			return;
+		}
 			
 		// Now reset the bounds
 		shell.setBounds(getConstrainedShellBounds(new Rectangle(shellLocation.x,

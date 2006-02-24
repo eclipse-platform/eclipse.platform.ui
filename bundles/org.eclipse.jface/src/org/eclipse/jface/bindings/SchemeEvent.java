@@ -56,8 +56,9 @@ public final class SchemeEvent extends AbstractNamedHandleEvent {
 			boolean parentIdChanged) {
 		super(definedChanged, descriptionChanged, nameChanged);
 
-		if (scheme == null)
+		if (scheme == null) {
 			throw new NullPointerException();
+		}
 		this.scheme = scheme;
 
 		if (parentIdChanged) {

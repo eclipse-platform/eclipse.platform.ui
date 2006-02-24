@@ -174,8 +174,9 @@ public class TableTreeViewer extends AbstractTreeViewer {
         ITableLabelProvider tprov = null;
         
         
-        if (prov instanceof ITableLabelProvider)
-            tprov = (ITableLabelProvider) prov;
+        if (prov instanceof ITableLabelProvider) {
+			tprov = (ITableLabelProvider) prov;
+		}
         
         int columnCount = tableTree.getTable().getColumnCount();
         TableTreeItem ti = (TableTreeItem) item;
@@ -205,13 +206,15 @@ public class TableTreeViewer extends AbstractTreeViewer {
             }
             
             //Avoid setting text to null
-            if(text == null)
-            	text = ""; //$NON-NLS-1$
+            if(text == null) {
+				text = ""; //$NON-NLS-1$
+			}
             
             ti.setText(column, text);
             // Apparently a problem to setImage to null if already null
-            if (ti.getImage(column) != image)
-                ti.setImage(column, image);
+            if (ti.getImage(column) != image) {
+				ti.setImage(column, image);
+			}
             
             getColorAndFontCollector().setFontsAndColors(element);
             getColorAndFontCollector().applyFontsAndColors(ti);
@@ -251,10 +254,12 @@ public class TableTreeViewer extends AbstractTreeViewer {
      * Method declared on AbstractTreeViewer.
      */
     protected Item[] getChildren(Widget o) {
-        if (o instanceof TableTreeItem)
-            return ((TableTreeItem) o).getItems();
-        if (o instanceof TableTree)
-            return ((TableTree) o).getItems();
+        if (o instanceof TableTreeItem) {
+			return ((TableTreeItem) o).getItems();
+		}
+        if (o instanceof TableTree) {
+			return ((TableTree) o).getItems();
+		}
         return null;
     }
    
@@ -263,10 +268,12 @@ public class TableTreeViewer extends AbstractTreeViewer {
      * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt.widgets.Widget, int)
      */
     protected Item getChild (Widget widget, int index) {
-      if (widget instanceof TableTreeItem)
-        return ((TableTreeItem) widget).getItem (index);
-      if (widget instanceof TableTree)
-        return ((TableTree) widget).getItem (index);
+      if (widget instanceof TableTreeItem) {
+		return ((TableTreeItem) widget).getItem (index);
+	}
+      if (widget instanceof TableTree) {
+		return ((TableTree) widget).getItem (index);
+	}
       return null;
     }
 
@@ -302,8 +309,9 @@ public class TableTreeViewer extends AbstractTreeViewer {
     public Object getElementAt(int index) {
         // XXX: Workaround for 1GBCSB1: SWT:WIN2000 - TableTree should have getItem(int index)
         TableTreeItem i = tableTree.getItems()[index];
-        if (i != null)
-            return i.getData();
+        if (i != null) {
+			return i.getData();
+		}
         return null;
     }
 
@@ -397,8 +405,9 @@ public class TableTreeViewer extends AbstractTreeViewer {
                         .getTable().getItems();
                 for (int i = 0; i < items.length; i++) {
                     Rectangle rect = items[i].getImageBounds(0);
-                    if (rect.contains(e.x, e.y))
-                        return;
+                    if (rect.contains(e.x, e.y)) {
+						return;
+					}
                 }
 
                 tableViewerImpl.handleMouseDown(e);
@@ -422,15 +431,17 @@ public class TableTreeViewer extends AbstractTreeViewer {
     protected Item newItem(Widget parent, int flags, int ix) {
         TableTreeItem item;
         if (ix >= 0) {
-            if (parent instanceof TableTreeItem)
-                item = new TableTreeItem((TableTreeItem) parent, flags, ix);
-            else
-                item = new TableTreeItem((TableTree) parent, flags, ix);
+            if (parent instanceof TableTreeItem) {
+				item = new TableTreeItem((TableTreeItem) parent, flags, ix);
+			} else {
+				item = new TableTreeItem((TableTree) parent, flags, ix);
+			}
         } else {
-            if (parent instanceof TableTreeItem)
-                item = new TableTreeItem((TableTreeItem) parent, flags);
-            else
-                item = new TableTreeItem((TableTree) parent, flags);
+            if (parent instanceof TableTreeItem) {
+				item = new TableTreeItem((TableTreeItem) parent, flags);
+			} else {
+				item = new TableTreeItem((TableTree) parent, flags);
+			}
         }
         return item;
     }

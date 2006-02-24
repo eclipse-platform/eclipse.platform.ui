@@ -139,8 +139,9 @@ public final class BindingManager extends HandleObjectManager implements
 			final StringTokenizer stringTokenizer = new StringTokenizer(string,
 					separator);
 			while (stringTokenizer.hasMoreElements()) {
-				if (stringBuffer.length() > 0)
+				if (stringBuffer.length() > 0) {
 					stringBuffer.append(separator);
+				}
 				stringBuffer.append(((String) stringTokenizer.nextElement())
 						.trim());
 				strings.add(stringBuffer.toString());
@@ -823,8 +824,9 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            <code>null</code>.
 	 */
 	private final void fireBindingManagerChanged(final BindingManagerEvent event) {
-		if (event == null)
+		if (event == null) {
 			throw new NullPointerException();
+		}
 
 		final Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {

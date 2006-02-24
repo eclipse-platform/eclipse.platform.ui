@@ -195,10 +195,12 @@ public class ActionContributionItem extends ContributionItem {
         if (widget == null && parent != null) {
             int flags = SWT.PUSH;
             if (action != null) {
-                if (action.getStyle() == IAction.AS_CHECK_BOX)
-                    flags = SWT.TOGGLE;
-                if (action.getStyle() == IAction.AS_RADIO_BUTTON)
-                    flags = SWT.RADIO;
+                if (action.getStyle() == IAction.AS_CHECK_BOX) {
+					flags = SWT.TOGGLE;
+				}
+                if (action.getStyle() == IAction.AS_RADIO_BUTTON) {
+					flags = SWT.RADIO;
+				}
             }
 
             Button b = new Button(parent, flags);
@@ -206,8 +208,9 @@ public class ActionContributionItem extends ContributionItem {
             b.addListener(SWT.Dispose, getButtonListener());
             // Don't hook a dispose listener on the parent
             b.addListener(SWT.Selection, getButtonListener());
-            if (action.getHelpListener() != null)
-                b.addHelpListener(action.getHelpListener());
+            if (action.getHelpListener() != null) {
+				b.addHelpListener(action.getHelpListener());
+			}
             widget = b;
 
             update(null);
@@ -241,11 +244,11 @@ public class ActionContributionItem extends ContributionItem {
             int flags = SWT.PUSH;
             if (action != null) {
                 int style = action.getStyle();
-                if (style == IAction.AS_CHECK_BOX)
-                    flags = SWT.CHECK;
-                else if (style == IAction.AS_RADIO_BUTTON)
-                    flags = SWT.RADIO;
-                else if (style == IAction.AS_DROP_DOWN_MENU) {
+                if (style == IAction.AS_CHECK_BOX) {
+					flags = SWT.CHECK;
+				} else if (style == IAction.AS_RADIO_BUTTON) {
+					flags = SWT.RADIO;
+				} else if (style == IAction.AS_DROP_DOWN_MENU) {
                     IMenuCreator mc = action.getMenuCreator();
                     if (mc != null) {
                         subMenu = mc.getMenu(parent);
@@ -255,20 +258,23 @@ public class ActionContributionItem extends ContributionItem {
             }
 
             MenuItem mi = null;
-            if (index >= 0)
-                mi = new MenuItem(parent, flags, index);
-            else
-                mi = new MenuItem(parent, flags);
+            if (index >= 0) {
+				mi = new MenuItem(parent, flags, index);
+			} else {
+				mi = new MenuItem(parent, flags);
+			}
             widget = mi;
 
             mi.setData(this);
             mi.addListener(SWT.Dispose, getMenuItemListener());
             mi.addListener(SWT.Selection, getMenuItemListener());
-            if (action.getHelpListener() != null)
-                mi.addHelpListener(action.getHelpListener());
+            if (action.getHelpListener() != null) {
+				mi.addHelpListener(action.getHelpListener());
+			}
 
-            if (subMenu != null)
-                mi.setMenu(subMenu);
+            if (subMenu != null) {
+				mi.setMenu(subMenu);
+			}
 
             update(null);
 
@@ -300,19 +306,21 @@ public class ActionContributionItem extends ContributionItem {
             int flags = SWT.PUSH;
             if (action != null) {
                 int style = action.getStyle();
-                if (style == IAction.AS_CHECK_BOX)
-                    flags = SWT.CHECK;
-                else if (style == IAction.AS_RADIO_BUTTON)
-                    flags = SWT.RADIO;
-                else if (style == IAction.AS_DROP_DOWN_MENU)
-                    flags = SWT.DROP_DOWN;
+                if (style == IAction.AS_CHECK_BOX) {
+					flags = SWT.CHECK;
+				} else if (style == IAction.AS_RADIO_BUTTON) {
+					flags = SWT.RADIO;
+				} else if (style == IAction.AS_DROP_DOWN_MENU) {
+					flags = SWT.DROP_DOWN;
+				}
             }
 
             ToolItem ti = null;
-            if (index >= 0)
-                ti = new ToolItem(parent, flags, index);
-            else
-                ti = new ToolItem(parent, flags);
+            if (index >= 0) {
+				ti = new ToolItem(parent, flags, index);
+			} else {
+				ti = new ToolItem(parent, flags);
+			}
             ti.setData(this);
             ti.addListener(SWT.Selection, getToolItemListener());
             ti.addListener(SWT.Dispose, getToolItemListener());
@@ -524,14 +532,16 @@ public class ActionContributionItem extends ContributionItem {
                 boolean trace = Policy.TRACE_ACTIONS;
 
                 long ms = System.currentTimeMillis();
-                if (trace)
-                    System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
+                if (trace) {
+					System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
+				}
 
                 action.runWithEvent(e);
 
-                if (trace)
-                    System.out.println((System.currentTimeMillis() - ms)
+                if (trace) {
+					System.out.println((System.currentTimeMillis() - ms)
                             + " ms to run action: " + action.getText()); //$NON-NLS-1$
+				}
             }
         }
     }
@@ -567,8 +577,9 @@ public class ActionContributionItem extends ContributionItem {
             ExternalActionManager.ICallback callback = ExternalActionManager
                     .getInstance().getCallback();
 
-            if (callback != null)
-                return callback.isActive(commandId);
+            if (callback != null) {
+				return callback.isActive(commandId);
+			}
         }
         return true;
     }
@@ -608,8 +619,9 @@ public class ActionContributionItem extends ContributionItem {
      * @since 2.0
      */
     protected boolean isEnabledAllowed() {
-        if (getParent() == null)
-            return true;
+        if (getParent() == null) {
+			return true;
+		}
         Boolean value = getParent().getOverrides().getEnabled(this);
         return (value == null) ? true : value.booleanValue();
     }
@@ -715,15 +727,17 @@ public class ActionContributionItem extends ContributionItem {
                     boolean shouldBeEnabled = action.isEnabled()
                             && isEnabledAllowed();
 
-                    if (ti.getEnabled() != shouldBeEnabled)
-                        ti.setEnabled(shouldBeEnabled);
+                    if (ti.getEnabled() != shouldBeEnabled) {
+						ti.setEnabled(shouldBeEnabled);
+					}
                 }
 
                 if (checkChanged) {
                     boolean bv = action.isChecked();
 
-                    if (ti.getSelection() != bv)
-                        ti.setSelection(bv);
+                    if (ti.getSelection() != bv) {
+						ti.setSelection(bv);
+					}
                 }
                 return;
             }
@@ -798,44 +812,52 @@ public class ActionContributionItem extends ContributionItem {
 
                     IContributionManagerOverrides overrides = null;
 
-                    if (getParent() != null)
-                        overrides = getParent().getOverrides();
+                    if (getParent() != null) {
+						overrides = getParent().getOverrides();
+					}
 
-                    if (overrides != null)
-                        text = getParent().getOverrides().getText(this);
+                    if (overrides != null) {
+						text = getParent().getOverrides().getText(this);
+					}
 
                     mi.setAccelerator(accelerator);
 
-                    if (text == null)
-                        text = updatedAction.getText();
+                    if (text == null) {
+						text = updatedAction.getText();
+					}
 
-                    if (text == null)
-                        text = ""; //$NON-NLS-1$
-                    else
-                        text = Action.removeAcceleratorText(text);
+                    if (text == null) {
+						text = ""; //$NON-NLS-1$
+					} else {
+						text = Action.removeAcceleratorText(text);
+					}
 
-                    if (acceleratorText == null)
-                        mi.setText(text);
-                    else
-                        mi.setText(text + '\t' + acceleratorText);
+                    if (acceleratorText == null) {
+						mi.setText(text);
+					} else {
+						mi.setText(text + '\t' + acceleratorText);
+					}
                 }
 
-                if (imageChanged)
-                    updateImages(false);
+                if (imageChanged) {
+					updateImages(false);
+				}
 
                 if (enableStateChanged) {
                     boolean shouldBeEnabled = action.isEnabled()
                             && isEnabledAllowed();
 
-                    if (mi.getEnabled() != shouldBeEnabled)
-                        mi.setEnabled(shouldBeEnabled);
+                    if (mi.getEnabled() != shouldBeEnabled) {
+						mi.setEnabled(shouldBeEnabled);
+					}
                 }
 
                 if (checkChanged) {
                     boolean bv = action.isChecked();
 
-                    if (mi.getSelection() != bv)
-                        mi.setSelection(bv);
+                    if (mi.getSelection() != bv) {
+						mi.setSelection(bv);
+					}
                 }
 
                 return;
@@ -844,34 +866,39 @@ public class ActionContributionItem extends ContributionItem {
             if (widget instanceof Button) {
                 Button button = (Button) widget;
 
-                if (imageChanged && updateImages(false))
-                    textChanged = false; // don't update text if it has an image
+                if (imageChanged && updateImages(false)) {
+					textChanged = false; // don't update text if it has an image
+				}
 
                 if (textChanged) {
                     String text = action.getText();
-                    if (text == null)
-                        text = ""; //$NON-NLS-1$
-                    else
-                        text = Action.removeAcceleratorText(text);
+                    if (text == null) {
+						text = ""; //$NON-NLS-1$
+					} else {
+						text = Action.removeAcceleratorText(text);
+					}
                     button.setText(text);
                 }
 
-                if (tooltipTextChanged)
-                    button.setToolTipText(action.getToolTipText());
+                if (tooltipTextChanged) {
+					button.setToolTipText(action.getToolTipText());
+				}
 
                 if (enableStateChanged) {
                     boolean shouldBeEnabled = action.isEnabled()
                             && isEnabledAllowed();
 
-                    if (button.getEnabled() != shouldBeEnabled)
-                        button.setEnabled(shouldBeEnabled);
+                    if (button.getEnabled() != shouldBeEnabled) {
+						button.setEnabled(shouldBeEnabled);
+					}
                 }
 
                 if (checkChanged) {
                     boolean bv = action.isChecked();
 
-                    if (button.getSelection() != bv)
-                        button.setSelection(bv);
+                    if (button.getSelection() != bv) {
+						button.setSelection(bv);
+					}
                 }
                 return;
             }
@@ -998,8 +1025,9 @@ public class ActionContributionItem extends ContributionItem {
      * if you need a different strategy.
      */
     protected String shortenText(String textValue, ToolItem item) {
-        if (textValue == null)
-            return null;
+        if (textValue == null) {
+			return null;
+		}
 
         GC gc = new GC(item.getParent());
 

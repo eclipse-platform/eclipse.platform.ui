@@ -60,8 +60,9 @@ public class ViewerLabel {
 	 * @return Returns the image.
 	 */
 	public final Image getImage() {
-		if (imageUpdated)
+		if (imageUpdated) {
 			return newImage;
+		}
 		return startImage;
 	}
 
@@ -83,8 +84,9 @@ public class ViewerLabel {
 	 * @return Returns the text.
 	 */
 	public final String getText() {
-		if (textUpdated)
+		if (textUpdated) {
 			return newText;
+		}
 		return startText;
 	}
 
@@ -109,11 +111,13 @@ public class ViewerLabel {
 	public boolean hasNewImage() {
 
 		//If we started with null any change is an update
-		if (startImage == null)
+		if (startImage == null) {
 			return newImage != null;
+		}
 		
-		if(imageUpdated)
+		if(imageUpdated) {
 			return !(startImage.equals(newImage));
+		}
 		return false;
 	}
 
@@ -125,11 +129,13 @@ public class ViewerLabel {
 	public boolean hasNewText() {
 
 		//If we started with null any change is an update
-		if (startText == null)
+		if (startText == null) {
 			return newText != null;
+		}
 		
-		if(textUpdated)
+		if(textUpdated) {
 			return !(startText.equals(newText));
+		}
 		
 		return false;
 	}

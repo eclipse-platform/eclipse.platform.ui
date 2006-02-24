@@ -106,8 +106,9 @@ public abstract class TriggerSequence {
 		}
 
 		// Check if they're the same type.
-		if (!(object instanceof TriggerSequence))
+		if (!(object instanceof TriggerSequence)) {
 			return false;
+		}
 
 		final TriggerSequence triggerSequence = (TriggerSequence) object;
 		return Util.equals(triggers, triggerSequence.triggers);
@@ -192,9 +193,10 @@ public abstract class TriggerSequence {
 	 */
 	public final boolean startsWith(final TriggerSequence triggerSequence,
 			final boolean equals) {
-		if (triggerSequence == null)
+		if (triggerSequence == null) {
 			throw new NullPointerException(
 					"A trigger sequence cannot start with null"); //$NON-NLS-1$
+		}
 
 		return Util.startsWith(triggers, triggerSequence.triggers, equals);
 	}

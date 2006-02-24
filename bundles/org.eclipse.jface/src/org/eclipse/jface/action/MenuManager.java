@@ -181,8 +181,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * contribution items. Use <code>removeAll</code> for that purpose.
      */
     public void dispose() {
-        if (menuExist())
-            menu.dispose();
+        if (menuExist()) {
+			menu.dispose();
+		}
         menu = null;
 
         if (menuItem != null) {
@@ -213,15 +214,17 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     public void fill(Menu parent, int index) {
         if (menuItem == null || menuItem.isDisposed()) {
-            if (index >= 0)
-                menuItem = new MenuItem(parent, SWT.CASCADE, index);
-            else
-                menuItem = new MenuItem(parent, SWT.CASCADE);
+            if (index >= 0) {
+				menuItem = new MenuItem(parent, SWT.CASCADE, index);
+			} else {
+				menuItem = new MenuItem(parent, SWT.CASCADE);
+			}
 
             menuItem.setText(getMenuText());
 
-            if (!menuExist())
-                menu = new Menu(parent);
+            if (!menuExist()) {
+				menu = new Menu(parent);
+			}
 
             menuItem.setMenu(menu);
 
@@ -244,8 +247,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     public IMenuManager findMenuUsingPath(String path) {
         IContributionItem item = findUsingPath(path);
-        if (item instanceof IMenuManager)
-            return (IMenuManager) item;
+        if (item instanceof IMenuManager) {
+			return (IMenuManager) item;
+		}
         return null;
     }
 
@@ -385,8 +389,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * Notifies all listeners that this menu is about to appear.
      */
     private void handleAboutToShow() {
-        if (removeAllWhenShown)
-            removeAll();
+        if (removeAllWhenShown) {
+			removeAll();
+		}
         fireAboutToShow(this);
         update(false, true);
     }
@@ -464,8 +469,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * @see org.eclipse.jface.action.IContributionItem#isVisible()
      */
     public boolean isVisible() {
-        if (!visible)
-            return false; // short circut calculations in this case
+        if (!visible) {
+			return false; // short circut calculations in this case
+		}
 
         // menus arent visible if all of its children are invisible (or only contains visible separators).
         IContributionItem[] childItems = getItems();
@@ -594,16 +600,18 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 IContributionItem separator = null;
                 for (int i = 0; i < items.length; ++i) {
                     IContributionItem ci = items[i];
-                    if (!ci.isVisible())
-                        continue;
+                    if (!ci.isVisible()) {
+						continue;
+					}
                     if (ci.isSeparator()) {
                         // delay creation until necessary 
                         // (handles both adjacent separators, and separator at end)
                         separator = ci;
                     } else {
                         if (separator != null) {
-                            if (clean.size() > 0) // no separator if first item
-                                clean.add(separator);
+                            if (clean.size() > 0) {
+								clean.add(separator);
+							}
                             separator = null;
                         }
                         clean.add(ci);
@@ -635,10 +643,11 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                     IContributionItem dest;
 
                     // get corresponding item in SWT widget
-                    if (srcIx < mi.length)
-                        dest = (IContributionItem) mi[srcIx].getData();
-                    else
-                        dest = null;
+                    if (srcIx < mi.length) {
+						dest = (IContributionItem) mi[srcIx].getData();
+					} else {
+						dest = null;
+					}
 
                     if (dest != null && src.equals(dest)) {
                         srcIx++;
@@ -666,17 +675,20 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                     // sub sub menus is lost.
                     if (recursive) {
                         IContributionItem item = src;
-                        if (item instanceof SubContributionItem)
-                            item = ((SubContributionItem) item).getInnerItem();
-                        if (item instanceof IMenuManager)
-                            ((IMenuManager) item).updateAll(force);
+                        if (item instanceof SubContributionItem) {
+							item = ((SubContributionItem) item).getInnerItem();
+						}
+                        if (item instanceof IMenuManager) {
+							((IMenuManager) item).updateAll(force);
+						}
                     }
 
                 }
 
                 // remove any old menu items not accounted for
-                for (; srcIx < mi.length; srcIx++)
-                    mi[srcIx].dispose();
+                for (; srcIx < mi.length; srcIx++) {
+					mi[srcIx].dispose();
+				}
 
                 setDirty(false);
             }
@@ -704,15 +716,17 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     public void update(String property) {
         IContributionItem items[] = getItems();
 
-        for (int i = 0; i < items.length; i++)
-            items[i].update(property);
+        for (int i = 0; i < items.length; i++) {
+			items[i].update(property);
+		}
 
         if (menu != null && !menu.isDisposed() && menu.getParentItem() != null
                 && IAction.TEXT.equals(property)) {
             String text = getOverrides().getText(this);
 
-            if (text == null)
-                text = getMenuText();
+            if (text == null) {
+				text = getMenuText();
+			}
 
             if (text != null) {
                 ExternalActionManager.ICallback callback = ExternalActionManager
@@ -726,11 +740,12 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                                 .charAt(index + 1));
 
                         if (callback.isAcceleratorInUse(SWT.ALT | character)) {
-                            if (index == 0)
-                                text = text.substring(1);
-                            else
-                                text = text.substring(0, index)
+                            if (index == 0) {
+								text = text.substring(1);
+							} else {
+								text = text.substring(0, index)
                                         + text.substring(index + 1);
+							}
                         }
                     }
                 }
@@ -779,10 +794,12 @@ public class MenuManager extends ContributionManager implements IMenuManager {
             if (menuItem.getEnabled() != enabled) {
                 // We only do this for context menus (for bug #34969)
                 Menu topMenu = menu;
-                while (topMenu.getParentMenu() != null)
-                    topMenu = topMenu.getParentMenu();
-                if ((topMenu.getStyle() & SWT.BAR) == 0)
-                    menuItem.setEnabled(enabled);
+                while (topMenu.getParentMenu() != null) {
+					topMenu = topMenu.getParentMenu();
+				}
+                if ((topMenu.getStyle() & SWT.BAR) == 0) {
+					menuItem.setEnabled(enabled);
+				}
             }
         }
     }

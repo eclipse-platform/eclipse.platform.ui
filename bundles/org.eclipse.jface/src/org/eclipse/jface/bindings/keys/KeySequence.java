@@ -91,8 +91,9 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 */
 	public static final KeySequence getInstance(final KeySequence keySequence,
 			final KeyStroke keyStroke) {
-		if (keySequence == null || keyStroke == null)
+		if (keySequence == null || keyStroke == null) {
 			throw new NullPointerException();
+		}
 
 		final KeyStroke[] oldKeyStrokes = keySequence.getKeyStrokes();
 		final int oldKeyStrokeLength = oldKeyStrokes.length;
@@ -158,17 +159,19 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 */
 	public static final KeySequence getInstance(final String string)
 			throws ParseException {
-		if (string == null)
+		if (string == null) {
 			throw new NullPointerException();
+		}
 
 		final List keyStrokes = new ArrayList();
 		final StringTokenizer stringTokenizer = new StringTokenizer(string,
 				KEY_STROKE_DELIMITERS);
 
 		try {
-			while (stringTokenizer.hasMoreTokens())
+			while (stringTokenizer.hasMoreTokens()) {
 				keyStrokes.add(KeyStroke.getInstance(stringTokenizer
 						.nextToken()));
+			}
 
 			final KeyStroke[] keyStrokeArray = (KeyStroke[]) keyStrokes
 					.toArray(new KeyStroke[keyStrokes.size()]);
@@ -199,8 +202,9 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 		for (int i = 0; i < triggers.length - 1; i++) {
 			KeyStroke keyStroke = (KeyStroke) triggers[i];
 
-			if (!keyStroke.isComplete())
+			if (!keyStroke.isComplete()) {
 				throw new IllegalArgumentException();
+			}
 		}
 	}
 

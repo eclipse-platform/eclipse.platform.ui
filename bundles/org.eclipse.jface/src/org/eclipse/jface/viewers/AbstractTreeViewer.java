@@ -121,8 +121,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
         Widget[] widgets = internalFindItems(parentElementOrTreePath);
         // If parent hasn't been realized yet, just ignore the add.
-        if (widgets.length == 0)
-            return;
+        if (widgets.length == 0) {
+			return;
+		}
 
 		for (int i = 0; i < widgets.length; i++) {
 			internalAdd(widgets[i], parentElementOrTreePath, childElements);
@@ -224,8 +225,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                     }
                 }
                 // append a dummy if necessary
-                if (needDummy && !haveDummy) 
-                    newItem(ti, SWT.NULL, -1);
+                if (needDummy && !haveDummy) {
+					newItem(ti, SWT.NULL, -1);
+				}
                 return;
             }
         }
@@ -237,8 +239,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			if(sorter != null) {
 				if (sorter instanceof TreePathViewerSorter) {
 					TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
-					if (path == null)
+					if (path == null) {
 						path = internalGetSorterParentPath(widget, sorter);
+					}
 					tpvs.sort(this, path, filtered);
 				} else {
 					sorter.sort(this,filtered);
@@ -262,11 +265,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				boolean add = true;
 				for (int j = 0; j < filters.length; j++) {
 					add = filters[j].select(this, parentElementOrTreePath, elements[i]);
-					if (!add)
+					if (!add) {
 						break;
+					}
 				}
-				if (add)
+				if (add) {
 					filtered.add(elements[i]);
+				}
 			}
 			return filtered.toArray();
 		}
@@ -282,8 +287,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     private void createAddedElements(Widget widget, Object[] elements) {
 
 		if(elements.length == 1){
-			if (equals(elements[0], widget.getData()))
+			if (equals(elements[0], widget.getData())) {
 				return;
+			}
 		}
 		
 		ViewerSorter sorter = getSorter ();
@@ -316,9 +322,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			else{
 				lastInsertion = insertionPosition(items,sorter,lastInsertion, element, parentPath);
 				//As we are only searching the original array we keep track of those positions only
-				if(lastInsertion == items.length)
+				if(lastInsertion == items.length) {
 					index = -1;
-				else{//See if we should just refresh
+				} else{//See if we should just refresh
 					while(lastInsertion < items.length && internalCompare(sorter,parentPath,element,items[lastInsertion].getData()) == 0){
 						//As we cannot assume the sorter is consistent with equals() - therefore we can
 						// just check against the item prior to this index (if any)
@@ -330,14 +336,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 						lastInsertion ++;//We had an insertion so increment
 					}
 					//Did we get to the end?
-					if(lastInsertion == items.length)
+					if(lastInsertion == items.length) {
 						index = -1;
-					else
+					} else {
 						index = lastInsertion + i; //Add the index as the array is growing					
+					}
 				}
 			}
-			if(newItem)
-				createTreeItem(widget, element, index);		
+			if(newItem) {
+				createTreeItem(widget, element, index);
+			}		
 		}
     }
 	
@@ -350,11 +358,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @return <code>true</code> if the element matches.
      */
 	private boolean itemExists(Item[] items, Object element) {
-		if(usingElementMap())//if we can do a constant time lookup find it
+		if(usingElementMap()) {
 			return findItem(element) != null;
+		}
 		for (int i = 0; i < items.length; i++) {
-			if(items[i].getData().equals(element))
+			if(items[i].getData().equals(element)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -381,8 +391,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element, TreePath parentPath) {
 		
 		int size = items.length;
-		if (sorter == null)
+		if (sorter == null) {
 			return size;
+		}
 	    int min = lastInsertion, max = size - 1;
 
 		while (min <= max) {
@@ -392,10 +403,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             if (compare == 0) {
                 return mid;//Return if we already match
             }
-            if (compare < 0)
-                min = mid + 1;
-            else
-                max = mid - 1;
+            if (compare < 0) {
+				min = mid + 1;
+			} else {
+				max = mid - 1;
+			}
 	        }
 	   return min;
 	    
@@ -437,8 +449,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		Item[] items = getChildren(parent);
 		int count = items.length;
 
-        if (sorter == null)
-            return count;
+        if (sorter == null) {
+			return count;
+		}
         int min = 0, max = count - 1;
 
         while (min <= max) {
@@ -457,10 +470,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 }
                 return mid;
             }
-            if (compare < 0)
-                min = mid + 1;
-            else
-                max = mid - 1;
+            if (compare < 0) {
+				min = mid + 1;
+			} else {
+				max = mid - 1;
+			}
         }
         return min;
     }
@@ -527,8 +541,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				if (w != null) {
 					path = internalGetSorterParentPath(w, sorter);
 				}
-				if (path == null)
+				if (path == null) {
 					path = TreePath.EMPTY.createChildPath(parentElementOrTreePath);
+				}
 			}
 	    	tpvs.sort(this, path, result);
 		} else if (sorter != null) {
@@ -649,8 +664,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     public void collapseToLevel(Object elementOrTreePath, int level) {
         Assert.isNotNull(elementOrTreePath);
         Widget w = internalGetWidgetToSelect(elementOrTreePath);
-        if (w != null)
-            internalCollapseToLevel(w, level);
+        if (w != null) {
+			internalCollapseToLevel(w, level);
+		}
     }
 
     /**
@@ -668,8 +684,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         final Item[] tis = getChildren(widget);
         if (tis != null && tis.length > 0) {
             Object data = tis[0].getData();
-            if (data != null)
-                return; // children already there!
+            if (data != null) {
+				return; // children already there!
+			}
         }
 
         BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
@@ -733,8 +750,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         // recursively unmapping the items is only required when
         // the hash map is used. In the other case disposing
         // an item will recursively dispose its children.
-        if (usingElementMap())
-            disassociateChildren(item);
+        if (usingElementMap()) {
+			disassociateChildren(item);
+		}
     }
 
     /**
@@ -747,8 +765,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     private void disassociateChildren(Item item) {
         Item[] items = getChildren(item);
         for (int i = 0; i < items.length; i++) {
-            if (items[i].getData() != null)
-                disassociate(items[i]);
+            if (items[i].getData() != null) {
+				disassociate(items[i]);
+			}
         }
     }
 
@@ -756,11 +775,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     protected Widget doFindInputItem(Object element) {
         // compare with root
         Object root = getRoot();
-        if (root == null)
-            return null;
+        if (root == null) {
+			return null;
+		}
 
-        if (equals(root, element))
-            return getControl();
+        if (equals(root, element)) {
+			return getControl();
+		}
         return null;
     }
 
@@ -768,15 +789,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     protected Widget doFindItem(Object element) {
         // compare with root
         Object root = getRoot();
-        if (root == null)
-            return null;
+        if (root == null) {
+			return null;
+		}
 
         Item[] items = getChildren(getControl());
         if (items != null) {
             for (int i = 0; i < items.length; i++) {
                 Widget o = internalFindItem(items[i], element);
-                if (o != null)
-                    return o;
+                if (o != null) {
+					return o;
+				}
             }
         }
         return null;
@@ -846,8 +869,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     public void expandToLevel(Object elementOrTreePath, int level) {
         Widget w = internalExpand(elementOrTreePath, true);
-        if (w != null)
-            internalExpandToLevel(w, level);
+        if (w != null) {
+			internalExpandToLevel(w, level);
+		}
     }
 
     /**
@@ -975,8 +999,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     public boolean getExpandedState(Object elementOrTreePath) {
         Assert.isNotNull(elementOrTreePath);
         Widget item = internalGetWidgetToSelect(elementOrTreePath);
-        if (item instanceof Item)
-            return getExpanded((Item) item);
+        if (item instanceof Item) {
+			return getExpanded((Item) item);
+		}
         return false;
     }
 
@@ -1038,8 +1063,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         }
         Item[] siblings = getItems(parent);
         if (siblings != null){
-        	if(siblings.length <= 1) 
-        		return getNextItem(parent, false);
+        	if(siblings.length <= 1) {
+				return getNextItem(parent, false);
+			}
         	
         	for (int i = 0; i < siblings.length; i++) {
                 if (siblings[i] == item && i < (siblings.length - 1)) {
@@ -1101,8 +1127,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			path = null;
 		}
         if (parent != null) {
-            if (equals(parent, getRoot()))
-                return super.getRawChildren(parent);
+            if (equals(parent, getRoot())) {
+				return super.getRawChildren(parent);
+			}
             IContentProvider cp = getContentProvider();
              if (cp instanceof ITreePathContentProvider) {
     			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
@@ -1118,13 +1145,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     				}
     			}
     			Object[] result = tpcp.getChildren(path);
-                if (result != null)
-                    return result;
+                if (result != null) {
+					return result;
+				}
     		} else if (cp instanceof ITreeContentProvider) {
     			ITreeContentProvider tcp = (ITreeContentProvider) cp;
                 Object[] result = tcp.getChildren(parent);
-                if (result != null)
-                    return result;
+                if (result != null) {
+					return result;
+				}
     		}
         }
         return new Object[0];
@@ -1146,8 +1175,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         for (int i = 0; i < items.length; i++) {
             Widget item = items[i];
             Object e = item.getData();
-            if (e != null)
-                list.add(e);
+            if (e != null) {
+				list.add(e);
+			}
         }
         return list;
     }
@@ -1204,14 +1234,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 boolean useRedraw = true;
                 // (size > REDRAW_THRESHOLD) || (table.getItemCount() >
                 // REDRAW_THRESHOLD);
-                if (useRedraw)
-                    tree.setRedraw(false);
+                if (useRedraw) {
+					tree.setRedraw(false);
+				}
                 removeAll(tree);
                 tree.setData(getRoot());
                 createChildren(tree);
                 internalExpandToLevel(tree, expandToLevel);
-                if (useRedraw)
-                    tree.setRedraw(true);
+                if (useRedraw) {
+					tree.setRedraw(true);
+				}
             }
         });
     }
@@ -1232,16 +1264,18 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     protected void internalCollapseToLevel(Widget widget, int level) {
         if (level == ALL_LEVELS || level > 0) {
 
-            if (widget instanceof Item)
-                setExpanded((Item) widget, false);
+            if (widget instanceof Item) {
+				setExpanded((Item) widget, false);
+			}
 
             if (level == ALL_LEVELS || level > 1) {
                 Item[] children = getChildren(widget);
                 if (children != null) {
                     int nextLevel = (level == ALL_LEVELS ? ALL_LEVELS
                             : level - 1);
-                    for (int i = 0; i < children.length; i++)
-                        internalCollapseToLevel(children[i], nextLevel);
+                    for (int i = 0; i < children.length; i++) {
+						internalCollapseToLevel(children[i], nextLevel);
+					}
                 }
             }
         }
@@ -1282,8 +1316,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected Widget internalExpand(Object elementOrPath, boolean expand) {
 
-        if (elementOrPath == null)
-            return null;
+        if (elementOrPath == null) {
+			return null;
+		}
 
         Widget w = internalGetWidgetToSelect(elementOrPath);
         if (w == null) {
@@ -1356,8 +1391,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
 			TreePath[] paths = tpcp.getParents(elementOrTreePath);
 			if (paths.length > 0) {
-				if (paths[0].getSegmentCount() == 0)
+				if (paths[0].getSegmentCount() == 0) {
 					return getInput();
+				}
 				return paths[0].getLastSegment();
 			}
 		}
@@ -1413,15 +1449,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     protected void internalExpandToLevel(Widget widget, int level) {
         if (level == ALL_LEVELS || level > 0) {
     		createChildren(widget);
-            if (widget instanceof Item)
-                setExpanded((Item) widget, true);
+            if (widget instanceof Item) {
+				setExpanded((Item) widget, true);
+			}
             if (level == ALL_LEVELS || level > 1) {
                 Item[] children = getChildren(widget);
                 if (children != null) {
                     int newLevel = (level == ALL_LEVELS ? ALL_LEVELS
                             : level - 1);
-                    for (int i = 0; i < children.length; i++)
-                        internalExpandToLevel(children[i], newLevel);
+                    for (int i = 0; i < children.length; i++) {
+						internalExpandToLevel(children[i], newLevel);
+					}
                 }
             }
         }
@@ -1442,8 +1480,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         for (int i = 0; i < items.length; i++) {
             Item item = items[i];
             Object data = item.getData();
-            if (data != null && equals(data, element))
-                return item;
+            if (data != null && equals(data, element)) {
+				return item;
+			}
         }
         return null;
     }
@@ -1462,16 +1501,18 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         // compare with node
         Object data = parent.getData();
         if (data != null) {
-            if (equals(data, element))
-                return parent;
+            if (equals(data, element)) {
+				return parent;
+			}
         }
         // recurse over children
         Item[] items = getChildren(parent);
         for (int i = 0; i < items.length; i++) {
             Item item = items[i];
             Widget o = internalFindItem(item, element);
-            if (o != null)
-                return o;
+            if (o != null) {
+				return o;
+			}
         }
         return null;
     }
@@ -1544,8 +1585,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 for (int i = 0; i < children.length; i++) {
                     Widget item = children[i];
                     Object data = item.getData();
-                    if (data != null)
-                        internalRefresh(item, data, doStruct, updateLabels);
+                    if (data != null) {
+						internalRefresh(item, data, doStruct, updateLabels);
+					}
                 }
             }
         }
@@ -1566,8 +1608,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             for (int i = 0; i < children.length; i++) {
                 Widget item = children[i];
                 Object data = item.getData();
-                if (data != null)
-                    internalRefreshStruct(item, data, updateLabels);
+                if (data != null) {
+					internalRefreshStruct(item, data, updateLabels);
+				}
             }
         }
     }
@@ -1621,8 +1664,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		Control tree = getControl();
         for (Enumeration e = parentItems.keys(); e.hasMoreElements();) {
             Item parentItem = (Item) e.nextElement();
-            if(parentItem.isDisposed())
-            	continue;
+            if(parentItem.isDisposed()) {
+				continue;
+			}
             if (!getExpanded(parentItem) && getItemCount(parentItem) == 0) {
                 // append a dummy if necessary
                 if (isExpandable(parentItem, null, parentItem.getData())) {
@@ -1932,8 +1976,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     public void reveal(Object elementOrTreePath) {
         Assert.isNotNull(elementOrTreePath);
         Widget w = internalExpand(elementOrTreePath, true);
-        if (w instanceof Item)
-            showItem((Item) w);
+        if (w instanceof Item) {
+			showItem((Item) w);
+		}
     }
 
     /**
@@ -2241,8 +2286,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
         // WORKAROUND
         int oldCnt = -1;
-        if (widget == tree)
-            oldCnt = getItemCount(tree);
+        if (widget == tree) {
+			oldCnt = getItemCount(tree);
+		}
 
         Item[] items = getChildren(widget);
 
@@ -2383,10 +2429,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         if (data != null && equals(element, data)) {
             // item shows same element
             if (hasPlus != needsPlus) {
-                if (needsPlus)
-                    addDummy = true;
-                else
-                    removeAll = true;
+                if (needsPlus) {
+					addDummy = true;
+				} else {
+					removeAll = true;
+				}
             }
         } else {
             // item shows different element
@@ -2400,13 +2447,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             // remove all children
             Item[] items = getItems(item);
             for (int i = 0; i < items.length; i++) {
-                if (items[i].getData() != null)
-                    disassociate(items[i]);
+                if (items[i].getData() != null) {
+					disassociate(items[i]);
+				}
                 items[i].dispose();
             }
         }
-        if (addDummy)
-            newItem(item, SWT.NULL, -1); // append a dummy
+        if (addDummy) {
+			newItem(item, SWT.NULL, -1); // append a dummy
+		}
     }
 
     /**
@@ -2428,8 +2477,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             Item item = items[i];
             if (getExpanded(item)) {
                 Object data = item.getData();
-                if (data != null)
-                    result.add(data);
+                if (data != null) {
+					result.add(data);
+				}
                 //Only recurse if it is expanded - if
                 //not then the children aren't visible
                 internalCollectVisibleExpanded(result, item);
@@ -2559,15 +2609,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 						|| (childItems.length > 0 && childItems[0].getData() != null)) {
 					// item has real children, go ahead and add
 					int insertionPosition = position;
-					if (insertionPosition == -1)
+					if (insertionPosition == -1) {
 						insertionPosition = getItemCount(item);
+					}
 
 					createTreeItem(item, element, position);
 				}
 			} else {
 				int insertionPosition = position;
-				if (insertionPosition == -1)
+				if (insertionPosition == -1) {
 					insertionPosition = getItemCount((Control)widget);
+				}
 
 				createTreeItem(widget, element, position);
 			}

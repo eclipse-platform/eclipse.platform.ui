@@ -105,10 +105,11 @@ public abstract class ListEditor extends FieldEditor {
 
         if (input != null) {
             int index = list.getSelectionIndex();
-            if (index >= 0)
-                list.add(input, index + 1);
-            else
-                list.add(input, 0);
+            if (index >= 0) {
+				list.add(input, index + 1);
+			} else {
+				list.add(input, 0);
+			}
             selectionChanged();
         }
     }
@@ -245,8 +246,9 @@ public abstract class ListEditor extends FieldEditor {
      */
     protected void doStore() {
         String s = createList(list.getItems());
-        if (s != null)
-            getPreferenceStore().setValue(getPreferenceName(), s);
+        if (s != null) {
+			getPreferenceStore().setValue(getPreferenceName(), s);
+		}
     }
 
     /**
@@ -335,8 +337,9 @@ public abstract class ListEditor extends FieldEditor {
      * @return the selection listener
      */
     private SelectionListener getSelectionListener() {
-        if (selectionListener == null)
-            createSelectionListener();
+        if (selectionListener == null) {
+			createSelectionListener();
+		}
         return selectionListener;
     }
 
@@ -350,8 +353,9 @@ public abstract class ListEditor extends FieldEditor {
      * @return the shell
      */
     protected Shell getShell() {
-        if (addButton == null)
-            return null;
+        if (addButton == null) {
+			return null;
+		}
         return addButton.getShell();
     }
 

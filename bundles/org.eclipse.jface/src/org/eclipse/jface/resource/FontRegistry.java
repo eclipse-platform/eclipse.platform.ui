@@ -85,10 +85,12 @@ public class FontRegistry extends ResourceRegistry {
          */
         void dispose() {
             baseFont.dispose();
-            if (boldFont != null)
-                boldFont.dispose();
-            if (italicFont != null)
-                italicFont.dispose();
+            if (boldFont != null) {
+				boldFont.dispose();
+			}
+            if (italicFont != null) {
+				italicFont.dispose();
+			}
         }
 
         /**
@@ -105,8 +107,9 @@ public class FontRegistry extends ResourceRegistry {
          * @return Font
          */
         public Font getBoldFont() {
-            if (boldFont != null)
-                return boldFont;
+            if (boldFont != null) {
+				return boldFont;
+			}
 
             FontData[] boldData = getModifiedFontData(SWT.BOLD);
             boldFont = new Font(Display.getCurrent(), boldData);
@@ -137,8 +140,9 @@ public class FontRegistry extends ResourceRegistry {
          * @return Font
          */
         public Font getItalicFont() {
-            if (italicFont != null)
-                return italicFont;
+            if (italicFont != null) {
+				return italicFont;
+			}
 
             FontData[] italicData = getModifiedFontData(SWT.ITALIC);
             italicFont = new Font(Display.getCurrent(), italicData);
@@ -154,12 +158,15 @@ public class FontRegistry extends ResourceRegistry {
         void addAllocatedFontsToStale(Font defaultFont) {
             //Return all of the fonts allocated by the receiver.
             //if any of them are the defaultFont then don't bother.
-            if (defaultFont != baseFont && baseFont != null)
-                staleFonts.add(baseFont);
-            if (defaultFont != boldFont && boldFont != null)
-                staleFonts.add(boldFont);
-            if (defaultFont != italicFont && italicFont != null)
-                staleFonts.add(italicFont);
+            if (defaultFont != baseFont && baseFont != null) {
+				staleFonts.add(baseFont);
+			}
+            if (defaultFont != boldFont && boldFont != null) {
+				staleFonts.add(boldFont);
+			}
+            if (defaultFont != italicFont && italicFont != null) {
+				staleFonts.add(italicFont);
+			}
         }
     }
 
@@ -297,8 +304,9 @@ public class FontRegistry extends ResourceRegistry {
         ResourceBundle bundle = null;
         if (osname != null) {
             OSLocation = location + "_" + osname; //$NON-NLS-1$
-            if (wsname != null)
-                WSLocation = OSLocation + "_" + wsname; //$NON-NLS-1$
+            if (wsname != null) {
+				WSLocation = OSLocation + "_" + wsname; //$NON-NLS-1$
+			}
         }
 
         try {
@@ -312,8 +320,9 @@ public class FontRegistry extends ResourceRegistry {
                 if (location != OSLocation) {
                     bundle = ResourceBundle.getBundle(location);
                     readResourceBundle(bundle, WSLocation);
-                } else
-                    throw osException;
+                } else {
+					throw osException;
+				}
             }
         }
     }
@@ -339,8 +348,9 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	public FontRegistry(Display display, boolean cleanOnDisplayDisposal) {
 		Assert.isNotNull(display);
-		if (cleanOnDisplayDisposal)
+		if (cleanOnDisplayDisposal) {
 			hookDisplayDispose(display);
+		}
 	}
 
     /**
@@ -355,8 +365,9 @@ public class FontRegistry extends ResourceRegistry {
         for (int i = 0; i < fonts.length; i++) {
             FontData fd = fonts[i];
 
-            if (fd == null)
-                break;
+            if (fd == null) {
+				break;
+			}
 
             FontData[] fixedFonts = display.getFontList(fd.getName(), false);
             if (isFixedFont(fixedFonts, fd)) {
@@ -371,8 +382,9 @@ public class FontRegistry extends ResourceRegistry {
 
         //None of the provided datas are valid. Return the
         //first one as it is at least the first choice.
-        if (fonts.length > 0)
-            return fonts[0];
+        if (fonts.length > 0) {
+			return fonts[0];
+		}
         
         //Nothing specified 
         return null;
@@ -388,8 +400,9 @@ public class FontRegistry extends ResourceRegistry {
     public FontData[] bestDataArray(FontData[] fonts, Display display) {
 
         FontData bestData = bestData(fonts, display);
-        if (bestData == null)
-            return null;
+        if (bestData == null) {
+			return null;
+		}
         
         FontData[] datas = new FontData[1];
         datas[0] = bestData;
@@ -411,8 +424,9 @@ public class FontRegistry extends ResourceRegistry {
     	for (int i = 0; i < fonts.length; i++) {
             FontData fd = fonts[i];
 
-            if (fd == null)
-                continue;
+            if (fd == null) {
+				continue;
+			}
 
             FontData[] fixedFonts = display.getFontList(fd.getName(), false);
             if (isFixedFont(fixedFonts, fd)) {
@@ -446,8 +460,9 @@ public class FontRegistry extends ResourceRegistry {
      */
     private FontRecord createFont(String symbolicName, FontData[] fonts) {
         Display display = Display.getCurrent();
-        if (display == null)
-            return null;
+        if (display == null) {
+			return null;
+		}
 
         FontData[] validData = filterData(fonts, display);
         if (validData.length == 0) {
@@ -518,8 +533,9 @@ public class FontRegistry extends ResourceRegistry {
 
         Assert.isNotNull(symbolicName);
         Object result = stringToFontData.get(symbolicName);
-        if (result == null)
-            return defaultFontData();
+        if (result == null) {
+			return defaultFontData();
+		}
 
         return (FontData[]) result;
     }
@@ -573,20 +589,23 @@ public class FontRegistry extends ResourceRegistry {
     private FontRecord getFontRecord(String symbolicName) {
         Assert.isNotNull(symbolicName);
         Object result = stringToFontRecord.get(symbolicName);
-        if (result != null)
-            return (FontRecord) result;
+        if (result != null) {
+			return (FontRecord) result;
+		}
 
         result = stringToFontData.get(symbolicName);
 
         FontRecord fontRecord;
 
-        if (result == null)
-            fontRecord = defaultFontRecord();
-        else
-            fontRecord = createFont(symbolicName, (FontData[]) result);
+        if (result == null) {
+			fontRecord = defaultFontRecord();
+		} else {
+			fontRecord = createFont(symbolicName, (FontData[]) result);
+		}
 
-        if (fontRecord == null) // create may have failed.  Ensure we have a valid font.
-            fontRecord = defaultFontRecord();
+        if (fontRecord == null) {
+			fontRecord = defaultFontRecord();
+		}
 
         stringToFontRecord.put(symbolicName, fontRecord);
         return fontRecord;
@@ -651,8 +670,9 @@ public class FontRegistry extends ResourceRegistry {
         String name = fd.getName();
         for (int i = 0; i < fixedFonts.length; i++) {
             FontData fixed = fixedFonts[i];
-            if (fixed.getHeight() == height && fixed.getName().equals(name))
-                return true;
+            if (fixed.getHeight() == height && fixed.getName().equals(name)) {
+				return true;
+			}
         }
         return false;
     }
@@ -706,17 +726,20 @@ public class FontRegistry extends ResourceRegistry {
         Assert.isNotNull(fontData);
 
         FontData[] existing = (FontData[]) stringToFontData.get(symbolicName);
-        if (Arrays.equals(existing, fontData))
-            return;
+        if (Arrays.equals(existing, fontData)) {
+			return;
+		}
 
         FontRecord oldFont = (FontRecord) stringToFontRecord
                 .remove(symbolicName);
         stringToFontData.put(symbolicName, fontData);
-        if (update)
-            fireMappingChanged(symbolicName, existing, fontData);
+        if (update) {
+			fireMappingChanged(symbolicName, existing, fontData);
+		}
 
-        if (oldFont != null)
-            oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
+        if (oldFont != null) {
+			oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
+		}
     }
 
     /**

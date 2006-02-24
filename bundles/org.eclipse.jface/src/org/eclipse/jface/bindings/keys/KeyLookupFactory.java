@@ -59,8 +59,9 @@ public final class KeyLookupFactory {
 	 *            the default look-up. Must not be <code>null</code>.
 	 */
 	public static final void setDefault(final IKeyLookup defaultLookup) {
-		if (defaultLookup == null)
+		if (defaultLookup == null) {
 			throw new NullPointerException("The look-up must not be null"); //$NON-NLS-1$
+		}
 
 		KeyLookupFactory.defaultLookup = defaultLookup;
 	}

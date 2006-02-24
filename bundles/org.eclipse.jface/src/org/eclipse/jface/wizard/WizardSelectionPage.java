@@ -57,11 +57,13 @@ public abstract class WizardSelectionPage extends WizardPage {
      * @param node the wizard node, or <code>null</code>
      */
     private void addSelectedNode(IWizardNode node) {
-        if (node == null)
-            return;
+        if (node == null) {
+			return;
+		}
 
-        if (selectedWizardNodes.contains(node))
-            return;
+        if (selectedWizardNodes.contains(node)) {
+			return;
+		}
 
         selectedWizardNodes.add(node);
     }
@@ -93,8 +95,9 @@ public abstract class WizardSelectionPage extends WizardPage {
      * of the currently selected wizard if there is one.
      */
     public IWizardPage getNextPage() {
-        if (selectedNode == null)
-            return null;
+        if (selectedNode == null) {
+			return null;
+		}
 
         boolean isCreated = selectedNode.isContentCreated();
 
@@ -105,9 +108,10 @@ public abstract class WizardSelectionPage extends WizardPage {
             return null;
         }
 
-        if (!isCreated)
-            // Allow the wizard to create its pages
+        if (!isCreated) {
+			// Allow the wizard to create its pages
             wizard.addPages();
+		}
 
         return wizard.getStartingPage();
     }
@@ -129,7 +133,8 @@ public abstract class WizardSelectionPage extends WizardPage {
     protected void setSelectedNode(IWizardNode node) {
         addSelectedNode(node);
         selectedNode = node;
-        if (isCurrentPage())
-            getContainer().updateButtons();
+        if (isCurrentPage()) {
+			getContainer().updateButtons();
+		}
     }
 }

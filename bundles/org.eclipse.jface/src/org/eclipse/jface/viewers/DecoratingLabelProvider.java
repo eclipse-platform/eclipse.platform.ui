@@ -151,10 +151,12 @@ public class DecoratingLabelProvider extends LabelProvider implements
      * decorator returns <code>true</code>.
      */
     public boolean isLabelProperty(Object element, String property) {
-        if (provider.isLabelProperty(element, property))
-            return true;
-        if (decorator != null && decorator.isLabelProperty(element, property))
-            return true;
+        if (provider.isLabelProperty(element, property)) {
+			return true;
+		}
+        if (decorator != null && decorator.isLabelProperty(element, property)) {
+			return true;
+		}
         return false;
     }
 
@@ -223,16 +225,18 @@ public class DecoratingLabelProvider extends LabelProvider implements
         // update icon and label
 
         if (decorationReady || oldText == null
-                || settings.getText().length() == 0)
-            settings.setText(getText(element));
+                || settings.getText().length() == 0) {
+			settings.setText(getText(element));
+		}
 
         Image oldImage = settings.getImage();
         if (decorationReady || oldImage == null) {
             settings.setImage(getImage(element));
         }
  
-        if(decorationReady)
-        	updateForDecorationReady(settings,element);
+        if(decorationReady) {
+			updateForDecorationReady(settings,element);
+		}
 
     }
 
@@ -250,8 +254,9 @@ public class DecoratingLabelProvider extends LabelProvider implements
 			settings.setForeground(colorDecorator.decorateForeground(element));
 		}
 		
-		if(decorator instanceof IFontDecorator)
+		if(decorator instanceof IFontDecorator) {
 			settings.setFont(((IFontDecorator) decorator).decorateFont(element));
+		}
 		
 	}
 	
@@ -259,8 +264,9 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
 	public Color getBackground(Object element) {
-		if(provider instanceof IColorProvider)
+		if(provider instanceof IColorProvider) {
 			return ((IColorProvider) provider).getBackground(element);
+		}
 		return null;
 	}
 	
@@ -268,8 +274,9 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
 	public Font getFont(Object element) {
-		if(provider instanceof IFontProvider)
+		if(provider instanceof IFontProvider) {
 			return ((IFontProvider) provider).getFont(element);
+		}
 		return null;
 	}
 	
@@ -277,8 +284,9 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
-		if(provider instanceof IColorProvider)
+		if(provider instanceof IColorProvider) {
 			return ((IColorProvider) provider).getForeground(element);
+		}
 		return null;
 	}
 
@@ -326,20 +334,23 @@ public class DecoratingLabelProvider extends LabelProvider implements
         if (provider instanceof ITreePathLabelProvider) {
 			ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
 			if (decorationReady || oldText == null
-	                || settings.getText().length() == 0)
+	                || settings.getText().length() == 0) {
 				pprov.updateLabel(settings, elementPath);
+			}
 		} else {
 	        if (decorationReady || oldText == null
-	                || settings.getText().length() == 0)
-	            settings.setText(getText(element));
+	                || settings.getText().length() == 0) {
+				settings.setText(getText(element));
+			}
 	
 	        Image oldImage = settings.getImage();
 	        if (decorationReady || oldImage == null) {
 	            settings.setImage(getImage(element));
 	        }
 	 
-	        if(decorationReady)
-	        	updateForDecorationReady(settings,element);
+	        if(decorationReady) {
+				updateForDecorationReady(settings,element);
+			}
 		}
 
 	}

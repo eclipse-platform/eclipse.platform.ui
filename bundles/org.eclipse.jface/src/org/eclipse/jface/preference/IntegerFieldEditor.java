@@ -78,8 +78,9 @@ public class IntegerFieldEditor extends StringFieldEditor {
 
         Text text = getTextControl();
 
-        if (text == null)
-            return false;
+        if (text == null) {
+			return false;
+		}
 
         String numberString = text.getText();
         try {

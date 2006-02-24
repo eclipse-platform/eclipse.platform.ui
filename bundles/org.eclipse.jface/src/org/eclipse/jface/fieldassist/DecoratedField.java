@@ -212,8 +212,9 @@ public class DecoratedField {
 			hoverShell.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent pe) {
 					pe.gc.drawString(text, hm, hm);
-					if (!CARBON)
+					if (!CARBON) {
 						pe.gc.drawPolygon(getPolygon(true));
+					}
 				}
 			});
 			hoverShell.addMouseListener(new MouseAdapter() {
@@ -231,10 +232,11 @@ public class DecoratedField {
 		int[] getPolygon(boolean border) {
 			Point e = getExtent();
 			int b = border ? 1 : 0;
-			if (arrowOnLeft)
+			if (arrowOnLeft) {
 				return new int[] { 0, 0, e.x - b, 0, e.x - b, e.y - b,
 						hao + haw, e.y - b, hao + haw / 2, e.y + hah - b, hao,
 						e.y - b, 0, e.y - b, 0, 0 };
+			}
 			return new int[] { 0, 0, e.x - b, 0, e.x - b, e.y - b,
 					e.x - hao - b, e.y - b, e.x - hao - haw / 2, e.y + hah - b,
 					e.x - hao - haw, e.y - b, 0, e.y - b, 0, 0 };
@@ -245,8 +247,9 @@ public class DecoratedField {
 		 * allocated by the hover.
 		 */
 		void dispose() {
-			if (!hoverShell.isDisposed())
+			if (!hoverShell.isDisposed()) {
 				hoverShell.dispose();
+			}
 			if (region != null) {
 				region.dispose();
 			}
@@ -257,11 +260,13 @@ public class DecoratedField {
 		 */
 		void setVisible(boolean visible) {
 			if (visible) {
-				if (!hoverShell.isVisible())
+				if (!hoverShell.isVisible()) {
 					hoverShell.setVisible(true);
+				}
 			} else {
-				if (hoverShell.isVisible())
+				if (hoverShell.isVisible()) {
 					hoverShell.setVisible(false);
+				}
 			}
 		}
 
@@ -271,8 +276,9 @@ public class DecoratedField {
 		 * pointing the arrow toward the target control.
 		 */
 		void setText(String t, Control hoverNear, Control targetControl) {
-			if (t == null)
+			if (t == null) {
 				t = EMPTY;
+			}
 			if (!t.equals(text)) {
 				Point oldSize = getExtent();
 				text = t;
@@ -448,10 +454,11 @@ public class DecoratedField {
 		switch (index) {
 		case LEFT_TOP:
 		case LEFT_BOTTOM:
-			if (index == LEFT_TOP)
+			if (index == LEFT_TOP) {
 				opposing = LEFT_BOTTOM;
-			else 
+			} else {
 				opposing = LEFT_TOP;
+			}
 			if (decDatas[opposing] == null) {
 				// No decorator on the opposing side.
 				// Attach the control to this decorator
@@ -479,10 +486,11 @@ public class DecoratedField {
 		 */
 		case RIGHT_TOP:
 		case RIGHT_BOTTOM:
-			if (index == RIGHT_TOP)
+			if (index == RIGHT_TOP) {
 				opposing = RIGHT_BOTTOM;
-			else
+			} else {
 				opposing = RIGHT_TOP;
+			}
 			if (decDatas[opposing] == null) {
 				// No decorator on the opposing side.
 				// Attach the control to this decorator.
@@ -552,8 +560,9 @@ public class DecoratedField {
 	private void addControlListeners() {
 		control.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
-				if (hover != null)
+				if (hover != null) {
 					hover.dispose();
+				}
 			}
 		});
 		control.addFocusListener(new FocusListener() {
@@ -684,8 +693,9 @@ public class DecoratedField {
 	 */
 	private void controlFocusGained() {
 		for (int i = 0; i < DECORATION_SLOTS; i++) {
-			if (decDatas[i] != null && decDatas[i].showOnFocus)
+			if (decDatas[i] != null && decDatas[i].showOnFocus) {
 				setVisible(decDatas[i], true);
+			}
 		}
 	}
 
@@ -695,8 +705,9 @@ public class DecoratedField {
 	 */
 	private void controlFocusLost() {
 		for (int i = 0; i < DECORATION_SLOTS; i++) {
-			if (decDatas[i] != null && decDatas[i].showOnFocus)
+			if (decDatas[i] != null && decDatas[i].showOnFocus) {
 				setVisible(decDatas[i], false);
+			}
 		}
 	}
 
@@ -710,14 +721,16 @@ public class DecoratedField {
 	 */
 	public void showDecoration(FieldDecoration decoration) {
 		FieldDecorationData data = getDecorationData(decoration);
-		if (data == null)
+		if (data == null) {
 			return;
+		}
 		// record the fact that client would like it to be visible
 		data.visible = true;
 		// even if it is supposed to be shown, if the field does not have focus,
 		// do not show it (yet)
-		if (!data.showOnFocus || control.isFocusControl())
+		if (!data.showOnFocus || control.isFocusControl()) {
 			setVisible(data, true);
+		}
 	}
 
 	/**
@@ -730,8 +743,9 @@ public class DecoratedField {
 	 */
 	public void hideDecoration(FieldDecoration decoration) {
 		FieldDecorationData data = getDecorationData(decoration);
-		if (data == null)
+		if (data == null) {
 			return;
+		}
 		// Store the desired visibility in the decData. We remember the
 		// client's instructions so that changes in visibility caused by
 		// field focus changes won't violate the client's visibility setting.
@@ -750,8 +764,9 @@ public class DecoratedField {
 	 */
 	public void updateDecoration(FieldDecoration decoration) {
 		FieldDecorationData data = getDecorationData(decoration);
-		if (data == null)
+		if (data == null) {
 			return;
+		}
 		if (data.label != null) {
 			data.label.setImage(decoration.getImage());
 			// If the decoration is being shown, and a hover is active,
@@ -772,10 +787,11 @@ public class DecoratedField {
 	private void setVisible(FieldDecorationData decData, boolean visible) {
 		// Check the decData visibility flag, since it contains the client's
 		// instructions for visibility.
-		if (visible && decData.visible)
+		if (visible && decData.visible) {
 			decData.label.setVisible(true);
-		else
+		} else {
 			decData.label.setVisible(false);
+		}
 	}
 
 	/*
@@ -785,8 +801,9 @@ public class DecoratedField {
 		for (int i = 0; i < DECORATION_SLOTS; i++) {
 			if (decDatas[i] != null && dec == decDatas[i].decoration
 					&& decDatas[i].label != null
-					&& !decDatas[i].label.isDisposed())
+					&& !decDatas[i].label.isDisposed()) {
 				return decDatas[i];
+			}
 		}
 		return null;
 	}
@@ -839,8 +856,9 @@ public class DecoratedField {
 	 * Return the width appropriate for the specified decoration image.
 	 */
 	private int widthOf(Image image) {
-		if (image == null)
+		if (image == null) {
 			return 0;
+		}
 		return useMaxDecorationWidth ? FieldDecorationRegistry.getDefault()
 				.getMaximumDecorationWidth() : image.getBounds().width;
 	}

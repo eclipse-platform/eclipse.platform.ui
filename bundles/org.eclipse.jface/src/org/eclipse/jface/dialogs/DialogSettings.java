@@ -151,9 +151,10 @@ public class DialogSettings implements IDialogSettings {
      */
     public double getDouble(String key) throws NumberFormatException {
         String setting = (String) items.get(key);
-        if (setting == null)
-            throw new NumberFormatException(
+        if (setting == null) {
+			throw new NumberFormatException(
                     "There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$ //$NON-NLS-2$
+		}
 
         return new Double(setting).doubleValue();
     }
@@ -163,9 +164,10 @@ public class DialogSettings implements IDialogSettings {
      */
     public float getFloat(String key) throws NumberFormatException {
         String setting = (String) items.get(key);
-        if (setting == null)
-            throw new NumberFormatException(
+        if (setting == null) {
+			throw new NumberFormatException(
                     "There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$ //$NON-NLS-2$
+		}
 
         return new Float(setting).floatValue();
     }
@@ -440,8 +442,9 @@ public class DialogSettings implements IDialogSettings {
     	}
 
     	private void printTabulation() {
-    		for (int i = 0; i < tab; i++)
-    			super.print('\t');
+    		for (int i = 0; i < tab; i++) {
+				super.print('\t');
+			}
     	}
 
     	public void printTag(String name, HashMap parameters, boolean close) {
@@ -452,8 +455,8 @@ public class DialogSettings implements IDialogSettings {
     		StringBuffer sb = new StringBuffer();
     		sb.append('<');
     		sb.append(name);
-    		if (parameters != null)
-    			for (Enumeration e = Collections.enumeration(parameters.keySet()); e.hasMoreElements();) {
+    		if (parameters != null) {
+				for (Enumeration e = Collections.enumeration(parameters.keySet()); e.hasMoreElements();) {
     				sb.append(" "); //$NON-NLS-1$
     				String key = (String) e.nextElement();
     				sb.append(key);
@@ -461,15 +464,19 @@ public class DialogSettings implements IDialogSettings {
     				sb.append(getEscaped(String.valueOf(parameters.get(key))));
     				sb.append("\""); //$NON-NLS-1$
     			}
-    		if (close)
-    			sb.append('/');
+			}
+    		if (close) {
+				sb.append('/');
+			}
     		sb.append('>');
-    		if (shouldTab)
-    			printTabulation();
-    		if (newLine)
-    			println(sb.toString());
-    		else
-    			print(sb.toString());
+    		if (shouldTab) {
+				printTabulation();
+			}
+    		if (newLine) {
+				println(sb.toString());
+			} else {
+				print(sb.toString());
+			}
     	}
 
     	public void startTag(String name, HashMap parameters) {
@@ -494,8 +501,9 @@ public class DialogSettings implements IDialogSettings {
 
     	private static String getEscaped(String s) {
     		StringBuffer result = new StringBuffer(s.length() + 10);
-    		for (int i = 0; i < s.length(); ++i)
-    			appendEscapedChar(result, s.charAt(i));
+    		for (int i = 0; i < s.length(); ++i) {
+				appendEscapedChar(result, s.charAt(i));
+			}
     		return result.toString();
     	}
 

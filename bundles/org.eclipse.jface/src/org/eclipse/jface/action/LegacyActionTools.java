@@ -188,14 +188,17 @@ public final class LegacyActionTools {
 	 * @return the accelerator text, or <code>null</code>
 	 */
 	public static final String extractAcceleratorText(final String text) {
-		if (text == null)
+		if (text == null) {
 			return null;
+		}
 
 		int index = text.lastIndexOf('\t');
-		if (index == -1)
+		if (index == -1) {
 			index = text.lastIndexOf('@');
-		if (index >= 0)
+		}
+		if (index >= 0) {
 			return text.substring(index + 1);
+		}
 		return null;
 	}
 
@@ -267,14 +270,17 @@ public final class LegacyActionTools {
 	 * @see SWT
 	 */
 	public static final int findKeyCode(String token) {
-		if (keyCodes == null)
+		if (keyCodes == null) {
 			initKeyCodes();
+		}
 		token = token.toUpperCase();
 		Integer i = (Integer) keyCodes.get(token);
-		if (i != null)
+		if (i != null) {
 			return i.intValue();
-		if (token.length() == 1)
+		}
+		if (token.length() == 1) {
 			return token.charAt(0);
+		}
 		return -1;
 	}
 
@@ -292,13 +298,15 @@ public final class LegacyActionTools {
 	 * @since 2.0
 	 */
 	public static final String findKeyString(final int keyCode) {
-		if (keyStrings == null)
+		if (keyStrings == null) {
 			initKeyStrings();
+		}
 		int i = keyCode & ~(SWT.CTRL | SWT.ALT | SWT.SHIFT | SWT.COMMAND);
 		Integer integer = new Integer(i);
 		String result = (String) keyStrings.get(integer);
-		if (result != null)
+		if (result != null) {
 			return result;
+		}
 		result = new String(new char[] { (char) i });
 		return result;
 	}
@@ -317,14 +325,17 @@ public final class LegacyActionTools {
 	 * @see #findKeyCode
 	 */
 	private static final int findLocalizedKeyCode(String token) {
-		if (localizedKeyCodes == null)
+		if (localizedKeyCodes == null) {
 			initLocalizedKeyCodes();
+		}
 		token = token.toUpperCase();
 		Integer i = (Integer) localizedKeyCodes.get(token);
-		if (i != null)
+		if (i != null) {
 			return i.intValue();
-		if (token.length() == 1)
+		}
+		if (token.length() == 1) {
 			return token.charAt(0);
+		}
 		return -1;
 	}
 
@@ -339,18 +350,23 @@ public final class LegacyActionTools {
 	 * @see #findModifier
 	 */
 	private static final int findLocalizedModifier(String token) {
-		if (localizedCtrl == null)
+		if (localizedCtrl == null) {
 			initLocalizedModifiers();
+		}
 
 		token = token.toUpperCase();
-		if (token.equals(localizedCtrl))
+		if (token.equals(localizedCtrl)) {
 			return SWT.CTRL;
-		if (token.equals(localizedShift))
+		}
+		if (token.equals(localizedShift)) {
 			return SWT.SHIFT;
-		if (token.equals(localizedAlt))
+		}
+		if (token.equals(localizedAlt)) {
 			return SWT.ALT;
-		if (token.equals(localizedCommand))
+		}
+		if (token.equals(localizedCommand)) {
 			return SWT.COMMAND;
+		}
 		return 0;
 	}
 
@@ -368,14 +384,18 @@ public final class LegacyActionTools {
 	 */
 	public static final int findModifier(String token) {
 		token = token.toUpperCase();
-		if (token.equals("CTRL")) //$NON-NLS-1$
+		if (token.equals("CTRL")) { //$NON-NLS-1$
 			return SWT.CTRL;
-		if (token.equals("SHIFT")) //$NON-NLS-1$
+		}
+		if (token.equals("SHIFT")) { //$NON-NLS-1$
 			return SWT.SHIFT;
-		if (token.equals("ALT")) //$NON-NLS-1$
+		}
+		if (token.equals("ALT")) { //$NON-NLS-1$
 			return SWT.ALT;
-		if (token.equals("COMMAND")) //$NON-NLS-1$
+		}
+		if (token.equals("COMMAND")) { //$NON-NLS-1$
 			return SWT.COMMAND;
+		}
 		return 0;
 	}
 
@@ -391,14 +411,18 @@ public final class LegacyActionTools {
 	 * @see SWT
 	 */
 	public static final String findModifierString(final int keyCode) {
-		if (keyCode == SWT.CTRL)
+		if (keyCode == SWT.CTRL) {
 			return JFaceResources.getString("Ctrl"); //$NON-NLS-1$
-		if (keyCode == SWT.ALT)
+		}
+		if (keyCode == SWT.ALT) {
 			return JFaceResources.getString("Alt"); //$NON-NLS-1$
-		if (keyCode == SWT.SHIFT)
+		}
+		if (keyCode == SWT.SHIFT) {
 			return JFaceResources.getString("Shift"); //$NON-NLS-1$
-		if (keyCode == SWT.COMMAND)
+		}
+		if (keyCode == SWT.COMMAND) {
 			return JFaceResources.getString("Command"); //$NON-NLS-1$		
+		}
 		return null;
 	}
 
@@ -647,10 +671,12 @@ public final class LegacyActionTools {
 	 */
 	public static final String removeAcceleratorText(final String text) {
 		int index = text.lastIndexOf('\t');
-		if (index == -1)
+		if (index == -1) {
 			index = text.lastIndexOf('@');
-		if (index >= 0)
+		}
+		if (index >= 0) {
 			return text.substring(0, index);
+		}
 		return text;
 	}
 

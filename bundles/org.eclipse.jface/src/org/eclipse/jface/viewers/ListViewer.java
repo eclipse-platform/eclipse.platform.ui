@@ -98,19 +98,22 @@ public class ListViewer extends AbstractListViewer {
     public void reveal(Object element) {
         Assert.isNotNull(element);
         int index = getElementIndex(element);
-        if (index == -1)
-            return;
+        if (index == -1) {
+			return;
+		}
         // algorithm patterned after List.showSelection()
         int count = list.getItemCount();
-        if (count == 0)
-            return;
+        if (count == 0) {
+			return;
+		}
         int height = list.getItemHeight();
         Rectangle rect = list.getClientArea();
         int topIndex = list.getTopIndex();
         int visibleCount = Math.max(rect.height / height, 1);
         int bottomIndex = Math.min(topIndex + visibleCount, count) - 1;
-        if ((topIndex <= index) && (index <= bottomIndex))
-            return;
+        if ((topIndex <= index) && (index <= bottomIndex)) {
+			return;
+		}
         int newTop = Math.min(Math.max(index - (visibleCount / 2), 0),
                 count - 1);
         list.setTopIndex(newTop);

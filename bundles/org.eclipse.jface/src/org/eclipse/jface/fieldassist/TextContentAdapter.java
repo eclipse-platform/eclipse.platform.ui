@@ -57,9 +57,10 @@ public class TextContentAdapter implements IControlContentAdapter {
 		((Text) control).insert(text);
 		// Insert will leave the cursor at the end of the inserted text. If this
 		// is not what we wanted, reset the selection.
-		if (cursorPosition < text.length())
+		if (cursorPosition < text.length()) {
 			((Text) control).setSelection(selection.x + cursorPosition,
 					selection.x + cursorPosition);
+		}
 	}
 
 	/*

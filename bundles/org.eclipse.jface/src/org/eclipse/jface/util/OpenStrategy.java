@@ -168,10 +168,12 @@ public class OpenStrategy {
             CURRENT_METHOD = method;
             return;
         }
-        if ((method & SINGLE_CLICK) == 0)
-            throw new IllegalArgumentException("Invalid open mode"); //$NON-NLS-1$
-        if ((method & (SINGLE_CLICK | SELECT_ON_HOVER | ARROW_KEYS_OPEN)) == 0)
-            throw new IllegalArgumentException("Invalid open mode"); //$NON-NLS-1$
+        if ((method & SINGLE_CLICK) == 0) {
+			throw new IllegalArgumentException("Invalid open mode"); //$NON-NLS-1$
+		}
+        if ((method & (SINGLE_CLICK | SELECT_ON_HOVER | ARROW_KEYS_OPEN)) == 0) {
+			throw new IllegalArgumentException("Invalid open mode"); //$NON-NLS-1$
+		}
         CURRENT_METHOD = method;
     }
 
@@ -203,8 +205,9 @@ public class OpenStrategy {
      * Fire the selection event to all selectionEventListeners
      */
     private void fireSelectionEvent(SelectionEvent e) {
-        if (e.item != null && e.item.isDisposed())
-            return;
+        if (e.item != null && e.item.isDisposed()) {
+			return;
+		}
         Object l[] = selectionEventListeners.getListeners();
         for (int i = 0; i < l.length; i++) {
             ((SelectionListener) l[i]).widgetSelected(e);
@@ -225,8 +228,9 @@ public class OpenStrategy {
      * Fire the post selection event to all postSelectionEventListeners
      */
     private void firePostSelectionEvent(SelectionEvent e) {
-        if (e.item != null && e.item.isDisposed())
-            return;
+        if (e.item != null && e.item.isDisposed()) {
+			return;
+		}
         Object l[] = postSelectionEventListeners.getListeners();
         for (int i = 0; i < l.length; i++) {
             ((SelectionListener) l[i]).widgetSelected(e);
@@ -237,8 +241,9 @@ public class OpenStrategy {
      * Fire the open event to all openEventListeners
      */
     private void fireOpenEvent(SelectionEvent e) {
-        if (e.item != null && e.item.isDisposed())
-            return;
+        if (e.item != null && e.item.isDisposed()) {
+			return;
+		}
         Object l[] = openEventListeners.getListeners();
         for (int i = 0; i < l.length; i++) {
             ((IOpenEventListener) l[i]).handleOpen(e);
@@ -296,12 +301,15 @@ public class OpenStrategy {
                     selectionPendent = null;
                     break;
                 case SWT.MouseMove:
-                    if ((CURRENT_METHOD & SELECT_ON_HOVER) == 0)
-                        return;
-                    if (e.stateMask != 0)
-                        return;
-                    if (e.widget.getDisplay().getFocusControl() != e.widget)
-                        return;
+                    if ((CURRENT_METHOD & SELECT_ON_HOVER) == 0) {
+						return;
+					}
+                    if (e.stateMask != 0) {
+						return;
+					}
+                    if (e.widget.getDisplay().getFocusControl() != e.widget) {
+						return;
+					}
                     mouseMoveEvent = e;
                     final Runnable runnable[] = new Runnable[1];
                     runnable[0] = new Runnable() {
@@ -334,8 +342,9 @@ public class OpenStrategy {
                     break;
                 case SWT.MouseUp:
                     mouseMoveEvent = null;
-                    if ((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0))
-                        return;
+                    if ((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0)) {
+						return;
+					}
                     if (selectionPendent != null
                             && !(collapseOccurred || expandOccurred)) {
                         mouseSelectItem(selectionPendent);
@@ -364,10 +373,11 @@ public class OpenStrategy {
                     SelectionEvent event = new SelectionEvent(e);
                     fireSelectionEvent(event);
                     mouseMoveEvent = null;
-                    if (mouseUpEvent != null)
-                        mouseSelectItem(event);
-                    else
-                        selectionPendent = event;
+                    if (mouseUpEvent != null) {
+						mouseSelectItem(event);
+					} else {
+						selectionPendent = event;
+					}
                     count[0]++;
                     // In the case of arrowUp/arrowDown when in the arrowKeysOpen mode, we
                     // want to delay any selection until the last arrowDown/Up occurs.  This
@@ -383,9 +393,10 @@ public class OpenStrategy {
                                         if (id == count[0]) {
                                             firePostSelectionEvent(new SelectionEvent(
                                                     e));
-                                            if ((CURRENT_METHOD & ARROW_KEYS_OPEN) != 0)
-                                                fireOpenEvent(new SelectionEvent(
+                                            if ((CURRENT_METHOD & ARROW_KEYS_OPEN) != 0) {
+												fireOpenEvent(new SelectionEvent(
                                                         e));
+											}
                                         }
                                     }
                                 });
@@ -399,18 +410,21 @@ public class OpenStrategy {
             }
 
             void mouseSelectItem(SelectionEvent e) {
-                if ((CURRENT_METHOD & SINGLE_CLICK) != 0)
-                    fireOpenEvent(e);
+                if ((CURRENT_METHOD & SINGLE_CLICK) != 0) {
+					fireOpenEvent(e);
+				}
                 mouseUpEvent = null;
                 selectionPendent = null;
             }
 
             void setSelection(Event e) {
-                if (e == null)
-                    return;
+                if (e == null) {
+					return;
+				}
                 Widget w = e.widget;
-                if (w.isDisposed())
-                    return;
+                if (w.isDisposed()) {
+					return;
+				}
 
                 SelectionEvent selEvent = new SelectionEvent(e);
 
@@ -420,26 +434,30 @@ public class OpenStrategy {
                 if (w instanceof Tree) {
                     Tree tree = (Tree) w;
                     TreeItem item = tree.getItem(new Point(e.x, e.y));
-                    if (item != null)
-                        tree.setSelection(new TreeItem[] { item });
+                    if (item != null) {
+						tree.setSelection(new TreeItem[] { item });
+					}
                     selEvent.item = item;
                 } else if (w instanceof Table) {
                     Table table = (Table) w;
                     TableItem item = table.getItem(new Point(e.x, e.y));
-                    if (item != null)
-                        table.setSelection(new TableItem[] { item });
+                    if (item != null) {
+						table.setSelection(new TableItem[] { item });
+					}
                     selEvent.item = item;
                 } else if (w instanceof TableTree) {
                     TableTree table = (TableTree) w;
                     TableTreeItem item = table.getItem(new Point(e.x, e.y));
-                    if (item != null)
-                        table.setSelection(new TableTreeItem[] { item });
+                    if (item != null) {
+						table.setSelection(new TableTreeItem[] { item });
+					}
                     selEvent.item = item;
                 } else {
                     return;
                 }
-                if (selEvent.item == null)
-                    return;
+                if (selEvent.item == null) {
+					return;
+				}
                 fireSelectionEvent(selEvent);
                 firePostSelectionEvent(selEvent);
             }

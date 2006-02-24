@@ -180,8 +180,9 @@ public class ToolBarManager extends ContributionManager implements
 	 *            the new number of items
 	 */
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
-		if ((oldCount == 0) != (newCount == 0))
+		if ((oldCount == 0) != (newCount == 0)) {
 			layoutBar.getParent().layout();
+		}
 	}
 
 	/**
@@ -221,8 +222,9 @@ public class ToolBarManager extends ContributionManager implements
 				//			}
 				for (int i = 0; i < items.length; ++i) {
 					IContributionItem ci = items[i];
-					if (!ci.isVisible())
+					if (!ci.isVisible()) {
 						continue;
+					}
 					if (ci.isSeparator()) {
 						// delay creation until necessary
 						// (handles both adjacent separators, and separator at
@@ -230,8 +232,9 @@ public class ToolBarManager extends ContributionManager implements
 						separator = ci;
 					} else {
 						if (separator != null) {
-							if (clean.size() > 0) // no separator if first item
+							if (clean.size() > 0) {
 								clean.add(separator);
+							}
 							separator = null;
 						}
 						clean.add(ci);
@@ -290,10 +293,11 @@ public class ToolBarManager extends ContributionManager implements
                         src = (IContributionItem) e.next();
 
                         // get corresponding item in SWT widget
-                        if (srcIx < mi.length)
-                            dest = (IContributionItem) mi[srcIx].getData();
-                        else
-                            dest = null;
+                        if (srcIx < mi.length) {
+							dest = (IContributionItem) mi[srcIx].getData();
+						} else {
+							dest = null;
+						}
 
                         if (dest != null && src.equals(dest)) {
                             srcIx++;

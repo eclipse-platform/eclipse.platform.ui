@@ -70,8 +70,9 @@ public class FieldDecorationRegistry {
 		FieldDecoration getDecoration() {
 			if (decoration == null) {
 				if (image == null) {
-					if (imageRegistry == null)
+					if (imageRegistry == null) {
 						imageRegistry = JFaceResources.getImageRegistry();
+					}
 					image = imageRegistry.get(imageId);
 				}
 				decoration = new FieldDecoration(image, description);
@@ -108,8 +109,9 @@ public class FieldDecorationRegistry {
 	 *         shared field decorations.
 	 */
 	public static FieldDecorationRegistry getDefault() {
-		if (defaultInstance == null)
+		if (defaultInstance == null) {
 			defaultInstance = new FieldDecorationRegistry();
+		}
 		return defaultInstance;
 	}
 
@@ -253,8 +255,9 @@ public class FieldDecorationRegistry {
 	 */
 	public FieldDecoration getFieldDecoration(String id) {
 		Object entry = decorations.get(id);
-		if (entry == null)
+		if (entry == null) {
 			return null;
+		}
 		FieldDecoration dec = ((Entry) entry).getDecoration();
 		Image image = dec.getImage();
 		if (image != null) {

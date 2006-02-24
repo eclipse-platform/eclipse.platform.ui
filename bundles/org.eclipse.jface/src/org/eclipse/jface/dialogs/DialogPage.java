@@ -128,8 +128,9 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
      */
     protected int convertHeightInCharsToPixels(int chars) {
         // test for failure to initialize for backward compatibility
-        if (fontMetrics == null)
-            return 0;
+        if (fontMetrics == null) {
+			return 0;
+		}
         return Dialog.convertHeightInCharsToPixels(fontMetrics, chars);
     }
 
@@ -150,8 +151,9 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
      */
     protected int convertHorizontalDLUsToPixels(int dlus) {
         // test for failure to initialize for backward compatibility
-        if (fontMetrics == null)
-            return 0;
+        if (fontMetrics == null) {
+			return 0;
+		}
         return Dialog.convertHorizontalDLUsToPixels(fontMetrics, dlus);
     }
 
@@ -172,8 +174,9 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
      */
     protected int convertVerticalDLUsToPixels(int dlus) {
         // test for failure to initialize for backward compatibility
-        if (fontMetrics == null)
-            return 0;
+        if (fontMetrics == null) {
+			return 0;
+		}
         return Dialog.convertVerticalDLUsToPixels(fontMetrics, dlus);
     }
 
@@ -194,8 +197,9 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
      */
     protected int convertWidthInCharsToPixels(int chars) {
         // test for failure to initialize for backward compatibility
-        if (fontMetrics == null)
-            return 0;
+        if (fontMetrics == null) {
+			return 0;
+		}
         return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
     }
 

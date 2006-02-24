@@ -54,8 +54,9 @@ public abstract class SafeRunnable implements ISafeRunnable {
     public void handleException(Throwable e) {
         // Workaround to avoid interactive error dialogs during automated testing
         if (!ignoreErrors) {
-            if (message == null)
-                message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
+            if (message == null) {
+				message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
+			}
             MessageDialog.openError(null,
                     JFaceResources.getString("Error"), message); //$NON-NLS-1$
         }

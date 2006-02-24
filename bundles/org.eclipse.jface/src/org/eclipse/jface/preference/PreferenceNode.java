@@ -119,8 +119,9 @@ public class PreferenceNode implements IPreferenceNode {
      * (non-Javadoc) Method declared on IPreferenceNode.
      */
     public void add(IPreferenceNode node) {
-        if (subNodes == null)
-            subNodes = new ArrayList();
+        if (subNodes == null) {
+			subNodes = new ArrayList();
+		}
         subNodes.add(node);
     }
 
@@ -134,8 +135,9 @@ public class PreferenceNode implements IPreferenceNode {
         Assert.isNotNull(className);
         try {
             Class cl = Class.forName(className);
-            if (cl != null)
-                return cl.newInstance();
+            if (cl != null) {
+				return cl.newInstance();
+			}
         } catch (ClassNotFoundException e) {
             return null;
         } catch (InstantiationException e) {
@@ -153,8 +155,9 @@ public class PreferenceNode implements IPreferenceNode {
      */
     public void createPage() {
         page = (IPreferencePage) createObject(classname);
-        if (getLabelImage() != null)
-            page.setImageDescriptor(imageDescriptor);
+        if (getLabelImage() != null) {
+			page.setImageDescriptor(imageDescriptor);
+		}
         page.setTitle(label);
     }
 
@@ -178,13 +181,15 @@ public class PreferenceNode implements IPreferenceNode {
     public IPreferenceNode findSubNode(String id) {
         Assert.isNotNull(id);
         Assert.isTrue(id.length() > 0);
-        if (subNodes == null)
-            return null;
+        if (subNodes == null) {
+			return null;
+		}
         int size = subNodes.size();
         for (int i = 0; i < size; i++) {
             IPreferenceNode node = (IPreferenceNode) subNodes.get(i);
-            if (id.equals(node.getId()))
-                return node;
+            if (id.equals(node.getId())) {
+				return node;
+			}
         }
         return null;
     }
@@ -219,8 +224,9 @@ public class PreferenceNode implements IPreferenceNode {
      * (non-Javadoc) Method declared on IPreferenceNode.
      */
     public String getLabelText() {
-        if (page != null)
-            return page.getTitle();
+        if (page != null) {
+			return page.getTitle();
+		}
         return label;
     }
 
@@ -235,8 +241,9 @@ public class PreferenceNode implements IPreferenceNode {
      * (non-Javadoc) Method declared on IPreferenceNode.
      */
     public IPreferenceNode[] getSubNodes() {
-        if (subNodes == null)
-            return new IPreferenceNode[0];
+        if (subNodes == null) {
+			return new IPreferenceNode[0];
+		}
         return (IPreferenceNode[]) subNodes
                 .toArray(new IPreferenceNode[subNodes.size()]);
     }
@@ -246,8 +253,9 @@ public class PreferenceNode implements IPreferenceNode {
      */
     public IPreferenceNode remove(String id) {
         IPreferenceNode node = findSubNode(id);
-        if (node != null)
-            remove(node);
+        if (node != null) {
+			remove(node);
+		}
         return node;
     }
 
@@ -255,8 +263,9 @@ public class PreferenceNode implements IPreferenceNode {
      * (non-Javadoc) Method declared on IPreferenceNode.
      */
     public boolean remove(IPreferenceNode node) {
-        if (subNodes == null)
-            return false;
+        if (subNodes == null) {
+			return false;
+		}
         return subNodes.remove(node);
     }
 

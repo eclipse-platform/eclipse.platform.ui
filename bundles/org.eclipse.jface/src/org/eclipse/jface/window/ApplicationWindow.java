@@ -122,8 +122,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 
         protected Point computeSize(Composite composite, int wHint, int hHint,
                 boolean flushCache) {
-            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-                return new Point(wHint, hHint);
+            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+				return new Point(wHint, hHint);
+			}
 
             Point result = new Point(0, 0);
             Control[] ws = composite.getChildren();
@@ -154,10 +155,12 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 }
             }
 
-            if (wHint != SWT.DEFAULT)
-                result.x = wHint;
-            if (hHint != SWT.DEFAULT)
-                result.y = hHint;
+            if (wHint != SWT.DEFAULT) {
+				result.x = wHint;
+			}
+            if (hHint != SWT.DEFAULT) {
+				result.y = hHint;
+			}
             return result;
         }
 
@@ -289,8 +292,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * Method declared on Window.
      */
     public boolean close() {
-        if (operationInProgress)
-            return false;
+        if (operationInProgress) {
+			return false;
+		}
 
         if (super.close()) {
             if (menuBarManager != null) {
@@ -298,10 +302,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 menuBarManager = null;
             }
             if (toolBarManager != null) {
-            	if (toolBarManager instanceof IToolBarManager2) 
-            		((IToolBarManager2) toolBarManager).dispose();
-            	else if (toolBarManager instanceof ToolBarManager)
-            		((ToolBarManager) toolBarManager).dispose();
+            	if (toolBarManager instanceof IToolBarManager2) {
+					((IToolBarManager2) toolBarManager).dispose();
+				} else if (toolBarManager instanceof ToolBarManager) {
+					((ToolBarManager) toolBarManager).dispose();
+				}
                 toolBarManager = null;
             }
             if (statusLineManager != null) {
@@ -309,10 +314,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 statusLineManager = null;
             }
             if (coolBarManager != null) {
-            	if (coolBarManager instanceof ICoolBarManager2)
-            		((ICoolBarManager2) coolBarManager).dispose();
-            	else if (coolBarManager instanceof CoolBarManager)
-            		((CoolBarManager) coolBarManager).dispose();
+            	if (coolBarManager instanceof ICoolBarManager2) {
+					((ICoolBarManager2) coolBarManager).dispose();
+				} else if (coolBarManager instanceof CoolBarManager) {
+					((CoolBarManager) coolBarManager).dispose();
+				}
                 coolBarManager = null;
             }
             return true;
@@ -342,8 +348,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             shell.setMenuBar(menuBarManager.createMenuBar((Decorations) shell));
         }
 
-        if (showTopSeperator())
-            seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+        if (showTopSeperator()) {
+			seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		}
 
         // will create either a cool bar or a tool bar
         createToolBarControl(shell);
@@ -481,10 +488,12 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control createToolBarControl(Composite parent) {
         if (toolBarManager != null) {
-        	if (toolBarManager instanceof IToolBarManager2) 
-        		return ((IToolBarManager2) toolBarManager).createControl2(parent);
-        	if (toolBarManager instanceof ToolBarManager) 
-        		return ((ToolBarManager) toolBarManager).createControl(parent);
+        	if (toolBarManager instanceof IToolBarManager2) {
+				return ((IToolBarManager2) toolBarManager).createControl2(parent);
+			}
+        	if (toolBarManager instanceof ToolBarManager) {
+				return ((ToolBarManager) toolBarManager).createControl(parent);
+			}
         }
         return null;
     }
@@ -500,10 +509,12 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control createCoolBarControl(Composite composite) {
         if (coolBarManager != null) {
-        	if (coolBarManager instanceof ICoolBarManager2) 
-        		return ((ICoolBarManager2) coolBarManager).createControl2(composite);
-        	if (coolBarManager instanceof CoolBarManager) 
-        		return ((CoolBarManager) coolBarManager).createControl(composite);
+        	if (coolBarManager instanceof ICoolBarManager2) {
+				return ((ICoolBarManager2) coolBarManager).createControl2(composite);
+			}
+        	if (coolBarManager instanceof CoolBarManager) {
+				return ((CoolBarManager) coolBarManager).createControl(composite);
+			}
         }
         return null;
     }
@@ -570,8 +581,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @see #addToolBar(int)
      */
     public ToolBarManager getToolBarManager() {
-    	if (toolBarManager instanceof ToolBarManager)
-        	return (ToolBarManager)toolBarManager;
+    	if (toolBarManager instanceof ToolBarManager) {
+			return (ToolBarManager)toolBarManager;
+		}
         return null;
     }
     
@@ -603,8 +615,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @since 3.0
      */
     public CoolBarManager getCoolBarManager() {
-    	if (coolBarManager instanceof CoolBarManager)
-        	return (CoolBarManager)coolBarManager;
+    	if (coolBarManager instanceof CoolBarManager) {
+			return (CoolBarManager)coolBarManager;
+		}
         return null;
     }
     
@@ -636,10 +649,12 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control getToolBarControl() {
         if (toolBarManager != null) {
-        	if (toolBarManager instanceof IToolBarManager2)
-        		return ((IToolBarManager2) toolBarManager).getControl2();
-        	if (toolBarManager instanceof ToolBarManager)
-        		return ((ToolBarManager) toolBarManager).getControl();
+        	if (toolBarManager instanceof IToolBarManager2) {
+				return ((IToolBarManager2) toolBarManager).getControl2();
+			}
+        	if (toolBarManager instanceof ToolBarManager) {
+				return ((ToolBarManager) toolBarManager).getControl();
+			}
         }
         return null;
     }
@@ -655,10 +670,12 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected Control getCoolBarControl() {
         if (coolBarManager != null) {
-        	if (coolBarManager instanceof ICoolBarManager2)
-        		return ((ICoolBarManager2) coolBarManager).getControl2();
-        	if (coolBarManager instanceof CoolBarManager)
-        		return ((CoolBarManager) coolBarManager).getControl();
+        	if (coolBarManager instanceof ICoolBarManager2) {
+				return ((ICoolBarManager2) coolBarManager).getControl2();
+			}
+        	if (coolBarManager instanceof CoolBarManager) {
+				return ((CoolBarManager) coolBarManager).getControl();
+			}
         }
         return null;
     }
@@ -696,26 +713,30 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 manager = null;
             }
             boolean menuBarWasEnabled = false;
-            if (menuBar != null)
-                menuBarWasEnabled = menuBar.isEnabled();
+            if (menuBar != null) {
+				menuBarWasEnabled = menuBar.isEnabled();
+			}
 
             Control toolbarControl = getToolBarControl();
             boolean toolbarWasEnabled = false;
-            if (toolbarControl != null)
-                toolbarWasEnabled = toolbarControl.getEnabled();
+            if (toolbarControl != null) {
+				toolbarWasEnabled = toolbarControl.getEnabled();
+			}
 
             Control coolbarControl = getCoolBarControl();
             boolean coolbarWasEnabled = false;
-            if (coolbarControl != null)
-                coolbarWasEnabled = coolbarControl.getEnabled();
+            if (coolbarControl != null) {
+				coolbarWasEnabled = coolbarControl.getEnabled();
+			}
 
             // Disable the rest of the shells on the current display
             Shell[] shells = display.getShells();
             boolean[] enabled = new boolean[shells.length];
             for (int i = 0; i < shells.length; i++) {
                 Shell current = shells[i];
-                if (current == shell)
-                    continue;
+                if (current == shell) {
+					continue;
+				}
                 if (current != null && !current.isDisposed()) {
                     enabled[i] = current.getEnabled();
                     current.setEnabled(false);
@@ -725,12 +746,15 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             Control currentFocus = display.getFocusControl();
             try {
                 contents.setEnabled(false);
-                if (menuBar != null)
-                    menuBar.setEnabled(false);
-                if (toolbarControl != null)
-                    toolbarControl.setEnabled(false);
-                if (coolbarControl != null)
-                    coolbarControl.setEnabled(false);
+                if (menuBar != null) {
+					menuBar.setEnabled(false);
+				}
+                if (toolbarControl != null) {
+					toolbarControl.setEnabled(false);
+				}
+                if (coolbarControl != null) {
+					coolbarControl.setEnabled(false);
+				}
                 mgr.setCancelEnabled(cancelable);
                 final Exception[] holder = new Exception[1];
                 BusyIndicator.showWhile(display, new Runnable() {
@@ -758,20 +782,25 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 // Enable the rest of the shells on the current display
                 for (int i = 0; i < shells.length; i++) {
                     Shell current = shells[i];
-                    if (current == shell)
-                        continue;
+                    if (current == shell) {
+						continue;
+					}
                     if (current != null && !current.isDisposed()) {
                         current.setEnabled(enabled[i]);
                     }
                 }
-                if (!contents.isDisposed())
-                    contents.setEnabled(contentsWasEnabled);
-                if (menuBar != null && !menuBar.isDisposed())
-                    menuBar.setEnabled(menuBarWasEnabled);
-                if (toolbarControl != null && !toolbarControl.isDisposed())
-                    toolbarControl.setEnabled(toolbarWasEnabled);
-                if (coolbarControl != null && !coolbarControl.isDisposed())
-                    coolbarControl.setEnabled(coolbarWasEnabled);
+                if (!contents.isDisposed()) {
+					contents.setEnabled(contentsWasEnabled);
+				}
+                if (menuBar != null && !menuBar.isDisposed()) {
+					menuBar.setEnabled(menuBarWasEnabled);
+				}
+                if (toolbarControl != null && !toolbarControl.isDisposed()) {
+					toolbarControl.setEnabled(toolbarWasEnabled);
+				}
+                if (coolbarControl != null && !coolbarControl.isDisposed()) {
+					coolbarControl.setEnabled(coolbarWasEnabled);
+				}
                 mgr.setCancelEnabled(cancelWasEnabled);
                 if (currentFocus != null && !currentFocus.isDisposed()) {
                     // It's necessary to restore focus after reenabling the controls

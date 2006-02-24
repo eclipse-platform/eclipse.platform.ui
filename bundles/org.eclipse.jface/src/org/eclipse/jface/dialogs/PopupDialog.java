@@ -608,14 +608,16 @@ public class PopupDialog extends Window {
 		titleLabel = new Label(parent, SWT.NONE);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		if (!showDialogMenu)
+		if (!showDialogMenu) {
 			gd.horizontalSpan = 2;
+		}
 		titleLabel.setLayoutData(gd);
 		
 		Font font = titleLabel.getFont();
 		FontData[] fontDatas = font.getFontData();
-		for (int i = 0; i < fontDatas.length; i++)
+		for (int i = 0; i < fontDatas.length; i++) {
 			fontDatas[i].setStyle(SWT.BOLD);
+		}
 		titleFont = new Font(titleLabel.getDisplay(), fontDatas);
 		titleLabel.setFont(titleFont);
 		
@@ -649,8 +651,9 @@ public class PopupDialog extends Window {
 		infoLabel.setText(infoText);
 		Font font = infoLabel.getFont();
 		FontData[] fontDatas = font.getFontData();
-		for (int i = 0; i < fontDatas.length; i++)
+		for (int i = 0; i < fontDatas.length; i++) {
 			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+		}
 		infoFont = new Font(infoLabel.getDisplay(), fontDatas);
 		infoLabel.setFont(infoFont);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL
@@ -736,8 +739,9 @@ public class PopupDialog extends Window {
 	 */
 	private void performTrackerAction(int style) {
 		Shell shell = getShell();
-		if (shell == null || shell.isDisposed())
+		if (shell == null || shell.isDisposed()) {
 			return;
+		}
 
 		Tracker tracker = new Tracker(shell.getDisplay(), style);
 		tracker.setStippled(true);
@@ -763,8 +767,9 @@ public class PopupDialog extends Window {
 	 * do not override method.
 	 */
 	protected void showDialogMenu() {
-		if (!showDialogMenu)
+		if (!showDialogMenu) {
 			return;
+		}
 
 		if (menuManager == null) {
 			menuManager = new MenuManager();
@@ -793,8 +798,9 @@ public class PopupDialog extends Window {
 	 */
 	protected void setInfoText(String text) {
 		infoText = text;
-		if (infoLabel != null)
+		if (infoLabel != null) {
 			infoLabel.setText(text);
+		}
 	}
 
 	/**
@@ -808,8 +814,9 @@ public class PopupDialog extends Window {
 	 */
 	protected void setTitleText(String text) {
 		titleText = text;
-		if (titleLabel != null)
+		if (titleLabel != null) {
 			titleLabel.setText(text);
+		}
 	}
 
 	/**
@@ -891,8 +898,9 @@ public class PopupDialog extends Window {
 	public boolean close() {
 		// If already closed, there is nothing to do.
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=127505
-		if (getShell() == null || getShell().isDisposed())
+		if (getShell() == null || getShell().isDisposed()) {
 			return true;
+		}
 		
 		saveDialogBounds(getShell());
 		// Widgets are about to be disposed, so null out any state
@@ -952,10 +960,11 @@ public class PopupDialog extends Window {
 				settings.put(prefix + DIALOG_WIDTH, shellSize.x);
 				settings.put(prefix + DIALOG_HEIGHT, shellSize.y);
 			}
-			if (showPersistAction && showDialogMenu)
+			if (showPersistAction && showDialogMenu) {
 				settings.put(
 						getClass().getName() + DIALOG_USE_PERSISTED_BOUNDS,
 						persistBounds);
+			}
 		}
 	}
 
@@ -1073,8 +1082,9 @@ public class PopupDialog extends Window {
 		}
 		if (control instanceof Composite) {
 			Control[] children = ((Composite) control).getChildren();
-			for (int i = 0; i < children.length; i++)
+			for (int i = 0; i < children.length; i++) {
 				applyForegroundColor(color, children[i], exclusions);
+			}
 		}
 	}
 
@@ -1097,8 +1107,9 @@ public class PopupDialog extends Window {
 		}
 		if (control instanceof Composite) {
 			Control[] children = ((Composite) control).getChildren();
-			for (int i = 0; i < children.length; i++)
+			for (int i = 0; i < children.length; i++) {
 				applyBackgroundColor(color, children[i], exclusions);
+			}
 		}
 	}
 
@@ -1146,12 +1157,15 @@ public class PopupDialog extends Window {
 	 */
 	protected List getForegroundColorExclusions() {
 		List list = new ArrayList(3);
-		if (infoLabel != null)
+		if (infoLabel != null) {
 			list.add(infoLabel);
-		if (titleSeparator != null)
+		}
+		if (titleSeparator != null) {
 			list.add(titleSeparator);
-		if (infoSeparator != null)
+		}
+		if (infoSeparator != null) {
 			list.add(infoSeparator);
+		}
 		return list;
 	}
 
@@ -1164,10 +1178,12 @@ public class PopupDialog extends Window {
 	 */
 	protected List getBackgroundColorExclusions() {
 		List list = new ArrayList(2);
-		if (titleSeparator != null)
+		if (titleSeparator != null) {
 			list.add(titleSeparator);
-		if (infoSeparator != null)
+		}
+		if (infoSeparator != null) {
 			list.add(infoSeparator);
+		}
 		return list;
 	}
 
@@ -1202,11 +1218,13 @@ public class PopupDialog extends Window {
 	 *
 	 */
 	private void handleDispose() {
-		if (infoFont != null && !infoFont.isDisposed())
+		if (infoFont != null && !infoFont.isDisposed()) {
 			infoFont.dispose();
+		}
 		infoFont = null;
-		if (titleFont != null && !titleFont.isDisposed())
+		if (titleFont != null && !titleFont.isDisposed()) {
 			titleFont.dispose();
+		}
 		titleFont = null;
 	}
 }

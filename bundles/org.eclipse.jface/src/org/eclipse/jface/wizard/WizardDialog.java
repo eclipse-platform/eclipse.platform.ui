@@ -184,8 +184,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
          */
         public Point computeSize(Composite composite, int wHint, int hHint,
                 boolean force) {
-            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-                return new Point(wHint, hHint);
+            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+				return new Point(wHint, hHint);
+			}
             Point result = null;
             Control[] children = composite.getChildren();
             if (children.length > 0) {
@@ -203,10 +204,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             }
             result.x = Math.max(result.x, minimumWidth);
             result.y = Math.max(result.y, minimumHeight);
-            if (wHint != SWT.DEFAULT)
-                result.x = wHint;
-            if (hHint != SWT.DEFAULT)
-                result.y = hHint;
+            if (wHint != SWT.DEFAULT) {
+				result.x = wHint;
+			}
+            if (hHint != SWT.DEFAULT) {
+				result.y = hHint;
+			}
             return result;
         }
 
@@ -290,8 +293,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         if (getShell() != null) {
             // Save focus control
             Control focusControl = getShell().getDisplay().getFocusControl();
-            if (focusControl != null && focusControl.getShell() != getShell())
-                focusControl = null;
+            if (focusControl != null && focusControl.getShell() != getShell()) {
+				focusControl = null;
+			}
             boolean needsProgressMonitor = wizard.needsProgressMonitor();
             cancelButton.removeSelectionListener(cancelListener);
             // Set the busy cursor to all shells.
@@ -303,8 +307,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             cancelButton.setCursor(arrowCursor);
             // Deactivate shell
             savedState = saveUIState(needsProgressMonitor && enableCancelButton);
-            if (focusControl != null)
-                savedState.put(FOCUS_CONTROL, focusControl);
+            if (focusControl != null) {
+				savedState.put(FOCUS_CONTROL, focusControl);
+			}
             // Attach the progress monitor part to the cancel button
             if (needsProgressMonitor) {
                 progressMonitorPart.attachToCancelComponent(cancelButton);
@@ -319,9 +324,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     protected void backPressed() {
         IWizardPage page = currentPage.getPreviousPage();
-        if (page == null)
-            // should never happen since we have already visited the page
+        if (page == null) {
+			// should never happen since we have already visited the page
             return;
+		}
         // set flag to indicate that we are moving back
         isMovingToPreviousPage = true;
         // show the page
@@ -364,9 +370,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     private Point calculatePageSizeDelta(IWizardPage page) {
         Control pageControl = page.getControl();
-        if (pageControl == null)
-            // control not created yet
+        if (pageControl == null) {
+			// control not created yet
             return new Point(0, 0);
+		}
         Point contentSize = pageControl.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                 true);
         Rectangle rect = pageContainerLayout.getClientArea(pageContainer);
@@ -396,8 +403,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      * @see org.eclipse.jface.window.Window#close()
      */
     public boolean close() {
-        if (okToClose())
-            return hardClose();
+        if (okToClose()) {
+			return hardClose();
+		}
         return false;
     }
 
@@ -433,8 +441,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             helpButton = createButton(parent, IDialogConstants.HELP_ID,
                     IDialogConstants.HELP_LABEL, false);
         }
-        if (wizard.needsPreviousAndNextButtons())
-            createPreviousAndNextButtons(parent);
+        if (wizard.needsPreviousAndNextButtons()) {
+			createPreviousAndNextButtons(parent);
+		}
         finishButton = createButton(parent, IDialogConstants.FINISH_ID,
                 IDialogConstants.FINISH_LABEL, true);
         cancelButton = createCancelButton(parent);
@@ -468,8 +477,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      * @return the button corresponding to the button id
      */
     protected Button getButton(int id) {
-        if (id == IDialogConstants.CANCEL_ID)
-            return cancelButton;
+        if (id == IDialogConstants.CANCEL_ID) {
+			return cancelButton;
+		}
         return super.getButton(id);
     }
 
@@ -538,9 +548,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
              */
             public void setBlocked(IStatus reason) {
                 super.setBlocked(reason);
-                if (!lockedUI)//Do not show blocked if we are locking the UI
-                    getBlockedHandler().showBlocked(getShell(), this, reason,
+                if (!lockedUI) {
+					getBlockedHandler().showBlocked(getShell(), this, reason,
                             currentTask);
+				}
             }
 
             /* (non-Javadoc)
@@ -548,8 +559,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
              */
             public void clearBlocked() {
                 super.clearBlocked();
-                if (!lockedUI)//Do not vlear if we never set it
-                    getBlockedHandler().clearBlocked();
+                if (!lockedUI) {
+					getBlockedHandler().clearBlocked();
+				}
             }
 
             /* (non-Javadoc)
@@ -574,8 +586,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             public void subTask(String name) {
                 super.subTask(name);
                 //If we haven't got anything yet use this value for more context
-                if (currentTask == null)
-                    currentTask = name;
+                if (currentTask == null) {
+					currentTask = name;
+				}
             }
         };
     }
@@ -603,8 +616,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         IWizardPage[] pages = wizard.getPages();
         for (int i = 0; i < pages.length; i++) {
             IWizardPage page = pages[i];
-            if (page.getControl() != null)
-                page.getControl().setVisible(false);
+            if (page.getControl() != null) {
+				page.getControl().setVisible(false);
+			}
         }
     }
 
@@ -778,8 +792,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
     private void restoreEnableState(Control w, Map h, String key) {
         if (w != null) {
             Boolean b = (Boolean) h.get(key);
-            if (b != null)
-                w.setEnabled(b.booleanValue());
+            if (b != null) {
+				w.setEnabled(b.booleanValue());
+			}
         }
     }
 
@@ -798,8 +813,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         restoreEnableState(cancelButton, state, "cancel"); //$NON-NLS-1$
         restoreEnableState(helpButton, state, "help"); //$NON-NLS-1$
         Object pageValue = state.get("page"); //$NON-NLS-1$
-        if (pageValue != null)//page may never have been created
-            ((ControlEnableState) pageValue).restore();
+        if (pageValue != null) {
+			((ControlEnableState) pageValue).restore();
+		}
     }
 
     /**
@@ -824,20 +840,23 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         // The operation can only be canceled if it is executed in a separate thread.
         // Otherwise the UI is blocked anyway.
         Object state = null;
-        if (activeRunningOperations == 0)
-            state = aboutToStart(fork && cancelable);
+        if (activeRunningOperations == 0) {
+			state = aboutToStart(fork && cancelable);
+		}
         activeRunningOperations++;
         try {
-            if (!fork)//If we are not forking do not open other dialogs
-                lockedUI = true;
+            if (!fork) {
+				lockedUI = true;
+			}
             ModalContext.run(runnable, fork, getProgressMonitor(), getShell()
                     .getDisplay());
             lockedUI = false;
         } finally {
             activeRunningOperations--;
             //Stop if this is the last one
-            if (state != null)
-                stopped(state);
+            if (state != null) {
+				stopped(state);
+			}
         }
     }
 
@@ -881,10 +900,11 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         saveEnableStateAndSet(cancelButton, savedState,
                 "cancel", keepCancelEnabled); //$NON-NLS-1$
         saveEnableStateAndSet(helpButton, savedState, "help", false); //$NON-NLS-1$
-        if (currentPage != null)
-            savedState
+        if (currentPage != null) {
+			savedState
                     .put(
                             "page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
+		}
         return savedState;
     }
 
@@ -896,8 +916,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     private void setDisplayCursor(Cursor c) {
         Shell[] shells = getShell().getDisplay().getShells();
-        for (int i = 0; i < shells.length; i++)
-            shells[i].setCursor(c);
+        for (int i = 0; i < shells.length; i++) {
+			shells[i].setCursor(c);
+		}
     }
 
     /**
@@ -975,11 +996,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             // on the nested list then we assume we have gone back and remove 
             // the last wizard from the list
             int size = nestedWizards.size();
-            if (size >= 2 && nestedWizards.get(size - 2) == wizard)
-                nestedWizards.remove(size - 1);
-            else
-                // Assume we are going forward to revisit a wizard
+            if (size >= 2 && nestedWizards.get(size - 2) == wizard) {
+				nestedWizards.remove(size - 1);
+			} else {
+				// Assume we are going forward to revisit a wizard
                 nestedWizards.add(wizard);
+			}
         }
     }
 
@@ -990,16 +1012,16 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         if (page == null || page == currentPage) {
             return;
         }
-        if (!isMovingToPreviousPage)
-            // remember my previous page.
+        if (!isMovingToPreviousPage) {
+			// remember my previous page.
             page.setPreviousPage(currentPage);
-        else
-            isMovingToPreviousPage = false;
+		} else {
+			isMovingToPreviousPage = false;
+		}
         //Update for the new page ina busy cursor if possible
-        if (getContents() == null)
-            updateForPage(page);
-
-        else {
+        if (getContents() == null) {
+			updateForPage(page);
+		} else {
             final IWizardPage finalPage = page;
             BusyIndicator.showWhile(getContents().getDisplay(), new Runnable() {
                 public void run() {
@@ -1015,8 +1037,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     private void updateForPage(IWizardPage page) {
         // ensure this page belongs to the current wizard
-        if (wizard != page.getWizard())
-            setWizard(page.getWizard());
+        if (wizard != page.getWizard()) {
+			setWizard(page.getWizard());
+		}
         // ensure that page control has been created
         // (this allows lazy page control creation)
         if (page.getControl() == null) {
@@ -1031,8 +1054,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         IWizardPage oldPage = currentPage;
         currentPage = page;
         currentPage.setVisible(true);
-        if (oldPage != null)
-            oldPage.setVisible(false);
+        if (oldPage != null) {
+			oldPage.setVisible(false);
+		}
         // update the dialog controls
         update();
     }
@@ -1086,8 +1110,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             arrowCursor.dispose();
             arrowCursor = null;
             Control focusControl = (Control) state.get(FOCUS_CONTROL);
-            if (focusControl != null)
-                focusControl.setFocus();
+            if (focusControl != null) {
+				focusControl.setFocus();
+			}
         }
     }
 
@@ -1111,18 +1136,20 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
     public void updateButtons() {
         boolean canFlipToNextPage = false;
         boolean canFinish = wizard.canFinish();
-        if (backButton != null)
-            backButton.setEnabled(currentPage.getPreviousPage() != null);
+        if (backButton != null) {
+			backButton.setEnabled(currentPage.getPreviousPage() != null);
+		}
         if (nextButton != null) {
             canFlipToNextPage = currentPage.canFlipToNextPage();
             nextButton.setEnabled(canFlipToNextPage);
         }
         finishButton.setEnabled(canFinish);
         // finish is default unless it is diabled and next is enabled
-        if (canFlipToNextPage && !canFinish)
-            getShell().setDefaultButton(nextButton);
-        else
-            getShell().setDefaultButton(finishButton);
+        if (canFlipToNextPage && !canFinish) {
+			getShell().setDefaultButton(nextButton);
+		} else {
+			getShell().setDefaultButton(finishButton);
+		}
     }
 
     /**
@@ -1133,8 +1160,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     private void updateDescriptionMessage() {
         pageDescription = currentPage.getDescription();
-        if (pageMessage == null)
-            setMessage(currentPage.getDescription());
+        if (pageMessage == null) {
+			setMessage(currentPage.getDescription());
+		}
     }
 
     /* (non-Javadoc)
@@ -1142,18 +1170,21 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     public void updateMessage() {
 
-        if (currentPage == null)
-            return;
+        if (currentPage == null) {
+			return;
+		}
 
         pageMessage = currentPage.getMessage();
-        if (pageMessage != null && currentPage instanceof IMessageProvider)
-            pageMessageType = ((IMessageProvider) currentPage).getMessageType();
-        else
-            pageMessageType = IMessageProvider.NONE;
-        if (pageMessage == null)
-            setMessage(pageDescription);
-        else
-            setMessage(pageMessage, pageMessageType);
+        if (pageMessage != null && currentPage instanceof IMessageProvider) {
+			pageMessageType = ((IMessageProvider) currentPage).getMessageType();
+		} else {
+			pageMessageType = IMessageProvider.NONE;
+		}
+        if (pageMessage == null) {
+			setMessage(pageDescription);
+		} else {
+			setMessage(pageMessage, pageMessageType);
+		}
         setErrorMessage(currentPage.getErrorMessage());
     }
 
@@ -1180,8 +1211,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      * @since 2.0
      */
     protected void updateSize(IWizardPage page) {
-        if (page == null || page.getControl() == null)
-            return;
+        if (page == null || page.getControl() == null) {
+			return;
+		}
         updateSizeForPage(page);
         pageContainerLayout.layoutPage(page.getControl());
     }
@@ -1239,10 +1271,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     public void updateTitleBar() {
         String s = null;
-        if (currentPage != null)
-            s = currentPage.getTitle();
-        if (s == null)
-            s = ""; //$NON-NLS-1$
+        if (currentPage != null) {
+			s = currentPage.getTitle();
+		}
+        if (s == null) {
+			s = ""; //$NON-NLS-1$
+		}
         setTitle(s);
         if (currentPage != null) {
             setTitleImage(currentPage.getImage());
@@ -1255,12 +1289,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      * Method declared on IWizardContainer.
      */
     public void updateWindowTitle() {
-        if (getShell() == null)
-            // Not created yet
+        if (getShell() == null) {
+			// Not created yet
             return;
+		}
         String title = wizard.getWindowTitle();
-        if (title == null)
-            title = ""; //$NON-NLS-1$
+        if (title == null) {
+			title = ""; //$NON-NLS-1$
+		}
         getShell().setText(title);
     }
 

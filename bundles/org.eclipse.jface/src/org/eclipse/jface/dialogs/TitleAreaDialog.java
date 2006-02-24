@@ -200,8 +200,9 @@ public class TitleAreaDialog extends TrayDialog {
         // add a dispose listener
         parent.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
-                if (titleAreaColor != null)
-                    titleAreaColor.dispose();
+                if (titleAreaColor != null) {
+					titleAreaColor.dispose();
+				}
             }
         });
         // Determine the background color of the title bar
@@ -258,8 +259,9 @@ public class TitleAreaDialog extends TrayDialog {
         bottomFillerLabel.setBackground(background);
         setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
         determineTitleImageLargest();
-        if (titleImageLargest)
-            return titleImage;
+        if (titleImageLargest) {
+			return titleImage;
+		}
         return messageLabel;
     }
 
@@ -298,9 +300,10 @@ public class TitleAreaDialog extends TrayDialog {
         messageLabelData.left = new FormAttachment(messageImageLabel,
                 horizontalSpacing);
         messageLabelData.height = messageLabelHeight;
-        if (titleImageLargest)
-            messageLabelData.bottom = new FormAttachment(titleImage, 0,
+        if (titleImageLargest) {
+			messageLabelData.bottom = new FormAttachment(titleImage, 0,
                     SWT.BOTTOM);
+		}
         messageLabel.setLayoutData(messageLabelData);
         FormData fillerData = new FormData();
         fillerData.left = new FormAttachment(0, horizontalSpacing);
@@ -363,8 +366,9 @@ public class TitleAreaDialog extends TrayDialog {
     public void setErrorMessage(String newErrorMessage) {
         // Any change?
         if (errorMessage == null ? newErrorMessage == null : errorMessage
-                .equals(newErrorMessage))
-            return;
+                .equals(newErrorMessage)) {
+			return;
+		}
         errorMessage = newErrorMessage;
         if (errorMessage == null) {
             if (showingError) {
@@ -376,9 +380,10 @@ public class TitleAreaDialog extends TrayDialog {
             // avoid calling setMessage in case it is overridden to call
             // setErrorMessage,
             // which would result in a recursive infinite loop
-            if (message == null) //this should probably never happen since
-                // setMessage does this conversion....
+            if (message == null) {
+				// setMessage does this conversion....
                 message = ""; //$NON-NLS-1$
+			}
             updateMessage(message);
             messageImageLabel.setImage(messageImage);
             setImageLabelVisible(messageImage != null);
@@ -449,15 +454,17 @@ public class TitleAreaDialog extends TrayDialog {
             messageLabelData.right = new FormAttachment(titleImage);
             messageLabelData.left = new FormAttachment(messageImageLabel, 0);
             messageLabelData.height = messageLabelHeight;
-            if (titleImageLargest)
-                messageLabelData.bottom = new FormAttachment(titleImage, 0,
+            if (titleImageLargest) {
+				messageLabelData.bottom = new FormAttachment(titleImage, 0,
                         SWT.BOTTOM);
+			}
             messageLabel.setLayoutData(messageLabelData);
         }
         //Do not layout before the dialog area has been created
         //to avoid incomplete calculations.
-        if (dialogArea != null)
-            workArea.getParent().layout(true);
+        if (dialogArea != null) {
+			workArea.getParent().layout(true);
+		}
     }
 
     /**
@@ -526,11 +533,13 @@ public class TitleAreaDialog extends TrayDialog {
      */
     private void showMessage(String newMessage, Image newImage) {
         // Any change?
-        if (message.equals(newMessage) && messageImage == newImage)
-            return;
+        if (message.equals(newMessage) && messageImage == newImage) {
+			return;
+		}
         message = newMessage;
-        if (message == null)
-            message = "";//$NON-NLS-1$
+        if (message == null) {
+			message = "";//$NON-NLS-1$
+		}
         // Message string to be shown - if there is an image then add in
         // a space to the message for layout purposes
         String shownMessage = (newImage == null) ? message : " " + message; //$NON-NLS-1$  
@@ -561,11 +570,13 @@ public class TitleAreaDialog extends TrayDialog {
      *            the title show
      */
     public void setTitle(String newTitle) {
-        if (titleLabel == null)
-            return;
+        if (titleLabel == null) {
+			return;
+		}
         String title = newTitle;
-        if (title == null)
-            title = "";//$NON-NLS-1$
+        if (title == null) {
+			title = "";//$NON-NLS-1$
+		}
         titleLabel.setText(title);
     }
 
@@ -591,10 +602,11 @@ public class TitleAreaDialog extends TrayDialog {
         if (newTitleImage != null) {
             determineTitleImageLargest();
             Control top;
-            if (titleImageLargest)
-                top = titleImage;
-            else
-                top = messageLabel;
+            if (titleImageLargest) {
+				top = titleImage;
+			} else {
+				top = messageLabel;
+			}
             resetWorkAreaAttachments(top);
         }
     }
@@ -619,10 +631,11 @@ public class TitleAreaDialog extends TrayDialog {
      */
     private void setMessageBackgrounds(boolean showingError) {
         Color color;
-        if (showingError)
-            color = errorMsgAreaBackground;
-        else
-            color = normalMsgAreaBackground;
+        if (showingError) {
+			color = errorMsgAreaBackground;
+		} else {
+			color = normalMsgAreaBackground;
+		}
         messageLabel.setBackground(color);
         messageImageLabel.setBackground(color);
         bottomFillerLabel.setBackground(color);

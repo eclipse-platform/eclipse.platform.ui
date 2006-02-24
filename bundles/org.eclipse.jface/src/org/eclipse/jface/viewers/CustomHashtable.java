@@ -64,13 +64,15 @@ import java.util.NoSuchElementException;
         }
 
         public boolean hasMoreElements() {
-            if (entry != null)
-                return true;
-            while (start <= lastSlot)
-                if (elementData[start++] != null) {
+            if (entry != null) {
+				return true;
+			}
+            while (start <= lastSlot) {
+				if (elementData[start++] != null) {
                     entry = elementData[start - 1];
                     return true;
                 }
+			}
             return false;
         }
 
@@ -79,8 +81,9 @@ import java.util.NoSuchElementException;
                 Object result = key ? entry.key : entry.value;
                 entry = entry.next;
                 return result;
-            } else
-                throw new NoSuchElementException();
+            } else {
+				throw new NoSuchElementException();
+			}
         }
     }
 
@@ -152,8 +155,9 @@ import java.util.NoSuchElementException;
             firstSlot = elementData.length;
             loadFactor = 0.75f;
             computeMaxSize();
-        } else
-            throw new IllegalArgumentException();
+        } else {
+			throw new IllegalArgumentException();
+		}
         this.comparer = comparer;
     }
 
@@ -202,8 +206,9 @@ import java.util.NoSuchElementException;
      * @return		an Enumeration of the values of this Hashtable
      */
     public Enumeration elements() {
-        if (elementCount == 0)
-            return emptyEnumerator;
+        if (elementCount == 0) {
+			return emptyEnumerator;
+		}
         return new HashEnumerator(false);
     }
 
@@ -219,8 +224,9 @@ import java.util.NoSuchElementException;
         int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
         HashMapEntry entry = elementData[index];
         while (entry != null) {
-            if (keyEquals(key, entry.key))
-                return entry.value;
+            if (keyEquals(key, entry.key)) {
+				return entry.value;
+			}
             entry = entry.next;
         }
         return null;
@@ -230,8 +236,9 @@ import java.util.NoSuchElementException;
         int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
         HashMapEntry entry = elementData[index];
         while (entry != null) {
-            if (keyEquals(key, entry.key))
-                return entry;
+            if (keyEquals(key, entry.key)) {
+				return entry;
+			}
             entry = entry.next;
         }
         return null;
@@ -241,20 +248,22 @@ import java.util.NoSuchElementException;
      * Answers the hash code for the given key.
      */
     private int hashCode(Object key) {
-        if (comparer == null)
-            return key.hashCode();
-        else
-            return comparer.hashCode(key);
+        if (comparer == null) {
+			return key.hashCode();
+		} else {
+			return comparer.hashCode(key);
+		}
     }
 
     /**
      * Compares two keys for equality.
      */
     private boolean keyEquals(Object a, Object b) {
-        if (comparer == null)
-            return a.equals(b);
-        else
-            return comparer.equals(a, b);
+        if (comparer == null) {
+			return a.equals(b);
+		} else {
+			return comparer.equals(a, b);
+		}
     }
 
     /**
@@ -265,8 +274,9 @@ import java.util.NoSuchElementException;
      * @return		an Enumeration of the keys of this Hashtable
      */
     public Enumeration keys() {
-        if (elementCount == 0)
-            return emptyEnumerator;
+        if (elementCount == 0) {
+			return emptyEnumerator;
+		}
         return new HashEnumerator(true);
     }
 
@@ -284,17 +294,20 @@ import java.util.NoSuchElementException;
         if (key != null && value != null) {
             int index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
             HashMapEntry entry = elementData[index];
-            while (entry != null && !keyEquals(key, entry.key))
-                entry = entry.next;
+            while (entry != null && !keyEquals(key, entry.key)) {
+				entry = entry.next;
+			}
             if (entry == null) {
                 if (++elementCount > threshold) {
                     rehash();
                     index = (hashCode(key) & 0x7FFFFFFF) % elementData.length;
                 }
-                if (index < firstSlot)
-                    firstSlot = index;
-                if (index > lastSlot)
-                    lastSlot = index;
+                if (index < firstSlot) {
+					firstSlot = index;
+				}
+                if (index > lastSlot) {
+					lastSlot = index;
+				}
                 entry = new HashMapEntry(key, value);
                 entry.next = elementData[index];
                 elementData[index] = entry;
@@ -304,8 +317,9 @@ import java.util.NoSuchElementException;
             entry.key = key; // important to avoid hanging onto keys that are equal but "old" -- see bug 30607
             entry.value = value;
             return result;
-        } else
-            throw new NullPointerException();
+        } else {
+			throw new NullPointerException();
+		}
     }
 
     /**
@@ -314,8 +328,9 @@ import java.util.NoSuchElementException;
      */
     private void rehash() {
         int length = elementData.length << 1;
-        if (length == 0)
-            length = 1;
+        if (length == 0) {
+			length = 1;
+		}
         firstSlot = length;
         lastSlot = -1;
         HashMapEntry[] newData = new HashMapEntry[length];
@@ -323,10 +338,12 @@ import java.util.NoSuchElementException;
             HashMapEntry entry = elementData[i];
             while (entry != null) {
                 int index = (hashCode(entry.key) & 0x7FFFFFFF) % length;
-                if (index < firstSlot)
-                    firstSlot = index;
-                if (index > lastSlot)
-                    lastSlot = index;
+                if (index < firstSlot) {
+					firstSlot = index;
+				}
+                if (index > lastSlot) {
+					lastSlot = index;
+				}
                 HashMapEntry next = entry.next;
                 entry.next = newData[index];
                 newData[index] = entry;
@@ -353,10 +370,11 @@ import java.util.NoSuchElementException;
             entry = entry.next;
         }
         if (entry != null) {
-            if (last == null)
-                elementData[index] = entry.next;
-            else
-                last.next = entry.next;
+            if (last == null) {
+				elementData[index] = entry.next;
+			} else {
+				last.next = entry.next;
+			}
             elementCount--;
             return entry.value;
         }
@@ -378,8 +396,9 @@ import java.util.NoSuchElementException;
      * @return		the string representation of this Hashtable
      */
     public String toString() {
-        if (size() == 0)
-            return "{}"; //$NON-NLS-1$
+        if (size() == 0) {
+			return "{}"; //$NON-NLS-1$
+		}
 
         StringBuffer buffer = new StringBuffer();
         buffer.append('{');
@@ -394,8 +413,9 @@ import java.util.NoSuchElementException;
             }
         }
         // Remove the last ", "
-        if (elementCount > 0)
-            buffer.setLength(buffer.length() - 2);
+        if (elementCount > 0) {
+			buffer.setLength(buffer.length() - 2);
+		}
         buffer.append('}');
         return buffer.toString();
     }

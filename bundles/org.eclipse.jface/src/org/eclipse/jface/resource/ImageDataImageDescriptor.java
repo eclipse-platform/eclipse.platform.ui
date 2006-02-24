@@ -125,8 +125,9 @@ class ImageDataImageDescriptor extends ImageDescriptor {
      * @see Object#equals
      */
     public boolean equals(Object obj) {
-        if (!(obj instanceof ImageDataImageDescriptor))
-            return false; 
+        if (!(obj instanceof ImageDataImageDescriptor)) {
+			return false;
+		} 
         
         ImageDataImageDescriptor imgWrap = (ImageDataImageDescriptor) obj;
        

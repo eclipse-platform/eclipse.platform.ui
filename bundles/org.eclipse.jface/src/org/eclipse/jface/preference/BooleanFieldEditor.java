@@ -94,8 +94,9 @@ public class BooleanFieldEditor extends FieldEditor {
      * Method declared on FieldEditor.
      */
     protected void adjustForNumColumns(int numColumns) {
-        if (style == SEPARATE_LABEL)
-            numColumns--;
+        if (style == SEPARATE_LABEL) {
+			numColumns--;
+		}
         ((GridData) checkBox.getLayoutData()).horizontalSpan = numColumns;
     }
 
@@ -114,8 +115,9 @@ public class BooleanFieldEditor extends FieldEditor {
             GridData gd = new GridData();
             gd.horizontalSpan = numColumns;
             checkBox.setLayoutData(gd);
-            if (text != null)
-                checkBox.setText(text);
+            if (text != null) {
+				checkBox.setText(text);
+			}
         }
     }
 
@@ -234,8 +236,9 @@ public class BooleanFieldEditor extends FieldEditor {
      */
     protected void valueChanged(boolean oldValue, boolean newValue) {
         setPresentsDefaultValue(false);
-        if (oldValue != newValue)
-            fireStateChanged(VALUE, oldValue, newValue);
+        if (oldValue != newValue) {
+			fireStateChanged(VALUE, oldValue, newValue);
+		}
     }
 
     /*
@@ -243,8 +246,9 @@ public class BooleanFieldEditor extends FieldEditor {
      */
     public void setEnabled(boolean enabled, Composite parent) {
         //Only call super if there is a label already
-        if (style == SEPARATE_LABEL)
-            super.setEnabled(enabled, parent);
+        if (style == SEPARATE_LABEL) {
+			super.setEnabled(enabled, parent);
+		}
         getChangeControl(parent).setEnabled(enabled);
     }
 

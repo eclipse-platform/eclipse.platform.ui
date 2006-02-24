@@ -53,24 +53,27 @@ public class SubContributionItem implements IContributionItem {
      * Method declared on IContributionItem.
      */
     public void fill(Composite parent) {
-        if (visible)
-            innerItem.fill(parent);
+        if (visible) {
+			innerItem.fill(parent);
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on IContributionItem.
      */
     public void fill(Menu parent, int index) {
-        if (visible)
-            innerItem.fill(parent, index);
+        if (visible) {
+			innerItem.fill(parent, index);
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on IContributionItem.
      */
     public void fill(ToolBar parent, int index) {
-        if (visible)
-            innerItem.fill(parent, index);
+        if (visible) {
+			innerItem.fill(parent, index);
+		}
     }
 
     /* (non-Javadoc)
@@ -164,8 +167,9 @@ public class SubContributionItem implements IContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
      */
     public void fill(CoolBar parent, int index) {
-        if (visible)
-            innerItem.fill(parent, index);
+        if (visible) {
+			innerItem.fill(parent, index);
+		}
     }
 
     /* (non-Javadoc)

@@ -73,10 +73,11 @@ public class LabelProviderChangedEvent extends EventObject {
      * @return the element whose label needs to be updated or <code>null</code>
      */
     public Object getElement() {
-        if (this.elements == null || this.elements.length == 0)
-            return null;
-        else
-            return this.elements[0];
+        if (this.elements == null || this.elements.length == 0) {
+			return null;
+		} else {
+			return this.elements[0];
+		}
     }
 
     /**
@@ -86,9 +87,10 @@ public class LabelProviderChangedEvent extends EventObject {
      * @return the element whose labels need to be updated or <code>null</code>
      */
     public Object[] getElements() {
-        if (this.elements == null)
-            return null;
-        else
-            return this.elements;
+        if (this.elements == null) {
+			return null;
+		} else {
+			return this.elements;
+		}
     }
 }

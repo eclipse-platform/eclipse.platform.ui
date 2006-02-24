@@ -208,8 +208,9 @@ public final class SWTKeySupport {
 		boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
 
 		if (ctrlDown && event.character != event.keyCode
-				&& event.character < 0x20)
+				&& event.character < 0x20) {
 			character += 0x40;
+		}
 
 		return character;
 	}

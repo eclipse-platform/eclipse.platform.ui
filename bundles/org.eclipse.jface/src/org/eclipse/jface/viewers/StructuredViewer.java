@@ -155,10 +155,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 */
 		public ColorAndFontCollectorWithProviders(IBaseLabelProvider provider) {
 			super();
-			if (provider instanceof IColorProvider)
+			if (provider instanceof IColorProvider) {
 				colorProvider = (IColorProvider) provider;
-			if (provider instanceof IFontProvider)
+			}
+			if (provider instanceof IFontProvider) {
 				fontProvider = (IFontProvider) provider;
+			}
 		}
 		
 	
@@ -168,18 +170,22 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		public void setFontsAndColors(Object element){
 			
 			if(fontProvider != null){
-				if(font == null)//Only set the font if it hasn't been set yet
-					font = fontProvider.getFont(element);	
+				if(font == null) {
+					font = fontProvider.getFont(element);
+				}	
 			}
 			
-			if(colorProvider == null)
-				return;			
+			if(colorProvider == null) {
+				return;
+			}			
 			//Set the colors if they are not set yet
-			if(background == null)
+			if(background == null) {
 				background = colorProvider.getBackground(element);
+			}
 			
-			if(foreground == null)
-				foreground = colorProvider.getForeground(element);			
+			if(foreground == null) {
+				foreground = colorProvider.getForeground(element);
+			}			
 		}
 		
 		/**
@@ -192,11 +198,13 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			if(colorProvider == null){
 				if(usedDecorators){
 					//If there is no provider only apply set values
-					if(background != null)
+					if(background != null) {
 						control.setBackground(background);
+					}
 				
-					if(foreground != null)
+					if(foreground != null) {
 						control.setForeground(foreground);
+					}
 				}
 			}
 			else{
@@ -206,11 +214,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			}
 			
 			if(fontProvider == null){
-				if(usedDecorators && font != null)
+				if(usedDecorators && font != null) {
 					control.setFont(font);
-			}
-			else//Always set the value if there is a provider
+				}
+			} else {
 				control.setFont(font);
+			}
 			
 			clear();
 		}
@@ -225,11 +234,13 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			if(colorProvider == null){
 				if(usedDecorators){
 					//If there is no provider only apply set values
-					if(background != null)
+					if(background != null) {
 						control.setBackground(background);
+					}
 				
-					if(foreground != null)
+					if(foreground != null) {
 						control.setForeground(foreground);
+					}
 				}
 			}
 			else{
@@ -239,11 +250,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			}
 			
 			if(fontProvider == null){
-				if(usedDecorators && font != null)
+				if(usedDecorators && font != null) {
 					control.setFont(font);
-			}
-			else//Always set the value if there is a provider
+				}
+			} else {
 				control.setFont(font);
+			}
 			
 			clear();
 		}
@@ -257,11 +269,13 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			if(colorProvider == null){
 				if(usedDecorators){
 					//If there is no provider only apply set values
-					if(background != null)
+					if(background != null) {
 						control.setBackground(background);
+					}
 				
-					if(foreground != null)
+					if(foreground != null) {
 						control.setForeground(foreground);
+					}
 				}
 			}
 			else{
@@ -271,11 +285,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			}
 			
 			if(fontProvider == null){
-				if(usedDecorators && font != null)
+				if(usedDecorators && font != null) {
 					control.setFont(font);
-			}
-			else//Always set the value if there is a provider
+				}
+			} else {
 				control.setFont(font);
+			}
 			
 			clear();
 		}
@@ -343,14 +358,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			
 			if(usedDecorators){
 				//If there is no provider only apply set values
-				if(background != null)
+				if(background != null) {
 					control.setBackground(background);
+				}
 			
-				if(foreground != null)
+				if(foreground != null) {
 					control.setForeground(foreground);
+				}
 		
-				if(font != null)
+				if(font != null) {
 					control.setFont(font);
+				}
 			}
 			clear();
 		}
@@ -363,14 +381,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		public void applyFontsAndColors(TreeItem control) {
 			if(usedDecorators){
 				//If there is no provider only apply set values
-				if(background != null)
+				if(background != null) {
 					control.setBackground(background);
+				}
 			
-				if(foreground != null)
+				if(foreground != null) {
 					control.setForeground(foreground);
+				}
 		
-				if(font != null)
+				if(font != null) {
 					control.setFont(font);
+				}
 			}
 			clear();
 		}
@@ -383,14 +404,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		public void applyFontsAndColors(TableTreeItem control) {
 			if(usedDecorators){
 				//If there is no provider only apply set values
-				if(background != null)
+				if(background != null) {
 					control.setBackground(background);
+				}
 			
-				if(foreground != null)
+				if(foreground != null) {
 					control.setForeground(foreground);
+				}
 		
-				if(font != null)
+				if(font != null) {
 					control.setFont(font);
+				}
 			}
 			clear();
 		}
@@ -532,8 +556,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            a viewer filter
 	 */
 	public void addFilter(ViewerFilter filter) {
-		if (filters == null)
+		if (filters == null) {
 			filters = new ArrayList();
+		}
 		filters.add(filter);
 		refresh();
 	}
@@ -565,8 +590,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	protected void associate(Object element, Item item) {
 		Object data = item.getData();
 		if (data != element) {
-			if (data != null)
+			if (data != null) {
 				disassociate(item);
+			}
 			item.setData(element);
 		}
 		// Always map the element, even if data == element,
@@ -650,10 +676,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @return whether elementA is equal to elementB
 	 */
 	protected boolean equals(Object elementA, Object elementB) {
-		if (comparer == null)
+		if (comparer == null) {
 			return elementA == null ? elementB == null : elementA.equals(elementB);
-		else
+		} else {
 			return elementA == null ? elementB == null : comparer.equals(elementA, elementB);
+		}
 	}
 
 	/**
@@ -671,11 +698,13 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				boolean add = true;
 				for (int j = 0; j < filters.size(); j++) {
 					add = ((ViewerFilter) filters.get(j)).select(this, root, elements[i]);
-					if (!add)
+					if (!add) {
 						break;
+					}
 				}
-				if (add)
+				if (add) {
 					filtered.add(elements[i]);
+				}
 			}
 			return filtered.toArray();
 		}
@@ -723,8 +752,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected final Widget[] findItems(Object element) {
 		Widget result = doFindInputItem(element);
-		if (result != null)
+		if (result != null) {
 			return new Widget[] { result };
+		}
 		// if we have an element map use it, otherwise search for the item.
 		if (usingElementMap()) {
 			Object widgetOrWidgets = elementMap.get(element);
@@ -844,8 +874,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @return an array of viewer filters
 	 */
 	public ViewerFilter[] getFilters() {
-		if (filters == null)
+		if (filters == null) {
 			return new ViewerFilter[0];
+		}
 		ViewerFilter[] result = new ViewerFilter[filters.size()];
 		filters.toArray(result);
 		return result;
@@ -1203,14 +1234,16 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *         <code>false</code> otherwise
 	 */
 	protected boolean needsRefilter(Object element, String property) {
-		if (sorter != null && sorter.isSorterProperty(element, property))
+		if (sorter != null && sorter.isSorterProperty(element, property)) {
 			return true;
+		}
 
 		if (filters != null) {
 			for (int i = 0, n = filters.size(); i < n; ++i) {
 				ViewerFilter filter = (ViewerFilter) filters.get(i);
-				if (filter.isFilterProperty(element, property))
+				if (filter.isFilterProperty(element, property)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -1264,13 +1297,15 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			inChange = false;
 
 			// restore selection
-			if (restoreSelection)
+			if (restoreSelection) {
 				setSelectionToWidget(oldSelection, false);
+			}
 
 			// send out notification if old and new differ
 			ISelection newSelection = getSelection();
-			if (!newSelection.equals(oldSelection))
+			if (!newSelection.equals(oldSelection)) {
 				handleInvalidSelection(oldSelection, newSelection);
+			}
 		}
 	}
 
@@ -1417,8 +1452,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				if (o == filter) {
 					i.remove();
 					refresh();
-					if (filters.size() == 0)
+					if (filters.size() == 0) {
 						filters = null;
+					}
 					return;
 				}
 			}
@@ -1550,10 +1586,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            selection, or <code>false</code> otherwise
 	 */
 	protected void setSelectionToWidget(ISelection selection, boolean reveal) {
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			setSelectionToWidget(((IStructuredSelection) selection).toList(), reveal);
-		else
+		} else {
 			setSelectionToWidget((List) null, reveal);
+		}
 	}
 
 	/**
@@ -1745,8 +1782,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            indicate unknown
 	 */
 	public void update(Object[] elements, String[] properties) {
-		for (int i = 0; i < elements.length; ++i)
+		for (int i = 0; i < elements.length; ++i) {
 			update(elements[i], properties);
+		}
 	}
 
 	/**
@@ -1819,8 +1857,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (properties != null) {
 			for (int i = 0; i < properties.length; ++i) {
 				needsRefilter = needsRefilter(element, properties[i]);
-				if (needsRefilter)
+				if (needsRefilter) {
 					break;
+				}
 			}
 		}
 		if (needsRefilter) {
@@ -1836,8 +1875,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			IBaseLabelProvider labelProvider = getLabelProvider();
 			for (int i = 0; i < properties.length; ++i) {
 				needsUpdate = labelProvider.isLabelProperty(element, properties[i]);
-				if (needsUpdate)
+				if (needsUpdate) {
 					break;
+				}
 			}
 		}
 		if (needsUpdate) {
@@ -1901,10 +1941,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see org.eclipse.jface.viewers.ContentViewer#setLabelProvider(org.eclipse.jface.viewers.IBaseLabelProvider)
 	 */
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
-		if (labelProvider instanceof IColorProvider || labelProvider instanceof IFontProvider)
+		if (labelProvider instanceof IColorProvider || labelProvider instanceof IFontProvider) {
 			colorAndFontCollector = new ColorAndFontCollectorWithProviders(labelProvider);
-		else
+		} else {
 			colorAndFontCollector = new ColorAndFontCollector();
+		}
 		super.setLabelProvider(labelProvider);
 		
 	}
@@ -1922,14 +1963,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
             		
 			colorAndFontCollector.setUsedDecorators();
 			
-			if(updateLabel.hasNewBackground())
+			if(updateLabel.hasNewBackground()) {
 				colorAndFontCollector.setBackground(updateLabel.getBackground());
+			}
 			
-			if(updateLabel.hasNewForeground())
+			if(updateLabel.hasNewForeground()) {
 				colorAndFontCollector.setForeground(updateLabel.getForeground());
+			}
 			
-			if(updateLabel.hasNewFont())
+			if(updateLabel.hasNewFont()) {
 				colorAndFontCollector.setFont(updateLabel.getFont());
+			}
 			return;
 
 		} 
@@ -1954,14 +1998,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
             		
 			colorAndFontCollector.setUsedDecorators();
 			
-			if(updateLabel.hasNewBackground())
+			if(updateLabel.hasNewBackground()) {
 				colorAndFontCollector.setBackground(updateLabel.getBackground());
+			}
 			
-			if(updateLabel.hasNewForeground())
+			if(updateLabel.hasNewForeground()) {
 				colorAndFontCollector.setForeground(updateLabel.getForeground());
+			}
 			
-			if(updateLabel.hasNewFont())
+			if(updateLabel.hasNewFont()) {
 				colorAndFontCollector.setFont(updateLabel.getFont());
+			}
 	
 	}
 	
@@ -1977,14 +2024,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
             		
 			colorAndFontCollector.setUsedDecorators();
 			
-			if(updateLabel.hasNewBackground())
+			if(updateLabel.hasNewBackground()) {
 				colorAndFontCollector.setBackground(updateLabel.getBackground());
+			}
 			
-			if(updateLabel.hasNewForeground())
+			if(updateLabel.hasNewForeground()) {
 				colorAndFontCollector.setForeground(updateLabel.getForeground());
+			}
 			
-			if(updateLabel.hasNewFont())
+			if(updateLabel.hasNewFont()) {
 				colorAndFontCollector.setFont(updateLabel.getFont());
+			}
 	
 	}
 	

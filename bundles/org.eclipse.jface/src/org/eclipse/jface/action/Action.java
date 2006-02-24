@@ -345,8 +345,9 @@ public abstract class Action extends AbstractAction implements IAction {
 	 * (non-Javadoc) Method declared on IAction.
 	 */
 	public String getDescription() {
-		if (description != null)
+		if (description != null) {
 			return description;
+		}
 		return getToolTipText();
 	}
 
@@ -392,10 +393,12 @@ public abstract class Action extends AbstractAction implements IAction {
 		// The default drop down menu value is only used
 		// to mark this action requested style. So do not
 		// return it. For backward compatibility reasons.
-		if (value == VAL_DROP_DOWN_MENU)
+		if (value == VAL_DROP_DOWN_MENU) {
 			return null;
-		if (value instanceof IMenuCreator)
+		}
+		if (value instanceof IMenuCreator) {
 			return (IMenuCreator) value;
+		}
 		return null;
 	}
 
@@ -404,14 +407,18 @@ public abstract class Action extends AbstractAction implements IAction {
 	 */
 	public int getStyle() {
 		// Infer the style from the value field.
-		if (value == VAL_PUSH_BTN || value == null)
+		if (value == VAL_PUSH_BTN || value == null) {
 			return AS_PUSH_BUTTON;
-		if (value == VAL_TOGGLE_BTN_ON || value == VAL_TOGGLE_BTN_OFF)
+		}
+		if (value == VAL_TOGGLE_BTN_ON || value == VAL_TOGGLE_BTN_OFF) {
 			return AS_CHECK_BOX;
-		if (value == VAL_RADIO_BTN_ON || value == VAL_RADIO_BTN_OFF)
+		}
+		if (value == VAL_RADIO_BTN_ON || value == VAL_RADIO_BTN_OFF) {
 			return AS_RADIO_BUTTON;
-		if (value instanceof IMenuCreator)
+		}
+		if (value instanceof IMenuCreator) {
 			return AS_DROP_DOWN_MENU;
+		}
 
 		// We should never get to this line...
 		return AS_PUSH_BUTTON;
@@ -526,10 +533,11 @@ public abstract class Action extends AbstractAction implements IAction {
 
 		if (newValue != value) {
 			value = newValue;
-			if (checked)
+			if (checked) {
 				firePropertyChange(CHECKED, Boolean.FALSE, Boolean.TRUE);
-			else
+			} else {
 				firePropertyChange(CHECKED, Boolean.TRUE, Boolean.FALSE);
+			}
 		}
 	}
 
@@ -624,8 +632,9 @@ public abstract class Action extends AbstractAction implements IAction {
 			return;
 		}
 
-		if (value instanceof IMenuCreator)
+		if (value instanceof IMenuCreator) {
 			value = creator == null ? VAL_DROP_DOWN_MENU : creator;
+		}
 	}
 
 	/**

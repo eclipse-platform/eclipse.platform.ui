@@ -297,8 +297,9 @@ public class DelegatingDropAdapter implements DropTargetListener {
      * @param listener the listener to remove
      */
     public void removeDropTargetListener(TransferDropTargetListener listener) {
-        if (currentListener == listener)
-            currentListener = null;
+        if (currentListener == listener) {
+			currentListener = null;
+		}
         listeners.remove(listener);
     }
 
@@ -311,8 +312,9 @@ public class DelegatingDropAdapter implements DropTargetListener {
      */
     private boolean setCurrentListener(TransferDropTargetListener listener,
             final DropTargetEvent event) {
-        if (currentListener == listener)
-            return false;
+        if (currentListener == listener) {
+			return false;
+		}
         if (currentListener != null) {
         	SafeRunnable.run(new SafeRunnable() {
                 public void run() throws Exception {
@@ -363,8 +365,9 @@ public class DelegatingDropAdapter implements DropTargetListener {
                 if (listener.isEnabled(event)) {
                     // if the listener stays the same, set its previously determined  
                     // event detail 
-                    if (!setCurrentListener(listener, event))
-                        event.detail = originalDetail;
+                    if (!setCurrentListener(listener, event)) {
+						event.detail = originalDetail;
+					}
                     return;
                 }
 				event.currentDataType = originalDataType;

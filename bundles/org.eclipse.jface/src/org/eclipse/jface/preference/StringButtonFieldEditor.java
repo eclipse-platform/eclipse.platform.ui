@@ -106,8 +106,9 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
     protected Button getChangeControl(Composite parent) {
         if (changeButton == null) {
             changeButton = new Button(parent, SWT.PUSH);
-            if (changeButtonText == null)
-                changeButtonText = JFaceResources.getString("openChange"); //$NON-NLS-1$
+            if (changeButtonText == null) {
+				changeButtonText = JFaceResources.getString("openChange"); //$NON-NLS-1$
+			}
             changeButton.setText(changeButtonText);
             changeButton.setFont(parent.getFont());
             changeButton.addSelectionListener(new SelectionAdapter() {
@@ -142,8 +143,9 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
      * @return the shell
      */
     protected Shell getShell() {
-        if (changeButton == null)
-            return null;
+        if (changeButton == null) {
+			return null;
+		}
         return changeButton.getShell();
     }
 
@@ -155,8 +157,9 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
     public void setChangeButtonText(String text) {
         Assert.isNotNull(text);
         changeButtonText = text;
-        if (changeButton != null)
-            changeButton.setText(text);
+        if (changeButton != null) {
+			changeButton.setText(text);
+		}
     }
 
     /* (non-Javadoc)

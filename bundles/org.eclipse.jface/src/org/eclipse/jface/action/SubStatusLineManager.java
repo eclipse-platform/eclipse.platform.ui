@@ -88,8 +88,9 @@ public class SubStatusLineManager extends SubContributionManager implements
     public void setErrorMessage(String message) {
         this.errorImage = null;
         this.errorMessage = message;
-        if (isVisible())
-            getParentStatusLineManager().setErrorMessage(errorMessage);
+        if (isVisible()) {
+			getParentStatusLineManager().setErrorMessage(errorMessage);
+		}
     }
 
     /* (non-Javadoc)
@@ -98,9 +99,10 @@ public class SubStatusLineManager extends SubContributionManager implements
     public void setErrorMessage(Image image, String message) {
         this.errorImage = image;
         this.errorMessage = message;
-        if (isVisible())
-            getParentStatusLineManager().setErrorMessage(errorImage,
+        if (isVisible()) {
+			getParentStatusLineManager().setErrorMessage(errorImage,
                     errorMessage);
+		}
     }
 
     /* (non-Javadoc)
@@ -109,8 +111,9 @@ public class SubStatusLineManager extends SubContributionManager implements
     public void setMessage(String message) {
         this.messageImage = null;
         this.message = message;
-        if (isVisible())
-            getParentStatusLineManager().setMessage(message);
+        if (isVisible()) {
+			getParentStatusLineManager().setMessage(message);
+		}
     }
 
     /* (non-Javadoc)
@@ -119,8 +122,9 @@ public class SubStatusLineManager extends SubContributionManager implements
     public void setMessage(Image image, String message) {
         this.messageImage = image;
         this.message = message;
-        if (isVisible())
-            getParentStatusLineManager().setMessage(messageImage, message);
+        if (isVisible()) {
+			getParentStatusLineManager().setMessage(messageImage, message);
+		}
     }
 
     /* (non-Javadoc)

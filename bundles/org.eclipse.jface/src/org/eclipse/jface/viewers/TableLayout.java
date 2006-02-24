@@ -69,8 +69,9 @@ public class TableLayout extends Layout {
 	 * (non-Javadoc) Method declared on Layout.
 	 */
 	public Point computeSize(Composite c, int wHint, int hHint, boolean flush) {
-		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
+		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 			return new Point(wHint, hHint);
+		}
 
 		Table table = (Table) c;
 		// To avoid recursions.
@@ -96,8 +97,9 @@ public class TableLayout extends Layout {
 				Assert.isTrue(false, "Unknown column layout data");//$NON-NLS-1$
 			}
 		}
-		if (width > result.x)
+		if (width > result.x) {
 			result.x = width;
+		}
 		return result;
 	}
 
@@ -111,8 +113,9 @@ public class TableLayout extends Layout {
 		// occasionally stick around (on Windows),
 		// requires hooking column resizing as well, and may not be what the
 		// user wants anyway.
-		if (!firstTime)
+		if (!firstTime) {
 			return;
+		}
 
 		int width = c.getClientArea().width;
 
@@ -120,8 +123,9 @@ public class TableLayout extends Layout {
 		// it is being called on Linux. This method resets the
 		// Layout to null so we make sure we run it only when
 		// the value is OK.
-		if (width <= 1)
+		if (width <= 1) {
 			return;
+		}
 
 		Item[] tableColumns = getColumns(c);
 		int size = Math.min(columns.size(), tableColumns.length);
@@ -170,8 +174,9 @@ public class TableLayout extends Layout {
 					int weight = cw.weight;
 					int pixels = totalWeight == 0 ? 0 : weight * rest
 							/ totalWeight;
-					if (pixels < cw.minimumWidth)
+					if (pixels < cw.minimumWidth) {
 						pixels = cw.minimumWidth;
+					}
 					totalDistributed += pixels;
 					widths[i] = pixels;
 				}
@@ -180,8 +185,9 @@ public class TableLayout extends Layout {
 			// Distribute any remaining pixels to columns with weight.
 			int diff = rest - totalDistributed;
 			for (int i = 0; diff > 0; ++i) {
-				if (i == size)
+				if (i == size) {
 					i = 0;
+				}
 				ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
 				if (col instanceof ColumnWeightData) {
 					++widths[i];
@@ -204,10 +210,11 @@ public class TableLayout extends Layout {
 	 * @param width
 	 */
 	private void setWidth(Item item, int width) {
-		if (item instanceof TreeColumn)
+		if (item instanceof TreeColumn) {
 			((TreeColumn) item).setWidth(width);
-		else
+		} else {
 			((TableColumn) item).setWidth(width);
+		}
 
 	}
 
@@ -218,8 +225,9 @@ public class TableLayout extends Layout {
 	 * @return Item[]
 	 */
 	private Item[] getColumns(Composite composite) {
-		if (composite instanceof Tree)
+		if (composite instanceof Tree) {
 			return ((Tree) composite).getColumns();
+		}
 		return ((Table) composite).getColumns();
 	}
 }

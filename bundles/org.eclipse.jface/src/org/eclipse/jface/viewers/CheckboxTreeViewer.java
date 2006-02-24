@@ -154,10 +154,12 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
                 Object data = item.getData();
                 if (data != null) {
                     TreeItem ti = (TreeItem) item;
-                    if (ti.getChecked())
-                        checked.put(data, data);
-                    if (ti.getGrayed())
-                        grayed.put(data, data);
+                    if (ti.getChecked()) {
+						checked.put(data, data);
+					}
+                    if (ti.getGrayed()) {
+						grayed.put(data, data);
+					}
                 }
             }
             gatherState(checked, grayed, item);
@@ -169,8 +171,9 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      */
     public boolean getChecked(Object element) {
         Widget widget = findItem(element);
-        if (widget instanceof TreeItem)
-            return ((TreeItem) widget).getChecked();
+        if (widget instanceof TreeItem) {
+			return ((TreeItem) widget).getChecked();
+		}
         return false;
     }
 
@@ -243,8 +246,9 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
                         !state));
             }
             lastClickedItem = null;
-        } else
-            super.handleDoubleSelect(event);
+        } else {
+			super.handleDoubleSelect(event);
+		}
     }
 
     /* (non-Javadoc)
@@ -263,8 +267,9 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
                 fireCheckStateChanged(new CheckStateChangedEvent(this, data,
                         item.getChecked()));
             }
-        } else
-            super.handleSelect(event);
+        } else {
+			super.handleSelect(event);
+		}
     }
 
     /**
@@ -280,8 +285,9 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
             Item item = items[i];
             if (item instanceof TreeItem && ((TreeItem) item).getChecked()) {
                 Object data = item.getData();
-                if (data != null)
-                    result.add(data);
+                if (data != null) {
+					result.add(data);
+				}
             }
             internalCollectChecked(result, item);
         }
@@ -300,8 +306,9 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
             Item item = items[i];
             if (item instanceof TreeItem && ((TreeItem) item).getGrayed()) {
                 Object data = item.getData();
-                if (data != null)
-                    result.add(data);
+                if (data != null) {
+					result.add(data);
+				}
             }
             internalCollectGrayed(result, item);
         }

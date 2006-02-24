@@ -176,11 +176,13 @@ public class StringFieldEditor extends FieldEditor {
      */
     protected boolean checkState() {
         boolean result = false;
-        if (emptyStringAllowed)
-            result = true;
+        if (emptyStringAllowed) {
+			result = true;
+		}
 
-        if (textField == null)
-            result = false;
+        if (textField == null) {
+			result = false;
+		}
 
         String txt = textField.getText();
 
@@ -189,10 +191,11 @@ public class StringFieldEditor extends FieldEditor {
         // call hook for subclasses
         result = result && doCheckState();
 
-        if (result)
-            clearErrorMessage();
-        else
-            showErrorMessage(errorMessage);
+        if (result) {
+			clearErrorMessage();
+		} else {
+			showErrorMessage(errorMessage);
+		}
 
         return result;
     }
@@ -294,8 +297,9 @@ public class StringFieldEditor extends FieldEditor {
      * @return the current value
      */
     public String getStringValue() {
-        if (textField != null)
-            return textField.getText();
+        if (textField != null) {
+			return textField.getText();
+		}
         
         return getPreferenceStore().getString(getPreferenceName());
     }
@@ -431,8 +435,9 @@ public class StringFieldEditor extends FieldEditor {
      */
     public void setStringValue(String value) {
         if (textField != null) {
-            if (value == null)
-                value = "";//$NON-NLS-1$
+            if (value == null) {
+				value = "";//$NON-NLS-1$
+			}
             oldValue = textField.getText();
             if (!oldValue.equals(value)) {
                 textField.setText(value);
@@ -450,8 +455,9 @@ public class StringFieldEditor extends FieldEditor {
      */
     public void setTextLimit(int limit) {
         textLimit = limit;
-        if (textField != null)
-            textField.setTextLimit(limit);
+        if (textField != null) {
+			textField.setTextLimit(limit);
+		}
     }
 
     /**
@@ -494,8 +500,9 @@ public class StringFieldEditor extends FieldEditor {
         boolean oldState = isValid;
         refreshValidState();
 
-        if (isValid != oldState)
-            fireStateChanged(IS_VALID, oldState, isValid);
+        if (isValid != oldState) {
+			fireStateChanged(IS_VALID, oldState, isValid);
+		}
 
         String newValue = textField.getText();
         if (!newValue.equals(oldValue)) {

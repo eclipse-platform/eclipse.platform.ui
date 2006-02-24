@@ -308,14 +308,16 @@ public class CoolBarManager extends ContributionManager implements
     }
     
     private CoolItem findCoolItem(CoolItem[] items, IContributionItem item) {
-        if (items == null)
-            return null;
+        if (items == null) {
+			return null;
+		}
 
         for (int i = 0; i < items.length; i++) {
             CoolItem coolItem = items[i];
             IContributionItem data = (IContributionItem) coolItem.getData();
-            if (data != null && data.equals(item))
-                return coolItem;
+            if (data != null && data.equals(item)) {
+				return coolItem;
+			}
         }
         return null;
     }
@@ -559,8 +561,9 @@ public class CoolBarManager extends ContributionManager implements
         ArrayList contributionList = getItemList();
 
         // Check the size of the list
-        if (contributionList.size() == 0)
-            return;
+        if (contributionList.size() == 0) {
+			return;
+		}
 
         // The list of all the cool items in their visual order
         CoolItem[] coolItems = coolBar.getItems();
@@ -674,8 +677,9 @@ public class CoolBarManager extends ContributionManager implements
     private void relocate(IContributionItem cbItem, int index,
             ArrayList contributionList, HashMap itemLocation) {
 
-        if (!(itemLocation.get(cbItem) instanceof Integer))
-            return;
+        if (!(itemLocation.get(cbItem) instanceof Integer)) {
+			return;
+		}
         int targetRow = ((Integer) itemLocation.get(cbItem)).intValue();
 
         int cbInternalIndex = contributionList.indexOf(cbItem);
@@ -700,22 +704,25 @@ public class CoolBarManager extends ContributionManager implements
                     IContributionItem item = (IContributionItem) iterator
                             .next();
                     Integer itemRow = (Integer) itemLocation.get(item);
-                    if (item.isSeparator())
-                        break;
+                    if (item.isSeparator()) {
+						break;
+					}
                     // if the item has an associate widget
                     if ((itemRow != null) && (itemRow.intValue() == targetRow)) {
                         // if the next element is the index we are looking for
                         // then break
-                        if (virtualIndex >= index)
-                            break;
+                        if (virtualIndex >= index) {
+							break;
+						}
                         virtualIndex++;
 
                     }
                     insertAt++;
                 }
                 // If we don't need to move it then we return
-                if (cbInternalIndex == insertAt)
-                    return;
+                if (cbInternalIndex == insertAt) {
+					return;
+				}
                 break;
             }
             nextRow(iterator, true);

@@ -110,10 +110,12 @@ public class JFaceColors {
      */
     public static void setColors(Control control, Color foreground,
             Color background) {
-        if (foreground != null)
-            control.setForeground(foreground);
-        if (background != null)
-            control.setBackground(background);
+        if (foreground != null) {
+			control.setForeground(foreground);
+		}
+        if (background != null) {
+			control.setBackground(background);
+		}
     }
 
 }

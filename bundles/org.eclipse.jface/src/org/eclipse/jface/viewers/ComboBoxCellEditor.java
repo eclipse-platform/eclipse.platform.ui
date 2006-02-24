@@ -194,9 +194,9 @@ public class ComboBoxCellEditor extends CellEditor {
      */
     public LayoutData getLayoutData() {
         LayoutData layoutData = super.getLayoutData();
-        if ((comboBox == null) || comboBox.isDisposed())
-            layoutData.minimumWidth = 60;
-        else {
+        if ((comboBox == null) || comboBox.isDisposed()) {
+			layoutData.minimumWidth = 60;
+		} else {
             // make the comboBox 10 characters wide
             GC gc = new GC(comboBox);
             layoutData.minimumWidth = (gc.getFontMetrics()
@@ -226,8 +226,9 @@ public class ComboBoxCellEditor extends CellEditor {
     private void populateComboBoxItems() {
         if (comboBox != null && items != null) {
             comboBox.removeAll();
-            for (int i = 0; i < items.length; i++)
-                comboBox.add(items[i], i);
+            for (int i = 0; i < items.length; i++) {
+				comboBox.add(items[i], i);
+			}
 
             setValueValid(true);
             selection = 0;

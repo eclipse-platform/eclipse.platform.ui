@@ -90,10 +90,12 @@ import org.eclipse.swt.widgets.Display;
          */
         public void run() {
             clearCollector(this);
-            if (subTask != null)
-                monitor.subTask(subTask);
-            if (worked > 0)
-                monitor.internalWorked(worked);
+            if (subTask != null) {
+				monitor.subTask(subTask);
+			}
+            if (worked > 0) {
+				monitor.internalWorked(worked);
+			}
         }
     }
 
@@ -134,8 +136,9 @@ import org.eclipse.swt.widgets.Display;
     private synchronized void clearCollector(Collector collectorToClear) {
         // Check if the accumulator is still using the given collector.
         // If not, don't clear it.
-        if (this.collector == collectorToClear)
-            this.collector = null;
+        if (this.collector == collectorToClear) {
+			this.collector = null;
+		}
     }
 
     /**
@@ -215,8 +218,9 @@ import org.eclipse.swt.widgets.Display;
         //Don't bother with a collector as this should only ever
         //happen once and prevent any more progress.
         final IProgressMonitor pm = getWrappedProgressMonitor();
-        if (!(pm instanceof IProgressMonitorWithBlocking))
-            return;
+        if (!(pm instanceof IProgressMonitorWithBlocking)) {
+			return;
+		}
 
         display.asyncExec(new Runnable() {
             /* (non-Javadoc)
@@ -237,8 +241,9 @@ import org.eclipse.swt.widgets.Display;
         //Don't bother with a collector as this should only ever
         //happen once and prevent any more progress.
         final IProgressMonitor pm = getWrappedProgressMonitor();
-        if (!(pm instanceof IProgressMonitorWithBlocking))
-            return;
+        if (!(pm instanceof IProgressMonitorWithBlocking)) {
+			return;
+		}
 
         display.asyncExec(new Runnable() {
             /* (non-Javadoc)

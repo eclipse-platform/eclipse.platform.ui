@@ -138,10 +138,12 @@ public class StringConverter {
      */
     public static boolean asBoolean(String value) throws DataFormatException {
         String v = value.toLowerCase();
-        if (v.equals("t") || v.equals("true")) //$NON-NLS-2$//$NON-NLS-1$
-            return true;
-        if (value.equals("f") || v.equals("false")) //$NON-NLS-2$//$NON-NLS-1$
-            return false;
+        if (v.equals("t") || v.equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
+		}
+        if (value.equals("f") || v.equals("false")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		}
         throw new DataFormatException(
                 "Value " + value + "doesn't represent a boolean"); //$NON-NLS-2$//$NON-NLS-1$
     }
@@ -251,24 +253,27 @@ public class StringConverter {
      *	font data
      */
     public static FontData asFontData(String value) throws DataFormatException {
-        if (value == null)
-            throw new DataFormatException(
+        if (value == null) {
+			throw new DataFormatException(
                     "Null doesn't represent a valid font data"); //$NON-NLS-1$
+		}
         String name = null;
         int height = 0;
         int style = 0;
         try {
             int length = value.length();
             int heightIndex = value.lastIndexOf(SEPARATOR);
-            if (heightIndex == -1)
-                throw new DataFormatException(
+            if (heightIndex == -1) {
+				throw new DataFormatException(
                         "No correct font data format \"" + value + "\""); //$NON-NLS-2$//$NON-NLS-1$
+			}
             height = StringConverter.asInt(value.substring(heightIndex + 1,
                     length));
             int faceIndex = value.lastIndexOf(SEPARATOR, heightIndex - 1);
-            if (faceIndex == -1)
-                throw new DataFormatException(
+            if (faceIndex == -1) {
+				throw new DataFormatException(
                         "No correct font data format \"" + value + "\""); //$NON-NLS-2$//$NON-NLS-1$
+			}
             String s = value.substring(faceIndex + 1, heightIndex);
             if (BOLD_ITALIC.equals(s)) {
                 style = SWT.BOLD | SWT.ITALIC;
@@ -295,14 +300,16 @@ public class StringConverter {
 	 * @param prop the initial comma-separated string
 	 */
 	private static String[] getArrayFromList(String prop, String separator) {
-		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
+		if (prop == null || prop.trim().equals("")) { //$NON-NLS-1$
 			return new String[0];
+		}
 		ArrayList list = new ArrayList();
 		StringTokenizer tokens = new StringTokenizer(prop, separator); 
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals("")) //$NON-NLS-1$
+			if (!token.equals("")) { //$NON-NLS-1$
 				list.add(token);
+			}
 		}
 		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[list.size()]);
 	}
@@ -428,9 +435,10 @@ public class StringConverter {
      *	a point
      */
     public static Point asPoint(String value) throws DataFormatException {
-        if (value == null)
-            throw new DataFormatException(
+        if (value == null) {
+			throw new DataFormatException(
                     "Null doesn't represent a valid point"); //$NON-NLS-1$
+		}
         StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
         String x = stok.nextToken();
         String y = stok.nextToken();
@@ -479,9 +487,10 @@ public class StringConverter {
      */
     public static Rectangle asRectangle(String value)
             throws DataFormatException {
-        if (value == null)
-            throw new DataFormatException(
+        if (value == null) {
+			throw new DataFormatException(
                     "Null doesn't represent a valid rectangle"); //$NON-NLS-1$
+		}
         StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
         String x = stok.nextToken();
         String y = stok.nextToken();
@@ -533,8 +542,9 @@ public class StringConverter {
      *	an RGB color value
      */
     public static RGB asRGB(String value) throws DataFormatException {
-        if (value == null)
-            throw new DataFormatException("Null doesn't represent a valid RGB"); //$NON-NLS-1$
+        if (value == null) {
+			throw new DataFormatException("Null doesn't represent a valid RGB"); //$NON-NLS-1$
+		}
         StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 
         try {
@@ -688,8 +698,9 @@ public class StringConverter {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < value.length; i++) {
             buffer.append(asString(value[i]));
-            if (i != value.length - 1)
-                buffer.append(FONT_SEPARATOR);
+            if (i != value.length - 1) {
+				buffer.append(FONT_SEPARATOR);
+			}
         }
         return buffer.toString();
     }
@@ -826,14 +837,16 @@ public class StringConverter {
                 break;
             }
         }
-        if (!found)
-            return s;
+        if (!found) {
+			return s;
+		}
 
         StringBuffer result = new StringBuffer(s.substring(0, wsIndex));
         for (int i = wsIndex + 1; i < size; i++) {
             char ch = s.charAt(i);
-            if (!Character.isWhitespace(ch))
-                result.append(ch);
+            if (!Character.isWhitespace(ch)) {
+				result.append(ch);
+			}
         }
         return result.toString();
     }

@@ -155,8 +155,9 @@ public abstract class PreferencePage extends DialogPage implements
      *   <code>(0,0)</code> if the page doesn't currently have any UI component
      */
     public Point computeSize() {
-        if (size != null)
-            return size;
+        if (size != null) {
+			return size;
+		}
         Control control = getControl();
         if (control != null) {
             size = doComputeSize();
@@ -230,9 +231,10 @@ public abstract class PreferencePage extends DialogPage implements
         }
 
         body = createContents(content);
-        if (body != null)
-            // null is not a valid return value but support graceful failure
+        if (body != null) {
+			// null is not a valid return value but support graceful failure
             body.setLayoutData(new GridData(GridData.FILL_BOTH));
+		}
 
         Composite buttonBar = new Composite(content, SWT.NONE);
         layout = new GridLayout();
@@ -287,8 +289,9 @@ public abstract class PreferencePage extends DialogPage implements
              * If not, throw away the button bar composite.  Otherwise
              * there is an unusually large button bar.
              */
-            if (buttonBar.getChildren().length < 1)
-                buttonBar.dispose();
+            if (buttonBar.getChildren().length < 1) {
+				buttonBar.dispose();
+			}
         }
     }
 
@@ -370,12 +373,14 @@ public abstract class PreferencePage extends DialogPage implements
      * @return the preference store , or <code>null</code> if none
      */
     public IPreferenceStore getPreferenceStore() {
-        if (preferenceStore == null)
-            preferenceStore = doGetPreferenceStore();
-        if (preferenceStore != null)
-            return preferenceStore;
-        else if (container != null)
-            return container.getPreferenceStore();
+        if (preferenceStore == null) {
+			preferenceStore = doGetPreferenceStore();
+		}
+        if (preferenceStore != null) {
+			return preferenceStore;
+		} else if (container != null) {
+			return container.getPreferenceStore();
+		}
         return null;
     }
 
@@ -498,8 +503,9 @@ public abstract class PreferencePage extends DialogPage implements
      */
     public void setTitle(String title) {
         super.setTitle(title);
-        if (getContainer() != null)
-            getContainer().updateTitle();
+        if (getContainer() != null) {
+			getContainer().updateTitle();
+		}
     }
 
     /**
@@ -516,8 +522,9 @@ public abstract class PreferencePage extends DialogPage implements
         isValid = b;
         if (oldValue != isValid) {
             // update container state
-            if (getContainer() != null)
-                getContainer().updateButtons();
+            if (getContainer() != null) {
+				getContainer().updateButtons();
+			}
             // update page state
             updateApplyButton();
         }
@@ -535,8 +542,9 @@ public abstract class PreferencePage extends DialogPage implements
      * this page is valid.
      */
     protected void updateApplyButton() {
-        if (applyButton != null)
-            applyButton.setEnabled(isValid());
+        if (applyButton != null) {
+			applyButton.setEnabled(isValid());
+		}
     }
 
     /**
@@ -637,8 +645,9 @@ public abstract class PreferencePage extends DialogPage implements
 	 */
 	public void setMessage(String newMessage, int newType) {
 		super.setMessage(newMessage, newType);
-		if (getContainer() != null) 
+		if (getContainer() != null) {
 			getContainer().updateMessage();
+		}
 	}	
 
 }

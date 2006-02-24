@@ -158,8 +158,9 @@ public abstract class Wizard implements IWizard {
     public boolean canFinish() {
         // Default implementation is to check if all pages are complete.
         for (int i = 0; i < pages.size(); i++) {
-            if (!((IWizardPage) pages.get(i)).isPageComplete())
-                return false;
+            if (!((IWizardPage) pages.get(i)).isPageComplete()) {
+				return false;
+			}
         }
         return true;
     }
@@ -233,9 +234,10 @@ public abstract class Wizard implements IWizard {
      */
     public IWizardPage getNextPage(IWizardPage page) {
         int index = pages.indexOf(page);
-        if (index == pages.size() - 1 || index == -1)
-            // last page or page not found
+        if (index == pages.size() - 1 || index == -1) {
+			// last page or page not found
             return null;
+		}
         return (IWizardPage) pages.get(index + 1);
     }
 
@@ -246,8 +248,9 @@ public abstract class Wizard implements IWizard {
         for (int i = 0; i < pages.size(); i++) {
             IWizardPage page = (IWizardPage) pages.get(i);
             String pageName = page.getName();
-            if (pageName.equals(name))
-                return page;
+            if (pageName.equals(name)) {
+				return page;
+			}
         }
         return null;
     }
@@ -272,11 +275,12 @@ public abstract class Wizard implements IWizard {
      */
     public IWizardPage getPreviousPage(IWizardPage page) {
         int index = pages.indexOf(page);
-        if (index == 0 || index == -1)
-            // first page or page not found
+        if (index == 0 || index == -1) {
+			// first page or page not found
             return null;
-        else
-            return (IWizardPage) pages.get(index - 1);
+		} else {
+			return (IWizardPage) pages.get(index - 1);
+		}
     }
 
     /**
@@ -286,8 +290,9 @@ public abstract class Wizard implements IWizard {
      * @return Shell
      */
     public Shell getShell() {
-        if (container == null)
-            return null;
+        if (container == null) {
+			return null;
+		}
         return container.getShell();
     }
 
@@ -296,8 +301,9 @@ public abstract class Wizard implements IWizard {
      * page inserted into the wizard.
      */
     public IWizardPage getStartingPage() {
-        if (pages.size() == 0)
-            return null;
+        if (pages.size() == 0) {
+			return null;
+		}
         return (IWizardPage) pages.get(0);
     }
 
@@ -453,7 +459,8 @@ public abstract class Wizard implements IWizard {
      */
     public void setWindowTitle(String newTitle) {
         windowTitle = newTitle;
-        if (container != null)
-            container.updateWindowTitle();
+        if (container != null) {
+			container.updateWindowTitle();
+		}
     }
 }

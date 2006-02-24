@@ -278,8 +278,9 @@ public abstract class SubContributionManager implements IContributionManager {
      */
     public IContributionItem remove(String id) {
         IContributionItem result = parentMgr.remove(id);
-        if (result != null)
-            itemRemoved(result);
+        if (result != null) {
+			itemRemoved(result);
+		}
         return result;
     }
 
@@ -289,11 +290,13 @@ public abstract class SubContributionManager implements IContributionManager {
     public IContributionItem remove(IContributionItem item) {
         SubContributionItem wrap = (SubContributionItem) mapItemToWrapper
                 .get(item);
-        if (wrap == null)
-            return null;
+        if (wrap == null) {
+			return null;
+		}
         IContributionItem result = parentMgr.remove(wrap);
-        if (result == null)
-            return null;
+        if (result == null) {
+			return null;
+		}
         itemRemoved(item);
         return item;
     }

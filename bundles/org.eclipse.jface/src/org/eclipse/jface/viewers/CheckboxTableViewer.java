@@ -207,8 +207,9 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
         ArrayList v = new ArrayList(children.length);
         for (int i = 0; i < children.length; i++) {
             TableItem item = children[i];
-            if (item.getChecked())
-                v.add(item.getData());
+            if (item.getChecked()) {
+				v.add(item.getData());
+			}
         }
         return v.toArray();
     }
@@ -244,8 +245,9 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
         List v = new ArrayList(children.length);
         for (int i = 0; i < children.length; i++) {
             TableItem item = children[i];
-            if (item.getGrayed())
-                v.add(item.getData());
+            if (item.getGrayed()) {
+				v.add(item.getData());
+			}
         }
         return v.toArray();
     }
@@ -263,8 +265,9 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
                 fireCheckStateChanged(new CheckStateChangedEvent(this, data,
                         item.getChecked()));
             }
-        } else
-            super.handleSelect(event);
+        } else {
+			super.handleSelect(event);
+		}
     }
 
     /* (non-Javadoc)
@@ -280,10 +283,12 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
             TableItem item = children[i];
             Object data = item.getData();
             if (data != null) {
-                if (item.getChecked())
-                    checked.put(data, data);
-                if (item.getGrayed())
-                    grayed.put(data, data);
+                if (item.getChecked()) {
+					checked.put(data, data);
+				}
+                if (item.getGrayed()) {
+					grayed.put(data, data);
+				}
             }
         }
 

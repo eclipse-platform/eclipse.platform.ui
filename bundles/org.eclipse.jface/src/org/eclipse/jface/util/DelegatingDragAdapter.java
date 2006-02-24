@@ -124,9 +124,10 @@ public class DelegatingDragAdapter implements DragSourceListener {
                     // The drag was canceled and currentListener was never set, so send the
                     // dragFinished event to all the active listeners. 
                     Iterator iterator = activeListeners.iterator();
-                    while (iterator.hasNext())
-                        ((TransferDragSourceListener) iterator.next())
+                    while (iterator.hasNext()) {
+						((TransferDragSourceListener) iterator.next())
                                 .dragFinished(event);
+					}
                 }
             }
         });
@@ -188,9 +189,10 @@ public class DelegatingDragAdapter implements DragSourceListener {
             doit |= event.doit;
         }
 
-        if (doit)
-            ((DragSource) event.widget).setTransfer((Transfer[]) transfers
+        if (doit) {
+			((DragSource) event.widget).setTransfer((Transfer[]) transfers
                     .toArray(new Transfer[transfers.size()]));
+		}
 
         event.doit = doit;
     }
@@ -228,10 +230,12 @@ public class DelegatingDragAdapter implements DragSourceListener {
      */
     public void removeDragSourceListener(TransferDragSourceListener listener) {
         listeners.remove(listener);
-        if (currentListener == listener)
-            currentListener = null;
-        if (activeListeners.contains(listener))
-            activeListeners.remove(listener);
+        if (currentListener == listener) {
+			currentListener = null;
+		}
+        if (activeListeners.contains(listener)) {
+			activeListeners.remove(listener);
+		}
     }
 
     /**
@@ -244,8 +248,9 @@ public class DelegatingDragAdapter implements DragSourceListener {
      */
     private void updateCurrentListener(DragSourceEvent event) {
         currentListener = null;
-        if (event.dataType == null)
-            return;
+        if (event.dataType == null) {
+			return;
+		}
         Iterator iterator = activeListeners.iterator();
         while (iterator.hasNext()) {
             TransferDragSourceListener listener = (TransferDragSourceListener) iterator

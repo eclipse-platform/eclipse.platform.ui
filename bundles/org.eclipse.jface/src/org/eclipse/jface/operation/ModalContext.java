@@ -109,8 +109,9 @@ public class ModalContext {
          */
         public void run() {
             try {
-                if (runnable != null)
-                    runnable.run(progressMonitor);
+                if (runnable != null) {
+					runnable.run(progressMonitor);
+				}
             } catch (InvocationTargetException e) {
                 throwable = e;
             } catch (InterruptedException e) {
@@ -124,8 +125,9 @@ public class ModalContext {
                 throwable = e;
             } finally {
                 //notify the operation of change of thread of control
-            	if (runnable instanceof IThreadListener)
-            		((IThreadListener)runnable).threadChange(callingThread);
+            	if (runnable instanceof IThreadListener) {
+					((IThreadListener)runnable).threadChange(callingThread);
+				}
             	
                 // Make sure that all events in the asynchronous event queue
                 // are dispatched.
@@ -153,8 +155,9 @@ public class ModalContext {
                 	// Run the event loop.  Handle any uncaught exceptions caused
                 	// by UI events.
                    	try {
-                    	if (!display.readAndDispatch())
-                        	display.sleep();
+                    	if (!display.readAndDispatch()) {
+							display.sleep();
+						}
                 	}
                    	// ThreadDeath is a normal error when the thread is dying.  We must
                    	// propagate it in order for it to properly terminate.
@@ -189,14 +192,16 @@ public class ModalContext {
      */
     public static boolean canProgressMonitorBeUsed(IProgressMonitor monitor1,
             IProgressMonitor monitor2) {
-        if (monitor1 == monitor2)
-            return true;
+        if (monitor1 == monitor2) {
+			return true;
+		}
 
         while (monitor1 instanceof ProgressMonitorWrapper) {
             monitor1 = ((ProgressMonitorWrapper) monitor1)
                     .getWrappedProgressMonitor();
-            if (monitor1 == monitor2)
-                return true;
+            if (monitor1 == monitor2) {
+				return true;
+			}
         }
         return false;
     }
@@ -222,8 +227,9 @@ public class ModalContext {
      */
     public static void checkCanceled(IProgressMonitor monitor)
             throws InterruptedException {
-        if (monitor.isCanceled())
-            throw new InterruptedException();
+        if (monitor.isCanceled()) {
+			throw new InterruptedException();
+		}
     }
 
     /**
@@ -231,8 +237,9 @@ public class ModalContext {
      */
     private static ModalContextThread getCurrentModalContextThread() {
         Thread t = Thread.currentThread();
-        if (t instanceof ModalContextThread)
-            return (ModalContextThread) t;
+        if (t instanceof ModalContextThread) {
+			return (ModalContextThread) t;
+		}
         return null;
     }
 
@@ -298,8 +305,9 @@ public class ModalContext {
 
         modalLevel++;
         try {
-            if (monitor != null)
-                monitor.setCanceled(false);
+            if (monitor != null) {
+				monitor.setCanceled(false);
+			}
             // Is the runnable supposed to be execute in the same thread.
             if (!fork || !runInSeparateThread) {
                 runInCurrentThread(operation, monitor);
@@ -311,8 +319,9 @@ public class ModalContext {
                     runInCurrentThread(operation, monitor);
                 } else {
                     t = new ModalContextThread(operation, monitor, display);
-                	if (operation instanceof IThreadListener)
-                		((IThreadListener)operation).threadChange(t);
+                	if (operation instanceof IThreadListener) {
+						((IThreadListener)operation).threadChange(t);
+					}
                     t.start();
                     t.block();
                     Throwable throwable = t.throwable;
@@ -356,8 +365,9 @@ public class ModalContext {
             IProgressMonitor progressMonitor) throws InterruptedException,
             InvocationTargetException {
         try {
-            if (runnable != null)
-                runnable.run(progressMonitor);
+            if (runnable != null) {
+				runnable.run(progressMonitor);
+			}
         } catch (InvocationTargetException e) {
             throw e;
         } catch (InterruptedException e) {

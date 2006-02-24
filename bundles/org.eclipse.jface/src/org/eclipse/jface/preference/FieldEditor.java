@@ -174,16 +174,18 @@ public abstract class FieldEditor {
      * Clears the error message from the message line.
      */
     protected void clearErrorMessage() {
-        if (page != null)
-            page.setErrorMessage(null);
+        if (page != null) {
+			page.setErrorMessage(null);
+		}
     }
 
     /**
      * Clears the normal message from the message line.
      */
     protected void clearMessage() {
-        if (page != null)
-            page.setMessage(null);
+        if (page != null) {
+			page.setMessage(null);
+		}
     }
 
     /**
@@ -321,8 +323,9 @@ public abstract class FieldEditor {
      */
     protected void fireStateChanged(String property, boolean oldValue,
             boolean newValue) {
-        if (oldValue == newValue)
-            return;
+        if (oldValue == newValue) {
+			return;
+		}
         fireValueChanged(property, new Boolean(oldValue), new Boolean(newValue));
     }
 
@@ -337,8 +340,9 @@ public abstract class FieldEditor {
      */
     protected void fireValueChanged(String property, Object oldValue,
             Object newValue) {
-        if (propertyChangeListener == null)
-            return;
+        if (propertyChangeListener == null) {
+			return;
+		}
         propertyChangeListener.propertyChange(new PropertyChangeEvent(this,
                 property, oldValue, newValue));
     }
@@ -376,8 +380,9 @@ public abstract class FieldEditor {
             label = new Label(parent, SWT.LEFT);
             label.setFont(parent.getFont());
             String text = getLabelText();
-            if (text != null)
-                label.setText(text);
+            if (text != null) {
+				label.setText(text);
+			}
             label.addDisposeListener(new DisposeListener() {
                 public void widgetDisposed(DisposeEvent event) {
                     label = null;
@@ -422,8 +427,9 @@ public abstract class FieldEditor {
      * @deprecated use #getPage()
      */
     protected PreferencePage getPreferencePage() {
-    	if(page != null && page instanceof PreferencePage)
-        	return (PreferencePage) page;
+    	if(page != null && page instanceof PreferencePage) {
+			return (PreferencePage) page;
+		}
     	return null;
     }
     
@@ -550,8 +556,9 @@ public abstract class FieldEditor {
     public void setLabelText(String text) {
         Assert.isNotNull(text);
         labelText = text;
-        if (label != null)
-            label.setText(text);
+        if (label != null) {
+			label.setText(text);
+		}
     }
 
     /**
@@ -638,8 +645,9 @@ public abstract class FieldEditor {
      * @param msg the error message
      */
     protected void showErrorMessage(String msg) {
-        if (page != null)
-            page.setErrorMessage(msg);
+        if (page != null) {
+			page.setErrorMessage(msg);
+		}
     }
 
     /**
@@ -649,16 +657,18 @@ public abstract class FieldEditor {
      * @param msg the message
      */
     protected void showMessage(String msg) {
-        if (page != null)
-            page.setErrorMessage(msg);
+        if (page != null) {
+			page.setErrorMessage(msg);
+		}
     }
 
     /**
      * Stores this field editor's value back into the preference store.
      */
     public void store() {
-        if (preferenceStore == null)
-            return;
+        if (preferenceStore == null) {
+			return;
+		}
 
         if (isDefaultPresented) {
             preferenceStore.setToDefault(preferenceName);

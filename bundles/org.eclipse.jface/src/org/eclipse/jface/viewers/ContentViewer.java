@@ -125,8 +125,9 @@ public abstract class ContentViewer extends Viewer {
      * @return a label provider
      */
     public IBaseLabelProvider getLabelProvider() {
-        if (labelProvider == null)
-            labelProvider = new LabelProvider();
+        if (labelProvider == null) {
+			labelProvider = new LabelProvider();
+		}
         return labelProvider;
     }
 

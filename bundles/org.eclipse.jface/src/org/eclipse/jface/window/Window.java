@@ -129,10 +129,11 @@ public abstract class Window implements IShellProvider {
 		 * @see org.eclipse.jface.window.Window.IExceptionHandler#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable t) {
-			if (t instanceof ThreadDeath)
+			if (t instanceof ThreadDeath) {
 				// Don't catch ThreadDeath as this is a normal occurrence when
 				// the thread dies
 				throw (ThreadDeath) t;
+			}
 			// Try to keep running.
 			t.printStackTrace();
 		}
@@ -261,8 +262,9 @@ public abstract class Window implements IShellProvider {
 	protected Window(Shell parentShell) {
         this(new SameShellProvider(parentShell));
         
-        if(parentShell == null)//Inherit the style from the parent if there is one
-            setShellStyle(getShellStyle() | getDefaultOrientation());
+        if(parentShell == null) {
+			setShellStyle(getShellStyle() | getDefaultOrientation());
+		}
 	}
     
     /**
@@ -318,8 +320,9 @@ public abstract class Window implements IShellProvider {
 			windowManager = null;
 		}
 
-		if (shell == null || shell.isDisposed())
+		if (shell == null || shell.isDisposed()) {
 			return true;
+		}
 
 		// If we "close" the shell recursion will occur.
 		// Instead, we need to "dispose" the shell to remove it from the
@@ -351,13 +354,15 @@ public abstract class Window implements IShellProvider {
 		// disposed images from the array passed to the shell.
 		if (defaultImages != null && defaultImages.length > 0) {
 			ArrayList nonDisposedImages = new ArrayList(defaultImages.length);
-			for (int i = 0; i < defaultImages.length; ++i)
-				if (defaultImages[i] != null && !defaultImages[i].isDisposed())
+			for (int i = 0; i < defaultImages.length; ++i) {
+				if (defaultImages[i] != null && !defaultImages[i].isDisposed()) {
 					nonDisposedImages.add(defaultImages[i]);
+				}
+			}
 
-			if (nonDisposedImages.size() <= 0)
+			if (nonDisposedImages.size() <= 0) {
 				System.err.println("Window.configureShell: images disposed"); //$NON-NLS-1$
-			else {
+			} else {
 				Image[] array = new Image[nonDisposedImages.size()];
 				nonDisposedImages.toArray(array);
 				newShell.setImages(array);
@@ -365,8 +370,9 @@ public abstract class Window implements IShellProvider {
 		}
 
 		Layout layout = getLayout();
-		if (layout != null)
+		if (layout != null) {
 			newShell.setLayout(layout);
+		}
 	}
 
 	/**
@@ -672,8 +678,9 @@ public abstract class Window implements IShellProvider {
 		return new ShellAdapter() {
 			public void shellClosed(ShellEvent event) {
 				event.doit = false; // don't close now
-				if (canHandleShellCloseEvent())
+				if (canHandleShellCloseEvent()) {
 					handleShellCloseEvent();
+				}
 			}
 		};
 	}
@@ -785,8 +792,9 @@ public abstract class Window implements IShellProvider {
 		shell.open();
 
 		// run the event loop if specified
-		if (block)
+		if (block) {
 			runEventLoop(shell);
+		}
 
 		return returnCode;
 	}
@@ -801,15 +809,17 @@ public abstract class Window implements IShellProvider {
 
 		//Use the display provided by the shell if possible
 		Display display;
-		if (shell == null)
+		if (shell == null) {
 			display = Display.getCurrent();
-		else
+		} else {
 			display = loopShell.getDisplay();
+		}
 
 		while (loopShell != null && !loopShell.isDisposed()) {
 			try {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			} catch (Throwable e) {
 				exceptionHandler.handleException(e);
 			}
@@ -997,8 +1007,9 @@ public abstract class Window implements IShellProvider {
 		if (manager != null) {
 			Window[] windows = manager.getWindows();
 			for (int i = 0; i < windows.length; i++) {
-				if (windows[i] == this)
+				if (windows[i] == this) {
 					return;
+				}
 			}
 			manager.add(this);
 		}
@@ -1015,8 +1026,9 @@ public abstract class Window implements IShellProvider {
 	 *            the exception handler for the application.
 	 */
 	public static void setExceptionHandler(IExceptionHandler handler) {
-		if (exceptionHandler instanceof DefaultExceptionHandler)
+		if (exceptionHandler instanceof DefaultExceptionHandler) {
 			exceptionHandler = handler;
+		}
 	}
     
     /**

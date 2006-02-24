@@ -81,8 +81,9 @@ import org.eclipse.swt.widgets.Item;
                     // so must get control first, but must still call activate() even if there is no control.
                     final Control control = cellEditor.getControl();
                     cellEditor.activate();
-                    if (control == null)
-                        return;
+                    if (control == null) {
+						return;
+					}
                     setLayoutData(cellEditor.getLayoutData());
                     setEditor(control, treeItem, columnNumber);
                     cellEditor.setFocus();
@@ -195,8 +196,9 @@ import org.eclipse.swt.widgets.Item;
      * @param column
      */
     public void editElement(Object element, int column) {
-        if (cellEditor != null)
-            applyEditorValue();
+        if (cellEditor != null) {
+			applyEditorValue();
+		}
 
         IStructuredSelection structuredSelection;
         if(element instanceof TreePath) {
@@ -206,8 +208,9 @@ import org.eclipse.swt.widgets.Item;
         }
         setSelection(structuredSelection, true);
         Item[] selection = getSelection();
-        if (selection.length != 1)
-            return;
+        if (selection.length != 1) {
+			return;
+		}
 
         treeItem = selection[0];
 
@@ -253,11 +256,13 @@ import org.eclipse.swt.widgets.Item;
      * @param event
      */
     public void handleMouseDown(MouseEvent event) {
-        if (event.button != 1)
-            return;
+        if (event.button != 1) {
+			return;
+		}
 
-        if (cellEditor != null)
-            applyEditorValue();
+        if (cellEditor != null) {
+			applyEditorValue();
+		}
 
         // activate the cell editor immediately.  If a second mouseDown
         // is received prior to the expiration of the doubleClick time then
@@ -311,8 +316,9 @@ import org.eclipse.swt.widgets.Item;
         if (cellModifier != null) {
             String property = null;
             if (columnProperties != null
-                    && columnNumber < columnProperties.length)
-                property = columnProperties[columnNumber];
+                    && columnNumber < columnProperties.length) {
+				property = columnProperties[columnNumber];
+			}
             cellModifier.modify(treeItem, property, cellEditor.getValue());
         }
     }

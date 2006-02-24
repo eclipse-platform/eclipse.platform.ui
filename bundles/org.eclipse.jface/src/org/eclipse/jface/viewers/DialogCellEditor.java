@@ -100,15 +100,17 @@ public abstract class DialogCellEditor extends CellEditor {
         public void layout(Composite editor, boolean force) {
             Rectangle bounds = editor.getClientArea();
             Point size = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
-            if (contents != null)
-                contents.setBounds(0, 0, bounds.width - size.x, bounds.height);
+            if (contents != null) {
+				contents.setBounds(0, 0, bounds.width - size.x, bounds.height);
+			}
             button.setBounds(bounds.width - size.x, 0, size.x, bounds.height);
         }
 
         public Point computeSize(Composite editor, int wHint, int hHint,
                 boolean force) {
-            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-                return new Point(wHint, hHint);
+            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+				return new Point(wHint, hHint);
+			}
             Point contentsSize = contents.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                     force);
             Point buttonSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT,
@@ -369,12 +371,14 @@ public abstract class DialogCellEditor extends CellEditor {
      * @param value the new value of this cell editor
      */
     protected void updateContents(Object value) {
-        if (defaultLabel == null)
-            return;
+        if (defaultLabel == null) {
+			return;
+		}
 
         String text = "";//$NON-NLS-1$
-        if (value != null)
-            text = value.toString();
+        if (value != null) {
+			text = value.toString();
+		}
         defaultLabel.setText(text);
     }
 }

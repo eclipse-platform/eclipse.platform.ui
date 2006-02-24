@@ -106,8 +106,9 @@ import org.eclipse.swt.widgets.ToolItem;
         public Point computeSize(Composite composite, int wHint, int hHint,
                 boolean changed) {
 
-            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-                return new Point(wHint, hHint);
+            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+				return new Point(wHint, hHint);
+			}
 
             Control[] children = composite.getChildren();
             int totalWidth = 0;
@@ -116,14 +117,16 @@ import org.eclipse.swt.widgets.ToolItem;
             for (int i = 0; i < children.length; i++) {
                 boolean useWidth = true;
                 Control w = children[i];
-                if (w == fProgressBarComposite && !fProgressIsVisible)
-                    useWidth = false;
-                else if (w == fToolBar && !fCancelButtonIsVisible)
-                    useWidth = false;
+                if (w == fProgressBarComposite && !fProgressIsVisible) {
+					useWidth = false;
+				} else if (w == fToolBar && !fCancelButtonIsVisible) {
+					useWidth = false;
+				}
                 StatusLineLayoutData data = (StatusLineLayoutData) w
                         .getLayoutData();
-                if (data == null)
-                    data = DEFAULT_DATA;
+                if (data == null) {
+					data = DEFAULT_DATA;
+				}
                 Point e = w.computeSize(data.widthHint, data.heightHint,
                         changed);
                 if (useWidth) {
@@ -132,17 +135,20 @@ import org.eclipse.swt.widgets.ToolItem;
                 }
                 maxHeight = Math.max(maxHeight, e.y);
             }
-            if (totalCnt > 0)
-                totalWidth += (totalCnt - 1) * GAP;
-            if (totalWidth <= 0)
-                totalWidth = maxHeight * 4;
+            if (totalCnt > 0) {
+				totalWidth += (totalCnt - 1) * GAP;
+			}
+            if (totalWidth <= 0) {
+				totalWidth = maxHeight * 4;
+			}
             return new Point(totalWidth, maxHeight);
         }
 
         public void layout(Composite composite, boolean flushCache) {
 
-            if (composite == null)
-                return;
+            if (composite == null) {
+				return;
+			}
 
             // StatusLineManager skips over the standard status line widgets 
             // in its update method. There is thus a dependency
@@ -163,14 +169,17 @@ import org.eclipse.swt.widgets.ToolItem;
             int totalWidth = -GAP;
             for (int i = 0; i < count; i++) {
                 Control w = children[i];
-                if (w == fProgressBarComposite && !fProgressIsVisible)
-                    continue;
-                if (w == fToolBar && !fCancelButtonIsVisible)
-                    continue;
+                if (w == fProgressBarComposite && !fProgressIsVisible) {
+					continue;
+				}
+                if (w == fToolBar && !fCancelButtonIsVisible) {
+					continue;
+				}
                 StatusLineLayoutData data = (StatusLineLayoutData) w
                         .getLayoutData();
-                if (data == null)
-                    data = DEFAULT_DATA;
+                if (data == null) {
+					data = DEFAULT_DATA;
+				}
                 int width = w.computeSize(data.widthHint, h, flushCache).x;
                 ws[i] = width;
                 totalWidth += width + GAP;
@@ -215,8 +224,9 @@ import org.eclipse.swt.widgets.ToolItem;
                     continue;
                 }
                 w.setBounds(x, y, ws[i], h);
-                if (ws[i] > 0)
-                    x += ws[i] + GAP;
+                if (ws[i] > 0) {
+					x += ws[i] + GAP;
+				}
             }
         }
     }
@@ -263,8 +273,9 @@ import org.eclipse.swt.widgets.ToolItem;
         fCancelButton.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
                 Image i = fCancelButton.getImage();
-                if ((i != null) && (!i.isDisposed()))
-                    i.dispose();
+                if ((i != null) && (!i.isDisposed())) {
+					i.dispose();
+				}
             }
         });
 
@@ -306,17 +317,19 @@ import org.eclipse.swt.widgets.ToolItem;
                 StatusLine.this.startTask(timestamp, animated);
             }
         };
-        if (fProgressBar == null)
-            return;
+        if (fProgressBar == null) {
+			return;
+		}
 
         fProgressBar.getDisplay().timerExec(DELAY_PROGRESS, timer);
         if (!animated) {
             fProgressBar.beginTask(totalWork);
         }
-        if (name == null)
-            fTaskName = "";//$NON-NLS-1$
-        else
-            fTaskName = name;
+        if (name == null) {
+			fTaskName = "";//$NON-NLS-1$
+		} else {
+			fTaskName = name;
+		}
         setMessage(fTaskName);
     }
 
@@ -370,11 +383,13 @@ import org.eclipse.swt.widgets.ToolItem;
             fProgressIsVisible = false;
             fCancelEnabled = false;
             fCancelButtonIsVisible = false;
-            if (fToolBar != null && !fToolBar.isDisposed())
-                fToolBar.setVisible(false);
+            if (fToolBar != null && !fToolBar.isDisposed()) {
+				fToolBar.setVisible(false);
+			}
             if (fProgressBarComposite != null
-                    && !fProgressBarComposite.isDisposed())
-                fProgressBarComposite.setVisible(false);
+                    && !fProgressBarComposite.isDisposed()) {
+				fProgressBarComposite.setVisible(false);
+			}
             layout();
         }
     }
@@ -384,8 +399,9 @@ import org.eclipse.swt.widgets.ToolItem;
      */
     public void internalWorked(double work) {
         if (!fProgressIsVisible) {
-            if (System.currentTimeMillis() - fStartTime > DELAY_PROGRESS)
-                showProgress();
+            if (System.currentTimeMillis() - fStartTime > DELAY_PROGRESS) {
+				showProgress();
+			}
         }
 
         if (fProgressBar != null) {
@@ -416,8 +432,9 @@ import org.eclipse.swt.widgets.ToolItem;
      */
     public void setCanceled(boolean b) {
         fIsCanceled = b;
-        if (fCancelButton != null)
-            fCancelButton.setEnabled(!b);
+        if (fCancelButton != null) {
+			fCancelButton.setEnabled(!b);
+		}
     }
 
     /**
@@ -432,8 +449,9 @@ import org.eclipse.swt.widgets.ToolItem;
             showButton();
             layout();
         }
-        if (fCancelButton != null && !fCancelButton.isDisposed())
-            fCancelButton.setEnabled(enabled);
+        if (fCancelButton != null && !fCancelButton.isDisposed()) {
+			fCancelButton.setEnabled(enabled);
+		}
     }
 
     /**
@@ -518,11 +536,13 @@ import org.eclipse.swt.widgets.ToolItem;
     protected void showProgress() {
         if (!fProgressIsVisible && !isDisposed()) {
             fProgressIsVisible = true;
-            if (fCancelEnabled)
-                showButton();
+            if (fCancelEnabled) {
+				showButton();
+			}
             if (fProgressBarComposite != null
-                    && !fProgressBarComposite.isDisposed())
-                fProgressBarComposite.setVisible(true);
+                    && !fProgressBarComposite.isDisposed()) {
+				fProgressBarComposite.setVisible(true);
+			}
             layout();
         }
     }
@@ -549,11 +569,12 @@ import org.eclipse.swt.widgets.ToolItem;
      */
     public void subTask(String name) {
         String text;
-        if (fTaskName.length() == 0)
-            text = name;
-        else
-            text = JFaceResources.format(
+        if (fTaskName.length() == 0) {
+			text = name;
+		} else {
+			text = JFaceResources.format(
                     "Set_SubTask", new Object[] { fTaskName, name });//$NON-NLS-1$
+		}
         setMessage(text);
     }
 
@@ -563,19 +584,22 @@ import org.eclipse.swt.widgets.ToolItem;
      * Allows null.
      */
     String trim(String message) {
-        if (message == null)
-            return null;
+        if (message == null) {
+			return null;
+		}
         int cr = message.indexOf('\r');
         int lf = message.indexOf('\n');
-        if (cr == -1 && lf == -1)
-            return message;
+        if (cr == -1 && lf == -1) {
+			return message;
+		}
         int len;
-        if (cr == -1)
-            len = lf;
-        else if (lf == -1)
-            len = cr;
-        else
-            len = Math.min(cr, lf);
+        if (cr == -1) {
+			len = lf;
+		} else if (lf == -1) {
+			len = cr;
+		} else {
+			len = Math.min(cr, lf);
+		}
         return message.substring(0, len);
     }
 

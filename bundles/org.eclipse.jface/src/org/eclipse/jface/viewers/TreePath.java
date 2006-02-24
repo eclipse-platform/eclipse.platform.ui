@@ -74,8 +74,9 @@ public final class TreePath {
 	 * @return the first element in this path
 	 */
 	public Object getFirstSegment() {
-		if (segments.length == 0)
+		if (segments.length == 0) {
 			return null;
+		}
 		return segments[0];
 	}
 
@@ -85,8 +86,9 @@ public final class TreePath {
 	 * @return the last element in this path
 	 */
 	public Object getLastSegment() {
-		if (segments.length == 0)
+		if (segments.length == 0) {
 			return null;
+		}
 		return segments[segments.length - 1];
 	}
 
@@ -96,8 +98,9 @@ public final class TreePath {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {
-		if (!(other instanceof TreePath))
+		if (!(other instanceof TreePath)) {
 			return false;
+		}
 		return equals((TreePath) other, null);
 	}
 
@@ -107,8 +110,9 @@ public final class TreePath {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		if (hash == 0)
+		if (hash == 0) {
 			hash = hashCode(null);
+		}
 		return hash;
 	}
 
@@ -145,17 +149,21 @@ public final class TreePath {
 	 * @return whether the paths are equal
 	 */
 	public boolean equals(TreePath otherPath, IElementComparer comparer) {
-		if (otherPath == null)
+		if (otherPath == null) {
 			return false;
-		if (segments.length != otherPath.segments.length)
+		}
+		if (segments.length != otherPath.segments.length) {
 			return false;
+		}
 		for (int i = 0; i < segments.length; i++) {
 			if (comparer == null) {
-				if (!segments[i].equals(otherPath.segments[i]))
+				if (!segments[i].equals(otherPath.segments[i])) {
 					return false;
+				}
 			} else {
-				if (!comparer.equals(segments[i], otherPath.segments[i]))
+				if (!comparer.equals(segments[i], otherPath.segments[i])) {
 					return false;
+				}
 			}
 		}
 		return true;

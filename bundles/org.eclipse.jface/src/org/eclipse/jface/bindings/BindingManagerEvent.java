@@ -107,9 +107,10 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 			final boolean activeSchemeChanged, final Scheme scheme,
 			final boolean schemeDefined, final boolean localeChanged,
 			final boolean platformChanged) {
-		if (manager == null)
+		if (manager == null) {
 			throw new NullPointerException(
 					"A binding manager event needs a binding manager"); //$NON-NLS-1$
+		}
 		this.manager = manager;
 
 		if (schemeDefined && (scheme == null)) {

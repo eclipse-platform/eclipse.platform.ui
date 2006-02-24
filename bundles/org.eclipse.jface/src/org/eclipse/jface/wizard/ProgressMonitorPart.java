@@ -56,8 +56,9 @@ public class ProgressMonitorPart extends Composite implements
     protected Listener fCancelListener = new Listener() {
         public void handleEvent(Event e) {
             setCanceled(true);
-            if (fCancelComponent != null)
-                fCancelComponent.setEnabled(false);
+            if (fCancelComponent != null) {
+				fCancelComponent.setEnabled(false);
+			}
         }
     };
 
@@ -130,16 +131,18 @@ public class ProgressMonitorPart extends Composite implements
      * @return The converted String
      */
     protected static String escapeMetaCharacters(String in) {
-        if (in == null || in.indexOf('&') < 0)
-            return in;
+        if (in == null || in.indexOf('&') < 0) {
+			return in;
+		}
         int length = in.length();
         StringBuffer out = new StringBuffer(length + 1);
         for (int i = 0; i < length; i++) {
             char c = in.charAt(i);
-            if (c == '&')
-                out.append("&&");//$NON-NLS-1$
-            else
-                out.append(c);
+            if (c == '&') {
+				out.append("&&");//$NON-NLS-1$
+			} else {
+				out.append(c);
+			}
         }
         return out.toString();
     }
@@ -249,8 +252,9 @@ public class ProgressMonitorPart extends Composite implements
         if (blockedStatus == null) {
             String text = taskLabel();
             fLabel.setText(text);
-        } else
-            fLabel.setText(blockedStatus.getMessage());
+        } else {
+			fLabel.setText(blockedStatus.getMessage());
+		}
 
         //Force an update as we are in the UI Thread
         fLabel.update();

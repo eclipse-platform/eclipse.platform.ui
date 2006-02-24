@@ -156,12 +156,14 @@ public class RadioGroupFieldEditor extends FieldEditor {
      * @return <code>true</code> if it is ok, and <code>false</code> otherwise
      */
     private boolean checkArray(String[][] table) {
-        if (table == null)
-            return false;
+        if (table == null) {
+			return false;
+		}
         for (int i = 0; i < table.length; i++) {
             String[] array = table[i];
-            if (array == null || array.length != 2)
-                return false;
+            if (array == null || array.length != 2) {
+				return false;
+			}
         }
         return true;
     }
@@ -235,8 +237,9 @@ public class RadioGroupFieldEditor extends FieldEditor {
                 Group group = new Group(parent, SWT.NONE);
                 group.setFont(font);
                 String text = getLabelText();
-                if (text != null)
-                    group.setText(text);
+                if (text != null) {
+					group.setText(text);
+				}
                 radioBox = group;
                 GridLayout layout = new GridLayout();
                 layout.horizontalSpacing = HORIZONTAL_GAP;
@@ -288,10 +291,11 @@ public class RadioGroupFieldEditor extends FieldEditor {
      * @param indent the indent (in pixels)
      */
     public void setIndent(int indent) {
-        if (indent < 0)
-            this.indent = 0;
-        else
-            this.indent = indent;
+        if (indent < 0) {
+			this.indent = 0;
+		} else {
+			this.indent = indent;
+		}
     }
 
     /**
@@ -301,8 +305,9 @@ public class RadioGroupFieldEditor extends FieldEditor {
      */
     private void updateValue(String selectedValue) {
         this.value = selectedValue;
-        if (radioButtons == null)
-            return;
+        if (radioButtons == null) {
+			return;
+		}
 
         if (this.value != null) {
             boolean found = false;
@@ -315,8 +320,9 @@ public class RadioGroupFieldEditor extends FieldEditor {
                 }
                 radio.setSelection(selection);
             }
-            if (found)
-                return;
+            if (found) {
+				return;
+			}
         }
 
         // We weren't able to find the value. So we select the first
@@ -332,8 +338,9 @@ public class RadioGroupFieldEditor extends FieldEditor {
      * @see FieldEditor.setEnabled(boolean,Composite).
      */
     public void setEnabled(boolean enabled, Composite parent) {
-        if (!useGroup)
-            super.setEnabled(enabled, parent);
+        if (!useGroup) {
+			super.setEnabled(enabled, parent);
+		}
         for (int i = 0; i < radioButtons.length; i++) {
             radioButtons[i].setEnabled(enabled);
         }

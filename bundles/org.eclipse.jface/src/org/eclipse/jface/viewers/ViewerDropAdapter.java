@@ -389,11 +389,13 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         }
         
          // Explicitly inhibit SELECT feedback if desired
-		if (!selectFeedbackEnabled)
+		if (!selectFeedbackEnabled) {
 			event.feedback &= ~DND.FEEDBACK_SELECT;
+		}
 
-		if (scrollExpandEnabled)
+		if (scrollExpandEnabled) {
 			event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
+		}
     }
 
     /**

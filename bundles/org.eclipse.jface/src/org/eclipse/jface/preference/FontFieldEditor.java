@@ -86,12 +86,14 @@ public class FontFieldEditor extends FieldEditor {
             text = new Text(parent, SWT.READ_ONLY | SWT.BORDER);
             text.addDisposeListener(new DisposeListener() {
                 public void widgetDisposed(DisposeEvent e) {
-                    if (font != null)
-                        font.dispose();
+                    if (font != null) {
+						font.dispose();
+					}
                 }
             });
-            if (string != null)
-                text.setText(string);
+            if (string != null) {
+				text.setText(string);
+			}
         }
 
         /**
@@ -106,8 +108,9 @@ public class FontFieldEditor extends FieldEditor {
          * @param fontData
          */
         public void setFont(FontData[] fontData) {
-            if (font != null)
-                font.dispose();
+            if (font != null) {
+				font.dispose();
+			}
             font = new Font(text.getDisplay(), fontData);
             text.setFont(font);
         }
@@ -162,8 +165,9 @@ public class FontFieldEditor extends FieldEditor {
     protected void adjustForNumColumns(int numColumns) {
 
         GridData data = new GridData();
-        if (valueControl.getLayoutData() != null)
-            data = (GridData) valueControl.getLayoutData();
+        if (valueControl.getLayoutData() != null) {
+			data = (GridData) valueControl.getLayoutData();
+		}
 
         data.horizontalSpan = numColumns - getNumberOfControls() + 1;
         valueControl.setLayoutData(data);
@@ -173,8 +177,9 @@ public class FontFieldEditor extends FieldEditor {
      * Method declared on FieldEditor.
      */
     protected void applyFont() {
-        if (chosenFont != null && previewer != null)
-            previewer.setFont(chosenFont);
+        if (chosenFont != null && previewer != null) {
+			previewer.setFont(chosenFont);
+		}
     }
 
     /* (non-Javadoc)
@@ -211,8 +216,9 @@ public class FontFieldEditor extends FieldEditor {
      * Method declared on FieldEditor.
      */
     protected void doLoad() {
-        if (changeFontButton == null)
-            return;
+        if (changeFontButton == null) {
+			return;
+		}
         updateFont(PreferenceConverter.getFontDataArray(getPreferenceStore(),
                 getPreferenceName()));
     }
@@ -221,8 +227,9 @@ public class FontFieldEditor extends FieldEditor {
      * Method declared on FieldEditor.
      */
     protected void doLoadDefault() {
-        if (changeFontButton == null)
-            return;
+        if (changeFontButton == null) {
+			return;
+		}
         updateFont(PreferenceConverter.getDefaultFontDataArray(
                 getPreferenceStore(), getPreferenceName()));
     }
@@ -231,9 +238,10 @@ public class FontFieldEditor extends FieldEditor {
      * Method declared on FieldEditor.
      */
     protected void doStore() {
-        if (chosenFont != null)
-            PreferenceConverter.setValue(getPreferenceStore(),
+        if (chosenFont != null) {
+			PreferenceConverter.setValue(getPreferenceStore(),
                     getPreferenceName(), chosenFont);
+		}
     }
 
     /**
@@ -245,20 +253,23 @@ public class FontFieldEditor extends FieldEditor {
     protected Button getChangeControl(Composite parent) {
         if (changeFontButton == null) {
             changeFontButton = new Button(parent, SWT.PUSH);
-            if (changeButtonText != null)
-                changeFontButton.setText(changeButtonText);
+            if (changeButtonText != null) {
+				changeFontButton.setText(changeButtonText);
+			}
             changeFontButton.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent event) {
                     FontDialog fontDialog = new FontDialog(changeFontButton
                             .getShell());
-                    if (chosenFont != null)
-                        fontDialog.setFontList(chosenFont);
+                    if (chosenFont != null) {
+						fontDialog.setFontList(chosenFont);
+					}
                     FontData font = fontDialog.open();
                     if (font != null) {
                         FontData[] oldFont = chosenFont;
-                        if (oldFont == null)
-                            oldFont = JFaceResources.getDefaultFont()
+                        if (oldFont == null) {
+							oldFont = JFaceResources.getDefaultFont()
                                     .getFontData();
+						}
                         setPresentsDefaultValue(false);
                         FontData[] newData = new FontData[1];
                         newData[0] = font;
@@ -285,8 +296,9 @@ public class FontFieldEditor extends FieldEditor {
      * Method declared on FieldEditor.
      */
     public int getNumberOfControls() {
-        if (previewer == null)
-            return 3;
+        if (previewer == null) {
+			return 3;
+		}
         
         return 4;
     }
@@ -298,8 +310,9 @@ public class FontFieldEditor extends FieldEditor {
      *  is installed
      */
     public int getPreferredPreviewHeight() {
-        if (previewer == null)
-            return -1;
+        if (previewer == null) {
+			return -1;
+		}
         return previewer.getPreferredExtent();
     }
 
@@ -309,8 +322,9 @@ public class FontFieldEditor extends FieldEditor {
      * @return the preview control
      */
     public Control getPreviewControl() {
-        if (previewer == null)
-            return null;
+        if (previewer == null) {
+			return null;
+		}
 
         return previewer.getControl();
     }
@@ -344,8 +358,9 @@ public class FontFieldEditor extends FieldEditor {
     public void setChangeButtonText(String text) {
         Assert.isNotNull(text);
         changeButtonText = text;
-        if (changeFontButton != null)
-            changeFontButton.setText(text);
+        if (changeFontButton != null) {
+			changeFontButton.setText(text);
+		}
     }
 
     /**
@@ -358,8 +373,9 @@ public class FontFieldEditor extends FieldEditor {
                 font, valueControl.getDisplay());
 
         //if we have nothing valid do as best we can
-        if (bestFont == null)
-            bestFont = getDefaultFontData();
+        if (bestFont == null) {
+			bestFont = getDefaultFontData();
+		}
 
         //Now cache this value in the receiver
         this.chosenFont = bestFont;

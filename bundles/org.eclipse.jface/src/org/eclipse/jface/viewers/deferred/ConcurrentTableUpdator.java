@@ -99,8 +99,9 @@ package org.eclipse.jface.viewers.deferred;
     Runnable uiRunnable = new Runnable() {
         public void run() {
             updateScheduled = false;
-            if(!table.getControl().isDisposed())
-            	updateTable();
+            if(!table.getControl().isDisposed()) {
+				updateTable();
+			}
         }
     };
     
@@ -263,8 +264,9 @@ package org.eclipse.jface.viewers.deferred;
         synchronized(this) {
 	        if (!updateScheduled) {
 	            updateScheduled = true;
-	            if(!table.getControl().isDisposed())
-	            	table.getControl().getDisplay().asyncExec(uiRunnable);
+	            if(!table.getControl().isDisposed()) {
+					table.getControl().getDisplay().asyncExec(uiRunnable);
+				}
 	        }
         }
     }

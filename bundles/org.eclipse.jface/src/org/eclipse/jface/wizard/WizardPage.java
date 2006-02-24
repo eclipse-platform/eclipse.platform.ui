@@ -123,8 +123,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      *   wizard has yet to be added to a container
      */
     protected IWizardContainer getContainer() {
-        if (wizard == null)
-            return null;
+        if (wizard == null) {
+			return null;
+		}
         return wizard.getContainer();
     }
 
@@ -134,8 +135,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      * @return the dialog settings, or <code>null</code> if none
      */
     protected IDialogSettings getDialogSettings() {
-        if (wizard == null)
-            return null;
+        if (wizard == null) {
+			return null;
+		}
         return wizard.getDialogSettings();
     }
 
@@ -145,8 +147,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
     public Image getImage() {
         Image result = super.getImage();
 
-        if (result == null && wizard != null)
-            return wizard.getDefaultPageImage();
+        if (result == null && wizard != null) {
+			return wizard.getDefaultPageImage();
+		}
 
         return result;
     }
@@ -163,8 +166,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      * The default behavior is to ask the wizard for the next page.
      */
     public IWizardPage getNextPage() {
-        if (wizard == null)
-            return null;
+        if (wizard == null) {
+			return null;
+		}
         return wizard.getNextPage(this);
     }
 
@@ -174,11 +178,13 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      * lacking that, to ask the wizard for the previous page.
      */
     public IWizardPage getPreviousPage() {
-        if (previousPage != null)
-            return previousPage;
+        if (previousPage != null) {
+			return previousPage;
+		}
 
-        if (wizard == null)
-            return null;
+        if (wizard == null) {
+			return null;
+		}
 
         return wizard.getPreviousPage(this);
     }
@@ -193,8 +199,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
     public Shell getShell() {
 
         IWizardContainer container = getContainer();
-        if (container == null)
-            return null;
+        if (container == null) {
+			return null;
+		}
 
         // Ask the wizard since our contents may not have been created.
         return container.getShell();
@@ -234,8 +241,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      */
     public void setDescription(String description) {
         super.setDescription(description);
-        if (isCurrentPage())
-            getContainer().updateTitleBar();
+        if (isCurrentPage()) {
+			getContainer().updateTitleBar();
+		}
     }
 
     /**
@@ -257,8 +265,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      */
     public void setImageDescriptor(ImageDescriptor image) {
         super.setImageDescriptor(image);
-        if (isCurrentPage())
-            getContainer().updateTitleBar();
+        if (isCurrentPage()) {
+			getContainer().updateTitleBar();
+		}
     }
 
     /**
@@ -268,8 +277,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      */
     public void setMessage(String newMessage, int newType) {
         super.setMessage(newMessage, newType);
-        if (isCurrentPage())
-            getContainer().updateMessage();
+        if (isCurrentPage()) {
+			getContainer().updateMessage();
+		}
     }
 
     /**
@@ -285,8 +295,9 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      */
     public void setPageComplete(boolean complete) {
         isPageComplete = complete;
-        if (isCurrentPage())
-            getContainer().updateButtons();
+        if (isCurrentPage()) {
+			getContainer().updateButtons();
+		}
     }
 
     /* (non-Javadoc)

@@ -86,8 +86,9 @@ public class WindowManager {
      * @param wm the child window manager
      */
     private void addWindowManager(WindowManager wm) {
-        if (subManagers == null)
-            subManagers = new ArrayList();
+        if (subManagers == null) {
+			subManagers = new ArrayList();
+		}
         if (!subManagers.contains(wm)) {
             subManagers.add(wm);
         }
@@ -106,16 +107,18 @@ public class WindowManager {
         while (e.hasNext()) {
             Window window = (Window) e.next();
             boolean closed = window.close();
-            if (!closed)
-                return false;
+            if (!closed) {
+				return false;
+			}
         }
         if (subManagers != null) {
             e = subManagers.iterator();
             while (e.hasNext()) {
                 WindowManager wm = (WindowManager) e.next();
                 boolean closed = wm.close();
-                if (!closed)
-                    return false;
+                if (!closed) {
+					return false;
+				}
             }
         }
         return true;

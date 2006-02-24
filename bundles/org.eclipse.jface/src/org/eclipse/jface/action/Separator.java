@@ -50,10 +50,11 @@ public class Separator extends AbstractGroupMarker {
      * Fills the given menu with a SWT separator MenuItem.
      */
     public void fill(Menu menu, int index) {
-        if (index >= 0)
-            new MenuItem(menu, SWT.SEPARATOR, index);
-        else
-            new MenuItem(menu, SWT.SEPARATOR);
+        if (index >= 0) {
+			new MenuItem(menu, SWT.SEPARATOR, index);
+		} else {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}
     }
 
     /* (non-Javadoc)
@@ -61,10 +62,11 @@ public class Separator extends AbstractGroupMarker {
      * Fills the given tool bar with a SWT separator ToolItem.
      */
     public void fill(ToolBar toolbar, int index) {
-        if (index >= 0)
-            new ToolItem(toolbar, SWT.SEPARATOR, index);
-        else
-            new ToolItem(toolbar, SWT.SEPARATOR);
+        if (index >= 0) {
+			new ToolItem(toolbar, SWT.SEPARATOR, index);
+		} else {
+			new ToolItem(toolbar, SWT.SEPARATOR);
+		}
     }
 
     /** 

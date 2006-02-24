@@ -157,18 +157,22 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         protected boolean locked = false;
 
         public void beginTask(String name, int totalWork) {
-            if (progressIndicator.isDisposed())
-                return;
-            if (name == null)
-                task = "";//$NON-NLS-1$
-            else
-                task = name;
+            if (progressIndicator.isDisposed()) {
+				return;
+			}
+            if (name == null) {
+				task = "";//$NON-NLS-1$
+			} else {
+				task = name;
+			}
             String s = task;
-            if (s.length() <= 0)
-                s = DEFAULT_TASKNAME;
+            if (s.length() <= 0) {
+				s = DEFAULT_TASKNAME;
+			}
             setMessage(s);
-            if (!forked)
-                update();
+            if (!forked) {
+				update();
+			}
             if (totalWork == UNKNOWN) {
                 progressIndicator.beginAnimatedTask();
             } else {
@@ -184,16 +188,19 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         }
 
         public void setTaskName(String name) {
-            if (name == null)
-                task = "";//$NON-NLS-1$
-            else
-                task = name;
+            if (name == null) {
+				task = "";//$NON-NLS-1$
+			} else {
+				task = name;
+			}
             String s = task;
-            if (s.length() <= 0)
-                s = DEFAULT_TASKNAME;
+            if (s.length() <= 0) {
+				s = DEFAULT_TASKNAME;
+			}
             setMessage(s);
-            if (!forked)
-                update();
+            if (!forked) {
+				update();
+			}
         }
 
         public boolean isCanceled() {
@@ -202,20 +209,24 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
         public void setCanceled(boolean b) {
             fIsCanceled = b;
-            if (locked)
-                clearBlocked();
+            if (locked) {
+				clearBlocked();
+			}
         }
 
         public void subTask(String name) {
-            if (subTaskLabel.isDisposed())
-                return;
-            if (name == null)
-                fSubTask = "";//$NON-NLS-1$
-            else
-                fSubTask = name;
+            if (subTaskLabel.isDisposed()) {
+				return;
+			}
+            if (name == null) {
+				fSubTask = "";//$NON-NLS-1$
+			} else {
+				fSubTask = name;
+			}
             subTaskLabel.setText(shortenText(fSubTask,subTaskLabel));
-            if (!forked)
-                subTaskLabel.update();
+            if (!forked) {
+				subTaskLabel.update();
+			}
         }
 
         public void worked(int work) {
@@ -223,8 +234,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         }
 
         public void internalWorked(double work) {
-            if (!progressIndicator.isDisposed())
-                progressIndicator.worked(work);
+            if (!progressIndicator.isDisposed()) {
+				progressIndicator.worked(work);
+			}
         }
 
         /*
@@ -340,10 +352,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         if (shell != null && !shell.isDisposed()) {
             shell.setCursor(null);
         }
-        if (arrowCursor != null)
-            arrowCursor.dispose();
-        if (waitCursor != null)
-            waitCursor.dispose();
+        if (arrowCursor != null) {
+			arrowCursor.dispose();
+		}
+        if (waitCursor != null) {
+			waitCursor.dispose();
+		}
         arrowCursor = null;
         waitCursor = null;
     }
@@ -354,8 +368,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(JFaceResources.getString("ProgressMonitorDialog.title")); //$NON-NLS-1$
-        if (waitCursor == null)
-            waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
+        if (waitCursor == null) {
+			waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
+		}
         shell.setCursor(waitCursor);
     }
 
@@ -377,8 +392,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
     protected void createCancelButton(Composite parent) {
         cancel = createButton(parent, IDialogConstants.CANCEL_ID,
                 IDialogConstants.CANCEL_LABEL, true);
-        if (arrowCursor == null)
-            arrowCursor = new Cursor(cancel.getDisplay(), SWT.CURSOR_ARROW);
+        if (arrowCursor == null) {
+			arrowCursor = new Cursor(cancel.getDisplay(), SWT.CURSOR_ARROW);
+		}
         cancel.setCursor(arrowCursor);
         setOperationCancelButtonEnabled(enableCancelButton);
     }
@@ -415,8 +431,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
      */
     protected Point getInitialSize() {
         Point calculatedSize = super.getInitialSize();
-        if (calculatedSize.x < 450)
-            calculatedSize.x = 450;
+        if (calculatedSize.x < 450) {
+			calculatedSize.x = 450;
+		}
         return calculatedSize;
     }
 
@@ -548,10 +565,11 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
      *            dialog, and <code>false</code> if it cannot be canceled
      */
     public void setCancelable(boolean cancelable) {
-        if (cancel == null)
-            enableCancelButton = cancelable;
-        else
-            asyncSetOperationCancelButtonEnabled(cancelable);
+        if (cancel == null) {
+			enableCancelButton = cancelable;
+		} else {
+			asyncSetOperationCancelButtonEnabled(cancelable);
+		}
     }
 
     /**
@@ -582,8 +600,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
     private void setMessage(String messageString) {
         //must not set null text in a label
         message = messageString == null ? "" : messageString; //$NON-NLS-1$
-        if (messageLabel == null || messageLabel.isDisposed())
-            return;
+        if (messageLabel == null || messageLabel.isDisposed()) {
+			return;
+		}
         messageLabel.setToolTipText(messageString);
         messageLabel.setText(shortenText(message,messageLabel));
     }
@@ -592,8 +611,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
      * Update the message label. Required if the monitor is forked.
      */
     private void update() {
-        if (messageLabel == null || messageLabel.isDisposed())
-            return;
+        if (messageLabel == null || messageLabel.isDisposed()) {
+			return;
+		}
         messageLabel.update();
     }
 
@@ -604,8 +624,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
     public int open() {
         //Check to be sure it is not already done. If it is just return OK.
         if (!getOpenOnRun()) {
-            if (getNestingDepth() == 0)
-                return OK;
+            if (getNestingDepth() == 0) {
+				return OK;
+			}
         }
         return super.open();
     }

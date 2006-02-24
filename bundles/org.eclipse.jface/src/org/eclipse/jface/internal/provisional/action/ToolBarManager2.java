@@ -90,8 +90,9 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	 */
 	public int getItemCount() {
 		ToolBar toolBar = getControl();
-		if (toolBar == null || toolBar.isDisposed())
+		if (toolBar == null || toolBar.isDisposed()) {
 			return 0;
+		}
 		return toolBar.getItemCount();
 	}
 

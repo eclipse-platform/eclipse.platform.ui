@@ -72,10 +72,12 @@ public class TreeViewer extends AbstractTreeViewer {
 		 *            IBaseLabelProvider
 		 */
 		public TreeColorAndFontCollector(IBaseLabelProvider provider) {
-			if (provider instanceof ITableFontProvider)
+			if (provider instanceof ITableFontProvider) {
 				fontProvider = (ITableFontProvider) provider;
-			if (provider instanceof ITableColorProvider)
+			}
+			if (provider instanceof ITableColorProvider) {
 				colorProvider = (ITableColorProvider) provider;
+			}
 		}
 
 		/**
@@ -103,8 +105,9 @@ public class TreeViewer extends AbstractTreeViewer {
 				treeItem.setForeground(column, colorProvider.getForeground(
 						element, column));
 			}
-			if (fontProvider != null)
+			if (fontProvider != null) {
 				treeItem.setFont(column, fontProvider.getFont(element, column));
+			}
 		}
 
 	}
@@ -199,8 +202,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
 	protected void doUpdateItem(final Item item, Object element) {
-		if (!(item instanceof TreeItem))
+		if (!(item instanceof TreeItem)) {
 			return;
+		}
 		TreeItem treeItem = (TreeItem) item;
 		if (treeItem.isDisposed()) {
 			unmapElement(element, treeItem);
@@ -215,8 +219,9 @@ public class TreeViewer extends AbstractTreeViewer {
 		IViewerLabelProvider vprov = null;
 		ITreePathLabelProvider pprov = null;
 		
-		if(prov instanceof ILabelProvider)
+		if(prov instanceof ILabelProvider) {
 			lprov = (ILabelProvider) prov;
+		}
 		
 		if (prov instanceof IViewerLabelProvider) {
 			vprov = (IViewerLabelProvider) prov;
@@ -241,11 +246,12 @@ public class TreeViewer extends AbstractTreeViewer {
 				TreePath path = getTreePathFromItem(item);
 				buildLabel(updateLabel,path,pprov);
 			} else 
-				if(vprov != null)
+				if(vprov != null) {
 					buildLabel(updateLabel,element,vprov);
-				else{
-					if(lprov != null)
+				} else{
+					if(lprov != null) {
 						buildLabel(updateLabel,element,lprov);
+					}
 				}
 
 			// As it is possible for user code to run the event
@@ -255,10 +261,12 @@ public class TreeViewer extends AbstractTreeViewer {
 				return;
 			}
 
-			if (updateLabel.hasNewText())
+			if (updateLabel.hasNewText()) {
 				treeItem.setText(updateLabel.getText());
-			if (updateLabel.hasNewImage())
+			}
+			if (updateLabel.hasNewImage()) {
 				treeItem.setImage(updateLabel.getImage());
+			}
 
 		} else {// Use the table based support
 			for (int column = 0; column < columnCount; column++) {
@@ -271,11 +279,12 @@ public class TreeViewer extends AbstractTreeViewer {
 					if (column == 0) {
 						ViewerLabel updateLabel = new ViewerLabel(treeItem
 								.getText(), treeItem.getImage());
-						if(vprov != null)
+						if(vprov != null) {
 							buildLabel(updateLabel,element,vprov);
-						else{
-							if(lprov != null)
+						} else{
+							if(lprov != null) {
 								buildLabel(updateLabel,element,lprov);
+							}
 						}
 
 						// As it is possible for user code to run the event
@@ -294,8 +303,9 @@ public class TreeViewer extends AbstractTreeViewer {
 				}
 
 				// Avoid setting text to null
-				if (text == null)
+				if (text == null) {
 					text = ""; //$NON-NLS-1$
+				}
 				treeItem.setText(column, text);
 				if (treeItem.getImage(column) != image) {
 					treeItem.setImage(column, image);
@@ -363,10 +373,12 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
 	protected Item[] getChildren(Widget o) {
-		if (o instanceof TreeItem)
+		if (o instanceof TreeItem) {
 			return ((TreeItem) o).getItems();
-		if (o instanceof Tree)
+		}
+		if (o instanceof Tree) {
 			return ((Tree) o).getItems();
+		}
 		return null;
 	}
 
@@ -563,15 +575,17 @@ public class TreeViewer extends AbstractTreeViewer {
 	protected Item newItem(Widget parent, int flags, int ix) {
 		TreeItem item;
 		if (ix >= 0) {
-			if (parent instanceof TreeItem)
+			if (parent instanceof TreeItem) {
 				item = new TreeItem((TreeItem) parent, flags, ix);
-			else
+			} else {
 				item = new TreeItem((Tree) parent, flags, ix);
+			}
 		} else {
-			if (parent instanceof TreeItem)
+			if (parent instanceof TreeItem) {
 				item = new TreeItem((TreeItem) parent, flags);
-			else
+			} else {
 				item = new TreeItem((Tree) parent, flags);
+			}
 		}
 		return item;
 	}
@@ -649,8 +663,9 @@ public class TreeViewer extends AbstractTreeViewer {
 		Item[] current = getSelection(getTree());
 
 		// Don't bother resetting the same selection
-		if (isSameSelection(items, current))
+		if (isSameSelection(items, current)) {
 			return;
+		}
 
 		TreeItem[] newItems = new TreeItem[items.size()];
 		items.toArray(newItems);
@@ -673,8 +688,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	protected boolean isSameSelection(List items, Item[] current) {
 		// If they are not the same size then they are not equivalent
 		int n = items.size();
-		if (n != current.length)
+		if (n != current.length) {
 			return false;
+		}
 
 		CustomHashtable itemSet = newHashtable(n * 2 + 1);
 		for (Iterator i = items.iterator(); i.hasNext();) {
@@ -686,8 +702,9 @@ public class TreeViewer extends AbstractTreeViewer {
 		// Go through the items of the current collection
 		// If there is a mismatch return false
 		for (int i = 0; i < current.length; i++) {
-			if (current[i].getData() == null || !itemSet.containsKey(current[i].getData()))
+			if (current[i].getData() == null || !itemSet.containsKey(current[i].getData())) {
 				return false;
+			}
 		}
 
 		return true;
@@ -705,16 +722,19 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt.widgets.Widget, int)
 	 */
 	protected Item getChild(Widget widget, int index) {
-		if (widget instanceof TreeItem)
+		if (widget instanceof TreeItem) {
 			return ((TreeItem) widget).getItem(index);
-		if (widget instanceof Tree)
+		}
+		if (widget instanceof Tree) {
 			return ((Tree) widget).getItem(index);
+		}
 		return null;
 	}
 	
 	protected void assertContentProviderType(IContentProvider provider) {
-		if(provider instanceof ILazyTreeContentProvider)
+		if(provider instanceof ILazyTreeContentProvider) {
 			return;
+		}
 		super.assertContentProviderType(provider);
 	}
 	

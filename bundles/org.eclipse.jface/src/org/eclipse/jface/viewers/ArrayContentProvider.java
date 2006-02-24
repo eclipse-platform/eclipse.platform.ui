@@ -29,10 +29,12 @@ public class ArrayContentProvider implements IStructuredContentProvider {
      * <code>Collection</code>. 
      */
     public Object[] getElements(Object inputElement) {
-        if (inputElement instanceof Object[])
-            return (Object[]) inputElement;
-        if (inputElement instanceof Collection)
-            return ((Collection) inputElement).toArray();
+        if (inputElement instanceof Object[]) {
+			return (Object[]) inputElement;
+		}
+        if (inputElement instanceof Collection) {
+			return ((Collection) inputElement).toArray();
+		}
         return new Object[0];
     }
 

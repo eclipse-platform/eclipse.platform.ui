@@ -74,8 +74,9 @@ public class PreferenceManager {
      */
     public boolean addTo(String path, IPreferenceNode node) {
         IPreferenceNode target = find(path);
-        if (target == null)
-            return false;
+        if (target == null) {
+			return false;
+		}
         target.add(node);
         return true;
     }
@@ -104,14 +105,16 @@ public class PreferenceManager {
      *	<code>PRE_ORDER</code> and <code>POST_ORDER</code>
      */
     protected void buildSequence(IPreferenceNode node, List sequence, int order) {
-        if (order == PRE_ORDER)
-            sequence.add(node);
+        if (order == PRE_ORDER) {
+			sequence.add(node);
+		}
         IPreferenceNode[] subnodes = node.getSubNodes();
         for (int i = 0; i < subnodes.length; i++) {
             buildSequence(subnodes[i], sequence, order);
         }
-        if (order == POST_ORDER)
-            sequence.add(node);
+        if (order == POST_ORDER) {
+			sequence.add(node);
+		}
     }
 
     /**
@@ -140,11 +143,13 @@ public class PreferenceManager {
          while (stok.hasMoreTokens()) {
              String id = stok.nextToken();
              node = node.findSubNode(id);
-             if (node == null)
-                 return null;
+             if (node == null) {
+				return null;
+			}
          }
-         if (node == top)
-             return null;
+         if (node == top) {
+			return null;
+		}
          return node;
     }
 
@@ -163,8 +168,9 @@ public class PreferenceManager {
                 "invalid traversal order");//$NON-NLS-1$
         ArrayList sequence = new ArrayList();
         IPreferenceNode[] subnodes = getRoot().getSubNodes();
-        for (int i = 0; i < subnodes.length; i++)
-            buildSequence(subnodes[i], sequence, order);
+        for (int i = 0; i < subnodes.length; i++) {
+			buildSequence(subnodes[i], sequence, order);
+		}
         return sequence;
     }
 
@@ -201,15 +207,17 @@ public class PreferenceManager {
     public IPreferenceNode remove(String path) {
         Assert.isNotNull(path);
         int index = path.lastIndexOf(separator);
-        if (index == -1)
-            return root.remove(path);
+        if (index == -1) {
+			return root.remove(path);
+		}
         // Make sure that the last character in the string isn't the "."
         Assert.isTrue(index < path.length() - 1, "Path can not end with a dot");//$NON-NLS-1$
         String parentPath = path.substring(0, index);
         String id = path.substring(index + 1);
         IPreferenceNode parentNode = find(parentPath);
-        if (parentNode == null)
-            return null;
+        if (parentNode == null) {
+			return null;
+		}
         return parentNode.remove(id);
     }
 

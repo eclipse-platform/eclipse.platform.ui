@@ -173,10 +173,12 @@ public class MessageDialog extends IconAndMessageDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        if (title != null)
-            shell.setText(title);
-        if (titleImage != null)
-            shell.setImage(titleImage);
+        if (title != null) {
+			shell.setText(title);
+		}
+        if (titleImage != null) {
+			shell.setImage(titleImage);
+		}
     }
 
     /*
@@ -230,8 +232,9 @@ public class MessageDialog extends IconAndMessageDialog {
         // allow subclasses to add custom controls
         customArea = createCustomArea(composite);
         //If it is null create a dummy label for spacing purposes
-        if (customArea == null)
-            customArea = new Label(composite, SWT.NULL);
+        if (customArea == null) {
+			customArea = new Label(composite, SWT.NULL);
+		}
         return composite;
     }
 
@@ -401,8 +404,9 @@ public class MessageDialog extends IconAndMessageDialog {
         Button button = super.createButton(parent, id, label, defaultButton);
         //Be sure to set the focus if the custom area cannot so as not
         //to lose the defaultButton.
-        if (defaultButton && !customShouldTakeFocus())
-            button.setFocus();
+        if (defaultButton && !customShouldTakeFocus()) {
+			button.setFocus();
+		}
         return button;
     }
 
@@ -415,10 +419,12 @@ public class MessageDialog extends IconAndMessageDialog {
      * @return boolean
      */
     protected boolean customShouldTakeFocus() {
-        if (customArea instanceof Label)
-            return false;
-        if (customArea instanceof CLabel)
-            return (customArea.getStyle() & SWT.NO_FOCUS) > 0;
+        if (customArea instanceof Label) {
+			return false;
+		}
+        if (customArea instanceof CLabel) {
+			return (customArea.getStyle() & SWT.NO_FOCUS) > 0;
+		}
         return true;
     }
 

@@ -54,9 +54,11 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
         RGB c;
 
         // this loops starts at index 1 because index 0 corresponds to the transparency value
-        for (i = 1; i < map.length && (c = map[i]) != null; i++)
-            if (c.red == red && c.green == green && c.blue == blue)
-                return i;
+        for (i = 1; i < map.length && (c = map[i]) != null; i++) {
+			if (c.red == red && c.green == green && c.blue == blue) {
+				return i;
+			}
+		}
 
         if (i < map.length - 1) {
             map[i] = new RGB(red, green, blue);
@@ -133,8 +135,9 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 
         // map maps src pixel values to dest pixel values
         int map[] = new int[256];
-        for (int i = 0; i < map.length; i++)
-            map[i] = -1;
+        for (int i = 0; i < map.length; i++) {
+			map[i] = -1;
+		}
 
         /* JM: added code to test if the image is an icon */
         if (src.getTransparencyType() == SWT.TRANSPARENCY_MASK) {
@@ -204,9 +207,11 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 
         drawCompositeImage(size.x, size.y);
 
-        for (int i = 0; i < rgbs.length; i++)
-            if (rgbs[i] == null)
-                rgbs[i] = black;
+        for (int i = 0; i < rgbs.length; i++) {
+			if (rgbs[i] == null) {
+				rgbs[i] = black;
+			}
+		}
 
         return imageData;
 

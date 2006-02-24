@@ -89,17 +89,21 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 
     private String getAccessibleMessageFor(Image image){
-    	if(image.equals(getErrorImage()))
+    	if(image.equals(getErrorImage())) {
 			return JFaceResources.getString("error");//$NON-NLS-1$
+		}
     	
-    	if(image.equals(getWarningImage()))
+    	if(image.equals(getWarningImage())) {
 			return JFaceResources.getString("warning");//$NON-NLS-1$
+		}
     	
-    	if(image.equals(getInfoImage()))
+    	if(image.equals(getInfoImage())) {
 			return JFaceResources.getString("info");//$NON-NLS-1$
+		}
     	
-    	if(image.equals(getQuestionImage()))
+    	if(image.equals(getQuestionImage())) {
 			return JFaceResources.getString("question"); //$NON-NLS-1$
+		}
     	
     	return null;
     }
@@ -115,8 +119,9 @@ public abstract class IconAndMessageDialog extends Dialog {
 				new AccessibleAdapter(){
     				public void getName(AccessibleEvent event) {
     					final String accessibleMessage = getAccessibleMessageFor(image);
-    					if(accessibleMessage == null)
-    						return;    					
+    					if(accessibleMessage == null) {
+							return;
+						}    					
     					event.result = accessibleMessage;
     				}
     			}

@@ -194,8 +194,9 @@ public class ToolBarContributionItem extends ContributionItem {
             }
 
             // Do not create a coolItem if the toolbar is empty
-            if (toolBar.getItemCount() < 1)
-                return;
+            if (toolBar.getItemCount() < 1) {
+				return;
+			}
             int flags = SWT.DROP_DOWN;
             if (index >= 0) {
                 coolItem = new CoolItem(coolBar, flags, index);
@@ -470,8 +471,9 @@ public class ToolBarContributionItem extends ContributionItem {
         if (checkDisposed()) {
             return;
         }
-        if (coolItem == null)
-            return;
+        if (coolItem == null) {
+			return;
+		}
 
         //1. Save current size
         CoolBar coolBar = coolItem.getParent();

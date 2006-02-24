@@ -76,8 +76,9 @@ public class PreferenceConverter {
     public static final FontData FONTDATA_DEFAULT_DEFAULT;
     static {
 		Display display = Display.getCurrent();
-		if (display == null) 
+		if (display == null) {
 			display = Display.getDefault ();
+		}
 		
         FONTDATA_ARRAY_DEFAULT_DEFAULT = display.getSystemFont().getFontData();
         /**
@@ -103,12 +104,14 @@ public class PreferenceConverter {
      */
     private static RGB basicGetColor(String value) {
 
-        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
-            return COLOR_DEFAULT_DEFAULT;
+        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value)) {
+			return COLOR_DEFAULT_DEFAULT;
+		}
 
         RGB color = StringConverter.asRGB(value, null);
-        if (color == null)
-            return COLOR_DEFAULT_DEFAULT;
+        if (color == null) {
+			return COLOR_DEFAULT_DEFAULT;
+		}
         return color;
     }
 
@@ -122,8 +125,9 @@ public class PreferenceConverter {
      * @since 3.0
      */
     public static FontData[] basicGetFontData(String value) {
-        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
-            return FONTDATA_ARRAY_DEFAULT_DEFAULT;
+        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value)) {
+			return FONTDATA_ARRAY_DEFAULT_DEFAULT;
+		}
 
         //Read in all of them to get the value
         StringTokenizer tokenizer = new StringTokenizer(value, ENTRY_SEPARATOR);
@@ -161,8 +165,9 @@ public class PreferenceConverter {
      */
     private static Point basicGetPoint(String value) {
         Point dp = new Point(POINT_DEFAULT_DEFAULT.x, POINT_DEFAULT_DEFAULT.y);
-        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
-            return dp;
+        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value)) {
+			return dp;
+		}
         return StringConverter.asPoint(value, dp);
     }
 
@@ -178,8 +183,9 @@ public class PreferenceConverter {
                 RECTANGLE_DEFAULT_DEFAULT.y, RECTANGLE_DEFAULT_DEFAULT.width,
                 RECTANGLE_DEFAULT_DEFAULT.height);
 
-        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
-            return dr;
+        if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value)) {
+			return dr;
+		}
         return StringConverter.asRectangle(value, dr);
     }
 

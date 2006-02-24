@@ -131,8 +131,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      * @param editor the field editor
      */
     protected void addField(FieldEditor editor) {
-        if (fields == null)
-            fields = new ArrayList();
+        if (fields == null) {
+			fields = new ArrayList();
+		}
         fields.add(editor);
     }
 
@@ -218,8 +219,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
 
         createFieldEditors();
 
-        if (style == GRID)
-            adjustGridLayout();
+        if (style == GRID) {
+			adjustGridLayout();
+		}
 
         initialize();
         checkState();

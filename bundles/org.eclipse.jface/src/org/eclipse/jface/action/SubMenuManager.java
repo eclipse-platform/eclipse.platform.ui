@@ -133,8 +133,9 @@ public class SubMenuManager extends SubContributionManager implements
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)
      */
     public void fill(Composite parent) {
-        if (isVisible())
-            getParentMenuManager().fill(parent);
+        if (isVisible()) {
+			getParentMenuManager().fill(parent);
+		}
     }
 
     /* (non-Javadoc)
@@ -148,16 +149,18 @@ public class SubMenuManager extends SubContributionManager implements
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
      */
     public void fill(Menu parent, int index) {
-        if (isVisible())
-            getParentMenuManager().fill(parent, index);
+        if (isVisible()) {
+			getParentMenuManager().fill(parent, index);
+		}
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.ToolBar, int)
      */
     public void fill(ToolBar parent, int index) {
-        if (isVisible())
-            getParentMenuManager().fill(parent, index);
+        if (isVisible()) {
+			getParentMenuManager().fill(parent, index);
+		}
     }
 
     /* (non-Javadoc)
@@ -169,9 +172,10 @@ public class SubMenuManager extends SubContributionManager implements
      */
     public IContributionItem find(String id) {
         IContributionItem item = getParentMenuManager().find(id);
-        if (item instanceof SubContributionItem)
-            // Return the item passed to us, not the wrapper.
+        if (item instanceof SubContributionItem) {
+			// Return the item passed to us, not the wrapper.
             item = unwrap(item);
+		}
 
         if (item instanceof IMenuManager) {
             // if it is a menu manager wrap it before returning

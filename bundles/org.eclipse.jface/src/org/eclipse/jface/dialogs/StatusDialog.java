@@ -164,8 +164,9 @@ public abstract class StatusDialog extends TrayDialog {
 	 *            the status.
 	 */
 	protected void updateButtonsEnableState(IStatus status) {
-		if (fOkButton != null && !fOkButton.isDisposed())
+		if (fOkButton != null && !fOkButton.isDisposed()) {
 			fOkButton.setEnabled(!status.matches(IStatus.ERROR));
+		}
 	}
 
 	/*
@@ -173,8 +174,9 @@ public abstract class StatusDialog extends TrayDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		if (fTitle != null)
+		if (fTitle != null) {
 			shell.setText(fTitle);
+		}
 	}
 
 	/*
@@ -240,8 +242,9 @@ public abstract class StatusDialog extends TrayDialog {
 	public void setTitle(String title) {
 		fTitle = title != null ? title : ""; //$NON-NLS-1$
 		Shell shell = getShell();
-		if ((shell != null) && !shell.isDisposed())
+		if ((shell != null) && !shell.isDisposed()) {
 			shell.setText(fTitle);
+		}
 	}
 
 	/**
@@ -253,8 +256,9 @@ public abstract class StatusDialog extends TrayDialog {
 	public void setImage(Image image) {
 		fImage = image;
 		Shell shell = getShell();
-		if ((shell != null) && !shell.isDisposed())
+		if ((shell != null) && !shell.isDisposed()) {
 			shell.setImage(fImage);
+		}
 	}
 
 }

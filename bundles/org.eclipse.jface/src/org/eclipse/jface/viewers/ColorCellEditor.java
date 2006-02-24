@@ -74,8 +74,9 @@ public class ColorCellEditor extends DialogCellEditor {
     private class ColorCellLayout extends Layout {
         public Point computeSize(Composite editor, int wHint, int hHint,
                 boolean force) {
-            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-                return new Point(wHint, hHint);
+            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+				return new Point(wHint, hHint);
+			}
             Point colorSize = colorLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                     force);
             Point rgbSize = rgbLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
@@ -91,8 +92,9 @@ public class ColorCellEditor extends DialogCellEditor {
             Point rgbSize = rgbLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                     force);
             int ty = (bounds.height - rgbSize.y) / 2;
-            if (ty < 0)
-                ty = 0;
+            if (ty < 0) {
+				ty = 0;
+			}
             colorLabel.setBounds(-1, 0, colorSize.x, colorSize.y);
             rgbLabel.setBounds(colorSize.x + GAP - 1, ty, bounds.width
                     - colorSize.x - GAP, bounds.height);
@@ -141,15 +143,17 @@ public class ColorCellEditor extends DialogCellEditor {
 
         int indent = 6;
         int extent = DEFAULT_EXTENT;
-        if (w instanceof Table)
-            extent = ((Table) w).getItemHeight() - 1;
-        else if (w instanceof Tree)
-            extent = ((Tree) w).getItemHeight() - 1;
-        else if (w instanceof TableTree)
-            extent = ((TableTree) w).getItemHeight() - 1;
+        if (w instanceof Table) {
+			extent = ((Table) w).getItemHeight() - 1;
+		} else if (w instanceof Tree) {
+			extent = ((Tree) w).getItemHeight() - 1;
+		} else if (w instanceof TableTree) {
+			extent = ((TableTree) w).getItemHeight() - 1;
+		}
 
-        if (size > extent)
-            size = extent;
+        if (size > extent) {
+			size = extent;
+		}
 
         int width = indent + size;
         int height = extent;
@@ -166,10 +170,11 @@ public class ColorCellEditor extends DialogCellEditor {
         int end = size - 1;
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                if (x == 0 || y == 0 || x == end || y == end)
-                    data.setPixel(x + xoffset, y + yoffset, 1);
-                else
-                    data.setPixel(x + xoffset, y + yoffset, 2);
+                if (x == 0 || y == 0 || x == end || y == end) {
+					data.setPixel(x + xoffset, y + yoffset, 1);
+				} else {
+					data.setPixel(x + xoffset, y + yoffset, 2);
+				}
             }
         }
 
@@ -209,8 +214,9 @@ public class ColorCellEditor extends DialogCellEditor {
     protected Object openDialogBox(Control cellEditorWindow) {
         ColorDialog dialog = new ColorDialog(cellEditorWindow.getShell());
         Object value = getValue();
-        if (value != null)
-            dialog.setRGB((RGB) value);
+        if (value != null) {
+			dialog.setRGB((RGB) value);
+		}
         value = dialog.open();
         return dialog.getRGB();
     }
@@ -225,8 +231,9 @@ public class ColorCellEditor extends DialogCellEditor {
             rgb = new RGB(0, 0, 0);
         }
         // XXX: Workaround for 1FMQ0P3: SWT:ALL - TableItem.setImage doesn't work if using the identical image."
-        if (image != null)
-            image.dispose();
+        if (image != null) {
+			image.dispose();
+		}
 
         ImageData id = createColorImage(colorLabel.getParent().getParent(), rgb);
         ImageData mask = id.getTransparencyMask();

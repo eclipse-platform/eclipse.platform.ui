@@ -109,8 +109,9 @@ public abstract class ContributionManager implements IContributionManager {
                         for (; items.hasNext(); i++) {
                             IContributionItem ci = (IContributionItem) items
                                     .next();
-                            if (ci.isGroupMarker())
-                                break;
+                            if (ci.isGroupMarker()) {
+								break;
+							}
                         }
                     }
                     if (allowItem(item)) {
@@ -158,15 +159,18 @@ public abstract class ContributionManager implements IContributionManager {
      */
     protected void dumpStatistics() {
         int size = 0;
-        if (contributions != null)
-            size = contributions.size();
+        if (contributions != null) {
+			size = contributions.size();
+		}
 
         System.out.println(this.toString());
         System.out.println("   Number of elements: " + size);//$NON-NLS-1$
         int sum = 0;
-        for (int i = 0; i < size; i++)
-            if (((IContributionItem) contributions.get(i)).isVisible())
-                sum++;
+        for (int i = 0; i < size; i++) {
+			if (((IContributionItem) contributions.get(i)).isVisible()) {
+				sum++;
+			}
+		}
         System.out.println("   Number of visible elements: " + sum);//$NON-NLS-1$
         System.out.println("   Is dirty: " + isDirty()); //$NON-NLS-1$
     }
@@ -179,8 +183,9 @@ public abstract class ContributionManager implements IContributionManager {
         while (e.hasNext()) {
             IContributionItem item = (IContributionItem) e.next();
             String itemId = item.getId();
-            if (itemId != null && itemId.equalsIgnoreCase(id))
-                return item;
+            if (itemId != null && itemId.equalsIgnoreCase(id)) {
+				return item;
+			}
         }
         return null;
     }
@@ -247,8 +252,9 @@ public abstract class ContributionManager implements IContributionManager {
         for (int i = 0; i < contributions.size(); i++) {
             IContributionItem item = (IContributionItem) contributions.get(i);
             String itemId = item.getId();
-            if (itemId != null && itemId.equalsIgnoreCase(id))
-                return i;
+            if (itemId != null && itemId.equalsIgnoreCase(id)) {
+				return i;
+			}
         }
         return -1;
     }
@@ -272,9 +278,10 @@ public abstract class ContributionManager implements IContributionManager {
      * @param item The item to be inserted
      */
     public void insert(int index, IContributionItem item) {
-        if (index > contributions.size())
-            throw new IndexOutOfBoundsException(
+        if (index > contributions.size()) {
+			throw new IndexOutOfBoundsException(
                     "inserting " + item.getId() + " at " + index); //$NON-NLS-1$ //$NON-NLS-2$
+		}
         if (allowItem(item)) {
             contributions.add(index, item);
             itemAdded(item);
@@ -293,8 +300,9 @@ public abstract class ContributionManager implements IContributionManager {
      */
     public void insertAfter(String ID, IContributionItem item) {
         IContributionItem ci = find(ID);
-        if (ci == null)
-            throw new IllegalArgumentException("can't find ID");//$NON-NLS-1$
+        if (ci == null) {
+			throw new IllegalArgumentException("can't find ID");//$NON-NLS-1$
+		}
         int ix = contributions.indexOf(ci);
         if (ix >= 0) {
             // System.out.println("insert after: " + ix);
@@ -317,8 +325,9 @@ public abstract class ContributionManager implements IContributionManager {
      */
     public void insertBefore(String ID, IContributionItem item) {
         IContributionItem ci = find(ID);
-        if (ci == null)
-            throw new IllegalArgumentException("can't find ID " + ID);//$NON-NLS-1$
+        if (ci == null) {
+			throw new IllegalArgumentException("can't find ID " + ID);//$NON-NLS-1$
+		}
         int ix = contributions.indexOf(ci);
         if (ix >= 0) {
             // System.out.println("insert before: " + ix);
@@ -333,13 +342,15 @@ public abstract class ContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public boolean isDirty() {
-        if (isDirty)
-            return true;
+        if (isDirty) {
+			return true;
+		}
         if (hasDynamicItems()) {
             for (Iterator iter = contributions.iterator(); iter.hasNext();) {
                 IContributionItem item = (IContributionItem) iter.next();
-                if (item.isDirty())
-                    return true;
+                if (item.isDirty()) {
+					return true;
+				}
             }
         }
         return false;
@@ -359,8 +370,9 @@ public abstract class ContributionManager implements IContributionManager {
     protected void itemAdded(IContributionItem item) {
         item.setParent(this);
         markDirty();
-        if (item.isDynamic())
-            dynamicItems++;
+        if (item.isDynamic()) {
+			dynamicItems++;
+		}
     }
 
     /**
@@ -370,8 +382,9 @@ public abstract class ContributionManager implements IContributionManager {
     protected void itemRemoved(IContributionItem item) {
         item.setParent(null);
         markDirty();
-        if (item.isDynamic())
-            dynamicItems--;
+        if (item.isDynamic()) {
+			dynamicItems--;
+		}
     }
 
     /* (non-Javadoc)
@@ -400,8 +413,9 @@ public abstract class ContributionManager implements IContributionManager {
      */
     public IContributionItem remove(String ID) {
         IContributionItem ci = find(ID);
-        if (ci == null)
-            return null;
+        if (ci == null) {
+			return null;
+		}
         return remove(ci);
     }
 

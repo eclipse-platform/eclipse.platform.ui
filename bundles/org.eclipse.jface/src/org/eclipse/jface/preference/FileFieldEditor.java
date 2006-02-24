@@ -78,11 +78,13 @@ public class FileFieldEditor extends StringButtonFieldEditor {
      */
     protected String changePressed() {
         File f = new File(getTextControl().getText());
-        if (!f.exists())
-            f = null;
+        if (!f.exists()) {
+			f = null;
+		}
         File d = getFile(f);
-        if (d == null)
-            return null;
+        if (d == null) {
+			return null;
+		}
 
         return d.getAbsolutePath();
     }
@@ -96,19 +98,22 @@ public class FileFieldEditor extends StringButtonFieldEditor {
         String msg = null;
 
         String path = getTextControl().getText();
-        if (path != null)
-            path = path.trim();
-        else
-            path = "";//$NON-NLS-1$
+        if (path != null) {
+			path = path.trim();
+		} else {
+			path = "";//$NON-NLS-1$
+		}
         if (path.length() == 0) {
-            if (!isEmptyStringAllowed())
-                msg = getErrorMessage();
+            if (!isEmptyStringAllowed()) {
+				msg = getErrorMessage();
+			}
         } else {
             File file = new File(path);
             if (file.isFile()) {
-                if (enforceAbsolute && !file.isAbsolute())
-                    msg = JFaceResources
+                if (enforceAbsolute && !file.isAbsolute()) {
+					msg = JFaceResources
                             .getString("FileFieldEditor.errorMessage2");//$NON-NLS-1$
+				}
             } else {
                 msg = getErrorMessage();
             }
@@ -133,15 +138,18 @@ public class FileFieldEditor extends StringButtonFieldEditor {
     private File getFile(File startingDirectory) {
 
         FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-        if (startingDirectory != null)
-            dialog.setFileName(startingDirectory.getPath());
-        if (extensions != null)
-            dialog.setFilterExtensions(extensions);
+        if (startingDirectory != null) {
+			dialog.setFileName(startingDirectory.getPath());
+		}
+        if (extensions != null) {
+			dialog.setFilterExtensions(extensions);
+		}
         String file = dialog.open();
         if (file != null) {
             file = file.trim();
-            if (file.length() > 0)
-                return new File(file);
+            if (file.length() > 0) {
+				return new File(file);
+			}
         }
 
         return null;

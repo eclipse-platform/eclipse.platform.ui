@@ -108,8 +108,9 @@ public class ColorFieldEditor extends FieldEditor {
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
 	protected void doLoad() {
-		if (colorSelector == null)
+		if (colorSelector == null) {
 			return;
+		}
 		colorSelector.setColorValue(PreferenceConverter.getColor(
 				getPreferenceStore(), getPreferenceName()));
 	}
@@ -118,8 +119,9 @@ public class ColorFieldEditor extends FieldEditor {
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
 	protected void doLoadDefault() {
-		if (colorSelector == null)
+		if (colorSelector == null) {
 			return;
+		}
 		colorSelector.setColorValue(PreferenceConverter.getDefaultColor(
 				getPreferenceStore(), getPreferenceName()));
 	}

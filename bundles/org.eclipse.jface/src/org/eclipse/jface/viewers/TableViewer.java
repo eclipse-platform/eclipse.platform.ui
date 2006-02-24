@@ -126,8 +126,9 @@ public class TableViewer extends StructuredViewer {
 		protected Object resolveElement(int index) {
 			
 			Object element = null;
-			if(index < cachedElements.length)
+			if(index < cachedElements.length) {
 				element =  cachedElements[index];
+			}
 			
 			return element;
 		}
@@ -204,10 +205,12 @@ public class TableViewer extends StructuredViewer {
 		 * @param provider IBaseLabelProvider
 		 */
 		public TableColorAndFontCollector(IBaseLabelProvider provider){
-			if(provider instanceof ITableFontProvider)
+			if(provider instanceof ITableFontProvider) {
 				fontProvider = (ITableFontProvider) provider;
-			if(provider instanceof ITableColorProvider)
+			}
+			if(provider instanceof ITableColorProvider) {
 				colorProvider = (ITableColorProvider) provider;
+			}
 		}
 	
 		
@@ -225,8 +228,9 @@ public class TableViewer extends StructuredViewer {
 				tableItem.setForeground(column, colorProvider.getForeground(element,
 						column));
 			}
-			if(fontProvider != null)
+			if(fontProvider != null) {
 				tableItem.setFont(column,fontProvider.getFont(element,column));
+			}
 		}	
 		
 	}
@@ -303,8 +307,9 @@ public class TableViewer extends StructuredViewer {
 	 * @param style
 	 */
 	private void initializeVirtualManager(int style) {
-		if((style & SWT.VIRTUAL) == 0)
+		if((style & SWT.VIRTUAL) == 0) {
 			return;
+		}
 			
 		virtualManager = new VirtualManager();	
 	}
@@ -341,9 +346,9 @@ public class TableViewer extends StructuredViewer {
 	 * @since 3.1
 	 */
 	private void createItem(Object element, int index) {
-		if(virtualManager == null)
+		if(virtualManager == null) {
 			updateItem(new TableItem(getTable(), SWT.NONE, index), element);
-		else{
+		} else{
 			virtualManager.notVisibleAdded(element,index);
 			
 		}
@@ -381,8 +386,9 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
 	 */
 	protected Widget doFindInputItem(Object element) {
-		if (equals(element, getRoot()))
+		if (equals(element, getRoot())) {
 			return getTable();
+		}
 		return null;
 	}
 
@@ -396,8 +402,9 @@ public class TableViewer extends StructuredViewer {
 		for (int i = 0; i < children.length; i++) {
 			TableItem item = children[i];
 			Object data = item.getData();
-			if (data != null && equals(data, element))
+			if (data != null && equals(data, element)) {
 				return item;
+			}
 		}
 
 		return null;
@@ -428,8 +435,9 @@ public class TableViewer extends StructuredViewer {
 			ILabelProvider lprov = null;
 			IViewerLabelProvider vprov = null;
 			
-			if(prov instanceof ILabelProvider)
+			if(prov instanceof ILabelProvider) {
 				lprov = (ILabelProvider) prov;
+			}
 			
 			if (prov instanceof IViewerLabelProvider) {
 				vprov = (IViewerLabelProvider) prov;
@@ -456,11 +464,12 @@ public class TableViewer extends StructuredViewer {
 						ViewerLabel updateLabel = new ViewerLabel(item
 								.getText(), item.getImage());
 						
-						if(vprov != null)
+						if(vprov != null) {
 							buildLabel(updateLabel,element,vprov);
-						else{
-							if(lprov != null)
+						} else{
+							if(lprov != null) {
 								buildLabel(updateLabel,element,lprov);
+							}
 						}
 						
 //						As it is possible for user code to run the event 
@@ -479,8 +488,9 @@ public class TableViewer extends StructuredViewer {
 				}
 
 				//Avoid setting text to null
-				if (text == null)
+				if (text == null) {
 					text = ""; //$NON-NLS-1$
+				}
 				ti.setText(column, text);
 				if (ti.getImage(column) != image) {
 					ti.setImage(column, image);
@@ -556,8 +566,9 @@ public class TableViewer extends StructuredViewer {
 	public Object getElementAt(int index) {
 		if (index >= 0 && index < table.getItemCount()) {
 			TableItem i = table.getItem(index);
-			if (i != null)
+			if (i != null) {
 				return i.getData();
+			}
 		}
 		return null;
 	}
@@ -581,15 +592,17 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	protected List getSelectionFromWidget() {
-		if(virtualManager != null)
+		if(virtualManager != null) {
 			return getVirtualSelection();
+		}
 		Widget[] items = table.getSelection();
 		ArrayList list = new ArrayList(items.length);
 		for (int i = 0; i < items.length; i++) {
 			Widget item = items[i];
 			Object e = item.getData();
-			if (e != null)
+			if (e != null) {
 				list.add(e);
+			}
 		}
 		return list;
 	}
@@ -613,8 +626,9 @@ public class TableViewer extends StructuredViewer {
 				//Only add the element if it got updated.
 				//If this is done deferred the selection will
 				//be incomplete until selection is finished.
-				if (element != null)
-					result.add(element);				
+				if (element != null) {
+					result.add(element);
+				}				
 			}
 		}
 		else{
@@ -630,8 +644,9 @@ public class TableViewer extends StructuredViewer {
 					TableItem item = getTable().getItem(selectionIndex);
 					element = item.getData();
 				}
-				if (element != null)
-					result.add(element);				
+				if (element != null) {
+					result.add(element);
+				}				
 			}
 			
 			
@@ -667,8 +682,9 @@ public class TableViewer extends StructuredViewer {
 	 */
 	protected int indexForElement(Object element) {
 		ViewerSorter sorter = getSorter();
-		if (sorter == null)
+		if (sorter == null) {
 			return table.getItemCount();
+		}
 		int count = table.getItemCount();
 		int min = 0, max = count - 1;
 		while (min <= max) {
@@ -687,10 +703,11 @@ public class TableViewer extends StructuredViewer {
 				}
 				return mid;
 			}
-			if (compare < 0)
+			if (compare < 0) {
 				min = mid + 1;
-			else
+			} else {
 				max = mid - 1;
+			}
 		}
 		return min;
 	}
@@ -775,8 +792,9 @@ public class TableViewer extends StructuredViewer {
 			add(element);
 			return;
 		}
-		if (position == -1)
+		if (position == -1) {
 			position = table.getItemCount();
+		}
 		
 		createItem(element,position);
 	}
@@ -796,9 +814,9 @@ public class TableViewer extends StructuredViewer {
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		tableViewerImpl.applyEditorValue();
 		if (element == null || equals(element, getRoot())) {
-			if(virtualManager == null)
+			if(virtualManager == null) {
 				internalRefreshAll(updateLabels);
-			else{
+			} else{
 				internalVirtualRefreshAll();
 			}
 		} else {
@@ -896,8 +914,9 @@ public class TableViewer extends StructuredViewer {
 		for (int i = 0; i < min; ++i) {
 							
 			TableItem item = items[i];
-			if (item.getData() == null) 
+			if (item.getData() == null) {
 				updateItem(item, children[i]);
+			}
 		}
 		// add any remaining elements
 		for (int i = min; i < children.length; ++i) {
@@ -1005,8 +1024,9 @@ public class TableViewer extends StructuredViewer {
 	public void reveal(Object element) {
 		Assert.isNotNull(element);
 		Widget w = findItem(element);
-		if (w instanceof TableItem)
+		if (w instanceof TableItem) {
 			getTable().showItem((TableItem) w);
+		}
 	}
 
 	/**
@@ -1054,10 +1074,11 @@ public class TableViewer extends StructuredViewer {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ILabelProvider);
 		super.setLabelProvider(labelProvider);
-		if(labelProvider instanceof ITableFontProvider || labelProvider instanceof ITableColorProvider)
+		if(labelProvider instanceof ITableFontProvider || labelProvider instanceof ITableColorProvider) {
 			tableColorAndFont = new TableColorAndFontCollector(labelProvider);
-		else
+		} else {
 			tableColorAndFont = new TableColorAndFontNoOp();
+		}
 				
 	}
 	
@@ -1140,11 +1161,12 @@ public class TableViewer extends StructuredViewer {
 			if (w instanceof TableItem) {
 				TableItem item = (TableItem) w;
 				indices[count++] = getTable().indexOf(item);
-				if (firstItem == null)
+				if (firstItem == null) {
 					firstItem = item;
-			}
-			else
+				}
+			} else {
 				virtualElements.add(o);
+			}
 		}
 		
 		if(getContentProvider() instanceof ILazyContentProvider){
@@ -1161,8 +1183,9 @@ public class TableViewer extends StructuredViewer {
 				if(virtualElements.contains(item.getData())){
 					indices[count++] = i;	
 					virtualElements.remove(item.getData());
-					if (firstItem == null)
+					if (firstItem == null) {
 						firstItem = item;
+					}
 				}
 			}
 		}
@@ -1177,8 +1200,9 @@ public class TableViewer extends StructuredViewer {
 						item.getText();//Be sure to fire the update
 						indices[count++] = i;	
 						virtualElements.remove(element);
-						if (firstItem == null)
+						if (firstItem == null) {
 							firstItem = item;
+						}
 					}
 				}
 			}
