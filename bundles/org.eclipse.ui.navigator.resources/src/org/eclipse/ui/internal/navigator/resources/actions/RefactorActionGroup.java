@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -52,13 +53,16 @@ public class RefactorActionGroup extends ActionGroup {
 
 	private Shell shell;
 
+	private Tree tree;
+
 	/**
 	 * 
 	 * @param aProvider
 	 * @param aShell
 	 */
-	public RefactorActionGroup(Shell aShell) {
+	public RefactorActionGroup(Shell aShell, Tree aTree) {
 		shell = aShell;
+		tree = aTree;
 		makeActions();
 	}
 
@@ -155,7 +159,7 @@ public class RefactorActionGroup extends ActionGroup {
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 
 		moveAction = new MoveResourceAction(shell);
-		renameAction = new RenameResourceAction(shell);
+		renameAction = new RenameResourceAction(shell, tree);
 
 		deleteAction = new DeleteResourceAction(shell);
 		deleteAction.setDisabledImageDescriptor(images

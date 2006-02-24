@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.CommonActionProvider;
@@ -40,7 +41,7 @@ public class RefactorActionProvider extends CommonActionProvider {
 	 */
 	public void init(ICommonActionExtensionSite anActionSite) {
 		site = anActionSite;
-		refactorGroup = new RefactorActionGroup(site.getViewSite().getShell());
+		refactorGroup = new RefactorActionGroup(site.getViewSite().getShell(), (Tree)site.getStructuredViewer().getControl());
 
 		IUndoContext workspaceContext = (IUndoContext) ResourcesPlugin
 				.getWorkspace().getAdapter(IUndoContext.class);
