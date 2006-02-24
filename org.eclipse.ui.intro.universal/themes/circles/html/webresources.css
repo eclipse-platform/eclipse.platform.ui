@@ -1,0 +1,8 @@
+/* show the "selected" image for this page */
+#navigation-links a#webresources img, #webresources a#webresources:hover img { 
+	background-image : url(../graphics/icons/ctool/wr_nav_64.gif); 
+}
+
+#navigation-links {
+	background-image: url(../graphics/contentpage/wr_banner.jpg);
+}

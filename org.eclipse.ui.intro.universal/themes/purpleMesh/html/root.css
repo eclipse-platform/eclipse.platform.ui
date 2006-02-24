@@ -126,29 +126,6 @@ body {
 #page-links a:hover#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew72.gif); }
 
 /*
-a#overview .background-image {
-	background-image : url(../graphics/icons/ctool/overview72.gif);	visibility : hidden;
-}
-a#tutorials .background-image {
-	background-image : url(../graphics/icons/ctool/tutorials72.gif);	visibility : hidden;
-}
-a#samples .background-image {
-	background-image : url(../graphics/icons/ctool/samples72.gif);	visibility : hidden;
-}
-a#whatsnew .background-image {
-	background-image : url(../graphics/icons/ctool/whatsnew72.gif);	visibility : hidden;
-}
-
-*/
-/* show the hover image on hover, focus, and active */
-/*
-#page-links a:hover .background-image,
-#page-links a:focus .background-image,
-#page-links a:active .background-image {
-	visibility : visible;
-}
-*/
-/*
  * Set up the action links
  */
 #action-links {
@@ -172,14 +149,11 @@ a#whatsnew .background-image {
 #action-links a .background-image {
 	position : absolute;
 }
-/*
-#action-links a#workbench .background-image {
-	background-image : url(../graphics/icons/ctool/wb48.gif);	visibility : hidden;
-}
-*/
+
 #action-links a#workbench .background-image {
 	background-image : url(../graphics/icons/etool/wb48.gif);
 }
+
 #action-links a#workbench:hover .background-image,
 #action-links a#workbench:focus .background-image,
 #action-links a#workbench:active .background-image {
