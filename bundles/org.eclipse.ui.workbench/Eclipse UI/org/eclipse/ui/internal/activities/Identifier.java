@@ -65,8 +65,8 @@ final class Identifier implements IIdentifier {
 
     public int compareTo(Object object) {
         Identifier castedObject = (Identifier) object;
-        int compareTo = Util.compare((Comparable[]) activityIdsAsArray,
-                (Comparable[]) castedObject.activityIdsAsArray);
+        int compareTo = Util.compare(activityIdsAsArray,
+                castedObject.activityIdsAsArray);
 
         if (compareTo == 0) {
             compareTo = Util.compare(enabled, castedObject.enabled);

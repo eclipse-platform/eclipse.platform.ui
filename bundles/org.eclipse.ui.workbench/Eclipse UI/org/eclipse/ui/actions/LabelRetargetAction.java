@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -72,13 +71,13 @@ public class LabelRetargetAction extends RetargetAction {
     protected void propagateChange(PropertyChangeEvent event) {
         super.propagateChange(event);
         String prop = event.getProperty();
-        if (prop.equals(Action.TEXT)) {
+        if (prop.equals(IAction.TEXT)) {
             String str = (String) event.getNewValue();
             super.setText(appendAccelerator(str));
-        } else if (prop.equals(Action.TOOL_TIP_TEXT)) {
+        } else if (prop.equals(IAction.TOOL_TIP_TEXT)) {
             String str = (String) event.getNewValue();
             super.setToolTipText(str);
-        } else if (prop.equals(Action.IMAGE)) {
+        } else if (prop.equals(IAction.IMAGE)) {
             updateImages(getActionHandler());
         }
     }

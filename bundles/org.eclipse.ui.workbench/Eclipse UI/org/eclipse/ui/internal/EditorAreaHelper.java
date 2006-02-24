@@ -266,7 +266,7 @@ public class EditorAreaHelper {
                     EditorPane parentPane = ((MultiEditorInnerPane) pane)
                             .getParentPane();
                     EditorStack activeWorkbook = parentPane.getWorkbook();
-                    PartPane activePane = (EditorPane)activeWorkbook.getSelection();
+                    PartPane activePane = activeWorkbook.getSelection();
                     if (activePane != parentPane)
                         parentPane.getWorkbook().setSelection(parentPane);
                     else

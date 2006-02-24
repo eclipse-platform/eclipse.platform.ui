@@ -38,7 +38,7 @@ final class ImageFactory {
 	}
 
 	static Image getImage(String key) {
-		Image image = (Image) imageRegistry.get(key);
+		Image image = imageRegistry.get(key);
 
 		if (image == null) {
 			ImageDescriptor imageDescriptor = getImageDescriptor(key);

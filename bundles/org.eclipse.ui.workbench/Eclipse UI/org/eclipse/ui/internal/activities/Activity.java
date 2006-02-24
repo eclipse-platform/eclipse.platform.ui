@@ -82,13 +82,13 @@ final class Activity implements IActivity {
         Activity castedObject = (Activity) object;
 
         int compareTo = Util.compare(
-                (Comparable[]) activityRequirementBindingsAsArray,
-                (Comparable[]) castedObject.activityRequirementBindingsAsArray);
+                activityRequirementBindingsAsArray,
+                castedObject.activityRequirementBindingsAsArray);
 
         if (compareTo == 0) {
             compareTo = Util.compare(
-                    (Comparable[]) activityPatternBindingsAsArray,
-                    (Comparable[]) castedObject.activityPatternBindingsAsArray);
+                    activityPatternBindingsAsArray,
+                    castedObject.activityPatternBindingsAsArray);
 
             if (compareTo == 0) {
                 compareTo = Util.compare(defined, castedObject.defined);

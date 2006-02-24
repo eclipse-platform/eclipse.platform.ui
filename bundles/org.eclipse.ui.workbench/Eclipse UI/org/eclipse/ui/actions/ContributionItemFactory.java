@@ -18,8 +18,8 @@ import org.eclipse.ui.internal.ReopenEditorMenu;
 import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
-import org.eclipse.ui.internal.actions.PinEditorContributionItem;
 import org.eclipse.ui.internal.actions.HelpSearchContributionItem;
+import org.eclipse.ui.internal.actions.PinEditorContributionItem;
 
 /**
  * Access to standard contribution items provided by the workbench.

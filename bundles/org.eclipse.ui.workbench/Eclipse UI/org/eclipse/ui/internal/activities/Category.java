@@ -71,8 +71,8 @@ final class Category implements ICategory {
     public int compareTo(Object object) {
         Category castedObject = (Category) object;
         int compareTo = Util.compare(
-                (Comparable[]) categoryActivityBindingsAsArray,
-                (Comparable[]) castedObject.categoryActivityBindingsAsArray);
+                categoryActivityBindingsAsArray,
+                castedObject.categoryActivityBindingsAsArray);
 
         if (compareTo == 0) {
             compareTo = Util.compare(defined, castedObject.defined);

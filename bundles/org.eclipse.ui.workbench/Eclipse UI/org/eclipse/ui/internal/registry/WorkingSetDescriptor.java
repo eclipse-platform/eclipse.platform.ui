@@ -17,13 +17,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.osgi.framework.Bundle;
 
 /**

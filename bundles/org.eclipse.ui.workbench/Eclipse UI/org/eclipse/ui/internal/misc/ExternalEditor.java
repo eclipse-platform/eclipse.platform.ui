@@ -17,6 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
@@ -58,7 +59,7 @@ public class ExternalEditor {
             }
             throw new CoreException(
                     new Status(
-                            Status.ERROR,
+                            IStatus.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
                             NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, path), 
@@ -108,7 +109,7 @@ public class ExternalEditor {
         if (filePath == null) {
             throw new CoreException(
                     new Status(
-                            Status.ERROR,
+                            IStatus.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
                             NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName), 
@@ -126,7 +127,7 @@ public class ExternalEditor {
         } catch (Exception e) {
             throw new CoreException(
                     new Status(
-                            Status.ERROR,
+                            IStatus.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
                             NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName),

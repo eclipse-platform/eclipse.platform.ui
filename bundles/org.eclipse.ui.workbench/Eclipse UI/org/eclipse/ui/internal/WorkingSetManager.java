@@ -19,18 +19,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleListener;
 

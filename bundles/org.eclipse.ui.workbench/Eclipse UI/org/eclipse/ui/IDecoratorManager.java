@@ -11,7 +11,10 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IDelayedLabelDecorator;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 /**
  * Manages the decorators contributed via the decorators extension point.

@@ -10,19 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.preference.BooleanFieldEditor;
-
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.preferences.ViewSettingsDialog;
-
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.preferences.ViewSettingsDialog;
 
 /**
  * The JobsViewPreferenceDialog is the dialog that

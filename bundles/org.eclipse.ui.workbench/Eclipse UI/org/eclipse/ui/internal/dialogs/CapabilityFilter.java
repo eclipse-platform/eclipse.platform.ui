@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**

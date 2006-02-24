@@ -53,7 +53,7 @@ public class ViewStack extends PartStack {
                 "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
         appendToGroupIfPossible(menuManager,
         		"misc", new UpdatingActionContributionItem(detachViewAction)); //$NON-NLS-1$
-        sizeItem = new SystemMenuSize((PartPane) getSelection());
+        sizeItem = new SystemMenuSize(getSelection());
         appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
     }
 

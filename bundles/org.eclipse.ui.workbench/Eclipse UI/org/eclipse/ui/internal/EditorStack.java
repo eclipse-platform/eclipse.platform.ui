@@ -71,7 +71,7 @@ public class EditorStack extends PartStack {
         pinEditorItem = new SystemMenuPinEditor((EditorPane) getSelection());
         appendToGroupIfPossible(menuManager,
                 "misc", new UpdatingActionContributionItem(pinEditorItem)); //$NON-NLS-1$
-        sizeItem = new SystemMenuSize((PartPane) getSelection());
+        sizeItem = new SystemMenuSize(getSelection());
         appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
     }
 
@@ -132,7 +132,7 @@ public class EditorStack extends PartStack {
         LayoutPart[] children = getChildren();
 
         for (int i = 0; i < children.length; i++)
-            remove((EditorPane) children[i]);
+            remove(children[i]);
     }
 
     public boolean isActiveWorkbook() {

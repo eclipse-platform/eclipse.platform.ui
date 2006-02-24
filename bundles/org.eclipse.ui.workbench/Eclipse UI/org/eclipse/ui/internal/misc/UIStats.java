@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.misc;
 
 import java.util.HashMap;
+
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;

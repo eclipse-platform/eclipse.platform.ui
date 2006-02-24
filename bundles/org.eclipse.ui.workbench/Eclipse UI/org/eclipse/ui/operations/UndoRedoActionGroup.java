@@ -11,13 +11,10 @@
 package org.eclipse.ui.operations;
 
 import org.eclipse.core.commands.operations.IUndoContext;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.operations.RedoActionHandler;
-import org.eclipse.ui.operations.UndoActionHandler;
 
 /**
  * <p>

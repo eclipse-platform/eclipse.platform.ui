@@ -4167,17 +4167,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (sashInfo.right != null) {
             Rectangle rightBounds = sashInfo.rightNode.getBounds();
             // set the new ratio 
-            sashInfo.right.setRatio(((float) ((deltaWidth + sashInfo.right
-                    .getBounds().x) - rightBounds.x))
-                    / ((float) rightBounds.width));
+            sashInfo.right.setRatio(((deltaWidth + sashInfo.right
+                    .getBounds().x) - rightBounds.x)
+                    / rightBounds.width);
             // complete the resize
             sashInfo.rightNode.setBounds(rightBounds);
         } else if (sashInfo.left != null) {
             Rectangle leftBounds = sashInfo.leftNode.getBounds();
             // set the ratio
             sashInfo.left
-                    .setRatio((float) ((sashInfo.left.getBounds().x - deltaWidth) - leftBounds.x)
-                            / ((float) leftBounds.width));
+                    .setRatio(((sashInfo.left.getBounds().x - deltaWidth) - leftBounds.x)
+                            / leftBounds.width);
             // complete the resize
             sashInfo.leftNode.setBounds(sashInfo.leftNode.getBounds());
         }
@@ -4187,17 +4187,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (sashInfo.bottom != null) {
             Rectangle bottomBounds = sashInfo.bottomNode.getBounds();
             // set the new ratio 
-            sashInfo.bottom.setRatio(((float) ((deltaHeight + sashInfo.bottom
-                    .getBounds().y) - bottomBounds.y))
-                    / ((float) bottomBounds.height));
+            sashInfo.bottom.setRatio(((deltaHeight + sashInfo.bottom
+                    .getBounds().y) - bottomBounds.y)
+                    / bottomBounds.height);
             // complete the resize
             sashInfo.bottomNode.setBounds(bottomBounds);
         } else if (sashInfo.top != null) {
             Rectangle topBounds = sashInfo.topNode.getBounds();
             // set the ratio
             sashInfo.top
-                    .setRatio((float) ((sashInfo.top.getBounds().y - deltaHeight) - topBounds.y)
-                            / ((float) topBounds.height));
+                    .setRatio(((sashInfo.top.getBounds().y - deltaHeight) - topBounds.y)
+                            / topBounds.height);
             // complete the resize
             sashInfo.topNode.setBounds(topBounds);
         }

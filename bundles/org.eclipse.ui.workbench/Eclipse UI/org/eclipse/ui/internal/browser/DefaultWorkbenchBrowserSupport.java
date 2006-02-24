@@ -13,7 +13,8 @@ package org.eclipse.ui.internal.browser;
 import java.util.Hashtable;
 
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.browser.*;
+import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
+import org.eclipse.ui.browser.IWebBrowser;
 
 /**
  * Extends the abstract browser support class by providing minimal support for

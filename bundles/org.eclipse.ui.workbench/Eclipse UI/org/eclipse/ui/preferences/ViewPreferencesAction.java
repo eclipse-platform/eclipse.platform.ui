@@ -11,7 +11,6 @@
 package org.eclipse.ui.preferences;
 
 import org.eclipse.jface.action.Action;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
