@@ -1011,17 +1011,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  					renamed = fLaunchManager.getMovedFrom(lc) != null;
  				}
 	 			if (getTabViewer().isDirty() && !deleted && !renamed) {
-	 				boolean canReplace = showUnsavedChangesDialog();
-	 				if (!canReplace) {
-	 					// restore the original selection
-	 					IStructuredSelection sel = new StructuredSelection(input);
-	 					fLaunchConfigurationView.getViewer().setSelection(sel);
-	 					return;
+	 				IStructuredSelection sel;
+	 				if (!showUnsavedChangesDialog()) {
+	 					sel = new StructuredSelection(input);
 	 				}
+	 				else {
+	 					sel = new StructuredSelection(newInput);
+	 				}
+	 				fLaunchConfigurationView.getViewer().setSelection(sel);
+	 				return;
 	 			}
  			}
- 			getTabViewer().setInput(newInput);
-
+			getTabViewer().setInput(newInput);
  			// bug 14758 - if the newly selected config is dirty, save its changes
  			if (getTabViewer().isDirty()) {
  				getTabViewer().handleApplyPressed();
@@ -1519,25 +1520,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 												 null,
 												 message,
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_34}, //  
+												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},  
 												 0);
 		int ret = dialog.open();
 		if (ret == IDialogConstants.OK_ID) {
-			// Turn off auto select if prompting to save changes. The user
-			// has made another selection and we don't want a 'rename' to
-			// cause an auto-select.
-			if (fLaunchConfigurationView != null) {
-				fLaunchConfigurationView.setAutoSelect(false);
-			}
+			fLaunchConfigurationView.setAutoSelect(false);
 			getTabViewer().handleApplyPressed();
-			if (fLaunchConfigurationView != null) {
-				fLaunchConfigurationView.setAutoSelect(true);
-			}
-			return true;
-		}
-		//bug 124257
-		if(ret == 1) {
-			//1 is the index of the 'No' button, from the specified index in the dialog above
+			fLaunchConfigurationView.setAutoSelect(true);
 			return true;
 		}
 		return false;

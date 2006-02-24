@@ -317,13 +317,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
                 if (from != null) {
                     viewer.remove(from);
                 }
-                viewer.setSelection(new StructuredSelection(configuration));
-			} catch (CoreException e) {
-			}
-            
-			if (isAutoSelect()) {
-				getTreeViewer().setSelection(new StructuredSelection(configuration), true);
-			}
+                if (isAutoSelect()) {
+    				viewer.setSelection(new StructuredSelection(configuration), true);
+    			}
+			} 
+			catch (CoreException e) {}
         }
     }
 
@@ -362,10 +360,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
      */
     private void handleConfigurationRemoved(ILaunchConfiguration configuration) {
         ILaunchConfigurationType type = null;
+        TreeViewer viewer = getTreeViewer();
 		int typeIndex= -1; // The index of the deleted configuration's type
 		int configIndex= -1; // The index of the deleted configuration		
 		// Initialize data used to set the selection after deletion
-		TreeItem[] items= getTreeViewer().getTree().getItems();
+		TreeItem[] items= viewer.getTree().getItems();
 		TreeItem typeItem;
 		for (int i= 0, numTypes= items.length; (i < numTypes && type == null); i++) {
 			typeItem= items[i];
@@ -380,12 +379,12 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 			}
 		}			
 			
-		getTreeViewer().remove(configuration);
+		viewer.remove(configuration);
 		if (getViewer().getSelection().isEmpty()) {
 			IStructuredSelection newSelection= null;
 			if (typeIndex != -1 && configIndex != -1) {
 				// Reset selection to the next config
-				TreeItem[] configItems= getTreeViewer().getTree().getItems()[typeIndex].getItems();
+				TreeItem[] configItems = viewer.getTree().getItems()[typeIndex].getItems();
 				int numItems= configItems.length;
 				Object data= null;
 				if (numItems > configIndex) { // Select the item at the same index as the deleted
@@ -401,7 +400,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				// Reset selection to the config type of the first selected configuration
 				newSelection = new StructuredSelection(type);
 			}
-			getTreeViewer().setSelection(newSelection);
+			if(isAutoSelect()) {
+				viewer.setSelection(newSelection);
+			}
 		}
     }
 

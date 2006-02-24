@@ -47,7 +47,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog__Apply_17;
 	public static String LaunchConfigurationDialog__Name__16;
 	public static String LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20;
-	public static String LaunchConfigurationDialog_Cancel_34;
 	public static String LaunchConfigurationTabGroupViewer_0;
 	public static String LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8;
 	public static String LaunchConfigurationDialog_Dele_te_14;
