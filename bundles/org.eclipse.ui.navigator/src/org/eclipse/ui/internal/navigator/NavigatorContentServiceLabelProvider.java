@@ -14,15 +14,8 @@ package org.eclipse.ui.internal.navigator;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -54,7 +47,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @see org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider
  */
 public class NavigatorContentServiceLabelProvider extends EventManager
-		implements ILabelProvider, IColorProvider, IFontProvider {
+		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
 
 	private final ILabelDecorator decorator;
 	private final NavigatorContentService contentService;
@@ -262,5 +255,23 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
+	 */
+	public void updateLabel(ViewerLabel label, TreePath elementPath) {
+		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(elementPath.getLastSegment());
+		Image image = null;
+		for (int i = 0; i < labelProviders.length && image == null; i++) {
+			ILabelProvider labelProvider = labelProviders[i];
+			if (labelProvider instanceof ITreePathLabelProvider) {
+				ITreePathLabelProvider tplp = (ITreePathLabelProvider) labelProvider;
+				((ITreePathLabelProvider)tplp).updateLabel(label, elementPath);
+			} else {
+				label.setImage(getImage(elementPath.getLastSegment()));
+				label.setText(getText(elementPath.getLastSegment()));
+			}
+		}
+	}
 
 }

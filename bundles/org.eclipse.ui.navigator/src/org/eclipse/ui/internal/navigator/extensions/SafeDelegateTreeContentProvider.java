@@ -10,30 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
+import java.util.ArrayList;
 import java.util.Set;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.navigator.ICommonContentExtensionSite;
-import org.eclipse.ui.navigator.ICommonContentProvider;
-import org.eclipse.ui.navigator.IMementoAware;
-import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
-import org.eclipse.ui.navigator.PipelinedShapeModification;
-import org.eclipse.ui.navigator.PipelinedViewerUpdate;
+import org.eclipse.ui.navigator.*;
 
 /**
  * @since 3.2
  */
 public class SafeDelegateTreeContentProvider implements
-		IPipelinedTreeContentProvider {
+		IPipelinedTreeContentProvider, ITreePathContentProvider {
 
 	private final ITreeContentProvider contentProvider;
 
 	private NavigatorContentService contentService;
 
 	private NavigatorContentDescriptor descriptor;
+
+	private Viewer viewer;
 
 	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider,
 			NavigatorContentDescriptor aDescriptor,
@@ -61,6 +58,10 @@ public class SafeDelegateTreeContentProvider implements
 	}
 
 	public Object[] getChildren(Object aParentElement) {
+		if (aParentElement instanceof TreePath) {
+			TreePath tp = (TreePath) aParentElement;
+			return getChildren(tp);
+		}
 		Object[] children = contentProvider.getChildren(aParentElement);
 		contentService.rememberContribution(descriptor, children);
 		return children;
@@ -90,6 +91,7 @@ public class SafeDelegateTreeContentProvider implements
 	}
 
 	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
+		viewer = aViewer;
 		contentProvider.inputChanged(aViewer, anOldInput, aNewInput);
 	}
 
@@ -217,6 +219,56 @@ public class SafeDelegateTreeContentProvider implements
 					.interceptRefresh(anUpdateSynchronization);
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#getChildren(org.eclipse.jface.viewers.TreePath)
+	 */
+	public Object[] getChildren(TreePath parentPath) {
+		if (contentProvider instanceof ITreePathContentProvider) {
+			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
+			Object[] children = tpcp.getChildren(parentPath);
+			contentService.rememberContribution(descriptor, children);
+			return children;
+		}
+		return getChildren(parentPath.getLastSegment());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#hasChildren(org.eclipse.jface.viewers.TreePath)
+	 */
+	public boolean hasChildren(TreePath path) {
+		if (contentProvider instanceof ITreePathContentProvider) {
+			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
+			return tpcp.hasChildren(path);
+		}
+		return hasChildren(path.getLastSegment());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#getParents(java.lang.Object)
+	 */
+	public TreePath[] getParents(Object element) {
+		if (contentProvider instanceof ITreePathContentProvider) {
+			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
+			return tpcp.getParents(element);
+		}
+		ArrayList segments = new ArrayList();
+		Object parent = element;
+		do {
+			parent = contentProvider.getParent(parent);
+			if (parent != null && parent != viewer.getInput())
+				segments.add(parent);
+		} while (parent != null && parent != viewer.getInput());
+		if (!segments.isEmpty()) {
+			// Loop backwards over the array to create the path.
+			TreePath path = TreePath.EMPTY;
+			for (int j = segments.size() - 1; j >=0; j--) {
+				path = path.createChildPath(segments.get(j));
+			}
+			return new TreePath[] { path };
+		}
+		return new TreePath[0];
 	}
 
 }

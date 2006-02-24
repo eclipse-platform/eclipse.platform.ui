@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
@@ -25,7 +20,7 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
  * 
  * @since 3.2
  */
-public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider {
+public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
 
 	private final ILabelProvider delegateLabelProvider;
 
@@ -127,6 +122,19 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 
 	public void saveState(IMemento aMemento) {
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
+	 */
+	public void updateLabel(ViewerLabel label, TreePath elementPath) {
+		if (delegateLabelProvider instanceof ITreePathLabelProvider) {
+			ITreePathLabelProvider tplp = (ITreePathLabelProvider) delegateLabelProvider;
+			tplp.updateLabel(label, elementPath);
+		} else {
+			label.setImage(getImage(elementPath.getLastSegment()));
+			label.setText(getText(elementPath.getLastSegment()));
+		}
 	}
 
 	/* (non-Javadoc)
