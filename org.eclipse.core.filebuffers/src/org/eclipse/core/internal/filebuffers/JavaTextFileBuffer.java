@@ -17,7 +17,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.SequenceInputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnmappableCharacterException;
+import java.nio.charset.UnsupportedCharsetException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -38,6 +47,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -399,69 +409,100 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		String encoding= computeEncoding();
-		try {
 
-			byte[] bytes= fDocument.get().getBytes(encoding);
+		Charset charset;
+		try {
+			charset= Charset.forName(encoding);
+		} catch (UnsupportedCharsetException ex) {
+			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_unsupported_encoding_message_arg, encoding);
+			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, ex);
+			throw new CoreException(s);
+		} catch (IllegalCharsetNameException ex) {
+			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_illegal_encoding_message_arg, encoding);
+			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, ex);
+			throw new CoreException(s);
+		}
+
+		CharsetEncoder encoder= charset.newEncoder();
+		encoder.onMalformedInput(CodingErrorAction.REPLACE);
+		encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
+
+		byte[] bytes;
+		int bytesLength;
+
+		try {
+			ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(fDocument.get()));
+			bytesLength= byteBuffer.limit();
+			if (byteBuffer.hasArray())
+				bytes= byteBuffer.array();
+			else {
+				bytes= new byte[bytesLength];
+				byteBuffer.get(bytes);
+			}
+		} catch (CharacterCodingException ex) {
+			Assert.isTrue(ex instanceof UnmappableCharacterException);
+			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_charset_mapping_failed_message_arg, encoding);
+			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, FileBuffers.CHARSET_MAPPING_FAILED, message, null);
+			throw new CoreException(s);
+		}
+
+		IFileInfo fileInfo= fFileStore == null ? null : fFileStore.fetchInfo();
+		if (fileInfo != null && fileInfo.exists()) {
+
+			if (!overwrite)
+				checkSynchronizationState();
+
+			InputStream stream= new ByteArrayInputStream(bytes, 0, bytesLength);
 
 			/*
 			 * XXX:
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fHasBOM && CHARSET_UTF_8.equals(encoding)) {
-				int bomLength= IContentDescription.BOM_UTF_8.length;
-				byte[] bytesWithBOM= new byte[bytes.length + bomLength];
-				System.arraycopy(IContentDescription.BOM_UTF_8, 0, bytesWithBOM, 0, bomLength);
-				System.arraycopy(bytes, 0, bytesWithBOM, bomLength, bytes.length);
-				bytes= bytesWithBOM;
+			if (fHasBOM && CHARSET_UTF_8.equals(encoding))
+				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
+
+
+			// here the file synchronizer should actually be removed and afterwards added again. However,
+			// we are already inside an operation, so the delta is sent AFTER we have added the listener
+			setFileContents(stream, overwrite, monitor);
+			// set synchronization stamp to know whether the file synchronizer must become active
+			fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
+
+			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
+				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+				persistableModel.commit(fDocument);
 			}
 
-			IFileInfo fileInfo= fFileStore == null ? null : fFileStore.fetchInfo();
-			if (fileInfo != null && fileInfo.exists()) {
+		} else {
 
-				if (!overwrite)
-					checkSynchronizationState();
+			fFileStore= FileBuffers.getFileStoreAtLocation(getLocation());
+			fFileStore.getParent().mkdir(EFS.NONE, null);
+			OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
+			try {
+				/*
+				 * XXX:
+				 * This is a workaround for a corresponding bug in Java readers and writer,
+				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+				 */
+				if (fHasBOM && CHARSET_UTF_8.equals(encoding))
+					out.write(IContentDescription.BOM_UTF_8);
 
-				InputStream stream= new ByteArrayInputStream(bytes);
-
-				// here the file synchronizer should actually be removed and afterwards added again. However,
-				// we are already inside an operation, so the delta is sent AFTER we have added the listener
-				setFileContents(stream, overwrite, monitor);
-				// set synchronization stamp to know whether the file synchronizer must become active
-				fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
-
-				if (fAnnotationModel instanceof IPersistableAnnotationModel) {
-					IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
-					persistableModel.commit(fDocument);
-				}
-
-			} else {
-
-				fFileStore= FileBuffers.getFileStoreAtLocation(getLocation());
-				fFileStore.getParent().mkdir(EFS.NONE, null);
-				OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
+				out.write(bytes);
+				out.flush();
+			} catch (IOException x) {
+				IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
+				throw new CoreException(s);
+			} finally {
 				try {
-					out.write(bytes);
-					out.flush();
+					out.close();
 				} catch (IOException x) {
-					IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
-					throw new CoreException(s);
-				} finally {
-					try {
-						out.close();
-					} catch (IOException x) {
-					}
 				}
-
-				// set synchronization stamp to know whether the file synchronizer must become active
-				fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
-
 			}
 
-		} catch (UnsupportedEncodingException x) {
-			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_unsupported_encoding_message_arg, encoding);
-			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
-			throw new CoreException(s);
+			// set synchronization stamp to know whether the file synchronizer must become active
+			fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
+
 		}
 	}
 
