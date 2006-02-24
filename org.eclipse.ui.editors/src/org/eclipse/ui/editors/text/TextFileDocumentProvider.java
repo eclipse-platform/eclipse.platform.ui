@@ -15,8 +15,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnmappableCharacterException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -148,7 +156,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IDocumentProviderExtension5, IStorageDocumentProvider  {
 
-		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.INFO, TextEditorMessages.NullProvider_error, null);
+		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, TextEditorMessages.NullProvider_error, null);
 
 		public void connect(Object element) throws CoreException {}
 		public void disconnect(Object element) {}
@@ -456,7 +464,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			if (e instanceof CoreException)
 				throw (CoreException) e;
 			String message= (e.getMessage() != null ? e.getMessage() : ""); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.ERROR, message, e));
+			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, e));
 		} catch (InterruptedException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.CANCEL, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
@@ -746,7 +754,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				// -> saveAs was executed with a target that is already open
 				// in another editor
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=85519
-				Status status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.ERROR, TextEditorMessages.TextFileDocumentProvider_saveAsTargetOpenInEditor, null);
+				Status status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, TextEditorMessages.TextFileDocumentProvider_saveAsTargetOpenInEditor, null);
 				throw new CoreException(status);
 			}
 
@@ -833,17 +841,49 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		String encoding= getCharsetForNewFile(file, document);
 		try {
 			monitor.beginTask(TextEditorMessages.TextFileDocumentProvider_beginTask_saving, 2000);
-			InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
+			
+			Charset charset;
+			try {
+				charset= Charset.forName(encoding);
+			} catch (UnsupportedCharsetException ex) {
+				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_unsupported_encoding_message_arg, encoding);
+				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, ex);
+				throw new CoreException(s);
+			} catch (IllegalCharsetNameException ex) {
+				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_illegal_encoding_message_arg, encoding);
+				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, ex);
+				throw new CoreException(s);
+			}
+
+			CharsetEncoder encoder= charset.newEncoder();
+			encoder.onMalformedInput(CodingErrorAction.REPLACE);
+			encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
+
+			InputStream stream;
+			
+			try {
+				byte[] bytes;
+				ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(document.get()));
+				if (byteBuffer.hasArray())
+					bytes= byteBuffer.array();
+				else {
+					bytes= new byte[byteBuffer.limit()];
+					byteBuffer.get(bytes);
+				}
+				stream= new ByteArrayInputStream(bytes, 0, byteBuffer.limit());
+			} catch (CharacterCodingException ex) {
+				Assert.isTrue(ex instanceof UnmappableCharacterException);
+				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_charset_mapping_failed_message_arg, encoding);
+				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, EditorsUI.CHARSET_MAPPING_FAILED, message, null);
+				throw new CoreException(s);
+			}
+			
 			if (!file.exists()) {
 				ContainerCreator creator= new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
 				creator.createContainer(new SubProgressMonitor(monitor, 1000));
 				file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 			} else
 				file.setContents(stream, false, false, new SubProgressMonitor(monitor, 1000));
-		} catch (UnsupportedEncodingException x) {
-			String message= NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding);
-			IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x);
-			throw new CoreException(s);
 		} finally {
 			monitor.done();
 		}
@@ -1229,7 +1269,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	protected void handleCoreException(CoreException exception, String message) {
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
 		ILog log= Platform.getLog(bundle);
-		IStatus status= message != null ? new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception) : exception.getStatus();
+		IStatus status= message != null ? new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception) : exception.getStatus();
 		log.log(status);
 	}
 

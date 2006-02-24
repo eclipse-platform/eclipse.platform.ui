@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import java.nio.charset.UnmappableCharacterException;
+
 import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -149,4 +151,21 @@ public final class EditorsUI {
 	public static SpellingService getSpellingService() {
 		return EditorsPlugin.getDefault().getSpellingService();
 	}
+	
+	// --------------- Status codes for this plug-in ---------------
+	
+	// NOTE: See also IEditorsStatusConstants 
+
+	/**
+	 * Editor UI plug-in status code indicating that an operation failed
+	 * because a character could not be mapped using the given
+	 * charset.
+	 * <p>
+	 * Value: {@value}</p>
+	 * 
+	 * @see UnmappableCharacterException
+	 * @since 3.2
+	 */
+	public static final int CHARSET_MAPPING_FAILED= 1;
+	
 }

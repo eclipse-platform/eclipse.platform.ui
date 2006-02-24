@@ -14,7 +14,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.SequenceInputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnmappableCharacterException;
+import java.nio.charset.UnsupportedCharsetException;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -49,6 +58,7 @@ import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -543,74 +553,95 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 			IFileEditorInput input= (IFileEditorInput) element;
 			String encoding= null;
+
+			FileInfo info= (FileInfo) getElementInfo(element);
+			IFile file= input.getFile();
+			encoding= getCharsetForNewFile(file, document, info);
+
+			Charset charset;
 			try {
-				FileInfo info= (FileInfo) getElementInfo(element);
-				IFile file= input.getFile();
-				encoding= getCharsetForNewFile(file, document, info);
-
-				byte[] bytes= document.get().getBytes(encoding);
-
-				/*
-				 * XXX:
-				 * This is a workaround for a corresponding bug in Java readers and writer,
-				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-				 */
-				if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
-					int bomLength= IContentDescription.BOM_UTF_8.length;
-					byte[] bytesWithBOM= new byte[bytes.length + bomLength];
-					System.arraycopy(IContentDescription.BOM_UTF_8, 0, bytesWithBOM, 0, bomLength);
-					System.arraycopy(bytes, 0, bytesWithBOM, bomLength, bytes.length);
-					bytes= bytesWithBOM;
-				}
-
-				InputStream stream= new ByteArrayInputStream(bytes);
-
-				if (file.exists()) {
-
-					if (info != null && !overwrite)
-						checkSynchronizationState(info.fModificationStamp, file);
-
-					// inform about the upcoming content change
-					fireElementStateChanging(element);
-					try {
-						file.setContents(stream, overwrite, true, monitor);
-					} catch (CoreException x) {
-						// inform about failure
-						fireElementStateChangeFailed(element);
-						throw x;
-					} catch (RuntimeException x) {
-						// inform about failure
-						fireElementStateChangeFailed(element);
-						throw x;
-					}
-
-					// If here, the editor state will be flipped to "not dirty".
-					// Thus, the state changing flag will be reset.
-
-					if (info != null) {
-
-						ResourceMarkerAnnotationModel model= (ResourceMarkerAnnotationModel) info.fModel;
-						model.updateMarkers(info.fDocument);
-
-						info.fModificationStamp= computeModificationStamp(file);
-					}
-
-				} else {
-					try {
-						monitor.beginTask(TextEditorMessages.FileDocumentProvider_task_saving, 2000);
-						ContainerCreator creator = new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
-						creator.createContainer(new SubProgressMonitor(monitor, 1000));
-						file.create(stream, false, new SubProgressMonitor(monitor, 1000));
-					}
-					finally {
-						monitor.done();
-					}
-				}
-
-			} catch (UnsupportedEncodingException x) {
-				String message= NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding);
-				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
+				charset= Charset.forName(encoding);
+			} catch (UnsupportedCharsetException ex) {
+				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_unsupported_encoding_message_arg, encoding);
+				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, ex);
 				throw new CoreException(s);
+			} catch (IllegalCharsetNameException ex) {
+				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_illegal_encoding_message_arg, encoding);
+				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, ex);
+				throw new CoreException(s);
+			}
+
+			CharsetEncoder encoder= charset.newEncoder();
+			encoder.onMalformedInput(CodingErrorAction.REPLACE);
+			encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
+
+			InputStream stream;
+
+			try {
+				byte[] bytes;
+				ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(document.get()));
+				if (byteBuffer.hasArray())
+					bytes= byteBuffer.array();
+				else {
+					bytes= new byte[byteBuffer.limit()];
+					byteBuffer.get(bytes);
+				}
+				stream= new ByteArrayInputStream(bytes, 0, byteBuffer.limit());
+			} catch (CharacterCodingException ex) {
+				Assert.isTrue(ex instanceof UnmappableCharacterException);
+				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_charset_mapping_failed_message_arg, encoding);
+				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, EditorsUI.CHARSET_MAPPING_FAILED, message, null);
+				throw new CoreException(s);
+			}
+
+			/*
+			 * XXX:
+			 * This is a workaround for a corresponding bug in Java readers and writer,
+			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+			 */
+			if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding))
+				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
+
+			if (file.exists()) {
+
+				if (info != null && !overwrite)
+					checkSynchronizationState(info.fModificationStamp, file);
+
+				// inform about the upcoming content change
+				fireElementStateChanging(element);
+				try {
+					file.setContents(stream, overwrite, true, monitor);
+				} catch (CoreException x) {
+					// inform about failure
+					fireElementStateChangeFailed(element);
+					throw x;
+				} catch (RuntimeException x) {
+					// inform about failure
+					fireElementStateChangeFailed(element);
+					throw x;
+				}
+
+				// If here, the editor state will be flipped to "not dirty".
+				// Thus, the state changing flag will be reset.
+
+				if (info != null) {
+
+					ResourceMarkerAnnotationModel model= (ResourceMarkerAnnotationModel) info.fModel;
+					model.updateMarkers(info.fDocument);
+
+					info.fModificationStamp= computeModificationStamp(file);
+				}
+
+			} else {
+				try {
+					monitor.beginTask(TextEditorMessages.FileDocumentProvider_task_saving, 2000);
+					ContainerCreator creator = new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
+					creator.createContainer(new SubProgressMonitor(monitor, 1000));
+					file.create(stream, false, new SubProgressMonitor(monitor, 1000));
+				}
+				finally {
+					monitor.done();
+				}
 			}
 
 		} else {
