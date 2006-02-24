@@ -405,7 +405,6 @@ public class DecoratedField {
 		if (decDatas[i] == null) {
 			formData = createFormDataForIndex(i, decoration.getImage());
 			label = new Label(form, SWT.HORIZONTAL | SWT.VERTICAL | SWT.CENTER);
-			label.setBackground(form.getBackground());
 			label.addMouseTrackListener(new MouseTrackListener() {
 				public void mouseHover(MouseEvent event) {
 					FieldDecorationData decData = (FieldDecorationData) event.widget
@@ -549,7 +548,7 @@ public class DecoratedField {
 	private Composite createForm(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NO_FOCUS);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=126553
-		// composite.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		composite.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		composite.setLayout(new FormLayout());
 		return composite;
 	}
