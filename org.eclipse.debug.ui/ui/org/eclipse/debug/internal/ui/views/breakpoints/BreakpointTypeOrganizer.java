@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,9 +40,9 @@ public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate
     	String name = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
     	if (name != null) {
     		IAdaptable[] categories = (IAdaptable[]) fTypes.get(name);
-    		if (category == null) {
+    		if (categories == null) {
     			categories = new IAdaptable[]{new BreakpointTypeCategory(name)};
-    			fTypes.put(name, category);
+    			fTypes.put(name, categories);
     		}
     		return categories;
     	}
