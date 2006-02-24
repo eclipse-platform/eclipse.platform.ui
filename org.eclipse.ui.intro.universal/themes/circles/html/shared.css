@@ -6,13 +6,8 @@ body { font-family : Arial, sans-serif; }
 H1, H2, H3, H4, p, a { color : #4D4D4D; }
 
 /*
-.intro-header H1 {
-	font-size : 16pt;
-	font-weight : normal;
-	color : #E5E5E5;
-}
-*/
-
+ * We are not using titles in this theme.
+ */
 .intro-header {
 	display : none;
 }
@@ -22,6 +17,7 @@ h2 {
 	font-weight : normal;
 	color : #7B8694;
 }
+
 /* For regular div labels */
 H4 .div-label {
 	font-size : 10pt;
@@ -37,7 +33,7 @@ H4 .div-label {
 	clear : both;
 }
 
-.page-description { 
+.page-description {
 	font-size : 10pt;
 	float : none;
 	clear : both;
@@ -79,9 +75,8 @@ html, body { width : 100%; height : 100%; }
 html, body, div, h1, h4, p, a { margin : 0px; padding : 0px; }
 
 /*
-.intro-header H1 { padding-top : 10px; margin-left : 10px; }
-*/
-
+ * Folding section settings.
+ */
 .section { }
 .section-body { display: none; padding : 0px; }
 
@@ -130,25 +125,9 @@ body {
 }
 
 /*
- * We will use one of the general purpose groups to show
- * the curve image
+ * Hide the general-purpose groups - not using them in this theme.
  */
-#extra-group1 { 
-	width : 100%;
-	height : 164px;
-	position : absolute;
-	top : 0px;
-	background-image : url(../graphics/contentpage/backgroundcurve.gif);
-	background-repeat : no-repeat;
-	background-position : top center;
-	margin : 0;
-	padding : 0;
-}
-
-/*
- * Hide the other general-purpose groups
- */
-
+#extra-group1,
 #extra-group2,
 #extra-group3,
 #extra-group4,
@@ -157,20 +136,25 @@ body {
 }
 
 /*
-.intro-header {	background-color : transparent; z-index : 100;}
-*/
-
+ * Dimensions.
+ */
 body, .page{
 	min-width : 770px;
 	/* since IE doesn't support min-width, try expression */
 	width:expression(document.body.clientWidth < 770? "770px": "auto" );
+	/*
 	min-height : 425px;
+	*/
 	height : 100%;
+	/*
 	height : expression(document.body.clientHeight < 425? "425px": "100%" );
+	*/
 }
 
-.page { 
+.page {
+/*
 	min-height : 475px;
+	*/
 	background-image : url(../graphics/contentpage/background.jpg);
 	background-repeat : repeat-x;
 	background-position : top left;
@@ -190,31 +174,41 @@ body, .page{
 	position : relative;
 	left : 0px;
 	top : 0px;
+	padding-left: 12px;
 	height : 118px;
 	width : 100%;
 }
 
 #navigation-links a {
-	padding-left : 5px;
-	padding-right : 5px;
-	float : left;
-	text-align : center;
-}
-
-#navigation-links #customize {
-	padding-left : 5px;
-	padding-right : 5px;
+/*
+	padding-left : 3px;
+	padding-right : 3px;
+*/
 	float : left;
 	text-align : center;
 }
 
 #navigation-links a img {
-	height : 52px;
-	width : 52px;
-	vertical-align : middle;
+	position : relative;
+	height : 64px;
+	width : 64px;
+	vertical-align : center;
+	horizontal-align : center;
+	top : 10px;
+	left : 12px;
 }
 
+#navigation-links a:hover img,
+#navigation-links a:focus img,
+#navigation-links a:active img {
+	top : 2px;
+	left : 3px;
+}
+
+/*
 #navigation-links a .link-label { display : block; margin-top : 5px;}
+*/
+#navigation-links a .link-label { display : none; }
 
 #navigation-links a .text { display : none; }
 
@@ -236,7 +230,7 @@ body, .page{
 #navigation-links a#tutorials img { background-image : url(../graphics/icons/ctool/tu_nav_32.gif); }
 #navigation-links a#tutorials:hover img,
 #navigation-links a#tutorials:active img,
-#navigation-links a#tutorials:focus img { background-image : url(../graphics/icons/ctool/tu_nav_64.gif); }
+#navigation-links a#tutorials:focus img { background-image : url(../graphics/icons/ctool/tu_nav_hover.gif); }
 
 #navigation-links a#samples img { background-image : url(../graphics/icons/ctool/sa_nav_32.gif); }
 #navigation-links a#samples:hover img,
@@ -258,12 +252,19 @@ body, .page{
 #navigation-links a#webresources:focus img,
 #navigation-links a#webresources:active img { background-image : url(../graphics/icons/ctool/wr_nav_hover.gif); }
 
-#navigation-links a#workbench { position : absolute;  right : 0px; top : -35px; text-align : right;}
+#navigation-links a#workbench { position : absolute;  left : 491px; text-align : left;}
 #navigation-links a#workbench .text { display : none; }
-#navigation-links a#workbench img { background-image : url(../graphics/icons/etool/wb48.gif); width : 53px; height : 53px;}
+#navigation-links a#workbench img { 
+	background-image : url(../graphics/icons/ctool/wb_nav_32.gif); 
+	width : 32px; height : 32px;
+}
 #navigation-links a#workbench:hover img,
 #navigation-links a#workbench:focus img,
-#navigation-links a#workbench:active img { background-image : url(../graphics/icons/ctool/wb48.gif); }
+#navigation-links a#workbench:active img { 
+	background-image : url(../graphics/icons/ctool/wb_nav_hover.gif); 
+	width : 51px;
+	height : 58px;
+}
 
 /* 
  * Lay out the page title and description 
@@ -481,6 +482,10 @@ p #group-description {
 
 .content-link:hover { border-right : 0px; }
 
+/*
+ * This part is for hosting embedded document inside
+ * the content area.
+ */
 
 iframe {
 	position:relative;
