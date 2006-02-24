@@ -49,6 +49,24 @@ public class StructuredViewerManager {
 	private Object cachedOldInput;
 
 	private Object cachedNewInput;
+	
+	private UIJob refreshJob = new UIJob(
+			CommonNavigatorMessages.StructuredViewerManager_0) {
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if(viewer != null) {
+				try {
+					if (viewer.getControl().isDisposed())
+						return Status.OK_STATUS;
+					Display display = viewer.getControl().getDisplay();
+					if (!display.isDisposed() && viewer != null)
+						viewer.refresh();
+				} catch (RuntimeException e) {
+					NavigatorPlugin.logError(0, e.toString(), e);
+				}
+			}
+			return Status.OK_STATUS;
+		}
+	};
 
 	/**
 	 * 
@@ -111,22 +129,7 @@ public class StructuredViewerManager {
 	 * 
 	 */
 	public void safeRefresh() {
-		UIJob refreshJob = new UIJob(
-				CommonNavigatorMessages.StructuredViewerManager_0) {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				try {
-					if (viewer.getControl().isDisposed())
-						return Status.OK_STATUS;
-					Display display = viewer.getControl().getDisplay();
-					if (!display.isDisposed() && viewer != null)
-						viewer.refresh();
-				} catch (RuntimeException e) {
-					NavigatorPlugin.logError(0, e.toString(), e);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		refreshJob.schedule();
+		refreshJob.schedule(10);
 
 	}
 
