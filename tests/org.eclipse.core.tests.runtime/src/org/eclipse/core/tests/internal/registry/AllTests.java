@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.internal.registry;
 
 import junit.framework.*;
+import org.eclipse.core.tests.internal.registry.simple.AllSimpleRegistryTests;
 
 public class AllTests extends TestCase {
 	public AllTests() {
@@ -26,6 +27,7 @@ public class AllTests extends TestCase {
 //		suite.addTest(ExtensionRegistryDynamicTest.suite());
 		suite.addTest(ExtensionRegistryStaticTest.suite());
 		suite.addTest(NamespaceTest.suite());
+		suite.addTest(AllSimpleRegistryTests.suite());
 		suite.addTestSuite(StaleObjects.class);
 		return suite;
 	}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="PointA" name="Test Point A" schema="schema/schema.exsd"/>
+   <extension-point id="PointB" name="Test Point B" schema="schema/schema.exsd"/>
+   
+   <extension id="TestExtensionA1" point="PointA"></extension>
+   <extension id="TestExtensionA2" point="PointA"></extension>
+   
+   <extension id="TestExtensionB1" point="PointB"></extension>
+   <extension id="TestExtensionB2" point="PointB"></extension>
+</plugin>
