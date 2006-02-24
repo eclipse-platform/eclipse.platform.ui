@@ -66,6 +66,10 @@ public class MarkerAdapter {
 		public MarkerNode[] getChildren() {
 
 			if (children == null) {
+				
+				//Return nothing while a build is going on as this could be stale
+				if(building)
+					return Util.EMPTY_MARKER_ARRAY;
 
 				ConcreteMarker[] allMarkers = markerAdapter.lastMarkers
 						.toArray();
@@ -385,6 +389,8 @@ public class MarkerAdapter {
 	 * if there are no categories.
 	 */
 	public MarkerCategory[] getCategories() {
+		if(building)//Assume staleness while the list is being built.
+			return null;
 		return categories;
 	}
 
