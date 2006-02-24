@@ -16,66 +16,109 @@
  */
 body {
 	min-width : 770px;	/* since IE doesn't support min-width, use expression */
-	width:expression(document.body.clientWidth < 770? "770px": "auto" );
-	background-repeat : no-repeat;	background-position : top left;	background-color : #345365;
-	background-image: url('../graphics/root/welcomebckgrd.jpg');
+	width:expression(document.body.clientWidth < 770? "770px": "auto" );	background-image : url(../graphics/rootpage/welcomebckgrd.jpg);	background-repeat : no-repeat;	background-position : center center;	background-color : #7169D1;
 }
 #root {
-	min-height : 450px;	height : 100%;	height : expression(document.body.clientHeight < 450? "450px": "100%" );
-	overflow: hidden;
+/*
+	background-image : url(../graphics/rootpage/brandmark.gif);
+	*/
+	background-repeat : no-repeat;	background-position : bottom left;
+	/*	min-height : 450px;
+	*/	height : 100%;
+	/*	height : expression(document.body.clientHeight < 450? "450px": "100%" );
+	*/
 }
 
-#branding {
-	position : relative;
-	background-repeat : no-repeat;
-	background-position: bottom left;
-	min-height: 450px;
-   	width: 100px;
-    height: 100%;
-	height : expression(document.body.clientHeight < 450? "450px": "100%" );
-    bottom: -20px;
-    top: auto;
-    left: 20px;
-}
+/*
+ * We will not use the general-purpose group1 used in
+ * other pages for a curve image.
+ */
 
+#extra-group1 {
+	display : none;
+}
 /* 
  * Set up the navigation bar.  It should be centered in the middle
  * of the page
  */
 #links-background {
-	position: relative;
-	height: 272px;
-	width: 100%;
-	/*
-	margin-top : 18%;
-	margin-bottom : auto;
+	width : 100%;
+	/*	height : 177px;
 	*/
-	top: 250px;
-	text-align : center;
-	background-position: center;
+	position: absolute;
+	top: 50%;	text-align : center;
+	/*
+	background-color: cyan;
+	*/
 }
 /* specify a width for Moz so we can center.  
  * **Important** If additional links are added, we will have to increase this width 
  * to accomodate them, otherwise they will wrap to a new line 
  */
- 
 #links-background > #page-links {
 	width : 33em;	margin : 0 auto;
 }
 #page-links {
-	height : 177px;
-	position : relative;	top : 50px;
+	width : 884px;
+	height: 387px;
+	position : relative;
+	left : -19px;
+	top : -50%;
 }
+
 #page-links a {
-	position : relative;	width : 86px;	margin-left : 1em;	margin-right : 1em;	text-align : center;	vertical-align : top;
+	position : absolute;	margin-left : 1em;	margin-right : 1em;	text-align : center;
+	/*	background-color: magenta;
+	*/
 }
-/* float left for Moz so the items all appear inline */
-#page-links > a {
-	float : left;	position : relative;
-}
+
 #page-links a img {
-	height : 82px;	width : 82px;	vertical-align : middle;
+	height : 103px;
+	width : 103px;
+	vertical-align : middle;
 }
+
+#page-links a img#overview {
+	height: 154px;
+	width: 141px;
+}
+
+#page-links a#overview {
+	left: 0px;
+	top: 0px;
+}
+
+#page-links a#whatsnew {
+	left: 149px;
+	top: 110px;
+}
+
+#page-links a#tutorials {
+	left: 430px;
+	top: 296px;
+}
+
+#page-links a#samples {
+	left: 242px;
+	top: 296px;
+}
+
+#page-links a#firststeps {
+	left: 336px;
+	top: 110px;
+}
+
+#page-links a#webresources {
+	left: 523px;
+	top: 203px;
+}
+
+#page-links a#migrate {
+	left: 710px;
+	top: 296px;
+}
+
+
 /* remove the hover image from the flow of the document,
    so it doesn't take up space and change the position
    of the link label and descriptions */
@@ -132,24 +175,30 @@ body {
 	text-align: right;	display: block;	position: absolute;	right : 0;	top: 145%;
 }
 /* properties for each of the page-links  */
-a#overview .background-image {
-	background-image : url(../graphics/icons/ctool/overview72.gif);	visibility : hidden;
-}
-a#tutorials .background-image {
-	background-image : url(../graphics/icons/ctool/tutorials72.gif);	visibility : hidden;
-}
-a#samples .background-image {
-	background-image : url(../graphics/icons/ctool/samples72.gif);	visibility : hidden;
-}
-a#news .background-image {
-	background-image : url(../graphics/icons/ctool/whatsnew72.gif);	visibility : hidden;
-}
-/* show the hover image on hover, focus, and active */
-#page-links a:hover .background-image,
-#page-links a:focus .background-image,
-#page-links a:active .background-image {
-	visibility : visible;
-}
+#page-links a#overview img { background-image : url(../graphics/icons/ctool/overview.gif); }
+/*
+#page-links a:hover#overview img { background-image : url(../graphics/icons/ctool/overview72.gif); }
+*/
+
+#page-links a#tutorials img { background-image : url(../graphics/icons/ctool/tutorials.gif); }
+/*
+#page-links a:hover#tutorials img { background-image : url(../graphics/icons/ctool/tutorials.gif); }
+*/
+
+#page-links a#samples img { background-image : url(../graphics/icons/ctool/samples.gif); }
+/*
+#page-links a:hover#samples img { background-image : url(../graphics/icons/ctool/samples72.gif); }
+*/
+
+#page-links a#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew.gif); }
+/*
+#page-links a:hover#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew72.gif); }
+*/
+
+#page-links a#firststeps img { background-image : url(../graphics/icons/ctool/firststeps.gif); }
+#page-links a#migrate img { background-image : url(../graphics/icons/ctool/migrate.gif); }
+#page-links a#webresources img { background-image : url(../graphics/icons/ctool/webresources.gif); }
+
 /*
  * Set up the action links
  */
@@ -174,12 +223,15 @@ a#news .background-image {
 #action-links a .background-image {
 	position : absolute;
 }
+
 #action-links a#workbench .background-image {
-	background-image : url(../graphics/icons/ctool/wb48.gif);	visibility : hidden;
+	background-image : url(../graphics/icons/etool/wb48.gif);
 }
+
 #action-links a#workbench:hover .background-image,
 #action-links a#workbench:focus .background-image,
 #action-links a#workbench:active .background-image {
+	background-image : url(../graphics/icons/ctool/wb48.gif);
 	visibility : visible;
 	position: absolute;
 	top: 0px;
