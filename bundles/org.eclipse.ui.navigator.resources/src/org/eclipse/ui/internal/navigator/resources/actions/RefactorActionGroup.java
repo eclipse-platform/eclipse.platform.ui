@@ -56,9 +56,9 @@ public class RefactorActionGroup extends ActionGroup {
 	private Tree tree;
 
 	/**
-	 * 
-	 * @param aProvider
+	 *  
 	 * @param aShell
+	 * @param aTree
 	 */
 	public RefactorActionGroup(Shell aShell, Tree aTree) {
 		shell = aShell;
