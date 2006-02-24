@@ -150,7 +150,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 				RefactoringUIMessages.UndoManagerAction_internal_error_title,  
 				RefactoringUIMessages.UndoManagerAction_internal_error_message); 
 		} catch (InterruptedException e) {
-			// Opertation isn't cancelable.
+			// Operation isn't cancelable.
 		} catch (OperationCanceledException e) {
 			// the waiting dialog got canceled.
 		}
