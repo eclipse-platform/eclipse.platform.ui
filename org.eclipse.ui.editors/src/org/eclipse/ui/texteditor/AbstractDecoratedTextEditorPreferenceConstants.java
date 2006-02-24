@@ -413,6 +413,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		
 		store.setDefault(SHOW_RANGE_INDICATOR, true);
 		store.setDefault(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH, ""); //$NON-NLS-1$
+		
+		PreferenceConverter.setDefault(store, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, new RGB(185, 176 , 180));
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

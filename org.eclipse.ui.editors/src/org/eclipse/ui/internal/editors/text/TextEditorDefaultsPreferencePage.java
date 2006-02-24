@@ -378,6 +378,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		{TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null},
 		{TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null},
 		{TextEditorMessages.TextEditorPreferencePage_printMarginColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null},
+		{TextEditorMessages.TextEditorPreferencePage_findScopeColor, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, null},
 		{TextEditorMessages.TextEditorPreferencePage_selectionForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR},
 		{TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR},
 		{TextEditorMessages.TextEditorPreferencePage_backgroundColor, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT},
@@ -417,6 +418,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		ArrayList overlayKeys= new ArrayList();
 
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE));
+		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 

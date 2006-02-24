@@ -39,6 +39,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_printMarginColor;
 	public static String TextEditorPreferencePage_foregroundColor;
 	public static String TextEditorPreferencePage_backgroundColor;
+	public static String TextEditorPreferencePage_findScopeColor;
 	public static String TextEditorPreferencePage_accessibility_disableCustomCarets;
 	public static String TextEditorPreferencePage_accessibility_wideCaret;
 	public static String TextEditorPreferencePage_overwriteMode;
