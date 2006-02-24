@@ -11,6 +11,7 @@
 package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;

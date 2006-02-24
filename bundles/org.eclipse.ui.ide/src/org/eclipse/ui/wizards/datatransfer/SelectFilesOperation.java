@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.ui.dialogs.FileSystemElement;
-
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 
 /**

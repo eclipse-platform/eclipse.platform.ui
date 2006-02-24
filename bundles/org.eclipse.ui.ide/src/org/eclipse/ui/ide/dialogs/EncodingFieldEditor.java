@@ -11,7 +11,6 @@
 package org.eclipse.ui.ide.dialogs;
 
 import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.ui.ide.IDEEncoding;
 
 /**

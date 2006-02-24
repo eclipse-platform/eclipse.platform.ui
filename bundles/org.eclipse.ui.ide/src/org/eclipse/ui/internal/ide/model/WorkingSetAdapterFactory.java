@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.ide.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.CompositeResourceMapping;
 import org.eclipse.core.resources.mapping.ModelProvider;

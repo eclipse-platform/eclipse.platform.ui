@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.ide.actions;
 
 import java.util.Collection;
 import java.util.HashSet;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

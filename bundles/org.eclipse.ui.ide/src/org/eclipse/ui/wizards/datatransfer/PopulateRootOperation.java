@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.ui.dialogs.FileSystemElement;
-
 import org.eclipse.ui.internal.wizards.datatransfer.MinimizedFileSystemElement;
 
 /**

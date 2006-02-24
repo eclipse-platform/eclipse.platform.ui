@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IContainmentAdapter;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
