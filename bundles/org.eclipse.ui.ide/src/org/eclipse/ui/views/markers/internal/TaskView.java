@@ -59,16 +59,19 @@ public class TaskView extends MarkerView {
 			if (element instanceof ConcreteMarker) {
 				IMarker marker = ((ConcreteMarker) element).getMarker();
 
-				if (COMPLETION.equals(property))
+				if (COMPLETION.equals(property)) {
 					return new Boolean(marker.getAttribute(IMarker.DONE, false));
+				}
 
-				if (IMarker.PRIORITY.equals(property))
+				if (IMarker.PRIORITY.equals(property)) {
 					return new Integer(IMarker.PRIORITY_HIGH
 							- marker.getAttribute(IMarker.PRIORITY,
 									IMarker.PRIORITY_NORMAL));
+				}
 
-				if (IMarker.MESSAGE.equals(property))
+				if (IMarker.MESSAGE.equals(property)) {
 					return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+				}
 			}
 
 			return null;
@@ -91,14 +94,15 @@ public class TaskView extends MarkerView {
 					try {
 						Object oldValue = getValue(data, property);
 						if (oldValue != null && !oldValue.equals(value)) {
-							if (COMPLETION.equals(property))
+							if (COMPLETION.equals(property)) {
 								marker.setAttribute(IMarker.DONE, value);
-							else if (IMarker.PRIORITY.equals(property))
+							} else if (IMarker.PRIORITY.equals(property)) {
 								marker.setAttribute(IMarker.PRIORITY,
 										IMarker.PRIORITY_HIGH
 												- ((Integer) value).intValue());
-							else if (IMarker.MESSAGE.equals(property))
+							} else if (IMarker.MESSAGE.equals(property)) {
 								marker.setAttribute(IMarker.MESSAGE, value);
+							}
 						}
 
 						concreteMarker.refresh();
@@ -150,11 +154,13 @@ public class TaskView extends MarkerView {
 	}
 
 	public void dispose() {
-		if (cellEditorActionHandler != null)
+		if (cellEditorActionHandler != null) {
 			cellEditorActionHandler.dispose();
+		}
 
-		if (markCompletedAction != null)
+		if (markCompletedAction != null) {
 			markCompletedAction.dispose();
+		}
 
 		super.dispose();
 	}
@@ -170,8 +176,9 @@ public class TaskView extends MarkerView {
 		IDialogSettings settings = workbenchSettings
 				.getSection(TAG_DIALOG_SECTION);
 
-		if (settings == null)
+		if (settings == null) {
 			settings = workbenchSettings.addNewSection(TAG_DIALOG_SECTION);
+		}
 
 		return settings;
 	}

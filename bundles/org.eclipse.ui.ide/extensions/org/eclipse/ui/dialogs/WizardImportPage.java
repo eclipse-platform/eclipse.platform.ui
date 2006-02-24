@@ -77,17 +77,20 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
     protected WizardImportPage(String name, IStructuredSelection selection) {
         super(name);
 
-        if (selection.size() == 1)
-            currentResourceSelection = (IResource) selection.getFirstElement();
-        else
-            currentResourceSelection = null;
+        if (selection.size() == 1) {
+			currentResourceSelection = (IResource) selection.getFirstElement();
+		} else {
+			currentResourceSelection = null;
+		}
 
         if (currentResourceSelection != null) {
-            if (currentResourceSelection.getType() == IResource.FILE)
-                currentResourceSelection = currentResourceSelection.getParent();
+            if (currentResourceSelection.getType() == IResource.FILE) {
+				currentResourceSelection = currentResourceSelection.getParent();
+			}
 
-            if (!currentResourceSelection.isAccessible())
-                currentResourceSelection = null;
+            if (!currentResourceSelection.isAccessible()) {
+				currentResourceSelection = null;
+			}
         }
 
     }
@@ -229,8 +232,9 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
     protected IContainer getSpecifiedContainer() {
         IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
         IPath path = getContainerFullPath();
-        if (workspace.getRoot().exists(path))
-            return (IContainer) workspace.getRoot().findMember(path);
+        if (workspace.getRoot().exists(path)) {
+			return (IContainer) workspace.getRoot().findMember(path);
+		}
 
         return null;
     }
@@ -245,8 +249,9 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
                 IDEWorkbenchMessages.WizardImportPage_selectFolderLabel);
 
         // if a container was selected then put its name in the container name field
-        if (containerPath != null) // null means user cancelled
-            containerNameField.setText(containerPath.makeRelative().toString());
+        if (containerPath != null) {
+			containerNameField.setText(containerPath.makeRelative().toString());
+		}
     }
 
     /**
@@ -257,8 +262,9 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
     public void handleEvent(Event event) {
         Widget source = event.widget;
 
-        if (source == containerBrowseButton)
-            handleContainerBrowseButtonPressed();
+        if (source == containerBrowseButton) {
+			handleContainerBrowseButtonPressed();
+		}
 
         setPageComplete(determinePageCompletion());
         updateWidgetEnablements();
@@ -268,11 +274,12 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
      * Sets the initial contents of the container name field.
      */
     protected final void initialPopulateContainerField() {
-        if (initialContainerFieldValue != null)
-            containerNameField.setText(initialContainerFieldValue);
-        else if (currentResourceSelection != null)
-            containerNameField.setText(currentResourceSelection.getFullPath()
+        if (initialContainerFieldValue != null) {
+			containerNameField.setText(initialContainerFieldValue);
+		} else if (currentResourceSelection != null) {
+			containerNameField.setText(currentResourceSelection.getFullPath()
                     .toString());
+		}
     }
 
     /**
@@ -282,18 +289,20 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
      * @param value new value
      */
     public void setContainerFieldValue(String value) {
-        if (containerNameField == null)
-            initialContainerFieldValue = value;
-        else
-            containerNameField.setText(value);
+        if (containerNameField == null) {
+			initialContainerFieldValue = value;
+		} else {
+			containerNameField.setText(value);
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on WizardDataTransferPage.
      */
     protected final boolean validateDestinationGroup() {
-        if (getContainerFullPath() == null)
-            return false;
+        if (getContainerFullPath() == null) {
+			return false;
+		}
 
         // If the container exist, validate it
         IContainer container = getSpecifiedContainer();

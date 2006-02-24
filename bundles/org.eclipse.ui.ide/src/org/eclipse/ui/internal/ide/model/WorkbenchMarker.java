@@ -31,8 +31,9 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
     public ImageDescriptor getImageDescriptor(Object o) {
-        if (!(o instanceof IMarker))
-            return null;
+        if (!(o instanceof IMarker)) {
+			return null;
+		}
         return IDEWorkbenchPlugin.getDefault().getMarkerImageProviderRegistry()
                 .getImageDescriptor((IMarker) o);
     }
@@ -84,8 +85,9 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
         } else if (name.equals(MESSAGE)) {
             try {
                 String msg = (String) marker.getAttribute(IMarker.MESSAGE);
-                if (msg == null)
-                    return false;
+                if (msg == null) {
+					return false;
+				}
                 return SimpleWildcardTester.testWildcardIgnoreCase(value, msg);
             } catch (CoreException e) {
                 return false;
@@ -94,8 +96,9 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
             try {
                 value = value.toLowerCase();
                 Boolean done = (Boolean) marker.getAttribute(IMarker.DONE);
-                if (done == null)
-                    return false;
+                if (done == null) {
+					return false;
+				}
                 return (done.booleanValue() == value.equals("true"));//$NON-NLS-1$
             } catch (CoreException e) {
                 return false;
@@ -110,8 +113,9 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
 
             if (!(desiredType == IResource.FILE
                     || desiredType == IResource.FOLDER
-                    || desiredType == IResource.PROJECT || desiredType == IResource.ROOT))
-                return false;
+                    || desiredType == IResource.PROJECT || desiredType == IResource.ROOT)) {
+				return false;
+			}
 
             return (marker.getResource().getType() & desiredType) > 0;
         }
@@ -126,8 +130,9 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
         Integer i1, i2;
         try {
             i1 = (Integer) marker.getAttribute(attrName);
-            if (i1 == null)
-                return false;
+            if (i1 == null) {
+				return false;
+			}
         } catch (CoreException e) {
             return false;
         }

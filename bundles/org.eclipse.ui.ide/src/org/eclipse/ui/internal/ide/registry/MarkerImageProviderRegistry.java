@@ -125,10 +125,11 @@ public class MarkerImageProviderRegistry {
                             //-- Save the image descriptor url as a persistable property, so a
                             //image descriptor can be created without activating the plugin next
                             //time the workbench is started.
-                            if (desc.provider == null)
-                                desc.provider = (IMarkerImageProvider) IDEWorkbenchPlugin
+                            if (desc.provider == null) {
+								desc.provider = (IMarkerImageProvider) IDEWorkbenchPlugin
                                         .createExtension(desc.element,
                                                 ATT_PROVIDER_CLASS);
+							}
                             String path = desc.provider.getImagePath(marker);
                             if (path != desc.imagePath) {
                                 desc.imagePath = path;

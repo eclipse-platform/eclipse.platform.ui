@@ -209,8 +209,9 @@ public class TaskPropertiesDialog extends Dialog {
         Composite composite = (Composite) super.createDialogArea(parent);
         initializeDialogUnits(composite);
         createDescriptionArea(composite);
-        if (marker != null)
-            createCreationTimeArea(composite);
+        if (marker != null) {
+			createCreationTimeArea(composite);
+		}
         if (isTask()) {
             createPriorityAndStatusArea(composite);
         } else {
@@ -357,10 +358,12 @@ public class TaskPropertiesDialog extends Dialog {
     private void createResourceArea(Composite parent) {
         IResource resource = getResource();
         if (marker == null) {
-            if (resource == null)
-                return;
-            if ((resource.getType() & (IResource.FILE | IResource.FOLDER | IResource.PROJECT)) == 0)
-                return;
+            if (resource == null) {
+				return;
+			}
+            if ((resource.getType() & (IResource.FILE | IResource.FOLDER | IResource.PROJECT)) == 0) {
+				return;
+			}
         }
 
         Font font = parent.getFont();
@@ -500,8 +503,9 @@ public class TaskPropertiesDialog extends Dialog {
                 loc = (String) o;
             }
         }
-        if (locationText != null)
-            locationText.setText(MarkerUtil.getLineAndLocation(line, loc));
+        if (locationText != null) {
+			locationText.setText(MarkerUtil.getLineAndLocation(line, loc));
+		}
 
         markDirty();
         return;
@@ -546,8 +550,9 @@ public class TaskPropertiesDialog extends Dialog {
      * Does nothing for problems, since they cannot be modified.
      */
     private void saveChanges() {
-        if (!isEditable() || !isDirty())
-            return;
+        if (!isEditable() || !isDirty()) {
+			return;
+		}
 
         final CoreException[] coreExceptions = new CoreException[1];
         final Map attrs = getMarkerAttributesFromDialog();
@@ -589,9 +594,10 @@ public class TaskPropertiesDialog extends Dialog {
             return;
         }
 
-        if (coreExceptions[0] != null)
-            ErrorDialog.openError(getShell(), TaskListMessages.TaskProp_errorMessage, 
+        if (coreExceptions[0] != null) {
+			ErrorDialog.openError(getShell(), TaskListMessages.TaskProp_errorMessage, 
                     null, coreExceptions[0].getStatus());
+		}
     }
 
     /**
@@ -618,8 +624,9 @@ public class TaskPropertiesDialog extends Dialog {
                 marker.setAttributes(initialAttrs);
             }
             monitor.worked(25);
-        } else
-            monitor.worked(50);
+        } else {
+			monitor.worked(50);
+		}
 
         // Set the marker attributes from the current dialog field values.
         // Do not use setAttributes(Map) as that overwrites any attributes

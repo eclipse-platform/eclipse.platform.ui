@@ -65,9 +65,9 @@ public class ReadOnlyStateChecker {
     private boolean checkAcceptedResource(IResource resourceToCheck,
             List selectedChildren) throws CoreException {
 
-        if (resourceToCheck.getType() == IResource.FILE)
-            selectedChildren.add(resourceToCheck);
-        else if (getIgnoreLinkedResources() && resourceToCheck.isLinked()) {
+        if (resourceToCheck.getType() == IResource.FILE) {
+			selectedChildren.add(resourceToCheck);
+		} else if (getIgnoreLinkedResources() && resourceToCheck.isLinked()) {
             selectedChildren.add(resourceToCheck);
         }
         else {
@@ -79,11 +79,12 @@ public class ReadOnlyStateChecker {
 				int childCheck = checkReadOnlyResources(container.members(),
 						selectedChildren);
 				// Add in the resource only if nothing was left out
-				if (childCheck == IDialogConstants.YES_TO_ALL_ID)
+				if (childCheck == IDialogConstants.YES_TO_ALL_ID) {
 					selectedChildren.add(resourceToCheck);
-				else
+				} else {
 					// Something was left out - return false
 					return false;
+				}
 			} else {
 				selectedChildren.add(resourceToCheck);
 			}
@@ -115,12 +116,14 @@ public class ReadOnlyStateChecker {
             });
         }
 
-        if (result == IDialogConstants.CANCEL_ID)
-            return new IResource[0];
+        if (result == IDialogConstants.CANCEL_ID) {
+			return new IResource[0];
+		}
 
         //All were selected so return the original items
-        if (result == IDialogConstants.YES_TO_ALL_ID)
-            return itemsToCheck;
+        if (result == IDialogConstants.YES_TO_ALL_ID) {
+			return itemsToCheck;
+		}
 
         IResource[] returnValue = new IResource[selections.size()];
         selections.toArray(returnValue);
@@ -141,8 +144,9 @@ public class ReadOnlyStateChecker {
             List allSelected) throws CoreException {
 
         //Shortcut. If the user has already selected yes to all then just return it
-        if (yesToAllSelected)
-            return IDialogConstants.YES_TO_ALL_ID;
+        if (yesToAllSelected) {
+			return IDialogConstants.YES_TO_ALL_ID;
+		}
 
         boolean noneSkipped = true;
         List selectedChildren = new ArrayList();
@@ -157,11 +161,13 @@ public class ReadOnlyStateChecker {
                 if (action == IDialogConstants.YES_ID) {
                     boolean childResult = checkAcceptedResource(
                             resourceToCheck, selectedChildren);
-                    if (!childResult)
-                        noneSkipped = false;
+                    if (!childResult) {
+						noneSkipped = false;
+					}
                 }
-                if (action == IDialogConstants.NO_ID)
-                    noneSkipped = false;
+                if (action == IDialogConstants.NO_ID) {
+					noneSkipped = false;
+				}
                 if (action == IDialogConstants.CANCEL_ID) {
                     cancelSelected = true;
                     return IDialogConstants.CANCEL_ID;
@@ -173,16 +179,19 @@ public class ReadOnlyStateChecker {
             } else {
                 boolean childResult = checkAcceptedResource(resourceToCheck,
                         selectedChildren);
-                if (cancelSelected)
-                    return IDialogConstants.CANCEL_ID;
-                if (!childResult)
-                    noneSkipped = false;
+                if (cancelSelected) {
+					return IDialogConstants.CANCEL_ID;
+				}
+                if (!childResult) {
+					noneSkipped = false;
+				}
             }
 
         }
 
-        if (noneSkipped)
-            return IDialogConstants.YES_TO_ALL_ID;
+        if (noneSkipped) {
+			return IDialogConstants.YES_TO_ALL_ID;
+		}
        allSelected.addAll(selectedChildren);
        return IDialogConstants.NO_ID;
 
@@ -196,8 +205,9 @@ public class ReadOnlyStateChecker {
 	 */
 	private boolean shouldCheck(IResource resourceToCheck) {
         if (ignoreLinkedResources) {
-        	if (resourceToCheck.isLinked())
-        		return false;
+        	if (resourceToCheck.isLinked()) {
+				return false;
+			}
         }
         return true;
     }
@@ -230,12 +240,15 @@ public class ReadOnlyStateChecker {
             }
         });
         int result = dialog.getReturnCode();
-        if (result == 0)
-            return IDialogConstants.YES_ID;
-        if (result == 1)
-            return IDialogConstants.YES_TO_ALL_ID;
-        if (result == 2)
-            return IDialogConstants.NO_ID;
+        if (result == 0) {
+			return IDialogConstants.YES_ID;
+		}
+        if (result == 1) {
+			return IDialogConstants.YES_TO_ALL_ID;
+		}
+        if (result == 2) {
+			return IDialogConstants.NO_ID;
+		}
         return IDialogConstants.CANCEL_ID;
     }
     

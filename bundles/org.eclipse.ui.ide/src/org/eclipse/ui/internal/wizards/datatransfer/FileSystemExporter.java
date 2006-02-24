@@ -38,10 +38,11 @@ public class FileSystemExporter {
      */
     public void write(IResource resource, IPath destinationPath)
             throws CoreException, IOException {
-        if (resource.getType() == IResource.FILE)
-            writeFile((IFile) resource, destinationPath);
-        else
-            writeChildren((IContainer) resource, destinationPath);
+        if (resource.getType() == IResource.FILE) {
+			writeFile((IFile) resource, destinationPath);
+		} else {
+			writeChildren((IContainer) resource, destinationPath);
+		}
     }
 
     /**
@@ -79,10 +80,12 @@ public class FileSystemExporter {
                 n = contentStream.read(readBuffer);
             }
         } finally {
-            if (output != null)
-                output.close();
-            if (contentStream != null)
-                contentStream.close();
+            if (output != null) {
+				output.close();
+			}
+            if (contentStream != null) {
+				contentStream.close();
+			}
         }
     }
 
@@ -91,9 +94,9 @@ public class FileSystemExporter {
      */
     protected void writeResource(IResource resource, IPath destinationPath)
             throws CoreException, IOException {
-        if (resource.getType() == IResource.FILE)
-            writeFile((IFile) resource, destinationPath);
-        else {
+        if (resource.getType() == IResource.FILE) {
+			writeFile((IFile) resource, destinationPath);
+		} else {
             createFolder(destinationPath);
             writeChildren((IContainer) resource, destinationPath);
         }

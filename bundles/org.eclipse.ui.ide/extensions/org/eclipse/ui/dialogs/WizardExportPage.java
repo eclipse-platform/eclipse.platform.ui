@@ -167,8 +167,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         restoreResourceSpecificationWidgetValues(); // ie.- local
         restoreWidgetValues(); // ie.- subclass hook
-        if (currentResourceSelection != null)
-            setupBasedOnInitialSelections();
+        if (currentResourceSelection != null) {
+			setupBasedOnInitialSelections();
+		}
 
         updateWidgetEnablements();
         setPageComplete(determinePageCompletion());
@@ -267,10 +268,12 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
         typesToExportField.setEnabled(!initialExportAllTypesValue);
         typesToExportEditButton.setEnabled(!initialExportAllTypesValue);
 
-        if (initialExportFieldValue != null)
-            resourceNameField.setText(initialExportFieldValue);
-        if (initialTypesFieldValue != null)
-            typesToExportField.setText(initialTypesFieldValue);
+        if (initialExportFieldValue != null) {
+			resourceNameField.setText(initialExportFieldValue);
+		}
+        if (initialTypesFieldValue != null) {
+			typesToExportField.setText(initialTypesFieldValue);
+		}
     }
 
     /**
@@ -289,11 +292,12 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * @param selectedResourceCount the resource selection size to display
      */
     protected void displayResourcesSelectedCount(int selectedResourceCount) {
-        if (selectedResourceCount == 1)
-            resourceDetailsDescription.setText(IDEWorkbenchMessages.WizardExportPage_oneResourceSelected);
-        else
-            resourceDetailsDescription
+        if (selectedResourceCount == 1) {
+			resourceDetailsDescription.setText(IDEWorkbenchMessages.WizardExportPage_oneResourceSelected);
+		} else {
+			resourceDetailsDescription
                     .setText(NLS.bind(IDEWorkbenchMessages.WizardExportPage_resourceCountMessage, new Integer(selectedResourceCount)));
+		}
     }
 
     /**
@@ -323,8 +327,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         while (resourcesEnum.hasNext()) {
             IResource currentResource = (IResource) resourcesEnum.next();
-            if (!currentResource.isLocal(IResource.DEPTH_ZERO))
-                result.addElement(currentResource);
+            if (!currentResource.isLocal(IResource.DEPTH_ZERO)) {
+				result.addElement(currentResource);
+			}
         }
 
         return result;
@@ -338,8 +343,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      *   value
      */
     public boolean getExportAllTypesValue() {
-        if (exportAllTypesRadio == null)
-            return initialExportAllTypesValue;
+        if (exportAllTypesRadio == null) {
+			return initialExportAllTypesValue;
+		}
 
         return exportAllTypesRadio.getSelection();
     }
@@ -353,8 +359,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      *   or <code>null</code>
      */
     public String getResourceFieldValue() {
-        if (resourceNameField == null)
-            return initialExportFieldValue;
+        if (resourceNameField == null) {
+			return initialExportFieldValue;
+		}
 
         return resourceNameField.getText();
     }
@@ -379,8 +386,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
         if (selectedResources == null) {
             IResource sourceResource = getSourceResource();
 
-            if (sourceResource != null)
-                selectAppropriateResources(sourceResource);
+            if (sourceResource != null) {
+				selectAppropriateResources(sourceResource);
+			}
         }
 
         return selectedResources;
@@ -402,8 +410,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
                 IResource.ROOT | IResource.PROJECT | IResource.FOLDER
                         | IResource.FILE);
 
-        if (result.isOK() && workspace.getRoot().exists(testPath))
-            return workspace.getRoot().findMember(testPath);
+        if (result.isOK() && workspace.getRoot().exists(testPath)) {
+			return workspace.getRoot().findMember(testPath);
+		}
 
         return null;
     }
@@ -416,8 +425,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      *   or <code>null</code>
      */
     public String getTypesFieldValue() {
-        if (typesToExportField == null)
-            return initialTypesFieldValue;
+        if (typesToExportField == null) {
+			return initialTypesFieldValue;
+		}
 
         return typesToExportField.getText();
     }
@@ -435,8 +445,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         while (tokenizer.hasMoreTokens()) {
             String currentExtension = tokenizer.nextToken().trim();
-            if (!currentExtension.equals(""))//$NON-NLS-1$
-                result.add(currentExtension);
+            if (!currentExtension.equals("")) { //$NON-NLS-1$
+				result.add(currentExtension);
+			}
         }
 
         return result;
@@ -451,17 +462,18 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
         Widget source = event.widget;
 
         if (source == exportAllTypesRadio || source == typesToExportField
-                || source == resourceNameField)
-            resetSelectedResources();
-        else if (source == exportSpecifiedTypesRadio) {
+                || source == resourceNameField) {
+			resetSelectedResources();
+		} else if (source == exportSpecifiedTypesRadio) {
             resetSelectedResources();
             typesToExportField.setFocus();
-        } else if (source == resourceDetailsButton)
-            handleResourceDetailsButtonPressed();
-        else if (source == resourceBrowseButton)
-            handleResourceBrowseButtonPressed();
-        else if (source == typesToExportEditButton)
-            handleTypesEditButtonPressed();
+        } else if (source == resourceDetailsButton) {
+			handleResourceDetailsButtonPressed();
+		} else if (source == resourceBrowseButton) {
+			handleResourceBrowseButtonPressed();
+		} else if (source == typesToExportEditButton) {
+			handleTypesEditButtonPressed();
+		}
 
         setPageComplete(determinePageCompletion());
         updateWidgetEnablements();
@@ -473,8 +485,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      */
     protected void handleResourceBrowseButtonPressed() {
         IResource currentFolder = getSourceResource();
-        if (currentFolder != null && currentFolder.getType() == IResource.FILE)
-            currentFolder = currentFolder.getParent();
+        if (currentFolder != null && currentFolder.getType() == IResource.FILE) {
+			currentFolder = currentFolder.getParent();
+		}
 
         IPath containerPath = queryForContainer((IContainer) currentFolder,
                 IDEWorkbenchMessages.WizardExportPage_selectResourcesToExport);
@@ -494,8 +507,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
     protected void handleResourceDetailsButtonPressed() {
         IAdaptable source = getSourceResource();
 
-        if (source == null)
-            source = ResourcesPlugin.getWorkspace().getRoot();
+        if (source == null) {
+			source = ResourcesPlugin.getWorkspace().getRoot();
+		}
 
         selectAppropriateResources(source);
 
@@ -521,9 +535,10 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         if (newSelectedTypes != null) { // ie.- did not press Cancel
             List result = new ArrayList(newSelectedTypes.length);
-            for (int i = 0; i < newSelectedTypes.length; i++)
-                result.add(((IFileEditorMapping) newSelectedTypes[i])
+            for (int i = 0; i < newSelectedTypes.length; i++) {
+				result.add(((IFileEditorMapping) newSelectedTypes[i])
                         .getExtension());
+			}
             setTypesToExport(result);
         }
     }
@@ -537,19 +552,22 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      *   upon its extension
      */
     protected boolean hasExportableExtension(String resourceName) {
-        if (selectedTypes == null) // ie.- all extensions are acceptable
-            return true;
+        if (selectedTypes == null) {
+			return true;
+		}
 
         int separatorIndex = resourceName.lastIndexOf(".");//$NON-NLS-1$
-        if (separatorIndex == -1)
-            return false;
+        if (separatorIndex == -1) {
+			return false;
+		}
 
         String extension = resourceName.substring(separatorIndex + 1);
 
         Iterator it = selectedTypes.iterator();
         while (it.hasNext()) {
-            if (extension.equalsIgnoreCase((String) it.next()))
-                return true;
+            if (extension.equalsIgnoreCase((String) it.next())) {
+				return true;
+			}
         }
 
         return false;
@@ -602,8 +620,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         for (int i = 0; i < mappingsSize; i++) {
             IFileEditorMapping currentMapping = editorMappings[i];
-            if (selectedTypes.contains(currentMapping.getExtension()))
-                initialSelections.add(currentMapping);
+            if (selectedTypes.contains(currentMapping.getExtension())) {
+				initialSelections.add(currentMapping);
+			}
         }
 
         ListSelectionDialog dialog = new ListSelectionDialog(getContainer()
@@ -629,11 +648,12 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
             exportCurrentSelection = false;
 
             if (resourceNameField.getText().length() > CURRENT_SELECTION
-                    .length())
-                resourceNameField.setText(resourceNameField.getText()
+                    .length()) {
+				resourceNameField.setText(resourceNameField.getText()
                         .substring(CURRENT_SELECTION.length()));
-            else
-                resourceNameField.setText("");//$NON-NLS-1$
+			} else {
+				resourceNameField.setText("");//$NON-NLS-1$
+			}
         }
     }
 
@@ -660,10 +680,12 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
                 String[] selectedTypes = settings
                         .getArray(STORE_SELECTED_TYPES_ID + pageName);
                 if (selectedTypes != null) {
-                    if (selectedTypes.length > 0)
-                        typesToExportField.setText(selectedTypes[0]);
-                    for (int i = 0; i < selectedTypes.length; i++)
-                        typesToExportField.add(selectedTypes[i]);
+                    if (selectedTypes.length > 0) {
+						typesToExportField.setText(selectedTypes[0]);
+					}
+                    for (int i = 0; i < selectedTypes.length; i++) {
+						typesToExportField.add(selectedTypes[i]);
+					}
                 }
             }
         }
@@ -683,8 +705,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
             // update specific types to export history
             String[] selectedTypesNames = settings
                     .getArray(STORE_SELECTED_TYPES_ID + pageName);
-            if (selectedTypesNames == null)
-                selectedTypesNames = new String[0];
+            if (selectedTypesNames == null) {
+				selectedTypesNames = new String[0];
+			}
 
             if (exportSpecifiedTypesRadio.getSelection()) {
                 selectedTypesNames = addToHistory(selectedTypesNames,
@@ -718,8 +741,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
                 if (members[i].getType() == IResource.FILE) {
                     IFile currentFile = (IFile) members[i];
                     if (hasExportableExtension(currentFile.getFullPath()
-                            .toString()))
-                        selectedResources.add(currentFile);
+                            .toString())) {
+						selectedResources.add(currentFile);
+					}
                 }
                 if (members[i].getType() == IResource.FOLDER) {
                     selectAppropriateFolderContents((IContainer) members[i]);
@@ -739,10 +763,11 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
     protected void selectAppropriateResources(Object resource) {
         if (selectedResources == null) {
 
-            if (exportSpecifiedTypesRadio.getSelection())
-                selectedTypes = getTypesToExport();
-            else
-                selectedTypes = null; // sentinel for select all extensions
+            if (exportSpecifiedTypesRadio.getSelection()) {
+				selectedTypes = getTypesToExport();
+			} else {
+				selectedTypes = null; // sentinel for select all extensions
+			}
 
             selectedResources = new ArrayList();
             if (resource instanceof IWorkspaceRoot) {
@@ -752,8 +777,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
                 }
             } else if (resource instanceof IFile) {
                 IFile file = (IFile) resource;
-                if (hasExportableExtension(file.getFullPath().toString()))
-                    selectedResources.add(file);
+                if (hasExportableExtension(file.getFullPath().toString())) {
+					selectedResources.add(file);
+				}
             } else {
                 selectAppropriateFolderContents((IContainer) resource);
             }
@@ -783,10 +809,11 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * @param value new value
      */
     public void setResourceFieldValue(String value) {
-        if (resourceNameField == null)
-            initialExportFieldValue = value;
-        else
-            resourceNameField.setText(value);
+        if (resourceNameField == null) {
+			initialExportFieldValue = value;
+		} else {
+			resourceNameField.setText(value);
+		}
     }
 
     /**
@@ -804,10 +831,11 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * @param value new value
      */
     public void setTypesFieldValue(String value) {
-        if (typesToExportField == null)
-            initialTypesFieldValue = value;
-        else
-            typesToExportField.setText(value);
+        if (typesToExportField == null) {
+			initialTypesFieldValue = value;
+		} else {
+			typesToExportField.setText(value);
+		}
     }
 
     /**
@@ -838,27 +866,31 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
             // a source resource has been programatically specified, which overrides
             // the current workbench resource selection
             IResource specifiedSourceResource = getSourceResource();
-            if (specifiedSourceResource == null)
-                currentResourceSelection = new StructuredSelection();
-            else
-                currentResourceSelection = new StructuredSelection(
+            if (specifiedSourceResource == null) {
+				currentResourceSelection = new StructuredSelection();
+			} else {
+				currentResourceSelection = new StructuredSelection(
                         specifiedSourceResource);
+			}
         }
 
-        if (currentResourceSelection.isEmpty())
-            return; // no setup needed
+        if (currentResourceSelection.isEmpty()) {
+			return; // no setup needed
+		}
 
         List selections = new ArrayList();
         Iterator it = currentResourceSelection.iterator();
         while (it.hasNext()) {
             IResource currentResource = (IResource) it.next();
             // do not add inaccessible elements
-            if (currentResource.isAccessible())
-                selections.add(currentResource);
+            if (currentResource.isAccessible()) {
+				selections.add(currentResource);
+			}
         }
 
-        if (selections.isEmpty())
-            return; // setup not needed anymore
+        if (selections.isEmpty()) {
+			return; // setup not needed anymore
+		}
 
         int selectedResourceCount = selections.size();
         if (selectedResourceCount == 1) {
@@ -878,9 +910,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * Updates the enablements of this page's controls. Subclasses may extend.
      */
     protected void updateWidgetEnablements() {
-        if (exportCurrentSelection)
-            resourceDetailsButton.setEnabled(true);
-        else {
+        if (exportCurrentSelection) {
+			resourceDetailsButton.setEnabled(true);
+		} else {
             IResource resource = getSourceResource();
             resourceDetailsButton.setEnabled(resource != null
                     && resource.isAccessible());
@@ -896,8 +928,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * Method declared on WizardDataTransferPage.
      */
     protected final boolean validateSourceGroup() {
-        if (exportCurrentSelection) // ie.- no more checking needed
-            return true;
+        if (exportCurrentSelection) {
+			return true;
+		}
 
         String sourceString = resourceNameField.getText();
         if (sourceString.equals("")) {//$NON-NLS-1$

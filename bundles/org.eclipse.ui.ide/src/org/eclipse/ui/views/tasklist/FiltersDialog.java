@@ -629,8 +629,9 @@ class FiltersDialog extends TrayDialog {
      * @return the filter
      */
     public TasksFilter getFilter() {
-        if (filter == null)
-            filter = new TasksFilter();
+        if (filter == null) {
+			filter = new TasksFilter();
+		}
         return filter;
     }
 
@@ -738,8 +739,9 @@ class FiltersDialog extends TrayDialog {
         MarkerType[] types = getMarkerTypes();
         for (int i = 0; i < types.length; ++i) {
             String id = types[i].getId();
-            if (id == null ? markerType == null : id.equals(markerType))
-                return i;
+            if (id == null ? markerType == null : id.equals(markerType)) {
+				return i;
+			}
         }
         return -1;
     }
@@ -875,16 +877,17 @@ class FiltersDialog extends TrayDialog {
 
         tasksFilter.types = getSelectedTypes();
 
-        if (selectedResourceButton.getSelection())
-            tasksFilter.onResource = TasksFilter.ON_SELECTED_RESOURCE_ONLY;
-        else if (selectedResourceAndChildrenButton.getSelection())
-            tasksFilter.onResource = TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN;
-        else if (anyResourceInSameProjectButton.getSelection()) // added by cagatayk@acm.org
-            tasksFilter.onResource = TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
-        else if (workingSetGroup.getSelection())
-            tasksFilter.onResource = TasksFilter.ON_WORKING_SET;
-        else
-            tasksFilter.onResource = TasksFilter.ON_ANY_RESOURCE;
+        if (selectedResourceButton.getSelection()) {
+			tasksFilter.onResource = TasksFilter.ON_SELECTED_RESOURCE_ONLY;
+		} else if (selectedResourceAndChildrenButton.getSelection()) {
+			tasksFilter.onResource = TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN;
+		} else if (anyResourceInSameProjectButton.getSelection()) {
+			tasksFilter.onResource = TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
+		} else if (workingSetGroup.getSelection()) {
+			tasksFilter.onResource = TasksFilter.ON_WORKING_SET;
+		} else {
+			tasksFilter.onResource = TasksFilter.ON_ANY_RESOURCE;
+		}
 
         tasksFilter.workingSet = workingSetGroup.getWorkingSet();
         tasksFilter.descriptionFilterKind = descriptionGroup.combo

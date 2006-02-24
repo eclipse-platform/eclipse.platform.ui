@@ -48,8 +48,9 @@ public class ActionRevealMarker extends MarkerSelectionProviderAction {
 	public void run() {
 		
 		IEditorPart editor = part.getSite().getPage().getActiveEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 		IFile file = ResourceUtil.getFile(editor.getEditorInput());
 		if (file != null) {
 			IMarker marker = getSelectedMarker();

@@ -51,12 +51,13 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 						result.add(mapping);
 					}
 				}
-				if (!result.isEmpty())
+				if (!result.isEmpty()) {
 					return new CompositeResourceMapping(
 							ModelProvider.RESOURCE_MODEL_PROVIDER_ID,
 							adaptable,
 							(ResourceMapping[]) result
 									.toArray(new ResourceMapping[result.size()]));
+				}
 			}
 			return null;
 		}
@@ -129,12 +130,13 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 						result.add(mapping);
 					}
 				}
-				if (!result.isEmpty())
+				if (!result.isEmpty()) {
 					return new CompositeResourceMapping(
 							ModelProvider.RESOURCE_MODEL_PROVIDER_ID,
 							adaptableObject,
 							(ResourceMapping[]) result
 									.toArray(new ResourceMapping[result.size()]));
+				}
 			}
 		}
 		return null;
@@ -202,8 +204,9 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 		if (o instanceof IAdaptable) {
 			IAdaptable element = (IAdaptable) o;
 			Object adapted = element.getAdapter(adapter);
-			if (adapted != null)
+			if (adapted != null) {
 				return adapted;
+			}
 		}
 		// Fallback to the adapter manager in case the object doesn't
 		// implement getAdapter or in the case where the implementation

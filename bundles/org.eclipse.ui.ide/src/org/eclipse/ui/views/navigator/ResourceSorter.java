@@ -91,18 +91,19 @@ public class ResourceSorter extends ViewerSorter {
         IResource r1 = (IResource) o1;
         IResource r2 = (IResource) o2;
 
-        if (r1 instanceof IContainer && r2 instanceof IContainer)
-            return compareNames(r1, r2);
-        else if (r1 instanceof IContainer)
-            return -1;
-        else if (r2 instanceof IContainer)
-            return 1;
-        else if (criteria == NAME)
-            return compareNames(r1, r2);
-        else if (criteria == TYPE)
-            return compareTypes(r1, r2);
-        else
-            return 0;
+        if (r1 instanceof IContainer && r2 instanceof IContainer) {
+			return compareNames(r1, r2);
+		} else if (r1 instanceof IContainer) {
+			return -1;
+		} else if (r2 instanceof IContainer) {
+			return 1;
+		} else if (criteria == NAME) {
+			return compareNames(r1, r2);
+		} else if (criteria == TYPE) {
+			return compareTypes(r1, r2);
+		} else {
+			return 0;
+		}
     }
 
     /**
@@ -156,8 +157,9 @@ public class ResourceSorter extends ViewerSorter {
         // return a value that indicates the correct NAME ordering.
         int result = collator.compare(ext1, ext2);
 
-        if (result != 0) // ie.- different extensions
-            return result;
+        if (result != 0) {
+			return result;
+		}
 
         return compareNames(resource1, resource2);
     }

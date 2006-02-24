@@ -57,8 +57,9 @@ public class FieldCategory extends AbstractField {
 
 				String groupName = MarkerSupportRegistry.getInstance()
 						.getCategory(marker.getMarker());
-				if (groupName == null)
+				if (groupName == null) {
 					groupName = Util.getMarkerTypeName(marker);
+				}
 				marker.setGroup(groupName);
 			}
 

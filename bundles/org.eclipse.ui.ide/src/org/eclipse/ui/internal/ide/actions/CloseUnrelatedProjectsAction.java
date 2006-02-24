@@ -72,16 +72,19 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * @param project
 	 */
 	private void addRelatedProjects(HashSet relatedProjects, IProject project) {
-		if (project == null || relatedProjects.contains(project))
+		if (project == null || relatedProjects.contains(project)) {
 			return;
+		}
 		relatedProjects.add(project);
 		try {
 			IProject[] related = project.getReferencedProjects();
-			for (int i = 0; i < related.length; i++)
+			for (int i = 0; i < related.length; i++) {
 				addRelatedProjects(relatedProjects, related[i]);
+			}
 			related = project.getReferencingProjects();
-			for (int i = 0; i < related.length; i++)
+			for (int i = 0; i < related.length; i++) {
 				addRelatedProjects(relatedProjects, related[i]);
+			}
 		} catch (CoreException e) {
 			// ignore project for which we can't compute related projects
 		}
@@ -104,8 +107,9 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		HashSet relatedProjects = new HashSet();
 		for (Iterator it = selection.iterator(); it.hasNext();) {
 			Object next = it.next();
-			if (next instanceof IProject)
+			if (next instanceof IProject) {
 				addRelatedProjects(relatedProjects, (IProject) next);
+			}
 		}
 		HashSet unrelated = new HashSet();
 		unrelated.addAll(Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects()));

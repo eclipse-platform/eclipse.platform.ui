@@ -106,8 +106,9 @@ public class ChooseWorkspaceData {
      */
     public ChooseWorkspaceData(URL instanceUrl) {
         readPersistedData();
-        if (instanceUrl != null)
-            setInitialDefault(new File(instanceUrl.getFile()).toString());
+        if (instanceUrl != null) {
+			setInitialDefault(new File(instanceUrl.getFile()).toString());
+		}
     }
 
     /**
@@ -115,9 +116,10 @@ public class ChooseWorkspaceData {
      * exists. Does not return null.
      */
     public String getInitialDefault() {
-        if (initialDefault == null)
-            setInitialDefault(System.getProperty("user.dir") //$NON-NLS-1$
+        if (initialDefault == null) {
+			setInitialDefault(System.getProperty("user.dir") //$NON-NLS-1$
                     + File.separator + "workspace"); //$NON-NLS-1$
+		}
         return initialDefault;
     }
 
@@ -134,8 +136,9 @@ public class ChooseWorkspaceData {
         }
 
         dir = new Path(dir).toOSString();
-        while (dir.charAt(dir.length() - 1) == File.separatorChar)
-            dir = dir.substring(0, dir.length() - 1);
+        while (dir.charAt(dir.length() - 1) == File.separatorChar) {
+			dir = dir.substring(0, dir.length() - 1);
+		}
         initialDefault = dir;
     }
 
@@ -200,8 +203,9 @@ public class ChooseWorkspaceData {
 			String oldEntry = recentWorkspaces[0];
 			recentWorkspaces[0] = selection;
 			for (int i = 1; i < recentWorkspaces.length && oldEntry != null; ++i) {
-				if (selection.equals(oldEntry))
+				if (selection.equals(oldEntry)) {
 					break;
+				}
 				String tmp = recentWorkspaces[i];
 				recentWorkspaces[i] = oldEntry;
 				oldEntry = tmp;
@@ -236,14 +240,16 @@ public class ChooseWorkspaceData {
 	    URL persUrl = null;
 
 	    Location configLoc = Platform.getConfigurationLocation();
-	    if (configLoc != null)
-	        persUrl = getPersistenceUrl(configLoc.getURL(), false);
+	    if (configLoc != null) {
+			persUrl = getPersistenceUrl(configLoc.getURL(), false);
+		}
 
 	    try {
 	        // inside try to get the safe default creation in the finally
 	        // clause
-	        if (persUrl == null)
-	            return false;
+	        if (persUrl == null) {
+				return false;
+			}
 
 	        // E.g.,
 	        //	<launchWorkspaceData>
@@ -257,25 +263,29 @@ public class ChooseWorkspaceData {
 
 	        Reader reader = new FileReader(persUrl.getFile());
 	        XMLMemento memento = XMLMemento.createReadRoot(reader);
-	        if (memento == null || !compatibleFileProtocol(memento))
-	            return false;
+	        if (memento == null || !compatibleFileProtocol(memento)) {
+				return false;
+			}
 
 	        IMemento alwaysAskTag = memento.getChild(XML.ALWAYS_ASK);
 	        showDialog = alwaysAskTag == null ? true : alwaysAskTag.getInteger(
 	                XML.SHOW_DIALOG).intValue() == 1;
 
 	        IMemento recent = memento.getChild(XML.RECENT_WORKSPACES);
-	        if (recent == null)
-	            return false;
+	        if (recent == null) {
+				return false;
+			}
 
 	        Integer maxLength = recent.getInteger(XML.MAX_LENGTH);
 	        int max = RECENT_MAX_LENGTH;
-	        if (maxLength != null)
-	            max = maxLength.intValue();
+	        if (maxLength != null) {
+				max = maxLength.intValue();
+			}
 
 	        IMemento indices[] = recent.getChildren(XML.WORKSPACE);
-	        if (indices == null || indices.length <= 0)
-	            return false;
+	        if (indices == null || indices.length <= 0) {
+				return false;
+			}
 
 	        // if a user has edited maxLength to be shorter than the listed
 	        // indices, accept the list (its tougher for them to retype a long
@@ -285,8 +295,9 @@ public class ChooseWorkspaceData {
 	        recentWorkspaces = new String[max];
 	        for (int i = 0; i < indices.length; ++i) {
 	            String path = indices[i].getString(XML.PATH);
-	            if (path == null)
-	                break;
+	            if (path == null) {
+					break;
+				}
 	            recentWorkspaces[i] = path;
 	        }
 	    } catch (IOException e) {
@@ -297,8 +308,9 @@ public class ChooseWorkspaceData {
 	        return false;
 	    } finally {
 	        // create safe default if needed
-	        if (recentWorkspaces == null)
-	            recentWorkspaces = new String[RECENT_MAX_LENGTH];
+	        if (recentWorkspaces == null) {
+				recentWorkspaces = new String[RECENT_MAX_LENGTH];
+			}
 	    }
 
 	    return true;
@@ -365,8 +377,9 @@ public class ChooseWorkspaceData {
 		int protocol = store
 				.getInt(IDE.Preferences.RECENT_WORKSPACES_PROTOCOL);
 		if (protocol == IPreferenceStore.INT_DEFAULT_DEFAULT
-				&& readPersistedData_file())
+				&& readPersistedData_file()) {
 			return true;
+		}
 
 		// 2. get value for showDialog
 		showDialog = store
@@ -393,11 +406,13 @@ public class ChooseWorkspaceData {
 
 		String path = null;
 		for (int i = 0; i < recent.length; ++i) {
-			if (recent[i] == null)
+			if (recent[i] == null) {
 				break;
+			}
 
-			if (path != null)
+			if (path != null) {
 				buff.append(","); //$NON-NLS-1$
+			}
 
 			path = recent[i];
 			buff.append(path);
@@ -412,12 +427,14 @@ public class ChooseWorkspaceData {
 	 */
     private static String[] decodeStoredWorkspacePaths(int max, String prefValue) {
 		String[] paths = new String[max];
-		if (prefValue == null || prefValue.length() <= 0)
+		if (prefValue == null || prefValue.length() <= 0) {
 			return paths;
+		}
 
 		StringTokenizer tokenizer = new StringTokenizer(prefValue, ","); //$NON-NLS-1$
-		for (int i = 0; i < paths.length && tokenizer.hasMoreTokens(); ++i)
+		for (int i = 0; i < paths.length && tokenizer.hasMoreTokens(); ++i) {
 			paths[i] = tokenizer.nextToken();
+		}
 
 		return paths;
 	}
@@ -428,8 +445,9 @@ public class ChooseWorkspaceData {
 	 */
     private static boolean compatibleFileProtocol(IMemento memento) {
         IMemento protocolMemento = memento.getChild(XML.PROTOCOL);
-        if (protocolMemento == null)
-            return false;
+        if (protocolMemento == null) {
+			return false;
+		}
 
         Integer version = protocolMemento.getInteger(XML.VERSION);
         return version != null && version.intValue() == PERS_ENCODING_VERSION;
@@ -444,21 +462,24 @@ public class ChooseWorkspaceData {
      *         be created.
      */
     private static URL getPersistenceUrl(URL baseUrl, boolean create) {
-        if (baseUrl == null)
-            return null;
+        if (baseUrl == null) {
+			return null;
+		}
 
         try {
             // make sure the directory exists
             URL url = new URL(baseUrl, PERS_FOLDER);
             File dir = new File(url.getFile());
-            if (!dir.exists() && (!create || !dir.mkdir()))
-                return null;
+            if (!dir.exists() && (!create || !dir.mkdir())) {
+				return null;
+			}
 
             // make sure the file exists
             url = new URL(dir.toURL(), PERS_FILENAME);
             File persFile = new File(url.getFile());
-            if (!persFile.exists() && (!create || !persFile.createNewFile()))
-                return null;
+            if (!persFile.exists() && (!create || !persFile.createNewFile())) {
+				return null;
+			}
 
             return persFile.toURL();
         } catch (IOException e) {

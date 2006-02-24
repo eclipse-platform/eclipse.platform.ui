@@ -64,8 +64,9 @@ public class FileSystemImportWizard extends Wizard implements IImportWizard {
         IDialogSettings workbenchSettings = plugin.getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("FileSystemImportWizard");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings.addNewSection("FileSystemImportWizard");//$NON-NLS-1$
+        if (section == null) {
+			section = workbenchSettings.addNewSection("FileSystemImportWizard");//$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 

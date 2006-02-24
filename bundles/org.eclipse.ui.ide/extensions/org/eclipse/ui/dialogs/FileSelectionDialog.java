@@ -83,10 +83,11 @@ public class FileSelectionDialog extends SelectionDialog {
         super(parentShell);
         setTitle(IDEWorkbenchMessages.FileSelectionDialog_title);
         root = fileSystemElement;
-        if (message != null)
-            setMessage(message);
-        else
-            setMessage(IDEWorkbenchMessages.FileSelectionDialog_message);
+        if (message != null) {
+			setMessage(message);
+		} else {
+			setMessage(IDEWorkbenchMessages.FileSelectionDialog_message);
+		}
     }
 
     /**
@@ -134,10 +135,11 @@ public class FileSelectionDialog extends SelectionDialog {
             FileSystemElement currentElement = (FileSystemElement) itemsToCheck
                     .next();
 
-            if (currentElement.isDirectory())
-                selectionGroup.initialCheckTreeItem(currentElement);
-            else
-                selectionGroup.initialCheckListItem(currentElement);
+            if (currentElement.isDirectory()) {
+				selectionGroup.initialCheckTreeItem(currentElement);
+			} else {
+				selectionGroup.initialCheckListItem(currentElement);
+			}
         }
     }
 
@@ -240,13 +242,15 @@ public class FileSelectionDialog extends SelectionDialog {
      */
     private void initializeDialog() {
         // initialize page	
-        if (getInitialElementSelections().isEmpty())
-            getOkButton().setEnabled(false);
-        else
-            checkInitialSelections();
+        if (getInitialElementSelections().isEmpty()) {
+			getOkButton().setEnabled(false);
+		} else {
+			checkInitialSelections();
+		}
         selectionGroup.aboutToOpen();
-        if (expandAllOnOpen)
-            selectionGroup.expandAll();
+        if (expandAllOnOpen) {
+			selectionGroup.expandAll();
+		}
     }
 
     /**
@@ -257,8 +261,9 @@ public class FileSelectionDialog extends SelectionDialog {
     protected void okPressed() {
         Iterator resultEnum = selectionGroup.getAllCheckedListItems();
         ArrayList list = new ArrayList();
-        while (resultEnum.hasNext())
-            list.add(resultEnum.next());
+        while (resultEnum.hasNext()) {
+			list.add(resultEnum.next());
+		}
         setResult(list);
         super.okPressed();
     }

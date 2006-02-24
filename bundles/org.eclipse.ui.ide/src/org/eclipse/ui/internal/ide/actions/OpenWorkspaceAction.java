@@ -57,8 +57,9 @@ public class OpenWorkspaceAction extends Action implements
     public OpenWorkspaceAction(IWorkbenchWindow window) {
         super(IDEWorkbenchMessages.OpenWorkspaceAction_text);
 
-        if (window == null)
-            throw new IllegalArgumentException();
+        if (window == null) {
+			throw new IllegalArgumentException();
+		}
 
         // TODO help?
 
@@ -74,12 +75,14 @@ public class OpenWorkspaceAction extends Action implements
      */
     public void run() {
         String path = promptForWorkspace();
-        if (path == null)
-            return;
+        if (path == null) {
+			return;
+		}
 
         String command_line = buildCommandLine(path);
-        if (command_line == null)
-            return;
+        if (command_line == null) {
+			return;
+		}
 
         System.setProperty(PROP_EXIT_CODE, Integer.toString(24));
         System.setProperty(PROP_EXIT_DATA, command_line);
@@ -101,8 +104,9 @@ public class OpenWorkspaceAction extends Action implements
 
         // return null if the user changed their mind
         String selection = data.getSelection();
-        if (selection == null)
-            return null;
+        if (selection == null) {
+			return null;
+		}
 
         // otherwise store the new selection and return the selection
         data.writePersistedData();
@@ -135,8 +139,9 @@ public class OpenWorkspaceAction extends Action implements
 
         // append the vmargs and commands. Assume that these already end in \n
         String vmargs = System.getProperty(PROP_VMARGS);
-        if (vmargs != null)
-            result.append(vmargs);
+        if (vmargs != null) {
+			result.append(vmargs);
+		}
 
         // append the rest of the args, replacing or adding -data as required
         property = System.getProperty(PROP_COMMANDS);

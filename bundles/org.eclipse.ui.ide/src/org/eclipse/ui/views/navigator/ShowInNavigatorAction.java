@@ -90,8 +90,9 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
      */
     public void run() {
         List v = getResources(getStructuredSelection());
-        if (v.isEmpty())
-            return;
+        if (v.isEmpty()) {
+			return;
+		}
         try {
             IViewPart view = page.showView(IPageLayout.ID_RES_NAV);
             if (view instanceof ISetSelectionTarget) {

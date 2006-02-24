@@ -62,8 +62,9 @@ public class ResourceFactory implements IElementFactory, IPersistableElement {
     public IAdaptable createElement(IMemento memento) {
         // Get the file name.
         String fileName = memento.getString(TAG_PATH);
-        if (fileName == null)
-            return null;
+        if (fileName == null) {
+			return null;
+		}
 
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         String type = memento.getString(TAG_TYPE);
@@ -74,14 +75,15 @@ public class ResourceFactory implements IElementFactory, IPersistableElement {
         } else {
             int resourceType = Integer.parseInt(type);
 
-            if (resourceType == IResource.ROOT)
-                res = root;
-            else if (resourceType == IResource.PROJECT)
-                res = root.getProject(fileName);
-            else if (resourceType == IResource.FOLDER)
-                res = root.getFolder(new Path(fileName));
-            else if (resourceType == IResource.FILE)
-                res = root.getFile(new Path(fileName));
+            if (resourceType == IResource.ROOT) {
+				res = root;
+			} else if (resourceType == IResource.PROJECT) {
+				res = root.getProject(fileName);
+			} else if (resourceType == IResource.FOLDER) {
+				res = root.getFolder(new Path(fileName));
+			} else if (resourceType == IResource.FILE) {
+				res = root.getFile(new Path(fileName));
+			}
         }
         return res;
     }

@@ -214,8 +214,9 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
             } 
 
             Object actualVal = resToCheck.getSessionProperty(key);
-             if (actualVal == null) 
-                 return false;
+             if (actualVal == null) {
+				return false;
+			}
               
              return expectedVal == null
                         || expectedVal.equals(actualVal.toString());

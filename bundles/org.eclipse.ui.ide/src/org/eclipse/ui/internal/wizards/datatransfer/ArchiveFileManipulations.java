@@ -38,8 +38,9 @@ public class ArchiveFileManipulations {
 	 * @return true if the file is in tar format
 	 */
 	public static boolean isTarFile(String fileName) {
-		if (fileName.length() == 0)
+		if (fileName.length() == 0) {
 			return false;
+		}
 
 		try {
 			new TarFile(fileName);
@@ -61,8 +62,9 @@ public class ArchiveFileManipulations {
 	 * @return true if the file is in tar format
 	 */
 	public static boolean isZipFile(String fileName) {
-		if (fileName.length() == 0)
+		if (fileName.length() == 0) {
 			return false;
+		}
 
 		try {
 			new ZipFile(fileName);
@@ -94,16 +96,17 @@ public class ArchiveFileManipulations {
 	 */
 	public static ZipLeveledStructureProvider getZipStructureProvider(
 			ZipFile targetZip, Shell shell) {
-		if (zipProviderCache == null)
+		if (zipProviderCache == null) {
 			zipProviderCache = new ZipLeveledStructureProvider(targetZip);
-		else if (!zipProviderCache.getZipFile().getName().equals(
+		} else if (!zipProviderCache.getZipFile().getName().equals(
 				targetZip.getName())) {
 			clearProviderCache(shell);
 			// ie.- new value, so finalize&remove old value
 			zipProviderCache = new ZipLeveledStructureProvider(targetZip);
-		} else if (!zipProviderCache.getZipFile().equals(targetZip))
+		} else if (!zipProviderCache.getZipFile().equals(targetZip)) {
 			closeZipFile(targetZip, shell); // ie.- duplicate handle to same
 		// .zip
+		}
 
 		return zipProviderCache;
 	}
@@ -141,9 +144,9 @@ public class ArchiveFileManipulations {
 	 */
 	public static TarLeveledStructureProvider getTarStructureProvider(
 			TarFile targetTar, Shell shell) {
-		if (tarProviderCache == null)
+		if (tarProviderCache == null) {
 			tarProviderCache = new TarLeveledStructureProvider(targetTar);
-		else if (!tarProviderCache.getTarFile().getName().equals(
+		} else if (!tarProviderCache.getTarFile().getName().equals(
 				targetTar.getName())) {
 			ArchiveFileManipulations.clearProviderCache(shell);
 			// ie.- new value, so finalize&remove old value

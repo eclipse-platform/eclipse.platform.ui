@@ -111,8 +111,9 @@ public class SaveAsDialog extends TitleAreaDialog {
      * method disposes of the banner image when the dialog is closed.
      */
     public boolean close() {
-        if (dlgTitleImage != null)
-            dlgTitleImage.dispose();
+        if (dlgTitleImage != null) {
+			dlgTitleImage.dispose();
+		}
         return super.close();
     }
 
@@ -181,8 +182,9 @@ public class SaveAsDialog extends TitleAreaDialog {
             resourceGroup.setContainerFullPath(originalFile.getParent()
                     .getFullPath());
             resourceGroup.setResource(originalFile.getName());
-        } else if (originalName != null)
-            resourceGroup.setResource(originalName);
+        } else if (originalName != null) {
+			resourceGroup.setResource(originalName);
+		}
         setDialogComplete(validatePage());
     }
 
@@ -198,12 +200,13 @@ public class SaveAsDialog extends TitleAreaDialog {
         //as dialog was provided a default file name append the extension 
         //of the default filename to the new name
         if (path.getFileExtension() == null) {
-            if (originalFile != null && originalFile.getFileExtension() != null)
-                path = path.addFileExtension(originalFile.getFileExtension());
-            else if (originalName != null) {
+            if (originalFile != null && originalFile.getFileExtension() != null) {
+				path = path.addFileExtension(originalFile.getFileExtension());
+			} else if (originalName != null) {
                 int pos = originalName.lastIndexOf('.');
-                if (++pos > 0 && pos < originalName.length())
-                    path = path.addFileExtension(originalName.substring(pos));
+                if (++pos > 0 && pos < originalName.length()) {
+					path = path.addFileExtension(originalName.substring(pos));
+				}
             }
         }
 
@@ -274,8 +277,9 @@ public class SaveAsDialog extends TitleAreaDialog {
         setErrorMessage(null);
 
         if (!resourceGroup.areAllValuesValid()) {
-            if (!resourceGroup.getResource().equals("")) // if blank name then fail silently//$NON-NLS-1$
-                setErrorMessage(resourceGroup.getProblemMessage());
+            if (!resourceGroup.getResource().equals("")) { //$NON-NLS-1$
+				setErrorMessage(resourceGroup.getProblemMessage());
+			}
             return false;
         }
 

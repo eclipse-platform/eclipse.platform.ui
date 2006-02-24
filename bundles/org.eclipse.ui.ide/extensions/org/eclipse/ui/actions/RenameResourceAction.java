@@ -165,14 +165,16 @@ public class RenameResourceAction extends WorkspaceAction {
      */
     private boolean checkReadOnlyAndNull(IResource currentResource) {
         //Do a quick read only and null check
-        if (currentResource == null)
-            return false;
+        if (currentResource == null) {
+			return false;
+		}
 
         //Do a quick read only check
-        if (currentResource.getResourceAttributes().isReadOnly())
-            return MessageDialog.openQuestion(getShell(), CHECK_RENAME_TITLE,
+        if (currentResource.getResourceAttributes().isReadOnly()) {
+			return MessageDialog.openQuestion(getShell(), CHECK_RENAME_TITLE,
                     MessageFormat.format(CHECK_RENAME_MESSAGE,
                             new Object[] { currentResource.getName() }));
+		}
         
         return true;
     }
@@ -199,8 +201,9 @@ public class RenameResourceAction extends WorkspaceAction {
     private static int getCellEditorInset(Control c) {
         if ("carbon".equals(SWT.getPlatform())) { // special case for MacOS X //$NON-NLS-1$
             if (System
-                    .getProperty("org.eclipse.swt.internal.carbon.noFocusRing") == null || c.getShell().getParent() != null) //$NON-NLS-1$
-                return -2; // native border
+                    .getProperty("org.eclipse.swt.internal.carbon.noFocusRing") == null || c.getShell().getParent() != null) { //$NON-NLS-1$
+				return -2; // native border
+			}
         }
         return 1; //  one pixel wide black border
     }
@@ -215,8 +218,8 @@ public class RenameResourceAction extends WorkspaceAction {
         textEditorParent = createParent();
         textEditorParent.setVisible(false);
         final int inset = getCellEditorInset(textEditorParent);
-        if (inset > 0) // only register for paint events if we have a border
-            textEditorParent.addListener(SWT.Paint, new Listener() {
+        if (inset > 0) {
+			textEditorParent.addListener(SWT.Paint, new Listener() {
                 public void handleEvent(Event e) {
                     Point textSize = textEditor.getSize();
                     Point parentSize = textEditorParent.getSize();
@@ -224,6 +227,7 @@ public class RenameResourceAction extends WorkspaceAction {
                             parentSize.x - 1), parentSize.y - 1);
                 }
             });
+		}
         // Create inner text editor.
         textEditor = new Text(textEditorParent, SWT.NONE);
         textEditor.setFont(navigatorTree.getFont());
@@ -265,16 +269,18 @@ public class RenameResourceAction extends WorkspaceAction {
             }
         });
 
-        if (textActionHandler != null)
-            textActionHandler.addText(textEditor);
+        if (textActionHandler != null) {
+			textActionHandler.addText(textEditor);
+		}
     }
 
     /**
      * Close the text widget and reset the editorText field.
      */
     private void disposeTextWidget() {
-        if (textActionHandler != null)
-            textActionHandler.removeText(textEditor);
+        if (textActionHandler != null) {
+			textActionHandler.removeText(textEditor);
+		}
 
         if (textEditorParent != null) {
             textEditorParent.dispose();
@@ -292,8 +298,9 @@ public class RenameResourceAction extends WorkspaceAction {
      * @return list of resource elements (element type: <code>IResource</code>)
      */
     protected List getActionResources() {
-        if (inlinedResource == null)
-            return super.getActionResources();
+        if (inlinedResource == null) {
+			return super.getActionResources();
+		}
 
         List actionResources = new ArrayList();
         actionResources.add(inlinedResource);
@@ -371,9 +378,10 @@ public class RenameResourceAction extends WorkspaceAction {
             description.setName(newPath.segment(0));
             project.move(description, IResource.FORCE | IResource.SHALLOW,
                     monitor);
-        } else
-            resource.move(newPath, IResource.KEEP_HISTORY | IResource.SHALLOW,
+        } else {
+			resource.move(newPath, IResource.KEEP_HISTORY | IResource.SHALLOW,
                     new SubProgressMonitor(monitor, 50));
+		}
     }
 
 	/**
@@ -459,19 +467,23 @@ public class RenameResourceAction extends WorkspaceAction {
 
         if (this.navigatorTree == null) {
             IResource currentResource = getCurrentResource();
-            if (currentResource == null || !currentResource.exists())
-                return;
+            if (currentResource == null || !currentResource.exists()) {
+				return;
+			}
             //Do a quick read only and null check
-            if (!checkReadOnlyAndNull(currentResource))
-                return;
+            if (!checkReadOnlyAndNull(currentResource)) {
+				return;
+			}
             String newName = queryNewResourceName(currentResource);
-            if (newName == null || newName.equals(""))//$NON-NLS-1$
-                return;
+            if (newName == null || newName.equals("")) { //$NON-NLS-1$
+				return;
+			}
             newPath = currentResource.getFullPath().removeLastSegments(1)
                     .append(newName);
             super.run();
-        } else
-            runWithInlineEditor();
+        } else {
+			runWithInlineEditor();
+		}
     }
 
     /* 
@@ -480,8 +492,9 @@ public class RenameResourceAction extends WorkspaceAction {
      */
     private void runWithInlineEditor() {
         IResource currentResource = getCurrentResource();
-        if (!checkReadOnlyAndNull(currentResource))
-            return;
+        if (!checkReadOnlyAndNull(currentResource)) {
+			return;
+		}
 
         queryNewResourceNameInline(currentResource);
 
@@ -495,8 +508,9 @@ public class RenameResourceAction extends WorkspaceAction {
      */
     private IResource getCurrentResource(){
     	List resources = getSelectedResources();
-    	if(resources.size() == 1)
-    		return (IResource) resources.get(0);
+    	if(resources.size() == 1) {
+			return (IResource) resources.get(0);
+		}
     	return null;
     	
     }
@@ -515,8 +529,9 @@ public class RenameResourceAction extends WorkspaceAction {
      * @param resource - the resource to move.
      */
     private void saveChangesAndDispose(IResource resource) {
-        if (saving == true)
-            return;
+        if (saving == true) {
+			return;
+		}
 
         saving = true;
         // Cache the resource to avoid selection loss since a selection of
@@ -568,14 +583,17 @@ public class RenameResourceAction extends WorkspaceAction {
     protected boolean updateSelection(IStructuredSelection selection) {
         disposeTextWidget();
 
-        if (selection.size() > 1)
-            return false;
-        if (!super.updateSelection(selection))
-            return false;
+        if (selection.size() > 1) {
+			return false;
+		}
+        if (!super.updateSelection(selection)) {
+			return false;
+		}
 
         IResource currentResource = getCurrentResource();
-        if (currentResource == null || !currentResource.exists())
-            return false;
+        if (currentResource == null || !currentResource.exists()) {
+			return false;
+		}
 
         return true;
     }
@@ -604,12 +622,13 @@ public class RenameResourceAction extends WorkspaceAction {
         if (destination.isReadOnly()) {
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
             IStatus status;
-            if (source.isReadOnly())
-                status = workspace.validateEdit(new IFile[] { source,
+            if (source.isReadOnly()) {
+				status = workspace.validateEdit(new IFile[] { source,
                         destination }, shell);
-            else
-                status = workspace.validateEdit(new IFile[] { destination },
+			} else {
+				status = workspace.validateEdit(new IFile[] { destination },
                         shell);
+			}
             return status.isOK();
         }
         return true;

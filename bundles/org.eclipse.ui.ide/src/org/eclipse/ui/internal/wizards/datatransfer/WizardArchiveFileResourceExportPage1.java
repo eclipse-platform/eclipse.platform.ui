@@ -137,8 +137,9 @@ public class WizardArchiveFileResourceExportPage1 extends
     protected boolean ensureTargetDirectoryIsValid(String fullPathname) {
         int separatorIndex = fullPathname.lastIndexOf(File.separator);
 
-        if (separatorIndex == -1) // ie.- default dir, which is fine
-            return true;
+        if (separatorIndex == -1) {
+			return true;
+		}
 
         return ensureTargetIsValid(new File(fullPathname.substring(0,
                 separatorIndex)));
@@ -157,8 +158,9 @@ public class WizardArchiveFileResourceExportPage1 extends
 
         if (targetFile.exists()) {
             if (targetFile.canWrite()) {
-                if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists))
-                    return false;
+                if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists)) {
+					return false;
+				}
             } else {
                 displayErrorDialog(DataTransferMessages.ZipExport_alreadyExistsError);
                 giveFocusToDestination();
@@ -176,11 +178,13 @@ public class WizardArchiveFileResourceExportPage1 extends
     protected boolean ensureTargetIsValid() {
         String targetPath = getDestinationValue();
 
-        if (!ensureTargetDirectoryIsValid(targetPath))
-            return false;
+        if (!ensureTargetDirectoryIsValid(targetPath)) {
+			return false;
+		}
 
-        if (!ensureTargetFileIsValid(new File(targetPath)))
-            return false;
+        if (!ensureTargetFileIsValid(new File(targetPath))) {
+			return false;
+		}
 
         return true;
     }
@@ -225,8 +229,9 @@ public class WizardArchiveFileResourceExportPage1 extends
     public boolean finish() {
     	List resourcesToExport = getWhiteCheckedResources();
     	
-        if (!ensureTargetIsValid())
-            return false;
+        if (!ensureTargetIsValid()) {
+			return false;
+		}
 
         //Save dirty editors if possible but do not stop if not all are saved
         saveDirtyEditors();
@@ -300,9 +305,10 @@ public class WizardArchiveFileResourceExportPage1 extends
         String currentSourceString = getDestinationValue();
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
-        if (lastSeparatorIndex != -1)
-            dialog.setFilterPath(currentSourceString.substring(0,
+        if (lastSeparatorIndex != -1) {
+			dialog.setFilterPath(currentSourceString.substring(0,
                     lastSeparatorIndex));
+		}
         String selectedFileName = dialog.open();
 
         if (selectedFileName != null) {
@@ -321,8 +327,9 @@ public class WizardArchiveFileResourceExportPage1 extends
         if (settings != null) {
             String[] directoryNames = settings
                     .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null)
-                directoryNames = new String[0];
+            if (directoryNames == null) {
+				directoryNames = new String[0];
+			}
 
             directoryNames = addToHistory(directoryNames, getDestinationValue());
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
@@ -344,13 +351,15 @@ public class WizardArchiveFileResourceExportPage1 extends
         if (settings != null) {
             String[] directoryNames = settings
                     .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null || directoryNames.length == 0)
-                return; // ie.- no settings stored
+            if (directoryNames == null || directoryNames.length == 0) {
+				return; // ie.- no settings stored
+			}
 
             // destination
             setDestinationValue(directoryNames[0]);
-            for (int i = 0; i < directoryNames.length; i++)
-                addDestinationItem(directoryNames[i]);
+            for (int i = 0; i < directoryNames.length; i++) {
+				addDestinationItem(directoryNames[i]);
+			}
 
             boolean setStructure = settings
                     .getBoolean(STORE_CREATE_STRUCTURE_ID);

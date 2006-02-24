@@ -36,8 +36,9 @@ class DefaultMarkerResourceAdapter implements ITaskListResourceAdapter {
      * Return the default instance used for MarkerView adapting.
      */
     static ITaskListResourceAdapter getDefault() {
-        if (singleton == null)
-            singleton = new DefaultMarkerResourceAdapter();
+        if (singleton == null) {
+			singleton = new DefaultMarkerResourceAdapter();
+		}
         return singleton;
     }
 
@@ -47,9 +48,10 @@ class DefaultMarkerResourceAdapter implements ITaskListResourceAdapter {
     public IResource getAffectedResource(IAdaptable adaptable) {
         IResource resource = (IResource) adaptable.getAdapter(IResource.class);
 
-        if (resource == null)
-            return (IFile) adaptable.getAdapter(IFile.class);
-        else
-            return resource;
+        if (resource == null) {
+			return (IFile) adaptable.getAdapter(IFile.class);
+		} else {
+			return resource;
+		}
     }
 }

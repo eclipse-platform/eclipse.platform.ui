@@ -63,8 +63,9 @@ public final class NavigatorContentServiceDescriptionProvider implements
 		String message = null;
 		ILabelProvider[] providers = contentService
 				.findRelevantLabelProviders(target);
-		if (providers.length == 0)
+		if (providers.length == 0) {
 			return getDefaultStatusBarMessage(0);
+		}
 		for (int i = 0; i < providers.length; i++) {
 			if (providers[i] instanceof ICommonLabelProvider) {
 				message = ((ICommonLabelProvider) providers[i])

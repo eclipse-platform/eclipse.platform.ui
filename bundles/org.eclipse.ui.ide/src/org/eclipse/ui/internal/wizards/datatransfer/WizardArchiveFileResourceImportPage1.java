@@ -180,8 +180,9 @@ public class WizardArchiveFileResourceImportPage1 extends
      * @return boolean
      */
     public boolean finish() {
-        if (!super.finish())
-            return false;
+        if (!super.finish()) {
+			return false;
+		}
 
         ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
         return true;
@@ -270,8 +271,9 @@ public class WizardArchiveFileResourceImportPage1 extends
             public boolean hasChildren(Object o) {
                 if (o instanceof MinimizedFileSystemElement) {
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    if (element.isPopulated())
-                        return getChildren(element).length > 0;
+                    if (element.isPopulated()) {
+						return getChildren(element).length > 0;
+					}
 
                     //If we have not populated then wait until asked
                     return true;
@@ -301,8 +303,9 @@ public class WizardArchiveFileResourceImportPage1 extends
      *	Return null if this file does not exist or is not of valid format.
      */
     private ZipFile getSpecifiedZipSourceFile(String fileName) {
-        if (fileName.length() == 0)
-            return null;
+        if (fileName.length() == 0) {
+			return null;
+		}
 
         try {
             return new ZipFile(fileName);
@@ -329,8 +332,9 @@ public class WizardArchiveFileResourceImportPage1 extends
      *	Return null if this file does not exist or is not of valid format.
      */
     private TarFile getSpecifiedTarSourceFile(String fileName) {
-        if (fileName.length() == 0)
-            return null;
+        if (fileName.length() == 0) {
+			return null;
+		}
 
         try {
             return new TarFile(fileName);
@@ -418,9 +422,10 @@ public class WizardArchiveFileResourceImportPage1 extends
         String currentSourceString = sourceNameField.getText();
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
-        if (lastSeparatorIndex != -1)
-            dialog.setFilterPath(currentSourceString.substring(0,
+        if (lastSeparatorIndex != -1) {
+			dialog.setFilterPath(currentSourceString.substring(0,
                     lastSeparatorIndex));
+		}
 
         return dialog.open();
     }
@@ -442,12 +447,14 @@ public class WizardArchiveFileResourceImportPage1 extends
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null)
-                return; // ie.- no settings stored
+            if (sourceNames == null) {
+				return; // ie.- no settings stored
+			}
 
             // set filenames history
-            for (int i = 0; i < sourceNames.length; i++)
-                sourceNameField.add(sourceNames[i]);
+            for (int i = 0; i < sourceNames.length; i++) {
+				sourceNameField.add(sourceNames[i]);
+			}
 
             // radio buttons and checkboxes	
             overwriteExistingResourcesCheckbox.setSelection(settings
@@ -467,8 +474,9 @@ public class WizardArchiveFileResourceImportPage1 extends
         if (settings != null) {
             // update source names history
             String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null)
-                sourceNames = new String[0];
+            if (sourceNames == null) {
+				sourceNames = new String[0];
+			}
 
             sourceNames = addToHistory(sourceNames, sourceNameField.getText());
             settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
@@ -476,8 +484,9 @@ public class WizardArchiveFileResourceImportPage1 extends
             // update specific types to import history
             String[] selectedTypesNames = settings
                     .getArray(STORE_SELECTED_TYPES_ID);
-            if (selectedTypesNames == null)
-                selectedTypesNames = new String[0];
+            if (selectedTypesNames == null) {
+				selectedTypesNames = new String[0];
+			}
 
             settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID,
                     overwriteExistingResourcesCheckbox.getSelection());

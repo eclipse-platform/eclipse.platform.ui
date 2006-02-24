@@ -121,8 +121,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
      */
     public String getMessage() {
         String msg = stepContainer.getMessage();
-        if (msg == null || msg.length() == 0)
-            msg = super.getMessage();
+        if (msg == null || msg.length() == 0) {
+			msg = super.getMessage();
+		}
         return msg;
     }
 
@@ -148,8 +149,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
      * @param steps the collection of steps
      */
     /* package */void setSteps(WizardStep[] steps) {
-        if (stepGroup != null)
-            stepGroup.setSteps(steps);
+        if (stepGroup != null) {
+			stepGroup.setSteps(steps);
+		}
     }
 
     /**
@@ -262,8 +264,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
          * Handles the help button pressed
          */
         public void helpPressed() {
-            if (currentPage != null)
-                currentPage.performHelp();
+            if (currentPage != null) {
+				currentPage.performHelp();
+			}
         }
 
         /**
@@ -272,8 +275,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
          * @return the result
          */
         public final boolean performCancel() {
-            if (wizard != null)
-                return wizard.performCancel();
+            if (wizard != null) {
+				return wizard.performCancel();
+			}
 
             return true;
         }
@@ -310,9 +314,10 @@ public class MultiStepConfigureWizardPage extends WizardPage {
         private Point calculatePageSizeDelta(IWizardPage page) {
             Control pageControl = page.getControl();
 
-            if (pageControl == null)
-                // control not created yet
+            if (pageControl == null) {
+				// control not created yet
                 return new Point(0, 0);
+			}
 
             Point contentSize = pageControl.computeSize(SWT.DEFAULT,
                     SWT.DEFAULT, true);
@@ -373,8 +378,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
             WizardStep[] steps = stepGroup.getSteps();
             while (stepIndex < steps.length) {
                 // adjust the finish button label
-                if (stepIndex == (steps.length - 1))
-                    wizardDialog.setFinishLabel(null);
+                if (stepIndex == (steps.length - 1)) {
+					wizardDialog.setFinishLabel(null);
+				}
 
                 final WizardStep step = steps[stepIndex];
                 stepGroup.setCurrentStep(step);
@@ -389,19 +395,22 @@ public class MultiStepConfigureWizardPage extends WizardPage {
                                     boolean tryAgain = wizardDialog
                                             .getMultiStepWizard()
                                             .handleMissingStepWizard(step);
-                                    if (!tryAgain)
-                                        break;
+                                    if (!tryAgain) {
+										break;
+									}
 
                                     stepWizard[0] = step.getWizard();
                                 }
                             }
                         });
 
-                if (stepWizard[0] == null)
-                    break;
+                if (stepWizard[0] == null) {
+					break;
+				}
                 setWizard(stepWizard[0]);
-                if (stepWizard[0].getPageCount() > 0)
-                    return;
+                if (stepWizard[0].getPageCount() > 0) {
+					return;
+				}
 
                 performFinish();
             }
@@ -425,8 +434,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
             IWizardPage[] pages = wizard.getPages();
             for (int i = 0; i < pages.length; i++) {
                 IWizardPage page = pages[i];
-                if (page.getControl() != null)
-                    page.getControl().setVisible(false);
+                if (page.getControl() != null) {
+					page.getControl().setVisible(false);
+				}
             }
 
             // Ensure the dialog is large enough for the wizard
@@ -444,11 +454,13 @@ public class MultiStepConfigureWizardPage extends WizardPage {
          * @param rememberPrevious whether hte previous page should be remembered
          */
         public void showPage(IWizardPage page, boolean rememberPrevious) {
-            if (page == null || page == currentPage)
-                return;
+            if (page == null || page == currentPage) {
+				return;
+			}
 
-            if (rememberPrevious && currentPage != null)
-                page.setPreviousPage(currentPage);
+            if (rememberPrevious && currentPage != null) {
+				page.setPreviousPage(currentPage);
+			}
 
             if (wizard != page.getWizard()) {
                 throw new IllegalStateException();
@@ -472,8 +484,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
             IWizardPage oldPage = currentPage;
             currentPage = page;
             currentPage.setVisible(true);
-            if (oldPage != null)
-                oldPage.setVisible(false);
+            if (oldPage != null) {
+				oldPage.setVisible(false);
+			}
             page.getControl().setBounds(pageSite.getClientArea());
 
             // update the dialog controls
@@ -486,8 +499,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
          * @return whether the wizard can finish
          */
         public boolean canWizardFinish() {
-            if (wizard != null)
-                return wizard.canFinish();
+            if (wizard != null) {
+				return wizard.canFinish();
+			}
 
             return false;
         }
@@ -499,8 +513,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
          * @return can flip to next page
          */
         public boolean canFlipToNextPage() {
-            if (currentPage != null)
-                return currentPage.canFlipToNextPage();
+            if (currentPage != null) {
+				return currentPage.canFlipToNextPage();
+			}
             return false;
         }
 
@@ -510,8 +525,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
          * @return the message
          */
         public String getMessage() {
-            if (currentPage != null)
-                return currentPage.getMessage();
+            if (currentPage != null) {
+				return currentPage.getMessage();
+			}
 
             return null;
         }
@@ -522,8 +538,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
          * @return the page
          */
         public IWizardPage getPreviousPage() {
-            if (currentPage != null)
-                return currentPage.getPreviousPage();
+            if (currentPage != null) {
+				return currentPage.getPreviousPage();
+			}
 
             return null;
         }

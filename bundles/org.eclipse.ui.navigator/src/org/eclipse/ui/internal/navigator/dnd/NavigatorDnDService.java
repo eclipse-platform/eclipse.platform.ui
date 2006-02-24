@@ -85,12 +85,14 @@ public class NavigatorDnDService implements INavigatorDnDService {
 				.getInstance().findCommonDropAdapterAssistants(aDropTarget,
 						contentService);
 
-		if (descriptors.length == 0)
+		if (descriptors.length == 0) {
 			return NO_ASSISTANTS;
+		}
 
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(aTransferType)  
-						&& LocalSelectionTransfer.getTransfer().getSelection() instanceof IStructuredSelection) 
-			return getAssistantsBySelection(descriptors, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()); 
+						&& LocalSelectionTransfer.getTransfer().getSelection() instanceof IStructuredSelection) {
+			return getAssistantsBySelection(descriptors, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection());
+		} 
 		return getAssistantsByTransferData(descriptors, aTransferType);
 	}
 	
@@ -103,8 +105,9 @@ public class NavigatorDnDService implements INavigatorDnDService {
 				.getInstance().findCommonDropAdapterAssistants(aDropTarget,
 						contentService);
 
-		if (descriptors.length == 0)
+		if (descriptors.length == 0) {
 			return NO_ASSISTANTS;
+		}
 
 		return getAssistantsBySelection(descriptors, theDragSelection);  
 	}
@@ -116,8 +119,9 @@ public class NavigatorDnDService implements INavigatorDnDService {
 		Set assistants = new LinkedHashSet();
 		for (int i = 0; i < descriptors.length; i++) {
 			CommonDropAdapterAssistant asst = getAssistant(descriptors[i]);
-			if (asst.isSupportedType(aTransferType))
+			if (asst.isSupportedType(aTransferType)) {
 				assistants.add(asst);
+			}
 		}
 		return (CommonDropAdapterAssistant[]) assistants
 				.toArray(new CommonDropAdapterAssistant[assistants.size()]);
@@ -129,9 +133,11 @@ public class NavigatorDnDService implements INavigatorDnDService {
 
 		Set assistants = new LinkedHashSet(); 
 			
-		for (int i = 0; i < descriptors.length; i++) 
-			if(descriptors[i].areDragElementsSupported(aSelection))
-				assistants.add(getAssistant(descriptors[i]));  
+		for (int i = 0; i < descriptors.length; i++) {
+			if(descriptors[i].areDragElementsSupported(aSelection)) {
+				assistants.add(getAssistant(descriptors[i]));
+			}
+		}  
 
 		return (CommonDropAdapterAssistant[]) assistants
 				.toArray(new CommonDropAdapterAssistant[assistants.size()]);
@@ -141,8 +147,9 @@ public class NavigatorDnDService implements INavigatorDnDService {
 			CommonDropAdapterDescriptor descriptor) {
 		CommonDropAdapterAssistant asst = (CommonDropAdapterAssistant) dropAssistants
 				.get(descriptor);
-		if (asst != null)
+		if (asst != null) {
 			return asst;
+		}
 		synchronized (dropAssistants) {
 			asst = (CommonDropAdapterAssistant) dropAssistants.get(descriptor);
 			if (asst == null) {

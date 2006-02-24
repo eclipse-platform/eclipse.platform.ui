@@ -43,8 +43,9 @@ public class DialogUtil {
         // Check for a nested CoreException
         CoreException nestedException = null;
         IStatus status = exception.getStatus();
-        if (status != null && status.getException() instanceof CoreException)
-            nestedException = (CoreException) status.getException();
+        if (status != null && status.getException() instanceof CoreException) {
+			nestedException = (CoreException) status.getException();
+		}
 
         if (nestedException != null) {
             // Open an error dialog and include the extra
@@ -71,14 +72,16 @@ public class DialogUtil {
             int endBracket = label.indexOf(')');
 
             //If there is more than one character it is not an accelerator
-            if ((endBracket - startBracket) == 3)
-                return label.substring(0, startBracket)
+            if ((endBracket - startBracket) == 3) {
+				return label.substring(0, startBracket)
                         + label.substring(endBracket + 1);
+			}
         }
 
         int i = label.indexOf('&');
-        if (i >= 0)
-            label = label.substring(0, i) + label.substring(i + 1);
+        if (i >= 0) {
+			label = label.substring(0, i) + label.substring(i + 1);
+		}
 
         return label;
     }

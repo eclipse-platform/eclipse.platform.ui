@@ -175,10 +175,11 @@ public class PathVariableDialog extends TitleAreaDialog {
         this.pathVariableManager = pathVariableManager;
         this.namesInUse = namesInUse;
 
-        if (newVariable)
-            this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_newVariable;
-        else
-            this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
+        if (newVariable) {
+			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_newVariable;
+		} else {
+			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
+		}
     }
 
     /**
@@ -188,11 +189,12 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        if (newVariable)
-            shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_newVariable);
-        else
-            shell
+        if (newVariable) {
+			shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_newVariable);
+		} else {
+			shell
                     .setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_existingVariable);
+		}
     }
 
     /**
@@ -237,10 +239,11 @@ public class PathVariableDialog extends TitleAreaDialog {
         contents.setLayout(layout);
         contents.setFont(parentComposite.getFont());
 
-        if (newVariable)
-            setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_newVariable);
-        else
-            setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_existingVariable);
+        if (newVariable) {
+			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_newVariable);
+		} else {
+			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_existingVariable);
+		}
         setMessage(standardMessage);
         return contents;
     }
@@ -319,8 +322,9 @@ public class PathVariableDialog extends TitleAreaDialog {
         // select file path button
         fileButton = new Button(contents, SWT.PUSH);
         fileButton.setText(IDEWorkbenchMessages.PathVariableDialog_file);
-        if ((variableType & IResource.FILE) == 0)
-            fileButton.setEnabled(false);
+        if ((variableType & IResource.FILE) == 0) {
+			fileButton.setEnabled(false);
+		}
 
         data = setButtonFormLayoutData(fileButton);
         data.top = new FormAttachment(variableNameLabel,
@@ -340,8 +344,9 @@ public class PathVariableDialog extends TitleAreaDialog {
         // select folder path button
         folderButton = new Button(contents, SWT.PUSH);
         folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
-        if ((variableType & IResource.FOLDER) == 0)
-            folderButton.setEnabled(false);
+        if ((variableType & IResource.FOLDER) == 0) {
+			folderButton.setEnabled(false);
+		}
 
         data = setButtonFormLayoutData(folderButton);
         data.top = new FormAttachment(variableValueLabel,
@@ -453,8 +458,9 @@ public class PathVariableDialog extends TitleAreaDialog {
         boolean allowFinish = false;
 
         // if the current validationStatus is ERROR, no additional validation applies
-        if (validationStatus == IMessageProvider.ERROR)
-            return false;
+        if (validationStatus == IMessageProvider.ERROR) {
+			return false;
+		}
 
         // assumes everything will be ok
         String message = standardMessage;
@@ -492,8 +498,9 @@ public class PathVariableDialog extends TitleAreaDialog {
         }
         // only set the message here if it is not going to be set in 
         // validateVariableValue to avoid flashing.
-        if (allowFinish == false)
-            setMessage(validationMessage, validationStatus);
+        if (allowFinish == false) {
+			setMessage(validationMessage, validationStatus);
+		}
         return allowFinish;
     }
 
@@ -506,8 +513,9 @@ public class PathVariableDialog extends TitleAreaDialog {
         boolean allowFinish = false;
 
         // if the current validationStatus is ERROR, no additional validation applies
-        if (validationStatus == IMessageProvider.ERROR)
-            return false;
+        if (validationStatus == IMessageProvider.ERROR) {
+			return false;
+		}
 
         // assumes everything will be ok
         String message = standardMessage;

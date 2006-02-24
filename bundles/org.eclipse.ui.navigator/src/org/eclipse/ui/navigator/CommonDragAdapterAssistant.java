@@ -110,8 +110,9 @@ public abstract class CommonDragAdapterAssistant {
 	 *         shell of the active workbench window.
 	 */
 	public final Shell getShell() {
-		if (contentService != null)
+		if (contentService != null) {
 			((NavigatorContentService) contentService).getShell();
+		}
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 

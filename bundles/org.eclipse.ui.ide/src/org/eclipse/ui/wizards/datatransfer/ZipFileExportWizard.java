@@ -61,8 +61,9 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
         IDialogSettings workbenchSettings = plugin.getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("ZipFileExportWizard");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings.addNewSection("ZipFileExportWizard");//$NON-NLS-1$
+        if (section == null) {
+			section = workbenchSettings.addNewSection("ZipFileExportWizard");//$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 

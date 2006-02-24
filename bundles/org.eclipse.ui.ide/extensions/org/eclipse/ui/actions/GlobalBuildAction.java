@@ -150,8 +150,9 @@ public class GlobalBuildAction extends Action implements
      * Returns the operation name to use
      */
     private String getOperationMessage() {
-        if (buildType == IncrementalProjectBuilder.INCREMENTAL_BUILD)
-            return IDEWorkbenchMessages.GlobalBuildAction_buildOperationTitle;
+        if (buildType == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
+			return IDEWorkbenchMessages.GlobalBuildAction_buildOperationTitle;
+		}
         return IDEWorkbenchMessages.GlobalBuildAction_rebuildAllOperationTitle;
     }
 
@@ -224,14 +225,17 @@ public class GlobalBuildAction extends Action implements
         }
         // Do nothing if there are no projects...
         IProject[] roots = getWorkspaceProjects();
-        if (roots.length < 1)
-            return;
+        if (roots.length < 1) {
+			return;
+		}
         // Verify that there are builders registered on at
         // least one project
-        if (!verifyBuildersAvailable(roots))
-            return;
-        if (!verifyNoManualRunning())
-            return;
+        if (!verifyBuildersAvailable(roots)) {
+			return;
+		}
+        if (!verifyNoManualRunning()) {
+			return;
+		}
         // Save all resources prior to doing build
         BuildUtilities.saveEditors(null);
         // Perform the build on all the projects
@@ -245,9 +249,11 @@ public class GlobalBuildAction extends Action implements
     /* package */boolean verifyBuildersAvailable(IProject[] roots) {
         try {
             for (int i = 0; i < roots.length; i++) {
-                if (roots[i].isAccessible())
-                    if (roots[i].getDescription().getBuildSpec().length > 0)
-                        return true;
+                if (roots[i].isAccessible()) {
+					if (roots[i].getDescription().getBuildSpec().length > 0) {
+						return true;
+					}
+				}
             }
         } catch (CoreException e) {
             IDEWorkbenchPlugin.log(getClass(), "verifyBuildersAvailable", e); //$NON-NLS-1$
@@ -285,8 +291,9 @@ public class GlobalBuildAction extends Action implements
     private boolean verifyNoManualRunning() {
         Job[] buildJobs = Platform.getJobManager().find(
                 ResourcesPlugin.FAMILY_MANUAL_BUILD);
-        if (buildJobs.length == 0)
-            return true;
+        if (buildJobs.length == 0) {
+			return true;
+		}
         boolean cancel = MessageDialog.openQuestion(workbenchWindow.getShell(),
                 IDEWorkbenchMessages.GlobalBuildAction_BuildRunningTitle,
                 IDEWorkbenchMessages.GlobalBuildAction_BuildRunningMessage);

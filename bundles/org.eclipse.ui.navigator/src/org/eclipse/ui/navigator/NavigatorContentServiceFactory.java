@@ -62,8 +62,9 @@ public final class NavigatorContentServiceFactory {
 	 * @see IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, Object, Object)
 	 */
 	public INavigatorContentService createContentService(String aViewerId, StructuredViewer aViewer) {
-		if(aViewer == null)
+		if(aViewer == null) {
 			return new NavigatorContentService(aViewerId);
+		}
 		return new NavigatorContentService(aViewerId, aViewer);
 	}
 

@@ -146,8 +146,9 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
-		if (delta == null)
+		if (delta == null) {
 			return;
+		}
 		IWorkingSet[] workingSets;
 		synchronized (fWorkingSets) {
 			workingSets = (IWorkingSet[]) fWorkingSets
@@ -184,8 +185,9 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 		}
 
 		// Don't dive into closed or opened projects
-		if (projectGotClosedOrOpened(resource, kind, flags))
+		if (projectGotClosedOrOpened(resource, kind, flags)) {
 			return;
+		}
 
 		IResourceDelta[] children = delta.getAffectedChildren();
 		for (int i = 0; i < children.length; i++) {

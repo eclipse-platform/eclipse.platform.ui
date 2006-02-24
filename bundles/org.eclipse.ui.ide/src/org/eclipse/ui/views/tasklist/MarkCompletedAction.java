@@ -54,8 +54,9 @@ class MarkCompletedAction extends TaskAction {
      * @return enablement
      */
     public boolean shouldEnable(IStructuredSelection selection) {
-        if (selection.isEmpty())
-            return false;
+        if (selection.isEmpty()) {
+			return false;
+		}
         for (Iterator i = selection.iterator(); i.hasNext();) {
             IMarker marker = (IMarker) i.next();
             if (!(MarkerUtil.isMarkerType(marker, IMarker.TASK)

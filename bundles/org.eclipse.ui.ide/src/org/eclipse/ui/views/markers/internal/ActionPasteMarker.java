@@ -69,8 +69,9 @@ public class ActionPasteMarker extends MarkerSelectionProviderAction {
     }
 
     void paste(final IMarker[] markers) {
-        if (markers == null)
-            return;
+        if (markers == null) {
+			return;
+		}
 
         final ArrayList newMarkers = new ArrayList();
 

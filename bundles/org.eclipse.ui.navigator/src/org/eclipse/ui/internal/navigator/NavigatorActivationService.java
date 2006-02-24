@@ -116,13 +116,15 @@ public final class NavigatorActivationService implements
 			String aNavigatorExtensionId, boolean toEnable) {
 
 		boolean currentlyActive = isNavigatorExtensionActive(aNavigatorExtensionId);
-		if (currentlyActive == toEnable)
+		if (currentlyActive == toEnable) {
 			return;
+		}
 
-		if (toEnable)
+		if (toEnable) {
 			activatedExtensions.add(aNavigatorExtensionId);
-		else
+		} else {
 			activatedExtensions.remove(aNavigatorExtensionId);
+		}
 		notifyListeners(new String[] { aNavigatorExtensionId }, toEnable);
 
 	}
@@ -150,12 +152,15 @@ public final class NavigatorActivationService implements
 	public void setActive(String[] aNavigatorExtensionIds,
 			boolean toEnable) {
 
-		if (toEnable)
-			for (int i = 0; i < aNavigatorExtensionIds.length; i++)
+		if (toEnable) {
+			for (int i = 0; i < aNavigatorExtensionIds.length; i++) {
 				activatedExtensions.add(aNavigatorExtensionIds[i]);
-		else
-			for (int i = 0; i < aNavigatorExtensionIds.length; i++)
+			}
+		} else {
+			for (int i = 0; i < aNavigatorExtensionIds.length; i++) {
 				activatedExtensions.remove(aNavigatorExtensionIds[i]);
+			}
+		}
 		notifyListeners(aNavigatorExtensionIds, toEnable);
 
 	}
@@ -174,9 +179,10 @@ public final class NavigatorActivationService implements
 					.iterator();
 			/* ensure that the preference will be non-empty */
 			StringBuffer preferenceValue = new StringBuffer();
-			while (activatedExtensionsIterator.hasNext())
+			while (activatedExtensionsIterator.hasNext()) {
 				preferenceValue.append(activatedExtensionsIterator.next())
 						.append(DELIM);
+			}
 			preferences
 					.setValue(getPreferenceKey(), preferenceValue.toString());
 		}
@@ -209,10 +215,11 @@ public final class NavigatorActivationService implements
 	private void notifyListeners(String[] navigatorExtensionIds,
 			boolean toEnable) {
 		Object[] listenerArray = listeners.getListeners();
-		for (int i = 0; i < listenerArray.length; i++)
+		for (int i = 0; i < listenerArray.length; i++) {
 			((IExtensionActivationListener) listenerArray[i])
 					.onExtensionActivation(contentService.getViewerId(),
 							navigatorExtensionIds, toEnable);
+		}
 
 	}
 
@@ -242,9 +249,11 @@ public final class NavigatorActivationService implements
 			 */
 			INavigatorContentDescriptor[] contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY
 					.getAllContentDescriptors();
-			for (int i = 0; i < contentDescriptors.length; i++)
-				if (contentDescriptors[i].isActiveByDefault())
+			for (int i = 0; i < contentDescriptors.length; i++) {
+				if (contentDescriptors[i].isActiveByDefault()) {
 					activatedExtensions.add(contentDescriptors[i].getId());
+				}
+			}
 		}
 		return activatedExtensions;
 	}
@@ -269,11 +278,14 @@ public final class NavigatorActivationService implements
 					.getAllContentDescriptors();
 			List descriptorList = new ArrayList(Arrays.asList(descriptors));
 
-			for (int descriptorIndx = 0; descriptorIndx < descriptors.length; descriptorIndx++)
-				for (int extId = 0; extId < extensionIds.length; extId++)
+			for (int descriptorIndx = 0; descriptorIndx < descriptors.length; descriptorIndx++) {
+				for (int extId = 0; extId < extensionIds.length; extId++) {
 					if (descriptors[descriptorIndx].getId().equals(
-							extensionIds[extId]))
+							extensionIds[extId])) {
 						descriptorList.remove(descriptors[descriptorIndx]);
+					}
+				}
+			}
 
 			String[] deactivatedExtensions = new String[descriptorList.size()];
 			for (int i = 0; i < descriptorList.size(); i++) {
@@ -284,8 +296,9 @@ public final class NavigatorActivationService implements
 			setActive(deactivatedExtensions, false);
 		}
 
-		if (activatedDescriptors.size() == 0)
+		if (activatedDescriptors.size() == 0) {
 			return NO_DESCRIPTORS;
+		}
 		return (INavigatorContentDescriptor[]) activatedDescriptors
 				.toArray(new NavigatorContentDescriptor[activatedDescriptors
 						.size()]);
@@ -302,11 +315,14 @@ public final class NavigatorActivationService implements
 					.getAllContentDescriptors();
 			List descriptorList = new ArrayList(Arrays.asList(descriptors));
 
-			for (int descriptorIndx = 0; descriptorIndx < descriptors.length; descriptorIndx++)
-				for (int extId = 0; extId < extensionIds.length; extId++)
+			for (int descriptorIndx = 0; descriptorIndx < descriptors.length; descriptorIndx++) {
+				for (int extId = 0; extId < extensionIds.length; extId++) {
 					if (descriptors[descriptorIndx].getId().equals(
-							extensionIds[extId]))
+							extensionIds[extId])) {
 						descriptorList.remove(descriptors[descriptorIndx]);
+					}
+				}
+			}
 
 			String[] activatedExtensions = new String[descriptorList.size()];
 			for (int i = 0; i < descriptorList.size(); i++) {
@@ -317,8 +333,9 @@ public final class NavigatorActivationService implements
 			}
 			setActive(activatedExtensions,	true);
 		}
-		if (activatedDescriptors.size() == 0)
+		if (activatedDescriptors.size() == 0) {
 			return NO_DESCRIPTORS;
+		}
 
 		return (INavigatorContentDescriptor[]) activatedDescriptors
 				.toArray(new NavigatorContentDescriptor[activatedDescriptors

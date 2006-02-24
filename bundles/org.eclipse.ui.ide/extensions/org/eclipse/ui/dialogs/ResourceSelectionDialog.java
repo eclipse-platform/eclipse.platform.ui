@@ -76,10 +76,11 @@ public class ResourceSelectionDialog extends SelectionDialog {
         super(parentShell);
         setTitle(IDEWorkbenchMessages.ResourceSelectionDialog_title);
         root = rootElement;
-        if (message != null)
-            setMessage(message);
-        else
-            setMessage(IDEWorkbenchMessages.ResourceSelectionDialog_message);
+        if (message != null) {
+			setMessage(message);
+		} else {
+			setMessage(IDEWorkbenchMessages.ResourceSelectionDialog_message);
+		}
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
@@ -93,10 +94,11 @@ public class ResourceSelectionDialog extends SelectionDialog {
         while (itemsToCheck.hasNext()) {
             IResource currentElement = (IResource) itemsToCheck.next();
 
-            if (currentElement.getType() == IResource.FILE)
-                selectionGroup.initialCheckListItem(currentElement);
-            else
-                selectionGroup.initialCheckTreeItem(currentElement);
+            if (currentElement.getType() == IResource.FILE) {
+				selectionGroup.initialCheckListItem(currentElement);
+			} else {
+				selectionGroup.initialCheckTreeItem(currentElement);
+			}
         }
     }
 
@@ -209,10 +211,11 @@ public class ResourceSelectionDialog extends SelectionDialog {
             }
         });
 
-        if (getInitialElementSelections().isEmpty())
-            getOkButton().setEnabled(false);
-        else
-            checkInitialSelections();
+        if (getInitialElementSelections().isEmpty()) {
+			getOkButton().setEnabled(false);
+		} else {
+			checkInitialSelections();
+		}
     }
 
     /**
@@ -223,8 +226,9 @@ public class ResourceSelectionDialog extends SelectionDialog {
     protected void okPressed() {
         Iterator resultEnum = selectionGroup.getAllCheckedListItems();
         ArrayList list = new ArrayList();
-        while (resultEnum.hasNext())
-            list.add(resultEnum.next());
+        while (resultEnum.hasNext()) {
+			list.add(resultEnum.next());
+		}
         setResult(list);
         super.okPressed();
     }

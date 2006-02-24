@@ -262,8 +262,9 @@ public class ResourceInfoPage extends PropertyPage {
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID))
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 					setValid(encodingEditor.isValid());
+				}
 
 			}
 		});
@@ -284,8 +285,9 @@ public class ResourceInfoPage extends PropertyPage {
 	 * @return String
 	 */
 	private String getFieldEditorLabel(IResource resource) {
-		if (resource instanceof IContainer)
+		if (resource instanceof IContainer) {
 			return CONTAINER_ENCODING_TITLE;
+		}
 		return FILE_ENCODING_TITLE;
 	}
 
@@ -427,12 +429,15 @@ public class ResourceInfoPage extends PropertyPage {
 				try {
 					IFileSystem fs = EFS.getFileSystem(location.getScheme());
 					int attributes = fs.attributes();
-					if ((attributes & EFS.ATTRIBUTE_READ_ONLY) != 0)
+					if ((attributes & EFS.ATTRIBUTE_READ_ONLY) != 0) {
 						createEditableButton(composite);
-					if ((attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0)
+					}
+					if ((attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0) {
 						createExecutableButton(composite);
-					if ((attributes & EFS.ATTRIBUTE_ARCHIVE) != 0)
+					}
+					if ((attributes & EFS.ATTRIBUTE_ARCHIVE) != 0) {
 						createArchiveButton(composite);
+					}
 				} catch (CoreException e) {
 					//ignore if we can't access the file system for this resource
 				}
@@ -450,8 +455,9 @@ public class ResourceInfoPage extends PropertyPage {
 	}
 
 	private IContentDescription getContentDescription(IResource resource) {
-		if (resource.getType() != IResource.FILE)
+		if (resource.getType() != IResource.FILE) {
 			return null;
+		}
 
 		if (cachedContentDescription == null) {
 			try {
@@ -475,8 +481,9 @@ public class ResourceInfoPage extends PropertyPage {
 	 *         path variable.
 	 */
 	private boolean isPathVariable(IResource resource) {
-		if (!resource.isLinked())
+		if (!resource.isLinked()) {
 			return false;
+		}
 
 		IPath resolvedLocation = resource.getLocation();
 		if (resolvedLocation == null) {
@@ -484,8 +491,9 @@ public class ResourceInfoPage extends PropertyPage {
 			return true;
 		}
 		IPath rawLocation = resource.getRawLocation();
-		if (resolvedLocation.equals(rawLocation))
+		if (resolvedLocation.equals(rawLocation)) {
 			return false;
+		}
 
 		return true;
 	}
@@ -496,21 +504,25 @@ public class ResourceInfoPage extends PropertyPage {
 	protected void performDefaults() {
 
 		// Nothing to update if we never made the box
-		if (this.editableBox != null)
+		if (this.editableBox != null) {
 			this.editableBox.setSelection(false);
+		}
 
 		// Nothing to update if we never made the box
-		if (this.executableBox != null)
+		if (this.executableBox != null) {
 			this.executableBox.setSelection(false);
+		}
 
 		// Nothing to update if we never made the box
-		if (this.derivedBox != null)
+		if (this.derivedBox != null) {
 			this.derivedBox.setSelection(false);
+		}
 
 		encodingEditor.loadDefault();
 
-		if (lineDelimiterEditor != null)
+		if (lineDelimiterEditor != null) {
 			lineDelimiterEditor.loadDefault();
+		}
 
 	}
 
@@ -523,8 +535,9 @@ public class ResourceInfoPage extends PropertyPage {
 
 		encodingEditor.store();
 
-		if (lineDelimiterEditor != null)
+		if (lineDelimiterEditor != null) {
 			lineDelimiterEditor.store();
+		}
 
 		try {
 			ResourceAttributes attrs = resource.getResourceAttributes();
@@ -553,12 +566,15 @@ public class ResourceInfoPage extends PropertyPage {
 						previousReadOnlyValue = attrs.isReadOnly();
 						previousExecutableValue = attrs.isExecutable();
 						previousArchiveValue = attrs.isArchive();
-						if (editableBox != null)
+						if (editableBox != null) {
 							editableBox.setSelection(attrs.isReadOnly());
-						if (executableBox != null)
+						}
+						if (executableBox != null) {
 							executableBox.setSelection(attrs.isExecutable());
-						if (archiveBox != null)
+						}
+						if (archiveBox != null) {
 							archiveBox.setSelection(attrs.isArchive());
+						}
 					}
 				}
 			}

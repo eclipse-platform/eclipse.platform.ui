@@ -73,14 +73,17 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 						.getString(getFilterActivationPreferenceKey());
 				String[] activeFilterIds = activatedFiltersPreferenceValue
 						.split(DELIM);
-				for (int i = 0; i < activeFilterIds.length; i++)
+				for (int i = 0; i < activeFilterIds.length; i++) {
 					activeFilters.add(activeFilterIds[i]);
+				}
 
 			} else { 
 				ICommonFilterDescriptor[] visibleFilterDescriptors = getVisibleFilterDescriptors();
-				for (int i = 0; i < visibleFilterDescriptors.length; i++)
-					if(visibleFilterDescriptors[i].isActiveByDefault())
+				for (int i = 0; i < visibleFilterDescriptors.length; i++) {
+					if(visibleFilterDescriptors[i].isActiveByDefault()) {
 						activeFilters.add(visibleFilterDescriptors[i].getId());
+					}
+				}
 			}
 
 		} catch (RuntimeException e) {
@@ -102,9 +105,10 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 				StringBuffer activatedFiltersPreferenceValue = new StringBuffer();
 
 				for (Iterator activeItr = activeFilters.iterator(); activeItr
-						.hasNext();)
+						.hasNext();) {
 					activatedFiltersPreferenceValue.append(
 							activeItr.next().toString()).append(DELIM);
+				}
 
 				Preferences preferences = NavigatorPlugin.getDefault()
 						.getPluginPreferences();
@@ -139,18 +143,21 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 		List filters = new ArrayList();
 
 		ViewerFilter instance;
-		for (int i = 0; i < descriptors.length; i++)
+		for (int i = 0; i < descriptors.length; i++) {
 			if (!toReturnOnlyActiveFilters || isActive(descriptors[i].getId())) {
 				instance = getViewerFilter(descriptors[i]);
-				if(instance != null)
+				if(instance != null) {
 					filters.add(instance);
+				}
 			}
+		}
 
 		/* return the enforced viewer filters always */
 		filters.addAll(enforcedViewerFilters);
 
-		if (filters.size() == 0)
+		if (filters.size() == 0) {
 			return NO_FILTERS;
+		}
 		return (ViewerFilter[]) filters
 				.toArray(new ViewerFilter[filters.size()]);
 	}
@@ -164,13 +171,15 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 	private ViewerFilter getViewerFilter(CommonFilterDescriptor descriptor) {
 		ViewerFilter filter = (ViewerFilter) declaredViewerFilters
 				.get(descriptor);
-		if (filter != null)
+		if (filter != null) {
 			return filter;
+		}
 		synchronized (declaredViewerFilters) {
 			filter = (ViewerFilter) declaredViewerFilters.get(descriptor);
-			if (filter == null)
+			if (filter == null) {
 				declaredViewerFilters
 						.put(descriptor, (filter = descriptor.createFilter()));
+			}
 		}
 		return filter;
 	}

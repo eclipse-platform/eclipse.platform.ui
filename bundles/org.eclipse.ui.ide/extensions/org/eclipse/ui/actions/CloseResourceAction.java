@@ -121,8 +121,9 @@ public class CloseResourceAction extends WorkspaceAction implements
      * @return List the editors to save
      */
     List getEditorsToSave(List dirtyEditors) {
-        if (dirtyEditors.isEmpty())
-            return new ArrayList(0);
+        if (dirtyEditors.isEmpty()) {
+			return new ArrayList(0);
+		}
 
         // The list may have multiple editors opened for the same input,
         // so process the list for duplicates.
@@ -151,8 +152,9 @@ public class CloseResourceAction extends WorkspaceAction implements
         dlg.setTitle(IDEWorkbenchMessages.EditorManager_saveResourcesTitle);
         int result = dlg.open();
 
-        if (result == IDialogConstants.CANCEL_ID)
-            return null;
+        if (result == IDialogConstants.CANCEL_ID) {
+			return null;
+		}
         return Arrays.asList(dlg.getResult());
     }
 
@@ -188,8 +190,9 @@ public class CloseResourceAction extends WorkspaceAction implements
      * it.
      */
     public void run() {
-        if (!saveDirtyEditors())
-            return;
+        if (!saveDirtyEditors()) {
+			return;
+		}
         if (!validateClose()) {
         	return;
         }
@@ -212,9 +215,10 @@ public class CloseResourceAction extends WorkspaceAction implements
     boolean saveDirtyEditors() {
         // Get the items to close.
         List projects = getSelectedResources();
-        if (projects == null || projects.isEmpty())
-            // no action needs to be taken since no projects are selected
+        if (projects == null || projects.isEmpty()) {
+			// no action needs to be taken since no projects are selected
             return false;
+		}
 
         // Collect all the dirty editors that are associated to the projects that are
         // to be closed.
@@ -222,9 +226,10 @@ public class CloseResourceAction extends WorkspaceAction implements
 
         // See which editors should be saved.
         final List saveEditors = getEditorsToSave(dirtyEditors);
-        if (saveEditors == null)
-            // the operation was cancelled
+        if (saveEditors == null) {
+			// the operation was cancelled
             return false;
+		}
 
         // Save and close the dirty editors.
         BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
@@ -261,8 +266,9 @@ public class CloseResourceAction extends WorkspaceAction implements
      */
     protected boolean updateSelection(IStructuredSelection s) {
         // don't call super since we want to enable if open project is selected.
-        if (!selectionIsOfType(IResource.PROJECT))
-            return false;
+        if (!selectionIsOfType(IResource.PROJECT)) {
+			return false;
+		}
 
         Iterator resources = getSelectedResources().iterator();
         while (resources.hasNext()) {

@@ -142,10 +142,11 @@ public class CreateLinkedResourceGroup {
         groupComposite.setFont(font);
 
         final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
-        if (type == IResource.FILE)
-            createLinkButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFileButton);
-        else
-            createLinkButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFolderButton);
+        if (type == IResource.FILE) {
+			createLinkButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFileButton);
+		} else {
+			createLinkButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFolderButton);
+		}
         createLinkButton.setSelection(createLink);
         createLinkButton.setFont(font);
         SelectionListener selectionListener = new SelectionAdapter() {
@@ -156,8 +157,9 @@ public class CreateLinkedResourceGroup {
                 linkTargetField.setEnabled(createLink);
                 fileSystemSelectionArea.setEnabled(createLink);
                 
-                if (listener != null)
-                    listener.handleEvent(new Event());
+                if (listener != null) {
+					listener.handleEvent(new Event());
+				}
             }
         };
         createLinkButton.addSelectionListener(selectionListener);
@@ -213,8 +215,9 @@ public class CreateLinkedResourceGroup {
 	                	}
                 	}
                 }
-                if (listener != null)
-                    listener.handleEvent(new Event());
+                if (listener != null) {
+					listener.handleEvent(new Event());
+				}
             }
         });
         
@@ -244,8 +247,9 @@ public class CreateLinkedResourceGroup {
         
         createResolvedPathGroup(locationGroup, indent);
  
-        if (linkTarget != null)
-            linkTargetField.setText(linkTarget);
+        if (linkTarget != null) {
+			linkTargetField.setText(linkTarget);
+		}
     }
     
     /**
@@ -257,8 +261,9 @@ public class CreateLinkedResourceGroup {
 	private void createFileSystemSelection(Composite composite,boolean enabled) {
 
 		// Always use the default if that is all there is.
-		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem())
+		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem()) {
 			return;
+		}
 		
 		fileSystemSelectionArea = new FileSystemSelectionArea();
 		fileSystemSelectionArea.createContents(composite);
@@ -307,8 +312,9 @@ public class CreateLinkedResourceGroup {
      * Disposes the group's widgets. 
      */
     public void dispose() {
-        if (groupComposite != null && groupComposite.isDisposed() == false)
-            groupComposite.dispose();
+        if (groupComposite != null && groupComposite.isDisposed() == false) {
+			groupComposite.dispose();
+		}
     }
 
     /**
@@ -318,8 +324,9 @@ public class CreateLinkedResourceGroup {
      * 	chose not to create a link.
      */
     public String getLinkTarget() {
-        if (createLink)
-            return linkTarget;
+        if (createLink) {
+			return linkTarget;
+		}
 
         return null;
     }
@@ -333,16 +340,18 @@ public class CreateLinkedResourceGroup {
 
         if (linkTarget.length() > 0) { 
             store = IDEResourceInfoUtils.getFileStore(linkTarget);
-            if (!store.fetchInfo().exists())
-                store = null;
+            if (!store.fetchInfo().exists()) {
+				store = null;
+			}
         }
         if (type == IResource.FILE) {
             FileDialog dialog = new FileDialog(linkTargetField.getShell());
             if (store != null) {
-                if (store.fetchInfo().isDirectory())
-                	dialog.setFilterPath(linkTarget);
-                else
-                    dialog.setFileName(linkTarget);
+                if (store.fetchInfo().isDirectory()) {
+					dialog.setFilterPath(linkTarget);
+				} else {
+					dialog.setFileName(linkTarget);
+				}
             }
             selection = dialog.open();
         } else {
@@ -350,17 +359,20 @@ public class CreateLinkedResourceGroup {
                     .getShell());
             if (store != null) {
                 IFileStore path = store;
-                if (!store.fetchInfo().isDirectory())
-                    path = store.getParent();
-                if (path != null)
-                    dialog.setFilterPath(store.toString());
+                if (!store.fetchInfo().isDirectory()) {
+					path = store.getParent();
+				}
+                if (path != null) {
+					dialog.setFilterPath(store.toString());
+				}
             }
             dialog
                     .setMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionLabel);
             selection = dialog.open();
         }
-        if (selection != null)
-            linkTargetField.setText(selection);
+        if (selection != null) {
+			linkTargetField.setText(selection);
+		}
     }
 
     /**
@@ -371,15 +383,17 @@ public class CreateLinkedResourceGroup {
 
         // allow selecting file and folder variables when creating a 
         // linked file
-        if (type == IResource.FILE)
-            variableTypes |= IResource.FILE;
+        if (type == IResource.FILE) {
+			variableTypes |= IResource.FILE;
+		}
 
         PathVariableSelectionDialog dialog = new PathVariableSelectionDialog(
                 linkTargetField.getShell(), variableTypes);
         if (dialog.open() == IDialogConstants.OK_ID) {
             String[] variableNames = (String[]) dialog.getResult();
-            if (variableNames != null && variableNames.length == 1)
-                linkTargetField.setText(variableNames[0]);
+            if (variableNames != null && variableNames.length == 1) {
+				linkTargetField.setText(variableNames[0]);
+			}
         }
     }
 
@@ -448,8 +462,9 @@ public class CreateLinkedResourceGroup {
      */
     public void setLinkTarget(String target) {
         linkTarget = target;
-        if (linkTargetField != null && linkTargetField.isDisposed() == false)
-            linkTargetField.setText(target);
+        if (linkTargetField != null && linkTargetField.isDisposed() == false) {
+			linkTargetField.setText(target);
+		}
     }
 
     /**
@@ -478,14 +493,16 @@ public class CreateLinkedResourceGroup {
      * 	specified link target is valid given the linkHandle.
      */
     public IStatus validateLinkLocation(IResource linkHandle) {
-        if (linkTargetField == null || linkTargetField.isDisposed())
-            return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+        if (linkTargetField == null || linkTargetField.isDisposed()) {
+			return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+		}
 
         IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
         IPath path = new Path(linkTarget);
 
-        if (createLink == false)
-            return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+        if (createLink == false) {
+			return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+		}
         
         if (path.isUNC()) {
             // print that path is not valid, but don't do core validation. See bug 90825.
@@ -494,8 +511,9 @@ public class CreateLinkedResourceGroup {
 
         IStatus locationStatus = workspace.validateLinkLocation(linkHandle,
                 path);
-        if (locationStatus.getSeverity() == IStatus.ERROR)
-            return locationStatus;
+        if (locationStatus.getSeverity() == IStatus.ERROR) {
+			return locationStatus;
+		}
 
         // use the resolved link target name
         String resolvedLinkTarget = resolvedPathLabelData.getText();
@@ -503,8 +521,9 @@ public class CreateLinkedResourceGroup {
         IFileInfo linkTargetFile = IDEResourceInfoUtils.getFileInfo(resolvedLinkTarget);
         if (linkTargetFile != null && linkTargetFile.exists()) {
             IStatus fileTypeStatus = validateFileType(linkTargetFile);
-            if (fileTypeStatus.isOK() == false)
-                return fileTypeStatus;
+            if (fileTypeStatus.isOK() == false) {
+				return fileTypeStatus;
+			}
         } else if (locationStatus.getSeverity() == IStatus.OK) {
             // locationStatus takes precedence over missing location warning.
             return createStatus(

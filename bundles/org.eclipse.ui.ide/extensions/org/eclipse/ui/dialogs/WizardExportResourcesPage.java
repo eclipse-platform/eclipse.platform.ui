@@ -238,8 +238,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
         restoreResourceSpecificationWidgetValues(); // ie.- local
         restoreWidgetValues(); // ie.- subclass hook
-        if (initialResourceSelection != null)
-            setupBasedOnInitialSelections();
+        if (initialResourceSelection != null) {
+			setupBasedOnInitialSelections();
+		}
 
         updateWidgetEnablements();
         setPageComplete(determinePageCompletion());
@@ -271,8 +272,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
                 .getProjects();
         for (int i = 0; i < projects.length; i++) {
-            if (projects[i].isOpen())
-                input.add(projects[i]);
+            if (projects[i].isOpen()) {
+				input.add(projects[i]);
+			}
         }
 
         this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
@@ -323,8 +325,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
         while (resourcesEnum.hasNext()) {
             IResource currentResource = (IResource) resourcesEnum.next();
-            if (!currentResource.isLocal(IResource.DEPTH_ZERO))
-                result.addElement(currentResource);
+            if (!currentResource.isLocal(IResource.DEPTH_ZERO)) {
+				result.addElement(currentResource);
+			}
         }
 
         return result;
@@ -377,8 +380,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         Iterator resourcesToExportIterator = this
                 .getSelectedResourcesIterator();
         List resourcesToExport = new ArrayList();
-        while (resourcesToExportIterator.hasNext())
-            resourcesToExport.add(resourcesToExportIterator.next());
+        while (resourcesToExportIterator.hasNext()) {
+			resourcesToExport.add(resourcesToExportIterator.next());
+		}
         return resourcesToExport;
     }
 
@@ -445,19 +449,22 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      *   upon its extension
      */
     protected boolean hasExportableExtension(String resourceName) {
-        if (selectedTypes == null) // ie.- all extensions are acceptable
-            return true;
+        if (selectedTypes == null) {
+			return true;
+		}
 
         int separatorIndex = resourceName.lastIndexOf("."); //$NON-NLS-1$
-        if (separatorIndex == -1)
-            return false;
+        if (separatorIndex == -1) {
+			return false;
+		}
 
         String extension = resourceName.substring(separatorIndex + 1);
 
         Iterator it = selectedTypes.iterator();
         while (it.hasNext()) {
-            if (extension.equalsIgnoreCase((String) it.next()))
-                return true;
+            if (extension.equalsIgnoreCase((String) it.next())) {
+				return true;
+			}
         }
 
         return false;
@@ -521,10 +528,11 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         Iterator it = this.initialResourceSelection.iterator();
         while (it.hasNext()) {
             IResource currentResource = (IResource) it.next();
-            if (currentResource.getType() == IResource.FILE)
-                this.resourceGroup.initialCheckListItem(currentResource);
-            else
-                this.resourceGroup.initialCheckTreeItem(currentResource);
+            if (currentResource.getType() == IResource.FILE) {
+				this.resourceGroup.initialCheckListItem(currentResource);
+			} else {
+				this.resourceGroup.initialCheckTreeItem(currentResource);
+			}
         }
     }
 
@@ -546,14 +554,16 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                         if (hasExportableExtension(resource.getName())) {
                             List resourceList = new ArrayList();
                             IContainer parent = resource.getParent();
-                            if (selectionMap.containsKey(parent))
-                                resourceList = (List) selectionMap.get(parent);
+                            if (selectionMap.containsKey(parent)) {
+								resourceList = (List) selectionMap.get(parent);
+							}
                             resourceList.add(resource);
                             selectionMap.put(parent, resourceList);
                         }
-                    } else
-                        setupSelectionsBasedOnSelectedTypes(selectionMap,
+                    } else {
+						setupSelectionsBasedOnSelectedTypes(selectionMap,
                                 (IContainer) resource);
+					}
                 }
                 resourceGroup.updateSelections(selectionMap);
             }
@@ -596,8 +606,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         }
 
         //Only add it to the list if there are files in this folder
-        if (hasFiles)
-            selectionMap.put(parent, selections);
+        if (hasFiles) {
+			selectionMap.put(parent, selections);
+		}
     }
 
     /**
@@ -616,8 +627,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
         boolean pageComplete = determinePageCompletion();
         setPageComplete(pageComplete);
-        if (pageComplete)
-            setMessage(null);
+        if (pageComplete) {
+			setMessage(null);
+		}
         super.updateWidgetEnablements();
     }
 }

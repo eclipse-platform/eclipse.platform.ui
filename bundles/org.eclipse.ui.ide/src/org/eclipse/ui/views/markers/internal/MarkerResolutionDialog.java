@@ -322,11 +322,13 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent arg0) {
 
 				WorkbenchMarkerResolution selected = getSelectedWorkbenchResolution();
-				if (selected == null)
+				if (selected == null) {
 					return;
+				}
 
-				if (addMatchingMarkers(selected))
+				if (addMatchingMarkers(selected)) {
 					addMatching.setEnabled(false);
+				}
 			}
 		});
 
@@ -342,8 +344,9 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	private WorkbenchMarkerResolution getSelectedWorkbenchResolution() {
 		Object selection = getSelectedResolution();
 		if (selection == null
-				|| !(selection instanceof WorkbenchMarkerResolution))
+				|| !(selection instanceof WorkbenchMarkerResolution)) {
 			return null;
+		}
 		return (WorkbenchMarkerResolution) selection;
 
 	}
@@ -356,8 +359,9 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 */
 	private IMarkerResolution getSelectedResolution() {
 		ISelection selection = resolutionsList.getSelection();
-		if (!(selection instanceof IStructuredSelection))
+		if (!(selection instanceof IStructuredSelection)) {
 			return null;
+		}
 
 		Object first = ((IStructuredSelection) selection).getFirstElement();
 
@@ -472,11 +476,13 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 */
 			public Object[] getElements(Object inputElement) {
 				IMarkerResolution selected = getSelectedResolution();
-				if (selected == null)
+				if (selected == null) {
 					return new Object[0];
+				}
 
-				if (markerMap.containsKey(selected))
+				if (markerMap.containsKey(selected)) {
 					return ((Collection) markerMap.get(selected)).toArray();
+				}
 				return new IMarker[] { originalMarker };
 			}
 
@@ -513,9 +519,9 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				if(event.getChecked() == true)
+				if(event.getChecked() == true) {
 					setComplete(true);
-				else{
+				} else{
 					setComplete(markersTable.getCheckedElements().length > 0);
 				}
 				
@@ -568,8 +574,9 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 */
 	protected void okPressed() {
 		IMarkerResolution resolution = getSelectedResolution();
-		if (resolution == null)
+		if (resolution == null) {
 			return;
+		}
 
 		Object[] checked = markersTable.getCheckedElements();
 

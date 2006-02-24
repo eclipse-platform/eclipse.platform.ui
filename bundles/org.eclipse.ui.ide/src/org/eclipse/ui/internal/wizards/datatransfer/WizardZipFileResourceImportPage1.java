@@ -133,8 +133,9 @@ public class WizardZipFileResourceImportPage1 extends
     protected boolean ensureSourceIsValid() {
         ZipFile specifiedFile = getSpecifiedSourceFile();
 
-        if (specifiedFile == null)
-            return false;
+        if (specifiedFile == null) {
+			return false;
+		}
 
         return closeZipFile(specifiedFile);
     }
@@ -147,8 +148,9 @@ public class WizardZipFileResourceImportPage1 extends
      * @return boolean
      */
     public boolean finish() {
-        if (!super.finish())
-            return false;
+        if (!super.finish()) {
+			return false;
+		}
 
         clearProviderCache();
         return true;
@@ -208,9 +210,9 @@ public class WizardZipFileResourceImportPage1 extends
             public boolean hasChildren(Object o) {
                 if (o instanceof MinimizedFileSystemElement) {
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    if (element.isPopulated())
-                        return getChildren(element).length > 0;
-                    else {
+                    if (element.isPopulated()) {
+						return getChildren(element).length > 0;
+					} else {
                         //If we have not populated then wait until asked
                         return true;
                     }
@@ -240,8 +242,9 @@ public class WizardZipFileResourceImportPage1 extends
      *	Return null if this file does not exist or is not of valid format.
      */
     private ZipFile getSpecifiedSourceFile(String fileName) {
-        if (fileName.length() == 0)
-            return null;
+        if (fileName.length() == 0) {
+			return null;
+		}
 
         try {
             return new ZipFile(fileName);
@@ -259,15 +262,16 @@ public class WizardZipFileResourceImportPage1 extends
      * Returns a structure provider for the specified zip file.
      */
     protected ZipFileStructureProvider getStructureProvider(ZipFile targetZip) {
-        if (providerCache == null)
-            providerCache = new ZipFileStructureProvider(targetZip);
-        else if (!providerCache.getZipFile().getName().equals(
+        if (providerCache == null) {
+			providerCache = new ZipFileStructureProvider(targetZip);
+		} else if (!providerCache.getZipFile().getName().equals(
                 targetZip.getName())) {
             clearProviderCache();
             // ie.- new value, so finalize&remove old value
             providerCache = new ZipFileStructureProvider(targetZip);
-        } else if (!providerCache.getZipFile().equals(targetZip))
-            closeZipFile(targetZip); // ie.- duplicate handle to same .zip
+        } else if (!providerCache.getZipFile().equals(targetZip)) {
+			closeZipFile(targetZip); // ie.- duplicate handle to same .zip
+		}
 
         return providerCache;
     }
@@ -330,9 +334,10 @@ public class WizardZipFileResourceImportPage1 extends
         String currentSourceString = sourceNameField.getText();
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
-        if (lastSeparatorIndex != -1)
-            dialog.setFilterPath(currentSourceString.substring(0,
+        if (lastSeparatorIndex != -1) {
+			dialog.setFilterPath(currentSourceString.substring(0,
                     lastSeparatorIndex));
+		}
 
         return dialog.open();
     }
@@ -354,12 +359,14 @@ public class WizardZipFileResourceImportPage1 extends
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null)
-                return; // ie.- no settings stored
+            if (sourceNames == null) {
+				return; // ie.- no settings stored
+			}
 
             // set filenames history
-            for (int i = 0; i < sourceNames.length; i++)
-                sourceNameField.add(sourceNames[i]);
+            for (int i = 0; i < sourceNames.length; i++) {
+				sourceNameField.add(sourceNames[i]);
+			}
 
             // radio buttons and checkboxes	
             overwriteExistingResourcesCheckbox.setSelection(settings
@@ -379,8 +386,9 @@ public class WizardZipFileResourceImportPage1 extends
         if (settings != null) {
             // update source names history
             String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null)
-                sourceNames = new String[0];
+            if (sourceNames == null) {
+				sourceNames = new String[0];
+			}
 
             sourceNames = addToHistory(sourceNames, sourceNameField.getText());
             settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
@@ -388,8 +396,9 @@ public class WizardZipFileResourceImportPage1 extends
             // update specific types to import history
             String[] selectedTypesNames = settings
                     .getArray(STORE_SELECTED_TYPES_ID);
-            if (selectedTypesNames == null)
-                selectedTypesNames = new String[0];
+            if (selectedTypesNames == null) {
+				selectedTypesNames = new String[0];
+			}
 
             settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID,
                     overwriteExistingResourcesCheckbox.getSelection());

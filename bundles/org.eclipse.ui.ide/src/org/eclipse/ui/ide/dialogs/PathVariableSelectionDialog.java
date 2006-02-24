@@ -102,8 +102,9 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                 setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
                 super.okPressed();
             }
-        } else
-            super.buttonPressed(buttonId);
+        } else {
+			super.buttonPressed(buttonId);
+		}
     }
 
     /* (non-Javadoc)
@@ -158,8 +159,9 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                     .getSelection();
             String[] variableNames = new String[selection.length];
 
-            for (int i = 0; i < selection.length; i++)
-                variableNames[i] = selection[i].name;
+            for (int i = 0; i < selection.length; i++) {
+				variableNames[i] = selection[i].name;
+			}
             setSelectionResult(variableNames);
         } else {
             setSelectionResult(null);
@@ -194,17 +196,20 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                 .getSelection();
         Button extendButton = getButton(EXTEND_ID);
 
-        if (extendButton == null)
-            return;
+        if (extendButton == null) {
+			return;
+		}
         if (selection.length == 1) {
             IFileInfo info = IDEResourceInfoUtils.getFileInfo(selection[0].path);
-            if (info.exists() && info.isDirectory())
-            	extendButton.setEnabled(true);
-            else
-                extendButton.setEnabled(false);
+            if (info.exists() && info.isDirectory()) {
+				extendButton.setEnabled(true);
+			} else {
+				extendButton.setEnabled(false);
+			}
                 
-        } else
-            extendButton.setEnabled(false);
+        } else {
+			extendButton.setEnabled(false);
+		}
     }
 
 }

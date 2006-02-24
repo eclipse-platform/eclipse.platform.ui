@@ -106,9 +106,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	public static MarkerSupportRegistry getInstance() {
 		if (singleton == null) {
 			synchronized (creationLock) {
-				if (singleton == null)// May have been created by blocking
+				if (singleton == null) {
 					// thread
 					singleton = new MarkerSupportRegistry();
+				}
 			}
 		}
 		return singleton;
@@ -135,8 +136,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(IDEWorkbenchPlugin.IDE_WORKBENCH,
 						MARKER_SUPPORT);
-		if (point == null)
+		if (point == null) {
 			return;
+		}
 		IExtension[] extensions = point.getExtensions();
 		// initial population
 		for (int i = 0; i < extensions.length; i++) {
@@ -190,10 +192,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				String groupName = element.getAttribute(MARKER_GROUPING);
 
 				Collection entries;
-				if (groupingEntries.containsKey(groupName))
+				if (groupingEntries.containsKey(groupName)) {
 					entries = (Collection) groupingEntries.get(groupName);
-				else
+				} else {
 					entries = new HashSet();
+				}
 
 				entries.add(entry);
 				groupingEntries.put(groupName, entries);
@@ -285,10 +288,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					MarkerGroupingEntry entry = (MarkerGroupingEntry) markerGroupingEntries
 							.get(defaultEntryId);
 					entry.setAsDefault(next.getMarkerType());
-				} else
+				} else {
 					IDEWorkbenchPlugin.log(NLS.bind(
 							"Reference to invalid markerGroupingEntry {0}",//$NON-NLS-1$
 							defaultEntryId));
+				}
 			}
 			IConfigurationElement[] mappings = next.getElement().getChildren(
 					ATTRIBUTE_MAPPING);
@@ -302,10 +306,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 							.get(entryId);
 					entry.mapAttribute(next.getMarkerType(), next
 							.getAttribute(), mappings[i].getAttribute(VALUE));
-				} else
+				} else {
 					IDEWorkbenchPlugin.log(NLS.bind(
 							"Reference to invaild markerGroupingEntry {0}", //$NON-NLS-1$
 							defaultEntryId));
+				}
 
 			}
 		}
@@ -348,8 +353,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		Iterator registeredIterator = registeredFilters.iterator();
 		while (registeredIterator.hasNext()) {
 			ProblemFilter next = (ProblemFilter) registeredIterator.next();
-			if (next.isFilteredOutByActivity())
+			if (next.isFilteredOutByActivity()) {
 				continue;
+			}
 			filteredFilters.add(next);
 		}
 
@@ -366,16 +372,21 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	private int getScopeValue(IConfigurationElement element) {
 		String scope = element.getAttribute(SCOPE);
-		if (scope == null)
+		if (scope == null) {
 			return -1;
-		if (scope.equals(ON_ANY))
+		}
+		if (scope.equals(ON_ANY)) {
 			return MarkerFilter.ON_ANY;
-		if (scope.equals(ON_SELECTED_ONLY))
+		}
+		if (scope.equals(ON_SELECTED_ONLY)) {
 			return MarkerFilter.ON_SELECTED_ONLY;
-		if (scope.equals(ON_SELECTED_AND_CHILDREN))
+		}
+		if (scope.equals(ON_SELECTED_AND_CHILDREN)) {
 			return MarkerFilter.ON_SELECTED_AND_CHILDREN;
-		if (scope.equals(ON_ANY_IN_SAME_CONTAINER))
+		}
+		if (scope.equals(ON_ANY_IN_SAME_CONTAINER)) {
 			return MarkerFilter.ON_ANY_IN_SAME_CONTAINER;
+		}
 
 		return -1;
 	}
@@ -390,14 +401,18 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	private int getSeverityValue(IConfigurationElement element) {
 		String severity = element.getAttribute(SEVERITY);
-		if (severity == null)
+		if (severity == null) {
 			return -1;
-		if (severity.equals(INFO))
+		}
+		if (severity.equals(INFO)) {
 			return ProblemFilter.SEVERITY_INFO;
-		if (severity.equals(WARNING))
+		}
+		if (severity.equals(WARNING)) {
 			return ProblemFilter.SEVERITY_WARNING;
-		if (severity.equals(ERROR))
+		}
+		if (severity.equals(ERROR)) {
 			return ProblemFilter.SEVERITY_ERROR;
+		}
 
 		return -1;
 	}
@@ -438,8 +453,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		if (severityValue > 0) {
 			filter.setSelectBySeverity(true);
 			filter.setSeverity(severityValue);
-		} else
+		} else {
 			filter.setSelectBySeverity(false);
+		}
 
 		List selectedTypes = new ArrayList();
 		IConfigurationElement[] types = element.getChildren(SELECTED_TYPE);
@@ -452,14 +468,16 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 							IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.WARNING,
 							MarkerMessages.ProblemFilterRegistry_nullType, null);
 					IDEWorkbenchPlugin.getDefault().getLog().log(status);
-				} else
+				} else {
 					selectedTypes.add(type);
+				}
 			}
 		}
 
-		if (selectedTypes.size() > 0) // Only set the types if there are any
+		if (selectedTypes.size() > 0) {
 			// specified
 			filter.setSelectedTypes(selectedTypes);
+		}
 
 		return filter;
 
@@ -476,8 +494,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		Collection removedGroups = new ArrayList();
 
 		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof ProblemFilter)
+			if (objects[i] instanceof ProblemFilter) {
 				registeredFilters.remove(objects[i]);
+			}
 
 			if (objects[i] instanceof FieldMarkerGroup) {
 				markerGroups.remove(((FieldMarkerGroup) objects[i]).getId());
@@ -531,13 +550,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				Collection collection = (Collection) next;
 				if (collection.contains(value)) {
 					collection.remove(value);
-					if (collection.isEmpty())
+					if (collection.isEmpty()) {
 						keysToRemove.add(key);
+					}
 					break;
 				}
 			} else {
-				if (cache.get(key).equals(value))
+				if (cache.get(key).equals(value)) {
 					keysToRemove.add(key);
+				}
 			}
 		}
 		Iterator keysToRemoveIterator = keysToRemove.iterator();
@@ -570,8 +591,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return String or <code>null</code>
 	 */
 	public String getCategory(String markerType) {
-		if (categories.containsKey(markerType))
+		if (categories.containsKey(markerType)) {
 			return (String) categories.get(markerType);
+		}
 		return null;
 	}
 
@@ -582,12 +604,14 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return TableSorter
 	 */
 	public TableSorter getSorterFor(String type) {
-		if (hierarchyOrders.containsKey(type))
+		if (hierarchyOrders.containsKey(type)) {
 			return (TableSorter) hierarchyOrders.get(type);
+		}
 
 		TableSorter sorter = findSorterInChildren(type, getRootType());
-		if (sorter == null)
+		if (sorter == null) {
 			return new TableSorter(new IField[0], new int[0], new int[0]);
+		}
 		return sorter;
 	}
 
@@ -616,15 +640,17 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 		MarkerType[] types = type.getAllSubTypes();
 		TableSorter defaultSorter = null;
-		if (hierarchyOrders.containsKey(type.getId()))
+		if (hierarchyOrders.containsKey(type.getId())) {
 			defaultSorter = (TableSorter) hierarchyOrders.get(type.getId());
+		}
 
 		for (int i = 0; i < types.length; i++) {
 			MarkerType[] subtypes = types[i].getAllSubTypes();
 			for (int j = 0; j < subtypes.length; j++) {
 				TableSorter sorter = findSorterInChildren(typeName, subtypes[j]);
-				if (sorter != null)
+				if (sorter != null) {
 					return sorter;
+				}
 			}
 		}
 		return defaultSorter;

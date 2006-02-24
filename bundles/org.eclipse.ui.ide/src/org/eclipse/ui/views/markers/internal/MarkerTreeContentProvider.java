@@ -41,8 +41,9 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof MarkerNode)
+		if (parentElement instanceof MarkerNode) {
 			return ((MarkerNode) parentElement).getChildren();
+		}
 		return Util.EMPTY_MARKER_ARRAY;
 	}
 
@@ -52,8 +53,9 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if (element instanceof MarkerNode)
+		if (element instanceof MarkerNode) {
 			return ((MarkerNode) element).getParent();
+		}
 		return null;
 	}
 
@@ -63,8 +65,9 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (element instanceof MarkerNode)
+		if (element instanceof MarkerNode) {
 			return ((MarkerNode) element).getChildren().length > 0;
+		}
 		return false;
 	}
 

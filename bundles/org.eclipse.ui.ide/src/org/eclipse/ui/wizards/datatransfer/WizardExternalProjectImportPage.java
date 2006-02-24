@@ -264,8 +264,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
      * @return the project name in the field
      */
     private String getProjectNameFieldValue() {
-        if (projectNameField == null)
-            return ""; //$NON-NLS-1$
+        if (projectNameField == null) {
+			return ""; //$NON-NLS-1$
+		}
 
         return projectNameField.getText().trim();
     }
@@ -289,16 +290,18 @@ public class WizardExternalProjectImportPage extends WizardPage {
         dialog.setMessage(DataTransferMessages.WizardExternalProjectImportPage_directoryLabel);
 
         String dirName = getProjectLocationFieldValue();
-        if (dirName.length() == 0)
-            dirName = previouslyBrowsedDirectory;
+        if (dirName.length() == 0) {
+			dirName = previouslyBrowsedDirectory;
+		}
 
-        if (dirName.length() == 0)
-            dialog.setFilterPath(getWorkspace().getRoot().getLocation()
+        if (dirName.length() == 0) {
+			dialog.setFilterPath(getWorkspace().getRoot().getLocation()
                     .toOSString());
-        else {
+		} else {
             File path = new File(dirName);
-            if (path.exists())
-                dialog.setFilterPath(new Path(dirName).toOSString());
+            if (path.exists()) {
+				dialog.setFilterPath(new Path(dirName).toOSString());
+			}
         }
 
         String selectedDirectory = dialog.open();
@@ -370,8 +373,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
     private void setProjectName(File projectFile) {
 
         //If there is no file or the user has already specified forget it
-        if (projectFile == null)
-            return;
+        if (projectFile == null) {
+			return;
+		}
 
         IPath path = new Path(projectFile.getPath());
 
@@ -398,12 +402,14 @@ public class WizardExternalProjectImportPage extends WizardPage {
      */
     private File projectFile(String locationFieldContents) {
         File directory = new File(locationFieldContents);
-        if (directory.isFile())
-            return null;
+        if (directory.isFile()) {
+			return null;
+		}
 
         File[] files = directory.listFiles(this.projectFilter);
-        if (files != null && files.length == 1)
-            return files[0];
+        if (files != null && files.length == 1) {
+			return files[0];
+		}
 
         return null;
     }
@@ -428,12 +434,14 @@ public class WizardExternalProjectImportPage extends WizardPage {
             this.description = workspace.newProjectDescription(projectName);
             IPath locationPath = getLocationPath();
             //If it is under the root use the default location
-            if (isPrefixOfRoot(locationPath))
-                this.description.setLocation(null);
-            else
-                this.description.setLocation(locationPath);
-        } else
-            this.description.setName(projectName);
+            if (isPrefixOfRoot(locationPath)) {
+				this.description.setLocation(null);
+			} else {
+				this.description.setLocation(locationPath);
+			}
+        } else {
+			this.description.setName(projectName);
+		}
 
         // create the new project operation
         WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -442,8 +450,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
                 monitor.beginTask("", 2000); //$NON-NLS-1$
                 project.create(description, new SubProgressMonitor(monitor,
                         1000));
-                if (monitor.isCanceled())
-                    throw new OperationCanceledException();
+                if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
                 project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 
             }
@@ -486,8 +495,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
      */
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if (visible)
-            this.locationPathField.setFocus();
+        if (visible) {
+			this.locationPathField.setFocus();
+		}
     }
 
 }

@@ -84,8 +84,9 @@ public final class IDEExceptionHandler {
                 }
                 Shell parent = defaultParent;
                 if (dialog != null && dialog.getShell() != null
-                        && !dialog.getShell().isDisposed())
-                    parent = dialog.getShell();
+                        && !dialog.getShell().isDisposed()) {
+					parent = dialog.getShell();
+				}
                 MessageBox box = new MessageBox(parent, SWT.ICON_ERROR
                         | SWT.YES | SWT.NO | SWT.SYSTEM_MODAL);
                 box.setText(MSG_FATAL_ERROR_RecursiveTitle);
@@ -116,8 +117,9 @@ public final class IDEExceptionHandler {
         try {
             closing = true;
             if (dialog != null && dialog.getShell() != null
-                    && !dialog.getShell().isDisposed())
-                dialog.close();
+                    && !dialog.getShell().isDisposed()) {
+				dialog.close();
+			}
             workbenchConfigurer.emergencyClose();
         } catch (RuntimeException re) {
             // Workbench may be in such bad shape (no OS handles left, out of memory, etc)
@@ -157,15 +159,17 @@ public final class IDEExceptionHandler {
                 } else {
                     msg = NLS.bind(IDEWorkbenchMessages.InternalErrorOneArg, internalError.getMessage());
                 }
-                if (Policy.DEBUG_OPEN_ERROR_DIALOG)
-                    return openQuestion(null, IDEWorkbenchMessages.Internal_error, msg, internalError, 1);
+                if (Policy.DEBUG_OPEN_ERROR_DIALOG) {
+					return openQuestion(null, IDEWorkbenchMessages.Internal_error, msg, internalError, 1);
+				}
                 return false;
             }
             // Always open the dialog in case of major error but do not show the
             // detail button if not in debug mode.
             Throwable detail = internalError;
-            if (!Policy.DEBUG_OPEN_ERROR_DIALOG)
-                detail = null;
+            if (!Policy.DEBUG_OPEN_ERROR_DIALOG) {
+				detail = null;
+			}
             return InternalErrorDialog
                     .openQuestion(null, IDEWorkbenchMessages.Internal_error,
                             MessageFormat.format(MSG_FATAL_ERROR,
@@ -185,19 +189,21 @@ public final class IDEExceptionHandler {
     private boolean openQuestion(Shell parent, String title, String message,
             Throwable detail, int defaultIndex) {
         String[] labels;
-        if (detail == null)
-            labels = new String[] { IDialogConstants.YES_LABEL,
+        if (detail == null) {
+			labels = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL };
-        else
-            labels = new String[] { IDialogConstants.YES_LABEL,
+		} else {
+			labels = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL,
                     IDialogConstants.SHOW_DETAILS_LABEL };
+		}
 
         dialog = new InternalErrorDialog(parent, title, null, message, detail,
                 MessageDialog.QUESTION, labels, defaultIndex);
 
-        if (detail != null)
-            dialog.setDetailButton(2);
+        if (detail != null) {
+			dialog.setDetailButton(2);
+		}
         boolean result = dialog.open() == Window.OK;
         dialog = null;
         return result;

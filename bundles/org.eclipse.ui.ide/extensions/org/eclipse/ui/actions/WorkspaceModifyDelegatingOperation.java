@@ -67,12 +67,15 @@ public class WorkspaceModifyDelegatingOperation extends
         try {
             content.run(monitor);
         } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof CoreException)
-                throw (CoreException) e.getTargetException();
-            if (e.getTargetException() instanceof RuntimeException)
-                throw (RuntimeException) e.getTargetException();
-            if (e.getTargetException() instanceof Error)
-                throw (Error) e.getTargetException();
+            if (e.getTargetException() instanceof CoreException) {
+				throw (CoreException) e.getTargetException();
+			}
+            if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+            if (e.getTargetException() instanceof Error) {
+				throw (Error) e.getTargetException();
+			}
             e.getTargetException().printStackTrace();
         }
     }

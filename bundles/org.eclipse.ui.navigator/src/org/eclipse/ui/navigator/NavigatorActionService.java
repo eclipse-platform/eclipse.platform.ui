@@ -166,10 +166,11 @@ public final class NavigatorActionService extends ActionGroup implements
 			 * contributions.
 			 */
 			if (force
-					|| viewerDescriptor.allowsPlatformContributionsToContextMenu())
+					|| viewerDescriptor.allowsPlatformContributionsToContextMenu()) {
 				((ICommonViewerWorkbenchSite)commonViewerSite).registerContextMenu(contentService
 						.getViewerDescriptor().getPopupMenuId(), menu,
 						aSelectionProvider);
+			}
 		}
 	}
 
@@ -191,11 +192,13 @@ public final class NavigatorActionService extends ActionGroup implements
 	public void fillContextMenu(IMenuManager aMenu) {
 		Assert.isTrue(!disposed);
 
-		if (menuGroups == null)
+		if (menuGroups == null) {
 			createMenuGroups();
+		}
 
-		for (int i = 0; i < menuGroups.length; i++)
+		for (int i = 0; i < menuGroups.length; i++) {
 			aMenu.add(menuGroups[i]);
+		}
 
 		addCommonActionProviderMenu(aMenu);
 
@@ -205,15 +208,16 @@ public final class NavigatorActionService extends ActionGroup implements
 		MenuInsertionPoint[] customPoints = viewerDescriptor
 				.getCustomInsertionPoints();
 
-		if (customPoints == null)
+		if (customPoints == null) {
 			menuGroups = DEFAULT_GROUPS;
-		else {
+		} else {
 			menuGroups = new IContributionItem[customPoints.length];
 			for (int i = 0; i < customPoints.length; i++) {
-				if (customPoints[i].isSeparator())
+				if (customPoints[i].isSeparator()) {
 					menuGroups[i] = new Separator(customPoints[i].getName());
-				else
+				} else {
 					menuGroups[i] = new GroupMarker(customPoints[i].getName());
+				}
 			}
 		}
 	}
@@ -352,8 +356,9 @@ public final class NavigatorActionService extends ActionGroup implements
 			CommonActionProviderDescriptor aProviderDescriptor) {
 		CommonActionProvider provider = (CommonActionProvider) actionProviderInstances
 				.get(aProviderDescriptor);
-		if (provider != null)
+		if (provider != null) {
 			return provider;
+		}
 		synchronized (actionProviderInstances) {
 			provider = (CommonActionProvider) actionProviderInstances
 					.get(aProviderDescriptor);
@@ -362,9 +367,10 @@ public final class NavigatorActionService extends ActionGroup implements
 				if (provider != null) {
 					initialize(aProviderDescriptor.getId(), provider);
 					actionProviderInstances.put(aProviderDescriptor, provider);
-				} else
+				} else {
 					actionProviderInstances.put(aProviderDescriptor,
 							(provider = SkeletonActionProvider.INSTANCE));
+				}
 			}
 		}
 		return provider;
@@ -379,8 +385,9 @@ public final class NavigatorActionService extends ActionGroup implements
 			anActionProvider.restoreState(memento);
 			anActionProvider.setContext(new ActionContext(
 					StructuredSelection.EMPTY));
-			if(commonViewerSite instanceof ICommonViewerWorkbenchSite)
+			if(commonViewerSite instanceof ICommonViewerWorkbenchSite) {
 				anActionProvider.fillActionBars(((ICommonViewerWorkbenchSite)commonViewerSite).getActionBars());
+			}
 		}
 
 	}

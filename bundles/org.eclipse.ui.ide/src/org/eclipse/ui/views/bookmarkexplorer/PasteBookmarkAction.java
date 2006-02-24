@@ -54,8 +54,9 @@ class PasteBookmarkAction extends BookmarkAction {
         final IMarker[] markerData = (IMarker[]) view.getClipboard()
                 .getContents(transfer);
 
-        if (markerData == null)
-            return;
+        if (markerData == null) {
+			return;
+		}
 
         final ArrayList newMarkers = new ArrayList();
 
@@ -64,8 +65,9 @@ class PasteBookmarkAction extends BookmarkAction {
                 public void run(IProgressMonitor monitor) throws CoreException {
                     for (int i = 0; i < markerData.length; i++) {
                         // Only paste tasks (not problems)
-                        if (!markerData[i].getType().equals(IMarker.BOOKMARK))
-                            continue;
+                        if (!markerData[i].getType().equals(IMarker.BOOKMARK)) {
+							continue;
+						}
 
                         // Paste to the same resource as the original
                         IResource resource = markerData[i].getResource();

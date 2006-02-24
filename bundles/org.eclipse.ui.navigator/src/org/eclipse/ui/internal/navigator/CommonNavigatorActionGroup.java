@@ -108,12 +108,14 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars theActionBars) {
 		IMenuManager menu = theActionBars.getMenuManager();
 
-		if (selectFiltersAction != null)
+		if (selectFiltersAction != null) {
 			menu.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS,
 					selectFiltersAction);
+		}
 
-		if (collapseAllAction != null)
+		if (collapseAllAction != null) {
 			theActionBars.getToolBarManager().add(collapseAllAction);
+		}
 
 		if (toggleLinkingAction != null) {
 			menu
@@ -131,8 +133,9 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	 */
 	public void dispose() { 
 		super.dispose();
-		if(toggleLinkingAction != null)
+		if(toggleLinkingAction != null) {
 			toggleLinkingAction.dispose();
+		}
 	}
 
 }

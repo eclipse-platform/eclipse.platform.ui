@@ -36,8 +36,9 @@ public class CustomAndExpression extends Expression {
 
 		IConfigurationElement[] children = element.getChildren();
 
-		if (children.length > 0)
+		if (children.length > 0) {
 			fExpressions = new ArrayList();
+		}
 		for (int i = 0; i < children.length; i++) {
 			try {
 				fExpressions.add(ElementHandler.getDefault().create(
@@ -50,16 +51,18 @@ public class CustomAndExpression extends Expression {
 
 	public EvaluationResult evaluate(IEvaluationContext scope)
 			throws CoreException {
-		if (fExpressions == null)
+		if (fExpressions == null) {
 			return EvaluationResult.TRUE;
+		}
 		EvaluationResult result = EvaluationResult.TRUE;
 		for (Iterator iter = fExpressions.iterator(); iter.hasNext();) {
 			Expression expression = (Expression) iter.next();
 			result = result.and(expression.evaluate(scope));
 			// keep iterating even if we have a not loaded found. It can be
 			// that we find a false which will result in a better result.
-			if (result == EvaluationResult.FALSE)
+			if (result == EvaluationResult.FALSE) {
 				return result;
+			}
 		}
 		return result;
 	}

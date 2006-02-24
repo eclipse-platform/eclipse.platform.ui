@@ -121,10 +121,11 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
                     }
                 }
             });
-            if (exc[0] != null)
-                throw exc[0];
-            else
-                return ret[0];
+            if (exc[0] != null) {
+				throw exc[0];
+			} else {
+				return ret[0];
+			}
         }
     }
 
@@ -271,12 +272,14 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
         // add an entry for each bundle group
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-        if (providers != null)
-            for (int i = 0; i < providers.length; ++i) {
+        if (providers != null) {
+			for (int i = 0; i < providers.length; ++i) {
                 IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
-                for (int j = 0; j < bundleGroups.length; ++j)
-                    infos.add(new AboutInfo(bundleGroups[j]));
+                for (int j = 0; j < bundleGroups.length; ++j) {
+					infos.add(new AboutInfo(bundleGroups[j]));
+				}
             }
+		}
 
         return (AboutInfo[]) infos.toArray(new AboutInfo[infos.size()]);
     }

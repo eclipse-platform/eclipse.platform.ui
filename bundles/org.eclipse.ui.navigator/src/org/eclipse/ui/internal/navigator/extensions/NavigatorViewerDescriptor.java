@@ -184,8 +184,9 @@ public final class NavigatorViewerDescriptor implements
 	 */
 	public boolean getBooleanConfigProperty(String aPropertyName) {
 		String propValue = properties.getProperty(aPropertyName);
-		if (propValue == null)
+		if (propValue == null) {
 			return false;
+		}
 		return Boolean.valueOf(propValue).booleanValue();
 	}
 
@@ -212,7 +213,7 @@ public final class NavigatorViewerDescriptor implements
 	/* package */void setPopupMenuId(String newPopupMenuId) {
 
 		if (newPopupMenuId != null) {
-			if (popupMenuId != null)
+			if (popupMenuId != null) {
 				NavigatorPlugin
 						.log(
 								IStatus.WARNING,
@@ -223,6 +224,7 @@ public final class NavigatorViewerDescriptor implements
 												new Object[] { getViewerId(),
 														popupMenuId,
 														newPopupMenuId }), null);
+			}
 			popupMenuId = newPopupMenuId;
 		}
 	}
@@ -242,8 +244,9 @@ public final class NavigatorViewerDescriptor implements
 	 *         viewer.
 	 */
 	public Set getDragAssistants() {
-		if (dragAssistants == null)
+		if (dragAssistants == null) {
 			dragAssistants = new HashSet();
+		}
 		return dragAssistants;
 	}
 
@@ -252,10 +255,11 @@ public final class NavigatorViewerDescriptor implements
 				.getChildren(TAG_INCLUDES);
 
 		if (includesElement.length == 1) {
-			if (isContent)
+			if (isContent) {
 				contentBinding.consumeIncludes(includesElement[0], true);
-			else
+			} else {
 				actionBinding.consumeIncludes(includesElement[0], false);
+			}
 		} else if (includesElement.length >= 1) {
 			NavigatorPlugin.logError(0, NLS.bind(
 					CommonNavigatorMessages.Too_many_elements_Warning,
@@ -272,10 +276,11 @@ public final class NavigatorViewerDescriptor implements
 
 		if (excludesElement.length == 1) {
 
-			if (isContent)
+			if (isContent) {
 				contentBinding.consumeExcludes(excludesElement[0]);
-			else
+			} else {
 				actionBinding.consumeExcludes(excludesElement[0]);
+			}
 		} else if (excludesElement.length >= 1) {
 			NavigatorPlugin.logError(0, NLS.bind(
 					CommonNavigatorMessages.Too_many_elements_Warning,

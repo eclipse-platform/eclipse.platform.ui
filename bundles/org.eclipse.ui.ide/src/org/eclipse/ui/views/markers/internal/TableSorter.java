@@ -130,13 +130,15 @@ public class TableSorter extends ViewerSorter implements Comparator {
 	}
 
 	public void setTopPriority(int priority) {
-		if (priority < 0 || priority >= priorities.length)
+		if (priority < 0 || priority >= priorities.length) {
 			return;
+		}
 
 		int index = -1;
 		for (int i = 0; i < priorities.length; i++) {
-			if (priorities[i] == priority)
+			if (priorities[i] == priority) {
 				index = i;
+			}
 		}
 
 		if (index == -1) {
@@ -153,8 +155,9 @@ public class TableSorter extends ViewerSorter implements Comparator {
 	}
 
 	public void setTopPriorityDirection(int direction) {
-		if (direction == ASCENDING || direction == DESCENDING)
+		if (direction == ASCENDING || direction == DESCENDING) {
 			directions[priorities[0]] = direction;
+		}
 	}
 
 	public int getTopPriorityDirection() {
@@ -221,8 +224,9 @@ public class TableSorter extends ViewerSorter implements Comparator {
 		int column = priorities[depth];
 		IField property = fields[column];
 		int result = property.compare(obj1, obj2);
-		if (result == 0 && continueSearching)
+		if (result == 0 && continueSearching) {
 			return compare(obj1, obj2, depth + 1, continueSearching);
+		}
 		return result * directions[column];
 	}
 
@@ -239,10 +243,12 @@ public class TableSorter extends ViewerSorter implements Comparator {
 		Arrays.fill(included, false);
 		for (int i = 0; i < length; i++) {
 			int priority = priorities[i];
-			if (priority < 0 || priority >= length)
+			if (priority < 0 || priority >= length) {
 				return false;
-			if (included[priority])
+			}
+			if (included[priority]) {
 				return false;
+			}
 			included[priority] = true;
 		}
 		return true;
@@ -250,8 +256,9 @@ public class TableSorter extends ViewerSorter implements Comparator {
 
 	private boolean verifyDirections(int[] directions) {
 		for (int i = 0; i < directions.length; i++) {
-			if (directions[i] != ASCENDING && directions[i] != DESCENDING)
+			if (directions[i] != ASCENDING && directions[i] != DESCENDING) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -308,8 +315,9 @@ public class TableSorter extends ViewerSorter implements Comparator {
 				int fieldIndex = Integer.parseInt(priority);
 				
 				//Make sure it is not old data from a different sized array
-				if(fieldIndex < fields.length)
+				if(fieldIndex < fields.length) {
 					priorities[i] = fieldIndex;
+				}
 				
 				String direction = settings.get(TAG_DIRECTION + i);
 				if (direction == null) {

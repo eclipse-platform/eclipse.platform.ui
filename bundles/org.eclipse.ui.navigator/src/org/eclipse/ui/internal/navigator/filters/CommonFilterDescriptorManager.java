@@ -59,11 +59,13 @@ public class CommonFilterDescriptorManager {
 		CommonFilterDescriptor descriptor;
 		for (Iterator filtersItr = filters.iterator(); filtersItr.hasNext();) {
 			descriptor = (CommonFilterDescriptor) filtersItr.next();
-			if (contentService.isVisible(descriptor.getId()))
+			if (contentService.isVisible(descriptor.getId())) {
 				visibleFilters.add(descriptor);
+			}
 		}
-		if (visibleFilters.size() == 0)
+		if (visibleFilters.size() == 0) {
 			return NO_FILTER_DESCRIPTORS;
+		}
 		return (CommonFilterDescriptor[]) visibleFilters
 				.toArray(new CommonFilterDescriptor[visibleFilters.size()]);
 	}

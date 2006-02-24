@@ -244,8 +244,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
                         .append(relativeSourcePath);
             }
             newDestination = workspaceRoot.findMember(newDestinationPath);
-            if (newDestination == null)
-                continue;
+            if (newDestination == null) {
+				continue;
+			}
 
             IFolder folder = getFolder(newDestination);
             if (folder != null) {
@@ -256,18 +257,20 @@ public class ImportOperation extends WorkspaceModifyOperation {
                         continue;
                     }
                 }
-                if (provider.isFolder(nextSource))//Recurse into children
-                    collectExistingReadonlyFiles(newDestinationPath, provider
+                if (provider.isFolder(nextSource)) {
+					collectExistingReadonlyFiles(newDestinationPath, provider
                             .getChildren(nextSource), noOverwrite,
                             overwriteReadonly, POLICY_FORCE_OVERWRITE);
+				}
             } else {
                 IFile file = getFile(newDestination);
 
                 if (file != null) {
-                    if (!queryOverwriteFile(file, policy))
-                        noOverwrite.add(file.getFullPath());
-                    else if (file.isReadOnly())
-                        overwriteReadonly.add(file);
+                    if (!queryOverwriteFile(file, policy)) {
+						noOverwrite.add(file.getFullPath());
+					} else if (file.isReadOnly()) {
+						overwriteReadonly.add(file);
+					}
                 }
             }
         }
@@ -288,17 +291,20 @@ public class ImportOperation extends WorkspaceModifyOperation {
         int segmentCount = path.segmentCount();
 
         //No containers to create
-        if (segmentCount == 0)
-            return currentFolder;
+        if (segmentCount == 0) {
+			return currentFolder;
+		}
 
         //Needs to be handles differently at the root
-        if (currentFolder.getType() == IResource.ROOT)
-            return createFromRoot(path);
+        if (currentFolder.getType() == IResource.ROOT) {
+			return createFromRoot(path);
+		}
 
         for (int i = 0; i < segmentCount; i++) {
             currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
-            if (!currentFolder.exists())
-                ((IFolder) currentFolder).create(false, true, null);
+            if (!currentFolder.exists()) {
+				((IFolder) currentFolder).create(false, true, null);
+			}
         }
 
         return currentFolder;
@@ -322,8 +328,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
         for (int i = 1; i < segmentCount; i++) {
             currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
-            if (!currentFolder.exists())
-                ((IFolder) currentFolder).create(false, true, null);
+            if (!currentFolder.exists()) {
+				((IFolder) currentFolder).create(false, true, null);
+			}
         }
 
         return currentFolder;
@@ -399,10 +406,12 @@ public class ImportOperation extends WorkspaceModifyOperation {
             throws CoreException {
         IPath pathname = new Path(provider.getFullPath(fileSystemObject));
 
-        if (createContainerStructure)
-            return createContainersFor(pathname.removeLastSegments(1));
-        if (source == fileSystemObject)
-                return null;
+        if (createContainerStructure) {
+			return createContainersFor(pathname.removeLastSegments(1));
+		}
+        if (source == fileSystemObject) {
+			return null;
+		}
         IPath sourcePath = new Path(provider.getFullPath(source));
         IPath destContainerPath = pathname.removeLastSegments(1);
         IPath relativePath = destContainerPath.removeFirstSegments(
@@ -423,8 +432,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
             return (IFile) resource;
         }
         Object adapted = ((IAdaptable) resource).getAdapter(IFile.class);
-        if(adapted == null)
-        	return null;
+        if(adapted == null) {
+			return null;
+		}
         return (IFile) adapted;
       
     }
@@ -441,8 +451,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
             return (IFolder) resource;
         }
         Object adapted = ((IAdaptable) resource).getAdapter(IFolder.class);
-        if(adapted == null)
-        	return null;
+        if(adapted == null) {
+			return null;
+		}
         return (IFolder) adapted;
     }
 
@@ -509,8 +520,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
                 .getLabel(fileObject)));
         monitor.worked(1);
 
-        if (rejectedFiles.contains(targetResource.getFullPath()))
-            return;
+        if (rejectedFiles.contains(targetResource.getFullPath())) {
+			return;
+		}
 
         // ensure that the source and target are not the same
         IPath targetPath = targetResource.getLocation();
@@ -535,11 +547,12 @@ public class ImportOperation extends WorkspaceModifyOperation {
         }
 
         try {
-            if (targetResource.exists())
-                targetResource.setContents(contentStream,
+            if (targetResource.exists()) {
+				targetResource.setContents(contentStream,
                         IResource.KEEP_HISTORY, null);
-            else
-                targetResource.create(contentStream, false, null);
+			} else {
+				targetResource.create(contentStream, false, null);
+			}
             setResourceAttributes(targetResource,fileObject);
             
             if (provider instanceof TarLeveledStructureProvider) {
@@ -573,13 +586,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     private void setResourceAttributes(IFile targetResource, Object fileObject) {
     	
-    	if(fileObject instanceof File)
+    	if(fileObject instanceof File) {
 			try {
 				targetResource.setResourceAttributes(ResourceAttributes.fromFile((File) fileObject));
 			} catch (CoreException e) {
 				//Inform the log that the attributes reading failed
 				IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
 			}
+		}
 		
 	}
 
@@ -633,8 +647,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
             return policy;
         }
 
-        if (containerResource == null)
-            return policy;
+        if (containerResource == null) {
+			return policy;
+		}
 
         monitor.subTask(provider.getFullPath(folderObject));
         IWorkspace workspace = destinationContainer.getWorkspace();
@@ -644,12 +659,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
         // Do not attempt the import if the resource path is unchanged. This may happen
         // when importing from a zip file.
-        if (resourcePath.equals(containerPath))
-            return policy;
+        if (resourcePath.equals(containerPath)) {
+			return policy;
+		}
 
         if (workspace.getRoot().exists(resourcePath)) {
-            if (rejectedFiles.contains(resourcePath))
-                return POLICY_SKIP_CHILDREN;
+            if (rejectedFiles.contains(resourcePath)) {
+				return POLICY_SKIP_CHILDREN;
+			}
 
             return POLICY_FORCE_OVERWRITE;
         }
@@ -674,8 +691,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @exception OperationCanceledException if canceled
      */
     void importRecursivelyFrom(Object fileSystemObject, int policy) {
-        if (monitor.isCanceled())
-            throw new OperationCanceledException();
+        if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
 
         if (!provider.isFolder(fileSystemObject)) {
             importFile(fileSystemObject, policy);
@@ -686,8 +704,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
         if (childPolicy != POLICY_SKIP_CHILDREN) {
             Iterator children = provider.getChildren(fileSystemObject)
                     .iterator();
-            while (children.hasNext())
-                importRecursivelyFrom(children.next(), childPolicy);
+            while (children.hasNext()) {
+				importRecursivelyFrom(children.next(), childPolicy);
+			}
         }
     }
 
@@ -704,8 +723,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
         String overwriteAnswer = overwriteCallback.queryOverwrite(resourcePath
                 .makeRelative().toString());
 
-        if (overwriteAnswer.equals(IOverwriteQuery.CANCEL))
-            throw new OperationCanceledException(DataTransferMessages.DataTransfer_emptyString);
+        if (overwriteAnswer.equals(IOverwriteQuery.CANCEL)) {
+			throw new OperationCanceledException(DataTransferMessages.DataTransfer_emptyString);
+		}
 
         if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
             return false;
@@ -716,8 +736,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
             return false;
         }
 
-        if (overwriteAnswer.equals(IOverwriteQuery.ALL))
-            this.overwriteState = OVERWRITE_ALL;
+        if (overwriteAnswer.equals(IOverwriteQuery.ALL)) {
+			this.overwriteState = OVERWRITE_ALL;
+		}
 
         return true;
     }
@@ -734,10 +755,12 @@ public class ImportOperation extends WorkspaceModifyOperation {
         //If force overwrite is on don't bother
         if (policy != POLICY_FORCE_OVERWRITE) {
             if (this.overwriteState == OVERWRITE_NOT_SET
-                    && !queryOverwrite(targetFile.getFullPath()))
-                return false;
-            if (this.overwriteState == OVERWRITE_NONE)
-                return false;
+                    && !queryOverwrite(targetFile.getFullPath())) {
+				return false;
+			}
+            if (this.overwriteState == OVERWRITE_NONE) {
+				return false;
+			}
         }
         return true;
     }
@@ -784,8 +807,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
      *   <code>false</code> otherwise
      */
     public void setOverwriteResources(boolean value) {
-        if (value)
-            this.overwriteState = OVERWRITE_ALL;
+        if (value) {
+			this.overwriteState = OVERWRITE_ALL;
+		}
     }
 
     /**
@@ -804,8 +828,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
             IStatus status = workspace.validateEdit(files, context);
 
             //If there was a mix return the bad ones
-            if (status.isMultiStatus())
-                return getRejectedFiles(status, files);
+            if (status.isMultiStatus()) {
+				return getRejectedFiles(status, files);
+			}
             
            if(!status.isOK()){
            		//If just a single status reject them all

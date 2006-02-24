@@ -78,12 +78,13 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 
 		ISelection selection = window.getSelectionService().getSelection();
 
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			wizard
 					.init(window.getWorkbench(),
 							(IStructuredSelection) selection);
-		else
+		} else {
 			wizard.init(window.getWorkbench(), StructuredSelection.EMPTY);
+		}
 
 		Shell parent = window.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);

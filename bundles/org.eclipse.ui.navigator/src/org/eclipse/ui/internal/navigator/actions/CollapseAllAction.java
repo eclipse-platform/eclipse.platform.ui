@@ -36,7 +36,8 @@ public class CollapseAllAction extends Action implements IAction {
 	}
 
 	public void run() {
-		if (commonViewer != null)
+		if (commonViewer != null) {
 			commonViewer.collapseAll();
+		}
 	}
 }

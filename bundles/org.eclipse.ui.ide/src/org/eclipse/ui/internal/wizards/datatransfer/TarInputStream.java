@@ -84,7 +84,9 @@ public class TarInputStream extends FilterInputStream
 	 */
 	boolean skipToEntry(TarEntry entry) throws TarException, IOException {
 		int bytestoskip = entry.filepos - bytesread;
-		if(bytestoskip < 0) return false;
+		if(bytestoskip < 0) {
+			return false;
+		}
 		while(bytestoskip > 0) {
 			long ret = in.skip(bytestoskip);
 			if(ret < 0) {
@@ -114,12 +116,20 @@ public class TarInputStream extends FilterInputStream
 		pos = 148;
 		StringBuffer checksumString = new StringBuffer();
 		for(i = 0; i < 8; i++) {
-			if(header[pos + i] == ' ') continue;
-			if(header[pos + i] == 0 || !Character.isDigit((char) header[pos + i])) break;
+			if(header[pos + i] == ' ') {
+				continue;
+			}
+			if(header[pos + i] == 0 || !Character.isDigit((char) header[pos + i])) {
+				break;
+			}
 			checksumString.append((char) header[pos + i]);
 		}
-		if(checksumString.length() == 0) return false;
-		if(checksumString.charAt(0) != '0') checksumString.insert(0, '0');
+		if(checksumString.length() == 0) {
+			return false;
+		}
+		if(checksumString.charAt(0) != '0') {
+			checksumString.insert(0, '0');
+		}
 		try {
 			fileChecksum = Long.decode(checksumString.toString()).longValue();
 		} catch(NumberFormatException exception) {
@@ -190,14 +200,16 @@ public class TarInputStream extends FilterInputStream
 			throw new TarException("not in tar format"); //$NON-NLS-1$
 		}
 
-		while (pos < 100 && header[pos] != 0)
+		while (pos < 100 && header[pos] != 0) {
 			pos++;
+		}
 		String name = new String(header, 0, pos, "UTF8"); //$NON-NLS-1$
 		// Prepend the prefix here.
 		pos = 345;
 		if(header[pos] != 0) {
-			while (pos < 500 && header[pos] != 0)
+			while (pos < 500 && header[pos] != 0) {
 				pos++;
+			}
 			String prefix = new String(header, 345, pos - 345, "UTF8"); //$NON-NLS-1$
 			name = prefix + "/" + name; //$NON-NLS-1$
 		}
@@ -216,11 +228,17 @@ public class TarInputStream extends FilterInputStream
 		pos = 100;
 		StringBuffer mode = new StringBuffer();
 		for(i = 0; i < 8; i++) {
-			if(header[pos + i] == 0) break;
-			if(header[pos + i] == ' ') continue;
+			if(header[pos + i] == 0) {
+				break;
+			}
+			if(header[pos + i] == ' ') {
+				continue;
+			}
 			mode.append((char) header[pos + i]);
 		}
-		if(mode.length() > 0 && mode.charAt(0) != '0') mode.insert(0, '0');
+		if(mode.length() > 0 && mode.charAt(0) != '0') {
+			mode.insert(0, '0');
+		}
 		try {
 			long fileMode = Long.decode(mode.toString()).longValue();
 			entry.setMode(fileMode);
@@ -231,11 +249,17 @@ public class TarInputStream extends FilterInputStream
 		pos = 100 + 24;
 		StringBuffer size = new StringBuffer();
 		for(i = 0; i < 12; i++) {
-			if(header[pos + i] == 0) break;
-			if(header[pos + i] == ' ') continue;
+			if(header[pos + i] == 0) {
+				break;
+			}
+			if(header[pos + i] == ' ') {
+				continue;
+			}
 			size.append((char) header[pos + i]);
 		}
-		if(size.charAt(0) != '0') size.insert(0, '0');
+		if(size.charAt(0) != '0') {
+			size.insert(0, '0');
+		}
 		int fileSize;
 		try {
 			fileSize = Integer.decode(size.toString()).intValue();
@@ -280,8 +304,9 @@ public class TarInputStream extends FilterInputStream
 			}
 
 			int pos = 0;
-			while (pos < longNameData.length && longNameData[pos] != 0)
+			while (pos < longNameData.length && longNameData[pos] != 0) {
 				pos++;
+			}
 			longLinkName = new String(longNameData, 0, pos, "UTF8"); //$NON-NLS-1$
 			return getNextEntryInternal();
 		}
@@ -292,8 +317,12 @@ public class TarInputStream extends FilterInputStream
 	 * @see java.io.FilterInputStream#read(byte[], int, int)
 	 */
 	public int read(byte[] b, int off, int len) throws IOException {
-		if(nextEOF == 0) return -1;
-		if(len > nextEOF) len = nextEOF;
+		if(nextEOF == 0) {
+			return -1;
+		}
+		if(len > nextEOF) {
+			len = nextEOF;
+		}
 		int size = super.read(b, off, len);
 		nextEntry -= size;
 		nextEOF -= size;
@@ -307,8 +336,9 @@ public class TarInputStream extends FilterInputStream
 	public int read() throws IOException {
 		byte[] data = new byte[1];
 		int size = read(data, 0, 1);
-		if (size < 0)
+		if (size < 0) {
 			return size;
+		}
 		return data[0];
 	}
 }

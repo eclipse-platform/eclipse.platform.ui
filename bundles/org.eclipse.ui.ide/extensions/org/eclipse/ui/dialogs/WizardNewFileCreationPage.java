@@ -198,8 +198,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
         resourceGroup.setAllowExistingResources(false);
         initialPopulateContainerNameField();
         createAdvancedControls(topLevel);
-        if (initialFileName != null)
-            resourceGroup.setResource(initialFileName);
+        if (initialFileName != null) {
+			resourceGroup.setResource(initialFileName);
+		}
         validatePage();
         // Show description on opening
         setErrorMessage(null);
@@ -219,15 +220,16 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      */
     protected void createFile(IFile fileHandle, InputStream contents,
             IProgressMonitor monitor) throws CoreException {
-        if (contents == null)
-            contents = new ByteArrayInputStream(new byte[0]);
+        if (contents == null) {
+			contents = new ByteArrayInputStream(new byte[0]);
+		}
 
         try {
             // Create a new file resource in the workspace
-            if (linkTargetPath != null)
-                fileHandle.createLink(linkTargetPath,
+            if (linkTargetPath != null) {
+				fileHandle.createLink(linkTargetPath,
                         IResource.ALLOW_MISSING_LOCAL, monitor);
-            else {
+			} else {
                 IPath path = fileHandle.getFullPath();
                 IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
                 int numSegments= path.segmentCount();
@@ -245,14 +247,16 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
             }
         } catch (CoreException e) {
             // If the file already existed locally, just refresh to get contents
-            if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
-                fileHandle.refreshLocal(IResource.DEPTH_ZERO, null);
-            else
-                throw e;
+            if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED) {
+				fileHandle.refreshLocal(IResource.DEPTH_ZERO, null);
+			} else {
+				throw e;
+			}
         }
 
-        if (monitor.isCanceled())
-            throw new OperationCanceledException();
+        if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
     }
 
     /**
@@ -304,8 +308,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      *    was not created
      */
     public IFile createNewFile() {
-        if (newFile != null)
-            return newFile;
+        if (newFile != null) {
+			return newFile;
+		}
 
         // create the new file and cache it if successful
 
@@ -373,8 +378,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
     protected ISchedulingRule createRule(IResource resource) {
 		IResource parent = resource.getParent();
     	while (parent != null) {
-    		if (parent.exists())
-    			return resource.getWorkspace().getRuleFactory().createRule(resource);
+    		if (parent.exists()) {
+				return resource.getWorkspace().getRuleFactory().createRule(resource);
+			}
     		resource = parent;
     		parent = parent.getParent();
     	}
@@ -400,8 +406,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      *   if no file name is known
      */
     public String getFileName() {
-        if (resourceGroup == null)
-            return initialFileName;
+        if (resourceGroup == null) {
+			return initialFileName;
+		}
 
         return resourceGroup.getResource();
     }
@@ -474,9 +481,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      * such a value.
      */
     protected void initialPopulateContainerNameField() {
-        if (initialContainerFullPath != null)
-            resourceGroup.setContainerFullPath(initialContainerFullPath);
-        else {
+        if (initialContainerFullPath != null) {
+			resourceGroup.setContainerFullPath(initialContainerFullPath);
+		} else {
             Iterator it = currentSelection.iterator();
             if (it.hasNext()) {
                 Object object = it.next();
@@ -488,11 +495,13 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                             .getAdapter(IResource.class);
                 }
                 if (selectedResource != null) {
-                    if (selectedResource.getType() == IResource.FILE)
-                        selectedResource = selectedResource.getParent();
-                    if (selectedResource.isAccessible())
-                        resourceGroup.setContainerFullPath(selectedResource
+                    if (selectedResource.getType() == IResource.FILE) {
+						selectedResource = selectedResource.getParent();
+					}
+                    if (selectedResource.isAccessible()) {
+						resourceGroup.setContainerFullPath(selectedResource
                                 .getFullPath());
+					}
                 }
             }
         }
@@ -505,10 +514,11 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      * @param path the full path to the container
      */
     public void setContainerFullPath(IPath path) {
-        if (resourceGroup == null)
-            initialContainerFullPath = path;
-        else
-            resourceGroup.setContainerFullPath(path);
+        if (resourceGroup == null) {
+			initialContainerFullPath = path;
+		} else {
+			resourceGroup.setContainerFullPath(path);
+		}
     }
 
     /**
@@ -518,10 +528,11 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      * @param value new file name
      */
     public void setFileName(String value) {
-        if (resourceGroup == null)
-            initialFileName = value;
-        else
-            resourceGroup.setResource(value);
+        if (resourceGroup == null) {
+			initialFileName = value;
+		} else {
+			resourceGroup.setResource(value);
+		}
     }
 
     /**
@@ -538,10 +549,11 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                 .validateLinkLocation(newFileHandle);
 
         if (status.getSeverity() == IStatus.ERROR) {
-            if (firstLinkCheck)
-                setMessage(status.getMessage());
-            else
-                setErrorMessage(status.getMessage());
+            if (firstLinkCheck) {
+				setMessage(status.getMessage());
+			} else {
+				setErrorMessage(status.getMessage());
+			}
         } else if (status.getSeverity() == IStatus.WARNING) {
             setMessage(status.getMessage(), WARNING);
             setErrorMessage(null);
@@ -565,16 +577,18 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                     || resourceGroup.getProblemType() == ResourceAndContainerGroup.PROBLEM_CONTAINER_EMPTY) {
                 setMessage(resourceGroup.getProblemMessage());
                 setErrorMessage(null);
-            } else
-                setErrorMessage(resourceGroup.getProblemMessage());
+            } else {
+				setErrorMessage(resourceGroup.getProblemMessage());
+			}
             valid = false;
         }
 
         IStatus linkedResourceStatus = null;
         if (valid) {
             linkedResourceStatus = validateLinkedResource();
-            if (linkedResourceStatus.getSeverity() == IStatus.ERROR)
-                valid = false;
+            if (linkedResourceStatus.getSeverity() == IStatus.ERROR) {
+				valid = false;
+			}
         }
         // validateLinkedResource sets messages itself
         if (valid
@@ -590,7 +604,8 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      */
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if (visible)
-            resourceGroup.setFocus();
+        if (visible) {
+			resourceGroup.setFocus();
+		}
     }
 }

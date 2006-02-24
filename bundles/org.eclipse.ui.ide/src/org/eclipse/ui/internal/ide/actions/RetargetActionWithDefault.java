@@ -43,8 +43,9 @@ public class RetargetActionWithDefault extends RetargetAction {
 		// Only set the default handler after clearing the old handler above.
 		// This triggers enablement updating on the default handler which 
 		// might be needed since the active part has changed.
-		if (newHandler == null)
+		if (newHandler == null) {
 			super.setActionHandler(defaultHandler);
+		}
 	}
 
 	/**
@@ -53,7 +54,8 @@ public class RetargetActionWithDefault extends RetargetAction {
 	 */
 	public void setDefaultHandler(IAction handler) {
 		this.defaultHandler = handler;
-		if (getActionHandler() == null && handler != null)
+		if (getActionHandler() == null && handler != null) {
 			super.setActionHandler(handler);
+		}
 	}
 }

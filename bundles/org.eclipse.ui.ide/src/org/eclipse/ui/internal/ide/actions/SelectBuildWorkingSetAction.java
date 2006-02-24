@@ -46,8 +46,9 @@ public class SelectBuildWorkingSetAction extends Action implements
         dialog.open();
         IWorkingSet[] sets = dialog.getSelection();
         //check for cancel
-        if (sets == null || sets.length == 0)
-            return null;
+        if (sets == null || sets.length == 0) {
+			return null;
+		}
         return sets[0];
     }
 

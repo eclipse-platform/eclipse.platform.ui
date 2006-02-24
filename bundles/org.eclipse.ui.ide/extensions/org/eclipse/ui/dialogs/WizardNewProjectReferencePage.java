@@ -109,8 +109,9 @@ public class WizardNewProjectReferencePage extends WizardPage {
     protected IStructuredContentProvider getContentProvider() {
         return new WorkbenchContentProvider() {
             public Object[] getChildren(Object element) {
-                if (!(element instanceof IWorkspace))
-                    return new Object[0];
+                if (!(element instanceof IWorkspace)) {
+					return new Object[0];
+				}
                 IProject[] projects = ((IWorkspace) element).getRoot()
                         .getProjects();
                 return projects == null ? new Object[0] : projects;
@@ -129,8 +130,9 @@ public class WizardNewProjectReferencePage extends WizardPage {
         int fontHeight = 10;
 
         //If we have no font data use our guess
-        if (viewerFontData.length > 0)
-            fontHeight = viewerFontData[0].getHeight();
+        if (viewerFontData.length > 0) {
+			fontHeight = viewerFontData[0].getHeight();
+		}
         return lines * fontHeight;
 
     }

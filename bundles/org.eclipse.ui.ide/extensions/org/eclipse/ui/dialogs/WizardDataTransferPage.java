@@ -85,8 +85,9 @@ public abstract class WizardDataTransferPage extends WizardPage implements
 
         // since only one new item was added, we can be over the limit
         // by at most one item
-        if (history.size() > COMBO_HISTORY_LENGTH)
-            history.remove(COMBO_HISTORY_LENGTH);
+        if (history.size() > COMBO_HISTORY_LENGTH) {
+			history.remove(COMBO_HISTORY_LENGTH);
+		}
     }
 
     /**
@@ -180,8 +181,9 @@ public abstract class WizardDataTransferPage extends WizardPage implements
 
         // Avoid draw flicker by not clearing the error
         // message unless all is valid.
-        if (complete)
-            setErrorMessage(null);
+        if (complete) {
+			setErrorMessage(null);
+		}
 
         return complete;
     }
@@ -193,8 +195,9 @@ public abstract class WizardDataTransferPage extends WizardPage implements
     protected IPath getPathFromText(Text textField) {
         String text = textField.getText();
         //Do not make an empty path absolute so as not to confuse with the root
-        if (text.length() == 0)
-            return new Path(text);
+        if (text.length() == 0) {
+			return new Path(text);
+		}
        
         return (new Path(text)).makeAbsolute();
     }
@@ -220,8 +223,9 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         ContainerSelectionDialog dialog = new ContainerSelectionDialog(
                 getControl().getShell(), initialSelection,
                 allowNewContainerName(), msg);
-        if (title != null)
-            dialog.setTitle(title);
+        if (title != null) {
+			dialog.setTitle(title);
+		}
         dialog.showClosedProjects(false);
         dialog.open();
         Object[] result = dialog.getResult();
@@ -247,12 +251,12 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         String messageString;
         //Break the message up if there is a file name and a directory
         //and there are at least 2 segments.
-        if (path.getFileExtension() == null || path.segmentCount() < 2)
-            messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_existsQuestion, pathString);
-
-        else
-            messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_overwriteNameAndPathQuestion, path.lastSegment(),
+        if (path.getFileExtension() == null || path.segmentCount() < 2) {
+			messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_existsQuestion, pathString);
+		} else {
+			messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_overwriteNameAndPathQuestion, path.lastSegment(),
 			path.removeLastSegments(1).toOSString());
+		}
 
         final MessageDialog dialog = new MessageDialog(getContainer()
                 .getShell(), IDEWorkbenchMessages.Question,
@@ -417,8 +421,9 @@ public abstract class WizardDataTransferPage extends WizardPage implements
     protected void displayErrorDialog(Throwable exception) {
         String message = exception.getMessage();
         //Some system exceptions have no message
-        if (message == null)
-            message = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_exceptionMessage, exception);
+        if (message == null) {
+			message = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_exceptionMessage, exception);
+		}
         displayErrorDialog(message);
     }
 

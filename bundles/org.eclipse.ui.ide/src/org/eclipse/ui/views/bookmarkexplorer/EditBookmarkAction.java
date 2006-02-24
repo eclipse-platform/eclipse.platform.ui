@@ -37,8 +37,9 @@ class EditBookmarkAction extends BookmarkAction {
     private IMarker marker;
 
     public void run() {
-        if (marker != null)
-            editBookmark();
+        if (marker != null) {
+			editBookmark();
+		}
     }
 
     /**
@@ -51,12 +52,14 @@ class EditBookmarkAction extends BookmarkAction {
         marker = null;
         setEnabled(false);
 
-        if (selection.size() != 1)
-            return;
+        if (selection.size() != 1) {
+			return;
+		}
 
         Object o = selection.getFirstElement();
-        if (!(o instanceof IMarker))
-            return;
+        if (!(o instanceof IMarker)) {
+			return;
+		}
 
         IMarker selectedMarker = (IMarker) o;
         IResource resource = selectedMarker.getResource();

@@ -56,21 +56,25 @@ public class AddTaskAction extends SelectionListenerAction {
     }
 
     private IResource getElement(IStructuredSelection selection) {
-        if (selection.size() != 1)
-            return null;
+        if (selection.size() != 1) {
+			return null;
+		}
 
         Object element = selection.getFirstElement();
         IResource resource = null;
-        if (element instanceof IResource)
-            resource = (IResource) element;
-        if (element instanceof IAdaptable)
-            resource = (IResource) ((IAdaptable) element)
+        if (element instanceof IResource) {
+			resource = (IResource) element;
+		}
+        if (element instanceof IAdaptable) {
+			resource = (IResource) ((IAdaptable) element)
                     .getAdapter(IResource.class);
+		}
 
         if (resource != null && resource instanceof IProject) {
             IProject project = (IProject) resource;
-            if (project.isOpen() == false)
-                resource = null;
+            if (project.isOpen() == false) {
+				resource = null;
+			}
         }
         return resource;
     }

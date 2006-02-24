@@ -102,8 +102,9 @@ public class WizardZipFileResourceExportPage1 extends
     protected boolean ensureTargetDirectoryIsValid(String fullPathname) {
         int separatorIndex = fullPathname.lastIndexOf(File.separator);
 
-        if (separatorIndex == -1) // ie.- default dir, which is fine
-            return true;
+        if (separatorIndex == -1) {
+			return true;
+		}
 
         return ensureTargetIsValid(new File(fullPathname.substring(0,
                 separatorIndex)));
@@ -122,8 +123,9 @@ public class WizardZipFileResourceExportPage1 extends
 
         if (targetFile.exists()) {
             if (targetFile.canWrite()) {
-                if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists))
-                    return false;
+                if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists)) {
+					return false;
+				}
             } else {
                 displayErrorDialog(DataTransferMessages.ZipExport_alreadyExistsError);
                 giveFocusToDestination();
@@ -141,11 +143,13 @@ public class WizardZipFileResourceExportPage1 extends
     protected boolean ensureTargetIsValid() {
         String targetPath = getDestinationValue();
 
-        if (!ensureTargetDirectoryIsValid(targetPath))
-            return false;
+        if (!ensureTargetDirectoryIsValid(targetPath)) {
+			return false;
+		}
 
-        if (!ensureTargetFileIsValid(new File(targetPath)))
-            return false;
+        if (!ensureTargetFileIsValid(new File(targetPath))) {
+			return false;
+		}
 
         return true;
     }
@@ -187,8 +191,9 @@ public class WizardZipFileResourceExportPage1 extends
      * @returns boolean
      */
     public boolean finish() {
-        if (!ensureTargetIsValid())
-            return false;
+        if (!ensureTargetIsValid()) {
+			return false;
+		}
 
         List resourcesToExport = getWhiteCheckedResources();
 
@@ -197,9 +202,10 @@ public class WizardZipFileResourceExportPage1 extends
         // about to invoke the operation so save our state
         saveWidgetValues();
 
-        if (resourcesToExport.size() > 0)
-            return executeExportOperation(new ArchiveFileExportOperation(null,
+        if (resourcesToExport.size() > 0) {
+			return executeExportOperation(new ArchiveFileExportOperation(null,
                     resourcesToExport, getDestinationValue()));
+		}
 
         MessageDialog.openInformation(getContainer().getShell(),
                 DataTransferMessages.DataTransfer_information,
@@ -265,9 +271,10 @@ public class WizardZipFileResourceExportPage1 extends
         String currentSourceString = getDestinationValue();
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
-        if (lastSeparatorIndex != -1)
-            dialog.setFilterPath(currentSourceString.substring(0,
+        if (lastSeparatorIndex != -1) {
+			dialog.setFilterPath(currentSourceString.substring(0,
                     lastSeparatorIndex));
+		}
         String selectedFileName = dialog.open();
 
         if (selectedFileName != null) {
@@ -286,8 +293,9 @@ public class WizardZipFileResourceExportPage1 extends
         if (settings != null) {
             String[] directoryNames = settings
                     .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null)
-                directoryNames = new String[0];
+            if (directoryNames == null) {
+				directoryNames = new String[0];
+			}
 
             directoryNames = addToHistory(directoryNames, getDestinationValue());
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
@@ -309,13 +317,15 @@ public class WizardZipFileResourceExportPage1 extends
         if (settings != null) {
             String[] directoryNames = settings
                     .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null || directoryNames.length == 0)
-                return; // ie.- no settings stored
+            if (directoryNames == null || directoryNames.length == 0) {
+				return; // ie.- no settings stored
+			}
 
             // destination
             setDestinationValue(directoryNames[0]);
-            for (int i = 0; i < directoryNames.length; i++)
-                addDestinationItem(directoryNames[i]);
+            for (int i = 0; i < directoryNames.length; i++) {
+				addDestinationItem(directoryNames[i]);
+			}
 
             boolean setStructure = settings
                     .getBoolean(STORE_CREATE_STRUCTURE_ID);

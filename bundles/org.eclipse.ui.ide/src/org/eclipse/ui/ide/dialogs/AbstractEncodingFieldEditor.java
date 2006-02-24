@@ -253,17 +253,19 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		encodings.toArray(encodingStrings);
 		encodingCombo.setItems(encodingStrings);
 
-		if (selectedEncoding == null)
+		if (selectedEncoding == null) {
 			encodingCombo.setText(getDefaultEnc());
-		else
+		} else {
 			encodingCombo.setText(selectedEncoding);
+		}
 	}
 
 	private void updateEncodingState(boolean useDefault) {
 		defaultEncodingButton.setSelection(useDefault);
 		otherEncodingButton.setSelection(!useDefault);
-		if(useDefault)
+		if(useDefault) {
 			encodingCombo.setText(getDefaultEnc());
+		}
 		encodingCombo.setEnabled(!useDefault);
 		updateValidState();
 	}

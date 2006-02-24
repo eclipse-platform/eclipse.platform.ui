@@ -94,8 +94,9 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
         Iterator itr = getSelectedResources().iterator();
         while (itr.hasNext()) {
             IResource resource = (IResource) itr.next();
-            if (resource instanceof IFile)
-                openFile((IFile) resource);
+            if (resource instanceof IFile) {
+				openFile((IFile) resource);
+			}
         }
     }
 

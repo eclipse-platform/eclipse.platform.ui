@@ -128,24 +128,28 @@ public abstract class BasicNewResourceWizard extends Wizard implements
     public static void selectAndReveal(IResource resource,
             IWorkbenchWindow window) {
         // validate the input
-        if (window == null || resource == null)
-            return;
+        if (window == null || resource == null) {
+			return;
+		}
         IWorkbenchPage page = window.getActivePage();
-        if (page == null)
-            return;
+        if (page == null) {
+			return;
+		}
 
         // get all the view and editor parts
         List parts = new ArrayList();
         IWorkbenchPartReference refs[] = page.getViewReferences();
         for (int i = 0; i < refs.length; i++) {
             IWorkbenchPart part = refs[i].getPart(false);
-            if (part != null)
-                parts.add(part);
+            if (part != null) {
+				parts.add(part);
+			}
         }
         refs = page.getEditorReferences();
         for (int i = 0; i < refs.length; i++) {
-            if (refs[i].getPart(false) != null)
-                parts.add(refs[i].getPart(false));
+            if (refs[i].getPart(false) != null) {
+				parts.add(refs[i].getPart(false));
+			}
         }
 
         final ISelection selection = new StructuredSelection(resource);
@@ -155,11 +159,12 @@ public abstract class BasicNewResourceWizard extends Wizard implements
 
             // get the part's ISetSelectionTarget implementation
             ISetSelectionTarget target = null;
-            if (part instanceof ISetSelectionTarget)
-                target = (ISetSelectionTarget) part;
-            else
-                target = (ISetSelectionTarget) part
+            if (part instanceof ISetSelectionTarget) {
+				target = (ISetSelectionTarget) part;
+			} else {
+				target = (ISetSelectionTarget) part
                         .getAdapter(ISetSelectionTarget.class);
+			}
 
             if (target != null) {
                 // select and reveal resource

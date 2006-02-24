@@ -290,8 +290,9 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             }
             IPerspectiveDescriptor persp = currentPage.getPerspective();
             String label = ""; //$NON-NLS-1$
-            if (persp != null)
-                label = persp.getLabel();
+            if (persp != null) {
+				label = persp.getLabel();
+			}
             IAdaptable input = currentPage.getInput();
             if (input != null && !input.equals(wbAdvisor.getDefaultPageInput())) {
                 label = currentPage.getLabel();
@@ -376,8 +377,9 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             IWorkbenchPage page = window.getActivePage();
             if (page == null) {
                 IWorkbenchPage[] pages = window.getPages();
-                if (pages != null && pages.length > 0)
-                    page = pages[0];
+                if (pages != null && pages.length > 0) {
+					page = pages[0];
+				}
             }
 
             // if the window does not contain a page, create one
@@ -411,15 +413,16 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
      * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#openIntro()
      */
     public void openIntro() {
-        if (editorsAndIntrosOpened )
-            return;
+        if (editorsAndIntrosOpened ) {
+			return;
+		}
 
         editorsAndIntrosOpened = true;
 
         // don't try to open the welcome editors if there is an intro
-        if (wbAdvisor.hasIntro())
-            super.openIntro();
-        else {
+        if (wbAdvisor.hasIntro()) {
+			super.openIntro();
+		} else {
             openWelcomeEditors(getWindowConfigurer().getWindow());
             // save any preferences changes caused by the above actions
             IDEWorkbenchPlugin.getDefault().savePluginPreferences();
@@ -435,13 +438,15 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                 IDEInternalPreferences.WELCOME_DIALOG)) {
             // show the welcome page for the product the first time the workbench opens
             IProduct product = Platform.getProduct();
-            if (product == null)
-                return;
+            if (product == null) {
+				return;
+			}
 
             AboutInfo productInfo = new AboutInfo(product);
             URL url = productInfo.getWelcomePageURL();
-            if (url == null)
-                return;
+            if (url == null) {
+				return;
+			}
 
             IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
                     IDEInternalPreferences.WELCOME_DIALOG, false);
@@ -469,13 +474,14 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                         if (pi != null) {
                             //Start the bundle if there is one
                             Bundle bundle = Platform.getBundle(pi);
-                            if(bundle != null)
-                                try{
+                            if(bundle != null) {
+								try{
                                     bundle.start();
                                 }
                                 catch(BundleException exception){
                                     IDEWorkbenchPlugin.log("Failed to load feature", exception);//$NON-NLS-1$
                                 }
+							}
                         }
                     }
                 }
@@ -540,8 +546,9 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                         e.getMessage(), e.getStatus());
             }
         }
-        if (page == null)
-            return;
+        if (page == null) {
+			return;
+		}
 
         if (page.getPerspective() == null) {
             try {

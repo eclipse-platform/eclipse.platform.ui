@@ -71,8 +71,9 @@ public class BuildUtilities {
 	 * @return The selected projects, or an empty array if no selection could be found.
 	 */
 	public static IProject[] findSelectedProjects(IWorkbenchWindow window) {
-		if (window == null)
+		if (window == null) {
 			return new IProject[0];
+		}
 		ISelection selection = window.getSelectionService().getSelection();
 		IProject[] selected = null;
 		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
@@ -88,8 +89,9 @@ public class BuildUtilities {
 				}
 			}
 		}
-		if (selected == null)
+		if (selected == null) {
 			selected = new IProject[0];
+		}
 		return selected;
 	}
 
@@ -104,8 +106,9 @@ public class BuildUtilities {
 	public static boolean isEnabled(IProject[] projects, int trigger) {
 		//incremental build is only enabled if all projects are not autobuilding
 		if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD && ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			if (!matchingTrigger(projects, IncrementalProjectBuilder.AUTO_BUILD, false))
+			if (!matchingTrigger(projects, IncrementalProjectBuilder.AUTO_BUILD, false)) {
 				return false;
+			}
 		}
 		//finally we are building only if there is a builder that accepts the trigger
 		return matchingTrigger(projects, trigger, true);
@@ -123,14 +126,16 @@ public class BuildUtilities {
 	 */
 	private static boolean matchingTrigger(IProject[] projects, int trigger, boolean value) {
 		for (int i = 0; i < projects.length; i++) {
-			if (!projects[i].isAccessible())
+			if (!projects[i].isAccessible()) {
 				continue;
+			}
 			try {
 				IProjectDescription description = projects[i].getDescription();
 				ICommand[] buildSpec = description.getBuildSpec();
 				for (int j = 0; j < buildSpec.length; j++) {
-					if (buildSpec[j].isBuilding(trigger) == value)
+					if (buildSpec[j].isBuilding(trigger) == value) {
 						return true;
+					}
 				}
 			} catch (CoreException e) {
 				//ignore projects that are not available
@@ -146,8 +151,9 @@ public class BuildUtilities {
 	 * to save editors in all projects.
 	 */
 	public static void saveEditors(Collection projects) {
-		if (!BuildAction.isSaveAllSet())
+		if (!BuildAction.isSaveAllSet()) {
 			return;
+		}
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages = windows[i].getPages();

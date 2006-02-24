@@ -136,12 +136,13 @@ public class ContainerSelectionGroup extends Composite {
         this.listener = listener;
         this.allowNewContainerName = allowNewContainerName;
         this.showClosedProjects = showClosedProjects;
-        if (message != null)
-            createContents(message, heightHint, widthHint);
-        else if (allowNewContainerName)
-            createContents(DEFAULT_MSG_NEW_ALLOWED, heightHint, widthHint);
-        else
-            createContents(DEFAULT_MSG_SELECT_ONLY, heightHint, widthHint);
+        if (message != null) {
+			createContents(message, heightHint, widthHint);
+		} else if (allowNewContainerName) {
+			createContents(DEFAULT_MSG_NEW_ALLOWED, heightHint, widthHint);
+		} else {
+			createContents(DEFAULT_MSG_SELECT_ONLY, heightHint, widthHint);
+		}
     }
 
     /**
@@ -153,9 +154,9 @@ public class ContainerSelectionGroup extends Composite {
         selectedContainer = container;
 
         if (allowNewContainerName) {
-            if (container == null)
-                containerNameField.setText("");//$NON-NLS-1$
-            else {
+            if (container == null) {
+				containerNameField.setText("");//$NON-NLS-1$
+			} else {
             	   String text = container.getFullPath().makeRelative().toString();
                 containerNameField.setText(text);
                 containerNameField.setToolTipText(text);
@@ -246,12 +247,14 @@ public class ContainerSelectionGroup extends Composite {
                 if (selection instanceof IStructuredSelection) {
                     Object item = ((IStructuredSelection) selection)
                             .getFirstElement();
-                    if(item == null)
-                    	return;
-                    if (treeViewer.getExpandedState(item))
-                        treeViewer.collapseToLevel(item, 1);
-                    else
-                        treeViewer.expandToLevel(item, 1);
+                    if(item == null) {
+						return;
+					}
+                    if (treeViewer.getExpandedState(item)) {
+						treeViewer.collapseToLevel(item, 1);
+					} else {
+						treeViewer.expandToLevel(item, 1);
+					}
                 }
             }
         });
@@ -269,16 +272,18 @@ public class ContainerSelectionGroup extends Composite {
     public IPath getContainerFullPath() {
         if (allowNewContainerName) {
             String pathName = containerNameField.getText();
-            if (pathName == null || pathName.length() < 1)
-                return null;
-            else
-                //The user may not have made this absolute so do it for them
+            if (pathName == null || pathName.length() < 1) {
+				return null;
+			} else {
+				//The user may not have made this absolute so do it for them
                 return (new Path(pathName)).makeAbsolute();
+			}
         } else {
-            if (selectedContainer == null)
-                return null;
-            else
-                return selectedContainer.getFullPath();
+            if (selectedContainer == null) {
+				return null;
+			} else {
+				return selectedContainer.getFullPath();
+			}
         }
     }
 
@@ -286,10 +291,11 @@ public class ContainerSelectionGroup extends Composite {
      * Gives focus to one of the widgets in the group, as determined by the group.
      */
     public void setInitialFocus() {
-        if (allowNewContainerName)
-            containerNameField.setFocus();
-        else
-            treeViewer.getTree().setFocus();
+        if (allowNewContainerName) {
+			containerNameField.setFocus();
+		} else {
+			treeViewer.getTree().setFocus();
+		}
     }
 
     /**

@@ -117,11 +117,13 @@ public class CommonActionProviderDescriptor implements
 		try {
 
 			// we try the id attribute if no override id was supplied.
-			if (id == null)
+			if (id == null) {
 				id = configurationElement.getAttribute(ATT_ID);
+			}
 			// if there was no id attribute, use the default id.
-			if (id == null)
+			if (id == null) {
 				id = DEFAULT_ID;
+			}
 
 			dependsOnId = configurationElement.getAttribute(ATT_DEPENDS_ON);
 
@@ -156,8 +158,9 @@ public class CommonActionProviderDescriptor implements
 	 *         the instance.
 	 */
 	public CommonActionProvider createActionProvider() {
-		if (hasLoadingFailed)
+		if (hasLoadingFailed) {
 			return SkeletonActionProvider.INSTANCE;
+		}
 		CommonActionProvider provider = null;
 		try {
 			provider = (CommonActionProvider) configurationElement
@@ -187,8 +190,9 @@ public class CommonActionProviderDescriptor implements
 	 *         the selection.
 	 */
 	public boolean isEnabledFor(IStructuredSelection aStructuredSelection) {
-		if (enablement == null)
+		if (enablement == null) {
 			return false;
+		}
 
 		IEvaluationContext context = null;
 
@@ -197,8 +201,9 @@ public class CommonActionProviderDescriptor implements
 			context = new EvaluationContext(null, elements.next());
 			try {
 				if (enablement.evaluate(context) == EvaluationResult.FALSE
-						|| enablement.evaluate(context) == EvaluationResult.NOT_LOADED)
+						|| enablement.evaluate(context) == EvaluationResult.NOT_LOADED) {
 					return false;
+				}
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 				return false;
@@ -215,8 +220,9 @@ public class CommonActionProviderDescriptor implements
 	 * @return True if and only if the extension is enabled for the element.
 	 */
 	public boolean isEnabledFor(Object anElement) {
-		if (enablement == null || anElement == null)
+		if (enablement == null || anElement == null) {
 			return false;
+		}
 
 		try {
 			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
@@ -268,8 +274,9 @@ public class CommonActionProviderDescriptor implements
 	protected void addDependentDescriptor(
 			CommonActionProviderDescriptor dependentDescriptor) {
 		Assert.isTrue(this != dependentDescriptor);
-		if (dependentDescriptors == null)
+		if (dependentDescriptors == null) {
 			dependentDescriptors = new HashSet();
+		}
 		dependentDescriptors.add(dependentDescriptor);
 	}
 
@@ -282,8 +289,9 @@ public class CommonActionProviderDescriptor implements
 	}
 
 	public String toString() {
-		if (toString == null)
+		if (toString == null) {
 			toString = "CommonActionProviderDescriptor[" + getId() + ", dependsOn=" + getDependsOnId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		}
 		return toString;
 	}
 

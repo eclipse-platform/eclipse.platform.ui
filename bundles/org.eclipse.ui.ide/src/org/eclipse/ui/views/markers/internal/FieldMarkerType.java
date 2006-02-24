@@ -53,8 +53,9 @@ public class FieldMarkerType extends AbstractField {
 	public String getValue(Object obj) {
 		if (obj instanceof ConcreteMarker) {
 			String name = Util.getMarkerTypeName((ConcreteMarker) obj);
-			if (name != null)
+			if (name != null) {
 				return name;
+			}
 		}
 		return Util.EMPTY_STRING;
 	}

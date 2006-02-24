@@ -281,8 +281,9 @@ public final class IDE {
     public static IEditorPart openEditor(IWorkbenchPage page,
             IEditorInput input, String editorId) throws PartInitException {
         //sanity checks
-        if (page == null)
-            throw new IllegalArgumentException();
+        if (page == null) {
+			throw new IllegalArgumentException();
+		}
 
         // open the editor on the file
         return page.openEditor(input, editorId);
@@ -313,8 +314,9 @@ public final class IDE {
             IEditorInput input, String editorId, boolean activate)
             throws PartInitException {
         //sanity checks
-        if (page == null)
-            throw new IllegalArgumentException();
+        if (page == null) {
+			throw new IllegalArgumentException();
+		}
 
         // open the editor on the file
         return page.openEditor(input, editorId, activate);
@@ -376,8 +378,9 @@ public final class IDE {
 	public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
             boolean activate, boolean determineContentType) throws PartInitException {
         //sanity checks
-        if (page == null)
-            throw new IllegalArgumentException();
+        if (page == null) {
+			throw new IllegalArgumentException();
+		}
 
         // open the editor on the file
         IEditorDescriptor editorDesc = getEditorDescriptor(input, determineContentType);
@@ -406,8 +409,9 @@ public final class IDE {
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input)
             throws PartInitException {
         //sanity checks
-        if (page == null)
-            throw new IllegalArgumentException();
+        if (page == null) {
+			throw new IllegalArgumentException();
+		}
 
         // open the editor on the file
         IEditorDescriptor editorDesc = getEditorDescriptor(input);
@@ -435,8 +439,9 @@ public final class IDE {
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
             String editorId) throws PartInitException {
         //sanity checks
-        if (page == null)
-            throw new IllegalArgumentException();
+        if (page == null) {
+			throw new IllegalArgumentException();
+		}
 
         // open the editor on the file
         return page.openEditor(new FileEditorInput(input), editorId);
@@ -466,8 +471,9 @@ public final class IDE {
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
             String editorId, boolean activate) throws PartInitException {
         //sanity checks
-        if (page == null)
-            throw new IllegalArgumentException();
+        if (page == null) {
+			throw new IllegalArgumentException();
+		}
 
         // open the editor on the file
         return page.openEditor(new FileEditorInput(input), editorId, activate);
@@ -653,30 +659,35 @@ public final class IDE {
 			IEditorRegistry editorReg, IEditorDescriptor defaultDescriptor)
 			throws PartInitException {
 
-		if (defaultDescriptor != null)
+		if (defaultDescriptor != null) {
 			return defaultDescriptor;
+		}
 
 		IEditorDescriptor editorDesc = defaultDescriptor;
 
 		// next check the OS for in-place editor (OLE on Win32)
-		if (editorReg.isSystemInPlaceEditorAvailable(name))
+		if (editorReg.isSystemInPlaceEditorAvailable(name)) {
 			editorDesc = editorReg
 					.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+		}
 
 		// next check with the OS for an external editor
 		if (editorDesc == null
-				&& editorReg.isSystemExternalEditorAvailable(name))
+				&& editorReg.isSystemExternalEditorAvailable(name)) {
 			editorDesc = editorReg
 					.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		}
 
 		// next lookup the default text editor
-		if (editorDesc == null)
+		if (editorDesc == null) {
 			editorDesc = editorReg
 					.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+		}
 
 		// if no valid editor found, bail out
-		if (editorDesc == null)
+		if (editorDesc == null) {
 			throw new PartInitException(IDEWorkbenchMessages.IDE_noFileEditorFound);
+		}
 
 		return editorDesc;
 	}
@@ -798,8 +809,9 @@ public final class IDE {
         final boolean[] result = new boolean[1];
         result[0] = true;
 
-        if (resourceRoots.length == 0)
-            return result[0];
+        if (resourceRoots.length == 0) {
+			return result[0];
+		}
 
         Platform.run(new SafeRunnable(IDEWorkbenchMessages.ErrorClosing) {
                     public void run() {
@@ -835,8 +847,9 @@ public final class IDE {
                         if (dirtyEditors.size() > 0) {
                             IWorkbenchWindow w = Workbench.getInstance()
                                     .getActiveWorkbenchWindow();
-                            if (w == null)
-                                w = windows[0];
+                            if (w == null) {
+								w = windows[0];
+							}
                             result[0] = EditorManager.saveAll(dirtyEditors,
                                     finalConfirm, false, w);
                         }
@@ -911,16 +924,18 @@ public final class IDE {
             String editorID = file.getPersistentProperty(EDITOR_KEY);
             if (editorID != null) {
                 IEditorDescriptor desc = editorReg.findEditor(editorID);
-                if (desc != null)
-                    return desc;
+                if (desc != null) {
+					return desc;
+				}
             }
         } catch (CoreException e) {
             // do nothing
         }
         
 		IContentType contentType = null;
-		if (determineContentType)
-			contentType = getContentType(file);    
+		if (determineContentType) {
+			contentType = getContentType(file);
+		}    
         // Try lookup with filename
         return editorReg.getDefaultEditor(file.getName(), contentType);
     }
@@ -971,8 +986,9 @@ public final class IDE {
 		try {
 			UIStats.start(UIStats.CONTENT_TYPE_LOOKUP, file.getName());
 			IContentDescription contentDescription = file.getContentDescription();
-			if (contentDescription == null)
+			if (contentDescription == null) {
 				return null;
+			}
 			return contentDescription.getContentType();
 		} catch (CoreException e) {
 			return null;		
@@ -1019,27 +1035,31 @@ public final class IDE {
      */
     public static boolean promptToConfirm(final Shell shell, final String title, String message, IResourceDelta delta, String[] ignoreModelProviderIds, boolean syncExec) {
     	IStatus status = ResourceChangeValidator.getValidator().validateChange(delta, null);
-    	if (status.isOK())
-    		return true;
+    	if (status.isOK()) {
+			return true;
+		}
     	final IStatus displayStatus;
     	if (status.isMultiStatus()) {
     		List result = new ArrayList();
     		IStatus[] children = status.getChildren();
     		for (int i = 0; i < children.length; i++) {
 				IStatus child = children[i];
-	    		if (!isIgnoredStatus(child, ignoreModelProviderIds))
-	    			result.add(child);
+	    		if (!isIgnoredStatus(child, ignoreModelProviderIds)) {
+					result.add(child);
+				}
 			}
-    		if (result.isEmpty())
-    			return true;
+    		if (result.isEmpty()) {
+				return true;
+			}
     		if (result.size() == 1) {
     			displayStatus = (IStatus)result.get(0);
     		} else {
     			displayStatus = new MultiStatus(status.getPlugin(), status.getCode(), (IStatus[]) result.toArray(new IStatus[result.size()]), status.getMessage(), status.getException());
     		}
     	} else {
-    		if (isIgnoredStatus(status, ignoreModelProviderIds))
-    			return true;
+    		if (isIgnoredStatus(status, ignoreModelProviderIds)) {
+				return true;
+			}
     		displayStatus = status;
     	}
     	
@@ -1063,10 +1083,11 @@ public final class IDE {
 					 * @see org.eclipse.jface.dialogs.ErrorDialog#buttonPressed(int)
 					 */
 					protected void buttonPressed(int id) {
-						if (id == IDialogConstants.YES_ID)
+						if (id == IDialogConstants.YES_ID) {
 							super.buttonPressed(IDialogConstants.OK_ID);
-						else if (id == IDialogConstants.NO_ID)
+						} else if (id == IDialogConstants.NO_ID) {
 							super.buttonPressed(IDialogConstants.CANCEL_ID);
+						}
 						super.buttonPressed(id);
 					}
 				};
@@ -1083,14 +1104,16 @@ public final class IDE {
 	}
     
     private static boolean isIgnoredStatus(IStatus status, String[] ignoreModelProviderIds) {
-    	if (ignoreModelProviderIds == null)
-    		return false;
+    	if (ignoreModelProviderIds == null) {
+			return false;
+		}
     	if (status instanceof ModelStatus) {
 			ModelStatus ms = (ModelStatus) status;		
 			for (int i = 0; i < ignoreModelProviderIds.length; i++) {
 				String id = ignoreModelProviderIds[i];
-				if (ms.getModelProviderId().equals(id))
+				if (ms.getModelProviderId().equals(id)) {
 					return true;
+				}
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(id);
 				String[] extended = desc.getExtendedModels();
 				if (isIgnoredStatus(status, extended)) {

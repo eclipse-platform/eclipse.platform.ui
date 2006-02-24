@@ -109,8 +109,9 @@ public class MarkerFilter implements Cloneable {
 		for (int i = 0; i < rootTypes.length; i++) {
 			MarkerType type = MarkerTypesModel.getInstance().getType(rootTypes[i]);
 
-			if (!this.rootTypes.contains(type))
+			if (!this.rootTypes.contains(type)) {
 				this.rootTypes.add(type);
+			}
 		}
 		resetState();
 	}
@@ -129,16 +130,19 @@ public class MarkerFilter implements Cloneable {
 	}
 
 	private void addAllSubTypes(List types, MarkerType type) {
-		if (type == null)
+		if (type == null) {
 			return;
+		}
 
-		if (!types.contains(type))
+		if (!types.contains(type)) {
 			types.add(type);
+		}
 
 		MarkerType[] subTypes = type.getSubtypes();
 
-		for (int i = 0; i < subTypes.length; i++)
+		for (int i = 0; i < subTypes.length; i++) {
 			addAllSubTypes(types, subTypes[i]);
+		}
 	}
 
 	/**
@@ -444,9 +448,9 @@ public class MarkerFilter implements Cloneable {
 		HashSet projects = new HashSet();
 
 		for (int idx = 0; idx < elements.length; idx++) {
-			if (elements[idx] instanceof IResource)
+			if (elements[idx] instanceof IResource) {
 				projects.add(((IResource) elements[idx]).getProject());
-			else {
+			} else {
 				IProject[] mappingProjects = (((ResourceMapping) elements[idx])
 						.getProjects());
 				for (int i = 0; i < mappingProjects.length; i++) {
@@ -481,18 +485,21 @@ public class MarkerFilter implements Cloneable {
 	 *         should be filtered out
 	 */
 	private boolean selectBySelection(ConcreteMarker marker) {
-		if (onResource == ON_ANY || marker == null)
+		if (onResource == ON_ANY || marker == null) {
 			return true;
+		}
 
-		if (focusResource == null)
+		if (focusResource == null) {
 			return true;
+		}
 
 		IResource resource = marker.getResource();
 
 		if (onResource == ON_WORKING_SET) {
 
-			if (resource != null)
+			if (resource != null) {
 				return isEnclosed(resource);
+			}
 
 		} else if (onResource == ON_ANY_IN_SAME_CONTAINER) {
 			IProject project = resource.getProject();
@@ -508,21 +515,24 @@ public class MarkerFilter implements Cloneable {
 					continue;
 				}
 
-				if (project.equals(selectedProject))
+				if (project.equals(selectedProject)) {
 					return true;
+				}
 			}
 		} else if (onResource == ON_SELECTED_ONLY) {
 			for (int i = 0; i < focusResource.length; i++) {
-				if (resource.equals(focusResource[i]))
+				if (resource.equals(focusResource[i])) {
 					return true;
+				}
 			}
 		} else if (onResource == ON_SELECTED_AND_CHILDREN) {
 			for (int i = 0; i < focusResource.length; i++) {
 				IResource parentResource = resource;
 
 				while (parentResource != null) {
-					if (parentResource.equals(focusResource[i]))
+					if (parentResource.equals(focusResource[i])) {
 						return true;
+					}
 
 					parentResource = parentResource.getParent();
 				}
@@ -544,11 +554,13 @@ public class MarkerFilter implements Cloneable {
 	 *         otherwise.
 	 */
 	private boolean isEnclosed(IResource element) {
-		if (workingSet == null)
+		if (workingSet == null) {
 			return false;
+		}
 
-		if (workingSet.isEmpty())
+		if (workingSet.isEmpty()) {
 			return true; // Everything is in an empty working set
+		}
 		Set workingSetPaths = getWorkingSetAsSetOfPaths();
 
 		return workingSetPaths.contains(element.getFullPath().toString());
@@ -587,8 +599,9 @@ public class MarkerFilter implements Cloneable {
 	 *            </ul>
 	 */
 	void setOnResource(int onResource) {
-		if (onResource >= ON_ANY && onResource <= ON_WORKING_SET)
+		if (onResource >= ON_ANY && onResource <= ON_WORKING_SET) {
 			this.onResource = onResource;
+		}
 	}
 
 	/**
@@ -704,8 +717,9 @@ public class MarkerFilter implements Cloneable {
 
 		String setting = settings.get(TAG_ENABLED);
 
-		if (setting != null)
+		if (setting != null) {
 			enabled = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.get(TAG_ON_RESOURCE);
 
@@ -768,9 +782,10 @@ public class MarkerFilter implements Cloneable {
 
 		setting = settings.get(TAG_WORKING_SET);
 
-		if (setting != null)
+		if (setting != null) {
 			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager()
 					.getWorkingSet(setting));
+		}
 	}
 
 	/**
@@ -787,8 +802,9 @@ public class MarkerFilter implements Cloneable {
 			MarkerType markerType = getMarkerType(stringTokenizer
 					.nextToken(TAG_TYPES_DELIMITER));
 
-			if (markerType != null && !selectedTypes.contains(markerType))
+			if (markerType != null && !selectedTypes.contains(markerType)) {
 				selectedTypes.add(markerType);
+			}
 		}
 	}
 
@@ -810,8 +826,9 @@ public class MarkerFilter implements Cloneable {
 	protected void restoreFilterSettings(IMemento memento) {
 		String setting = memento.getString(TAG_ENABLED);
 
-		if (setting != null)
+		if (setting != null) {
 			enabled = Boolean.valueOf(setting).booleanValue();
+		}
 
 		Integer resourceSetting = memento.getInteger(TAG_ON_RESOURCE);
 
@@ -871,9 +888,10 @@ public class MarkerFilter implements Cloneable {
 
 		setting = memento.getString(TAG_WORKING_SET);
 
-		if (setting != null)
+		if (setting != null) {
 			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager()
 					.getWorkingSet(setting));
+		}
 	}
 
 	/**
@@ -902,8 +920,9 @@ public class MarkerFilter implements Cloneable {
 
 		settings.putString(TAG_SELECTION_STATUS, markerTypeIds);
 
-		if (workingSet != null)
+		if (workingSet != null) {
 			settings.putString(TAG_WORKING_SET, workingSet.getName());
+		}
 	}
 
 	/**

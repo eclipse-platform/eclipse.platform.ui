@@ -200,10 +200,11 @@ class DialogMarkerProperties extends TrayDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        if (title == null)
-            newShell.setText(MarkerMessages.propertiesDialog_title);
-        else
-            newShell.setText(title);
+        if (title == null) {
+			newShell.setText(MarkerMessages.propertiesDialog_title);
+		} else {
+			newShell.setText(title);
+		}
     }
 
     /**
@@ -228,8 +229,9 @@ class DialogMarkerProperties extends TrayDialog {
             createCreationTimeArea(composite);
         }
         createAttributesArea(composite);
-        if (resource != null)
-            createResourceArea(composite);
+        if (resource != null) {
+			createResourceArea(composite);
+		}
         updateDialogFromMarker();
         updateEnablement();
         return composite;
@@ -356,18 +358,22 @@ class DialogMarkerProperties extends TrayDialog {
             return;
         }
         descriptionText.setText(Util.getProperty(IMarker.MESSAGE, marker));
-        if (creationTime != null)
-            creationTime.setText(Util.getCreationTime(marker));
-        if (resourceText != null)
-            resourceText.setText(Util.getResourceName(marker));
-        if (folderText != null)
-            folderText.setText(Util.getContainerName(marker));
+        if (creationTime != null) {
+			creationTime.setText(Util.getCreationTime(marker));
+		}
+        if (resourceText != null) {
+			resourceText.setText(Util.getResourceName(marker));
+		}
+        if (folderText != null) {
+			folderText.setText(Util.getContainerName(marker));
+		}
         if (locationText != null) {
             String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
-            if (line.equals("")) //$NON-NLS-1$
-                locationText.setText(""); //$NON-NLS-1$
-            else
-                locationText.setText(NLS.bind(MarkerMessages.label_lineNumber, line));
+            if (line.equals("")) { //$NON-NLS-1$
+				locationText.setText(""); //$NON-NLS-1$
+			} else {
+				locationText.setText(NLS.bind(MarkerMessages.label_lineNumber, line));
+			}
         }
 
         descriptionText.selectAll();
@@ -384,15 +390,18 @@ class DialogMarkerProperties extends TrayDialog {
             int n = path.segmentCount() - 1; // n is the number of segments in container, not path
             if (n > 0) {
                 int len = 0;
-                for (int i = 0; i < n; ++i)
-                    len += path.segment(i).length();
+                for (int i = 0; i < n; ++i) {
+					len += path.segment(i).length();
+				}
                 // account for /'s
-                if (n > 1)
-                    len += n - 1;
+                if (n > 1) {
+					len += n - 1;
+				}
                 StringBuffer sb = new StringBuffer(len);
                 for (int i = 0; i < n; ++i) {
-                    if (i != 0)
-                        sb.append('/');
+                    if (i != 0) {
+						sb.append('/');
+					}
                     sb.append(path.segment(i));
                 }
                 folderText.setText(sb.toString());
@@ -401,14 +410,16 @@ class DialogMarkerProperties extends TrayDialog {
 
         if (initialAttributes != null) {
             Object description = initialAttributes.get(IMarker.MESSAGE);
-            if (description != null && description instanceof String)
-                descriptionText.setText((String) description);
+            if (description != null && description instanceof String) {
+				descriptionText.setText((String) description);
+			}
             descriptionText.selectAll();
 
             Object line = initialAttributes.get(IMarker.LINE_NUMBER);
-            if (line != null && line instanceof Integer && locationText != null)
-                locationText.setText(
+            if (line != null && line instanceof Integer && locationText != null) {
+				locationText.setText(
                     NLS.bind(MarkerMessages.label_lineNumber, line));
+			}
         }
     }
 
@@ -468,10 +479,12 @@ class DialogMarkerProperties extends TrayDialog {
                                             public void run(
                                                     IProgressMonitor monitor)
                                                     throws CoreException {
-                                                if (marker == null)
-                                                    createMarker(monitor);
-                                                if (isDirty())
-                                                    updateMarker(monitor, attrs);
+                                                if (marker == null) {
+													createMarker(monitor);
+												}
+                                                if (isDirty()) {
+													updateMarker(monitor, attrs);
+												}
                                             }
                                         }, monitor);
                                 monitor.done();
@@ -490,11 +503,12 @@ class DialogMarkerProperties extends TrayDialog {
         catch (InterruptedException e) {
         }
 
-        if (coreExceptions[0] != null)
-            ErrorDialog
+        if (coreExceptions[0] != null) {
+			ErrorDialog
                     .openError(
                             getShell(),
-                            MarkerMessages.Error, null, coreExceptions[0].getStatus()); 
+                            MarkerMessages.Error, null, coreExceptions[0].getStatus());
+		} 
 
     }
 
@@ -541,8 +555,9 @@ class DialogMarkerProperties extends TrayDialog {
      * @throws CoreException
      */
     private void createMarker(IProgressMonitor monitor) throws CoreException {
-        if (resource == null)
-            return;
+        if (resource == null) {
+			return;
+		}
 
         monitor.worked(10);
         marker = resource.createMarker(type);

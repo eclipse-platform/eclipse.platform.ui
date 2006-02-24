@@ -80,8 +80,9 @@ public class IDEWorkbenchActivityHelper {
                 new IRegistryChangeListener() {
                     public void registryChanged(IRegistryChangeEvent event) {
                         if (event.getExtensionDeltas(
-                                "org.eclipse.core.resources", "natures").length > 0) //$NON-NLS-1$ //$NON-NLS-2$
-                            loadNatures();
+                                "org.eclipse.core.resources", "natures").length > 0) { //$NON-NLS-1$ //$NON-NLS-2$
+							loadNatures();
+						}
                     }
                 }, "org.eclipse.core.resources"); //$NON-NLS-1$
         loadNatures();
@@ -138,12 +139,14 @@ public class IDEWorkbenchActivityHelper {
              * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
              */
             public void resourceChanged(IResourceChangeEvent event) {
-                if (!WorkbenchActivityHelper.isFiltering())
-                    return;
+                if (!WorkbenchActivityHelper.isFiltering()) {
+					return;
+				}
                 IResourceDelta mainDelta = event.getDelta();
 
-                if (mainDelta == null)
-                    return;
+                if (mainDelta == null) {
+					return;
+				}
                 //Has the root changed?
                 if (mainDelta.getKind() == IResourceDelta.CHANGED
                         && mainDelta.getResource().getType() == IResource.ROOT) {
@@ -179,17 +182,20 @@ public class IDEWorkbenchActivityHelper {
     protected void processProject(IProject project,
             IWorkbenchActivitySupport workbenchActivitySupport)
             throws CoreException {
-        if (!project.isOpen())
-            return;
+        if (!project.isOpen()) {
+			return;
+		}
         String[] ids = project.getDescription().getNatureIds();
-        if (ids.length == 0)
-            return;
+        if (ids.length == 0) {
+			return;
+		}
         
         for (int j = 0; j < ids.length; j++) {
             IPluginContribution contribution = (IPluginContribution) natureMap
                     .get(ids[j]);
-            if (contribution == null)
-                continue; //bad nature ID.
+            if (contribution == null) {
+				continue; //bad nature ID.
+			}
             ITriggerPoint triggerPoint = workbenchActivitySupport
                     .getTriggerPointManager().getTriggerPoint(NATURE_POINT); 
             //consult the advisor - if the activities need enabling, they will be

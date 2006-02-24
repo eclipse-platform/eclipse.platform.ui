@@ -399,8 +399,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      *	and is valid
      */
     protected boolean ensureSourceIsValid() {
-        if (new File(getSourceDirectoryName()).isDirectory())
-            return true;
+        if (new File(getSourceDirectoryName()).isDirectory()) {
+			return true;
+		}
 
         displayErrorDialog(DataTransferMessages.FileImport_invalidSource);
         sourceNameField.setFocus();
@@ -442,8 +443,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      * @return boolean
      */
     public boolean finish() {
-        if (!ensureSourceIsValid())
-            return false;
+        if (!ensureSourceIsValid()) {
+			return false;
+		}
 
         saveWidgetValues();
 
@@ -454,8 +456,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                     .getFileSystemObject());
         }
 
-        if (fileSystemObjects.size() > 0)
-            return importResources(fileSystemObjects);
+        if (fileSystemObjects.size() > 0) {
+			return importResources(fileSystemObjects);
+		}
 
         MessageDialog.openInformation(getContainer().getShell(),
                 DataTransferMessages.DataTransfer_information,
@@ -490,8 +493,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     protected MinimizedFileSystemElement getFileSystemTree() {
 
         File sourceDirectory = getSourceDirectory();
-        if (sourceDirectory == null)
-            return null;
+        if (sourceDirectory == null) {
+			return null;
+		}
 
         return selectFiles(sourceDirectory,
                 FileSystemStructureProvider.INSTANCE);
@@ -516,8 +520,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             public boolean hasChildren(Object o) {
                 if (o instanceof MinimizedFileSystemElement) {
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    if (element.isPopulated())
-                        return getChildren(element).length > 0;
+                    if (element.isPopulated()) {
+						return getChildren(element).length > 0;
+					}
 
                     //If we have not populated then wait until asked
                     return true;
@@ -567,10 +572,11 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     private String getSourceDirectoryName(String sourceName) {
         IPath result = new Path(sourceName.trim());
 
-        if (result.getDevice() != null && result.segmentCount() == 0) // something like "c:"
-            result = result.addTrailingSeparator();
-        else
-            result = result.removeTrailingSeparator();
+        if (result.getDevice() != null && result.segmentCount() == 0) {
+			result = result.addTrailingSeparator();
+		} else {
+			result = result.removeTrailingSeparator();
+		}
 
         return result.toOSString();
     }
@@ -588,8 +594,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      * @param event Event
      */
     public void handleEvent(Event event) {
-        if (event.widget == sourceBrowseButton)
-            handleSourceBrowseButtonPressed();
+        if (event.widget == sourceBrowseButton) {
+			handleSourceBrowseButtonPressed();
+		}
 
         super.handleEvent(event);
     }
@@ -611,8 +618,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         if (selectedDirectory != null) {
             //Just quit if the directory is not valid
             if ((getSourceDirectory(selectedDirectory) == null)
-                    || selectedDirectory.equals(currentSource))
-                return;
+                    || selectedDirectory.equals(currentSource)) {
+				return;
+			}
             //If it is valid then proceed to populate
             setErrorMessage(null);
             setSourceName(selectedDirectory);
@@ -661,13 +669,15 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      *   upon its extension
      */
     protected boolean isExportableExtension(String extension) {
-        if (selectedTypes == null) // ie.- all extensions are acceptable
-            return true;
+        if (selectedTypes == null) {
+			return true;
+		}
 
         Iterator itr = selectedTypes.iterator();
         while (itr.hasNext()) {
-            if (extension.equalsIgnoreCase((String) itr.next()))
-                return true;
+            if (extension.equalsIgnoreCase((String) itr.next())) {
+				return true;
+			}
         }
 
         return false;
@@ -691,12 +701,14 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null)
-                return; // ie.- no values stored, so stop
+            if (sourceNames == null) {
+				return; // ie.- no values stored, so stop
+			}
 
             // set filenames history
-            for (int i = 0; i < sourceNames.length; i++)
-                sourceNameField.add(sourceNames[i]);
+            for (int i = 0; i < sourceNames.length; i++) {
+				sourceNameField.add(sourceNames[i]);
+			}
 
             // radio buttons and checkboxes	
             overwriteExistingResourcesCheckbox.setSelection(settings
@@ -719,8 +731,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         if (settings != null) {
             // update source names history
             String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null)
-                sourceNames = new String[0];
+            if (sourceNames == null) {
+				sourceNames = new String[0];
+			}
 
             sourceNames = addToHistory(sourceNames, getSourceDirectoryName());
             settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
@@ -780,8 +793,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             String[] currentItems = this.sourceNameField.getItems();
             int selectionIndex = -1;
             for (int i = 0; i < currentItems.length; i++) {
-                if (currentItems[i].equals(path))
-                    selectionIndex = i;
+                if (currentItems[i].equals(path)) {
+					selectionIndex = i;
+				}
             }
             if (selectionIndex < 0) {
                 int oldLength = currentItems.length;
@@ -814,8 +828,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 }
                 Iterator filesList = files.iterator();
                 while (filesList.hasNext()) {
-                    if (monitor.isCanceled())
-                        throw new InterruptedException();
+                    if (monitor.isCanceled()) {
+						throw new InterruptedException();
+					}
                     checkFile(filesList.next());
                 }
             }
@@ -826,8 +841,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                     throw new InterruptedException();
                 }
                 for (int i = 0; i < files.length; i++) {
-                    if (monitor.isCanceled())
-                        throw new InterruptedException();
+                    if (monitor.isCanceled()) {
+						throw new InterruptedException();
+					}
                     checkFile(files[i]);
                 }
             }
@@ -837,8 +853,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                 if (isExportableExtension(file.getFileNameExtension())) {
                     List elements = new ArrayList();
                     FileSystemElement parent = file.getParent();
-                    if (selectionMap.containsKey(parent))
-                        elements = (List) selectionMap.get(parent);
+                    if (selectionMap.containsKey(parent)) {
+						elements = (List) selectionMap.get(parent);
+					}
                     elements.add(file);
                     selectionMap.put(parent, elements);
                 }
@@ -883,8 +900,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         resetSelection();
-        if (visible)
-            this.sourceNameField.setFocus();
+        if (visible) {
+			this.sourceNameField.setFocus();
+		}
     }
 
     /**
@@ -945,8 +963,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     protected boolean sourceConflictsWithDestination(IPath sourcePath) {
 
         IContainer container = getSpecifiedContainer();
-        if (container == null)
-            return false;
+        if (container == null) {
+			return false;
+		}
         
         IPath destinationLocation = getSpecifiedContainer().getLocation();
         if (destinationLocation != null) {

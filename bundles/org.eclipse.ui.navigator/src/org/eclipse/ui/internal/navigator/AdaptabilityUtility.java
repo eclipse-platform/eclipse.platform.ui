@@ -32,13 +32,14 @@ public class AdaptabilityUtility {
 	 * @return An adapter of the requested type or null
 	 */
 	public static Object getAdapter(Object anElement, Class anAdapterType) {
-		if (anElement == null)
+		if (anElement == null) {
 			return null;
-		else if (anElement instanceof IAdaptable)
+		} else if (anElement instanceof IAdaptable) {
 			return ((IAdaptable) anElement).getAdapter(anAdapterType);
-		else
+		} else {
 			return Platform.getAdapterManager().getAdapter(anElement,
 					anAdapterType);
+		}
 	}
 
 }

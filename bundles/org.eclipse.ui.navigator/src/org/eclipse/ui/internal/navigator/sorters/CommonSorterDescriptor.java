@@ -44,12 +44,14 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 	private void init() {
 		id = element.getAttribute(ATT_ID);
-		if (id == null)
+		if (id == null) {
 			id = ""; //$NON-NLS-1$
+		}
 		IConfigurationElement[] children = element
 				.getChildren(TAG_PARENT_EXPRESSION);
-		if (children.length == 1)
+		if (children.length == 1) {
 			parentExpression = new CustomAndExpression(children[0]);
+		}
 	}
 
 	/**
@@ -86,8 +88,9 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 	 *         the given parent.
 	 */
 	public boolean isEnabledForParent(Object aParent) {
-		if(aParent == null)
+		if(aParent == null) {
 			return false;
+		}
 
 		if (parentExpression != null) {
 			EvaluationContext context = new EvaluationContext(null, aParent);

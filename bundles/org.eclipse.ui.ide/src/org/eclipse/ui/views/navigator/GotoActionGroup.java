@@ -59,8 +59,9 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
                 if (resourceSelection != null && !resourceSelection.isEmpty()) {
                     IProject project = (IProject) resourceSelection
                             .getFirstElement();
-                    if (project.isOpen())
-                        menu.add(goIntoAction);
+                    if (project.isOpen()) {
+						menu.add(goIntoAction);
+					}
                 }
             }
         }

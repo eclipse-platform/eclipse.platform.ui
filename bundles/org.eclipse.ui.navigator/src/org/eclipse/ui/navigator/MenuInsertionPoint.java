@@ -63,8 +63,9 @@ public final class MenuInsertionPoint {
 	}
 
 	public String toString() { 
-		if(toString == null)
+		if(toString == null) {
 			toString = "MenuInsertionPoint[name=\""+name+"\", isSeparator="+isSeparator+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		return toString;
 	}
 }

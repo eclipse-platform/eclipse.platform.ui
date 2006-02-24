@@ -75,8 +75,9 @@ public class WelcomeEditorInput implements IEditorInput {
     public boolean equals(Object o) {
         if ((o != null) && (o instanceof WelcomeEditorInput)) {
             if (((WelcomeEditorInput) o).aboutInfo.getFeatureId().equals(
-                    aboutInfo.getFeatureId()))
-                return true;
+                    aboutInfo.getFeatureId())) {
+				return true;
+			}
         }
         return false;
     }

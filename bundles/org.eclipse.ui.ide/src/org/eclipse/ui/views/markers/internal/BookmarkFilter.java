@@ -55,8 +55,9 @@ public class BookmarkFilter extends MarkerFilter {
 	}
 
 	private boolean selectByDescription(ConcreteMarker marker) {
-		if (description == null || description.equals("")) //$NON-NLS-1$
+		if (description == null || description.equals("")) { //$NON-NLS-1$
 			return true;
+		}
 
 		String markerDescription = marker.getDescription();
 		int index = markerDescription.indexOf(description);
@@ -101,13 +102,15 @@ public class BookmarkFilter extends MarkerFilter {
 
 		String setting = settings.get(TAG_CONTAINS);
 
-		if (setting != null)
+		if (setting != null) {
 			contains = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.get(TAG_DESCRIPTION);
 
-		if (setting != null)
+		if (setting != null) {
 			description = new String(setting);
+		}
 
 	}
 
@@ -119,13 +122,15 @@ public class BookmarkFilter extends MarkerFilter {
 
 		String setting = memento.getString(TAG_CONTAINS);
 
-		if (setting != null)
+		if (setting != null) {
 			contains = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = memento.getString(TAG_DESCRIPTION);
 
-		if (setting != null)
+		if (setting != null) {
 			description = new String(setting);
+		}
 
 	}
 

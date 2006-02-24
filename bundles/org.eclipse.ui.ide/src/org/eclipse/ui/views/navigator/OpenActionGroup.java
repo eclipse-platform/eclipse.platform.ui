@@ -76,11 +76,13 @@ public class OpenActionGroup extends ResourceNavigatorActionGroup {
             IStructuredSelection selection) {
 
         // Only supported if exactly one file is selected.
-        if (selection.size() != 1)
-            return;
+        if (selection.size() != 1) {
+			return;
+		}
         Object element = selection.getFirstElement();
-        if (!(element instanceof IFile))
-            return;
+        if (!(element instanceof IFile)) {
+			return;
+		}
 
         MenuManager submenu = new MenuManager(ResourceNavigatorMessages.ResourceNavigator_openWith, OPEN_WITH_ID);
         submenu.add(new OpenWithMenu(navigator.getSite().getPage(),
@@ -98,13 +100,16 @@ public class OpenActionGroup extends ResourceNavigatorActionGroup {
             IStructuredSelection selection) {
 
         // Only supported if exactly one container (i.e open project or folder) is selected.
-        if (selection.size() != 1)
-            return;
+        if (selection.size() != 1) {
+			return;
+		}
         Object element = selection.getFirstElement();
-        if (!(element instanceof IContainer))
-            return;
-        if (element instanceof IProject && !(((IProject) element).isOpen()))
-            return;
+        if (!(element instanceof IContainer)) {
+			return;
+		}
+        if (element instanceof IProject && !(((IProject) element).isOpen())) {
+			return;
+		}
 
         menu.add(new OpenInNewWindowAction(navigator.getSite()
                 .getWorkbenchWindow(), (IContainer) element));

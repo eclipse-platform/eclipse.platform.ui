@@ -116,10 +116,11 @@ public class WelcomeItem {
      * Open a help topic
      */
     private void openHelpTopic(String topic, String href) {
-        if (href != null)
-        	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
-        else
-        	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(topic);
+        if (href != null) {
+			PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+		} else {
+			PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(topic);
+		}
     }
 
     /**

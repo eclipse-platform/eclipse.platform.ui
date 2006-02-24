@@ -122,8 +122,9 @@ public class TextActionHandler {
         }
 
         public void propertyChange(PropertyChangeEvent event) {
-            if (activeTextControl != null)
-                return;
+            if (activeTextControl != null) {
+				return;
+			}
             if (event.getProperty().equals(IAction.ENABLED)) {
                 Boolean bool = (Boolean) event.getNewValue();
                 actionHandler.setEnabled(bool.booleanValue());
@@ -361,8 +362,9 @@ public class TextActionHandler {
      * @param textControl the inline <code>Text</code> control
      */
     public void addText(Text textControl) {
-        if (textControl == null)
-            return;
+        if (textControl == null) {
+			return;
+		}
 
         activeTextControl = textControl;
         textControl.addListener(SWT.Activate, textControlListener);
@@ -395,8 +397,9 @@ public class TextActionHandler {
      * @param textControl the inline <code>Text</code> control
      */
     public void removeText(Text textControl) {
-        if (textControl == null)
-            return;
+        if (textControl == null) {
+			return;
+		}
 
         textControl.removeListener(SWT.Activate, textControlListener);
         textControl.removeListener(SWT.Deactivate, textControlListener);
@@ -417,16 +420,19 @@ public class TextActionHandler {
      *    Copy action, or <code>null</code> if not interested.
      */
     public void setCopyAction(IAction action) {
-        if (copyAction == action)
-            return;
+        if (copyAction == action) {
+			return;
+		}
 
-        if (copyAction != null)
-            copyAction.removePropertyChangeListener(copyActionListener);
+        if (copyAction != null) {
+			copyAction.removePropertyChangeListener(copyActionListener);
+		}
 
         copyAction = action;
 
-        if (copyAction != null)
-            copyAction.addPropertyChangeListener(copyActionListener);
+        if (copyAction != null) {
+			copyAction.addPropertyChangeListener(copyActionListener);
+		}
 
         textCopyAction.updateEnabledState();
     }
@@ -440,16 +446,19 @@ public class TextActionHandler {
      *    Cut action, or <code>null</code> if not interested.
      */
     public void setCutAction(IAction action) {
-        if (cutAction == action)
-            return;
+        if (cutAction == action) {
+			return;
+		}
 
-        if (cutAction != null)
-            cutAction.removePropertyChangeListener(cutActionListener);
+        if (cutAction != null) {
+			cutAction.removePropertyChangeListener(cutActionListener);
+		}
 
         cutAction = action;
 
-        if (cutAction != null)
-            cutAction.addPropertyChangeListener(cutActionListener);
+        if (cutAction != null) {
+			cutAction.addPropertyChangeListener(cutActionListener);
+		}
 
         textCutAction.updateEnabledState();
     }
@@ -463,16 +472,19 @@ public class TextActionHandler {
      *    Paste action, or <code>null</code> if not interested.
      */
     public void setPasteAction(IAction action) {
-        if (pasteAction == action)
-            return;
+        if (pasteAction == action) {
+			return;
+		}
 
-        if (pasteAction != null)
-            pasteAction.removePropertyChangeListener(pasteActionListener);
+        if (pasteAction != null) {
+			pasteAction.removePropertyChangeListener(pasteActionListener);
+		}
 
         pasteAction = action;
 
-        if (pasteAction != null)
-            pasteAction.addPropertyChangeListener(pasteActionListener);
+        if (pasteAction != null) {
+			pasteAction.addPropertyChangeListener(pasteActionListener);
+		}
 
         textPasteAction.updateEnabledState();
     }
@@ -486,17 +498,20 @@ public class TextActionHandler {
      *    Select All action, or <code>null</code> if not interested.
      */
     public void setSelectAllAction(IAction action) {
-        if (selectAllAction == action)
-            return;
+        if (selectAllAction == action) {
+			return;
+		}
 
-        if (selectAllAction != null)
-            selectAllAction
+        if (selectAllAction != null) {
+			selectAllAction
                     .removePropertyChangeListener(selectAllActionListener);
+		}
 
         selectAllAction = action;
 
-        if (selectAllAction != null)
-            selectAllAction.addPropertyChangeListener(selectAllActionListener);
+        if (selectAllAction != null) {
+			selectAllAction.addPropertyChangeListener(selectAllActionListener);
+		}
 
         textSelectAllAction.updateEnabledState();
     }
@@ -510,16 +525,19 @@ public class TextActionHandler {
      *    Delete action, or <code>null</code> if not interested.
      */
     public void setDeleteAction(IAction action) {
-        if (deleteAction == action)
-            return;
+        if (deleteAction == action) {
+			return;
+		}
 
-        if (deleteAction != null)
-            deleteAction.removePropertyChangeListener(deleteActionListener);
+        if (deleteAction != null) {
+			deleteAction.removePropertyChangeListener(deleteActionListener);
+		}
 
         deleteAction = action;
 
-        if (deleteAction != null)
-            deleteAction.addPropertyChangeListener(deleteActionListener);
+        if (deleteAction != null) {
+			deleteAction.addPropertyChangeListener(deleteActionListener);
+		}
 
         textDeleteAction.updateEnabledState();
     }

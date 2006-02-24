@@ -50,13 +50,15 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 		marker1 = (MarkerNode) obj1;
 		marker2 = (MarkerNode) obj2;
 
-		if (categoryField == null)
+		if (categoryField == null) {
 			return innerSorter.compare(marker1, marker2, depth,
 					continueSearching);
+		}
 
 		int result = categoryField.compare(marker1, marker2);
-		if (continueSearching && result == 0)
+		if (continueSearching && result == 0) {
 			return innerSorter.compare(marker1, marker2, 0, continueSearching);
+		}
 		return result;
 	}
 
@@ -125,8 +127,9 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 		}
 
 		String description = Util.EMPTY_STRING;
-		if (categoryField != null)
+		if (categoryField != null) {
 			description = categoryField.getDescription();
+		}
 
 		settings.put(TAG_FIELD, description);
 
@@ -145,8 +148,9 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 
 		IDialogSettings settings = dialogSettings
 				.getSection(TableSorter.TAG_DIALOG_SECTION);
-		if (settings == null)
+		if (settings == null) {
 			return;
+		}
 
 		//String description = settings.get(TAG_FIELD);
 

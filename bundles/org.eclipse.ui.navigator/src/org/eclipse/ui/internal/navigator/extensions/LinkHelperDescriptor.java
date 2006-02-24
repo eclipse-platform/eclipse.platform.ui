@@ -109,8 +109,9 @@ public class LinkHelperDescriptor {
 
 	public boolean isEnabledFor(IEditorInput anInput) {
 
-		if (editorInputEnablement == null || anInput == null)
+		if (editorInputEnablement == null || anInput == null) {
 			return false;
+		}
 
 		try {
 			return (editorInputEnablement.evaluate(new EvaluationContext(null, anInput)) == EvaluationResult.TRUE);
@@ -125,8 +126,9 @@ public class LinkHelperDescriptor {
 	}
 
 	public boolean isEnabledFor(IStructuredSelection aSelection) {
-		if (selectionEnablement == null)
+		if (selectionEnablement == null) {
 			return false;
+		}
 
 		IEvaluationContext context = null;
 
@@ -134,8 +136,9 @@ public class LinkHelperDescriptor {
 		while (elements.hasNext()) {
 			context = new EvaluationContext(null, elements.next());
 			try {
-				if (selectionEnablement.evaluate(context) == EvaluationResult.FALSE)
+				if (selectionEnablement.evaluate(context) == EvaluationResult.FALSE) {
 					return false;
+				}
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 				return false;

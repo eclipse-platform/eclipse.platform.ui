@@ -170,10 +170,11 @@ class BookmarkPropertiesDialog extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        if (title == null)
-            newShell.setText(BookmarkMessages.PropertiesDialogTitle_text);
-        else
-            newShell.setText(title);
+        if (title == null) {
+			newShell.setText(BookmarkMessages.PropertiesDialogTitle_text);
+		} else {
+			newShell.setText(title);
+		}
     }
 
     /* (non-Javadoc)
@@ -194,10 +195,12 @@ class BookmarkPropertiesDialog extends Dialog {
         Composite composite = (Composite) super.createDialogArea(parent);
         initializeDialogUnits(composite);
         createDescriptionArea(composite);
-        if (marker != null)
-            createCreationTimeArea(composite);
-        if (resource != null && resource.getType() != IResource.ROOT)
-            createResourceArea(composite);
+        if (marker != null) {
+			createCreationTimeArea(composite);
+		}
+        if (resource != null && resource.getType() != IResource.ROOT) {
+			createResourceArea(composite);
+		}
         updateDialogFromMarker();
         return composite;
     }
@@ -308,18 +311,22 @@ class BookmarkPropertiesDialog extends Dialog {
             return;
         }
         descriptionText.setText(MarkerUtil.getMessage(marker));
-        if (creationTime != null)
-            creationTime.setText(MarkerUtil.getCreationTime(marker));
-        if (resourceText != null)
-            resourceText.setText(MarkerUtil.getResourceName(marker));
-        if (folderText != null)
-            folderText.setText(MarkerUtil.getContainerName(marker));
+        if (creationTime != null) {
+			creationTime.setText(MarkerUtil.getCreationTime(marker));
+		}
+        if (resourceText != null) {
+			resourceText.setText(MarkerUtil.getResourceName(marker));
+		}
+        if (folderText != null) {
+			folderText.setText(MarkerUtil.getContainerName(marker));
+		}
         if (locationText != null) {
             int line = MarkerUtil.getLineNumber(marker);
-            if (line < 0)
-                locationText.setText(""); //$NON-NLS-1$
-            else
-                locationText.setText(NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line)));
+            if (line < 0) {
+				locationText.setText(""); //$NON-NLS-1$
+			} else {
+				locationText.setText(NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line)));
+			}
         }
 
         descriptionText.selectAll();
@@ -333,15 +340,18 @@ class BookmarkPropertiesDialog extends Dialog {
             int n = path.segmentCount() - 1; // n is the number of segments in container, not path
             if (n > 0) {
                 int len = 0;
-                for (int i = 0; i < n; ++i)
-                    len += path.segment(i).length();
+                for (int i = 0; i < n; ++i) {
+					len += path.segment(i).length();
+				}
                 // account for /'s
-                if (n > 1)
-                    len += n - 1;
+                if (n > 1) {
+					len += n - 1;
+				}
                 StringBuffer sb = new StringBuffer(len);
                 for (int i = 0; i < n; ++i) {
-                    if (i != 0)
-                        sb.append('/');
+                    if (i != 0) {
+						sb.append('/');
+					}
                     sb.append(path.segment(i));
                 }
                 folderText.setText(sb.toString());
@@ -350,13 +360,15 @@ class BookmarkPropertiesDialog extends Dialog {
 
         if (initialAttributes != null) {
             Object description = initialAttributes.get(IMarker.MESSAGE);
-            if (description != null && description instanceof String)
-                descriptionText.setText((String) description);
+            if (description != null && description instanceof String) {
+				descriptionText.setText((String) description);
+			}
             descriptionText.selectAll();
 
             Object line = initialAttributes.get(IMarker.LINE_NUMBER);
-            if (line != null && line instanceof Integer)
-                locationText.setText(NLS.bind(BookmarkMessages.LineIndicator_text, line));
+            if (line != null && line instanceof Integer) {
+				locationText.setText(NLS.bind(BookmarkMessages.LineIndicator_text, line));
+			}
         }
     }
 
@@ -385,10 +397,11 @@ class BookmarkPropertiesDialog extends Dialog {
         try {
             ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) throws CoreException {
-                    if (marker == null)
-                        createMarker();
-                    else if (isDirty())
-                        updateMarker();
+                    if (marker == null) {
+						createMarker();
+					} else if (isDirty()) {
+						updateMarker();
+					}
                 }
             }, null);
         } catch (CoreException e) {
@@ -423,14 +436,16 @@ class BookmarkPropertiesDialog extends Dialog {
     }
 
     private void createMarker() {
-        if (resource == null || !(resource instanceof IFile))
-            return;
+        if (resource == null || !(resource instanceof IFile)) {
+			return;
+		}
 
         IFile file = (IFile) resource;
         try {
             IMarker newMarker = file.createMarker(IMarker.BOOKMARK);
-            if (initialAttributes != null)
-                newMarker.setAttributes(initialAttributes);
+            if (initialAttributes != null) {
+				newMarker.setAttributes(initialAttributes);
+			}
             String message = descriptionText.getText();
             newMarker.setAttribute(IMarker.MESSAGE, message);
         } catch (CoreException e) {

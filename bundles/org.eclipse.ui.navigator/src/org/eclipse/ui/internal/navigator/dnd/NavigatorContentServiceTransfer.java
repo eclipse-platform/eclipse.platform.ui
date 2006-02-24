@@ -44,8 +44,9 @@ public class NavigatorContentServiceTransfer {
 	 * @param aContentService The Content Service to register.
 	 */
 	public synchronized void registerContentService(INavigatorContentService aContentService) { 
-		if(findService(aContentService.getViewerId()) == null)
+		if(findService(aContentService.getViewerId()) == null) {
 			registeredContentServices.add(new WeakReference(aContentService));
+		}
 	}
 	
 	/**
@@ -56,9 +57,9 @@ public class NavigatorContentServiceTransfer {
   
 		for (Iterator iter = registeredContentServices.iterator(); iter.hasNext();) {
 			WeakReference ref = (WeakReference) iter.next();
-			if(ref.get() == null) 
+			if(ref.get() == null) {
 				iter.remove();
-			else { 
+			} else { 
 				if(ref.get() == aContentService) {
 					iter.remove(); 
 					return;
@@ -73,17 +74,19 @@ public class NavigatorContentServiceTransfer {
 	 * @return The registered content service for the given viewer id.
 	 */
 	public synchronized INavigatorContentService findService(String aViewerId) {
-		if(aViewerId == null || aViewerId.length() == 0)
+		if(aViewerId == null || aViewerId.length() == 0) {
 			return null;
+		}
 		INavigatorContentService contentService;
 		for (Iterator iter = registeredContentServices.iterator(); iter.hasNext();) {
 			WeakReference ref = (WeakReference) iter.next();
-			if(ref.get() == null) 
+			if(ref.get() == null) {
 				iter.remove();
-			else {
+			} else {
 				contentService = (INavigatorContentService)ref.get();
-				if(aViewerId.equals(contentService.getViewerId())) 
-					return contentService; 
+				if(aViewerId.equals(contentService.getViewerId())) {
+					return contentService;
+				} 
 			}
 		}
 		return null;

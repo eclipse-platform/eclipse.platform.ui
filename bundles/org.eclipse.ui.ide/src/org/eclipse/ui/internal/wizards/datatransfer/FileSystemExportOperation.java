@@ -76,8 +76,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
         Iterator elementsEnum = resources.iterator();
         while (elementsEnum.hasNext()) {
             IResource currentResource = (IResource) elementsEnum.next();
-            if (isDescendent(resources, currentResource))
-                elementsEnum.remove(); //Remove currentResource
+            if (isDescendent(resources, currentResource)) {
+				elementsEnum.remove(); //Remove currentResource
+			}
         }
 
         resourcesToExport = resources;
@@ -125,14 +126,16 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
      */
     protected int countChildrenOf(IResource parentResource)
             throws CoreException {
-        if (parentResource.getType() == IResource.FILE)
-            return 1;
+        if (parentResource.getType() == IResource.FILE) {
+			return 1;
+		}
 
         int count = 0;
         if (parentResource.isAccessible()) {
             IResource[] children = ((IContainer) parentResource).members();
-            for (int i = 0; i < children.length; i++)
-                count += countChildrenOf(children[i]);
+            for (int i = 0; i < children.length; i++) {
+				count += countChildrenOf(children[i]);
+			}
         }
 
         return count;
@@ -148,8 +151,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
         int result = 0;
         Iterator resources = resourcesToExport.iterator();
 
-        while (resources.hasNext())
-            result += countChildrenOf((IResource) resources.next());
+        while (resources.hasNext()) {
+			result += countChildrenOf((IResource) resources.next());
+		}
 
         return result;
     }
@@ -173,9 +177,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
      *	Recursively export the previously-specified resource
      */
     protected void exportAllResources() throws InterruptedException {
-        if (resource.getType() == IResource.FILE)
-            exportFile((IFile) resource, path);
-        else {
+        if (resource.getType() == IResource.FILE) {
+			exportFile((IFile) resource, path);
+		} else {
             try {
                 exportChildren(((IContainer) resource).members(), path);
             } catch (CoreException e) {
@@ -197,12 +201,13 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
             throws InterruptedException {
         for (int i = 0; i < children.length; i++) {
             IResource child = children[i];
-            if (!child.isAccessible())
-                continue;
+            if (!child.isAccessible()) {
+				continue;
+			}
 
-            if (child.getType() == IResource.FILE)
-                exportFile((IFile) child, currentPath);
-            else {
+            if (child.getType() == IResource.FILE) {
+				exportFile((IFile) child, currentPath);
+			} else {
                 IPath destination = currentPath.append(child.getName());
                 exporter.createFolder(destination);
                 try {
@@ -241,15 +246,17 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
                 return;
             }
 
-            if (overwriteState == OVERWRITE_NONE)
-                return;
+            if (overwriteState == OVERWRITE_NONE) {
+				return;
+			}
 
             if (overwriteState != OVERWRITE_ALL) {
                 String overwriteAnswer = overwriteCallback
                         .queryOverwrite(properPathString);
 
-                if (overwriteAnswer.equals(IOverwriteQuery.CANCEL))
-                    throw new InterruptedException();
+                if (overwriteAnswer.equals(IOverwriteQuery.CANCEL)) {
+					throw new InterruptedException();
+				}
 
                 if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
                     monitor.worked(1);
@@ -262,8 +269,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
                     return;
                 }
 
-                if (overwriteAnswer.equals(IOverwriteQuery.ALL))
-                    overwriteState = OVERWRITE_ALL;
+                if (overwriteAnswer.equals(IOverwriteQuery.ALL)) {
+					overwriteState = OVERWRITE_ALL;
+				}
             }
         }
 
@@ -291,8 +299,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 
         while (resources.hasNext()) {
             IResource currentResource = (IResource) resources.next();
-            if (!currentResource.isAccessible())
-                continue;
+            if (!currentResource.isAccessible()) {
+				continue;
+			}
 
             path = initPath;
 
@@ -300,8 +309,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
                 // No root resource specified and creation of containment directories
                 // is required.  Create containers from depth 2 onwards (ie.- project's
                 // child inclusive) for each resource being exported.
-                if (createLeadupStructure)
-                    createLeadupDirectoriesFor(currentResource);
+                if (createLeadupStructure) {
+					createLeadupDirectoriesFor(currentResource);
+				}
 
             } else {
                 // Root resource specified.  Must create containment directories
@@ -317,9 +327,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
                 }
             }
 
-            if (currentResource.getType() == IResource.FILE)
-                exportFile((IFile) currentResource, path);
-            else {
+            if (currentResource.getType() == IResource.FILE) {
+				exportFile((IFile) currentResource, path);
+			} else {
                 if (createContainerDirectories) {
                     path = path.append(currentResource.getName());
                     exporter.createFolder(path);
@@ -365,12 +375,14 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
      *  @param child org.eclipse.core.resources.IResource
      */
     protected boolean isDescendent(List resources, IResource child) {
-        if (child.getType() == IResource.PROJECT)
-            return false;
+        if (child.getType() == IResource.PROJECT) {
+			return false;
+		}
 
         IResource parent = child.getParent();
-        if (resources.contains(parent))
-            return true;
+        if (resources.contains(parent)) {
+			return true;
+		}
 
         return isDescendent(resources, parent);
     }
@@ -384,8 +396,9 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
         this.monitor = progressMonitor;
 
         if (resource != null) {
-            if (createLeadupStructure)
-                createLeadupDirectoriesFor(resource);
+            if (createLeadupStructure) {
+				createLeadupDirectoriesFor(resource);
+			}
 
             if (createContainerDirectories
                     && resource.getType() != IResource.FILE) {
@@ -398,10 +411,11 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
         try {
             int totalWork = IProgressMonitor.UNKNOWN;
             try {
-                if (resourcesToExport == null)
-                    totalWork = countChildrenOf(resource);
-                else
-                    totalWork = countSelectedResources();
+                if (resourcesToExport == null) {
+					totalWork = countChildrenOf(resource);
+				} else {
+					totalWork = countSelectedResources();
+				}
             } catch (CoreException e) {
                 // Should not happen
                 errorTable.add(e.getStatus());
@@ -445,7 +459,8 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
      *	@param value boolean
      */
     public void setOverwriteFiles(boolean value) {
-        if (value)
-            overwriteState = OVERWRITE_ALL;
+        if (value) {
+			overwriteState = OVERWRITE_ALL;
+		}
     }
 }

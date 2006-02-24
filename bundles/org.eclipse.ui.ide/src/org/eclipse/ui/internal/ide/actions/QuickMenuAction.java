@@ -60,11 +60,13 @@ public abstract class QuickMenuAction extends Action {
      */
     public void run() {
         Display display = Display.getCurrent();
-        if (display == null)
-            return;
+        if (display == null) {
+			return;
+		}
         Control focus = display.getFocusControl();
-        if (focus == null || focus.isDisposed())
-            return;
+        if (focus == null || focus.isDisposed()) {
+			return;
+		}
 
         MenuManager menu = new MenuManager();
         fillMenu(menu);
@@ -74,8 +76,9 @@ public abstract class QuickMenuAction extends Action {
         }
         quickMenu = menu.createContextMenu(focus.getShell());
         Point location = computeMenuLocation(focus, quickMenu);
-        if (location == null)
-            return;
+        if (location == null) {
+			return;
+		}
         quickMenu.setLocation(location);
         quickMenu.setVisible(true);
     }
@@ -159,8 +162,9 @@ public abstract class QuickMenuAction extends Action {
     protected Point computeMenuLocation(StyledText text) {
         Point result = text.getLocationAtOffset(text.getCaretOffset());
         result.y += text.getLineHeight();
-        if (!text.getClientArea().contains(result))
-            return null;
+        if (!text.getClientArea().contains(result)) {
+			return null;
+		}
         return result;
     }
 
@@ -198,8 +202,9 @@ public abstract class QuickMenuAction extends Action {
             Point cursorLocation = tree.getDisplay().getCursorLocation();
             Point result = findBestLocation(getIncludedPositions(rectangles,
                     clientArea), tree.toControl(cursorLocation));
-            if (result != null)
-                result.x = result.x + getAvarageCharWith(tree) * CHAR_INDENT;
+            if (result != null) {
+				result.x = result.x + getAvarageCharWith(tree) * CHAR_INDENT;
+			}
             return result;
         }
     }
@@ -242,9 +247,10 @@ public abstract class QuickMenuAction extends Action {
             Point cursorLocation = table.getDisplay().getCursorLocation();
             Point result = findBestLocation(getIncludedPositions(rectangles,
                     clientArea), table.toControl(cursorLocation));
-            if (result != null)
-                result.x = result.x + iBounds.width + getAvarageCharWith(table)
+            if (result != null) {
+				result.x = result.x + iBounds.width + getAvarageCharWith(table)
                         * CHAR_INDENT;
+			}
             return result;
         }
         }
@@ -296,8 +302,9 @@ public abstract class QuickMenuAction extends Action {
             gc = new GC(control);
             return gc.getFontMetrics().getAverageCharWidth();
         } finally {
-            if (gc != null)
-                gc.dispose();
+            if (gc != null) {
+				gc.dispose();
+			}
         }
     }
 }

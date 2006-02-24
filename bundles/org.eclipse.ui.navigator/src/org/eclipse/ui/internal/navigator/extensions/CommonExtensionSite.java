@@ -37,8 +37,9 @@ public class CommonExtensionSite {
 		Assert.isNotNull(aContentService);
 
 		contentService = aContentService;
-		if (anExtensionId != null)
+		if (anExtensionId != null) {
 			extensionStateModel = aContentService.findStateModel(anExtensionId);
+		}
 	}
 
 	/**

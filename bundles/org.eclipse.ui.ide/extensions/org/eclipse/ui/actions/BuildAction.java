@@ -99,13 +99,15 @@ public class BuildAction extends WorkspaceAction {
      */
     private void addAllProjects(IProject project, HashSet projects) {
         if (project == null || !project.isAccessible()
-                || projects.contains(project))
-            return;
+                || projects.contains(project)) {
+			return;
+		}
         projects.add(project);
         try {
             IProject[] preReqs = project.getReferencedProjects();
-            for (int i = 0; i < preReqs.length; i++)
-                addAllProjects(preReqs[i], projects);
+            for (int i = 0; i < preReqs.length; i++) {
+				addAllProjects(preReqs[i], projects);
+			}
         } catch (CoreException e) {
             //ignore inaccessible projects
         }
@@ -225,12 +227,14 @@ public class BuildAction extends WorkspaceAction {
     List pruneResources(List resourceCollection) {
         //recursively compute project prerequisites
         HashSet toBuild = new HashSet();
-        for (Iterator it = resourceCollection.iterator(); it.hasNext();)
-            addAllProjects((IProject) it.next(), toBuild);
+        for (Iterator it = resourceCollection.iterator(); it.hasNext();) {
+			addAllProjects((IProject) it.next(), toBuild);
+		}
 
         // Optimize...
-        if (toBuild.size() < 2)
-            return resourceCollection;
+        if (toBuild.size() < 2) {
+			return resourceCollection;
+		}
 
         // Try the workspace's description build order if specified
         String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription()
@@ -267,8 +271,9 @@ public class BuildAction extends WorkspaceAction {
      */
     public void run() {
 	    List projects = getProjectsToBuild();
-	    if (projects == null || projects.isEmpty())
-	        return;
+	    if (projects == null || projects.isEmpty()) {
+			return;
+		}
 
 	    // Save all resources prior to doing build
         BuildUtilities.saveEditors(projects);

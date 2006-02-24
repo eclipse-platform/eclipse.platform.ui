@@ -43,11 +43,13 @@ public abstract class MarkerSelectionProviderAction extends SelectionProviderAct
 		ArrayList markers = new ArrayList();
 		for (int i = 0; i < selection.length; i++) {
 			Object object = selection[i];
-			if(!(object instanceof MarkerNode))
+			if(!(object instanceof MarkerNode)) {
 				return new IMarker[0];//still pending
+			}
 			MarkerNode marker =(MarkerNode) object;
-			if(marker.isConcrete())
+			if(marker.isConcrete()) {
 				markers.add(((ConcreteMarker) object).getMarker());
+			}
 		}
 		
 		return (IMarker[]) markers.toArray(new IMarker[markers.size()]);

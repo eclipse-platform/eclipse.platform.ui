@@ -111,14 +111,16 @@ public class SafeDelegateTreeContentProvider implements
 	}
 
 	public void restoreState(IMemento aMemento) {
-		if (contentProvider != null && contentProvider instanceof IMementoAware)
+		if (contentProvider != null && contentProvider instanceof IMementoAware) {
 			((IMementoAware) contentProvider).restoreState(aMemento);
+		}
 
 	}
 
 	public void saveState(IMemento aMemento) {
-		if (contentProvider != null && contentProvider instanceof IMementoAware)
+		if (contentProvider != null && contentProvider instanceof IMementoAware) {
 			((IMementoAware) contentProvider).saveState(aMemento);
+		}
 
 	}
 
@@ -135,9 +137,10 @@ public class SafeDelegateTreeContentProvider implements
 	 *      java.util.Set)
 	 */
 	public void getPipelinedChildren(Object aParent, Set theCurrentChildren) {
-		if (contentProvider instanceof IPipelinedTreeContentProvider)
+		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			((IPipelinedTreeContentProvider) contentProvider)
 					.getPipelinedChildren(aParent, theCurrentChildren);
+		}
 
 	}
 
@@ -148,9 +151,10 @@ public class SafeDelegateTreeContentProvider implements
 	 *      java.util.Set)
 	 */
 	public void getPipelinedElements(Object anInput, Set theCurrentElements) {
-		if (contentProvider instanceof IPipelinedTreeContentProvider)
+		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			((IPipelinedTreeContentProvider) contentProvider)
 					.getPipelinedElements(anInput, theCurrentElements);
+		}
 	}
 
 	/*
@@ -160,9 +164,10 @@ public class SafeDelegateTreeContentProvider implements
 	 *      java.lang.Object)
 	 */
 	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
-		if (contentProvider instanceof IPipelinedTreeContentProvider)
+		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			return ((IPipelinedTreeContentProvider) contentProvider)
 					.getPipelinedParent(anObject, aSuggestedParent);
+		}
 		return anObject;
 	}
 
@@ -193,9 +198,10 @@ public class SafeDelegateTreeContentProvider implements
 	 */
 	public boolean interceptRefresh(
 			PipelinedViewerUpdate aRefreshSynchronization) {
-		if (contentProvider instanceof IPipelinedTreeContentProvider)
+		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			return ((IPipelinedTreeContentProvider) contentProvider)
 					.interceptRefresh(aRefreshSynchronization);
+		}
 		return false;
 	}
 
@@ -206,9 +212,10 @@ public class SafeDelegateTreeContentProvider implements
 	 */
 	public boolean interceptUpdate(
 			PipelinedViewerUpdate anUpdateSynchronization) {
-		if (contentProvider instanceof IPipelinedTreeContentProvider)
+		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			return ((IPipelinedTreeContentProvider) contentProvider)
 					.interceptRefresh(anUpdateSynchronization);
+		}
 		return false;
 	}
 

@@ -230,9 +230,10 @@ public class TaskList extends ViewPart {
                 IMarkerConstants.P_LINE_AND_LOCATION };
 
         public String getColumnText(Object element, int columnIndex) {
-            if (columnIndex >= 3 && columnIndex <= 6)
-                return (String) MarkerUtil.getProperty(element,
+            if (columnIndex >= 3 && columnIndex <= 6) {
+				return (String) MarkerUtil.getProperty(element,
                         keys[columnIndex]);
+			}
             return ""; //$NON-NLS-1$
         }
 
@@ -263,8 +264,9 @@ public class TaskList extends ViewPart {
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
             IDialogSettings settings = workbenchSettings
                     .getSection(TAG_SORT_SECTION);
-            if (settings == null)
-                settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
+            if (settings == null) {
+				settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
+			}
             sorter.saveState(settings);
         }
     }
@@ -287,8 +289,9 @@ public class TaskList extends ViewPart {
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
             IDialogSettings settings = workbenchSettings
                     .getSection(TAG_SORT_SECTION);
-            if (settings == null)
-                settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
+            if (settings == null) {
+				settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
+			}
             sorter.saveState(settings);
         }
     }
@@ -410,9 +413,9 @@ public class TaskList extends ViewPart {
             public void widgetSelected(SelectionEvent e) {
                 // column selected - need to sort
                 int column = table.indexOf((TableColumn) e.widget);
-                if (column == sorter.getTopPriority())
-                    sorter.reverseTopPriority();
-                else {
+                if (column == sorter.getTopPriority()) {
+					sorter.reverseTopPriority();
+				} else {
                     sorter.setTopPriority(column);
                 }
                 updateSortingState();
@@ -421,9 +424,10 @@ public class TaskList extends ViewPart {
                         .getDialogSettings();
                 IDialogSettings settings = workbenchSettings
                         .getSection(TAG_SORT_SECTION);
-                if (settings == null)
-                    settings = workbenchSettings
+                if (settings == null) {
+					settings = workbenchSettings
                             .addNewSection(TAG_SORT_SECTION);
+				}
                 sorter.saveState(settings);
             }
         };
@@ -454,12 +458,13 @@ public class TaskList extends ViewPart {
         for (int i = 0; i < columnHeaders.length; i++) {
             TableColumn tc = new TableColumn(table, SWT.NONE, i);
 
-            if (!text && i == 1)
-                tc.setImage(MarkerUtil.getImage("header_complete")); //$NON-NLS-1$
-            else if (!text && i == 2)
-                tc.setImage(MarkerUtil.getImage("header_priority")); //$NON-NLS-1$
-            else
-                tc.setText(columnHeaders[i]);
+            if (!text && i == 1) {
+				tc.setImage(MarkerUtil.getImage("header_complete")); //$NON-NLS-1$
+			} else if (!text && i == 2) {
+				tc.setImage(MarkerUtil.getImage("header_priority")); //$NON-NLS-1$
+			} else {
+				tc.setText(columnHeaders[i]);
+			}
 
             if (text && (i == 1 || i == 2)) {
                 tc.pack();
@@ -574,8 +579,9 @@ public class TaskList extends ViewPart {
         if (memento != null) {
             //restore filter
             IMemento filterMem = memento.getChild(TAG_FILTER);
-            if (filterMem != null)
-                getFilter().restoreState(filterMem);
+            if (filterMem != null) {
+				getFilter().restoreState(filterMem);
+			}
         }
 
         sorter = new TaskSorter();
@@ -626,11 +632,12 @@ public class TaskList extends ViewPart {
 
                             //If it is editable all we need is completeness
                             // the rest is found by the table accessibility
-                            if (MarkerUtil.isEditable(marker))
-                                e.result = MarkerUtil.getCompleteText(marker);
-                            else
-                                //Otherwise all it needs is severity
+                            if (MarkerUtil.isEditable(marker)) {
+								e.result = MarkerUtil.getCompleteText(marker);
+							} else {
+								//Otherwise all it needs is severity
                                 e.result = MarkerUtil.getKindText(marker);
+							}
 
                         } else {
                             super.getValue(e);
@@ -684,8 +691,9 @@ public class TaskList extends ViewPart {
 
         getSite().setSelectionProvider(viewer);
 
-        if (memento != null)
-            restoreState(memento);
+        if (memento != null) {
+			restoreState(memento);
+		}
         memento = null;
 
         // Set help on the view itself
@@ -702,8 +710,9 @@ public class TaskList extends ViewPart {
                     contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
                 }
 
-                if (contextId == null)
-                    contextId = ITaskListHelpContextIds.TASK_LIST_VIEW;
+                if (contextId == null) {
+					contextId = ITaskListHelpContextIds.TASK_LIST_VIEW;
+				}
 
                 getSite().getWorkbenchWindow().getWorkbench().getHelpSystem()
 						.displayHelp(contextId);
@@ -743,8 +752,9 @@ public class TaskList extends ViewPart {
             editorActionHandler.dispose();
             editorActionHandler = null;
         }
-        if (clipboard != null)
-            clipboard.dispose();
+        if (clipboard != null) {
+			clipboard.dispose();
+		}
     }
 
     /**
@@ -929,8 +939,9 @@ public class TaskList extends ViewPart {
      * @return an <code>IResource.DEPTH_*</code> constant
      */
     int getResourceDepth() {
-        if (showSelections() && !showChildrenHierarchy())
-            return IResource.DEPTH_ZERO;
+        if (showSelections() && !showChildrenHierarchy()) {
+			return IResource.DEPTH_ZERO;
+		}
 
         return IResource.DEPTH_INFINITE;
     }
@@ -985,8 +996,9 @@ public class TaskList extends ViewPart {
      */
     void handleKeyPressed(KeyEvent event) {
         if (event.character == SWT.DEL && event.stateMask == 0
-                && removeTaskAction.isEnabled())
-            removeTaskAction.run();
+                && removeTaskAction.isEnabled()) {
+			removeTaskAction.run();
+		}
     }
 
     /* (non-Javadoc)
@@ -1020,8 +1032,9 @@ public class TaskList extends ViewPart {
                 project = resource2.getProject();
 
                 if (project == null
-                        || project.equals(resource.getProject()))
-                    return true;
+                        || project.equals(resource.getProject())) {
+					return true;
+				}
             }
         }
 
@@ -1031,16 +1044,19 @@ public class TaskList extends ViewPart {
 
                 if (resource2 != null
                         && resource2.getFullPath().isPrefixOf(
-                                resource.getFullPath()))
-                    return true;
+                                resource.getFullPath())) {
+					return true;
+				}
             }
-        } else
-            for (int i = 0, l = resources.length; i < l; i++) {
+        } else {
+			for (int i = 0, l = resources.length; i < l; i++) {
                 resource2 = resources[i];
 
-                if (resource.equals(resource2))
-                    return true;
+                if (resource.equals(resource2)) {
+					return true;
+				}
             }
+		}
 
         return false;
     }
@@ -1214,8 +1230,9 @@ public class TaskList extends ViewPart {
     }
 
     void partActivated(IWorkbenchPart part) {
-        if (part == focusPart)
-            return;
+        if (part == focusPart) {
+			return;
+		}
 
         if (focusSelectionProvider != null) {
             focusSelectionProvider
@@ -1238,8 +1255,9 @@ public class TaskList extends ViewPart {
     }
 
     void partClosed(IWorkbenchPart part) {
-        if (part != focusPart)
-            return;
+        if (part != focusPart) {
+			return;
+		}
         if (focusSelectionProvider != null) {
             focusSelectionProvider
                     .removeSelectionChangedListener(focusSelectionChangedListener);
@@ -1312,8 +1330,9 @@ public class TaskList extends ViewPart {
      */
     public void saveState(IMemento memento) {
         if (viewer == null) {
-            if (this.memento != null) //Keep the old state;
-                memento.putMemento(this.memento);
+            if (this.memento != null) {
+				memento.putMemento(this.memento);
+			}
             return;
         }
 
@@ -1467,11 +1486,13 @@ public class TaskList extends ViewPart {
         Assert.isTrue(selection instanceof IStructuredSelection);
         IStructuredSelection ssel = (IStructuredSelection) selection;
 
-        for (Iterator i = ssel.iterator(); i.hasNext();)
-            Assert.isTrue(i.next() instanceof IMarker);
+        for (Iterator i = ssel.iterator(); i.hasNext();) {
+			Assert.isTrue(i.next() instanceof IMarker);
+		}
 
-        if (viewer != null)
-            viewer.setSelection(selection, reveal);
+        if (viewer != null) {
+			viewer.setSelection(selection, reveal);
+		}
     }
 
     boolean showChildrenHierarchy() {
@@ -1668,10 +1689,11 @@ public class TaskList extends ViewPart {
     void updateStatusMessage() {
         ISelection selection = viewer.getSelection();
 
-        if (selection instanceof IStructuredSelection)
-            updateStatusMessage((IStructuredSelection) selection);
-        else
-            updateStatusMessage(null);
+        if (selection instanceof IStructuredSelection) {
+			updateStatusMessage((IStructuredSelection) selection);
+		} else {
+			updateStatusMessage(null);
+		}
     }
 
     /**

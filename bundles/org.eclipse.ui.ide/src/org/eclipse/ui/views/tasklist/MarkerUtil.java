@@ -138,10 +138,11 @@ class MarkerUtil implements IMarkerConstants {
      */
     public static Image getCompleteImage(IMarker marker) {
         if (isMarkerType(marker, IMarker.TASK)) {
-            if (isComplete(marker))
-                return getImage("complete_tsk");//$NON-NLS-1$
-            else if (!isReadOnly(marker)) // don't show a check box for read-only tasks
-                return getImage("incomplete_tsk");//$NON-NLS-1$
+            if (isComplete(marker)) {
+				return getImage("complete_tsk");//$NON-NLS-1$
+			} else if (!isReadOnly(marker)) {
+				return getImage("incomplete_tsk");//$NON-NLS-1$
+			}
         }
         return null;
     }
@@ -152,10 +153,11 @@ class MarkerUtil implements IMarkerConstants {
      */
     public static String getCompleteText(IMarker marker) {
         if (isMarkerType(marker, IMarker.TASK)) {
-            if (isComplete(marker))
-                return TaskListMessages.TaskList_completed; 
-            else
-                return TaskListMessages.TaskList_notCompleted;
+            if (isComplete(marker)) {
+				return TaskListMessages.TaskList_completed;
+			} else {
+				return TaskListMessages.TaskList_notCompleted;
+			}
         }
         return ""; //$NON-NLS-1$
     }
@@ -184,18 +186,22 @@ class MarkerUtil implements IMarkerConstants {
     public static String getContainerName(IMarker marker) {
         IPath path = marker.getResource().getFullPath();
         int n = path.segmentCount() - 1; // n is the number of segments in container, not path
-        if (n <= 0)
-            return ""; //$NON-NLS-1$
+        if (n <= 0) {
+			return ""; //$NON-NLS-1$
+		}
         int len = 0;
-        for (int i = 0; i < n; ++i)
-            len += path.segment(i).length();
+        for (int i = 0; i < n; ++i) {
+			len += path.segment(i).length();
+		}
         // account for /'s
-        if (n > 1)
-            len += n - 1;
+        if (n > 1) {
+			len += n - 1;
+		}
         StringBuffer sb = new StringBuffer(len);
         for (int i = 0; i < n; ++i) {
-            if (i != 0)
-                sb.append('/');
+            if (i != 0) {
+				sb.append('/');
+			}
             sb.append(path.segment(i));
         }
         return sb.toString();
@@ -315,8 +321,9 @@ class MarkerUtil implements IMarkerConstants {
 
         // skip any leading '#'
         // workaround for 1GCE69U: ITPJCORE:ALL - Java problems should not have '#' in location.
-        if (i < len && value.charAt(i) == '#')
-            ++i;
+        if (i < len && value.charAt(i) == '#') {
+			++i;
+		}
 
         if (i < len && value.charAt(i) == '-') {
             negative = true;
@@ -364,8 +371,9 @@ class MarkerUtil implements IMarkerConstants {
      * Returns the text for the given marker's priority.
      */
     public static String getPriorityText(IMarker marker) {
-        if (!isMarkerType(marker, IMarker.TASK))
-            return ""; //$NON-NLS-1$
+        if (!isMarkerType(marker, IMarker.TASK)) {
+			return ""; //$NON-NLS-1$
+		}
 
         switch (getPriority(marker)) {
         case IMarker.PRIORITY_HIGH:

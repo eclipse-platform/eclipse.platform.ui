@@ -64,8 +64,9 @@ public class TableViewLabelProvider extends LabelProvider implements
 
 	public Font getFont(Object element) {
 		MarkerNode node = (MarkerNode) element;
-		if (node.isConcrete())
+		if (node.isConcrete()) {
 			return null;
+		}
 		return JFaceResources.getFontRegistry().getBold(
 				JFaceResources.DEFAULT_FONT);
 	}

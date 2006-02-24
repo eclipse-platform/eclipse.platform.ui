@@ -151,8 +151,9 @@ public abstract class RegistryReader {
 	 */
 	protected void readElements(IConfigurationElement[] elements) {
 		for (int i = 0; i < elements.length; i++) {
-			if (!readElement(elements[i]))
+			if (!readElement(elements[i])) {
 				logUnknownElement(elements[i]);
+			}
 		}
 	}
 
@@ -167,17 +168,20 @@ public abstract class RegistryReader {
 	 * Start the registry reading process using the supplied plugin ID and extension point.
 	 */
 	public void readRegistry() {
-		if (isInitialized)
+		if (isInitialized) {
 			return;
+		}
 		synchronized (this) {
 			if (!isInitialized) {
 				IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPointId);
-				if (point == null)
+				if (point == null) {
 					return;
+				}
 				IExtension[] extensions = point.getExtensions();
 				extensions = orderExtensions(extensions);
-				for (int i = 0; i < extensions.length; i++)
+				for (int i = 0; i < extensions.length; i++) {
 					readExtension(extensions[i]);
+				}
 				isInitialized = true;
 			}
 

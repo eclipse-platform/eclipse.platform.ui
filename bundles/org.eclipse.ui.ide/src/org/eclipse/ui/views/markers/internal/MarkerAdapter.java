@@ -68,8 +68,9 @@ public class MarkerAdapter {
 			if (children == null) {
 				
 				//Return nothing while a build is going on as this could be stale
-				if(building)
+				if(building) {
 					return Util.EMPTY_MARKER_ARRAY;
+				}
 
 				ConcreteMarker[] allMarkers = markerAdapter.lastMarkers
 						.toArray();
@@ -95,8 +96,9 @@ public class MarkerAdapter {
 		 * @return int
 		 */
 		private int getDisplayedSize() {
-			if (view.getMarkerLimit() > 0)
+			if (view.getMarkerLimit() > 0) {
 				return Math.min(getTotalSize(), view.getMarkerLimit());
+			}
 			return getTotalSize();
 		}
 
@@ -116,9 +118,10 @@ public class MarkerAdapter {
 		 */
 		public String getDescription() {
 
-			if (view.getMarkerLimit() < 0)
+			if (view.getMarkerLimit() < 0) {
 				return NLS.bind(MarkerMessages.Category_Label, new Object[] {
 						name, String.valueOf(getDisplayedSize()) });
+			}
 			return NLS.bind(MarkerMessages.Category_Limit_Label, new Object[] {
 					name, String.valueOf(getDisplayedSize()),
 					String.valueOf(getTotalSize()) });
@@ -215,8 +218,9 @@ public class MarkerAdapter {
 				lastMarkers = MarkerList.compute(view.getEnabledFilters(),
 						subMonitor, true);
 
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return;
+				}
 
 				view.refreshMarkerCounts(monitor);
 
@@ -241,8 +245,9 @@ public class MarkerAdapter {
 
 				lastMarkers = SortUtil.getFirst(lastMarkers,
 						(Comparator) sorter, markerLimit, mon);
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return;
+				}
 				sorter.sort(view.getViewer(), lastMarkers.toArray());
 			}
 
@@ -259,8 +264,9 @@ public class MarkerAdapter {
 						.getSize() - 1, 0);
 			}
 
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return;
+			}
 
 			monitor.done();
 		} finally {
@@ -277,8 +283,9 @@ public class MarkerAdapter {
 	private boolean isShowingHierarchy() {
 
 		ViewerSorter sorter = view.getViewer().getSorter();
-		if (sorter instanceof CategorySorter)
+		if (sorter instanceof CategorySorter) {
 			return ((CategorySorter) sorter).getCategoryField() != null;
+		}
 		return false;
 	}
 
@@ -300,8 +307,9 @@ public class MarkerAdapter {
 			int sortIndex) {
 		CategorySorter sorter = getCategorySorter();
 
-		if (sortIndex > 0)
+		if (sortIndex > 0) {
 			return null;// Are we out of categories?
+		}
 
 		Collection categories = new ArrayList();
 
@@ -348,8 +356,9 @@ public class MarkerAdapter {
 			view.scheduleMarkerUpdate();
 			building = true;
 		}
-		if (building)
+		if (building) {
 			return new MarkerList();
+		}
 		return lastMarkers;
 	}
 
@@ -365,10 +374,12 @@ public class MarkerAdapter {
 			view.scheduleMarkerUpdate();
 			building = true;
 		}
-		if (building)
+		if (building) {
 			return Util.EMPTY_MARKER_ARRAY;
-		if (isShowingHierarchy() && categories != null)
+		}
+		if (isShowingHierarchy() && categories != null) {
 			return categories;
+		}
 		return lastMarkers.toArray();
 	}
 
@@ -389,8 +400,9 @@ public class MarkerAdapter {
 	 * if there are no categories.
 	 */
 	public MarkerCategory[] getCategories() {
-		if(building)//Assume staleness while the list is being built.
+		if(building) {
 			return null;
+		}
 		return categories;
 	}
 

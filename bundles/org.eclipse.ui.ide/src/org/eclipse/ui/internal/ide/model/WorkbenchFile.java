@@ -36,9 +36,10 @@ public class WorkbenchFile extends WorkbenchResource {
         // @issue move IDE specific images
         ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry()
                 .getImageDescriptor(resource.getName(), contentType);
-        if (image == null)
-            image = PlatformUI.getWorkbench().getSharedImages()
+        if (image == null) {
+			image = PlatformUI.getWorkbench().getSharedImages()
                     .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+		}
         return image;
     }
 }

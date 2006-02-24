@@ -112,21 +112,23 @@ public class CopyFilesAndFoldersOperation {
 		while (true) {
 			String nameSegment;
 
-			if (counter > 1)
+			if (counter > 1) {
 				nameSegment = NLS
 						.bind(
 								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyNameTwoArgs,
 								new Integer(counter), resourceName);
-			else
+			} else {
 				nameSegment = NLS
 						.bind(
 								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyNameOneArg,
 								resourceName);
+			}
 
 			IPath pathToTry = leadupSegment.append(nameSegment);
 
-			if (!workspace.getRoot().exists(pathToTry))
+			if (!workspace.getRoot().exists(pathToTry)) {
 				return pathToTry;
+			}
 
 			counter++;
 		}
@@ -417,10 +419,10 @@ public class CopyFilesAndFoldersOperation {
 				}
 			} else {
 				if (existing != null) {
-					if (homogenousResources(source, existing))
+					if (homogenousResources(source, existing)) {
 						copyExisting(source, existing, new SubProgressMonitor(
 								subMonitor, 1));
-					else {
+					} else {
 						// Copying a linked resource over unlinked or vice
 						// versa.
 						// Can't use setContents here. Fixes bug 28772.
@@ -557,10 +559,9 @@ public class CopyFilesAndFoldersOperation {
 			} catch (InvocationTargetException e) {
 				display(e);
 			}
-		}
-
-		else
+		} else {
 			copyResources(resources, destinationPath, copiedResources, monitor);
+		}
 
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {
@@ -640,8 +641,9 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	public void copyFiles(URI[] uris, IContainer destination) {
 		IFileStore[] stores = buildFileStores(uris);
-		if (stores == null)
+		if (stores == null) {
 			return;
+		}
 
 		copyFileStores(destination, stores, true, null);
 	}
@@ -665,8 +667,9 @@ public class CopyFilesAndFoldersOperation {
 	public void copyFilesInCurrentThread(URI[] uris, IContainer destination,
 			IProgressMonitor monitor) {
 		IFileStore[] stores = buildFileStores(uris);
-		if (stores == null)
+		if (stores == null) {
 			return;
+		}
 
 		copyFileStores(destination, stores, false, monitor);
 	}
@@ -716,8 +719,9 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	public void copyFiles(final String[] fileNames, IContainer destination) {
 		IFileStore[] stores = buildFileStores(fileNames);
-		if (stores == null)
+		if (stores == null) {
 			return;
+		}
 
 		copyFileStores(destination, stores, true, null);
 	}
@@ -741,8 +745,9 @@ public class CopyFilesAndFoldersOperation {
 	public void copyFilesInCurrentThread(final String[] fileNames, IContainer destination,
 			IProgressMonitor monitor) {
 		IFileStore[] stores = buildFileStores(fileNames);
-		if (stores == null)
+		if (stores == null) {
 			return;
+		}
 
 		copyFileStores(destination, stores, false, monitor);
 	}
@@ -827,8 +832,9 @@ public class CopyFilesAndFoldersOperation {
 			} catch (InvocationTargetException exception) {
 				display(exception);
 			}
-		} else
+		} else {
 			copyFileStores(stores, destinationPath, monitor);
+		}
 
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {
@@ -1259,8 +1265,9 @@ public class CopyFilesAndFoldersOperation {
 			IProgressMonitor monitor) {
 		IOverwriteQuery query = new IOverwriteQuery() {
 			public String queryOverwrite(String pathString) {
-				if (alwaysOverwrite)
+				if (alwaysOverwrite) {
 					return ALL;
+				}
 
 				final String returnCode[] = { CANCEL };
 				final String msg = NLS
@@ -1315,9 +1322,10 @@ public class CopyFilesAndFoldersOperation {
 		// failure.
 		IStatus status = op.getStatus();
 		if (!status.isOK()) {
-			if (errorStatus == null)
+			if (errorStatus == null) {
 				errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID,
 						IStatus.ERROR, getProblemsMessage(), null);
+			}
 			errorStatus.merge(status);
 		}
 	}
@@ -1330,9 +1338,10 @@ public class CopyFilesAndFoldersOperation {
 	 *            a <code>CoreException</code>
 	 */
 	private void recordError(CoreException error) {
-		if (errorStatus == null)
+		if (errorStatus == null) {
 			errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR,
 					getProblemsMessage(), error);
+		}
 
 		errorStatus.merge(error.getStatus());
 	}
@@ -1481,11 +1490,12 @@ public class CopyFilesAndFoldersOperation {
 		for (int i = 0; i < sourceNames.length; i++) {
 			IFileStore store = IDEResourceInfoUtils
 					.getFileStore(sourceNames[i]);
-			if (store == null)
+			if (store == null) {
 				return NLS
 						.bind(
 								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_infoNotFound,
 								sourceNames[i]);
+			}
 			stores[i] = store;
 		}
 		return validateImportDestinationInternal(destination, stores);
@@ -1546,8 +1556,9 @@ public class CopyFilesAndFoldersOperation {
 				// work around bug 16202. replacement for
 				// sourcePath.isPrefixOf(destinationPath)
 				IFileStore destinationParent = destinationStore.getParent();
-				if (sourceStore.isParentOf(destinationParent))
+				if (sourceStore.isParentOf(destinationParent)) {
 					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
+				}
 
 			}
 		}
@@ -1694,23 +1705,26 @@ public class CopyFilesAndFoldersOperation {
 				copyResources = validateNoNameCollisions(container,
 						copyResources);
 				if (copyResources == null) {
-					if (canceled)
+					if (canceled) {
 						return;
+					}
 					displayError(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameCollision);
 					return;
 				}
-				if (validateEdit(container, copyResources) == false)
+				if (validateEdit(container, copyResources) == false) {
 					return;
+				}
 			}
 		}
 
 		errorStatus = null;
 		if (copyResources.length > 0) {
-			if (copyWithAutoRename)
+			if (copyWithAutoRename) {
 				performCopyWithAutoRename(copyResources, destinationPath,
 						monitor);
-			else
+			} else {
 				performCopy(copyResources, destinationPath, monitor);
+			}
 		}
 		copiedResources[0] = copyResources;
 	}

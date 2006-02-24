@@ -74,13 +74,15 @@ class CopyTaskAction extends TaskAction {
             // set the clipboard contents
             getTaskList().getClipboard().setContents(data, transferTypes);
         } catch (SWTError e) {
-            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
-                throw e;
+            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
+				throw e;
+			}
             if (MessageDialog
                     .openQuestion(
                             getShell(),
-                            TaskListMessages.CopyToClipboardProblemDialog_title, TaskListMessages.CopyToClipboardProblemDialog_message)) 
-                setClipboard(markers, markerReport);
+                            TaskListMessages.CopyToClipboardProblemDialog_title, TaskListMessages.CopyToClipboardProblemDialog_message)) {
+				setClipboard(markers, markerReport);
+			}
         }
     }
 }

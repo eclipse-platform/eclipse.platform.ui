@@ -74,8 +74,9 @@ public class PopulateRootOperation extends SelectFilesOperation {
         if (isContainer) {
             if (depth > 0) {
                 List children = provider.getChildren(fileSystemObject);
-                if (children == null)
-                    children = new ArrayList(1);
+                if (children == null) {
+					children = new ArrayList(1);
+				}
                 Iterator childrenEnum = children.iterator();
                 while (childrenEnum.hasNext()) {
                     createElement(result, childrenEnum.next(), depth - 1);

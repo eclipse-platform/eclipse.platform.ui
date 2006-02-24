@@ -92,16 +92,18 @@ public class Category extends WorkbenchAdapter {
         name = configElement.getAttribute(ATT_NAME);
         unparsedPath = configElement.getAttribute(ATT_PARENT);
 
-        if (id == null || name == null)
-            throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
+        if (id == null || name == null) {
+			throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on ICategory.
      */
     public void addElement(Object element) {
-        if (elements == null)
-            elements = new ArrayList(5);
+        if (elements == null) {
+			elements = new ArrayList(5);
+		}
         elements.add(element);
     }
 
@@ -109,10 +111,11 @@ public class Category extends WorkbenchAdapter {
      * Method declared on IAdaptable.
      */
     public Object getAdapter(Class adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return this;
-        else
-            return null;
+        if (adapter == IWorkbenchAdapter.class) {
+			return this;
+		} else {
+			return null;
+		}
     }
 
     /* (non-Javadoc)
@@ -172,10 +175,11 @@ public class Category extends WorkbenchAdapter {
      */
     public String getRootPath() {
         String[] path = getParentPath();
-        if (path != null && path.length > 0)
-            return path[0];
-        else
-            return id;
+        if (path != null && path.length > 0) {
+			return path[0];
+		} else {
+			return id;
+		}
     }
 
     /* (non-Javadoc)
@@ -189,9 +193,10 @@ public class Category extends WorkbenchAdapter {
      * Method declared on ICategory.
      */
     public boolean hasElements() {
-        if (elements != null)
-            return !elements.isEmpty();
-        else
-            return false;
+        if (elements != null) {
+			return !elements.isEmpty();
+		} else {
+			return false;
+		}
     }
 }

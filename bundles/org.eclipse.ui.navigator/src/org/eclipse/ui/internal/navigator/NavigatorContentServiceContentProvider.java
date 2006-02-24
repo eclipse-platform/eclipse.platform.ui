@@ -127,8 +127,9 @@ public class NavigatorContentServiceContentProvider implements
 	public synchronized Object[] getElements(Object anInputElement) {
 		Set rootContentExtensions = contentService
 				.findRootContentExtensions(anInputElement);
-		if (rootContentExtensions.size() == 0)
+		if (rootContentExtensions.size() == 0) {
 			return NO_CHILDREN;
+		}
 		Set finalElementsSet = new LinkedHashSet();
 
 		Object[] contributedChildren = null;
@@ -155,9 +156,10 @@ public class NavigatorContentServiceContentProvider implements
 					}
 
 					if (contributedChildren != null
-							&& contributedChildren.length > 0)
+							&& contributedChildren.length > 0) {
 						finalElementsSet.addAll(Arrays
 								.asList(contributedChildren));
+					}
 				}
 			} catch (RuntimeException re) {
 				NavigatorPlugin
@@ -213,8 +215,9 @@ public class NavigatorContentServiceContentProvider implements
 	public synchronized Object[] getChildren(Object aParentElement) {
 		Set enabledExtensions = contentService
 				.findContentExtensionsByTriggerPoint(aParentElement);
-		if (enabledExtensions.size() == 0)
+		if (enabledExtensions.size() == 0) {
 			return NO_CHILDREN;
+		}
 		Set finalChildrenSet = new LinkedHashSet();
 
 		Object[] contributedChildren = null;
@@ -241,9 +244,10 @@ public class NavigatorContentServiceContentProvider implements
 					}
 
 					if (contributedChildren != null
-							&& contributedChildren.length > 0)
+							&& contributedChildren.length > 0) {
 						finalChildrenSet.addAll(Arrays
 								.asList(contributedChildren));
+					}
 				}
 			} catch (RuntimeException re) {
 				NavigatorPlugin
@@ -300,9 +304,10 @@ public class NavigatorContentServiceContentProvider implements
 						pipelinedChildren);
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(aParent);
-				if (overridingExtensions.length > 0)
+				if (overridingExtensions.length > 0) {
 					pipelinedChildren = pipelineChildren(aParent,
 							overridingExtensions, pipelinedChildren);
+				}
 			}
 		}
 
@@ -341,9 +346,10 @@ public class NavigatorContentServiceContentProvider implements
 
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(anInputElement);
-				if (overridingExtensions.length > 0)
+				if (overridingExtensions.length > 0) {
 					pipelinedElements = pipelineElements(anInputElement,
 							overridingExtensions, pipelinedElements);
+				}
 			}
 		}
 		return pipelinedElements;
@@ -376,8 +382,9 @@ public class NavigatorContentServiceContentProvider implements
 			 * overriding extension.
 			 */
 			if (theEnabledExtensions.contains(contentService
-					.getExtension(aDescriptor.getOverriddenDescriptor())))
+					.getExtension(aDescriptor.getOverriddenDescriptor()))) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -426,8 +433,9 @@ public class NavigatorContentServiceContentProvider implements
 								overridingExtensions, parent);
 					}
 
-					if (parent != null)
+					if (parent != null) {
 						return parent;
+					}
 				}
 			} catch (RuntimeException re) {
 				NavigatorPlugin
@@ -486,9 +494,10 @@ public class NavigatorContentServiceContentProvider implements
 
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(anInputElement);
-				if (overridingExtensions.length > 0)
+				if (overridingExtensions.length > 0) {
 					aSuggestedParent = pipelineParent(anInputElement,
 							overridingExtensions, aSuggestedParent);
+				}
 			}
 		}
 		return aSuggestedParent;
@@ -513,10 +522,11 @@ public class NavigatorContentServiceContentProvider implements
 		NavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
 			ext = (NavigatorContentExtension) itr.next();
-			if (!ext.isLoaded())
+			if (!ext.isLoaded()) {
 				return true;
-			else if (ext.internalGetContentProvider().hasChildren(anElement))
+			} else if (ext.internalGetContentProvider().hasChildren(anElement)) {
 				return true;
+			}
 		}
 
 		return false;
@@ -536,8 +546,9 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public synchronized void dispose() {
-		if (isContentServiceSelfManaged)
+		if (isContentServiceSelfManaged) {
 			contentService.dispose();
+		}
 	}
 
 	/**

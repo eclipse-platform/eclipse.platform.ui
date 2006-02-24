@@ -135,8 +135,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
                 } catch (CoreException e) {
                     errors = recordError(errors, e);
                 }
-                if (monitor.isCanceled())
-                    throw new OperationCanceledException();
+                if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
             }
             return errors == null ? Status.OK_STATUS : errors;
         } finally {
@@ -252,8 +253,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
         Iterator elementsEnum = prunedList.iterator();
         while (elementsEnum.hasNext()) {
             IResource currentResource = (IResource) elementsEnum.next();
-            if (isDescendent(prunedList, currentResource))
-                elementsEnum.remove(); //Removes currentResource
+            if (isDescendent(prunedList, currentResource)) {
+				elementsEnum.remove(); //Removes currentResource
+			}
         }
         return prunedList;
     }
@@ -265,9 +267,10 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @param error a <code>CoreException</code>
      */
     MultiStatus recordError(MultiStatus errors, CoreException error) {
-        if (errors == null)
-        	errors = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH,
+        if (errors == null) {
+			errors = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH,
                     IStatus.ERROR, getProblemsMessage(), null);
+		}
         errors.merge(error.getStatus());
         return errors;
     }
@@ -381,10 +384,11 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @since 3.1
      */
     public void runInBackground(ISchedulingRule rule, Object jobFamily) {
-    	if (jobFamily == null) 
-    		runInBackground(rule, (Object []) null);
-    	else
-    		runInBackground(rule, new Object[] {jobFamily});
+    	if (jobFamily == null) {
+			runInBackground(rule, (Object []) null);
+		} else {
+			runInBackground(rule, new Object[] {jobFamily});
+		}
     }
     
     /**
@@ -424,8 +428,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
                 return WorkspaceAction.this.execute(resources, monitor);
             }
         };
-        if (rule != null)
-            job.setRule(rule);
+        if (rule != null) {
+			job.setRule(rule);
+		}
         job.setUser(true);
         job.schedule();
     }

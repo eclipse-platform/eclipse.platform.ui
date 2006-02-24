@@ -95,8 +95,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                     return EXIT_OK;
                 }
             } finally {
-                if (shell != null)
-                    shell.dispose();
+                if (shell != null) {
+					shell.dispose();
+				}
             }
 
             // create the workbench with this advisor and run it until it exits
@@ -109,16 +110,18 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             // the workbench doesn't support relaunch yet (bug 61809) so
             // for now restart is used, and exit data properties are checked
             // here to substitute in the relaunch return code if needed
-            if (returnCode != PlatformUI.RETURN_RESTART)
-                return EXIT_OK;
+            if (returnCode != PlatformUI.RETURN_RESTART) {
+				return EXIT_OK;
+			}
 
             // if the exit code property has been set to the relaunch code, then
             // return that code now, otherwise this is a normal restart
             return EXIT_RELAUNCH.equals(Integer.getInteger(PROP_EXIT_CODE)) ? EXIT_RELAUNCH
                     : EXIT_RESTART;
         } finally {
-            if (display != null)
-                display.dispose();
+            if (display != null) {
+				display.dispose();
+			}
         }
     }
 
@@ -147,8 +150,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      */
     private boolean checkJavaRuntimeVersion(Shell shell) {
         try {
-            if (isCompatibleVersion(System.getProperty("java.version"))) //$NON-NLS-1$
-                return true;
+            if (isCompatibleVersion(System.getProperty("java.version"))) { //$NON-NLS-1$
+				return true;
+			}
 
             // build the requirement into a version string
             String reqVersion = Integer.toString(MIN_JVM_VERSION_MAJOR) + '.'
@@ -192,8 +196,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
         if (instanceLoc.isSet()) {
             // make sure the meta data version is compatible (or the user has
             // chosen to overwrite it).
-            if (!checkValidWorkspace(shell, instanceLoc.getURL()))
-                return false;
+            if (!checkValidWorkspace(shell, instanceLoc.getURL())) {
+				return false;
+			}
 
             // at this point its valid, so try to lock it and update the
             // metadata version information if successful
@@ -226,8 +231,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
         boolean force = false;
         while (true) {
             URL workspaceUrl = promptForWorkspace(shell, launchData, force);
-            if (workspaceUrl == null)
-                return false;
+            if (workspaceUrl == null) {
+				return false;
+			}
 
             // if there is an error with the first selection, then force the
             // dialog to open to give the user a chance to correct
@@ -263,28 +269,34 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      * copied from the old code in the runtime.
      */
     private static boolean isCompatibleVersion(String vmVersion) {
-        if (vmVersion == null)
-            return false;
+        if (vmVersion == null) {
+			return false;
+		}
 
         StringTokenizer tokenizer = new StringTokenizer(vmVersion, " ._"); //$NON-NLS-1$
         try {
             // make sure the running vm's major is >= the requirement
-            if (!tokenizer.hasMoreTokens())
-                return true;
+            if (!tokenizer.hasMoreTokens()) {
+				return true;
+			}
             int major = Integer.parseInt(tokenizer.nextToken());
-            if (major != MIN_JVM_VERSION_MAJOR)
-                return major > MIN_JVM_VERSION_MAJOR;
+            if (major != MIN_JVM_VERSION_MAJOR) {
+				return major > MIN_JVM_VERSION_MAJOR;
+			}
 
             // make sure the running vm's minor is >= the requirement
-            if (!tokenizer.hasMoreTokens())
-                return true;
+            if (!tokenizer.hasMoreTokens()) {
+				return true;
+			}
             int minor = Integer.parseInt(tokenizer.nextToken());
-            if (minor != MIN_JVM_VERSION_MINOR)
-                return minor > MIN_JVM_VERSION_MINOR;
+            if (minor != MIN_JVM_VERSION_MINOR) {
+				return minor > MIN_JVM_VERSION_MINOR;
+			}
 
             // make sure the running vm's service is >= the requirement
-            if (!tokenizer.hasMoreTokens())
-                return true;
+            if (!tokenizer.hasMoreTokens()) {
+				return true;
+			}
             int service = Integer.parseInt(tokenizer.nextToken());
             return service >= MIN_JVM_VERSION_SERVICE;
         } catch (SecurityException e) {
@@ -321,8 +333,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
         	// shell. See bug 84881.
             new ChooseWorkspaceDialog(null, launchData, false, true).prompt(force);
             String instancePath = launchData.getSelection();
-            if (instancePath == null)
-                return null;
+            if (instancePath == null) {
+				return null;
+			}
 
             // the dialog is not forced on the first iteration, but is on every
             // subsequent one -- if there was an error then the user needs to be
@@ -341,8 +354,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
 
             // create the workspace if it does not already exist
             File workspace = new File(instancePath);
-            if (!workspace.exists())
-                workspace.mkdir();
+            if (!workspace.exists()) {
+				workspace.mkdir();
+			}
 
             try {
                 // Don't use File.toURL() since it adds a leading slash that Platform does not
@@ -374,24 +388,27 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      */
     private boolean checkValidWorkspace(Shell shell, URL url) {
         // a null url is not a valid workspace
-        if (url == null)
-            return false;
+        if (url == null) {
+			return false;
+		}
 
         String version = readWorkspaceVersion(url);
 
         // if the version could not be read, then there is not any existing
         // workspace data to trample, e.g., perhaps its a new directory that
         // is just starting to be used as a workspace
-        if (version == null)
-            return true;
+        if (version == null) {
+			return true;
+		}
 
         final int ide_version = Integer.parseInt(WORKSPACE_VERSION_VALUE);
         int workspace_version = Integer.parseInt(version);
 
         // equality test is required since any version difference (newer
         // or older) may result in data being trampled
-        if (workspace_version == ide_version)
-            return true;
+        if (workspace_version == ide_version) {
+			return true;
+		}
 
         // At this point workspace has been detected to be from a version
         // other than the current ide version -- find out if the user wants
@@ -412,8 +429,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      */
     private static String readWorkspaceVersion(URL workspace) {
         File versionFile = getVersionFile(workspace, false);
-        if (versionFile == null || !versionFile.exists())
-            return null;
+        if (versionFile == null || !versionFile.exists()) {
+			return null;
+		}
 
         try {
             // Although the version file is not spec'ed to be a Java properties
@@ -445,12 +463,14 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      */
     private static void writeWorkspaceVersion() {
         Location instanceLoc = Platform.getInstanceLocation();
-        if (instanceLoc == null || instanceLoc.isReadOnly())
-            return;
+        if (instanceLoc == null || instanceLoc.isReadOnly()) {
+			return;
+		}
 
         File versionFile = getVersionFile(instanceLoc.getURL(), true);
-        if (versionFile == null)
-            return;
+        if (versionFile == null) {
+			return;
+		}
 
         OutputStream output = null;
         try {
@@ -464,8 +484,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                     StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
         } finally {
             try {
-                if (output != null)
-                    output.close();
+                if (output != null) {
+					output.close();
+				}
             } catch (IOException e) {
                 // do nothing
             }
@@ -484,20 +505,23 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      *         could not be created.
      */
     private static File getVersionFile(URL workspaceUrl, boolean create) {
-        if (workspaceUrl == null)
-            return null;
+        if (workspaceUrl == null) {
+			return null;
+		}
 
         try {
             // make sure the directory exists
             File metaDir = new File(workspaceUrl.getPath(), METADATA_FOLDER);
-            if (!metaDir.exists() && (!create || !metaDir.mkdir()))
-                return null;
+            if (!metaDir.exists() && (!create || !metaDir.mkdir())) {
+				return null;
+			}
 
             // make sure the file exists
             File versionFile = new File(metaDir, VERSION_FILENAME);
             if (!versionFile.exists()
-                    && (!create || !versionFile.createNewFile()))
-                return null;
+                    && (!create || !versionFile.createNewFile())) {
+				return null;
+			}
 
             return versionFile;
         } catch (IOException e) {

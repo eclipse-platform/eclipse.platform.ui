@@ -38,8 +38,9 @@ public class DefaultContributorResourceAdapter implements
      * @return the default instance used for TaskList adapting
      */
     public static IContributorResourceAdapter getDefault() {
-        if (singleton == null)
-            singleton = new DefaultContributorResourceAdapter();
+        if (singleton == null) {
+			singleton = new DefaultContributorResourceAdapter();
+		}
         return singleton;
     }
 

@@ -108,8 +108,9 @@ public class CommonFiltersTab extends CustomizationTab {
 						String filterTextString = filterText.getText();
 						if (filterTextString.length() == 0) {
 							e.result = initialFilterTextValue;
-						} else
+						} else {
 							e.result = filterTextString;
+						}
 					}
 				});
 
@@ -120,8 +121,9 @@ public class CommonFiltersTab extends CustomizationTab {
 			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusGained(FocusEvent e) {
-				if (initialFilterTextValue.equals(filterText.getText().trim()))
+				if (initialFilterTextValue.equals(filterText.getText().trim())) {
 					filterText.selectAll();
+				}
 			}
 		});
 
@@ -133,8 +135,9 @@ public class CommonFiltersTab extends CustomizationTab {
 			 */
 			public void mouseUp(MouseEvent e) {
 				super.mouseUp(e);
-				if (initialFilterTextValue.equals(filterText.getText().trim()))
+				if (initialFilterTextValue.equals(filterText.getText().trim())) {
 					filterText.selectAll();
+				}
 			}
 		});
 
@@ -185,9 +188,11 @@ public class CommonFiltersTab extends CustomizationTab {
 			}
 
 			private TableItem getFirstHighlightedItem(TableItem[] items) {
-				for (int i = 0; i < items.length; i++)
-					if (patternFilter.match(items[i].getText()))
+				for (int i = 0; i < items.length; i++) {
+					if (patternFilter.match(items[i].getText())) {
 						return items[i];
+					}
+				}
 				return null;
 			}
 		});
@@ -241,9 +246,9 @@ public class CommonFiltersTab extends CustomizationTab {
 		}
 
 		protected void setPattern(String newPattern) {
-			if (newPattern == null || newPattern.trim().length() == 0)
+			if (newPattern == null || newPattern.trim().length() == 0) {
 				matcher = new StringMatcher("*", true, false); //$NON-NLS-1$
-			else {
+			} else {
 				String patternString = "*" + newPattern + "*"; //$NON-NLS-1$ //$NON-NLS-2$ 
 				matcher = new StringMatcher(patternString, true, false);
 			}
@@ -259,14 +264,16 @@ public class CommonFiltersTab extends CustomizationTab {
 		 * @return whether the string matches the pattern
 		 */
 		protected boolean match(String input) {
-			if (input == null)
+			if (input == null) {
 				return false;
+			}
 			return matcher == null || matcher.match(input);
 		}
 
 		protected boolean match(TableItem tableItem) {
-			if (tableItem == null || tableItem.getData() == null)
+			if (tableItem == null || tableItem.getData() == null) {
 				return false;
+			}
 			return match(filterLabelProvider.getText(tableItem.getData()));
 		}
 	}

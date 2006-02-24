@@ -55,11 +55,13 @@ public class StructuredViewerManager {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if(viewer != null) {
 				try {
-					if (viewer.getControl().isDisposed())
+					if (viewer.getControl().isDisposed()) {
 						return Status.OK_STATUS;
+					}
 					Display display = viewer.getControl().getDisplay();
-					if (!display.isDisposed() && viewer != null)
+					if (!display.isDisposed() && viewer != null) {
 						viewer.refresh();
+					}
 				} catch (RuntimeException e) {
 					NavigatorPlugin.logError(0, e.toString(), e);
 				}
@@ -115,9 +117,10 @@ public class StructuredViewerManager {
 	public boolean initialize(IStructuredContentProvider aContentProvider) {
 		boolean result = true;
 		try {
-			if (aContentProvider != null)
+			if (aContentProvider != null) {
 				aContentProvider.inputChanged(viewer, cachedOldInput,
 						cachedNewInput);
+			}
 		} catch (RuntimeException e) {
 			NavigatorPlugin.logError(0, e.toString(), e);
 			result = false;

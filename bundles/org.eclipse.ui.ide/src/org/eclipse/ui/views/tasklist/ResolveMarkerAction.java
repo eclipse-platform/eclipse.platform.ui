@@ -44,11 +44,13 @@ class ResolveMarkerAction extends TaskAction {
      * @return enablement
      */
     public boolean shouldEnable(IStructuredSelection selection) {
-        if (selection.size() != 1)
-            return false;
+        if (selection.size() != 1) {
+			return false;
+		}
         IMarker marker = (IMarker) selection.getFirstElement();
-        if (marker == null)
-            return false;
+        if (marker == null) {
+			return false;
+		}
         return IDE.getMarkerHelpRegistry().hasResolutions(marker);
     }
 
@@ -69,11 +71,13 @@ class ResolveMarkerAction extends TaskAction {
         }
         MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(
                 getShell(), resolutions);
-        if (d.open() != Window.OK)
-            return;
+        if (d.open() != Window.OK) {
+			return;
+		}
         Object[] result = d.getResult();
-        if (result != null && result.length > 0)
-            ((IMarkerResolution) result[0]).run(marker);
+        if (result != null && result.length > 0) {
+			((IMarkerResolution) result[0]).run(marker);
+		}
     }
 
     /**
@@ -95,8 +99,9 @@ class ResolveMarkerAction extends TaskAction {
         IStructuredSelection selection = (IStructuredSelection) getTaskList()
                 .getSelection();
         // only enable for single selection
-        if (selection.size() != 1)
-            return null;
+        if (selection.size() != 1) {
+			return null;
+		}
         return (IMarker) selection.getFirstElement();
     }
 }

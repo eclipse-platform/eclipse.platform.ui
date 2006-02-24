@@ -97,8 +97,9 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			}
 			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue,
 					parent, e1, e2);
-			if (sorter != null)
+			if (sorter != null) {
 				return sorter.compare(viewer, e1, e2);
+			}
 		}
 		int categoryDelta = category(e1) - category(e2);
 		if (categoryDelta == 0) {

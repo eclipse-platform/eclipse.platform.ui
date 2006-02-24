@@ -96,8 +96,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
 
         createProjectNameGroup(composite);
         locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite);
-        if(initialProjectFieldValue != null)
-        	locationArea.updateProjectName(initialProjectFieldValue);
+        if(initialProjectFieldValue != null) {
+			locationArea.updateProjectName(initialProjectFieldValue);
+		}
 
 		// Scale the button based on the rest of the dialog
 		setButtonLayoutData(locationArea.getBrowseButton());
@@ -121,8 +122,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
 			public void reportError(String errorMessage) {
 				setErrorMessage(errorMessage);
 				boolean valid = errorMessage == null;
-				if(valid)
+				if(valid) {
 					valid = validatePage();
+				}
 				
 				setPageComplete(valid);
 			}
@@ -156,8 +158,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
 
         // Set the initial value first before listener
         // to avoid handling an event during the creation.
-        if (initialProjectFieldValue != null)
-            projectNameField.setText(initialProjectFieldValue);
+        if (initialProjectFieldValue != null) {
+			projectNameField.setText(initialProjectFieldValue);
+		}
         projectNameField.addListener(SWT.Modify, nameModifyListener);
     }
 
@@ -197,8 +200,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
      *   if no project name is known
      */
     public String getProjectName() {
-        if (projectNameField == null)
-            return initialProjectFieldValue;
+        if (projectNameField == null) {
+			return initialProjectFieldValue;
+		}
 
         return getProjectNameFieldValue();
     }
@@ -210,8 +214,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
      * @return the project name in the field
      */
     private String getProjectNameFieldValue() {
-        if (projectNameField == null)
-            return ""; //$NON-NLS-1$
+        if (projectNameField == null) {
+			return ""; //$NON-NLS-1$
+		}
 
         return projectNameField.getText().trim();
     }
@@ -232,12 +237,13 @@ public class WizardNewProjectCreationPage extends WizardPage {
      * 
      */
     public void setInitialProjectName(String name) {
-        if (name == null)
-            initialProjectFieldValue = null;
-        else {
+        if (name == null) {
+			initialProjectFieldValue = null;
+		} else {
             initialProjectFieldValue = name.trim();
-            if(locationArea != null)
-            	locationArea.updateProjectName(name.trim());
+            if(locationArea != null) {
+				locationArea.updateProjectName(name.trim());
+			}
         }
     }
 
@@ -307,8 +313,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
      */
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if (visible)
-            projectNameField.setFocus();
+        if (visible) {
+			projectNameField.setFocus();
+		}
     }
 
     /**

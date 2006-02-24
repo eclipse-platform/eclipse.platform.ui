@@ -56,9 +56,10 @@ public class ExternalProjectImportWizard extends Wizard implements
         
 		IDialogSettings wizardSettings = workbenchSettings
 		        .getSection(EXTERNAL_PROJECT_SECTION);
-		if (wizardSettings == null)
-		    wizardSettings = workbenchSettings
+		if (wizardSettings == null) {
+			wizardSettings = workbenchSettings
 		            .addNewSection(EXTERNAL_PROJECT_SECTION);
+		}
 		setDialogSettings(wizardSettings);        
     }
 

@@ -149,8 +149,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		INavigatorFilterService filterService = commonViewer
 				.getNavigatorContentService().getFilterService();
 		ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
-		for (int i = 0; i < visibleFilters.length; i++)
+		for (int i = 0; i < visibleFilters.length; i++) {
 			commonViewer.addFilter(visibleFilters[i]);
+		}
 
 		commonViewer.setSorter(new CommonViewerSorter());
 
@@ -194,10 +195,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		if (commonManager != null)
+		if (commonManager != null) {
 			commonManager.dispose();
-		if(commonActionGroup != null)
+		}
+		if(commonActionGroup != null) {
 			commonActionGroup.dispose();
+		}
 		super.dispose();
 	}
 
@@ -247,8 +250,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		if (commonViewer != null)
+		if (commonViewer != null) {
 			commonViewer.getTree().setFocus();
+		}
 	}
 
 	/**
@@ -261,8 +265,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * @see org.eclipse.ui.part.ISetSelectionTarget#selectReveal(org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectReveal(ISelection selection) {
-		if (commonViewer != null)
+		if (commonViewer != null) {
 			commonViewer.setSelection(selection, true);
+		}
 	}
 
 	/**
@@ -322,10 +327,11 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 *    have an adapter for the given class
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter == CommonViewer.class)
+		if (adapter == CommonViewer.class) {
 			return getCommonViewer();
-		else if (adapter == NavigatorContentService.class)
+		} else if (adapter == NavigatorContentService.class) {
 			return getCommonViewer().getNavigatorContentService();
+		}
 		return super.getAdapter(adapter);
 	}
 
@@ -484,8 +490,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 */
 	protected void updateTitle() {
 
-		if (commonViewer == null)
+		if (commonViewer == null) {
 			return;
+		}
 
 		Object input = commonViewer.getInput();
 		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$ 
@@ -509,9 +516,10 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * </p>
 	 */
 	protected String getFrameToolTipText(Object anElement) {
-		if (commonViewer != null)
+		if (commonViewer != null) {
 			return ((ILabelProvider) commonViewer.getLabelProvider())
 					.getText(anElement);
+		}
 		return ""; //$NON-NLS-1$
 	}
 

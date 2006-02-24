@@ -165,9 +165,10 @@ public abstract class SelectionListenerAction extends
 
 								resourcesFoundForThisSelection = true;
 
-								if (resources == null)
+								if (resources == null) {
 									resources = new ArrayList(
 											getStructuredSelection().size());
+								}
 
 								for (int j = 0; j < traversalResources.length; j++) {
 									resources.add(traversalResources[j]);
@@ -181,8 +182,9 @@ public abstract class SelectionListenerAction extends
 
 				}// if
 
-				if (resourcesFoundForThisSelection)
+				if (resourcesFoundForThisSelection) {
 					continue;
+				}
 			}
 
 			if (nonResources == null) {
@@ -206,8 +208,9 @@ public abstract class SelectionListenerAction extends
 			selectionDirty = false;
 		}
 
-		if (nonResources == null)
+		if (nonResources == null) {
 			return EMPTY_LIST;
+		}
 		
 		return nonResources;
 	}
@@ -225,8 +228,9 @@ public abstract class SelectionListenerAction extends
 			selectionDirty = false;
 		}
 
-		if (resources == null)
+		if (resources == null) {
 			return EMPTY_LIST;
+		}
 		return resources;
 	}
 
@@ -263,13 +267,15 @@ public abstract class SelectionListenerAction extends
 	 * @see IResource
 	 */
 	protected boolean selectionIsOfType(int resourceMask) {
-		if (getSelectedNonResources().size() > 0)
+		if (getSelectedNonResources().size() > 0) {
 			return false;
+		}
 
 		for (Iterator e = getSelectedResources().iterator(); e.hasNext();) {
 			IResource next = (IResource) e.next();
-			if (!resourceIsType(next, resourceMask))
+			if (!resourceIsType(next, resourceMask)) {
 				return false;
+			}
 		}
 		return true;
 	}

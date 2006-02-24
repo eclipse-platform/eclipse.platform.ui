@@ -112,9 +112,10 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 		commonFiltersTab.addSelectionChangedListener(getSelectionListener());
 
-		if (contentExtensionsTab != null)
+		if (contentExtensionsTab != null) {
 			contentExtensionsTab
 					.addSelectionChangedListener(getSelectionListener());
+		}
 
 		return customizationsTabFolder;
 	}
@@ -133,8 +134,9 @@ public class CommonFilterSelectionDialog extends Dialog {
 		customizationsTabFolder.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				if (descriptionText != null)
+				if (descriptionText != null) {
 					descriptionText.setText(""); //$NON-NLS-1$
+				}
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -162,9 +164,10 @@ public class CommonFilterSelectionDialog extends Dialog {
 	}
 
 	private ISelectionChangedListener getSelectionListener() {
-		if (updateDescriptionSelectionListener == null)
+		if (updateDescriptionSelectionListener == null) {
 			updateDescriptionSelectionListener = new FilterDialogSelectionListener(
 					descriptionText);
+		}
 		return updateDescriptionSelectionListener;
 	}
 
@@ -184,12 +187,14 @@ public class CommonFilterSelectionDialog extends Dialog {
 				descriptor = (INavigatorContentDescriptor) tableItems[i]
 						.getData();
 
-				if (tableItems[i].getChecked())
-					checkedExtensions.add(descriptor.getId()); 
+				if (tableItems[i].getChecked()) {
+					checkedExtensions.add(descriptor.getId());
+				} 
 			}
-			if (checkedExtensions.size() != 0)
+			if (checkedExtensions.size() != 0) {
 				contentExtensionIdsToActivate = (String[]) checkedExtensions
 						.toArray(new String[checkedExtensions.size()]);
+			}
  
 		}
 
@@ -201,13 +206,15 @@ public class CommonFilterSelectionDialog extends Dialog {
 			for (int i = 0; i < tableItems.length; i++) {
 				descriptor = (ICommonFilterDescriptor) tableItems[i].getData();
 
-				if (tableItems[i].getChecked())
-					checkedFilters.add(descriptor.getId()); 
+				if (tableItems[i].getChecked()) {
+					checkedFilters.add(descriptor.getId());
+				} 
 			}
 
-			if (checkedFilters.size() != 0)
+			if (checkedFilters.size() != 0) {
 				filterIdsToActivate = (String[]) checkedFilters
 						.toArray(new String[checkedFilters.size()]);
+			}
  
 		}
 

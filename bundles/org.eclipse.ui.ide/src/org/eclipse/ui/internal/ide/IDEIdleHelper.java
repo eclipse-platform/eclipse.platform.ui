@@ -97,28 +97,33 @@ class IDEIdleHelper {
 	IDEIdleHelper(IWorkbenchConfigurer aConfigurer) {
 		this.configurer = aConfigurer;
 		//don't gc while running tests because performance tests are sensitive to timing (see bug 121562)
-		if (PlatformUI.getTestableObject().getTestHarness() != null)
+		if (PlatformUI.getTestableObject().getTestHarness() != null) {
 			return;
+		}
 		String enabled = System.getProperty(PROP_GC);
 		//gc is turned on by default if property is missing
-		if (enabled != null && enabled.equalsIgnoreCase(Boolean.FALSE.toString()))
+		if (enabled != null && enabled.equalsIgnoreCase(Boolean.FALSE.toString())) {
 			return;
+		}
 		//init gc interval
 		Integer prop = Integer.getInteger(PROP_GC_INTERVAL);
-		if (prop != null && prop.intValue() >= 0)
+		if (prop != null && prop.intValue() >= 0) {
 			minGCInterval = nextGCInterval = prop.intValue();
+		}
 
 		//init max gc interval
 		prop = Integer.getInteger(PROP_GC_MAX);
-		if (prop != null)
+		if (prop != null) {
 			maxGC = prop.intValue();
+		}
 
 		//hook idle handler
 		final Display display = configurer.getWorkbench().getDisplay();
 		final Runnable handler = new Runnable() {
 			public void run() {
-				if (!configurer.getWorkbench().isClosing())
+				if (!configurer.getWorkbench().isClosing()) {
 					display.timerExec(performGC(), this);
+				}
 			}
 		};
 		idleListener = new Listener() {
@@ -137,28 +142,33 @@ class IDEIdleHelper {
 	 */
 	protected int performGC() {
 		//don't garbage collect if background jobs are running
-		if (!Platform.getJobManager().isIdle())
+		if (!Platform.getJobManager().isIdle()) {
 			return IDLE_INTERVAL;
+		}
 		final long start = System.currentTimeMillis();
 		//don't garbage collect if we have collected within the specific interval
-		if ((start - lastGC) < nextGCInterval)
+		if ((start - lastGC) < nextGCInterval) {
 			return nextGCInterval - (int) (start - lastGC);
+		}
 		System.gc();
 		System.runFinalization();
 		lastGC = start;
 		final int duration = (int) (System.currentTimeMillis() - start);
-		if (Policy.DEBUG_GC)
+		if (Policy.DEBUG_GC) {
 			System.out.println("Explicit GC took: " + duration); //$NON-NLS-1$
+		}
 		if (duration > maxGC) {
-			if (Policy.DEBUG_GC)
+			if (Policy.DEBUG_GC) {
 				System.out.println("Further explicit GCs disabled due to long GC"); //$NON-NLS-1$
+			}
 			shutdown();
 			return -1;
 		}
 		//if the gc took a long time, ensure the next gc doesn't happen for awhile
 		nextGCInterval = Math.max(minGCInterval, GC_DELAY_MULTIPLIER * duration);
-		if (Policy.DEBUG_GC)
+		if (Policy.DEBUG_GC) {
 			System.out.println("Next GC to run in: " + nextGCInterval); //$NON-NLS-1$
+		}
 		return nextGCInterval;
 	}
 
@@ -166,8 +176,9 @@ class IDEIdleHelper {
 	 * Shuts down the idle helper, removing any installed listeners, etc.
 	 */
 	void shutdown() {
-		if (idleListener == null)
+		if (idleListener == null) {
 			return;
+		}
 		Display display = configurer.getWorkbench().getDisplay();
 		if (display != null && !display.isDisposed()) {
 			display.removeFilter(SWT.KeyUp, idleListener);

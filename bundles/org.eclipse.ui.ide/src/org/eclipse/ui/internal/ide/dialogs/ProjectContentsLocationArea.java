@@ -155,8 +155,9 @@ public class ProjectContentsLocationArea {
 				if (useDefaults) {
 					userPath = locationPathField.getText();
 					locationPathField.setText(getDefaultPathDisplayString());
-				} else
+				} else {
 					locationPathField.setText(userPath);
+				}
 				setUserAreaEnabled(!useDefaults);
 			}
 		});
@@ -204,12 +205,12 @@ public class ProjectContentsLocationArea {
 		
 		createFileSystemSelection(composite);
 
-		if (defaultEnabled)// Will be null if it is not set
+		if (defaultEnabled) {
 			locationPathField.setText(getDefaultPathDisplayString());
-		else {
-			if (existingProject == null)
+		} else {
+			if (existingProject == null) {
 				locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
-			else {
+			} else {
 				locationPathField.setText(existingProject.getLocation()
 						.toString());
 			}
@@ -235,8 +236,9 @@ public class ProjectContentsLocationArea {
 	private void createFileSystemSelection(Composite composite) {
 
 		// Always use the default if that is all there is.
-		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem())
+		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem()) {
 			return;
+		}
 		
 		new Label(composite,SWT.NONE);
 		
@@ -253,8 +255,9 @@ public class ProjectContentsLocationArea {
 	private String getDefaultPathDisplayString() {
 
 		URI defaultURI = null;
-		if (existingProject != null)
+		if (existingProject != null) {
 			defaultURI = existingProject.getLocationURI();
+		}
 
 		// Handle files specially. Assume a file if there is no project to query
 		if (defaultURI == null || defaultURI.getScheme().equals(FILE_SCHEME)) {
@@ -301,13 +304,15 @@ public class ProjectContentsLocationArea {
 		String dirName = getPathFromLocationField();
 		if (!dirName.equals(IDEResourceInfoUtils.EMPTY_STRING)) {
 			IFileInfo info = IDEResourceInfoUtils.getFileInfo(dirName);
-			if (info != null && info.exists())
+			if (info != null && info.exists()) {
 				dialog.setFilterPath(dirName);
+			}
 		}
 
 		String selectedDirectory = dialog.open();
-		if (selectedDirectory != null)
+		if (selectedDirectory != null) {
 			updateLocationField(selectedDirectory);
+		}
 	}
 
 	/**
@@ -342,8 +347,9 @@ public class ProjectContentsLocationArea {
 	 */
 	public String checkValidLocation() {
 
-		if (isDefault())
+		if (isDefault()) {
 			return null;
+		}
 
 		String locationFieldContents = locationPathField.getText();
 		if (locationFieldContents.length() == 0) {
@@ -365,8 +371,9 @@ public class ProjectContentsLocationArea {
 			IStatus locationStatus = existingProject.getWorkspace()
 					.validateProjectLocationURI(existingProject, newPath);
 
-			if (!locationStatus.isOK())
+			if (!locationStatus.isOK()) {
 				return locationStatus.getMessage();
+			}
 
 			URI projectPath = existingProject.getLocationURI();
 			if (projectPath != null && projectPath.equals(newPath)) {
@@ -385,8 +392,9 @@ public class ProjectContentsLocationArea {
 	private URI getLocationFieldURI() {
 
 		FileSystemConfiguration configuration = getSelectedConfiguration();
-		if (configuration == null)
+		if (configuration == null) {
 			return null;
+		}
 
 		return configuration.getContributor().getURI(
 				locationPathField.getText());
@@ -400,9 +408,10 @@ public class ProjectContentsLocationArea {
 	 *         determined.
 	 */
 	private FileSystemConfiguration getSelectedConfiguration() {
-		if (fileSystemSelectionArea == null)
+		if (fileSystemSelectionArea == null) {
 			return FileSystemSupportRegistry.getInstance()
 					.getDefaultConfiguration();
+		}
 
 		return fileSystemSelectionArea.getSelectedConfiguration();
 	}
@@ -417,8 +426,9 @@ public class ProjectContentsLocationArea {
 	 */
 	public void updateProjectName(String newName) {
 		projectName = newName;
-		if (isDefault())
+		if (isDefault()) {
 			locationPathField.setText(getDefaultPathDisplayString());
+		}
 
 	}
 
@@ -429,8 +439,9 @@ public class ProjectContentsLocationArea {
 	 * @return String
 	 */
 	public String getProjectLocation() {
-		if (isDefault())
+		if (isDefault()) {
 			return Platform.getLocation().toString();
+		}
 		return locationPathField.getText();
 	}
 }

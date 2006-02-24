@@ -148,8 +148,9 @@ public final class WizardActionGroup extends ActionGroup {
 			ISelection selection = aContext.getSelection();
 			Object element = null;
 			if (!selection.isEmpty()
-					&& selection instanceof IStructuredSelection)
+					&& selection instanceof IStructuredSelection) {
 				element = ((IStructuredSelection) selection).getFirstElement();
+			}
 			// null should be okay here
 			setWizardActionIds(CommonWizardDescriptorManager.getInstance()
 					.getEnabledCommonWizardDescriptorIds(element, type));
@@ -167,10 +168,13 @@ public final class WizardActionGroup extends ActionGroup {
 		Assert.isTrue(!disposed);
 
 		IAction action = null;
-		if (wizardActionIds != null)
-			for (int i = 0; i < wizardActionIds.length; i++)
-				if ((action = getAction(wizardActionIds[i])) != null)
+		if (wizardActionIds != null) {
+			for (int i = 0; i < wizardActionIds.length; i++) {
+				if ((action = getAction(wizardActionIds[i])) != null) {
 					menu.add(action);
+				}
+			}
+		}
 
 	}
 
@@ -188,8 +192,9 @@ public final class WizardActionGroup extends ActionGroup {
 	 * found.
 	 */
 	protected IAction getAction(String id) {
-		if (id == null || id.length() == 0)
+		if (id == null || id.length() == 0) {
 			return null;
+		}
 
 		// Keep a cache, rather than creating a new action each time,
 		// so that image caching in ActionContributionItem works.
@@ -209,8 +214,9 @@ public final class WizardActionGroup extends ActionGroup {
 	 * @return a map of (id, IAction)-pairs.
 	 */
 	protected Map getActions() {
-		if (actions == null)
+		if (actions == null) {
 			actions = new HashMap();
+		}
 		return actions;
 	}
 

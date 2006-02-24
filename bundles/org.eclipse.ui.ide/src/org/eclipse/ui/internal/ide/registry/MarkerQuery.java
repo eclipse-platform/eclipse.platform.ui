@@ -74,8 +74,9 @@ public class MarkerQuery {
     public MarkerQueryResult performQuery(IMarker marker) {
         // Check type
         try {
-            if (type != null && !type.equals(marker.getType()))
-                return null;
+            if (type != null && !type.equals(marker.getType())) {
+				return null;
+			}
         } catch (CoreException e) {
             IDEWorkbenchPlugin
                     .log("Error accessing marker type", e.getStatus()); //$NON-NLS-1$
@@ -87,8 +88,9 @@ public class MarkerQuery {
         for (int i = 0; i < attributes.length; i++) {
             try {
                 Object value = marker.getAttribute(attributes[i]);
-                if (value == null)
-                    return null;
+                if (value == null) {
+					return null;
+				}
                 values[i] = value.toString();
             } catch (CoreException e) {
                 IDEWorkbenchPlugin.log(
@@ -105,22 +107,27 @@ public class MarkerQuery {
      * Method declared on Object.
      */
     public boolean equals(Object o) {
-        if (!(o instanceof MarkerQuery))
-            return false;
+        if (!(o instanceof MarkerQuery)) {
+			return false;
+		}
 
-        if (o == this)
-            return true;
+        if (o == this) {
+			return true;
+		}
 
         MarkerQuery mq = (MarkerQuery) o;
-        if (!(type == null ? mq.type == null : type.equals(mq.type)))
-            return false;
+        if (!(type == null ? mq.type == null : type.equals(mq.type))) {
+			return false;
+		}
 
-        if (attributes.length != mq.attributes.length)
-            return false;
+        if (attributes.length != mq.attributes.length) {
+			return false;
+		}
 
         for (int i = 0; i < attributes.length; i++) {
-            if (!(attributes[i].equals(mq.attributes[i])))
-                return false;
+            if (!(attributes[i].equals(mq.attributes[i]))) {
+				return false;
+			}
         }
 
         return true;
@@ -139,8 +146,9 @@ public class MarkerQuery {
     public void computeHashCode() {
         hashCode = 19;
 
-        if (type != null)
-            hashCode = hashCode * 37 + type.hashCode();
+        if (type != null) {
+			hashCode = hashCode * 37 + type.hashCode();
+		}
 
         for (int i = 0; i < attributes.length; i++) {
             hashCode = hashCode * 37 + attributes[i].hashCode();

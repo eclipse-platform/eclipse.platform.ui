@@ -66,8 +66,9 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
      */
     public void run() {
         IProject project = getProject();
-        if (project == null)
-            return;
+        if (project == null) {
+			return;
+		}
 
         SelProvider selProvider = new SelProvider();
         selProvider.projectSelection = new StructuredSelection(project);
@@ -102,17 +103,21 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
         } else {
             ISelection sel = workbenchWindow.getSelectionService()
                     .getSelection();
-            if ((sel != null) && (sel instanceof IStructuredSelection))
-                selection = ((IStructuredSelection) sel).getFirstElement();
+            if ((sel != null) && (sel instanceof IStructuredSelection)) {
+				selection = ((IStructuredSelection) sel).getFirstElement();
+			}
         }
-        if (selection == null)
-            return null;
-        if (!(selection instanceof IAdaptable))
-            return null;
+        if (selection == null) {
+			return null;
+		}
+        if (!(selection instanceof IAdaptable)) {
+			return null;
+		}
         IResource resource = (IResource) ((IAdaptable) selection)
                 .getAdapter(IResource.class);
-        if (resource == null)
-            return null;
+        if (resource == null) {
+			return null;
+		}
         return resource.getProject();
     }
 

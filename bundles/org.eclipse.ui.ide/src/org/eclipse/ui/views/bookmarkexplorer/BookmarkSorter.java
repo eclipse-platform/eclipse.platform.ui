@@ -55,13 +55,15 @@ class BookmarkSorter extends ViewerSorter {
     }
 
     public void setTopPriority(int priority) {
-        if (priority < 0 || priority >= priorities.length)
-            return;
+        if (priority < 0 || priority >= priorities.length) {
+			return;
+		}
 
         int index = -1;
         for (int i = 0; i < priorities.length; i++) {
-            if (priorities[i] == priority)
-                index = i;
+            if (priorities[i] == priority) {
+				index = i;
+			}
         }
 
         if (index == -1) {
@@ -78,8 +80,9 @@ class BookmarkSorter extends ViewerSorter {
     }
 
     public void setTopPriorityDirection(int direction) {
-        if (direction == ASCENDING || direction == DESCENDING)
-            directions[priorities[0]] = direction;
+        if (direction == ASCENDING || direction == DESCENDING) {
+			directions[priorities[0]] = direction;
+		}
     }
 
     public int getTopPriorityDirection() {
@@ -104,8 +107,9 @@ class BookmarkSorter extends ViewerSorter {
     }
 
     private int compare(IMarker marker1, IMarker marker2, int depth) {
-        if (depth >= priorities.length)
-            return 0;
+        if (depth >= priorities.length) {
+			return 0;
+		}
 
         int column = priorities[depth];
         switch (column) {
@@ -113,32 +117,36 @@ class BookmarkSorter extends ViewerSorter {
             String desc1 = marker1.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
             String desc2 = marker2.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
             int result = collator.compare(desc1, desc2);
-            if (result == 0)
-                return compare(marker1, marker2, depth + 1);
+            if (result == 0) {
+				return compare(marker1, marker2, depth + 1);
+			}
             return result * directions[column];
         }
         case RESOURCE: {
             String res1 = marker1.getResource().getName();
             String res2 = marker2.getResource().getName();
             int result = collator.compare(res1, res2);
-            if (result == 0)
-                return compare(marker1, marker2, depth + 1);
+            if (result == 0) {
+				return compare(marker1, marker2, depth + 1);
+			}
             return result * directions[column];
         }
         case FOLDER: {
             String folder1 = BookmarkLabelProvider.getContainerName(marker1);
             String folder2 = BookmarkLabelProvider.getContainerName(marker2);
             int result = collator.compare(folder1, folder2);
-            if (result == 0)
-                return compare(marker1, marker2, depth + 1);
+            if (result == 0) {
+				return compare(marker1, marker2, depth + 1);
+			}
             return result * directions[column];
         }
         case LOCATION: {
             int line1 = marker1.getAttribute(IMarker.LINE_NUMBER, -1);
             int line2 = marker2.getAttribute(IMarker.LINE_NUMBER, -1);
             int result = line1 - line2;
-            if (result == 0)
-                return compare(marker1, marker2, depth + 1);
+            if (result == 0) {
+				return compare(marker1, marker2, depth + 1);
+			}
             return result * directions[column];
         }
         case CREATION_TIME: {
@@ -148,8 +156,9 @@ class BookmarkSorter extends ViewerSorter {
             } catch (CoreException e) {
                 result = 0;
             }
-            if (result == 0)
-                return compare(marker1, marker2, depth + 1);
+            if (result == 0) {
+				return compare(marker1, marker2, depth + 1);
+			}
             return ((int) result) * directions[column];
         }
         }
@@ -165,8 +174,9 @@ class BookmarkSorter extends ViewerSorter {
     }
 
     public void saveState(IDialogSettings settings) {
-        if (settings == null)
-            return;
+        if (settings == null) {
+			return;
+		}
 
         for (int i = 0; i < priorities.length; i++) {
             settings.put("priority" + i, priorities[i]);//$NON-NLS-1$
@@ -175,8 +185,9 @@ class BookmarkSorter extends ViewerSorter {
     }
 
     public void restoreState(IDialogSettings settings) {
-        if (settings == null)
-            return;
+        if (settings == null) {
+			return;
+		}
 
         try {
             for (int i = 0; i < priorities.length; i++) {

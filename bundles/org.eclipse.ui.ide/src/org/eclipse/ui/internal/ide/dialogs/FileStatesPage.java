@@ -133,12 +133,14 @@ public class FileStatesPage extends PreferencePage implements
 
         //Get the current value and make sure we get at least one day out of it.
         long days = description.getFileStateLongevity() / DAY_LENGTH;
-        if (days < 1)
-            days = 1;
+        if (days < 1) {
+			days = 1;
+		}
 
         long megabytes = description.getMaxFileStateSize() / MEGABYTES;
-        if (megabytes < 1)
-            megabytes = 1;
+        if (megabytes < 1) {
+			megabytes = 1;
+		}
 
         this.longevityText = addLabelAndText(IDEWorkbenchMessages.FileHistory_longevity, String
                 .valueOf(days), composite);
@@ -226,8 +228,9 @@ public class FileStatesPage extends PreferencePage implements
         int maxFileStates = validateMaxFileStates();
         long maxStateSize = validateMaxFileStateSize();
         if (longevityValue == FAILED_VALUE || maxFileStates == FAILED_VALUE
-                || maxStateSize == FAILED_VALUE)
-            return false;
+                || maxStateSize == FAILED_VALUE) {
+			return false;
+		}
 
         IWorkspaceDescription description = getWorkspaceDescription();
         description.setFileStateLongevity(longevityValue * DAY_LENGTH);
@@ -310,8 +313,9 @@ public class FileStatesPage extends PreferencePage implements
      */
     private int validateMaxFileStates() {
         int maxFileStates = validateIntegerTextEntry(this.maxStatesText);
-        if (maxFileStates == FAILED_VALUE)
-            return maxFileStates;
+        if (maxFileStates == FAILED_VALUE) {
+			return maxFileStates;
+		}
 
         if (maxFileStates > FILE_STATES_MAXIMUM) {
             setErrorMessage(NLS.bind(IDEWorkbenchMessages.FileHistory_aboveMaxEntries, String.valueOf(FILE_STATES_MAXIMUM)));
@@ -330,8 +334,9 @@ public class FileStatesPage extends PreferencePage implements
      */
     private long validateMaxFileStateSize() {
         long maxFileStateSize = validateLongTextEntry(this.maxStateSizeText);
-        if (maxFileStateSize == FAILED_VALUE)
-            return maxFileStateSize;
+        if (maxFileStateSize == FAILED_VALUE) {
+			return maxFileStateSize;
+		}
 
         if (maxFileStateSize > STATE_SIZE_MAXIMUM) {
             setErrorMessage(NLS.bind(IDEWorkbenchMessages.FileHistory_aboveMaxFileSize, String.valueOf(STATE_SIZE_MAXIMUM)));

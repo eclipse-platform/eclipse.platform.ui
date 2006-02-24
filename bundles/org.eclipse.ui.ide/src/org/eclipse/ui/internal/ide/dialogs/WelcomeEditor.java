@@ -130,8 +130,9 @@ public class WelcomeEditor extends EditorPart {
      * beginning of the text.
      */
     private void focusOn(StyledText newText, int caretOffset) {
-        if (newText == null)
-            return;
+        if (newText == null) {
+			return;
+		}
         newText.setFocus();
         newText.setCaretOffset(caretOffset);
         scrolledComposite.setOrigin(0, newText.getLocation().y);
@@ -142,16 +143,18 @@ public class WelcomeEditor extends EditorPart {
      */
     private StyledText nextText(StyledText text) {
         int index = 0;
-        if (text == null)
-            return (StyledText) texts.get(0);
-        else
-            index = texts.indexOf(text);
+        if (text == null) {
+			return (StyledText) texts.get(0);
+		} else {
+			index = texts.indexOf(text);
+		}
 
         //If we are not at the end....
-        if (index < texts.size() - 1)
-            return (StyledText) texts.get(index + 1);
-        else
-            return (StyledText) texts.get(0);
+        if (index < texts.size() - 1) {
+			return (StyledText) texts.get(index + 1);
+		} else {
+			return (StyledText) texts.get(0);
+		}
     }
 
     /**
@@ -159,16 +162,18 @@ public class WelcomeEditor extends EditorPart {
      */
     private StyledText previousText(StyledText text) {
         int index = 0;
-        if (text == null)
-            return (StyledText) texts.get(0);
-        else
-            index = texts.indexOf(text);
+        if (text == null) {
+			return (StyledText) texts.get(0);
+		} else {
+			index = texts.indexOf(text);
+		}
 
         //If we are at the beginning....
-        if (index == 0)
-            return (StyledText) texts.get(texts.size() - 1);
-        else
-            return (StyledText) texts.get(index - 1);
+        if (index == 0) {
+			return (StyledText) texts.get(texts.size() - 1);
+		} else {
+			return (StyledText) texts.get(index - 1);
+		}
     }
 
     /**
@@ -189,17 +194,20 @@ public class WelcomeEditor extends EditorPart {
      * Finds the next link after the current selection.
      */
     private StyleRange findNextLink(StyledText text) {
-        if (text == null)
-            return null;
+        if (text == null) {
+			return null;
+		}
 
         WelcomeItem item = (WelcomeItem) text.getData();
         StyleRange[] ranges = text.getStyleRanges();
         int currentSelectionEnd = text.getSelection().y;
 
         for (int i = 0; i < ranges.length; i++) {
-            if (ranges[i].start >= currentSelectionEnd)
-                if (item.isLinkAt(ranges[i].start))
-                    return ranges[i];
+            if (ranges[i].start >= currentSelectionEnd) {
+				if (item.isLinkAt(ranges[i].start)) {
+					return ranges[i];
+				}
+			}
         }
         return null;
     }
@@ -208,17 +216,20 @@ public class WelcomeEditor extends EditorPart {
      * Finds the previous link before the current selection.
      */
     private StyleRange findPreviousLink(StyledText text) {
-        if (text == null)
-            return null;
+        if (text == null) {
+			return null;
+		}
 
         WelcomeItem item = (WelcomeItem) text.getData();
         StyleRange[] ranges = text.getStyleRanges();
         int currentSelectionStart = text.getSelection().x;
 
         for (int i = ranges.length - 1; i > -1; i--) {
-            if ((ranges[i].start + ranges[i].length) < currentSelectionStart)
-                if (item.isLinkAt(ranges[i].start + ranges[i].length - 1))
-                    return ranges[i];
+            if ((ranges[i].start + ranges[i].length) < currentSelectionStart) {
+				if (item.isLinkAt(ranges[i].start + ranges[i].length - 1)) {
+					return ranges[i];
+				}
+			}
         }
         return null;
     }
@@ -294,12 +305,13 @@ public class WelcomeEditor extends EditorPart {
                 } catch (IllegalArgumentException ex) {
                     // location is not over a character
                 }
-                if (offset == -1)
-                    text.setCursor(null);
-                else if (item.isLinkAt(offset))
-                    text.setCursor(handCursor);
-                else
-                    text.setCursor(null);
+                if (offset == -1) {
+					text.setCursor(null);
+				} else if (item.isLinkAt(offset)) {
+					text.setCursor(handCursor);
+				} else {
+					text.setCursor(null);
+				}
             }
         });
 
@@ -314,9 +326,9 @@ public class WelcomeEditor extends EditorPart {
                 case SWT.TRAVERSE_TAB_NEXT:
                     // Handle Ctrl-Tab
                     if ((e.stateMask & SWT.CTRL) != 0) {
-                        if (e.widget == lastText)
-                            return;
-                        else {
+                        if (e.widget == lastText) {
+							return;
+						} else {
                             e.doit = false;
                             nextTabAbortTraversal = true;
                             lastText.traverse(SWT.TRAVERSE_TAB_NEXT);
@@ -346,9 +358,9 @@ public class WelcomeEditor extends EditorPart {
                 case SWT.TRAVERSE_TAB_PREVIOUS:
                     // Handle Ctrl-Shift-Tab
                     if ((e.stateMask & SWT.CTRL) != 0) {
-                        if (e.widget == firstText)
-                            return;
-                        else {
+                        if (e.widget == firstText) {
+							return;
+						} else {
                             e.doit = false;
                             previousTabAbortTraversal = true;
                             firstText.traverse(SWT.TRAVERSE_TAB_PREVIOUS);
@@ -369,9 +381,9 @@ public class WelcomeEditor extends EditorPart {
                             previousText.setSelection(previousText
                                     .getCharCount());
                             previousLink = findPreviousLink(previousText);
-                            if (previousLink == null)
-                                focusOn(previousText, 0);
-                            else {
+                            if (previousLink == null) {
+								focusOn(previousText, 0);
+							} else {
                                 focusOn(previousText, previousText
                                         .getSelection().x);
                                 previousText
@@ -452,9 +464,10 @@ public class WelcomeEditor extends EditorPart {
 
                 // Remove highlighted selection if text widget has changed
                 if ((currentText != lastNavigatedText)
-                        && (lastNavigatedText != null))
-                    lastNavigatedText.setSelection(lastNavigatedText
+                        && (lastNavigatedText != null)) {
+					lastNavigatedText.setSelection(lastNavigatedText
                             .getSelection().x);
+				}
 
                 // enable/disable copy action
                 copyAction.setEnabled(currentText.getSelectionCount() > 0);
@@ -613,10 +626,11 @@ public class WelcomeEditor extends EditorPart {
                     }
                     for (int i = 0; i < texts.size(); i++) {
                         int extent;
-                        if (i == 0)
-                            extent = w - adjustFirst;
-                        else
-                            extent = w - adjust;
+                        if (i == 0) {
+							extent = w - adjustFirst;
+						} else {
+							extent = w - adjust;
+						}
                         StyledText text = (StyledText) texts.get(i);
                         Point p = text.computeSize(extent, SWT.DEFAULT, false);
                         ((GridData) text.getLayoutData()).widthHint = p.x;
@@ -670,8 +684,9 @@ public class WelcomeEditor extends EditorPart {
     public void createPartControl(Composite parent) {
         // read our contents
         readFile();
-        if (parser == null)
-            return;
+        if (parser == null) {
+			return;
+		}
 
         handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
         busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
@@ -744,8 +759,9 @@ public class WelcomeEditor extends EditorPart {
         // Message label
         final CLabel messageLabel = new CLabel(titleArea, SWT.LEFT) {
             protected String shortenText(GC gc, String text, int width) {
-                if (gc.textExtent(text, SWT.DRAW_MNEMONIC).x <= width)
-                    return text;
+                if (gc.textExtent(text, SWT.DRAW_MNEMONIC).x <= width) {
+					return text;
+				}
                 final String ellipsis = "..."; //$NON-NLS-1$
                 int ellipseWidth = gc.textExtent(ellipsis, SWT.DRAW_MNEMONIC).x;
                 int length = text.length();
@@ -803,10 +819,12 @@ public class WelcomeEditor extends EditorPart {
      */
     public void dispose() {
         super.dispose();
-        if (busyCursor != null)
-            busyCursor.dispose();
-        if (handCursor != null)
-            handCursor.dispose();
+        if (busyCursor != null) {
+			busyCursor.dispose();
+		}
+        if (handCursor != null) {
+			handCursor.dispose();
+		}
         if (this.colorListener != null) {
             JFacePreferences.getPreferenceStore().removePropertyChangeListener(
                     this.colorListener);
@@ -843,8 +861,9 @@ public class WelcomeEditor extends EditorPart {
      * Returns the title obtained from the parser
      */
     private String getBannerTitle() {
-        if (parser.getTitle() == null)
-            return ""; //$NON-NLS-1$
+        if (parser.getTitle() == null) {
+			return ""; //$NON-NLS-1$
+		}
         return parser.getTitle();
     }
 
@@ -891,9 +910,10 @@ public class WelcomeEditor extends EditorPart {
      */
     public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
-        if (!(input instanceof WelcomeEditorInput))
-            throw new PartInitException(
+        if (!(input instanceof WelcomeEditorInput)) {
+			throw new PartInitException(
                     "Invalid Input: Must be WelcomeEditorInput"); //$NON-NLS-1$
+		}
         setSite(site);
         setInput(input);
     }
@@ -949,9 +969,10 @@ public class WelcomeEditor extends EditorPart {
         URL url = ((WelcomeEditorInput) getEditorInput()).getAboutInfo()
                 .getWelcomePageURL();
 
-        if (url == null)
-            // should not happen 
+        if (url == null) {
+			// should not happen 
             return;
+		}
 
         InputStream is = null;
         try {
@@ -963,8 +984,9 @@ public class WelcomeEditor extends EditorPart {
             IDEWorkbenchPlugin.log(IDEWorkbenchMessages.WelcomeEditor_readFileError, status);
         } finally {
             try {
-                if (is != null)
-                    is.close();
+                if (is != null) {
+					is.close();
+				}
             } catch (IOException e) {
             }
         }
@@ -990,8 +1012,9 @@ public class WelcomeEditor extends EditorPart {
      */
     public void setFocus() {
         if ((editorComposite != null) && (lastNavigatedText == null)
-                && (currentText == null))
-            editorComposite.setFocus();
+                && (currentText == null)) {
+			editorComposite.setFocus();
+		}
     }
 
     /**

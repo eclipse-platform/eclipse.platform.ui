@@ -70,8 +70,9 @@ public class RefreshAction extends WorkspaceAction {
 	 * prompts the user with whether to delete the project or not.
 	 */
 	void checkLocationDeleted(IProject project) throws CoreException {
-		if (!project.exists())
+		if (!project.exists()) {
 			return;
+		}
 		IFileInfo location = IDEResourceInfoUtils.getFileInfo(project
 				.getLocationURI());
 		if (!location.exists()) {

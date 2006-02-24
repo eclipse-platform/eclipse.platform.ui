@@ -157,11 +157,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
 				.getAllContentDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (assistant.isVisible(descriptors[i].getId()))
+			if (assistant.isVisible(descriptors[i].getId())) {
 				visibleExtensionIds.add(descriptors[i].getId());
+			}
 		}
-		if (visibleExtensionIds.isEmpty())
+		if (visibleExtensionIds.isEmpty()) {
 			return NO_EXTENSION_IDS;
+		}
 		return (String[]) visibleExtensionIds
 				.toArray(new String[visibleExtensionIds.size()]);
 
@@ -173,11 +175,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
 				.getAllContentDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (assistant.isVisible(descriptors[i].getId()))
+			if (assistant.isVisible(descriptors[i].getId())) {
 				visibleDescriptors.add(descriptors[i]);
+			}
 		}
-		if (visibleDescriptors.isEmpty())
+		if (visibleDescriptors.isEmpty()) {
 			return NO_DESCRIPTORS;
+		}
 		return (INavigatorContentDescriptor[]) visibleDescriptors
 				.toArray(new INavigatorContentDescriptor[visibleDescriptors
 						.size()]);
@@ -192,22 +196,26 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public INavigatorContentDescriptor[] bindExtensions(String[] extensionIds,
 			boolean isRoot) {
-		if (extensionIds == null || extensionIds.length == 0)
+		if (extensionIds == null || extensionIds.length == 0) {
 			return NO_DESCRIPTORS;
+		}
 
-		for (int i = 0; i < extensionIds.length; i++)
+		for (int i = 0; i < extensionIds.length; i++) {
 			assistant.bindExtensions(extensionIds, isRoot);
+		}
 		Set boundDescriptors = new HashSet();
 		INavigatorContentDescriptor descriptor;
 		for (int i = 0; i < extensionIds.length; i++) {
 			descriptor = CONTENT_DESCRIPTOR_REGISTRY
 					.getContentDescriptor(extensionIds[i]);
-			if (descriptor != null)
+			if (descriptor != null) {
 				boundDescriptors.add(descriptor);
+			}
 		}
 
-		if (boundDescriptors.size() == 0)
+		if (boundDescriptors.size() == 0) {
 			return NO_DESCRIPTORS;
+		}
 		return (INavigatorContentDescriptor[]) boundDescriptors
 				.toArray(new INavigatorContentDescriptor[boundDescriptors
 						.size()]);
@@ -220,12 +228,14 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.internal.navigator.INavigatorContentService#createCommonContentProvider()
 	 */
 	public ITreeContentProvider createCommonContentProvider() {
-		if (contentProviderInitialized)
+		if (contentProviderInitialized) {
 			return contentProvider;
+		}
 		synchronized (this) {
-			if (contentProvider == null)
+			if (contentProvider == null) {
 				contentProvider = new NavigatorContentServiceContentProvider(
 						this);
+			}
 			contentProviderInitialized = true;
 		}
 		return contentProvider;
@@ -237,11 +247,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.internal.navigator.INavigatorContentService#createCommonLabelProvider()
 	 */
 	public ILabelProvider createCommonLabelProvider() {
-		if (labelProviderInitialized)
+		if (labelProviderInitialized) {
 			return labelProvider;
+		}
 		synchronized (this) {
-			if (labelProvider == null)
+			if (labelProvider == null) {
 				labelProvider = new NavigatorContentServiceLabelProvider(this);
+			}
 			labelProviderInitialized = true;
 		}
 		return labelProvider;
@@ -253,12 +265,14 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#createCommonDescriptionProvider()
 	 */
 	public IDescriptionProvider createCommonDescriptionProvider() {
-		if (descriptionProvider != null)
+		if (descriptionProvider != null) {
 			return descriptionProvider;
+		}
 		synchronized (this) {
-			if (descriptionProvider == null)
+			if (descriptionProvider == null) {
 				descriptionProvider = new NavigatorContentServiceDescriptionProvider(
 						this);
+			}
 		}
 		return descriptionProvider;
 	}
@@ -270,8 +284,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void dispose() {
 		for (Iterator contentItr = contentExtensions.values().iterator(); contentItr
-				.hasNext();)
+				.hasNext();) {
 			((NavigatorContentExtension) contentItr.next()).dispose();
+		}
 		getActivationService().removeExtensionActivationListener(this);
 		assistant.dispose();
 	}
@@ -284,30 +299,35 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			if (structuredViewerManager == null) {
 				structuredViewerManager = new StructuredViewerManager(aViewer);
 				structuredViewerManager.inputChanged(anOldInput, aNewInput);
-			} else
+			} else {
 				structuredViewerManager.inputChanged(aViewer, anOldInput,
 						aNewInput);
+			}
 
 			for (Iterator contentItr = contentExtensions.values().iterator(); contentItr
-					.hasNext();)
+					.hasNext();) {
 				structuredViewerManager
 						.initialize(((NavigatorContentExtension) contentItr
 								.next()).getContentProvider());
+			}
 
 			rootContentProviders = extractContentProviders(findRootContentExtensions(aNewInput));
 		}
 	}
 
 	public IExtensionStateModel findStateModel(String anExtensionId) {
-		if (anExtensionId == null)
+		if (anExtensionId == null) {
 			return null;
+		}
 		INavigatorContentDescriptor desc = CONTENT_DESCRIPTOR_REGISTRY
 				.getContentDescriptor(anExtensionId);
-		if (desc == null)
+		if (desc == null) {
 			return null;
+		}
 		INavigatorContentExtension ext = getExtension(desc);
-		if (ext == null)
+		if (ext == null) {
 			return null;
+		}
 		return ext.getStateModel();
 	}
 
@@ -351,8 +371,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         viewer.
 	 */
 	public ITreeContentProvider[] findRootContentProviders(Object anElement) {
-		if (rootContentProviders != null)
+		if (rootContentProviders != null) {
 			return rootContentProviders;
+		}
 		synchronized (this) {
 			if (rootContentProviders == null) {
 				rootContentProviders = extractContentProviders(findRootContentExtensions(anElement));
@@ -429,13 +450,15 @@ public class NavigatorContentService implements IExtensionActivationListener,
 				if (isActive(descriptors[i].getId())
 						&& isRootExtension(descriptors[i].getId())) {
 					extension = getExtension(descriptors[i]);
-					if (!extension.hasLoadingFailed())
+					if (!extension.hasLoadingFailed()) {
 						rootExtensions.add(extension);
+					}
 				}
 			}
 		}
-		if (rootExtensions.isEmpty())
+		if (rootExtensions.isEmpty()) {
 			return findContentExtensionsByTriggerPoint(anElement);
+		}
 		return rootExtensions;
 	}
 
@@ -458,8 +481,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) iter
 					.next();
-			if (descriptor.hasOverridingExtensions())
+			if (descriptor.hasOverridingExtensions()) {
 				overrideableExtensions.add(getExtension(descriptor));
+			}
 		}
 		return overrideableExtensions;
 	}
@@ -544,9 +568,11 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public synchronized void rememberContribution(
 			NavigatorContentDescriptor source, Object[] elements) {
 
-		if (source != null && elements != null)
-			for (int i = 0; i < elements.length; i++)
+		if (source != null && elements != null) {
+			for (int i = 0; i < elements.length; i++) {
 				getContributionMemory().put(elements[i], source);
+			}
+		}
 	}
 
 	/**
@@ -560,8 +586,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public synchronized void rememberContribution(
 			NavigatorContentDescriptor source, Object element) {
-		if (source != null && element != null)
+		if (source != null && element != null) {
 			getContributionMemory().put(element, source);
+		}
 	}
 
 	/**
@@ -580,11 +607,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @return Returns the contributionMemory.
 	 */
 	public Map getContributionMemory() {
-		if (contributionMemory != null)
+		if (contributionMemory != null) {
 			return contributionMemory;
+		}
 		synchronized (this) {
-			if (contributionMemory == null)
+			if (contributionMemory == null) {
 				contributionMemory = new WeakHashMap();
+			}
 		}
 
 		return contributionMemory;
@@ -605,8 +634,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
 		Set result = new HashSet();
-		if (descriptor != null)
+		if (descriptor != null) {
 			result.add(descriptor);
+		}
 		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
 				.findDescriptorsForTriggerPoint(anElement, assistant));
 		return result;
@@ -627,8 +657,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
 		Set result = new HashSet();
-		if (descriptor != null)
+		if (descriptor != null) {
 			result.add(descriptor);
+		}
 		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
 				.findDescriptorsForPossibleChild(anElement, assistant));
 		return result;
@@ -652,8 +683,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void update() {
 		rootContentProviders = null;
-		if (structuredViewerManager != null)
+		if (structuredViewerManager != null) {
 			structuredViewerManager.safeRefresh();
+		}
 	}
 
 	/*
@@ -689,8 +721,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		/* Query and return the relevant descriptor instance */
 		NavigatorContentExtension extension = (NavigatorContentExtension) contentExtensions
 				.get(aDescriptorKey);
-		if (extension != null || !toLoadIfNecessary)
+		if (extension != null || !toLoadIfNecessary) {
 			return extension;
+		}
 
 		/*
 		 * If the descriptor instance hasn't been created yet, then we need to
@@ -796,8 +829,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
 	 */
 	public INavigatorFilterService getFilterService() {
-		if (navigatorFilterService == null)
+		if (navigatorFilterService == null) {
 			navigatorFilterService = new NavigatorFilterService(this);
+		}
 		return navigatorFilterService;
 	}
 
@@ -807,8 +841,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
 	 */
 	public INavigatorSorterService getSorterService() {
-		if (navigatorSorterService == null)
+		if (navigatorSorterService == null) {
 			navigatorSorterService = new NavigatorSorterService(this);
+		}
 		return navigatorSorterService;
 	}
 
@@ -818,8 +853,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
 	 */
 	public INavigatorPipelineService getPipelineService() {
-		if (navigatorPipelineService == null)
+		if (navigatorPipelineService == null) {
 			navigatorPipelineService = new NavigatorPipelineService(this);
+		}
 		return navigatorPipelineService;
 	}
 
@@ -829,8 +865,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getDnDService()
 	 */
 	public INavigatorDnDService getDnDService() {
-		if (navigatorDnDService == null)
+		if (navigatorDnDService == null) {
 			navigatorDnDService = new NavigatorDnDService(this);
+		}
 		return navigatorDnDService;
 	}
 
@@ -841,8 +878,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public INavigatorActivationService getActivationService() {
 
-		if (navigatorActivationService == null)
+		if (navigatorActivationService == null) {
 			navigatorActivationService = new NavigatorActivationService(this);
+		}
 		return navigatorActivationService;
 	}
 	
@@ -851,8 +889,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @return A shell associated with the current viewer (if any) or <b>null</b>.
 	 */
 	public Shell getShell() {
-		if(structuredViewerManager != null && structuredViewerManager.getViewer() != null)
+		if(structuredViewerManager != null && structuredViewerManager.getViewer() != null) {
 			return structuredViewerManager.getViewer().getControl().getShell();
+		}
 		return null;
 	}
 
@@ -880,8 +919,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private void notifyListeners(NavigatorContentExtension aDescriptorInstance) {
 
-		if (listeners.size() == 0)
+		if (listeners.size() == 0) {
 			return;
+		}
 		INavigatorContentServiceListener listener = null;
 		List failedListeners = null;
 		for (Iterator listenersItr = listeners.iterator(); listenersItr
@@ -891,8 +931,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 						.next();
 				listener.onLoad(aDescriptorInstance);
 			} catch (RuntimeException re) {
-				if (failedListeners == null)
+				if (failedListeners == null) {
 					failedListeners = new ArrayList();
+				}
 				failedListeners.add(listener);
 			}
 		}
@@ -903,20 +944,23 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private ITreeContentProvider[] extractContentProviders(
 			Set theDescriptorInstances) {
-		if (theDescriptorInstances.size() == 0)
+		if (theDescriptorInstances.size() == 0) {
 			return NO_CONTENT_PROVIDERS;
+		}
 		List resultProvidersList = new ArrayList();
-		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();)
+		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();) {
 			resultProvidersList.add(((NavigatorContentExtension) itr.next())
 					.internalGetContentProvider());
+		}
 		return (ITreeContentProvider[]) resultProvidersList
 				.toArray(new ITreeContentProvider[resultProvidersList.size()]);
 	}
 
 	private Set extractDescriptorInstances(Set theDescriptors,
 			boolean toLoadAllIfNecessary) {
-		if (theDescriptors.size() == 0)
+		if (theDescriptors.size() == 0) {
 			return Collections.EMPTY_SET;
+		}
 		Set resultInstances = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		for (Iterator descriptorIter = theDescriptors.iterator(); descriptorIter
 				.hasNext();) {
@@ -932,12 +976,14 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	private ILabelProvider[] extractLabelProviders(Set theDescriptorInstances) {
-		if (theDescriptorInstances.size() == 0)
+		if (theDescriptorInstances.size() == 0) {
 			return NO_LABEL_PROVIDERS;
+		}
 		List resultProvidersList = new ArrayList();
-		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();)
+		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();) {
 			resultProvidersList.add(((NavigatorContentExtension) itr.next())
 					.getLabelProvider());
+		}
 		return (ILabelProvider[]) resultProvidersList
 				.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}

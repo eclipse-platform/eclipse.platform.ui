@@ -200,8 +200,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
                 if (containmentAdapter.contains(workingSetElement, element,
                         IContainmentAdapter.CHECK_CONTEXT
                                 | IContainmentAdapter.CHECK_IF_CHILD
-                                | IContainmentAdapter.CHECK_IF_DESCENDANT))
-                    return true;
+                                | IContainmentAdapter.CHECK_IF_DESCENDANT)) {
+					return true;
+				}
             } else if (isEnclosedResource(element, elementPath,
                     workingSetElement)) {
                 return true;
@@ -228,8 +229,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
             IAdaptable workingSetElement) {
         IResource workingSetResource = null;
 
-        if (workingSetElement.equals(element))
-            return true;
+        if (workingSetElement.equals(element)) {
+			return true;
+		}
         if (workingSetElement instanceof IResource) {
             workingSetResource = (IResource) workingSetElement;
         } else {
@@ -238,8 +240,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         }
         if (workingSetResource != null) {
             IPath resourcePath = workingSetResource.getFullPath();
-            if (resourcePath.isPrefixOf(elementPath))
-                return true;
+            if (resourcePath.isPrefixOf(elementPath)) {
+				return true;
+			}
         }
         return false;
     }
@@ -277,8 +280,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         descriptionFilterKind = ival == null ? FILTER_CONTAINS : ival
                 .intValue();
         descriptionFilter = memento.getString(TAG_DESCRIPTION_FILTER);
-        if (descriptionFilter == null)
-            descriptionFilter = ""; //$NON-NLS-1$
+        if (descriptionFilter == null) {
+			descriptionFilter = ""; //$NON-NLS-1$
+		}
         ival = memento.getInteger(TAG_FILTER_ON_SEVERITY);
         filterOnSeverity = ival != null && ival.intValue() == 1;
         ival = memento.getInteger(TAG_SEVERITY_FILTER);
@@ -363,16 +367,18 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 
     private boolean selectByType(IMarker marker) {
         for (int i = 0; i < types.length; ++i) {
-            if (MarkerUtil.isMarkerType(marker, types[i]))
-                return true;
+            if (MarkerUtil.isMarkerType(marker, types[i])) {
+				return true;
+			}
         }
         return false;
     }
 
     private boolean selectByType(IMarkerDelta markerDelta) {
         for (int i = 0; i < types.length; ++i) {
-            if (markerDelta.isSubtypeOf(types[i]))
-                return true;
+            if (markerDelta.isSubtypeOf(types[i])) {
+				return true;
+			}
         }
         return false;
     }
@@ -426,8 +432,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         if (filterOnSeverity
                 && MarkerUtil.isMarkerType(marker, IMarker.PROBLEM)) {
             int sev = MarkerUtil.getSeverity(marker);
-            if ((severityFilter & (1 << sev)) == 0)
-                return false;
+            if ((severityFilter & (1 << sev)) == 0) {
+				return false;
+			}
         }
 
         // priority and completion filters apply only to tasks
@@ -436,21 +443,24 @@ class TasksFilter extends ViewerFilter implements Cloneable {
                 && MarkerUtil.isMarkerType(marker, IMarker.TASK)) {
             if (filterOnPriority) {
                 int pri = MarkerUtil.getPriority(marker);
-                if ((priorityFilter & (1 << pri)) == 0)
-                    return false;
+                if ((priorityFilter & (1 << pri)) == 0) {
+					return false;
+				}
             }
             if (filterOnCompletion) {
                 boolean complete = MarkerUtil.isComplete(marker);
-                if ((completionFilter & (complete ? 2 : 1)) == 0)
-                    return false;
+                if ((completionFilter & (complete ? 2 : 1)) == 0) {
+					return false;
+				}
             }
         }
 
         // description applies to all markers
         if (filterOnDescription) {
             String desc = MarkerUtil.getMessage(marker);
-            if (!checkDescription(desc))
-                return false;
+            if (!checkDescription(desc)) {
+				return false;
+			}
         }
         return true;
     }
@@ -461,8 +471,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         if (filterOnSeverity && markerDelta.isSubtypeOf(IMarker.PROBLEM)) {
             int sev = markerDelta.getAttribute(IMarker.SEVERITY,
                     IMarker.SEVERITY_WARNING);
-            if ((severityFilter & (1 << sev)) == 0)
-                return false;
+            if ((severityFilter & (1 << sev)) == 0) {
+				return false;
+			}
         }
 
         // priority and completion filters apply only to tasks
@@ -472,22 +483,25 @@ class TasksFilter extends ViewerFilter implements Cloneable {
             if (filterOnPriority) {
                 int pri = markerDelta.getAttribute(IMarker.PRIORITY,
                         IMarker.PRIORITY_NORMAL);
-                if ((priorityFilter & (1 << pri)) == 0)
-                    return false;
+                if ((priorityFilter & (1 << pri)) == 0) {
+					return false;
+				}
             }
             if (filterOnCompletion) {
                 boolean complete = markerDelta
                         .getAttribute(IMarker.DONE, false);
-                if ((completionFilter & (complete ? 2 : 1)) == 0)
-                    return false;
+                if ((completionFilter & (complete ? 2 : 1)) == 0) {
+					return false;
+				}
             }
         }
 
         // description applies to all markers
         if (filterOnDescription) {
             String desc = markerDelta.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
-            if (!checkDescription(desc))
-                return false;
+            if (!checkDescription(desc)) {
+				return false;
+			}
         }
         return true;
     }

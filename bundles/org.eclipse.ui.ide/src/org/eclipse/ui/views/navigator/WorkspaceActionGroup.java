@@ -101,11 +101,12 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
             Object next = resources.next();
             IProject project = null;
 
-            if (next instanceof IProject)
-                project = (IProject) next;
-            else if (next instanceof IAdaptable)
-                project = (IProject) ((IAdaptable) next)
+            if (next instanceof IProject) {
+				project = (IProject) next;
+			} else if (next instanceof IAdaptable) {
+				project = (IProject) ((IAdaptable) next)
                         .getAdapter(IProject.class);
+			}
 
             if (project == null) {
                 isProjectSelection = false;
@@ -113,8 +114,9 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
             }
             if (project.isOpen()) {
                 hasOpenProjects = true;
-                if (hasBuilder && !hasBuilder(project))
-                    hasBuilder = false;
+                if (hasBuilder && !hasBuilder(project)) {
+					hasBuilder = false;
+				}
             } else {
                 hasClosedProjects = true;
                 hasBuilder = false;
@@ -168,8 +170,9 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
     boolean hasBuilder(IProject project) {
         try {
             ICommand[] commands = project.getDescription().getBuildSpec();
-            if (commands.length > 0)
-                return true;
+            if (commands.length > 0) {
+				return true;
+			}
         } catch (CoreException e) {
             // Cannot determine if project has builders. Project is closed 
             // or does not exist. Fall through to return false.

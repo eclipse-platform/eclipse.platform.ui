@@ -326,8 +326,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         resourceListener = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
 				IResourceDelta delta = event.getDelta();
-				if (delta == null)
+				if (delta == null) {
 					return;
+				}
 				IResourceDelta[] projectDeltas = delta.getAffectedChildren();
 				for (int i = 0; i < projectDeltas.length; i++) {
 					int kind = projectDeltas[i].getKind();
@@ -452,11 +453,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             MenuManager newMenu = new MenuManager(newText, newId) {
                 public String getMenuText() {
                     String result = super.getMenuText();
-                    if (newQuickMenu == null)
-                        return result;
+                    if (newQuickMenu == null) {
+						return result;
+					}
                     String shortCut = newQuickMenu.getShortCutString();
-                    if (shortCut == null)
-                        return result;
+                    if (shortCut == null) {
+						return result;
+					}
                     return result + "\t" + shortCut; //$NON-NLS-1$
                 }
             };
@@ -569,11 +572,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.Workbench_showIn, "showIn") { //$NON-NLS-1$
                 public String getMenuText() {
                     String result = super.getMenuText();
-                    if (showInQuickMenu == null)
-                        return null;
+                    if (showInQuickMenu == null) {
+						return null;
+					}
                     String shortCut = showInQuickMenu.getShortCutString();
-                    if (shortCut == null)
-                        return result;
+                    if (shortCut == null) {
+						return result;
+					}
                     return result + "\t" + shortCut; //$NON-NLS-1$
                 }
             };
@@ -716,10 +721,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_help, IWorkbenchActionConstants.M_HELP);
 		addSeparatorOrGroupMarker(menu, "group.intro"); //$NON-NLS-1$
 		// See if a welcome or intro page is specified
-		if (introAction != null)
+		if (introAction != null) {
 			menu.add(introAction);
-		else if (quickStartAction != null)
+		} else if (quickStartAction != null) {
 			menu.add(quickStartAction);
+		}
 		menu.add(new GroupMarker("group.intro.ext")); //$NON-NLS-1$
 		addSeparatorOrGroupMarker(menu, "group.main"); //$NON-NLS-1$
 		menu.add(helpContentsAction);
@@ -727,8 +733,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		menu.add(dynamicHelpAction);
 		addSeparatorOrGroupMarker(menu, "group.assist"); //$NON-NLS-1$
 		// See if a tips and tricks page is specified
-		if (tipsAndTricksAction != null)
+		if (tipsAndTricksAction != null) {
 			menu.add(tipsAndTricksAction);
+		}
 		// HELP_START should really be the first item, but it was after
 		// quickStartAction and tipsAndTricksAction in 2.1.
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
@@ -1011,8 +1018,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Called when the window is closed.
      */
     public void dispose() {
-        if (isDisposed)
-            return;
+        if (isDisposed) {
+			return;
+		}
     	isDisposed = true;
         getActionBarConfigurer().getStatusLineManager().remove(statusLineItem);
         if (pageListener != null) {
@@ -1136,10 +1144,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * are preserved in OLE menu merging.
      */
     public boolean isApplicationMenu(String menuId) {
-        if (menuId.equals(IWorkbenchActionConstants.M_FILE))
-            return true;
-        if (menuId.equals(IWorkbenchActionConstants.M_WINDOW))
-            return true;
+        if (menuId.equals(IWorkbenchActionConstants.M_FILE)) {
+			return true;
+		}
+        if (menuId.equals(IWorkbenchActionConstants.M_WINDOW)) {
+			return true;
+		}
         return false;
     }
 
@@ -1148,10 +1158,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * the workbench creates.
      */
     public boolean isWorkbenchCoolItemId(String id) {
-        if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(id))
-            return true;
-        if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(id))
-            return true;
+        if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(id)) {
+			return true;
+		}
+        if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(id)) {
+			return true;
+		}
         return false;
     }
 
@@ -1542,8 +1554,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         // this can be triggered by property or resource change notifications
         Runnable update = new Runnable() {
             public void run() {
-                if (isDisposed)
-                	return;
+                if (isDisposed) {
+					return;
+				}
 		    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IProject[] projects = workspace.getRoot().getProjects();
 		    	boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);

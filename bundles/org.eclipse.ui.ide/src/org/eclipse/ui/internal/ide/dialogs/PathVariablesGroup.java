@@ -168,8 +168,9 @@ public class PathVariablesGroup {
                 pathVariableManager, tempPathVariables.keySet());
 
         // opens the dialog - just returns if the user cancels it
-        if (dialog.open() == Window.CANCEL)
-            return;
+        if (dialog.open() == Window.CANCEL) {
+			return;
+		}
 
         // otherwise, adds the new variable (or updates an existing one) in the
         // temporary collection of currently defined variables
@@ -231,8 +232,9 @@ public class PathVariablesGroup {
         variableTable.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateEnabledState();
-                if (selectionListener != null)
-                    selectionListener.handleEvent(new Event());
+                if (selectionListener != null) {
+					selectionListener.handleEvent(new Event());
+				}
             }
         });
         data = new GridData(GridData.FILL_BOTH);
@@ -277,8 +279,9 @@ public class PathVariablesGroup {
         dialog.setVariableValue(variableValue.toOSString());
 
         // opens the dialog - just returns if the user cancels it
-        if (dialog.open() == Window.CANCEL)
-            return;
+        if (dialog.open() == Window.CANCEL) {
+			return;
+		}
 
         // the name can be changed, so we remove the current variable definition...
         removedVariableNames.add(variableName);
@@ -459,16 +462,19 @@ public class PathVariablesGroup {
             item.setData(varName);
             item.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG 
                     : FILE_IMG ) : imageUnkown);
-            if (varName.equals(selectedVarName))
-                selectedVarIndex = variableTable.getItemCount() - 1;
+            if (varName.equals(selectedVarName)) {
+				selectedVarIndex = variableTable.getItemCount() - 1;
+			}
         }
         if (variableTable.getItemCount() > selectedVarIndex) {
             variableTable.setSelection(selectedVarIndex);
-            if (selectionListener != null)
-                selectionListener.handleEvent(new Event());
+            if (selectionListener != null) {
+				selectionListener.handleEvent(new Event());
+			}
         } else if (variableTable.getItemCount() == 0
-                && selectionListener != null)
-            selectionListener.handleEvent(new Event());
+                && selectionListener != null) {
+			selectionListener.handleEvent(new Event());
+		}
     }
 
     /**
@@ -484,8 +490,9 @@ public class PathVariablesGroup {
                     .hasNext();) {
                 String removedVariableName = (String) removed.next();
                 // only removes variables that have not been added again
-                if (!tempPathVariables.containsKey(removedVariableName))
-                    pathVariableManager.setValue(removedVariableName, null);
+                if (!tempPathVariables.containsKey(removedVariableName)) {
+					pathVariableManager.setValue(removedVariableName, null);
+				}
             }
 
             // then process the current collection of variables, adding/updating them
@@ -552,9 +559,9 @@ public class PathVariablesGroup {
             variableLabel.setEnabled(enabled);
             variableTable.setEnabled(enabled);
             addButton.setEnabled(enabled);
-            if (enabled)
-                updateEnabledState();
-            else {
+            if (enabled) {
+				updateEnabledState();
+			} else {
                 editButton.setEnabled(enabled);
                 removeButton.setEnabled(enabled);
             }

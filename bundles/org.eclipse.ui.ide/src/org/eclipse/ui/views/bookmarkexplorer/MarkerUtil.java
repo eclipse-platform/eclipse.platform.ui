@@ -49,18 +49,22 @@ class MarkerUtil {
     static String getContainerName(IMarker marker) {
         IPath path = marker.getResource().getFullPath();
         int n = path.segmentCount() - 1; // n is the number of segments in container, not path
-        if (n <= 0)
-            return ""; //$NON-NLS-1$
+        if (n <= 0) {
+			return ""; //$NON-NLS-1$
+		}
         int len = 0;
-        for (int i = 0; i < n; ++i)
-            len += path.segment(i).length();
+        for (int i = 0; i < n; ++i) {
+			len += path.segment(i).length();
+		}
         // account for /'s
-        if (n > 1)
-            len += n - 1;
+        if (n > 1) {
+			len += n - 1;
+		}
         StringBuffer sb = new StringBuffer(len);
         for (int i = 0; i < n; ++i) {
-            if (i != 0)
-                sb.append('/');
+            if (i != 0) {
+				sb.append('/');
+			}
             sb.append(path.segment(i));
         }
         return sb.toString();
@@ -100,8 +104,9 @@ class MarkerUtil {
 
         // skip any leading '#'
         // workaround for 1GCE69U: ITPJCORE:ALL - Java problems should not have '#' in location.
-        if (i < len && value.charAt(i) == '#')
-            ++i;
+        if (i < len && value.charAt(i) == '#') {
+			++i;
+		}
 
         if (i < len && value.charAt(i) == '-') {
             negative = true;

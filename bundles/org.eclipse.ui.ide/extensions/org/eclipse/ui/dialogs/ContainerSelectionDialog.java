@@ -85,10 +85,11 @@ public class ContainerSelectionDialog extends SelectionDialog {
         setTitle(IDEWorkbenchMessages.ContainerSelectionDialog_title);
         this.initialSelection = initialRoot;
         this.allowNewContainerName = allowNewContainerName;
-        if (message != null)
-            setMessage(message);
-        else
-            setMessage(IDEWorkbenchMessages.ContainerSelectionDialog_message);
+        if (message != null) {
+			setMessage(message);
+		} else {
+			setMessage(IDEWorkbenchMessages.ContainerSelectionDialog_message);
+		}
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
@@ -149,8 +150,9 @@ public class ContainerSelectionDialog extends SelectionDialog {
 
         List chosenContainerPathList = new ArrayList();
         IPath returnValue = group.getContainerFullPath();
-        if (returnValue != null)
-            chosenContainerPathList.add(returnValue);
+        if (returnValue != null) {
+			chosenContainerPathList.add(returnValue);
+		}
         setResult(chosenContainerPathList);
         super.okPressed();
     }

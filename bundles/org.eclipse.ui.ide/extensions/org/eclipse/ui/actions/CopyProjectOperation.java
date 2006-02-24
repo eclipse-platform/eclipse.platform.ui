@@ -95,23 +95,27 @@ public class CopyProjectOperation {
         ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(
                 parentShell, project);
         dialog.setTitle(IDEWorkbenchMessages.CopyProjectOperation_copyProject);
-        if (dialog.open() != Window.OK)
-            return;
+        if (dialog.open() != Window.OK) {
+			return;
+		}
 
         Object[] destinationPaths = dialog.getResult();
-        if (destinationPaths == null)
-            return;
+        if (destinationPaths == null) {
+			return;
+		}
 
         String newName = (String) destinationPaths[0];
         IPath newLocation = new Path((String) destinationPaths[1]);
 
-        if (!validateCopy(parentShell, project, newName, getModelProviderIds()))
-        	return;
+        if (!validateCopy(parentShell, project, newName, getModelProviderIds())) {
+			return;
+		}
         
         boolean completed = performProjectCopy(project, newName, newLocation);
 
-        if (!completed) // ie.- canceled
-            return; // not appropriate to show errors
+        if (!completed) {
+			return; // not appropriate to show errors
+		}
 
         // If errors occurred, open an Error dialog
         if (errorStatus != null) {
@@ -135,8 +139,9 @@ public class CopyProjectOperation {
         WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             public void execute(IProgressMonitor monitor) {
                 try {
-                    if (monitor.isCanceled())
-                        throw new OperationCanceledException();
+                    if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
                     
                     monitor.setTaskName(IDEWorkbenchMessages.CopyProjectOperation_progressTitle);
                     
@@ -186,10 +191,11 @@ public class CopyProjectOperation {
         newDescription.setName(projectName);
 
         //If the location is the default then set the location to null
-        if (rootLocation.equals(Platform.getLocation()))
-            newDescription.setLocation(null);
-        else
-            newDescription.setLocation(rootLocation);
+        if (rootLocation.equals(Platform.getLocation())) {
+			newDescription.setLocation(null);
+		} else {
+			newDescription.setLocation(rootLocation);
+		}
 
         return newDescription;
     }
@@ -202,12 +208,13 @@ public class CopyProjectOperation {
      */
     private void recordError(CoreException error) {
 
-        if (errorStatus == null)
-            errorStatus = new MultiStatus(
+        if (errorStatus == null) {
+			errorStatus = new MultiStatus(
                     PlatformUI.PLUGIN_ID,
                     IStatus.ERROR,
                     IDEWorkbenchMessages.CopyProjectOperation_copyFailedMessage,
                     error);
+		}
 
         errorStatus.merge(error.getStatus());
     }

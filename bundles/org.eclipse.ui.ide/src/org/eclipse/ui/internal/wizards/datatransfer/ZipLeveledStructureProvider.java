@@ -67,14 +67,16 @@ public class ZipLeveledStructureProvider implements
 	 */
 	protected ZipEntry createContainer(IPath pathname) {
 		ZipEntry existingEntry = (ZipEntry) directoryEntryCache.get(pathname);
-		if (existingEntry != null)
+		if (existingEntry != null) {
 			return existingEntry;
+		}
 
 		ZipEntry parent;
-		if (pathname.segmentCount() == 1)
+		if (pathname.segmentCount() == 1) {
 			parent = root;
-		else
+		} else {
 			parent = createContainer(pathname.removeLastSegments(1));
+		}
 		ZipEntry newEntry = new ZipEntry(pathname.toString());
 		directoryEntryCache.put(pathname, newEntry);
 		List childList = new ArrayList();
@@ -91,11 +93,12 @@ public class ZipLeveledStructureProvider implements
 	protected void createFile(ZipEntry entry) {
 		IPath pathname = new Path(entry.getName());
 		ZipEntry parent;
-		if (pathname.segmentCount() == 1)
+		if (pathname.segmentCount() == 1) {
 			parent = root;
-		else
+		} else {
 			parent = (ZipEntry) directoryEntryCache.get(pathname
 					.removeLastSegments(1));
+		}
 
 		List childList = (List) children.get(parent);
 		childList.add(entry);
@@ -105,8 +108,9 @@ public class ZipLeveledStructureProvider implements
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
 	public List getChildren(Object element) {
-		if (children == null)
+		if (children == null) {
 			initialize();
+		}
 
 		return ((List) children.get(element));
 	}
@@ -138,8 +142,9 @@ public class ZipLeveledStructureProvider implements
 			}
 			// No seperator wasw present so we're in a higher directory right
 			// now
-			if (firstSep == -1)
+			if (firstSep == -1) {
 				return pathOrig;
+			}
 			path = path.substring(firstSep);
 		}
 		return path;
@@ -156,8 +161,9 @@ public class ZipLeveledStructureProvider implements
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
 	public String getLabel(Object element) {
-		if (element.equals(root))
+		if (element.equals(root)) {
 			return ((ZipEntry) element).getName();
+		}
 
 		return stripPath(new Path(((ZipEntry) element).getName()).lastSegment());
 	}
@@ -193,15 +199,16 @@ public class ZipLeveledStructureProvider implements
 			ZipEntry entry = (ZipEntry) entries.nextElement();
 			IPath path = new Path(entry.getName()).addTrailingSeparator();
 
-			if (entry.isDirectory())
+			if (entry.isDirectory()) {
 				createContainer(path);
-			else
+			} else
 			{
 				// Ensure the container structure for all levels above this is initialized
 				// Once we hit a higher-level container that's already added we need go no further
 				int pathSegmentCount = path.segmentCount();
-				if (pathSegmentCount > 1)
+				if (pathSegmentCount > 1) {
 					createContainer(path.uptoSegment(pathSegmentCount - 1));
+				}
 				createFile(entry);
 			}
 		}

@@ -151,8 +151,9 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation {
 	protected IResourceDeltaVisitor getDeltaVisitor() {
 		return new IResourceDeltaVisitor() {
 			public boolean visit(IResourceDelta delta) {
-				if (resources == null)
+				if (resources == null) {
 					return false;
+				}
 				for (int i = 0; i < resources.length; i++) {
 					if (resources[i].equals(delta.getResource())) {
 						if (isResourceInvalid(resources[i], delta)) {

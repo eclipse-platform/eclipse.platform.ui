@@ -148,10 +148,11 @@ public class OpenWithMenu extends ContributionItem {
         }
         if (imageDesc == null) {
             if (editorDesc.getId().equals(
-                    IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID))
-                imageDesc = registry
+                    IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)) {
+				imageDesc = registry
                         .getSystemExternalEditorImageDescriptor(getFileResource()
                                 .getName());
+			}
         }
         return imageDesc;
     }
@@ -179,8 +180,9 @@ public class OpenWithMenu extends ContributionItem {
             public void handleEvent(Event event) {
                 switch (event.type) {
                 case SWT.Selection:
-                    if (menuItem.getSelection())
-                        openEditor(descriptor);
+                    if (menuItem.getSelection()) {
+						openEditor(descriptor);
+					}
                     break;
                 }
             }
@@ -215,15 +217,17 @@ public class OpenWithMenu extends ContributionItem {
             if (!alreadyMapped.contains(editor)) {
                 createMenuItem(menu, editor, preferredEditor);
                 if (defaultEditor != null
-                        && editor.getId().equals(defaultEditor.getId()))
-                    defaultFound = true;
+                        && editor.getId().equals(defaultEditor.getId())) {
+					defaultFound = true;
+				}
                 alreadyMapped.add(editor);
             }
         }
 
         // Only add a separator if there is something to separate
-        if (editors.length > 0)
-            new MenuItem(menu, SWT.SEPARATOR);
+        if (editors.length > 0) {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}
 
         // Add default editor. Check it if it is saved as the preference.
         if (!defaultFound && defaultEditor != null) {

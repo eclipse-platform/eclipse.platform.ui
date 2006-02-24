@@ -56,10 +56,12 @@ public class TableSortDialog extends TrayDialog {
             int index0 = -1;
             int index1 = -1;
             for (int i = 0; i < propertyText.length; i++) {
-                if (propertyText[i].equals(arg0))
-                    index0 = i;
-                if (propertyText[i].equals(arg1))
-                    index1 = i;
+                if (propertyText[i].equals(arg0)) {
+					index0 = i;
+				}
+                if (propertyText[i].equals(arg1)) {
+					index1 = i;
+				}
             }
             return index0 - index1;
         }
@@ -89,8 +91,9 @@ public class TableSortDialog extends TrayDialog {
      */
     protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
-        if (sorter == null)
-            return composite;
+        if (sorter == null) {
+			return composite;
+		}
 
         createPrioritiesArea(composite);
         createRestoreDefaultsButton(composite);
@@ -154,14 +157,16 @@ public class TableSortDialog extends TrayDialog {
                 priorityCombos[i].addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e) {
                         int oldSelectionDirection = TableSorter.ASCENDING;
-                        if (descendingButtons[index].getSelection())
-                            oldSelectionDirection = TableSorter.DESCENDING;
+                        if (descendingButtons[index].getSelection()) {
+							oldSelectionDirection = TableSorter.DESCENDING;
+						}
                         ArrayList oldSelectionList = new ArrayList(Arrays
                                 .asList(priorityCombos[index].getItems()));
                         oldSelectionList.removeAll(Arrays
                                 .asList(priorityCombos[index + 1].getItems()));
-                        if (oldSelectionList.size() != 1)
-                            return;
+                        if (oldSelectionList.size() != 1) {
+							return;
+						}
                         String oldSelection = (String) oldSelectionList.get(0);
                         String newSelection = priorityCombos[index]
                                 .getItem(priorityCombos[index]
@@ -181,11 +186,12 @@ public class TableSortDialog extends TrayDialog {
                                                 columnComparator);
                                 if (insertionPoint >= 0
                                         && insertionPoint <= priorityCombos[j]
-                                                .getItemCount())
-                                    priorityCombos[j].add(oldSelection,
+                                                .getItemCount()) {
+									priorityCombos[j].add(oldSelection,
                                             insertionPoint);
-                                else
-                                    priorityCombos[j].add(oldSelection);
+								} else {
+									priorityCombos[j].add(oldSelection);
+								}
                                 priorityCombos[j].select(priorityCombos[j]
                                         .indexOf(oldSelection));
                                 ascendingButtons[index]
@@ -208,11 +214,12 @@ public class TableSortDialog extends TrayDialog {
                                                 columnComparator);
                                 if (insertionPoint >= 0
                                         && insertionPoint <= priorityCombos[j]
-                                                .getItemCount())
-                                    priorityCombos[j].add(oldSelection,
+                                                .getItemCount()) {
+									priorityCombos[j].add(oldSelection,
                                             insertionPoint);
-                                else
-                                    priorityCombos[j].add(oldSelection);
+								} else {
+									priorityCombos[j].add(oldSelection);
+								}
                             }
                         }
                         markDirty();
@@ -308,8 +315,9 @@ public class TableSortDialog extends TrayDialog {
 
         for (int i = 0; i < priorityCombos.length; i++) {
             priorityCombos[i].removeAll();
-            for (int j = 0; j < availablePriorities.size(); j++)
-                priorityCombos[i].add((String) availablePriorities.get(j));
+            for (int j = 0; j < availablePriorities.size(); j++) {
+				priorityCombos[i].add((String) availablePriorities.get(j));
+			}
             priorityCombos[i].select(priorityCombos[i]
                     .indexOf(propertyText[priorities[i]]));
             availablePriorities.remove(propertyText[priorities[i]]);
@@ -328,8 +336,9 @@ public class TableSortDialog extends TrayDialog {
                         .getSelectionIndex());
                 int index = -1;
                 for (int j = 0; j < propertyText.length && index == -1; j++) {
-                    if (propertyText[j].equals(column))
-                        index = j;
+                    if (propertyText[j].equals(column)) {
+						index = j;
+					}
                 }
                 if (index == -1) {
                     sorter.resetState();
@@ -337,8 +346,9 @@ public class TableSortDialog extends TrayDialog {
                 }
                 sorter.setTopPriority(properties[index]);
                 int direction = TableSorter.ASCENDING;
-                if (descendingButtons[i].getSelection())
-                    direction = TableSorter.DESCENDING;
+                if (descendingButtons[i].getSelection()) {
+					direction = TableSorter.DESCENDING;
+				}
                 sorter.setTopPriorityDirection(direction);
             }
         }

@@ -107,12 +107,14 @@ public class ActionCopyMarker extends MarkerSelectionProviderAction {
 
 			clipboard.setContents(data, transferTypes);
 		} catch (SWTError e) {
-			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 				throw e;
+			}
 			if (MessageDialog.openQuestion(part.getSite().getShell(),
 					MarkerMessages.CopyToClipboardProblemDialog_title,
-					MarkerMessages.CopyToClipboardProblemDialog_message))
+					MarkerMessages.CopyToClipboardProblemDialog_message)) {
 				setClipboard(markers, markerReport);
+			}
 		}
 	}
 
@@ -145,20 +147,22 @@ public class ActionCopyMarker extends MarkerSelectionProviderAction {
 		// create header
 		for (int i = 0; i < properties.length; i++) {
 			report.append(properties[i].getDescription());
-			if (i == properties.length - 1)
+			if (i == properties.length - 1) {
 				report.append(NEWLINE);
-			else
+			} else {
 				report.append(DELIMITER);
+			}
 		}
 
 		for (int i = 0; i < markers.length; i++) {
 			ConcreteMarker marker = markers[i];
 			for (int j = 0; j < properties.length; j++) {
 				report.append(properties[j].getValue(marker));
-				if (j == properties.length - 1)
+				if (j == properties.length - 1) {
 					report.append(NEWLINE);
-				else
+				} else {
 					report.append(DELIMITER);
+				}
 			}
 		}
 

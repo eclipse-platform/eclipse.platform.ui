@@ -100,27 +100,29 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public void dragEnter(DropTargetEvent event) {
 		super.dragEnter(event);
 
-		for (int i = 0; i < event.dataTypes.length; i++)
+		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(
 					event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
 				return;
 			}
+		}
 
-		for (int i = 0; i < event.dataTypes.length; i++)
+		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (FileTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
 				event.detail = DND.DROP_COPY;
 				return;
 			}
+		}
 
-		for (int i = 0; i < event.dataTypes.length; i++)
-
+		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (PluginTransfer.getInstance()
 					.isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
 				return;
 			}
+		}
 
 		event.detail = DND.DROP_NONE;
 
@@ -146,9 +148,9 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * @see org.eclipse.ui.part.PluginDropAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void drop(DropTargetEvent event) {
-		if (PluginTransfer.getInstance().isSupportedType(event.currentDataType))
+		if (PluginTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			super.drop(event);
-		else {
+		} else {
 
 			CommonDropAdapterAssistant[] assistants = dndService
 					.findCommonDropAdapterAssistants(getCurrentTarget(),
@@ -180,20 +182,21 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public boolean validateDrop(Object aDropTarget, int theDropOperation,
 			TransferData theTransferData) {
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("CommonDropAdapter.validateDrop (begin)"); //$NON-NLS-1$
+		}
 
 		boolean result = false;
 
 		IStatus valid = null;
 
-		if (super.validateDrop(aDropTarget, theDropOperation, theTransferData))
+		if (super.validateDrop(aDropTarget, theDropOperation, theTransferData)) {
 			result = true;
-		else if (FileTransfer.getInstance().isSupportedType(theTransferData))
+		} else if (FileTransfer.getInstance().isSupportedType(theTransferData)) {
 			// only allow copying when dragging from outside Eclipse
 			// result = theDropOperation != DND.DROP_COPY;
 			result = true;
-		else {
+		} else {
 			CommonDropAdapterAssistant[] assistants = dndService
 					.findCommonDropAdapterAssistants(aDropTarget,
 							theTransferData);
@@ -212,9 +215,10 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			}
 		}
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out
 					.println("CommonDropAdapter.validateDrop (returning " + (valid != null ? valid.getSeverity() + ": " + valid.getMessage() : "" + result) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
 
 		return result;
 

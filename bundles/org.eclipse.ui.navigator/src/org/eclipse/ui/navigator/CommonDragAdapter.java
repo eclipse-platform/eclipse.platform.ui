@@ -97,8 +97,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		for (int i = 0; i < assistants.length; i++) {
 			transferTypes = assistants[i].getSupportedTransferTypes();
 			for (int j = 0; j < transferTypes.length; j++) {
-				if (transferTypes[j] != null)
+				if (transferTypes[j] != null) {
 					supportedTypes.add(transferTypes[j]);
+				}
 			}
 		}
 		
@@ -113,8 +114,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 	 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragStart(DragSourceEvent event) {
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("CommonDragAdapter.dragStart (begin): " + event); //$NON-NLS-1$
+		}
 		try {
 			// Workaround for 1GEUS9V
 			DragSource dragSource = (DragSource) event.widget;
@@ -125,17 +127,20 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 					LocalSelectionTransfer.getTransfer()
 							.setSelection(selection);
 					event.doit = true;
-				} else
+				} else {
 					event.doit = false;
-			} else
+				}
+			} else {
 				event.doit = false;
+			}
 		} catch (RuntimeException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out
 					.println("CommonDragAdapter.dragStart (end): doit=" + event.doit); //$NON-NLS-1$
+		}
 	}
 
 	/*
@@ -148,27 +153,31 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		ISelection selection = LocalSelectionTransfer.getTransfer()
 				.getSelection();
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out
 					.println("CommonDragAdapter.dragSetData (begin): event" + event + " selection=" + selection); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
 		if (LocalSelectionTransfer.getTransfer()
 				.isSupportedType(event.dataType)) {
 			event.data = selection;
 
-			if (DEBUG)
+			if (DEBUG) {
 				System.out
 						.println("CommonDragAdapter.dragSetData set LocalSelectionTransfer"); //$NON-NLS-1$
+			}
 		} else if (PluginTransfer.getInstance().isSupportedType(event.dataType)) {
 			event.data = NavigatorPluginDropAction
 					.createTransferData(contentService);
-			if (DEBUG)
+			if (DEBUG) {
 				System.out
 						.println("CommonDragAdapter.dragSetData set PluginTransfer"); //$NON-NLS-1$
+			}
 		} else if (selection instanceof IStructuredSelection) {
-			if (DEBUG)
+			if (DEBUG) {
 				System.out
 						.println("CommonDragAdapter.dragSetData looking for assistants"); //$NON-NLS-1$
+			}
 
 			INavigatorDnDService dndService = contentService.getDnDService();
 			CommonDragAdapterAssistant[] assistants = dndService
@@ -179,25 +188,29 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 						.getSupportedTransferTypes();
 				for (int j = 0; j < supportedTransferTypes.length; j++) {
 					if (supportedTransferTypes[j]
-							.isSupportedType(event.dataType))
+							.isSupportedType(event.dataType)) {
 						try {
-							if (DEBUG)
+							if (DEBUG) {
 								System.out
 										.println("CommonDragAdapter.dragSetData set assistant transfer type"); //$NON-NLS-1$
+							}
 							assistants[i].setDragData(event,
 									(IStructuredSelection) selection);
 						} catch (RuntimeException re) {
 							NavigatorPlugin.logError(0, re.getMessage(), re);
 						}
+					}
 
 				}
 			}
 
-		} else
+		} else {
 			event.doit = false;
+		}
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("CommonDragAdapter.dragSetData (end): " + event); //$NON-NLS-1$
+		}
 	}
 
 	/*
@@ -207,8 +220,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 	 */
 	public void dragFinished(DragSourceEvent event) {
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("CommonDragAdapter.dragFinished()."); //$NON-NLS-1$
+		}
 
 		LocalSelectionTransfer.getTransfer().setSelection(null);
 

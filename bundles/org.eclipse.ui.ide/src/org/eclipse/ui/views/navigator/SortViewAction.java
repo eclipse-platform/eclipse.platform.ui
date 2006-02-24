@@ -45,9 +45,9 @@ public class SortViewAction extends ResourceNavigatorAction {
         IResourceNavigator navigator = getNavigator();
         ResourceSorter sorter = navigator.getSorter();
 
-        if (sorter == null)
-            navigator.setSorter(new ResourceSorter(sortCriteria));
-        else {
+        if (sorter == null) {
+			navigator.setSorter(new ResourceSorter(sortCriteria));
+		} else {
             sorter.setCriteria(sortCriteria);
             navigator.setSorter(sorter);
         }

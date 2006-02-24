@@ -154,12 +154,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		for (int i = 0; i < cmdLineArgs.length; i++) {
 			if ("-showlocation".equalsIgnoreCase(cmdLineArgs[i])) { //$NON-NLS-1$
 				String name = null;
-				if (cmdLineArgs.length > i + 1)
+				if (cmdLineArgs.length > i + 1) {
 					name = cmdLineArgs[i + 1];
-				if (name != null && name.indexOf("-") == -1) //$NON-NLS-1$
+				}
+				if (name != null && name.indexOf("-") == -1) { //$NON-NLS-1$
 					workspaceLocation = name;
-				else
+				} else {
 					workspaceLocation = Platform.getLocation().toOSString();
+				}
 				break;
 			}
 		}
@@ -241,8 +243,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						MessageDialog.QUESTION, new String[] {
 								IDEWorkbenchMessages.SystemSettingsChange_yes,
 								IDEWorkbenchMessages.SystemSettingsChange_no },
-						1).open() == Window.OK)
+						1).open() == Window.OK) {
 					PlatformUI.getWorkbench().restart();
+				}
 			}
 		};
 
@@ -320,13 +323,16 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				.getPreferenceStore();
 		boolean refresh = store
 				.getBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP);
-		if (!refresh)
+		if (!refresh) {
 			return;
+		}
 
 		// Do not refresh if it was already done by core on startup.
-		for (int i = 0; i < commandLineArgs.length; i++)
-			if (commandLineArgs[i].equalsIgnoreCase("-refresh")) //$NON-NLS-1$
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-refresh")) { //$NON-NLS-1$
 				return;
+			}
+		}
 
 		final IContainer root = ResourcesPlugin.getWorkspace().getRoot();
 		Job job = new WorkspaceJob(IDEWorkbenchMessages.Workspace_refreshing) {
@@ -473,8 +479,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 *         <code>AboutInfo</code>).
 	 */
 	public Map getNewlyAddedBundleGroups() {
-		if (newlyAddedBundleGroups == null)
+		if (newlyAddedBundleGroups == null) {
 			newlyAddedBundleGroups = createNewBundleGroupsMap();
+		}
 		return newlyAddedBundleGroups;
 	}
 
@@ -495,9 +502,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		settings.put(INSTALLED_FEATURES, currentFeaturesArray);
 
 		// remove the previously known from the current set
-		if (previousFeaturesArray != null)
-			for (int i = 0; i < previousFeaturesArray.length; ++i)
+		if (previousFeaturesArray != null) {
+			for (int i = 0; i < previousFeaturesArray.length; ++i) {
 				bundleGroups.remove(previousFeaturesArray[i]);
+			}
+		}
 
 		return bundleGroups;
 	}
@@ -695,8 +704,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				for (Iterator i = m.values().iterator(); i.hasNext();) {
 					AboutInfo info = (AboutInfo) i.next();
 					if (info != null && info.getWelcomePerspectiveId() != null
-							&& info.getWelcomePageURL() != null)
+							&& info.getWelcomePageURL() != null) {
 						list.add(info);
+					}
 				}
 				welcomePerspectiveInfos = new AboutInfo[list.size()];
 				list.toArray(welcomePerspectiveInfos);

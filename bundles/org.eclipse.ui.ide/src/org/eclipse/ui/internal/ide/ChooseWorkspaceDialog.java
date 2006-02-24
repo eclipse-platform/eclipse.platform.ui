@@ -89,8 +89,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
             open();
 
             // 70576: make sure dialog gets dismissed on ESC too
-            if (getReturnCode() == CANCEL)
-                launchData.workspaceSelected(null);
+            if (getReturnCode() == CANCEL) {
+				launchData.workspaceSelected(null);
+			}
 
             return;
         }
@@ -100,10 +101,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         // If the selection dialog was not used then the workspace to use is either the
         // most recent selection or the initialDefault (if there is no history).
         String workspace = null;
-        if (recent != null && recent.length > 0)
-        	workspace = recent[0];
-        if (workspace == null || workspace.length() == 0)
-        	workspace = launchData.getInitialDefault();
+        if (recent != null && recent.length > 0) {
+			workspace = recent[0];
+		}
+        if (workspace == null || workspace.length() == 0) {
+			workspace = launchData.getInitialDefault();
+		}
         launchData.workspaceSelected(workspace);
     }
 
@@ -134,12 +137,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
         // bug 59934: load title image for sizing, but set it non-visible so the
         //            white background is displayed
-        if (getTitleImageLabel() != null)
-            getTitleImageLabel().setVisible(false);
+        if (getTitleImageLabel() != null) {
+			getTitleImageLabel().setVisible(false);
+		}
 
         createWorkspaceBrowseRow(composite);
-        if (!suppressAskAgain)
-            createShowDialogButton(composite);
+        if (!suppressAskAgain) {
+			createShowDialogButton(composite);
+		}
         Dialog.applyDialogFont(composite);
         return composite;
     }
@@ -232,8 +237,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
                 dialog.setMessage(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserMessage);
                 dialog.setFilterPath(getInitialBrowsePath());
                 String dir = dialog.open();
-                if (dir != null)
-                    text.setText(dir);
+                if (dir != null) {
+					text.setText(dir);
+				}
             }
         });
     }
@@ -249,8 +255,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      */
     private String getInitialBrowsePath() {
         File dir = new File(text.getText());
-        while (dir != null && !dir.exists())
-            dir = dir.getParentFile();
+        while (dir != null && !dir.exists()) {
+			dir = dir.getParentFile();
+		}
 
         return dir != null ? dir.getAbsolutePath() : System
                 .getProperty("user.dir"); //$NON-NLS-1$
@@ -262,8 +269,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	protected Point getInitialLocation(Point initialSize) {
 		Composite parent = getShell().getParent();
 		
-		if (!centerOnMonitor || parent == null)
+		if (!centerOnMonitor || parent == null) {
 			return super.getInitialLocation(initialSize);
+		}
 
 		Monitor monitor = parent.getMonitor();
 		Rectangle monitorBounds = monitor.getClientArea();
@@ -302,9 +310,11 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
     private void setInitialTextValues(Combo text) {
         String[] recentWorkspaces = launchData.getRecentWorkspaces();
-        for (int i = 0; i < recentWorkspaces.length; ++i)
-            if (recentWorkspaces[i] != null)
-                text.add(recentWorkspaces[i]);
+        for (int i = 0; i < recentWorkspaces.length; ++i) {
+			if (recentWorkspaces[i] != null) {
+				text.add(recentWorkspaces[i]);
+			}
+		}
 
         text.setText(text.getItemCount() > 0 ? text.getItem(0) : launchData
                 .getInitialDefault());
@@ -319,8 +329,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		// If we were explicitly instructed to center on the monitor, then
 		// do not provide any settings for retrieving a different location or, worse,
 		// saving the centered location.
-		if (centerOnMonitor) 
+		if (centerOnMonitor) {
 			return null;
+		}
 		
         IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);

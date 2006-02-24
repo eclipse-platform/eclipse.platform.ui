@@ -59,8 +59,9 @@ class OpenBookmarkAction extends BookmarkAction {
                 CoreException nestedException = null;
                 IStatus status = e.getStatus();
                 if (status != null
-                        && status.getException() instanceof CoreException)
-                    nestedException = (CoreException) status.getException();
+                        && status.getException() instanceof CoreException) {
+					nestedException = (CoreException) status.getException();
+				}
 
                 if (nestedException != null) {
                     // Open an error dialog and include the extra

@@ -50,9 +50,10 @@ public class ResourceNavigatorRenameAction extends RenameResourceAction {
         super.runWithNewPath(path, resource);
         if (this.viewer != null) {
             IResource newResource = root.findMember(path);
-            if (newResource != null)
-                this.viewer.setSelection(new StructuredSelection(newResource),
+            if (newResource != null) {
+				this.viewer.setSelection(new StructuredSelection(newResource),
                         true);
+			}
         }
     }
 

@@ -121,8 +121,9 @@ public class QuickStartAction extends Action implements
                 .getFeatureInfos();
         for (int i = 0; i < features.length; i++) {
             URL url = features[i].getWelcomePageURL();
-            if (url != null && !url.equals(productUrl))
-                welcomeFeatures.add(features[i]);
+            if (url != null && !url.equals(productUrl)) {
+				welcomeFeatures.add(features[i]);
+			}
         }
 
         Shell shell = workbenchWindow.getShell();
@@ -140,8 +141,9 @@ public class QuickStartAction extends Action implements
                 product == null ? null : product.getId(), IDEWorkbenchMessages.WelcomePageSelectionDialog_title,
                 IDEWorkbenchMessages.WelcomePageSelectionDialog_message,
                 IIDEHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
-        if (d.open() != Window.OK || d.getResult().length != 1)
-            return null;
+        if (d.open() != Window.OK || d.getResult().length != 1) {
+			return null;
+		}
         return (AboutInfo) d.getResult()[0];
     }
 

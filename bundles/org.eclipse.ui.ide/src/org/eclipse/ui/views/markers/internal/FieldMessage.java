@@ -73,8 +73,9 @@ public class FieldMessage extends AbstractField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	public String getValue(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return MarkerMessages.FieldMessage_NullMessage;
+		}
 
 		if (obj instanceof MarkerNode) {
 			return ((MarkerNode) obj).getDescription();
@@ -94,8 +95,9 @@ public class FieldMessage extends AbstractField {
 
 		MarkerNode node = (MarkerNode) obj;
 		if (node.isConcrete()) {
-			if (node instanceof ProblemMarker)
+			if (node instanceof ProblemMarker) {
 				return Util.getImage(((ProblemMarker) obj).getSeverity());
+			}
 			return null;
 		}
 

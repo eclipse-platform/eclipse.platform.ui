@@ -144,13 +144,15 @@ public class ResourcePropertySource implements IPropertySource {
      */
     private String getDateStringValue(IResource resource) {
 
-        if (!resource.isLocal(IResource.DEPTH_ZERO))
-            return NOT_LOCAL_TEXT;
+        if (!resource.isLocal(IResource.DEPTH_ZERO)) {
+			return NOT_LOCAL_TEXT;
+		}
 
         IPath location = resource.getLocation();
         if (location == null) {
-            if (resource.isLinked())
-                return UNDEFINED_PATH_VARIABLE;
+            if (resource.isLinked()) {
+				return UNDEFINED_PATH_VARIABLE;
+			}
 
             return FILE_NOT_FOUND;
         } else {
@@ -174,8 +176,9 @@ public class ResourcePropertySource implements IPropertySource {
      * Get the location of a resource
      */
     private String getLocationText(IResource resource) {
-        if (!resource.isLocal(IResource.DEPTH_ZERO))
-            return NOT_LOCAL_TEXT;
+        if (!resource.isLocal(IResource.DEPTH_ZERO)) {
+			return NOT_LOCAL_TEXT;
+		}
 
         IPath resolvedLocation = resource.getLocation();
         IPath location = resolvedLocation;
@@ -203,13 +206,15 @@ public class ResourcePropertySource implements IPropertySource {
      * This resolves path variables if present in the resource path.
      */
     private String getResolvedLocationText(IResource resource) {
-        if (!resource.isLocal(IResource.DEPTH_ZERO))
-            return NOT_LOCAL_TEXT;
+        if (!resource.isLocal(IResource.DEPTH_ZERO)) {
+			return NOT_LOCAL_TEXT;
+		}
 
         IPath location = resource.getLocation();
         if (location == null) {
-            if (resource.isLinked())
-                return UNDEFINED_PATH_VARIABLE;
+            if (resource.isLinked()) {
+				return UNDEFINED_PATH_VARIABLE;
+			}
 
             return FILE_NOT_FOUND;
         } else {
@@ -227,10 +232,11 @@ public class ResourcePropertySource implements IPropertySource {
      * Method declared on IPropertySource.
      */
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        if (isPathVariable(element))
-            return propertyDescriptorsLinkVariable;
-        else
-            return propertyDescriptors;
+        if (isPathVariable(element)) {
+			return propertyDescriptorsLinkVariable;
+		} else {
+			return propertyDescriptors;
+		}
     }
 
     /* (non-Javadoc)
@@ -247,10 +253,11 @@ public class ResourcePropertySource implements IPropertySource {
             return getDateStringValue(element);
         }
         if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
-            if (element.isReadOnly())
-                return IDEPropertiesMessages.ResourceProperty_false;
-            else
-                return IDEPropertiesMessages.ResourceProperty_true;
+            if (element.isReadOnly()) {
+				return IDEPropertiesMessages.ResourceProperty_false;
+			} else {
+				return IDEPropertiesMessages.ResourceProperty_true;
+			}
         }
         if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
             return String.valueOf(element.isDerived());
@@ -278,8 +285,9 @@ public class ResourcePropertySource implements IPropertySource {
      * 	path variable.  
      */
     private boolean isPathVariable(IResource resource) {
-        if (!resource.isLinked())
-            return false;
+        if (!resource.isLinked()) {
+			return false;
+		}
 
         IPath resolvedLocation = resource.getLocation();
         if (resolvedLocation == null) {
@@ -287,8 +295,9 @@ public class ResourcePropertySource implements IPropertySource {
             return true;
         }
         IPath rawLocation = resource.getRawLocation();
-        if (resolvedLocation.equals(rawLocation))
-            return false;
+        if (resolvedLocation.equals(rawLocation)) {
+			return false;
+		}
 
         return true;
     }
@@ -325,10 +334,11 @@ public class ResourcePropertySource implements IPropertySource {
      */
     protected File getFile(IResource resource) {
         IPath location = resource.getLocation();
-        if (location == null)
-            return null;
-        else
-            return location.toFile();
+        if (location == null) {
+			return null;
+		} else {
+			return location.toFile();
+		}
     }
 
 }

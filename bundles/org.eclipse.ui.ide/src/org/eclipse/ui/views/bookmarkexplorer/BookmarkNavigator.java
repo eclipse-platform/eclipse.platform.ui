@@ -174,8 +174,9 @@ public class BookmarkNavigator extends ViewPart {
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
             IDialogSettings settings = workbenchSettings
                     .getSection("BookmarkSortState");//$NON-NLS-1$
-            if (settings == null)
-                settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+            if (settings == null) {
+				settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+			}
             sorter.saveState(settings);
         }
     }
@@ -198,8 +199,9 @@ public class BookmarkNavigator extends ViewPart {
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
             IDialogSettings settings = workbenchSettings
                     .getSection("BookmarkSortState");//$NON-NLS-1$
-            if (settings == null)
-                settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+            if (settings == null) {
+				settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+			}
             sorter.saveState(settings);
         }
     }
@@ -324,8 +326,9 @@ public class BookmarkNavigator extends ViewPart {
 
         getSite().setSelectionProvider(viewer);
 
-        if (memento != null)
-            restoreState(memento);
+        if (memento != null) {
+			restoreState(memento);
+		}
         memento = null;
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(),
@@ -333,8 +336,9 @@ public class BookmarkNavigator extends ViewPart {
     }
 
     public void dispose() {
-        if (clipboard != null)
-            clipboard.dispose();
+        if (clipboard != null) {
+			clipboard.dispose();
+		}
     }
 
     /**
@@ -414,8 +418,9 @@ public class BookmarkNavigator extends ViewPart {
      */
     void handleKeyPressed(KeyEvent event) {
         if (event.character == SWT.DEL && event.stateMask == 0
-                && removeAction.isEnabled())
-            removeAction.run();
+                && removeAction.isEnabled()) {
+			removeAction.run();
+		}
     }
 
     /**
@@ -476,11 +481,13 @@ public class BookmarkNavigator extends ViewPart {
                 ILabelProvider provider = (ILabelProvider) getViewer()
                         .getLabelProvider();
                 for (int i = 0; i < markers.length; i++) {
-                    if (i > 0)
-                        buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+                    if (i > 0) {
+						buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+					}
                     String text = provider.getText(markers[i]);
-                    if(text != null)
-                    	buffer.append(text);
+                    if(text != null) {
+						buffer.append(text);
+					}
                 }
                 event.data = buffer.toString();
             }
@@ -502,8 +509,9 @@ public class BookmarkNavigator extends ViewPart {
                             .getString(TAG_RESOURCE));
                     if (resource != null) {
                         IMarker marker = resource.findMarker(id);
-                        if (marker != null)
-                            selectionList.add(marker);
+                        if (marker != null) {
+							selectionList.add(marker);
+						}
                     }
                 } catch (CoreException e) {
                 }
@@ -540,8 +548,9 @@ public class BookmarkNavigator extends ViewPart {
 
     public void saveState(IMemento memento) {
         if (viewer == null) {
-            if (this.memento != null) //Keep the old state;
-                memento.putMemento(this.memento);
+            if (this.memento != null) {
+				memento.putMemento(this.memento);
+			}
             return;
         }
 
@@ -574,8 +583,9 @@ public class BookmarkNavigator extends ViewPart {
      * Method declared on IWorkbenchPart.
      */
     public void setFocus() {
-        if (viewer != null)
-            viewer.getControl().setFocus();
+        if (viewer != null) {
+			viewer.getControl().setFocus();
+		}
     }
 
     void createColumns() {
@@ -592,9 +602,9 @@ public class BookmarkNavigator extends ViewPart {
             public void widgetSelected(SelectionEvent e) {
                 // column selected - first column doesn't count
                 int column = table.indexOf((TableColumn) e.widget) - 1;
-                if (column == sorter.getTopPriority())
-                    sorter.reverseTopPriority();
-                else {
+                if (column == sorter.getTopPriority()) {
+					sorter.reverseTopPriority();
+				} else {
                     sorter.setTopPriority(column);
                 }
                 updateSortState();
@@ -603,9 +613,10 @@ public class BookmarkNavigator extends ViewPart {
                         .getDialogSettings();
                 IDialogSettings settings = workbenchSettings
                         .getSection("BookmarkSortState");//$NON-NLS-1$
-                if (settings == null)
-                    settings = workbenchSettings
+                if (settings == null) {
+					settings = workbenchSettings
                             .addNewSection("BookmarkSortState");//$NON-NLS-1$
+				}
                 sorter.saveState(settings);
             }
         };
@@ -618,8 +629,9 @@ public class BookmarkNavigator extends ViewPart {
             TableColumn tc = new TableColumn(table, SWT.NONE, i);
             tc.setResizable(columnLayouts[i].resizable);
             tc.setText(columnHeaders[i]);
-            if (i > 0)
-                tc.addSelectionListener(headerListener);
+            if (i > 0) {
+				tc.addSelectionListener(headerListener);
+			}
         }
     }
 

@@ -51,10 +51,12 @@ public class ResourceSelectionUtil {
         Iterator resources = selection.iterator();
         while (resources.hasNext()) {
             Object next = resources.next();
-            if (!(next instanceof IResource))
-                return false;
-            if (!resourceIsType((IResource) next, resourceMask))
-                return false;
+            if (!(next instanceof IResource)) {
+				return false;
+			}
+            if (!resourceIsType((IResource) next, resourceMask)) {
+				return false;
+			}
         }
         return true;
     }
@@ -78,12 +80,14 @@ public class ResourceSelectionUtil {
             if (next instanceof IAdaptable) {
                 Object resource = ((IAdaptable) next)
                         .getAdapter(IResource.class);
-                if (resource == null)
-                    return null;
-                else if (resourceIsType((IResource) resource, resourceMask))
-                    result.add(resource);
-            } else
-                return null;
+                if (resource == null) {
+					return null;
+				} else if (resourceIsType((IResource) resource, resourceMask)) {
+					result.add(resource);
+				}
+            } else {
+				return null;
+			}
         }
         return new StructuredSelection(result);
 

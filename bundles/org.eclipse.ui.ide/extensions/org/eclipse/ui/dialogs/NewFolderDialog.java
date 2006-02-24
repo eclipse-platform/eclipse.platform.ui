@@ -270,15 +270,18 @@ public class NewFolderDialog extends SelectionStatusDialog {
             public void execute(IProgressMonitor monitor) throws CoreException {
                 try {
                     monitor.beginTask(IDEWorkbenchMessages.NewFolderDialog_progress, 2000);
-                    if (monitor.isCanceled())
-                        throw new OperationCanceledException();
-                    if (linkTargetName == null)
-                        folderHandle.create(false, true, monitor);
-                    else
-                        folderHandle.createLink(new Path(linkTargetName),
+                    if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
+                    if (linkTargetName == null) {
+						folderHandle.create(false, true, monitor);
+					} else {
+						folderHandle.createLink(new Path(linkTargetName),
                                 IResource.ALLOW_MISSING_LOCAL, monitor);
-                    if (monitor.isCanceled())
-                        throw new OperationCanceledException();
+					}
+                    if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
                 } finally {
                     monitor.done();
                 }
@@ -346,8 +349,9 @@ public class NewFolderDialog extends SelectionStatusDialog {
      * 	specified container as a parent. 
      */
     private boolean isValidContainer() {
-        if (container.getType() != IResource.PROJECT && container.getType() != IResource.FOLDER)
-            return false;
+        if (container.getType() != IResource.PROJECT && container.getType() != IResource.FOLDER) {
+			return false;
+		}
 
         try {
             IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
@@ -358,8 +362,9 @@ public class NewFolderDialog extends SelectionStatusDialog {
                 IProjectNatureDescriptor descriptor = workspace
                         .getNatureDescriptor(natureIds[i]);
                 if (descriptor != null
-                        && descriptor.isLinkingAllowed() == false)
-                    return false;
+                        && descriptor.isLinkingAllowed() == false) {
+					return false;
+				}
             }
         } catch (CoreException exception) {
             // project does not exist or is closed
@@ -408,15 +413,18 @@ public class NewFolderDialog extends SelectionStatusDialog {
             IStatus status = linkedResourceGroup
                     .validateLinkLocation(linkHandle);
 
-            if (status.getSeverity() != IStatus.ERROR)
-                getOkButton().setEnabled(true);
-            else
-                getOkButton().setEnabled(false);
+            if (status.getSeverity() != IStatus.ERROR) {
+				getOkButton().setEnabled(true);
+			} else {
+				getOkButton().setEnabled(false);
+			}
 
-            if (status.isOK() == false)
-                updateStatus(status);
-        } else
-            getOkButton().setEnabled(false);
+            if (status.isOK() == false) {
+				updateStatus(status);
+			}
+        } else {
+			getOkButton().setEnabled(false);
+		}
     }
 
     /**
@@ -454,8 +462,9 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	protected void okPressed() {
 		String linkTarget = linkedResourceGroup.getLinkTarget();
         IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
-        if (folder == null)
-            return;
+        if (folder == null) {
+			return;
+		}
 
         setSelectionResult(new IFolder[] { folder });
         

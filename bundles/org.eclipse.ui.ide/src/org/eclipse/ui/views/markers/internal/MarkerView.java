@@ -237,8 +237,9 @@ public abstract class MarkerView extends TableView {
 		 * @param changed
 		 */
 		void refresh(Collection changed) {
-			if (refreshAll)
+			if (refreshAll) {
 				return;
+			}
 			pendingMarkerUpdates.addAll(changed);
 		}
 
@@ -257,8 +258,9 @@ public abstract class MarkerView extends TableView {
 		 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
-			if (getViewer().getControl().isDisposed())
+			if (getViewer().getControl().isDisposed()) {
 				return Status.CANCEL_STATUS;
+			}
 
 			if (refreshAll) {
 				getViewer().refresh(true);
@@ -280,17 +282,18 @@ public abstract class MarkerView extends TableView {
 				updateStatusMessage();
 				updateTitle();
 				// Expand all if the list is small
-				if (getCurrentMarkers().getSize() < 20)
+				if (getCurrentMarkers().getSize() < 20) {
 					getViewer().expandAll();
-				else {// Reexpand the old categories
+				} else {// Reexpand the old categories
 					MarkerCategory[] categories = getMarkerAdapter()
 							.getCategories();
 					if (categories != null) {
 						for (int i = 0; i < categories.length; i++) {
 							MarkerCategory category = categories[i];
-							if (categoriesToExpand.contains(category.getName()))
+							if (categoriesToExpand.contains(category.getName())) {
 								getViewer().expandToLevel(category,
 										AbstractTreeViewer.ALL_LEVELS);
+							}
 						}
 					}
 					categoriesToExpand.clear();
@@ -603,8 +606,9 @@ public abstract class MarkerView extends TableView {
 	private void restoreFilters(IMemento memento) {
 
 		IMemento[] sections = null;
-		if (memento != null)
+		if (memento != null) {
 			sections = memento.getChildren(TAG_FILTER_ENTRY);
+		}
 
 		if (sections == null) {
 			// Check if we have an old filter setting around
@@ -697,14 +701,16 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adaptable) {
-		if (adaptable.equals(IContextProvider.class))
+		if (adaptable.equals(IContextProvider.class)) {
 			return contextProvider;
+		}
 		if (adaptable.equals(IShowInSource.class)) {
 			return new IShowInSource() {
 				public ShowInContext getShowInContext() {
 					ISelection selection = getViewer().getSelection();
-					if (!(selection instanceof IStructuredSelection))
+					if (!(selection instanceof IStructuredSelection)) {
 						return null;
+					}
 					IStructuredSelection structured = (IStructuredSelection) selection;
 					Iterator markerIterator = structured.iterator();
 					List newSelection = new ArrayList();
@@ -761,8 +767,9 @@ public abstract class MarkerView extends TableView {
 			clipboard.dispose();
 
 		}
-		if (showInMenu != null)
+		if (showInMenu != null) {
 			showInMenu.dispose();
+		}
 	}
 
 	/*
@@ -816,8 +823,9 @@ public abstract class MarkerView extends TableView {
 				.getWorkbenchWindow().getShell(),
 				markerEnablementPreferenceName, markerLimitPreferenceName,
 				MarkerMessages.MarkerPreferences_DialogTitle);
-		if (dialog.open() == Window.OK)
+		if (dialog.open() == Window.OK) {
 			refreshViewer();
+		}
 
 	}
 
@@ -909,8 +917,9 @@ public abstract class MarkerView extends TableView {
 				.toArray();
 		ArrayList markers = new ArrayList();
 		for (int i = 0; i < selection.length; i++) {
-			if (selection[i] instanceof ConcreteMarker)
+			if (selection[i] instanceof ConcreteMarker) {
 				markers.add(((ConcreteMarker) selection[i]).getMarker());
+			}
 		}
 		return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
 	}
@@ -921,8 +930,9 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
-		if (manager == null)
+		if (manager == null) {
 			return;
+		}
 		manager.add(openAction);
 		createShowInMenu(manager);
 		manager.add(new Separator());
@@ -930,8 +940,9 @@ public abstract class MarkerView extends TableView {
 		pasteAction.updateEnablement();
 		manager.add(pasteAction);
 
-		if (canBeEditable())
+		if (canBeEditable()) {
 			manager.add(deleteAction);
+		}
 		manager.add(selectAllAction);
 		fillContextMenuAdditions(manager);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -983,8 +994,9 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#handleOpenEvent(org.eclipse.jface.viewers.OpenEvent)
 	 */
 	protected void handleOpenEvent(OpenEvent event) {
-		if (openAction.isEnabled())
+		if (openAction.isEnabled()) {
 			openAction.run();
+		}
 	}
 
 	/*
@@ -998,8 +1010,9 @@ public abstract class MarkerView extends TableView {
 		IMemento selectionMem = memento.createChild(TAG_SELECTION);
 		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
 			Object next = iterator.next();
-			if (!(next instanceof ConcreteMarker))
+			if (!(next instanceof ConcreteMarker)) {
 				continue;
+			}
 			ConcreteMarker marker = (ConcreteMarker) next;
 			IMemento elementMem = selectionMem.createChild(TAG_MARKER);
 			elementMem.putString(TAG_RESOURCE, marker.getMarker().getResource()
@@ -1027,8 +1040,9 @@ public abstract class MarkerView extends TableView {
 				if (editorInput != null) {
 					Object mapping = editorInput
 							.getAdapter(ResourceMapping.class);
-					if (mapping != null)
+					if (mapping != null) {
 						selectedElements.add(mapping);
+					}
 				}
 			} else {
 				selectedElements.add(file);
@@ -1055,10 +1069,12 @@ public abstract class MarkerView extends TableView {
 						if (resource == null) {
 							Object mapping = ((IAdaptable) object)
 									.getAdapter(ResourceMapping.class);
-							if (mapping != null)
+							if (mapping != null) {
 								selectedElements.add(mapping);
-						} else
+							}
+						} else {
 							selectedElements.add(resource);
+						}
 					}
 				}
 			}
@@ -1075,11 +1091,12 @@ public abstract class MarkerView extends TableView {
 
 		Collection resourceCollection = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof IResource)
+			if (elements[i] instanceof IResource) {
 				resourceCollection.add(elements[i]);
-			else
+			} else {
 				addResources(resourceCollection,
 						((ResourceMapping) elements[i]));
+			}
 		}
 
 		IResource[] resources = new IResource[resourceCollection.size()];
@@ -1137,8 +1154,9 @@ public abstract class MarkerView extends TableView {
 
 		for (int i = 0; i < filters.length; i++) {
 			MarkerFilter filter = filters[i];
-			if (!filter.isEnabled())
+			if (!filter.isEnabled()) {
 				continue;
+			}
 
 			int onResource = filter.getOnResource();
 			if (onResource == MarkerFilter.ON_ANY
@@ -1161,8 +1179,9 @@ public abstract class MarkerView extends TableView {
 						.getProjectsAsCollection(newElements);
 
 				if (oldProjects.size() == newProjects.size()) {
-					if (newProjects.containsAll(oldProjects))
+					if (newProjects.containsAll(oldProjects)) {
 						continue;
+					}
 				}
 
 				return true;
@@ -1208,10 +1227,11 @@ public abstract class MarkerView extends TableView {
 	protected void updateStatusMessage() {
 		ISelection selection = getViewer().getSelection();
 
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			updateStatusMessage((IStructuredSelection) selection);
-		else
+		} else {
 			updateStatusMessage(null);
+		}
 	}
 
 	/**
@@ -1280,12 +1300,14 @@ public abstract class MarkerView extends TableView {
 		if (dialog.open() == Window.OK) {
 
 			MarkerFilter[] result = dialog.getFilters();
-			if (result == null)
+			if (result == null) {
 				return;
-			if (result.length == 0)
+			}
+			if (result.length == 0) {
 				setFilters(new MarkerFilter[] { createFilter(MarkerMessages.MarkerFilter_defaultFilterName) });
-			else
+			} else {
 				setFilters(result);
+			}
 
 			updateForFilterChanges();
 			refreshFilterMenu();
@@ -1321,8 +1343,9 @@ public abstract class MarkerView extends TableView {
 	 * Refresh the contents of the filter sub menu.
 	 */
 	private void refreshFilterMenu() {
-		if (filtersMenu == null)
+		if (filtersMenu == null) {
 			return;
+		}
 		filtersMenu.removeAll();
 		MarkerFilter[] filters = getAllFilters();
 		for (int i = 0; i < filters.length; i++) {
@@ -1360,8 +1383,9 @@ public abstract class MarkerView extends TableView {
 			}
 		}
 
-		if (viewer != null)
+		if (viewer != null) {
 			viewer.setSelection(new StructuredSelection(newSelection), reveal);
+		}
 	}
 
 	protected MarkerList getVisibleMarkers() {
@@ -1407,8 +1431,9 @@ public abstract class MarkerView extends TableView {
 		if (busy) {
 			preBusyMarkers = totalMarkers;
 		} else {// Only bold if there has been a change in count
-			if (totalMarkers != preBusyMarkers)
+			if (totalMarkers != preBusyMarkers) {
 				getProgressService().warnOfContentChange();
+			}
 		}
 
 	}
@@ -1439,8 +1464,9 @@ public abstract class MarkerView extends TableView {
 		MarkerFilter[] allFilters = getAllFilters();
 		ArrayList filters = new ArrayList(0);
 		for (int i = 0; i < allFilters.length; i++) {
-			if (allFilters[i].isEnabled())
+			if (allFilters[i].isEnabled()) {
 				filters.add(allFilters[i]);
+			}
 		}
 		return filters;
 	}
@@ -1476,12 +1502,14 @@ public abstract class MarkerView extends TableView {
 	 */
 	void createShowInMenu(IMenuManager menu) {
 		ISelection selection = getViewer().getSelection();
-		if (!(selection instanceof IStructuredSelection))
+		if (!(selection instanceof IStructuredSelection)) {
 			return;
+		}
 
 		IStructuredSelection structured = (IStructuredSelection) selection;
-		if (!Util.isSingleConcreteSelection(structured))
+		if (!Util.isSingleConcreteSelection(structured)) {
 			return;
+		}
 
 		menu.add(new Separator(MENU_SHOW_IN_GROUP));
 		// Don't add in the filters until they are set

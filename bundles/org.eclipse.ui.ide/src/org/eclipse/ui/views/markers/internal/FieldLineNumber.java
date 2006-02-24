@@ -70,16 +70,18 @@ public class FieldLineNumber extends AbstractField {
      * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
      */
     public String getValue(Object obj) {
-    	if (obj == null)
+    	if (obj == null) {
 			return MarkerMessages.FieldMessage_NullMessage;
+		}
 
     	if (obj instanceof MarkerNode){
 			MarkerNode node = (MarkerNode) obj;
 	    	if(node.isConcrete()){
 	    		ConcreteMarker concreteNode = (ConcreteMarker) node;
 	    		if(concreteNode.getLocationString().length() == 0){
-	    			if (concreteNode.getLine() < 0) 
-	    	            return MarkerMessages.Unknown;	    	   
+	    			if (concreteNode.getLine() < 0) {
+						return MarkerMessages.Unknown;
+					}	    	   
 	    	        return NLS.bind(
 	    	        		MarkerMessages.label_lineNumber,
 	    	        		Integer.toString(concreteNode.getLine()));
@@ -89,11 +91,13 @@ public class FieldLineNumber extends AbstractField {
 	    	return Util.EMPTY_STRING;
 		}
 		
-		if(obj instanceof IWorkbenchAdapter)
+		if(obj instanceof IWorkbenchAdapter) {
 			return Util.EMPTY_STRING;//Don't show pending
+		}
 		
-		if(obj instanceof IMarker)
-			 return Util.getProperty(IMarker.LINE_NUMBER, (IMarker) obj); 
+		if(obj instanceof IMarker) {
+			return Util.getProperty(IMarker.LINE_NUMBER, (IMarker) obj);
+		} 
 		
 		return NLS.bind(MarkerMessages.FieldMessage_WrongType,obj.toString());
         
@@ -123,8 +127,9 @@ public class FieldLineNumber extends AbstractField {
         String location1 = marker1.getLocationString();
         String location2 = marker2.getLocationString();
         
-        if(location1.length() == 0 || location2.length() == 0)
-        	return marker1.getLine() - marker2.getLine();
+        if(location1.length() == 0 || location2.length() == 0) {
+			return marker1.getLine() - marker2.getLine();
+		}
         
         return location1.compareTo(location2);
     }

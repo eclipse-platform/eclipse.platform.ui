@@ -62,12 +62,14 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getProperty(String property, IMarker marker) {
-		if (marker == null)
+		if (marker == null) {
 			return EMPTY_STRING;
+		}
 		try {
 			Object obj = marker.getAttribute(property);
-			if (obj != null)
+			if (obj != null) {
 				return obj.toString();
+			}
 			return EMPTY_STRING;
 		} catch (CoreException e) {
 			log(e);
@@ -115,8 +117,9 @@ public final class Util {
 			Object pathAttribute = marker
 					.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
 
-			if (pathAttribute != null)
+			if (pathAttribute != null) {
 				return pathAttribute.toString();
+			}
 		} catch (CoreException exception) {
 			// Log the exception and fall back.
 			log(exception);
@@ -125,18 +128,22 @@ public final class Util {
 		IPath path = marker.getResource().getFullPath();
 		int n = path.segmentCount() - 1; // n is the number of segments in
 		// container, not path
-		if (n <= 0)
+		if (n <= 0) {
 			return Util.EMPTY_STRING;
+		}
 		int len = 0;
-		for (int i = 0; i < n; ++i)
+		for (int i = 0; i < n; ++i) {
 			len += path.segment(i).length();
+		}
 		// account for /'s
-		if (n > 1)
+		if (n > 1) {
 			len += n - 1;
+		}
 		StringBuffer sb = new StringBuffer(len);
 		for (int i = 0; i < n; ++i) {
-			if (i != 0)
+			if (i != 0) {
 				sb.append('/');
+			}
 			sb.append(path.segment(i));
 		}
 		return sb.toString();
@@ -165,8 +172,9 @@ public final class Util {
 			Object nameAttribute = marker
 					.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE);
 
-			if (nameAttribute != null)
+			if (nameAttribute != null) {
 				return nameAttribute.toString();
+			}
 		} catch (CoreException exception) {
 			log(exception);
 		}
@@ -201,8 +209,9 @@ public final class Util {
 	 */
 	public static IStatus errorStatus(Throwable exception) {
 		String message = exception.getLocalizedMessage();
-		if(message == null)
+		if(message == null) {
 			message = EMPTY_STRING;
+		}
 		return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
 				IStatus.ERROR,message , exception);
 	}
@@ -275,8 +284,9 @@ public final class Util {
 			Object pathAttribute = marker
 					.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
 
-			if (pathAttribute != null)
+			if (pathAttribute != null) {
 				return pathAttribute.toString();
+			}
 		} catch (CoreException exception) {
 			// Log the exception and fall back.
 			log(exception);
@@ -286,15 +296,18 @@ public final class Util {
 		int type = resource.getType();
 		
 		//Cannot be project relative if it is the root or a project
-		if(type == IResource.PROJECT)
+		if(type == IResource.PROJECT) {
 			return resource.getName();
+		}
 		
-		if(type == IResource.ROOT)
+		if(type == IResource.ROOT) {
 			return MarkerMessages.Util_WorkspaceRoot;
+		}
 		
 		String result =  marker.getResource().getProjectRelativePath().removeLastSegments(1).toOSString();
-		if(result.trim().length() == 0)
+		if(result.trim().length() == 0) {
 			return MarkerMessages.Util_ProjectRoot;
+		}
 		return result;
 	}
 	
@@ -308,8 +321,9 @@ public final class Util {
 	static boolean isSingleConcreteSelection(IStructuredSelection selection) {
 		if( selection != null && selection.size() == 1){
 			Object first = selection.getFirstElement();
-			if(first instanceof MarkerNode)
-			 return((MarkerNode) first).isConcrete();
+			if(first instanceof MarkerNode) {
+				return((MarkerNode) first).isConcrete();
+			}
 		}
 		return false;	
 	}
@@ -324,8 +338,9 @@ public final class Util {
 		if( selection != null && selection.size()>0){
 			Iterator nodes = selection.iterator();
 			while(nodes.hasNext()){
-				if(((MarkerNode) nodes.next()).isConcrete())
+				if(((MarkerNode) nodes.next()).isConcrete()) {
 					continue;
+				}
 				return false;
 			}
 			return true;

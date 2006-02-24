@@ -95,9 +95,10 @@ public class ProjectReferencePage extends PropertyPage {
         data.grabExcessHorizontalSpace = true;
 
         //Only set a height hint if it will not result in a cut off dialog
-        if (DialogUtil.inRegularFontMode(parent))
-            data.heightHint = getDefaultFontHeight(listViewer.getTable(),
+        if (DialogUtil.inRegularFontMode(parent)) {
+			data.heightHint = getDefaultFontHeight(listViewer.getTable(),
                     PROJECT_LIST_MULTIPLIER);
+		}
         listViewer.getTable().setLayoutData(data);
         listViewer.getTable().setFont(font);
 
@@ -156,8 +157,9 @@ public class ProjectReferencePage extends PropertyPage {
                 try {
                     projects = project.getDescription().getReferencedProjects();
                     for (int i = 0; i < projects.length; i++) {
-                        if (!referenced.contains(projects[i]))
-                            referenced.add(projects[i]);
+                        if (!referenced.contains(projects[i])) {
+							referenced.add(projects[i]);
+						}
                     }
                 } catch (CoreException e) {
                     //Ignore core exceptions
@@ -179,8 +181,9 @@ public class ProjectReferencePage extends PropertyPage {
         int fontHeight = 10;
 
         //If we have no font data use our guess
-        if (viewerFontData.length > 0)
-            fontHeight = viewerFontData[0].getHeight();
+        if (viewerFontData.length > 0) {
+			fontHeight = viewerFontData[0].getHeight();
+		}
         return lines * fontHeight;
 
     }
@@ -196,8 +199,9 @@ public class ProjectReferencePage extends PropertyPage {
             error = ((CoreException) target).getStatus();
         } else {
             String msg = target.getMessage();
-            if (msg == null)
-                msg = IDEWorkbenchMessages.Internal_error;
+            if (msg == null) {
+				msg = IDEWorkbenchMessages.Internal_error;
+			}
             error = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
                     1, msg, target);
         }
@@ -217,8 +221,9 @@ public class ProjectReferencePage extends PropertyPage {
      * @see PreferencePage#performOk
      */
     public boolean performOk() {
-        if (!modified)
-            return true;
+        if (!modified) {
+			return true;
+		}
         Object[] checked = listViewer.getCheckedElements();
         final IProject[] refs = new IProject[checked.length];
         System.arraycopy(checked, 0, refs, 0, checked.length);

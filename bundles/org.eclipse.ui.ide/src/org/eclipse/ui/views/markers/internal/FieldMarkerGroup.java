@@ -107,8 +107,9 @@ public class FieldMarkerGroup implements IField {
 				return null;
 			}
 			
-			if (value != null && attributeValue.equals(value.toString()))
+			if (value != null && attributeValue.equals(value.toString())) {
 				return groupingEntry;
+			}
 			return null;
 		}
 	}
@@ -214,14 +215,17 @@ public class FieldMarkerGroup implements IField {
 				EntryMapping mapping = (EntryMapping) mappings.next();
 				if (mapping.hasAttributes()) {
 					MarkerGroupingEntry entry = mapping.testAttribute(marker);
-					if (entry != null)
+					if (entry != null) {
 						return entry;
-				} else
+					}
+				} else {
 					// If it has no attributes it is our default
 					defaultMapping = mapping;
+				}
 			}
-			if (defaultMapping != null)
+			if (defaultMapping != null) {
 				return defaultMapping.groupingEntry;
+			}
 
 		}
 
@@ -315,10 +319,11 @@ public class FieldMarkerGroup implements IField {
 		for (int i = 0; i < allDerived.length; i++) {
 			Collection entries = new HashSet();
 			MarkerType type = allDerived[i];
-			if (typesToMappings.containsKey(type.getId()))
+			if (typesToMappings.containsKey(type.getId())) {
 				entries = (Collection) typesToMappings.get(markerType);
-			else
+			} else {
 				entries = new HashSet();
+			}
 
 			entries.add(entry);
 			typesToMappings.put(type.getId(), entries);
@@ -344,8 +349,9 @@ public class FieldMarkerGroup implements IField {
 			}
 		}
 
-		if (types.isEmpty())
+		if (types.isEmpty()) {
 			return new MarkerType[0];
+		}
 
 		MarkerType[] typesArray = new MarkerType[types.size()];
 		types.toArray(typesArray);

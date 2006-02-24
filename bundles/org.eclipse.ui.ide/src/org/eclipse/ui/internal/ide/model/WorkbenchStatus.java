@@ -33,8 +33,9 @@ public class WorkbenchStatus extends WorkbenchAdapter implements IAdaptable {
      * no such object can be found.
      */
     public Object getAdapter(Class adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return this;
+        if (adapter == IWorkbenchAdapter.class) {
+			return this;
+		}
         return null;
     }
 

@@ -86,10 +86,11 @@ public class ProblemView extends MarkerView {
 			problemView = view;
 			IField categoryField = view.getMarkerAdapter().getCategorySorter()
 					.getCategoryField();
-			if (categoryField == null)
+			if (categoryField == null) {
 				setChecked(groupingField == null);
-			else
+			} else {
 				setChecked(categoryField.equals(groupingField));
+			}
 		}
 
 		/*
@@ -99,8 +100,9 @@ public class ProblemView extends MarkerView {
 		 */
 		public void run() {
 			String description = Util.EMPTY_STRING;
-			if (groupingField != null)
+			if (groupingField != null) {
 				description = groupingField.getDescription();
+			}
 			IDEWorkbenchPlugin.getDefault().getPluginPreferences().setValue(
 					IDEInternalPreferences.PROBLEMS_GROUPING, description);
 			problemView.getMarkerAdapter().getCurrentMarkers().clearGroups();
@@ -127,8 +129,9 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#dispose()
 	 */
 	public void dispose() {
-		if (resolveMarkerAction != null)
+		if (resolveMarkerAction != null) {
 			resolveMarkerAction.dispose();
+		}
 
 		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
 				.removeActivityManagerListener(activityManagerListener);
@@ -159,8 +162,9 @@ public class ProblemView extends MarkerView {
 		IDialogSettings settings = workbenchSettings
 				.getSection(TAG_DIALOG_SECTION);
 
-		if (settings == null)
+		if (settings == null) {
 			settings = workbenchSettings.addNewSection(TAG_DIALOG_SECTION);
+		}
 
 		return settings;
 	}
@@ -208,10 +212,11 @@ public class ProblemView extends MarkerView {
 		String breakdown = formatSummaryBreakDown(visibleMarkers);
 		int filteredCount = visibleMarkers.getItemCount();
 		int totalCount = getTotalMarkers();
-		if (filteredCount != totalCount)
+		if (filteredCount != totalCount) {
 			breakdown = NLS.bind(MarkerMessages.problem_filter_matchedMessage,
 					new Object[] { breakdown, new Integer(filteredCount),
 							new Integer(totalCount) });
+		}
 		setContentDescription(breakdown);
 	}
 
@@ -247,8 +252,9 @@ public class ProblemView extends MarkerView {
 		Iterator selectionIterator = selection.iterator();
 		while (selectionIterator.hasNext()) {
 			MarkerNode next = (MarkerNode) selectionIterator.next();
-			if (next.isConcrete())
+			if (next.isConcrete()) {
 				selectionList.add(next);
+			}
 		}
 
 		return getSummary(new MarkerList(selectionList),
@@ -456,8 +462,9 @@ public class ProblemView extends MarkerView {
 	public IField findField(String description) {
 		IField[] fields = getSortingFields();
 		for (int i = 0; i < fields.length; i++) {
-			if (fields[i].getDescription().equals(description))
+			if (fields[i].getDescription().equals(description)) {
 				return fields[i];
+			}
 		}
 		return null;
 	}

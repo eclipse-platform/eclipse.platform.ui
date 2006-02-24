@@ -100,8 +100,9 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 				 */
 				if (indexofContentExtensionIdToBeActivated >= 0
 						^ contentService.isActive(visibleContentDescriptors[i]
-								.getId()))
+								.getId())) {
 					updateExtensionActivation = true;
+				}
 			}
 
 			/* If so, update */

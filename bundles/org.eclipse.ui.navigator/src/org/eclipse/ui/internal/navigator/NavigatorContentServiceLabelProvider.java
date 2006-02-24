@@ -91,8 +91,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public Image getImage(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
 		Image image = null;
-		for (int i = 0; i < labelProviders.length && image == null; i++)
+		for (int i = 0; i < labelProviders.length && image == null; i++) {
 			image = labelProviders[i].getImage(anElement);
+		}
 		return image == null ? null : decorator.decorateImage(image, anElement);  
 	}
 
@@ -111,8 +112,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public String getText(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
 		String text = null;
-		for (int i = 0; i < labelProviders.length && text == null; i++)
+		for (int i = 0; i < labelProviders.length && text == null; i++) {
 			text = labelProviders[i].getText(anElement);
+		}
 		// decorate the element
 		return text == null ? "" : text; //$NON-NLS-1$
 	}
@@ -127,8 +129,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			if (provider instanceof IFontProvider) {
 				IFontProvider fontProvider = (IFontProvider) provider;
 				Font font = fontProvider.getFont(anElement);
-				if (font != null)
+				if (font != null) {
 					return font;
+				}
 			}
 		}
 		return null;
@@ -144,8 +147,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			if (provider instanceof IColorProvider) {
 				IColorProvider colorProvider = (IColorProvider) provider;
 				Color color = colorProvider.getForeground(anElement);
-				if (color != null)
+				if (color != null) {
 					return color;
+				}
 			}
 		}
 		return null;
@@ -161,8 +165,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			if (provider instanceof IColorProvider) {
 				IColorProvider colorProvider = (IColorProvider) provider;
 				Color color = colorProvider.getBackground(anElement);
-				if (color != null)
+				if (color != null) {
 					return color;
+				}
 			}
 		}
 		return null;
@@ -186,8 +191,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public boolean isLabelProperty(Object anElement, String aProperty) {
 		boolean result = false;
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		for (int i = 0; i < labelProviders.length && !result; i++)
+		for (int i = 0; i < labelProviders.length && !result; i++) {
 			result = labelProviders[i].isLabelProperty(anElement, aProperty);
+		}
 		return result;
 	}
 
@@ -229,8 +235,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		if (isContentServiceSelfManaged)
+		if (isContentServiceSelfManaged) {
 			contentService.dispose();
+		}
 
 	}
 	

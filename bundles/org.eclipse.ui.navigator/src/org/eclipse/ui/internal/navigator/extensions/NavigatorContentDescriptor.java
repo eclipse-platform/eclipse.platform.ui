@@ -315,8 +315,9 @@ public final class NavigatorContentDescriptor implements
 	 */
 	public boolean isTriggerPoint(Object anElement) {
 
-		if (enablement == null || anElement == null)
+		if (enablement == null || anElement == null) {
 			return false;
+		}
 
 		try {
 			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
@@ -343,18 +344,20 @@ public final class NavigatorContentDescriptor implements
 	public boolean isPossibleChild(Object anElement) {
 
 		if ((enablement == null && possibleChildren == null)
-				|| anElement == null)
+				|| anElement == null) {
 			return false;
-		else if(anElement instanceof IStructuredSelection)
+		} else if(anElement instanceof IStructuredSelection) {
 			return arePossibleChildren((IStructuredSelection) anElement);
+		}
 
 		try {
-			if (possibleChildren != null)
+			if (possibleChildren != null) {
 				return (possibleChildren.evaluate(new EvaluationContext(null,
 						anElement)) == EvaluationResult.TRUE);
-			else if (enablement != null)
+			} else if (enablement != null) {
 				return (enablement.evaluate(new EvaluationContext(null,
 						anElement)) == EvaluationResult.TRUE);
+			}
 		} catch (CoreException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
@@ -368,12 +371,14 @@ public final class NavigatorContentDescriptor implements
 	 * @return True if and only if every element in the selection is a possible child.
 	 */
 	public boolean arePossibleChildren(IStructuredSelection aSelection) {
-		if(aSelection.isEmpty())
+		if(aSelection.isEmpty()) {
 			return false;
+		}
 		for (Iterator iter = aSelection.iterator(); iter.hasNext();) {
 			Object element = iter.next();
-			if(!isPossibleChild(element))
-				return false;			
+			if(!isPossibleChild(element)) {
+				return false;
+			}			
 		}
 		return true;
 	}
@@ -393,8 +398,9 @@ public final class NavigatorContentDescriptor implements
 	 *         {@link INavigatorContentDescriptor}
 	 */
 	public Set getOverriddingExtensions() {
-		if (overridingExtensions == null)
+		if (overridingExtensions == null) {
 			overridingExtensions = new HashSet();
+		}
 		return overridingExtensions;
 	}
 

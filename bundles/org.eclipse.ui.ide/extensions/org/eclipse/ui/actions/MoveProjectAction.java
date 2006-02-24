@@ -91,8 +91,9 @@ public class MoveProjectAction extends CopyProjectAction {
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
-					if (monitor.isCanceled())
+					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
+					}
 					
 					monitor.setTaskName(MOVE_PROGRESS_TITLE);
 					//Get a copy of the current description and modify it
@@ -153,19 +154,22 @@ public class MoveProjectAction extends CopyProjectAction {
 
 		//Get the project name and location in a two element list
 		Object[] destinationPaths = queryDestinationParameters(project);
-		if (destinationPaths == null)
+		if (destinationPaths == null) {
 			return;
+		}
 
 		String projectName = (String) destinationPaths[0];
 		IPath newLocation = new Path((String) destinationPaths[1]);
 
-		if (!validateMove(project, projectName))
+		if (!validateMove(project, projectName)) {
 			return;
+		}
 		
 		boolean completed = performMove(project, projectName, newLocation);
 
-		if (!completed) // ie.- canceled
+		if (!completed) {
 			return; // not appropriate to show errors
+		}
 
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {

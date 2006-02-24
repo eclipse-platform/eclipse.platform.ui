@@ -60,10 +60,11 @@ public class MultiStepWizardDialog extends WizardDialog {
      * Method declared on WizardDialog.
      */
     protected void backPressed() {
-        if (multiStepWizard.isConfigureStepMode())
-            multiStepWizard.getStepContainer().backPressed();
-        else
-            super.backPressed();
+        if (multiStepWizard.isConfigureStepMode()) {
+			multiStepWizard.getStepContainer().backPressed();
+		} else {
+			super.backPressed();
+		}
     }
 
     /* (non-Javadoc)
@@ -73,8 +74,9 @@ public class MultiStepWizardDialog extends WizardDialog {
         if (multiStepWizard.isConfigureStepMode()) {
             boolean success = multiStepWizard.getStepContainer()
                     .performFinish();
-            if (success)
-                multiStepWizard.getStepContainer().processCurrentStep();
+            if (success) {
+				multiStepWizard.getStepContainer().processCurrentStep();
+			}
         } else {
             super.finishPressed();
         }
@@ -91,20 +93,22 @@ public class MultiStepWizardDialog extends WizardDialog {
      * Method declared on WizardDialog.
      */
     protected void helpPressed() {
-        if (multiStepWizard.isConfigureStepMode())
-            multiStepWizard.getStepContainer().helpPressed();
-        else
-            super.helpPressed();
+        if (multiStepWizard.isConfigureStepMode()) {
+			multiStepWizard.getStepContainer().helpPressed();
+		} else {
+			super.helpPressed();
+		}
     }
 
     /* (non-Javadoc)
      * Method declared on WizardDialog.
      */
     protected void nextPressed() {
-        if (multiStepWizard.isConfigureStepMode())
-            multiStepWizard.getStepContainer().nextPressed();
-        else
-            super.nextPressed();
+        if (multiStepWizard.isConfigureStepMode()) {
+			multiStepWizard.getStepContainer().nextPressed();
+		} else {
+			super.nextPressed();
+		}
     }
 
     /**
@@ -112,8 +116,9 @@ public class MultiStepWizardDialog extends WizardDialog {
      */
     /* package */void setFinishLabel(String label) {
         Button button = getButton(IDialogConstants.FINISH_ID);
-        if (button == null)
-            return;
+        if (button == null) {
+			return;
+		}
 
         if (label == null) {
             if (!button.getText().equals(IDialogConstants.FINISH_LABEL)) {

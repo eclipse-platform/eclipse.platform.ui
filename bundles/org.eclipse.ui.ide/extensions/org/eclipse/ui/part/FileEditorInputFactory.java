@@ -50,17 +50,19 @@ public class FileEditorInputFactory implements IElementFactory {
     public IAdaptable createElement(IMemento memento) {
         // Get the file name.
         String fileName = memento.getString(TAG_PATH);
-        if (fileName == null)
-            return null;
+        if (fileName == null) {
+			return null;
+		}
 
         // Get a handle to the IFile...which can be a handle
         // to a resource that does not exist in workspace
         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
                 new Path(fileName));
-        if (file != null)
-            return new FileEditorInput(file);
-        else
-            return null;
+        if (file != null) {
+			return new FileEditorInput(file);
+		} else {
+			return null;
+		}
     }
 
     /**

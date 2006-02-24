@@ -46,8 +46,9 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 	 */
 	public boolean run(Object sourceData, Object target) {
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("NavigatorPluginDropAction.run (begin)"); //$NON-NLS-1$
+		}
 
 		String sourceViewerId = new String((byte[]) sourceData);
 
@@ -57,8 +58,9 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 		INavigatorContentService contentService = NavigatorContentServiceTransfer
 				.getInstance().findService(sourceViewerId);
 
-		if (contentService == null)
+		if (contentService == null) {
 			return false;
+		}
 		try {
 			CommonDropAdapterAssistant[] assistants = contentService
 					.getDnDService().findCommonDropAdapterAssistants(target,
@@ -77,8 +79,9 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 					.unregisterContentService(contentService);
 		}
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("NavigatorPluginDropAction.run (exit)"); //$NON-NLS-1$
+		}
 
 		return false;
 	}

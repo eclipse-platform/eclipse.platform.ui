@@ -308,8 +308,9 @@ class TaskListContentProvider implements IStructuredContentProvider,
      *   - problem severities don't change
      */
     private void updateMarkerCounts(IMarkerDelta markerDelta, int difference) {
-        if (visibleMarkerCounts == null)
-            return;
+        if (visibleMarkerCounts == null) {
+			return;
+		}
 
         if (markerDelta.isSubtypeOf(IMarker.PROBLEM)) {
             int severity = markerDelta.getAttribute(IMarker.SEVERITY,
@@ -326,8 +327,9 @@ class TaskListContentProvider implements IStructuredContentProvider,
                 visibleMarkerCounts[INFOS] += difference;
                 break;
             }
-        } else if (markerDelta.isSubtypeOf(IMarker.TASK))
-            visibleMarkerCounts[TASKS] += difference;
+        } else if (markerDelta.isSubtypeOf(IMarker.TASK)) {
+			visibleMarkerCounts[TASKS] += difference;
+		}
     }
 
     /**
@@ -442,8 +444,9 @@ class TaskListContentProvider implements IStructuredContentProvider,
          */
         IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
 
-        if (markerDeltas == null)
-            return;
+        if (markerDeltas == null) {
+			return;
+		}
 
         int oldTotal = totalMarkerCount;
         final List additions = new ArrayList();
@@ -453,8 +456,9 @@ class TaskListContentProvider implements IStructuredContentProvider,
         for (int i = 0; i < markerDeltas.length; i++) {
             IMarkerDelta markerDelta = markerDeltas[i];
 
-            if (markerDelta == null)
-                continue;
+            if (markerDelta == null) {
+				continue;
+			}
 
             int iKind = markerDelta.getKind();
 
@@ -489,8 +493,9 @@ class TaskListContentProvider implements IStructuredContentProvider,
 
                     IResource resource = markerDelta.getResource();
 
-                    if (resource == null)
-                        continue;
+                    if (resource == null) {
+						continue;
+					}
 
                     boolean affectedBy = taskList.checkResource(resource)
                             && taskList.getFilter().select(markerDelta);

@@ -57,8 +57,9 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 * @return MarkerSupportRegistry
 	 */
 	public static FileSystemSupportRegistry getInstance() {
-		if (singleton == null)
+		if (singleton == null) {
 			singleton = new FileSystemSupportRegistry();
+		}
 		return singleton;
 	}
 
@@ -81,13 +82,15 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 					if (!initialPath.equals(IDEResourceInfoUtils.EMPTY_STRING)) {
 						IFileInfo info = IDEResourceInfoUtils
 								.getFileInfo(initialPath);
-						if (info != null && info.exists())
+						if (info != null && info.exists()) {
 							dialog.setFilterPath(initialPath);
+						}
 					}
 
 					String selectedDirectory = dialog.open();
-					if (selectedDirectory == null)
+					if (selectedDirectory == null) {
 						return null;
+					}
 					return new File(selectedDirectory).toURI();
 
 				}
@@ -105,8 +108,9 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(IDEWorkbenchPlugin.IDE_WORKBENCH,
 						FILESYSTEM_SUPPORT);
-		if (point == null)
+		if (point == null) {
 			return;
+		}
 		IExtension[] extensions = point.getExtensions();
 		// initial population
 		for (int i = 0; i < extensions.length; i++) {
@@ -194,8 +198,9 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 			}
 		});
 
-		if (exceptions[0] != null)
+		if (exceptions[0] != null) {
 			return null;
+		}
 		String name = element.getAttribute(LABEL);
 		String fileSystem = element.getAttribute(SCHEME);
 		FileSystemConfiguration config = new FileSystemConfiguration(name,

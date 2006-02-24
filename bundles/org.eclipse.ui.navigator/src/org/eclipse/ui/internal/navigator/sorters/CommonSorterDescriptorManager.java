@@ -74,11 +74,13 @@ public class CommonSorterDescriptorManager {
 		Set sorters = getCommonSorters(sourceOfContribution);
 		for (Iterator sortersItr = sorters.iterator(); sortersItr.hasNext();) {
 			descriptor = (CommonSorterDescriptor) sortersItr.next();
-			if (descriptor.isEnabledForParent(aParent))
+			if (descriptor.isEnabledForParent(aParent)) {
 				applicableSorters.add(descriptor);
+			}
 		}
-		if (applicableSorters.size() == 0)
+		if (applicableSorters.size() == 0) {
 			return NO_SORTER_DESCRIPTORS;
+		}
 		return (CommonSorterDescriptor[]) applicableSorters
 				.toArray(new CommonSorterDescriptor[applicableSorters.size()]);
 	}
@@ -109,11 +111,13 @@ public class CommonSorterDescriptorManager {
 		Set sorters = getCommonSorters(theSource);
 		for (Iterator sortersItr = sorters.iterator(); sortersItr.hasNext();) {
 			descriptor = (CommonSorterDescriptor) sortersItr.next();
-			if (descriptor.isEnabledForParent(aParent))
+			if (descriptor.isEnabledForParent(aParent)) {
 				applicableSorters.add(descriptor);
+			}
 		}
-		if (applicableSorters.size() == 0)
+		if (applicableSorters.size() == 0) {
 			return NO_SORTER_DESCRIPTORS;
+		}
 		return (CommonSorterDescriptor[]) applicableSorters
 				.toArray(new CommonSorterDescriptor[applicableSorters.size()]);
 	}
@@ -180,12 +184,14 @@ public class CommonSorterDescriptorManager {
 
 	private Set getCommonSorters(INavigatorContentDescriptor contentDescriptor) {
 		Set descriptors = (Set) sortersMap.get(contentDescriptor);
-		if (descriptors != null)
+		if (descriptors != null) {
 			return descriptors;
+		}
 		synchronized (sortersMap) {
 			descriptors = (Set) sortersMap.get(contentDescriptor);
-			if (descriptors == null)
+			if (descriptors == null) {
 				sortersMap.put(contentDescriptor, descriptors = new HashSet());
+			}
 		}
 		return descriptors;
 	}

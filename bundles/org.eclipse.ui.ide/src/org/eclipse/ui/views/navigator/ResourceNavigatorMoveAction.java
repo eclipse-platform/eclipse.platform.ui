@@ -71,8 +71,9 @@ public class ResourceNavigatorMoveAction extends MoveResourceAction {
             while (iterator.hasNext()) {
                 IResource newResource = root
                         .findMember((IPath) iterator.next());
-                if (newResource != null)
-                    resources.add(newResource);
+                if (newResource != null) {
+					resources.add(newResource);
+				}
             }
 
             this.viewer.setSelection(new StructuredSelection(resources), true);

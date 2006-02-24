@@ -56,8 +56,9 @@ public class NavigatorViewerDescriptorManager {
 
 		NavigatorViewerDescriptor viewerDescriptor = (NavigatorViewerDescriptor) viewerDescriptors
 				.get(aViewerId);
-		if (viewerDescriptor != null)
+		if (viewerDescriptor != null) {
 			return viewerDescriptor;
+		}
 
 		synchronized (viewerDescriptors) {
 			viewerDescriptor = (NavigatorViewerDescriptor) viewerDescriptors
@@ -87,33 +88,35 @@ public class NavigatorViewerDescriptorManager {
 				String attPopupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
 				IConfigurationElement[] tagPopupMenu = element
 						.getChildren(TAG_POPUP_MENU);
-				if (tagPopupMenu.length == 0 && attPopupMenuId != null)
+				if (tagPopupMenu.length == 0 && attPopupMenuId != null) {
 					descriptor.setPopupMenuId(attPopupMenuId);
-				else {
-					if (attPopupMenuId != null)
+				} else {
+					if (attPopupMenuId != null) {
 						NavigatorPlugin
 								.logError(
 										0,
 										"A popupMenuId attribute and popupMenu element may NOT be concurrently specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
-					else if (tagPopupMenu.length > 1)
+					} else if (tagPopupMenu.length > 1) {
 						NavigatorPlugin
 								.logError(
 										0,
 										"Only one \"popupMenu\" child of \"viewer\" may be specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
-					else { // valid case
+					} else { // valid case
 
 						String popupMenuId = tagPopupMenu[0]
 								.getAttribute(ATT_ID);
 						String allowsPlatformContributions = tagPopupMenu[0]
 								.getAttribute(ATT_ALLOWS_PLATFORM_CONTRIBUTIONS);
 
-						if (popupMenuId != null)
+						if (popupMenuId != null) {
 							descriptor.setPopupMenuId(popupMenuId);
+						}
 
-						if (allowsPlatformContributions != null)
+						if (allowsPlatformContributions != null) {
 							descriptor.setAllowsPlatformContributions(Boolean
 									.valueOf(allowsPlatformContributions)
 									.booleanValue());
+						}
 
 						IConfigurationElement[] insertionPointElements = tagPopupMenu[0]
 								.getChildren(TAG_INSERTION_POINT);

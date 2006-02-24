@@ -67,11 +67,13 @@ public class FilePropertySource extends ResourcePropertySource {
 
         Object returnValue = super.getPropertyValue(key);
 
-        if (returnValue != null)
-            return returnValue;
+        if (returnValue != null) {
+			return returnValue;
+		}
 
-        if (key.equals(IResourcePropertyConstants.P_SIZE_RES))
-            return getSizeString((IFile) element);
+        if (key.equals(IResourcePropertyConstants.P_SIZE_RES)) {
+			return getSizeString((IFile) element);
+		}
 
         return null;
     }
@@ -80,13 +82,14 @@ public class FilePropertySource extends ResourcePropertySource {
      * Return a String that indicates the size of the supplied file.
      */
     private String getSizeString(IFile file) {
-        if (!file.isLocal(IResource.DEPTH_ZERO))
-            return NOT_LOCAL_TEXT;
-        else {
+        if (!file.isLocal(IResource.DEPTH_ZERO)) {
+			return NOT_LOCAL_TEXT;
+		} else {
             IPath location = file.getLocation();
             if (location == null) {
-                if (file.isLinked())
-                    return UNDEFINED_PATH_VARIABLE;
+                if (file.isLinked()) {
+					return UNDEFINED_PATH_VARIABLE;
+				}
 
                 return FILE_NOT_FOUND;
             } else {

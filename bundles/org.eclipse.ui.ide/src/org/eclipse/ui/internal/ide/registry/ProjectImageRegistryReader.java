@@ -34,8 +34,9 @@ public class ProjectImageRegistryReader extends IDERegistryReader {
      * Reads the contents of the given element
      */
     protected boolean readElement(IConfigurationElement element) {
-        if (!element.getName().equals(TAG_IMAGE))
-            return false;
+        if (!element.getName().equals(TAG_IMAGE)) {
+			return false;
+		}
 
         String id = element.getAttribute(ATT_ID);
         if (id == null) {
@@ -58,8 +59,9 @@ public class ProjectImageRegistryReader extends IDERegistryReader {
 		ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(
 				extendingPluginId, icon);
 
-        if (image != null)
-            registry.setNatureImage(natureId, image);
+        if (image != null) {
+			registry.setNatureImage(natureId, image);
+		}
 
         return true;
     }

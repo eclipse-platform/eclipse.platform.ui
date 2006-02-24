@@ -97,18 +97,20 @@ public class LineDelimiterEditor {
 
 		SelectionAdapter buttonListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (e.widget.equals(defaultButton))
+				if (e.widget.equals(defaultButton)) {
 					updateState(true);
-				else
+				} else {
 					updateState(false);
+				}
 			}
 		};
 
 		defaultButton = new Button(group, SWT.RADIO);
-		if (project == null)
+		if (project == null) {
 			defaultButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelim);
-		else
+		} else {
 			defaultButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelimProj);
+		}
 		
 		data = new GridData();
 		data.horizontalSpan = 2;
@@ -168,8 +170,9 @@ public class LineDelimiterEditor {
 	 * @return the scope context
 	 */
 	private IScopeContext getScopeContext() {
-		if (project != null)
+		if (project != null) {
 			return new ProjectScope(project);
+		}
 
 		return new InstanceScope();
 	}
@@ -249,19 +252,20 @@ public class LineDelimiterEditor {
 	 */
 	public void store() {
 		String val;
-		if (defaultButton.getSelection() || choiceCombo.getText().equals("")) //$NON-NLS-1$
+		if (defaultButton.getSelection() || choiceCombo.getText().equals("")) { //$NON-NLS-1$
 			val = null;
-		else {
+		} else {
 			Map lineSeparators = Platform.knownPlatformLineSeparators();
 			val = (String) lineSeparators.get(choiceCombo.getText());
 		}
 
 		IEclipsePreferences node = getScopeContext().getNode(
 				Platform.PI_RUNTIME);
-		if (val == null)
+		if (val == null) {
 			node.remove(Platform.PREF_LINE_SEPARATOR);
-		else
+		} else {
 			node.put(Platform.PREF_LINE_SEPARATOR, val);
+		}
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {

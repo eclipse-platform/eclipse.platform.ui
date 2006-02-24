@@ -73,28 +73,33 @@ public final class AboutInfo {
         // first see if the id matches the product
         IProduct product = Platform.getProduct();
         if (product != null
-                && featureId.equals(ProductProperties.getProductId(product)))
-            return new AboutInfo(product);
+                && featureId.equals(ProductProperties.getProductId(product))) {
+			return new AboutInfo(product);
+		}
 
         // then check the bundle groups
         IBundleGroup bundleGroup = getBundleGroup(featureId, versionId);
-        if (bundleGroup != null)
-            return new AboutInfo(bundleGroup);
+        if (bundleGroup != null) {
+			return new AboutInfo(bundleGroup);
+		}
 
         return null;
     }
 
     private static IBundleGroup getBundleGroup(String id, String versionId) {
-        if (id == null || versionId == null)
-            return null;
+        if (id == null || versionId == null) {
+			return null;
+		}
 
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
         for (int p = 0; p < providers.length; ++p) {
             IBundleGroup[] groups = providers[p].getBundleGroups();
-            for (int g = 0; g < groups.length; ++g)
-                if (id.equals(groups[g].getIdentifier())
-                        && versionId.equals(groups[g].getVersion()))
-                    return groups[g];
+            for (int g = 0; g < groups.length; ++g) {
+				if (id.equals(groups[g].getIdentifier())
+                        && versionId.equals(groups[g].getVersion())) {
+					return groups[g];
+				}
+			}
         }
 
         return null;
@@ -130,8 +135,9 @@ public final class AboutInfo {
      * or <code>null</code> if none
      */
     public String getFeatureImageName() {
-        if (bundleGroupProperties == null)
-            return null;
+        if (bundleGroupProperties == null) {
+			return null;
+		}
 
         URL url = bundleGroupProperties.getFeatureImageUrl();
         return url == null ? null : new Path(url.getPath()).lastSegment();
@@ -143,8 +149,9 @@ public final class AboutInfo {
      * @return the CRC of the feature image, or <code>null</code> if none
      */
     public Long getFeatureImageCRC() {
-        if (bundleGroupProperties == null)
-            return null;
+        if (bundleGroupProperties == null) {
+			return null;
+		}
 
         if (!calculatedImageCRC) {
             featureImageCRC = calculateImageCRC(bundleGroupProperties
@@ -159,8 +166,9 @@ public final class AboutInfo {
      * Calculate a CRC for the feature image
      */
     private static Long calculateImageCRC(URL url) {
-        if (url == null)
-            return null;
+        if (url == null) {
+			return null;
+		}
 
         InputStream in = null;
         try {
@@ -169,20 +177,23 @@ public final class AboutInfo {
 
             // the contents don't matter, the read just needs a place to go
             byte[] sink = new byte[2048];
-            while (true)
-                if (in.read(sink) <= 0)
-                    break;
+            while (true) {
+				if (in.read(sink) <= 0) {
+					break;
+				}
+			}
 
             return new Long(checksum.getValue());
         } catch (IOException e) {
             return null;
         } finally {
-            if (in != null)
-                try {
+            if (in != null) {
+				try {
                     in.close();
                 } catch (IOException e) {
                     // do nothing
                 }
+			}
         }
     }
 
@@ -190,10 +201,12 @@ public final class AboutInfo {
      * Returns a label for the feature plugn, or <code>null</code>.
      */
     public String getFeatureLabel() {
-        if (productProperties != null)
-            return productProperties.getProductName();
-        if (bundleGroupProperties != null)
-            return bundleGroupProperties.getFeatureLabel();
+        if (productProperties != null) {
+			return productProperties.getProductName();
+		}
+        if (bundleGroupProperties != null) {
+			return bundleGroupProperties.getFeatureLabel();
+		}
         return null;
     }
 
@@ -204,10 +217,11 @@ public final class AboutInfo {
      */
     public String getFeatureId() {
         String id = null;
-        if (productProperties != null)
-            id = productProperties.getProductId();
-        else if (bundleGroupProperties != null)
-            id = bundleGroupProperties.getFeatureId();
+        if (productProperties != null) {
+			id = productProperties.getProductId();
+		} else if (bundleGroupProperties != null) {
+			id = bundleGroupProperties.getFeatureId();
+		}
         return id != null ? id : ""; //$NON-NLS-1$ 
     }
 
@@ -277,10 +291,12 @@ public final class AboutInfo {
      * @return the welcome page, or <code>null</code> if none
      */
     public URL getWelcomePageURL() {
-        if (productProperties != null)
-            return productProperties.getWelcomePageUrl();
-        if (bundleGroupProperties != null)
-            return bundleGroupProperties.getWelcomePageUrl();
+        if (productProperties != null) {
+			return productProperties.getWelcomePageUrl();
+		}
+        if (bundleGroupProperties != null) {
+			return bundleGroupProperties.getWelcomePageUrl();
+		}
         return null;
     }
 

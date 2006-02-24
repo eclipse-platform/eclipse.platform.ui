@@ -69,8 +69,9 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
         Iterator elementsEnum = resources.iterator();
         while (elementsEnum.hasNext()) {
             IResource currentResource = (IResource) elementsEnum.next();
-            if (isDescendent(resources, currentResource))
-                elementsEnum.remove(); //Removes currentResource;
+            if (isDescendent(resources, currentResource)) {
+				elementsEnum.remove(); //Removes currentResource;
+			}
         }
 
         resourcesToExport = resources;
@@ -120,14 +121,16 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      *  @param checkResource org.eclipse.core.resources.IResource
      */
     protected int countChildrenOf(IResource checkResource) throws CoreException {
-        if (checkResource.getType() == IResource.FILE)
-            return 1;
+        if (checkResource.getType() == IResource.FILE) {
+			return 1;
+		}
 
         int count = 0;
         if (checkResource.isAccessible()) {
             IResource[] children = ((IContainer) checkResource).members();
-            for (int i = 0; i < children.length; i++)
-                count += countChildrenOf(children[i]);
+            for (int i = 0; i < children.length; i++) {
+				count += countChildrenOf(children[i]);
+			}
         }
 
         return count;
@@ -142,8 +145,9 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
     protected int countSelectedResources() throws CoreException {
         int result = 0;
         Iterator resources = resourcesToExport.iterator();
-        while (resources.hasNext())
-            result += countChildrenOf((IResource) resources.next());
+        while (resources.hasNext()) {
+			result += countChildrenOf((IResource) resources.next());
+		}
 
         return result;
     }
@@ -168,17 +172,19 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      */
     protected void exportResource(IResource exportResource, int leadupDepth)
             throws InterruptedException {
-        if (!exportResource.isAccessible())
-            return;
+        if (!exportResource.isAccessible()) {
+			return;
+		}
 
         if (exportResource.getType() == IResource.FILE) {
             String destinationName;
             IPath fullPath = exportResource.getFullPath();
-            if (createLeadupStructure)
-                destinationName = fullPath.makeRelative().toString();
-            else
-                destinationName = fullPath.removeFirstSegments(
+            if (createLeadupStructure) {
+				destinationName = fullPath.makeRelative().toString();
+			} else {
+				destinationName = fullPath.removeFirstSegments(
                         fullPath.segmentCount() - leadupDepth).toString();
+			}
             monitor.subTask(destinationName);
 
             try {
@@ -201,8 +207,9 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
                 addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath()), e);
             }
 
-            for (int i = 0; i < children.length; i++)
-                exportResource(children[i], leadupDepth + 1);
+            for (int i = 0; i < children.length; i++) {
+				exportResource(children[i], leadupDepth + 1);
+			}
 
         }
     }
@@ -270,12 +277,14 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      *  @param child org.eclipse.core.resources.IResource
      */
     protected boolean isDescendent(List resources, IResource child) {
-        if (child.getType() == IResource.PROJECT)
-            return false;
+        if (child.getType() == IResource.PROJECT) {
+			return false;
+		}
 
         IResource parent = child.getParent();
-        if (resources.contains(parent))
-            return true;
+        if (resources.contains(parent)) {
+			return true;
+		}
 
         return isDescendent(resources, parent);
     }
@@ -298,10 +307,11 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             // ie.- a single resource for recursive export was specified
             int totalWork = IProgressMonitor.UNKNOWN;
             try {
-                if (resourcesToExport == null)
-                    totalWork = countChildrenOf(resource);
-                else
-                    totalWork = countSelectedResources();
+                if (resourcesToExport == null) {
+					totalWork = countChildrenOf(resource);
+				} else {
+					totalWork = countSelectedResources();
+				}
             } catch (CoreException e) {
                 // Should not happen
             }

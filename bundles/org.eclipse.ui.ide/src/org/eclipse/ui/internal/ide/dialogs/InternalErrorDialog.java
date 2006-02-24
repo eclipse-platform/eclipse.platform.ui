@@ -167,19 +167,21 @@ public class InternalErrorDialog extends MessageDialog {
     public static boolean openQuestion(Shell parent, String title,
             String message, Throwable detail, int defaultIndex) {
         String[] labels;
-        if (detail == null)
-            labels = new String[] { IDialogConstants.YES_LABEL,
+        if (detail == null) {
+			labels = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL };
-        else
-            labels = new String[] { IDialogConstants.YES_LABEL,
+		} else {
+			labels = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL,
                     IDialogConstants.SHOW_DETAILS_LABEL };
+		}
 
         InternalErrorDialog dialog = new InternalErrorDialog(parent, title,
                 null, // accept the default window icon
                 message, detail, QUESTION, labels, defaultIndex);
-        if (detail != null)
-            dialog.setDetailButton(2);
+        if (detail != null) {
+			dialog.setDetailButton(2);
+		}
         return dialog.open() == 0;
     }
 

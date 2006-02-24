@@ -71,10 +71,11 @@ class BookmarkContentProvider implements IStructuredContentProvider,
     public Object[] getChildren(Object element) {
         // If the input element is a workbench return a list
         // of the existing bookmarks.  Otherwise, return an empty list.
-        if (element instanceof IResource)
-            return getBookmarks((IResource) element);
-        else
-            return new Object[0];
+        if (element instanceof IResource) {
+			return getBookmarks((IResource) element);
+		} else {
+			return new Object[0];
+		}
     }
 
     public Object[] getElements(Object element) {
@@ -129,10 +130,11 @@ class BookmarkContentProvider implements IStructuredContentProvider,
      * hasChildren method comment.
      */
     public boolean hasChildren(Object element) {
-        if (element instanceof IWorkspace)
-            return true;
-        else
-            return false;
+        if (element instanceof IWorkspace) {
+			return true;
+		} else {
+			return false;
+		}
     }
 
     public void inputChanged(Viewer newViewer, Object oldInput, Object newInput) {
@@ -160,8 +162,9 @@ class BookmarkContentProvider implements IStructuredContentProvider,
         final List changes = new ArrayList();
 
         IResourceDelta delta = event.getDelta();
-        if (delta == null)
-            return;
+        if (delta == null) {
+			return;
+		}
         getMarkerDeltas(delta, additions, removals, changes);
 
         // update the viewer based on the marker changes, in the UI thread
@@ -171,8 +174,9 @@ class BookmarkContentProvider implements IStructuredContentProvider,
                     // This method runs inside an asyncExec.  The widget may have been destroyed
                     // by the time this is run.  Check for this and do nothing if so.
                     Control ctrl = viewer.getControl();
-                    if (ctrl == null || ctrl.isDisposed())
-                        return;
+                    if (ctrl == null || ctrl.isDisposed()) {
+						return;
+					}
 
                     viewer.refresh();
                 }

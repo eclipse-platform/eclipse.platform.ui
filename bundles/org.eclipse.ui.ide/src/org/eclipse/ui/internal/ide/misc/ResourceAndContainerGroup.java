@@ -166,12 +166,13 @@ public class ResourceAndContainerGroup implements Listener {
         composite.setFont(font);
 
         // container group
-        if (heightHint == SWT.DEFAULT)
-            containerGroup = new ContainerSelectionGroup(composite, this, true,
+        if (heightHint == SWT.DEFAULT) {
+			containerGroup = new ContainerSelectionGroup(composite, this, true,
                     null, showClosedProjects);
-        else
-            containerGroup = new ContainerSelectionGroup(composite, this, true,
+		} else {
+			containerGroup = new ContainerSelectionGroup(composite, this, true,
                     null, showClosedProjects, heightHint, SIZING_TEXT_FIELD_WIDTH);
+		}
 
         // resource name group
         Composite nameGroup = new Composite(composite, SWT.NONE);
@@ -343,8 +344,9 @@ public class ResourceAndContainerGroup implements Listener {
         problemType = PROBLEM_NONE;
         problemMessage = "";//$NON-NLS-1$
 
-        if (!validateContainer() || !validateResourceName())
-            return false;
+        if (!validateContainer() || !validateResourceName()) {
+			return false;
+		}
 
         IPath path = containerGroup.getContainerFullPath().append(
                 resourceNameField.getText());

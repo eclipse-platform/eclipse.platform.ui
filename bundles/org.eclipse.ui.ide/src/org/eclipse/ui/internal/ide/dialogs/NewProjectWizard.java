@@ -50,8 +50,9 @@ public class NewProjectWizard extends MultiStepWizard implements
         IDialogSettings workbenchSettings = plugin.getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("NewProjectWizard");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings.addNewSection("NewProjectWizard");//$NON-NLS-1$
+        if (section == null) {
+			section = workbenchSettings.addNewSection("NewProjectWizard");//$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 
@@ -112,10 +113,11 @@ public class NewProjectWizard extends MultiStepWizard implements
         // pages, so ignore it. If there is only one step after that,
         // then it needs the "Finish" label. So the "Finish Step" label
         // is only needed if more than 2 steps in the list.
-        if (steps.length > 2)
-            return super.getFinishStepLabel(steps);
-        else
-            return null;
+        if (steps.length > 2) {
+			return super.getFinishStepLabel(steps);
+		} else {
+			return null;
+		}
     }
 
     /**
@@ -171,10 +173,11 @@ public class NewProjectWizard extends MultiStepWizard implements
      * @param name initial project name
      */
     public void setInitialProjectName(String name) {
-        if (name == null)
-            initialProjectName = null;
-        else
-            initialProjectName = name.trim();
+        if (name == null) {
+			initialProjectName = null;
+		} else {
+			initialProjectName = name.trim();
+		}
     }
 
     /**

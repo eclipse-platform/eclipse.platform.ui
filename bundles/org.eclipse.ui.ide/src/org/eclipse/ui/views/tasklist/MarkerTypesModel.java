@@ -58,12 +58,15 @@ class MarkerTypesModel {
      * Workaround until we have labels in XML.
      */
     private String getWellKnownLabel(String type) {
-        if (type.equals(IMarker.PROBLEM))
-            return "Problem";//$NON-NLS-1$
-        if (type.equals(IMarker.TASK))
-            return "Task";//$NON-NLS-1$
-        if (type.equals("org.eclipse.jdt.core.problem"))//$NON-NLS-1$
-            return "Java Problem";//$NON-NLS-1$
+        if (type.equals(IMarker.PROBLEM)) {
+			return "Problem";//$NON-NLS-1$
+		}
+        if (type.equals(IMarker.TASK)) {
+			return "Task";//$NON-NLS-1$
+		}
+        if (type.equals("org.eclipse.jdt.core.problem")) { //$NON-NLS-1$
+			return "Java Problem";//$NON-NLS-1$
+		}
         return type;
     }
 

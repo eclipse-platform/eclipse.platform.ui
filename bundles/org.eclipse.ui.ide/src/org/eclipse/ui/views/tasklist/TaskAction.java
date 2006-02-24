@@ -54,8 +54,9 @@ abstract class TaskAction extends Action {
         IDialogSettings workbenchSettings = TaskList.getPlugin()
                 .getDialogSettings();
         IDialogSettings settings = workbenchSettings.getSection("TaskAction");//$NON-NLS-1$
-        if (settings == null)
-            settings = workbenchSettings.addNewSection("TaskAction");//$NON-NLS-1$
+        if (settings == null) {
+			settings = workbenchSettings.addNewSection("TaskAction");//$NON-NLS-1$
+		}
         settings.put(getId(), isChecked());
     }
 }

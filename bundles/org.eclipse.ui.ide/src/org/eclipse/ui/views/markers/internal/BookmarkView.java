@@ -57,8 +57,9 @@ public class BookmarkView extends MarkerView {
 	private ICellModifier cellModifier = new ICellModifier() {
 		public Object getValue(Object element, String property) {
 			if (element instanceof ConcreteMarker
-					&& IMarker.MESSAGE.equals(property))
+					&& IMarker.MESSAGE.equals(property)) {
 				return ((ConcreteMarker) element).getDescription();
+			}
 			return null;
 		}
 
@@ -76,8 +77,9 @@ public class BookmarkView extends MarkerView {
 
 					try {
 						if (!marker.getAttribute(property).equals(value)) {
-							if (IMarker.MESSAGE.equals(property))
+							if (IMarker.MESSAGE.equals(property)) {
 								marker.setAttribute(IMarker.MESSAGE, value);
+							}
 						}
 					} catch (CoreException e) {
 						ErrorDialog
@@ -118,8 +120,9 @@ public class BookmarkView extends MarkerView {
 	}
 
 	public void dispose() {
-		if (cellEditorActionHandler != null)
+		if (cellEditorActionHandler != null) {
 			cellEditorActionHandler.dispose();
+		}
 
 		super.dispose();
 	}
@@ -129,8 +132,9 @@ public class BookmarkView extends MarkerView {
 		IDialogSettings settings = workbenchSettings
 				.getSection(TAG_DIALOG_SECTION);
 
-		if (settings == null)
+		if (settings == null) {
 			settings = workbenchSettings.addNewSection(TAG_DIALOG_SECTION);
+		}
 
 		return settings;
 	}

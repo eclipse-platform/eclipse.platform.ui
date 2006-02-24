@@ -80,8 +80,9 @@ public class CommonWizardDescriptor {
 	 *         the selection.
 	 */
 	public boolean isEnabledFor(IStructuredSelection aStructuredSelection) {
-		if (enablement == null)
+		if (enablement == null) {
 			return false;
+		}
 
 		IEvaluationContext context = null;
 
@@ -89,8 +90,9 @@ public class CommonWizardDescriptor {
 		while (elements.hasNext()) {
 			context = new EvaluationContext(null, elements.next());
 			try {
-				if (enablement.evaluate(context) == EvaluationResult.FALSE)
+				if (enablement.evaluate(context) == EvaluationResult.FALSE) {
 					return false;
+				}
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 				return false;
@@ -108,8 +110,9 @@ public class CommonWizardDescriptor {
 	 */
 	public boolean isEnabledFor(Object anElement) {
 
-		if (enablement == null || anElement == null)
+		if (enablement == null || anElement == null) {
 			return false;
+		}
 
 		try {
 			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);

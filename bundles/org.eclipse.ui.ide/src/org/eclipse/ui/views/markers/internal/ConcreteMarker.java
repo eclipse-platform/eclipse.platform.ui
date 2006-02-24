@@ -211,8 +211,9 @@ public class ConcreteMarker extends MarkerNode{
 	 * @return String
 	 */
 	public String getShortFolder() {
-		if(shortFolder == null)
+		if(shortFolder == null) {
 			shortFolder = Util.getShortContainerName(marker);
+		}
 		return shortFolder;
 	}
 

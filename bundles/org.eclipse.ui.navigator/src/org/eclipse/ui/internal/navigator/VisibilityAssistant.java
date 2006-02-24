@@ -83,8 +83,9 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 * @param isRoot
 	 */
 	public void bindExtensions(String[] theExtensions, boolean isRoot) {
-		if (theExtensions == null)
+		if (theExtensions == null) {
 			return;
+		}
 		for (int i = 0; i < theExtensions.length; i++) {
 			programmaticVisibilityBindings.add(theExtensions[i]);
 			if (isRoot) {
@@ -220,8 +221,9 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 */
 	public void onExtensionActivation(String aViewerId,
 			String[] theNavigatorExtensionIds, boolean isActive) {
-		if (aViewerId.equals(viewerDescriptor.getViewerId()))
+		if (aViewerId.equals(viewerDescriptor.getViewerId())) {
 			notifyClients();
+		}
 
 	}
 

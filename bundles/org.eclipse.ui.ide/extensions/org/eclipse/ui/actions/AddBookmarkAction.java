@@ -99,8 +99,9 @@ public class AddBookmarkAction extends SelectionListenerAction {
                 createMarker((IFile) o, markerType);
             } else if (o instanceof IAdaptable) {
                 Object resource = ((IAdaptable) o).getAdapter(IResource.class);
-                if (resource instanceof IFile)
-                    createMarker((IFile) resource, markerType);
+                if (resource instanceof IFile) {
+					createMarker((IFile) resource, markerType);
+				}
             }
         }
     }
@@ -116,8 +117,9 @@ public class AddBookmarkAction extends SelectionListenerAction {
             file.getWorkspace().run(new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) throws CoreException {
                     String markerMessage = file.getName();
-                    if (promptForName)
-                        markerMessage = askForLabel(markerMessage);
+                    if (promptForName) {
+						markerMessage = askForLabel(markerMessage);
+					}
                     if (markerMessage != null) {
                         IMarker marker = file.createMarker(markerType);
                         marker.setAttribute(IMarker.MESSAGE, markerMessage);
@@ -167,8 +169,9 @@ public class AddBookmarkAction extends SelectionListenerAction {
 
         if (dialog.open() != Window.CANCEL) {
             String name = dialog.getValue();
-            if (name == null)
-                return null;
+            if (name == null) {
+				return null;
+			}
             name = name.trim();
             return (name.length() == 0) ? null : name;
         } else {

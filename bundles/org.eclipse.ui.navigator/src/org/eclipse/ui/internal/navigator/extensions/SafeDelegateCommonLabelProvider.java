@@ -133,8 +133,9 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
-		if(delegateLabelProvider instanceof IColorProvider)
+		if(delegateLabelProvider instanceof IColorProvider) {
 			return ((IColorProvider)delegateLabelProvider).getForeground(element);
+		}
 		return null;
 	}
 
@@ -142,8 +143,9 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
 	public Color getBackground(Object element) {
-		if(delegateLabelProvider instanceof IColorProvider)
+		if(delegateLabelProvider instanceof IColorProvider) {
 			return ((IColorProvider)delegateLabelProvider).getBackground(element);
+		}
 		return null;
 	}
 
@@ -151,8 +153,9 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
 	public Font getFont(Object element) {
-		if(delegateLabelProvider instanceof IFontProvider)
+		if(delegateLabelProvider instanceof IFontProvider) {
 			return ((IFontProvider)delegateLabelProvider).getFont(element);
+		}
 		return null;
 	}
 }

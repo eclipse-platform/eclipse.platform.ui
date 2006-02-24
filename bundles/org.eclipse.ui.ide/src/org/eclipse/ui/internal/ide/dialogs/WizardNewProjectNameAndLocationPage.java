@@ -215,8 +215,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 
         // Set the initial value first before listener
         // to avoid handling an event during the creation.
-        if (initialProjectFieldValue != null)
-            projectNameField.setText(initialProjectFieldValue);
+        if (initialProjectFieldValue != null) {
+			projectNameField.setText(initialProjectFieldValue);
+		}
         projectNameField.addListener(SWT.Modify, nameModifyListener);
     }
 
@@ -257,8 +258,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 
         // Set the initial value first before listener
         // to avoid handling an event during the creation.
-        if (initialLocationFieldValue != null)
-            locationPathField.setText(initialLocationFieldValue.toOSString());
+        if (initialLocationFieldValue != null) {
+			locationPathField.setText(initialLocationFieldValue.toOSString());
+		}
         locationPathField.addListener(SWT.Modify, locationModifyListener);
     }
 
@@ -270,8 +272,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      *   if no project location path is known
      */
     /* package */IPath getLocationPath() {
-        if (useDefaults)
-            return initialLocationFieldValue;
+        if (useDefaults) {
+			return initialLocationFieldValue;
+		}
 
         return new Path(getProjectLocationFieldValue());
     }
@@ -298,8 +301,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      *   if no project name is known
      */
     /* package */String getProjectName() {
-        if (projectNameField == null)
-            return initialProjectFieldValue;
+        if (projectNameField == null) {
+			return initialProjectFieldValue;
+		}
 
         return getProjectNameFieldValue();
     }
@@ -311,8 +315,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      * @return the project name in the field
      */
     private String getProjectNameFieldValue() {
-        if (projectNameField == null)
-            return IDEResourceInfoUtils.EMPTY_STRING; 
+        if (projectNameField == null) {
+			return IDEResourceInfoUtils.EMPTY_STRING;
+		} 
        return projectNameField.getText().trim();
     }
 
@@ -323,8 +328,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      * @return the project location directory in the field
      */
     private String getProjectLocationFieldValue() {
-        if (locationPathField == null)
-        	return IDEResourceInfoUtils.EMPTY_STRING; 
+        if (locationPathField == null) {
+			return IDEResourceInfoUtils.EMPTY_STRING;
+		} 
        return locationPathField.getText().trim();
     }
 
@@ -338,8 +344,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 
         String dirName = getProjectLocationFieldValue();
         if (dirName.length() > 0) { 
-            if (IDEResourceInfoUtils.exists(dirName))
-                dialog.setFilterPath(new Path(dirName).toOSString());
+            if (IDEResourceInfoUtils.exists(dirName)) {
+				dialog.setFilterPath(new Path(dirName).toOSString());
+			}
         }
 
         String selectedDirectory = dialog.open();
@@ -368,10 +375,11 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      * @param name initial project name for this page
      */
     /* package */void setInitialProjectName(String name) {
-        if (name == null)
-            initialProjectFieldValue = null;
-        else
-            initialProjectFieldValue = name.trim();
+        if (name == null) {
+			initialProjectFieldValue = null;
+		} else {
+			initialProjectFieldValue = name.trim();
+		}
     }
 
     /**
@@ -449,8 +457,9 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
      */
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if (visible)
-            projectNameField.setFocus();
+        if (visible) {
+			projectNameField.setFocus();
+		}
     }
 
 }

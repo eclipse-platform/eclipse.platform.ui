@@ -98,8 +98,9 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 				 * @see org.eclipse.ui.internal.ide.dialogs.IFileStoreFilter#accept(org.eclipse.core.filesystem.IFileStore)
 				 */
 				public boolean accept(IFileStore file) {
-					if (!file.fetchInfo().isDirectory() && showFiles == false)
+					if (!file.fetchInfo().isDirectory() && showFiles == false) {
 						return false;
+					}
 					return true;
 				}
 			};
@@ -155,8 +156,9 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 		 */
 		public int category(Object element) {
 			if (element instanceof IFileStore
-					&& !((IFileStore) element).fetchInfo().isDirectory())
+					&& !((IFileStore) element).fetchInfo().isDirectory()) {
 				return 1;
+			}
 			return 0;
 		}
 	}
@@ -203,10 +205,11 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 				if (curr instanceof IFileStore) {
 					IFileStore file = (IFileStore) curr;
 					if (acceptFolders == false
-							&& file.fetchInfo().isDirectory())
+							&& file.fetchInfo().isDirectory()) {
 						return new Status(IStatus.ERROR, pluginId,
 								IStatus.ERROR,
 								IDEResourceInfoUtils.EMPTY_STRING, null);
+					}
 
 				}
 			}

@@ -46,12 +46,14 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 
 	private void init() {
 		id = element.getAttribute(ATT_ID);
-		if (id == null)
+		if (id == null) {
 			id = ""; //$NON-NLS-1$
+		}
 		IConfigurationElement[] children = element
 				.getChildren(TAG_FILTER_EXPRESSION);
-		if (children.length == 1)
+		if (children.length == 1) {
 			filterExpression = new CustomAndExpression(children[0]);
+		}
 	}
 
 	/**
@@ -100,7 +102,7 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 
 			if (filterExpression != null) {
 
-				if (element.getAttribute(ATT_CLASS) != null)
+				if (element.getAttribute(ATT_CLASS) != null) {
 					NavigatorPlugin
 							.log(
 									IStatus.WARNING,
@@ -110,7 +112,8 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 													.getNamespace()
 											+ " which specifies a \"class\" attribute and an Core Expression.\n" + //$NON-NLS-1$
 											"Only the Core Expression will be respected.", //$NON-NLS-1$
-									null); 
+									null);
+				} 
 
 				return new CoreExpressionFilter(filterExpression);
 			}

@@ -60,10 +60,11 @@ public class CommonActionDescriptorManager {
 			return;
 		}
 		
-		if (aDescriptor.getDependsOnId() == null)
+		if (aDescriptor.getDependsOnId() == null) {
 			rootDescriptors.put(aDescriptor.getId(), aDescriptor);
-		else
+		} else {
 			dependentDescriptors.put(aDescriptor.getId(), aDescriptor);
+		}
 	}
 
 	/**
@@ -84,9 +85,10 @@ public class CommonActionDescriptorManager {
 			dependentDescriptor = (CommonActionProviderDescriptor) iter.next();
 			requiredDescriptor = (CommonActionProviderDescriptor) rootDescriptors
 					.get(dependentDescriptor.getDependsOnId());
-			if (requiredDescriptor == null)
+			if (requiredDescriptor == null) {
 				requiredDescriptor = (CommonActionProviderDescriptor) dependentDescriptors
 						.get(dependentDescriptor.getDependsOnId());
+			}
 			if (requiredDescriptor != null) {
 				requiredDescriptor.addDependentDescriptor(dependentDescriptor);
 				unresolvedDependentDescriptors.remove(dependentDescriptor);
@@ -104,10 +106,11 @@ public class CommonActionDescriptorManager {
 			CommonActionProviderDescriptor[] unresolvedDescriptors = (CommonActionProviderDescriptor[]) unresolvedDependentDescriptors
 					.toArray(new CommonActionProviderDescriptor[unresolvedDependentDescriptors
 							.size()]);
-			for (int i = 0; i < unresolvedDescriptors.length; i++)
+			for (int i = 0; i < unresolvedDescriptors.length; i++) {
 				errorMessage
 						.append(
 								"\nUnresolved dependency specified for actionProvider: ").append(unresolvedDescriptors[i].getId()); //$NON-NLS-1$
+			}
 
 			NavigatorPlugin.log(IStatus.WARNING, 0, errorMessage.toString(),
 					null);
@@ -132,11 +135,12 @@ public class CommonActionDescriptorManager {
 	public CommonActionProviderDescriptor[] findRelevantActionDescriptors(
 			INavigatorContentService aContentService, ActionContext aContext) {
 		IStructuredSelection structuredSelection = null;
-		if (aContext.getSelection() instanceof IStructuredSelection)
+		if (aContext.getSelection() instanceof IStructuredSelection) {
 			structuredSelection = (IStructuredSelection) aContext
 					.getSelection();
-		else
+		} else {
 			structuredSelection = StructuredSelection.EMPTY;
+		}
 
 		CommonActionProviderDescriptor actionDescriptor = null;
 		List providers = new ArrayList();
@@ -147,10 +151,11 @@ public class CommonActionDescriptorManager {
 			addProviderIfRelevant(aContentService, structuredSelection,
 					actionDescriptor, providers);
 		}
-		if (providers.size() > 0)
+		if (providers.size() > 0) {
 			return (CommonActionProviderDescriptor[]) providers
 					.toArray(new CommonActionProviderDescriptor[providers
 							.size()]);
+		}
 		return NO_DESCRIPTORS;
 	}
 
@@ -167,12 +172,14 @@ public class CommonActionDescriptorManager {
 		if (isVisible(aContentService, actionDescriptor)
 				&& actionDescriptor.isEnabledFor(structuredSelection)) {
 			providers.add(actionDescriptor);
-			if (actionDescriptor.hasDependentDescriptors())
+			if (actionDescriptor.hasDependentDescriptors()) {
 				for (Iterator iter = actionDescriptor.dependentDescriptors(); iter
-						.hasNext();)
+						.hasNext();) {
 					addProviderIfRelevant(aContentService, structuredSelection,
 							(CommonActionProviderDescriptor) iter.next(),
 							providers);
+				}
+			}
 		}
 	}
 
@@ -201,19 +208,23 @@ public class CommonActionDescriptorManager {
 			} else if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
 				IConfigurationElement[] actionProviders = anElement
 						.getChildren(TAG_ACTION_PROVIDER);
-				if (actionProviders.length == 0)
+				if (actionProviders.length == 0) {
 					return true;
+				}
 				IConfigurationElement defaultEnablement = null;
 				IConfigurationElement[] enablement = anElement
 						.getChildren(TAG_ENABLEMENT);
-				if (enablement.length == 0)
+				if (enablement.length == 0) {
 					enablement = anElement.getChildren(TAG_POSSIBLE_CHILDREN);
-				if (enablement.length == 1)
+				}
+				if (enablement.length == 1) {
 					defaultEnablement = enablement[0];
-				for (int i = 0; i < actionProviders.length; i++)
+				}
+				for (int i = 0; i < actionProviders.length; i++) {
 					addActionDescriptor(new CommonActionProviderDescriptor(
 							actionProviders[i], defaultEnablement, anElement
 									.getAttribute(ATT_ID), true));
+				}
 				return true;
 			}
 			return super.readElement(anElement);

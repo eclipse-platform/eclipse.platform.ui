@@ -195,8 +195,9 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         saveInterval.setPropertyChangeListener(new IPropertyChangeListener() {
 
             public void propertyChange(PropertyChangeEvent event) {
-                if (event.getProperty().equals(FieldEditor.IS_VALID))
-                    setValid(saveInterval.isValid());
+                if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+					setValid(saveInterval.isValid());
+				}
             }
         });
 
@@ -240,8 +241,9 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID))
-					 setValid(encodingEditor.isValid());
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+					setValid(encodingEditor.isValid());
+				}
 
 			}
 		});
@@ -395,8 +397,9 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         boolean autoRefresh = autoRefreshButton.getSelection();
         preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
         
-        if (clearUserSettings)
+        if (clearUserSettings) {
 			IDEEncoding.clearUserEncodings();
+		}
         encodingEditor.store();
 		lineSeparatorEditor.store();
 		openReferencesEditor.store();

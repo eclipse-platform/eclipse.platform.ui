@@ -87,8 +87,9 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
         this.window = window;
 
         IWorkbenchPage page = window.getActivePage();
-        if (page != null)
-            chosenPersp = page.getPerspective();
+        if (page != null) {
+			chosenPersp = page.getPerspective();
+		}
 
         IPerspectiveRegistry reg = window.getWorkbench()
                 .getPerspectiveRegistry();
@@ -96,13 +97,15 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
         for (int i = 0; i < perspIds.length; i++) {
             IPerspectiveDescriptor desc;
             desc = reg.findPerspectiveWithId(perspIds[i]);
-            if (desc != null && desc != chosenPersp)
-                persps.add(desc);
+            if (desc != null && desc != chosenPersp) {
+				persps.add(desc);
+			}
         }
         Collections.sort(persps, comparator);
 
-        if (chosenPersp != null)
-            persps.add(0, chosenPersp);
+        if (chosenPersp != null) {
+			persps.add(0, chosenPersp);
+		}
     }
 
     /* (non-Javadoc)
@@ -139,8 +142,9 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
         createPerspectiveGroup(composite);
         createOptionGroup(composite);
 
-        if (chosenPersp != null)
-            list.setSelection(new StructuredSelection(chosenPersp));
+        if (chosenPersp != null) {
+			list.setSelection(new StructuredSelection(chosenPersp));
+		}
 
         return composite;
     }
@@ -218,8 +222,9 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
      * was shown in.
      */
     public IWorkbenchWindow showChosenPerspective() {
-        if (chosenPersp == null)
-            return window;
+        if (chosenPersp == null) {
+			return window;
+		}
 
         final IWorkbenchWindow[] results = new IWorkbenchWindow[1];
         final WorkbenchException[] errors = new WorkbenchException[1];
@@ -228,8 +233,9 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
                 if (sameWindow) {
                     results[0] = window;
                     IWorkbenchPage page = window.getActivePage();
-                    if (page != null)
-                        page.setPerspective(chosenPersp);
+                    if (page != null) {
+						page.setPerspective(chosenPersp);
+					}
                 } else {
                     try {
                         results[0] = window.getWorkbench().openWorkbenchWindow(
@@ -290,9 +296,10 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
         public void selectionChanged(SelectionChangedEvent event) {
             IStructuredSelection selection = (IStructuredSelection) event
                     .getSelection();
-            if (selection != null)
-                chosenPersp = (IPerspectiveDescriptor) selection
+            if (selection != null) {
+				chosenPersp = (IPerspectiveDescriptor) selection
                         .getFirstElement();
+			}
         }
     }
 }

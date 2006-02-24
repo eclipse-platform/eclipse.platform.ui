@@ -151,8 +151,9 @@ public class ResourceTransfer extends ByteArrayTransfer {
          */
 
         byte[] bytes = (byte[]) super.nativeToJava(transferData);
-        if (bytes == null)
-            return null;
+        if (bytes == null) {
+			return null;
+		}
         DataInputStream in = new DataInputStream(
                 new ByteArrayInputStream(bytes));
         try {

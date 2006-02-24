@@ -79,14 +79,16 @@ public class CommonDropDescriptorManager {
 						.hasNext();) {
 					CommonDropAdapterDescriptor dropDescriptor = (CommonDropAdapterDescriptor) iterator
 							.next();
-					if (dropDescriptor.isDropElementSupported(aDropTarget))
+					if (dropDescriptor.isDropElementSupported(aDropTarget)) {
 						foundDescriptors.add(dropDescriptor);
+					}
 				}
 			}
 		}
 
-		if (foundDescriptors.isEmpty())
+		if (foundDescriptors.isEmpty()) {
 			return NO_DESCRIPTORS;
+		}
 		return (CommonDropAdapterDescriptor[]) foundDescriptors
 				.toArray(new CommonDropAdapterDescriptor[foundDescriptors
 						.size()]);
@@ -95,13 +97,15 @@ public class CommonDropDescriptorManager {
 	private List getDropDescriptors(
 			INavigatorContentDescriptor aContentDescriptor) {
 		List descriptors = (List) dropDescriptors.get(aContentDescriptor);
-		if (descriptors != null)
+		if (descriptors != null) {
 			return descriptors;
+		}
 		synchronized (dropDescriptors) {
 			descriptors = (List) dropDescriptors.get(aContentDescriptor);
-			if (descriptors == null)
+			if (descriptors == null) {
 				dropDescriptors.put(aContentDescriptor,
 						(descriptors = new ArrayList()));
+			}
 
 		}
 		return descriptors;

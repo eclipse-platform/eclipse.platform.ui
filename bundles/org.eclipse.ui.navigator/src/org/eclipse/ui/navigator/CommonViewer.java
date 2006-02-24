@@ -207,8 +207,9 @@ public class CommonViewer extends TreeViewer {
 	 * </p>
 	 */
 	public void dispose() {
-		if (contentService != null)
+		if (contentService != null) {
 			contentService.dispose();
+		}
 	}
 
 	/**
@@ -219,8 +220,9 @@ public class CommonViewer extends TreeViewer {
 	 *            a viewer sorter, or <code>null</code> if none
 	 */
 	public void setSorter(ViewerSorter sorter) {
-		if (sorter != null && sorter instanceof CommonViewerSorter)
+		if (sorter != null && sorter instanceof CommonViewerSorter) {
 			((CommonViewerSorter) sorter).setContentService(contentService);
+		}
 
 		super.setSorter(sorter);
 	}
@@ -287,10 +289,12 @@ public class CommonViewer extends TreeViewer {
 			/* intercept and apply the update */
 			boolean toUpdateLabels = update.isUpdateLabels();
 			for (Iterator iter = update.getRefreshTargets().iterator(); iter
-					.hasNext();)
+					.hasNext();) {
 				super.refresh(iter.next(), toUpdateLabels);
-		} else
+			}
+		} else {
 			super.refresh(element, updateLabels);
+		}
 	}
 
 	/*
@@ -326,8 +330,9 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefresh(java.lang.Object, boolean)
 	 */
 	protected void internalRefresh(Object element, boolean updateLabels) {
-		if(element == null && getRoot() == null)
+		if(element == null && getRoot() == null) {
 			return;
+		}
 		super.internalRefresh(element, updateLabels);
 	}
 

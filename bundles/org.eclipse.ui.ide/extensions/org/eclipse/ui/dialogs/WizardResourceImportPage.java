@@ -110,17 +110,20 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
             if (firstElement instanceof IAdaptable) {
                 Object resource = ((IAdaptable) firstElement)
                         .getAdapter(IResource.class);
-                if (resource != null)
-                    currentResourceSelection = (IResource) resource;
+                if (resource != null) {
+					currentResourceSelection = (IResource) resource;
+				}
             }
         }
 
         if (currentResourceSelection != null) {
-            if (currentResourceSelection.getType() == IResource.FILE)
-                currentResourceSelection = currentResourceSelection.getParent();
+            if (currentResourceSelection.getType() == IResource.FILE) {
+				currentResourceSelection = currentResourceSelection.getParent();
+			}
 
-            if (!currentResourceSelection.isAccessible())
-                currentResourceSelection = null;
+            if (!currentResourceSelection.isAccessible()) {
+				currentResourceSelection = null;
+			}
         }
 
     }
@@ -262,8 +265,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         //make the path absolute to allow for optional leading slash
         IPath testPath = getResourcePath();
 
-        if (testPath.equals(workspace.getRoot().getFullPath()))
-            return testPath;
+        if (testPath.equals(workspace.getRoot().getFullPath())) {
+			return testPath;
+		}
 
         IStatus result = workspace.validatePath(testPath.toString(),
                 IResource.PROJECT | IResource.FOLDER | IResource.ROOT);
@@ -328,8 +332,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         IPath path = getContainerFullPath();
         if (workspace.getRoot().exists(path)){
         	IResource resource = workspace.getRoot().findMember(path);
-        	if(resource.getType() == IResource.FILE)
-        		return null;
+        	if(resource.getType() == IResource.FILE) {
+				return null;
+			}
         	return (IContainer) resource;
         	
         }
@@ -373,8 +378,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     public void handleEvent(Event event) {
         Widget source = event.widget;
 
-        if (source == containerBrowseButton)
-            handleContainerBrowseButtonPressed();
+        if (source == containerBrowseButton) {
+			handleContainerBrowseButtonPressed();
+		}
 
         updateWidgetEnablements();
     }
@@ -393,8 +399,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         Object[] newSelectedTypes = dialog.getResult();
         if (newSelectedTypes != null) { // ie.- did not press Cancel
             this.selectedTypes = new ArrayList(newSelectedTypes.length);
-            for (int i = 0; i < newSelectedTypes.length; i++)
-                this.selectedTypes.add(newSelectedTypes[i]);
+            for (int i = 0; i < newSelectedTypes.length; i++) {
+				this.selectedTypes.add(newSelectedTypes[i]);
+			}
 
             setupSelectionsBasedOnSelectedTypes();
         }
@@ -405,11 +412,12 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
      * Sets the initial contents of the container name field.
      */
     protected final void initialPopulateContainerField() {
-        if (initialContainerFieldValue != null)
-            containerNameField.setText(initialContainerFieldValue);
-        else if (currentResourceSelection != null)
-            containerNameField.setText(currentResourceSelection.getFullPath()
+        if (initialContainerFieldValue != null) {
+			containerNameField.setText(initialContainerFieldValue);
+		} else if (currentResourceSelection != null) {
+			containerNameField.setText(currentResourceSelection.getFullPath()
                     .makeRelative().toString());
+		}
     }
 
     /**
@@ -427,10 +435,11 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
      * @param value String
      */
     public void setContainerFieldValue(String value) {
-        if (containerNameField == null)
-            initialContainerFieldValue = value;
-        else
-            containerNameField.setText(value);
+        if (containerNameField == null) {
+			initialContainerFieldValue = value;
+		} else {
+			containerNameField.setText(value);
+		}
     }
 
     /**
@@ -462,8 +471,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
         boolean pageComplete = determinePageCompletion();
         setPageComplete(pageComplete);
-        if (pageComplete)
-            setMessage(null);
+        if (pageComplete) {
+			setMessage(null);
+		}
         super.updateWidgetEnablements();
     }
 
@@ -482,16 +492,18 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         IContainer container = getSpecifiedContainer();
         if (container == null) {
         	//If it exists but is not valid then abort
-        	if(IDEWorkbenchPlugin.getPluginWorkspace().getRoot().exists(getContainerFullPath()))
-        		return false;
+        	if(IDEWorkbenchPlugin.getPluginWorkspace().getRoot().exists(getContainerFullPath())) {
+				return false;
+			}
         	
             //if it is does not exist be sure the project does
             IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
             IPath projectPath = containerPath.removeLastSegments(containerPath
                     .segmentCount() - 1);
 
-            if (workspace.getRoot().exists(projectPath))
-                return true;
+            if (workspace.getRoot().exists(projectPath)) {
+				return true;
+			}
             setErrorMessage(IDEWorkbenchMessages.WizardImportPage_projectNotExist);
             return false;
         } 
@@ -564,8 +576,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         IProject[] projects = IDEWorkbenchPlugin.getPluginWorkspace().getRoot()
                 .getProjects();
         for (int i = 0; i < projects.length; i++) {
-            if (projects[i].isOpen())
-                return false;
+            if (projects[i].isOpen()) {
+				return false;
+			}
         }
         return true;
     }

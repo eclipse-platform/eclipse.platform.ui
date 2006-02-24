@@ -204,8 +204,9 @@ public class CopyResourceAction extends SelectionListenerAction implements
             List sources = getSelectedResources();
 
             IPath destination = queryDestinationResource();
-            if (destination == null)
-                return;
+            if (destination == null) {
+				return;
+			}
 
             IWorkspaceRoot root = IDEWorkbenchPlugin.getPluginWorkspace()
                     .getRoot();
@@ -246,8 +247,9 @@ public class CopyResourceAction extends SelectionListenerAction implements
 
         // to enable this command all selected resources must be siblings
         List selectedResources = getSelectedResources();
-        if (selectedResources.size() == 0)
-            return false;
+        if (selectedResources.size() == 0) {
+			return false;
+		}
         IContainer firstParent = ((IResource) selectedResources.get(0))
                 .getParent();
         if (firstParent == null) {

@@ -130,8 +130,9 @@ public class FrameList extends EventManager {
      * @return the frame at the given index or <code>null</code>
      */
     public Frame getFrame(int index) {
-        if (index < 0 || index >= frames.size())
-            return null;
+        if (index < 0 || index >= frames.size()) {
+			return null;
+		}
         return (Frame) frames.get(index);
     }
 
@@ -195,8 +196,9 @@ public class FrameList extends EventManager {
      * if the current frame changes.
      */
     public void setCurrentIndex(int index) {
-        if (index != -1 && index != current)
-            setCurrent(index);
+        if (index != -1 && index != current) {
+			setCurrent(index);
+		}
     }
 
     /**

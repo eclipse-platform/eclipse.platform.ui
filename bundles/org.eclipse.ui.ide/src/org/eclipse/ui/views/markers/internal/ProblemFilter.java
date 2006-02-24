@@ -108,8 +108,9 @@ public class ProblemFilter extends MarkerFilter {
 	}
 
 	private boolean selectByDescription(ConcreteMarker item) {
-		if (description == null || description.equals("")) //$NON-NLS-1$
+		if (description == null || description.equals("")) { //$NON-NLS-1$
 			return true;
+		}
 
 		String markerDescription = item.getDescription();
 		int index = markerDescription.indexOf(description);
@@ -120,12 +121,13 @@ public class ProblemFilter extends MarkerFilter {
 		if (selectBySeverity) {
 			int markerSeverity = item.getSeverity();
 
-			if (markerSeverity == IMarker.SEVERITY_ERROR)
+			if (markerSeverity == IMarker.SEVERITY_ERROR) {
 				return (severity & SEVERITY_ERROR) > 0;
-			else if (markerSeverity == IMarker.SEVERITY_WARNING)
+			} else if (markerSeverity == IMarker.SEVERITY_WARNING) {
 				return (severity & SEVERITY_WARNING) > 0;
-			else if (markerSeverity == IMarker.SEVERITY_INFO)
+			} else if (markerSeverity == IMarker.SEVERITY_INFO) {
 				return (severity & SEVERITY_INFO) > 0;
+			}
 		}
 
 		return true;
@@ -227,26 +229,30 @@ public class ProblemFilter extends MarkerFilter {
 
 		String setting = settings.get(TAG_CONTAINS);
 
-		if (setting != null)
+		if (setting != null) {
 			contains = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.get(TAG_DESCRIPTION);
 
-		if (setting != null)
+		if (setting != null) {
 			description = new String(setting);
+		}
 
 		setting = settings.get(TAG_SELECT_BY_SEVERITY);
 
-		if (setting != null)
+		if (setting != null) {
 			selectBySeverity = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.get(TAG_SEVERITY);
 
-		if (setting != null)
+		if (setting != null) {
 			try {
 				severity = Integer.parseInt(setting);
 			} catch (NumberFormatException eNumberFormat) {
 			}
+		}
 
 	}
 
@@ -261,23 +267,27 @@ public class ProblemFilter extends MarkerFilter {
 
 		String setting = memento.getString(TAG_CONTAINS);
 
-		if (setting != null)
+		if (setting != null) {
 			contains = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = memento.getString(TAG_DESCRIPTION);
 
-		if (setting != null)
+		if (setting != null) {
 			description = new String(setting);
+		}
 
 		setting = memento.getString(TAG_SELECT_BY_SEVERITY);
 
-		if (setting != null)
+		if (setting != null) {
 			selectBySeverity = Boolean.valueOf(setting).booleanValue();
+		}
 
 		Integer severitySetting = memento.getInteger(TAG_SEVERITY);
 
-		if (setting != null)
+		if (setting != null) {
 			severity = severitySetting.intValue();
+		}
 	}
 
 	/*
@@ -302,8 +312,9 @@ public class ProblemFilter extends MarkerFilter {
 	 * @return String
 	 */
 	public String getId() {
-		if (contributionDescriptor == null)
+		if (contributionDescriptor == null) {
 			return null;
+		}
 		return contributionDescriptor.getLocalId();
 	}
 
@@ -338,8 +349,9 @@ public class ProblemFilter extends MarkerFilter {
 	 * @return boolean <code>true</code> if it is filtered out.
 	 */
 	public boolean isFilteredOutByActivity() {
-		if (contributionDescriptor == null)
+		if (contributionDescriptor == null) {
 			return false;
+		}
 		if (identifier == null) {
 			identifier = WorkbenchActivityHelper
 					.getIdentifier(contributionDescriptor);

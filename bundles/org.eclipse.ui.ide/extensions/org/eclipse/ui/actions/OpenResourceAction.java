@@ -113,17 +113,20 @@ public class OpenResourceAction extends WorkspaceAction implements
 				.getPreferenceStore();
 		String key = IDEInternalPreferences.OPEN_REQUIRED_PROJECTS;
 		String value = store.getString(key);
-		if (MessageDialogWithToggle.ALWAYS.equals(value))
+		if (MessageDialogWithToggle.ALWAYS.equals(value)) {
 			return true;
-		if (MessageDialogWithToggle.NEVER.equals(value))
+		}
+		if (MessageDialogWithToggle.NEVER.equals(value)) {
 			return false;
+		}
 		String message = IDEWorkbenchMessages.OpenResourceAction_openRequiredProjects;
 		MessageDialogWithToggle dialog = MessageDialogWithToggle
 				.openYesNoCancelQuestion(getShell(), IDEWorkbenchMessages.Question, message, null,
 						false, store, key);
 		int result = dialog.getReturnCode();
-		if (result == Window.CANCEL)
+		if (result == Window.CANCEL) {
 			throw new OperationCanceledException();
+		}
 		return dialog.getReturnCode() == IDialogConstants.YES_ID;
 	}
 
@@ -159,8 +162,9 @@ public class OpenResourceAction extends WorkspaceAction implements
 	 */
 	public void run() {
 		try {
-			if (promptToOpenWithReferences())
+			if (promptToOpenWithReferences()) {
 				runOpenWithReferences();
+			}
 			ISchedulingRule rule = null;
 			// be conservative and include all projects in the selection - projects
 			// can change state between now and when the job starts
@@ -190,9 +194,11 @@ public class OpenResourceAction extends WorkspaceAction implements
 				int count = 0;
 				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
 						.getProjects();
-				for (int i = 0; i < projects.length; i++)
-					if (!projects[i].isOpen())
+				for (int i = 0; i < projects.length; i++) {
+					if (!projects[i].isOpen()) {
 						count++;
+					}
+				}
 				return count;
 			}
 
@@ -201,12 +207,14 @@ public class OpenResourceAction extends WorkspaceAction implements
 			 */
 			private void doOpenWithReferences(IProject project,
 					IProgressMonitor monitor) throws CoreException {
-				if (!project.exists() || project.isOpen())
+				if (!project.exists() || project.isOpen()) {
 					return;
+				}
 				project.open(new SubProgressMonitor(monitor, 1000));
 				IProject[] references = project.getReferencedProjects();
-				for (int i = 0; i < references.length; i++)
+				for (int i = 0; i < references.length; i++) {
 					doOpenWithReferences(references[i], monitor);
+				}
 			}
 
 			public IStatus runInWorkspace(IProgressMonitor monitor)
@@ -245,8 +253,9 @@ public class OpenResourceAction extends WorkspaceAction implements
 		// don't call super since we want to enable if closed project is
 		// selected.
 
-		if (!selectionIsOfType(IResource.PROJECT))
+		if (!selectionIsOfType(IResource.PROJECT)) {
 			return false;
+		}
 
 		Iterator resources = getSelectedResources().iterator();
 		while (resources.hasNext()) {

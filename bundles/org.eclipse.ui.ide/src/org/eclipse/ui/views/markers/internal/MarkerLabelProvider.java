@@ -26,16 +26,18 @@ class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider {
 
     public Image getColumnImage(Object element, int columnIndex) {
         if (element == null || !(element instanceof IMarker)
-                || properties == null || columnIndex >= properties.length)
-            return null;
+                || properties == null || columnIndex >= properties.length) {
+			return null;
+		}
 
         return properties[columnIndex].getImage(element);
     }
 
     public String getColumnText(Object element, int columnIndex) {
         if (element == null || !(element instanceof IMarker)
-                || properties == null || columnIndex >= properties.length)
-            return ""; //$NON-NLS-1$
+                || properties == null || columnIndex >= properties.length) {
+			return ""; //$NON-NLS-1$
+		}
 
         return properties[columnIndex].getValue(element);
     }

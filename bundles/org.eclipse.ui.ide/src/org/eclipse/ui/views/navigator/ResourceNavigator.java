@@ -170,8 +170,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     private IPartListener partListener = new IPartListener() {
         public void partActivated(IWorkbenchPart part) {
-            if (part instanceof IEditorPart)
-                editorActivated((IEditorPart) part);
+            if (part instanceof IEditorPart) {
+				editorActivated((IEditorPart) part);
+			}
         }
 
         public void partBroughtToTop(IWorkbenchPart part) {
@@ -303,8 +304,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 .getWorkingSetManager();
         workingSetManager.addPropertyChangeListener(propertyChangeListener);
 
-        if (memento != null)
-            restoreState(memento);
+        if (memento != null) {
+			restoreState(memento);
+		}
         memento = null;
 
         // Set help for the view 
@@ -632,12 +634,14 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Used as the name for the current frame. 
      */
     String getFrameName(Object element) {
-        if (element instanceof IResource) 
-            return ((IResource) element).getName();
+        if (element instanceof IResource) {
+			return ((IResource) element).getName();
+		}
         String text = ((ILabelProvider) getTreeViewer().getLabelProvider())
         .getText(element);
-        if(text == null)
-        	return "";//$NON-NLS-1$
+        if(text == null) {
+			return "";//$NON-NLS-1$
+		}
         return text;
     }
 
@@ -648,15 +652,17 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     String getFrameToolTipText(Object element) {
         if (element instanceof IResource) {
             IPath path = ((IResource) element).getFullPath();
-            if (path.isRoot()) 
-                return ResourceNavigatorMessages.ResourceManager_toolTip;
+            if (path.isRoot()) {
+				return ResourceNavigatorMessages.ResourceManager_toolTip;
+			}
             return path.makeRelative().toString();
         } 
         
         String text = ((ILabelProvider) getTreeViewer().getLabelProvider())
         	.getText(element);
-        if(text == null)
-        	return "";//$NON-NLS-1$
+        if(text == null) {
+			return "";//$NON-NLS-1$
+		}
         return text;
     }
 
@@ -808,14 +814,16 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             int sortInt = 0;
             if (memento != null) {
                 String sortStr = memento.getString(TAG_SORTER);
-                if (sortStr != null)
-                    sortInt = new Integer(sortStr).intValue();
+                if (sortStr != null) {
+					sortInt = new Integer(sortStr).intValue();
+				}
             } else {
                 sortInt = settings.getInt(STORE_SORT_TYPE);
             }
             if (sortInt == ResourceSorter.NAME
-                    || sortInt == ResourceSorter.TYPE)
-                sortType = sortInt;
+                    || sortInt == ResourceSorter.TYPE) {
+				sortType = sortInt;
+			}
         } catch (NumberFormatException e) {
         }
         setSorter(new ResourceSorter(sortType));
@@ -928,12 +936,13 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 ArrayList unSelectedFilters = new ArrayList();
                 for (int i = 0; i < children.length; i++) {
                     if (children[i].getString(TAG_IS_ENABLED).equals(
-                            String.valueOf(true)))
-                        selectedFilters.add(children[i].getString(TAG_ELEMENT));
-                    else
-                        //enabled == false
+                            String.valueOf(true))) {
+						selectedFilters.add(children[i].getString(TAG_ELEMENT));
+					} else {
+						//enabled == false
                         unSelectedFilters.add(children[i]
                                 .getString(TAG_ELEMENT));
+					}
                 }
 
                 /* merge filters from Memento with selected = true filters from plugins
@@ -942,8 +951,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 for (Iterator iter = pluginFilters.iterator(); iter.hasNext();) {
                     String element = (String) iter.next();
                     if (!selectedFilters.contains(element)
-                            && !unSelectedFilters.contains(element))
-                        selectedFilters.add(element);
+                            && !unSelectedFilters.contains(element)) {
+						selectedFilters.add(element);
+					}
                 }
 
                 //Convert to an array of Strings
@@ -1028,8 +1038,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     public void saveState(IMemento memento) {
         TreeViewer viewer = getTreeViewer();
         if (viewer == null) {
-            if (this.memento != null) //Keep the old state;
-                memento.putMemento(this.memento);
+            if (this.memento != null) {
+				memento.putMemento(this.memento);
+			}
             return;
         }
 
@@ -1119,8 +1130,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         StringBuffer sb = new StringBuffer();
 
         for (int i = 0; i < patterns.length; i++) {
-            if (i != 0)
-                sb.append(ResourcePatternFilter.COMMA_SEPARATOR);
+            if (i != 0) {
+				sb.append(ResourcePatternFilter.COMMA_SEPARATOR);
+			}
             sb.append(patterns[i]);
         }
 
@@ -1132,8 +1144,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 .getPreferenceStore();
         String storedPatterns = preferenceStore
                 .getString(ResourcePatternFilter.FILTERS_TAG);
-        if (storedPatterns.length() > 0)
-            preferenceStore.setValue(ResourcePatternFilter.FILTERS_TAG, ""); //$NON-NLS-1$
+        if (storedPatterns.length() > 0) {
+			preferenceStore.setValue(ResourcePatternFilter.FILTERS_TAG, ""); //$NON-NLS-1$
+		}
     }
 
     /**
@@ -1289,8 +1302,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                     .getLabelProvider();
             String inputToolTip = getFrameToolTipText(input);
             String text = labelProvider.getText(input);
-            if(text != null)
-            	setContentDescription(text);
+            if(text != null) {
+				setContentDescription(text);
+			}
             if (workingSet != null) {
                 setTitleToolTip(NLS.bind(ResourceNavigatorMessages.ResourceNavigator_workingSetInputToolTip, inputToolTip, workingSet.getLabel()));
             } else {

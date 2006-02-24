@@ -70,8 +70,9 @@ public class CreateProjectWizard extends Wizard {
         // get a project descriptor
         IPath defaultPath = Platform.getLocation();
         IPath newPath = page.getLocationPath();
-        if (defaultPath.equals(newPath))
-            newPath = null;
+        if (defaultPath.equals(newPath)) {
+			newPath = null;
+		}
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         final IProjectDescription description = workspace
                 .newProjectDescription(newProjectHandle.getName());
@@ -141,8 +142,9 @@ public class CreateProjectWizard extends Wizard {
             projectHandle.create(description, new SubProgressMonitor(monitor,
                     1000));
 
-            if (monitor.isCanceled())
-                throw new OperationCanceledException();
+            if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 
             projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 
@@ -165,8 +167,9 @@ public class CreateProjectWizard extends Wizard {
      * Method declared on IWizard.
      */
     public boolean performFinish() {
-        if (wizard.getNewProject() != null)
-            return true;
+        if (wizard.getNewProject() != null) {
+			return true;
+		}
 
         IProject project = createNewProject();
         if (project != null) {

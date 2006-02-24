@@ -100,8 +100,9 @@ public class WizardStepGroup {
         stepViewer.setContentProvider(getStepProvider());
         stepViewer.setLabelProvider(new StepLabelProvider());
 
-        if (selectionListener != null)
-            stepViewer.addSelectionChangedListener(selectionListener);
+        if (selectionListener != null) {
+			stepViewer.addSelectionChangedListener(selectionListener);
+		}
 
         return composite;
     }
@@ -142,10 +143,11 @@ public class WizardStepGroup {
     private IContentProvider getStepProvider() {
         return new WorkbenchContentProvider() {
             public Object[] getChildren(Object parentElement) {
-                if (parentElement instanceof StepRoot)
-                    return ((StepRoot) parentElement).getSteps();
-                else
-                    return null;
+                if (parentElement instanceof StepRoot) {
+					return ((StepRoot) parentElement).getSteps();
+				} else {
+					return null;
+				}
             }
 
         };
@@ -157,8 +159,9 @@ public class WizardStepGroup {
     public WizardStep[] getSteps() {
         if (stepViewer != null) {
             StepRoot root = (StepRoot) stepViewer.getInput();
-            if (root != null)
-                return root.getSteps();
+            if (root != null) {
+				return root.getSteps();
+			}
         }
 
         return new WizardStep[0];
@@ -168,8 +171,9 @@ public class WizardStepGroup {
      * Marks the current step as being done
      */
     public void markStepAsDone() {
-        if (currentStep != null)
-            currentStep.markAsDone();
+        if (currentStep != null) {
+			currentStep.markAsDone();
+		}
     }
 
     /**
@@ -183,15 +187,18 @@ public class WizardStepGroup {
         WizardStep oldStep = currentStep;
         currentStep = step;
         if (stepViewer != null) {
-            if (oldStep != null)
-                stepViewer.update(oldStep, null);
-            if (currentStep != null)
-                stepViewer.update(currentStep, null);
+            if (oldStep != null) {
+				stepViewer.update(oldStep, null);
+			}
+            if (currentStep != null) {
+				stepViewer.update(currentStep, null);
+			}
 
             // Update the layout so that there is enough
             // room for the icon now.
-            if (oldStep == null && currentStep != null)
-                parentComposite.layout(true);
+            if (oldStep == null && currentStep != null) {
+				parentComposite.layout(true);
+			}
         }
     }
 
@@ -202,11 +209,13 @@ public class WizardStepGroup {
      * @param listener The selection listener to set
      */
     public void setSelectionListener(ISelectionChangedListener listener) {
-        if (selectionListener != null && stepViewer != null)
-            stepViewer.removeSelectionChangedListener(selectionListener);
+        if (selectionListener != null && stepViewer != null) {
+			stepViewer.removeSelectionChangedListener(selectionListener);
+		}
         selectionListener = listener;
-        if (selectionListener != null && stepViewer != null)
-            stepViewer.addSelectionChangedListener(selectionListener);
+        if (selectionListener != null && stepViewer != null) {
+			stepViewer.addSelectionChangedListener(selectionListener);
+		}
     }
 
     /**
@@ -234,10 +243,11 @@ public class WizardStepGroup {
         }
 
         public WizardStep[] getSteps() {
-            if (steps == null)
-                return new WizardStep[0];
-            else
-                return steps;
+            if (steps == null) {
+				return new WizardStep[0];
+			} else {
+				return steps;
+			}
         }
     }
 
@@ -258,10 +268,12 @@ public class WizardStepGroup {
         public Image getImage(Object element) {
             if (element instanceof WizardStep) {
                 WizardStep step = (WizardStep) element;
-                if (step.isDone())
-                    return getDoneImage();
-                if (step == currentStep)
-                    return getCurrentImage();
+                if (step.isDone()) {
+					return getDoneImage();
+				}
+                if (step == currentStep) {
+					return getCurrentImage();
+				}
             }
 
             return null;

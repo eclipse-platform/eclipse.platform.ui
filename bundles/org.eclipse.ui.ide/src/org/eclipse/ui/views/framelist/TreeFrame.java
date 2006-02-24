@@ -71,8 +71,9 @@ public class TreeFrame extends Frame {
         setInput(input);
         ILabelProvider provider = (ILabelProvider) viewer.getLabelProvider();
         String name = provider.getText(input);
-        if(name == null)
-        	name = "";//$NON-NLS-1$
+        if(name == null) {
+			name = "";//$NON-NLS-1$
+		}
         setName(name);
         setToolTipText(name);
     }
@@ -128,8 +129,9 @@ public class TreeFrame extends Frame {
             if (factoryID != null) {
                 IElementFactory factory = PlatformUI.getWorkbench()
                         .getElementFactory(factoryID);
-                if (factory != null)
-                    elements.add(factory.createElement(elementMem[i]));
+                if (factory != null) {
+					elements.add(factory.createElement(elementMem[i]));
+				}
             }
         }
         return elements;
@@ -143,16 +145,18 @@ public class TreeFrame extends Frame {
     public void restoreState(IMemento memento) {
         IMemento childMem = memento.getChild(TAG_FRAME_INPUT);
 
-        if (childMem == null)
-            return;
+        if (childMem == null) {
+			return;
+		}
 
         String factoryID = childMem.getString(TAG_FACTORY_ID);
         IAdaptable frameInput = null;
         if (factoryID != null) {
             IElementFactory factory = PlatformUI.getWorkbench()
                     .getElementFactory(factoryID);
-            if (factory != null)
-                frameInput = factory.createElement(childMem);
+            if (factory != null) {
+				frameInput = factory.createElement(childMem);
+			}
         }
         if (frameInput != null) {
             input = frameInput;
@@ -201,8 +205,9 @@ public class TreeFrame extends Frame {
      * @param memento memento to persist the frame state in.
      */
     public void saveState(IMemento memento) {
-        if (!(input instanceof IAdaptable))
-            return;
+        if (!(input instanceof IAdaptable)) {
+			return;
+		}
 
         IPersistableElement persistable = (IPersistableElement) ((IAdaptable) input)
                 .getAdapter(IPersistableElement.class);

@@ -110,13 +110,15 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
                     for (int j = 0; j < configElements.length; j++) {
                         String pattern = configElements[j]
                                 .getAttribute("pattern");//$NON-NLS-1$
-                        if (pattern != null)
-                            definedFilters.add(pattern);
+                        if (pattern != null) {
+							definedFilters.add(pattern);
+						}
                         String selected = configElements[j]
                                 .getAttribute("selected");//$NON-NLS-1$
                         if (selected != null
-                                && selected.equalsIgnoreCase("true"))//$NON-NLS-1$
-                            defaultFilters.add(pattern);
+                                && selected.equalsIgnoreCase("true")) { //$NON-NLS-1$
+							defaultFilters.add(pattern);
+						}
                     }
                 }
             }

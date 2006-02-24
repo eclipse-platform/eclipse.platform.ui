@@ -64,8 +64,9 @@ public class FileSystemExportWizard extends Wizard implements IExportWizard {
         IDialogSettings workbenchSettings = plugin.getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("FileSystemExportWizard");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings.addNewSection("FileSystemExportWizard");//$NON-NLS-1$
+        if (section == null) {
+			section = workbenchSettings.addNewSection("FileSystemExportWizard");//$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 

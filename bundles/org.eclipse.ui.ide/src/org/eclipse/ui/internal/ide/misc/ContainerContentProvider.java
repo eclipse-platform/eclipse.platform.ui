@@ -48,8 +48,9 @@ public class ContainerContentProvider implements ITreeContentProvider {
             // check if closed projects should be shown
             IProject[] allProjects = ((IWorkspace) element).getRoot()
                     .getProjects();
-            if (showClosedProjects)
-                return allProjects;
+            if (showClosedProjects) {
+				return allProjects;
+			}
 
             ArrayList accessibleProjects = new ArrayList();
             for (int i = 0; i < allProjects.length; i++) {
@@ -89,8 +90,9 @@ public class ContainerContentProvider implements ITreeContentProvider {
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
      */
     public Object getParent(Object element) {
-        if (element instanceof IResource)
-            return ((IResource) element).getParent();
+        if (element instanceof IResource) {
+			return ((IResource) element).getParent();
+		}
         return null;
     }
 

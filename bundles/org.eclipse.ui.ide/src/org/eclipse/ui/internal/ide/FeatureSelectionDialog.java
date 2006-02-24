@@ -100,10 +100,12 @@ public class FeatureSelectionDialog extends SelectionDialog {
                 name1 = i1.getFeatureLabel();
                 i2 = (AboutInfo) b;
                 name2 = i2.getFeatureLabel();
-                if (name1 == null)
-                    name1 = ""; //$NON-NLS-1$
-                if (name2 == null)
-                    name2 = ""; //$NON-NLS-1$
+                if (name1 == null) {
+					name1 = ""; //$NON-NLS-1$
+				}
+                if (name2 == null) {
+					name2 = ""; //$NON-NLS-1$
+				}
                 return coll.compare(name1, name2);
             }
         });

@@ -93,15 +93,17 @@ public class NewExampleAction extends Action {
 
         ISelection selection = window.getSelectionService().getSelection();
         IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
-        if (selection instanceof IStructuredSelection)
-            selectionToPass = (IStructuredSelection) selection;
+        if (selection instanceof IStructuredSelection) {
+			selectionToPass = (IStructuredSelection) selection;
+		}
         wizard.init(workbench, selectionToPass);
         IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
                 .getDialogSettings();
         IDialogSettings wizardSettings = workbenchSettings
                 .getSection("NewWizardAction"); //$NON-NLS-1$
-        if (wizardSettings == null)
-            wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$
+        if (wizardSettings == null) {
+			wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$
+		}
         wizard.setDialogSettings(wizardSettings);
         wizard.setForcePreviousAndNextButtons(true);
 

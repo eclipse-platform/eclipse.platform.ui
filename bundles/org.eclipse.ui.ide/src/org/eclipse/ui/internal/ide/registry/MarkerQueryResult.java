@@ -47,19 +47,23 @@ public class MarkerQueryResult {
      * Method declared on Object.
      */
     public boolean equals(Object o) {
-        if (!(o instanceof MarkerQueryResult))
-            return false;
+        if (!(o instanceof MarkerQueryResult)) {
+			return false;
+		}
 
-        if (o == this)
-            return true;
+        if (o == this) {
+			return true;
+		}
 
         MarkerQueryResult mqr = (MarkerQueryResult) o;
-        if (values.length != mqr.values.length)
-            return false;
+        if (values.length != mqr.values.length) {
+			return false;
+		}
 
         for (int i = 0; i < values.length; i++) {
-            if (!(values[i].equals(mqr.values[i])))
-                return false;
+            if (!(values[i].equals(mqr.values[i]))) {
+				return false;
+			}
         }
 
         return true;

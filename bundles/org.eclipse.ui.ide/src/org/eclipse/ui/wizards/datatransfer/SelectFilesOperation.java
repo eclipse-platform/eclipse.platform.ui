@@ -67,8 +67,9 @@ public class SelectFilesOperation implements IRunnableWithProgress {
                 .getFullPath(fileSystemObject) : provider
                 .getLabel(fileSystemObject);
 
-        if (!isContainer && !hasDesiredExtension(elementLabel))
-            return null;
+        if (!isContainer && !hasDesiredExtension(elementLabel)) {
+			return null;
+		}
 
         FileSystemElement result = new FileSystemElement(elementLabel, parent,
                 isContainer);
@@ -77,12 +78,14 @@ public class SelectFilesOperation implements IRunnableWithProgress {
         if (isContainer) {
             boolean haveChildOrFile = false;
             List children = provider.getChildren(fileSystemObject);
-            if (children == null)
-                children = new ArrayList(1);
+            if (children == null) {
+				children = new ArrayList(1);
+			}
             Iterator childrenEnum = children.iterator();
             while (childrenEnum.hasNext()) {
-                if (createElement(result, childrenEnum.next()) != null)
-                    haveChildOrFile = true;
+                if (createElement(result, childrenEnum.next()) != null) {
+					haveChildOrFile = true;
+				}
             }
 
             if (!haveChildOrFile && parent != null) {
@@ -100,8 +103,9 @@ public class SelectFilesOperation implements IRunnableWithProgress {
     protected String getExtensionFor(String filename) {
         int nIndex = filename.lastIndexOf('.');
 
-        if (nIndex >= 0)
-            return filename.substring(nIndex + 1);
+        if (nIndex >= 0) {
+			return filename.substring(nIndex + 1);
+		}
 
         return "";//$NON-NLS-1$
 
@@ -119,14 +123,16 @@ public class SelectFilesOperation implements IRunnableWithProgress {
      * is one of the extensions specified as desired by the filter.
      */
     protected boolean hasDesiredExtension(String filename) {
-        if (desiredExtensions == null) // ie.- all extensions are fine
-            return true;
+        if (desiredExtensions == null) {
+			return true;
+		}
 
         int extensionsSize = desiredExtensions.length;
         for (int i = 0; i < extensionsSize; i++) {
             if (getExtensionFor(filename)
-                    .equalsIgnoreCase(desiredExtensions[i]))
-                return true;
+                    .equalsIgnoreCase(desiredExtensions[i])) {
+				return true;
+			}
         }
 
         return false;

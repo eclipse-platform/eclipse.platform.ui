@@ -208,8 +208,9 @@ public class WizardFileSystemResourceExportPage1 extends
      */
     protected boolean ensureDirectoryExists(File directory) {
         if (!directory.exists()) {
-            if (!queryYesNoQuestion(DataTransferMessages.DataTransfer_createTargetDirectory))
-                return false;
+            if (!queryYesNoQuestion(DataTransferMessages.DataTransfer_createTargetDirectory)) {
+				return false;
+			}
 
             if (!directory.mkdirs()) {
                 displayErrorDialog(DataTransferMessages.DataTransfer_directoryCreationError);
@@ -278,8 +279,9 @@ public class WizardFileSystemResourceExportPage1 extends
      */
     public boolean finish() {
         List resourcesToExport = getWhiteCheckedResources();
-        if (!ensureTargetIsValid(new File(getDestinationValue())))
-            return false;
+        if (!ensureTargetIsValid(new File(getDestinationValue()))) {
+			return false;
+		}
 
 
         //Save dirty editors if possible but do not stop if not all are saved
@@ -341,8 +343,9 @@ public class WizardFileSystemResourceExportPage1 extends
     public void handleEvent(Event e) {
         Widget source = e.widget;
 
-        if (source == destinationBrowseButton)
-            handleDestinationBrowseButtonPressed();
+        if (source == destinationBrowseButton) {
+			handleDestinationBrowseButtonPressed();
+		}
 
         updatePageCompletion();
     }
@@ -357,8 +360,9 @@ public class WizardFileSystemResourceExportPage1 extends
         if (settings != null) {
             String[] directoryNames = settings
                     .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null)
-                directoryNames = new String[0];
+            if (directoryNames == null) {
+				directoryNames = new String[0];
+			}
 
             directoryNames = addToHistory(directoryNames, getDestinationValue());
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
@@ -382,13 +386,15 @@ public class WizardFileSystemResourceExportPage1 extends
         if (settings != null) {
             String[] directoryNames = settings
                     .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null)
-                return; // ie.- no settings stored
+            if (directoryNames == null) {
+				return; // ie.- no settings stored
+			}
 
             // destination
             setDestinationValue(directoryNames[0]);
-            for (int i = 0; i < directoryNames.length; i++)
-                addDestinationItem(directoryNames[i]);
+            for (int i = 0; i < directoryNames.length; i++) {
+				addDestinationItem(directoryNames[i]);
+			}
 
             // options
             overwriteExistingFilesCheckbox.setSelection(settings
@@ -422,9 +428,9 @@ public class WizardFileSystemResourceExportPage1 extends
         }
 
         String conflictingContainer = getConflictingContainerNameFor(destinationValue);
-        if (conflictingContainer == null)
-            setErrorMessage(null);
-        else {
+        if (conflictingContainer == null) {
+			setErrorMessage(null);
+		} else {
             setErrorMessage(NLS.bind(DataTransferMessages.FileExport_conflictingContainer, conflictingContainer));
             giveFocusToDestination();
             return false;
@@ -444,9 +450,9 @@ public class WizardFileSystemResourceExportPage1 extends
     	if (resourcesToExport.size() == 0){
     		setErrorMessage(DataTransferMessages.FileExport_noneSelected);
             isValid =  false;
-    	}
-    	else
-    		setErrorMessage(null);
+    	} else {
+			setErrorMessage(null);
+		}
 		return super.validateSourceGroup() && isValid;
 	}
 
@@ -469,8 +475,9 @@ public class WizardFileSystemResourceExportPage1 extends
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IPath testPath = new Path(targetDirectory);
 
-        if (root.getLocation().isPrefixOf(testPath))
-            return DataTransferMessages.FileExport_rootName;
+        if (root.getLocation().isPrefixOf(testPath)) {
+			return DataTransferMessages.FileExport_rootName;
+		}
 
 	    IContainer[] containers = root.findContainersForLocation(testPath);
 	    if (containers.length > 0){

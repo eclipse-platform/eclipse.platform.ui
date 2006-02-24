@@ -65,9 +65,10 @@ public class CustomizationTab extends Composite {
 
 	protected void addSelectionChangedListener(
 			ISelectionChangedListener selectionListener) {
-		if (tableViewer != null)
+		if (tableViewer != null) {
 			tableViewer
 					.addSelectionChangedListener(selectionListener);
+		}
 	}
 
 	protected void createControl() {

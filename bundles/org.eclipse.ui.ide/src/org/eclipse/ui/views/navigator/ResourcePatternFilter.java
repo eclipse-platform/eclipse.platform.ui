@@ -49,8 +49,9 @@ public class ResourcePatternFilter extends ViewerFilter {
      */
     private StringMatcher[] getMatchers() {
 
-        if (this.matchers == null)
-            initializeFromPreferences();
+        if (this.matchers == null) {
+			initializeFromPreferences();
+		}
 
         return this.matchers;
     }
@@ -61,8 +62,9 @@ public class ResourcePatternFilter extends ViewerFilter {
      */
     public String[] getPatterns() {
 
-        if (this.patterns == null)
-            initializeFromPreferences();
+        if (this.patterns == null) {
+			initializeFromPreferences();
+		}
 
         return this.patterns;
 
@@ -106,8 +108,9 @@ public class ResourcePatternFilter extends ViewerFilter {
 
         while (entries.hasMoreElements()) {
             String nextToken = entries.nextToken();
-            if (definedFilters.indexOf(nextToken) > -1)
-                patterns.add(nextToken);
+            if (definedFilters.indexOf(nextToken) > -1) {
+				patterns.add(nextToken);
+			}
         }
 
         //Convert to an array of Strings
@@ -132,8 +135,9 @@ public class ResourcePatternFilter extends ViewerFilter {
             String name = resource.getName();
             StringMatcher[] testMatchers = getMatchers();
             for (int i = 0; i < testMatchers.length; i++) {
-                if (testMatchers[i].match(name))
-                    return false;
+                if (testMatchers[i].match(name)) {
+					return false;
+				}
             }
             return true;
         }

@@ -777,8 +777,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 							 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
 							 */
 							public String isValid(String newText) {
-								if (newText.length() == 0)
+								if (newText.length() == 0) {
 									return MarkerMessages.MarkerFilterDialog_emptyMessage;
+								}
 								return null;
 							}
 						});
@@ -815,8 +816,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			list.toArray(selected);
 			selectedFilters = selected;
 
-		} else
+		} else {
 			selectedFilters = new MarkerFilter[0];
+		}
 		updateUIFromFilter();
 
 	}
@@ -833,8 +835,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 					- toRemove.size()];
 			int index = 0;
 			for (int i = 0; i < filters.length; i++) {
-				if (toRemove.contains(filters[i]))
+				if (toRemove.contains(filters[i])) {
 					continue;
+				}
 				newFilters[index] = filters[i];
 				index++;
 			}
@@ -1025,8 +1028,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	 */
 	protected MarkerFilter getSelectedFilter() {
 
-		if (selectedFilters.length == 1)
+		if (selectedFilters.length == 1) {
 			return selectedFilters[0];
+		}
 		return null;
 	}
 
@@ -1044,8 +1048,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			 */
 			public Object[] getElements(Object inputElement) {
 				MarkerFilter selected = getSelectedFilter();
-				if (selected == null)
+				if (selected == null) {
 					return new Object[0];
+				}
 
 				return getRootEntries(selected);
 			}
@@ -1121,8 +1126,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		List selected = new ArrayList();
 		for (int i = 0; i < checkElements.length; i++) {
 			AbstractNode node = (AbstractNode) checkElements[i];
-			if (!node.isCategory())
+			if (!node.isCategory()) {
 				selected.add(((MarkerTypeNode) node).getMarkerType());
+			}
 
 		}
 		return selected;
@@ -1250,16 +1256,17 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 
 		filter.setSelectedTypes(getSelectedTypes());
 
-		if (selectedResourceButton.getSelection())
+		if (selectedResourceButton.getSelection()) {
 			filter.setOnResource(MarkerFilter.ON_SELECTED_ONLY);
-		else if (selectedResourceAndChildrenButton.getSelection())
+		} else if (selectedResourceAndChildrenButton.getSelection()) {
 			filter.setOnResource(MarkerFilter.ON_SELECTED_AND_CHILDREN);
-		else if (anyResourceInSameProjectButton.getSelection())
+		} else if (anyResourceInSameProjectButton.getSelection()) {
 			filter.setOnResource(MarkerFilter.ON_ANY_IN_SAME_CONTAINER);
-		else if (workingSetGroup.getSelection())
+		} else if (workingSetGroup.getSelection()) {
 			filter.setOnResource(MarkerFilter.ON_WORKING_SET);
-		else
+		} else {
 			filter.setOnResource(MarkerFilter.ON_ANY);
+		}
 
 		filter.setWorkingSet(workingSetGroup.getWorkingSet());
 	}
@@ -1379,9 +1386,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 				elements.add(new MarkerTypeNode(markerType));
 			} else {
 				MarkerCategory category;
-				if (categories.containsKey(categoryName))
+				if (categories.containsKey(categoryName)) {
 					category = (MarkerCategory) categories.get(categoryName);
-				else {
+				} else {
 					category = new MarkerCategory(categoryName);
 					categories.put(categoryName, category);
 					elements.add(category);
@@ -1405,11 +1412,13 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	 */
 	private void setParentCheckState(Object element, boolean checked) {
 		Object parent = typesContentProvider.getParent(element);
-		if (parent == null)
+		if (parent == null) {
 			return;
+		}
 		Object[] children = typesContentProvider.getChildren(parent);
-		if (children.length == 0)
+		if (children.length == 0) {
 			return;
+		}
 		if (checked) {// at least one is checked
 			for (int i = 0; i < children.length; i++) {
 				Object object = children[i];

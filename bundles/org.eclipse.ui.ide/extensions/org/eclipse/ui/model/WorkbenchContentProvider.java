@@ -115,15 +115,17 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	protected void processDelta(IResourceDelta delta) {		
 
 		Control ctrl = viewer.getControl();
-		if (ctrl == null || ctrl.isDisposed())
+		if (ctrl == null || ctrl.isDisposed()) {
 			return;
+		}
 		
 		
 		final Collection runnables = new ArrayList();
 		processDelta(delta, runnables);
 
-		if (runnables.isEmpty())
+		if (runnables.isEmpty()) {
 			return;
+		}
 
 		//Are we in the UIThread? If so spin it until we are done
 		if (ctrl.getDisplay().getThread() == Thread.currentThread()) {
@@ -136,8 +138,9 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 				public void run() {
 					//Abort if this happens after disposes
 					Control ctrl = viewer.getControl();
-					if (ctrl == null || ctrl.isDisposed())
+					if (ctrl == null || ctrl.isDisposed()) {
 						return;
+					}
 					
 					runUpdates(runnables);
 				}
@@ -165,8 +168,9 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		//he widget may have been destroyed
 		// by the time this is run. Check for this and do nothing if so.
 		Control ctrl = viewer.getControl();
-		if (ctrl == null || ctrl.isDisposed())
+		if (ctrl == null || ctrl.isDisposed()) {
 			return;
+		}
 
 		// Get the affected resource
 		final IResource resource = delta.getResource();
@@ -235,8 +239,9 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		IResourceDelta[] removedChildren = delta
 				.getAffectedChildren(IResourceDelta.REMOVED);
 
-		if (addedChildren.length == 0 && removedChildren.length == 0)
+		if (addedChildren.length == 0 && removedChildren.length == 0) {
 			return;
+		}
 
 		final Object[] addedObjects;
 		final Object[] removedObjects;
@@ -254,8 +259,9 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 					++numMovedFrom;
 				}
 			}
-		} else
+		} else {
 			addedObjects = new Object[0];
+		}
 
 		// Handle removed children. Issue one update for all removals.
 		if (removedChildren.length > 0) {
@@ -285,10 +291,12 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 						treeViewer.getControl().setRedraw(false);
 					}
 					try {
-						if (addedObjects.length > 0)
+						if (addedObjects.length > 0) {
 							treeViewer.add(resource, addedObjects);
-						if (removedObjects.length > 0)
+						}
+						if (removedObjects.length > 0) {
 							treeViewer.remove(removedObjects);
+						}
 					}
 					finally {
 						if (hasRename) {

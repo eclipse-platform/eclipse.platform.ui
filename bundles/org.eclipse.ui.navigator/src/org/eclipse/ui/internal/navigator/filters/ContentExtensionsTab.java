@@ -48,8 +48,9 @@ public class ContentExtensionsTab extends CustomizationTab {
 		INavigatorContentDescriptor[] visibleExtensions = getContentService()
 				.getVisibleExtensions();
 		for (int i = 0; i < visibleExtensions.length; i++) {
-			if (getContentService().isActive(visibleExtensions[i].getId()))
+			if (getContentService().isActive(visibleExtensions[i].getId())) {
 				getTableViewer().setChecked(visibleExtensions[i], true);
+			}
 		}
 
 	}

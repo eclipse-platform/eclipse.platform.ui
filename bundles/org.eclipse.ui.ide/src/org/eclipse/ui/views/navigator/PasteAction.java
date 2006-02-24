@@ -84,12 +84,15 @@ import org.eclipse.ui.part.ResourceTransfer;
         for (int i = 0; i < selectedResources.size(); i++) {
             IResource resource = (IResource) selectedResources.get(i);
 
-            if (resource instanceof IProject && !((IProject) resource).isOpen())
-                return null;
-            if (resource.getType() == IResource.FILE)
-                resource = resource.getParent();
-            if (resource != null)
-                return resource;
+            if (resource instanceof IProject && !((IProject) resource).isOpen()) {
+				return null;
+			}
+            if (resource.getType() == IResource.FILE) {
+				resource = resource.getParent();
+			}
+            if (resource != null) {
+				return resource;
+			}
         }
         return null;
     }
@@ -103,8 +106,9 @@ import org.eclipse.ui.part.ResourceTransfer;
      */
     private boolean isLinked(IResource[] resources) {
         for (int i = 0; i < resources.length; i++) {
-            if (resources[i].isLinked())
-                return true;
+            if (resources[i].isLinked()) {
+				return true;
+			}
         }
         return false;
     }
@@ -156,10 +160,11 @@ import org.eclipse.ui.part.ResourceTransfer;
      */
     private IContainer getContainer() {
         List selection = getSelectedResources();
-        if (selection.get(0) instanceof IFile)
-            return ((IFile) selection.get(0)).getParent();
-        else
-            return (IContainer) selection.get(0);
+        if (selection.get(0) instanceof IFile) {
+			return ((IFile) selection.get(0)).getParent();
+		} else {
+			return (IContainer) selection.get(0);
+		}
     }
 
     /**
@@ -174,8 +179,9 @@ import org.eclipse.ui.part.ResourceTransfer;
      * 	project or multiple selected files in the same folder 
      */
     protected boolean updateSelection(IStructuredSelection selection) {
-        if (!super.updateSelection(selection))
-            return false;
+        if (!super.updateSelection(selection)) {
+			return false;
+		}
 
         final IResource[][] clipboardData = new IResource[1][];
         shell.getDisplay().syncExec(new Runnable() {
@@ -195,20 +201,23 @@ import org.eclipse.ui.part.ResourceTransfer;
                 // make sure all resource data are open projects
                 // can paste open projects regardless of selection
                 if (resourceData[i].getType() != IResource.PROJECT
-                        || ((IProject) resourceData[i]).isOpen() == false)
-                    return false;
+                        || ((IProject) resourceData[i]).isOpen() == false) {
+					return false;
+				}
             }
             return true;
         }
 
-        if (getSelectedNonResources().size() > 0)
-            return false;
+        if (getSelectedNonResources().size() > 0) {
+			return false;
+		}
 
         IResource targetResource = getTarget();
         // targetResource is null if no valid target is selected (e.g., open project) 
         // or selection is empty	
-        if (targetResource == null)
-            return false;
+        if (targetResource == null) {
+			return false;
+		}
 
         // can paste files and folders to a single selection (file, folder, 
         // open project) or multiple file selection with the same parent
@@ -216,24 +225,28 @@ import org.eclipse.ui.part.ResourceTransfer;
         if (selectedResources.size() > 1) {
             for (int i = 0; i < selectedResources.size(); i++) {
                 IResource resource = (IResource) selectedResources.get(i);
-                if (resource.getType() != IResource.FILE)
-                    return false;
-                if (!targetResource.equals(resource.getParent()))
-                    return false;
+                if (resource.getType() != IResource.FILE) {
+					return false;
+				}
+                if (!targetResource.equals(resource.getParent())) {
+					return false;
+				}
             }
         }
         if (resourceData != null) {
             // linked resources can only be pasted into projects
             if (isLinked(resourceData)
                     && targetResource.getType() != IResource.PROJECT
-                    && targetResource.getType() != IResource.FOLDER)
-                return false;
+                    && targetResource.getType() != IResource.FOLDER) {
+				return false;
+			}
 
             if (targetResource.getType() == IResource.FOLDER) {
                 // don't try to copy folder to self
                 for (int i = 0; i < resourceData.length; i++) {
-                    if (targetResource.equals(resourceData[i]))
-                        return false;
+                    if (targetResource.equals(resourceData[i])) {
+						return false;
+					}
                 }
             }
             return true;
@@ -241,8 +254,9 @@ import org.eclipse.ui.part.ResourceTransfer;
         TransferData[] transfers = clipboard.getAvailableTypes();
         FileTransfer fileTransfer = FileTransfer.getInstance();
         for (int i = 0; i < transfers.length; i++) {
-            if (fileTransfer.isSupportedType(transfers[i]))
-                return true;
+            if (fileTransfer.isSupportedType(transfers[i])) {
+				return true;
+			}
         }
         return false;
     }

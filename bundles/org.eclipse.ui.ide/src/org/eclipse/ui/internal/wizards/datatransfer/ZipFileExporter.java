@@ -75,8 +75,9 @@ public class ZipFileExporter implements IFileExporter {
                     length += n;
                 }
             } finally {
-                if (contentStream != null)
-                    contentStream.close();
+                if (contentStream != null) {
+					contentStream.close();
+				}
             }
 
             entry.setSize(length);
@@ -91,8 +92,9 @@ public class ZipFileExporter implements IFileExporter {
                 outputStream.write(readBuffer, 0, n);
             }
         } finally {
-            if (contentStream != null)
-                contentStream.close();
+            if (contentStream != null) {
+				contentStream.close();
+			}
         }
         outputStream.closeEntry();
     }

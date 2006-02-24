@@ -35,8 +35,9 @@ class DefaultTaskListResourceAdapter implements ITaskListResourceAdapter {
      * Return the default instance used for TaskList adapting.
      */
     static ITaskListResourceAdapter getDefault() {
-        if (singleton == null)
-            singleton = new DefaultTaskListResourceAdapter();
+        if (singleton == null) {
+			singleton = new DefaultTaskListResourceAdapter();
+		}
         return singleton;
     }
 
@@ -46,10 +47,11 @@ class DefaultTaskListResourceAdapter implements ITaskListResourceAdapter {
     public IResource getAffectedResource(IAdaptable adaptable) {
 
         IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-        if (resource == null)
-            return (IFile) adaptable.getAdapter(IFile.class);
-        else
-            return resource;
+        if (resource == null) {
+			return (IFile) adaptable.getAdapter(IFile.class);
+		} else {
+			return resource;
+		}
 
     }
 

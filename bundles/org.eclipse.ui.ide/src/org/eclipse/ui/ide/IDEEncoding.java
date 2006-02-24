@@ -84,8 +84,9 @@ public final class IDEEncoding {
 
 		String enc = getResourceEncoding();
 
-		if (!(enc == null || encodings.contains(enc)))
+		if (!(enc == null || encodings.contains(enc))) {
 			encodings.add(enc);
+		}
 
 		Collections.sort(encodings);
 		return encodings;
@@ -100,8 +101,9 @@ public final class IDEEncoding {
 	public static String getResourceEncoding() {
 		String preference = ResourcesPlugin.getPlugin().getPluginPreferences().getString(
 				ResourcesPlugin.PREF_ENCODING);
-		if (preference == null || preference.length() == 0)
+		if (preference == null || preference.length() == 0) {
 			return null;
+		}
 		return preference;
 	}
 
@@ -118,8 +120,9 @@ public final class IDEEncoding {
 	 */
 	public static void setResourceEncoding(String value) {
 
-		if (value != null)
+		if (value != null) {
 			addIDEEncoding(value);
+		}
 
 		final String finalValue = value;
 		Job charsetJob = new Job(IDEWorkbenchMessages.IDEEncoding_EncodingJob) {
@@ -155,8 +158,9 @@ public final class IDEEncoding {
 	 */
 	public static void addIDEEncoding(String value) {
 
-		if (WorkbenchEncoding.getDefinedEncodings().contains(value))
+		if (WorkbenchEncoding.getDefinedEncodings().contains(value)) {
 			return;
+		}
 
 		writeEncodingsPreference(value, getIDEEncodingsPreference());
 
@@ -180,12 +184,14 @@ public final class IDEEncoding {
 			String string = (String) currentEncodings.next();
 			result.append(string);
 			result.append(PREFERENCE_SEPARATOR);
-			if (addValue && string.equals(value))//If we still think we are going to add it check first
+			if (addValue && string.equals(value)) {
 				addValue = false;
+			}
 		}
 
-		if (addValue)
+		if (addValue) {
 			result.append(value);
+		}
 
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDE_ENCODINGS_PREFERENCE,
 				result.toString());
@@ -203,8 +209,9 @@ public final class IDEEncoding {
 		String encodings = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(
 				IDE_ENCODINGS_PREFERENCE);
 
-		if (encodings == null || encodings.length() == 0)
+		if (encodings == null || encodings.length() == 0) {
 			return new ArrayList();
+		}
 
 		String[] preferenceEncodings = encodings.split(PREFERENCE_SEPARATOR);
 		ArrayList result = new ArrayList();
@@ -218,17 +225,18 @@ public final class IDEEncoding {
 			} catch (IllegalCharsetNameException e) {
 				isSupported = false;
 			}
-			if (isSupported)
+			if (isSupported) {
 				result.add(string);
-			else{
+			} else{
 				WorkbenchPlugin.log(NLS.bind(IDEWorkbenchMessages.WorkbenchEncoding_invalidCharset, string));
 				updateRequired = true;
 			}
 				
 		}
 		
-		if(updateRequired)//If we logged a problem then clear the preference
+		if(updateRequired) {
 			writeEncodingsPreference(null, result);
+		}
 		return result;
 
 	}
@@ -252,18 +260,23 @@ public final class IDEEncoding {
 	 */
 	public static String getByteOrderMarkLabel(IContentDescription description) {
 
-		if (description == null)
+		if (description == null) {
 			return null;
+		}
 
 		byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-		if (bom == null)
+		if (bom == null) {
 			return null;
-		if (bom == IContentDescription.BOM_UTF_8)
+		}
+		if (bom == IContentDescription.BOM_UTF_8) {
 			return IDEEncoding.BOM_UTF_8;
-		if (bom == IContentDescription.BOM_UTF_16BE)
+		}
+		if (bom == IContentDescription.BOM_UTF_16BE) {
 			return IDEEncoding.BOM_UTF_16BE;
-		if (bom == IContentDescription.BOM_UTF_16LE)
+		}
+		if (bom == IContentDescription.BOM_UTF_16LE) {
 			return IDEEncoding.BOM_UTF_16LE;
+		}
 
 		return null;
 	}

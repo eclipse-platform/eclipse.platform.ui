@@ -88,8 +88,9 @@ public class TarFileExporter implements IFileExporter {
                 outputStream.write(readBuffer, 0, n);
             }
         } finally {
-            if (contentStream != null)
-                contentStream.close();
+            if (contentStream != null) {
+				contentStream.close();
+			}
         }
 
     	outputStream.closeEntry();    	

@@ -83,8 +83,9 @@ public final class ResourceEncodingFieldEditor extends
 	 */
 	protected String getStoredValue() {
 		try {
-			if (resource instanceof IContainer)
+			if (resource instanceof IContainer) {
 				return ((IContainer) resource).getDefaultCharset(false);
+			}
 			return ((IFile) resource).getCharset(false);
 
 		} catch (CoreException e) {// If there is an error return the default
@@ -107,19 +108,22 @@ public final class ResourceEncodingFieldEditor extends
 		String encoding = getSelectedEncoding();
 
 		// Clear the value if nothing is selected
-		if (isDefaultSelected())
+		if (isDefaultSelected()) {
 			encoding = null;
+		}
 		// Don't update if the same thing is selected
-		if (hasSameEncoding(encoding))
+		if (hasSameEncoding(encoding)) {
 			return;
+		}
 
 		String descriptionCharset = getCharsetFromDescription();
 		if (descriptionCharset != null
 				&& !(descriptionCharset.equals(encoding)) && encoding != null) {
 			Shell shell = null;
 			DialogPage page = getPage();
-			if (page != null)
+			if (page != null) {
 				shell = page.getShell();
+			}
 
 			MessageDialog dialog = new MessageDialog(
 					shell,
@@ -133,8 +137,9 @@ public final class ResourceEncodingFieldEditor extends
 							IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL }, 0); // yes is the
 																// default
-			if (dialog.open() > 0)
+			if (dialog.open() > 0) {
 				return;
+			}
 		}
 
 		IDEEncoding.addIDEEncoding(encoding);
@@ -149,11 +154,12 @@ public final class ResourceEncodingFieldEditor extends
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					if (resource instanceof IContainer)
+					if (resource instanceof IContainer) {
 						((IContainer) resource).setDefaultCharset(
 								finalEncoding, monitor);
-					else
+					} else {
 						((IFile) resource).setCharset(finalEncoding, monitor);
+					}
 					return Status.OK_STATUS;
 				} catch (CoreException e) {// If there is an error return the
 											// default
@@ -209,14 +215,16 @@ public final class ResourceEncodingFieldEditor extends
 	 */
 	protected String findDefaultEncoding() {
 
-		if (resource instanceof IWorkspaceRoot)
+		if (resource instanceof IWorkspaceRoot) {
 			return super.findDefaultEncoding();
+		}
 
 		String defaultCharset = getCharsetFromDescription();
 		defaultCharset = getCharsetFromDescription();
 
-		if (defaultCharset != null && defaultCharset.length() > 0)
+		if (defaultCharset != null && defaultCharset.length() > 0) {
 			return defaultCharset;
+		}
 		try {
 			// Query up the whole hierarchy
 			defaultCharset = resource.getParent().getDefaultCharset(true);
@@ -224,8 +232,9 @@ public final class ResourceEncodingFieldEditor extends
 			// If there is an exception try again
 		}
 
-		if (defaultCharset != null && defaultCharset.length() > 0)
+		if (defaultCharset != null && defaultCharset.length() > 0) {
 			return defaultCharset;
+		}
 
 		return super.findDefaultEncoding();
 	}
@@ -237,8 +246,9 @@ public final class ResourceEncodingFieldEditor extends
 	 */
 	private String getCharsetFromDescription() {
 		IContentDescription description = getContentDescription();
-		if (description != null)
+		if (description != null) {
 			return description.getCharset();
+		}
 		return null;
 	}
 
@@ -249,8 +259,9 @@ public final class ResourceEncodingFieldEditor extends
 	 */
 	protected String defaultButtonText() {
 
-		if (resource instanceof IWorkspaceRoot)
+		if (resource instanceof IWorkspaceRoot) {
 			return super.defaultButtonText();
+		}
 
 		if (resource instanceof IFile) {
 			try {
@@ -258,11 +269,12 @@ public final class ResourceEncodingFieldEditor extends
 						.getContentDescription();
 				// If we can find a charset from the description then derive
 				// from that
-				if (description == null || description.getCharset() == null)
+				if (description == null || description.getCharset() == null) {
 					return NLS
 							.bind(
 									IDEWorkbenchMessages.ResourceInfo_fileContainerEncodingFormat,
 									getDefaultEnc());
+				}
 
 				return NLS
 						.bind(
@@ -315,8 +327,9 @@ public final class ResourceEncodingFieldEditor extends
 	 */
 	private IContentDescription getContentDescription() {
 		try {
-			if (resource instanceof IFile)
+			if (resource instanceof IFile) {
 				return (((IFile) resource).getContentDescription());
+			}
 		} catch (CoreException exception) {
 			// If we cannot find it return null
 		}

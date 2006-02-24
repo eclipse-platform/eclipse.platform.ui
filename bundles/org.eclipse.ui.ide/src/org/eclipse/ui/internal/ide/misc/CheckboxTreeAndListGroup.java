@@ -133,12 +133,14 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     private void addToHierarchyToCheckedStore(Object treeElement) {
 
         // if this tree element is already gray then its ancestors all are as well
-        if (!checkedStateStore.containsKey(treeElement))
-            checkedStateStore.put(treeElement, new ArrayList());
+        if (!checkedStateStore.containsKey(treeElement)) {
+			checkedStateStore.put(treeElement, new ArrayList());
+		}
 
         Object parent = treeContentProvider.getParent(treeElement);
-        if (parent != null)
-            addToHierarchyToCheckedStore(parent);
+        if (parent != null) {
+			addToHierarchyToCheckedStore(parent);
+		}
     }
 
     /**
@@ -151,8 +153,9 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     protected boolean areAllChildrenWhiteChecked(Object treeElement) {
         Object[] children = treeContentProvider.getChildren(treeElement);
         for (int i = 0; i < children.length; ++i) {
-            if (!whiteCheckedTreeItems.contains(children[i]))
-                return false;
+            if (!whiteCheckedTreeItems.contains(children[i])) {
+				return false;
+			}
         }
 
         return true;
@@ -167,8 +170,9 @@ public class CheckboxTreeAndListGroup extends EventManager implements
      */
     protected boolean areAllElementsChecked(Object treeElement) {
         List checkedElements = (List) checkedStateStore.get(treeElement);
-        if (checkedElements == null) // ie.- tree item not even gray-checked
-            return false;
+        if (checkedElements == null) {
+			return false;
+		}
 
         return getListItemsSize(treeElement) == checkedElements.size();
     }
@@ -199,12 +203,13 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         BusyIndicator.showWhile(treeViewer.getControl().getDisplay(),
                 new Runnable() {
                     public void run() {
-                        if (event.getCheckable().equals(treeViewer))
-                            treeItemChecked(event.getElement(), event
+                        if (event.getCheckable().equals(treeViewer)) {
+							treeItemChecked(event.getElement(), event
                                     .getChecked());
-                        else
-                            listItemChecked(event.getElement(), event
+						} else {
+							listItemChecked(event.getElement(), event
                                     .getChecked(), true);
+						}
 
                         notifyCheckStateChangeListeners(event);
                     }
@@ -287,15 +292,17 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         // if any list items associated with treeElement are checked then it
         // retains its gray-checked status regardless of its children
         List checked = (List) checkedStateStore.get(treeElement);
-        if (checked != null && (!checked.isEmpty()))
-            return true;
+        if (checked != null && (!checked.isEmpty())) {
+			return true;
+		}
 
         // if any children of treeElement are still gray-checked then treeElement
         // must remain gray-checked as well
         Object[] children = treeContentProvider.getChildren(treeElement);
         for (int i = 0; i < children.length; ++i) {
-            if (checkedStateStore.containsKey(children[i]))
-                return true;
+            if (checkedStateStore.containsKey(children[i])) {
+				return true;
+			}
         }
 
         return false;
@@ -324,12 +331,14 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         // statuses will be needed to determine the white-checked status for
         // this tree element
         Object[] children = treeContentProvider.getElements(treeElement);
-        for (int i = 0; i < children.length; ++i)
-            determineWhiteCheckedDescendents(children[i]);
+        for (int i = 0; i < children.length; ++i) {
+			determineWhiteCheckedDescendents(children[i]);
+		}
 
         // now determine the white-checked status for this tree element
-        if (determineShouldBeWhiteChecked(treeElement))
-            setWhiteChecked(treeElement, true);
+        if (determineShouldBeWhiteChecked(treeElement)) {
+			setWhiteChecked(treeElement, true);
+		}
     }
 
     /**
@@ -352,8 +361,9 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         while (listCollectionsEnum.hasNext()) {
             Iterator currentCollection = ((List) listCollectionsEnum.next())
                     .iterator();
-            while (currentCollection.hasNext())
-                result.add(currentCollection.next());
+            while (currentCollection.hasNext()) {
+				result.add(currentCollection.next());
+			}
         }
 
         return result.iterator();
@@ -406,16 +416,18 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     protected void grayCheckHierarchy(Object treeElement) {
 
         // if this tree element is already gray then its ancestors all are as well
-        if (checkedStateStore.containsKey(treeElement))
-            return; // no need to proceed upwards from here
+        if (checkedStateStore.containsKey(treeElement)) {
+			return; // no need to proceed upwards from here
+		}
 
         checkedStateStore.put(treeElement, new ArrayList());
         if (determineShouldBeWhiteChecked(treeElement)) {
             setWhiteChecked(treeElement, true);
         }
         Object parent = treeContentProvider.getParent(treeElement);
-        if (parent != null)
-            grayCheckHierarchy(parent);
+        if (parent != null) {
+			grayCheckHierarchy(parent);
+		}
     }
 
     /**
@@ -472,8 +484,9 @@ public class CheckboxTreeAndListGroup extends EventManager implements
             }
         }
 
-        if (updatingFromSelection)
-            updateHierarchy(currentTreeSelection);
+        if (updatingFromSelection) {
+			updateHierarchy(currentTreeSelection);
+		}
     }
 
     /**
@@ -505,8 +518,9 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
         if (listItemsToCheck != null) {
             Iterator listItemsEnum = listItemsToCheck.iterator();
-            while (listItemsEnum.hasNext())
-                listViewer.setChecked(listItemsEnum.next(), true);
+            while (listItemsEnum.hasNext()) {
+				listViewer.setChecked(listItemsEnum.next(), true);
+			}
         }
     }
 
@@ -536,8 +550,9 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         }
 
         // ie.- if not an item deselection
-        if (selectedElement != currentTreeSelection)
-            populateListViewer(selectedElement);
+        if (selectedElement != currentTreeSelection) {
+			populateListViewer(selectedElement);
+		}
 
         currentTreeSelection = selectedElement;
     }
@@ -600,12 +615,14 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         if (state) {
             Object[] listItems = listContentProvider.getElements(treeElement);
             List listItemsChecked = new ArrayList();
-            for (int i = 0; i < listItems.length; ++i)
-                listItemsChecked.add(listItems[i]);
+            for (int i = 0; i < listItems.length; ++i) {
+				listItemsChecked.add(listItems[i]);
+			}
 
             checkedStateStore.put(treeElement, listItemsChecked);
-        } else
-            checkedStateStore.remove(treeElement);
+        } else {
+			checkedStateStore.remove(treeElement);
+		}
 
         setWhiteChecked(treeElement, state);
         treeViewer.setChecked(treeElement, state);
@@ -645,10 +662,12 @@ public class CheckboxTreeAndListGroup extends EventManager implements
      */
     protected void setWhiteChecked(Object treeElement, boolean isWhiteChecked) {
         if (isWhiteChecked) {
-            if (!whiteCheckedTreeItems.contains(treeElement))
-                whiteCheckedTreeItems.add(treeElement);
-        } else
-            whiteCheckedTreeItems.remove(treeElement);
+            if (!whiteCheckedTreeItems.contains(treeElement)) {
+				whiteCheckedTreeItems.add(treeElement);
+			}
+        } else {
+			whiteCheckedTreeItems.remove(treeElement);
+		}
     }
 
     /**
@@ -683,14 +702,16 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         setTreeChecked(treeElement, state);
 
         Object parent = treeContentProvider.getParent(treeElement);
-        if (parent == null)
-            return;
+        if (parent == null) {
+			return;
+		}
 
         // now update upwards in the tree hierarchy 
-        if (state)
-            grayCheckHierarchy(parent);
-        else
-            ungrayCheckHierarchy(parent);
+        if (state) {
+			grayCheckHierarchy(parent);
+		} else {
+			ungrayCheckHierarchy(parent);
+		}
 
         updateHierarchy(treeElement);
     }
@@ -699,12 +720,14 @@ public class CheckboxTreeAndListGroup extends EventManager implements
      *	Logically un-gray-check all ancestors of treeItem iff appropriate.
      */
     protected void ungrayCheckHierarchy(Object treeElement) {
-        if (!determineShouldBeAtLeastGrayChecked(treeElement))
-            checkedStateStore.remove(treeElement);
+        if (!determineShouldBeAtLeastGrayChecked(treeElement)) {
+			checkedStateStore.remove(treeElement);
+		}
 
         Object parent = treeContentProvider.getParent(treeElement);
-        if (parent != null)
-            ungrayCheckHierarchy(parent);
+        if (parent != null) {
+			ungrayCheckHierarchy(parent);
+		}
     }
 
     /**
@@ -717,8 +740,9 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
         treeViewer.setChecked(treeElement, shouldBeAtLeastGray);
         setWhiteChecked(treeElement, whiteChecked);
-        if (!whiteChecked)
-            treeViewer.setGrayed(treeElement, shouldBeAtLeastGray);
+        if (!whiteChecked) {
+			treeViewer.setGrayed(treeElement, shouldBeAtLeastGray);
+		}
 
         // proceed up the tree element hierarchy
         Object parent = treeContentProvider.getParent(treeElement);
@@ -746,10 +770,10 @@ public class CheckboxTreeAndListGroup extends EventManager implements
                             Object key = keyIterator.next();
                             //Replace the items in the checked state store with those from the supplied items
                             List selections = (List) items.get(key);
-                            if (selections.size() == 0)
-                                //If it is empty remove it from the list
+                            if (selections.size() == 0) {
+								//If it is empty remove it from the list
                                 checkedStateStore.remove(key);
-                            else {
+							} else {
                                 checkedStateStore.put(key, selections);
                                 // proceed up the tree element hierarchy
                                 Object parent = treeContentProvider

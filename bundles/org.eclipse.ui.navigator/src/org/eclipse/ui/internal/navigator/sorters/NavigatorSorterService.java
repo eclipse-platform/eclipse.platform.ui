@@ -53,19 +53,22 @@ public class NavigatorSorterService implements INavigatorSorterService {
 
 		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager
 				.getInstance().findApplicableSorters(contentService, aParent);
-		if (descriptors.length > 0)
+		if (descriptors.length > 0) {
 			return getSorter(descriptors[0]);
+		}
 		return SkeletonViewerSorter.INSTANCE;
 	}
 
 	private ViewerSorter getSorter(CommonSorterDescriptor descriptor) {
 		ViewerSorter sorter = (ViewerSorter) sorters.get(descriptor);
-		if (sorter != null)
+		if (sorter != null) {
 			return sorter;
+		}
 		synchronized (sorters) {
 			sorter = (ViewerSorter) sorters.get(descriptor);
-			if (sorter == null)
+			if (sorter == null) {
 				sorters.put(descriptor, sorter = descriptor.createSorter());
+			}
 		}
 		return sorter;
 	}
@@ -81,8 +84,9 @@ public class NavigatorSorterService implements INavigatorSorterService {
 
 		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager
 				.getInstance().findApplicableSorters(contentService, source, parent, lvalue, rvalue);
-		if(descriptors.length > 0) 
-			return getSorter(descriptors[0]); 
+		if(descriptors.length > 0) {
+			return getSorter(descriptors[0]);
+		} 
 		return null;
 	}
 	 

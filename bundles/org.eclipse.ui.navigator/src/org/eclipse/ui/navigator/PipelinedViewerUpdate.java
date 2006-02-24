@@ -101,15 +101,18 @@ public final class PipelinedViewerUpdate {
 	 */
 	public final void setProperties(Object aTarget, String[] theProperties) {
 		if (theProperties != null && theProperties.length > 0) {
-			if (properties == null)
+			if (properties == null) {
 				properties = new HashMap();
+			}
 			properties.put(aTarget, theProperties);
 
-		} else
+		} else {
 			properties.remove(aTarget);
+		}
 
-		if (properties.size() == 0)
+		if (properties.size() == 0) {
 			properties = null;
+		}
 
 	}
 

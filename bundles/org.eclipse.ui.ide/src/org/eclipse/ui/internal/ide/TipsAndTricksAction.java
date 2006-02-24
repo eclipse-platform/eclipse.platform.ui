@@ -67,8 +67,9 @@ public class TipsAndTricksAction extends PartEventAction implements
                 .getFeatureInfos();
         ArrayList tipsAndTricksFeatures = new ArrayList(featureInfos.length);
         for (int i = 0; i < featureInfos.length; i++) {
-            if (featureInfos[i].getTipsAndTricksHref() != null)
-                tipsAndTricksFeatures.add(featureInfos[i]);
+            if (featureInfos[i].getTipsAndTricksHref() != null) {
+				tipsAndTricksFeatures.add(featureInfos[i]);
+			}
         }
 
         Shell shell = workbenchWindow.getShell();
@@ -88,8 +89,9 @@ public class TipsAndTricksAction extends PartEventAction implements
                 IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_message,
                 IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
 
-        if (d.open() != Window.OK || d.getResult().length != 1)
-            return;
+        if (d.open() != Window.OK || d.getResult().length != 1) {
+			return;
+		}
 
         AboutInfo feature = (AboutInfo) d.getResult()[0];
 

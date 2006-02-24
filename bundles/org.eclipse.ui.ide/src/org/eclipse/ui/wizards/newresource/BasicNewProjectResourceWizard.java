@@ -124,9 +124,10 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
                 .getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
-        if (section == null)
-            section = workbenchSettings
+        if (section == null) {
+			section = workbenchSettings
                     .addNewSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 
@@ -168,16 +169,18 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
      *         project was not created
      */
     private IProject createNewProject() {
-        if (newProject != null)
-            return newProject;
+        if (newProject != null) {
+			return newProject;
+		}
 
         // get a project handle
         final IProject newProjectHandle = mainPage.getProjectHandle();
 
         // get a project descriptor
         IPath newPath = null;
-        if (!mainPage.useDefaults())
-            newPath = mainPage.getLocationPath();
+        if (!mainPage.useDefaults()) {
+			newPath = mainPage.getLocationPath();
+		}
 
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         final IProjectDescription description = workspace
@@ -187,8 +190,9 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
         // update the referenced project if provided
         if (referencePage != null) {
             IProject[] refProjects = referencePage.getReferencedProjects();
-            if (refProjects.length > 0)
-                description.setReferencedProjects(refProjects);
+            if (refProjects.length > 0) {
+				description.setReferencedProjects(refProjects);
+			}
         }
 
         // create the new project operation
@@ -265,8 +269,9 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
             projectHandle.create(description, new SubProgressMonitor(monitor,
                     1000));
 
-            if (monitor.isCanceled())
-                throw new OperationCanceledException();
+            if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 
             projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 
@@ -327,8 +332,9 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
     public boolean performFinish() {
         createNewProject();
 
-        if (newProject == null)
-            return false;
+        if (newProject == null) {
+			return false;
+		}
 
         updatePerspective();
         selectAndReveal(newProject);
@@ -344,11 +350,13 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
         //Get the active page.
         IWorkbenchWindow window = PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
-        if (window == null)
-            return;
+        if (window == null) {
+			return;
+		}
         IWorkbenchPage page = window.getActivePage();
-        if (page == null)
-            return;
+        if (page == null) {
+			return;
+		}
 
         // Set the perspective.
         page.setPerspective(persp);
@@ -391,8 +399,9 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
     public static void updatePerspective(IConfigurationElement configElement) {
         // Do not change perspective if the configuration element is
         // not specified.
-        if (configElement == null)
-            return;
+        if (configElement == null) {
+			return;
+		}
 
         // Retrieve the new project open perspective preference setting
         String perspSetting = PrefUtil.getAPIPreferenceStore().getString(
@@ -405,13 +414,15 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
         // Return if do not switch perspective setting and are not prompting
         if (!(promptSetting.equals(MessageDialogWithToggle.PROMPT))
                 && perspSetting
-                        .equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
-            return;
+                        .equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE)) {
+			return;
+		}
 
         // Read the requested perspective id to be opened.
         String finalPerspId = configElement.getAttribute(FINAL_PERSPECTIVE);
-        if (finalPerspId == null)
-            return;
+        if (finalPerspId == null) {
+			return;
+		}
 
         // Map perspective id to descriptor.
         IPerspectiveRegistry reg = PlatformUI.getWorkbench()
@@ -437,9 +448,10 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
                     Set enabledIds = new HashSet(activityManager
                             .getEnabledActivityIds());
 
-                    if (enabledIds.addAll(idActivities))
-                        workbenchActivitySupport
+                    if (enabledIds.addAll(idActivities)) {
+						workbenchActivitySupport
                                 .setEnabledActivityIds(enabledIds);
+					}
                 }
             }
         } else {
@@ -556,12 +568,13 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
         //If we are not going to prompt anymore propogate the choice.
         if (dialog.getToggleState()) {
             String preferenceValue;
-            if (result == IDialogConstants.YES_ID)
-                //Doesn't matter if it is replace or new window
+            if (result == IDialogConstants.YES_ID) {
+				//Doesn't matter if it is replace or new window
                 //as we are going to use the open perspective setting
                 preferenceValue = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
-            else
-                preferenceValue = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
+			} else {
+				preferenceValue = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
+			}
 
             // update PROJECT_OPEN_NEW_PERSPECTIVE to correspond
             PrefUtil.getAPIPreferenceStore().setValue(

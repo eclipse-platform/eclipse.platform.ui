@@ -80,16 +80,18 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
      */
     public void decorate(Object element, IDecoration decoration) {
 
-        if (element instanceof IResource == false)
-            return;
+        if (element instanceof IResource == false) {
+			return;
+		}
         IResource resource = (IResource) element;
         if (resource.isLinked()) {
             IPath location = resource.getLocation();
 
-            if (location != null && location.toFile().exists())
-                decoration.addOverlay(LINK);
-            else
-                decoration.addOverlay(LINK_WARNING);
+            if (location != null && location.toFile().exists()) {
+				decoration.addOverlay(LINK);
+			} else {
+				decoration.addOverlay(LINK_WARNING);
+			}
         }
 
     }

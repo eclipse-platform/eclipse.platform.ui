@@ -46,8 +46,9 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         int childrenLength = children == null ? 0 : children.length;
         List result = new ArrayList(childrenLength);
 
-        for (int i = 0; i < childrenLength; i++)
-            result.add(new File(folder, children[i]));
+        for (int i = 0; i < childrenLength; i++) {
+			result.add(new File(folder, children[i]));
+		}
 
         return result;
     }
@@ -79,8 +80,9 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         //Get the name - if it is empty then return the path as it is a file root
         File file = (File) element;
         String name = file.getName();
-        if (name.length() == 0)
-            return file.getPath();
+        if (name.length() == 0) {
+			return file.getPath();
+		}
         return name;
     }
 

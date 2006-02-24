@@ -31,10 +31,11 @@ import org.eclipse.ui.views.properties.ResourcePropertySource;
         if (adapterType == IPropertySource.class) {
             if (o instanceof IResource) {
                 IResource resource = (IResource) o;
-                if (resource.getType() == IResource.FILE)
-                    return new FilePropertySource((IFile) o);
-                else
-                    return new ResourcePropertySource((IResource) o);
+                if (resource.getType() == IResource.FILE) {
+					return new FilePropertySource((IFile) o);
+				} else {
+					return new ResourcePropertySource((IResource) o);
+				}
             }
         }
         return null;

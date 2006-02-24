@@ -49,8 +49,9 @@ class GotoTaskAction extends TaskAction {
         IStructuredSelection selection = (IStructuredSelection) getTaskList()
                 .getSelection();
         Object o = selection.getFirstElement();
-        if (!(o instanceof IMarker))
-            return;
+        if (!(o instanceof IMarker)) {
+			return;
+		}
         IMarker marker = (IMarker) o;
         IResource resource = marker.getResource();
         if (marker.exists() && resource instanceof IFile) {

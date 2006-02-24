@@ -192,8 +192,9 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      * complex rules necessary for making the error dialog look nice.
      */
     private void openError(IStatus status) {
-        if (status == null)
-            return;
+        if (status == null) {
+			return;
+		}
 
         String genericTitle = ResourceNavigatorMessages.DropAdapter_title;
         int codes = IStatus.ERROR | IStatus.WARNING;
@@ -242,10 +243,11 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
             result = NavigatorDropAdapter.super.performDrop(data);
         }
         if (resources != null && resources.length > 0) {
-            if (getCurrentOperation() == DND.DROP_COPY)
-                status = performResourceCopy(getShell(), resources);
-            else
-                status = performResourceMove(resources);
+            if (getCurrentOperation() == DND.DROP_COPY) {
+				status = performResourceCopy(getShell(), resources);
+			} else {
+				status = performResourceMove(resources);
+			}
         }
         openError(status);
         return result;
@@ -319,8 +321,9 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
      */
     public String queryOverwrite(String pathString) {
-        if (alwaysOverwrite)
-            return ALL;
+        if (alwaysOverwrite) {
+			return ALL;
+		}
 
         final String returnCode[] = { CANCEL };
         final String msg = NLS.bind(ResourceNavigatorMessages.DropAdapter_overwriteQuery, pathString);
@@ -338,8 +341,9 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
                 returnCode[0] = returnVal < 0 ? CANCEL : returnCodes[returnVal];
             }
         });
-        if (returnCode[0] == ALL)
-            alwaysOverwrite = true;
+        if (returnCode[0] == ALL) {
+			alwaysOverwrite = true;
+		}
         return returnCode[0];
     }
 
@@ -384,9 +388,9 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         if (LocalSelectionTransfer.getInstance().isSupportedType(transferType)) {
             IResource[] selectedResources = getSelectedResources();
 
-            if (selectedResources.length == 0)
-                message = ResourceNavigatorMessages.DropAdapter_dropOperationErrorOther;
-            else {
+            if (selectedResources.length == 0) {
+				message = ResourceNavigatorMessages.DropAdapter_dropOperationErrorOther;
+			} else {
                 CopyFilesAndFoldersOperation operation;
                 if (lastValidOperation == DND.DROP_COPY) {
                     operation = new CopyFilesAndFoldersOperation(getShell());

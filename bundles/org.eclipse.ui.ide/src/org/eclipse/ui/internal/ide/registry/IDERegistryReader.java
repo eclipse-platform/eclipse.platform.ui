@@ -153,8 +153,9 @@ public abstract class IDERegistryReader {
      */
     protected void readElements(IConfigurationElement[] elements) {
         for (int i = 0; i < elements.length; i++) {
-            if (!readElement(elements[i]))
-                logUnknownElement(elements[i]);
+            if (!readElement(elements[i])) {
+				logUnknownElement(elements[i]);
+			}
         }
     }
 
@@ -177,13 +178,15 @@ public abstract class IDERegistryReader {
         if (extensions == null) {
             IExtensionPoint point = registry.getExtensionPoint(pluginId,
                     extensionPoint);
-            if (point == null)
-                return;
+            if (point == null) {
+				return;
+			}
             extensions = point.getExtensions();
             extensions = orderExtensions(extensions);
             extensionPoints.put(pointId, extensions);
         }
-        for (int i = 0; i < extensions.length; i++)
-            readExtension(extensions[i]);
+        for (int i = 0; i < extensions.length; i++) {
+			readExtension(extensions[i]);
+		}
     }
 }

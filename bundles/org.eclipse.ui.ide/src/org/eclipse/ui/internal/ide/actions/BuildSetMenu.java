@@ -81,10 +81,12 @@ public class BuildSetMenu extends ContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
      */
     public void fill(Menu menu, int index) {
-        if (getParent() instanceof MenuManager)
-            ((MenuManager) getParent()).addMenuListener(menuListener);
-        if (!dirty)
-            return;
+        if (getParent() instanceof MenuManager) {
+			((MenuManager) getParent()).addMenuListener(menuListener);
+		}
+        if (!dirty) {
+			return;
+		}
         fillMenu(menu);
         dirty = false;
     }
@@ -120,14 +122,15 @@ public class BuildSetMenu extends ContributionItem {
 	            addMnemonic(last, accel++);
 	            new ActionContributionItem(last).fill(menu, -1);
 	            lastSet = last.getWorkingSet();
-			}
-			else //Clear the last built if it is not there
+			} else {
 				BuildSetAction.lastBuilt = null;
+			}
         }
         //add build actions for the most recently used working sets
         for (int i = 0; i < sets.length; i++) {
-            if (lastSet != null && lastSet.equals(sets[i]))
-                continue;
+            if (lastSet != null && lastSet.equals(sets[i])) {
+				continue;
+			}
             BuildSetAction action = new BuildSetAction(sets[i], window,
                     actionBars);
             addMnemonic(action, accel++);
@@ -135,8 +138,9 @@ public class BuildSetMenu extends ContributionItem {
             new ActionContributionItem(action).fill(menu, -1);
         }
         //add the action to select a different working set
-        if (sets.length > 0)
-        	new Separator().fill(menu, -1);
+        if (sets.length > 0) {
+			new Separator().fill(menu, -1);
+		}
         selectBuildWorkingSetAction.setEnabled(!isAutoBuilding);
         new ActionContributionItem(selectBuildWorkingSetAction).fill(menu, -1);
     }

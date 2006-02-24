@@ -85,8 +85,9 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
 
         // working set elements won't be cached if select is called
         // directly, outside filter. fixes bug 14500.
-        if (workingSetElements == null)
-            workingSetElements = workingSet.getElements();
+        if (workingSetElements == null) {
+			workingSetElements = workingSet.getElements();
+		}
 
         for (int i = 0; i < workingSetElements.length; i++) {
             IAdaptable workingSetElement = workingSetElements[i];
@@ -101,8 +102,9 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
                         IContainmentAdapter.CHECK_CONTEXT
                                 | IContainmentAdapter.CHECK_IF_CHILD
                                 | IContainmentAdapter.CHECK_IF_ANCESTOR
-                                | IContainmentAdapter.CHECK_IF_DESCENDANT))
-                    return true;
+                                | IContainmentAdapter.CHECK_IF_DESCENDANT)) {
+					return true;
+				}
             } else if (isEnclosedResource(element, elementPath,
                     workingSetElement)) {
                 return true;
@@ -129,8 +131,9 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
             IAdaptable workingSetElement) {
         IResource workingSetResource = null;
 
-        if (workingSetElement.equals(element))
-            return true;
+        if (workingSetElement.equals(element)) {
+			return true;
+		}
         if (workingSetElement instanceof IResource) {
             workingSetResource = (IResource) workingSetElement;
         } else {
@@ -139,10 +142,12 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
         }
         if (workingSetResource != null) {
             IPath resourcePath = workingSetResource.getFullPath();
-            if (resourcePath.isPrefixOf(elementPath))
-                return true;
-            if (elementPath.isPrefixOf(resourcePath))
-                return true;
+            if (resourcePath.isPrefixOf(elementPath)) {
+				return true;
+			}
+            if (elementPath.isPrefixOf(resourcePath)) {
+				return true;
+			}
         }
         return false;
     }
@@ -155,8 +160,9 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
      */
     public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
         Object[] result = null;
-        if (workingSet != null)
-            cachedWorkingSet = workingSet.getElements();
+        if (workingSet != null) {
+			cachedWorkingSet = workingSet.getElements();
+		}
         try {
             result = super.filter(viewer, parent, elements);
         } finally {

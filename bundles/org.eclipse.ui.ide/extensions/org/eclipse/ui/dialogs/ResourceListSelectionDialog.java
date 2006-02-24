@@ -133,8 +133,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 }
             });
 
-            if (disposed[0])
-                return;
+            if (disposed[0]) {
+				return;
+			}
 
             int last;
             if ((patternString.indexOf('?') == -1)
@@ -167,8 +168,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     final int index = i;
                     display.syncExec(new Runnable() {
                         public void run() {
-                            if (stop || resourceNames.isDisposed())
-                                return;
+                            if (stop || resourceNames.isDisposed()) {
+								return;
+							}
                             updateItem(index, itemIndex[0], itemCount[0]);
                             itemIndex[0]++;
                         }
@@ -198,8 +200,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         last = index;
                         display.syncExec(new Runnable() {
                             public void run() {
-                                if (stop || resourceNames.isDisposed())
-                                    return;
+                                if (stop || resourceNames.isDisposed()) {
+									return;
+								}
                                 updateItem(index, itemIndex[0], itemCount[0]);
                                 itemIndex[0]++;
                             }
@@ -208,14 +211,16 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 }
             }
 
-            if (disposed[0])
-                return;
+            if (disposed[0]) {
+				return;
+			}
 
             lastMatch = last;
             display.syncExec(new Runnable() {
                 public void run() {
-                    if (resourceNames.isDisposed())
-                        return;
+                    if (resourceNames.isDisposed()) {
+						return;
+					}
                     itemCount[0] = resourceNames.getItemCount();
                     if (itemIndex[0] < itemCount[0]) {
                         resourceNames.setRedraw(false);
@@ -279,8 +284,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     final int index = i;
                     display.syncExec(new Runnable() {
                         public void run() {
-                            if (stop || resourceNames.isDisposed())
-                                return;
+                            if (stop || resourceNames.isDisposed()) {
+								return;
+							}
                             updateItem(index, itemIndex[0], itemCount[0]);
                             itemIndex[0]++;
                         }
@@ -304,8 +310,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     if (match(descriptors[index].label)) {
                         display.syncExec(new Runnable() {
                             public void run() {
-                                if (stop || resourceNames.isDisposed())
-                                    return;
+                                if (stop || resourceNames.isDisposed()) {
+									return;
+								}
                                 updateItem(index, itemIndex[0], itemCount[0]);
                                 itemIndex[0]++;
                             }
@@ -458,8 +465,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         pattern.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                if (e.keyCode == SWT.ARROW_DOWN)
-                    resourceNames.setFocus();
+                if (e.keyCode == SWT.ARROW_DOWN) {
+					resourceNames.setFocus();
+				}
             }
         });
 
@@ -527,8 +535,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     private void filterResources(boolean force) {
         String oldPattern = force ? null : patternString;
         patternString = adjustPattern();
-        if (!force && patternString.equals(oldPattern))
-            return;
+        if (!force && patternString.equals(oldPattern)) {
+			return;
+		}
 
         updateFilterThread.stop = true;
         stringMatcher = new StringMatcher(patternString, true, false);
@@ -587,8 +596,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 }
             }
         }
-        if (match)
-            return high;
+        if (match) {
+			return high;
+		}
         return -1;
     }
 
@@ -597,8 +607,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     private void gatherResources(boolean force) {
         String oldPattern = force ? null : patternString;
         patternString = adjustPattern();
-        if (!force && patternString.equals(oldPattern))
-            return;
+        if (!force && patternString.equals(oldPattern)) {
+			return;
+		}
 
         updateGatherThread.stop = true;
         updateGatherThread = new UpdateGatherThread();
@@ -675,8 +686,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 }
             }
         }
-        if (match)
-            return low;
+        if (match) {
+			return low;
+		}
         return -1;
     }
 
@@ -706,8 +718,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                             return false;
                         }
                     }
-                    if (type == IResource.FILE)
-                        return false;
+                    if (type == IResource.FILE) {
+						return false;
+					}
                     return true;
                 }
             }, IResource.NONE);
@@ -730,8 +743,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         } else {
             text = parent.getFullPath().makeRelative().toString();
         }
-        if(text == null)
-        	return ""; //$NON-NLS-1$
+        if(text == null) {
+			return ""; //$NON-NLS-1$
+		}
         return text;
     }
 
@@ -779,8 +793,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
                 //Merge the resource descriptor with the same label and type.
                 int index = 0;
-                if (descriptorsSize < 2)
-                    return;
+                if (descriptorsSize < 2) {
+					return;
+				}
                 ResourceDescriptor current = descriptors[index];
                 IResource currentResource = (IResource) current.resources
                         .get(0);
@@ -819,8 +834,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      */
     private boolean match(String label) {
         if ((patternString == null)
-                || (patternString.equals("")) || (patternString.equals("*")))//$NON-NLS-2$//$NON-NLS-1$
-            return true;
+                || (patternString.equals("")) || (patternString.equals("*"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
+		}
         return stringMatcher.match(label);
     }
 

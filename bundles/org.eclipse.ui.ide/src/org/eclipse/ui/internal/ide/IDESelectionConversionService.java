@@ -55,8 +55,9 @@ public class IDESelectionConversionService implements
 			} else if (currentElement instanceof IAdaptable) {
 				Object adapter = ((IAdaptable) currentElement)
 						.getAdapter(IResource.class);
-				if (adapter != null)
+				if (adapter != null) {
 					result.add(adapter); // add the converted resource
+				}
 
 			} else {
 
@@ -91,8 +92,9 @@ public class IDESelectionConversionService implements
 		}
 
 		// all that can be converted are done, answer new selection
-		if (result.isEmpty())
+		if (result.isEmpty()) {
 			return StructuredSelection.EMPTY;
+		}
 		return new StructuredSelection(result.toArray());
 	}
 }

@@ -329,13 +329,16 @@ public abstract class TableView extends ViewPart {
 	 * @param menu
 	 */
 	protected void initMenu(IMenuManager menu) {
-		if (sortAction != null)
+		if (sortAction != null) {
 			menu.add(sortAction);
+		}
 		addDropDownContributions(menu);
-		if (filtersAction != null)
+		if (filtersAction != null) {
 			menu.add(filtersAction);
-		if (preferencesAction != null)
+		}
+		if (preferencesAction != null) {
 			menu.add(preferencesAction);
+		}
 	}
 
 	/**
@@ -427,9 +430,9 @@ public abstract class TableView extends ViewPart {
 
 									monitor.beginTask(MarkerMessages.sortDialog_title, 100);
 									monitor.worked(10);
-									if (field.equals(sorter.getTopField()))
+									if (field.equals(sorter.getTopField())) {
 										sorter.reverseTopPriority();
-									else {
+									} else {
 										sorter.setTopPriority(field);
 									}
 									monitor.worked(15);
@@ -481,8 +484,9 @@ public abstract class TableView extends ViewPart {
 	 * @return int
 	 */
 	private int getWidth(IField field) {
-		if (!field.isShowing())
+		if (!field.isShowing()) {
 			return 0;
+		}
 		return field.getPreferredWidth();
 	}
 
@@ -561,8 +565,9 @@ public abstract class TableView extends ViewPart {
 		IWorkbenchSiteProgressService service = null;
 		Object siteService = getSite().getAdapter(
 				IWorkbenchSiteProgressService.class);
-		if (siteService != null)
+		if (siteService != null) {
 			service = (IWorkbenchSiteProgressService) siteService;
+		}
 		return service;
 	}
 

@@ -41,8 +41,9 @@ public class CreateMarkerOperation extends AbstractMarkersOperation {
 
 	protected void doExecute(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException {
-		if (monitor == null)
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
+		}
 		monitor.beginTask("", 100); //$NON-NLS-1$
 		createMarkers(100, monitor);
 		monitor.done();
@@ -50,8 +51,9 @@ public class CreateMarkerOperation extends AbstractMarkersOperation {
 
 	protected void doUndo(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException {
-		if (monitor == null)
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
+		}
 		monitor.beginTask("", 100); //$NON-NLS-1$
 		deleteMarkers(100, monitor);
 		monitor.done();

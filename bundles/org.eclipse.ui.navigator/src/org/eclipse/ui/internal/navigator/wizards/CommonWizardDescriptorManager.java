@@ -53,8 +53,9 @@ public class CommonWizardDescriptorManager {
 	 * @return the singleton instance of the registry
 	 */
 	public static CommonWizardDescriptorManager getInstance() {
-		if (isInitialized)
+		if (isInitialized) {
 			return INSTANCE;
+		}
 		synchronized (INSTANCE) {
 			if (!isInitialized) {
 				INSTANCE.init();
@@ -69,8 +70,9 @@ public class CommonWizardDescriptorManager {
 	}
 
 	private void addCommonWizardDescriptor(CommonWizardDescriptor aDesc) {
-		if (aDesc == null)
+		if (aDesc == null) {
 			return;
+		}
 		synchronized (commonWizardDescriptors) {
 			Set descriptors = (HashSet) commonWizardDescriptors.get(aDesc
 					.getType());
@@ -99,8 +101,9 @@ public class CommonWizardDescriptorManager {
 			String aType) {
 
 		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
-		if (commonDescriptors == null)
+		if (commonDescriptors == null) {
 			return NO_DESCRIPTORS;
+		}
 		/* Find other Common Wizard providers which enable for this object */
 		List descriptorIds = new ArrayList();
 		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
@@ -108,8 +111,9 @@ public class CommonWizardDescriptorManager {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
 					.next();
 
-			if (descriptor.getWizardId() != null && descriptor.isEnabledFor(anElement))
+			if (descriptor.getWizardId() != null && descriptor.isEnabledFor(anElement)) {
 				descriptorIds.add(descriptor.getWizardId());
+			}
 		}
 		String[] wizardIds = new String[descriptorIds.size()];
 		return (String[]) descriptorIds.toArray(wizardIds); // Collections.unmodifiableList(descriptors);
@@ -129,8 +133,9 @@ public class CommonWizardDescriptorManager {
 	public String[] getEnabledCommonWizardDescriptorIds(
 			IStructuredSelection aStructuredSelection, String aType) {
 		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
-		if (commonDescriptors == null)
+		if (commonDescriptors == null) {
 			return NO_DESCRIPTORS;
+		}
 		/* Find other Common Wizard providers which enable for this object */
 		List descriptorIds = new ArrayList();
 		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
@@ -138,8 +143,9 @@ public class CommonWizardDescriptorManager {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
 					.next();
 
-			if (descriptor.isEnabledFor(aStructuredSelection))
+			if (descriptor.isEnabledFor(aStructuredSelection)) {
 				descriptorIds.add(descriptor.getWizardId());
+			}
 		}
 		String[] wizardIds = new String[descriptorIds.size()];
 		return (String[]) descriptorIds.toArray(wizardIds); // Collections.unmodifiableList(descriptors);

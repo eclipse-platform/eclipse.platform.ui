@@ -107,15 +107,17 @@ public class ResourceWorkingSetPage extends WizardPage implements
         for (int i = 0; i < elements.length; i++) {
             IResource resource = null;
 
-            if (elements[i] instanceof IResource)
-                resource = (IResource) elements[i];
-            else
-                resource = (IResource) elements[i].getAdapter(IResource.class);
+            if (elements[i] instanceof IResource) {
+				resource = (IResource) elements[i];
+			} else {
+				resource = (IResource) elements[i].getAdapter(IResource.class);
+			}
 
             if (resource != null) {
                 IPath resourcePath = resource.getFullPath();
-                if (containerPath.isPrefixOf(resourcePath))
-                    collectedResources.add(elements[i]);
+                if (containerPath.isPrefixOf(resourcePath)) {
+					collectedResources.add(elements[i]);
+				}
             }
         }
     }
@@ -190,14 +192,15 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
             public void treeExpanded(TreeExpansionEvent event) {
                 final Object element = event.getElement();
-                if (tree.getGrayed(element) == false)
-                    BusyIndicator.showWhile(getShell().getDisplay(),
+                if (tree.getGrayed(element) == false) {
+					BusyIndicator.showWhile(getShell().getDisplay(),
                             new Runnable() {
                                 public void run() {
                                     setSubtreeChecked((IContainer) element,
                                             tree.getChecked(element), false);
                                 }
                             });
+				}
             }
         });
 
@@ -257,12 +260,13 @@ public class ResourceWorkingSetPage extends WizardPage implements
         }
         for (int i = 0; i < resources.length; i++) {
             if (tree.getGrayed(resources[i])) {
-                if (resources[i].isAccessible())
-                    findCheckedResources(checkedResources,
+                if (resources[i].isAccessible()) {
+					findCheckedResources(checkedResources,
                             (IContainer) resources[i]);
-                else
-                    addWorkingSetElements(checkedResources,
+				} else {
+					addWorkingSetElements(checkedResources,
                             (IContainer) resources[i]);
+				}
             } else if (tree.getChecked(resources[i])) {
                 checkedResources.add(resources[i]);
             }
@@ -355,8 +359,9 @@ public class ResourceWorkingSetPage extends WizardPage implements
      * working set, if any.
      */
     private void initializeCheckedState() {
-        if (workingSet == null)
-            return;
+        if (workingSet == null) {
+			return;
+		}
 
         BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
             public void run() {
@@ -383,8 +388,9 @@ public class ResourceWorkingSetPage extends WizardPage implements
                     }
                     if (resource != null && resource.isAccessible() == false) {
                         IProject project = resource.getProject();
-                        if (tree.getChecked(project) == false)
-                            tree.setGrayChecked(project, true);
+                        if (tree.getChecked(project) == false) {
+							tree.setGrayChecked(project, true);
+						}
                     } else {
                         updateParentState(resource);
                     }
@@ -463,8 +469,9 @@ public class ResourceWorkingSetPage extends WizardPage implements
      * 	be set.
      */
     private void updateParentState(IResource child) {
-        if (child == null || child.getParent() == null)
-            return;
+        if (child == null || child.getParent() == null) {
+			return;
+		}
 
         IContainer parent = child.getParent();
         boolean childChecked = false;

@@ -66,15 +66,17 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
      * it has not already been created.
      */
     protected void createContainer(IPath pathname) {
-        if (directoryEntryCache.containsKey(pathname))
-            return;
+        if (directoryEntryCache.containsKey(pathname)) {
+			return;
+		}
 
         ZipEntry parent;
-        if (pathname.segmentCount() == 1)
-            parent = root;
-        else
-            parent = (ZipEntry) directoryEntryCache.get(pathname
+        if (pathname.segmentCount() == 1) {
+			parent = root;
+		} else {
+			parent = (ZipEntry) directoryEntryCache.get(pathname
                     .removeLastSegments(1));
+		}
 
         ZipEntry newEntry = new ZipEntry(pathname.toString());
         directoryEntryCache.put(pathname, newEntry);
@@ -87,11 +89,12 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     protected void createFile(ZipEntry entry) {
         IPath pathname = new Path(entry.getName());
         ZipEntry parent;
-        if (pathname.segmentCount() == 1)
-            parent = root;
-        else
-            parent = (ZipEntry) directoryEntryCache.get(pathname
+        if (pathname.segmentCount() == 1) {
+			parent = root;
+		} else {
+			parent = (ZipEntry) directoryEntryCache.get(pathname
                     .removeLastSegments(1));
+		}
 
         addToChildren(parent, entry);
     }
@@ -100,8 +103,9 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
      * Method declared on IImportStructureProvider
      */
     public List getChildren(Object element) {
-        if (children == null)
-            initialize();
+        if (children == null) {
+			initialize();
+		}
 
         return ((List) children.get(element));
     }
@@ -129,8 +133,9 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
      * Method declared on IImportStructureProvider
      */
     public String getLabel(Object element) {
-        if (element.equals(root))
-            return ((ZipEntry) element).getName();
+        if (element.equals(root)) {
+			return ((ZipEntry) element).getName();
+		}
 
         return new Path(((ZipEntry) element).getName()).lastSegment();
     }
@@ -167,8 +172,9 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
                 IPath path = new Path(entry.getName()).addTrailingSeparator();
                 int pathSegmentCount = path.segmentCount();
 
-                for (int i = 1; i < pathSegmentCount; i++)
-                    createContainer(path.uptoSegment(i));
+                for (int i = 1; i < pathSegmentCount; i++) {
+					createContainer(path.uptoSegment(i));
+				}
                 createFile(entry);
             }
         }

@@ -77,20 +77,23 @@ public class IDEResourceInfoUtils {
 	 * @return String
 	 */
 	public static String getDateStringValue(IResource resource) {
-		if (!resource.isLocal(IResource.DEPTH_ZERO))
+		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
+		}
 
 		URI location = resource.getLocationURI();
 		if (location == null) {
-			if (resource.isLinked())
+			if (resource.isLinked()) {
 				return MISSING_PATH_VARIABLE_TEXT;
+			}
 
 			return NOT_EXIST_TEXT;
 		}
 
 		IFileInfo info = getFileInfo(location);
-		if (info == null)
+		if (info == null) {
 			return UNKNOWN_LABEL;
+		}
 
 		if (info.exists()) {
 			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG,
@@ -109,8 +112,9 @@ public class IDEResourceInfoUtils {
 	 */
 	public static IFileInfo getFileInfo(URI location) {
 		IFileStore store = getFileStore(location);
-		if (store == null)
+		if (store == null) {
 			return null;
+		}
 		return store.fetchInfo();
 	}
 
@@ -123,8 +127,9 @@ public class IDEResourceInfoUtils {
 	 */
 	public static IFileInfo getFileInfo(String pathName) {
 		IFileStore store = getFileStore(pathName);
-		if (store == null)
+		if (store == null) {
 			return null;
+		}
 		return store.fetchInfo();
 	}
 	
@@ -137,8 +142,9 @@ public class IDEResourceInfoUtils {
 	 */
 	public static IFileInfo getFileInfo(IPath pathName) {
 		IFileStore store = getFileStore(pathName.toFile().toURI());
-		if (store == null)
+		if (store == null) {
 			return null;
+		}
 		return store.fetchInfo();
 	}
 
@@ -149,8 +155,9 @@ public class IDEResourceInfoUtils {
 	 * @return String the text to display the location
 	 */
 	public static String getLocationText(IResource resource) {
-		if (!resource.isLocal(IResource.DEPTH_ZERO))
+		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
+		}
 
 		URI resolvedLocation = resource.getLocationURI();
 		URI location = resolvedLocation;
@@ -165,14 +172,16 @@ public class IDEResourceInfoUtils {
 		if (resolvedLocation != null && !isPathVariable(resource)) {
 			// No path variable used. Display the file not exist message
 			// in the location. Fixes bug 33318.
-			if (store == null)
+			if (store == null) {
 				return UNKNOWN_LABEL;
+			}
 			if (!store.fetchInfo().exists()) {
 				return NLS.bind(FILE_NOT_EXIST_TEXT, location.toString());
 			}
 		}
-		if (store != null)
+		if (store != null) {
 			return store.toString();
+		}
 		return location.toString();
 	}
 
@@ -184,23 +193,27 @@ public class IDEResourceInfoUtils {
 	 * @return String
 	 */
 	public static String getResolvedLocationText(IResource resource) {
-		if (!resource.isLocal(IResource.DEPTH_ZERO))
+		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
+		}
 
 		URI location = resource.getLocationURI();
 		if (location == null) {
-			if (resource.isLinked())
+			if (resource.isLinked()) {
 				return MISSING_PATH_VARIABLE_TEXT;
+			}
 
 			return NOT_EXIST_TEXT;
 		}
 
 		IFileStore store = getFileStore(location);
-		if (store == null)
+		if (store == null) {
 			return UNKNOWN_LABEL;
+		}
 
-		if (!store.fetchInfo().exists())
+		if (!store.fetchInfo().exists()) {
 			return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
+		}
 
 		return store.toString();
 	}
@@ -212,23 +225,27 @@ public class IDEResourceInfoUtils {
 	 * @return String
 	 */
 	public static String getSizeString(IFile file) {
-		if (!file.isLocal(IResource.DEPTH_ZERO))
+		if (!file.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
+		}
 
 		URI location = file.getLocationURI();
 		if (location == null) {
-			if (file.isLinked())
+			if (file.isLinked()) {
 				return MISSING_PATH_VARIABLE_TEXT;
+			}
 
 			return NOT_EXIST_TEXT;
 		}
 
 		IFileInfo info = getFileInfo(location);
-		if (info == null)
+		if (info == null) {
 			return UNKNOWN_LABEL;
+		}
 
-		if (info.exists())
+		if (info.exists()) {
 			return NLS.bind(BYTES_LABEL, Long.toString(info.getLength()));
+		}
 
 		return NOT_EXIST_TEXT;
 
@@ -241,27 +258,32 @@ public class IDEResourceInfoUtils {
 	 * @return String
 	 */
 	public static String getSizeString(IResource resource) {
-		if (resource.getType() != IResource.FILE)
+		if (resource.getType() != IResource.FILE) {
 			return ""; //$NON-NLS-1$
+		}
 
 		IFile file = (IFile) resource;
-		if (!file.isLocal(IResource.DEPTH_ZERO))
+		if (!file.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
+		}
 
 		URI location = file.getLocationURI();
 		if (location == null) {
-			if (file.isLinked())
+			if (file.isLinked()) {
 				return MISSING_PATH_VARIABLE_TEXT;
+			}
 
 			return NOT_EXIST_TEXT;
 		}
 
 		IFileInfo info = getFileInfo(location);
-		if (info == null)
+		if (info == null) {
 			return UNKNOWN_LABEL;
+		}
 
-		if (info.exists())
+		if (info.exists()) {
 			return NLS.bind(BYTES_LABEL, Long.toString(info.getLength()));
+		}
 
 		return NOT_EXIST_TEXT;
 	}
@@ -277,27 +299,31 @@ public class IDEResourceInfoUtils {
 			IContentDescription description) {
 
 		if (resource.getType() == IResource.FILE) {
-			if (resource.isLinked())
+			if (resource.isLinked()) {
 				return LINKED_FILE_LABEL;
+			}
 
 			if (resource instanceof IFile) {
 				String contentType = getContentTypeString(description);
-				if (contentType != null)
+				if (contentType != null) {
 					return MessageFormat.format(FILE_TYPE_FORMAT,
 							new String[] { contentType });
+				}
 			}
 			return FILE_LABEL;
 		}
 
 		if (resource.getType() == IResource.FOLDER) {
-			if (resource.isLinked())
+			if (resource.isLinked()) {
 				return LINKED_FOLDER_LABEL;
+			}
 
 			return FOLDER_LABEL;
 		}
 
-		if (resource.getType() == IResource.PROJECT)
+		if (resource.getType() == IResource.PROJECT) {
 			return PROJECT_LABEL;
+		}
 
 		// Should not be possible
 		return UNKNOWN_LABEL;
@@ -306,8 +332,9 @@ public class IDEResourceInfoUtils {
 	private static String getContentTypeString(IContentDescription description) {
 		if (description != null) {
 			IContentType contentType = description.getContentType();
-			if (contentType != null)
+			if (contentType != null) {
 				return contentType.getName();
+			}
 		}
 		return null;
 	}
@@ -324,8 +351,9 @@ public class IDEResourceInfoUtils {
 	 *         path variable.
 	 */
 	private static boolean isPathVariable(IResource resource) {
-		if (!resource.isLinked())
+		if (!resource.isLinked()) {
 			return false;
+		}
 
 		URI resolvedLocation = resource.getLocationURI();
 		if (resolvedLocation == null) {
@@ -333,8 +361,9 @@ public class IDEResourceInfoUtils {
 			return true;
 		}
 		URI rawLocation = resource.getRawLocationURI();
-		if (resolvedLocation.equals(rawLocation))
+		if (resolvedLocation.equals(rawLocation)) {
 			return false;
+		}
 
 		return true;
 	}
@@ -386,8 +415,9 @@ public class IDEResourceInfoUtils {
 			return new IFileStore[0];
 		}
 		for (int i = 0; i < children.length; i++) {
-			if(fileFilter.accept(children[i]))
-				result.add(children[i]);			
+			if(fileFilter.accept(children[i])) {
+				result.add(children[i]);
+			}			
 		}
 		IFileStore[] stores = new IFileStore[result.size()];
 		result.toArray(stores);
@@ -402,8 +432,9 @@ public class IDEResourceInfoUtils {
 	 */
 	public static boolean exists(String pathName) {
 		IFileInfo info = getFileInfo(pathName);
-		if(info == null)
+		if(info == null) {
 			return false;
+		}
 		return info.exists();
 	}
 

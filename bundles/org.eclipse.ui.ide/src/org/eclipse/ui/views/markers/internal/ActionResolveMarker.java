@@ -76,12 +76,13 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 				IWorkbenchSiteProgressService.class);
 
 		try {
-			if (service == null)
+			if (service == null) {
 				PlatformUI.getWorkbench().getProgressService().runInUI(context,
 						resolutionsRunnable, null);
-			else
+			} else {
 				((IWorkbenchSiteProgressService) service).runInUI(context,
 						resolutionsRunnable, null);
+			}
 		} catch (InvocationTargetException exception) {
 			handleException(exception);
 			return;

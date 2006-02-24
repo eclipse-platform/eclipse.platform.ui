@@ -46,8 +46,9 @@ public final class CommonDropAdapterDescriptor implements
 
 	private void init() {
 		IConfigurationElement[] children = element.getChildren(TAG_POSSIBLE_DROP_TARGETS);
-		if (children.length == 1)
+		if (children.length == 1) {
 			dropExpr = new CustomAndExpression(children[0]);
+		}
 	}
 
 	/**
@@ -69,8 +70,9 @@ public final class CommonDropAdapterDescriptor implements
 	 *         extension.
 	 */
 	public boolean areDragElementsSupported(IStructuredSelection aSelection) {
-		if (aSelection.isEmpty())
+		if (aSelection.isEmpty()) {
 			return false;
+		}
 		return contentDescriptor.arePossibleChildren(aSelection);
 	}
 
@@ -82,13 +84,14 @@ public final class CommonDropAdapterDescriptor implements
 	 *         extension.
 	 */
 	public boolean isDropElementSupported(Object anElement) {
-		if (dropExpr != null && anElement != null)
+		if (dropExpr != null && anElement != null) {
 			try {
 				return dropExpr
 						.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE;
 			} catch (CoreException e) {
 				NavigatorPlugin.logError(0, e.getMessage(), e);
 			}
+		}
 		return false;
 	}
 

@@ -37,22 +37,26 @@ public class ExtensionPriorityComparator implements Comparator {
 		INavigatorContentDescriptor lvalue = null;
 		INavigatorContentDescriptor rvalue = null;
 
-		if (o1 instanceof INavigatorContentDescriptor)
+		if (o1 instanceof INavigatorContentDescriptor) {
 			lvalue = (INavigatorContentDescriptor) o1;
-		else if (o1 instanceof INavigatorContentExtension)
+		} else if (o1 instanceof INavigatorContentExtension) {
 			lvalue = ((INavigatorContentExtension) o1).getDescriptor();
+		}
 
-		if (o2 instanceof INavigatorContentDescriptor)
+		if (o2 instanceof INavigatorContentDescriptor) {
 			rvalue = (INavigatorContentDescriptor) o2;
-		else if (o2 instanceof INavigatorContentExtension)
+		} else if (o2 instanceof INavigatorContentExtension) {
 			rvalue = ((INavigatorContentExtension) o2).getDescriptor();
+		}
 
-		if (lvalue == null || rvalue == null)
+		if (lvalue == null || rvalue == null) {
 			return -1;
+		}
 
 		int c = lvalue.getPriority() - rvalue.getPriority();
-		if (c != 0)
+		if (c != 0) {
 			return c;
+		}
 		return lvalue.getId().compareTo(rvalue.getId());
 
 	}

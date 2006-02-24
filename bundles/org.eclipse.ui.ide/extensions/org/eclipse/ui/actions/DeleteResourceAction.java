@@ -85,8 +85,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
         }
 
         static String getTitle(IResource[] projects) {
-            if (projects.length == 1)
-                return IDEWorkbenchMessages.DeleteResourceAction_titleProject1;
+            if (projects.length == 1) {
+				return IDEWorkbenchMessages.DeleteResourceAction_titleProject1;
+			}
             return IDEWorkbenchMessages.DeleteResourceAction_titleProjectN;
         }
 
@@ -115,10 +116,11 @@ public class DeleteResourceAction extends SelectionListenerAction {
             String text1;
             if (projects.length == 1) {
                 IProject project = (IProject) projects[0];
-                if (project == null || project.getLocation() == null)
-                    text1 = IDEWorkbenchMessages.DeleteResourceAction_deleteContentsN;
-                else
-                    text1 = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_deleteContents1, project.getLocation().toOSString());
+                if (project == null || project.getLocation() == null) {
+					text1 = IDEWorkbenchMessages.DeleteResourceAction_deleteContentsN;
+				} else {
+					text1 = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_deleteContents1, project.getLocation().toOSString());
+				}
             } else {
                 text1 = IDEWorkbenchMessages.DeleteResourceAction_deleteContentsN;
             }
@@ -235,8 +237,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
             return false;
         }
 
-        if (resources.length == 0)
-            return false;
+        if (resources.length == 0) {
+			return false;
+		}
         // Return true if everything in the selection exists.
         for (int i = 0; i < resources.length; i++) {
             IResource resource = resources[i];
@@ -257,8 +260,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
     private boolean containsLinkedResource(IResource[] resources) {
         for (int i = 0; i < resources.length; i++) {
             IResource resource = resources[i];
-            if (resource.isLinked())
-                return true;
+            if (resource.isLinked()) {
+				return true;
+			}
         }
         return false;
     }
@@ -273,8 +277,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
     private boolean containsOnlyNonProjects(IResource[] resources) {
         int types = getSelectedResourceTypes(resources);
         // check for empty selection
-        if (types == 0)
-            return false;
+        if (types == 0) {
+			return false;
+		}
         // note that the selection may contain multiple types of resource
         return (types & IResource.PROJECT) == 0;
     }
@@ -298,8 +303,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
      * @return The result status for the deletion
      */
     private IStatus createResult(List exceptions) {
-    	if (exceptions.isEmpty())
-    		return Status.OK_STATUS;
+    	if (exceptions.isEmpty()) {
+			return Status.OK_STATUS;
+		}
         final int exceptionCount = exceptions.size();
         if (exceptionCount == 1) {
             return ((CoreException) exceptions.get(0)).getStatus();
@@ -357,16 +363,18 @@ public class DeleteResourceAction extends SelectionListenerAction {
         if (resources.length == 1) {
             title = IDEWorkbenchMessages.DeleteResourceAction_title1;
             IResource resource = resources[0];
-            if (resource.isLinked())
-                msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmLinkedResource1, resource.getName());
-            else
-                msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirm1, resource.getName());
+            if (resource.isLinked()) {
+				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmLinkedResource1, resource.getName());
+			} else {
+				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirm1, resource.getName());
+			}
         } else {
             title = IDEWorkbenchMessages.DeleteResourceAction_titleN;
-            if (containsLinkedResource(resources))
-                msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmLinkedResourceN, new Integer(resources.length));
-            else
-                msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmN, new Integer(resources.length));
+            if (containsLinkedResource(resources)) {
+				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmLinkedResourceN, new Integer(resources.length));
+			} else {
+				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmN, new Integer(resources.length));
+			}
         }
         return MessageDialog.openQuestion(shell, title, msg);
     }
@@ -408,8 +416,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	            }
 	        }
 	        IStatus result = createResult(exceptions);
-			if (!result.isOK())
+			if (!result.isOK()) {
 				throw new CoreException(result);
+			}
         } finally {
         	monitor.done();
         }
@@ -496,12 +505,14 @@ public class DeleteResourceAction extends SelectionListenerAction {
         // since the selection may change during the run, 
         // e.g. due to window activation when the prompt dialog is dismissed.
         // For more details, see Bug 60606 [Navigator] (data loss) Navigator deletes/moves the wrong file
-        if (!confirmDelete(resources))
-            return;
+        if (!confirmDelete(resources)) {
+			return;
+		}
         final IResource[] resourcesToDelete = getResourcesToDelete(resources);
 
-        if (resourcesToDelete.length == 0)
-            return;
+        if (resourcesToDelete.length == 0) {
+			return;
+		}
 		//use a non-workspace job with a runnable inside so we can avoid periodic updates
     	Job deleteJob = new Job(IDEWorkbenchMessages.DeleteResourceAction_jobName) {
     		public IStatus run(IProgressMonitor monitor) {
@@ -607,12 +618,15 @@ public class DeleteResourceAction extends SelectionListenerAction {
             }
         });
         int result = dialog.getReturnCode();
-        if (result == 0)
-            return IDialogConstants.YES_ID;
-        if (result == 1)
-            return IDialogConstants.YES_TO_ALL_ID;
-        if (result == 2)
-            return IDialogConstants.NO_ID;
+        if (result == 0) {
+			return IDialogConstants.YES_ID;
+		}
+        if (result == 1) {
+			return IDialogConstants.YES_TO_ALL_ID;
+		}
+        if (result == 2) {
+			return IDialogConstants.NO_ID;
+		}
         return IDialogConstants.CANCEL_ID;
     }
     

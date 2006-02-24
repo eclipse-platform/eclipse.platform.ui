@@ -111,10 +111,11 @@ public class CopyProjectAction extends SelectionListenerAction {
         newDescription.setName(projectName);
 
         //If the location is the default then set the location to null
-        if (rootLocation.equals(Platform.getLocation()))
-            newDescription.setLocation(null);
-        else
-            newDescription.setLocation(rootLocation);
+        if (rootLocation.equals(Platform.getLocation())) {
+			newDescription.setLocation(null);
+		} else {
+			newDescription.setLocation(rootLocation);
+		}
 
         return newDescription;
     }
@@ -163,8 +164,9 @@ public class CopyProjectAction extends SelectionListenerAction {
 
                 monitor.beginTask(COPY_PROGRESS_TITLE, 100);
                 try {
-                    if (monitor.isCanceled())
-                        throw new OperationCanceledException();
+                    if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
 
                     //Get a copy of the current description and modify it
                     IProjectDescription newDescription = createDescription(
@@ -231,18 +233,21 @@ public class CopyProjectAction extends SelectionListenerAction {
 
         //Get the project name and location in a two element list
         Object[] destinationPaths = queryDestinationParameters(project);
-        if (destinationPaths == null)
-            return;
+        if (destinationPaths == null) {
+			return;
+		}
 
         String newName = (String) destinationPaths[0];
         IPath newLocation = new Path((String) destinationPaths[1]);
-        if (!CopyProjectOperation.validateCopy(shell, project, newName, getModelProviderIds()))
-        	return;
+        if (!CopyProjectOperation.validateCopy(shell, project, newName, getModelProviderIds())) {
+			return;
+		}
 
         boolean completed = performCopy(project, newName, newLocation);
 
-        if (!completed) // ie.- canceled
-            return; // not appropriate to show errors
+        if (!completed) {
+			return; // not appropriate to show errors
+		}
 
         // If errors occurred, open an Error dialog
         if (errorStatus != null) {
@@ -267,11 +272,13 @@ public class CopyProjectAction extends SelectionListenerAction {
 
         // to enable this command there must be one project selected and nothing else
         List selectedResources = getSelectedResources();
-        if (selectedResources.size() != 1)
-            return false;
+        if (selectedResources.size() != 1) {
+			return false;
+		}
         IResource source = (IResource) selectedResources.get(0);
-        if (source instanceof IProject && ((IProject) source).isOpen())
-            return true;
+        if (source instanceof IProject && ((IProject) source).isOpen()) {
+			return true;
+		}
         return false;
     }
     

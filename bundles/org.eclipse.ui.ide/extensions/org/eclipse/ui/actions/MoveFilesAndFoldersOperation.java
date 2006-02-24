@@ -88,9 +88,9 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
             } else {
                 // if we're merging folders, we could be overwriting an existing file				
                 if (existing != null) {
-                    if (homogenousResources(source, existing))
-                        moveExisting(source, existing, subMonitor);
-                    else {
+                    if (homogenousResources(source, existing)) {
+						moveExisting(source, existing, subMonitor);
+					} else {
                         // Moving a linked resource over unlinked or vice versa.
                         // Can't use setContents here. Fixes bug 28772.
                         delete(existing, new SubProgressMonitor(subMonitor, 0));

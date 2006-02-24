@@ -102,8 +102,9 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 				/* Either we have a filter that should be active that isn't XOR 
 				 * a filter that shouldn't be active that is currently
 				 */
-				if(indexofFilterIdToBeActivated >= 0 ^ filterService.isActive(visibleFilterDescriptors[i].getId()))  
-					updateFilterActivation = true; 
+				if(indexofFilterIdToBeActivated >= 0 ^ filterService.isActive(visibleFilterDescriptors[i].getId())) {
+					updateFilterActivation = true;
+				} 
 			} 
 			 
 			/* If so, update */
@@ -116,8 +117,9 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 
 				ViewerFilter[] visibleFilters = filterService
 						.getVisibleFilters(true);
-				for (int i = 0; i < visibleFilters.length; i++)
+				for (int i = 0; i < visibleFilters.length; i++) {
 					commonViewer.addFilter(visibleFilters[i]);
+				}
 
 				// the action providers may no longer be enabled, so we reset
 				// the selection.

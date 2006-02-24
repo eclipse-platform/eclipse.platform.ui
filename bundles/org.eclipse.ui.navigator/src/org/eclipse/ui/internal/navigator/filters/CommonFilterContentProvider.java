@@ -34,8 +34,9 @@ public class CommonFilterContentProvider implements IStructuredContentProvider {
  
  
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput instanceof INavigatorContentService)
+		if (newInput instanceof INavigatorContentService) {
 			contentService = (INavigatorContentService) newInput;
+		}
 	}
 
 	/*

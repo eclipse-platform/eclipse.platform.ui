@@ -81,8 +81,9 @@ public class ContainerGenerator {
             throws CoreException {
         folderHandle.create(false, true, monitor);
 
-        if (monitor.isCanceled())
-            throw new OperationCanceledException();
+        if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
 
         return folderHandle;
     }
@@ -115,12 +116,14 @@ public class ContainerGenerator {
             monitor.beginTask("", 2000);//$NON-NLS-1$
 
             projectHandle.create(new SubProgressMonitor(monitor, 1000));
-            if (monitor.isCanceled())
-                throw new OperationCanceledException();
+            if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 
             projectHandle.open(new SubProgressMonitor(monitor, 1000));
-            if (monitor.isCanceled())
-                throw new OperationCanceledException();
+            if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
         } finally {
             monitor.done();
         }
@@ -162,14 +165,16 @@ public class ContainerGenerator {
                 monitor
                         .beginTask(
                                 IDEWorkbenchMessages.ContainerGenerator_progressMessage, 1000 * containerFullPath.segmentCount());
-                if (container != null)
-                    return;
+                if (container != null) {
+					return;
+				}
 
                 // Does the container exist already?
                 IWorkspaceRoot root = getWorkspaceRoot();
                 container = (IContainer) root.findMember(containerFullPath);
-                if (container != null)
-                    return;
+                if (container != null) {
+					return;
+				}
 
                 // Create the container for the given path
                 container = root;

@@ -99,8 +99,9 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            if (event.getProperty().equals(FieldEditor.IS_VALID))
-                updateValidState();
+            if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				updateValidState();
+			}
         }
     };
 
@@ -127,8 +128,9 @@ public class BuildOrderPreferencePage extends PreferencePage implements
                 this, contentsProvider, labelProvider,
                 PROJECT_SELECTION_MESSAGE);
 
-        if (dialog.open() != Window.OK)
-            return;
+        if (dialog.open() != Window.OK) {
+			return;
+		}
 
         Object[] result = dialog.getResult();
 
@@ -416,10 +418,11 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         } else {
             setBuildOrderWidgetsEnablement(true);
             String[] buildOrder = getCurrentBuildOrder();
-            if (buildOrder == null)
-                buildList.setItems(getDefaultProjectOrder());
-            else
-                buildList.setItems(buildOrder);
+            if (buildOrder == null) {
+				buildList.setItems(getDefaultProjectOrder());
+			} else {
+				buildList.setItems(buildOrder);
+			}
         }
     }
 
@@ -474,8 +477,9 @@ public class BuildOrderPreferencePage extends PreferencePage implements
     private boolean includes(String[] testArray, String searchElement) {
 
         for (int i = 0; i < testArray.length; i++) {
-            if (searchElement.equals(testArray[i]))
-                return true;
+            if (searchElement.equals(testArray[i])) {
+				return true;
+			}
         }
         return false;
 
@@ -543,8 +547,9 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         boolean useDefault = defaultOrderButton.getSelection();
 
         // if use defaults is turned off
-        if (!useDefault)
-            buildOrder = buildList.getItems();
+        if (!useDefault) {
+			buildOrder = buildList.getItems();
+		}
 
         //Get a copy of the description from the workspace, set the build order and then
         //apply it to the workspace.
@@ -614,8 +619,9 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         TreeSet difference = new TreeSet();
 
         for (int i = 0; i < allProjects.length; i++) {
-            if (!includes(currentlyDisplayed, allProjects[i].getName()))
-                difference.add(allProjects[i].getName());
+            if (!includes(currentlyDisplayed, allProjects[i].getName())) {
+				difference.add(allProjects[i].getName());
+			}
         }
 
         String[] returnValue = new String[difference.size()];

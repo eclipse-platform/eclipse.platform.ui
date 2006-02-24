@@ -60,10 +60,12 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
      * equality of their underlying <code>IFile</code> resources.
      */
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof IFileEditorInput))
-            return false;
+        if (this == obj) {
+			return true;
+		}
+        if (!(obj instanceof IFileEditorInput)) {
+			return false;
+		}
         IFileEditorInput other = (IFileEditorInput) obj;
         return file.equals(other.getFile());
     }
@@ -79,8 +81,9 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
      * Method declared on IAdaptable.
      */
     public Object getAdapter(Class adapter) {
-        if (adapter == IFile.class)
-            return file;
+        if (adapter == IFile.class) {
+			return file;
+		}
         return file.getAdapter(adapter);
     }
 

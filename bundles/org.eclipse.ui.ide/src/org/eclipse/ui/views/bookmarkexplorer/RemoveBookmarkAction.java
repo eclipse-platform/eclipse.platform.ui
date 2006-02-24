@@ -45,8 +45,9 @@ class RemoveBookmarkAction extends BookmarkAction {
      */
     public void run() {
         final IStructuredSelection sel = getStructuredSelection();
-        if (sel.isEmpty())
-            return;
+        if (sel.isEmpty()) {
+			return;
+		}
         try {
             getView().getWorkspace().run(new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) throws CoreException {

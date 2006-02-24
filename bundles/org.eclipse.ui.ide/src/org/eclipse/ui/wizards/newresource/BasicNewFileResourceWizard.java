@@ -86,8 +86,9 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
      */
     public boolean performFinish() {
         IFile file = mainPage.createNewFile();
-        if (file == null)
-            return false;
+        if (file == null) {
+			return false;
+		}
 
         selectAndReveal(file);
 

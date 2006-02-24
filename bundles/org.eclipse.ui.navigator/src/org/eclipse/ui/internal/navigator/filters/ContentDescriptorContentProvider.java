@@ -30,11 +30,13 @@ class ContentDescriptorContentProvider implements ITreeContentProvider {
 
 		if (aNewInput != null) {
 
-			if (aNewInput instanceof INavigatorContentService)
+			if (aNewInput instanceof INavigatorContentService) {
 				contentService = (INavigatorContentService) aNewInput;
+			}
 
-			if (aViewer instanceof CheckboxTableViewer)
+			if (aViewer instanceof CheckboxTableViewer) {
 				talbleViewer = (CheckboxTableViewer) aViewer;
+			}
 
 			updateCheckState();
 		} else {
@@ -91,8 +93,9 @@ class ContentDescriptorContentProvider implements ITreeContentProvider {
 	}
 
 	private void updateCheckState() {
-		if (talbleViewer == null || contentService == null)
+		if (talbleViewer == null || contentService == null) {
 			return;
+		}
 
 		INavigatorContentDescriptor descriptor;
 		boolean enabled;

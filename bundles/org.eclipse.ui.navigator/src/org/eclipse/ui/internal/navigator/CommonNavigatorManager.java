@@ -218,9 +218,10 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 		Image img = null;
 		if (aSelection != null && !aSelection.isEmpty()
-				&& aSelection instanceof IStructuredSelection)
+				&& aSelection instanceof IStructuredSelection) {
 			img = labelProvider.getImage(((IStructuredSelection) aSelection)
 					.getFirstElement());
+		}
 
 		statusLineManager.setMessage(img, commonDescriptionProvider
 				.getDescription(aSelection));

@@ -128,14 +128,17 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
 	public void threadChange(Thread thread) {
 		//we must make sure we aren't transferring control away from a thread that
 		//already owns a scheduling rule because this is deadlock prone (bug 105491)
-		if (rule == null)
+		if (rule == null) {
 			return;
+		}
 		Job currentJob = Platform.getJobManager().currentJob();
-		if (currentJob == null)
+		if (currentJob == null) {
 			return;
+		}
 		ISchedulingRule currentRule = currentJob.getRule();
-		if (currentRule == null)
+		if (currentRule == null) {
 			return;
+		}
 		throw new IllegalStateException("Cannot fork a thread from a thread owning a rule"); //$NON-NLS-1$
 	}
 

@@ -205,10 +205,10 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             // Create the folder resource in the workspace
             // Update: Recursive to create any folders which do not exist already
             if (!folderHandle.exists()) {
-                if (linkTargetPath != null)
-                    folderHandle.createLink(linkTargetPath,
+                if (linkTargetPath != null) {
+					folderHandle.createLink(linkTargetPath,
                             IResource.ALLOW_MISSING_LOCAL, monitor);
-                else {
+				} else {
 	                IPath path = folderHandle.getFullPath();
 	                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	                int numSegments= path.segmentCount();
@@ -227,15 +227,17 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             }
         } catch (CoreException e) {
             // If the folder already existed locally, just refresh to get contents
-            if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
-                folderHandle.refreshLocal(IResource.DEPTH_INFINITE,
+            if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED) {
+				folderHandle.refreshLocal(IResource.DEPTH_INFINITE,
                         new SubProgressMonitor(monitor, 500));
-            else
-                throw e;
+			} else {
+				throw e;
+			}
         }
 
-        if (monitor.isCanceled())
-            throw new OperationCanceledException();
+        if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
     }
 
     /**
@@ -287,8 +289,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
      *    was not created
      */
     public IFolder createNewFolder() {
-        if (newFolder != null)
-            return newFolder;
+        if (newFolder != null) {
+			return newFolder;
+		}
 
         // create the new folder and cache it if successful
         final IPath containerPath = resourceGroup.getContainerFullPath();
@@ -354,8 +357,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
     private ISchedulingRule createRule(IResource resource) {
 		IResource parent = resource.getParent();
     	while (parent != null) {
-    		if (parent.exists())
-    			return resource.getWorkspace().getRuleFactory().createRule(resource);
+    		if (parent.exists()) {
+				return resource.getWorkspace().getRuleFactory().createRule(resource);
+			}
     		resource = parent;
     		parent = parent.getParent();
     	}
@@ -414,11 +418,13 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
                         .getAdapter(IResource.class);
             }
             if (selectedResource != null) {
-                if (selectedResource.getType() == IResource.FILE)
-                    selectedResource = selectedResource.getParent();
-                if (selectedResource.isAccessible())
-                    resourceGroup.setContainerFullPath(selectedResource
+                if (selectedResource.getType() == IResource.FILE) {
+					selectedResource = selectedResource.getParent();
+				}
+                if (selectedResource.isAccessible()) {
+					resourceGroup.setContainerFullPath(selectedResource
                             .getFullPath());
+				}
             }
         }
 
@@ -430,8 +436,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
      */
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if (visible)
-            resourceGroup.setFocus();
+        if (visible) {
+			resourceGroup.setFocus();
+		}
     }
 
     /**
@@ -448,10 +455,11 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
                 .validateLinkLocation(newFolderHandle);
 
         if (status.getSeverity() == IStatus.ERROR) {
-            if (firstLinkCheck)
-                setMessage(status.getMessage());
-            else
-                setErrorMessage(status.getMessage());
+            if (firstLinkCheck) {
+				setMessage(status.getMessage());
+			} else {
+				setErrorMessage(status.getMessage());
+			}
         } else if (status.getSeverity() == IStatus.WARNING) {
             setMessage(status.getMessage(), WARNING);
             setErrorMessage(null);
@@ -484,8 +492,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
         IStatus linkedResourceStatus = null;
         if (valid) {
             linkedResourceStatus = validateLinkedResource();
-            if (linkedResourceStatus.getSeverity() == IStatus.ERROR)
-                valid = false;
+            if (linkedResourceStatus.getSeverity() == IStatus.ERROR) {
+				valid = false;
+			}
         }
         // validateLinkedResource sets messages itself
         if (valid

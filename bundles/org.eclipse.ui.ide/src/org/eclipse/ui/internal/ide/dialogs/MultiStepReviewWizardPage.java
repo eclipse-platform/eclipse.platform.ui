@@ -139,8 +139,9 @@ public class MultiStepReviewWizardPage extends WizardPage {
                     IStructuredSelection sel = (IStructuredSelection) event
                             .getSelection();
                     WizardStep step = (WizardStep) sel.getFirstElement();
-                    if (step != null)
-                        detailsField.setText(step.getDetails());
+                    if (step != null) {
+						detailsField.setText(step.getDetails());
+					}
                 }
             }
         });
@@ -150,8 +151,9 @@ public class MultiStepReviewWizardPage extends WizardPage {
      * Returns the steps to be displayed.
      */
     /* package */WizardStep[] getSteps() {
-        if (stepGroup != null)
-            return stepGroup.getSteps();
+        if (stepGroup != null) {
+			return stepGroup.getSteps();
+		}
 
         return new WizardStep[0];
     }
@@ -163,8 +165,9 @@ public class MultiStepReviewWizardPage extends WizardPage {
      * @param steps the collection of steps
      */
     /* package */void setSteps(WizardStep[] steps) {
-        if (stepGroup != null)
-            stepGroup.setSteps(steps);
+        if (stepGroup != null) {
+			stepGroup.setSteps(steps);
+		}
     }
 
     /* (non-Javadoc)
@@ -173,10 +176,11 @@ public class MultiStepReviewWizardPage extends WizardPage {
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (visible) {
-            if (stepWizard.canFinishOnReviewPage())
-                instructionLabel.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_instructionFinishLabel);
-            else
-                instructionLabel.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_instructionNextLabel);
+            if (stepWizard.canFinishOnReviewPage()) {
+				instructionLabel.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_instructionFinishLabel);
+			} else {
+				instructionLabel.setText(IDEWorkbenchMessages.MultiStepReviewWizardPage_instructionNextLabel);
+			}
             ((Composite) getControl()).layout(true);
         }
     }

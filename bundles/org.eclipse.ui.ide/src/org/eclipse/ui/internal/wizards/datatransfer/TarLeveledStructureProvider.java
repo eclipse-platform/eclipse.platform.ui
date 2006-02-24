@@ -65,14 +65,16 @@ public class TarLeveledStructureProvider implements
 	 */
 	protected TarEntry createContainer(IPath pathname) {
 		TarEntry existingEntry = (TarEntry) directoryEntryCache.get(pathname);
-		if (existingEntry != null)
+		if (existingEntry != null) {
 			return existingEntry;
+		}
 
 		TarEntry parent;
-		if (pathname.segmentCount() == 1)
+		if (pathname.segmentCount() == 1) {
 			parent = root;
-		else
+		} else {
 			parent = createContainer(pathname.removeLastSegments(1));
+		}
 		TarEntry newEntry = new TarEntry(pathname.toString());
 		newEntry.setFileType(TarEntry.DIRECTORY);
 		directoryEntryCache.put(pathname, newEntry);
@@ -90,11 +92,12 @@ public class TarLeveledStructureProvider implements
 	protected void createFile(TarEntry entry) {
 		IPath pathname = new Path(entry.getName());
 		TarEntry parent;
-		if (pathname.segmentCount() == 1)
+		if (pathname.segmentCount() == 1) {
 			parent = root;
-		else
+		} else {
 			parent = (TarEntry) directoryEntryCache.get(pathname
 					.removeLastSegments(1));
+		}
 
 		List childList = (List) children.get(parent);
 		childList.add(entry);
@@ -104,8 +107,9 @@ public class TarLeveledStructureProvider implements
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
 	public List getChildren(Object element) {
-		if (children == null)
+		if (children == null) {
 			initialize();
+		}
 
 		return ((List) children.get(element));
 	}
@@ -150,8 +154,9 @@ public class TarLeveledStructureProvider implements
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
 	public String getLabel(Object element) {
-		if (element.equals(root))
+		if (element.equals(root)) {
 			return ((TarEntry) element).getName();
+		}
 
 		return stripPath(new Path(((TarEntry) element).getName()).lastSegment());
 	}
@@ -187,15 +192,16 @@ public class TarLeveledStructureProvider implements
 			TarEntry entry = (TarEntry) entries.nextElement();
 			IPath path = new Path(entry.getName()).addTrailingSeparator();
 			
-			if (entry.getFileType() == TarEntry.DIRECTORY) 
+			if (entry.getFileType() == TarEntry.DIRECTORY) {
 				createContainer(path);
-			else
+			} else
 			{
 				// Ensure the container structure for all levels above this is initialized
 				// Once we hit a higher-level container that's already added we need go no further
 				int pathSegmentCount = path.segmentCount();
-				if (pathSegmentCount > 1)
+				if (pathSegmentCount > 1) {
 					createContainer(path.uptoSegment(pathSegmentCount - 1));
+				}
 				createFile(entry);
 			}
 		}
@@ -223,8 +229,9 @@ public class TarLeveledStructureProvider implements
 			}
 			// No seperator wasw present so we're in a higher directory right
 			// now
-			if (firstSep == -1)
+			if (firstSep == -1) {
 				return pathOrig;
+			}
 			path = path.substring(firstSep);
 		}
 		return path;

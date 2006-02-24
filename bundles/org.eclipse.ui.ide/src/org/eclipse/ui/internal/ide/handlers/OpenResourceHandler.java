@@ -139,13 +139,15 @@ public final class OpenResourceHandler extends Action implements IHandler,
 		final OpenResourceDialog dialog = new OpenResourceDialog(parent, input,
 				IResource.FILE);
 		final int resultCode = dialog.open();
-		if (resultCode != IDialogConstants.OK_ID)
+		if (resultCode != IDialogConstants.OK_ID) {
 			return null;
+		}
 
 		final Object[] result = dialog.getResult();
 		if (result == null || result.length == 0
-				|| result[0] instanceof IFile == false)
+				|| result[0] instanceof IFile == false) {
 			return null;
+		}
 
 		return (IFile) result[0];
 	}

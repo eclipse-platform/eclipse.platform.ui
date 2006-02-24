@@ -68,8 +68,9 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
          * Method declared on Object.
          */
         public boolean equals(Object o) {
-            if (!(o instanceof QueryComparator))
-                return false;
+            if (!(o instanceof QueryComparator)) {
+				return false;
+			}
             return true;
         }
 
@@ -84,10 +85,12 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
             int size1 = q1.getAttributes().length;
             int size2 = q2.getAttributes().length;
 
-            if (size1 > size2)
-                return -1;
-            if (size1 == size2)
-                return 0;
+            if (size1 > size2) {
+				return -1;
+			}
+            if (size1 == size2) {
+				return 0;
+			}
             return 1;
         }
     }
@@ -112,9 +115,10 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
                 Map resultsTable = (Map) helpQueries.get(query);
                 IConfigurationElement element = (IConfigurationElement) resultsTable
                         .get(result);
-                if (element != null)
-                    // We have a match so return the help context id
+                if (element != null) {
+					// We have a match so return the help context id
                     return element.getAttribute(ATT_HELP);
+				}
             }
         }
         return null;
@@ -149,14 +153,16 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
                         if (generator != null) {
                             if (generator instanceof IMarkerResolutionGenerator2) {
                                 if (((IMarkerResolutionGenerator2) generator)
-                                        .hasResolutions(marker))
-                                    return true;
+                                        .hasResolutions(marker)) {
+									return true;
+								}
                             } else {
                                 IMarkerResolution[] resolutions = generator
                                         .getResolutions(marker);
-                                if (resolutions.length > 0)
-                                    // there is at least one resolution
+                                if (resolutions.length > 0) {
+									// there is at least one resolution
                                     return true;
+								}
                             }
                         }
                     } else {

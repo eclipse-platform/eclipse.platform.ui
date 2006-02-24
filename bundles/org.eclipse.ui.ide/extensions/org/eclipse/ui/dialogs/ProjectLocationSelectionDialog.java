@@ -90,10 +90,11 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 			code = IStatus.OK;
 			errorMsg = ""; //$NON-NLS-1$
 			allowFinish = true;
-		} else if (firstLocationCheck)
+		} else if (firstLocationCheck) {
 			code = IStatus.OK;
-		else
+		} else {
 			code = IStatus.ERROR;
+		}
 
 		updateStatus(new Status(code, IDEWorkbenchPlugin.IDE_WORKBENCH, code,
 				errorMsg, null));
@@ -106,8 +107,9 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	 */
 	private String checkValid() {
 		String valid = checkValidName();
-		if (valid != null)
+		if (valid != null) {
 			return valid;
+		}
 		return locationArea.checkValidLocation();
 	}
 
@@ -120,8 +122,9 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		String name = this.projectNameField.getText();
 		IWorkspace workspace = getProject().getWorkspace();
 		IStatus nameStatus = workspace.validateName(name, IResource.PROJECT);
-		if (!nameStatus.isOK())
+		if (!nameStatus.isOK()) {
 			return nameStatus.getMessage();
+		}
 		IProject newProject = workspace.getRoot().getProject(name);
 		if (newProject.exists()) {
 			return NLS.bind(
@@ -227,8 +230,9 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	private String getCopyNameFor(String projectName) {
 
 		IWorkspace workspace = getProject().getWorkspace();
-		if (!workspace.getRoot().getProject(projectName).exists())
+		if (!workspace.getRoot().getProject(projectName).exists()) {
 			return projectName;
+		}
 
 		int counter = 1;
 		while (true) {
@@ -243,8 +247,9 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 						projectName);
 			}
 
-			if (!workspace.getRoot().getProject(nameSegment).exists())
+			if (!workspace.getRoot().getProject(nameSegment).exists()) {
 				return nameSegment;
+			}
 
 			counter++;
 		}

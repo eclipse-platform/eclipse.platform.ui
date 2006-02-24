@@ -78,8 +78,9 @@ public class CleanDialog extends MessageDialog {
      */
     private static String getQuestion() {
         boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
-        if (autoBuilding)
-            return IDEWorkbenchMessages.CleanDialog_buildCleanAuto;
+        if (autoBuilding) {
+			return IDEWorkbenchMessages.CleanDialog_buildCleanAuto;
+		}
         return IDEWorkbenchMessages.CleanDialog_buildCleanManual;
     }
 
@@ -96,8 +97,9 @@ public class CleanDialog extends MessageDialog {
                 IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
         this.window = window;
         this.selection = selection;
-        if (this.selection == null)
-            this.selection = new Object[0];
+        if (this.selection == null) {
+			this.selection = new Object[0];
+		}
         setShellStyle(SWT.RESIZE | getShellStyle());
     }
 
@@ -111,8 +113,9 @@ public class CleanDialog extends MessageDialog {
         final boolean buildAll = buildNowButton != null
                 && buildNowButton.getSelection();
         super.buttonPressed(buttonId);
-        if (buttonId != IDialogConstants.OK_ID)
-        	return;
+        if (buttonId != IDialogConstants.OK_ID) {
+			return;
+		}
         //save all dirty editors
         BuildUtilities.saveEditors(null);
         //batching changes ensures that autobuild runs after cleaning
@@ -192,11 +195,13 @@ public class CleanDialog extends MessageDialog {
     	projectNames.addFilter(new ViewerFilter() {
     		private final IProject[] projectHolder = new IProject[1];
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (!(element instanceof IProject))
+				if (!(element instanceof IProject)) {
 					return false;
+				}
 				IProject project = (IProject) element;
-				if (!project.isAccessible())
+				if (!project.isAccessible()) {
 					return false;
+				}
 				projectHolder[0] = project;
 				return BuildUtilities.isEnabled(projectHolder, IncrementalProjectBuilder.CLEAN_BUILD);
 			}
@@ -227,16 +232,17 @@ public class CleanDialog extends MessageDialog {
 	 */
 	protected void doClean(boolean cleanAll, IProgressMonitor monitor)
 	        throws CoreException {
-	    if (cleanAll)
-	        ResourcesPlugin.getWorkspace().build(
+	    if (cleanAll) {
+			ResourcesPlugin.getWorkspace().build(
 	                IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-	    else {
+		} else {
 	        try {
 	            monitor.beginTask(IDEWorkbenchMessages.CleanDialog_taskName, selection.length);
-	            for (int i = 0; i < selection.length; i++)
-	                ((IProject) selection[i]).build(
+	            for (int i = 0; i < selection.length; i++) {
+					((IProject) selection[i]).build(
 	                        IncrementalProjectBuilder.CLEAN_BUILD,
 	                        new SubProgressMonitor(monitor, 1));
+				}
 	        } finally {
 	            monitor.done();
 	        }

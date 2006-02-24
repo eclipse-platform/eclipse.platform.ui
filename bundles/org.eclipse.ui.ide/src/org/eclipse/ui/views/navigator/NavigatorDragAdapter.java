@@ -62,16 +62,18 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
     public void dragFinished(DragSourceEvent event) {
         LocalSelectionTransfer.getInstance().setSelection(null);
 
-        if (event.doit == false)
-            return;
+        if (event.doit == false) {
+			return;
+		}
 
         final int typeMask = IResource.FOLDER | IResource.FILE;
         if (event.detail == DND.DROP_MOVE) {
             //never delete resources when dragging outside Eclipse. 
             //workaround for bug 30543.
             if (lastDataType != null
-                    && FileTransfer.getInstance().isSupportedType(lastDataType))
-                return;
+                    && FileTransfer.getInstance().isSupportedType(lastDataType)) {
+				return;
+			}
 
             IResource[] resources = getSelectedResources(typeMask);
             DragSource dragSource = (DragSource) event.widget;
@@ -79,8 +81,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
             Shell shell = control.getShell();
             ReadOnlyStateChecker checker;
 
-            if (resources == null || resources.length == 0)
-                return;
+            if (resources == null || resources.length == 0) {
+				return;
+			}
 
             checker = new ReadOnlyStateChecker(shell, CHECK_MOVE_TITLE,
                     CHECK_DELETE_MESSAGE);
@@ -99,8 +102,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 
             // file moved for us by OS, no need to delete the resources, just
             // update the view
-            if (resources == null)
-                return;
+            if (resources == null) {
+				return;
+			}
             for (int i = 0; i < resources.length; i++) {
                 try {
                     resources[i].refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -118,8 +122,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
         final int typeMask = IResource.FILE | IResource.FOLDER;
         IResource[] resources = getSelectedResources(typeMask);
 
-        if (resources == null || resources.length == 0)
-            return;
+        if (resources == null || resources.length == 0) {
+			return;
+		}
 
         lastDataType = event.dataType;
         //use local selection transfer if possible
@@ -134,8 +139,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
             return;
         }
         //resort to a file transfer
-        if (!FileTransfer.getInstance().isSupportedType(event.dataType))
-            return;
+        if (!FileTransfer.getInstance().isSupportedType(event.dataType)) {
+			return;
+		}
 
         // Get the path of each file and set as the drag data
         final int length = resources.length;
@@ -144,17 +150,20 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
         for (int i = 0; i < length; i++) {
             IPath location = resources[i].getLocation();
             // location may be null. See bug 29491.
-            if (location != null)
-                fileNames[actualLength++] = location.toOSString();
+            if (location != null) {
+				fileNames[actualLength++] = location.toOSString();
+			}
         }
-        if (actualLength == 0)
-            return;
+        if (actualLength == 0) {
+			return;
+		}
         // was one or more of the locations null?
         if (actualLength < length) {
             String[] tempFileNames = fileNames;
             fileNames = new String[actualLength];
-            for (int i = 0; i < actualLength; i++)
-                fileNames[i] = tempFileNames[i];
+            for (int i = 0; i < actualLength; i++) {
+				fileNames[i] = tempFileNames[i];
+			}
         }
         event.data = fileNames;
     }
@@ -198,8 +207,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
             return null;
         }
         IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-        if (structuredSelection == null)
-            return null;
+        if (structuredSelection == null) {
+			return null;
+		}
 
         // loop through list and look for matching items
         Iterator itr = structuredSelection.iterator();

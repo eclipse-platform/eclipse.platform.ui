@@ -80,8 +80,9 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
      */
     public boolean performFinish() {
         IFolder folder = mainPage.createNewFolder();
-        if (folder == null)
-            return false;
+        if (folder == null) {
+			return false;
+		}
 
         selectAndReveal(folder);
 

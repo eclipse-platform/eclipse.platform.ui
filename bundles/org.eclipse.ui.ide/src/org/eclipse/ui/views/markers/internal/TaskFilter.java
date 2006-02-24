@@ -90,16 +90,18 @@ public class TaskFilter extends MarkerFilter {
 	}
 
 	private boolean selectByDescription(ConcreteMarker marker) {
-		if (description == null || description.equals("")) //$NON-NLS-1$
+		if (description == null || description.equals("")) { //$NON-NLS-1$
 			return true;
+		}
 
 		int index = marker.getDescription().indexOf(description);
 		return contains ? (index >= 0) : (index < 0);
 	}
 
 	private boolean selectByDone(TaskMarker item) {
-		if (selectByDone)
+		if (selectByDone) {
 			return done == (item.getDone() == 1);
+		}
 
 		return true;
 	}
@@ -108,12 +110,13 @@ public class TaskFilter extends MarkerFilter {
 		if (priority != 0 && selectByPriority) {
 			int markerPriority = marker.getPriority();
 
-			if (markerPriority == IMarker.PRIORITY_HIGH)
+			if (markerPriority == IMarker.PRIORITY_HIGH) {
 				return (priority & PRIORITY_HIGH) > 0;
-			else if (markerPriority == IMarker.PRIORITY_NORMAL)
+			} else if (markerPriority == IMarker.PRIORITY_NORMAL) {
 				return (priority & PRIORITY_NORMAL) > 0;
-			else if (markerPriority == IMarker.PRIORITY_LOW)
+			} else if (markerPriority == IMarker.PRIORITY_LOW) {
 				return (priority & PRIORITY_LOW) > 0;
+			}
 		}
 
 		return true;
@@ -190,36 +193,42 @@ public class TaskFilter extends MarkerFilter {
 
 		String setting = settings.get(TAG_CONTAINS);
 
-		if (setting != null)
+		if (setting != null) {
 			contains = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.get(TAG_DESCRIPTION);
 
-		if (setting != null)
+		if (setting != null) {
 			description = new String(setting);
+		}
 
 		setting = settings.get(TAG_DONE);
 
-		if (setting != null)
+		if (setting != null) {
 			done = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.get(TAG_PRIORITY);
 
-		if (setting != null)
+		if (setting != null) {
 			try {
 				priority = Integer.parseInt(setting);
 			} catch (NumberFormatException eNumberFormat) {
 			}
+		}
 
 		setting = settings.get(TAG_SELECT_BY_DONE);
 
-		if (setting != null)
+		if (setting != null) {
 			selectByDone = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.get(TAG_SELECT_BY_PRIORITY);
 
-		if (setting != null)
+		if (setting != null) {
 			selectByPriority = Boolean.valueOf(setting).booleanValue();
+		}
 
 	}
 	
@@ -231,33 +240,39 @@ public class TaskFilter extends MarkerFilter {
 
 		String setting = settings.getString(TAG_CONTAINS);
 
-		if (setting != null)
+		if (setting != null) {
 			contains = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.getString(TAG_DESCRIPTION);
 
-		if (setting != null)
+		if (setting != null) {
 			description = new String(setting);
+		}
 
 		setting = settings.getString(TAG_DONE);
 
-		if (setting != null)
+		if (setting != null) {
 			done = Boolean.valueOf(setting).booleanValue();
+		}
 
 		Integer priorityValue = settings.getInteger(TAG_PRIORITY);
 
-		if (setting != null)
+		if (setting != null) {
 			priority = priorityValue.intValue();
+		}
 
 		setting = settings.getString(TAG_SELECT_BY_DONE);
 
-		if (setting != null)
+		if (setting != null) {
 			selectByDone = Boolean.valueOf(setting).booleanValue();
+		}
 
 		setting = settings.getString(TAG_SELECT_BY_PRIORITY);
 
-		if (setting != null)
+		if (setting != null) {
 			selectByPriority = Boolean.valueOf(setting).booleanValue();
+		}
 
 	}
 

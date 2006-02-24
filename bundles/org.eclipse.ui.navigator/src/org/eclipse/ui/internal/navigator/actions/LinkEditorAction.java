@@ -65,16 +65,18 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 
 	protected void activateEditor() {
 		ISelection selection = commonViewer.getSelection();
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			activateEditor((IStructuredSelection) selection);
+		}
 	}
 
 	/**
 	 * Update the active editor based on the current selection in the Navigator.
 	 */
 	protected void activateEditor(final IStructuredSelection aSelection) {
-		if (aSelection == null || aSelection.size() != 1)
+		if (aSelection == null || aSelection.size() != 1) {
 			return;
+		}
 
 		final Runnable activateEditor = new Runnable() {
 
@@ -85,8 +87,9 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 			 */
 			public void run() {
 				ILinkHelper[] helpers = linkHelperRegistry.getLinkHelpersFor(aSelection);
-				if (helpers.length > 0)
+				if (helpers.length > 0) {
 					helpers[0].activateEditor(commonNavigator.getSite().getPage(), aSelection);
+				}
 			}
 		};
 
@@ -110,13 +113,15 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		partListener = new IPartListener() {
 
 			public void partActivated(IWorkbenchPart part) {
-				if (part instanceof IEditorPart)
+				if (part instanceof IEditorPart) {
 					linkToEditor((IEditorPart) part);
+				}
 			}
 
 			public void partBroughtToTop(IWorkbenchPart part) {
-				if (part instanceof IEditorPart)
+				if (part instanceof IEditorPart) {
 					linkToEditor((IEditorPart) part);
+				}
 			}
 
 			public void partClosed(IWorkbenchPart part) {
@@ -164,8 +169,9 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 
 			for (int i = 0; i < helpers.length; i++) {
 				selection = helpers[i].findSelection(input);
-				if (selection != null && !selection.isEmpty())
+				if (selection != null && !selection.isEmpty()) {
 					newSelection = mergeSelection(newSelection, selection);
+				}
 			}
 
 			commonNavigator.selectReveal(newSelection);
@@ -173,11 +179,11 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	}
 
 	private IStructuredSelection mergeSelection(IStructuredSelection aBase, IStructuredSelection aSelectionToAppend) {
-		if (aBase == null || aBase.isEmpty())
+		if (aBase == null || aBase.isEmpty()) {
 			return (aSelectionToAppend != null) ? aSelectionToAppend : StructuredSelection.EMPTY;
-		else if (aSelectionToAppend == null || aSelectionToAppend.isEmpty())
+		} else if (aSelectionToAppend == null || aSelectionToAppend.isEmpty()) {
 			return aBase;
-		else {
+		} else {
 			List newItems = new ArrayList(aBase.toList());
 			newItems.addAll(aSelectionToAppend.toList());
 			return new StructuredSelection(newItems);
@@ -197,8 +203,9 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		if (commonNavigator.isLinkingEnabled())
+		if (commonNavigator.isLinkingEnabled()) {
 			activateEditor((IStructuredSelection) event.getSelection());
+		}
 
 	}
 

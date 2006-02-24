@@ -79,13 +79,15 @@ class CopyBookmarkAction extends BookmarkAction {
             // set the clipboard contents
             getView().getClipboard().setContents(data, transferTypes);
         } catch (SWTError e) {
-            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
-                throw e;
+            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
+				throw e;
+			}
             if (MessageDialog
                     .openQuestion(
                             getView().getShell(),
-                            BookmarkMessages.CopyToClipboardProblemDialog_title, BookmarkMessages.CopyToClipboardProblemDialog_message))
-                setClipboard(markers, markerReport);
+                            BookmarkMessages.CopyToClipboardProblemDialog_title, BookmarkMessages.CopyToClipboardProblemDialog_message)) {
+				setClipboard(markers, markerReport);
+			}
         }
     }
 

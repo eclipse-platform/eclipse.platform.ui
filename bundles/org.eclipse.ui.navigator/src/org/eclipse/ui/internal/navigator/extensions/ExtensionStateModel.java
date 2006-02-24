@@ -131,8 +131,9 @@ public class ExtensionStateModel extends EventManager implements
 
 	protected void firePropertyChangeEvent(PropertyChangeEvent anEvent) {
 		Object[] listeners = getListeners();
-		for (int i = 0; i < listeners.length; ++i)
+		for (int i = 0; i < listeners.length; ++i) {
 			((IPropertyChangeListener) listeners[i]).propertyChange(anEvent);
+		}
 	}
 
 }

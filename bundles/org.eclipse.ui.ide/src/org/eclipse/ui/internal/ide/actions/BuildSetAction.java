@@ -77,8 +77,9 @@ public class BuildSetAction extends Action {
 		//radio buttons receive an event when they become unselected,
 		//so we must not run the action in this case
 		if (event.widget instanceof MenuItem) {
-			if (!((MenuItem) event.widget).getSelection())
+			if (!((MenuItem) event.widget).getSelection()) {
 				return;
+			}
 		}
 		run();
 	}

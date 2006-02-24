@@ -101,10 +101,11 @@ public class WizardNewLinkPage extends WizardPage {
 				IIDEHelpContextIds.NEW_LINK_WIZARD_PAGE);
 
         final Button createLinkButton = new Button(topLevel, SWT.CHECK);
-        if (type == IResource.FILE)
-            createLinkButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_linkFileButton);
-        else
-            createLinkButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_linkFolderButton);
+        if (type == IResource.FILE) {
+			createLinkButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_linkFileButton);
+		} else {
+			createLinkButton.setText(IDEWorkbenchMessages.WizardNewLinkPage_linkFolderButton);
+		}
         createLinkButton.setSelection(createLink);
         GridData data = new GridData();
         data.horizontalSpan = 3;
@@ -220,10 +221,11 @@ public class WizardNewLinkPage extends WizardPage {
         if (type == IResource.FILE) {
             FileDialog dialog = new FileDialog(getShell());
             if (store != null) {
-                if (store.fetchInfo().isDirectory()) 
-                	dialog.setFilterPath(linkTargetName);
-                else
-                    dialog.setFileName(linkTargetName);
+                if (store.fetchInfo().isDirectory()) {
+					dialog.setFilterPath(linkTargetName);
+				} else {
+					dialog.setFileName(linkTargetName);
+				}
             }
             selection = dialog.open();
         } else {

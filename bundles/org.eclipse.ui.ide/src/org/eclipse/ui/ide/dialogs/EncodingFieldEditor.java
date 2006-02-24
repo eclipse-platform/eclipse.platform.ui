@@ -49,8 +49,9 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 	protected void doStore() {
 		String encoding = getSelectedEncoding();
 		
-		if(hasSameEncoding(encoding))
+		if(hasSameEncoding(encoding)) {
 			return;
+		}
 		
 		IDEEncoding.addIDEEncoding(encoding);	
 		

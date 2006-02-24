@@ -55,8 +55,9 @@ public final class ResourceUtil {
         // Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
         // See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
         Object o = editorInput.getAdapter(IFile.class);
-        if (o instanceof IFile)
-            return (IFile) o;
+        if (o instanceof IFile) {
+			return (IFile) o;
+		}
         return null;
     }
 
@@ -75,8 +76,9 @@ public final class ResourceUtil {
         // Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
         // See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
         Object o = editorInput.getAdapter(IResource.class);
-        if (o instanceof IResource)
-            return (IResource) o;
+        if (o instanceof IResource) {
+			return (IResource) o;
+		}
         // the input may adapt to IFile but not IResource
         return getFile(editorInput);
     }

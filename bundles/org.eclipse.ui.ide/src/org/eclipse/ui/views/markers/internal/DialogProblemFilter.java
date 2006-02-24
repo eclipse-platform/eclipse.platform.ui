@@ -514,13 +514,15 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 						if (selection instanceof IStructuredSelection) {
 							Object selected = ((IStructuredSelection) selection)
 									.getFirstElement();
-							if (selected == null)
+							if (selected == null) {
 								systemSettingsLabel.setText(Util.EMPTY_STRING);
-							else
+							} else {
 								systemSettingsLabel
 										.setText(getSystemFilterString((ProblemFilter) selected));
-						} else
+							}
+						} else {
 							systemSettingsLabel.setText(Util.EMPTY_STRING);
+						}
 						showSystemLabel(true);
 
 					}
@@ -551,8 +553,9 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		StringBuffer filterBuffer = new StringBuffer();
 
 		String scopeString = getScopeString(filter);
-		if (scopeString != null)
+		if (scopeString != null) {
 			filterBuffer.append(scopeString);
+		}
 
 		String descriptionString = getDescriptionString(filter);
 		if (descriptionString != null) {
@@ -581,8 +584,9 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	 */
 	private String getProblemTypesString(ProblemFilter filter) {
 		List types = filter.getSelectedTypes();
-		if (types.size() == getRootEntries(filter).length)
+		if (types.size() == getRootEntries(filter).length) {
 			return MarkerMessages.ProblemFilterDialog_All_Problems;
+		}
 		StringBuffer typesBuffer = new StringBuffer();
 		Iterator typesIterator = types.iterator();
 		typesBuffer.append(MarkerMessages.ProblemFilterDialog_Selected_Types);
@@ -626,17 +630,19 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	 * @return String or <code>null</code>.
 	 */
 	private String getDescriptionString(ProblemFilter filter) {
-		if (filter.getDescription().length() == 0)
+		if (filter.getDescription().length() == 0) {
 			return null;
-		if (filter.getContains())
+		}
+		if (filter.getContains()) {
 			return NLS.bind(
 					MarkerMessages.ProblemFilterDialog_Contains_Description,
 					filter.getDescription());
-		else
+		} else {
 			return NLS
 					.bind(
 							MarkerMessages.ProblemFilterDialog_Does_Not_Contain_Description,
 							filter.getDescription());
+		}
 	}
 
 	/**

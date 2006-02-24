@@ -54,12 +54,14 @@ public class LinkHelperRegistry extends RegistryReader {
 	// returned
 	public ILinkHelper[] getLinkHelpersFor(IStructuredSelection aSelection) {
 
-		if (aSelection.isEmpty())
+		if (aSelection.isEmpty()) {
 			return NO_LINK_HELPERS;
+		}
 
 		Set contentDescriptors = contentService.findContentExtensionsWithPossibleChild(aSelection.getFirstElement());
-		if (contentDescriptors.isEmpty())
+		if (contentDescriptors.isEmpty()) {
 			return NO_LINK_HELPERS;
+		}
 
 		/* Use the first Navigator Content LinkHelperDescriptor for now */
 		INavigatorContentExtension contentExtension = (INavigatorContentExtension) contentDescriptors
@@ -70,14 +72,16 @@ public class LinkHelperRegistry extends RegistryReader {
 		LinkHelperDescriptor descriptor = null;
 		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
 			descriptor = (LinkHelperDescriptor) itr.next();
-			if (descriptor.isEnabledFor(contentExtension.getId()))
+			if (descriptor.isEnabledFor(contentExtension.getId())) {
 				helpersList.add(descriptor.getLinkHelper());
-			else if (descriptor.isEnabledFor(aSelection))
+			} else if (descriptor.isEnabledFor(aSelection)) {
 				helpersList.add(descriptor.getLinkHelper());
+			}
 		}
-		if (helpersList.size() > 0)
+		if (helpersList.size() > 0) {
 			helpersList
 					.toArray((helpers = new ILinkHelper[helpersList.size()]));
+		}
 
 		return helpers;
 	}
@@ -88,12 +92,14 @@ public class LinkHelperRegistry extends RegistryReader {
 		LinkHelperDescriptor descriptor = null;
 		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
 			descriptor = (LinkHelperDescriptor) itr.next();
-			if (descriptor.isEnabledFor(input))
+			if (descriptor.isEnabledFor(input)) {
 				helpersList.add(descriptor.getLinkHelper());
+			}
 		}
-		if (helpersList.size() > 0)
+		if (helpersList.size() > 0) {
 			helpersList
 					.toArray((helpers = new ILinkHelper[helpersList.size()]));
+		}
 
 		return helpers;
 	}
@@ -111,8 +117,9 @@ public class LinkHelperRegistry extends RegistryReader {
 	 * @return
 	 */
 	protected List getDescriptors() {
-		if (descriptors == null)
+		if (descriptors == null) {
 			descriptors = new ArrayList();
+		}
 		return descriptors;
 	}
 }

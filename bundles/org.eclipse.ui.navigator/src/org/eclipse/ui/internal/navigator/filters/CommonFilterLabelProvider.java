@@ -42,8 +42,9 @@ public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelPro
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof NavigatorContentDescriptor)
+		if (element instanceof NavigatorContentDescriptor) {
 			return CONTENT_DESCRIPTOR_REGISTRY.getImage(((INavigatorContentDescriptor) element).getId());
+		}
 		return null;
 	}
 
@@ -53,10 +54,11 @@ public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelPro
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof NavigatorContentDescriptor)
+		if (element instanceof NavigatorContentDescriptor) {
 			return ((INavigatorContentDescriptor) element).getName();
-		else if (element instanceof ICommonFilterDescriptor)
+		} else if (element instanceof ICommonFilterDescriptor) {
 			return ((ICommonFilterDescriptor) element).getName();
+		}
 		return null;
 	}
 

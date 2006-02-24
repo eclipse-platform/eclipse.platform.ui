@@ -45,14 +45,16 @@ class Binding {
 		Pattern pattern = null;
 		for (Iterator itr = includePatterns.iterator(); itr.hasNext();) {
 			pattern = (Pattern) itr.next();
-			if (pattern.matcher(anExtensionId).matches())
+			if (pattern.matcher(anExtensionId).matches()) {
 				return true;
+			}
 		}
 
 		for (Iterator itr = excludePatterns.iterator(); itr.hasNext();) {
 			pattern = (Pattern) itr.next();
-			if (pattern.matcher(anExtensionId).matches())
+			if (pattern.matcher(anExtensionId).matches()) {
 				return false;
+			}
 		}
 		return false;
 	}
@@ -63,13 +65,15 @@ class Binding {
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#isRootExtension(java.lang.String)
 	 */
 	boolean isRootExtension(String anExtensionId) {
-		if (rootPatterns.size() == 0)
+		if (rootPatterns.size() == 0) {
 			return false;
+		}
 		Pattern pattern = null;
 		for (Iterator itr = rootPatterns.iterator(); itr.hasNext();) {
 			pattern = (Pattern) itr.next();
-			if (pattern.matcher(anExtensionId).matches())
+			if (pattern.matcher(anExtensionId).matches()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -103,7 +107,7 @@ class Binding {
 
 			patternString = contentExtensionPatterns[i]
 					.getAttribute(NavigatorViewerDescriptor.ATT_PATTERN);
-			if (patternString == null)
+			if (patternString == null) {
 				NavigatorPlugin
 						.logError(
 								0,
@@ -119,11 +123,12 @@ class Binding {
 																.getDeclaringExtension()
 																.getNamespace() }),
 								null);
-			else {
+			} else {
 				compiledPattern = Pattern.compile(patternString);
 				includePatterns.add(compiledPattern);
-				if (toRespectRoots && isRoot)
+				if (toRespectRoots && isRoot) {
 					rootPatterns.add(compiledPattern);
+				}
 			}
 		}
 
@@ -140,7 +145,7 @@ class Binding {
 
 			patternString = contentExtensionPatterns[i]
 					.getAttribute(NavigatorViewerDescriptor.ATT_PATTERN);
-			if (patternString == null)
+			if (patternString == null) {
 				NavigatorPlugin
 						.logError(
 								0,
@@ -156,7 +161,7 @@ class Binding {
 																.getDeclaringExtension()
 																.getNamespace() }),
 								null);
-			else {
+			} else {
 				compiledPattern = Pattern.compile(patternString);
 				excludePatterns.add(compiledPattern);
 			}

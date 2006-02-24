@@ -75,12 +75,13 @@ public abstract class MultiStepWizard extends Wizard {
      * Method declared on IWizard.
      */
     public boolean canFinish() {
-        if (getContainer().getCurrentPage() == reviewPage)
-            return canFinishOnReviewPage();
-        else if (isConfigureStepMode())
-            return getStepContainer().canWizardFinish();
-        else
-            return false;
+        if (getContainer().getCurrentPage() == reviewPage) {
+			return canFinishOnReviewPage();
+		} else if (isConfigureStepMode()) {
+			return getStepContainer().canWizardFinish();
+		} else {
+			return false;
+		}
     }
 
     /**
@@ -138,10 +139,11 @@ public abstract class MultiStepWizard extends Wizard {
      * Method declared on IWizard.
      */
     public final IWizardPage getPreviousPage(IWizardPage page) {
-        if (page == configPage)
-            return null;
-        else
-            return super.getPreviousPage(page);
+        if (page == configPage) {
+			return null;
+		} else {
+			return super.getPreviousPage(page);
+		}
     }
 
     /**
@@ -177,10 +179,11 @@ public abstract class MultiStepWizard extends Wizard {
      * Method declared on IWizard.
      */
     public final boolean performCancel() {
-        if (isConfigureStepMode())
-            return getStepContainer().performCancel();
-        else
-            return true;
+        if (isConfigureStepMode()) {
+			return getStepContainer().performCancel();
+		} else {
+			return true;
+		}
     }
 
     /* (non-Javadoc)
@@ -204,10 +207,11 @@ public abstract class MultiStepWizard extends Wizard {
      * Returns the collection of steps for the wizard.
      */
     public final WizardStep[] getSteps() {
-        if (reviewPage != null)
-            return reviewPage.getSteps();
-        else
-            return new WizardStep[0];
+        if (reviewPage != null) {
+			return reviewPage.getSteps();
+		} else {
+			return new WizardStep[0];
+		}
     }
 
     /**
@@ -216,10 +220,12 @@ public abstract class MultiStepWizard extends Wizard {
      * pages are not yet created.
      */
     public final void setSteps(WizardStep[] steps) {
-        if (reviewPage != null)
-            reviewPage.setSteps(steps);
-        if (configPage != null)
-            configPage.setSteps(steps);
+        if (reviewPage != null) {
+			reviewPage.setSteps(steps);
+		}
+        if (configPage != null) {
+			configPage.setSteps(steps);
+		}
     }
 
     /**
@@ -228,7 +234,8 @@ public abstract class MultiStepWizard extends Wizard {
      */
     /* package */void setWizardDialog(MultiStepWizardDialog dialog) {
         wizardDialog = dialog;
-        if (configPage != null)
-            configPage.setWizardDialog(wizardDialog);
+        if (configPage != null) {
+			configPage.setWizardDialog(wizardDialog);
+		}
     }
 }

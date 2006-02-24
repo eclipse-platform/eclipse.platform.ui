@@ -126,8 +126,9 @@ public class MarkerList {
 			return new BookmarkMarker(marker);
 		} else if (marker.isSubtypeOf(IMarker.PROBLEM)) {
 			return new ProblemMarker(marker);
-		} else
+		} else {
 			return new ConcreteMarker(marker);
+		}
 	}
 
 	public void refresh() {
