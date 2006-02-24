@@ -121,7 +121,7 @@ public class DocumentProviderRegistry {
 			String msg= MessageFormat.format(TextEditorMessages.DocumentProviderRegistry_error_extension_point_not_found, new Object[] { PlatformUI.PLUGIN_ID });
 			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
 			ILog log= Platform.getLog(bundle);
-			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, null));
+			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, null));
 			return;
 		}
 

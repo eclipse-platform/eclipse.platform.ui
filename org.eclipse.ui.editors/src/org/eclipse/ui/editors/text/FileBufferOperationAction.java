@@ -190,9 +190,9 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 					}
 
 				} catch (OperationCanceledException e) {
-					status= new Status(IStatus.CANCEL, EditorsUI.PLUGIN_ID, IStatus.CANCEL, "", null); //$NON-NLS-1$
+					status= new Status(IStatus.CANCEL, EditorsUI.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 				} catch (CoreException e) {
-					status= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.ERROR, "", e); //$NON-NLS-1$
+					status= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "", e); //$NON-NLS-1$
 				}
 				return status;
 			}

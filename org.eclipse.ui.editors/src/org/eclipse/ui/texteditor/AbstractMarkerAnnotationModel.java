@@ -166,7 +166,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
 		ILog log= Platform.getLog(bundle);
 		if (message != null)
-			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));
+			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception));
 		else
 			log.log(exception.getStatus());
 	}
