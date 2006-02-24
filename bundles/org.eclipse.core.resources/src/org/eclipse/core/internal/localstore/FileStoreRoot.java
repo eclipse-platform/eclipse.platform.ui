@@ -53,7 +53,7 @@ public class FileStoreRoot {
 		this.variableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 		this.root = rootURI;
 		this.chop = workspacePath.segmentCount();
-		this.localRoot = FileUtil.toPath(root);
+		this.localRoot = toLocalPath(root);
 	}
 
 	/**
@@ -109,5 +109,16 @@ public class FileStoreRoot {
 
 	void setValid(boolean value) {
 		this.isValid = value;
+	}
+
+	/**
+	 * Returns the local path for the given URI, or null if not possible.
+	 */
+	private IPath toLocalPath(URI uri) {
+		try {
+			return new Path(EFS.getStore(uri).toLocalFile(EFS.NONE, null).getAbsolutePath());
+		} catch (CoreException e) {
+			return FileUtil.toPath(uri);
+		}
 	}
 }
