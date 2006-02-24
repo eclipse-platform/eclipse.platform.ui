@@ -68,7 +68,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	private Map fDynamicVariables;
 	
 	/**
-	 * Value varialbes - maps variable names to variables.
+	 * Value variables - maps variable names to variables.
 	 */
 	private Map fValueVariables;
 	
@@ -228,7 +228,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	}
 
 	/**
-	 * Loads any persisted value varialbes from the preference store.
+	 * Loads any persisted value variables from the preference store.
 	 */
 	private void loadPersistedValueVariables() {
 		String variablesString= VariablesPlugin.getDefault().getPluginPreferences().getString(PREF_VALUE_VARIABLES);
@@ -289,7 +289,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 
 	/**
 	 * Loads contributed value variables. This is done after the persisted value
-	 * varaibles are restored. Any contributed variables with the same name are
+	 * variables are restored. Any contributed variables with the same name are
 	 * merged with existing persisted values.
 	 */
 	private void loadContributedValueVariables() {
