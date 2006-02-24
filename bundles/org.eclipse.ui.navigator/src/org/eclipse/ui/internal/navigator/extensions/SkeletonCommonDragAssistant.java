@@ -50,8 +50,9 @@ public final class SkeletonCommonDragAssistant extends
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#setDragData(org.eclipse.swt.dnd.DragSourceEvent,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void setDragData(DragSourceEvent anEvent,
+	public boolean setDragData(DragSourceEvent anEvent,
 			IStructuredSelection aSelection) {
+		return false;
 
 	}
 

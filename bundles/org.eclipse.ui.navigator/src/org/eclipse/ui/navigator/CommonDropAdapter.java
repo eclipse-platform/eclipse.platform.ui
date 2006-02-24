@@ -47,7 +47,7 @@ import org.eclipse.ui.part.PluginTransfer;
  * @see CommonDragAdapter
  * @see CommonDragAdapterAssistant
  * @see CommonDropAdapterAssistant
- * @see CommonViewer#initDragAndDrop()
+ * @see CommonViewer
  * @since 3.2
  */
 public final class CommonDropAdapter extends PluginDropAdapter {

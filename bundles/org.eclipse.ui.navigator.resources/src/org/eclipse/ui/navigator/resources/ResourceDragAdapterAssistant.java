@@ -67,7 +67,7 @@ public final class ResourceDragAdapterAssistant extends
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#setDragData(org.eclipse.swt.dnd.DragSourceEvent,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void setDragData(DragSourceEvent anEvent,
+	public boolean setDragData(DragSourceEvent anEvent,
 			IStructuredSelection aSelection) {
 
 		if (LocalSelectionTransfer.getInstance().isSupportedType(
@@ -77,6 +77,7 @@ public final class ResourceDragAdapterAssistant extends
 				System.out
 						.println("ResourceDragAdapterAssistant.dragSetData set LocalSelectionTransfer"); //$NON-NLS-1$
 			}
+			return true;
 		} else if (ResourceTransfer.getInstance().isSupportedType(
 				anEvent.dataType)) {
 			anEvent.data = getSelectedResources(aSelection);
@@ -84,7 +85,7 @@ public final class ResourceDragAdapterAssistant extends
 				System.out
 						.println("ResourceDragAdapterAssistant.dragSetData set ResourceTransfer"); //$NON-NLS-1$
 			}
-
+			return true;
 		} else if (FileTransfer.getInstance().isSupportedType(anEvent.dataType)) {
 
 			IResource[] resources = getSelectedResources(aSelection);
@@ -100,25 +101,23 @@ public final class ResourceDragAdapterAssistant extends
 					fileNames[actualLength++] = location.toOSString();
 				}
 			}
-			if (actualLength == 0) {
-				return;
-			}
-			// was one or more of the locations null?
-			if (actualLength < length) {
-				String[] tempFileNames = fileNames;
-				fileNames = new String[actualLength];
-				for (int i = 0; i < actualLength; i++) {
-					fileNames[i] = tempFileNames[i];
+			if (actualLength > 0) { 
+				// was one or more of the locations null?
+				if (actualLength < length) {
+					String[] tempFileNames = fileNames;
+					fileNames = new String[actualLength];
+					for (int i = 0; i < actualLength; i++)
+						fileNames[i] = tempFileNames[i];
 				}
+				anEvent.data = fileNames;
+	
+				if (DEBUG)
+					System.out
+							.println("ResourceDragAdapterAssistant.dragSetData set FileTransfer"); //$NON-NLS-1$
+				return true;
 			}
-			anEvent.data = fileNames;
-
-			if (DEBUG) {
-				System.out
-						.println("ResourceDragAdapterAssistant.dragSetData set FileTransfer"); //$NON-NLS-1$
-			}
-
 		}
+		return false;
 
 	}
 
@@ -130,7 +129,7 @@ public final class ResourceDragAdapterAssistant extends
 			resource = adaptToResource(selected);
 			if (resource != null) {
 				resources.add(resource);
-			}
+		}
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}

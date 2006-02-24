@@ -94,7 +94,7 @@ public class CommonViewer extends TreeViewer {
 
 		CommonDragAdapter dragAdapter = new CommonDragAdapter(contentService,
 				this);
-		addDragSupport(operations, dragAdapter.getSupportDragTransfers(),
+		addDragSupport(operations, dragAdapter.getSupportedDragTransfers(),
 				dragAdapter);
 
 		CommonDropAdapter dropAdapter = new CommonDropAdapter(contentService,

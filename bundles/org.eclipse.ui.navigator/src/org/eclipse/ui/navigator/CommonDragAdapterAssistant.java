@@ -37,7 +37,7 @@ import org.eclipse.ui.part.PluginTransfer;
  * @see CommonDragAdapter
  * @see CommonDropAdapter
  * @see CommonDropAdapterAssistant
- * @see CommonViewer#initDragAndDrop()
+ * @see CommonViewer
  * @see <a
  *      href="http://www.eclipse.org/articles/Article-SWT-DND/DND-in-SWT.html">Drag
  *      and Drop: Adding Drag and Drop to an SWT Application</a>
@@ -60,10 +60,13 @@ public abstract class CommonDragAdapterAssistant {
 	 * <p>
 	 * CommonDragAdapterAssistants can extend the available TransferTypes that a
 	 * Common Navigator Viewer can generate. Clients should return the set of
-	 * Transfer Types they support.When a match is found for a particular
-	 * {@link DragSourceEvent},
-	 * {@link #setDragData(DragSourceEvent, IStructuredSelection)} will be
-	 * called directly after.
+	 * Transfer Types they support. When a drop event occurs, the available drag
+	 * assistants will be searched for a <i>enabled</i> assistants for the
+	 * {@link DragSourceEvent}. Only if the drop event occurs will
+	 * {@link #setDragData(DragSourceEvent, IStructuredSelection)} be called. If
+	 * the drop event is cancelled,
+	 * {@link #setDragData(DragSourceEvent, IStructuredSelection)} will not be
+	 * called.
 	 * </p>
 	 * 
 	 * @return The added transfer types. (e.g. FileTransfer.getInstance()).
@@ -76,14 +79,20 @@ public abstract class CommonDragAdapterAssistant {
 	 * returned a matching Transfer Type from
 	 * {@link #getSupportedTransferTypes()} for the
 	 * {@link DragSourceEvent#dataType}.
+	 * <p>
+	 * Clients will only have an opportunity to set the data when the drop event
+	 * occurs. If the drop operation is cancelled, then this method will not be
+	 * called.
+	 * </p>
 	 * 
 	 * @param anEvent
 	 *            The event object should have its {@link Event#data} field set
 	 *            to a value that matches a supported {@link TransferData} type.
 	 * @param aSelection
 	 *            The current selection from the viewer.
+	 * @return True if the data could be set; false otherwise.
 	 */
-	public abstract void setDragData(DragSourceEvent anEvent,
+	public abstract boolean setDragData(DragSourceEvent anEvent,
 			IStructuredSelection aSelection);
 
 	/**

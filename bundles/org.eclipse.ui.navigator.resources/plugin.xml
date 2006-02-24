@@ -100,7 +100,7 @@
 		         </or>
 		   </parentExpression>
         </commonSorter>
-        <commonDropAdapter
+        <dropAssistant
               class="org.eclipse.ui.navigator.resources.ResourceDropAdapterAssistant"
               id="org.eclipse.ui.navigator.resources.resourceDropAdapter">
            <possibleDropTargets>
@@ -110,7 +110,7 @@
                  <instanceof value="org.eclipse.core.resources.IFile"/>
               </or>
            </possibleDropTargets>
-        </commonDropAdapter>
+        </dropAssistant>
         <actionProvider
               class="org.eclipse.ui.internal.navigator.resources.actions.RefactorActionProvider"
               id="org.eclipse.ui.navigator.resources.actions.RefactorActions"/>

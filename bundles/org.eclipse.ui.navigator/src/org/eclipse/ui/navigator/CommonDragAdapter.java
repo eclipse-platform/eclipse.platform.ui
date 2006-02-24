@@ -47,7 +47,7 @@ import org.eclipse.ui.part.PluginTransfer;
  * @see CommonDragAdapterAssistant
  * @see CommonDropAdapter
  * @see CommonDropAdapterAssistant
- * @see CommonViewer#initDragAndDrop()
+ * @see CommonViewer
  * @since 3.2
  * 
  */
@@ -86,7 +86,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 	 * @see LocalSelectionTransfer
 	 * @see PluginTransfer
 	 */
-	public Transfer[] getSupportDragTransfers() {
+	public Transfer[] getSupportedDragTransfers() {
 		CommonDragAdapterAssistant[] assistants = contentService
 				.getDnDService().getCommonDragAssistants();
 
@@ -140,7 +140,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		if (DEBUG) {
 			System.out
 					.println("CommonDragAdapter.dragStart (end): doit=" + event.doit); //$NON-NLS-1$
-		}
+	}
 	}
 
 	/*
@@ -194,8 +194,10 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 								System.out
 										.println("CommonDragAdapter.dragSetData set assistant transfer type"); //$NON-NLS-1$
 							}
-							assistants[i].setDragData(event,
-									(IStructuredSelection) selection);
+							if(assistants[i].setDragData(event,
+									(IStructuredSelection) selection)) {
+								return;
+							}
 						} catch (RuntimeException re) {
 							NavigatorPlugin.logError(0, re.getMessage(), re);
 						}
@@ -212,7 +214,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 			System.out.println("CommonDragAdapter.dragSetData (end): " + event); //$NON-NLS-1$
 		}
 	}
-
+	 
 	/*
 	 * (non-Javadoc)
 	 * 

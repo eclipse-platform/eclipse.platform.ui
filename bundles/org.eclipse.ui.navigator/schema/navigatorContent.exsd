@@ -19,11 +19,7 @@ that the extension may be able to provide a parent for. Clients
 should describe all elements that could be set as the selection
 to ensure that the link with editor support can properly 
 expand to the right node.
-&lt;p&gt;
-&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
-part of a work in progress. There is a guarantee neither that this API will
-work nor that it will remain the same. Please do not use this API without
-consulting with the Platform/UI team.
+&lt;p&gt; 
       </documentation>
    </annotation>
 
@@ -86,7 +82,7 @@ Optionally, clients may also provide an action provider which can provide menu c
             <element ref="actionProvider" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="commonSorter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="override" minOccurs="0" maxOccurs="1"/>
-            <element ref="commonDropAdapter" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dropAssistant" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -515,16 +511,15 @@ When clients provide their content through the pipeline, the contribution memory
       </complexType>
    </element>
 
-   <element name="commonDropAdapter">
+   <element name="dropAssistant">
       <annotation>
          <documentation>
             Provides a subclass of &lt;code&gt;org.eclipse.ui.navigator.CommonDropAdapterAssistant&lt;/code&gt; which can provide programatic validation for a drop operation, request additional transfer types, and handle the drop operation. 
 &lt;br&gt;&lt;br&gt;
-A &lt;b&gt;commonDropAdapter&lt;/b&gt; will be invoked whenever elements that are dragged match the &lt;b&gt;possibleChildren&lt;/b&gt; expression of the containing &lt;b&gt;navigatorContent&lt;/b&gt; extension &lt;i&gt;and&lt;/i&gt; the drop target of the operation is described by the &lt;b&gt;possibleDropTargets&lt;/b&gt; expression of the &lt;b&gt;commonDropAdapter&lt;/b&gt; element.
+A &lt;b&gt;dropAssistant&lt;/b&gt; will be invoked whenever elements that are dragged match the &lt;b&gt;possibleChildren&lt;/b&gt; expression of the containing &lt;b&gt;navigatorContent&lt;/b&gt; extension &lt;i&gt;and&lt;/i&gt; the drop target of the operation is described by the &lt;b&gt;possibleDropTargets&lt;/b&gt; expression of the &lt;b&gt;dropAssistant&lt;/b&gt; element.
 &lt;br&gt;&lt;br&gt;
 An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;possibleDropTargets&lt;/b&gt; expressions. The first drop adapter found that matches the given drop target and returns an OK status for &lt;code&gt;CommonDropAdapterAssistant.validateDrop(...)&lt;/code&gt; will be given an opportunity to handle the drop. 
 &lt;br&gt;&lt;br&gt;
- 
          </documentation>
       </annotation>
       <complexType>
@@ -534,17 +529,17 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The id is used to refer to the drop assistant internally. The id should be unique.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  An implementation of &lt;code&gt;org.eclipse.ui.navigator.CommonDropAdapterAssistant&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonDragAdapterAssistant"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonDropAdapterAssistant"/>
                </appInfo>
             </annotation>
          </attribute>
