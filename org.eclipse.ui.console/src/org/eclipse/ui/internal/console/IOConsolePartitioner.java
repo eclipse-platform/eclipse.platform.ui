@@ -513,7 +513,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				ArrayList pendingCopy = new ArrayList();
 				StringBuffer buffer = null;
 				boolean consoleClosed = false;
-				while (display != null && pendingPartitions.size() > 0) {
+				while (pendingPartitions.size() > 0) {
 					synchronized(pendingPartitions) {
 						pendingCopy.addAll(pendingPartitions);
 						pendingPartitions.clear();
