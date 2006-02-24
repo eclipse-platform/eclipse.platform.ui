@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.navigator;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -128,7 +129,7 @@ public class NavigatorContentServiceContentProvider implements
 				.findRootContentExtensions(anInputElement);
 		if (rootContentExtensions.size() == 0)
 			return NO_CHILDREN;
-		Set finalElementsSet = new HashSet();
+		Set finalElementsSet = new LinkedHashSet();
 
 		Object[] contributedChildren = null;
 		NavigatorContentExtension foundExtension;
@@ -214,7 +215,7 @@ public class NavigatorContentServiceContentProvider implements
 				.findContentExtensionsByTriggerPoint(aParentElement);
 		if (enabledExtensions.size() == 0)
 			return NO_CHILDREN;
-		Set finalChildrenSet = new HashSet();
+		Set finalChildrenSet = new LinkedHashSet();
 
 		Object[] contributedChildren = null;
 		NavigatorContentExtension foundExtension;

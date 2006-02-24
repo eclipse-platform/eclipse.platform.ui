@@ -144,8 +144,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 */
 	public void createPartControl(Composite aParent) {
 
-		commonViewer = createCommonViewer(aParent);
-		// commonViewer.addFilter(new DuplicateContentFilter(commonViewer));
+		commonViewer = createCommonViewer(aParent);	
 
 		INavigatorFilterService filterService = commonViewer
 				.getNavigatorContentService().getFilterService();
