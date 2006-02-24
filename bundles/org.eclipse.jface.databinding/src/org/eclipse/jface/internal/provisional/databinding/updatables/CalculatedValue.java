@@ -125,8 +125,9 @@ public abstract class CalculatedValue extends UpdatableValue {
 	}
 
 	private void unhookDependantUpdatableValues() {
-		if (dependantUpdatableValues == null)
+		if (dependantUpdatableValues == null) {
 			return;
+		}
 		
 		for (int i = 0; i < dependantUpdatableValues.length; i++) {
 			dependantUpdatableValues[i].removeChangeListener(getUpdatableChangeListener());

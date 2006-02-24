@@ -47,10 +47,11 @@ public class DataBinding {
 	public static IDataBindingContext createContext(
 			IUpdatableFactory[] factories) {
 		DataBindingContext result = new DataBindingContext();
-		if (factories != null)
+		if (factories != null) {
 			for (int i = 0; i < factories.length; i++) {
 				result.addUpdatableFactory(factories[i]);
 			}
+		}
 		return result;
 	}
 

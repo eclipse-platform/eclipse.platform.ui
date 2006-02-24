@@ -115,13 +115,15 @@ public class CopyOfJavaBeanUpdatableCollection extends UpdatableCollection {
 	}
 
 	public int addElement(Object value, int index) {
-		if (descriptor.getPropertyType().isArray())
+		if (descriptor.getPropertyType().isArray()) {
 			Assert.isTrue(false, "cannot add elements"); //$NON-NLS-1$		   
+		}
 		
 		Collection list = collection();
 		list.add(value);	
-		if (index <= 0 || index > list.size())
+		if (index <= 0 || index > list.size()) {
 			index = list.size();
+		}
 		fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		return index;
 	}
@@ -141,8 +143,9 @@ public class CopyOfJavaBeanUpdatableCollection extends UpdatableCollection {
 	}
 
 	public void removeElement(int index) {
-		if (descriptor.getPropertyType().isArray())
+		if (descriptor.getPropertyType().isArray()) {
 			Assert.isTrue(false, "cannot remove elements"); //$NON-NLS-1$		   
+		}
 		
 		Object o = findElement(index);
 		if (o!=null) {

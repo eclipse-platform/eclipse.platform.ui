@@ -58,19 +58,23 @@ public class TreeModelDescription {
 	 */
 	public void addChildrenProperty (Class instanceType, String childrenProperty) {		
 		PropertyHelper prop = new PropertyHelper(childrenProperty, instanceType);
-		if (prop.getGetter()==null)
+		if (prop.getGetter()==null) {
 			throw new BindingException("Invalid children property: "+childrenProperty);		 //$NON-NLS-1$				
+		}
 		addType(instanceType);
 		childrenProperties.put(instanceType, addProperty(childrenProperty, (String[])childrenProperties.get(instanceType)));
 	}
 	
 	
 	private String[] addProperty(String property, String[] list) {
-		if (list==null)
+		if (list==null) {
 			return new String[] { property } ;
+		}
 		
 		for (int i = 0; i < list.length; i++) {
-			if (list[i].equals(property)) return list;			
+			if (list[i].equals(property)) {
+				return list;
+			}			
 		}
 		String[] newList = new String[list.length+1];
 		System.arraycopy(list,0, newList, 0, list.length);
@@ -80,14 +84,17 @@ public class TreeModelDescription {
 	
 	private String[] addProperties(String[] properties, String[] list) {
 		String[] result = list;
-		for (int i = 0; i < properties.length; i++) 
-			result = addProperty(properties[i], result);			
+		for (int i = 0; i < properties.length; i++) {
+			result = addProperty(properties[i], result);
+		}			
 		return result;
 	}
 	
 	private void addType(Class instanceType) {
 		for (int i = 0; i < types.length; i++) {
-			if (types[i]==instanceType) return;			
+			if (types[i]==instanceType) {
+				return;
+			}			
 		}
 		Class[] newTypes = new Class[types.length+1];
 		System.arraycopy(types,0, newTypes, 0, types.length);

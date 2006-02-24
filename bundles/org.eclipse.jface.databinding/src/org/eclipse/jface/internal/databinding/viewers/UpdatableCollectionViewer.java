@@ -68,10 +68,11 @@ public class UpdatableCollectionViewer extends SelectionAwareUpdatableCollection
 				updating = true;
 				int position = primAddElement(element, index);
 				if (position == elements.size() - 1
-						|| viewer.getSorter() != null)
+						|| viewer.getSorter() != null) {
 					viewer.add(element);
-				else
+				} else {
 					viewer.refresh();
+				}
 				fireChangeEvent(ChangeEvent.ADD, null, element, position);
 				return position;
 			} finally {

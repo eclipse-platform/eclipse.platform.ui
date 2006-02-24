@@ -46,14 +46,16 @@ public class PropertyHelper {
 		propertyString=property;
 		StringTokenizer stk = new StringTokenizer(property, PROPERTY_NESTING_SEPERATOR);
 		propertyList = new String [stk.countTokens()];		
-		for(int i=0; stk.hasMoreElements(); i++)
+		for(int i=0; stk.hasMoreElements(); i++) {
 			propertyList[i]=(String)stk.nextElement();
+		}
 		this.rootClass=rootClass;
 	}
 		
 	private Method getGetterMethod (Class c, String property) throws SecurityException, NoSuchMethodException {
-		if (c==null || property==null) 
+		if (c==null || property==null) {
 			return null;
+		}
 		Method getter=null;
 		// Try a vanilla getter
 		try {
@@ -72,19 +74,22 @@ public class PropertyHelper {
 			catch (SecurityException e) {} 
 			catch (NoSuchMethodException e) {}
 			
-			if (getter==null)  // allow for method invocation
-				getter =  c.getMethod(property, new Class[0]);			
+			if (getter==null) {
+				getter =  c.getMethod(property, new Class[0]);
+			}			
 		}
 		
-		if (getter!=null && !getter.isAccessible())
+		if (getter!=null && !getter.isAccessible()) {
 			getter.setAccessible(true);
+		}
 			
 		return getter;		
 	}
 	
 	private Method getSetterMethod (Class c, String property, Class argType) throws SecurityException, NoSuchMethodException {
-		if (c==null || property==null) 
+		if (c==null || property==null) {
 			return null;
+		}
 		Method setter=null;
 		try {
 			setter = c.getMethod(
@@ -92,18 +97,21 @@ public class PropertyHelper {
 		} 
 		catch (SecurityException e) {} 
 		catch (NoSuchMethodException e) {}
-		if (setter==null)  // allow for method invocation
+		if (setter==null) {
 			setter =  c.getMethod(property, new Class[] { argType });
+		}
 		
-		if (setter!=null && !setter.isAccessible())
+		if (setter!=null && !setter.isAccessible()) {
 			setter.setAccessible(true);
+		}
 				
 		return setter;		
 	}
 	
 	private Method[] getGetters(Class root) {
-		if (getterList!=null)
+		if (getterList!=null) {
 			return getterList;
+		}
 		
 		getterList = new Method[propertyList.length];
 		Method getter = null;
@@ -125,8 +133,9 @@ public class PropertyHelper {
 	 * @return setter
 	 */
 	public Method getSetter() {
-		if (setter!=null)
+		if (setter!=null) {
 			return setter;
+		}
 		
 		Method[] list = getGetters(rootClass);
 		Class target = list.length>1? list[list.length-2].getReturnType(): rootClass;
@@ -151,16 +160,18 @@ public class PropertyHelper {
 	}
 	
 	private Object get(Object root, int length) {
-		if (root == null)
+		if (root == null) {
 			return null;
+		}
 
 		Object result = root;
 		Method list[] = getGetters(rootClass);
 		try {
 			for (int i = 0; i <= length; i++) {
 				result = list[i].invoke(result, new Object[0]);
-				if (result == null)
+				if (result == null) {
 					break;
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -189,7 +200,7 @@ public class PropertyHelper {
 	public void set(Object root, Object singleArg) {
 		Method setter = getSetter();
 		Object target = getLeafTarget(root);
-		if (setter!=null && target!=null)
+		if (setter!=null && target!=null) {
 			try {
 				setter.invoke(target, new Object[] {singleArg});
 			} catch (IllegalArgumentException e) {
@@ -197,6 +208,7 @@ public class PropertyHelper {
 			} catch (IllegalAccessException e) {
 			} catch (InvocationTargetException e) {
 			}
+		}
 	}
 	
 	/**
@@ -228,7 +240,9 @@ public class PropertyHelper {
 	 */
 	public Object getLeafTarget(Object root) {
 		int index = propertyList.length-2;
-		if (index<0) return root;
+		if (index<0) {
+			return root;
+		}
 		return get(root, index);
 	}
 	

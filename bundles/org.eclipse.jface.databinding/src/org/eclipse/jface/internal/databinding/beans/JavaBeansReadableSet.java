@@ -109,9 +109,9 @@ public class JavaBeansReadableSet extends AbstractUpdatableSet implements
 		Object[] values = null;
 
 		Object result = primGetValues();
-		if (descriptor.getPropertyType().isArray())
+		if (descriptor.getPropertyType().isArray()) {
 			values = (Object[]) result;
-		else {
+		} else {
 			// TODO add jUnit for POJO (var. SettableValue) collections
 			Collection list = (Collection) result;
 			if (list != null) {

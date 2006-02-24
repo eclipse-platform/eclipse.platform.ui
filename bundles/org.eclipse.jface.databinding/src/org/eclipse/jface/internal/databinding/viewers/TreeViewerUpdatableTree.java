@@ -121,8 +121,9 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 			}		
 			public Object getParent(Object element) {
 				TreeNode node = getTreeNode(element);
-				if (node!=null)
+				if (node!=null) {
 					return node.getParent();
+				}
 				return null;
 			}		
 			public Object[] getChildren(Object parentElement) {
@@ -174,8 +175,9 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 		while (!viewerRefreshList.isEmpty()) {
 		   Runnable work[] = (Runnable[])viewerRefreshList.toArray(new Runnable[viewerRefreshList.size()]);
 		   viewerRefreshList.clear();
-		   for (int i = 0; i < work.length; i++) 
-			updateViewer(work[i]);		
+		   for (int i = 0; i < work.length; i++) {
+			updateViewer(work[i]);
+		}		
 		}
 	}
 		
@@ -191,11 +193,14 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 	
 	protected int addElement(final Object parentElement, int index, final Object value, final boolean fire) {				
 		TreeNode parentNode = getTreeNode(parentElement);
-		if (parentNode == null) return -1;
+		if (parentNode == null) {
+			return -1;
+		}
 			
 
-		if (!hasChildren(parentElement) && parentNode.getChildren()==null)
+		if (!hasChildren(parentElement) && parentNode.getChildren()==null) {
 			parentNode.setChildren(new ArrayList());
+		}
 		List list = parentNode.getChildren();
 		int addedIndex = -1;
 		if (!list.contains(value)) {
@@ -207,8 +212,9 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 				public void run() {
 					viewer.add(parentElement == null ? viewerInput : parentElement,
 							value);			
-					if (fire) 
-						fireChangeEvent(ChangeEvent.ADD, null, value, parentElement, fireIndex);						
+					if (fire) {
+						fireChangeEvent(ChangeEvent.ADD, null, value, parentElement, fireIndex);
+					}						
 				}			
 			});			
 		}
@@ -236,13 +242,15 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 				updateViewer(new Runnable() {			
 					public void run() {
 							viewer.remove(element);		
-							if (fire)
+							if (fire) {
 								fireChangeEvent(ChangeEvent.REMOVE, element, null, parentElement, index);
+							}
 					}
 				});
 			}
-			if (children.size()==0)
+			if (children.size()==0) {
 				parentNode.setChildren(null);
+			}
 			}
 	}
 
@@ -278,19 +286,22 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 			public Object run() {
 				hasChildren(parentElement); // prime Children if needed
 				TreeNode parentNode = getTreeNode(parentElement);
-				if (parentNode == null)
+				if (parentNode == null) {
 					return null;
+				}
 
 				List children = parentNode.getChildren();
 				if (children != null) {
-					while (children.size() > 0)
+					while (children.size() > 0) {
 						removeElement(parentElement, 0, true);
+					}
 				}					
 				parentNode.setRequestedChildren(true);
-				if (values != null)
+				if (values != null) {
 					for (int i = 0; i < values.length; i++) {
 						addElement(parentElement, i, values[i], true);
 					}
+				}
 				return null;
 			}
 		};
@@ -304,9 +315,11 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 			TreeNode parentNode = getTreeNode(parentElement);
 			if (parentNode!=null) {
 				List children = parentNode.getChildren();
-				if (children!=null) 
-					if (index>=0&&index<children.size())
+				if (children!=null) {
+					if (index>=0&&index<children.size()) {
 						element = children.get(index);
+					}
+				}
 			}
 		}
 		return element;
@@ -333,7 +346,9 @@ public class TreeViewerUpdatableTree extends WritableUpdatable implements IUpdat
 	 */
 	public boolean hasChildren(final Object element) {
 		TreeNode node = getTreeNode(element);	
-		if (node==null) return false;
+		if (node==null) {
+			return false;
+		}
 		boolean have = node.getChildren()!=null && node.getChildren().size()>0;
 		if (!have && !updatingVirtual && !node.isRequestedChildren()) {	
 			    updatingVirtual=true;

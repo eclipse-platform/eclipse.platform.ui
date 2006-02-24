@@ -34,10 +34,11 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 		this.list = list;
 		
 		
-		if (attribute.equals(ViewersProperties.CONTENT))
+		if (attribute.equals(ViewersProperties.CONTENT)) {
 			this.attribute = SWTProperties.ITEMS;
-		else
+		} else {
 			this.attribute = attribute;
+		}
 		
 		if (this.attribute.equals(SWTProperties.ITEMS)) {
 			//TODO List does not fire any event when items are changed.
@@ -48,9 +49,9 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 //					}
 //				}
 //			});
-		}
-		else
+		} else {
 			throw new IllegalArgumentException();
+		}
 	}
 
 	public int computeSize() {
@@ -59,8 +60,9 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 
 	public int addElement(Object value, int index) {
 		try {
-			if (index<0 || index>computeSize())
+			if (index<0 || index>computeSize()) {
 				index=computeSize();
+			}
 			String[] newItems = new String[computeSize()+1];			
 			System.arraycopy(list.getItems(), 0, newItems,0, index);
 			newItems[index]=(String)value;
@@ -75,8 +77,9 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 
 	public void removeElement(int index) {
 		try {
-			if (index<0 || index>computeSize())
+			if (index<0 || index>computeSize()) {
 				index=computeSize();
+			}
 			String[] newItems = new String[computeSize()-1];
 			String old = list.getItem(index);
 			System.arraycopy(list.getItems(), 0, newItems,0, index);			

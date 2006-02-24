@@ -70,10 +70,11 @@ public class TableViewerUpdatableCollection extends SelectionAwareUpdatableColle
 
 	private int internalAddElement(Object element, int index) {
 		int position = primAddElement(element, index);
-		if (position == elements.size() - 1 || viewer.getSorter() != null)
+		if (position == elements.size() - 1 || viewer.getSorter() != null) {
 			viewer.add(element);
-		else
+		} else {
 			viewer.refresh();
+		}
 		return position;
 	}
 

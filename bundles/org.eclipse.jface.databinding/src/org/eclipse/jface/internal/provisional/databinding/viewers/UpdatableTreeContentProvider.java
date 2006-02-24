@@ -275,8 +275,9 @@ public final class UpdatableTreeContentProvider implements ITreeContentProvider 
                     	boolean haveRemoveMethod32 = false;
                     	try {
                     		removeMethod = treeViewer.getClass().getDeclaredMethod("remove", new Class[]{Object.class, Object[].class}); //$NON-NLS-1$
-                    		if (removeMethod != null) 
-                    			haveRemoveMethod32 = true;
+                    		if (removeMethod != null) {
+								haveRemoveMethod32 = true;
+							}
                     	} catch (Exception e) {}
                     	if (haveRemoveMethod32) {
                     		try {

@@ -110,7 +110,9 @@ public class JavaBeanTree implements ITree {
 						if (children!=null) {
 							index = Arrays.asList(children).indexOf(event.getSource());
 						}
-						if (index<0) index = ChangeEvent.POSITION_UNKNOWN;
+						if (index<0) {
+							index = ChangeEvent.POSITION_UNKNOWN;
+						}
 					    changeSupport.fireTreeChange(ChangeEvent.CHANGE, null, event.getSource(), node.getParent(), index);
 					}
 				}
@@ -125,12 +127,13 @@ public class JavaBeanTree implements ITree {
 	 */
 	public JavaBeanTree(TreeModelDescription modelDescripton) {
 		this.modelDescription = modelDescripton;
-		if (modelDescripton.getRoot()==null)
+		if (modelDescripton.getRoot()==null) {
 			rootElements = Collections.EMPTY_LIST.toArray();
-		else
+		} else {
 			rootElements = modelDescripton.getRoot().getClass().isArray()?
 				          (Object[]) modelDescripton.getRoot():
 				           new Object[] { modelDescripton.getRoot() };
+		}
 		TreeNode root = new TreeNode(null);
 		nodes.put(this, root);
 		hookup(null, rootElements);		
@@ -140,30 +143,35 @@ public class JavaBeanTree implements ITree {
 	// pick up the leaf most registered class that is assignable
 	// from o.class.
 	private Class getRelevantClass(Object o) {
-		if (o==null)
+		if (o==null) {
 			return null;
+		}
 		Class leafClass = null;
 		Class current = o.getClass();
 		Class[] list = modelDescription.getTypes();		
-		for (int i = 0; i < list.length; i++)
+		for (int i = 0; i < list.length; i++) {
 			if (list[i].isAssignableFrom(current)) {
 				// found registered class
-				if (leafClass==null)
+				if (leafClass==null) {
 					leafClass=list[i];
-				else
-					if (leafClass.isAssignableFrom(list[i]))
-							leafClass=list[i]; 
+				} else
+					if (leafClass.isAssignableFrom(list[i])) {
+						leafClass=list[i];
+					} 
 			}
+		}
 		return leafClass;
 	}
 		
 	private Method[] getInvocationMethods(Class clazz, int methodType) {
-		if (clazz==null)
+		if (clazz==null) {
 			return null;
+		}
 		String[] childrenProperties = modelDescription
 				.getChildrenProperties(clazz);
-		if (childrenProperties == null || childrenProperties.length == 0)
+		if (childrenProperties == null || childrenProperties.length == 0) {
 			return null;
+		}
 		
 		PropertyHelper[] properties = (PropertyHelper[]) descriptors.get(clazz);
 		if (properties == null) {
@@ -185,17 +193,20 @@ public class JavaBeanTree implements ITree {
 		}
 		List methods = new ArrayList();
 		for (int i = 0; i < properties.length; i++) {
-			if (methodType==READ)
+			if (methodType==READ) {
 				methods.add(properties[i].getGetter());
-			else
-				methods.add(properties[i].getSetter());			
+			} else {
+				methods.add(properties[i].getSetter());
+			}			
 		}		
 		return (Method[])methods.toArray(new Method[methods.size()]);
 	}
 		
 	private Method[] getReadMethods(Object element) {		
 		Class clazz = getRelevantClass(element);
-		if (clazz==null) return null;
+		if (clazz==null) {
+			return null;
+		}
 		
 		Method[] methods = getInvocationMethods(clazz, READ);		
 		return methods;
@@ -204,7 +215,9 @@ public class JavaBeanTree implements ITree {
 	
 	private Method[] getWriteMethods (Object element) {
 		Class clazz = getRelevantClass(element);
-		if (clazz==null) return null;
+		if (clazz==null) {
+			return null;
+		}
 		Method[] methods = getInvocationMethods(clazz, WRITE);		
 		return methods;
 	}
@@ -223,13 +236,15 @@ public class JavaBeanTree implements ITree {
 	}
 		
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement==null) 
+		if (parentElement==null) {
 			return rootElements;
+		}
 		
 		
 		Method[] getters = getReadMethods(parentElement);
-		if (getters==null)
+		if (getters==null) {
 			return Collections.EMPTY_LIST.toArray();
+		}
 		
 		List children = new ArrayList();
 		
@@ -237,10 +252,11 @@ public class JavaBeanTree implements ITree {
 			for (int i = 0; i < getters.length; i++) {
 				Object list = getters[i].invoke(parentElement, new Object[0]);
 				if (list!=null) {
-					if (getters[i].getReturnType().isArray()) 					
+					if (getters[i].getReturnType().isArray()) {
 						children.addAll(Arrays.asList((Object[])list));
-					else
-					    children.addAll((Collection) getters[i].invoke(parentElement, new Object[0]));
+					} else {
+						children.addAll((Collection) getters[i].invoke(parentElement, new Object[0]));
+					}
 				}
 			}
 		} catch (IllegalArgumentException e) {
@@ -261,7 +277,7 @@ public class JavaBeanTree implements ITree {
 		TreeNode node = (TreeNode) nodes.get(key);
 		Set removed = new HashSet(node.getChildren());
 		List newList = children==null? new ArrayList(): Arrays.asList(children);
-		if (children!=null)
+		if (children!=null) {
 			for (int i=0; i<children.length; i++) {
 				if (!removed.remove(children[i])) {
 					// new child
@@ -269,27 +285,32 @@ public class JavaBeanTree implements ITree {
 					nodes.put(children[i], child);
 				}				
 			}
-		for (Iterator itr=removed.iterator(); itr.hasNext();)
+		}
+		for (Iterator itr=removed.iterator(); itr.hasNext();) {
 			nodes.remove(itr.next());
+		}
 		node.setChildren(newList);
 	}
 
 	public void setChildren(Object parentElement, Object[] children) {
-		if (parentElement==null) 
+		if (parentElement==null) {
 			throw new BindingException ("Changing root element/s is not supported"); //$NON-NLS-1$
+		}
 		
 		Method[] setters = getWriteMethods(parentElement);
 		// TODO we can try to figure out (by type) which methods to invoke on which object
-		if (setters==null || setters.length!=1)
+		if (setters==null || setters.length!=1) {
 			throw new BindingException("Can not determine children set method for: "+parentElement.getClass().getName()); //$NON-NLS-1$
+		}
 		
 		Method setter = setters[0];
 		Class[] parameters = setter.getParameterTypes();
 		Object arg;
-		if (parameters[0].isArray())
+		if (parameters[0].isArray()) {
 			arg = children;
-		else
-			arg = Arrays.asList(children);		
+		} else {
+			arg = Arrays.asList(children);
+		}		
 		try {
 			setter.invoke(parentElement, new Object[] { arg } );
 		} catch (IllegalArgumentException e) {
@@ -300,8 +321,9 @@ public class JavaBeanTree implements ITree {
 			throw new BindingException(e.getLocalizedMessage());	
 		}
 		hookup(parentElement, children);		
-		if (changeSupport!=null)
-		   changeSupport.fireTreeChange(ChangeEvent.REPLACE, null, children, parentElement, -1);
+		if (changeSupport!=null) {
+			changeSupport.fireTreeChange(ChangeEvent.REPLACE, null, children, parentElement, -1);
+		}
 	}
 
 	public boolean hasChildren(Object element) {
@@ -314,24 +336,28 @@ public class JavaBeanTree implements ITree {
 	}
 
 	public void addTreeChangeListener(IChangeListener listener) {
-		if (listener==null)
+		if (listener==null) {
 			return;
-		if (changeSupport==null)
+		}
+		if (changeSupport==null) {
 			changeSupport = new ITree.ChangeSupport(this);
+		}
 		changeSupport.addTreeChangeListener(listener);		
 	}
 
 	public void removeTreeChangeListener(IChangeListener listener) {
-		if (listener==null || changeSupport==null)
+		if (listener==null || changeSupport==null) {
 			return;
+		}
 		
 		changeSupport.removeTreeChangeListener(listener);		
 	}
 
 	public void dispose() {
 		if (listenerSupport!=null) {
-		  for (Iterator itr=listenerSupport.values().iterator(); itr.hasNext();) 
-		   ((ListenerSupport)itr.next()).dispose();
+		  for (Iterator itr=listenerSupport.values().iterator(); itr.hasNext();) {
+			((ListenerSupport)itr.next()).dispose();
+		}
 		  listenerSupport=null;
 		  descriptors=null;
 		  changeSupport=null;

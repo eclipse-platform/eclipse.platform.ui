@@ -97,8 +97,9 @@ public class NestedUpdatableValue extends UpdatableValue implements INestedUpdat
 	}
 
 	public void setValue(Object value) {
-		if (innerUpdatableValue!=null)
-		   innerUpdatableValue.setValue(value);
+		if (innerUpdatableValue!=null) {
+			innerUpdatableValue.setValue(value);
+		}
 	}
 
 	public Object computeValue() {

@@ -77,10 +77,11 @@ public class TreeViewerDescription {
 		}
 		Column column = new Column(propertyName, cellEditor , validator,
 				converter);
-		if(columnIndex == -1)
-			columns.add(column);			
-		else 
-			columns.add(columnIndex,column);			
+		if(columnIndex == -1) {
+			columns.add(column);
+		} else {
+			columns.add(columnIndex,column);
+		}			
 	}
 	
 	/**
@@ -156,8 +157,9 @@ public class TreeViewerDescription {
 	 */
 	public int getColumnCount(Class instanceType) {
 		List columns = (List) columnsMap.get(instanceType);
-		if (columns!=null)
-		  return columns.size();
+		if (columns!=null) {
+			return columns.size();
+		}
 		return 0;
 	}
 
@@ -168,8 +170,9 @@ public class TreeViewerDescription {
 	 */
 	public Column getColumn(Class instanceType, int columnIndex) {
 		List columns = (List) columnsMap.get(instanceType);
-		if (columns!=null && columns.size()>columnIndex)
-		   return (Column) columns.get(columnIndex);
+		if (columns!=null && columns.size()>columnIndex) {
+			return (Column) columns.get(columnIndex);
+		}
 		return null;
 	}
 	
@@ -181,8 +184,9 @@ public class TreeViewerDescription {
 	 */
 	public int getColumnIndex(Class instanceType, Column column) {
 		List columns = (List) columnsMap.get(instanceType);
-		if (columns!=null)
+		if (columns!=null) {
 			return columns.indexOf(column);
+		}
 		return -1;
 	}
 
@@ -194,7 +198,9 @@ public class TreeViewerDescription {
 	}
 	
 	public Class[] getClassTypes() {
-		if (columnsMap.keySet().size()==0) return null;
+		if (columnsMap.keySet().size()==0) {
+			return null;
+		}
 		
 		return (Class[]) columnsMap.keySet().toArray(new Class[columnsMap.keySet().size()]);
 	}

@@ -68,8 +68,9 @@ public class TableBinding extends Binding {
 
 	private IChangeListener modelChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating)
+			if (updating) {
 				return;
+			}
 			// TODO validation
 			if ((changeEvent.getChangeType() &  (ChangeEvent.ADD_MANY | ChangeEvent.REMOVE_MANY | ChangeEvent.STALE)) != 0) {
 				BindingEvent e = new BindingEvent(changeEvent, BindingEvent.EVENT_COPY_TO_TARGET, BindingEvent.PIPELINE_AFTER_GET);

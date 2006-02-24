@@ -73,8 +73,9 @@ public class ConversionFunctionRegistry {
      * @return An appropriate IConversionFunction or TheNullConverter.NULL on error
      */
     public static IConversionFunction get(Class sourceClass, Class destClass) {
-        if (sourceClass.equals(destClass))
-            return TheIdentityFunction.IDENTITY;
+        if (sourceClass.equals(destClass)) {
+			return TheIdentityFunction.IDENTITY;
+		}
         
         HashMap sourceClassConverters = (HashMap) converterFunctions.get(sourceClass);
         

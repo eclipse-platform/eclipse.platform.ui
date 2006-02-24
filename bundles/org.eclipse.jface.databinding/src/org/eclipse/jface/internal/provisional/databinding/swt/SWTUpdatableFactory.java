@@ -166,13 +166,14 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 						(StructuredViewer) object, (String) attribute);
 			}
 			if (object instanceof AbstractListViewer
-					&& SWTProperties.SELECTION.equals(attribute))
+					&& SWTProperties.SELECTION.equals(attribute)) {
 				return new StructuredViewerUpdatableValue(
 						(AbstractListViewer) object, (String) attribute);
-			else if (object instanceof AbstractListViewer
-					&& ViewersProperties.CONTENT.equals(attribute))
+			} else if (object instanceof AbstractListViewer
+					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new UpdatableCollectionViewer(
 						(AbstractListViewer) object);
+			}
 			if (object instanceof TableViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new TableViewerUpdatableCollection(

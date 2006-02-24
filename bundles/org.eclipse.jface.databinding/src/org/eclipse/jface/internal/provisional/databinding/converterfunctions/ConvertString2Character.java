@@ -27,8 +27,9 @@ public class ConvertString2Character implements IConversionFunction {
         String s = (String) source;
         Character result;
         
-        if (s.length() > 1)
-            throw new IllegalArgumentException("String2Character: string too long: " + s); //$NON-NLS-1$
+        if (s.length() > 1) {
+			throw new IllegalArgumentException("String2Character: string too long: " + s); //$NON-NLS-1$
+		}
         
         try {
             result = new Character(s.charAt(0));

@@ -48,8 +48,9 @@ public class RegexStringValidator implements IValidator {
 	 */
 	public String isPartiallyValid(Object fragment) {
         Matcher matcher = fragmentRegex.matcher((String)fragment);
-		if (matcher.find())
-            return null;
+		if (matcher.find()) {
+			return null;
+		}
 
         return hint;
 	}
@@ -60,8 +61,9 @@ public class RegexStringValidator implements IValidator {
 	public String isValid(Object value) {
         String stringValue = (String) value;
         Matcher matcher = fullValueRegex.matcher(stringValue);
-        if (matcher.find())
-            return null;
+        if (matcher.find()) {
+			return null;
+		}
 
         return hint;
 	}

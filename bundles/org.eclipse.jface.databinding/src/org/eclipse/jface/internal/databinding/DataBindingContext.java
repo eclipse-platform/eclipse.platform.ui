@@ -488,8 +488,9 @@ public class DataBindingContext implements IDataBindingContext {
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter.hasNext();) {
 			IBindingListener listener = (IBindingListener) bindingEventIter.next();
 			result = listener.bindingEvent(event);
-			if (result != null)
+			if (result != null) {
 				break;
+			}
 		}
 		return result;
 	}

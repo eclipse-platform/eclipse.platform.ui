@@ -39,10 +39,11 @@ public class CComboUpdatableCollection extends SelectionAwareUpdatableCollection
 		this.ccombo = ccombo;
 		
 		
-		if (attribute.equals(ViewersProperties.CONTENT))
+		if (attribute.equals(ViewersProperties.CONTENT)) {
 			this.attribute = SWTProperties.ITEMS;
-		else
+		} else {
 			this.attribute = attribute;
+		}
 		
 		if (this.attribute.equals(SWTProperties.ITEMS)) {
 			ccombo.addModifyListener(new ModifyListener() {
@@ -52,9 +53,9 @@ public class CComboUpdatableCollection extends SelectionAwareUpdatableCollection
 					}
 				}
 			});
-		}
-		else
+		} else {
 			throw new IllegalArgumentException();
+		}
 	}
 
 	public int computeSize() {
@@ -64,8 +65,9 @@ public class CComboUpdatableCollection extends SelectionAwareUpdatableCollection
 	public int addElement(Object value, int index) {
 		updating=true;		
 		try {
-			if (index<0 || index>computeSize())
+			if (index<0 || index>computeSize()) {
 				index=computeSize();
+			}
 			String[] newItems = new String[computeSize()+1];			
 			System.arraycopy(ccombo.getItems(), 0, newItems,0, index);
 			newItems[index]=(String)value;
@@ -82,8 +84,9 @@ public class CComboUpdatableCollection extends SelectionAwareUpdatableCollection
 	public void removeElement(int index) {
 		updating=true;		
 		try {
-			if (index<0 || index > computeSize() - 1)
+			if (index<0 || index > computeSize() - 1) {
 				throw new BindingException("Request to remove an element out of the collection bounds"); //$NON-NLS-1$
+			}
 			
 			String[] newItems = new String[computeSize()-1];
 			String old = ccombo.getItem(index);

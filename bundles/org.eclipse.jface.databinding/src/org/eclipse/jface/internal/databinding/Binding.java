@@ -60,11 +60,13 @@ abstract public class Binding implements IBinding {
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter.hasNext();) {
 			IBindingListener listener = (IBindingListener) bindingEventIter.next();
 			result = listener.bindingEvent(event);
-			if (result != null)
+			if (result != null) {
 				break;
+			}
 		}
-		if (result == null)
+		if (result == null) {
 			result = context.fireBindingEvent(event);
+		}
 		return result;
 	}
 }

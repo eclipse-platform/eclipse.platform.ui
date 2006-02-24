@@ -42,8 +42,9 @@ public class CComboUpdatableValue extends UpdatableValue {
 	public CComboUpdatableValue(CCombo ccombo, String attribute) {
 		this.ccombo = ccombo;
 		this.attribute = attribute;
-		if (attribute.equals(ViewersProperties.CONTENT))
+		if (attribute.equals(ViewersProperties.CONTENT)) {
 			attribute = SWTProperties.TEXT;
+		}
 
 		if (attribute.equals(SWTProperties.SELECTION) || 
 			attribute.equals(SWTProperties.TEXT)) {
@@ -54,9 +55,9 @@ public class CComboUpdatableValue extends UpdatableValue {
 					}
 				}
 			});
-		}
-		else
+		} else {
 			throw new IllegalArgumentException();
+		}
 	}
 
 	public void setValue(final Object value) {
@@ -98,8 +99,9 @@ public class CComboUpdatableValue extends UpdatableValue {
 	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable() {
 			public Object run() {
-				if (attribute.equals(SWTProperties.TEXT)) 
+				if (attribute.equals(SWTProperties.TEXT)) {
 					return ccombo.getText();
+				}
 				
 				Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
 						"unexpected attribute: " + attribute); //$NON-NLS-1$

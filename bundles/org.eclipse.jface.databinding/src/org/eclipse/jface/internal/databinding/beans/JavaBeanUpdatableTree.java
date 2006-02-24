@@ -70,8 +70,9 @@ public class JavaBeanUpdatableTree extends WritableUpdatable implements IUpdatab
 		updating=true;
 		try {
 			Object[] list = tree.getChildren(parentElement);
-			if (index <= 0 || index > list.length)
+			if (index <= 0 || index > list.length) {
 				index = list.length;
+			}
 			Object[] newList = primAddElement(list, value, index);	
 			tree.setChildren(parentElement, newList);
 			fireChangeEvent(ChangeEvent.ADD, null, value, parentElement, index);
@@ -85,8 +86,9 @@ public class JavaBeanUpdatableTree extends WritableUpdatable implements IUpdatab
 		updating=true;
 		try {
 			Object[] list = tree.getChildren(parentElement);
-			if (list == null || index < 0 || index >= list.length)
+			if (list == null || index < 0 || index >= list.length) {
 				return;
+			}
 
 			Object o = list[index];
 			Object[] newList=primRemoveElement(list,index);
@@ -101,7 +103,9 @@ public class JavaBeanUpdatableTree extends WritableUpdatable implements IUpdatab
 		updating = true;
 		try {
 			Object[] list = tree.getChildren(parentElement);
-			if (list==null || index<0 || index>=list.length) return;
+			if (list==null || index<0 || index>=list.length) {
+				return;
+			}
 			
 			Object oldValue = list[index];
 			list[index]= value;
@@ -126,7 +130,9 @@ public class JavaBeanUpdatableTree extends WritableUpdatable implements IUpdatab
 
 	public Object getElement(Object parentElement, int index) {
 		Object[] list = tree.getChildren(parentElement);
-		if (list==null || index<0 || index>=list.length) return null;
+		if (list==null || index<0 || index>=list.length) {
+			return null;
+		}
 		
 		return list[index];
 	}

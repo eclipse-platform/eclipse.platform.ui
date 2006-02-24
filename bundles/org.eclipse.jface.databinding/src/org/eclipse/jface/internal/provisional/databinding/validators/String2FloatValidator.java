@@ -21,8 +21,9 @@ import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
 public class String2FloatValidator implements IValidator {
     
 	public String isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
-            return null;
+		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) { //$NON-NLS-1$
+			return null;
+		}
 
         return getHint();
 	}

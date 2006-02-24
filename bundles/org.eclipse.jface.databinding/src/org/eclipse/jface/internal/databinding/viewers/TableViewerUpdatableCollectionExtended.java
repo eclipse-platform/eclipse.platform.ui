@@ -48,8 +48,9 @@ public class TableViewerUpdatableCollectionExtended extends
 			ITableLabelProvider {
 		private Object getValue(Object element, Column column) {
 			String propertyName = column.getPropertyName();
-			if (propertyName == null) 
+			if (propertyName == null) {
 				return element;
+			}
 			
 			Object value = tableViewerDescription.getCellModifier().getValue(
 					element, propertyName);
@@ -196,15 +197,18 @@ public class TableViewerUpdatableCollectionExtended extends
 				//TODO jUnit for nested column
 				StringTokenizer stk = new StringTokenizer(properties,TableViewerDescription.COLUMN_PROPERTY_NESTING_SEPERATOR);
 				List list = new ArrayList(stk.countTokens());
-				while(stk.hasMoreTokens())
+				while(stk.hasMoreTokens()) {
 					list.add(stk.nextElement());
+				}
 				return list;					
 			}
 			
 			private Object getGetterValue(Object root, List properties) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 				Object result=root;					
 				for (int i = 0; i < properties.size(); i++) {
-					if (result==null) return null;
+					if (result==null) {
+						return null;
+					}
 					String prop = (String) properties.get(i);
 					Method getter = result.getClass().getMethod(
 							"get"+ prop.substring(0, 1).toUpperCase(Locale.ENGLISH) + prop.substring(1), new Class[0]); //$NON-NLS-1$
@@ -304,10 +308,11 @@ public class TableViewerUpdatableCollectionExtended extends
 			columnInfos[i] = new ColumnInfo();
 			if (column.getConverter() == null) {
 				columnInfos[i].converterDefaulted = true;
-				if (column.getPropertyType()!=null)
+				if (column.getPropertyType()!=null) {
 					initializeColumnConverter(column,column.getPropertyType());
-				else
-				   column.setConverter(new IdentityConverter(String.class));
+				} else {
+					column.setConverter(new IdentityConverter(String.class));
+				}
 			}
 			if (column.getValidator() == null && column.isEditable()) {
 				columnInfos[i].validatorDefaulted = true;

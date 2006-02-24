@@ -131,9 +131,9 @@ public class JavaBeanUpdatableCollection extends UpdatableCollection {
 		Object[] values = null;
 
 		Object result = primGetValues();
-		if (descriptor.getPropertyType().isArray())
+		if (descriptor.getPropertyType().isArray()) {
 			values = (Object[])result;
-		else {
+		} else {
 			//TODO add jUnit for POJO (var. SettableValue) collections  
 			Collection list = (Collection) result;
 			if (list != null) {
@@ -146,20 +146,23 @@ public class JavaBeanUpdatableCollection extends UpdatableCollection {
 	}
 
 	public int addElement(Object value, int index) {
-		if (descriptor.getPropertyType().isArray())
+		if (descriptor.getPropertyType().isArray()) {
 			Assert.isTrue(false, "cannot add elements"); //$NON-NLS-1$		   
+		}
 		
 		Collection list = (Collection)primGetValues();
-		if (index <= 0 || index > list.size())
+		if (index <= 0 || index > list.size()) {
 			index = list.size();
+		}
 		list.add(value);	
 		fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		return index;
 	}
 
 	public void removeElement(int index) {
-		if (descriptor.getPropertyType().isArray())
+		if (descriptor.getPropertyType().isArray()) {
 			Assert.isTrue(false, "cannot remove elements"); //$NON-NLS-1$		   
+		}
 		
 		Collection list = (Collection)primGetValues();
 		Object o = null;

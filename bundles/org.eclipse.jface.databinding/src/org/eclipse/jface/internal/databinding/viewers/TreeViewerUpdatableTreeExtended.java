@@ -54,10 +54,11 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 		private Object getConvertedValue(Object element, Column column) {
 			String propertyName = column.getPropertyName();
 			Object value;
-			if (propertyName == null) 
+			if (propertyName == null) {
 				value = element;
-			else 
+			} else {
 				value = getValue(element, column);
+			}
 			
 			Object convertedValue = column.getConverter().convertModelToTarget(
 					value);
@@ -148,8 +149,9 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 		Class[] types = treeViewerDescription.getClassTypes();
 		for (int i = 0; i < types.length; i++) {
 			int cc = treeViewerDescription.getColumnCount(types[i]);
-			if (cc>count)
+			if (cc>count) {
 				count = cc;
+			}
 		}
 		return count;
 	}
@@ -161,17 +163,19 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 			Column column = treeViewerDescription.getColumn(classTypes[i], columnIndex);
 			if (column!=null && column.getCellEditor()!=null) {
 				if (customEditor!=null) {
-					if (customEditor!=column.getCellEditor()) // Limitation, see Bug 113713	 
+					if (customEditor!=column.getCellEditor()) {
 						throw new BindingException("Different Cell Editors on Column: "+columnIndex); //$NON-NLS-1$
-				}
-				else
-					customEditor = column.getCellEditor();				
+					}
+				} else {
+					customEditor = column.getCellEditor();
+				}				
 			}			
 		}
 		
-		if (customEditor==null) 			
-		    // Use a default
+		if (customEditor==null) {
+			// Use a default
 			return new TextCellEditor(treeViewerDescription.getTreeViewer().getTree()) ;
+		}
 		
 		for (int i = 0; i < classTypes.length; i++) {
 			Column column = treeViewerDescription.getColumn(classTypes[i], columnIndex);
@@ -274,7 +278,9 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 
 	private void fillDescriptionDefaults(final IDataBindingContext dataBindingContext) {
 		Class[] types = treeViewerDescription.getClassTypes();
-		if (types==null) return;
+		if (types==null) {
+			return;
+		}
 		
 		for (int i=0; i<types.length; i++) {
 			int colCount = treeViewerDescription.getColumnCount(types[i]);					
@@ -284,10 +290,11 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 				columnInfos.put(column, info);
 				if (column.getConverter() == null) {
 					info.converterDefaulted = true;
-					if (column.getPropertyType()!=null)
+					if (column.getPropertyType()!=null) {
 						initializeColumnConverter(column,column.getPropertyType());
-					else
-					   column.setConverter(new IdentityConverter(String.class));
+					} else {
+						column.setConverter(new IdentityConverter(String.class));
+					}
 				}
 				if (column.getValidator() == null) {
 					info.validatorDefaulted = true;
@@ -304,8 +311,9 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 		if (treeViewerDescription.getCellModifier() == null) {			
 			treeViewerDescription.setCellModifier(createCellModifier(dataBindingContext));
 		}
-		if (columnInfos.isEmpty())
+		if (columnInfos.isEmpty()) {
 			columnInfos=null;
+		}
 	}
 
 
@@ -337,8 +345,9 @@ public class TreeViewerUpdatableTreeExtended extends TreeViewerUpdatableTree {
 					}
 				}
 			}			
-			if (columnInfos.isEmpty())
+			if (columnInfos.isEmpty()) {
 				columnInfos = null;	// No More checking
+			}
 		}
 		return super.addElement(parentElement, index, value, fire);
 	}

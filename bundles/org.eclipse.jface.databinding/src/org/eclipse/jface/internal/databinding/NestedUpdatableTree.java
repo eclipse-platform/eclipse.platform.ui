@@ -81,13 +81,14 @@ public class NestedUpdatableTree extends WritableUpdatable implements IUpdatable
 			}
 			
 			Object currentOuterValue;
-			if (outerUpdatableValue instanceof IUpdatableValue)
+			if (outerUpdatableValue instanceof IUpdatableValue) {
 				currentOuterValue = ((IUpdatableValue)outerUpdatableValue).getValue();
-			else {
+			} else {
 				IUpdatableCollection collection = (IUpdatableCollection)outerUpdatableValue;
 				Object[] elements = new Object[collection.getSize()];
-				for (int i = 0; i < elements.length; i++) 
+				for (int i = 0; i < elements.length; i++) {
 					elements[i]=collection.getElement(i);
+				}
 				currentOuterValue=elements;					
 			}
 			// Construct a new description
@@ -95,8 +96,9 @@ public class NestedUpdatableTree extends WritableUpdatable implements IUpdatable
 			Class[] types = originalDescription.getTypes();
 			for (int i = 0; i < types.length; i++) {
 				String[] properties = originalDescription.getChildrenProperties(types[i]);
-				for (int j = 0; j < properties.length; j++) 
+				for (int j = 0; j < properties.length; j++) {
 					newDescriptor.addChildrenProperty(types[i], properties[j]);
+				}
 			}							    
 			innerUpdatableTree = (IUpdatableTree) databindingContext.createUpdatable(newDescriptor);
 			innerUpdatableTree.addChangeListener(innerChangeListener);

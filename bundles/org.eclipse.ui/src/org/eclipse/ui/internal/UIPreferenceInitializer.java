@@ -104,12 +104,13 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS, false);
 
 		// Set the default theme.
-		if (highContrast[0])
+		if (highContrast[0]) {
 			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
 					HIGH_CONTRAST_THEME);
-		else
+		} else {
 			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
 					IThemeManager.DEFAULT_THEME);
+		}
 
 		// The default minimum character width for editor tabs is undefined
 		// (i.e., -1)
@@ -148,10 +149,11 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		final String uiName = UIPlugin.getDefault().getBundle()
 				.getSymbolicName();
 		try {
-			if (rootNode.nodeExists(uiName))
+			if (rootNode.nodeExists(uiName)) {
 				((IEclipsePreferences) rootNode.node(uiName))
 						.addPreferenceChangeListener(PlatformUIPreferenceListener
 								.getSingleton());
+			}
 		} catch (BackingStoreException e) {
 			IStatus status = new Status(IStatus.ERROR, UIPlugin.getDefault()
 					.getBundle().getSymbolicName(), IStatus.ERROR, e
@@ -167,8 +169,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 					 */
 					public void added(NodeChangeEvent event) {
-						if (!event.getChild().name().equals(uiName))
+						if (!event.getChild().name().equals(uiName)) {
 							return;
+						}
 						((IEclipsePreferences) event.getChild())
 								.addPreferenceChangeListener(PlatformUIPreferenceListener
 										.getSingleton());

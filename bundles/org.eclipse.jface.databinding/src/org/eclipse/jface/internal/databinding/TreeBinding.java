@@ -49,8 +49,9 @@ public class TreeBinding extends Binding {
 
 	private IChangeListener targetChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating != 0  && changeEvent.getChangeType()!=ChangeEvent.VIRTUAL)
+			if (updating != 0  && changeEvent.getChangeType()!=ChangeEvent.VIRTUAL) {
 				return;
+			}
 
 			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 				// No Conversion on the object itself
@@ -62,8 +63,9 @@ public class TreeBinding extends Binding {
 
 	private IChangeListener modelChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating != 0  && changeEvent.getChangeType()!=ChangeEvent.VIRTUAL)
+			if (updating != 0  && changeEvent.getChangeType()!=ChangeEvent.VIRTUAL) {
 				return;
+			}
 
 			if ((changeEvent.getChangeType() &  (ChangeEvent.CHANGE | ChangeEvent.REPLACE | ChangeEvent.VIRTUAL)) != 0) {
 				update(target, model, changeEvent);
@@ -110,12 +112,13 @@ public class TreeBinding extends Binding {
 						
 					case ChangeEvent.REPLACE:
 						Object val = event.getNewValue();
-						if (val.getClass().isArray())
-						   needsUpdate.setElements(parent, (Object[]) val);
-						else if (val instanceof Collection)
+						if (val.getClass().isArray()) {
+							needsUpdate.setElements(parent, (Object[]) val);
+						} else if (val instanceof Collection) {
 							needsUpdate.setElements(parent, ((Collection)val).toArray());
-						else
+						} else {
 							throw new BindingException ("Invalid REPLACE event"); //$NON-NLS-1$
+						}
 					    break;
 				}
 

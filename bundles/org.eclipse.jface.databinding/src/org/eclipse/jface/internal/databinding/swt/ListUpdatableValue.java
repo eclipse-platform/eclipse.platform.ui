@@ -43,8 +43,9 @@ public class ListUpdatableValue extends UpdatableValue {
 		this.list = list;
 		this.attribute = attribute;
 		
-		if ((list.getStyle()&SWT.MULTI)>0)
+		if ((list.getStyle()&SWT.MULTI)>0) {
 			throw new IllegalArgumentException("SWT.SINGLE support only for a List selection"); //$NON-NLS-1$
+		}
 		
 		if (attribute.equals(SWTProperties.SELECTION)) {
 			list.addListener(SWT.Selection, new Listener(){			
@@ -55,14 +56,16 @@ public class ListUpdatableValue extends UpdatableValue {
 				}
 			
 			});
-		} else
+		} else {
 			throw new IllegalArgumentException();
+		}
 	}
 
 	public void setValue(Object value) {
 		String oldValue = null;
-		if (list.getSelection()!=null && list.getSelection().length>0)
+		if (list.getSelection()!=null && list.getSelection().length>0) {
 			oldValue = list.getSelection()[0];
+		}
 		try {
 			updating = true;
 			if (attribute.equals(SWTProperties.SELECTION)) {
@@ -88,8 +91,9 @@ public class ListUpdatableValue extends UpdatableValue {
 		Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute" + attribute); //$NON-NLS-1$
 		int index = list.getSelectionIndex();
-		if (index >= 0)
+		if (index >= 0) {
 			return list.getItem(index);
+		}
 		return null;
 	}
 

@@ -76,13 +76,14 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 						(StructuredViewer) object, (String) attribute);
 			}
 			if (object instanceof AbstractListViewer
-					&& ViewersProperties.SINGLE_SELECTION.equals(attribute))
+					&& ViewersProperties.SINGLE_SELECTION.equals(attribute)) {
 				return new StructuredViewerUpdatableValue(
 						(AbstractListViewer) object, (String) attribute);
-			else if (object instanceof AbstractListViewer
-					&& ViewersProperties.CONTENT.equals(attribute))
+			} else if (object instanceof AbstractListViewer
+					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new UpdatableCollectionViewer(
 						(AbstractListViewer) object);
+			}
 			if (object instanceof TableViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {
 //				return new TableViewerUpdatableCollection((TableViewer) object);

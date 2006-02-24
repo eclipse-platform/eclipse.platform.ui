@@ -104,15 +104,17 @@ public class ListenerSupport {
 			for (int i = 0; i < targets.length; i++) {
 				Object newValue = targets[i];
 				IdentityWrapper identityWrapper = new IdentityWrapper(newValue);
-				if(!elementsToUnhook.remove(identityWrapper)) 				
+				if(!elementsToUnhook.remove(identityWrapper)) {
 					hookListener(newValue);
+				}
 			}
 		}
 			
 		for (Iterator it = elementsToUnhook.iterator(); it.hasNext();) {
 			Object o = it.next();
-			if (o.getClass()!=IdentityWrapper.class)
+			if (o.getClass()!=IdentityWrapper.class) {
 				o = new IdentityWrapper(o);
+			}
 			elementsListenedTo.remove(o);
 			unhookListener(o);
 		}							
@@ -124,8 +126,9 @@ public class ListenerSupport {
 	 * @param target
 	 */
 	public void unhookListener(Object target) {
-		if (target.getClass()==IdentityWrapper.class)
+		if (target.getClass()==IdentityWrapper.class) {
 			target = ((IdentityWrapper)target).o;
+		}
 		
 		Method removePropertyChangeListenerMethod = null;
 		try {
@@ -176,8 +179,9 @@ public class ListenerSupport {
 		if (elementsListenedTo!=null && elementsListenedTo.size()>0) {
 			Object[] identityList = elementsListenedTo.toArray();
 			targets = new Object[identityList.length];
-			for (int i = 0; i < identityList.length; i++) 
-				targets[i]=((IdentityWrapper)identityList[i]).o;							
+			for (int i = 0; i < identityList.length; i++) {
+				targets[i]=((IdentityWrapper)identityList[i]).o;
+			}							
 		}
 		return targets;
 	}

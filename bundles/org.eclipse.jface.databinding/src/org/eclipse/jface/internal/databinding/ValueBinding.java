@@ -72,8 +72,9 @@ public class ValueBinding extends Binding {
 
 	private final IChangeListener targetChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating) 
+			if (updating) {
 				return;
+			}
 			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 				// we are notified of a pending change, do validation
 				// and veto the change if it is not valid
@@ -95,8 +96,9 @@ public class ValueBinding extends Binding {
 	
 	private IChangeListener modelChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating) 
+			if (updating) {
 				return;
+			}
 			// The model has changed so we must update the target
 			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 			} else if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {

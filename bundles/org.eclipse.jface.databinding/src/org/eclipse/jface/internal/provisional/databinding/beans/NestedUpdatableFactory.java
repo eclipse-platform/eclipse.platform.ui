@@ -74,9 +74,10 @@ public class NestedUpdatableFactory implements IUpdatableFactory {
 			TreeModelDescription treeModelDescription = (TreeModelDescription) description;
 			if (treeModelDescription.getRoot() != null) {
 				if (treeModelDescription.getRoot() instanceof IUpdatable) {
-					if (treeModelDescription.getRoot() instanceof IUpdatableTree)
+					if (treeModelDescription.getRoot() instanceof IUpdatableTree) {
 						return (IUpdatableTree) treeModelDescription
 								.getRoot();
+					}
 					// Nest the TreeModelDescription's root
 					return new NestedUpdatableTree(
 							bindingContext,
@@ -92,9 +93,10 @@ public class NestedUpdatableFactory implements IUpdatableFactory {
 					for (int i = 0; i < types.length; i++) {
 						String[] props = treeModelDescription
 								.getChildrenProperties(types[i]);
-						for (int j = 0; j < props.length; j++)
+						for (int j = 0; j < props.length; j++) {
 							newDescription.addChildrenProperty(
 									types[i], props[j]);
+						}
 					}
 					return bindingContext
 							.createUpdatable(newDescription);

@@ -30,8 +30,9 @@ public class ConvertObject2String implements IConversionFunction {
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
-        if (source == null) 
-            return ""; //$NON-NLS-1$
+        if (source == null) {
+			return ""; //$NON-NLS-1$
+		}
         
         IConversionFunction converter = ConversionFunctionRegistry.get(source.getClass(), String.class);
         if (converter != null) {

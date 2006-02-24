@@ -57,8 +57,9 @@ public interface ITree  {
 		 */
 		public void addTreeChangeListener(IChangeListener listener) {
 			if (listener!=null) {
-				if (listeners==null)
+				if (listeners==null) {
 					listeners=new ArrayList();
+				}
 				listeners.add(listener);
 			}
 		}
@@ -67,8 +68,9 @@ public interface ITree  {
 		 * @param listener
 		 */
 		public void removeTreeChangeListener(IChangeListener listener) {
-			if (listener==null || listeners==null)
+			if (listener==null || listeners==null) {
 				return;
+			}
 			listeners.remove(listener);
 		}
 		
@@ -92,8 +94,9 @@ public interface ITree  {
 			Object nval = evt.getNewValue();
 			
 			if (listeners==null ||
-				(oval != null && nval != null && oval.equals(nval)))
+				(oval != null && nval != null && oval.equals(nval))) {
 				return;
+			}
 			
 			IChangeListener[] list = (IChangeListener[])listeners.toArray(new IChangeListener[listeners.size()]);
 			for (int i = 0; i < list.length; i++) {

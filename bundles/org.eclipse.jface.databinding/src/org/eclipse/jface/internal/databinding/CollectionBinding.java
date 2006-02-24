@@ -69,8 +69,9 @@ public class CollectionBinding extends Binding {
 	
 	private final IChangeListener targetChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating)
+			if (updating) {
 				return;
+			}
 
 			if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 				// we are notified of a pending change, do validation
@@ -102,16 +103,18 @@ public class CollectionBinding extends Binding {
 					context.updatePartialValidationError(this, null);
 					context.updateValidationError(this, validationError);
 				}
-				if (validationError == null) 
-				     update(model, target, changeEvent);
+				if (validationError == null) {
+					update(model, target, changeEvent);
+				}
 			}
 		}
 	};
 
 	private IChangeListener modelChangeListener = new IChangeListener() {
 		public void handleChange(ChangeEvent changeEvent) {
-			if (updating)
+			if (updating) {
 				return;
+			}
 			// TODO validation
 			if ((changeEvent.getChangeType() &  (ChangeEvent.CHANGE | ChangeEvent.ADD | ChangeEvent.ADD_MANY | ChangeEvent.REMOVE | ChangeEvent.REMOVE_MANY)) != 0) {
 				update(target, model, changeEvent);

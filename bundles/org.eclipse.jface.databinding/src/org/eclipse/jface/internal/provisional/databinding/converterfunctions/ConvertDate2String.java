@@ -24,8 +24,9 @@ import org.eclipse.jface.internal.provisional.databinding.converterfunction.ICon
  */
 public class ConvertDate2String extends DateConversionSupport implements IConversionFunction {	
 	public Object convert(Object source) {
-		if (source != null)
+		if (source != null) {
 			return format((Date)source);
+		}
 		return ""; //$NON-NLS-1$
 	}	
 }

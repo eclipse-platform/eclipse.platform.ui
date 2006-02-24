@@ -24,8 +24,9 @@ public class String2ShortValidator implements IValidator {
 	 * @see org.eclipse.jface.internal.provisional.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
 	 */
 	public String isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-            return null;
+		if (((String)fragment).matches("\\-?[0-9]*")) { //$NON-NLS-1$
+			return null;
+		}
 
         return getHint();
 	}

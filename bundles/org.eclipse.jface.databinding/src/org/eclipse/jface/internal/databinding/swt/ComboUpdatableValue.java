@@ -42,8 +42,9 @@ public class ComboUpdatableValue extends UpdatableValue {
 	public ComboUpdatableValue(Combo combo, String attribute) {
 		this.combo = combo;
 		this.attribute = attribute;
-		if (attribute.equals(ViewersProperties.CONTENT))
+		if (attribute.equals(ViewersProperties.CONTENT)) {
 			attribute = SWTProperties.TEXT;
+		}
 
 		if (attribute.equals(SWTProperties.TEXT)
 				|| attribute.equals(SWTProperties.SELECTION)) {
@@ -54,8 +55,9 @@ public class ComboUpdatableValue extends UpdatableValue {
 					}
 				}
 			});
-		} else
+		} else {
 			throw new IllegalArgumentException();
+		}
 	}
 
 	public void setValue(final Object value) {
@@ -93,14 +95,16 @@ public class ComboUpdatableValue extends UpdatableValue {
 	public Object computeValue() {
 		SyncRunnable runnable = new SyncRunnable() {
 			public Object run() {
-				if (attribute.equals(SWTProperties.TEXT))
+				if (attribute.equals(SWTProperties.TEXT)) {
 					return combo.getText();
+				}
 
 				Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
 						"unexpected attribute" + attribute); //$NON-NLS-1$
 				int index = combo.getSelectionIndex();
-				if (index >= 0)
+				if (index >= 0) {
 					return combo.getItem(index);
+				}
 				return null;
 			}
 		};
