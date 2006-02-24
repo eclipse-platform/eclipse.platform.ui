@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -32,7 +31,7 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
 
     private Image icon;
 
-    private IAdaptable element;
+    private Object element;
 
     /**
      * Create a new instance of the receiver.
@@ -40,7 +39,7 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
      * @param element
      */
     public PropertyPageNode(RegistryPageContributor contributor,
-            IAdaptable element) {
+            Object element) {
         super(contributor.getPageId(), contributor.getConfigurationElement());
         this.contributor = contributor;
         this.element = element;

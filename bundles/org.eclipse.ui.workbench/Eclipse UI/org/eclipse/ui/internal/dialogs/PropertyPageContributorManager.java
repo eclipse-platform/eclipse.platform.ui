@@ -18,7 +18,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
@@ -115,10 +114,11 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	 * contributors and sequentially invoke them to contribute to the property
 	 * page manager. Matching algorithm will also check subclasses and
 	 * implemented interfaces.
-	 * 
+	 * @param manager
+	 * @param object
 	 * @return true if contribution took place, false otherwise.
 	 */
-	public boolean contribute(PropertyPageManager manager, IAdaptable object) {
+	public boolean contribute(PropertyPageManager manager, Object object) {
 
 		List result = getContributors(object);
 
@@ -176,18 +176,12 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	/**
 	 * Ideally, shared instance should not be used and manager should be located
 	 * in the workbench class.
+	 * @return PropertyPageContributorManager
 	 */
 	public static PropertyPageContributorManager getManager() {
 		if (sharedInstance == null)
 			sharedInstance = new PropertyPageContributorManager();
 		return sharedInstance;
-	}
-
-	/**
-	 * Returns true if contributors exist in the manager for this object.
-	 */
-	public boolean hasContributorsFor(Object object) {
-		return super.hasContributorsFor(object);
 	}
 
 	/**

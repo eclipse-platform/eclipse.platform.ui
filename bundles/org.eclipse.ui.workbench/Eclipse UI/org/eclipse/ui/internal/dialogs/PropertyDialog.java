@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,25 +31,28 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * type.
  */
 public class PropertyDialog extends FilteredPreferenceDialog {
-    private ISelection selection;
+	private ISelection selection;
 
-    //The id of the last page that was selected
-    private static String lastPropertyId = null;
+	// The id of the last page that was selected
+	private static String lastPropertyId = null;
 
-    
-    /**
-     * Create a new property dialog.
-     * 
-     * @param shell the parent shell
-     * @param propertyPageId the property page id
-     * @param element the adaptable element
-     * @return the property dialog
-     */
-    public static PropertyDialog createDialogOn(Shell shell,final String propertyPageId, IAdaptable element){
+	/**
+	 * Create a new property dialog.
+	 * 
+	 * @param shell
+	 *            the parent shell
+	 * @param propertyPageId
+	 *            the property page id
+	 * @param element
+	 *            the adaptable element
+	 * @return the property dialog
+	 */
+	public static PropertyDialog createDialogOn(Shell shell,
+			final String propertyPageId, Object element) {
 
 		PropertyPageManager pageManager = new PropertyPageManager();
 		String title = "";//$NON-NLS-1$
-		
+
 		if (element == null)
 			return null;
 		// load pages for the selection
@@ -60,14 +64,14 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 				.iterator();
 		String name = getName(element);
 		if (!pages.hasNext()) {
-			MessageDialog
-					.openInformation(
-							shell,
-							WorkbenchMessages.PropertyDialog_messageTitle,
-							NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage,  name)); 
+			MessageDialog.openInformation(shell,
+					WorkbenchMessages.PropertyDialog_messageTitle, NLS.bind(
+							WorkbenchMessages.PropertyDialog_noPropertyMessage,
+							name));
 			return null;
 		}
-		title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage,  name ); 
+		title = NLS
+				.bind(WorkbenchMessages.PropertyDialog_propertyMessage, name);
 		PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager,
 				new StructuredSelection(element));
 
@@ -81,68 +85,74 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 				IWorkbenchHelpContextIds.PROPERTY_DIALOG);
 
 		return propertyDialog;
-	
-    }
-    
-    /**
+
+	}
+
+	/**
 	 * Returns the name of the given element.
 	 * 
 	 * @param element
 	 *            the element
 	 * @return the name of the element
 	 */
-	private static String getName(IAdaptable element) {
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter) element
-				.getAdapter(IWorkbenchAdapter.class);
-		if (adapter != null) 
+	private static String getName(Object element) {
+		IWorkbenchAdapter adapter = null;
+		if (element instanceof IAdaptable) {
+			adapter = (IWorkbenchAdapter) ((IAdaptable) element)
+					.getAdapter(IWorkbenchAdapter.class);
+		} else {
+			adapter = (IWorkbenchAdapter) Platform.getAdapterManager()
+					.getAdapter(element, IWorkbenchAdapter.class);
+		}
+		if (adapter != null)
 			return adapter.getLabel(element);
 		return "";//$NON-NLS-1$
 	}
-	
-    /**
-     * Create an instance of the receiver.
-     * @param parentShell
-     * @param mng
-     * @param selection
-     */
-    public PropertyDialog(Shell parentShell, PreferenceManager mng,
-            ISelection selection) {
-        super(parentShell, mng);
-        setSelection(selection);
-    }
 
-    /**
-     * Returns selection in the "Properties" action context.
-     * 
-     * @return the selection
-     */
-    public ISelection getSelection() {
-        return selection;
-    }
+	/**
+	 * Create an instance of the receiver.
+	 * 
+	 * @param parentShell
+	 * @param mng
+	 * @param selection
+	 */
+	public PropertyDialog(Shell parentShell, PreferenceManager mng,
+			ISelection selection) {
+		super(parentShell, mng);
+		setSelection(selection);
+	}
 
-    /**
-     * Sets the selection that will be used to determine target object.
-     * 
-     * @param newSelection the new selection
-     */
-    public void setSelection(ISelection newSelection) {
-        selection = newSelection;
-    }
+	/**
+	 * Returns selection in the "Properties" action context.
+	 * 
+	 * @return the selection
+	 */
+	public ISelection getSelection() {
+		return selection;
+	}
 
-    /**
-     * Get the name of the selected item preference
-     */
-    protected String getSelectedNodePreference() {
-        return lastPropertyId;
-    }
+	/**
+	 * Sets the selection that will be used to determine target object.
+	 * 
+	 * @param newSelection
+	 *            the new selection
+	 */
+	public void setSelection(ISelection newSelection) {
+		selection = newSelection;
+	}
 
-    /**
-     * Get the name of the selected item preference
-     */
-    protected void setSelectedNodePreference(String pageId) {
-        lastPropertyId = pageId;
-    }
-    
+	/**
+	 * Get the name of the selected item preference
+	 */
+	protected String getSelectedNodePreference() {
+		return lastPropertyId;
+	}
 
+	/**
+	 * Get the name of the selected item preference
+	 */
+	protected void setSelectedNodePreference(String pageId) {
+		lastPropertyId = pageId;
+	}
 
 }

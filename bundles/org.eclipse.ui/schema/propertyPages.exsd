@@ -94,7 +94,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
          <attribute name="objectClass" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the class for which the page is registered.
+                  a fully qualified name of the class for which the page is registered. This class does not need to implement &lt;tt&gt;IAdaptable&lt;/tt&gt;. Objects that are not an instance of &lt;tt&gt;IAdaptable&lt;/tt&gt; will be wrappered in an &lt;tt&gt;IAdaptable&lt;/tt&gt; before being sent to the property page&apos;s instance (an &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;).
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>

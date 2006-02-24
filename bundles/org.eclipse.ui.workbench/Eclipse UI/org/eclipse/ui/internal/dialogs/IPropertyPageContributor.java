@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.internal.IObjectContributor;
 
 /**
@@ -23,9 +22,11 @@ public interface IPropertyPageContributor extends IObjectContributor {
     /**
      * Implement this method to add instances of PropertyPage class to the
      * property page manager.
+     * @param manager the contributor manager onto which to contribute the
+     * property pages.
+     * @param object the type for which pages should be contributed. 
      * @return true if pages were added, false if not.
      */
-
     public boolean contributePropertyPages(PropertyPageManager manager,
-            IAdaptable object);
+            Object object);
 }

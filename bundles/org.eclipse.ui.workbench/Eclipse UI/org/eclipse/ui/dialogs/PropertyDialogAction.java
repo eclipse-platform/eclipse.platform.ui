@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -101,8 +100,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * @return boolean
 	 */
 	private boolean hasPropertyPagesFor(Object object) {
-		PropertyPageContributorManager manager = PropertyPageContributorManager.getManager();
-		return manager.hasContributorsFor(object);
+		return PropertyPageContributorManager.getManager().hasContributorsFor(object);
 	}
 
 	/**
@@ -167,7 +165,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 */
 	public PreferenceDialog createDialog() {
 
-		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
+		Object element = getStructuredSelection().getFirstElement();
 		if (element == null)
 			return null;
 		return PropertyDialog

@@ -67,12 +67,11 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         adaptable = Boolean.valueOf(pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ADAPTABLE)).booleanValue();
     }
 
-	/**
-     * Implements the interface by creating property page specified with
-     * the configuration element.
+	 /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.dialogs.IPropertyPageContributor#contributePropertyPages(org.eclipse.ui.internal.dialogs.PropertyPageManager, java.lang.Object)
      */
     public boolean contributePropertyPages(PropertyPageManager mng,
-            IAdaptable element) {
+            Object element) {
         PropertyPageNode node = new PropertyPageNode(this, element);
         
         if(getCategory() == null){
@@ -92,7 +91,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
      * @return the property page
      * @throws CoreException thrown if there is a problem creating the apge
      */
-    public IWorkbenchPropertyPage createPage(IAdaptable element)
+    public IWorkbenchPropertyPage createPage(Object element)
             throws CoreException {
         IWorkbenchPropertyPage ppage = null;
         ppage = (IWorkbenchPropertyPage) WorkbenchPlugin.createExtension(
@@ -111,7 +110,10 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
            }
         }
         
-        ppage.setElement((IAdaptable)adapted);
+        if(adapted instanceof IAdaptable)
+        	ppage.setElement((IAdaptable) adapted);
+        else
+        	ppage.setElement(new AdaptableForwarder(adapted));
 
         return ppage;
     }
@@ -126,7 +128,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         if (iconName == null)
             return null;
         return AbstractUIPlugin.imageDescriptorFromPlugin(pageElement
-                .getNamespace(), iconName);
+                .getNamespaceIdentifier(), iconName);
     }
 
     /**

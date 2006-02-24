@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 /**
  * Interface for workbench property pages. Property pages generally show up in
@@ -43,6 +44,13 @@ public interface IWorkbenchPropertyPage extends IPreferencePage {
      * Sets the object that owns the properties shown in this page.
      * The page is expected to store this object and provide it if
      * <code>getElement</code> is called.
+     * <p> As of Eclipse 3.2 the org.eclipse.ui.propertyPages extension
+     * point now supports non IAdaptable inputs. An input
+     * that is not an IAdaptable will be wrapped in an 
+     * IAdaptable by the workbench before it is forwarded 
+     * to this method.
+     * </p>
+     * @see PropertyDialogAction
      *
      * @param element the object that owns the properties shown in this page
      */
