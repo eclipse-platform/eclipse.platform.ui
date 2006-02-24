@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <compositeCheatsheet name="Test Guide">
-    <task kind="html" name= "Task name">
+    <task  kind="ua.junit" name= "Task name">
          <param value = "b" />
     </task>
 </compositeCheatsheet>

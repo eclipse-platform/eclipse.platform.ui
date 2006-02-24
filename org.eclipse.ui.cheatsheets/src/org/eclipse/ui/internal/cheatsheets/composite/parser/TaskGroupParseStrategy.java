@@ -11,17 +11,18 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.parser;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ITaskGroup;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.w3c.dom.Node;
 
 public class TaskGroupParseStrategy implements ITaskParseStrategy {
 
-	private String kind;
 
-	public TaskGroupParseStrategy(String kind) {
-		this.kind = kind;
+	public TaskGroupParseStrategy() {
 	}
 	
 	public void init() {	
@@ -35,6 +36,7 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 	}
 
 	public void parsingComplete(AbstractTask parentTask, IStatusContainer status) {
+		String kind = parentTask.getKind();
 		if (ITaskGroup.SEQUENCE.equals(kind)) {
 			// Create dependencies between the children
 			ICompositeCheatSheetTask[] children  = parentTask.getSubtasks();
@@ -48,6 +50,30 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 					previous.addSuccessorTask(next);
 				}
 			}
+			checkForChildren(parentTask, status);
+		} else if (ITaskGroup.SET.equals(kind)) {
+			checkForChildren(parentTask, status);
+		} else if (ITaskGroup.CHOICE.equals(kind)) {
+			if (parentTask.getSubtasks().length < 2) {
+				String message = NLS.bind(
+						Messages.ERROR_PARSING_NO_CHOICE,
+						(new Object[] { parentTask.getName()}));
+			    status.addStatus(IStatus.ERROR, message, null);
+			}
+		} else {
+			String message = NLS.bind(
+					Messages.ERROR_PARSING_TASK_INVALID_KIND,
+					(new Object[] { parentTask.getKind(), ICompositeCheatsheetTags.TASK_GROUP, parentTask.getName()}));
+		    status.addStatus(IStatus.ERROR, message, null);
+		}
+	}
+
+	private void checkForChildren(AbstractTask parentTask, IStatusContainer status) {
+		if (parentTask.getSubtasks().length < 1) {
+			String message = NLS.bind(
+					Messages.ERROR_PARSING_CHILDLESS_TASK_GROUP,
+					(new Object[] { parentTask.getName()}));
+		    status.addStatus(IStatus.ERROR, message, null);
 		}
 	}
 

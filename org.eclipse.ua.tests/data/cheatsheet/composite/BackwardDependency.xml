@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <compositeCheatsheet name="Test Guide">
     <taskGroup  name= "Task name">
-        <task name="This is Task2" id = "task2"> 
+        <task kind="ua.junit" name="This is Task2" id = "task2"> 
             <dependsOn task = "task1"/>
         </task>
-        <task name="This is Task1" id = "task1" >
+        <task kind="ua.junit" name="This is Task1" id = "task1" >
         </task>
     </taskGroup>
 </compositeCheatsheet>

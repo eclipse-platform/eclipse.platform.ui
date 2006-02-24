@@ -380,7 +380,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	}
 	
 	private void addIfIncomplete(StringBuffer buf, ICompositeCheatSheetTask task) {
-		if (task.getState() != ICompositeCheatSheetTask.COMPLETED) {
+		if (task.getState() != ICompositeCheatSheetTask.COMPLETED &&
+			task.getState() != ICompositeCheatSheetTask.SKIPPED	) {
 			buf.append("<li>"); //$NON-NLS-1$
 			String message = NLS.bind(Messages.COMPOSITE_PAGE_TASK_NOT_COMPLETE, (new Object[] {task.getName()}));	
 			buf.append(message);

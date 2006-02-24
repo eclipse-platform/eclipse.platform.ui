@@ -125,6 +125,12 @@ public final class Messages extends NLS {
 	public static String RESTART_ALL_MENU;
 	public static String RESTART_MENU;
 	public static String ERROR_EDITABLE_TASK_WITH_CHILDREN;
+	public static String ERROR_PARSING_TASK_NO_NAME;
+	public static String ERROR_PARSING_CCS_NO_NAME;
+	public static String ERROR_PARSING_TASK_NO_KIND;
+	public static String ERROR_PARSING_TASK_INVALID_KIND;
+	public static String ERROR_PARSING_CHILDLESS_TASK_GROUP;
+	public static String ERROR_PARSING_NO_CHOICE;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

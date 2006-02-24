@@ -158,16 +158,27 @@ public class TaskDependencies {
 			// Now the list contains a cycle and possibly additional tasks at the start
 			// of the list
 			boolean cycleStarted = false;
+			String thisTask = null;
+			String lastTask = null;
+			String firstTask = null;
 			for (Iterator cycleIterator = cycle.iterator(); cycleIterator.hasNext();) {
 				ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)cycleIterator.next();
 				if (task == cycleStartTask) {
 					cycleStarted = true;
+					firstTask = task.getName();
 				}
 				if (cycleStarted) {
-					String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {task.getId()}));	
-					status.addStatus(IStatus.ERROR, message, null);
+					// Save the name of this task
+					lastTask = thisTask;
+					thisTask = task.getName();
+					if (lastTask != null) {
+					    String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {lastTask, thisTask}));	
+					    status.addStatus(IStatus.ERROR, message, null);
+					}
 				}
 			}
+			String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {thisTask, firstTask}));	
+		    status.addStatus(IStatus.ERROR, message, null);
 		}
 	}
 

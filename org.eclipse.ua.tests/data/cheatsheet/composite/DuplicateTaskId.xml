@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <compositeCheatsheet name="Test Guide">
-    <taskGroup kind="html" name= "Task name">
-        <task  name="This is Task1" id = "task1" />
-        <task  name="This is Task2" id = "task1" /> 
+    <taskGroup kind="set" name= "Task name">
+        <task kind="ua.junit" name="This is Task1" id = "task1" />
+        <task kind="ua.junit" name="This is Task2" id = "task1" /> 
     </taskGroup>
 </compositeCheatsheet>

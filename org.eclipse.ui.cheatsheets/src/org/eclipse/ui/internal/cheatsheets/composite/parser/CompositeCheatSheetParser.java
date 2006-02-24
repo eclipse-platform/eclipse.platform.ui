@@ -170,7 +170,8 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 					throw new CheatSheetParserException(message);
 				}
 				
-				String name = ""; //$NON-NLS-1$
+				String name = "";  //$NON-NLS-1$
+				boolean nameFound = false;
 				String explorerId = ICompositeCheatsheetTags.TREE;
 				
 				NamedNodeMap attributes = rootnode.getAttributes();
@@ -179,6 +180,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 						Node attribute = attributes.item(x);
 						String attributeName = attribute.getNodeName();
 						if ( attributeName != null && attributeName.equals(ICompositeCheatsheetTags.NAME)) {
+							nameFound = true;
 							name= attribute.getNodeValue();
 						}
 						if (attributeName.equals(ICompositeCheatsheetTags.EXPLORER)) {
@@ -194,7 +196,11 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 				
 				if (compositeCS.getRootTask() == null) {
 					addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_ROOT, null);
-				} else if (status.getSeverity() != IStatus.ERROR) {
+				} 
+				if (!nameFound) {
+					addStatus(IStatus.ERROR, Messages.ERROR_PARSING_CCS_NO_NAME, null);
+				}
+				if (status.getSeverity() != IStatus.ERROR) {
 					compositeCS.setContentUrl(url);
 				    return compositeCS;
 				}
@@ -337,15 +343,19 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			}
 		}
 
+		String nodeName = taskNode.getNodeName();
 		if (id == null) {
 			id = autoGenerateId();
 		}
-		String nodeName = taskNode.getNodeName();
+		if (name == null) {
+			String message = NLS.bind(Messages.ERROR_PARSING_TASK_NO_NAME, (new Object[] {nodeName}));
+			addStatus(IStatus.ERROR, message, null);
+		}
 		task = createTask(nodeName, model, kind, id, name);
 		task.setSkippable(skippable);
 
 		if (model.getDependencies().getTask(id) != null) {
-			String message = NLS.bind(Messages.ERROR_PARSING_DUPLICATE_TASK_ID, (new Object[] {id}));
+			String message = NLS.bind(Messages.ERROR_PARSING_DUPLICATE_TASK_ID, (new Object[] {id, }));
 			addStatus(IStatus.ERROR, message, null);
 		} else {
 		    model.getDependencies().saveId(task);

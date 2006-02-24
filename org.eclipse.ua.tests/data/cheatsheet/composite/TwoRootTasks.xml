@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <compositeCheatsheet name="Test Guide">
-    <task kind="html" name= "Task name">
+    <task kind="ua.junit" name= "Task name">
     </task>
-    <task kind="html" name= "Task2 name">
+    <task kind="ua.junit" name= "Task2 name">
     </task>
 </compositeCheatsheet>

@@ -149,7 +149,8 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		boolean startable = true;
 		ICompositeCheatSheetTask[] requiredTasks = getRequiredTasks();
 		for (int i = 0; i < requiredTasks.length; i++) {
-			if (requiredTasks[i].getState() != COMPLETED) {
+			if (requiredTasks[i].getState() != COMPLETED ||
+				requiredTasks[i].getState() != SKIPPED	) {
 				startable = false;
 			}
 		}
@@ -172,7 +173,8 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	 * @param state
 	 */
 	public void setState(int state) {
-		if (state == COMPLETED) {
+		if (state == COMPLETED ||
+			state == SKIPPED) {
 		    updateSuccessorTasks(state);
 		}
 		this.state = state;	

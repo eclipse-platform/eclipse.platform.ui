@@ -110,6 +110,10 @@
             This cheat sheet has items to test the framework
          </description>
       </cheatsheet>
+      <taskEditor
+            class="org.eclipse.ua.tests.cheatsheet.util.TestTaskEditor"
+            icon="icons/sample.gif"
+            id="ua.junit"/>
    </extension>
 
    <!-- 

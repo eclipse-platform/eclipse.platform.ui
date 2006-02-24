@@ -276,6 +276,9 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 *  with a given id.
 	 */
 	public TaskEditorNode findTaskEditor(String id) {
+		if (cheatsheets == null) {
+		    readCheatSheets(); // Ensure that the registry has been read
+		}
 		return (TaskEditorNode)taskEditors.get(id);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,6 +169,49 @@ public class TestCompositeParser extends TestCase {
 			fail("Expected status message to contain '" + text + "' actual message is '"
 					+ status.getMessage() + "'");
 		}
+	}
+	
+	public void testNoTaskKind() {
+		assertNull(parseTestFile("LeafTaskWithoutKind.xml"));
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		assertStatusContains(parser.getStatus(), "Missing kind attribute in task");
+	}
+
+	public void testLeafTaskInvalidKind() {
+		assertNull(parseTestFile("LeafTaskInvalidKind.xml"));
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		assertStatusContains(parser.getStatus(), "Invalid kind");
+	}
+
+	public void testLeafTaskNoName() {
+		assertNull(parseTestFile("TaskNoName.xml"));
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		assertStatusContains(parser.getStatus(), "Missing name attribute in task");
+	}
+
+	public void testCompositeNoName() {
+		assertNull(parseTestFile("CompositeNoName.xml"));
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		assertStatusContains(parser.getStatus(), "Missing name attribute in composite");
+	}
+
+	public void testTaskGroupInvalidKind() {
+		assertNull(parseTestFile("InvalidTaskGroupKind.xml"));
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		assertStatusContains(parser.getStatus(), "Invalid kind");
+	}
+	
+	public void testSetNoChild() {
+		assertNull(parseTestFile("SetWithNoChildren.xml"));
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		assertStatusContains(parser.getStatus(), "Task group");
+		assertStatusContains(parser.getStatus(), "has no children");
+	}
+	
+	public void testChoiceOneChild() {
+		assertNull(parseTestFile("SingleChoice.xml"));
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		assertStatusContains(parser.getStatus(), "must have at least two child tasks");
 	}
 	
 	public void assertMultiStatusContains(IStatus status, String text) {

@@ -98,6 +98,7 @@ public class SuccesorTaskFinder {
 			seenThisTask = true;
 		}
 		if (task.getState() == ICompositeCheatSheetTask.COMPLETED || 
+			task.getState() == ICompositeCheatSheetTask.SKIPPED ||
 		     bestLaterTask != null) {
 			return;
 		}

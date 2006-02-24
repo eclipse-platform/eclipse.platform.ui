@@ -4,9 +4,9 @@
          <task kind="cheatsheet" name= "Create a java project" ref="org.eclipse.jdt.helloworld" />
          <task kind="cheatsheet" name= "Deploy a java project" ref="org.eclipse.pde.updates" />
          <taskGroup kind="sequence" name= "Additional Resources" ref="docs/additionalresources.html">
-             <task kind="html" name= "Creating a help plugin" ref="docs/helpplugin.html" />
-             <task kind="html" name= "The Eclipse Update Manager" ref="docs/updatemanager.html" />
-             <task kind="html" name= "Eclipse home page" ref="http://www.eclipse.org" />
+             <task  kind="ua.junit" name= "Creating a help plugin" ref="docs/helpplugin.html" />
+             <task  kind="ua.junit" name= "The Eclipse Update Manager" ref="docs/updatemanager.html" />
+             <task  kind="ua.junit" name= "Eclipse home page" ref="http://www.eclipse.org" />
          </task>
     </taskGroup>
 </compositeCheatsheet>

@@ -34,7 +34,7 @@ public class TaskGroup extends AbstractTask implements ITaskGroup {
 		if (kind == null) {
 			this.kind = ITaskGroup.SET;
 		}
-		parserStrategy = new TaskGroupParseStrategy(kind);
+		parserStrategy = new TaskGroupParseStrategy();
 		completionStrategy = determineCompletionStrategy(kind);
 	}
 
