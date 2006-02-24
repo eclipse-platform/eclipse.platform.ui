@@ -47,7 +47,6 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 				next = (AbstractTask)children[i];
 				if (previous != null) {
 					next.addRequiredTask(previous);
-					previous.addSuccessorTask(next);
 				}
 			}
 			checkForChildren(parentTask, status);

@@ -93,7 +93,6 @@ public class TaskDependencies {
 					status.addStatus(IStatus.ERROR, message, null);
 			 } else if (!sourceTask.requiresTask(requiredTask)) {
 				 sourceTask.addRequiredTask(requiredTask);
-				 requiredTask.addSuccessorTask(sourceTask);
 			 }
 		}
 		checkForCircularities (status);

@@ -105,16 +105,13 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		return (ICompositeCheatSheetTask[])successorTasks.toArray(new ICompositeCheatSheetTask[successorTasks.size()]);
 	}
 	
-	public void addRequiredTask(ICompositeCheatSheetTask task) {
+	public void addRequiredTask(AbstractTask task) {
 		if (requiredTasks==null)
 			requiredTasks = new ArrayList();
 		requiredTasks.add(task);
-	}
-	
-	public void addSuccessorTask(ICompositeCheatSheetTask task) {
-		if (successorTasks==null)
-			successorTasks = new ArrayList();
-		successorTasks.add(task);
+		if (task.successorTasks==null)
+			task.successorTasks = new ArrayList();
+		task.successorTasks.add(this);
 	}
 
 	public int getState() {
@@ -149,7 +146,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		boolean startable = true;
 		ICompositeCheatSheetTask[] requiredTasks = getRequiredTasks();
 		for (int i = 0; i < requiredTasks.length; i++) {
-			if (requiredTasks[i].getState() != COMPLETED ||
+			if (requiredTasks[i].getState() != COMPLETED &&
 				requiredTasks[i].getState() != SKIPPED	) {
 				startable = false;
 			}

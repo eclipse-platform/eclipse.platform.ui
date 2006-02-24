@@ -21,9 +21,10 @@ public class AllCompositeTests {
 				"org.eclipse.ua.tests.cheatsheet.AllCompositeTests");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(TestCompositeParser.class);
+		suite.addTestSuite(TestTaskGroups.class);
 		suite.addTestSuite(TestEventing.class);
 		suite.addTestSuite(TestPersistence.class);
-		suite.addTestSuite(TestTaskGroups.class);
+		suite.addTestSuite(TestDependency.class);
 		//$JUnit-END$
 		return suite;
 	}

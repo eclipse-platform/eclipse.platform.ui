@@ -19,6 +19,12 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 
 import junit.framework.TestCase;
 
+/**
+ * Test that the state of a task group is determined by the state of its children.
+ * Each test creates a task group and sets the state of its children then tests the
+ * state of the parent task group.
+ */
+
 public class TestTaskGroups extends TestCase {
 	
 	private static final int NOT_STARTED = ICompositeCheatSheetTask.NOT_STARTED;
