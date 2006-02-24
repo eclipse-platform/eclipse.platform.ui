@@ -14,8 +14,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.HashMap;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 /**
@@ -35,7 +35,7 @@ public class ImageResource {
 	static {
 		try {
 			String pathSuffix = "icons/"; //$NON-NLS-1$
-			ICON_BASE_URL = Platform.find(WebBrowserUIPlugin.getInstance().getBundle(), new Path(pathSuffix));
+			ICON_BASE_URL = FileLocator.find(WebBrowserUIPlugin.getInstance().getBundle(), new Path(pathSuffix), null);
 		} catch (Exception e) {
 			Trace.trace(Trace.SEVERE, "Could not set icon base URL", e); //$NON-NLS-1$
 		}
