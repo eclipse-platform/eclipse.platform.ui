@@ -488,8 +488,10 @@ public abstract class ViewItem {
 
 	protected void setCompletionMessageCollapsed() {
 		if (completionComposite != null) {
-			if (completionMessageExpanded) {
-				completionComposite.setVisible(false);
+			if (completionMessageExpanded) {				
+				completionComposite.dispose();
+				completionComposite = null;
+				page.getForm().reflow(true);
 			}
 		}
 		completionMessageExpanded = false;
