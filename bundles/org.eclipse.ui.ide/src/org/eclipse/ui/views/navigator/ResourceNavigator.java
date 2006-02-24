@@ -532,7 +532,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 case IResource.FOLDER:
                 case IResource.PROJECT:
                 case IResource.ROOT:
-                    return (IContainer) resource;
+                    return resource;
                 default:
                     // Unknown resource type.  Fall through.
                     break;
