@@ -43,6 +43,6 @@ public interface IFileBufferStatusCodes {
 	 * @see UnmappableCharacterException
 	 * @since 3.2
 	 */
-	public static final int CHARSET_MAPPING_FAILED= 3;
+	int CHARSET_MAPPING_FAILED= 3;
 	
 }
