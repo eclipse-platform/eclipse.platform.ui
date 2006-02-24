@@ -161,7 +161,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	        if (iconName == null) 
 	        	return null;
             imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    configurationElement.getNamespace(), iconName);    
+                    configurationElement.getNamespaceIdentifier(), iconName);    
     	}
         return imageDescriptor;
     }
@@ -204,7 +204,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 			IStructuredSelection originalSelection) {
 		Object selectionService = PlatformUI.getWorkbench().getService(
 				ISelectionConversionService.class);
-		if (selectionService == null)
+		if (selectionService == null || originalSelection == null)
 			return StructuredSelection.EMPTY;
 		return ((ISelectionConversionService) selectionService)
 				.convertToResources(originalSelection);
@@ -224,7 +224,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public String getPluginId() {
         return (configurationElement != null) ? configurationElement
-                .getNamespace() : null;
+                .getNamespaceIdentifier() : null;
     }
 
     /* (non-Javadoc)
@@ -236,7 +236,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
     		if (descImage == null)
     			return null;
             descriptionImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    configurationElement.getNamespace(), descImage);
+                    configurationElement.getNamespaceIdentifier(), descImage);
     	}
         return descriptionImage;
     }
