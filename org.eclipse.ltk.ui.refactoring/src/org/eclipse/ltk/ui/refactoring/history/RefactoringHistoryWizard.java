@@ -946,7 +946,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				final String[] messages= { RefactoringUIMessages.RefactoringHistoryWizard_one_refactoring_undone + message, RefactoringUIMessages.RefactoringHistoryWizard_several_refactorings_undone + message};
 				final ChoiceFormat choice= new ChoiceFormat(new double[] { 1, Double.MAX_VALUE}, messages);
 				format.setFormatByArgumentIndex(0, choice);
-				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), getShell().getText(), format.format(new Object[] { Integer.valueOf(fExecutedRefactorings)}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), getShell().getText(), format.format(new Object[] { new Integer(fExecutedRefactorings)}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_UNDO_ON_CANCEL, dialog.getToggleState());
 				if (dialog.getReturnCode() == 1)
 					return false;
