@@ -82,6 +82,6 @@ public abstract class RefactoringHistoryNode {
 	 * {@inheritDoc}
 	 */
 	public int hashCode() {
-		return getKind() + 31 * (getParent() != null ? getParent().hashCode() : 1);
+		return 17 * getKind() + 31 * (getParent() != null ? getParent().hashCode() : 1);
 	}
 }

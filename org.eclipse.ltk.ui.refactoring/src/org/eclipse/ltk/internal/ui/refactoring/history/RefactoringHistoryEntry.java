@@ -47,7 +47,7 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryEntry) {
 			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) object;
-			return fDescriptorProxy.equals(entry.fDescriptorProxy);
+			return super.equals(object) && getDescriptor().equals(entry.getDescriptor());
 		}
 		return false;
 	}
@@ -79,6 +79,6 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 	 * {@inheritDoc}
 	 */
 	public int hashCode() {
-		return fDescriptorProxy.hashCode();
+		return super.hashCode() + 31 * getDescriptor().hashCode();
 	}
 }

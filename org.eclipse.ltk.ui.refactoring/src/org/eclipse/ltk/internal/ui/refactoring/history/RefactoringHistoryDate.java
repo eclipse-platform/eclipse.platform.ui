@@ -51,7 +51,7 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryDate) {
 			final RefactoringHistoryDate node= (RefactoringHistoryDate) object;
-			return fStamp == node.fStamp && getKind() == node.getKind();
+			return super.equals(object) && getTimeStamp() == node.getTimeStamp() && getKind() == node.getKind();
 		}
 		return false;
 	}
@@ -83,6 +83,6 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 	 * {@inheritDoc}
 	 */
 	public int hashCode() {
-		return (int) (getKind() + 31 * fStamp);
+		return (int) (super.hashCode() + 17 * getKind() + 31 * getTimeStamp());
 	}
 }
