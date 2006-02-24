@@ -34,6 +34,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IAction;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -70,8 +72,29 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 
 		fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent e) {
-				if (ResourcesPlugin.PREF_ENCODING.equals(e.getProperty()))
-					setEncoding(null, false); // null means: use default
+				if (ResourcesPlugin.PREF_ENCODING.equals(e.getProperty())) {
+					Runnable runnable= new Runnable() {
+						public void run() {
+							setEncoding(null, false); // null means: use default
+						}
+					};
+					if (Display.getCurrent() != null)
+						runnable.run();
+					else {
+						// Post runnable into UI thread
+						Shell shell;
+						if (fTextEditor != null)
+							shell= fTextEditor.getSite().getShell();
+						else
+							shell= getActiveWorkbenchShell();
+						Display display;
+						if (shell != null)
+							display= shell.getDisplay();
+						else
+							display= Display.getDefault();
+						display.asyncExec(runnable);
+					}
+				}
 			}
 		};
 
@@ -280,4 +303,19 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		filler.setLayoutData(new GridData(GridData.FILL_BOTH));
 		filler.setBackground(bgColor);
 	}
+
+	/**
+	 * Returns the shell of the active workbench window.
+	 * 
+	 * @return the shell of the active workbench window or <code>null</code> if none
+	 * @since 3.2
+	 */
+	private static Shell getActiveWorkbenchShell() {
+		 IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		 if (window != null)
+		 	return window.getShell();
+		 
+		 return null;
+	}
+
 }
