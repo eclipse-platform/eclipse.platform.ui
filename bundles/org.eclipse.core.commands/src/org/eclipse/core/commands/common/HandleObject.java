@@ -114,8 +114,9 @@ public abstract class HandleObject extends EventManager implements
 		}
 
 		// Check if they're the same type.
-		if (!(object instanceof HandleObject))
+		if (!(object instanceof HandleObject)) {
 			return false;
+		}
 
 		// Check each property in turn.
 		final HandleObject handle= (HandleObject) object;

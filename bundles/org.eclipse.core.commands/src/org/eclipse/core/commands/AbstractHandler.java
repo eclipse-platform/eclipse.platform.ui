@@ -61,8 +61,9 @@ public abstract class AbstractHandler extends EventManager implements IHandler {
 	 *            <code>null</code>.
 	 */
 	protected void fireHandlerChanged(final HandlerEvent handlerEvent) {
-		if (handlerEvent == null)
+		if (handlerEvent == null) {
 			throw new NullPointerException();
+		}
 
 		final Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {

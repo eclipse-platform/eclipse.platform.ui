@@ -194,11 +194,13 @@ public final class CommandManager extends HandleObjectManager implements
 			char c = escapedText.charAt(i);
 			if (c != ESCAPE_CHAR) {
 				// normal unescaped character
-				if (buffer != null)
+				if (buffer != null) {
 					buffer.append(c);
+				}
 			} else {
-				if (buffer == null)
+				if (buffer == null) {
 					buffer = new StringBuffer(escapedText.substring(0, i));
+				}
 
 				if (++i < escapedText.length()) {
 					c = escapedText.charAt(i);
@@ -222,8 +224,9 @@ public final class CommandManager extends HandleObjectManager implements
 
 		}
 
-		if (buffer == null)
+		if (buffer == null) {
 			return escapedText;
+		}
 
 		return buffer.toString();
 	}
@@ -472,8 +475,9 @@ public final class CommandManager extends HandleObjectManager implements
 	 *            <code>null</code>.
 	 */
 	private final void fireCommandManagerChanged(final CommandManagerEvent event) {
-		if (event == null)
+		if (event == null) {
 			throw new NullPointerException();
+		}
 
 		final Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {
@@ -692,11 +696,13 @@ public final class CommandManager extends HandleObjectManager implements
 			throws SerializationException {
 
 		if (serializedParameters == null
-				|| (serializedParameters.length() == 0))
+				|| (serializedParameters.length() == 0)) {
 			return null;
+		}
 
-		if ((parameters == null) || (parameters.length == 0))
+		if ((parameters == null) || (parameters.length == 0)) {
 			return null;
+		}
 
 		final ArrayList paramList = new ArrayList();
 
@@ -918,13 +924,15 @@ public final class CommandManager extends HandleObjectManager implements
 		int pos = escapedText.indexOf(ch);
 
 		// first char can't be escaped
-		if (pos == 0)
+		if (pos == 0) {
 			return pos;
+		}
 
 		while (pos != -1) {
 			// look back for the escape character
-			if (escapedText.charAt(pos - 1) != ESCAPE_CHAR)
+			if (escapedText.charAt(pos - 1) != ESCAPE_CHAR) {
 				return pos;
+			}
 
 			// scan for the next instance of ch
 			pos = escapedText.indexOf(ch, pos + 1);

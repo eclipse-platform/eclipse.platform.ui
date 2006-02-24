@@ -328,10 +328,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			limits.remove(context);
 			return;
 		}
-		if (flushUndo)
+		if (flushUndo) {
 			flushUndo(context);
-		if (flushRedo)
+		}
+		if (flushRedo) {
 			flushRedo(context);
+		}
 
 	}
 
@@ -500,8 +502,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		/*
 		 * Execute the operation
 		 */
-		if (!merging)
+		if (!merging) {
 			notifyAboutToExecute(operation);
+		}
 		try {
 			status = operation.execute(monitor, info);
 		} catch (OperationCanceledException e) {
@@ -870,13 +873,14 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		final Object[] listenerArray = listeners.getListeners();
 
-		for (int i = 0; i < listenerArray.length; i++)
+		for (int i = 0; i < listenerArray.length; i++) {
 			try {
 				((IOperationHistoryListener) listenerArray[i])
 						.historyNotification(event);
 			} catch (Exception e) {
 				handleNotificationException(e);
 			}
+		}
 	}
 
 	private void notifyAboutToExecute(IUndoableOperation operation) {
@@ -1049,8 +1053,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		IUndoableOperation operation = getRedoOperation(context);
 
 		// info if there is no operation
-		if (operation == null)
+		if (operation == null) {
 			return IOperationHistory.NOTHING_TO_REDO_STATUS;
+		}
 
 		// error if operation is invalid
 		if (!operation.canRedo()) {
@@ -1160,8 +1165,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		synchronized (undoRedoHistoryLock) {
 			int index = redoList.indexOf(operation);
-			if (index == -1)
+			if (index == -1) {
 				return;
+			}
 			ArrayList allContexts = new ArrayList(replacements.length);
 			redoList.remove(operation);
 			// notify listeners after we release the lock on redoList
@@ -1182,8 +1188,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 		// send listener notifications after we release the lock on the history
 		internalRemove(operation);
-		for (int i = 0; i < replacements.length; i++)
+		for (int i = 0; i < replacements.length; i++) {
 			notifyAdd(replacements[i]);
+		}
 	}
 
 	/*
@@ -1221,8 +1228,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		IUndoableOperation operation = getUndoOperation(context);
 
 		// info if there is no operation
-		if (operation == null)
+		if (operation == null) {
 			return IOperationHistory.NOTHING_TO_UNDO_STATUS;
+		}
 
 		// error if operation is invalid
 		if (!operation.canUndo()) {
@@ -1326,13 +1334,16 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// notification will occur at the end of that sequence.
 		if (endedComposite != null) {
 			if (operationOK) {
-				if (mode == EXECUTE)
+				if (mode == EXECUTE) {
 					notifyDone(endedComposite);
-				if (addToHistory)
+				}
+				if (addToHistory) {
 					add(endedComposite);
+				}
 			} else {
-				if (mode == EXECUTE)
+				if (mode == EXECUTE) {
 					notifyNotOK(endedComposite);
+				}
 			}
 		}
 	}
@@ -1354,8 +1365,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * execution should continue, but the exception should be logged.
 	 */
 	private void handleNotificationException(Throwable e) {
-		if (e instanceof OperationCanceledException)
+		if (e instanceof OperationCanceledException) {
 			return;
+		}
 		// This plug-in is intended to run stand-alone outside of the
 		// platform, so we do not employ standard platform exception logging.
 		if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {

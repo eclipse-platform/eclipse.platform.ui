@@ -55,8 +55,9 @@ public final class ContextEvent extends AbstractNamedHandleEvent {
 			final boolean parentIdChanged) {
 		super(definedChanged, descriptionChanged, nameChanged);
 		
-		if (context == null)
+		if (context == null) {
 			throw new NullPointerException();
+		}
 		this.context = context;
 		
 		if (parentIdChanged) {

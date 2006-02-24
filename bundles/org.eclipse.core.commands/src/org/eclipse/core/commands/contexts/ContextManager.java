@@ -110,8 +110,9 @@ public final class ContextManager extends HandleObjectManager implements
 	 *            <code>null</code>.
 	 */
 	private final void fireContextManagerChanged(final ContextManagerEvent event) {
-		if (event == null)
+		if (event == null) {
 			throw new NullPointerException();
+		}
 
 		final Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {

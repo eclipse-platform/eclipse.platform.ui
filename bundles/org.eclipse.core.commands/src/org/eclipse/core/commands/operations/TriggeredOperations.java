@@ -284,8 +284,9 @@ public final class TriggeredOperations extends AbstractOperation implements
 		ArrayList allContexts = new ArrayList();
 		if (triggeringOperation != null) {
 			IUndoContext[] contexts = triggeringOperation.getContexts();
-			for (int i = 0; i < contexts.length; i++)
+			for (int i = 0; i < contexts.length; i++) {
 				allContexts.add(contexts[i]);
+			}
 		}
 		for (int i = 0; i < children.size(); i++) {
 			IUndoContext[] contexts = ((IUndoableOperation) children.get(i))
@@ -328,8 +329,9 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#getAffectedObjects()
 	 */
 	public Object [] getAffectedObjects() {
-		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+		if (triggeringOperation instanceof IAdvancedUndoableOperation) {
 			return ((IAdvancedUndoableOperation)triggeringOperation).getAffectedObjects();
+		}
 		return null;
 	}
 	
@@ -339,8 +341,9 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
 	 */
 	public void aboutToNotify(OperationHistoryEvent event) {
-		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+		if (triggeringOperation instanceof IAdvancedUndoableOperation) {
 			((IAdvancedUndoableOperation)triggeringOperation).aboutToNotify(event);
+		}
 	}
 	
 	/*
@@ -349,12 +352,13 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) throws ExecutionException {
-		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+		if (triggeringOperation instanceof IAdvancedUndoableOperation) {
 			try {
 				return ((IAdvancedUndoableOperation)triggeringOperation).computeUndoableStatus(monitor);
 			} catch (OperationCanceledException e) {
 				return Status.CANCEL_STATUS;
 			}
+		}
 		return Status.OK_STATUS;
 
 	}
@@ -365,12 +369,13 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) throws ExecutionException {
-		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+		if (triggeringOperation instanceof IAdvancedUndoableOperation) {
 			try {
 				return ((IAdvancedUndoableOperation)triggeringOperation).computeRedoableStatus(monitor);
 			} catch (OperationCanceledException e) {
 				return Status.CANCEL_STATUS;
 			}
+		}
 		return Status.OK_STATUS;
 
 	}

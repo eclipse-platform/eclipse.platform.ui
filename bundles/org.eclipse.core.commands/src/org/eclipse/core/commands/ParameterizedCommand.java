@@ -113,21 +113,24 @@ public final class ParameterizedCommand implements Comparable {
 			case CommandManager.ID_VALUE_CHAR:
 			case CommandManager.PARAMETER_SEPARATOR_CHAR:
 			case CommandManager.ESCAPE_CHAR:
-				if (buffer == null)
+				if (buffer == null) {
 					buffer = new StringBuffer(rawText.substring(0, i));
+				}
 				buffer.append(CommandManager.ESCAPE_CHAR);
 				buffer.append(c);
 				break;
 			default:
-				if (buffer != null)
+				if (buffer != null) {
 					buffer.append(c);
+				}
 				break;
 			}
 
 		}
 
-		if (buffer == null)
+		if (buffer == null) {
 			return rawText;
+		}
 		return buffer.toString();
 	}
 

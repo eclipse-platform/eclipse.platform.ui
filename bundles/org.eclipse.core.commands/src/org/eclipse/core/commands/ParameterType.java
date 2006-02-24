@@ -60,8 +60,9 @@ public final class ParameterType extends HandleObject implements Comparable {
 	private static final boolean isInstanceOf(final Object element,
 			final String type) {
 		// null isn't an instanceof of anything.
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 		return isSubtype(element.getClass(), type);
 	}
 
@@ -78,15 +79,18 @@ public final class ParameterType extends HandleObject implements Comparable {
 	 *         of <code>type</code>; <code>false</code> otherwise.
 	 */
 	private static final boolean isSubtype(final Class clazz, final String type) {
-		if (clazz.getName().equals(type))
+		if (clazz.getName().equals(type)) {
 			return true;
+		}
 		final Class superClass = clazz.getSuperclass();
-		if (superClass != null && isSubtype(superClass, type))
+		if (superClass != null && isSubtype(superClass, type)) {
 			return true;
+		}
 		final Class[] interfaces = clazz.getInterfaces();
 		for (int i = 0; i < interfaces.length; i++) {
-			if (isSubtype(interfaces[i], type))
+			if (isSubtype(interfaces[i], type)) {
 				return true;
+			}
 		}
 		return false;
 	}

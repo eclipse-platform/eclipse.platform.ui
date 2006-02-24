@@ -152,8 +152,9 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 			final boolean helpContextIdChanged) {
 		super(definedChanged, descriptionChanged, nameChanged);
 
-		if (command == null)
+		if (command == null) {
 			throw new NullPointerException();
+		}
 		this.command = command;
 
 		if (categoryChanged) {

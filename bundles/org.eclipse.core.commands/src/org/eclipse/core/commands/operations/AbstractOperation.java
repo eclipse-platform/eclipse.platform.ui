@@ -153,8 +153,9 @@ public abstract class AbstractOperation implements IUndoableOperation {
 			// have to check both ways because one context may be more general
 			// in
 			// its matching rules than another.
-			if (context.matches(otherContext) || otherContext.matches(context))
+			if (context.matches(otherContext) || otherContext.matches(context)) {
 				return true;
+			}
 		}
 		return false;
 	}

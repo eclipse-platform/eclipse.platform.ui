@@ -108,8 +108,9 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 			if (history.getRedoOperation(context) != operation) {
 				IStatus status = allowLinearRedoViolation(operation, context,
 						history, info);
-				if (!status.isOK())
+				if (!status.isOK()) {
 					return status;
+				}
 			}
 		}
 		return Status.OK_STATUS;
@@ -131,8 +132,9 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 			if (history.getUndoOperation(context) != operation) {
 				IStatus status = allowLinearUndoViolation(operation, context,
 						history, info);
-				if (!status.isOK())
+				if (!status.isOK()) {
 					return status;
+				}
 			}
 		}
 		return Status.OK_STATUS;

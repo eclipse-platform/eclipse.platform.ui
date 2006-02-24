@@ -58,12 +58,15 @@ public final class Category extends NamedHandleObject {
 	 */
 	public final void addCategoryListener(
 			final ICategoryListener categoryListener) {
-		if (categoryListener == null)
+		if (categoryListener == null) {
 			throw new NullPointerException();
-		if (categoryListeners == null)
+		}
+		if (categoryListeners == null) {
 			categoryListeners = new ArrayList();
-		if (!categoryListeners.contains(categoryListener))
+		}
+		if (!categoryListeners.contains(categoryListener)) {
 			categoryListeners.add(categoryListener);
+		}
 	}
 
 	/**
@@ -108,8 +111,9 @@ public final class Category extends NamedHandleObject {
 	 *            <code>null</code>.
 	 */
 	private final void fireCategoryChanged(final CategoryEvent categoryEvent) {
-		if (categoryEvent == null)
+		if (categoryEvent == null) {
 			throw new NullPointerException();
+		}
 		if (categoryListeners != null) {
 			final Iterator listenerItr = categoryListeners.iterator();
 			while (listenerItr.hasNext()) {
@@ -129,8 +133,9 @@ public final class Category extends NamedHandleObject {
 	 */
 	public final void removeCategoryListener(
 			final ICategoryListener categoryListener) {
-		if (categoryListener == null)
+		if (categoryListener == null) {
 			throw new NullPointerException();
+		}
 
 		if (categoryListeners != null) {
 			categoryListeners.remove(categoryListener);

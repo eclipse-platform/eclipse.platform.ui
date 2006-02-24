@@ -64,13 +64,15 @@ public final class Util {
      */
     public static final void assertInstance(final Object object, final Class c,
             final boolean allowNull) {
-        if (object == null && allowNull)
-            return;
+        if (object == null && allowNull) {
+			return;
+		}
 
-        if (object == null || c == null)
-            throw new NullPointerException();
-        else if (!c.isInstance(object))
-            throw new IllegalArgumentException();
+        if (object == null || c == null) {
+			throw new NullPointerException();
+		} else if (!c.isInstance(object)) {
+			throw new IllegalArgumentException();
+		}
     }
 
     /**
@@ -109,14 +111,15 @@ public final class Util {
      */
     public static final int compare(final Comparable left,
             final Comparable right) {
-        if (left == null && right == null)
-            return 0;
-        else if (left == null)
-            return -1;
-        else if (right == null)
-            return 1;
-        else
-            return left.compareTo(right);
+        if (left == null && right == null) {
+			return 0;
+		} else if (left == null) {
+			return -1;
+		} else if (right == null) {
+			return 1;
+		} else {
+			return left.compareTo(right);
+		}
     }
 
     /**
@@ -154,14 +157,15 @@ public final class Util {
      *         <code>left.toString().compareTo(right.toString())</code>.
      */
     public static final int compare(final Object left, final Object right) {
-        if (left == null && right == null)
-            return 0;
-        else if (left == null)
-            return -1;
-        else if (right == null)
-            return 1;
-        else
-            return left.toString().compareTo(right.toString());
+        if (left == null && right == null) {
+			return 0;
+		} else if (left == null) {
+			return -1;
+		} else if (right == null) {
+			return 1;
+		} else {
+			return left.toString().compareTo(right.toString());
+		}
     }
 
     /**
@@ -281,8 +285,9 @@ public final class Util {
     public static final Map safeCopy(final Map map, final Class keyClass,
             final Class valueClass, final boolean allowNullKeys,
             final boolean allowNullValues) {
-        if (map == null || keyClass == null || valueClass == null)
-            throw new NullPointerException();
+        if (map == null || keyClass == null || valueClass == null) {
+			throw new NullPointerException();
+		}
 
         final Map copy = Collections.unmodifiableMap(new HashMap(map));
         final Iterator iterator = copy.entrySet().iterator();
@@ -329,14 +334,16 @@ public final class Util {
      */
     public static final Set safeCopy(final Set set, final Class c,
             final boolean allowNullElements) {
-        if (set == null || c == null)
-            throw new NullPointerException();
+        if (set == null || c == null) {
+			throw new NullPointerException();
+		}
 
         final Set copy = Collections.unmodifiableSet(new HashSet(set));
         final Iterator iterator = copy.iterator();
 
-        while (iterator.hasNext())
-            assertInstance(iterator.next(), c, allowNullElements);
+        while (iterator.hasNext()) {
+			assertInstance(iterator.next(), c, allowNullElements);
+		}
 
         return set;
     }

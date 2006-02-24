@@ -45,8 +45,9 @@ public final class CategoryEvent extends AbstractNamedHandleEvent {
 			final boolean descriptionChanged, final boolean nameChanged) {
 		super(definedChanged, descriptionChanged, nameChanged);
 
-		if (category == null)
+		if (category == null) {
 			throw new NullPointerException();
+		}
 		this.category = category;
 	}
 

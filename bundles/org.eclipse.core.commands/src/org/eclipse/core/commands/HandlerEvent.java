@@ -54,8 +54,9 @@ public final class HandlerEvent extends AbstractBitSetEvent {
 	 */
 	public HandlerEvent(final IHandler handler, final boolean enabledChanged,
 			final boolean handledChanged) {
-		if (handler == null)
+		if (handler == null) {
 			throw new NullPointerException();
+		}
 		this.handler = handler;
 
 		if (enabledChanged) {

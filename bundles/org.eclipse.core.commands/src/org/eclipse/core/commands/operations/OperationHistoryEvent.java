@@ -180,10 +180,12 @@ public final class OperationHistoryEvent {
 	 */
 	public OperationHistoryEvent(int code, IOperationHistory history,
 			IUndoableOperation operation, IStatus status) {
-		if (history == null)
+		if (history == null) {
 			throw new NullPointerException();
-		if (operation == null)
+		}
+		if (operation == null) {
 			throw new NullPointerException();
+		}
 		this.code = code;
 		this.history = history;
 		this.operation = operation;

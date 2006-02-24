@@ -43,8 +43,9 @@ public final class ParameterTypeEvent extends AbstractHandleObjectEvent {
 
 		super(definedChanged);
 
-		if (parameterType == null)
+		if (parameterType == null) {
 			throw new NullPointerException();
+		}
 
 		this.parameterType = parameterType;
 	}

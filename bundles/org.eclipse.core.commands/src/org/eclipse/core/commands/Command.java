@@ -809,8 +809,9 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *         otherwise.
 	 */
 	public final boolean isHandled() {
-		if (handler == null)
+		if (handler == null) {
 			return false;
+		}
 
 		return handler.isHandled();
 	}

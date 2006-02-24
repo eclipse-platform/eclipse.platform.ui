@@ -61,10 +61,12 @@ public final class ObjectUndoContext extends UndoContext {
 	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
 	 */
 	public String getLabel() {
-		if (label != null)
+		if (label != null) {
 			return label;
-		if (object != null) 	
+		}
+		if (object != null) {
 			return object.toString();
+		}
 		return super.getLabel();
 	}
 
@@ -114,11 +116,13 @@ public final class ObjectUndoContext extends UndoContext {
 	 */
 	public boolean matches(IUndoContext context) {
 		// Check first for explicit matches that have been assigned.
-		if (children.contains(context))
+		if (children.contains(context)) {
 			return true;
+		}
 		// Contexts for equal objects are considered matching
-		if (context instanceof ObjectUndoContext && getObject() != null)
+		if (context instanceof ObjectUndoContext && getObject() != null) {
 			return getObject().equals(((ObjectUndoContext)context).getObject());
+		}
 		// Use the normal matching implementation
 		return super.matches(context);
 	}
