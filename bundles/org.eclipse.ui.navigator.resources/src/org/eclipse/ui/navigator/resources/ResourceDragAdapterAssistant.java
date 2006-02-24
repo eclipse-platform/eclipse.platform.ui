@@ -24,6 +24,7 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
+import org.eclipse.ui.navigator.INavigatorDnDService;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
@@ -32,8 +33,9 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  * <b>org.eclipse.ui.navigator.viewer</b> extension point.
  * 
  * <p>
- * Clients may not extend or instantiate this class. Clients may have no direct
- * dependencies on the contract of this class.
+ * Clients may not extend or instantiate this class for any purpose other than
+ * {@link INavigatorDnDService#bindDragAssistant(CommonDragAdapterAssistant)}.
+ * Clients may have no direct dependencies on the contract of this class.
  * </p>
  * 
  * @since 3.2
