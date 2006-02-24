@@ -13,9 +13,9 @@ package org.eclipse.debug.internal.ui.model.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
+import org.eclipse.jface.viewers.TreePath;
 
 
 /**
@@ -50,7 +50,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	            // find the right node
 	            for (int i = 0; i < nodes.length; i++) {
 	                ModelNode node = nodes[i];
-	                if (treePath.startsWith(node.getTreePath())) {
+	                if (treePath.startsWith(node.getTreePath(), null)) {
 	                    ModelAddRequestMonitor addRequest = new ModelAddRequestMonitor(node, treePath, this);
 	                    requestScheduled(addRequest);
 	                    addRequest.done();
@@ -65,7 +65,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	            if (nodes != null) {
 	                for (int j = 0; j < nodes.length; j++) {
 	                    final ModelNode node = nodes[j];
-	                    if (treePath.startsWith(node.getTreePath())) {
+	                    if (treePath.startsWith(node.getTreePath(), null)) {
 	                    	Runnable runnable = new Runnable() {
 								public void run() {
 									getViewer().nodeChanged(node);
@@ -109,7 +109,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
                 // find the right node
                 for (int i = 0; i < nodes.length; i++) {
                     final ModelNode node = nodes[i];
-                    if (treePath.startsWith(node.getTreePath())) {
+                    if (treePath.startsWith(node.getTreePath(), null)) {
                     	Runnable runnable = new Runnable() {
 							public void run() {
 								getViewer().nodeChanged(node);

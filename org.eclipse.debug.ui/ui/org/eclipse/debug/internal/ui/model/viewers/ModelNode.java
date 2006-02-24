@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.model.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.viewers.TreePath;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Widget;
 
 /**

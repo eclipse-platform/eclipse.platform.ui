@@ -20,12 +20,12 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.viewers.TreePath;
-import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -262,7 +262,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                 for (int k = 0; k < nodes.length; k++) {
                     ModelNode node = nodes[k];
                     TreePath treePath = node.getTreePath();
-                    if (path.startsWith(treePath)) {
+                    if (path.startsWith(treePath, null)) {
                         if (!node.isDisposed()) {
                             Widget widget = node.getWidget();
                             if (widget == null) {
@@ -808,7 +808,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         synchronized (this) {
             for (Iterator i = fPendingExpansion.iterator(); i.hasNext();) {
                 TreePath expansionPath = (TreePath) i.next();
-                if (expansionPath.startsWith(treePath)) {
+                if (expansionPath.startsWith(treePath, null)) {
                     i.remove();
                 }
             }

@@ -12,10 +12,10 @@ package org.eclipse.debug.internal.ui.model.viewers;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.internal.ui.viewers.TreePath;
-import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 
 /**
  * Default update policy updates a viewer based on model deltas.

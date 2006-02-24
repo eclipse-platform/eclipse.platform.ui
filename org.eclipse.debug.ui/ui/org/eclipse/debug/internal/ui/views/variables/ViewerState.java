@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
-import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
