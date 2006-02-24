@@ -532,7 +532,7 @@ public class WorkbenchLayout extends Layout {
 				// If we have to show a drag handle then do it here
 				if (td.listener != null) {
 					TrimCommonUIHandle handle = getDragHandle(trimArea.orientation);
-					handle.setControl(control);
+//					handle.setControl(control);
 
 					if (horizontal)
 						handle.setBounds(tilePosMajor, tilePosMinor,
@@ -577,27 +577,28 @@ public class WorkbenchLayout extends Layout {
 
 	private void resetDragHandles() {
 		for (Iterator iter = dragHandles.iterator(); iter.hasNext();) {
-			TrimCommonUIHandle handle = (TrimCommonUIHandle) iter.next();
-			handle.setControl(null);
+//			TrimCommonUIHandle handle = (TrimCommonUIHandle) iter.next();
+//			handle.setControl(null);
 		}
 	}
 
 	private TrimCommonUIHandle getDragHandle(int orientation) {
-		boolean horizontal = orientation == SWT.TOP
-				|| orientation == SWT.BOTTOM;
+//		boolean horizontal = orientation == SWT.TOP
+//				|| orientation == SWT.BOTTOM;
 
 		for (Iterator iter = dragHandles.iterator(); iter.hasNext();) {
 			TrimCommonUIHandle handle = (TrimCommonUIHandle) iter.next();
-			if (handle.toDrag == null && handle.horizontal == horizontal)
+//			if (handle.toDrag == null && handle.horizontal == horizontal)
 				return handle;
 		}
 
 		// If we get here then we haven't found a new drag handle so create one
 		System.out.println("new Handle"); //$NON-NLS-1$
-		TrimCommonUIHandle newHandle = new TrimCommonUIHandle(layoutComposite,
-				horizontal);
-		dragHandles.add(newHandle);
-		return newHandle;
+//		TrimCommonUIHandle newHandle = new TrimCommonUIHandle(layoutComposite,
+//				horizontal);
+//		dragHandles.add(newHandle);
+//		return newHandle;
+		return null;
 	}
 
 	public static int getOrientation(String areaId) {
