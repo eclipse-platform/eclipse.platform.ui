@@ -101,32 +101,6 @@ public class JavaBeanUpdatableCollection extends UpdatableCollection {
 		elementListenerSupport.setHookTargets(getValues());		
 	}
 
-	private void unhookListener(PropertyChangeListener listener, Object target) {
-		Method removePropertyChangeListenerMethod = null;
-		try {
-			removePropertyChangeListenerMethod = target.getClass().getMethod(
-					"removePropertyChangeListener", //$NON-NLS-1$
-					new Class[] { PropertyChangeListener.class });
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
-		}
-		if (removePropertyChangeListenerMethod != null) {
-			try {
-				removePropertyChangeListenerMethod.invoke(target,
-						new Object[] { listener });
-				return;
-			} catch (IllegalArgumentException e) {
-				// ignore
-			} catch (IllegalAccessException e) {
-				// ignore
-			} catch (InvocationTargetException e) {
-				// ignore
-			}
-		}
-	}
-
 	public void dispose() {
 		super.dispose();
 		elementListenerSupport.dispose();

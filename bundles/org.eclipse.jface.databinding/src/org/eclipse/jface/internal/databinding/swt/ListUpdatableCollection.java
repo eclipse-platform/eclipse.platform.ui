@@ -26,8 +26,6 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 
 	private final String attribute;
 
-	private boolean updating = false;
-
 	/**
 	 * @param list
 	 * @param attribute
@@ -60,7 +58,6 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 	}
 
 	public int addElement(Object value, int index) {
-		updating=true;		
 		try {
 			if (index<0 || index>computeSize())
 				index=computeSize();
@@ -72,13 +69,11 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 			fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		}
 		finally{
-			updating=false;
 		}
 		return index;
 	}
 
 	public void removeElement(int index) {
-		updating=true;		
 		try {
 			if (index<0 || index>computeSize())
 				index=computeSize();
@@ -90,7 +85,6 @@ public class ListUpdatableCollection extends SelectionAwareUpdatableCollection {
 			fireChangeEvent(ChangeEvent.REMOVE, old, null, index);
 		}
 		finally{
-			updating=false;
 		}		
 	}
 

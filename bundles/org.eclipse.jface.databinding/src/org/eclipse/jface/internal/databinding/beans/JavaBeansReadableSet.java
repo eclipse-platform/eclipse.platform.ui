@@ -70,8 +70,6 @@ public class JavaBeansReadableSet extends AbstractUpdatableSet implements
 
 	private PropertyDescriptor descriptor;
 
-	private Class elementType = null;
-
 	private ListenerSupport collectionListenSupport = new ListenerSupport(
 			collectionListener);
 
@@ -83,7 +81,6 @@ public class JavaBeansReadableSet extends AbstractUpdatableSet implements
 			Class elementType) {
 		this.object = object;
 		this.descriptor = descriptor;
-		this.elementType = elementType;
 		collectionListenSupport.hookListener(this.object);
 		elements = new HashSet(Arrays.asList(getValues()));
 	}

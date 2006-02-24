@@ -23,8 +23,6 @@ public class ListUpdatableCollection extends UpdatableCollection {
 
 	private final List elements;
 
-	private boolean updating;
-
 	/**
 	 * @param elements
 	 * @param elementType
@@ -38,33 +36,27 @@ public class ListUpdatableCollection extends UpdatableCollection {
 	}
 
 	public int addElement(Object value, int index) {
-		updating = true;
 		try {
 			elements.add(index, value);
 			fireChangeEvent(ChangeEvent.ADD, null, value, index);
 			return index;
 		} finally {
-			updating = false;
 		}
 	}
 
 	public void removeElement(int index) {
-		updating = true;
 		try {
 			Object oldValue = elements.remove(index);
 			fireChangeEvent(ChangeEvent.REMOVE, oldValue, null, index);
 		} finally {
-			updating = false;
 		}
 	}
 
 	public void setElement(int index, Object value) {
-		updating = true;
 		try {
 			Object oldValue = elements.set(index, value);
 			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, index);
 		} finally {
-			updating = false;
 		}
 	}
 

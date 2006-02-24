@@ -11,8 +11,10 @@
  */
 package org.eclipse.jface.internal.provisional.databinding.converterfunctions;
 
-import java.text.*;
-import java.util.*;
+import java.text.DateFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Base support for date/string conversion handling according to the

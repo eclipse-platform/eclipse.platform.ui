@@ -30,7 +30,7 @@ public abstract class ListeningLabelProvider extends ViewerLabelProvider {
 				Collection added = (Collection)changeEvent.getNewValue();
 				
 				for (Iterator iter = added.iterator(); iter.hasNext();) {
-					Object next = (Object) iter.next();
+					Object next = iter.next();
 					
 					addListenerTo(next);
 				}
@@ -38,7 +38,7 @@ public abstract class ListeningLabelProvider extends ViewerLabelProvider {
 				Collection removed = (Collection)changeEvent.getNewValue();
 				
 				for (Iterator iter = removed.iterator(); iter.hasNext();) {
-					Object next = (Object) iter.next();
+					Object next = iter.next();
 					
 					removeListenerFrom(next);
 				}				
@@ -51,7 +51,7 @@ public abstract class ListeningLabelProvider extends ViewerLabelProvider {
 		this.items = itemsThatNeedLabels;
 		items.addChangeListener(listener);
 		for (Iterator iter = items.toCollection().iterator(); iter.hasNext();) {
-			Object next = (Object) iter.next();
+			Object next = iter.next();
 			
 			addListenerTo(next);
 		}
@@ -72,7 +72,7 @@ public abstract class ListeningLabelProvider extends ViewerLabelProvider {
 	 */
 	public void dispose() {
 		for (Iterator iter = items.toCollection().iterator(); iter.hasNext();) {
-			Object next = (Object) iter.next();
+			Object next = iter.next();
 			
 			removeListenerFrom(next);
 		}

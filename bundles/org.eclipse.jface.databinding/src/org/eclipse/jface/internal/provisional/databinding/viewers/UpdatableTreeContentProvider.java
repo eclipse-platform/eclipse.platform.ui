@@ -141,7 +141,7 @@ public final class UpdatableTreeContentProvider implements ITreeContentProvider 
          */
         public void expanded() {
             for (Iterator iter = getChildren().iterator(); iter.hasNext();) {
-                Object next = (Object) iter.next();
+                Object next = iter.next();
 
                 ValueTreeNode childProvider = (ValueTreeNode) mapElementToValueTreeNode.get(next);
 
@@ -405,10 +405,6 @@ public final class UpdatableTreeContentProvider implements ITreeContentProvider 
         }
         
         return false;
-    }
-
-    private boolean subtreeExists(Object element) {
-        return mapElementToValueTreeNode.containsKey(element);
     }
 
     public Object[] getChildren(Object parentElement) {

@@ -11,7 +11,6 @@
 package org.eclipse.jface.internal.databinding;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.jface.internal.provisional.databinding.BindingEvent;
 import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
@@ -32,8 +31,6 @@ public class TableBinding extends Binding {
 
 	private final IUpdatableCellProvider model;
 	
-	private /*IConverter*/ List columnConverters;
-
 	private boolean updating = false;
 
 	private IReadableSet modelSet;

@@ -52,7 +52,7 @@ public class JavaBeansUpdatableCellProvider extends Updatable implements IUpdata
 				Collection added = (Collection)changeEvent.getNewValue();
 				
 				for (Iterator iter = added.iterator(); iter.hasNext();) {
-					Object element = (Object) iter.next();
+					Object element = iter.next();
 					
 					addBeansListenerTo(element);
 				}
@@ -60,7 +60,7 @@ public class JavaBeansUpdatableCellProvider extends Updatable implements IUpdata
 				Collection removed = (Collection)changeEvent.getNewValue();
 				
 				for (Iterator iter = removed.iterator(); iter.hasNext();) {
-					Object element = (Object) iter.next();
+					Object element = iter.next();
 					
 					removeBeansListenerFrom(element);
 				}				
