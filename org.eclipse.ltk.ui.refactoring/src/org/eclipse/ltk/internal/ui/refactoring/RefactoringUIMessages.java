@@ -194,15 +194,29 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringHistoryWizard_fatal_error_message;
 
+	public static String RefactoringHistoryWizard_internal_error;
+
+	public static String RefactoringHistoryWizard_internal_error_description;
+
+	public static String RefactoringHistoryWizard_internal_error_title;
+
 	public static String RefactoringHistoryWizard_no_refactorings_error;
 
 	public static String RefactoringHistoryWizard_no_refactorings_message;
+
+	public static String RefactoringHistoryWizard_one_refactoring_undone;
 
 	public static String RefactoringHistoryWizard_preparing_changes;
 
 	public static String RefactoringHistoryWizard_preparing_refactoring;
 
 	public static String RefactoringHistoryWizard_preparing_refactorings;
+
+	public static String RefactoringHistoryWizard_several_refactorings_undone;
+
+	public static String RefactoringHistoryWizard_undo_message_explanation;
+
+	public static String RefactoringHistoryWizard_undo_message_pattern;
 
 	public static String RefactoringHistoryWizard_warning_finish;
 

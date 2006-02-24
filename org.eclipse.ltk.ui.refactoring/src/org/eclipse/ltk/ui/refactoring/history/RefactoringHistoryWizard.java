@@ -11,6 +11,8 @@
 package org.eclipse.ltk.ui.refactoring.history;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ChoiceFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -94,7 +96,8 @@ import org.eclipse.osgi.util.NLS;
  * <li> Refactorings are applied to the workspace as soon as a preview has been
  * accepted. The execution of a refactoring history triggers a series of error
  * pages and preview pages. Within this sequence of pages, going back is not
- * supported anymore. </li>
+ * supported anymore. However, cancelling the refactoring history wizard will
+ * undo the already performed refactorings.</li>
  * </ul>
  * <p>
  * A refactoring history wizard is usually opened using the {@link WizardDialog}.
@@ -202,6 +205,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** Preference key for the warn finish preference */
 	private static final String PREFERENCE_DO_NOT_WARN_FINISH= RefactoringUIPlugin.getPluginId() + ".do.not.warn.finish.wizard"; //$NON-NLS-1$;
 
+	/** Preference key for the warn undo on cancel preference */
+	private static final String PREFERENCE_DO_NOT_WARN_UNDO_ON_CANCEL= RefactoringUIPlugin.getPluginId() + ".do.not.warn.undo.on.cancel.refactoring"; //$NON-NLS-1$;
+
 	/**
 	 * The status code representing an interrupted operation.
 	 * <p>
@@ -231,6 +237,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** Has the about to perform history event already been fired? */
 	private boolean fAboutToPerformFired= false;
 
+	/** Has an exception occurred while cancelling the wizard? */
+	private boolean fCancelException= false;
+
 	/** The refactoring history control configuration to use */
 	private RefactoringHistoryControlConfiguration fControlConfiguration;
 
@@ -242,6 +251,9 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/** The error wizard page */
 	private final RefactoringHistoryErrorPage fErrorPage;
+
+	/** The number of successfully executed refactorings */
+	private int fExecutedRefactorings= 0;
 
 	/** Are we currently in method <code>addPages</code>? */
 	private boolean fInAddPages= false;
@@ -382,6 +394,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	protected RefactoringStatus aboutToPerformHistory(final IProgressMonitor monitor) {
 		Assert.isNotNull(monitor);
+		fExecutedRefactorings= 0;
 		return new RefactoringStatus();
 	}
 
@@ -780,7 +793,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @return the first page, or <code>null</code>
 	 */
 	private IWizardPage getRefactoringPage() {
-		final IWizardPage[] result= { null };
+		final IWizardPage[] result= { null};
 		final RefactoringStatus status= new RefactoringStatus();
 		final IWizardContainer wizard= getContainer();
 		final IRunnableWithProgress runnable= new IRunnableWithProgress() {
@@ -924,6 +937,55 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * {@inheritDoc}
 	 */
+	public boolean performCancel() {
+		if (fExecutedRefactorings > 0 && !fCancelException) {
+			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
+			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_UNDO_ON_CANCEL)) {
+				final MessageFormat format= new MessageFormat(RefactoringUIMessages.RefactoringHistoryWizard_undo_message_pattern);
+				final String message= RefactoringUIMessages.RefactoringHistoryWizard_undo_message_explanation;
+				final String[] messages= { RefactoringUIMessages.RefactoringHistoryWizard_one_refactoring_undone + message, RefactoringUIMessages.RefactoringHistoryWizard_several_refactorings_undone + message};
+				final ChoiceFormat choice= new ChoiceFormat(new double[] { 1, Double.MAX_VALUE}, messages);
+				format.setFormatByArgumentIndex(0, choice);
+				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), getShell().getText(), format.format(new Object[] { Integer.valueOf(fExecutedRefactorings)}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+				store.setValue(PREFERENCE_DO_NOT_WARN_UNDO_ON_CANCEL, dialog.getToggleState());
+				if (dialog.getReturnCode() == 1)
+					return false;
+			}
+			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
+
+				public final void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					for (int index= 0; index < fExecutedRefactorings; index++) {
+						try {
+							RefactoringCore.getUndoManager().performUndo(null, new SubProgressMonitor(monitor, 100));
+							if (fExecutedRefactorings > 0)
+								fExecutedRefactorings--;
+						} catch (CoreException exception) {
+							throw new InvocationTargetException(exception);
+						}
+					}
+				}
+			};
+			try {
+				getContainer().run(false, false, runnable);
+			} catch (InvocationTargetException exception) {
+				RefactoringUIPlugin.log(exception);
+				fCancelException= true;
+				fErrorPage.setStatus(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_internal_error));
+				fErrorPage.setNextPageDisabled(true);
+				fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryWizard_internal_error_title);
+				fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryWizard_internal_error_description);
+				getContainer().showPage(fErrorPage);
+				return false;
+			} catch (InterruptedException exception) {
+				// Does not happen
+			}
+		}
+		return super.performCancel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean performFinish() {
 		final IWizardContainer wizard= getContainer();
 		final RefactoringStatus status= new RefactoringStatus();
@@ -1041,7 +1103,7 @@ public class RefactoringHistoryWizard extends Wizard {
 					return false;
 				}
 			} catch (InterruptedException exception) {
-				// Just close wizard
+				// Does not happen
 			}
 			final RefactoringStatus result= operation.getExecutionStatus();
 			if (!result.isOK()) {
@@ -1202,6 +1264,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	protected RefactoringStatus refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
 		Assert.isNotNull(refactoring);
 		Assert.isNotNull(monitor);
+		fExecutedRefactorings++;
 		return new RefactoringStatus();
 	}
 
