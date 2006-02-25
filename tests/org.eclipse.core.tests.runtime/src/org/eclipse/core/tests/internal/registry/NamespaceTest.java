@@ -64,16 +64,16 @@ public class NamespaceTest extends TestCase {
 		IExtension[] defaultExtensions = Platform.getExtensionRegistry().getExtensions("testNamespace1");
 		assertTrue(defaultExtensions.length == 0);
 
-		// add another bundle
-		BundleTestingHelper.installBundle("Plugin", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testNamespace/2");
-		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
-
 		// remove the first bundle
 		bundle01.uninstall();
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 	}
 
-	public void testNamespaceDynamic() {
+	public void testNamespaceDynamic() throws BundleException, IOException {
+
+		// add another bundle
+		Bundle anotherNamespaceBundle = BundleTestingHelper.installBundle("Plugin", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testNamespace/2");
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {anotherNamespaceBundle});
 
 		// all elements from the first bundle should be gone
 		IExtensionPoint extpt_removed = Platform.getExtensionRegistry().getExtensionPoint("org.abc.xptNS1");
@@ -94,6 +94,10 @@ public class NamespaceTest extends TestCase {
 		IExtension[] namespaceExtensions2 = Platform.getExtensionRegistry().getExtensions("org.abc");
 		assertTrue(namespaceExtensions2.length == 1);
 		assertTrue(namespaceExtensions2[0].equals(ext2));
+		
+		// remove the second bundle
+		anotherNamespaceBundle.uninstall();
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {anotherNamespaceBundle});
 	}
 
 	public static Test suite() {
