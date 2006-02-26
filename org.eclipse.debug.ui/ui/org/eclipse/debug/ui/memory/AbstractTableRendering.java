@@ -3354,7 +3354,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * Returns the color provider for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a color provider is obtained by aksing this rendering's
+	 * By default a color provider is obtained by asking this rendering's
 	 * memory bock for its {@link IColorProvider} adapter. When the color
 	 * provider is queried for color information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
@@ -3371,7 +3371,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * Returns the label provider for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a label provider is obtained by aksing this rendering's
+	 * By default a label provider is obtained by asking this rendering's
 	 * memory bock for its {@link ILabelProvider} adapter. When the label
 	 * provider is queried for label information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
@@ -3388,7 +3388,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * Returns the font provider for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a font provider is obtained by aksing this rendering's
+	 * By default a font provider is obtained by asking this rendering's
 	 * memory bock for its {@link IFontProvider} adapter. When the font
 	 * provider is queried for font information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
@@ -3405,7 +3405,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * Returns the table presentation for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a table presentation is obtained by aksing this rendering's
+	 * By default a table presentation is obtained by asking this rendering's
 	 * memory bock for its {@link IMemoryBlockTablePresentation} adapter.
 	 * </p>
 	 * @return the table presentation for this rendering's memory block,
