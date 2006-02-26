@@ -53,7 +53,8 @@
             default="true"
             id="org.eclipse.ui.intro.universal.circles"
             name="%theme.name.circles"
-            path="$nl$/themes/circles"/>
+            path="$nl$/themes/circles"
+            previewImage="themes/circles/preview.png"/>
       <theme
             id="org.eclipse.ui.intro.universal.purpleMesh"
             name="%theme.name.purpleMesh"

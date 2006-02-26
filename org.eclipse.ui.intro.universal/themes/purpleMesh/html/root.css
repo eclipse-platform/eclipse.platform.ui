@@ -11,6 +11,15 @@
 #page-links a p .text, #action-links a p .text {
 	font-size : 13pt;	font-weight : 500;	color : #E5E5E5;
 }
+
+/*
+ * Turn off shared backround image.
+ */
+
+.page {
+	background-image: none;
+}
+
 /*
  * Set up the content for the root page.
  */
@@ -19,7 +28,17 @@ body {
 	width:expression(document.body.clientWidth < 770? "770px": "auto" );	background-image : url(../graphics/root/background.jpg);	background-repeat : no-repeat;	background-position : top left;	background-color : #7169D1;
 }
 #root {
-	background-image : url(../graphics/root/brandmark.gif);	background-repeat : no-repeat;	background-position : bottom left;	min-height : 450px;	height : 100%;	height : expression(document.body.clientHeight < 450? "450px": "100%" );
+/*
+	background-image : url(../graphics/root/brandmark.gif);
+*/
+	background-repeat : no-repeat;	background-position : bottom left;
+	min-height : 450px;	height : 100%;	height : expression(document.body.clientHeight < 450? "450px": "100%" );
+}
+
+#branding {
+	position: absolute;
+	bottom : 20px;
+	left : 20px;
 }
 
 /*

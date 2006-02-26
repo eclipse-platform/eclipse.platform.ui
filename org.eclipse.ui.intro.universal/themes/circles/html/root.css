@@ -16,27 +16,42 @@
  */
 body {
 	min-width : 770px;	/* since IE doesn't support min-width, use expression */
-	width:expression(document.body.clientWidth < 770? "770px": "auto" );	background-image : url(../graphics/rootpage/welcomebckgrd.jpg);	background-repeat : no-repeat;	background-position : center center;	background-color : #7169D1;
+	width:expression(document.body.clientWidth < 770? "770px": "auto" );
+	background-image : url(../graphics/rootpage/welcomebckgrd.jpg);	background-repeat : no-repeat;	background-position : center center;
+	background-attachment : fixed;
+	background-color : #7169D1;
 }
 #root {
 /*
 	background-image : url(../graphics/rootpage/brandmark.gif);
 	*/
-	background-repeat : no-repeat;	background-position : bottom left;
-	/*	min-height : 450px;
-	*/	height : 100%;
-	/*	height : expression(document.body.clientHeight < 450? "450px": "100%" );
-	*/
-}
-
 /*
- * We will not use the general-purpose group1 used in
- * other pages for a curve image.
- */
-
-#extra-group1 {
-	display : none;
+	background-repeat : no-repeat;	background-position : bottom left;
+	*/
+	min-height : 450px;
+	height : expression(document.body.clientHeight < 450? "450px": "100%" );
+/*
+	border-color: magenta;
+	border-style : solid;
+	border-width : 1px;
+*/
+	overflow: hidden;
 }
+
+	/* For non-IE browsers */
+#root[id] {	display: table; position: static; }
+
+#branding {
+	position: absolute;
+	bottom : 20px;
+	left : 20px;
+/*
+	border-style : solid;
+	border-width : 1px;
+	border-color: white;
+*/
+}
+
 /* 
  * Set up the navigation bar.  It should be centered in the middle
  * of the page
@@ -47,10 +62,15 @@ body {
 	*/
 	position: absolute;
 	top: 50%;	text-align : center;
-	/*
-	background-color: cyan;
-	*/
 }
+
+/* for non-IE browsers only */
+#links-background[id] {
+	display: table-cell; 
+	vertical-align: middle; 
+	position: static;
+}
+
 /* specify a width for Moz so we can center.  
  * **Important** If additional links are added, we will have to increase this width 
  * to accomodate them, otherwise they will wrap to a new line 
@@ -58,12 +78,18 @@ body {
 #links-background > #page-links {
 	width : 33em;	margin : 0 auto;
 }
+
 #page-links {
 	width : 884px;
 	height: 387px;
 	position : relative;
-	left : -19px;
+	left : -18px;
 	top : -50%;
+/*
+	border-style : solid;
+	border-color: yellow;
+	border-width : 1px;
+*/
 }
 
 #page-links a {
@@ -72,20 +98,32 @@ body {
 	*/
 }
 
+#page-links[id] { position: static; } 
+
+/* Position root links using absolute coordinates */
 #page-links a img {
 	height : 103px;
 	width : 103px;
-	vertical-align : middle;
 }
 
-#page-links a img#overview {
-	height: 154px;
-	width: 141px;
+#page-links a:hover img {
+	width : 202px;
+	height : 80px;
+}
+
+#page-links a#overview img {
+	width : 141px;
+	height : 154px;
+}
+
+#page-links a:hover #overview img {
+	width : 202px;
+	height : 99px;
 }
 
 #page-links a#overview {
-	left: 0px;
-	top: 0px;
+	left: -1px;
+	top: 4px;
 }
 
 #page-links a#whatsnew {
@@ -176,84 +214,82 @@ body {
 }
 /* properties for each of the page-links  */
 #page-links a#overview img { background-image : url(../graphics/icons/ctool/overview.gif); }
-/*
-#page-links a:hover#overview img { background-image : url(../graphics/icons/ctool/overview72.gif); }
-*/
+#page-links a:hover#overview img { background-image : url(../graphics/icons/ctool/overview_tophov.gif); }
 
 #page-links a#tutorials img { background-image : url(../graphics/icons/ctool/tutorials.gif); }
-/*
-#page-links a:hover#tutorials img { background-image : url(../graphics/icons/ctool/tutorials.gif); }
-*/
+#page-links a:hover#tutorials img { background-image : url(../graphics/icons/ctool/tutorials_tophov.gif); }
 
 #page-links a#samples img { background-image : url(../graphics/icons/ctool/samples.gif); }
-/*
-#page-links a:hover#samples img { background-image : url(../graphics/icons/ctool/samples72.gif); }
-*/
+#page-links a:hover#samples img { background-image : url(../graphics/icons/ctool/samples_tophov.gif); }
 
 #page-links a#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew.gif); }
-/*
-#page-links a:hover#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew72.gif); }
-*/
+#page-links a:hover#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew_tophov.gif); }
 
 #page-links a#firststeps img { background-image : url(../graphics/icons/ctool/firststeps.gif); }
+#page-links a:hover#firststeps img { background-image : url(../graphics/icons/ctool/firststeps_tophov.gif); }
+
 #page-links a#migrate img { background-image : url(../graphics/icons/ctool/migrate.gif); }
+#page-links a:hover#migrate img { background-image : url(../graphics/icons/ctool/migrate_tophov.gif); }
+
 #page-links a#webresources img { background-image : url(../graphics/icons/ctool/webresources.gif); }
+#page-links a:hover#webresources img { background-image : url(../graphics/icons/ctool/webresources_tophov.gif); }
 
 /*
  * Set up the action links
  */
 #action-links {
-	width : 98%;	position : absolute;	left : 0px;	top : 20px;
+	width : 100%;
+	position: absolute;
+	top: 50%;
+	text-align : center;
 }
-#action-links a#workbench {
-	position : absolute;	top : -16px;	right : -8px;	text-align : right;
+
+#action-links a {
+	position : relative;
+	top : -50%;
 }
+
 #action-links a .background-image,
 #action-links a #workbench_img {
-	height : 53px;	width : 53px;	text-align : center;	vertical-align : top;
+	height : 103px;	width : 103px;
+	position : absolute;
+	left : 364px;
+	top : -83px;
 }
+
+#action-links a:hover#workbench img {
+	width : 202px;
+	height : 80px;
+}
+
 /* special case for mozilla */
 #action-links a > .background-image,
 #action-links a > #workbench_img {
 	vertical-align : middle;
 }
-/* remove the hover image from the flow of the document,
-   so it doesn't take up space and change the position
-   of the main image */
-#action-links a .background-image {
-	position : absolute;
-}
 
-#action-links a#workbench .background-image {
-	background-image : url(../graphics/icons/etool/wb48.gif);
-}
+#action-links a#workbench img { background-image : url(../graphics/icons/ctool/workbench.gif); }
+#action-links a:hover#workbench img { background-image : url(../graphics/icons/ctool/workbench_tophov.gif); }
 
-#action-links a#workbench:hover .background-image,
-#action-links a#workbench:focus .background-image,
-#action-links a#workbench:active .background-image {
-	background-image : url(../graphics/icons/ctool/wb48.gif);
-	visibility : visible;
-	position: absolute;
-	top: 0px;
-	right: 0px;	
-}
 /* hide the link and description until users hover over the link */
 #action-links a p .text, #action-links a .link-label {
 	display : none;
 }
+
 #action-links a:hover .link-label,
 #action-links a:focus .link-label,
 #action-links a:active .link-label {
-	display : block;	width : 16em;
-	margin-left : 10px;
+	display : block;	margin-left : 10px;
 }
 #action-links a:hover p .text,
 #action-links a:focus p .text,
 #action-links a:active p .text {
 	display : block;	width : 16em;
 }
+/*
 #action-links a:hover,
 #action-links a:focus,
 #action-links a:active {
 	border : 0px;
 }
+*/

@@ -377,9 +377,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 #page-content * a p .text {
 	display : block;
-	/*
-	width : 300px;
-	*/
 	position : relative;
 	top : -45px;
 	left : 53px;
@@ -387,15 +384,7 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 #page-content * a p > .text { left: 58px; }
 
-/* Special case for Mozilla, because the links are displayed
-   in 1 vertical column instead of 2 centered columns */
-
-#page-content * > a { 	width : 700px; }
-#page-content * a > .link-label { width : 700px; }
-#page-content * a p > .text { width : 700px; }
-
 #page-content * a:hover { border-right : 5px; }
-
 
 /* The following rules are for extensions in all pages. Extensions should be placed in
  * groups with the style 'content-group' and contain links with the style 'content-link'.
@@ -405,32 +394,22 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
  */
  
 .content-group {
-	/* To center in Moz (have to use text-align for IE) */
-	margin-left : auto;
-	margin-right : auto;
-	/*
-	width : 750px;
-	*/
-	/*
-	margin-bottom : 30px;
-	*/
+	width : auto;
 	padding-left: 10px;
 	padding-right: 10px;
 	float : none;
 	clear : both;
-	text-align : left;
+	text-align: left;
 }
 
 .content-link {
-/*
-	width : 360px;
-	*/
 	text-align : left; 
 	margin-left : 5px;
 	margin-right : 5px;
 	margin-top : 10px;
 	margin-bottom : -20px;
 	vertical-align : top;
+	clear : both;
 }
 
 .content-group > .content-link {

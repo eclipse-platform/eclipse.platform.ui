@@ -876,7 +876,7 @@ public class IntroHTMLGenerator {
 			if (blankImageURL != null) {
 				image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, blankImageURL);
 				if (pngOnWin32) {
-					String style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + imageSrc + "', sizingMethod='scale')"; //$NON-NLS-1$//$NON-NLS-2$
+					String style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + imageSrc + "', sizingMethod='image')"; //$NON-NLS-1$//$NON-NLS-2$
 					image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, style);
 				}
 			}
