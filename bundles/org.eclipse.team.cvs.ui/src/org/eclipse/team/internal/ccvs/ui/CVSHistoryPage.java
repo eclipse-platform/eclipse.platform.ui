@@ -84,7 +84,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
 	private IAction toggleCompareAction;
-	private IAction toggleGroupingAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
@@ -95,7 +94,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private Action localMode;
 	private Action remoteMode;
 	private Action remoteLocalMode;
-
+	private Action groupByDateMode;
+	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
 
@@ -129,7 +129,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static int LOCAL_MODE = 2;
 	
 	//grouping on
-	private boolean groupingOn = false; 
+	private boolean groupingOn = true; 
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -271,6 +271,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		//set the inital filter to both remote and local
 		updateFilterMode(REMOTE_LOCAL_MODE);
+		
+
+		groupByDateMode = new Action(CVSUIMessages.CVSHistoryPage_GroupByDate, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY)){
+			public void run() {
+				groupingOn = !groupingOn;
+				toggleCompareAction.setChecked(groupingOn);
+				refresh();
+			}
+		};
+		groupByDateMode.setChecked(true);
+		groupByDateMode.setToolTipText(CVSUIMessages.CVSHistoryPage_GroupByDate);
+		groupByDateMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY));
+		groupByDateMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY));
 		
 		// Click Compare action
 		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction);
@@ -452,15 +465,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		};
 		toggleCompareAction.setChecked(false);
 	
-		toggleGroupingAction = new Action(CVSUIMessages.CVSHistoryPage_GroupByDate){
-			public void run() {
-				groupingOn = !groupingOn;
-				toggleCompareAction.setChecked(groupingOn);
-				refresh();
-			}
-		};
-		toggleGroupingAction.setChecked(false);
-		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(treeViewer.getTree());
@@ -485,8 +489,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				// Contribute toggle text visible to the toolbar drop-down
 				IMenuManager actionBarsMenu = actionBars.getMenuManager();
 				if (actionBarsMenu != null){
-					actionBarsMenu.add(toggleGroupingAction);
-					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleCompareAction);
 					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleTextWrapAction);
@@ -516,11 +518,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		IToolBarManager tbm = parentSite.getToolBarManager();
 		if (tbm != null) {
 			//Add groups
+			tbm.add(new Separator("grouping"));	//$NON-NLS-1$
+			tbm.appendToGroup("grouping", groupByDateMode); //$NON-NLS-1$
 			tbm.add(new Separator("modes"));	//$NON-NLS-1$
-			tbm.add(new Separator("filter")); //$NON-NLS-1$
 			tbm.appendToGroup("modes", remoteLocalMode); //$NON-NLS-1$
 			tbm.appendToGroup("modes", localMode); //$NON-NLS-1$
 			tbm.appendToGroup("modes", remoteMode); //$NON-NLS-1$
+			tbm.add(new Separator("filter")); //$NON-NLS-1$
 			tbm.appendToGroup("filter", cvsHistoryFilter); //$NON-NLS-1$
 			tbm.update(false);
 		}
