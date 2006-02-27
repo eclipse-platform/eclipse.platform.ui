@@ -110,7 +110,7 @@
             configId="org.eclipse.ui.intro.universalConfig"
             content="new-intro/whatsnewEx2.xml"/>
    </extension>
-   <!--
+   <!-- -->
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -121,6 +121,6 @@
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
    </extension>
- -->
+ <!-- -->
 
 </plugin>
