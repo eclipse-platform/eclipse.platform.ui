@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-public class InternalAPI {
+public final class InternalAPI {
 	
 	public static final InternalAPI INSTANCE= new InternalAPI();
 	
