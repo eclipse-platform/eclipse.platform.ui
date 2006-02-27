@@ -73,7 +73,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 			}
         } else {
         	queueSuspendedThread(event);
-            int extras = IModelDelta.NO_CHANGE;
+            int extras = IModelDelta.STATE;
             if (event.getDetail() == DebugEvent.BREAKPOINT | event.getDetail() == DebugEvent.CLIENT_REQUEST) {
                 extras = IModelDelta.EXPAND;
             }

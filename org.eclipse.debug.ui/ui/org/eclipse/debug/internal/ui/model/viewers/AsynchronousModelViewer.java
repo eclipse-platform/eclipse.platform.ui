@@ -183,7 +183,13 @@ public abstract class AsynchronousModelViewer extends StructuredViewer implement
 		if (element == getInput()) {
 			return; // the input is not displayed
 		}
-		internalRefresh(element);
+		ModelNode[] nodes = getModel().getNodes(element);
+		if (nodes != null) {
+			for (int i = 0; i < nodes.length; i++) {
+				ModelNode node = nodes[i];
+				updateLabel(node);
+			}
+		}
 	}
 	
 	/**
