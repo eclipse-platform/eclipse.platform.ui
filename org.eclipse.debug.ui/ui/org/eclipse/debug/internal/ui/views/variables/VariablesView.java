@@ -605,7 +605,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 		// add tree viewer
 		final VariablesViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL, this);
-		variablesViewer.setUseHashlookup(false);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.FocusListener#focusGained(FocusEvent)

@@ -132,12 +132,14 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
 
         fTree = tree;
         hookControl(fTree);
-        setUseHashlookup(false);
 
         tree.addTreeListener(new TreeListener() {
             public void treeExpanded(TreeEvent e) {
                 ((TreeItem) e.item).setExpanded(true);
-                internalRefresh(e.item.getData(), e.item);
+                ModelNode node = findNode(e.item);
+                if (node != null) {
+					internalRefresh(node);
+                }
             }
 
             public void treeCollapsed(TreeEvent e) {
@@ -158,7 +160,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                         item.setExpanded(false);
                     } else {
                         item.setExpanded(true);
-                        internalRefresh(item.getData(), item);
+                        ModelNode node = findNode(item);
+                        if (node != null) {
+                        	internalRefresh(node);
+                        }
                     }
                 }
             }
@@ -176,33 +181,21 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
 
     /**
-     * Updates whether the given element has children.
+     * Updates whether the given node has children.
      * 
-     * @param element
-     *            element to update
-     * @param widget
-     *            widget associated with the element in this viewer's tree
+     * @param node node to update
      */
-    protected void updateHasChildren(Object element, Widget widget) {
-        ModelNode node = getModel().getNode(widget);
-        if (node != null) {
-            ((AsynchronousTreeModel)getModel()).updateHasChildren(node);
-        }
+    protected void updateHasChildren(ModelNode node) {
+        ((AsynchronousTreeModel)getModel()).updateHasChildren(node);
     }
 
     /**
-     * Updates the children of the given element.
+     * Updates the children of the given node.
      * 
-     * @param parent
-     *            element of which to update children
-     * @param widget
-     *            widget associated with the element in this viewer's tree
+     * @param parent node of which to update children
      */
-    protected void updateChildren(Object parent, Widget widget) {
-        ModelNode node = getModel().getNode(widget);
-        if (node != null) {
-            ((AsynchronousTreeModel)getModel()).updateChildren(node);
-        }
+    protected void updateChildren(ModelNode parent) {
+        ((AsynchronousTreeModel)getModel()).updateChildren(parent);
     }
 
     /**
@@ -264,17 +257,17 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     TreePath treePath = node.getTreePath();
                     if (path.startsWith(treePath, null)) {
                         if (!node.isDisposed()) {
-                            Widget widget = node.getWidget();
+                            Widget widget = findItem(node);
                             if (widget == null) {
                                 // force the widgets to be mapped
                                 ModelNode parent = node.getParentNode();
                                 ModelNode child = node;
-                                widget = parent.getWidget();
+                                widget = findItem(parent);
                                 while (widget == null && parent != null) {
                                     child = parent;
                                     parent = parent.getParentNode();
                                     if (parent != null) {
-                                        widget = parent.getWidget();
+                                        widget = findItem(parent);
                                         treePath = parent.getTreePath();
                                     }
                                 }
@@ -284,9 +277,11 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                                 }
                                 TreeItem[] items = getItems(widget);
                                 if (childIndex < items.length) {
-                                    getModel().mapWidget(items[childIndex], child);
-                                    widget = child.getWidget();
+                                    widget = items[childIndex];
+                                    mapElement(child, widget);
+                                    widget.setData(child.getElement());
                                     treePath = child.getTreePath();
+                                    node = child;
                                 } else {
                                     return false;
                                 }
@@ -297,7 +292,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                                     return path.getSegmentCount() == treePath.getSegmentCount();
                                 }
                                 if (treeItem.getItemCount() > 0) {
-                                    updateChildren(element, treeItem);
+                                    updateChildren(node);
                                     expand(treeItem);
                                     if (path.getSegmentCount() == treePath.getSegmentCount()) {
                                         return true;
@@ -386,7 +381,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     	if (childrenNodes != null) {
     		nodeChildrenSet(parentNode, childrenNodes);
     	} else {
-	       Widget widget = parentNode.getWidget();
+	       Widget widget = findItem(parentNode);
 	       if (widget != null && !widget.isDisposed()) {
 	           int childCount = parentNode.getChildCount();
 	           setItemCount(widget, childCount);
@@ -410,7 +405,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @param node
      */
     protected void nodeContainerChanged(ModelNode node) {
-         Widget widget = node.getWidget();
+         Widget widget = findItem(node);
         if (widget != null && !widget.isDisposed()) {
             if (isVisible(widget)) {
                 boolean expanded = true;
@@ -421,7 +416,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     expanded = ((TreeItem)widget).getExpanded();
                 }
                 if (expanded) {
-                    updateChildren(node.getElement(), widget);
+                    updateChildren(node);
                 }
             }
         }
@@ -434,11 +429,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
 			return ((TreeItem) widget).getItemCount();
 		}
     	return ((Tree) widget).getItemCount();
-    }
-
-    protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
-        super.doUpdateItem(item, element, fullMap);
-        updateHasChildren(element, item);
     }
 
     private void setItemCount(Widget widget, int itemCount) {
@@ -469,16 +459,24 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
             index = fTree.indexOf(item);
         }
 
-        ModelNode parentNode = getModel().getModelNode(parentItem);
-        if (parentNode != null) {
-        	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
-        	if (childrenNodes != null && index < childrenNodes.length) {
-        		ModelNode child = childrenNodes[index];
-        		getModel().mapWidget(item, child);
-        		internalRefresh(child.getElement(), item);
-        	} else {
-        		addPendingChildIndex(parentNode, index);
-            }
+        ModelNode[] nodes = getModel().getNodes(parentItem.getData());
+        if (nodes != null) {
+	        for (int i = 0; i < nodes.length; i++) {
+				ModelNode node = nodes[i];
+				Widget widget = findItem(node);
+				if (widget == parentItem) {
+		        	ModelNode[] childrenNodes = node.getChildrenNodes();
+		        	if (childrenNodes != null && index < childrenNodes.length) {
+		        		ModelNode child = childrenNodes[index];
+		        		mapElement(child, item);
+		        		item.setData(child.getElement());
+		        		internalRefresh(child);
+		        	} else {
+		        		addPendingChildIndex(node, index);
+		            }
+		        	return;
+				}
+			}
         }
     }
     
@@ -542,31 +540,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
-     */
-    protected Widget doFindInputItem(Object element) {
-        if (element.equals(getInput())) {
-            return fTree;
-        }
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
-     */
-    protected Widget doFindItem(Object element) {
-        Widget[] widgets = getWidgets(element);
-        if (widgets != null && widgets.length > 0) {
-            return widgets[0];
-        }
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#newSelectionFromWidget()
      */
     protected ISelection newSelectionFromWidget() {
@@ -592,15 +565,12 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         return Arrays.asList(paths);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.ui.viewers.AsynchronousViewer#internalRefresh(java.lang.Object,
-     *      org.eclipse.swt.widgets.Widget)
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
      */
-    protected synchronized void internalRefresh(Object element, Widget item) {
-        super.internalRefresh(element, item);
-        updateHasChildren(element, item);
+    protected void internalRefresh(ModelNode node) {
+        super.internalRefresh(node);
+        updateHasChildren(node);
     }
 
     /*
@@ -609,12 +579,20 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
      */
     public void reveal(Object element) {
-        Widget[] widgets = getWidgets(element);
-        if (widgets != null && widgets.length > 0) {
-            // TODO: only reveals the first occurrence - should we reveal all?
-            TreeItem item = (TreeItem) widgets[0];
-            Tree tree = (Tree) getControl();
-            tree.showItem(item);
+    	// TODO: in virtual case, we should attempt expansion
+        ModelNode[] nodes = getModel().getNodes(element);
+        if (nodes != null) {
+        	for (int i = 0; i < nodes.length; i++) {
+				ModelNode node = nodes[i];
+				Widget widget = findItem(node);
+				if (widget instanceof TreeItem) {
+		            // TODO: only reveals the first occurrence - should we reveal all?
+		            TreeItem item = (TreeItem) widget;
+		            Tree tree = (Tree) getControl();
+		            tree.showItem(item);			
+		            return;
+				}
+			}
         }
     }
 
@@ -628,6 +606,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         List remaining = new ArrayList();
         if (!selection.isEmpty()) {
             List toSelect = new ArrayList();
+            List theNodes = new ArrayList();
             List theElements = new ArrayList();
             TreeSelection treeSelection = (TreeSelection) selection;
             TreePath[] paths = treeSelection.getPaths();
@@ -642,9 +621,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     for (int j = 0; j < nodes.length; j++) {
                         ModelNode node = nodes[j];
                         if (node.correspondsTo(path)) {
-                            Widget widget = node.getWidget();
+                            Widget widget = findItem(node);
                             if (widget != null && !widget.isDisposed()) {
                                 toSelect.add(widget);
+                                theNodes.add(node);
                                 theElements.add(path.getLastSegment());
                                 selected = true;
                                 break;
@@ -654,7 +634,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                         ModelNode parent = node.getParentNode();
                         ModelNode child = node;
                         if (parent != null) {
-                        	Widget widget = parent.getWidget();
+                        	Widget widget = findItem(parent);
 		                    if (widget != null && !widget.isDisposed()) {
 		                        int childIndex = parent.getChildIndex(child);
 		                        if (childIndex < 0) {
@@ -662,9 +642,11 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
 		                        }
 		                        TreeItem[] items = getItems(widget);
 		                        if (childIndex < items.length) {
-		                            getModel().mapWidget(items[childIndex], child);
-		                            widget = child.getWidget();
+		                            widget = items[childIndex];
+		                            mapElement(child, widget);
+		                            widget.setData(child.getElement());
 		                            toSelect.add(widget);
+		                            theNodes.add(child);
 		                            theElements.add(child.getElement());
 		                            selected = true;
 		                        } else {
@@ -685,14 +667,15 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                 // between set selection & refresh
                 for (int i = 0; i < items.length; i++) {
                     TreeItem item = items[i];
-                    Object element = theElements.get(i);
+                    Object element = theElements.get(i); 
                     if (!item.isDisposed() && item.getData() != element) {
-                        ModelNode node = getModel().getNode(item);
-                        if (node == null) {
+                        ModelNode theNode = (ModelNode) theNodes.get(i);
+						Widget mapped = findItem(theNode);
+                        if (mapped == null) {
                         	// the node has been unmapped from the widget (pushed down perhaps)
                         	return selection;
                         }
-                        node.remap(element);
+                        theNode.remap(element);
                         item.setData(element);
                     }
                 }
@@ -838,7 +821,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#nodeChanged(org.eclipse.debug.internal.ui.viewers.ModelNode)
      */
     protected void nodeChanged(ModelNode node) {
-        Widget widget = node.getWidget();
+        Widget widget = findItem(node);
         if (widget != null && !widget.isDisposed()) {
             if (widget instanceof TreeItem) {
                 if (!isVisible(widget)) {
@@ -847,8 +830,8 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                 }
             }
             widget.setData(node.getElement());
-            getModel().mapWidget(widget, node);
-            internalRefresh(node.getElement(), widget);
+            mapElement(node, widget);
+            internalRefresh(node);
             attemptExpansion();
             attemptSelection(false);
         }
@@ -863,7 +846,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      */
     protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
         int[] indicies = (int[]) fParentsPendingChildren.remove(parent);
-        Widget widget = parent.getWidget();
+        Widget widget = findItem(parent);
         if (widget != null && !widget.isDisposed()) {
             if (indicies != null) {
                 for (int i = 0; i < indicies.length; i++) {
@@ -882,8 +865,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     }
                     if (item != null) {
                         if (index < children.length) {
-                            getModel().mapWidget(item, children[index]);
-                            internalRefresh(children[index].getElement(), item);
+                        	ModelNode childNode = children[index];
+							mapElement(childNode, item);
+							item.setData(childNode.getElement());
+                            internalRefresh(childNode);
                         }
                     }
                 }
@@ -903,18 +888,17 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
 	public IModelUpdatePolicy createUpdatePolicy() {
 		return new TreeUpdatePolicy();
 	}
-	
-    /**
-     * A node has been disposed from the model.
-     * 
-     * @param node
-     */
-    protected synchronized void nodeDisposed(ModelNode node) {
-    	super.nodeDisposed(node);
-    	Widget widget = node.getWidget();
-    	if (widget instanceof Tree && !widget.isDisposed()) {
-    		clear(widget);
-    	}
-    }	
+
+	protected synchronized void unmapAllElements() {
+		super.unmapAllElements();
+		Tree tree = getTree();
+		if (!tree.isDisposed()) {
+			TreeItem[] items = tree.getItems();
+			for (int i = 0; i < items.length; i++) {
+				items[i].dispose();
+			}
+			clear(tree);
+		}
+	}
 
 }

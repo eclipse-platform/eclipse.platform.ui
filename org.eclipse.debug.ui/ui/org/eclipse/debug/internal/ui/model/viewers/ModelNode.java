@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * A node in an asynchronous model.
@@ -27,7 +26,6 @@ public class ModelNode {
 	private boolean fIsContainer; // whether this element may have children
 	private ModelNode fParent; // parent node or null for root
 	private ModelNode[] fChildren; // child nodes, possibly null
-	private Widget fWidget; // corresponding widget or item for this node or null
 	private boolean fDisposed; // whether this node has been disposed
 	
 	public ModelNode(ModelNode parent, Object element) {
@@ -53,14 +51,6 @@ public class ModelNode {
 	
 	public synchronized ModelNode[] getChildrenNodes() {
 		return fChildren;
-	}
-	
-	public synchronized Widget getWidget() {
-		return fWidget;
-	}
-	
-	public synchronized void setWidget(Widget widget) {
-		fWidget = widget;
 	}
 	
 	public synchronized boolean isDisposed() {

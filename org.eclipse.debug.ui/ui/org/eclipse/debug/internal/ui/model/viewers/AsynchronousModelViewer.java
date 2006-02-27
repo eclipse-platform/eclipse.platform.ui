@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.viewers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +40,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -115,6 +113,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 */
 	protected AsynchronousModelViewer() {
 		setContentProvider(new NullContentProvider());
+		setUseHashlookup(true);
 	}
 	
 	/**
@@ -160,26 +159,18 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 		if (element == getInput()) {
 			return; // the input is not displayed
 		}
-		Widget[] items = getWidgets(element);
-		if (items != null) {
-			for (int i = 0; i < items.length; i++) {
-				updateLabel(element, items[i]);
-			}
-		}
+		internalRefresh(element);
 	}
 	
 	/**
-	 * Updates the label for a specific element and item.
+	 * Updates the label for a specific element (node) in the model.
 	 * 
-	 * @param element element to update
+	 * @param node node to update
 	 * @param item its associated item
 	 */
-	protected void updateLabel(Object element, Widget item) {
-		if (item instanceof Item) {
-			ModelNode node = getModel().getNode(item);
-			if (node != null) {
-				getModel().updateLabel(node);
-			}
+	protected void updateLabel(ModelNode node) {
+		if (!node.getElement().equals(getInput())) {
+			getModel().updateLabel(node);
 		}
 	}
 		
@@ -226,65 +217,14 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 		return adapter;
 	}
 
-	/**
-	 * Returns the widgets associated with the given element or
-	 * <code>null</code>.
-	 * 
-	 * @param element element to retrieve widgets for
-	 * @return widgets or <code>null</code> if none
-	 */
-	protected synchronized Widget[] getWidgets(Object element) {
-        // TODO: we likely want to return all nodes and force mapping to widget
-		if (element == null) {
-			return null;
-		}
-		ModelNode[] nodes = getModel().getNodes(element);
-        if (nodes == null) {
-            return null;
-        }
-        List widgets = new ArrayList();
-        for (int i = 0; i < nodes.length; i++) {
-            Widget widget = nodes[i].getWidget();
-            if (widget != null) {
-                widgets.add(widget);
-            }
-        }
-        if (widgets.isEmpty()) {
-            return null;
-        }
-        return (Widget[]) widgets.toArray(new Widget[widgets.size()]);
-	}
-	
-	/**
-	 * Returns the element associated with the given widget or
-	 * <code>null</code>.
-	 * 
-	 * @param widget widget to retrieve element for
-	 * @return element or <code>null</code> if none
-	 */
-	protected synchronized Object getElement(Widget widget) {
-		ModelNode node = getModel().getNode(widget);
-		if (node != null) {
-			return node.getElement();
-		}
-		return null;
-	}	
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#unmapAllElements()
 	 */
 	protected synchronized void unmapAllElements() {
-		final AsynchronousModel model = getModel();
+		super.unmapAllElements();
+		AsynchronousModel model = getModel();
 		if (model != null) {
-			ModelNode root = model.getModelNode(getControl());
-			if (root != null) {
-				ModelNode[] childrenNodes = root.getChildrenNodes();
-				if (childrenNodes != null) {
-					for (int i = 0; i < childrenNodes.length; i++) {
-						nodeDisposed(childrenNodes[i]);
-					}
-				}				
-			}
+			model.dispose();
 		}
 	}
 
@@ -300,7 +240,13 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 			fModel.dispose();
 		}
 		fModel = createModel();
-		fModel.init(input, getControl());
+		fModel.init(input);
+		if (input != null) {
+			mapElement(fModel.getRootNode(), getControl());
+			getControl().setData(fModel.getRootNode().getElement());
+		} else {
+			unmapAllElements();
+		}
         refresh();		
 	}
 	
@@ -418,41 +364,70 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
-		Widget[] widgets = getWidgets(element);
-		if (widgets != null && widgets.length > 0) {
-			return widgets[0];
+		AsynchronousModel model = getModel();
+		if (model != null) {
+			if (element.equals(model.getRootNode())) {
+				return doFindInputItem(element);
+			}
+			Widget[] widgets = findItems(element);
+			if (widgets.length > 0) {
+				return widgets[0];
+			}
 		}
 		return null;
 	}
+	
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
+     */
+    protected Widget doFindInputItem(Object element) {
+    	if (element instanceof ModelNode) {
+			ModelNode node = (ModelNode) element;
+			if (node.getElement().equals(getInput())) {
+				return getControl();
+			}
+		}
+        return null;
+    }	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
 	 */
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
-		updateLabel(element, item);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
 	 */
 	protected void internalRefresh(Object element) {
-		Widget[] items = getWidgets(element);
-		if (items == null) {
-			return;
-		}
-		for (int i = 0; i < items.length; i++) {
-			internalRefresh(element, items[i]);
+		// get the nodes in the model
+		AsynchronousModel model = getModel();
+		if (model != null) {
+			ModelNode[] nodes = model.getNodes(element);
+			if (nodes != null) {
+				for (int i = 0; i < nodes.length; i++) {
+					ModelNode node = nodes[i];
+					// get the widget for the node
+					Widget item = findItem(node);
+					if (item != null) {
+						internalRefresh(node);
+					}
+				}
+			}
 		}
 	}
 	
 	/**
-	 * Refreshes a specific occurrence of an element.
+	 * Refreshes a specific occurrence of an element (a node).
 	 * 
-	 * @param element element to update
-	 * @param item item to update
+	 * @param node node to update
+	 * 
+	 * Subclasses should override and call super
 	 */
-	protected void internalRefresh(Object element, Widget item) {
-		updateLabel(element, item);
+	protected void internalRefresh(ModelNode node) {
+		updateLabel(node);
 	}	
 
 	/* (non-Javadoc)
@@ -807,20 +782,18 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
      * 
      * @param node
      */
-    protected synchronized void nodeDisposed(ModelNode node) {
-       Widget widget = node.getWidget();
-       if (widget instanceof Item) {
-           widget.dispose();
-           node.setWidget(null);
-       } else if (widget == getControl()) {
-    	   // root control
-    	   ModelNode[] nodes = node.getChildrenNodes();
-    	   if (nodes != null) {
-    		   for (int i = 0; i < nodes.length; i++) {
-    			   nodeDisposed(nodes[i]);
-    		   }
-    	   }
-       }
+    protected void nodeDisposed(ModelNode node) {
+    	Widget widget = findItem(node);
+    	if (widget != null) {
+    		unmapElement(node);
+    		widget.dispose();
+    		ModelNode[] childrenNodes = node.getChildrenNodes();
+    		if (childrenNodes != null) {
+    			for (int i = 0; i < childrenNodes.length; i++) {
+					nodeDisposed(childrenNodes[i]);
+				}
+    		}
+    	}
     }    
     
     /**
@@ -828,10 +801,10 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
      * 
      * @param node
      */
-    protected synchronized void nodeChanged(ModelNode node) {
-       Widget widget = node.getWidget();
+    protected void nodeChanged(ModelNode node) {
+       Widget widget = findItem(node);
        if (widget != null) {
-           internalRefresh(node.getElement(), widget);
+           internalRefresh(node);
        }
     }
     
@@ -866,5 +839,33 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
      * @param parent
      */
     protected abstract void nodeChildrenChanged(ModelNode parentNode);    
+    
+    /**
+     * Returns the node corresponding to the given widget or <code>null</code>
+     * @param widget widget for which a node is requested
+     * @return node or <code>null</code>
+     */
+    protected ModelNode findNode(Widget widget) {
+        ModelNode[] nodes = getModel().getNodes(widget.getData());
+        if (nodes != null) {
+        	for (int i = 0; i < nodes.length; i++) {
+				ModelNode node = nodes[i];
+				Widget item = findItem(node);
+				if (widget == item) {
+					return node;
+				}
+			}
+        }    	
+        return null;
+    }
+    
+    /**
+     * Returns the item for the node or <code>null</code>
+     * @param node
+     * @return
+     */
+    protected Widget findItem(ModelNode node) {
+    	return findItem((Object)node);
+    }
 	
 }

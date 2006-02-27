@@ -67,7 +67,7 @@ class ModelLabelRequestMonitor extends AsynchronousModelRequestMonitor implement
 	 */
 	protected void performUpdate() {
 		AsynchronousModelViewer viewer = getModel().getViewer();
-		Widget widget = getNode().getWidget();
+		Widget widget = viewer.findItem(getNode());
         if (!widget.isDisposed()) {
     		viewer.setLabels(widget, fLabels, fImageDescriptors);
     		viewer.setColors(widget, fForegrounds, fBackgrounds);

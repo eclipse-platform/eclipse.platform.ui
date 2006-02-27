@@ -28,7 +28,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapt
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * Model for an asynchronous viewer
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class AsynchronousModel {
 	
 	private ModelNode fRoot; // root node
-	private Map fWidgetToNode = new HashMap(); // map of widgets to corresponding tree node
 	private Map fElementToNodes = new HashMap(); // map of element to corresponding tree nodes (list)
 	private Map fModelProxies = new HashMap(); // map of installed model proxies, by element
 	private AsynchronousModelViewer fViewer; // viewer this model works for
@@ -70,11 +68,9 @@ public abstract class AsynchronousModel {
 	 * @param root root element or <code>null</code>
 	 * @param widget root widget/control
 	 */
-	public void init(Object root, Widget widget) {
+	public void init(Object root) {
 		if (root != null) {
 			fRoot = new ModelNode(null, root);
-			fRoot.setWidget(widget);
-			mapWidget(widget, fRoot);
 			mapElement(root, fRoot);
 		}		
 	}
@@ -91,9 +87,11 @@ public abstract class AsynchronousModel {
         cancelPendingUpdates();
 		disposeAllModelProxies();
 		fPendingUpdates.clear();
-		if (getRootNode() != null) {
-			getViewer().nodeDisposed(getRootNode());
+		ModelNode rootNode = getRootNode();
+		if (rootNode != null) {
+			rootNode.dispose();
 		}
+		fElementToNodes.clear();
 	}
     
     /**
@@ -193,19 +191,6 @@ public abstract class AsynchronousModel {
 	}	
 	
 	/**
-	 * Maps the given widget to the given node
-	 * 
-	 * @param widget
-	 * @param node
-	 */
-	protected void mapWidget(Widget widget, ModelNode node) {
-		Object element = node.getElement();
-		widget.setData(element);
-        node.setWidget(widget);
-		fWidgetToNode.put(widget, node);
-	}
-	
-	/**
 	 * Maps the given element to the given node.
 	 * 
 	 * @param element
@@ -258,10 +243,6 @@ public abstract class AsynchronousModel {
                 }
             }
         }
-        Widget widget = node.getWidget();
-        if (widget != null) {
-            fWidgetToNode.remove(widget);
-        }
     }
 	
 	/**
@@ -273,16 +254,6 @@ public abstract class AsynchronousModel {
 	 */
 	protected ModelNode[] getNodes(Object element) {
 		return (ModelNode[]) fElementToNodes.get(element);
-	}
-	
-	/**
-	 * Returns the node mapped to the given widet, or <code>null</code>
-	 * 
-	 * @param widget
-	 * @return
-	 */
-	protected ModelNode getNode(Widget widget) {
-		return (ModelNode) fWidgetToNode.get(widget);
 	}
 	
 	/**
@@ -362,16 +333,6 @@ public abstract class AsynchronousModel {
 			return filtered.toArray();
 		}
 		return elements;
-	}
-	
-	/**
-	 * Returns the model node the given widget is mapped to or <code>null</code>
-	 * 
-	 * @param widget
-	 * @return
-	 */
-	public ModelNode getModelNode(Widget widget) {
-		return (ModelNode) fWidgetToNode.get(widget);
 	}
 	
 	/**
@@ -563,35 +524,22 @@ public abstract class AsynchronousModel {
         }
         
         //update viewer outside the lock
-        if (prevKids != null) {
-        	final ModelNode[] finalPrevKids = prevKids; 
-            preservingSelection(new Runnable() {
-                public void run() {
-                    for (int i = 0; i < finalPrevKids.length; i++) {
-                        ModelNode kid = finalPrevKids[i];
-                        if (i >= children.length) {
-                            viewer.nodeDisposed(kid);
-                        } else {
-                            viewer.nodeChanged(kid);
-                        }
-                    }
-                    viewer.nodeChildrenChanged(parentNode);
-                }
-            });        	
-        } else {
-        	final ModelNode[] finalNewChildren = newChildren;
-            preservingSelection(new Runnable() {
-                public void run() {
-                	if (finalNewChildren.length == 0) {
-                		viewer.nodeChildrenChanged(parentNode);
-                	} else {
-//                  the tree could have asked for data before it was ready...
-                		viewer.nodeChildrenSet(parentNode, finalNewChildren);
-                	}
-                }
-            });
-        }
-        
+    	final ModelNode[] finalPrevKids = prevKids; 
+        preservingSelection(new Runnable() {
+            public void run() {
+            	if (finalPrevKids != null) {
+	                for (int i = 0; i < finalPrevKids.length; i++) {
+	                    ModelNode kid = finalPrevKids[i];
+	                    if (i >= children.length) {
+	                        viewer.nodeDisposed(kid);
+	                    } else {
+	                        viewer.nodeChanged(kid);
+	                    }
+	                }
+            	}
+                viewer.nodeChildrenChanged(parentNode);
+            }
+        });        	        
 
 	}
 }

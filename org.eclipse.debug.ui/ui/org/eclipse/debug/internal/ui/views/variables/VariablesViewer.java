@@ -4,10 +4,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
+import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -45,14 +45,11 @@ public class VariablesViewer extends AsynchronousTreeModelViewer{
 	}
 	
 	/* (non-Javadoc)
-	 * 
-	 * Also update details area if required
-	 * 
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeModelViewer#internalRefresh(java.lang.Object, org.eclipse.swt.widgets.Widget)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
 	 */
-	protected void internalRefresh(Object element, Widget item) {
-		super.internalRefresh(element, item);
-		if (fView != null && element.equals(((IStructuredSelection)getSelection()).getFirstElement())) {
+	protected void internalRefresh(ModelNode node) {
+		super.internalRefresh(node);
+		if (fView != null && node.getElement().equals(((IStructuredSelection)getSelection()).getFirstElement())) {
 			fView.populateDetailPane();
 		}
 	}
