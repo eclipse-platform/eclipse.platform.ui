@@ -48,6 +48,9 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	/** The comment of the refactoring session, or <code>null</code> */
 	private String fComment= null;
 
+	/** Should project information be included? */
+	private final boolean fProjects;
+
 	/**
 	 * The current list of refactoring descriptors, or <code>null</code>
 	 * (element type: <code>RefactoringDescriptor</code>)
@@ -56,6 +59,17 @@ public final class RefactoringSessionReader extends DefaultHandler {
 
 	/** The current version of the refactoring script, or <code>null</code> */
 	private String fVersion= null;
+
+	/**
+	 * Creates a new refactoring session reader.
+	 * 
+	 * @param projects
+	 *            <code>true</code> to include project information,
+	 *            <code>false</code> otherwise
+	 */
+	public RefactoringSessionReader(final boolean projects) {
+		fProjects= projects;
+	}
 
 	/**
 	 * Creates a new parser from the specified factory.
@@ -147,7 +161,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 					flags= value;
 				else if (IRefactoringSerializationConstants.ATTRIBUTE_COMMENT.equals(name))
 					comment= value;
-				else if (IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name))
+				else if (fProjects && IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name))
 					project= value;
 				else if (!"".equals(name) && !"".equals(value)) //$NON-NLS-1$//$NON-NLS-2$
 					map.put(name, value);

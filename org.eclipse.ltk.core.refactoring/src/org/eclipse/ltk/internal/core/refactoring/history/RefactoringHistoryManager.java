@@ -57,8 +57,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
@@ -278,7 +276,7 @@ public final class RefactoringHistoryManager {
 	private static void readRefactoringDescriptors(final InputStream stream, final Collection collection, final int count, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 1);
-			final RefactoringDescriptor[] results= new RefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
+			final RefactoringDescriptor[] results= new RefactoringSessionReader(true).readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
 			Arrays.sort(results, new Comparator() {
 
 				public final int compare(final Object first, final Object second) {
@@ -443,7 +441,7 @@ public final class RefactoringHistoryManager {
 	 *             if an error occurs while transforming the descriptor
 	 */
 	private static Object transformDescriptor(final RefactoringDescriptor descriptor) throws CoreException {
-		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer();
+		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer(true);
 		try {
 			transformer.beginSession(null);
 			try {
@@ -529,7 +527,7 @@ public final class RefactoringHistoryManager {
 	 *             descriptor
 	 */
 	public static void writeRefactoringSession(final OutputStream stream, final RefactoringSessionDescriptor descriptor, final boolean stamps) throws CoreException {
-		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer();
+		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer(true);
 		final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 		try {
 			transformer.beginSession(descriptor.getComment());
@@ -784,103 +782,10 @@ public final class RefactoringHistoryManager {
 	private RefactoringSessionDescriptor getCachedSession(final IFileStore store, final InputStream input) throws CoreException {
 		if (store.equals(fCachedStore) && fCachedDescriptor != null)
 			return fCachedDescriptor;
-		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader().readSession(new InputSource(input));
+		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(true).readSession(new InputSource(input));
 		fCachedDescriptor= descriptor;
 		fCachedStore= store;
 		return descriptor;
-	}
-
-	/**
-	 * Moves the refactoring history of the old project to the new project.
-	 * 
-	 * @param store
-	 *            the file store to read
-	 * @param oldProject
-	 *            the old project, which does not exist anymore
-	 * @param newProject
-	 *            the new project, which already exists and contains the
-	 *            refactoring history to update
-	 * @param monitor
-	 *            the progress monitor to use
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	private void moveRefactoringHistory(final IFileStore store, final IProject oldProject, final IProject newProject, final IProgressMonitor monitor) throws CoreException {
-		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 100);
-			final IFileInfo info= store.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-			if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE) && !info.isDirectory() && info.exists()) {
-				InputStream input= null;
-				try {
-					input= store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-					final Document document= DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(input));
-					try {
-						input.close();
-						input= null;
-					} catch (IOException exception) {
-						// Do nothing
-					}
-					final NodeList list= document.getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
-					for (int index= 0; index < list.getLength(); index++) {
-						final Element element= (Element) list.item(index);
-						if (oldProject.getName().equals(element.getAttribute(IRefactoringSerializationConstants.ATTRIBUTE_PROJECT)))
-							element.setAttribute(IRefactoringSerializationConstants.ATTRIBUTE_PROJECT, newProject.getName());
-					}
-					addHistoryEntry(store, document, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-				} catch (ParserConfigurationException exception) {
-					new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-				} catch (IOException exception) {
-					new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-				} catch (SAXException exception) {
-					new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-				} finally {
-					if (input != null) {
-						try {
-							input.close();
-						} catch (IOException exception) {
-							// Do nothing
-						}
-					}
-				}
-			} else
-				monitor.worked(30);
-			final IFileStore[] stores= store.childStores(EFS.NONE, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-			final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 50);
-			try {
-				subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, stores.length);
-				for (int index= 0; index < stores.length; index++)
-					moveRefactoringHistory(stores[index], oldProject, newProject, new SubProgressMonitor(subMonitor, 1));
-			} finally {
-				subMonitor.done();
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/**
-	 * Moves the refactoring history of the old project to the new project.
-	 * 
-	 * @param oldProject
-	 *            the old project, which does not exist anymore
-	 * @param newProject
-	 *            the new project, which already exists and contains the
-	 *            refactoring history to update
-	 * @param monitor
-	 *            the progress monitor to use
-	 */
-	void moveRefactoringHistory(final IProject oldProject, final IProject newProject, final IProgressMonitor monitor) {
-		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 100);
-			try {
-				if (fHistoryStore.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists())
-					moveRefactoringHistory(fHistoryStore, oldProject, newProject, new SubProgressMonitor(monitor, 80));
-			} catch (CoreException exception) {
-				RefactoringCorePlugin.log(exception);
-			}
-		} finally {
-			monitor.done();
-		}
 	}
 
 	/**

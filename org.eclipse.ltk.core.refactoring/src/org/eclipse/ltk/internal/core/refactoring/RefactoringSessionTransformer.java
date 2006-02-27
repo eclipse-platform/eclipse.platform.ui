@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -39,11 +38,25 @@ public final class RefactoringSessionTransformer {
 	/** The current document, or <code>null</code> */
 	private Document fDocument= null;
 
+	/** Should project information be included? */
+	private final boolean fProjects;
+
 	/** The current refactoring node, or <code>null</code> */
 	private Node fRefactoring= null;
 
 	/** The current session node, or <code>null</code> */
 	private Node fSession= null;
+
+	/**
+	 * Creates a new refactoring session transformer.
+	 * 
+	 * @param projects
+	 *            <code>true</code> to include project information,
+	 *            <code>false</code> otherwise
+	 */
+	public RefactoringSessionTransformer(final boolean projects) {
+		fProjects= projects;
+	}
 
 	/**
 	 * Begins the transformation of a refactoring specified by the given
@@ -110,7 +123,7 @@ public final class RefactoringSessionTransformer {
 					attribute.setValue(comment);
 					attributes.setNamedItem(attribute);
 				}
-				if (project != null) {
+				if (project != null && fProjects) {
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_PROJECT);
 					attribute.setValue(project);
 					attributes.setNamedItem(attribute);

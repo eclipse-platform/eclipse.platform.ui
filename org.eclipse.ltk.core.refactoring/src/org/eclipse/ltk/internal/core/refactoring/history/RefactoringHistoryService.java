@@ -468,7 +468,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 */
 		private void moveHistory(final IProject oldProject, final IProject newProject, final IProgressMonitor monitor) {
 			try {
-				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 150);
+				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 60);
 				final IFileStore historyStore= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
 				final String oldName= oldProject.getName();
 				final String newName= newProject.getName();
@@ -489,13 +489,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					if (oldName.equals(descriptor.getProject()))
 						descriptor.setProject(newName);
 				}
-				final String name= newProject.getName();
-				if (hasSharedRefactoringHistory(newProject)) {
-					final URI uri= newProject.getLocationURI();
-					if (uri != null)
-						fUndoStack.getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).moveRefactoringHistory(oldProject, newProject, new SubProgressMonitor(monitor, 100));
-				} else
-					fUndoStack.getManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(name), name).moveRefactoringHistory(oldProject, newProject, new SubProgressMonitor(monitor, 100));
 			} catch (CoreException exception) {
 				RefactoringCorePlugin.log(exception);
 			} finally {
@@ -1045,7 +1038,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public boolean hasSharedRefactoringHistory(final IProject project) {
 		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project) };
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
 			return Boolean.valueOf(preference).booleanValue();
@@ -1090,7 +1083,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(stream);
 		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		final List list= new ArrayList();
-		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader().readSession(new InputSource(stream));
+		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(true).readSession(new InputSource(stream));
 		if (descriptor != null) {
 			final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 			if (flags > RefactoringDescriptor.NONE) {
