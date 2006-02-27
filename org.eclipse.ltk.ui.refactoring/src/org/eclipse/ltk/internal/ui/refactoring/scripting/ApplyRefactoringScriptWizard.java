@@ -179,7 +179,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 * Sets the location of the refactoring script.
 	 * 
 	 * @param uri
-	 *            the location of the script
+	 *            the location of the script, or <code>null</code>
 	 */
 	public void setRefactoringScript(final URI uri) {
 		fScriptURI= uri;

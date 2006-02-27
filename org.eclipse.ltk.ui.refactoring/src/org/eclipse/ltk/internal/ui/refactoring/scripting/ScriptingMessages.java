@@ -24,19 +24,9 @@ public final class ScriptingMessages extends NLS {
 
 	public static String ApplyRefactoringScriptWizard_workspace_caption;
 
-	public static String ApplyRefactoringScriptWizardPage_browse_caption;
-
-	public static String ApplyRefactoringScriptWizardPage_browse_label;
+	public static String ApplyRefactoringScriptWizardPage_empty_clipboard;
 
 	public static String ApplyRefactoringScriptWizardPage_error_cannot_read;
-
-	public static String ApplyRefactoringScriptWizardPage_filter_extension_script;
-
-	public static String ApplyRefactoringScriptWizardPage_filter_extension_wildcard;
-
-	public static String ApplyRefactoringScriptWizardPage_filter_name_script;
-
-	public static String ApplyRefactoringScriptWizardPage_filter_name_wildcard;
 
 	public static String ApplyRefactoringScriptWizardPage_invalid_format;
 
@@ -46,7 +36,9 @@ public final class ScriptingMessages extends NLS {
 
 	public static String ApplyRefactoringScriptWizardPage_location_caption;
 
-	public static String ApplyRefactoringScriptWizardPage_location_label;
+	public static String ApplyRefactoringScriptWizardPage_no_script_clipboard;
+
+	public static String ApplyRefactoringScriptWizardPage_no_text_clipboard;
 
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages"; //$NON-NLS-1$
 
@@ -67,6 +59,22 @@ public final class ScriptingMessages extends NLS {
 	public static String CreateRefactoringScriptWizardPage_browse_caption;
 
 	public static String CreateRefactoringScriptWizardPage_script_extension;
+
+	public static String ScriptLocationControl_browse_caption;
+
+	public static String ScriptLocationControl_browse_label;
+
+	public static String ScriptLocationControl_clipboard_label;
+
+	public static String ScriptLocationControl_filter_extension_script;
+
+	public static String ScriptLocationControl_filter_extension_wildcard;
+
+	public static String ScriptLocationControl_filter_name_script;
+
+	public static String ScriptLocationControl_filter_name_wildcard;
+
+	public static String ScriptLocationControl_location_label;
 
 	static {
 		// initialize resource bundle

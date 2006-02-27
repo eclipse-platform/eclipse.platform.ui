@@ -147,7 +147,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		composite.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 6, 0));
 		composite.setLayout(new GridLayout(3, false));
 		label= new Label(composite, SWT.NONE);
-		label.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_label);
+		label.setText(ScriptingMessages.ScriptLocationControl_location_label);
 		data= createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 1, 0);
 		label.setLayoutData(data);
 		fLocationField= new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -160,7 +160,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		});
 		fLocationField.setFocus();
 		final Button button= new Button(composite, SWT.PUSH);
-		button.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_browse_label);
+		button.setText(ScriptingMessages.ScriptLocationControl_browse_label);
 		button.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_FILL, 1, 0));
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(new SelectionAdapter() {
@@ -178,8 +178,8 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	private void handleBrowseButtonSelected() {
 		final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
 		file.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_browse_caption);
-		file.setFilterNames(new String[] { ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_name_script, ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_name_wildcard});
-		file.setFilterExtensions(new String[] { ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_extension_script, ScriptingMessages.ApplyRefactoringScriptWizardPage_filter_extension_wildcard});
+		file.setFilterNames(new String[] { ScriptingMessages.ScriptLocationControl_filter_name_script, ScriptingMessages.ScriptLocationControl_filter_name_wildcard});
+		file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
 		String path= file.open();
 		if (path != null) {
 			if (!path.endsWith(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
