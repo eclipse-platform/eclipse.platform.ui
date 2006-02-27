@@ -30,7 +30,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	 * 
 	 * @param viewer associated viewer
 	 */
-	public AsynchronousTreeModel(AsynchronousTreeModelViewer viewer) {
+	public AsynchronousTreeModel(AsynchronousModelViewer viewer) {
 		super(viewer);
 	}
 	

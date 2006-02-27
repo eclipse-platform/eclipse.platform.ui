@@ -33,13 +33,19 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -63,9 +69,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </p>
  * @since 3.2
  */
-public abstract class AsynchronousModelViewer extends StructuredViewer {
-
-	public static boolean DEBUG_CACHE;
+public abstract class AsynchronousModelViewer extends StructuredViewer implements Listener {
 	
 	/**
 	 * Model of elements for this viewer
@@ -108,6 +112,18 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 */
 	private IModelUpdatePolicy fUpdatePolicy;
 	
+	protected static final Rectangle NOT_VISIBLE = new Rectangle(0, 0, 0, 0);
+
+    /**
+     * Map of parent nodes for which children were needed to "set data"
+     * in the virtual widget. A parent is added to this map when we try go
+     * get children but they aren't there yet. The children are retrieved
+     * asynchronously, and later put back into the widgetry.
+     * The value is an array of ints of the indicies of the children that 
+     * were requested. 
+     */	
+	private Map fParentsPendingChildren = new HashMap();
+	
 	/**
 	 * Creates a new viewer 
 	 */
@@ -116,6 +132,14 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 		setUseHashlookup(true);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#hookControl(org.eclipse.swt.widgets.Control)
+	 */
+	protected void hookControl(Control control) {
+		super.hookControl(control);
+		control.addListener(SWT.SetData, this);
+	}
+
 	/**
 	 * Clients must call this methods when this viewer is no longer needed
 	 * so it can perform cleanup.
@@ -232,6 +256,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
 	protected synchronized void inputChanged(Object input, Object oldInput) {
+		fParentsPendingChildren.clear();
 		if (fUpdatePolicy == null) {
 			fUpdatePolicy = createUpdatePolicy();
             fUpdatePolicy.init(this);
@@ -279,7 +304,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param descriptor image descriptor or <code>null</code>
 	 * @return image or <code>null</code>
 	 */
-	Image getImage(ImageDescriptor descriptor) {
+	protected Image getImage(ImageDescriptor descriptor) {
 		if (descriptor == null) {
 			return null;
 		}
@@ -291,7 +316,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 		return image;
 	}
 
-	Font[] getFonts(FontData[] fontDatas) {
+	protected Font[] getFonts(FontData[] fontDatas) {
 		if (fontDatas == null) {
 			return new Font[0];
 		}
@@ -310,7 +335,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param fontData font data or <code>null</code>
 	 * @return font font or <code>null</code>
 	 */
-	Font getFont(FontData fontData) {
+	protected Font getFont(FontData fontData) {
 		if (fontData == null) {
 			return null;
 		}
@@ -322,7 +347,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 		return font;
 	}
 	
-	Color[] getColor(RGB[] rgb) {
+	protected Color[] getColor(RGB[] rgb) {
 		if (rgb == null) {
 			return new Color[0];
 		}
@@ -339,7 +364,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param rgb RGB or <code>null</code>
 	 * @return color or <code>null</code>
 	 */
-	Color getColor(RGB rgb) {
+	protected Color getColor(RGB rgb) {
 		if (rgb == null) {
 			return null;
 		}
@@ -717,7 +742,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param foreground foreground color of the widget or <code>null</code> if default
 	 * @param background background color of the widget or <code>null</code> if default
 	 */
-	abstract void setColors(Widget widget, RGB foreground[], RGB background[]);
+	protected abstract void setColors(Widget widget, RGB foreground[], RGB background[]);
 	
 	/**
 	 * Sets the label attributes of the given widget.
@@ -726,7 +751,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param text label text
 	 * @param image label image or <code>null</code>
 	 */
-	abstract void setLabels(Widget widget, String[] text, ImageDescriptor[] image);
+	protected abstract void setLabels(Widget widget, String[] text, ImageDescriptor[] image);
 	
 	/**
 	 * Sets the font attributes of the given widget.
@@ -734,7 +759,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
 	 * @param widget widget to update
 	 * @param font font of the widget or <code>null</code> if default.
 	 */
-	abstract void setFonts(Widget widget, FontData[] font);
+	protected abstract void setFonts(Widget widget, FontData[] font);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#updateSelection(org.eclipse.jface.viewers.ISelection)
@@ -801,7 +826,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
      * 
      * @param node
      */
-    protected void nodeChanged(ModelNode node) {
+    public void nodeChanged(ModelNode node) {
        Widget widget = findItem(node);
        if (widget != null) {
            internalRefresh(node);
@@ -831,14 +856,80 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
      * @param parent
      * @param children
      */
-    protected abstract void nodeChildrenSet(ModelNode parent, ModelNode[] children);
+    protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
+        int[] indicies = removePendingChildren(parent);
+        Widget widget = findItem(parent);
+        if (widget != null && !widget.isDisposed()) {
+            if (indicies != null) {
+                for (int i = 0; i < indicies.length; i++) {
+                    int index = indicies[i];
+                    Widget item = getChildWidget(widget, index);
+                    if (item != null) {
+                        if (index < children.length) {
+                        	ModelNode childNode = children[index];
+							mapElement(childNode, item);
+							item.setData(childNode.getElement());
+                            internalRefresh(childNode);
+                        }
+                    }
+                }
+                setItemCount(widget, children.length);
+            } else {
+                setItemCount(widget, children.length);
+            }   
+        }
+        attemptPendingUpdates();
+    }
+        
+    /**
+     * Returns the child widet at the given index for the given parent or <code>null</code>
+     * 
+     * @param parent
+     * @param index
+     * @return
+     */
+    protected abstract Widget getChildWidget(Widget parent, int index);
+    
+    /**
+     * Sets the item count for a parent widget
+     * 
+     * @param parent
+     * @param itemCount
+     */
+    protected abstract void setItemCount(Widget parent, int itemCount);
+    
+    /**
+     * Attempt pending udpates. Subclasses may override but should call super.
+     */
+    protected void attemptPendingUpdates() {
+    	attemptSelection(false);
+    }
     
     /**
      * The children of a node have changed.
      * 
      * @param parent
      */
-    protected abstract void nodeChildrenChanged(ModelNode parentNode);    
+    protected void nodeChildrenChanged(ModelNode parentNode) {
+    	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+    	if (childrenNodes != null) {
+    		nodeChildrenSet(parentNode, childrenNodes);
+    	} else {
+	       Widget widget = findItem(parentNode);
+	       if (widget != null && !widget.isDisposed()) {
+	           int childCount = parentNode.getChildCount();
+	           setItemCount(widget, childCount);
+	// this fix for bug 126817 causes bug 127307 (inconsistency between hasChildren/getChildren)           
+	//           if (childCount == 0) { 
+	//               clear(widget);
+	//               if (isVisible(widget)) {
+	//                   internalRefresh(parentNode.getElement(), widget);
+	//               }
+	//           }
+	           attemptPendingUpdates();
+	       }
+    	}
+    }
     
     /**
      * Returns the node corresponding to the given widget or <code>null</code>
@@ -867,5 +958,96 @@ public abstract class AsynchronousModelViewer extends StructuredViewer {
     protected Widget findItem(ModelNode node) {
     	return findItem((Object)node);
     }
+
+    /**
+     * Note that the child at the specified index was requested by a widget
+     * when revealed but that the data was not in the model yet. When the data
+     * becomes available, map it to its widget.
+     * 
+     * @param parent
+     * @param index
+     */
+	protected synchronized void addPendingChildIndex(ModelNode parent, int index) {
+	    int[] indicies = (int[]) fParentsPendingChildren.get(parent);
+	    if (indicies == null) {
+	        indicies = new int[]{index};
+	    } else {
+	        int[] next = new int[indicies.length + 1];
+	        System.arraycopy(indicies, 0, next, 0, indicies.length);
+	        next[indicies.length] = index;
+	        indicies = next;
+	    }
+	    fParentsPendingChildren.put(parent, indicies);    	
+	}
 	
+	/**
+	 * Removes and returns and children indicies that were pending for the given
+	 * parent node. May return <code>null</code>.
+	 * 
+	 * @param parent
+	 * @return indicies of children that data were requested for or <code>null</code>
+	 */
+	protected int[] removePendingChildren(ModelNode parent) {
+		return (int[]) fParentsPendingChildren.remove(parent);
+	}
+	
+    /* (non-Javadoc)
+     * 
+     * A virtual item has been exposed in the control, map its data.
+     * 
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(final Event event) {
+        Widget parentItem = getParentWidget(event.item);
+        // TODO: we should be able to use event.index, but it seems to be 0 (zero) all the time
+        int index = getChildIndex(parentItem, event);
+
+        ModelNode[] nodes = getModel().getNodes(parentItem.getData());
+        if (nodes != null) {
+	        for (int i = 0; i < nodes.length; i++) {
+				ModelNode node = nodes[i];
+				Widget widget = findItem(node);
+				if (widget == parentItem) {
+		        	ModelNode[] childrenNodes = node.getChildrenNodes();
+		        	if (childrenNodes != null && index < childrenNodes.length) {
+		        		ModelNode child = childrenNodes[index];
+		        		mapElement(child, event.item);
+		        		event.item.setData(child.getElement());
+		        		internalRefresh(child);
+		        	} else {
+		        		addPendingChildIndex(node, index);
+		            }
+		        	return;
+				}
+			}
+        }
+    }	
+    
+    /**
+     * Returns the parent widget for the given widget or <code>null</code>
+     * 
+     * @param widget
+     * @return parent widget or <code>null</code>
+     */
+    protected abstract Widget getParentWidget(Widget widget);
+    
+    /**
+     * Returns the index of the child that has been revealed in the given event.
+     * 
+     * @param parent
+     * @param event
+     * @return
+     * 
+     * TODO: should not need this method when "event.item" is fixed
+     */
+    protected abstract int getChildIndex(Widget parent, Event event);
+
+    /**
+     * Updates the children of the given node.
+     * 
+     * @param parent node of which to update children
+     */
+    protected void updateChildren(ModelNode parent) {
+        getModel().updateChildren(parent);
+    }       
 }

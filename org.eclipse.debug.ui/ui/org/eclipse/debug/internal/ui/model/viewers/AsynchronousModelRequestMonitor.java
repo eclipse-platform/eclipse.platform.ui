@@ -24,7 +24,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </p>
  * @since 3.2
  */
-abstract class AsynchronousModelRequestMonitor implements IAsynchronousRequestMonitor {
+public abstract class AsynchronousModelRequestMonitor implements IAsynchronousRequestMonitor {
     
 	/**
 	 * Model node the upadte is rooted at
@@ -70,7 +70,7 @@ abstract class AsynchronousModelRequestMonitor implements IAsynchronousRequestMo
      * @param node model node
      * @param model model the node is in
      */
-    AsynchronousModelRequestMonitor(ModelNode node, AsynchronousModel model) {
+    public AsynchronousModelRequestMonitor(ModelNode node, AsynchronousModel model) {
         fNode = node;
         fModel = model;
         fViewerUpdateJob.setSystem(true);

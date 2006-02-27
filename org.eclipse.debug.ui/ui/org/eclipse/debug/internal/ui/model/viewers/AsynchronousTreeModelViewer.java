@@ -12,10 +12,8 @@ package org.eclipse.debug.internal.ui.model.viewers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -66,8 +64,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class AsynchronousTreeModelViewer extends AsynchronousModelViewer implements Listener {
 
-    private static final Rectangle NOT_VISIBLE = new Rectangle(0, 0, 0, 0);
-
     /**
      * The tree
      */
@@ -80,16 +76,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      */
     private List fPendingExpansion = new ArrayList();
     
-    /**
-     * Map of parent nodes for which chidlren were needed to "set data"
-     * in the virtual tree. A parent is added to this map when we try go
-     * get children but they aren't there yet. The children are retrieved
-     * asynchronously, and later put back into the tree widgetry.
-     * The value is an array of intsfor the indicies of the children that 
-     * were requested. 
-     */
-    private Map fParentsPendingChildren = new HashMap();
-
     /**
      * Creates an asynchronous tree viewer on a newly-created tree control under
      * the given parent. The tree control is created using the SWT style bits
@@ -129,10 +115,16 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     public AsynchronousTreeModelViewer(Tree tree) {
         super();
         Assert.isTrue((tree.getStyle() & SWT.VIRTUAL) != 0);
-
         fTree = tree;
         hookControl(fTree);
+    }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.StructuredViewer#hookControl(org.eclipse.swt.widgets.Control)
+     */
+    protected void hookControl(Control control) {
+		super.hookControl(control);
+		Tree tree = (Tree)control;
         tree.addTreeListener(new TreeListener() {
             public void treeExpanded(TreeEvent e) {
                 ((TreeItem) e.item).setExpanded(true);
@@ -167,11 +159,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                     }
                 }
             }
-        });
-        tree.addListener(SWT.SetData, this);
-    }
+        });		
+	}
 
-    /**
+	/**
      * Returns the tree control for this viewer.
      * 
      * @return the tree control for this viewer
@@ -187,15 +178,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      */
     protected void updateHasChildren(ModelNode node) {
         ((AsynchronousTreeModel)getModel()).updateHasChildren(node);
-    }
-
-    /**
-     * Updates the children of the given node.
-     * 
-     * @param parent node of which to update children
-     */
-    protected void updateChildren(ModelNode parent) {
-        ((AsynchronousTreeModel)getModel()).updateChildren(parent);
     }
 
     /**
@@ -325,7 +307,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      */
     synchronized protected void inputChanged(Object input, Object oldInput) {
         fPendingExpansion.clear();
-        fParentsPendingChildren.clear();
         super.inputChanged(input, oldInput);
     }
 
@@ -372,34 +353,6 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
     
     /**
-     * The children of a node have changed.
-     * 
-     * @param parent
-     */
-    protected void nodeChildrenChanged(ModelNode parentNode) {
-    	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
-    	if (childrenNodes != null) {
-    		nodeChildrenSet(parentNode, childrenNodes);
-    	} else {
-	       Widget widget = findItem(parentNode);
-	       if (widget != null && !widget.isDisposed()) {
-	           int childCount = parentNode.getChildCount();
-	           setItemCount(widget, childCount);
-	           
-	// this fix for bug 126817 causes bug 127307 (inconsistency between hasChildren/getChildren)           
-	//           if (childCount == 0) { 
-	//               clear(widget);
-	//               if (isVisible(widget)) {
-	//                   internalRefresh(parentNode.getElement(), widget);
-	//               }
-	//           }
-	           attemptExpansion();
-	           attemptSelection(false);
-	       }
-    	}
-    }
-    
-    /**
      * Container status of a node changed
      * 
      * @param node
@@ -420,8 +373,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
                 }
             }
         }
-        attemptExpansion();
-        attemptSelection(false);
+        attemptPendingUpdates();
     }
     
     protected int getItemCount(Widget widget) {
@@ -431,7 +383,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     	return ((Tree) widget).getItemCount();
     }
 
-    private void setItemCount(Widget widget, int itemCount) {
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
+     */
+    protected void setItemCount(Widget widget, int itemCount) {
         if (widget == fTree) {
             fTree.setItemCount(itemCount);
         } else {
@@ -439,7 +394,25 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         }
     }
 
-    private TreeItem[] getItems(Widget widget) {
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
+     */
+    protected Widget getChildWidget(Widget parent, int index) {
+		if (parent instanceof Tree) {
+			Tree tree = (Tree) parent;
+			if (index < tree.getItemCount()) {
+				return tree.getItem(index);
+			}
+		} else if (parent instanceof TreeItem){
+			TreeItem item = (TreeItem) parent;
+			if (index < item.getItemCount()) {
+				return item.getItem(index);
+			}
+		}
+		return null;
+	}
+
+	private TreeItem[] getItems(Widget widget) {
         if (widget instanceof TreeItem) {
             return ((TreeItem) widget).getItems();
         } else {
@@ -447,59 +420,35 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         }
     }
 
-    public void handleEvent(final Event event) {
-    	// don't preserve selection when item is revealed: see bug 125499
-        TreeItem item = (TreeItem) event.item;
-        Widget parentItem = item.getParentItem();
-        int index = 0;
-        if (parentItem != null) {
-            index = ((TreeItem) parentItem).indexOf(item);
-        } else {
-            parentItem = fTree;
-            index = fTree.indexOf(item);
-        }
-
-        ModelNode[] nodes = getModel().getNodes(parentItem.getData());
-        if (nodes != null) {
-	        for (int i = 0; i < nodes.length; i++) {
-				ModelNode node = nodes[i];
-				Widget widget = findItem(node);
-				if (widget == parentItem) {
-		        	ModelNode[] childrenNodes = node.getChildrenNodes();
-		        	if (childrenNodes != null && index < childrenNodes.length) {
-		        		ModelNode child = childrenNodes[index];
-		        		mapElement(child, item);
-		        		item.setData(child.getElement());
-		        		internalRefresh(child);
-		        	} else {
-		        		addPendingChildIndex(node, index);
-		            }
-		        	return;
-				}
-			}
-        }
+    /**
+     * Returns the parent widget for the given widget or <code>null</code>
+     * 
+     * @param widget
+     * @return parent widget or <code>null</code>
+     */
+    protected Widget getParentWidget(Widget widget) {
+    	if (widget instanceof TreeItem) {
+    		TreeItem parentItem = ((TreeItem)widget).getParentItem();
+    		if (parentItem == null) {
+    			return getControl();
+    		}
+    		return parentItem;
+    	}
+    	return null;
     }
     
-    /**
-     * Note that the child at the specified index of the given parent node needs
-     * data mapped to its widget when the data becomes available.
-     * 
-     * @param parent
-     * @param index
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
      */
-    private synchronized void addPendingChildIndex(ModelNode parent, int index) {
-        int[] indicies = (int[]) fParentsPendingChildren.get(parent);
-	    if (indicies == null) {
-	        indicies = new int[]{index};
-        } else {
-            int[] next = new int[indicies.length + 1];
-            System.arraycopy(indicies, 0, next, 0, indicies.length);
-            next[indicies.length] = index;
-            indicies = next;
+    protected int getChildIndex(Widget parent, Event event) {
+        if (parent instanceof TreeItem) {
+            return ((TreeItem) parent).indexOf((TreeItem)event.item);
+        } else if (parent instanceof Tree) {
+            return ((Tree)parent).indexOf((TreeItem)event.item);
         }
-        fParentsPendingChildren.put(parent, indicies);    	
-    }
-
+        return -1;
+	}
+    
     /**
      * Expands the given tree item and all of its parents. Does *not* update
      * elements or retrieve children.
@@ -518,7 +467,10 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         }
     }
 
-    private void clear(Widget widget) {
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#clear(org.eclipse.swt.widgets.Widget)
+     */
+    protected void clear(Widget widget) {
     	if (widget instanceof TreeItem) {
     		TreeItem item = (TreeItem) widget;
     		item.clearAll(true);
@@ -527,7 +479,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     	}
     }
 
-    private boolean isVisible(Widget widget) {
+    protected boolean isVisible(Widget widget) {
         if (widget instanceof Tree) {
             return true;
         } else {
@@ -725,7 +677,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @see org.eclipse.debug.ui.viewers.AsynchronousViewer#setColor(org.eclipse.swt.widgets.Widget,
      *      org.eclipse.swt.graphics.RGB, org.eclipse.swt.graphics.RGB)
      */
-    void setColors(Widget widget, RGB[] foregrounds, RGB[] backgrounds) {
+    protected void setColors(Widget widget, RGB[] foregrounds, RGB[] backgrounds) {
         if (widget instanceof TreeItem) {
             TreeItem item = (TreeItem) widget;
             Color[] fgs = getColor(foregrounds);
@@ -743,7 +695,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @see org.eclipse.debug.ui.viewers.AsynchronousViewer#setFont(org.eclipse.swt.widgets.Widget,
      *      org.eclipse.swt.graphics.FontData)
      */
-    void setFonts(Widget widget, FontData[] fontData) {
+    protected void setFonts(Widget widget, FontData[] fontData) {
         if (widget instanceof TreeItem) {
             TreeItem item = (TreeItem) widget;
             Font[] fonts = getFonts(fontData);
@@ -799,7 +751,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
         ((AsynchronousTreeModel)getModel()).remove(treePath);
     }
 
-    void setLabels(Widget widget, String[] text, ImageDescriptor[] image) {
+    protected void setLabels(Widget widget, String[] text, ImageDescriptor[] image) {
         if (widget instanceof TreeItem) {
             TreeItem item = (TreeItem) widget;
             if (!item.isDisposed()) {
@@ -820,7 +772,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#nodeChanged(org.eclipse.debug.internal.ui.viewers.ModelNode)
      */
-    protected void nodeChanged(ModelNode node) {
+    public void nodeChanged(ModelNode node) {
         Widget widget = findItem(node);
         if (widget != null && !widget.isDisposed()) {
             if (widget instanceof TreeItem) {
@@ -832,55 +784,17 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
             widget.setData(node.getElement());
             mapElement(node, widget);
             internalRefresh(node);
-            attemptExpansion();
-            attemptSelection(false);
+            attemptPendingUpdates();
         }
     }
     
     /**
-     * Called when nodes are set in the model. The children may not have been retrieved
-     * yet when the tree got the call to "set data".
-     * 
-     * @param parent
-     * @param children
+     * Attempt pending udpates. Subclasses may override but should call super.
      */
-    protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
-        int[] indicies = (int[]) fParentsPendingChildren.remove(parent);
-        Widget widget = findItem(parent);
-        if (widget != null && !widget.isDisposed()) {
-            if (indicies != null) {
-                for (int i = 0; i < indicies.length; i++) {
-                    int index = indicies[i];
-                    TreeItem item = null;
-                    if (widget instanceof TreeItem) {
-                        TreeItem treeItem = (TreeItem)widget;
-                        if (index < treeItem.getItemCount()) {
-                            item = treeItem.getItem(index);
-                        }
-                    } else {
-                        Tree tree = (Tree)widget;
-                        if (index < tree.getItemCount()) {
-                            item = ((Tree)widget).getItem(index);
-                        }
-                    }
-                    if (item != null) {
-                        if (index < children.length) {
-                        	ModelNode childNode = children[index];
-							mapElement(childNode, item);
-							item.setData(childNode.getElement());
-                            internalRefresh(childNode);
-                        }
-                    }
-                }
-                setItemCount(widget, children.length);
-            }
-            else {
-                setItemCount(widget, children.length);
-            }   
-        }
-        attemptExpansion();
-        attemptSelection(false);        
-    }
+    protected void attemptPendingUpdates() {
+    	attemptExpansion();
+    	super.attemptPendingUpdates();
+    }    
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#createUpdatePolicy()

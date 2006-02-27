@@ -252,7 +252,7 @@ public abstract class AsynchronousModel {
 	 * @param element model element
 	 * @return associated nodes or <code>null</code>
 	 */
-	protected ModelNode[] getNodes(Object element) {
+	public ModelNode[] getNodes(Object element) {
 		return (ModelNode[]) fElementToNodes.get(element);
 	}
 	
@@ -261,7 +261,7 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @return the root node or <code>null</code>
 	 */
-	protected ModelNode getRootNode() {
+	public ModelNode getRootNode() {
 		return fRoot;
 	}
 	
@@ -396,7 +396,7 @@ public abstract class AsynchronousModel {
      * @param parent
      *            node of which to update children
      */
-    protected void updateChildren(ModelNode parent) {
+    public void updateChildren(ModelNode parent) {
         Object element = parent.getElement();
         IAsynchronousContentAdapter adapter = getContentAdapter(element);
         if (adapter != null) {
