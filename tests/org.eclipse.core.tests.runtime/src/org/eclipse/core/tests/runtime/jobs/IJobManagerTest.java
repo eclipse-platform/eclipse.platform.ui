@@ -1141,7 +1141,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		Job[] jobs = new Job[JOB_COUNT];
 		ISchedulingRule mutex = new IdentityRule();
 		for (int i = 0; i < JOB_COUNT; i++) {
-			jobs[i] = new TestJob("testSimpleRules", 1000000, 10);
+			jobs[i] = new TestJob("testMutexRule", 1000000, 10);
 			jobs[i].setRule(mutex);
 			jobs[i].schedule();
 		}
