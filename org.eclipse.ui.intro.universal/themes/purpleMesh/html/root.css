@@ -144,6 +144,12 @@ body {
 #page-links a#whatsnew img { background-image : url(../graphics/icons/etool/whatsnew72.gif); }
 #page-links a:hover#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew72.gif); }
 
+#page-links a#firststeps img { background-image : url(../graphics/icons/etool/firsteps72.gif); }
+#page-links a:hover#firststeps img { background-image : url(../graphics/icons/ctool/firsteps72.gif); }
+
+#page-links a#webresources img { background-image : url(../graphics/icons/etool/webrsrc72.gif); }
+#page-links a:hover#webresources img { background-image : url(../graphics/icons/ctool/webrsrc72.gif); }
+
 /*
  * Set up the action links
  */

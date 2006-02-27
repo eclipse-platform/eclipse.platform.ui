@@ -19,6 +19,15 @@
 }
 
 /*
+ * We will not use the general-purpose group1 used in
+ * other pages for a curve image.
+ */
+
+#extra-group1 {
+	display : none;
+}
+
+/*
  * Set up the content for the standby page.
  */
 body {
@@ -124,6 +133,16 @@ a#whatsnew img { background-image : url(../graphics/icons/etool/whatsnew48.gif);
 a#whatsnew:hover img,
 a#whatsnew:focus img,
 a#whatsnew:active img { background-image : url(../graphics/icons/ctool/whatsnew48.gif); }
+
+a#firststeps img { background-image : url(../graphics/icons/etool/firsteps48.gif); }
+a#firststeps:hover img,
+a#firststeps:focus img,
+a#firststeps:active img { background-image : url(../graphics/icons/ctool/firsteps48.gif); }
+
+a#webresources img { background-image : url(../graphics/icons/etool/webrsrc48.gif); }
+a#webresources:hover img,
+a#webresources:focus img,
+a#webresources:active img { background-image : url(../graphics/icons/ctool/webrsrc48.gif); }
 
 a#workbench img { background-image : url(../graphics/icons/etool/wb48.gif); }
 a#workbench:hover img,

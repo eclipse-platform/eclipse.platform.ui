@@ -1,0 +1,8 @@
+body {
+	background-image : url(../graphics/contentpage/webrsrc_wtr.jpg);
+}
+
+/* show the "selected" image for this page */
+#navigation-links a#webresources img, #navigation-links a#webresources:hover img { 
+	background-image : url(../graphics/icons/ctool/webrsrc48sel.gif); 
+}

@@ -233,6 +233,16 @@ body, .page{
 #navigation-links a#whatsnew:focus img,
 #navigation-links a#whatsnew:active img { background-image : url(../graphics/icons/ctool/whatsnew48.gif); }
 
+#navigation-links a#firststeps img { background-image : url(../graphics/icons/etool/firsteps48.gif); }
+#navigation-links a#firststeps:hover img,
+#navigation-links a#firststeps:focus img,
+#navigation-links a#firststeps:active img { background-image : url(../graphics/icons/ctool/firsteps48.gif); }
+
+#navigation-links a#webresources img { background-image : url(../graphics/icons/etool/webrsrc48.gif); }
+#navigation-links a#webresources:hover img,
+#navigation-links a#webresources:focus img,
+#navigation-links a#webresources:active img { background-image : url(../graphics/icons/ctool/webrsrc48.gif); }
+
 #navigation-links a#workbench { position : absolute;  right : 0px; top : -35px; text-align : right;}
 #navigation-links a#workbench .text { display : none; }
 #navigation-links a#workbench img { background-image : url(../graphics/icons/etool/wb48.gif); width : 53px; height : 53px;}
@@ -366,6 +376,8 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
  */
  
 .content-group {
+	margin-left: 10px;
+	margin-right: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
 	float : none;
@@ -385,12 +397,8 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 .content-group > .content-link {
 	float : left;
-	/*
-	height : 150px;
-	*/
 	vertical-align : middle;
 }
-
 
 .content-link img  {
 	height : 57px;
@@ -425,7 +433,6 @@ p #group-description {
 }
 
 .content-link:hover { border-right : 0px; }
-
 
 iframe {
 	position:relative;

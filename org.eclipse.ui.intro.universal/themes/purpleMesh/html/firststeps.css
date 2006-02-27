@@ -1,0 +1,8 @@
+body {
+	background-image : url(../graphics/contentpage/firsteps_wtr.jpg);
+}
+
+/* show the "selected" image for this page */
+#navigation-links a#firststeps img, #navigation-links a#firststeps:hover img { 
+	background-image : url(../graphics/icons/ctool/firsteps48sel.gif); 
+}
