@@ -92,7 +92,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
         }
 
         setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
-        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importzip_wiz.gif"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importzip_wiz.png"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

@@ -303,7 +303,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
      * (non-Javadoc) Method declared on BasicNewResourceWizard.
      */
     protected void initializeDefaultPageImageDescriptor() {
-		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
+		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.png");//$NON-NLS-1$
         setDefaultPageImageDescriptor(desc);
     }
 

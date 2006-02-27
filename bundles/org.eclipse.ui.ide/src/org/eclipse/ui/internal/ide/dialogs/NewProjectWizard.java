@@ -161,7 +161,7 @@ public class NewProjectWizard extends MultiStepWizard implements
      * Sets the image banner for the wizard
      */
     protected void initializeDefaultPageImageDescriptor() {
-        ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
+        ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.png");//$NON-NLS-1$
         setDefaultPageImageDescriptor(desc);
        
     }   
