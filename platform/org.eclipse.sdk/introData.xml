@@ -7,7 +7,7 @@
       <group path="page-content/bottom-right" default="true">
       </group>
       <group path="page-content/top-left">
-         <extension id="org.eclipse.jdt" importance="high"/>
+         <extension id="org.eclipse.jdt" importance="low"/>
       </group>
       <group path="page-content/top-right">
          <extension id="org.eclipse.pde" importance="low"/>
@@ -19,11 +19,11 @@
       <group path="page-content/bottom-right" default="true">
       </group>
       <group path="page-content/top-left">
-         <extension id="org.eclipse.pde.workbench" importance="high"/>
+         <extension id="org.eclipse.pde.workbench" importance="low"/>
       </group>
       <group path="page-content/top-right">
-         <extension id="org.eclipse.jdt" importance="callout"/>
-         <extension id="org.eclipse.pde.swt" importance="callout"/>
+         <extension id="org.eclipse.jdt" importance="low"/>
+         <extension id="org.eclipse.pde.swt" importance="low"/>
       </group>
    </page>
    <page id="whatsnew">
@@ -48,7 +48,7 @@
       <group path="page-content/bottom-right" default="true">
       </group>
       <group path="page-content/top-left">
-         <extension id="org.eclipse.ui.workbench" importance="medium"/>
+         <extension id="org.eclipse.ui.workbench" importance="low"/>
       </group>
       <group path="page-content/top-right">
          <extension id="org.eclipse.jdt" importance="low"/>
