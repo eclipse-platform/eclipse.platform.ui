@@ -610,14 +610,14 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		int i = 0;
 		for (; i < 100; i++) {
+			int currentStatus = status[0];
 			Job[] result = manager.find(first);
 
-			if (status[0] == TestBarrier.STATUS_DONE)
+			//if the thread is complete then all jobs must be done
+			if (currentStatus == TestBarrier.STATUS_DONE) {
+				assertTrue("2." + i, result.length == 0);
 				break;
-
-			//the thread is either blocked, or it is done
-			assertTrue("2." + i, ((result.length > 0) || (status[0] == TestBarrier.STATUS_RUNNING)));
-
+			}
 			sleep(100);
 		}
 		assertTrue("2.0", i < 100);
