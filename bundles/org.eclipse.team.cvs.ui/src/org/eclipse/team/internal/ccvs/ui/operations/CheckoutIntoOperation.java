@@ -423,8 +423,12 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getSchedulingRule()
 	 */
 	protected ISchedulingRule getSchedulingRule() {
-		// Use the project of the target folder as the scheduling rule
-		return getLocalFolder().getIResource().getProject();
+		//use the modfiy rule for the time being
+		//TODO: Just lock the project not the entire workspace (so can't use modifyRule)
+		//since the project already exists 
+		 IProject tempProject = getLocalFolder().getIResource().getProject();
+		 IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+		 return ruleFactory.modifyRule(tempProject);
 	}
 
 }
