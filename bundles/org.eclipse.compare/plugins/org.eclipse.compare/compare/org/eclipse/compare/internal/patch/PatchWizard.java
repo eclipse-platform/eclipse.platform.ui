@@ -41,7 +41,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	 */
 	/* package */PatchWizard(ISelection selection) {
 
-		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.gif")); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.png")); //$NON-NLS-1$
 		setWindowTitle(PatchMessages.PatchWizard_title);
 
 		fPatcher= new WorkspacePatcher();

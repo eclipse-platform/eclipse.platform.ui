@@ -518,7 +518,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		if (fgComparePlugin == null)
 			return null;
 		IPath path= Utilities.getIconPath(null).append(relativePath);		
-		URL url= Platform.find(fgComparePlugin.getBundle(), path);
+		URL url= FileLocator.find(fgComparePlugin.getBundle(), path, null);
 		if (url == null)
 			return null;
 		return ImageDescriptor.createFromURL(url);
