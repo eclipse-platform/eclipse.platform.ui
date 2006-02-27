@@ -154,7 +154,7 @@ public class ErrorNotificationManager {
                 && ((Workbench) workbench).isClosing()) {
 			return Status.CANCEL_STATUS;
 		}
-        dialog = new JobErrorDialog(ProgressManagerUtil.getNonModalShell(), title, msg, errorInfo, IStatus.OK
+        dialog = new JobErrorDialog(ProgressManagerUtil.getDefaultParent(), title, msg, errorInfo, IStatus.OK
                 | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
         
         dialog.open();
