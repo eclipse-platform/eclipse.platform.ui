@@ -65,6 +65,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -1120,8 +1121,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			
 			fSashForm.setWeights(new int[] {w1, w2});
 		}
-		super.initializeBounds();
 		resize();
+		super.initializeBounds();
 	}
 
 	/**
