@@ -53,7 +53,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	private static final String PAGE_NAME= "ApplyRefactoringScriptWizardPage"; //$NON-NLS-1$
 
 	/** The script location control */
-	private ScriptLocationControl fScriptControl= null;
+	private RefactoringScriptLocationControl fScriptControl= null;
 
 	/** The associated wizard */
 	private final ApplyRefactoringScriptWizard fWizard;
@@ -80,22 +80,8 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		createLocationGroup(composite);
-		setControl(composite);
-		Dialog.applyDialogFont(composite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
-	}
-
-	/**
-	 * Creates the location group.
-	 * 
-	 * @param parent
-	 *            the parent control
-	 */
-	private void createLocationGroup(final Composite parent) {
-		Assert.isNotNull(parent);
-		new Label(parent, SWT.NONE).setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
-		fScriptControl= new ScriptLocationControl(parent) {
+		new Label(composite, SWT.NONE).setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
+		fScriptControl= new RefactoringScriptLocationControl(composite) {
 
 			protected final void handleClipboardScriptChanged() {
 				super.handleClipboardScriptChanged();
@@ -114,34 +100,43 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			}
 		};
 		setPageComplete(false);
+		setControl(composite);
+		Dialog.applyDialogFont(composite);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
 	}
 
 	/**
 	 * Handles the clipboard changed event.
 	 */
 	private void handleClipboardChanged() {
-		final Clipboard clipboard= new Clipboard(fScriptControl.getDisplay());
-		final Object contents= clipboard.getContents(TextTransfer.getInstance());
-		if (contents == null) {
-			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_empty_clipboard);
-			setPageComplete(false);
-			return;
-		}
-		if (contents instanceof String) {
-			final String script= (String) contents;
-			try {
-				final ByteArrayInputStream stream= new ByteArrayInputStream(script.getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
-				fWizard.setRefactoringHistory(RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
-			} catch (UnsupportedEncodingException exception) {
-				// Does not happen
-			} catch (CoreException exception) {
-				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_no_script_clipboard);
+		Clipboard clipboard= null;
+		try {
+			clipboard= new Clipboard(fScriptControl.getDisplay());
+			final Object contents= clipboard.getContents(TextTransfer.getInstance());
+			if (contents == null) {
+				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_empty_clipboard);
 				setPageComplete(false);
 				return;
 			}
-		} else {
-			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_no_text_clipboard);
-			setPageComplete(false);
+			if (contents instanceof String) {
+				final String script= (String) contents;
+				try {
+					final ByteArrayInputStream stream= new ByteArrayInputStream(script.getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
+					fWizard.setRefactoringHistory(RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
+				} catch (UnsupportedEncodingException exception) {
+					// Does not happen
+				} catch (CoreException exception) {
+					setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_no_script_clipboard);
+					setPageComplete(false);
+					return;
+				}
+			} else {
+				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_no_text_clipboard);
+				setPageComplete(false);
+			}
+		} finally {
+			if (clipboard != null)
+				clipboard.dispose();
 		}
 	}
 
@@ -149,7 +144,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	 * Handles the location changed event.
 	 */
 	private void handleLocationChanged() {
-		final URI uri= fScriptControl.getScriptLocation();
+		final URI uri= fScriptControl.getRefactoringScript();
 		if (uri == null) {
 			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_location);
 			setPageComplete(false);
@@ -194,7 +189,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			if (uri != null) {
 				fWizard.setRefactoringScript(null);
 				try {
-					fScriptControl.setScriptLocation(uri);
+					fScriptControl.setRefactoringScript(uri);
 					handleLocationChanged();
 				} catch (IllegalArgumentException exception) {
 					RefactoringUIPlugin.log(exception);

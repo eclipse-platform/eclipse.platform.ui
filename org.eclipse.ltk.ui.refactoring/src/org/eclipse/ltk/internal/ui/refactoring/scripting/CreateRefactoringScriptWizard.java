@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -35,10 +37,16 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -66,6 +74,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 
 	/** The refactoring script location, or <code>null</code> */
 	private URI fScriptLocation= null;
+
+	/** Should the wizard put the refactoring script to the clipboard? */
+	private boolean fUseClipboard= false;
 
 	/** The create refactoring script wizard page */
 	private final CreateRefactoringScriptWizardPage fWizardPage;
@@ -107,16 +118,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public boolean canFinish() {
-		return fScriptLocation != null && fRefactoringDescriptors.length > 0;
-	}
-
-	/**
-	 * Returns the selected refactoring descriptors.
-	 * 
-	 * @return the selected refactoring descriptors
-	 */
-	public RefactoringDescriptorProxy[] getRefactoringDescriptors() {
-		return fRefactoringDescriptors;
+		return (fUseClipboard || fScriptLocation != null) && fRefactoringDescriptors.length > 0;
 	}
 
 	/**
@@ -129,34 +131,12 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	}
 
 	/**
-	 * Returns the refactoring script location.
-	 * 
-	 * @return the refactoring script location
-	 */
-	public URI getScriptLocation() {
-		return fScriptLocation;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean performFinish() {
-		if (fNewSettings) {
-			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
-			IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
-			section= settings.addNewSection(DIALOG_SETTINGS_KEY);
-			setDialogSettings(section);
-		}
-		return performScriptExport();
-	}
-
-	/**
 	 * Performs the actual refactoring script export.
 	 * 
 	 * @return <code>true</code> if the wizard can be finished,
 	 *         <code>false</code> otherwise
 	 */
-	private boolean performScriptExport() {
+	private boolean performExport() {
 		RefactoringDescriptorProxy[] writable= fRefactoringDescriptors;
 		if (fScriptLocation != null) {
 			final File file= new File(fScriptLocation);
@@ -233,8 +213,63 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					}
 				}
 			}
+		} else if (fUseClipboard) {
+			try {
+				final ByteArrayOutputStream stream= new ByteArrayOutputStream(2048);
+				Arrays.sort(writable, new Comparator() {
+
+					public final int compare(final Object first, final Object second) {
+						final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
+						final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
+						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
+					}
+				});
+				RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());
+				try {
+					final String string= stream.toString(IRefactoringSerializationConstants.OUTPUT_ENCODING);
+					Clipboard clipboard= null;
+					try {
+						clipboard= new Clipboard(getShell().getDisplay());
+						try {
+							clipboard.setContents(new Object[] { string}, new Transfer[] { TextTransfer.getInstance()});
+							return true;
+						} catch (SWTError error) {
+							MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, error.getLocalizedMessage());
+							return false;
+						}
+					} finally {
+						if (clipboard != null)
+							clipboard.dispose();
+					}
+				} catch (UnsupportedEncodingException exception) {
+					// Does not happen
+					return false;
+				}
+			} catch (CoreException exception) {
+				final Throwable throwable= exception.getStatus().getException();
+				if (throwable instanceof IOException) {
+					MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
+					return true;
+				} else {
+					RefactoringUIPlugin.log(exception);
+					return false;
+				}
+			}
 		}
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean performFinish() {
+		if (fNewSettings) {
+			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
+			section= settings.addNewSection(DIALOG_SETTINGS_KEY);
+			setDialogSettings(section);
+		}
+		return performExport();
 	}
 
 	/**
@@ -253,10 +288,23 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	 * Sets the refactoring script location.
 	 * 
 	 * @param location
-	 *            the script location
+	 *            the refactoring script location, or <code>null</code>
 	 */
-	public void setScriptLocation(final URI location) {
+	public void setRefactoringScript(final URI location) {
 		fScriptLocation= location;
+		getContainer().updateButtons();
+	}
+
+	/**
+	 * Determines whether the wizard should save the refactoring script to the
+	 * clipboard.
+	 * 
+	 * @param clipboard
+	 *            <code>true</code> to save the script to clipboard,
+	 *            <code>false</code> otherwise
+	 */
+	public void setUseClipboard(final boolean clipboard) {
+		fUseClipboard= clipboard;
 		getContainer().updateButtons();
 	}
 }

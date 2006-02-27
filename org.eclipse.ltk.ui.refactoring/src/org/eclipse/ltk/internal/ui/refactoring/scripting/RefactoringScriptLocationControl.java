@@ -34,33 +34,30 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @since 3.2
  */
-public class ScriptLocationControl extends Composite {
-
-	/** The clipboard script, or <code>null</code> */
-	private String fCliboardScript= null;
+public class RefactoringScriptLocationControl extends Composite {
 
 	/** The external browse button */
-	private Button fExternalBrowseButton= null;
+	protected Button fExternalBrowseButton= null;
 
 	/** The external location text field */
-	private Text fExternalLocationField= null;
+	protected Text fExternalLocationField= null;
 
 	/** The from clipboard button */
-	private Button fFromClipboardButton= null;
+	protected Button fFromClipboardButton= null;
 
 	/** The from external location button */
-	private Button fFromExternalLocationButton= null;
+	protected Button fFromExternalLocationButton= null;
 
 	/** The script location, or <code>null</code> */
-	private URI fScriptLocation= null;
+	protected URI fScriptLocation= null;
 
 	/**
-	 * Creates a new script location control.
+	 * Creates a new refactoring script location control.
 	 * 
 	 * @param parent
 	 *            the parent control
 	 */
-	public ScriptLocationControl(final Composite parent) {
+	public RefactoringScriptLocationControl(final Composite parent) {
 		super(parent, SWT.NONE);
 		setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 6, 0));
 		setLayout(new GridLayout(3, false));
@@ -118,22 +115,11 @@ public class ScriptLocationControl extends Composite {
 	 *            the indent
 	 * @return the grid data
 	 */
-	private GridData createGridData(final int flag, final int hspan, final int indent) {
+	protected GridData createGridData(final int flag, final int hspan, final int indent) {
 		final GridData data= new GridData(flag);
 		data.horizontalIndent= indent;
 		data.horizontalSpan= hspan;
 		return data;
-	}
-
-	/**
-	 * Returns the refactoring script from the clipboard.
-	 * 
-	 * @return the refactoring script from the clipboard, or <code>null</code>
-	 *         if the clipboard is empty or does not contain a refactoring
-	 *         script
-	 */
-	public String getClipboardScript() {
-		return fCliboardScript;
 	}
 
 	/**
@@ -143,14 +129,14 @@ public class ScriptLocationControl extends Composite {
 	 *         refactoring script has been chosen, or the refactoring script
 	 *         should be taken from the clipboard
 	 */
-	public URI getScriptLocation() {
+	public URI getRefactoringScript() {
 		return fScriptLocation;
 	}
 
 	/**
 	 * Handles the browse external location event.
 	 */
-	private void handleBrowseExternalLocation() {
+	protected void handleBrowseExternalLocation() {
 		final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
 		file.setText(ScriptingMessages.ScriptLocationControl_browse_caption);
 		file.setFilterNames(new String[] { ScriptingMessages.ScriptLocationControl_filter_name_script, ScriptingMessages.ScriptLocationControl_filter_name_wildcard});
@@ -186,7 +172,7 @@ public class ScriptLocationControl extends Composite {
 	 *            refactoring script has been chosen, or the refactoring script
 	 *            should be taken from the clipboard
 	 */
-	public void setScriptLocation(final URI uri) {
+	public void setRefactoringScript(final URI uri) {
 		if (fExternalLocationField != null)
 			fExternalLocationField.setEnabled(true);
 		if (fExternalBrowseButton != null)

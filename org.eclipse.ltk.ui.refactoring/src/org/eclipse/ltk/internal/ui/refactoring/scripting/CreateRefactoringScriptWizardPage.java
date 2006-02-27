@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
-import java.io.File;
+import java.net.URI;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -18,20 +18,13 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.history.SelectRefactoringHistoryControl;
-import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -56,8 +49,8 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	/** The refactoring history control */
 	private SelectRefactoringHistoryControl fHistoryControl= null;
 
-	/** The location text field */
-	private Text fLocationField= null;
+	/** The script location control */
+	private RefactoringScriptLocationControl fScriptControl= null;
 
 	/** The associated wizard */
 	private final CreateRefactoringScriptWizard fWizard;
@@ -106,103 +99,64 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors());
 			}
 		});
-		createLocationGroup(composite);
+		final Label label= new Label(composite, SWT.NONE);
+		label.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
+		final GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_END);
+		data.horizontalIndent= 0;
+		data.horizontalSpan= 1;
+		data.verticalIndent= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		label.setLayoutData(data);
+		fScriptControl= new RefactoringScriptLocationControl(composite) {
+
+			protected void handleBrowseExternalLocation() {
+				final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
+				file.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_browse_caption);
+				file.setFilterNames(new String[] { ScriptingMessages.ScriptLocationControl_filter_name_script, ScriptingMessages.ScriptLocationControl_filter_name_wildcard});
+				file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
+				String path= file.open();
+				if (path != null) {
+					if (!path.endsWith(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
+						path= path + ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension;
+					fExternalLocationField.setText(path);
+				}
+			}
+
+			protected final void handleClipboardScriptChanged() {
+				super.handleClipboardScriptChanged();
+				fWizard.setRefactoringScript(null);
+				fWizard.setUseClipboard(fFromClipboardButton.getSelection());
+				setErrorMessage(null);
+				setPageComplete(true);
+			}
+
+			protected final void handleExternalLocationChanged() {
+				super.handleExternalLocationChanged();
+				fWizard.setRefactoringScript(null);
+				fWizard.setUseClipboard(false);
+				setErrorMessage(null);
+				setPageComplete(true);
+				handleLocationChanged();
+			}
+		};
+		setPageComplete(false);
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_CREATE_SCRIPT_PAGE);
 	}
 
 	/**
-	 * Creates a new grid data.
-	 * 
-	 * @param flag
-	 *            the flags to use
-	 * @param hspan
-	 *            the horizontal span
-	 * @param indent
-	 *            the indent
-	 * @return the grid data
-	 */
-	private GridData createGridData(final int flag, final int hspan, final int indent) {
-		final GridData data= new GridData(flag);
-		data.horizontalIndent= indent;
-		data.horizontalSpan= hspan;
-		return data;
-	}
-
-	/**
-	 * Creates the location group.
-	 * 
-	 * @param parent
-	 *            the parent control
-	 */
-	private void createLocationGroup(final Composite parent) {
-		Assert.isNotNull(parent);
-		Label label= new Label(parent, SWT.NONE);
-		label.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
-		GridData data= createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_END, 1, 0);
-		data.verticalIndent= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		label.setLayoutData(data);
-		final Composite composite= new Composite(parent, SWT.NONE);
-		composite.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 6, 0));
-		composite.setLayout(new GridLayout(3, false));
-		label= new Label(composite, SWT.NONE);
-		label.setText(ScriptingMessages.ScriptLocationControl_location_label);
-		data= createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 1, 0);
-		label.setLayoutData(data);
-		fLocationField= new Text(composite, SWT.SINGLE | SWT.BORDER);
-		fLocationField.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 1, 0));
-		fLocationField.addModifyListener(new ModifyListener() {
-
-			public final void modifyText(final ModifyEvent event) {
-				handleLocationChanged();
-			}
-		});
-		fLocationField.setFocus();
-		final Button button= new Button(composite, SWT.PUSH);
-		button.setText(ScriptingMessages.ScriptLocationControl_browse_label);
-		button.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_FILL, 1, 0));
-		SWTUtil.setButtonDimensionHint(button);
-		button.addSelectionListener(new SelectionAdapter() {
-
-			public final void widgetSelected(final SelectionEvent event) {
-				handleBrowseButtonSelected();
-			}
-		});
-		setPageComplete(false);
-	}
-
-	/**
-	 * Handles the browse button selected event.
-	 */
-	private void handleBrowseButtonSelected() {
-		final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
-		file.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_browse_caption);
-		file.setFilterNames(new String[] { ScriptingMessages.ScriptLocationControl_filter_name_script, ScriptingMessages.ScriptLocationControl_filter_name_wildcard});
-		file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
-		String path= file.open();
-		if (path != null) {
-			if (!path.endsWith(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
-				path= path + ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension;
-			fLocationField.setText(path);
-		}
-	}
-
-	/**
 	 * Handles the location changed event.
 	 */
 	private void handleLocationChanged() {
-		if (fLocationField != null) {
-			final String path= fLocationField.getText();
-			if ("".equals(path)) { //$NON-NLS-1$
-				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_location);
-				setPageComplete(false);
-				fWizard.setScriptLocation(null);
-			} else {
-				fWizard.setScriptLocation(new File(path).toURI());
-				setErrorMessage(null);
-				setPageComplete(true);
-			}
+		final URI uri= fScriptControl.getRefactoringScript();
+		if (uri == null) {
+			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_location);
+			setPageComplete(false);
+			fWizard.setRefactoringScript(null);
+		} else {
+			fWizard.setRefactoringScript(uri);
+			setErrorMessage(null);
+			setPageComplete(true);
 		}
 	}
 }
