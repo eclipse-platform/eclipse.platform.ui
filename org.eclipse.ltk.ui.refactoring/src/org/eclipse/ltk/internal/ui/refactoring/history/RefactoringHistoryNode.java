@@ -59,7 +59,13 @@ public abstract class RefactoringHistoryNode {
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) object;
-			return getParent() == node.getParent() && getKind() == node.getKind();
+			final RefactoringHistoryNode parent= getParent();
+			if (parent != null) {
+				if (!parent.equals(node.getParent()))
+					return false;
+			} else if (node.getParent() != null)
+				return false;
+			return getKind() == node.getKind();
 		}
 		return false;
 	}
@@ -82,6 +88,6 @@ public abstract class RefactoringHistoryNode {
 	 * {@inheritDoc}
 	 */
 	public int hashCode() {
-		return 17 * getKind() + 31 * (getParent() != null ? getParent().hashCode() : 1);
+		return (getParent() != null ? getParent().hashCode() : 0) + 31 * getKind();
 	}
 }
