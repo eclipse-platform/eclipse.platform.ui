@@ -1115,13 +1115,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				w2 = settings.getInt(DIALOG_SASH_WEIGHTS_2);
 			}
 			catch(NumberFormatException nfe) {
-				w1 = fSelectionArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-				w2 = fEditArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				w1 = DEFAULT_SASH_WEIGHTS[0];
+				w2 = DEFAULT_SASH_WEIGHTS[1];
 			}
-			
 			fSashForm.setWeights(new int[] {w1, w2});
 		}
-		super.initializeBounds();
 		resize();
 	}
 
@@ -1222,16 +1220,22 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * resize the dialog to show all relevant content
 	 */
 	protected void resize() {
-		Point contentSize = fTabViewer.getTabFolder().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		if (getTabGroup() != null) {
+		if(getTabGroup() != null) {
+			Point contentSize = fTabViewer.getTabFolder().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int maxAllowedWidth = (int) (getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT);
 			int otherWidth = fSashForm.SASH_WIDTH + fSelectionArea.getBounds().width;
 			int totalWidth = contentSize.x + otherWidth;
 			if (totalWidth > maxAllowedWidth) {
 				contentSize.x = maxAllowedWidth - otherWidth;
 			}
-			int maxAllowedHeight =(int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
-			contentSize.y = Math.min(contentSize.y, maxAllowedHeight);	
+			if(contentSize.x < DEFAULT_INITIAL_DIALOG_SIZE.x) {
+				contentSize.x = DEFAULT_INITIAL_DIALOG_SIZE.x;
+			}
+			int maxAllowedHeight = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
+			contentSize.y = Math.min(contentSize.y, maxAllowedHeight);
+			if(contentSize.y < DEFAULT_INITIAL_DIALOG_SIZE.y) {
+				contentSize.y = DEFAULT_INITIAL_DIALOG_SIZE.y;
+			}
 			fEditArea.layout(true);
 			Rectangle rect = fTabViewer.getTabFolder().getClientArea();
 			Point containerSize = new Point(rect.width, rect.height);
@@ -1250,20 +1254,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				}
 				Point shellSize = getShell().getSize();
 				//padding for margins, etc.
-				int offset = fTabViewer.getTabGroup().getTabs().length*3;
+				int offset = 10;
+				if(getTabGroup() != null) {
+					offset = fTabViewer.getTabGroup().getTabs().length*3;
+				}
 				setShellSize(shellSize.x + Math.max(0, hdiff) + offset, shellSize.y + Math.max(0, vdiff));
 				if (newSashWeights != null) {
 					fSashForm.setWeights(newSashWeights);
 				}
 			} 
-		}
-		else {
-			if(!(contentSize.x < getShell().getBounds().width)) {
-				if(contentSize.x < DEFAULT_INITIAL_DIALOG_SIZE.x || contentSize.y > DEFAULT_INITIAL_DIALOG_SIZE.y) {
-					setShellSize(DEFAULT_INITIAL_DIALOG_SIZE.x, DEFAULT_INITIAL_DIALOG_SIZE.y);
-					fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
-				}
-			}
 		}
 	}
 	
