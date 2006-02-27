@@ -155,7 +155,8 @@ public class CreateLinkedResourceGroup {
                 browseButton.setEnabled(createLink);
                 variablesButton.setEnabled(createLink);
                 linkTargetField.setEnabled(createLink);
-                fileSystemSelectionArea.setEnabled(createLink);
+                if (fileSystemSelectionArea != null)
+                	fileSystemSelectionArea.setEnabled(createLink);
                 
                 if (listener != null) {
 					listener.handleEvent(new Event());
