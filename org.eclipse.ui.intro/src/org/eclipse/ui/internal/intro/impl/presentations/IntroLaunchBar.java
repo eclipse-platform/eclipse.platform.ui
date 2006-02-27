@@ -8,6 +8,8 @@
  **************************************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
+import java.util.Map;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -43,6 +45,8 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarShortcut;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.intro.IIntroPart;
@@ -76,6 +80,8 @@ public class IntroLaunchBar implements IWindowTrim {
 	protected boolean simple;
 
 	private String presentationId;
+	
+	private IntroTheme theme;
 
 	static final int[] TOP_LEFT_CORNER = new int[] { 0, 6, 1, 5, 1, 4, 4, 1, 5, 1, 6, 0 };
 
@@ -147,11 +153,12 @@ public class IntroLaunchBar implements IWindowTrim {
 		}
 	}
 
-	public IntroLaunchBar(int orientation, String lastPageId, IntroLaunchBarElement element) {
+	public IntroLaunchBar(int orientation, String lastPageId, IntroLaunchBarElement element, IntroTheme theme) {
 		this.orientation = orientation;
 		this.location = element.getLocation();
 		this.lastPageId = lastPageId;
 		this.element = element;
+		this.theme = theme;
 
 		simple = true;
 		presentationId = PlatformUI.getPreferenceStore().getString(
@@ -357,15 +364,28 @@ public class IntroLaunchBar implements IWindowTrim {
 
 	private void computeColors(Display display) {
 		if (element.getBackground() != null) {
-			RGB r = SharedStyleManager.parseRGB(element.getBackground());
+			RGB r = SharedStyleManager.parseRGB(resolveColor(element.getBackground()));
 			if (r != null)
 				bg = new Color(display, r);
 		}
 		if (element.getForeground() != null) {
-			RGB r = SharedStyleManager.parseRGB(element.getForeground());
+			RGB r = SharedStyleManager.parseRGB(resolveColor(element.getForeground()));
 			if (r != null)
 				fg = new Color(display, r);
 		}
+	}
+	
+	private String resolveColor(String value) {
+		if (value.indexOf('$')== -1)
+			return value;
+		if (value.charAt(0)=='$' && value.charAt(value.length()-1)=='$' && theme!=null) {
+			Map properties = theme.getProperties();
+			if (properties!=null) {
+				String key = value.substring(1, value.length()-1);
+				return (String)properties.get(key);
+			}
+		}
+		return value;
 	}
 
 	public Control getControl() {

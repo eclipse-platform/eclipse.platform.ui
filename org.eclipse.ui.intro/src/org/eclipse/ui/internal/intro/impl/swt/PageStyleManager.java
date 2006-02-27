@@ -376,6 +376,14 @@ public class PageStyleManager extends SharedStyleManager {
         String key = buff.append(".font.fg").toString(); //$NON-NLS-1$
         return getColor(toolkit, key);
     }
+    
+    public Color getBackgrond(FormToolkit toolkit, AbstractBaseIntroElement element) {
+        StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
+        if (buff == null)
+            return null;
+        String key = buff.append(".bg").toString(); //$NON-NLS-1$
+        return getColor(toolkit, key);
+    }
 
     public boolean isBold(IntroText text) {
         String value = null;

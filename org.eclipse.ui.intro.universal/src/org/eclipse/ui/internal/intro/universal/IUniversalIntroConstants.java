@@ -98,4 +98,13 @@ public interface IUniversalIntroConstants {
 	//Page table properties
 	String P_IMPORTANCE = "importance"; //$NON-NLS-1$
 	String P_NAME = "name"; //$NON-NLS-1$
+	
+	//Theme property constants
+	String LAUNCHBAR_OVERVIEW_ICON = "launchbarOverviewIcon"; //$NON-NLS-1$
+	String LAUNCHBAR_FIRSTSTEPS_ICON = "launchbarFirststepsIcon"; //$NON-NLS-1$
+	String LAUNCHBAR_TUTORIALS_ICON = "launchbarTutorialsIcon"; //$NON-NLS-1$
+	String LAUNCHBAR_SAMPLES_ICON = "launchbarSamplesIcon"; //$NON-NLS-1$
+	String LAUNCHBAR_WHATSNEW_ICON = "launchbarWhatsnewIcon"; //$NON-NLS-1$
+	String LAUNCHBAR_MIGRATE_ICON = "launchbarMigrateIcon"; //$NON-NLS-1$
+	String LAUNCHBAR_WEBRESOURCES_ICON = "launchbarWebresourcesIcon"; //$NON-NLS-1$
 }

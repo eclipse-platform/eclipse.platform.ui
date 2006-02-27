@@ -74,12 +74,6 @@ html, body { width : 100%; height : 100%; }
 
 html, body, div, h1, h4, p, a { margin : 0px; padding : 0px; }
 
-/*
- * Folding section settings.
- */
-.section { }
-.section-body { display: none; padding : 0px; }
-
 /* For regular div labels */
 #page-content div H4 {
 	padding : 10px;
@@ -479,3 +473,26 @@ iframe {
 	width: 98%;
 	padding-left: 2%;
 }	
+
+/*
+ * Folding section settings.
+ */
+.section { text-align: left; }
+.section-body { 
+	display: none;
+	padding : 0px;
+	color : cyan; 
+}
+
+.section-title { 
+	font-size : 10pt;
+	color : blue; 
+}
+
+.section-toggle-image {
+	float : right;
+	clear: right;
+	width : 16px;
+	height : 16px;
+	background-image : url(../graphics/icons/ctool/widget_closed.gif);
+}

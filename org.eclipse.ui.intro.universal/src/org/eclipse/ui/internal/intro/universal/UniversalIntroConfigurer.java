@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro.universal;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -30,13 +31,14 @@ import org.eclipse.ui.intro.config.IntroElement;
 import org.osgi.framework.Bundle;
 
 /**
- * This class provides for dynamic configuration of the shared intro implementation based on the
- * data file associated with the product.
+ * This class provides for dynamic configuration of the shared intro
+ * implementation based on the data file associated with the product.
  * 
  * @since 3.2
  */
 
-public class UniversalIntroConfigurer extends IntroConfigurer implements IUniversalIntroConstants {
+public class UniversalIntroConfigurer extends IntroConfigurer implements
+		IUniversalIntroConstants {
 	private ArrayList introData = new ArrayList();
 
 	public UniversalIntroConfigurer() {
@@ -53,7 +55,8 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 				return value;
 			}
 			// nothing - try preferences
-			Preferences prefs = UniversalIntroPlugin.getDefault().getPluginPreferences();
+			Preferences prefs = UniversalIntroPlugin.getDefault()
+					.getPluginPreferences();
 			// try to prefix with a preduct id first
 			String key = product.getId() + "_" + variableName; //$NON-NLS-1$
 			value = prefs.getString(key);
@@ -64,18 +67,22 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 			}
 			if (value.length() > 0)
 				value = resolveVariable(product.getDefiningBundle(), value);
-			else
-				value = null;
+			else {
+				// pass it to the theme
+				value = getThemeProperty(variableName);
+			}
 			return value;
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.intro.config.IntroConfigurer#getMixinStyle(java.lang.String)
 	 */
 	public String getMixinStyle(String pageId, String extensionId) {
-		if (introData.size()>0) {
+		if (introData.size() > 0) {
 			// TODO getting the active product one only
 			// Eventually we should consult the data from all the products
 			IntroData idata = (IntroData) introData.get(0);
@@ -83,7 +90,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 			if (pdata != null) {
 				ExtensionData ed = pdata.findExtension(extensionId, false);
 				int importance = ed.getImportance();
-				if (importance!=ExtensionData.HIDDEN)
+				if (importance != ExtensionData.HIDDEN)
 					return ExtensionData.IMPORTANCE_STYLE_TABLE[importance];
 			}
 		}
@@ -135,8 +142,10 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 			// other pages
 			if (groupId.equals(DIV_PAGE_LINKS))
 				return getNavLinks(pageId);
-			if (groupId.equals(DIV_LAYOUT_TOP_LEFT) || groupId.equals(DIV_LAYOUT_TOP_RIGHT)
-					|| groupId.equals(DIV_LAYOUT_BOTTOM_LEFT) || groupId.equals(DIV_LAYOUT_BOTTOM_RIGHT))
+			if (groupId.equals(DIV_LAYOUT_TOP_LEFT)
+					|| groupId.equals(DIV_LAYOUT_TOP_RIGHT)
+					|| groupId.equals(DIV_LAYOUT_BOTTOM_LEFT)
+					|| groupId.equals(DIV_LAYOUT_BOTTOM_RIGHT))
 				return getContent(pageId, groupId);
 		}
 		return new IntroElement[0];
@@ -230,35 +239,40 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 					id,
 					"migrate_img", "$theme$/graphics/root/migrate.gif", Messages.SharedIntroConfigurer_migrate_alt, Messages.SharedIntroConfigurer_migrate_tooltip, "right"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (id.equals(ID_WEBRESOURCES))
-			return createRootLink(Messages.SharedIntroConfigurer_webresources_name,
-					createPageURL(id, standby), id, "webresources_img", "css/graphics/root/webresources.gif", //$NON-NLS-1$ //$NON-NLS-2$
+			return createRootLink(
+					Messages.SharedIntroConfigurer_webresources_name,
+					createPageURL(id, standby),
+					id,
+					"webresources_img", "css/graphics/root/webresources.gif", //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_webresources_alt,
-					Messages.SharedIntroConfigurer_webresources_tooltip, "right"); //$NON-NLS-1$
+					Messages.SharedIntroConfigurer_webresources_tooltip,
+					"right"); //$NON-NLS-1$
 		return null;
 	}
 
 	private IntroElement createNavLink(String id, String pageId) {
 		if (id.equals(ID_OVERVIEW))
-			return createNavLink(Messages.SharedIntroConfigurer_overview_nav, createPageURL(id, false), id,
-					"left"); //$NON-NLS-1$ 
+			return createNavLink(Messages.SharedIntroConfigurer_overview_nav,
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$ 
 		if (id.equals(ID_FIRSTSTEPS))
-			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav, createPageURL(id, false), id,
-					"left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav,
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		if (id.equals(ID_TUTORIALS))
-			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav, createPageURL(id, false), id,
-					"left"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav,
+					createPageURL(id, false), id, "left"); //$NON-NLS-1$
 		if (id.equals(ID_SAMPLES))
-			return createNavLink(Messages.SharedIntroConfigurer_samples_nav, createPageURL(id, false), id,
-					"right"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_samples_nav,
+					createPageURL(id, false), id, "right"); //$NON-NLS-1$
 		if (id.equals(ID_WHATSNEW))
-			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav, createPageURL(id, false), id,
-					"right"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav,
+					createPageURL(id, false), id, "right"); //$NON-NLS-1$
 		if (id.equals(ID_MIGRATE))
-			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav, createPageURL(id, false), id,
-					"right"); //$NON-NLS-1$
+			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav,
+					createPageURL(id, false), id, "right"); //$NON-NLS-1$
 		if (id.equals(ID_WEBRESOURCES))
-			return createNavLink(Messages.SharedIntroConfigurer_webresources_nav, createPageURL(id, false),
-					id, "right"); //$NON-NLS-1$
+			return createNavLink(
+					Messages.SharedIntroConfigurer_webresources_nav,
+					createPageURL(id, false), id, "right"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -272,37 +286,38 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 	private IntroElement createLaunchBarShortcut(String id) {
 		if (id.equals(ID_OVERVIEW))
 			return createShortcutLink(
-					"icons/full/obj16/overview16.png", Messages.SharedIntroConfigurer_overview_nav, //$NON-NLS-1$
+					getThemeProperty(LAUNCHBAR_OVERVIEW_ICON), Messages.SharedIntroConfigurer_overview_nav, 
 					id);
 		if (id.equals(ID_FIRSTSTEPS))
 			return createShortcutLink(
-					"icons/full/obj16/firststeps16.png", Messages.SharedIntroConfigurer_firststeps_nav, //$NON-NLS-1$
+					getThemeProperty(LAUNCHBAR_FIRSTSTEPS_ICON), Messages.SharedIntroConfigurer_firststeps_nav, 
 					id);
 		if (id.equals(ID_TUTORIALS))
 			return createShortcutLink(
-					"icons/full/obj16/tutorials16.png", Messages.SharedIntroConfigurer_tutorials_nav, //$NON-NLS-1$
+					getThemeProperty(LAUNCHBAR_TUTORIALS_ICON), Messages.SharedIntroConfigurer_tutorials_nav, 
 					id);
 		if (id.equals(ID_SAMPLES))
 			return createShortcutLink(
-					"icons/full/obj16/samples16.png", Messages.SharedIntroConfigurer_samples_nav, //$NON-NLS-1$
+					getThemeProperty(LAUNCHBAR_SAMPLES_ICON), Messages.SharedIntroConfigurer_samples_nav, 
 					id);
 		if (id.equals(ID_WHATSNEW))
 			return createShortcutLink(
-					"icons/full/obj16/whatsnew16.png", Messages.SharedIntroConfigurer_whatsnew_nav, //$NON-NLS-1$
+					getThemeProperty(LAUNCHBAR_WHATSNEW_ICON), Messages.SharedIntroConfigurer_whatsnew_nav, 
 					id);
 		if (id.equals(ID_MIGRATE))
 			return createShortcutLink(
-					"icons/full/obj16/migrate16.png", Messages.SharedIntroConfigurer_migrate_nav, //$NON-NLS-1$
+					getThemeProperty(LAUNCHBAR_MIGRATE_ICON), Messages.SharedIntroConfigurer_migrate_nav, 
 					id);
 		if (id.equals(ID_WEBRESOURCES))
 			return createShortcutLink(
-					"icons/full/obj16/webresources16.png", Messages.SharedIntroConfigurer_webresources_nav, //$NON-NLS-1$
+					getThemeProperty(LAUNCHBAR_WEBRESOURCES_ICON), Messages.SharedIntroConfigurer_webresources_nav, 
 					id);
 		return null;
 	}
 
-	private IntroElement createRootLink(String name, String url, String id, String imgId, String imgSrc,
-			String imgAlt, String imgText, String styleId) {
+	private IntroElement createRootLink(String name, String url, String id,
+			String imgId, String imgSrc, String imgAlt, String imgText,
+			String styleId) {
 		IntroElement element = new IntroElement("link"); //$NON-NLS-1$
 		element.setAttribute("label", name); //$NON-NLS-1$
 		element.setAttribute("url", url); //$NON-NLS-1$
@@ -320,7 +335,8 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 		return element;
 	}
 
-	private IntroElement createNavLink(String label, String url, String id, String styleId) {
+	private IntroElement createNavLink(String label, String url, String id,
+			String styleId) {
 		IntroElement element = new IntroElement("link"); //$NON-NLS-1$
 		element.setAttribute("label", label); //$NON-NLS-1$
 		element.setAttribute("url", url); //$NON-NLS-1$
@@ -329,7 +345,8 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 		return element;
 	}
 
-	private IntroElement createShortcutLink(String icon, String tooltip, String id) {
+	private IntroElement createShortcutLink(String icon, String tooltip,
+			String id) {
 		IntroElement element = new IntroElement("shortcut"); //$NON-NLS-1$
 		element.setAttribute("icon", icon); //$NON-NLS-1$
 		element.setAttribute("tooltip", tooltip); //$NON-NLS-1$
@@ -343,8 +360,9 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 		String pid = Platform.getProduct().getId();
 		if (dataFile != null)
 			introData.add(new IntroData(pid, dataFile, true));
-		IConfigurationElement[] products = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.core.runtime.products"); //$NON-NLS-1$
+		IConfigurationElement[] products = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(
+						"org.eclipse.core.runtime.products"); //$NON-NLS-1$
 		for (int i = 0; i < products.length; i++) {
 			IConfigurationElement product = products[i];
 			IExtension extension = product.getDeclaringExtension();
@@ -363,7 +381,8 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 			String name = child.getAttribute("name"); //$NON-NLS-1$
 			if (name != null && name.equals(VAR_INTRO_DATA)) {
 				String value = child.getAttribute("value"); //$NON-NLS-1$
-				String bid = child.getDeclaringExtension().getNamespaceIdentifier();
+				String bid = child.getDeclaringExtension()
+						.getNamespaceIdentifier();
 				Bundle bundle = Platform.getBundle(bid);
 				if (bundle != null) {
 					String dataFile = resolveVariable(bundle, value);
@@ -412,7 +431,8 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 					IPath p1 = ipath.removeFirstSegments(2);
 					// remove the last anchor and append the
 					// relative path from the extension
-					resolvedPath = p2.removeLastSegments(1).append(p1).toString();
+					resolvedPath = p2.removeLastSegments(1).append(p1)
+							.toString();
 				}
 				return resolvedPath;
 			}
@@ -423,14 +443,18 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements IUniver
 		return null;
 	}
 
-	public void init(IIntroSite site) {
+	public void init(IIntroSite site, Map themeProperties) {
+		super.init(site, themeProperties);
 		IConfigurationElement element = CustomizeAction.getPageElement();
-		if (element==null)
+		if (element == null)
 			return;
 		Action customizeAction = new CustomizeAction(site, element);
 		customizeAction.setText(Messages.SharedIntroConfigurer_customize_label);
-		customizeAction.setToolTipText(Messages.SharedIntroConfigurer_customize_text);
-		customizeAction.setImageDescriptor(ImageUtil.createImageDescriptor("full/elcl16/configure.gif")); //$NON-NLS-1$
-		site.getActionBars().getToolBarManager().appendToGroup(TB_ADDITIONS, customizeAction);
+		customizeAction
+				.setToolTipText(Messages.SharedIntroConfigurer_customize_text);
+		customizeAction.setImageDescriptor(ImageUtil
+				.createImageDescriptor("full/elcl16/configure.gif")); //$NON-NLS-1$
+		site.getActionBars().getToolBarManager().appendToGroup(TB_ADDITIONS,
+				customizeAction);
 	}
 }

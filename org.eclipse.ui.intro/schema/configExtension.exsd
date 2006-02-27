@@ -136,6 +136,9 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
 
    <element name="theme">
       <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -175,6 +178,30 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
                <appInfo>
                   <meta.attribute kind="resource"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="property">
+      <annotation>
+         <documentation>
+            an optional theme property that can be used by intro configurers to further customize intro presentation.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique name of the property
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  value of the property
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
@@ -84,6 +87,17 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
      * @return
      */
     public ImageDescriptor getImageDescriptor() {
+    	String icon = getIcon();
+    	if (icon!=null) {
+    		try {
+    			URL imageUrl = new URL(icon);
+                ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
+                return desc;
+    		}
+    		catch (MalformedURLException e) {
+    			// not a full url
+    		}
+    	}
         return ImageUtil.createImageDescriptor(getBundle(), getIcon());
     }
 }

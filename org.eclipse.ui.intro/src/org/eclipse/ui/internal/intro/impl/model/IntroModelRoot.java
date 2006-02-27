@@ -889,4 +889,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	if (configurer==null) return null;
     	return configurer.resolvePath(extensionId, path);
     }
+
+	
+	public IntroTheme getTheme() {
+		return theme;
+	}
 }

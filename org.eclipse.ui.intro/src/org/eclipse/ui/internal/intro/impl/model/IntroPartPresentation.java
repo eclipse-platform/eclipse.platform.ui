@@ -9,6 +9,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -210,8 +211,11 @@ public class IntroPartPresentation extends AbstractIntroElement {
 				implementation.init(introPart, memento);
 				implementation.createPartControl(parent);
 				IntroModelRoot model = getModelRoot();
-				if (model != null && model.getConfigurer() != null)
-					model.getConfigurer().init(introPart.getIntroSite());
+				if (model != null && model.getConfigurer() != null) {
+					IntroTheme theme = model.getTheme();
+					Map properties = theme!=null?theme.getProperties():null;
+					model.getConfigurer().init(introPart.getIntroSite(), properties);
+				}
 				if (Log.logInfo)
 					Log.info("Loading Intro UI implementation from: " //$NON-NLS-1$
 							+ ModelLoaderUtil.getLogString(implementationElement, "kind")); //$NON-NLS-1$

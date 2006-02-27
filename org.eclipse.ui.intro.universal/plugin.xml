@@ -41,7 +41,7 @@
             </implementation>
             <launchBar
                	location="fastview" 
-            	bg="#c6c3e8"
+            	bg="$launchbarBackground$"
             	computed="true">
             </launchBar>
          </presentation>
@@ -54,11 +54,45 @@
             id="org.eclipse.ui.intro.universal.circles"
             name="%theme.name.circles"
             path="$nl$/themes/circles"
-            previewImage="themes/circles/preview.png"/>
+            previewImage="themes/circles/preview.png">
+            <property name="launchbarBackground"
+            		value="#a1c2cb"/>
+            <property name="launchbarOverviewIcon"
+            		  value="$theme$graphics/launchbar/overview16.png"/>
+            <property name="launchbarFirststepsIcon"
+            		  value="$theme$graphics/launchbar/firststeps16.png"/>
+            <property name="launchbarTutorialsIcon"
+            		  value="$theme$graphics/launchbar/tutorials16.png"/>
+            <property name="launchbarSamplesIcon"
+            		  value="$theme$graphics/launchbar/samples16.png"/>
+            <property name="launchbarWhatsnewIcon"
+            		  value="$theme$graphics/launchbar/whatsnew16.png"/>
+            <property name="launchbarMigrateIcon"
+            		  value="$theme$graphics/launchbar/migrate16.png"/>
+            <property name="launchbarWebresourcesIcon"
+            		  value="$theme$graphics/launchbar/webresources16.png"/>
+      </theme>
       <theme
             id="org.eclipse.ui.intro.universal.purpleMesh"
             name="%theme.name.purpleMesh"
             path="$nl$/themes/purpleMesh"
-            previewImage="themes/purpleMesh/preview.png"/>
+            previewImage="themes/purpleMesh/preview.png">
+            <property name="launchbarBackground"
+            		value="#c6c3e8"/>
+            <property name="launchbarOverviewIcon"
+            		  value="$theme$graphics/launchbar/overview.gif"/>
+            <property name="launchbarFirststepsIcon"
+            		  value="$theme$graphics/launchbar/firststeps16.png"/>
+            <property name="launchbarTutorialsIcon"
+            		  value="$theme$graphics/launchbar/tutorials.gif"/>
+            <property name="launchbarSamplesIcon"
+            		  value="$theme$graphics/launchbar/samples.gif"/>
+            <property name="launchbarWhatsnewIcon"
+            		  value="$theme$graphics/launchbar/whatsnew.gif"/>
+            <property name="launchbarMigrateIcon"
+            		  value="$theme$graphics/launchbar/migrate16.png"/>
+            <property name="launchbarWebresourcesIcon"
+            		  value="$theme$graphics/launchbar/webresources16.png"/>
+      </theme>
    </extension>
 </plugin>

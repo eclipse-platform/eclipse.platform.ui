@@ -399,6 +399,9 @@ public class PageWidgetFactory {
         Color fg = styleManager.getColor(toolkit, element);
         if (fg != null)
             elementControl.setForeground(fg);
+        Color bg = styleManager.getBackgrond(toolkit, element);
+        if (bg != null)
+            elementControl.setBackground(bg);
     }
 
 

@@ -9,6 +9,9 @@
 
 package org.eclipse.ui.intro.config;
 
+import java.util.Map;
+
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.intro.IIntroSite;
 
 
@@ -22,21 +25,49 @@ import org.eclipse.ui.intro.IIntroSite;
  */
 
 public abstract class IntroConfigurer {
+
 	/**
-	 * The identifier of the named group where the configurer can
-	 * contribute local tool bar actions.
+	 * The identifier of the named group where the configurer can contribute local tool bar actions.
 	 * 
 	 * @see #init(IIntroSite)
 	 */
 	public static final String TB_ADDITIONS = "additions"; //$NON-NLS-1$
 
+	protected Map themeProperties;
+	protected IIntroSite site;
+
 	/**
-	 * Provides the opportunity for the configurer to contribute to
-	 * the action bars. 
+	 * Provides the opportunity for the configurer to contribute to the action bars and to fetch
+	 * presentation theme properties.
+	 * 
 	 * @param site
 	 *            the intro part's site
+	 * @param themeProperties
+	 *            properties of the current theme that can be used by the configurer, or
+	 *            <code>null</code> if no theme is currently active or the active theme has no
+	 *            properties.
 	 */
-	public void init(IIntroSite site) {
+	public void init(IIntroSite site, Map themeProperties) {
+		this.themeProperties = themeProperties;
+		this.site = site;
+	}
+
+	/**
+	 * Returns the value of the theme property with a given name.
+	 * 
+	 * @param name
+	 *            the theme property name
+	 * @return the value of the property or <code>null</code> if property is not found, the theme
+	 *         does not have properties or no theme is currently active.
+	 */
+
+	protected String getThemeProperty(String name) {
+		if (themeProperties == null)
+			return null;
+		String value = (String)themeProperties.get(name);
+		if (value!=null)
+			value = IntroPlugin.getDefault().getIntroModelRoot().resolveVariables(value);
+		return value;
 	}
 
 	/**
