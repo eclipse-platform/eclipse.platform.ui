@@ -1121,8 +1121,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			
 			fSashForm.setWeights(new int[] {w1, w2});
 		}
-		resize();
 		super.initializeBounds();
+		resize();
 	}
 
 	/**
@@ -1258,9 +1258,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			} 
 		}
 		else {
-			if(contentSize.x < DEFAULT_INITIAL_DIALOG_SIZE.x || contentSize.y > DEFAULT_INITIAL_DIALOG_SIZE.y) {
-				setShellSize(DEFAULT_INITIAL_DIALOG_SIZE.x, DEFAULT_INITIAL_DIALOG_SIZE.y);
-				fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+			if(!(contentSize.x < getShell().getBounds().width)) {
+				if(contentSize.x < DEFAULT_INITIAL_DIALOG_SIZE.x || contentSize.y > DEFAULT_INITIAL_DIALOG_SIZE.y) {
+					setShellSize(DEFAULT_INITIAL_DIALOG_SIZE.x, DEFAULT_INITIAL_DIALOG_SIZE.y);
+					fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+				}
 			}
 		}
 	}
