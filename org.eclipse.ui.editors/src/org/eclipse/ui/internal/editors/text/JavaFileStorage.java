@@ -31,6 +31,7 @@ import org.eclipse.jface.text.Assert;
 class JavaFileStorage implements IStorage {
 
 	private IFileStore fFileStore;
+	private IPath fFullPath;
 	
 	public JavaFileStorage(IFileStore fileStore) {
 		Assert.isNotNull(fileStore);
@@ -49,7 +50,9 @@ class JavaFileStorage implements IStorage {
 	 * @see org.eclipse.core.resources.IStorage#getFullPath()
 	 */
 	public IPath getFullPath() {
-		return new Path(fFileStore.toURI().getPath());
+    	if (fFullPath == null)
+    		fFullPath= new Path(fFileStore.toURI().getPath());
+    	return fFullPath;
 	}
 
 	/*

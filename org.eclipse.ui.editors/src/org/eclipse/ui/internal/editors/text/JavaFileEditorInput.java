@@ -73,7 +73,9 @@ public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInpu
 
 	private IFileStore fFileStore;
 	private WorkbenchAdapter fWorkbenchAdapter= new WorkbenchAdapter();
-
+	private IStorage fStorage;
+	private IPath fPath;
+	
 	public JavaFileEditorInput(IFileStore fileStore) {
 		Assert.isNotNull(fileStore);
 		Assert.isTrue(EFS.SCHEME_FILE.equals(fileStore.getFileSystem().getScheme()));
@@ -141,7 +143,9 @@ public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInpu
      * @since 3.1
      */
     public IPath getPath() {
-    	return new Path(fFileStore.toURI().getPath());
+    	if (fPath == null)
+    		fPath= new Path(fFileStore.toURI().getPath());
+    	return fPath;
     }
 
 	/*
@@ -176,7 +180,9 @@ public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInpu
 	 * @since 3.2
 	 */
 	public IStorage getStorage() throws CoreException {
-		return new JavaFileStorage(fFileStore);
+		if (fStorage == null)
+			fStorage= new JavaFileStorage(fFileStore);
+		return fStorage;
 	}
 
 }
