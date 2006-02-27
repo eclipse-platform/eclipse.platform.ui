@@ -134,7 +134,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
-	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(620, 560);
+	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(640, 560);
+	
+	/**
+	 * defines some default sashweights when we have a new workspace
+	 * @since 3.2
+	 */
+	protected static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 450};
+	
 	/**
 	 * Constant specifying that this dialog should be opened with the last configuration launched
 	 * in the workspace selected.
@@ -1114,6 +1121,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			fSashForm.setWeights(new int[] {w1, w2});
 		}
 		super.initializeBounds();
+		resize();
 	}
 
 	/**
@@ -1213,8 +1221,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * resize the dialog to show all relevant content
 	 */
 	protected void resize() {
+		Point contentSize = fTabViewer.getTabFolder().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		if (getTabGroup() != null) {
-			Point contentSize = fTabViewer.getTabFolder().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int maxAllowedWidth = (int) (getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT);
 			int otherWidth = fSashForm.SASH_WIDTH + fSelectionArea.getBounds().width;
 			int totalWidth = contentSize.x + otherWidth;
@@ -1222,7 +1230,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				contentSize.x = maxAllowedWidth - otherWidth;
 			}
 			int maxAllowedHeight =(int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
-			contentSize.y = Math.min(contentSize.y, maxAllowedHeight);			
+			contentSize.y = Math.min(contentSize.y, maxAllowedHeight);	
 			fEditArea.layout(true);
 			Rectangle rect = fTabViewer.getTabFolder().getClientArea();
 			Point containerSize = new Point(rect.width, rect.height);
@@ -1247,6 +1255,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					fSashForm.setWeights(newSashWeights);
 				}
 			} 
+		}
+		else {
+			if(contentSize.x < DEFAULT_INITIAL_DIALOG_SIZE.x || contentSize.y > DEFAULT_INITIAL_DIALOG_SIZE.y) {
+				setShellSize(DEFAULT_INITIAL_DIALOG_SIZE.x, DEFAULT_INITIAL_DIALOG_SIZE.y);
+				fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+			}
 		}
 	}
 	
