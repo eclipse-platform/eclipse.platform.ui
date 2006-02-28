@@ -29,31 +29,14 @@ public class DecorationContext implements IDecorationContext {
 	 */
 	public static final IDecorationContext DEFAULT_CONTEXT = new DecorationContext();
 	
-	private String[] contextIds;
 	private Map properties = new HashMap();
 
 	/**
 	 * Create a decoration context.
 	 */
 	public DecorationContext() {
-		this.contextIds = new String[0];
 	}
 	
-	/**
-	 * Create a decoration context with the given context ids
-	 * @param contextIds the context ids for this decoration context
-	 * @deprecated to be removed by M5
-	 */
-	public DecorationContext(String[] contextIds) {
-		this.contextIds = contextIds;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IDecorationContext#getContextIds()
-	 */
-	public String[] getContextIds() {
-		return contextIds;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IDecorationContext#getProperty(java.lang.String)

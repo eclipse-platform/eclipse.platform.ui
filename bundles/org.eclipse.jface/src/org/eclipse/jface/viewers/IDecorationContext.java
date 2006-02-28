@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.commands.contexts.Context;
 
 /**
  * A decoration context provides additional information to
@@ -23,17 +22,6 @@ import org.eclipse.core.commands.contexts.Context;
  * @since 3.2
  */
 public interface IDecorationContext {
-	
-	/**
-	 * Return the ids of the contexts that are active for
-	 * the element that is being decorated. Context ids identify
-	 * a command {@link Context}.
-	 * @return the ids of the contexts that are active for
-	 * the element that is being decorated
-	 * @see org.eclipse.core.commands.contexts.Context
-	 * @deprecated to be removed before M5
-	 */
-	String[] getContextIds();
 	
 	/**
 	 * Get the value of the given property or <code>null</code>
