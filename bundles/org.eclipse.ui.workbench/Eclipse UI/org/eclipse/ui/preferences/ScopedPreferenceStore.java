@@ -839,6 +839,7 @@ public class ScopedPreferenceStore extends EventManager implements
 		}
 		if (preferencesListener != null) {
 			preferences.removePreferenceChangeListener(preferencesListener);
+			preferencesListener= null;
 		}
 	}
 
