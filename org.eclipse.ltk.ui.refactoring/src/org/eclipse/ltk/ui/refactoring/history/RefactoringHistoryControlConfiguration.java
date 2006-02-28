@@ -71,8 +71,8 @@ public class RefactoringHistoryControlConfiguration {
 	}
 
 	/**
-	 * Returns the caption of the comment field below the refactoring history
-	 * tree.
+	 * Returns the text of the comment field below the refactoring history tree,
+	 * if the currently selected refactoring descriptor provides no comment.
 	 * 
 	 * @return the comment caption
 	 */
