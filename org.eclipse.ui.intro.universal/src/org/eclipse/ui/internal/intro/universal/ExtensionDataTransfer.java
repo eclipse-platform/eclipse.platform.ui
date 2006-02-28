@@ -33,20 +33,25 @@ public class ExtensionDataTransfer extends ByteArrayTransfer {
 		if (!checkMyType(object) || !isSupportedType(transferData)) {
 			DND.error(DND.ERROR_INVALID_DATA);
 		}
-		ExtensionData[] myTypes = (ExtensionData[]) object;
+		BaseData[] myTypes = (BaseData[]) object;
 		try {
 			// write data to a byte array and then ask super to convert to pMedium
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			DataOutputStream writeOut = new DataOutputStream(out);
 			for (int i = 0, length = myTypes.length; i < length; i++) {
-				ExtensionData ed = myTypes[i];
-				byte[] buffer = ed.getId().getBytes();
-				writeOut.writeInt(ed.getId().length());
+				BaseData bd = myTypes[i];
+				boolean separator = bd instanceof SeparatorData;
+				writeOut.writeBoolean(separator);
+				byte[] buffer = bd.getId().getBytes();
+				writeOut.writeInt(bd.getId().length());
 				writeOut.write(buffer);
-				writeOut.writeInt(ed.getName().length());
-				buffer = ed.getName().getBytes();
-				writeOut.write(buffer);
-				writeOut.writeInt(myTypes[i].getImportance());
+				if (bd instanceof ExtensionData) {
+					ExtensionData ed = (ExtensionData)bd;
+					writeOut.writeInt(ed.getName().length());
+					buffer = ed.getName().getBytes();
+					writeOut.write(buffer);
+					writeOut.writeInt(ed.getImportance());
+				}
 			}
 			byte[] buffer = out.toByteArray();
 			writeOut.close();
@@ -61,27 +66,34 @@ public class ExtensionDataTransfer extends ByteArrayTransfer {
 			if (buffer == null)
 				return null;
 
-			ExtensionData[] myData = new ExtensionData[0];
+			BaseData[] myData = new BaseData[0];
 			try {
 				ByteArrayInputStream in = new ByteArrayInputStream(buffer);
 				DataInputStream readIn = new DataInputStream(in);
-				while (readIn.available() > 12) {
-					int importance;
+				while (readIn.available() > 4) {
+					boolean separator;
+					int importance=0;
 					String id;
-					String name;
+					String name=null;
+					separator = readIn.readBoolean();
 					int size = readIn.readInt();
 					byte[] buff = new byte[size];
 					readIn.read(buff);
 					id = new String(buff);
-					size = readIn.readInt();
-					buff = new byte[size];
-					readIn.read(buff);
-					name = new String(buff);
-					importance = readIn.readInt();
+					if (!separator) {
+						size = readIn.readInt();
+						buff = new byte[size];
+						readIn.read(buff);
+						name = new String(buff);
+						importance = readIn.readInt();
+					}
 
-					ExtensionData[] newMyData = new ExtensionData[myData.length + 1];
+					BaseData[] newMyData = new BaseData[myData.length + 1];
 					System.arraycopy(myData, 0, newMyData, 0, myData.length);
-					newMyData[myData.length] = new ExtensionData(id, name, importance);
+					if (separator)
+						newMyData[myData.length] = new SeparatorData(id);
+					else
+						newMyData[myData.length] = new ExtensionData(id, name, importance);
 					myData = newMyData;
 				}
 				readIn.close();
@@ -96,12 +108,12 @@ public class ExtensionDataTransfer extends ByteArrayTransfer {
 
 
 	boolean checkMyType(Object object) {
-		if (object == null || !(object instanceof ExtensionData[]) || ((ExtensionData[]) object).length == 0) {
+		if (object == null || !(object instanceof BaseData[]) || ((BaseData[]) object).length == 0) {
 			return false;
 		}
-		ExtensionData[] myTypes = (ExtensionData[]) object;
+		BaseData[] myTypes = (BaseData[]) object;
 		for (int i = 0; i < myTypes.length; i++) {
-			if (myTypes[i] == null || myTypes[i].getId() == null || myTypes[i].getName() == null)
+			if (myTypes[i] == null || myTypes[i].getId() == null || myTypes[i] instanceof ExtensionData && ((ExtensionData)myTypes[i]).getName() == null)
 				return false;
 		}
 		return true;

@@ -12,7 +12,7 @@ import org.w3c.dom.NodeList;
 public class GroupData {
 	boolean fDefault=false;
 	private String path;
-	private ArrayList extensions = new ArrayList();
+	private ArrayList children = new ArrayList();
 	
 	public GroupData(String path, boolean defaultGroup) {
 		fDefault = defaultGroup;
@@ -27,8 +27,13 @@ public class GroupData {
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("extension")) { //$NON-NLS-1$
-				loadExtension((Element) child);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				if (child.getNodeName().equals("extension")) { //$NON-NLS-1$
+					loadExtension((Element) child);
+				}
+				else if (child.getNodeName().equals("separator")) {//$NON-NLS-1$" 
+					loadSeparator((Element)child);
+				}
 			}
 		}
 		String df = element.getAttribute("default"); //$NON-NLS-1$
@@ -45,31 +50,41 @@ public class GroupData {
 	}
 
 	public void addAnchors(ArrayList result) {
-		for (int i = 0; i < extensions.size(); i++) {
-			ExtensionData edata = (ExtensionData) extensions.get(i);
+		for (int i = 0; i < children.size(); i++) {
+			BaseData edata = (BaseData) children.get(i);
 			String id = edata.getId();
-			IntroElement anchor = new IntroElement("anchor"); //$NON-NLS-1$
-			anchor.setAttribute("id", id); //$NON-NLS-1$
-			result.add(anchor);
+			IntroElement element = null;
+			String tagName="anchor"; //$NON-NLS-1$
+			if (edata instanceof SeparatorData)
+				tagName = "hr"; //$NON-NLS-1$
+			element = new IntroElement(tagName);
+			element.setAttribute("id", id); //$NON-NLS-1$
+			result.add(element);
 		}
 	}
 	
-	public void add(ExtensionData ed) {
-		extensions.add(ed);
+	public void add(BaseData ed) {
+		children.add(ed);
 		ed.setParent(this);
 	}
-	public void add(int index, ExtensionData ed) {
-		extensions.add(index, ed);
+	public void add(int index, BaseData ed) {
+		children.add(index, ed);
 		ed.setParent(this);
 	}
-	public void remove(ExtensionData ed) {
-		extensions.remove(ed);
+	public void remove(BaseData ed) {
+		children.remove(ed);
 		ed.setParent(null);
 	}
 	
 	public void addImplicitExtension(String id, String name) {
 		ExtensionData ed = new ExtensionData(id, name, IUniversalIntroConstants.LOW, true);
 		add(ed);
+	}
+	
+	private void loadSeparator(Element element) {
+		String id = element.getAttribute("id"); //$NON-NLS-1$
+		SeparatorData sd = new SeparatorData(id);
+		add(sd);
 	}
 
 	private void loadExtension(Element element) {
@@ -80,66 +95,96 @@ public class GroupData {
 		add(ed);
 	}
 	
-	public int getExtensionCount() {
-		return extensions.size();
+	public BaseData[] getChildren() {
+		return (BaseData[])children.toArray(new BaseData[children.size()]);
 	}
 
-	public ExtensionData[] getExtensions() {
-		return (ExtensionData[]) extensions.toArray(new ExtensionData[extensions.size()]);
+	public int getExtensionCount() {
+		int count=0;
+		for (int i=0; i<children.size(); i++) {
+			BaseData data = (BaseData)children.get(i);
+			if (data instanceof ExtensionData)
+				count++;
+		}
+		return count;
 	}
+/*
+	public ExtensionData[] getExtensions() {
+		ArrayList result = new ArrayList();
+		for (int i=0; i<children.size(); i++) {
+			BaseData data = (BaseData)children.get(i);
+			if (data instanceof ExtensionData)
+				result.add(data);
+		}
+		return (ExtensionData[]) result.toArray(new ExtensionData[result.size()]);
+	}
+	*/
 
 	public String getPath() {
 		return path;
 	}
 
-	public boolean contains(String extensionId) {
-		return find(extensionId)!=null;
+	public boolean contains(String id) {
+		return find(id)!=null;
 	}
 	
-	ExtensionData find(String extensionId) {
-		for (int i = 0; i < extensions.size(); i++) {
-			ExtensionData ed = (ExtensionData) extensions.get(i);
-			if (ed.getId().equals(extensionId))
-				return ed;
+	BaseData find(String extensionId) {
+		for (int i = 0; i < children.size(); i++) {
+			BaseData data = (BaseData) children.get(i);
+			if (data.getId().equals(extensionId))
+				return data;
 		}
 		return null;
 	}
-	
-	public int getIndexOf(ExtensionData ed) {
-		return extensions.indexOf(ed);
+
+	public int getIndexOf(BaseData ed) {
+		return children.indexOf(ed);
 	}
 	
-	public int getIndexOf(String extensionId) {
-		for (int i = 0; i < extensions.size(); i++) {
-			ExtensionData ed = (ExtensionData) extensions.get(i);
-			if (ed.getId().equals(extensionId))
+	public int getIndexOf(String baseId) {
+		for (int i = 0; i < children.size(); i++) {
+			BaseData bd = (BaseData) children.get(i);
+			if (bd.getId().equals(baseId))
 				return i;
 		}
 		return -1;
 	}
 	
-	public boolean canMoveUp(ExtensionData ed) {
-		int index = extensions.indexOf(ed);
+	public boolean canMoveUp(BaseData ed) {
+		int index = children.indexOf(ed);
 		return (index>0);
 	}
 	
-	public boolean canMoveDown(ExtensionData ed) {
-		int index = extensions.indexOf(ed);
-		return (index!= -1 && index < extensions.size()-1);
+	public boolean canMoveDown(BaseData ed) {
+		int index = children.indexOf(ed);
+		return (index!= -1 && index < children.size()-1);
 	}
 	
-	public void moveUp(ExtensionData ed) {
-		int index = extensions.indexOf(ed);
-		ExtensionData swapped = (ExtensionData)extensions.get(index-1);
-		extensions.set(index, swapped);
-		extensions.set(index-1, ed);
+	public void moveUp(BaseData ed) {
+		int index = children.indexOf(ed);
+		BaseData swapped = (BaseData)children.get(index-1);
+		children.set(index, swapped);
+		children.set(index-1, ed);
 	}
 
-	public void moveDown(ExtensionData ed) {
-		int index = extensions.indexOf(ed);
-		ExtensionData swapped = (ExtensionData)extensions.get(index+1);
-		extensions.set(index, swapped);
-		extensions.set(index+1, ed);		
+	public void moveDown(BaseData ed) {
+		int index = children.indexOf(ed);
+		BaseData swapped = (BaseData)children.get(index+1);
+		children.set(index, swapped);
+		children.set(index+1, ed);		
+	}
+	
+	public void addSeparator(BaseData after) {
+		SeparatorData sd = new SeparatorData();
+		sd.id = ""+sd.hashCode(); //$NON-NLS-1$
+		if (after!=null) {
+			int index = children.indexOf(after);
+			if (index!= -1) {
+				children.add(index+1, sd);
+				return;
+			}
+		}
+		children.add(sd);
 	}
 	
 	public void write(PrintWriter writer, String indent) {
@@ -153,8 +198,8 @@ public class GroupData {
 			else
 				writer.println(">"); //$NON-NLS-1$
 		}
-		for (int i=0; i<extensions.size(); i++) {
-			ExtensionData ed = (ExtensionData)extensions.get(i);
+		for (int i=0; i<children.size(); i++) {
+			BaseData ed = (BaseData)children.get(i);
 			ed.write(writer, indent+"   "); //$NON-NLS-1$
 		}
 		writer.print(indent);

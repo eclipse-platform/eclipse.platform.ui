@@ -22,6 +22,14 @@ H4 .div-label {
 	font-weight : bold;
 }
 
+/* For separators */
+HR {
+	width: 90%;
+	align: left;
+	height : 1px;
+	color :  #dfdfe4;
+}
+
 /* For the main page content's title */
 #content-header H4 .div-label {
 	font-size : 14pt;

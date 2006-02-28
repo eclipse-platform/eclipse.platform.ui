@@ -33,6 +33,14 @@ H4 .div-label {
 	clear : both;
 }
 
+/* For separators */
+HR {
+	width: 90%;
+	align: left;
+	height : 1px;
+	color :  #dfdfe4;
+}
+
 .page-description {
 	font-size : 10pt;
 	float : none;

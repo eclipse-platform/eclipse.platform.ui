@@ -172,7 +172,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			if (inputElement == ROOT_PAGE_TABLE)
 				return ROOT_PAGE_TABLE;
 			if (inputElement instanceof GroupData) {
-				return ((GroupData) inputElement).getExtensions();
+				return ((GroupData) inputElement).getChildren();
 			}
 			if (inputElement == themes) {
 				return themeList.toArray();
@@ -190,7 +190,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	class TableDragSourceListener implements DragSourceListener {
 
 		TableViewer viewer;
-		ExtensionData[] sel;
+		BaseData[] sel;
 
 		public TableDragSourceListener(TableViewer viewer) {
 			this.viewer = viewer;
@@ -207,10 +207,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 		public void dragSetData(DragSourceEvent event) {
 			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-			ExtensionData[] array = new ExtensionData[ssel.size()];
+			BaseData[] array = new BaseData[ssel.size()];
 			int i = 0;
 			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				array[i++] = (ExtensionData) iter.next();
+				array[i++] = (BaseData) iter.next();
 			}
 			event.data = array;
 			sel = array;
@@ -220,7 +220,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			if (event.detail == DND.DROP_MOVE) {
 				GroupData gd = (GroupData) viewer.getInput();
 				for (int i = 0; i < sel.length; i++) {
-					ExtensionData ed = sel[i];
+					BaseData ed = sel[i];
 					gd.remove(ed);
 				}
 				viewer.refresh();
@@ -237,12 +237,12 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		}
 
 		public boolean performDrop(Object data) {
-			ExtensionData target = (ExtensionData) getCurrentTarget();
+			BaseData target = (BaseData) getCurrentTarget();
 			int loc = getCurrentLocation();
 			GroupData gd = (GroupData) getViewer().getInput();
 			if (gd == null)
 				gd = createTargetGd(getViewer());
-			ExtensionData[] sel = (ExtensionData[]) data;
+			BaseData[] sel = (BaseData[]) data;
 
 			int index = target != null ? gd.getIndexOf(target) : -1;
 			int startingIndex = getStartIndex(gd, sel);
@@ -255,7 +255,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			}
 
 			for (int i = 0; i < sel.length; i++) {
-				ExtensionData ed = sel[i];
+				BaseData ed = sel[i];
 				if (index == -1)
 					gd.add(ed);
 				else
@@ -269,9 +269,9 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			return true;
 		}
 
-		private int getStartIndex(GroupData gd, ExtensionData[] sel) {
+		private int getStartIndex(GroupData gd, BaseData[] sel) {
 			for (int i = 0; i < sel.length; i++) {
-				ExtensionData ed = sel[i];
+				BaseData ed = sel[i];
 				int index = gd.getIndexOf(ed.getId());
 				if (index != -1)
 					return index;
@@ -296,6 +296,9 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 				if (name != null && name.length() > 0)
 					return name;
 				return ed.getId();
+			}
+			if (obj instanceof SeparatorData) {
+				return Messages.WelcomeCustomizationPreferencePage_horizontalSeparator;
 			}
 			if (obj instanceof IntroTheme) {
 				IntroTheme bg = (IntroTheme) obj;
@@ -482,7 +485,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private void createPageContainer() {
 		pageContainer = new Composite(tabFolder, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.horizontalSpacing = 10;
+		//layout.horizontalSpacing = 10;
 		pageContainer.setLayout(layout);
 		layout.numColumns = 4;
 		//layout.makeColumnsEqualWidth = true;
@@ -503,6 +506,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		label = new Label(pageContainer, SWT.SEPARATOR | SWT.VERTICAL);
 		gd = new GridData(GridData.VERTICAL_ALIGN_FILL);
 		gd.verticalSpan = 3;
+		gd.widthHint = 10;
 		label.setLayoutData(gd);
 		
 		label = new Label(pageContainer, SWT.NULL);
@@ -936,9 +940,11 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			}
 
 			public Object getValue(Object element, String property) {
-				ExtensionData ed = (ExtensionData) element;
-				if (property.equals(IUniversalIntroConstants.P_IMPORTANCE))
-					return new Integer(ed.getImportance());
+				if (element instanceof ExtensionData) {
+					ExtensionData ed = (ExtensionData) element;
+					if (property.equals(IUniversalIntroConstants.P_IMPORTANCE))
+						return new Integer(ed.getImportance());
+				}
 				return null;
 			}
 
@@ -960,6 +966,16 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	private void fillPopupMenu(IMenuManager manager, final TableViewer viewer) {
 		StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
+		
+		manager.add(new Separator());
+		Action addSeparator = new Action(Messages.WelcomeCustomizationPreferencePage_addSeparator) {
+			public void run() {
+				doAddSeparator(viewer);
+			}
+		};
+		
+		manager.add(addSeparator);
+		manager.add(new Separator());
 
 		if (ssel.size() == 1 && viewer != available) {
 			Action upAction = new Action(Messages.WelcomeCustomizationPreferencePage_up) {
@@ -974,7 +990,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 					doMove(viewer, false);
 				}
 			};
-			ExtensionData ed = (ExtensionData) ssel.getFirstElement();
+			BaseData ed = (BaseData) ssel.getFirstElement();
 			GroupData gd = (GroupData) viewer.getInput();
 			upAction.setEnabled(gd.canMoveUp(ed));
 			downAction.setEnabled(gd.canMoveDown(ed));
@@ -991,6 +1007,26 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			addMoveToAction(menu, bottomLeft, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom_left);
 			addMoveToAction(menu, bottomRight, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom_right);
 			manager.add(menu);
+			
+			boolean addDeleteSeparator=false;
+			
+			for (Iterator iter=ssel.iterator(); iter.hasNext();) {
+				Object obj = iter.next();
+				if (obj instanceof SeparatorData)
+					addDeleteSeparator=true;
+				else {
+					addDeleteSeparator=false;
+					break;
+				}
+			}
+			if (addDeleteSeparator) {
+				Action deleteSeparator = new Action(Messages.WelcomeCustomizationPreferencePage_removeSeparator) {
+					public void run() {
+						doRemoveSeparators(viewer);
+					}
+				};
+				manager.add(deleteSeparator);
+			}
 		}
 	}
 
@@ -1011,9 +1047,26 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		Object obj = ((StructuredSelection) viewer.getSelection()).getFirstElement();
 		GroupData gd = (GroupData) viewer.getInput();
 		if (up)
-			gd.moveUp((ExtensionData) obj);
+			gd.moveUp((BaseData) obj);
 		else
-			gd.moveDown((ExtensionData) obj);
+			gd.moveDown((BaseData) obj);
+		viewer.refresh();
+	}
+	
+	private void doAddSeparator(Viewer viewer) {
+		Object obj = ((StructuredSelection) viewer.getSelection()).getFirstElement();
+		GroupData gd = (GroupData) viewer.getInput();
+		gd.addSeparator((BaseData)obj);
+		viewer.refresh();
+	}
+
+	private void doRemoveSeparators(Viewer viewer) {
+		StructuredSelection ssel = ((StructuredSelection) viewer.getSelection());
+		GroupData gd = (GroupData) viewer.getInput();
+		for (Iterator iter=ssel.iterator(); iter.hasNext();) {
+			SeparatorData sdata = (SeparatorData)iter.next();
+			gd.remove(sdata);
+		}
 		viewer.refresh();
 	}
 
@@ -1025,7 +1078,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			targetGd = createTargetGd(target);
 		}
 		for (int i = 0; i < selObjs.length; i++) {
-			ExtensionData ed = (ExtensionData) selObjs[i];
+			BaseData ed = (BaseData) selObjs[i];
 			sourceGd.remove(ed);
 			targetGd.add(ed);
 		}

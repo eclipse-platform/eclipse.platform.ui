@@ -137,13 +137,20 @@ public class PageData {
 	public ExtensionData findExtension(String extensionId, boolean checkHidden) {
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gdata = (GroupData)groups.get(i);
-			ExtensionData ed = gdata.find(extensionId);
+			ExtensionData ed = find(gdata, extensionId);
 			if (ed!=null)
 				return ed;
 		}
 		// check the hidden
 		if (checkHidden && hidden!=null)
-			return hidden.find(extensionId);
+			return find (hidden, extensionId);
+		return null;
+	}
+		
+	private ExtensionData find(GroupData gd, String extensionId) {
+		BaseData bd = gd.find(extensionId);
+		if (bd!=null && bd instanceof ExtensionData)
+			return (ExtensionData)bd;
 		return null;
 	}
 
