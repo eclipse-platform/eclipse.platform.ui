@@ -158,7 +158,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 *            refactoring instance
 	 * @param comment
 	 *            the comment associated with the refactoring, or
-	 *            <code>null</code> for no commment
+	 *            <code>null</code> for no comment
 	 * @param flags
 	 *            the flags of the refactoring descriptor
 	 */

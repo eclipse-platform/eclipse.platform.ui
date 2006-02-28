@@ -12,28 +12,34 @@ package org.eclipse.ltk.core.refactoring;
 
 /**
  * A {@link RefactoringChangeDescriptor} describes changes created by a
- * refactoring.
+ * refactoring. Changes created by a refactoring should provide an appropriate
+ * refactoring change descriptor, which allows to completely reconstruct the
+ * particular refactoring instance from the encapsulated refactoring descriptor.
+ * <p>
+ * Note: this class is not indented to be subclassed by clients.
+ * </p>
  * 
  * @since 3.2
  */
 public class RefactoringChangeDescriptor extends ChangeDescriptor {
-	
+
 	/** The refactoring descriptor */
 	private final RefactoringDescriptor fRefactoringDescriptor;
 
 	/**
-	 * Creates the <code>RefactoringChangeDescriptor</code> with the {@link RefactoringDescriptor}
-	 * that originated the change.
+	 * Creates the <code>RefactoringChangeDescriptor</code> with the
+	 * {@link RefactoringDescriptor} that originated the change.
 	 * 
-	 * @param refactoringDescriptor the {@link RefactoringDescriptor} that originated the change.
+	 * @param descriptor
+	 *            the {@link RefactoringDescriptor} that originated the change.
 	 */
-	public RefactoringChangeDescriptor(final RefactoringDescriptor refactoringDescriptor) {
-		fRefactoringDescriptor= refactoringDescriptor;
+	public RefactoringChangeDescriptor(final RefactoringDescriptor descriptor) {
+		fRefactoringDescriptor= descriptor;
 	}
-	
+
 	/**
 	 * Returns the {@link RefactoringDescriptor} that originated the change.
-	 *
+	 * 
 	 * @return the {@link RefactoringDescriptor} that originated the change.
 	 */
 	public RefactoringDescriptor getRefactoringDescriptor() {
