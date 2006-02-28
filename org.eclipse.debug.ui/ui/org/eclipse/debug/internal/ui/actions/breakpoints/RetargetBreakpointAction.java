@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.debug.internal.ui.actions.RetargetAction;
-import org.eclipse.debug.ui.actions.*;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 
 
 /**

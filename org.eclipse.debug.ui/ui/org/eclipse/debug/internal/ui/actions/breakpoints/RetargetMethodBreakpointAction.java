@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.ui.actions.*;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
