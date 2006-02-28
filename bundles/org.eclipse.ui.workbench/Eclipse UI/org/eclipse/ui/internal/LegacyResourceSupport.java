@@ -349,7 +349,7 @@ public final class LegacyResourceSupport {
 			IAdaptable adaptable = (IAdaptable) object;
 			Class contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
 			if (contributorResourceAdapterClass == null) {
-				return null;
+				return adaptable.getAdapter(LegacyResourceSupport.getResourceClass());
 			}
 			Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
 			if (resourceAdapter == null) {
@@ -402,11 +402,11 @@ public final class LegacyResourceSupport {
             IAdaptable adaptable = (IAdaptable) object;
             Class contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
             if (contributorResourceAdapterClass == null) {
-                return null;
+                return adaptable.getAdapter(LegacyResourceSupport.getResourceMappingClass());
             }
             Class contributorResourceAdapter2Class = LegacyResourceSupport.getIContributorResourceAdapter2Class();
             if (contributorResourceAdapter2Class == null) {
-                return null;
+                return adaptable.getAdapter(LegacyResourceSupport.getResourceMappingClass());
             }
             Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
             Object resourceMappingAdapter;
