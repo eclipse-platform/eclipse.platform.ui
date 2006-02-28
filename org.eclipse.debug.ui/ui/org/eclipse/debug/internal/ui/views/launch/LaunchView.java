@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -64,7 +63,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -576,17 +574,15 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
-		// TODO: fix this
 		if (isActive()) { 
 			IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
-			if (!selection.isEmpty()) { 
-				Object sourceElement = null;
-//				if (fResult != null) {
-//					sourceElement = fResult.getSourceElement();
-//				}
-				if (sourceElement instanceof IAdaptable) {
-					if (((IAdaptable)sourceElement).getAdapter(IResource.class) != null) {
-						return new ShowInContext(null, new StructuredSelection(sourceElement));
+			if (selection.size() == 1) { 
+				Object object = selection.getFirstElement();
+				if (object instanceof IAdaptable) {
+					IAdaptable adaptable = (IAdaptable) object;
+					IShowInSource show = (IShowInSource) adaptable.getAdapter(IShowInSource.class);
+					if (show != null) {
+						return show.getShowInContext();
 					}
 				}
 			}
@@ -598,7 +594,20 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.ui.part.IShowInTargetList#getShowInTargetIds()
 	 */
 	public String[] getShowInTargetIds() {
-		return new String[] { IPageLayout.ID_RES_NAV };
+		if (isActive()) { 
+			IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+			if (selection.size() == 1) { 
+				Object object = selection.getFirstElement();
+				if (object instanceof IAdaptable) {
+					IAdaptable adaptable = (IAdaptable) object;
+					IShowInTargetList show = (IShowInTargetList) adaptable.getAdapter(IShowInTargetList.class);
+					if (show != null) {
+						return show.getShowInTargetIds();
+					}
+				}
+			}
+		}
+		return new String[0];
 	}
 
 	/* (non-Javadoc)
