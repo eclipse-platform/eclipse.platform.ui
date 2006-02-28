@@ -22,6 +22,11 @@ public class WithExpression extends CompositeExpression {
 
 	private String fVariable;
 	private static final String ATT_VARIABLE= "variable";  //$NON-NLS-1$
+
+	/**
+	 * The seed for the hash code for all with expressions.
+	 */
+	private static final int HASH_INITIAL= WithExpression.class.getName().hashCode();
 	
 	public WithExpression(IConfigurationElement configElement) throws CoreException {
 		fVariable= configElement.getAttribute(ATT_VARIABLE);
@@ -29,7 +34,27 @@ public class WithExpression extends CompositeExpression {
 	}
 	
 	public WithExpression(String variable) {
+		Assert.isNotNull(variable);
 		fVariable= variable;
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof WithExpression))
+			return false;
+		
+		final WithExpression that= (WithExpression)object;
+		return this.fVariable.equals(that.fVariable) && equals(this.fExpressions, that.fExpressions);
+	}
+	
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
+			fHashCode= fHashCode * HASH_FACTOR + fVariable.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {

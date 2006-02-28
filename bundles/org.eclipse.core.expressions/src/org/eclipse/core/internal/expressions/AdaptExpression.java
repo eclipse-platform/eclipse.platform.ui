@@ -16,12 +16,17 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
 
 public class AdaptExpression extends CompositeExpression {
 
 	private static final String ATT_TYPE= "type"; //$NON-NLS-1$
+
+	/**
+	 * The seed for the hash code for all adapt expressions.
+	 */
+	private static final int HASH_INITIAL= AdaptExpression.class.getName().hashCode();
 	
 	private String fTypeName;
 	
@@ -33,6 +38,26 @@ public class AdaptExpression extends CompositeExpression {
 	public AdaptExpression(String typeName) {
 		Assert.isNotNull(typeName);
 		fTypeName= typeName;
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof AdaptExpression))
+			return false;
+		
+		final AdaptExpression that= (AdaptExpression)object;
+		return equals(this.fExpressions, that.fExpressions)
+				&& this.fTypeName.equals(that.fTypeName);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode = HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
+			fHashCode = fHashCode * HASH_FACTOR + fTypeName.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 	
 	/* (non-Javadoc)

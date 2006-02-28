@@ -18,6 +18,10 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.ExpressionInfo;
 
 public class NotExpression extends Expression {
+	/**
+	 * The seed for the hash code for all not expressions.
+	 */
+	private static final int HASH_INITIAL= NotExpression.class.getName().hashCode();
 
 	private Expression fExpression;
 
@@ -32,5 +36,23 @@ public class NotExpression extends Expression {
 	
 	public void collectExpressionInfo(ExpressionInfo info) {
 		fExpression.collectExpressionInfo(info);
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof NotExpression))
+			return false;
+		
+		final NotExpression that= (NotExpression)object;
+		return this.fExpression.equals(that.fExpression);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + fExpression.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 }

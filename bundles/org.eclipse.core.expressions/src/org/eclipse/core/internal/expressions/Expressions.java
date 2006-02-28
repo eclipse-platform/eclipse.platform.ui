@@ -91,7 +91,7 @@ public class Expressions {
 	
 	//---- Argument parsing --------------------------------------------
 	
-	private static final Object[] EMPTY_ARGS= new Object[0];
+	public static final Object[] EMPTY_ARGS= new Object[0];
 	
 	public static Object[] getArguments(IConfigurationElement element, String attributeName) throws CoreException {
 		String args= element.getAttribute(attributeName);

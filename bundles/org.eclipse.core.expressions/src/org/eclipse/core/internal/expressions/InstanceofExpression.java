@@ -19,6 +19,10 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.ExpressionInfo;
 
 public class InstanceofExpression extends Expression {
+	/**
+	 * The seed for the hash code for all instance of expressions.
+	 */
+	private static final int HASH_INITIAL= InstanceofExpression.class.getName().hashCode();
 
 	private String fTypeName;
 	
@@ -42,6 +46,24 @@ public class InstanceofExpression extends Expression {
 	
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof InstanceofExpression))
+			return false;
+		
+		final InstanceofExpression that= (InstanceofExpression) object;
+		return this.fTypeName.equals(that.fTypeName);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + fTypeName.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 	
 	//---- Debugging ---------------------------------------------------

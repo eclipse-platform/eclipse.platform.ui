@@ -29,6 +29,11 @@ public class CountExpression extends Expression {
 	private static final int NONE_OR_ONE= 	2;
 	private static final int NONE= 			1;
 	private static final int UNKNOWN= 		0;
+
+	/**
+	 * The seed for the hash code for all count expressions.
+	 */
+	private static final int HASH_INITIAL= CountExpression.class.getName().hashCode();
 	
 	private int fMode;
 	private int fSize;
@@ -87,5 +92,24 @@ public class CountExpression extends Expression {
 
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof CountExpression))
+			return false;
+		
+		final CountExpression that= (CountExpression)object;
+		return (this.fMode == that.fMode) && (this.fSize == that.fSize);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + fMode;
+			fHashCode= fHashCode * HASH_FACTOR + fSize;
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 }

@@ -25,6 +25,11 @@ public class ResolveExpression extends CompositeExpression {
 	
 	private static final String ATT_VARIABLE= "variable";  //$NON-NLS-1$
 	private static final String ATT_ARGS= "args";  //$NON-NLS-1$
+
+	/**
+	 * The seed for the hash code for all resolve expressions.
+	 */
+	private static final int HASH_INITIAL= ResolveExpression.class.getName().hashCode();
 	
 	public ResolveExpression(IConfigurationElement configElement) throws CoreException {
 		fVariable= configElement.getAttribute(ATT_VARIABLE);
@@ -56,4 +61,26 @@ public class ResolveExpression extends CompositeExpression {
 		}
 		info.mergeExceptDefaultVariable(other);
 	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof ResolveExpression))
+			return false;
+		
+		final ResolveExpression that= (ResolveExpression)object;
+		return this.fVariable.equals(that.fVariable) 
+				&& equals(this.fArgs, that.fArgs) 
+				&& equals(this.fExpressions, that.fExpressions);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
+			fHashCode= fHashCode * HASH_FACTOR + hashCode(fArgs);
+			fHashCode= fHashCode * HASH_FACTOR + fVariable.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
+	} 
 }

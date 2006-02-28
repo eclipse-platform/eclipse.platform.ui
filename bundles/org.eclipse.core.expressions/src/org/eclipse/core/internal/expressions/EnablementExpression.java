@@ -21,6 +21,14 @@ public class EnablementExpression extends CompositeExpression {
 	public EnablementExpression(IConfigurationElement configElement) {
 		// config element not used yet.
 	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof EnablementExpression))
+			return false;
+		
+		final EnablementExpression that= (EnablementExpression)object;
+		return equals(this.fExpressions, that.fExpressions);
+	} 
 	
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		long start= 0;

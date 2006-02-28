@@ -68,6 +68,11 @@ public class IterateExpression extends CompositeExpression {
 	private static final String ATT_OPERATOR= "operator"; //$NON-NLS-1$
 	private static final int OR= 1;
 	private static final int AND= 2;
+
+	/**
+	 * The seed for the hash code for all iterate expressions.
+	 */
+	private static final int HASH_INITIAL= IterateExpression.class.getName().hashCode();
 	
 	private int fOperator;
 	
@@ -135,5 +140,24 @@ public class IterateExpression extends CompositeExpression {
 		// elements.
 		info.markDefaultVariableAccessed();
 		super.collectExpressionInfo(info);
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof IterateExpression))
+			return false;
+		
+		final IterateExpression that= (IterateExpression)object;
+		return (this.fOperator == that.fOperator) && equals(this.fExpressions, that.fExpressions);
+	} 
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode = HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
+			fHashCode = fHashCode * HASH_FACTOR + fOperator;
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 }

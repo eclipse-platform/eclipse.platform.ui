@@ -18,12 +18,17 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
 
 public abstract class CompositeExpression extends Expression {
 
-	private static final Expression[] EMPTY_ARRAY= new Expression[0]; 
+	private static final Expression[] EMPTY_ARRAY = new Expression[0];
+
+	/**
+	 * The seed for the hash code for all composite expressions.
+	 */
+	private static final int HASH_INITIAL= CompositeExpression.class.getName().hashCode();
 	
 	protected List fExpressions;
 	
@@ -74,5 +79,15 @@ public abstract class CompositeExpression extends Expression {
 			Expression expression= (Expression)iter.next();
 			expression.collectExpressionInfo(info);
 		}
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 }

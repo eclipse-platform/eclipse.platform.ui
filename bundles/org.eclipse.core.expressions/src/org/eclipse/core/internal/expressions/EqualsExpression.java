@@ -19,6 +19,10 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.ExpressionInfo;
 
 public class EqualsExpression extends Expression {
+	/**
+	 * The seed for the hash code for all equals expressions.
+	 */
+	private static final int HASH_INITIAL= EqualsExpression.class.getName().hashCode();
 
 	private Object fExpectedValue; 
 	
@@ -40,5 +44,23 @@ public class EqualsExpression extends Expression {
 
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof EqualsExpression))
+			return false;
+		
+		final EqualsExpression that= (EqualsExpression)object;
+		return this.fExpectedValue.equals(that.fExpectedValue);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 }

@@ -19,5 +19,13 @@ public class OrExpression extends CompositeExpression {
 
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		return evaluateOr(context);
-	}	
+	}
+	
+	public boolean equals(final Object object) {
+		if (!(object instanceof OrExpression))
+			return false;
+		
+		final OrExpression that= (OrExpression)object;
+		return equals(this.fExpressions, that.fExpressions);
+	} 
 }

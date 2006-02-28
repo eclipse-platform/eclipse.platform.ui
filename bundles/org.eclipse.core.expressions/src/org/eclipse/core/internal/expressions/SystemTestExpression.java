@@ -25,6 +25,11 @@ public class SystemTestExpression extends Expression {
 	
 	private static final String ATT_PROPERTY= "property"; //$NON-NLS-1$
 	
+	/**
+	 * The seed for the hash code for all system test expressions.
+	 */
+	private static final int HASH_INITIAL= SystemTestExpression.class.getName().hashCode();
+	
 	public SystemTestExpression(IConfigurationElement element) throws CoreException {
 		fProperty= element.getAttribute(ATT_PROPERTY);
 		Expressions.checkAttribute(ATT_PROPERTY, fProperty);
@@ -33,6 +38,8 @@ public class SystemTestExpression extends Expression {
 	}
 	
 	public SystemTestExpression(String property, String expectedValue) {
+		Assert.isNotNull(property);
+		Assert.isNotNull(expectedValue);
 		fProperty= property;
 		fExpectedValue= expectedValue;
 	}
@@ -47,8 +54,28 @@ public class SystemTestExpression extends Expression {
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markSystemPropertyAccessed();
 	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof SystemTestExpression))
+			return false;
+		
+		final SystemTestExpression that= (SystemTestExpression)object;
+		return this.fProperty.equals(that.fProperty)
+				&& this.fExpectedValue.equals(that.fExpectedValue);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode();
+			fHashCode= fHashCode * HASH_FACTOR + fProperty.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
+	}
 	
-	//---- Debugging ---------------------------------------------------
+	// ---- Debugging ---------------------------------------------------
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

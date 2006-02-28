@@ -27,6 +27,10 @@ public class TestExpression extends Expression {
 	
 	private static final String ATT_PROPERTY= "property"; //$NON-NLS-1$
 	private static final String ATT_ARGS= "args"; //$NON-NLS-1$
+	/**
+	 * The seed for the hash code for all test expressions.
+	 */
+	private static final int HASH_INITIAL= TestExpression.class.getName().hashCode();
 	
 	private static final TypeExtensionManager fgTypeExtensionManager= new TypeExtensionManager("propertyTesters"); //$NON-NLS-1$
 	
@@ -45,9 +49,11 @@ public class TestExpression extends Expression {
 	}
 	
 	public TestExpression(String namespace, String property, Object[] args, Object expectedValue) {
+		Assert.isNotNull(namespace);
+		Assert.isNotNull(property);
 		fNamespace= namespace;
 		fProperty= property;
-		fArgs= args;
+		fArgs= args != null ? args : Expressions.EMPTY_ARGS;
 		fExpectedValue= expectedValue;
 	}
 	
@@ -67,6 +73,28 @@ public class TestExpression extends Expression {
 
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
+	}
+
+	public boolean equals(final Object object) {
+		if (!(object instanceof TestExpression))
+			return false;
+		
+		final TestExpression that= (TestExpression)object;
+		return this.fNamespace.equals(that.fNamespace) && this.fProperty.equals(that.fProperty)
+			&& equals(this.fArgs, that.fArgs) && equals(this.fExpectedValue, that.fExpectedValue);
+	}
+
+	public int hashCode() {
+		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+			fHashCode= HASH_INITIAL * HASH_FACTOR + hashCode(fArgs);
+			fHashCode= fHashCode * HASH_FACTOR + hashCode(fExpectedValue);
+			fHashCode= fHashCode * HASH_FACTOR + fNamespace.hashCode();
+			fHashCode= fHashCode * HASH_FACTOR + fProperty.hashCode();
+			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
+				fHashCode++;
+			}
+		}
+		return fHashCode;
 	}
 	
 	//---- Debugging ---------------------------------------------------
