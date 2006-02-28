@@ -12,6 +12,7 @@ package org.eclipse.jface.fieldassist;
 
 import java.util.HashMap;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
@@ -40,6 +41,85 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.2
  */
 public class FieldDecorationRegistry {
+
+	/**
+	 * Decoration id for the decoration that should be used to cue the user that
+	 * content proposals are available.
+	 */
+	public static final String DEC_CONTENT_PROPOSAL = "DEC_CONTENT_PROPOSAL"; //$NON-NLS-1$
+
+	/**
+	 * Decoration id for the decoration that should be used to cue the user that
+	 * a field is required.
+	 */
+	public static final String DEC_REQUIRED = "DEC_REQUIRED"; //$NON-NLS-1$
+
+	/**
+	 * Decoration id for the decoration that should be used to cue the user that
+	 * a field has an error.
+	 */
+	public static final String DEC_ERROR = "DEC_ERROR"; //$NON-NLS-1$
+
+	/**
+	 * Decoration id for the decoration that should be used to cue the user that
+	 * a field has a warning.
+	 */
+	public static final String DEC_WARNING = "DEC_WARNING"; //$NON-NLS-1$
+
+	/*
+	 * Image id's
+	 */
+	private static final String IMG_DEC_FIELD_CONTENT_PROPOSAL = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_CONTENT_PROPOSAL"; //$NON-NLS-1$
+
+	private static final String IMG_DEC_FIELD_REQUIRED = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_REQUIRED"; //$NON-NLS-1$
+
+	private static final String IMG_DEC_FIELD_ERROR = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_ERROR"; //$NON-NLS-1$
+
+	private static final String IMG_DEC_FIELD_WARNING = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_WARNING"; //$NON-NLS-1$
+
+	/*
+	 * Declare images and decorations immediately.
+	 */
+	static {
+		ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
+
+		// Define the images used in the standard decorations.
+		imageRegistry.put(IMG_DEC_FIELD_CONTENT_PROPOSAL, ImageDescriptor
+				.createFromFile(FieldDecorationRegistry.class,
+						"images/content_proposal_cue.gif"));//$NON-NLS-1$
+		imageRegistry.put(IMG_DEC_FIELD_ERROR, ImageDescriptor.createFromFile(
+				FieldDecorationRegistry.class, "images/error_cue.gif"));//$NON-NLS-1$
+
+		imageRegistry.put(IMG_DEC_FIELD_WARNING, ImageDescriptor
+				.createFromFile(FieldDecorationRegistry.class,
+						"images/warning_cue.gif"));//$NON-NLS-1$
+
+		imageRegistry.put(IMG_DEC_FIELD_REQUIRED, ImageDescriptor
+				.createFromFile(FieldDecorationRegistry.class,
+						"images/required_field_cue.gif"));//$NON-NLS-1$		
+
+		// Define the standard decorations. Some do not have standard
+		// descriptions. Use null in these cases.
+		getDefault()
+				.registerFieldDecoration(
+						DEC_CONTENT_PROPOSAL,
+						JFaceResources
+								.getString("FieldDecorationRegistry.contentAssistMessage"), //$NON-NLS-1$
+						IMG_DEC_FIELD_CONTENT_PROPOSAL, imageRegistry);
+
+		getDefault().registerFieldDecoration(
+				DEC_ERROR,
+				JFaceResources
+						.getString("FieldDecorationRegistry.errorMessage"), //$NON-NLS-1$
+				IMG_DEC_FIELD_ERROR, imageRegistry);
+
+		getDefault().registerFieldDecoration(DEC_WARNING, null,
+				IMG_DEC_FIELD_WARNING, imageRegistry);
+
+		getDefault().registerFieldDecoration(DEC_REQUIRED, null,
+				IMG_DEC_FIELD_REQUIRED, imageRegistry);
+
+	}
 
 	/*
 	 * Data structure that holds onto the decoration image info and description,
@@ -128,11 +208,6 @@ public class FieldDecorationRegistry {
 
 	/**
 	 * Construct a FieldDecorationRegistry.
-	 * 
-	 * @param decorationWidth
-	 *            the width in pixels reserved for decorations
-	 * @param decorationHeight
-	 *            the height in pixels reserved for decorations
 	 */
 	public FieldDecorationRegistry() {
 		maxDecorationWidth = 0;
@@ -145,7 +220,7 @@ public class FieldDecorationRegistry {
 	 * This value can be used by clients to reserve space or otherwise compute
 	 * margins when aligning non-decorated fields with decorated fields.
 	 * 
-	 * @return decorationWidth the maximum width in pixels of any accessed
+	 * @return the maximum width in pixels of any accessed
 	 *         decoration
 	 */
 	public int getMaximumDecorationWidth() {
@@ -159,7 +234,7 @@ public class FieldDecorationRegistry {
 	 * margins when aligning non-decorated fields with decorated fields.
 	 * 
 	 * 
-	 * @return decorationHeight the maximum height in pixels of any accessed
+	 * @return the maximum height in pixels of any accessed
 	 *         decoration
 	 */
 	public int getMaximumDecorationHeight() {

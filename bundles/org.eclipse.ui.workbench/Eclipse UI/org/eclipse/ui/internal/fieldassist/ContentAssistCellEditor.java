@@ -21,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
-import org.eclipse.ui.fieldassist.IWorkbenchFieldDecorationConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -36,6 +35,9 @@ import org.eclipse.ui.keys.IBindingService;
 public class ContentAssistCellEditor extends DecoratedFieldCellEditor {
 
 	private ContentAssistCommandAdapter adapter;
+	
+	// Note that we reuse the key name used in ContentAssistField
+	private static final String CONTENT_ASSIST_DECORATION_ID = "org.eclipse.ui.fieldAssist.ContentAssistField"; //$NON-NLS-1$
 
 	/**
 	 * Construct a content assist field that shows a content assist cue and can
@@ -98,15 +100,14 @@ public class ContentAssistCellEditor extends DecoratedFieldCellEditor {
 	private FieldDecoration getFieldDecoration() {
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
 		// Look for a decoration installed for this command.
-		String decId = IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE
+		String decId = CONTENT_ASSIST_DECORATION_ID
 				+ adapter.getCommandId();
 		FieldDecoration dec = registry.getFieldDecoration(decId);
 
-		// If there is not one, base it on the content assist decoration without
-		// a keybinding
+		// If there is not one, base ours on the standard JFace one.
 		if (dec == null) {
 			FieldDecoration originalDec = registry
-					.getFieldDecoration(IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE);
+					.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 
 			registry.registerFieldDecoration(decId, null, originalDec
 					.getImage());

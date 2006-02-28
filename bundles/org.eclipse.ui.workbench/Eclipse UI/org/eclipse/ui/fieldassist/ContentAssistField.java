@@ -38,6 +38,8 @@ public class ContentAssistField extends DecoratedField {
 
 	private ContentAssistCommandAdapter adapter;
 
+	private static final String CONTENT_ASSIST_DECORATION_ID = "org.eclipse.ui.fieldAssist.ContentAssistField"; //$NON-NLS-1$
+
 	/**
 	 * Construct a content assist field that shows a content assist cue and can
 	 * assist the user with choosing content for the field.
@@ -70,14 +72,13 @@ public class ContentAssistField extends DecoratedField {
 	public ContentAssistField(Composite parent, int style,
 			IControlCreator controlCreator,
 			IControlContentAdapter controlContentAdapter,
-			IContentProposalProvider proposalProvider,
-			 String commandId,
+			IContentProposalProvider proposalProvider, String commandId,
 			char[] autoActivationCharacters) {
 
 		super(parent, style, controlCreator);
 		adapter = new ContentAssistCommandAdapter(getControl(),
-				controlContentAdapter, proposalProvider, 
-				commandId, autoActivationCharacters);
+				controlContentAdapter, proposalProvider, commandId,
+				autoActivationCharacters);
 
 		addFieldDecoration(getFieldDecoration(), SWT.LEFT | SWT.TOP, true);
 
@@ -109,16 +110,14 @@ public class ContentAssistField extends DecoratedField {
 	 */
 	private FieldDecoration getFieldDecoration() {
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
-		// Look for a decoration installed for this command.
-		String decId = IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE
-				+ adapter.getCommandId();
+		// Look for a decoration installed for this particular command id.
+		String decId = CONTENT_ASSIST_DECORATION_ID + adapter.getCommandId();
 		FieldDecoration dec = registry.getFieldDecoration(decId);
 
-		// If there is not one, base it on the content assist decoration without
-		// a keybinding
+		// If there is not one, base ours on the standard JFace one.
 		if (dec == null) {
 			FieldDecoration originalDec = registry
-					.getFieldDecoration(IWorkbenchFieldDecorationConstants.CONTENT_ASSIST_CUE);
+					.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 
 			registry.registerFieldDecoration(decId, null, originalDec
 					.getImage());
@@ -136,6 +135,7 @@ public class ContentAssistField extends DecoratedField {
 		// Now return the field decoration
 		return dec;
 	}
+
 	/**
 	 * Return the ContentAssistCommandAdapter installed on the receiver. This
 	 * adapter is provided so that clients can configure the adapter if the

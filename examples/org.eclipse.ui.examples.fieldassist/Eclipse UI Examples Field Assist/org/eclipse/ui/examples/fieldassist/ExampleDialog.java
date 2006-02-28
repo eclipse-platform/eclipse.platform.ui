@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposal;
@@ -19,7 +20,6 @@ import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.fieldassist.TextControlCreator;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -91,7 +91,7 @@ public class ExampleDialog extends StatusDialog {
 			if (errorDecoration == null) {
 				FieldDecoration standardError = FieldDecorationRegistry
 						.getDefault().getFieldDecoration(
-								FieldAssistPlugin.DEC_ERROR);
+								FieldDecorationRegistry.DEC_ERROR);
 				if (getErrorMessage() == null) {
 					errorDecoration = standardError;
 				} else {
@@ -107,7 +107,7 @@ public class ExampleDialog extends StatusDialog {
 			if (warningDecoration == null) {
 				FieldDecoration standardWarning = FieldDecorationRegistry
 						.getDefault().getFieldDecoration(
-								FieldAssistPlugin.DEC_WARNING);
+								FieldDecorationRegistry.DEC_WARNING);
 				if (getWarningMessage() == null) {
 					warningDecoration = standardWarning;
 				} else {
@@ -154,7 +154,8 @@ public class ExampleDialog extends StatusDialog {
 		}
 
 		boolean isWarning() {
-			return getContents().equals(TaskAssistExampleMessages.ExampleDialog_WarningName);
+			return getContents().equals(
+					TaskAssistExampleMessages.ExampleDialog_WarningName);
 		}
 
 		String getWarningMessage() {
@@ -364,14 +365,19 @@ public class ExampleDialog extends StatusDialog {
 	}
 
 	private FieldDecoration getCueDecoration() {
+		// We use our own decoration which is based on the JFace version.
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
 		FieldDecoration dec = registry
 				.getFieldDecoration(FieldAssistPlugin.DEC_CONTENTASSIST);
 		if (dec == null) {
+			// Get the standard one. We use its image and our own customized
+			// text.
+			FieldDecoration standardDecoration = registry
+					.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 			registry.registerFieldDecoration(
 					FieldAssistPlugin.DEC_CONTENTASSIST, NLS.bind(
 							TaskAssistExampleMessages.Decorator_ContentAssist,
-							triggerKey), FieldAssistPlugin.DEC_CONTENTASSIST);
+							triggerKey), standardDecoration.getImage());
 			dec = registry
 					.getFieldDecoration(FieldAssistPlugin.DEC_CONTENTASSIST);
 		}
@@ -380,12 +386,12 @@ public class ExampleDialog extends StatusDialog {
 
 	private FieldDecoration getWarningDecoration() {
 		return FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldAssistPlugin.DEC_WARNING);
+				FieldDecorationRegistry.DEC_WARNING);
 	}
 
 	private FieldDecoration getRequiredFieldDecoration() {
 		return FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldAssistPlugin.DEC_REQUIRED);
+				FieldDecorationRegistry.DEC_REQUIRED);
 	}
 
 	private void handleModify(SmartField smartField) {
@@ -423,8 +429,9 @@ public class ExampleDialog extends StatusDialog {
 		if (showRequiredFieldColor && smartField.isRequiredField()
 				&& smartField.getContents().length() == 0) {
 			smartField.field.getControl().setBackground(
-					smartField.field.getControl().getDisplay().getSystemColor(
-							SWT.COLOR_INFO_BACKGROUND));
+					FieldAssistColors
+							.getRequiredFieldBackgroundColor(smartField.field
+									.getControl()));
 		}
 	}
 
@@ -436,7 +443,8 @@ public class ExampleDialog extends StatusDialog {
 							.getDescription(), null));
 		}
 		if (showErrorDecoration) {
-			smartField.field.addFieldDecoration(dec, SWT.BOTTOM | SWT.LEFT, false);
+			smartField.field.addFieldDecoration(dec, SWT.BOTTOM | SWT.LEFT,
+					false);
 		}
 		if (showErrorColor) {
 			smartField.field.getControl().setBackground(
@@ -580,50 +588,10 @@ public class ExampleDialog extends StatusDialog {
 		return data;
 	}
 
-	private RGB computeErrorColor(Control control) {
-		// Takes into account both the magnitude of each color component
-		// and significant variation from the average magnitude.
-		Color background = control.getBackground();
-		Color error = JFaceColors.getErrorText(control.getDisplay());
-		int average = (error.getRed() + error.getBlue() + error.getGreen()) / 3;
-		int rMore = (int) (0.08 * error.getRed())
-				+ (int) (0.05 * (error.getRed() - average));
-		int gMore = (int) (0.08 * error.getGreen())
-				+ (int) (0.05 * (error.getGreen() - average));
-		int bMore = (int) (0.08 * error.getBlue())
-				+ (int) (0.05 * (error.getBlue() - average));
-		int r = background.getRed();
-		int g = background.getGreen();
-		int b = background.getBlue();
-		if (r <= 255 - rMore) {
-			r += rMore;
-		} else {
-			g -= rMore;
-			b -= rMore;
-		}
-		if (g <= 255 - gMore) {
-			g += gMore;
-		} else {
-			r -= gMore;
-			b -= gMore;
-		}
-		if (b <= 255 - bMore) {
-			b += bMore;
-		} else {
-			r -= bMore;
-			g -= bMore;
-		}
-		r = Math.max(0, Math.min(255, r));
-		g = Math.max(0, Math.min(255, g));
-		b = Math.max(0, Math.min(255, b));
-		return new RGB(r, g, b);
-	}
-
 	private Color getErrorColor(Control control) {
 		if (errorColor == null) {
-			RGB rgb = computeErrorColor(control);
+			RGB rgb = FieldAssistColors.computeErrorFieldBackgroundRGB(control);
 			errorColor = new Color(control.getDisplay(), rgb);
-
 		}
 		return errorColor;
 	}
