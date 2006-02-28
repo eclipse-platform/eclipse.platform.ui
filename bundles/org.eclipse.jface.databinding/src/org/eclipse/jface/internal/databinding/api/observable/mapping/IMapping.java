@@ -11,21 +11,22 @@
 
 package org.eclipse.jface.internal.databinding.api.observable.mapping;
 
-import org.eclipse.jface.internal.databinding.api.observable.IObservable;
-
 /**
- * @since 1.0
- * 
+ * @since 3.2
+ *
  */
-public interface IObservableMapping extends IObservable, IMapping {
+public interface IMapping {
 
 	/**
-	 * @param listener
+	 * @param element
+	 * @return the mapping value for the given element
 	 */
-	public void addMappingChangeListener(IMappingChangeListener listener);
+	public Object getMappingValue(Object element);
 
 	/**
-	 * @param listener
+	 * @param element
+	 * @param value
 	 */
-	public void removeMappingChangeListener(IMappingChangeListener listener);
+	public void setMappingValue(Object element, Object value);
+
 }

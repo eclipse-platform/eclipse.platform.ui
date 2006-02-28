@@ -28,7 +28,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.WritableSet;
  * 
  */
 public class BidirectionalMapping extends AbstractObservableMapping implements
-		IBidirectionalMapping {
+		IBidirectionalMapping, IObservableMappingWithDomain {
 
 	private final IObservableMapping wrappedMapping;
 
@@ -154,6 +154,10 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 	public void dispose() {
 		wrappedMapping.removeMappingChangeListener(mappingChangeListener);
 		domain.removeSetChangeListener(domainListener);
+	}
+
+	public IObservableSet getDomain() {
+		return domain;
 	}
 
 }

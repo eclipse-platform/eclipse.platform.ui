@@ -21,7 +21,7 @@ import java.util.Set;
  * @since 1.0
  * 
  */
-public final class WritableSet extends ObservableSet {
+public class WritableSet extends ObservableSet {
 
 	/**
 	 * @param wrappedSet

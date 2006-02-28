@@ -35,6 +35,7 @@ public class TableObservableValue extends AbstractObservableValue {
 	 */
 	public TableObservableValue(Table table, String attribute) {
 		this.table = table;
+		currentSelection = table.getSelectionIndex();
 		if (attribute.equals(SWTProperties.SELECTION)) {
 			currentSelection = table.getSelectionIndex();
 			table.addSelectionListener(new SelectionListener() {
