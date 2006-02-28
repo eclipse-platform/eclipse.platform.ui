@@ -19,6 +19,8 @@ body {
 	width:expression(document.body.clientWidth < 770? "770px": "auto" );
 	background-image : url(../graphics/rootpage/welcomebckgrd.jpg);	background-repeat : no-repeat;	background-position : center center;
 	background-attachment : fixed;
+	overflow : hidden;
+	overflow-clip: rect(0, auto, auto, 0);
 	background-color : #7169D1;
 }
 #root {
