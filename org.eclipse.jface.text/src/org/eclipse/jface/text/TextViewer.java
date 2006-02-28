@@ -1633,10 +1633,8 @@ public class TextViewer extends Viewer implements
 
 	//---- simple getters and setters
 
-	/**
-	 * Returns viewer's text widget.
-	 *
-	 * @return the viewer's text widget
+	/*
+	 * @see org.eclipse.jface.text.ITextViewer#getTextWidget()
 	 */
 	public StyledText getTextWidget() {
 		return fTextWidget;

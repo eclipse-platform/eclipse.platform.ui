@@ -115,6 +115,11 @@ public interface ITextViewer {
 
 	/**
 	 * Returns this viewer's SWT control, <code>null</code> if the control is disposed.
+	 * <p>
+	 * <em>Calling API directly on the widget can interfere with features provided
+	 * by a text viewer. Clients who call API directly on the widget are responsible
+	 * to resolve such conflicts on their side.</em> 
+	 * </p>
 	 *
 	 * @return the SWT control or <code>null</code>
 	 */
