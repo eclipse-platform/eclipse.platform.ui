@@ -90,8 +90,8 @@ public class NewTableScenarios extends ScenariosTestCase {
 //		// Factory for directly creating IObservables for beans
 //		JavaBeans javaBeans = new JavaBeans();
 //		
-//		// Wrap the TableViewer in an IObservableTable
-//		IObservableTable accountTable = new TableViewerObservableTable(
+//		// Wrap the TableViewer in an IObservableSetWithLabels
+//		IObservableSetWithLabels accountTable = new TableViewerObservableTable(
 //				tableViewer);
 //
 //		// Create a readable set to track the catalog's accounts
