@@ -85,7 +85,7 @@ public class TreeLabelProvider extends LabelProvider {
 	
 	private Image getDefaultImage() {
 		if (defaultImage == null) {
-			ImageDescriptor desc = createImageDescriptor("icons/obj16/info_task.gif"); //$NON-NLS-1$
+			ImageDescriptor desc = createImageDescriptor("$nl$/icons/obj16/info_task.gif"); //$NON-NLS-1$
 			defaultImage = desc.createImage();	
 		}
 		return defaultImage;
@@ -122,19 +122,19 @@ public class TreeLabelProvider extends LabelProvider {
 			images.put(ICompositeCheatSheetTask.NOT_STARTED, desc.createImage());
 			
 			createImageWithOverlay(ICompositeCheatSheetTask.IN_PROGRESS, 
-		               "icons/ovr16/task_in_progress.gif",  //$NON-NLS-1$
+		               "$nl$/icons/ovr16/task_in_progress.gif",  //$NON-NLS-1$
 		               images, 
 		               desc);
 			createImageWithOverlay(ICompositeCheatSheetTask.SKIPPED, 
-		               "icons/ovr16/task_skipped.gif",  //$NON-NLS-1$
+		               "$nl$/icons/ovr16/task_skipped.gif",  //$NON-NLS-1$
 		               images, 
 		               desc);
 			createImageWithOverlay(BLOCKED, 
-		               "icons/ovr16/task_blocked.gif",  //$NON-NLS-1$
+		               "$nl$/icons/ovr16/task_blocked.gif",  //$NON-NLS-1$
 		               images, 
 		               desc);
 			createImageWithOverlay(ICompositeCheatSheetTask.COMPLETED, 
-		               "icons/ovr16/task_complete.gif",  //$NON-NLS-1$
+		               "$nl$/icons/ovr16/task_complete.gif",  //$NON-NLS-1$
 		               images, 
 		               desc);
 			
@@ -144,11 +144,11 @@ public class TreeLabelProvider extends LabelProvider {
 
 	private ImageDescriptor getPredefinedImageDescriptor(String kind) {
 		if (ITaskGroup.SET.equals(kind)) {
-			return createImageDescriptor("icons/obj16/task_set.gif"); //$NON-NLS-1$
+			return createImageDescriptor("$nl$/icons/obj16/task_set.gif"); //$NON-NLS-1$
 		} else if (ITaskGroup.CHOICE.equals(kind)) {
-			return createImageDescriptor("icons/obj16/task_choice.gif"); //$NON-NLS-1$
+			return createImageDescriptor("$nl$/icons/obj16/task_choice.gif"); //$NON-NLS-1$
 		} else if (ITaskGroup.SEQUENCE.equals(kind)) {
-			return createImageDescriptor("icons/obj16/task_sequence.gif"); //$NON-NLS-1$
+			return createImageDescriptor("$nl$/icons/obj16/task_sequence.gif"); //$NON-NLS-1$
 		}
 		return null;
 	}

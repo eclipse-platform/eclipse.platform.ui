@@ -189,7 +189,7 @@
    <extension
          point="org.eclipse.help.base.luceneSearchParticipants">
       <searchParticipant
-            icon="icons/obj16/cheatsheet_obj.gif"
+            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
             id="org.eclipse.ui.cheatsheets"
             name="%searchParticipant.name"
             participant="org.eclipse.ui.internal.cheatsheets.CheatsheetSearchParticipant"/>
@@ -198,11 +198,11 @@
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <taskEditor
             class="org.eclipse.ui.internal.cheatsheets.composite.views.CheatsheetTaskEditor"
-            icon="icons/obj16/cheatsheet_obj.gif"
+            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
             id="cheatsheet"/>
       <taskExplorer
             class="org.eclipse.ui.internal.cheatsheets.composite.explorer.TreeTaskExplorer"
-            icon="icons/obj16/cheatsheet_obj.gif"
+            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
             id="tree"
             name="Tree"/>
    </extension>
