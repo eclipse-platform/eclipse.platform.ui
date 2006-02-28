@@ -119,11 +119,6 @@ public final class SearchMessages extends NLS {
 	public static String FileSearchPage_error_marker;
 	public static String FileSearchPage_sort_by_label;
 	public static String FileSearchPage_limited_format;
-	public static String TypesFiltering_title;
-	public static String TypesFiltering_message;
-	public static String TypesFiltering_otherExtensions;
-	public static String TypesFiltering_selectAll;
-	public static String TypesFiltering_deselectAll;
 	public static String WorkspaceScope;
 	public static String WorkingSetScope;
 	public static String SelectionScope;
