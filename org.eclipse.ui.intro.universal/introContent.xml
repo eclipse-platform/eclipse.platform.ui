@@ -72,7 +72,7 @@
 			<!-- panes -->
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
-			<group id="content-divider"/>
+			<group id="content-divider" filteredFrom="swt"/>		
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -102,7 +102,7 @@
             <text style-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
-			<group id="content-divider"/>
+			<group id="content-divider" filteredFrom="swt"/>		
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -131,7 +131,7 @@
             <text style-id="page-description" id="page-description">Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
-			<group id="content-divider"/>			
+			<group id="content-divider" filteredFrom="swt"/>		
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -159,7 +159,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">WHAT'S NEW</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
-			<group id="content-divider"/>			
+			<group id="content-divider" filteredFrom="swt"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -187,7 +187,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">FIRST STEPS</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
-			<group id="content-divider"/>			
+			<group id="content-divider" filteredFrom="swt"/>				
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -215,7 +215,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">WEB RESOURCE</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
-			<group id="content-divider"/>			
+			<group id="content-divider" filteredFrom="swt"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
@@ -244,7 +244,7 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">MIGRATE</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
-			<group id="content-divider"/>			
+			<group id="content-divider" filteredFrom="swt"/>			
 			<group id="bottom-left" computed="true"/>
 			<group id="bottom-right" computed="true"/>
         </group>
