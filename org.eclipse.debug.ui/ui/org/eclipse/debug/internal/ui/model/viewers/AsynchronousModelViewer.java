@@ -44,8 +44,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -830,11 +828,15 @@ public abstract class AsynchronousModelViewer extends StructuredViewer implement
     /**
      * A node in the model has been updated
      * 
+     * TODO: may want to consider 'clear' to avoid refreshing non-visible nodes.
+     *  - however that may create a flash.
+     * 
      * @param node
      */
     public void nodeChanged(ModelNode node) {
        Widget widget = findItem(node);
        if (widget != null) {
+    	   widget.setData(node.getElement());
            internalRefresh(node);
        }
     }
