@@ -13,10 +13,18 @@ package org.eclipse.ui.internal.navigator.extensions;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreePathContentProvider;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.navigator.*;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
+import org.eclipse.ui.navigator.ICommonContentProvider;
+import org.eclipse.ui.navigator.IMementoAware;
+import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
+import org.eclipse.ui.navigator.PipelinedShapeModification;
+import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
 /**
  * @since 3.2

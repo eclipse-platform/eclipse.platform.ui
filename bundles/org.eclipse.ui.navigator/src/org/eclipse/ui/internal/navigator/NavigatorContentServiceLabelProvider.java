@@ -14,8 +14,18 @@ package org.eclipse.ui.internal.navigator;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITreePathLabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -266,7 +276,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			ILabelProvider labelProvider = labelProviders[i];
 			if (labelProvider instanceof ITreePathLabelProvider) {
 				ITreePathLabelProvider tplp = (ITreePathLabelProvider) labelProvider;
-				((ITreePathLabelProvider)tplp).updateLabel(label, elementPath);
+				tplp.updateLabel(label, elementPath);
 			} else {
 				label.setImage(getImage(elementPath.getLastSegment()));
 				label.setText(getText(elementPath.getLastSegment()));
