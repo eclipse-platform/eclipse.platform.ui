@@ -158,7 +158,7 @@ public abstract class Expression {
 	 * The hash code for this object. This value is computed lazily.  If it is
 	 * not yet computed, it is equal to {@link #HASH_CODE_NOT_COMPUTED}.
 	 */
-	protected transient int fHashCode= HASH_CODE_NOT_COMPUTED;
+	private transient int fHashCode= HASH_CODE_NOT_COMPUTED;
 	
 	/**
 	 * Evaluates this expression. 
@@ -200,5 +200,31 @@ public abstract class Expression {
 	 */
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.addMisBehavingExpressionType(getClass());
+	}
+	
+	/**
+	 * Method to compute the hash code for this object. The result
+	 * returned from this method in cached in the <code>fHashCode</code>
+	 * field. If the value returned from the method equals {@link HASH_CODE_NOT_COMPUTED}
+	 * (e.g. <code>-1</code>) then the value is incremented by one.
+	 * <p>
+	 * This default implementation calls <code>super.hashCode()</code>
+	 * </p>
+	 * @return a hash code for this object.
+	 */
+	protected int computeHashCode() {
+		return super.hashCode();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public int hashCode() {
+		if (fHashCode != HASH_CODE_NOT_COMPUTED)
+			return fHashCode;
+		fHashCode= computeHashCode();
+		if (fHashCode == HASH_CODE_NOT_COMPUTED)
+			fHashCode++;
+		return fHashCode;
 	}
 }

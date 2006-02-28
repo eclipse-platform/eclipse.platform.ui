@@ -46,13 +46,7 @@ public class NotExpression extends Expression {
 		return this.fExpression.equals(that.fExpression);
 	}
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode= HASH_INITIAL * HASH_FACTOR + fExpression.hashCode();
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + fExpression.hashCode();
 	}
 }

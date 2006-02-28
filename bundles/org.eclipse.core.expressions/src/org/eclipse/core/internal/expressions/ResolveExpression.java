@@ -72,15 +72,9 @@ public class ResolveExpression extends CompositeExpression {
 				&& equals(this.fExpressions, that.fExpressions);
 	}
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode= HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
-			fHashCode= fHashCode * HASH_FACTOR + hashCode(fArgs);
-			fHashCode= fHashCode * HASH_FACTOR + fVariable.hashCode();
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
+			* HASH_FACTOR + hashCode(fArgs)
+			* HASH_FACTOR + fVariable.hashCode();
 	} 
 }

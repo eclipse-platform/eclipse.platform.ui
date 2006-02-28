@@ -45,19 +45,13 @@ public class AdaptExpression extends CompositeExpression {
 			return false;
 		
 		final AdaptExpression that= (AdaptExpression)object;
-		return equals(this.fExpressions, that.fExpressions)
-				&& this.fTypeName.equals(that.fTypeName);
+		return this.fTypeName.equals(that.fTypeName)
+				&& equals(this.fExpressions, that.fExpressions);
 	}
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode = HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
-			fHashCode = fHashCode * HASH_FACTOR + fTypeName.hashCode();
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
+			* HASH_FACTOR + fTypeName.hashCode();
 	}
 	
 	/* (non-Javadoc)

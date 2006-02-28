@@ -54,13 +54,7 @@ public class EqualsExpression extends Expression {
 		return this.fExpectedValue.equals(that.fExpectedValue);
 	}
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode= HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode();
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode();
 	}
 }

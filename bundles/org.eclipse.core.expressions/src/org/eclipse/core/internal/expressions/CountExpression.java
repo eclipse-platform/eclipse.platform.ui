@@ -102,14 +102,8 @@ public class CountExpression extends Expression {
 		return (this.fMode == that.fMode) && (this.fSize == that.fSize);
 	}
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode= HASH_INITIAL * HASH_FACTOR + fMode;
-			fHashCode= fHashCode * HASH_FACTOR + fSize;
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + fMode
+			* HASH_FACTOR + fSize;
 	}
 }

@@ -84,17 +84,11 @@ public class TestExpression extends Expression {
 			&& equals(this.fArgs, that.fArgs) && equals(this.fExpectedValue, that.fExpectedValue);
 	}
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode= HASH_INITIAL * HASH_FACTOR + hashCode(fArgs);
-			fHashCode= fHashCode * HASH_FACTOR + hashCode(fExpectedValue);
-			fHashCode= fHashCode * HASH_FACTOR + fNamespace.hashCode();
-			fHashCode= fHashCode * HASH_FACTOR + fProperty.hashCode();
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + hashCode(fArgs)
+			* HASH_FACTOR + hashCode(fExpectedValue)
+			* HASH_FACTOR + fNamespace.hashCode()
+			* HASH_FACTOR + fProperty.hashCode();
 	}
 	
 	//---- Debugging ---------------------------------------------------

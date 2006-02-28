@@ -150,14 +150,8 @@ public class IterateExpression extends CompositeExpression {
 		return (this.fOperator == that.fOperator) && equals(this.fExpressions, that.fExpressions);
 	} 
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode = HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
-			fHashCode = fHashCode * HASH_FACTOR + fOperator;
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
+			* HASH_FACTOR + fOperator;
 	}
 }

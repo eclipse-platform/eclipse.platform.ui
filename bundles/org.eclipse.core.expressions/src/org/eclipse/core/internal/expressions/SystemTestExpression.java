@@ -64,15 +64,9 @@ public class SystemTestExpression extends Expression {
 				&& this.fExpectedValue.equals(that.fExpectedValue);
 	}
 
-	public int hashCode() {
-		if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-			fHashCode= HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode();
-			fHashCode= fHashCode * HASH_FACTOR + fProperty.hashCode();
-			if (fHashCode == HASH_CODE_NOT_COMPUTED) {
-				fHashCode++;
-			}
-		}
-		return fHashCode;
+	protected int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode()
+			* HASH_FACTOR + fProperty.hashCode();
 	}
 	
 	// ---- Debugging ---------------------------------------------------
