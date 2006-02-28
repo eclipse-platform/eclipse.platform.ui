@@ -33,17 +33,12 @@ import org.eclipse.ui.part.CellEditorActionHandler;
  *
  */
 public class BookmarkView extends MarkerView {
-//
-//	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
-//			new ColumnPixelData(0,false,false),
-//			new ColumnPixelData(200), new ColumnPixelData(75),
-//			new ColumnPixelData(150), new ColumnPixelData(60) };
 
 	private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 
 	private final static String[] ROOT_TYPES = { IMarker.BOOKMARK };
 
-	private final static String[] TABLE_COLUMN_PROPERTIES = {Util.EMPTY_STRING, IMarker.MESSAGE,
+	private final static String[] TABLE_COLUMN_PROPERTIES = {IMarker.MESSAGE,
 		Util.EMPTY_STRING,
 		Util.EMPTY_STRING,
 		Util.EMPTY_STRING
@@ -51,7 +46,7 @@ public class BookmarkView extends MarkerView {
 
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.bookmark"; //$NON-NLS-1$
 
-	private final IField[] VISIBLE_FIELDS = {new FieldDummy(), new FieldMessage(),
+	private final IField[] VISIBLE_FIELDS = {new FieldMessage(),
 			new FieldResource(), new FieldFolder(), new FieldLineNumber() };
 
 	private ICellModifier cellModifier = new ICellModifier() {
@@ -105,7 +100,7 @@ public class BookmarkView extends MarkerView {
 				.getColumnCount()];
 		CellEditor descriptionCellEditor = new TextCellEditor(treeViewer
 				.getTree());
-		cellEditors[1] = descriptionCellEditor;
+		cellEditors[0] = descriptionCellEditor;
 		treeViewer.setCellEditors(cellEditors);
 		treeViewer.setCellModifier(cellModifier);
 		treeViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);

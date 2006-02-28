@@ -144,7 +144,7 @@ public class FieldDone extends AbstractField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */
 	public int getPreferredWidth() {
-		return 20;
+		return 40;
 	}
 
 }
