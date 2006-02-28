@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297 
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297, bug 128104 
  *     IBM Corporation - nlsing and incorporating into Eclipse. 
  *                          Class created from combination of all utility classes of contribution
  *******************************************************************************/
@@ -53,6 +53,7 @@ import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -258,7 +259,7 @@ public class ExportUtil
         List projects = new ArrayList();
         IClasspathEntry entries[] = project.getRawClasspath();
         addClasspathProjects(projects, entries);
-        return projects;
+        return sortProjectsUsingBuildOrder(projects);
     }
     
     private static void addClasspathProjects(List projects, IClasspathEntry[] entries) {
@@ -288,7 +289,7 @@ public class ExportUtil
     {
         LinkedList result = new LinkedList();
         getClasspathProjectsRecursive(project, result);
-        return result;
+        return sortProjectsUsingBuildOrder(result);
     }
     
     private static void getClasspathProjectsRecursive(IJavaProject project, LinkedList result) throws JavaModelException
@@ -302,6 +303,48 @@ public class ExportUtil
                 getClasspathProjectsRecursive(javaProject, result); // recursion
             }
         }
+    }
+    
+    /**
+     * Sort projects according to General -&gt; Workspace -&gt; Build Order.
+     * @param projects list of IJavaProject objects
+     * @return list of IJavaProject objects with new order
+     */
+    private static List sortProjectsUsingBuildOrder(List javaProjects) {
+    	if (javaProjects.isEmpty()) {
+    		return javaProjects;
+    	}
+        List result = new ArrayList(javaProjects.size());
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        String[] buildOrder= workspace.getDescription().getBuildOrder();
+        if (buildOrder == null) {//default build order
+        	IProject[] projects= new IProject[javaProjects.size()];
+        	int i= 0;
+        	for (Iterator iter = javaProjects.iterator(); iter.hasNext(); i++) {
+        		IJavaProject javaProject = (IJavaProject) iter.next();
+        		projects[i]= javaProject.getProject();             
+        	}
+        	IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
+        	projects=po.projects;
+        	buildOrder= new String[projects.length];
+        	for (i = 0; i < projects.length; i++) {
+				buildOrder[i]= projects[i].getName();
+			}
+        }
+        
+        for (int i = 0; i < buildOrder.length && !javaProjects.isEmpty(); i++) {
+        	String projectName = buildOrder[i];            
+        	for (Iterator iter = javaProjects.iterator(); iter.hasNext();) {
+        		IJavaProject javaProject = (IJavaProject) iter.next();
+        		if (javaProject.getProject().getName().equals(projectName)) {
+        			result.add(javaProject);
+        			iter.remove();
+        		}                
+        	}
+        }
+        //add any remaining projects not specified in the build order
+        result.addAll(javaProjects);
+        return result;
     }
     
     /**
@@ -1149,5 +1192,4 @@ public class ExportUtil
         
         return relative;
     }
-
 }
