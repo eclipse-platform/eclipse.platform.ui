@@ -1094,6 +1094,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 					this, fileSystemObjects);
 			operation.setContext(getShell());
 			operation.run(monitor);
+			record.provider.closeArchive();
 			return true;
 		}
 		//import from file system

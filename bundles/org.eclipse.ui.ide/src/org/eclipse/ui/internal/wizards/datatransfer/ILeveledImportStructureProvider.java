@@ -16,10 +16,9 @@ package org.eclipse.ui.internal.wizards.datatransfer;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 
 /**
- * Interface which can provide structure and content information for an element
- * (for example, a file system element). Used by the import wizards to abstract
- * the commonalities between importing from the file system and importing from
- * an archive.
+ * Interface which can provide structure and content information for an archive 
+ * element. Used by the import wizards to abstract the commonalities between 
+ * importing from the a zip file and importing from a tar file.
  * 
  * @since 3.1
  */
@@ -27,7 +26,7 @@ interface ILeveledImportStructureProvider extends IImportStructureProvider {
 	/**
 	 * Returns the entry that this importer uses as the root sentinel.
 	 * 
-	 * @return TarEntry entry
+	 * @return root entry of the archive file
 	 */
 	public abstract Object getRoot();
 
@@ -47,4 +46,11 @@ interface ILeveledImportStructureProvider extends IImportStructureProvider {
 	 * @return int Number of entries
 	 */
 	public abstract int getStrip();
+	
+	/**
+	 * Close the archive file that was used to create this leveled structure provider.
+	 * 
+	 * @return <code>true</code> if the archive was closed successfully
+	 */
+	public boolean closeArchive();
 }

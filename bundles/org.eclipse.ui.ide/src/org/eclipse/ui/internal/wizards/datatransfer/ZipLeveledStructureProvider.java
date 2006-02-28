@@ -186,6 +186,22 @@ public class ZipLeveledStructureProvider implements
 		return zipFile;
 	}
 
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.internal.wizards.datatransfer.ILeveledImportStructureProvider#closeArchive()
+	 */
+	public boolean closeArchive(){
+		try {
+			getZipFile().close();
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.log(DataTransferMessages.ZipImport_couldNotClose
+					+ getZipFile().getName(), e);
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Initializes this object's children table based on the contents of the
 	 * specified source file.
