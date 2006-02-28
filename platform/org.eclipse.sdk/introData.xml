@@ -2,7 +2,6 @@
 <extensions>
    <page id="tutorials">
       <group path="page-content/bottom-left" default="true">
-         <extension id="extra" importance="low"/>
       </group>
       <group path="page-content/bottom-right" default="true">
       </group>
@@ -43,7 +42,6 @@
    </page>
    <page id="overview">
       <group path="page-content/bottom-left" default="true">
-         <extension id="extra" importance="low"/>
       </group>
       <group path="page-content/bottom-right" default="true">
       </group>
