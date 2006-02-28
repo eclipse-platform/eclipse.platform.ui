@@ -144,6 +144,11 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
      * Type constant for the theme element.
      */
     public static final int THEME = 1 << 18;
+    
+    /**
+     * Type constant for the hr element.
+     */
+    public static final int HR = 1 << 19;
 
 
     /**

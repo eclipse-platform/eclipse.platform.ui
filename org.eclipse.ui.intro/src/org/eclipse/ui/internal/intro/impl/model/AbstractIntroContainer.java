@@ -166,6 +166,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         case AbstractIntroElement.IMAGE:
             src = new IntroImage[size];
             break;
+        case AbstractIntroElement.HR:
+            src = new IntroSeparator[size];
+            break;
         case AbstractIntroElement.HTML:
             src = new IntroHTML[size];
             break;
@@ -294,6 +297,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         else if (childElement.getNodeName().equalsIgnoreCase(
             IntroImage.TAG_IMAGE))
             child = new IntroImage(childElement, bundle, base);
+        else if (childElement.getNodeName().equalsIgnoreCase(
+                IntroSeparator.TAG_HR))
+            child = new IntroSeparator(childElement, bundle, base);
         else if (childElement.getNodeName()
             .equalsIgnoreCase(IntroHTML.TAG_HTML))
             child = new IntroHTML(childElement, bundle, base);

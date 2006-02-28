@@ -28,7 +28,8 @@ DTD fragments.</p>
 The introContent element defines the body of the intro content file.  The content file is made up of pages, shared groups that can be included in multiple pages, and extensions to anchor points defined in other configurations.</p>
 <br><br>
 <h2><code>page</code></h2>
-<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.page">page</a> (<a href="#e.group">group</a>* | <a href="#e.link">link</a>* | <a href="#e.text">text</a>* | <a href="#e.head">head</a>* | <a href="#e.img">img</a>* | <a href="#e.include">include</a>* | <a href="#e.html">html</a>* | <a href="#e.title">title</a>? | <a href="#e.anchor">anchor</a>* 
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.page">page</a> (<a href="#e.group">group</a>* | <a href="#e.link">link</a>* | <a href="#e.text">text</a>* | <a href="#e.head">head</a>* | <a href="#e.img">img</a>* | <a href="#e.include">include</a>* | 
+<a href="#e.html">html</a>* | <a href="#e.hr">hr</a>* | <a href="#e.title">title</a>? | <a href="#e.anchor">anchor</a>* 
 | <a href="#e.contentProvider">contentProvider</a>*)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST page</p>
 <p class=code id=dtdAttlist>url&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>alt-style&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html)<br>
@@ -218,6 +219,19 @@ Inclusion allows for including an html snippet directly from a file into the dyn
 <li><b>style-id</b> - A means to classify this HTML element into a given category so that a common style may be applied.</li>
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
 <li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file (in the case where type=inline is specified). If not specified, the default is UTF-8. Since 3.0.1</li>
+</ul>
+<h2><code>hr</code></h2>
+<br><p class=code id=dtd0>&lt;!ELEMENT <a name="e.hr">hr</a> EMPTY&gt;</p>
+<p class=code id=dtd1>&lt;!ATTLIST hr</p>
+<p class=code id=dtdAttlist0>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist1>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist2>filteredFrom&nbsp;(swt|html) &gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc0>
+a horizontal rule.</p>
+<br>
+<ul class=ConfigMarkup id=attlistDesc0>
+<li><b>id</b> - unique identifier of this rule.</li>
+<li><b>style-id</b> - A means to classify this element into a given category so that a common style may be applied</li>
+<li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
 </ul>
 <h2><code>title</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.title">title</a> EMPTY&gt;</p>

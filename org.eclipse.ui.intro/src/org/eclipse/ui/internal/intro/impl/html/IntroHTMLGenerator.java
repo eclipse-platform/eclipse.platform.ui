@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroImage;
 import org.eclipse.ui.internal.intro.impl.model.IntroInjectedIFrame;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
 import org.eclipse.ui.internal.intro.impl.model.IntroPageTitle;
+import org.eclipse.ui.internal.intro.impl.model.IntroSeparator;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
@@ -257,6 +258,8 @@ public class IntroHTMLGenerator {
 			return generateIntroContent((IntroContentProvider) element, indentLevel);
 		case AbstractIntroElement.IMAGE:
 			return generateIntroImage((IntroImage) element, indentLevel);
+		case AbstractIntroElement.HR:
+			return generateIntroSeparator((IntroSeparator) element, indentLevel);			
 		case AbstractIntroElement.TEXT:
 			return generateIntroText((IntroText) element, indentLevel);
 		case AbstractIntroElement.PAGE_TITLE:
@@ -458,6 +461,15 @@ public class IntroHTMLGenerator {
 		if (element.getId() != null)
 			imageElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, element.getId());
 		return imageElement;
+	}
+	
+	private HTMLElement generateIntroSeparator(IntroSeparator element, int indentLevel) {
+		HTMLElement hrElement = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_HR, indentLevel, false);
+		if (element.getId() != null)
+			hrElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, element.getId());
+		if (element.getStyleId() != null)
+			hrElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, element.getStyleId());
+		return hrElement;
 	}
 
 	/**

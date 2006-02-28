@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -35,6 +36,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
 import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
 import org.eclipse.ui.internal.intro.impl.model.IntroImage;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
+import org.eclipse.ui.internal.intro.impl.model.IntroSeparator;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
@@ -163,6 +165,12 @@ public class PageWidgetFactory {
             c = createContentProvider(parent, provider);
             updateLayoutData(c, element);
             break;
+        case AbstractIntroElement.HR:
+        	IntroSeparator sep = (IntroSeparator)element;
+            c = createSeparator(parent, sep);
+            updateLayoutData(c, element);
+            break;
+        	
         default:
             break;
         }
@@ -348,8 +356,7 @@ public class PageWidgetFactory {
         ilabel.setLayoutData(td);
         return ilabel;
     }
-
-
+    
     public Control createContentProvider(Composite parent,
             IntroContentProvider provider) {
         // If we've already loaded the content provider for this element,
@@ -392,6 +399,23 @@ public class PageWidgetFactory {
                 createText(container, text);
         }
         return container;
+    }
+    
+    protected Control createSeparator(Composite parent, IntroSeparator sep) {
+    	String key = sep.getParentPage().getId()+".separator.fg"; //$NON-NLS-1$
+        Color fg = styleManager.getColor(toolkit, key);
+        //Composite l = toolkit.createCompositeSeparator(parent);
+        Composite l = new Composite(parent, SWT.NULL);
+        if (fg!=null)
+        	l.setBackground(fg);
+        else
+        	l.setBackground(toolkit.getColors().getColor(FormColors.SEPARATOR));
+        TableWrapData td = new TableWrapData(TableWrapData.FILL,
+                TableWrapData.FILL);
+        td.grabHorizontal = true;
+        td.maxHeight = 1;
+        l.setLayoutData(td);
+        return l;
     }
 
     private void colorControl(Control elementControl,

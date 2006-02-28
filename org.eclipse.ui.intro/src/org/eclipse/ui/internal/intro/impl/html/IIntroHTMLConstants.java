@@ -40,6 +40,7 @@ public interface IIntroHTMLConstants {
     String ELEMENT_H2 = "H2"; //$NON-NLS-1$
     String ELEMENT_H3 = "H3"; //$NON-NLS-1$
     String ELEMENT_H4 = "H4"; //$NON-NLS-1$
+    String ELEMENT_HR = "HR"; //$NON-NLS-1$
     String ELEMENT_PARAGRAPH = "P"; //$NON-NLS-1$
     String ELEMENT_STYLE = "STYLE"; //$NON-NLS-1$
     String ELEMENT_IFrame = "iFrame"; //$NON-NLS-1$

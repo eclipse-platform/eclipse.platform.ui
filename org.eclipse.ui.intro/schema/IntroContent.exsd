@@ -123,7 +123,6 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
             <annotation>
                <documentation>
                   an optional URL of the image to use as a background for this group
-
                </documentation>
             </annotation>
          </attribute>
@@ -420,7 +419,7 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  A means to classifiy this element into a given category so that a common style may be applied
+                  A means to classify this element into a given category so that a common style may be applied
                </documentation>
             </annotation>
          </attribute>
@@ -668,8 +667,7 @@ Since 3.1, styles can also be a comma separated list of styles. These styles wil
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  (since 3.2) a unique identifier of this extension required when used in conjunction with intro configurer. 
-
+                  (since 3.2) a unique identifier of this extension required when used in conjunction with intro configurer.
                </documentation>
             </annotation>
          </attribute>
@@ -715,6 +713,45 @@ Another difference between the tags is that the html tag is only supported for t
                   A class that implements the IContentProvider interface
                </documentation>
             </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="hr">
+      <annotation>
+         <documentation>
+            a horizontal rule.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this hr
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  A means to classify this element into a given category so that a common style may be applied
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filteredFrom">
+            <annotation>
+               <documentation>
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

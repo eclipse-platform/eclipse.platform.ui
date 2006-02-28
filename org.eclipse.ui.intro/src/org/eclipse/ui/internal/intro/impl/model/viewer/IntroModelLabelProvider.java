@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroImage;
 import org.eclipse.ui.internal.intro.impl.model.IntroInclude;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
 import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
+import org.eclipse.ui.internal.intro.impl.model.IntroSeparator;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 
@@ -86,6 +87,9 @@ public class IntroModelLabelProvider extends LabelProvider {
             break;
         case AbstractIntroElement.IMAGE:
             label = "IMAGE: " + ((IntroImage) introElement).getId(); //$NON-NLS-1$
+            break;
+        case AbstractIntroElement.HR:
+            label = "HR: " + ((IntroSeparator) introElement).getId(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.HTML:
             label = "HTML: " + ((IntroHTML) introElement).getId(); //$NON-NLS-1$

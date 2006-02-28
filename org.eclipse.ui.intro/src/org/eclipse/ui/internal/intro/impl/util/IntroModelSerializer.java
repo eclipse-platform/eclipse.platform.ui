@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroLink;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroPageTitle;
+import org.eclipse.ui.internal.intro.impl.model.IntroSeparator;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
 import org.osgi.framework.Bundle;
 
@@ -169,6 +170,9 @@ public class IntroModelSerializer {
             case AbstractIntroElement.IMAGE:
                 printImage(text, (IntroImage) children[i], indent);
                 break;
+            case AbstractIntroElement.HR:
+                printSeparator(text, (IntroSeparator) children[i], indent);
+                break;
             case AbstractIntroElement.HTML:
                 printHtml(text, (IntroHTML) children[i], indent);
                 break;
@@ -224,6 +228,12 @@ public class IntroModelSerializer {
         text.append(indent + "src = " + image.getSrc()); //$NON-NLS-1$
         text.append(indent + "alt = " + image.getAlt()); //$NON-NLS-1$
         text.append(indent + "style-id = " + image.getStyleId()); //$NON-NLS-1$
+    }
+    
+    private void printSeparator(StringBuffer text, IntroSeparator sep, String indent) {
+        text.append(indent + "HR: id = " + sep.getId()); //$NON-NLS-1$
+        indent = indent + "\t\t"; //$NON-NLS-1$
+        text.append(indent + "style-id = " + sep.getStyleId()); //$NON-NLS-1$
     }
 
     private void printHtml(StringBuffer text, IntroHTML html, String indent) {
