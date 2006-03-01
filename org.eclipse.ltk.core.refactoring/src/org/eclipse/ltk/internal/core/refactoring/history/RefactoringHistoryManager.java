@@ -436,12 +436,15 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param descriptor
 	 *            the descriptor to transform
+	 * @param projects
+	 *            <code>true</code> to include project information,
+	 *            <code>false</code> otherwise
 	 * @return the DOM node representing the refactoring descriptor
 	 * @throws CoreException
 	 *             if an error occurs while transforming the descriptor
 	 */
-	private static Object transformDescriptor(final RefactoringDescriptor descriptor) throws CoreException {
-		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer(true);
+	private static Object transformDescriptor(final RefactoringDescriptor descriptor, final boolean projects) throws CoreException {
+		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer(projects);
 		try {
 			transformer.beginSession(null);
 			try {
@@ -594,7 +597,10 @@ public final class RefactoringHistoryManager {
 	/** The history file store */
 	private final IFileStore fHistoryStore;
 
-	/** The name of the project whose history is managed */
+	/**
+	 * The the non-empty name of the managed project, or <code>null</code> for
+	 * the workspace
+	 */
 	private final String fProjectName;
 
 	/**
@@ -702,7 +708,7 @@ public final class RefactoringHistoryManager {
 									// Do nothing
 								}
 								monitor.worked(1);
-								final Object result= transformDescriptor(descriptor);
+								final Object result= transformDescriptor(descriptor, false);
 								if (result instanceof Document) {
 									final NodeList list= ((Document) result).getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
 									Assert.isTrue(list.getLength() == 1);
@@ -727,7 +733,7 @@ public final class RefactoringHistoryManager {
 							}
 						} else {
 							try {
-								final Object result= transformDescriptor(descriptor);
+								final Object result= transformDescriptor(descriptor, false);
 								if (result instanceof Node) {
 									addHistoryEntry(history, (Node) result, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 									addIndexEntry(index, descriptor, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -920,8 +926,11 @@ public final class RefactoringHistoryManager {
 							if (descriptor != null) {
 								final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 								for (int index= 0; index < descriptors.length; index++) {
-									if (descriptors[index].getTimeStamp() == stamp)
-										return descriptors[index];
+									if (descriptors[index].getTimeStamp() == stamp) {
+										final RefactoringDescriptor result= descriptors[index];
+										result.setProject(fProjectName);
+										return result;
+									}
 								}
 							}
 						}

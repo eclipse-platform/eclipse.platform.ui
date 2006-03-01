@@ -305,11 +305,11 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * </p>
 	 * 
 	 * @param project
-	 *            the non-empty project name to set
+	 *            the non-empty project name to set, or <code>null</code> for
+	 *            the workspace
 	 */
 	public final void setProject(final String project) {
-		Assert.isNotNull(project);
-		Assert.isLegal(!"".equals(project)); //$NON-NLS-1$
+		Assert.isLegal(project == null || !"".equals(project)); //$NON-NLS-1$
 		fProject= project;
 	}
 
