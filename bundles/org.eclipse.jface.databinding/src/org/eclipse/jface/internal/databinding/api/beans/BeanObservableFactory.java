@@ -16,10 +16,15 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.Collection;
 
+import org.eclipse.jface.internal.databinding.api.BindingException;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.Property;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
+import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.ListToSetAdapter;
+import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableMapping;
 import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableValue;
 
 /**
@@ -103,8 +108,8 @@ final public class BeanObservableFactory implements IObservableFactory {
 							 * expecting the IObservableCollection to be
 							 * registered to the generic property change event.
 							 */
-//							return new JavaBeanObservableCollection(object,
-//									descriptor, elementType);
+							// return new JavaBeanObservableCollection(object,
+							// descriptor, elementType);
 							// return new
 							// CopyOfJavaBeanObservableCollection(object,
 							// descriptor, elementType);
@@ -113,43 +118,41 @@ final public class BeanObservableFactory implements IObservableFactory {
 					}
 				}
 			}
+			// else if (description instanceof ITree)
+			// return new JavaBeanObservableTree((ITree) description);
+			// else if (description instanceof TreeModelDescription) {
+			// Object root = ((TreeModelDescription) description).getRoot();
+			// if (root == null || !(root instanceof IObservable)
+			// && !(root instanceof Property)) // TODO workaround until the
+			// // context's factory is
+			// // driven first
+			// return new JavaBeanObservableTree(new JavaBeanTree(
+			// (TreeModelDescription) description));
+		} else if (description instanceof TableModelDescription) {
+			TableModelDescription tableModelDescription = (TableModelDescription) description;
+			IObservable collectionObservable = bindingContext
+					.createObservable(tableModelDescription
+							.getCollectionProperty());
+			if (collectionObservable == null) {
+				return null;
+			}
+			IObservableSet readableSet;
+			if (collectionObservable instanceof IObservableSet) {
+				readableSet = (IObservableSet) collectionObservable;
+			} else if (collectionObservable instanceof IObservableList) {
+				readableSet = new ListToSetAdapter(
+						(IObservableList) collectionObservable);
+			} else {
+				throw new BindingException(
+						"collection inside a TableModelDescription needs to be IReadableSet or IReadableList"); //$NON-NLS-1$
+			}
+			Object[] columnIDs = tableModelDescription.getColumnIDs();
+			String[] propertyNames = new String[columnIDs.length];
+			for (int i = 0; i < propertyNames.length; i++) {
+				propertyNames[i] = (String) columnIDs[i];
+			}
+			return new JavaBeanObservableMapping(readableSet, null /*propertyNames*/);
 		}
-//		else if (description instanceof ITree)
-//			return new JavaBeanObservableTree((ITree) description);
-//		else if (description instanceof TreeModelDescription) {
-//			Object root = ((TreeModelDescription) description).getRoot();
-//			if (root == null || !(root instanceof IObservable)
-//					&& !(root instanceof Property)) // TODO workaround until the
-//													// context's factory is
-//													// driven first
-//				return new JavaBeanObservableTree(new JavaBeanTree(
-//						(TreeModelDescription) description));
-//		} else if (description instanceof TableModelDescription) {
-//			TableModelDescription tableModelDescription = (TableModelDescription) description;
-//			IObservable collectionObservable = bindingContext
-//					.createObservable(tableModelDescription
-//							.getCollectionProperty());
-//			if (collectionObservable == null) {
-//				return null;
-//			}
-//			IReadableSet readableSet;
-//			if (collectionObservable instanceof IReadableSet) {
-//				readableSet = (IReadableSet) collectionObservable;
-//			} else if (collectionObservable instanceof IReadableList) {
-//				readableSet = new ListToSetAdapter(
-//						(IReadableList) collectionObservable);
-//			} else {
-//				throw new BindingException(
-//						"collection inside a TableModelDescription needs to be IReadableSet or IReadableList"); //$NON-NLS-1$
-//			}
-//			Object[] columnIDs = tableModelDescription.getColumnIDs();
-//			String[] propertyNames = new String[columnIDs.length];
-//			for (int i = 0; i < propertyNames.length; i++) {
-//				propertyNames[i] = (String) columnIDs[i];
-//			}
-//			return new JavaBeansObservableCellProvider(readableSet,
-//					propertyNames);
-//		}
 		return null;
 	}
 }

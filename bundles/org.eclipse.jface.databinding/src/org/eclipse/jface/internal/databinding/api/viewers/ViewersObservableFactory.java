@@ -12,8 +12,14 @@ package org.eclipse.jface.internal.databinding.api.viewers;
 
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.Property;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.nonapi.viewers.AbstractListViewerObservableSetWithLabels;
+import org.eclipse.jface.internal.databinding.nonapi.viewers.StructuredViewerObservableValue;
+import org.eclipse.jface.internal.databinding.nonapi.viewers.TableViewerObservableSetWithLabels;
 import org.eclipse.jface.viewers.AbstractListViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
 
 /**
  * A factory that supports binding to JFace viewers. This factory supports the
@@ -58,46 +64,33 @@ final public class ViewersObservableFactory implements IObservableFactory {
 
 	public IObservable createObservable(IDataBindingContext bindingContext,
 			Object description) {
-//		if (description instanceof Property) {
-//			Object object = ((Property) description).getObject();
-//			Object attribute = ((Property) description).getPropertyID();
-//			if (object instanceof StructuredViewer
-//					&& ViewersProperties.SINGLE_SELECTION.equals(attribute)) {
-//				return new StructuredViewerObservableValue(
-//						(StructuredViewer) object, (String) attribute);
-//			}
-//			if (object instanceof AbstractListViewer
-//					&& ViewersProperties.SINGLE_SELECTION.equals(attribute))
-//				return new StructuredViewerObservableValue(
-//						(AbstractListViewer) object, (String) attribute);
-//			else if (object instanceof AbstractListViewer
-//					&& ViewersProperties.CONTENT.equals(attribute))
-//				return new ObservableCollectionViewer(
-//						(AbstractListViewer) object);
-//			if (object instanceof TableViewer
-//					&& ViewersProperties.CONTENT.equals(attribute)) {
-//				// return new TableViewerObservableCollection((TableViewer)
-//				// object);
-//				return new TableViewerObservableTable((TableViewer) object);
-//			}
-//			if (object instanceof TreeViewer
-//					&& ViewersProperties.CONTENT.equals(attribute)) {
-//				return new TreeViewerObservableTree((TreeViewer) object);
-//			}
-//		}
-//		if (description instanceof AbstractListViewer) {
-//			// binding to a Viewer directly implies binding to its
-//			// content
-//			return new ObservableCollectionViewer(
-//					(AbstractListViewer) description);
-//		} else if (description instanceof TableViewerDescription) {
-//			return new TableViewerObservableCollectionExtended(
-//					(TableViewerDescription) description, bindingContext,
-//					updateTime);
-//		} else if (description instanceof TreeViewerDescription) {
-//			return new TreeViewerObservableTreeExtended(
-//					(TreeViewerDescription) description, bindingContext);
-//		}
+		if (description instanceof Property) {
+			Object object = ((Property) description).getObject();
+			Object attribute = ((Property) description).getPropertyID();
+			if (object instanceof StructuredViewer
+					&& ViewersProperties.SINGLE_SELECTION.equals(attribute)) {
+				return new StructuredViewerObservableValue(
+						(StructuredViewer) object, (String) attribute);
+			} else if (object instanceof AbstractListViewer
+					&& ViewersProperties.SINGLE_SELECTION.equals(attribute))
+				return new StructuredViewerObservableValue(
+						(AbstractListViewer) object, (String) attribute);
+			else if (object instanceof AbstractListViewer
+					&& ViewersProperties.CONTENT.equals(attribute))
+				return new AbstractListViewerObservableSetWithLabels(
+						(AbstractListViewer) object);
+			else if (object instanceof TableViewer
+					&& ViewersProperties.CONTENT.equals(attribute)) {
+				return new TableViewerObservableSetWithLabels(
+						(TableViewer) object);
+			}
+		} else if (description instanceof AbstractListViewer) {
+			return new AbstractListViewerObservableSetWithLabels(
+					(AbstractListViewer) description);
+		} else if (description instanceof TableViewer) {
+			return new TableViewerObservableSetWithLabels(
+					(TableViewer) description);
+		}
 		return null;
 	}
 }

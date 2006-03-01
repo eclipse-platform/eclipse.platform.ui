@@ -58,7 +58,7 @@ public class ListToSetAdapter extends ObservableSet {
 	/**
 	 * @param wrappedSet
 	 */
-	protected ListToSetAdapter(IObservableList list) {
+	public ListToSetAdapter(IObservableList list) {
 		super(new HashSet());
 		this.list = list;
 		wrappedSet.addAll(list);
