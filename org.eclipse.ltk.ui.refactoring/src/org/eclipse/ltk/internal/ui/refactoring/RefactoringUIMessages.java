@@ -100,6 +100,8 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RedoRefactoringAction_name;
 
+	public static String RefactoringHistoryControl_no_comment;
+
 	public static String RefactoringHistoryControl_resolving_information;
 
 	public static String RefactoringHistoryControl_selection_pattern;

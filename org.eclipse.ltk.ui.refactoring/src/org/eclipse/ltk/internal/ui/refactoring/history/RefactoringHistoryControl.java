@@ -59,12 +59,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.progress.UIJob;
 
 import org.eclipse.compare.CompareViewerPane;
-import org.eclipse.compare.CompareViewerSwitchingPane;
 import org.eclipse.compare.Splitter;
 
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
@@ -249,8 +247,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	private final Set fCheckedDescriptors= new HashSet();
 
-	/** The comment pane */
-	private CompareViewerSwitchingPane fCommentPane= null;
+	/** The comment viewer */
+	private TextViewer fCommentViewer= null;
 
 	/** The refactoring history control configuration to use */
 	protected final RefactoringHistoryControlConfiguration fControlConfiguration;
@@ -368,25 +366,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		});
 		fHistoryPane.setContent(fHistoryViewer.getControl());
-		fCommentPane= new CompareViewerSwitchingPane(fSplitterControl, SWT.BORDER | SWT.FLAT) {
-
-			protected final Viewer getViewer(final Viewer viewer, final Object input) {
-				if (input instanceof String) {
-					final String comment= (String) input;
-					final TextViewer extended= new TextViewer(fCommentPane, SWT.NULL);
-					extended.setDocument(new Document(comment));
-					setText(fControlConfiguration.getCommentCaption());
-					return extended;
-				}
-				return null;
-			}
-
-			public final void setTopCenter(final Control control) {
-				// No toolbar
-			}
-		};
-		fCommentPane.setText(fControlConfiguration.getCommentCaption());
-		fCommentPane.setEnabled(false);
+		fCommentViewer= new TextViewer(fSplitterControl, SWT.BORDER | SWT.FLAT);
+		fCommentViewer.setDocument(new Document(fControlConfiguration.getCommentCaption()));
+		fCommentViewer.getTextWidget().setEnabled(false);
 		fSplitterControl.setWeights(new int[] { 75, 25});
 
 		Dialog.applyDialogFont(this);
@@ -547,8 +529,10 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				public final IStatus runInUIThread(final IProgressMonitor monitor) {
 					final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
 					if (descriptor != null) {
-						fCommentPane.setInput(descriptor.getComment());
-						fCommentPane.setText(fControlConfiguration.getCommentCaption());
+						String comment= descriptor.getComment();
+						if ("".equals(comment)) //$NON-NLS-1$
+							comment= RefactoringUIMessages.RefactoringHistoryControl_no_comment;
+						fCommentViewer.setDocument(new Document(comment));
 					}
 					return Status.OK_STATUS;
 				}
@@ -556,8 +540,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			job.setSystem(true);
 			job.schedule();
 		}
-		fCommentPane.setInput(null);
-		fCommentPane.setText(fControlConfiguration.getCommentCaption());
+		fCommentViewer.setDocument(new Document(fControlConfiguration.getCommentCaption()));
 	}
 
 	/**
