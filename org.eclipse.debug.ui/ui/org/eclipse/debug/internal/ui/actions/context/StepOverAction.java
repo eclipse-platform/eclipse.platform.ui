@@ -1,0 +1,109 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.debug.internal.ui.actions.context;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.jface.resource.ImageDescriptor;
+
+public class StepOverAction extends StepIntoAction {
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getText()
+     */
+    public String getText() {
+        return ActionMessages.StepOverAction_0;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getDisabledImageDescriptor()
+     */
+    public ImageDescriptor getDisabledImageDescriptor() {
+        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_OVER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getHelpContextId()
+     */
+    public String getHelpContextId() {
+        return "step_over_action_context"; //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getHoverImageDescriptor()
+     */
+    public ImageDescriptor getHoverImageDescriptor() {
+        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_OVER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getId()
+     */
+    public String getId() {
+        return "org.eclipse.debug.ui.debugview.toolbar.stepOver"; //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getImageDescriptor()
+     */
+    public ImageDescriptor getImageDescriptor() {
+        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_OVER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getToolTipText()
+     */
+    public String getToolTipText() {
+        return ActionMessages.StepOverAction_3;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#checkCapability(org.eclipse.debug.core.model.IStep)
+     */
+    protected boolean checkCapability(IStep element) {
+        return element.canStepOver();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#stepAction(org.eclipse.debug.core.model.IStep)
+     */
+    protected void stepAction(IStep element) throws DebugException {
+        element.stepOver();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getStatusMessage()
+     */
+    protected String getStatusMessage() {
+        return ActionMessages.StepOverActionDelegate_Exceptions_occurred_attempting_to_step_over_the_frame_2;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getErrorDialogMessage()
+     */
+    protected String getErrorDialogMessage() {
+        return ActionMessages.StepOverActionDelegate_Step_over_failed_1;
+    }
+}

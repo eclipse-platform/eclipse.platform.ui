@@ -529,7 +529,6 @@
       <viewContribution
             targetID="org.eclipse.debug.ui.DebugView"
             id="org.eclipse.debug.ui.debugview.toolbar">
-      <!-- Thread Group -->
          <action
                id="org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
                toolbarPath="threadGroup"
@@ -541,94 +540,12 @@
                label="%RemoveAllTerminatedAction.label"
                tooltip="%RemoveAllTerminatedAction.tooltip">
          </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.disconnect"
-               toolbarPath="threadGroup"
-               hoverIcon="$nl$/icons/full/elcl16/disconnect_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.DisconnectActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/disconnect_co.gif"
-               icon="$nl$/icons/full/elcl16/disconnect_co.gif"
-               helpContextId="disconnect_action_context"
-               label="%DisconnectAction.label"
-               tooltip="%DisconnectAction.tooltip">
-         </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.terminate"
-               toolbarPath="threadGroup"
-               hoverIcon="$nl$/icons/full/elcl16/terminate_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.TerminateActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
-               icon="$nl$/icons/full/elcl16/terminate_co.gif"
-               helpContextId="terminate_action_context"
-               label="%TerminateAction.label"
-               tooltip="%TerminateAction.tooltip">
-         </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.suspend"
-               toolbarPath="threadGroup"
-               hoverIcon="$nl$/icons/full/elcl16/suspend_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.SuspendActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/suspend_co.gif"
-               icon="$nl$/icons/full/elcl16/suspend_co.gif"
-               label="%SuspendAction.label"
-               helpContextId="suspend_action_context"
-               tooltip="%SuspendAction.tooltip">
-         </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.resume"
-               toolbarPath="threadGroup"
-               hoverIcon="$nl$/icons/full/elcl16/resume_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.ResumeActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/resume_co.gif"
-               icon="$nl$/icons/full/elcl16/resume_co.gif"
-               label="%ResumeAction.label"
-               helpContextId="resume_action_context"
-               tooltip="%ResumeAction.tooltip">
-         </action>
-      <!-- Step Group -->
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.stepReturn"
-               toolbarPath="stepReturnGroup"
-               hoverIcon="$nl$/icons/full/elcl16/stepreturn_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.StepReturnActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.gif"
-               icon="$nl$/icons/full/elcl16/stepreturn_co.gif"
-               label="%StepReturnAction.label"
-               helpContextId="step_return_action_context"
-               tooltip="%StepReturnAction.tooltip">
-         </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.stepOver"
-               toolbarPath="stepOverGroup"
-               hoverIcon="$nl$/icons/full/elcl16/stepover_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.StepOverActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/stepover_co.gif"
-               icon="$nl$/icons/full/elcl16/stepover_co.gif"
-               label="%StepOverAction.label"
-               helpContextId="step_over_action_context"
-               tooltip="%StepOverAction.tooltip">
-         </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.stepInto"
-               toolbarPath="stepIntoGroup"
-               hoverIcon="$nl$/icons/full/elcl16/stepinto_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.StepIntoActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.gif"
-               icon="$nl$/icons/full/elcl16/stepinto_co.gif"
-               label="%StepIntoAction.label"
-               helpContextId="step_into_action_context"
-               tooltip="%StepIntoAction.tooltip">
-         </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.dropToFrame"
-               toolbarPath="emptyStepGroup"
-               class="org.eclipse.debug.internal.ui.actions.context.DropToFrameActionDelegate"
-               icon="$nl$/icons/full/elcl16/drop_to_frame.gif"
-               label="%DropToFrameAction.label"
-               helpContextId="drop_to_frame_action_context"
-               tooltip="%DropToFrameAction.tooltip">
-        </action>
-      <!-- Render Group -->
+
+
+
+
+
+
          <action
                id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
                toolbarPath="renderGroup"
@@ -643,6 +560,7 @@
                state="false">
          </action>         
       </viewContribution>
+     
 <!-- Contributions to Breakpoints View Toolbar -->
       <viewContribution
             targetID="org.eclipse.debug.ui.BreakpointView"
@@ -1046,7 +964,7 @@
       <viewerContribution
             targetID="org.eclipse.debug.ui.DebugView"
             id="org.eclipse.debug.ui.debugview.popupMenu">
-      <!-- Edit Group -->
+
          <action
                label="%CopyToClipboardAction.label"
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
@@ -1056,15 +974,8 @@
                menubarPath="editGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyToClipboard">
          </action>
-      <!-- Launch Group -->
-         <action
-               label="%TerminateAllAction.label"
-               icon="$nl$/icons/full/elcl16/terminate_all_co.gif"
-               helpContextId="terminate_all_action_context"
-               class="org.eclipse.debug.internal.ui.actions.context.TerminateAllAction"
-               menubarPath="launchGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.terminateAll">
-         </action>
+
+
          <action
                label="%RelaunchAction.label"
                icon="$nl$/icons/full/elcl16/runlast_co.gif"
@@ -1074,18 +985,6 @@
                id="org.eclipse.debug.ui.debugview.popupMenu.relaunch">
          </action>
          <action
-               label="%TerminateAndRemoveAction.label"
-               icon="$nl$/icons/full/elcl16/terminate_rem_co.gif"
-               helpContextId="terminate_and_remove_action_context"
-               class="org.eclipse.debug.internal.ui.actions.context.TerminateAndRemoveActionDelegate"
-               menubarPath="launchGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove">
-            <selection
-                  class="org.eclipse.debug.core.model.ITerminate">
-            </selection>
-         </action>
-      <!-- Thread Group -->
-         <action
                label="%RemoveAllTerminatedAction.label"
                icon="$nl$/icons/full/elcl16/rem_all_co.gif"
                helpContextId="remove_all_terminated_action_context"
@@ -1093,87 +992,6 @@
                menubarPath="launchGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.removeAllTerminated">
          </action>
-         <action
-               label="%DisconnectAction.label"
-               icon="$nl$/icons/full/elcl16/disconnect_co.gif"
-               helpContextId="disconnect_action_context"
-               class="org.eclipse.debug.internal.ui.actions.context.DisconnectActionDelegate"
-               menubarPath="threadGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.disconnect">
-         </action>
-         <action
-               label="%TerminateAndRelaunchAction.label"
-               class="org.eclipse.debug.internal.ui.actions.context.TerminateAndRelaunchAction"
-               definitionId="org.eclipse.debug.ui.commands.TerminateAndRelaunch"
-               helpContextId="terminate_and_relaunch_action_context"
-               icon="$nl$/icons/full/etool16/term_restart.gif"
-               id="org.eclipse.debug.ui.debugview.popupMenu.TerminateAndRelaunch"
-               menubarPath="threadGroup">
-         </action>
-         <action
-               label="%TerminateAction.label"
-               icon="$nl$/icons/full/elcl16/terminate_co.gif"
-               helpContextId="terminate_action_context"
-               definitionId="org.eclipse.debug.ui.commands.Terminate"
-               class="org.eclipse.debug.internal.ui.actions.context.TerminateActionDelegate"
-               menubarPath="threadGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.terminate">
-         </action>
-         <action
-               label="%SuspendAction.label"
-               icon="$nl$/icons/full/elcl16/suspend_co.gif"
-               helpContextId="suspend_action_context"
-               definitionId="org.eclipse.debug.ui.commands.Suspend"
-               class="org.eclipse.debug.internal.ui.actions.context.SuspendActionDelegate"
-               menubarPath="threadGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.suspend">
-         </action>
-         <action
-               label="%ResumeAction.label"
-               icon="$nl$/icons/full/elcl16/resume_co.gif"
-               helpContextId="resume_action_context"
-               definitionId="org.eclipse.debug.ui.commands.Resume"
-               class="org.eclipse.debug.internal.ui.actions.context.ResumeActionDelegate"
-               menubarPath="threadGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.resume">
-         </action>
-      <!-- Step Group -->
-         <action
-               label="%DropToFrameAction.label"
-               icon="$nl$/icons/full/elcl16/drop_to_frame.gif"
-               helpContextId="drop_to_frame_action_context"
-               class="org.eclipse.debug.internal.ui.actions.context.DropToFrameActionDelegate"
-               menubarPath="stepReturnGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.dropToFrame">
-         </action>      
-         <action
-               label="%StepReturnAction.label"
-               icon="$nl$/icons/full/elcl16/stepreturn_co.gif"
-               helpContextId="step_return_action_context"
-               definitionId="org.eclipse.debug.ui.commands.StepReturn"
-               class="org.eclipse.debug.internal.ui.actions.context.StepReturnActionDelegate"
-               menubarPath="stepReturnGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.stepReturn">
-         </action>
-         <action
-               label="%StepOverAction.label"
-               icon="$nl$/icons/full/elcl16/stepover_co.gif"
-               helpContextId="step_over_action_context"
-               definitionId="org.eclipse.debug.ui.commands.StepOver"
-               class="org.eclipse.debug.internal.ui.actions.context.StepOverActionDelegate"
-               menubarPath="stepOverGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.stepOver">
-         </action>
-         <action
-               label="%StepIntoAction.label"
-               icon="$nl$/icons/full/elcl16/stepinto_co.gif"
-               helpContextId="step_into_action_context"
-               definitionId="org.eclipse.debug.ui.commands.StepInto"
-               class="org.eclipse.debug.internal.ui.actions.context.StepIntoActionDelegate"
-               menubarPath="stepIntoGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.stepInto">
-         </action>
-      <!-- Render Group -->  
          <action
                label="%StepWithFiltersAction.label"
                icon="$nl$/icons/full/elcl16/stepbystep_co.gif"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -23,7 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 /**
  * Terminates all launches.
  */
-public class TerminateAllAction extends AbstractDebugContextActionDelegate {
+public class TerminateAllAction extends AbstractDebugContextAction {
 	
 
 	protected void doAction(Object element) throws DebugException {
@@ -53,12 +57,35 @@ public class TerminateAllAction extends AbstractDebugContextActionDelegate {
 		action.setEnabled(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#getSelection()
-	 */
 	protected IStructuredSelection getContext() {
 		return new StructuredSelection(DebugPlugin.getDefault().getLaunchManager().getLaunches());
-	}		
-	
-	
+	}
+
+    public String getHelpContextId() {
+        return "terminate_all_action_context"; //$NON-NLS-1$
+    }
+
+    public String getId() {
+        return "org.eclipse.debug.ui.debugview.popupMenu.terminateAll"; //$NON-NLS-1$
+    }
+
+    public String getText() {
+        return ActionMessages.TerminateAllAction_2;
+    }
+
+    public String getToolTipText() {
+        return ActionMessages.TerminateAllAction_3;
+    }
+
+    public ImageDescriptor getDisabledImageDescriptor() {
+        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL);
+    }
+
+    public ImageDescriptor getHoverImageDescriptor() {
+        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL);
+    }
+
+    public ImageDescriptor getImageDescriptor() {
+        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL);
+    }
 }

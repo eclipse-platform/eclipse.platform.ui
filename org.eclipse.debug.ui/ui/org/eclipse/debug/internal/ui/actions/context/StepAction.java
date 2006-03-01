@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,14 @@
 
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStep;
 
-public abstract class StepActionDelegate extends AbstractDebugContextActionDelegate {
+public abstract class StepAction extends AbstractDebugContextAction {
 	
-	/**
-	 * @see AbstractDebugActionDelegate#doAction(Object)
+	/*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
 	 */
 	protected void doAction(Object object) throws DebugException {
 		if (object instanceof IStep) {
@@ -26,8 +26,9 @@ public abstract class StepActionDelegate extends AbstractDebugContextActionDeleg
 		}
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
+	/*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object)
 	 */
 	protected boolean isEnabledFor(Object element) {
 		if (element instanceof IStep) {
@@ -48,19 +49,4 @@ public abstract class StepActionDelegate extends AbstractDebugContextActionDeleg
 	 * @exception DebugException if the action fails
 	 */
 	protected abstract void stepAction(IStep element) throws DebugException;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextActionDelegate#getTarget(java.lang.Object)
-	 */
-	protected Object getTarget(Object selectee) {
-		if (selectee instanceof IStep) {
-			return selectee;
-		}
-		if (selectee instanceof IAdaptable) {
-			return ((IAdaptable)selectee).getAdapter(IStep.class);
-		}
-		return null;
-	}
-	
-	
 }

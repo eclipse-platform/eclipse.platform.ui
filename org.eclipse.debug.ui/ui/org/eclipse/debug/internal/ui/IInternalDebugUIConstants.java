@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,19 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_NEW_CONFIG = "IMG_DLCL_NEW_CONFIG"; //$NON-NLS-1$
     public static final String IMG_DLCL_DUPLICATE_CONFIG = "IMG_DLCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
     public static final String IMG_DLCL_FILTER_CONFIGS = "IMG_DLCL_FILTER_CONFIGS"; //$NON-NLS-1$
+    public static final String IMG_DLCL_SUSPEND = "IMG_DLCL_SUSPEND"; //$NON-NLS-1$
+    public static final String IMG_DLCL_RESUME = "IMG_DLCL_RESUME"; //$NON-NLS-1$
+    public static final String IMG_DLCL_STEP_RETURN = "IMG_DLCL_STEP_RETURN"; //$NON-NLS-1$
+    public static final String IMG_DLCL_STEP_OVER = "IMG_DLCL_STEP_OVER"; //$NON-NLS-1$
+    public static final String IMG_DLCL_STEP_INTO = "IMG_DLCL_STEP_INTO"; //$NON-NLS-1$
+    public static final String IMG_DLCL_DROP_TO_FRAME = "IMG_DLCL_DROP_TO_FRAME"; //$NON-NLS-1$
+    public static final String IMG_DLCL_TERMINATE_AND_REMOVE = "IMG_DLCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
+    public static final String IMG_DLCL_TERMINATE_ALL = "IMG_DLCL_TERMINATE_ALL"; //$NON-NLS-1$
+    public static final String IMG_DLCL_TERMINATE_AND_RELAUNCH = "IMG_DLCL_TERMINATE_AND_RELAUNCH"; //$NON-NLS-1$
+    
+    //TODO: Move this IDebugUIConstants. Created too late in 3.2 cycle to add API.
+    //The enabled icon is already API.
+    public static final String IMG_DLCL_DISCONNECT= "IMG_DLCL_DISCONNECT"; //$NON-NLS-1$
     
     // enabled local tool images    
     public static final String IMG_ELCL_LOCK= "IMG_ELCL_LOCK"; //$NON-NLS-1$
@@ -86,6 +99,15 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_NEW_CONFIG = "IMG_ELCL_NEW_CONFIG"; //$NON-NLS-1$
     public static final String IMG_ELCL_FILTER_CONFIGS = "IMG_ELCL_FILTER_CONFIGS"; //$NON-NLS-1$
     public static final String IMG_ELCL_DUPLICATE_CONFIG = "IMG_ELCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
+    public static final String IMG_ELCL_SUSPEND = "IMG_ELCL_SUSPEND"; //$NON-NLS-1$
+    public static final String IMG_ELCL_RESUME = "IMG_ELCL_RESUME"; //$NON-NLS-1$
+    public static final String IMG_ELCL_STEP_RETURN = "IMG_ELCL_STEP_RETURN"; //$NON-NLS-1$
+    public static final String IMG_ELCL_STEP_OVER = "IMG_ELCL_STEP_OVER"; //$NON-NLS-1$
+    public static final String IMG_ELCL_STEP_INTO = "IMG_ELCL_STEP_INTO"; //$NON-NLS-1$
+    public static final String IMG_ELCL_DROP_TO_FRAME = "IMG_ELCL_DROP_TO_FRAME"; //$NON-NLS-1$
+    public static final String IMG_ELCL_TERMINATE_AND_REMOVE = "IMG_ELCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
+    public static final String IMG_ELCL_TERMINATE_ALL = "IMG_ELCL_TERMINATE_ALL"; //$NON-NLS-1$
+    public static final String IMG_ELCL_TERMINATE_AND_RELAUNCH = "IMG_ELCL_TERMINATE_AND_RELAUNCH"; //$NON-NLS-1$
     
     public static final String IMG_OBJS_COMMON_TAB = "IMG_OBJS_COMMON_TAB"; //$NON-NLS-1$
     public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$
