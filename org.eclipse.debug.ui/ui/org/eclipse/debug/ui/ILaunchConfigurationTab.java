@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Control;
  * In 3.0, the addition of the methods <code>activated</code> and <code>deactivated</code>
  * allow tabs to determine the appropriate course of action. The default implementation
  * in <code>AbstractLaunchConfigurationTab</code> is to call the old methods
- * (<code>initializeFrom</code> and <code>performApply</code>). Tabs should overeride
+ * (<code>initializeFrom</code> and <code>performApply</code>). Tabs should override
  * the new methods as required.
  * </p>
  * <p>
