@@ -30,7 +30,9 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -45,6 +47,8 @@ public class ProblemView extends MarkerView {
 	private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
 
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.problem"; //$NON-NLS-1$
+
+	private static final String TAG_SYSTEM_FILTER_ENTRY = "systemFilter";//$NON-NLS-1$
 
 	private ActionResolveMarker resolveMarkerAction;
 
@@ -99,16 +103,9 @@ public class ProblemView extends MarkerView {
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		public void run() {
-			String description = Util.EMPTY_STRING;
-			if (groupingField != null) {
-				description = groupingField.getDescription();
-			}
-			IDEWorkbenchPlugin.getDefault().getPluginPreferences().setValue(
-					IDEInternalPreferences.PROBLEMS_GROUPING, description);
-			problemView.getMarkerAdapter().getCurrentMarkers().clearGroups();
-			problemView.getMarkerAdapter().getCategorySorter()
-					.setCategoryField(groupingField);
-			problemView.refreshViewer();
+
+			problemView.selectCategoryField(groupingField, problemView
+					.getMarkerAdapter().getCategorySorter());
 			getMarkerAdapter().getCategorySorter().saveState(
 					getDialogSettings());
 
@@ -500,5 +497,112 @@ public class ProblemView extends MarkerView {
 	protected void initToolBar(IToolBarManager tbm) {
 		tbm.add(getFilterAction());
 		tbm.update(false);
+	}
+
+	/**
+	 * Select the category for the receiver.
+	 * 
+	 * @param description
+	 * @param sorter -
+	 *            the sorter to select for
+	 */
+	public void selectCategory(String description, CategorySorter sorter) {
+
+		if (description == null)
+			selectCategoryField(null, sorter);
+
+		Iterator definedGroups = MarkerSupportRegistry.getInstance()
+				.getMarkerGroups().iterator();
+		while (definedGroups.hasNext()) {
+			FieldMarkerGroup group = (FieldMarkerGroup) definedGroups.next();
+			if (group.getDescription().equals(description)) {
+				selectCategoryField(group, sorter);
+				return;
+			}
+		}
+		selectCategoryField(null, sorter);
+
+	}
+
+	/**
+	 * Select the field groupingField.
+	 * 
+	 * @param description
+	 */
+	void selectCategoryField(IField groupingField, CategorySorter sorter) {
+		getMarkerAdapter().getCurrentMarkers().clearGroups();
+		sorter.setCategoryField(groupingField);
+		refreshViewer();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#writeFiltersSettings(org.eclipse.ui.XMLMemento)
+	 */
+	protected void writeFiltersSettings(XMLMemento memento) {
+		super.writeFiltersSettings(memento);
+
+		// Add the system filters
+		Iterator filters = MarkerSupportRegistry.getInstance()
+				.getRegisteredFilters().iterator();
+
+		while (filters.hasNext()) {
+			MarkerFilter filter = (MarkerFilter) filters.next();
+			IMemento child = memento.createChild(TAG_SYSTEM_FILTER_ENTRY,
+					filter.getName());
+			child.putString(MarkerFilter.TAG_ENABLED, String.valueOf(filter
+					.isEnabled()));
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#restoreFilters(org.eclipse.ui.IMemento)
+	 */
+void restoreFilters(IMemento memento) {
+
+		super.restoreFilters(memento);
+		
+		if (memento == null) 
+			return;
+		
+		IMemento[] sections = memento.getChildren(TAG_SYSTEM_FILTER_ENTRY);
+		
+		
+		Collection registered = MarkerSupportRegistry.getInstance().getRegisteredFilters();
+		MarkerFilter[] filters = new MarkerFilter[registered.size()];
+		registered.toArray(filters);		
+
+		if (sections != null) {
+			
+			for (int i = 0; i < sections.length; i++) {
+				String filterName = sections[i].getID();
+				boolean enabled = Boolean.valueOf(sections[i].getString(MarkerFilter.TAG_ENABLED)).booleanValue();
+				setEnablement(filterName,enabled,filters);
+				
+			}
+		}
+
+	
+	}
+	/**
+	 * Set the enablement state of the filter called filterName to
+	 * enabled.
+	 * @param filterName
+	 * @param enabled
+	 * @param filters
+	 */
+	private void setEnablement(String filterName, boolean enabled,
+			MarkerFilter[] filters) {
+		for (int i = 0; i < filters.length; i++) {
+			if (filters[i].getName().equals(filterName)) {
+				filters[i].setEnabled(enabled);
+				return;
+			}
+		}
+
 	}
 }

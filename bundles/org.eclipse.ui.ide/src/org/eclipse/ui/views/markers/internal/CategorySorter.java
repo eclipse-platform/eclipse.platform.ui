@@ -18,6 +18,7 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 
 	private final String TAG_FIELD = "categoryField"; //$NON-NLS-1$
 
+
 	/**
 	 * Create a new instance of the receiver wrapping a sorter.
 	 * 
@@ -152,7 +153,7 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 			return;
 		}
 
-		//String description = settings.get(TAG_FIELD);
-
+		String description = settings.get(TAG_FIELD);
+		view.selectCategory(description,this);
 	}
 }

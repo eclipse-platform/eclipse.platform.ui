@@ -570,12 +570,7 @@ public abstract class MarkerView extends TableView {
 
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
 
-		MarkerFilter[] filters = getUserFilters();
-		for (int i = 0; i < filters.length; i++) {
-			IMemento child = memento.createChild(TAG_FILTER_ENTRY, filters[i]
-					.getName());
-			filters[i].saveFilterSettings(child);
-		}
+		writeFiltersSettings(memento);		
 
 		StringWriter writer = new StringWriter();
 		try {
@@ -592,6 +587,19 @@ public abstract class MarkerView extends TableView {
 	}
 
 	/**
+	 * Write the filter settings to the memento.
+	 * @param memento
+	 */
+	protected void writeFiltersSettings(XMLMemento memento) {
+		MarkerFilter[] filters = getUserFilters();
+		for (int i = 0; i < filters.length; i++) {
+			IMemento child = memento.createChild(TAG_FILTER_ENTRY, filters[i]
+					.getName());
+			filters[i].saveFilterSettings(child);
+		}
+	}
+
+	/**
 	 * Get the name of the filters preference for instances of the receiver.
 	 * 
 	 * @return String
@@ -603,7 +611,7 @@ public abstract class MarkerView extends TableView {
 	 * 
 	 * @param memento
 	 */
-	private void restoreFilters(IMemento memento) {
+	void restoreFilters(IMemento memento) {
 
 		IMemento[] sections = null;
 		if (memento != null) {

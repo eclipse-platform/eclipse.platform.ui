@@ -35,9 +35,14 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * MarkerFilter is the class that defines a filter on markers in a
+ * MarkerView.
+ *
+ */
 public class MarkerFilter implements Cloneable {
 
-	private static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
+	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 
 	private static final String TAG_ON_RESOURCE = "onResource"; //$NON-NLS-1$
 
@@ -62,14 +67,29 @@ public class MarkerFilter implements Cloneable {
 	 */
 	private static final String SELECTED_TRUE = "true"; //$NON-NLS-1$
 
+	/**
+	 * Constant for any element.
+	 */
 	public static final int ON_ANY = 0;
 
+	/**
+	 * Constant for any selected element only.
+	 */
 	public static final int ON_SELECTED_ONLY = 1;
 
+	/**
+	 * Constant for selected element and children.
+	 */
 	public static final int ON_SELECTED_AND_CHILDREN = 2;
 
+	/**
+	 * Constant for any element in same container.
+	 */
 	public static final int ON_ANY_IN_SAME_CONTAINER = 3;
 
+	/**
+	 * Constant for on working set.
+	 */
 	public static final int ON_WORKING_SET = 4;
 
 	static final int DEFAULT_ON_RESOURCE = ON_ANY;
@@ -85,7 +105,6 @@ public class MarkerFilter implements Cloneable {
 	protected int onResource;
 
 	protected boolean enabled;
-
 
 	private IResource[] focusResource;
 
@@ -107,7 +126,8 @@ public class MarkerFilter implements Cloneable {
 		name = filterName;
 
 		for (int i = 0; i < rootTypes.length; i++) {
-			MarkerType type = MarkerTypesModel.getInstance().getType(rootTypes[i]);
+			MarkerType type = MarkerTypesModel.getInstance().getType(
+					rootTypes[i]);
 
 			if (!this.rootTypes.contains(type)) {
 				this.rootTypes.add(type);
@@ -263,9 +283,9 @@ public class MarkerFilter implements Cloneable {
 					} catch (CoreException e) {
 						if (ignoreExceptions) {
 							continue;
-						} else {
-							throw e;
 						}
+						throw e;
+
 					}
 
 					if (limit != -1 && resultList.size() >= limit) {
@@ -351,8 +371,9 @@ public class MarkerFilter implements Cloneable {
 	}
 
 	/**
-	 * Return the resources in the working set. If it is empty then
-	 * return the workspace root.
+	 * Return the resources in the working set. If it is empty then return the
+	 * workspace root.
+	 * 
 	 * @return IResource[]
 	 */
 	IResource[] getResourcesInWorkingSet() {
@@ -425,7 +446,7 @@ public class MarkerFilter implements Cloneable {
 	 * Returns the set of projects that contain the given set of resources.
 	 * 
 	 * @param resources
-	 * @return
+	 * @return IProject[]
 	 */
 	static IProject[] getProjects(IResource[] resources) {
 		if (resources == null) {
@@ -463,6 +484,12 @@ public class MarkerFilter implements Cloneable {
 		return projects;
 	}
 
+	/**
+	 * Return whether or not the receiver would select the marker.
+	 * 
+	 * @param marker
+	 * @return boolean
+	 */
 	public boolean select(ConcreteMarker marker) {
 		if (!isEnabled()) {
 			return true;
@@ -473,7 +500,8 @@ public class MarkerFilter implements Cloneable {
 	}
 
 	private boolean selectByType(ConcreteMarker marker) {
-		return selectedTypes.contains(MarkerTypesModel.getInstance().getType(marker.getType()));
+		return selectedTypes.contains(MarkerTypesModel.getInstance().getType(
+				marker.getType()));
 	}
 
 	/**
@@ -580,6 +608,8 @@ public class MarkerFilter implements Cloneable {
 	 * <li><code>MarkerFilter.ON_WORKING_SET</code> if showing items in some
 	 * working set.</li>
 	 * </ul>
+	 * 
+	 * @return int
 	 */
 	public int getOnResource() {
 		return onResource;
@@ -613,6 +643,8 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Sets the focused resources.
+	 * 
+	 * @param resources
 	 */
 	public void setFocusResource(IResource[] resources) {
 		focusResource = resources;
@@ -750,7 +782,8 @@ public class MarkerFilter implements Cloneable {
 					status = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
 				}
 
-				MarkerType markerType = MarkerTypesModel.getInstance().getType(id);
+				MarkerType markerType = MarkerTypesModel.getInstance().getType(
+						id);
 				if (markerType != null) {
 					newTypes.remove(markerType);
 
@@ -856,7 +889,8 @@ public class MarkerFilter implements Cloneable {
 					status = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
 				}
 
-				MarkerType markerType = MarkerTypesModel.getInstance().getType(id);
+				MarkerType markerType = MarkerTypesModel.getInstance().getType(
+						id);
 				if (markerType != null) {
 					newTypes.remove(markerType);
 
