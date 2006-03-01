@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
 import org.eclipse.ltk.internal.core.refactoring.NotCancelableProgressMonitor;
+import org.eclipse.ltk.internal.core.refactoring.history.UnknownRefactoringDescriptor;
 
 /**
  * Operation that, when performed, creates a {@link Change} object for a given
@@ -142,6 +143,19 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 * @return the created change or <code>null</code>
 	 */
 	public Change getChange() {
+		if (fChange != null) {
+			final ChangeDescriptor descriptor= fChange.getDescriptor();
+			if (descriptor == null) {
+				final CompositeChange composite= new CompositeChange(fChange.getName()) {
+
+					public final ChangeDescriptor getDescriptor() {
+						return new RefactoringChangeDescriptor(new UnknownRefactoringDescriptor(fChange.getName()));
+					}
+				};
+				composite.add(fChange);
+				fChange= composite;
+			}
+		}
 		return fChange;
 	}
 	
