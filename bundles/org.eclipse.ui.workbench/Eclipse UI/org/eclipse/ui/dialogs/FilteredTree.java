@@ -272,45 +272,48 @@ public class FilteredTree extends Composite {
 		        } else if (text != null){
 		            patternFilter.setPattern(text);
 		        }
-		        // don't want the user to see updates that will be made to the tree
-		        treeViewer.getControl().setRedraw(false);
-		        treeViewer.refresh(true);
-		       
-		        if (text.length() > 0 && !initial) {
-		        	/* Expand elements one at a time.  After each is expanded, check
-		        	 * to see if the filter text has been modified.  If it has, then 
-		        	 * cancel the refresh job so the user doesn't have to endure 
-		        	 * expansion of all the nodes.
-		        	 */
-		        	IStructuredContentProvider provider = (IStructuredContentProvider) treeViewer
-							.getContentProvider();
-					Object[] elements = provider.getElements(treeViewer
-							.getInput());
-					for (int i = 0; i < elements.length; i++) {
-						treeViewer.setExpandedState(elements[i], true);
-						if (monitor.isCanceled()) {
-							treeViewer.getControl().setRedraw(true);
-							return Status.CANCEL_STATUS;
-						}
-					}
-
-		            TreeItem[] items = getViewer().getTree().getItems();
-		            if (items.length > 0) {
-		            	// to prevent scrolling
-						treeViewer.getTree().showItem(items[0]);	
-					}
-		            
-		            // enabled toolbar - there is text to clear
-		            // and the list is currently being filtered		
-		            updateToolbar(true);
-		        } else {
-					// disabled toolbar - there is no text to clear
-			        // and the list is currently not filtered		        	
-		        	updateToolbar(false);
-		        }
 		        
-		        // done updating the tree - set redraw back to true
-		        treeViewer.getControl().setRedraw(true);
+		        try {
+			        // don't want the user to see updates that will be made to the tree
+			        treeViewer.getControl().setRedraw(false);
+			        treeViewer.refresh(true);
+			       
+			        if (text.length() > 0 && !initial) {
+			        	/* Expand elements one at a time.  After each is expanded, check
+			        	 * to see if the filter text has been modified.  If it has, then 
+			        	 * cancel the refresh job so the user doesn't have to endure 
+			        	 * expansion of all the nodes.
+			        	 */
+			        	IStructuredContentProvider provider = (IStructuredContentProvider) treeViewer
+								.getContentProvider();
+						Object[] elements = provider.getElements(treeViewer
+								.getInput());
+						for (int i = 0; i < elements.length; i++) {
+							treeViewer.setExpandedState(elements[i], true);
+							if (monitor.isCanceled()) {
+								return Status.CANCEL_STATUS;
+							}
+						}
+	
+			            TreeItem[] items = getViewer().getTree().getItems();
+			            if (items.length > 0) {
+			            	// to prevent scrolling
+							treeViewer.getTree().showItem(items[0]);	
+						}
+			            
+			            // enabled toolbar - there is text to clear
+			            // and the list is currently being filtered		
+			            updateToolbar(true);
+			        } else {
+						// disabled toolbar - there is no text to clear
+				        // and the list is currently not filtered		        	
+			        	updateToolbar(false);
+			        }
+	        	}
+	        	finally {
+			        // done updating the tree - set redraw back to true
+			        treeViewer.getControl().setRedraw(true);
+	        	}	
 		        return Status.OK_STATUS;
 			}
 			
