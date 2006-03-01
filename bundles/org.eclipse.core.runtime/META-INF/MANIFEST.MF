@@ -6,8 +6,7 @@ Bundle-SymbolicName: org.eclipse.core.runtime; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.internal.boot;x-friends:="org.eclipse.core.resources,org.eclipse.core.runtime.compatibility,org.eclipse.pde.build",
- org.eclipse.core.internal.preferences;x-internal:=true,
+Export-Package: org.eclipse.core.internal.preferences;x-internal:=true,
  org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility",
  org.eclipse.core.runtime
 Require-Bundle: org.eclipse.equinox.registry;visibility:=reexport,

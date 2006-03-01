@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,10 @@
 package org.eclipse.core.internal.runtime;
 
 import java.util.Hashtable;
-import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
-import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
-import org.osgi.service.url.URLConstants;
-import org.osgi.service.url.URLStreamHandlerService;
 
 /**
  * Activator for the Eclipse runtime.
@@ -38,26 +34,9 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	public void start(BundleContext runtimeContext) throws Exception {
 		PlatformActivator.context = runtimeContext;
 		InternalPlatform.getDefault().start(runtimeContext);
-		installPlatformURLSupport();
 		registerApplicationService();
 		InternalPlatform.getDefault().setRuntimeInstance(this);
 		super.start(runtimeContext);
-	}
-
-	/**
-	 * Register the platform URL support as a service to the URLHandler service
-	 */
-	private void installPlatformURLSupport() {
-		PlatformURLPluginConnection.startup();
-		PlatformURLFragmentConnection.startup();
-		PlatformURLMetaConnection.startup();
-		PlatformURLConfigConnection.startup();
-
-		PlatformURLBaseConnection.startup(InternalPlatform.getDefault().getInstallURL());
-
-		Hashtable properties = new Hashtable(1);
-		properties.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] {PlatformURLHandler.PROTOCOL});
-		context.registerService(URLStreamHandlerService.class.getName(), new PlatformURLHandler(), properties);
 	}
 
 	public void stop(BundleContext runtimeContext) {

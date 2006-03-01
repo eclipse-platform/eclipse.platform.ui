@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.preferences.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -27,7 +26,6 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
-import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -133,7 +131,6 @@ public final class InternalPlatform {
 
 	private ServiceRegistration legacyPreferencesService = null;
 	private ServiceRegistration customPreferencesService = null;
-	private ServiceRegistration platformURLConverterService = null;
 
 	private ServiceTracker environmentTracker = null;
 	private ServiceTracker logTracker = null;
@@ -335,7 +332,7 @@ public final class InternalPlatform {
 		// optimize for common case; length==1
 		if (bundles.length == 1 && (bundles[0].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0)
 			return bundles;
-		//Remove all the bundes that are installed or uninstalled
+		//Remove all the bundles that are installed or uninstalled
 		Bundle[] selectedBundles = new Bundle[bundles.length];
 		int added = 0;
 		for (int i = 0; i < bundles.length; i++) {
@@ -362,7 +359,7 @@ public final class InternalPlatform {
 	}
 
 	/**
-	 * Lazy initialise ContentTypeManager - it can only be used after the registry is up and running
+	 * Lazy initialize ContentTypeManager - it can only be used after the registry is up and running
 	 */
 	public IContentTypeManager getContentTypeManager() {
 		if (contentTracker == null) {
@@ -468,7 +465,7 @@ public final class InternalPlatform {
 	 * of the platform's meta area.
 	 */
 	public DataArea getMetaArea() {
-		// TODO: derecate?
+		// TODO: deprecate?
 		return MetaDataKeeper.getMetaArea();
 	}
 
@@ -523,7 +520,7 @@ public final class InternalPlatform {
 		// definition in the install location.
 		if (input == null)
 			try {
-				URL url = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING + PLUGIN_PATH);
+				URL url = new URL("platform:/base/" + PLUGIN_PATH); //$NON-NLS-1$
 				input = url.openStream();
 			} catch (MalformedURLException e) {
 				//fall through
@@ -813,7 +810,7 @@ public final class InternalPlatform {
 	 * through here as well.
 	 */
 	public void log(final IStatus status) {
-		// TODO: derecate?
+		// TODO: deprecate?
 		RuntimeLog.log(status);
 	}
 
@@ -885,7 +882,7 @@ public final class InternalPlatform {
 				found = true;
 			}
 
-			// consume obsolete args for compatibilty
+			// consume obsolete args for compatibility
 			if (args[i - 1].equalsIgnoreCase(CLASSLOADER_PROPERTIES))
 				found = true; // ignore
 			if (args[i - 1].equalsIgnoreCase(BOOT))
@@ -1025,10 +1022,6 @@ public final class InternalPlatform {
 	private void startServices() {
 		customPreferencesService = getBundleContext().registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
 		legacyPreferencesService = getBundleContext().registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
-
-		Dictionary urlProperties = new Hashtable();
-		urlProperties.put("protocol", "platform"); //$NON-NLS-1$ //$NON-NLS-2$
-		platformURLConverterService = context.registerService(URLConverter.class.getName(), new PlatformURLConverter(), urlProperties);
 	}
 
 	private void stopServices() {
@@ -1039,10 +1032,6 @@ public final class InternalPlatform {
 		if (customPreferencesService != null) {
 			customPreferencesService.unregister();
 			customPreferencesService = null;
-		}
-		if (platformURLConverterService != null) {
-			platformURLConverterService.unregister();
-			platformURLConverterService = null;
 		}
 	}
 
