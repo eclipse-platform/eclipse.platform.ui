@@ -517,17 +517,21 @@
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"
-            objectClass="org.eclipse.core.resources.IProject"
             name="%PropertyPages.project.reference"
             class="org.eclipse.ui.internal.ide.dialogs.ProjectReferencePage"
             id="org.eclipse.ui.propertypages.project.reference">
+         <enablement>
+            <objectClass name="org.eclipse.core.resources.IProject"/>
+         </enablement>
       </page>
       <page
             adaptable="true"
-            objectClass="org.eclipse.core.resources.IResource"
             name="%PropertyPages.info.file"
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file">
+         <enablement>
+            <objectClass name="org.eclipse.core.resources.IResource"/>
+         </enablement>
       </page>
    </extension>
    <extension

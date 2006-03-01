@@ -21,6 +21,8 @@ If these filtering mechanisms are inadequate a property page may use the filter 
       </documentation>
    </annotation>
 
+   <include schemaLocation="commonExpression.exsd"/>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -63,6 +65,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
          <sequence>
             <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="keywordReference" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -91,13 +94,15 @@ If these filtering mechanisms are inadequate a property page may use the filter 
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="objectClass" type="string" use="required">
+         <attribute name="objectClass" type="string">
             <annotation>
                <documentation>
                   a fully qualified name of the class for which the page is registered. This class does not need to implement &lt;tt&gt;IAdaptable&lt;/tt&gt;. Objects that are not an instance of &lt;tt&gt;IAdaptable&lt;/tt&gt; will be wrappered in an &lt;tt&gt;IAdaptable&lt;/tt&gt; before being sent to the property page&apos;s instance (an &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;).
+
+&lt;p&gt;Deprecated in 3.2. The objectClass should now be specified using the enablement of the receiver.&lt;/p&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" deprecated="true"/>
                </appInfo>
             </annotation>
          </attribute>
