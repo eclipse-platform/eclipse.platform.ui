@@ -265,7 +265,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		minWidth= computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
 		minWidth= Math.max(minWidth, computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_on));
 		columnLayout.addColumnData(new ColumnPixelData(minWidth, false, false));
-		column4.setResizable(false);
 		
 		gc.dispose();
 
