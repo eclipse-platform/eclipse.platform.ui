@@ -20,12 +20,10 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ISelectionConversionService;
 
 /**
@@ -50,20 +48,15 @@ public class IDESelectionConversionService implements
 
 		while (elements.hasNext()) {
 			Object currentElement = elements.next();
-			if (currentElement instanceof IResource) { // already a resource
-				result.add(currentElement);
-			} else if (currentElement instanceof IAdaptable) {
-				Object adapter = ((IAdaptable) currentElement)
-						.getAdapter(IResource.class);
-				if (adapter != null) {
-					result.add(adapter); // add the converted resource
-				}
 
-			} else {
+			IResource resource = ResourceUtil.getResource(currentElement);
 
-				IAdapterManager adapterManager = Platform.getAdapterManager();
-				ResourceMapping mapping = (ResourceMapping) adapterManager
-						.getAdapter(currentElement, ResourceMapping.class);
+			if (resource == null) {
+
+				ResourceMapping mapping = ResourceUtil
+						.getResourceMapping(currentElement);
+				if (mapping == null)
+					continue;
 
 				ResourceTraversal[] traversals = null;
 				try {
@@ -83,12 +76,13 @@ public class IDESelectionConversionService implements
 						if (resources != null) {
 							for (int j = 0; j < resources.length; j++) {
 								result.add(resources[j]);
-							}// for
-						}// if
-					}// for
-				}// if
+							}
+						}
+					}
+				}
 
-			}
+			} else
+				result.add(resource);
 		}
 
 		// all that can be converted are done, answer new selection
