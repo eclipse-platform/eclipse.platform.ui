@@ -133,6 +133,7 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         String helpContextId = getHelpContextId();
         if (helpContextId != null)
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, helpContextId);
+        setEnabled(false);
     }
    
     public void setDelegate(AbstractDebugContextActionDelegate delegate) {

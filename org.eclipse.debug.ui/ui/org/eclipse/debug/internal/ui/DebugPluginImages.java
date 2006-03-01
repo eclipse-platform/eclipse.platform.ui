@@ -117,7 +117,6 @@ public class DebugPluginImages {
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEP_RETURN, DLCL+ "stepreturn_co.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEP_OVER, DLCL + "stepover_co.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEP_INTO, DLCL + "stepinto_co.gif"); //$NON-NLS-1$
-        declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DROP_TO_FRAME, DLCL + "drop_to_frame.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE, DLCL + "terminate_rem_co.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL, DLCL + "terminate_all_co.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_RELAUNCH, DTOOL + "term_restart.gif"); //$NON-NLS-1$

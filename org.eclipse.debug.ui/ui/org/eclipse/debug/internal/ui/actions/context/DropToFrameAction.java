@@ -99,15 +99,6 @@ public class DropToFrameAction extends AbstractDebugContextAction {
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#getDisabledImageDescriptor()
-     */
-    public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DROP_TO_FRAME);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#getHoverImageDescriptor()
      */
     public ImageDescriptor getHoverImageDescriptor() {
@@ -122,4 +113,11 @@ public class DropToFrameAction extends AbstractDebugContextAction {
     public ImageDescriptor getImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DROP_TO_FRAME);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#getDisabledImageDescriptor()
+	 */
+	public ImageDescriptor getDisabledImageDescriptor() {
+		return null;
+	}
 }

@@ -66,7 +66,6 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_STEP_RETURN = "IMG_DLCL_STEP_RETURN"; //$NON-NLS-1$
     public static final String IMG_DLCL_STEP_OVER = "IMG_DLCL_STEP_OVER"; //$NON-NLS-1$
     public static final String IMG_DLCL_STEP_INTO = "IMG_DLCL_STEP_INTO"; //$NON-NLS-1$
-    public static final String IMG_DLCL_DROP_TO_FRAME = "IMG_DLCL_DROP_TO_FRAME"; //$NON-NLS-1$
     public static final String IMG_DLCL_TERMINATE_AND_REMOVE = "IMG_DLCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
     public static final String IMG_DLCL_TERMINATE_ALL = "IMG_DLCL_TERMINATE_ALL"; //$NON-NLS-1$
     public static final String IMG_DLCL_TERMINATE_AND_RELAUNCH = "IMG_DLCL_TERMINATE_AND_RELAUNCH"; //$NON-NLS-1$

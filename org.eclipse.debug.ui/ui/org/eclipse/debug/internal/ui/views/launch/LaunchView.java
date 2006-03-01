@@ -67,7 +67,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -273,19 +272,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         TerminateAndRelaunchAction terminateAndRelaunchAction = new TerminateAndRelaunchAction();
         terminateAndRelaunchAction.init(window);
         setAction(TERMINATE_AND_RELAUNCH, terminateAndRelaunchAction);
-
-				
-		// submit an async exec to update the selection once the
-		// view has been created - i.e. auto-expand and select the
-		// suspended thread on creation. (Done here, because the
-		// viewer needs to be set).
-		Runnable r = new Runnable() {
-			public void run() {
-				initializeSelection();
-			}
-		};
-		asyncExec(r);		
-		
 	}
 
 	/* (non-Javadoc)
@@ -390,23 +376,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 				lManager.removeLaunch(launch);		
 			}
-		}
-	}
-	
-	/**
-	 * Select the first stack frame in a suspended thread,
-	 * if any.
-	 */
-	private void initializeSelection() {
-		if (!isAvailable()) {
-			return;
-		}
-		ILaunchManager launchManager = (ILaunchManager) getViewer().getInput();
-		ILaunch[] launches = launchManager.getLaunches();
-		// forces the delegates to update enablement
-		// TODO: would it be better to contribute toolbar/context actions in code?		
-		if (launches.length == 0) {
-			getViewer().setSelection(new StructuredSelection());
 		}
 	}
 
