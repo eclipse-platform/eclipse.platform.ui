@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ContainerSourceContainer;
 
 /**
  * A project in the workspace. Source is searched for in the root project
