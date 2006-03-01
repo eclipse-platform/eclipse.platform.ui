@@ -104,6 +104,7 @@
  	<type name="AbstractSourceContainerTypeDelegate" />
  	<type name="ArchiveSourceContainer" subclass="false" />
  	<type name="CompositeSourceContainer" />
+ 	<type name="ContainerSourceContainer" subclass="false" instantiate="false"/>
  	<type name="DefaultSourceContainer" subclass="false" />
  	<type name="DirectorySourceContainer" subclass="false" />
  	<type name="ExternalArchiveSourceContainer" subclass="false" />
