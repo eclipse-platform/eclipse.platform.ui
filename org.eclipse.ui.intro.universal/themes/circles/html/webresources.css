@@ -2,9 +2,21 @@
 #navigation-links a#webresources img, #webresources a#webresources:hover img { 
 	background-image : url(../graphics/icons/ctool/wr_nav_64.gif); 
 	top : 2px;
-	left : 0px;
+	left : -3px;
 }
 
 #navigation-links {
 	background-image: url(../graphics/contentpage/wr_banner.jpg);
+}
+
+#navigation-links a:hover#webresources .link-label,
+#navigation-links a:focus#webresources .link-label,
+#navigation-links a:active#webresources .link-label {
+	display : none;
+}
+
+#navigation-links a:hover#webresources,
+#navigation-links a:focus#webresources,
+#navigation-links a:active#webresources {
+	background-image : none;
 }

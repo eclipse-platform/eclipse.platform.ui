@@ -3,9 +3,21 @@
 #navigation-links a#samples img, #navigation-links a#samples:hover img { 
 	background-image : url(../graphics/icons/ctool/sa_nav_64.gif); 
 	top : 2px; 
-	left : 0px;
+	left : -3px;
 }
 
 #navigation-links {
 	background-image: url(../graphics/contentpage/sa_banner.jpg);
+}
+
+#navigation-links a:hover#samples .link-label,
+#navigation-links a:focus#samples .link-label,
+#navigation-links a:active#samples .link-label {
+	display : none;
+}
+
+#navigation-links a:hover#samples,
+#navigation-links a:focus#samples,
+#navigation-links a:active#samples {
+	background-image : none;
 }

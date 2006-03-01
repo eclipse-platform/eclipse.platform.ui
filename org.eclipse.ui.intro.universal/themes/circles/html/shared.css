@@ -41,6 +41,7 @@ HR {
 	color :  #dfdfe4;
 }
 
+/* Page description if the page has it. */
 .page-description {
 	font-size : 10pt;
 	float : none;
@@ -53,17 +54,19 @@ a {
 	color : #4D4D4D;
 }
 
+/* General link labels */
 a .link-label {
 	font-size : 10pt;
 	font-weight : normal;
 }
 
+/* Floating link labels for navigation links */
 #navigation-links a .link-label {
-	font-size : 9pt;
+	font-size : 8pt;
 	font-weight : normal;
-	color : #E5E5E5;
 }
 
+/* Text in links. */
 a .text {
 	font-size : 8pt;
 	font-weight : normal;
@@ -74,6 +77,12 @@ p .group-description {
 	font-weight : normal;
 }
 
+/*
+ * Additional div generated for links with text is normally hidden.
+ */
+.link-label-extra-div {
+	display : none;
+}
 
 /* 
  * Set up other general properties like padding/margins
@@ -81,6 +90,14 @@ p .group-description {
 html, body { width : 100%; height : 100%; }
 
 html, body, div, h1, h4, p, a { margin : 0px; padding : 0px; }
+
+/* 
+ * Page header - adding extra padding at the bottom to compensate
+ * for navigation background/header overlap.
+ */
+#page-content #content-header {
+	padding-bottom : 22px;
+}
 
 /* For regular div labels */
 #page-content div H4 {
@@ -182,12 +199,11 @@ body, .page{
 }
 
 #navigation-links a {
-/*
-	padding-left : 3px;
-	padding-right : 3px;
-*/
+	position: relative;
 	float : left;
-	text-align : center;
+	text-align : left;
+	width : auto;
+	height : 64px;
 }
 
 #navigation-links a img {
@@ -197,26 +213,61 @@ body, .page{
 	vertical-align : center;
 	horizontal-align : center;
 	top : 10px;
-	left : 12px;
+	left : 9px;
 }
 
 #navigation-links a:hover img,
 #navigation-links a:focus img,
 #navigation-links a:active img {
 	top : 2px;
-	left : 3px;
+	left : 0px;
 }
 
 /*
-#navigation-links a .link-label { display : block; margin-top : 5px;}
-*/
-#navigation-links a .link-label { display : none; }
+ * Navigation link label text is normally hidden, so
+ * turn it off and remove it from the document flow.
+ */
+#navigation-links a .link-label { 
+	display : none;
+}
 
 #navigation-links a .text { display : none; }
 
-#navigation-links a:hover, 
-#navigation-links a:focus 
-#navigation-links a:active { border-right : 0px;}
+#navigation-links a:hover,
+#navigation-links a:focus,
+#navigation-links a:active {
+	border-right : 0px;
+	background-image: url(../graphics/icons/ctool/nav_midhov.gif);
+	background-repeat: repeat-x;
+	background-position: 0px 2px;
+	z-index: 20;
+}
+
+#navigation-links a:hover:after,
+#navigation-links a:focus:after,
+#navigation-links a:active:after {
+	content : url(../graphics/icons/ctool/nav_rightedgehov.gif);
+}
+
+#navigation-links a:hover .link-label,
+#navigation-links a:focus .link-label,
+#navigation-links a:active .link-label {
+	display : inline;
+	clear : both;
+	float : left;
+	text-align: right;
+	position : relative;
+	padding-left: 5px;
+	padding-top: 7px;
+	padding-right: 5px;
+	margin-right: auto;
+	top : -40px;
+	white-space: nowrap;
+	height : 32px;
+/*
+	background-color: yellow;
+	*/
+}
 
 /* properties for each of the navigation-links  */
 #navigation-links a#overview img { background-image : url(../graphics/icons/ctool/ov_nav_32.gif); }
@@ -254,7 +305,11 @@ body, .page{
 #navigation-links a#webresources:focus img,
 #navigation-links a#webresources:active img { background-image : url(../graphics/icons/ctool/wr_nav_hover.gif); }
 
-#navigation-links a#workbench { position : absolute;  left : 491px; text-align : left;}
+#navigation-links a#workbench { 
+	position : absolute;  
+	left : 494px; 
+	text-align : left;
+}
 #navigation-links a#workbench .text { display : none; }
 #navigation-links a#workbench img { 
 	background-image : url(../graphics/icons/ctool/wb_nav_32.gif); 
@@ -265,7 +320,7 @@ body, .page{
 #navigation-links a#workbench:active img { 
 	background-image : url(../graphics/icons/ctool/wb_nav_hover.gif); 
 	width : 51px;
-	height : 58px;
+	height : 64px;
 }
 
 /* 
@@ -276,14 +331,15 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 /* position the page content so that the page title overlays the bottom
  * of the background image, but make sure the content is always on top 
  * (using z-index) */
+
 #page-content {
 	float : none;
 	clear : both;
 	text-align : center;
-	margin-top : 35px;
+	position : relative;
+	top : -40px;
+	z-index : 10;
 }
-
-.page > #page-content { margin-top : 50px; }
 
 #page-content p { 
 	padding-bottom : 15px; 
@@ -367,9 +423,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 #page-content * a .link-label {
 	display : block;
-	/*
-	width : 300px;
-	*/
 	position : relative;
 	top : -50px;
 	left : 60px;
@@ -394,7 +447,21 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
  * uses block display. We need to see a solid rectangle around the extension, not 
  * a tight polygon around the link perimeter.
  */
- 
+
+.content-group {
+	padding-left: 10px;
+	padding-right: 10px;
+	float : none;
+	clear : both;
+	text-align: left;
+/*
+	background-color: #c0c0ff;
+	border-color: black;
+	border-style: solid;
+	border-width: 1px;
+*/
+}
+/*
 .content-group {
 	width : auto;
 	padding-left: 10px;
@@ -402,6 +469,10 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	float : none;
 	clear : both;
 	text-align: left;
+	background-color: #8080b0;
+	border-color: black;
+	border-style: solid;
+	border-width: 1px;
 }
 
 .content-link {
@@ -409,19 +480,18 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	margin-left : 5px;
 	margin-right : 5px;
 	margin-top : 10px;
-	margin-bottom : -20px;
 	vertical-align : top;
 	clear : both;
+	background-color: #80b080;
+	border-color: red;
+	border-style: solid;
+	border-width: 1px;
 }
 
 .content-group > .content-link {
 	float : left;
-	/*
-	height : 150px;
-	*/
 	vertical-align : middle;
 }
-
 
 .content-link img  {
 	height : 57px;
@@ -438,28 +508,24 @@ p #group-description {
 	padding-bottom : 10px;
 	float : none;
 	clear : both;
+	background-color: #b08080;
 }
 
 .content-link .link-label {
 	display : block;
-	/*
-	width : 300px;
-	*/
-	position : relative;
 	top : -50px;
-	left : 60px;
+	background-color: #b0b080;
 }
-
 
 .content-link p .text {
 	display : block;
-	/*
-	width : 300px;
-	*/
 	position : relative;
 	top : -45px;
 	left : 53px;
+	background-color: #80b0b0;
 }
+
+*/
 
 .content-link:hover { border-right : 0px; }
 
@@ -482,9 +548,7 @@ iframe {
 	padding-left: 2%;
 }	
 
-/*
- * Folding section settings.
- */
+/* Folding section settings. */
 .section { text-align: left; }
 .section-body { 
 	display: none;
@@ -492,11 +556,13 @@ iframe {
 	color : cyan; 
 }
 
+/* The label part of the folding section */
 .section-title { 
 	font-size : 10pt;
 	color : blue; 
 }
 
+/* The toggle image part of the folding section. */
 .section-toggle-image {
 	float : right;
 	clear: right;
