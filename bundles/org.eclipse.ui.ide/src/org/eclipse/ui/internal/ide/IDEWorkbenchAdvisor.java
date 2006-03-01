@@ -222,8 +222,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 					new IDESelectionConversionService());
 
 			initializeSettingsChangeListener();
-			Display.getCurrent().addListener(SWT.Settings,
-					settingsChangeListener);
+//			Display.getCurrent().addListener(SWT.Settings,
+//					settingsChangeListener);
 		} finally {// Resume background jobs after we startup
 			Platform.getJobManager().resume();
 		}
