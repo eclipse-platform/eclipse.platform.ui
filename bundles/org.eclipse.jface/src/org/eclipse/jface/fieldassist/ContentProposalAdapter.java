@@ -93,6 +93,21 @@ public class ContentProposalAdapter {
 												.hasFocus())) {
 									return;
 								}
+								// Workaround a problem on X and Mac, whereby at this
+								// point, the focus control is not known.  This can happen,
+								// for example, when resizing the popup shell on the Mac.
+								// Check the active shell.
+								Shell activeShell = e.display.getActiveShell();
+								if (activeShell == getShell()
+										|| (infoPopup != null && infoPopup
+												.getShell() == activeShell)) {
+									return;
+								}
+								/*
+								 * System.out.println(e);
+								 * System.out.println(e.display.getFocusControl());
+								 * System.out.println(e.display.getActiveShell());
+								 */
 								close();
 							}
 						}
