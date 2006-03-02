@@ -16,12 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,6 +30,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -368,7 +368,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 							public void handleException(Throwable x) {
 							}
 						};
-						Platform.run(runnable);
+						SafeRunner.run(runnable);
 					} else {
 						revertSelection();
 						return;
@@ -415,7 +415,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				public void handleException(Throwable x) {
 				}
 			};
-			Platform.run(runnable);
+			SafeRunner.run(runnable);
 		}
 	}
 
@@ -459,7 +459,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				public void handleException(Throwable x) {
 				}
 			};
-			Platform.run(runnable);
+			SafeRunner.run(runnable);
 			control= result[0];
 			if (control == null) {
 				String message= TextEditorMessages.SpellingConfigurationBlock_info_no_preferences;
@@ -483,7 +483,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			public void handleException(Throwable x) {
 			}
 		};
-		Platform.run(runnable);
+		SafeRunner.run(runnable);
 	}
 
 	public void initialize() {
@@ -505,7 +505,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			public void handleException(Throwable x) {
 			}
 		};
-		Platform.run(runnable);
+		SafeRunner.run(runnable);
 		return result[0].booleanValue();
 	}
 
@@ -519,7 +519,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				public void handleException(Throwable x) {
 				}
 			};
-			Platform.run(runnable);
+			SafeRunner.run(runnable);
 		}
 	}
 
@@ -534,7 +534,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				public void handleException(Throwable x) {
 				}
 			};
-			Platform.run(runnable);
+			SafeRunner.run(runnable);
 		}
 	}
 
@@ -548,7 +548,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				public void handleException(Throwable x) {
 				}
 			};
-			Platform.run(runnable);
+			SafeRunner.run(runnable);
 		}
 	}
 

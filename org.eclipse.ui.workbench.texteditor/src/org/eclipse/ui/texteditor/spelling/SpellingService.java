@@ -14,7 +14,7 @@ package org.eclipse.ui.texteditor.spelling;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -105,7 +105,7 @@ public class SpellingService {
 							public void handleException(Throwable x) {
 							}
 						};
-						Platform.run(runnable);
+						SafeRunner.run(runnable);
 					}
 				} catch (CoreException x) {
 					TextEditorPlugin.getDefault().getLog().log(x.getStatus());

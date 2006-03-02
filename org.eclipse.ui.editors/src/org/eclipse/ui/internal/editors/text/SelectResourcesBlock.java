@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -543,7 +543,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		Object[] array= listeners.getListeners();
 		for (int i= 0; i < array.length; i++) {
 			final ICheckStateListener l= (ICheckStateListener) array[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					l.checkStateChanged(event);
 				}
