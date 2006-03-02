@@ -77,13 +77,6 @@ p .group-description {
 	font-weight : normal;
 }
 
-/*
- * Additional div generated for links with text is normally hidden.
- */
-.link-label-extra-div {
-	display : none;
-}
-
 /* 
  * Set up other general properties like padding/margins
  */
@@ -449,6 +442,8 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
  */
 
 .content-group {
+	margin-left: 10px;
+	margin-right: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
 	float : none;
