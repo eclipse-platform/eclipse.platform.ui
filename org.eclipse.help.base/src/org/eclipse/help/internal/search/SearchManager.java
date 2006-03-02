@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -8,17 +8,22 @@
  **************************************************************************************************/
 package org.eclipse.help.internal.search;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Hits;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -27,6 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.ITocsChangedListener;
@@ -36,6 +42,7 @@ import org.eclipse.help.internal.search.IndexingOperation.IndexingException;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
 import org.eclipse.help.internal.search.federated.FederatedSearchJob;
 import org.eclipse.help.internal.util.URLCoder;
+import org.eclipse.help.internal.xhtml.XHTMLSupport;
 import org.eclipse.help.search.LuceneSearchParticipant;
 import org.osgi.framework.Bundle;
 
@@ -50,6 +57,7 @@ public class SearchManager implements ITocsChangedListener {
 	private static final Object PARTICIPANTS_NOT_FOUND = new Object();
 	/** Search indexes, by locale */
 	private Map indexes = new HashMap();
+	private Map indexCaches = new HashMap();
 
 	/** Caches analyzer descriptors for each locale */
 	private Map analyzerDescriptors = new HashMap();
@@ -148,6 +156,66 @@ public class SearchManager implements ITocsChangedListener {
 	}
 
 	/**
+	 * Converts the given Hits object into a List of raw SearchHits.
+	 * Hits objects are immutable and can't be instantiated from outside
+	 * Lucene.
+	 * 
+	 * @param hits the Hits object to convert
+	 * @return a List of raw SearchHits
+	 */
+	public static List asList(Hits hits) {
+		List list = new ArrayList(hits.length());
+		for (int i=0;i<hits.length();++i) {
+			try {
+				Document doc = hits.doc(i);
+				float score = hits.score(i);
+				String href = doc.get("name"); //$NON-NLS-1$
+				String summary = doc.get("summary");			 //$NON-NLS-1$
+				String id = doc.get("id"); //$NON-NLS-1$
+				String participantId = doc.get("participantId"); //$NON-NLS-1$
+				String label = doc.get("raw_title"); //$NON-NLS-1$
+				String filters = doc.get("filters"); //$NON-NLS-1$
+				list.add(new SearchHit(href, label, summary, score, null, id, participantId, filters));
+			}
+			catch (IOException e) {
+				HelpBasePlugin.logError("An error occured while reading search hits", e); //$NON-NLS-1$
+				continue;
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * Returns whether or not the given filters match the current filterable
+	 * property values. For example, if the filters contain "os=win32", the filter
+	 * matches only if the OS is windows. 
+	 * 
+	 * @param filters the filters to check, e.g. "os=linux,ws=gtk,arch=x86"
+	 * @return whether or not the filters are satisfied
+	 */
+	private boolean filtersMatch(String filters) {
+		StringTokenizer tok = new StringTokenizer(filters, ","); //$NON-NLS-1$
+		while (tok.hasMoreTokens()) {
+			String filter = tok.nextToken();
+			int index = filter.indexOf('=');
+			if (index > 0) {
+				boolean enabled = true;
+				if (filter.charAt(0) == '!') {
+					enabled = false;
+					filter = filter.substring(1);
+					index--;
+				}
+				String name = filter.substring(0, index);
+				String value = filter.substring(index + 1);
+				if (XHTMLSupport.getFilterProcessor().isFilteredIn(name, value) != enabled) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * Public for use by indexing tool
 	 */
 	public SearchIndexWithIndexingProgress getIndex(String locale) {
@@ -162,6 +230,18 @@ public class SearchManager implements ITocsChangedListener {
 		}
 	}
 
+	private SearchIndexCache getIndexCache(String locale) {
+		synchronized (indexCaches) {
+			Object index = indexCaches.get(locale);
+			if (index == null) {
+				index = new SearchIndexCache(locale, getAnalyzer(locale), HelpPlugin
+						.getTocManager());
+				indexCaches.put(locale, index);
+			}
+			return (SearchIndexCache) index;
+		}
+	}
+	
 	/**
 	 * Obtains AnalyzerDescriptor that indexing and search should use for a given locale.
 	 * 
@@ -482,7 +562,23 @@ public class SearchManager implements ITocsChangedListener {
 	}
 
 	/**
-	 * Searches index for documents containing an expression.
+	 * Searches index for documents containing an expression. Searching is
+	 * done in potentially several phases. There are two indexes in play; the
+	 * master index, which has all documents indexed unfiltered, and the cache
+	 * index, which has a subset of all documents indexed filtered, and is created
+	 * on demand.
+	 * 
+	 * The procedure for searching is as follows:
+	 * 
+	 * 1. Search the master index. This will yield potential false positives
+	 *    because the master index docs were unfiltered.
+	 * 2. For those docs that didn't have filters, mark them as hits. For the
+	 *    potential false positives, search the cache index.
+	 * 3. For each hit in the cache index, check whether the filters used at the
+	 *    time of indexing agree with the current filters. If yes, mark as hit. If
+	 *    no, reindex those that didn't match with the current filters (or weren't
+	 *    found at all).
+	 * 4. Search the now-updated cache for these remaining documents.
 	 */
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
 			throws QueryTooComplexException {
@@ -500,18 +596,172 @@ public class SearchManager implements ITocsChangedListener {
 				System.out.println(this.getClass().getName() + " IndexUpdateException occurred."); //$NON-NLS-1$
 			}
 		}
-		index.search(searchQuery, collector);
-	}
+		
+		final List definiteHits = new ArrayList();
+		final List potentialFalseHits = new ArrayList();
+		final List needReindexingHits = new ArrayList();
+		final String[] highlightTerms = new String[1];
 
+		/*
+		 * Pass 1: Search the master index. This will yield definite hits,
+		 * potentially false hits, and the terms to highlight.
+		 */
+		searchPass1(searchQuery, definiteHits, potentialFalseHits, highlightTerms);
+		
+		if (!potentialFalseHits.isEmpty()) {
+			/*
+			 * Pass 2: Ensure that the cache index is up to date. This will yield
+			 * all potential false hits' docs that need to be reindexed for the cache.
+			 */
+			searchPass2(searchQuery, potentialFalseHits, needReindexingHits);
+			if (!needReindexingHits.isEmpty()) {
+				reindex(needReindexingHits, searchQuery.getLocale());
+			}
+
+			/*
+			 * Pass 3: Now that cache is up to date, search the cache and add
+			 * to the definite hits.
+			 */
+			searchPass3(searchQuery, definiteHits);
+			
+			// sort by score
+			Collections.sort(definiteHits);
+		}
+		
+		// send out the final results
+		collector.addHits(definiteHits, highlightTerms[0]);
+	}
+	
 	/**
 	 * Performs the federated search.
 	 */
-
 	public void search(String expression, FederatedSearchEntry[] entries) {
 		for (int i = 0; i < entries.length; i++) {
 			FederatedSearchJob job = new FederatedSearchJob(expression, entries[i]);
 			job.schedule();
 		}
+	}
+	
+	/**
+	 * Performs the initial search pass. This searches the master index
+	 * (unfiltered documents). This will yield definite hits and potentially
+	 * false hits, added to the corresponding collection parameters. This
+	 * also yields the terms to highlight in the result.
+	 * 
+	 * Infocenter doesn't filter, so in this mode there are never
+	 * potential false hits.
+	 * 
+	 * @param searchQuery what to search for
+	 * @param definiteHits those hits that we know for sure are not false hits
+	 * @param potentialFalseHits hits that may be false hits (we are not sure)
+	 * @param highlightTerms the terms to highlight
+	 */
+	private void searchPass1(ISearchQuery searchQuery, Collection definiteHits, Collection potentialFalseHits, String[] highlightTerms) {
+		final Collection fDefiniteHits = definiteHits;
+		final Collection fPotentialFalseHits = potentialFalseHits;
+		final String[] fHighlightTerms = highlightTerms;
+		ISearchHitCollector collector = new ISearchHitCollector() {
+			public void addHits(List hits, String wordsSearched) {
+				boolean isInfocenter = HelpSystem.isShared();
+				fHighlightTerms[0] = wordsSearched;
+				Iterator iter = hits.iterator();
+				while (iter.hasNext()) {
+					SearchHit hit = (SearchHit)iter.next();
+					String filters = hit.getFilters();
+					
+					// if it has filters it is potentially a false hit
+					if (!isInfocenter && filters != null) {
+						fPotentialFalseHits.add(hit);
+					}
+					else {
+						fDefiniteHits.add(hit);
+					}
+				}
+			}
+		};
+		
+		/*
+		 * Perform the initial search pass on the master index. This will
+		 * find all potential hits.
+		 */
+		SearchIndex index = getIndex(searchQuery.getLocale());
+		index.search(searchQuery, collector);
+	}
+	
+	/**
+	 * Performs the second search pass. The only purpose for this pass is
+	 * to check whether the cache index is up to date or not. This will search
+	 * the cache, check whether the filters match the current values, and find
+	 * the potential false hit documents that haven't yet been indexed.
+	 * 
+	 * @param searchQuery what to search for
+	 * @param potentialFalseHits the potentially false hits (not modified)
+	 * @param needReindexingHits the hits whose docs need to be indexed or reindexed
+	 */
+	private void searchPass2(ISearchQuery searchQuery, Collection potentialFalseHits, Collection needReindexingHits) {
+		final List secondPassDefiniteHits = new ArrayList();
+		final Collection fNeedReindexingHits = needReindexingHits;
+		ISearchHitCollector collector = new ISearchHitCollector() {
+			public void addHits(List hits, String wordsSearched) {
+				Iterator iter = hits.iterator();
+				while (iter.hasNext()) {
+					SearchHit hit = (SearchHit)iter.next();
+					String filters = hit.getFilters();
+					
+					/*
+					 * If the current filter property values (e.g. os,
+					 * ws) match those used at indexing time we are ok.
+					 * Otherwise we need to reindex with updated filters.
+					 */
+					if (filtersMatch(filters)) {
+						secondPassDefiniteHits.add(hit);
+					}
+					else {
+						fNeedReindexingHits.add(hit);
+					}
+				}
+			}
+		};
+		
+		// perform the second search pass
+		SearchIndexCache indexCache = getIndexCache(searchQuery.getLocale());
+		if (indexCache.exists()) {
+			indexCache.search(searchQuery, collector);
+		}
+		
+		// are all the potential false hits accounted for?
+		// for ones that aren't, check if need reindexing
+		Set unaccountedFor = new HashSet(potentialFalseHits);
+		unaccountedFor.removeAll(secondPassDefiniteHits);
+		unaccountedFor.removeAll(needReindexingHits);
+		
+		Iterator iter = unaccountedFor.iterator();
+		while (iter.hasNext()) {
+			SearchHit hit = (SearchHit)iter.next();
+			String filters = (String)indexCache.getIndexedDocs().get(hit.getHref());
+			if (filters == null || !filtersMatch(filters)) {
+				needReindexingHits.add(hit);
+			}
+		}
+	}
+	
+	/**
+	 * Performs the third and final search pass. This searches for all the
+	 * previously collected potential false hits in the cache. Those found are
+	 * now known to be definite hits, since the cache was updated in pass 2.
+	 * 
+	 * @param searchQuery what to search for
+	 * @param definiteHits the definite hits
+	 */
+	private void searchPass3(ISearchQuery searchQuery, Collection definiteHits) {
+		final Collection fDefiniteHits = definiteHits;
+		ISearchHitCollector collector = new ISearchHitCollector() {
+			public void addHits(List hits, String wordsSearched) {
+				fDefiniteHits.addAll(hits);
+			}
+		};
+		SearchIndexCache indexCache = getIndexCache(searchQuery.getLocale());
+		indexCache.search(searchQuery, collector);
 	}
 
 	/**
@@ -636,5 +886,53 @@ public class SearchManager implements ITocsChangedListener {
 				SearchProgressMonitor.reinit(ix.getLocale());
 			}
 		}
+	}
+	
+	private void reindex(List hits, String locale) {
+		SearchIndexCache indexCache = getIndexCache(locale);
+		if (indexCache.exists()) {
+			indexCache.beginDeleteBatch();
+			Iterator iter = hits.iterator();
+			while (iter.hasNext()) {
+				SearchHit hit = (SearchHit)iter.next();
+				indexCache.removeDocument(hit.getHref());
+			}
+			indexCache.endDeleteBatch();
+		}
+		indexCache.beginAddBatch(false);
+		Iterator iter = hits.iterator();
+		while (iter.hasNext()) {
+			SearchHit hit = (SearchHit)iter.next();
+			String filters = hit.getFilters();
+			filters = setCurrentValues(filters);
+			indexCache.addDocument(hit.getHref(), SearchIndex.getIndexableURL(locale, hit.getHref()), filters);
+		}
+		indexCache.endAddBatch(true, true);
+	}
+	
+	private String setCurrentValues(String filters) {
+		StringBuffer buf = new StringBuffer();
+		StringTokenizer tok = new StringTokenizer(filters, ","); //$NON-NLS-1$
+		boolean first = true;
+		while (tok.hasMoreTokens()) {
+			if (!first) {
+				buf.append(',');
+			}
+			first = false;
+			String filter = tok.nextToken();
+			int index = filter.indexOf('=');
+			if (index > 0) {
+				String name = filter.substring(0, index);
+				String value = filter.substring(index + 1);
+				if (!XHTMLSupport.getFilterProcessor().isFilteredIn(name, value)) {
+					buf.append('!');
+				}
+				buf.append(filter);
+			}
+			else {
+				buf.append(filter + '=' + XHTMLSupport.getFilterProcessor().getCurrentValue(filter));
+			}
+		}
+		return buf.toString();
 	}
 }

@@ -33,14 +33,25 @@ import org.w3c.dom.Document;
 public class DynamicContentProducer implements IHelpContentProducer {
 
 	public InputStream getInputStream(String pluginID, String href, Locale locale) {
+		String file = href;
 		int qloc = href.indexOf('?');
 		if (qloc != -1)
-			href = href.substring(0, qloc);
-		int loc = href.lastIndexOf('.');
+			file = href.substring(0, qloc);
+		int loc = file.lastIndexOf('.');
 		if (loc != -1) {
-			String extension = href.substring(loc + 1).toLowerCase();
-			if ("xhtml".equals(extension)) //$NON-NLS-1$
-				return openXHTMLFromPlugin(pluginID, href, locale.toString());
+			String extension = file.substring(loc + 1).toLowerCase();
+			if ("xhtml".equals(extension)) {//$NON-NLS-1$
+				/*
+				 * Filtering can be turned off when, for example,
+				 * indexing documents.
+				 */
+				boolean filter = true;
+				if (qloc != -1 && qloc < href.length() - 1) {
+					String query = href.substring(qloc + 1);
+					filter = (query.indexOf("filter=false") == -1); //$NON-NLS-1$
+				}
+				return openXHTMLFromPlugin(pluginID, file, locale.toString(), filter);
+			}
 			// place support for other formats here
 		}
 		return null;
@@ -56,16 +67,18 @@ public class DynamicContentProducer implements IHelpContentProducer {
 	 *            the relative path of the file to find
 	 * @param locale
 	 *            the locale used as an override or <code>null</code> to use the default locale
+	 * @param filter
+	 *            whether or not the content should be filtered
 	 * 
 	 * @return an InputStream to the file or <code>null</code> if the file wasn't found
 	 */
-	private InputStream openXHTMLFromPlugin(String pluginID, String file, String locale) {
+	private InputStream openXHTMLFromPlugin(String pluginID, String file, String locale, boolean filter) {
 		InputStream inputStream = openStreamFromPlugin(pluginID, file, locale);
 		if (inputStream != null) {
 			UAContentParser parser = new UAContentParser(inputStream);
 			Document dom = parser.getDocument();
 			XHTMLSupport support = new XHTMLSupport(pluginID, file, dom, locale);
-			dom = support.processDOM();
+			dom = support.processDOM(filter);
 			try {
 				inputStream.close();
 			} catch (IOException e) {

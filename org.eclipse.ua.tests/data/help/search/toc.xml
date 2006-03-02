@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Search test TOC">
+	<topic label="test1.xhtml" href="data/help/search/test1.xhtml"/>
+	<topic label="test2.xhtml" href="data/help/search/test2.xhtml"/>
+	<topic label="test3.xhtml" href="data/help/search/test3.xhtml"/>
+	<topic label="test4.xhtml" href="data/help/search/test4.xhtml"/>
+	<topic label="test5.xhtml" href="data/help/search/test5.xhtml"/>
+	<topic label="test6.xhtml" href="data/help/search/test6.xhtml"/>
+</toc>

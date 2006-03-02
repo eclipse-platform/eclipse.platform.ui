@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -184,6 +184,7 @@ public class SearchIndex implements ISearchIndex {
 		try {
 			Document doc = new Document();
 			doc.add(Field.Keyword(FIELD_NAME, name));
+			addExtraFields(doc);
 			String pluginId = SearchManager.getPluginId(name);
 			if (relativePath != null)
 				doc.add(Field.Keyword(FIELD_INDEX_ID, relativePath));
@@ -200,7 +201,8 @@ public class SearchIndex implements ISearchIndex {
 			if (participant != null) {
 				IStatus status = participant.addDocument(this, pluginId, name, url, id, doc);
 				if (status.getSeverity() == IStatus.OK) {
-					indexedDocs.put(name, "0"); //$NON-NLS-1$
+					String filters = doc.get("filters"); //$NON-NLS-1$
+					indexedDocs.put(name, filters != null ? filters : "0"); //$NON-NLS-1$
 					if (id != null)
 						doc.add(Field.UnIndexed("id", id)); //$NON-NLS-1$
 					if (pid != null)
@@ -224,6 +226,15 @@ public class SearchIndex implements ISearchIndex {
 		}
 	}
 
+	/**
+	 * Add any extra fields that need to be added to this document. Subclasses
+	 * should override to add more fields.
+	 * 
+	 * @param doc the document to add fields to
+	 */
+	protected void addExtraFields(Document doc) {
+	}
+	
 	/**
 	 * Starts additions. To be called before adding documents.
 	 */
@@ -303,6 +314,7 @@ public class SearchIndex implements ISearchIndex {
 		try {
 			ir.delete(term);
 			indexedDocs.remove(name);
+			//System.out.println("removed: " + name); //$NON-NLS-1$
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 					"IO exception occurred while removing document " + name //$NON-NLS-1$
@@ -333,6 +345,15 @@ public class SearchIndex implements ISearchIndex {
 				indexedDocs = null;
 				setInconsistent(false);
 			}
+			
+			/*
+			 * The searcher's index reader has it's stuff in memory so it won't
+			 * know about this change. Close it so that it gets reloaded next search.
+			 */
+			if (searcher != null) {
+				searcher.close();
+				searcher = null;
+			}
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at endAddBatch.", e); //$NON-NLS-1$
@@ -356,6 +377,15 @@ public class SearchIndex implements ISearchIndex {
 			indexedDocs = null;
 			getDocPlugins().save();
 			saveDependencies();
+			
+			/*
+			 * The searcher's index reader has it's stuff in memory so it won't
+			 * know about this change. Close it so that it gets reloaded next search.
+			 */
+			if (searcher != null) {
+				searcher.close();
+				searcher = null;
+			}
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
@@ -584,7 +614,7 @@ public class SearchIndex implements ISearchIndex {
 					openSearcher();
 				}
 				Hits hits = searcher.search(luceneQuery);
-				collector.addHits(hits, highlightTerms);
+				collector.addHits(SearchManager.asList(hits), highlightTerms);
 			}
 		} catch (BooleanQuery.TooManyClauses tmc) {
 			throw new QueryTooComplexException();

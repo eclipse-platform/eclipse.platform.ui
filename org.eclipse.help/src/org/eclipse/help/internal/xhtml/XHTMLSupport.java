@@ -35,11 +35,26 @@ public class XHTMLSupport {
 
 	}
 
-
+	/**
+	 * Processes the DOM, with filtering turned on.
+	 * 
+	 * @return the resulting DOM
+	 */
 	public Document processDOM() {
+		return processDOM(true);
+	}
+
+	/**
+	 * Processes the DOM. Filtering will only be done if requested. Filtering
+	 * may be skipped, for example, for indexing.
+	 * 
+	 * @param filter whether or not to filter
+	 * @return the resulting DOM
+	 */
+	public Document processDOM(boolean filter) {
 
 		// filters do not apply to shared help systems
-		if (!HelpSystem.isShared()) {
+		if (filter && !HelpSystem.isShared()) {
 			// resolve filters.
 			filterProcessor.applyFilters(document);
 		}

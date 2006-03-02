@@ -239,6 +239,50 @@
        <toc file="data/help/toc/filteredToc/toc.xml" primary="true" />
        <toc file="data/help/toc/filteredToc/filter.xml" />
        <toc file="data/help/toc/filteredToc/simple_toc.xml" />
+       <toc file="data/help/search/toc.xml" primary="true"/>
+   </extension>
+
+   <!--
+      For testing dynamic content
+   -->
+   <extension
+         point="org.eclipse.help.contentProducer">
+      <binding producerId="org.eclipse.help.dynamic"/>
+   </extension>
+
+   <!--
+      For testing XHTML content
+   -->
+   <extension
+         point="org.eclipse.help.base.luceneSearchParticipants">
+      <binding participantId="org.eclipse.help.base.xhtml"/>
+   </extension>
+
+   <!--
+      An activity used to test searching (see
+      XHTMLTest#testXHTMLActivityFilteringSearch())
+   -->
+   <extension
+         point="org.eclipse.ui.activities">
+      <category
+            name="testCategory"
+            description="testCategoryDescription"
+            id="org.eclipse.ua.tests.activity.category">
+      </category>
+      <activity
+            name="testActivity"
+            description="testActivityDescription"
+            id="org.eclipse.ua.tests.activity">
+      </activity>
+      <categoryActivityBinding
+	        activityId="org.eclipse.ua.tests.activity"
+	        categoryId="org.eclipse.ua.tests.activity.category">
+      </categoryActivityBinding>
+   </extension>
+
+   <extension point= "org.eclipse.help.contentExtension"> 
+      <contentExtension file="data/help/search/extension.xml"/>
+      <contentExtension file="data/help/search/extension2.xml"/>
    </extension>
 
 </plugin>

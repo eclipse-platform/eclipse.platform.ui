@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.lucene.search.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
  * Progress monitor for search
@@ -37,7 +42,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	static {
 		dummy_collector = new ISearchHitCollector() {
-			public void addHits(Hits h, String s) {
+			public void addHits(List hits, String s) {
 			}
 		};
 	}

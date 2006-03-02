@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,16 +60,22 @@ public class ParserTest extends TestCase {
 			Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
 			String pluginRoot = bundle.getLocation().substring("update@".length());
 			String relativePath = file.getHref();
-			String absolutePath = pluginRoot + relativePath;
-			String resultFile = FileUtil.getResultFile(absolutePath); 
-
-			try {
-				String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath, true));
-				String actual = TocModelSerializer.serialize(toc);
-				Assert.assertEquals("Serialized toc model for " + relativePath + "did not match the expected result: " + FileUtil.getResultFile(relativePath), expected, actual);
-			}
-			catch(IOException e) {
-				Assert.fail("An error occured while loading expected result file for TOC at: " + resultFile + ": " + e);
+			
+			/*
+			 * Only test what's in the toc test data folder.
+			 */
+			if (relativePath.startsWith("data/help/toc/")) {
+				String absolutePath = pluginRoot + relativePath;
+				String resultFile = FileUtil.getResultFile(absolutePath); 
+	
+				try {
+					String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath, true));
+					String actual = TocModelSerializer.serialize(toc);
+					Assert.assertEquals("Serialized toc model for " + relativePath + "did not match the expected result: " + FileUtil.getResultFile(relativePath), expected, actual);
+				}
+				catch(IOException e) {
+					Assert.fail("An error occured while loading expected result file for TOC at: " + resultFile + ": " + e);
+				}
 			}
 		}
 	}

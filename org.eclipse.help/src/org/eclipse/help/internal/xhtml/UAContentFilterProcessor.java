@@ -63,6 +63,32 @@ public class UAContentFilterProcessor {
 		}
 	}
 
+	/**
+	 * Returns the current value for the given single-value filterable property
+	 * by the given name (e.g. "os"). For multi-value properties, returns null. 
+	 * 
+	 * @param filterName the filter name (e.g. "os")
+	 * @return the current value (e.g. "win32") or null
+	 */
+	public String getCurrentValue(String filterName) {
+		if (filterName.equals("ws")) { //$NON-NLS-1$
+			return Platform.getWS();
+		}
+		else if (filterName.equals("os")) { //$NON-NLS-1$
+			return Platform.getOS();
+		}
+		else if (filterName.equals("arch")) { //$NON-NLS-1$
+			return Platform.getOSArch();
+		}
+		else if (filterName.equals("product")) { //$NON-NLS-1$ 
+			IProduct product = Platform.getProduct();
+			if (product != null) {
+				return product.getId();
+			}
+		}
+		return null;
+	}
+	
 	private static boolean hasFilterAttribute(Element element) {
 		if (element.getAttribute(DOMUtil.ATT_FILTER).equals("")) //$NON-NLS-1$
 			return false;
@@ -159,6 +185,21 @@ public class UAContentFilterProcessor {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns whether or not the given filter property allows multiple instances
+	 * to be specified. For example, for os there can only ever be one os running,
+	 * but for plugins there can be many.
+	 * 
+	 * @param filterName the name of the filter (without value)
+	 * @return whether or not the filter allows multiple values
+	 */
+	public boolean isMultiValue(String filterName) {
+		return !(filterName.equals("os") //$NON-NLS-1$
+				|| filterName.equals("ws") //$NON-NLS-1$
+				|| filterName.equals("arch") //$NON-NLS-1$
+				|| filterName.equals("product")); //$NON-NLS-1$
 	}
 	
 	/**

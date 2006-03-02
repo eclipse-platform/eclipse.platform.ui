@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.lucene.search.Hits;
-import org.eclipse.help.*;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.URLCoder;
-import org.eclipse.help.internal.workingset.*;
+import org.eclipse.help.internal.workingset.AdaptableHelpResource;
+import org.eclipse.help.internal.workingset.AdaptableToc;
+import org.eclipse.help.internal.workingset.WorkingSet;
 
 /**
  * Search result collector. Performs filtering and collects hits into an array
@@ -40,28 +43,20 @@ public class SearchResults implements ISearchHitCollector {
 		this.locale = locale;
 		this.scopes = getScopes(workingSets);
 	}
-	/**
-	 * Adds hits to the result
-	 * 
-	 * @param hits
-	 *            Hits
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(List, String)
 	 */
-	public void addHits(Hits hits, String highlightTerms) {
+	public void addHits(List hits, String highlightTerms) {
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
 		List searchHitList = new ArrayList();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
-		for (int h = 0, j = 0; h < hits.length() && j < maxHits && h < 500 ; h++) {
-			org.apache.lucene.document.Document doc;
-			float score;
-			try {
-				doc = hits.doc(h);
-				score = hits.score(h);
-			} catch (IOException ioe) {
-				continue;
-			}
-			String href = doc.get("name"); //$NON-NLS-1$
-
+		
+		Iterator iter = hits.iterator();
+		for (int i=0;i<maxHits && iter.hasNext();i++) {
+			SearchHit rawHit = (SearchHit)iter.next();
+			String href = rawHit.getHref();
 			IToc toc = null; // the TOC containing the topic
 			AdaptableHelpResource scope = null;
 			// the scope for the topic, if any
@@ -80,6 +75,7 @@ public class SearchResults implements ISearchHitCollector {
 			}
 
 			// adjust score
+			float score = rawHit.getScore();
 			if (!scoreScaleSet) {
 				if (score > 0) {
 					scoreScale = 0.99f / score;
@@ -91,7 +87,7 @@ public class SearchResults implements ISearchHitCollector {
 			}
 
 			// Set the document label
-			String label = doc.get("raw_title"); //$NON-NLS-1$
+			String label = rawHit.getLabel();
 			if ("".equals(label) && toc != null) { //$NON-NLS-1$
 				ITopic t;
 				if (scope != null) {
@@ -106,15 +102,10 @@ public class SearchResults implements ISearchHitCollector {
 			if (label == null || "".equals(label)) { //$NON-NLS-1$
 				label = href;
 			}
-			String summary = doc.get("summary");			 //$NON-NLS-1$
-			String id = doc.get("id"); //$NON-NLS-1$
-			String participantId = doc.get("participantId"); //$NON-NLS-1$
-			
-			j++;
 			
 			// Set document href
-			href = href + "?resultof=" + urlEncodedWords; //$NON-NLS-1$
-			searchHitList.add(new SearchHit(href, label, summary, score, toc, id, participantId));
+			href += "?resultof=" + urlEncodedWords; //$NON-NLS-1$
+			searchHitList.add(new SearchHit(href, label, rawHit.getSummary(), score, toc, rawHit.getId(), rawHit.getParticipantId(), rawHit.getFilters()));
 		}
 		searchHits = (SearchHit[]) searchHitList
 				.toArray(new SearchHit[searchHitList.size()]);
