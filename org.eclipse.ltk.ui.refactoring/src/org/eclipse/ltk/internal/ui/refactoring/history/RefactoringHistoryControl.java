@@ -41,12 +41,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -78,7 +77,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class RefactoringHistoryControl extends Composite implements IRefactoringHistoryControl {
 
-	/** Checkbox treeviewer for the refactoring history */
+	/** Checkbox tree viewer for the refactoring history */
 	protected final class RefactoringHistoryTreeViewer extends CheckboxTreeViewer {
 
 		/**
@@ -247,8 +246,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	private final Set fCheckedDescriptors= new HashSet();
 
-	/** The comment viewer */
-	private TextViewer fCommentViewer= null;
+	/** The comment field */
+	private Text fCommentField= null;
 
 	/** The refactoring history control configuration to use */
 	protected final RefactoringHistoryControlConfiguration fControlConfiguration;
@@ -366,9 +365,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		});
 		fHistoryPane.setContent(fHistoryViewer.getControl());
-		fCommentViewer= new TextViewer(fSplitterControl, SWT.BORDER | SWT.FLAT);
-		fCommentViewer.setDocument(new Document(fControlConfiguration.getCommentCaption()));
-		fCommentViewer.getTextWidget().setEnabled(false);
+		fCommentField= new Text(fSplitterControl, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		fCommentField.setText(fControlConfiguration.getCommentCaption());
 		fSplitterControl.setWeights(new int[] { 75, 25});
 
 		Dialog.applyDialogFont(this);
@@ -532,7 +530,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 						String comment= descriptor.getComment();
 						if ("".equals(comment)) //$NON-NLS-1$
 							comment= RefactoringUIMessages.RefactoringHistoryControl_no_comment;
-						fCommentViewer.setDocument(new Document(comment));
+						fCommentField.setText(comment);
 					}
 					return Status.OK_STATUS;
 				}
@@ -540,7 +538,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			job.setSystem(true);
 			job.schedule();
 		}
-		fCommentViewer.setDocument(new Document(fControlConfiguration.getCommentCaption()));
+		fCommentField.setText(fControlConfiguration.getCommentCaption());
 	}
 
 	/**
