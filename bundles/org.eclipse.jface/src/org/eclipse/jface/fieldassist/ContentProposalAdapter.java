@@ -93,21 +93,6 @@ public class ContentProposalAdapter {
 												.hasFocus())) {
 									return;
 								}
-								// Workaround a problem on X, whereby at this
-								// point, the focus control is not known.
-								// Check the active shell.
-								// This may be related to bug #126138.
-								Shell activeShell = e.display.getActiveShell();
-								if (activeShell == getShell()
-										|| (infoPopup != null && infoPopup
-												.getShell() == activeShell)) {
-									return;
-								}
-								/*
-								 * System.out.println(e);
-								 * System.out.println(e.display.getFocusControl());
-								 * System.out.println(e.display.getActiveShell());
-								 */
 								close();
 							}
 						}
@@ -474,19 +459,19 @@ public class ContentProposalAdapter {
 		 * which this popup is showing content, and how the proposals should be
 		 * obtained and displayed.
 		 * 
-		 * @param adapter
-		 *            the content proposal adapter that opened this dialog.
-		 * @param control
-		 *            the control whose content is being proposed.
 		 * @param infoText
 		 *            Text to be shown in a lower info area, or
 		 *            <code>null</code> if there is no info area.
-		 * @param filter
-		 *            a boolean indicating whether proposals should be filtered
-		 *            as keys are typed in the popup.
 		 */
 		ContentProposalPopup(String infoText) {
-			super(control.getShell(), PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE,
+			// IMPORTANT:  Use of SWT.ON_TOP is critical here for ensuring 
+			// that the target control retains focus on Mac and Linux.  Without
+			// it, the focus will disappear, keystrokes will not go to the popup,
+			// and the popup closer will wrongly close the popup.
+			// On platforms where SWT.ON_TOP overrides SWT.RESIZE, we will live
+			// with this.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=126138
+			super(control.getShell(), SWT.RESIZE | SWT.ON_TOP,
 					false, false, false, false, null, infoText);
 			this.proposals = getProposals(filterText);
 		}
@@ -688,25 +673,6 @@ public class ContentProposalAdapter {
 		}
 
 		/*
-		 * Add a listener to the target control. We monitor key and traverse
-		 * events in the target control while we are open, in order to handle
-		 * traversal and navigation requests.
-		 */
-		private void addControlListener() {
-			targetControlListener = new TargetControlListener();
-			control.addListener(SWT.KeyDown, targetControlListener);
-			control.addListener(SWT.Traverse, targetControlListener);
-		}
-
-		/*
-		 * Remove any listeners installed on the control.
-		 */
-		private void removeControlListener() {
-			control.removeListener(SWT.KeyDown, targetControlListener);
-			control.removeListener(SWT.Traverse, targetControlListener);
-		}
-
-		/*
 		 * Answer true if the popup is valid, which means the table has been
 		 * created and not disposed.
 		 */
@@ -765,7 +731,6 @@ public class ContentProposalAdapter {
 		 * @see org.eclipse.jface.window.Window#open()
 		 */
 		public int open() {
-			addControlListener();
 			int value = super.open();
 			if (popupCloser == null) {
 				popupCloser = new PopupCloserListener();
@@ -783,7 +748,6 @@ public class ContentProposalAdapter {
 		 *         and <code>false</code> if it is still open
 		 */
 		public boolean close() {
-			removeControlListener();
 			popupCloser.removeListeners();
 			if (infoPopup != null) {
 				infoPopup.close();
@@ -903,6 +867,13 @@ public class ContentProposalAdapter {
 			}
 			return (IContentProposal[]) list.toArray(new IContentProposal[list
 					.size()]);
+		}
+		
+		Listener getTargetControlListener() {
+			if (targetControlListener == null) {
+				targetControlListener = new TargetControlListener();
+			}
+			return targetControlListener;
 		}
 	}
 
@@ -1432,10 +1403,29 @@ public class ContentProposalAdapter {
 				}
 
 				switch (e.type) {
+				case SWT.Traverse:
 				case SWT.KeyDown:
 					if (DEBUG) {
-						dump("keyDown OK", e); //$NON-NLS-1$
+						dump("Traverse and KeyDown received by adapter", e); //$NON-NLS-1$
 					}
+					// If the popup is open, it gets first shot at the
+					// keystroke.
+					if (popup != null) {
+						popup.getTargetControlListener().handleEvent(e);
+						// If we are not propagating keys to the control while
+						// the popup is open, then we are done.
+						if (!propagateKeys) {
+							e.doit = false;
+							return;
+						}
+						// We were only listening to traverse events for the popup
+						if (e.type == SWT.Traverse) {
+							return;
+						}
+					}
+
+					// The popup is not open. We are looking at keydown events
+					// for a trigger to open the popup.
 					if (triggerKeyStroke != null) {
 						// Either there are no modifiers for the trigger and we
 						// check the character field...
@@ -1447,22 +1437,10 @@ public class ContentProposalAdapter {
 								(triggerKeyStroke.getNaturalKey() == e.keyCode && ((triggerKeyStroke
 										.getModifierKeys() & e.stateMask) == triggerKeyStroke
 										.getModifierKeys()))) {
-							// We never propagate an explicit keystroke
-							// invocation
+							// We never propagate the keystroke for an explicit
+							// keystroke invocation of the popup
 							e.doit = false;
-							/*
-							 * Open the popup in an async so that this keystroke
-							 * finishes processing before the popup registers
-							 * its own listeners.
-							 */
-							if (popup == null) {
-								getControl().getDisplay().asyncExec(
-										new Runnable() {
-											public void run() {
-												openProposalPopup();
-											}
-										});
-							}
+							openProposalPopup();
 							return;
 						}
 					}
@@ -1491,7 +1469,7 @@ public class ContentProposalAdapter {
 						 */
 						if (autoActivated) {
 							e.doit = propagateKeys;
-							if (popup == null) {
+				
 								if (autoActivationDelay > 0) {
 									Runnable runnable = new Runnable() {
 										public void run() {
@@ -1516,13 +1494,9 @@ public class ContentProposalAdapter {
 								} else {
 									openProposalPopup();
 								}
-							}
+							
 						}
 					}
-
-					// If the popup is not open, we always propagate keys.
-					// If the popup is open, consult the flag.
-					e.doit = popup == null || propagateKeys;
 					break;
 
 				default:
@@ -1556,6 +1530,7 @@ public class ContentProposalAdapter {
 			}
 		};
 		control.addListener(SWT.KeyDown, controlListener);
+		control.addListener(SWT.Traverse, controlListener);
 
 		if (DEBUG) {
 			System.out
