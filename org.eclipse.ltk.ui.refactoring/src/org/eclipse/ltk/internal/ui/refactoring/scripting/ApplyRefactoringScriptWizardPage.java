@@ -81,11 +81,11 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		new Label(composite, SWT.NONE).setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
-		fScriptControl= new RefactoringScriptLocationControl(composite) {
+		fScriptControl= new RefactoringScriptLocationControl(fWizard, composite) {
 
 			protected final void handleClipboardScriptChanged() {
 				super.handleClipboardScriptChanged();
-				fWizard.setRefactoringHistory(null);
+				ApplyRefactoringScriptWizardPage.this.fWizard.setRefactoringHistory(null);
 				setErrorMessage(null);
 				setPageComplete(true);
 				handleClipboardChanged();
@@ -93,7 +93,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 
 			protected final void handleExternalLocationChanged() {
 				super.handleExternalLocationChanged();
-				fWizard.setRefactoringHistory(null);
+				ApplyRefactoringScriptWizardPage.this.fWizard.setRefactoringHistory(null);
 				setErrorMessage(null);
 				setPageComplete(true);
 				handleLocationChanged();

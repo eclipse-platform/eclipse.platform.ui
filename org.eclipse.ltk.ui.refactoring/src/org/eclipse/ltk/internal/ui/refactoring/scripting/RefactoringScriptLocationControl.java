@@ -14,10 +14,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,12 +33,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.wizard.IWizard;
+
 /**
  * Control to specify the location of a refactoring script.
  * 
  * @since 3.2
  */
 public class RefactoringScriptLocationControl extends Composite {
+
+	/** The clipboard dialog setting */
+	protected static final String SETTING_CLIPBOARD= "org.eclipse.ltk.ui.refactoring.useClipboard"; //$NON-NLS-1$
 
 	/** The external browse button */
 	protected Button fExternalBrowseButton= null;
@@ -51,19 +61,31 @@ public class RefactoringScriptLocationControl extends Composite {
 	/** The script location, or <code>null</code> */
 	protected URI fScriptLocation= null;
 
+	/** The parent wizard */
+	protected final IWizard fWizard;
+
 	/**
 	 * Creates a new refactoring script location control.
 	 * 
+	 * @param wizard
+	 *            the parent wizard
 	 * @param parent
 	 *            the parent control
 	 */
-	public RefactoringScriptLocationControl(final Composite parent) {
+	public RefactoringScriptLocationControl(final IWizard wizard, final Composite parent) {
 		super(parent, SWT.NONE);
+		Assert.isNotNull(wizard);
+		fWizard= wizard;
 		setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 6, 0));
 		setLayout(new GridLayout(3, false));
+		boolean clipboard= false;
+		final IDialogSettings settings= fWizard.getDialogSettings();
+		if (settings != null)
+			clipboard= settings.getBoolean(SETTING_CLIPBOARD);
 		fFromClipboardButton= new Button(this, SWT.RADIO);
 		fFromClipboardButton.setText(ScriptingMessages.ScriptLocationControl_clipboard_label);
 		fFromClipboardButton.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 3, 0));
+		fFromClipboardButton.setSelection(clipboard);
 		fFromClipboardButton.addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
@@ -76,7 +98,7 @@ public class RefactoringScriptLocationControl extends Composite {
 		fFromExternalLocationButton= new Button(this, SWT.RADIO);
 		fFromExternalLocationButton.setText(ScriptingMessages.ScriptLocationControl_location_label);
 		fFromExternalLocationButton.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 1, 0));
-		fFromExternalLocationButton.setSelection(true);
+		fFromExternalLocationButton.setSelection(!clipboard);
 		fFromExternalLocationButton.addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
@@ -85,6 +107,7 @@ public class RefactoringScriptLocationControl extends Composite {
 		});
 		fExternalLocationField= new Text(this, SWT.SINGLE | SWT.BORDER);
 		fExternalLocationField.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 1, 0));
+		fExternalLocationField.setEnabled(!clipboard);
 		fExternalLocationField.addModifyListener(new ModifyListener() {
 
 			public final void modifyText(final ModifyEvent event) {
@@ -94,12 +117,20 @@ public class RefactoringScriptLocationControl extends Composite {
 		fExternalLocationField.setFocus();
 		fExternalBrowseButton= new Button(this, SWT.PUSH);
 		fExternalBrowseButton.setText(ScriptingMessages.ScriptLocationControl_browse_label);
+		fExternalBrowseButton.setEnabled(!clipboard);
 		fExternalBrowseButton.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_FILL, 1, 0));
 		SWTUtil.setButtonDimensionHint(fExternalBrowseButton);
 		fExternalBrowseButton.addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
 				handleBrowseExternalLocation();
+			}
+		});
+		addDisposeListener(new DisposeListener() {
+
+			public final void widgetDisposed(final DisposeEvent event) {
+				if (settings != null)
+					settings.put(SETTING_CLIPBOARD, fFromClipboardButton.getSelection());
 			}
 		});
 	}

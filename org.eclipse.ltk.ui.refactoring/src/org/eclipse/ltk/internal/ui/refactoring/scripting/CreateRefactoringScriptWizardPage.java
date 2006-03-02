@@ -106,7 +106,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		data.horizontalSpan= 1;
 		data.verticalIndent= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		label.setLayoutData(data);
-		fScriptControl= new RefactoringScriptLocationControl(composite) {
+		fScriptControl= new RefactoringScriptLocationControl(fWizard, composite) {
 
 			protected void handleBrowseExternalLocation() {
 				final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
@@ -123,16 +123,16 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 
 			protected final void handleClipboardScriptChanged() {
 				super.handleClipboardScriptChanged();
-				fWizard.setRefactoringScript(null);
-				fWizard.setUseClipboard(fFromClipboardButton.getSelection());
+				CreateRefactoringScriptWizardPage.this.fWizard.setRefactoringScript(null);
+				CreateRefactoringScriptWizardPage.this.fWizard.setUseClipboard(fFromClipboardButton.getSelection());
 				setErrorMessage(null);
 				setPageComplete(true);
 			}
 
 			protected final void handleExternalLocationChanged() {
 				super.handleExternalLocationChanged();
-				fWizard.setRefactoringScript(null);
-				fWizard.setUseClipboard(false);
+				CreateRefactoringScriptWizardPage.this.fWizard.setRefactoringScript(null);
+				CreateRefactoringScriptWizardPage.this.fWizard.setUseClipboard(false);
 				setErrorMessage(null);
 				setPageComplete(true);
 				handleLocationChanged();
