@@ -627,26 +627,6 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(preExec == 1 && postExec == 1);
 	}
 	
-	public void testStressTestAPI() throws ExecutionException {
-		history.setLimit(contextA, STRESS_NUM);
-		for (int i=0; i < STRESS_NUM; i++) {
-			IUndoableOperation op = new TestOperation("test");
-			op.addContext(contextA);
-			if (i%3 == 0) {
-				op.addContext(contextB);
-			}
-			history.execute(op, null, null);
-		}
-		for (int i=0; i < STRESS_NUM; i++) {
-			if (i%2 == 0) {
-				history.undo(contextA, null, null);
-			}
-			if (i%5 == 0) {
-				history.redo(contextA, null, null);
-			}
-		}
-	}
-	
 	public void testReplaceContext() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -674,5 +654,70 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Operation should have context", op3.hasContext(contextC));
 	
 	}
-
+	
+	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=128117
+	// Test that context is removed from a triggered operations.
+	public void test128117simple() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+		ICompositeOperation batch = new TriggeredOperations(op1, history);
+		IUndoContext context = new ObjectUndoContext("test");
+		batch.addContext(context);
+		assertTrue("Operation should have newly added context", batch.hasContext(context));
+		history.openOperation(batch, IOperationHistory.EXECUTE);
+		op1.execute(null, null);
+		op2.execute(null, null);
+		history.add(op2);
+		history.execute(op3, null, null);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("Operation should be the composite", op == batch);
+		assertTrue("Operation should have top level context", op.hasContext(context));
+		op.removeContext(context);
+		assertFalse("Operation should have removed top level context", op.hasContext(context));
+	}
+	
+	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=128117
+	// Test that context is removed from a triggered operations after recompute of contexts.
+	public void test128117complex() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+		ICompositeOperation batch = new TriggeredOperations(op1, history);
+		IUndoContext context = new ObjectUndoContext("test");
+		batch.addContext(context);
+		assertTrue("Operation should have top level context", batch.hasContext(context));
+		history.openOperation(batch, IOperationHistory.EXECUTE);
+		op1.execute(null, null);
+		op2.execute(null, null);
+		history.add(op2);
+		history.execute(op3, null, null);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("Operation should be the composite", op == batch);
+		op.removeContext(contextB);
+		assertFalse("Operation should have removed child context", op.hasContext(contextB));
+		assertTrue("Operation should have top level context", op.hasContext(context));
+		op.removeContext(context);
+		assertFalse("Operation should have removed top level context", op.hasContext(context));
+	}
+	
+	public void testStressTestAPI() throws ExecutionException {
+		history.setLimit(contextA, STRESS_NUM);
+		for (int i=0; i < STRESS_NUM; i++) {
+			IUndoableOperation op = new TestOperation("test");
+			op.addContext(contextA);
+			if (i%3 == 0) {
+				op.addContext(contextB);
+			}
+			history.execute(op, null, null);
+		}
+		for (int i=0; i < STRESS_NUM; i++) {
+			if (i%2 == 0) {
+				history.undo(contextA, null, null);
+			}
+			if (i%5 == 0) {
+				history.redo(contextA, null, null);
+			}
+		}
+	}
 }
