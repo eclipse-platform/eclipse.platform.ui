@@ -51,10 +51,11 @@ public class SharedStyleManager {
     	context = new StyleContext();
         context.bundle = modelRoot.getBundle();
         properties = new Properties();
-        String sharedStyle = modelRoot.getPresentation()
-            .getImplementationStyle();
-        if (sharedStyle != null) {
-        	load(properties, sharedStyle, context);
+        String [] sharedStyles = modelRoot.getPresentation()
+            .getImplementationStyles();
+        if (sharedStyles != null) {
+        	for (int i=0; i<sharedStyles.length; i++)
+        	load(properties, sharedStyles[i], context);
         }
     }
 

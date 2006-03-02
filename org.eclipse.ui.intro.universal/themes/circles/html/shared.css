@@ -548,6 +548,13 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	text-align: left;
 }
 
+#page-content .content-group .section-body,
+#page-content .content-group .section-title {
+	position: relative;
+	left : 60px;
+	margin-right: 60px;
+}
+
 .content-link:hover { border-right : 0px; }
 
 /*
@@ -567,27 +574,4 @@ iframe {
 #page-content > iframe {
 	width: 98%;
 	padding-left: 2%;
-}	
-
-/* Folding section settings. */
-.section { text-align: left; }
-.section-body { 
-	display: none;
-	padding : 0px;
-	color : cyan; 
-}
-
-/* The label part of the folding section */
-.section-title { 
-	font-size : 10pt;
-	color : blue; 
-}
-
-/* The toggle image part of the folding section. */
-.section-toggle-image {
-	float : right;
-	clear: right;
-	width : 16px;
-	height : 16px;
-	background-image : url(../graphics/icons/ctool/widget_closed.gif);
 }

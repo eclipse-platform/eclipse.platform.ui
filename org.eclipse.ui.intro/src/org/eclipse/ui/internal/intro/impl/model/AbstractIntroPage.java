@@ -638,9 +638,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // now add shared style.
         IntroModelRoot modelRoot = (IntroModelRoot)getParent();
         IntroPartPresentation presentation = modelRoot.getPresentation();
-        String style = presentation!=null?presentation.getImplementationStyle():null;
-        if (style != null && injectSharedStyle()) {
-            ModelUtil.insertStyle(dom, style);
+        String [] styles = presentation!=null?presentation.getImplementationStyles():null;
+        if (styles != null && injectSharedStyle()) {
+        	for (int i=0; i<styles.length; i++)
+        		ModelUtil.insertStyle(dom, styles[i]);
         }
 
         // filter the content

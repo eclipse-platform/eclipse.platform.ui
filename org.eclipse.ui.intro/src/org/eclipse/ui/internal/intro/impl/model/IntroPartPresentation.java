@@ -9,7 +9,9 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -65,7 +67,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
 
 	// private String title;
-	private String implementationStyle;
+	private String [] implementationStyles;
 	private String implementationKind;
 	private String homePageId;
 	private String standbyPageId;
@@ -96,27 +98,40 @@ public class IntroPartPresentation extends AbstractIntroElement {
 		if (element != null) {
 			// reset (ie: inherit) type and style to be implementation type and
 			// style. Then handle HEAD content for the case of HTML Browser.
-			implementationStyle = element.getAttribute(ATT_STYLE);
-			IntroModelRoot root = getModelRoot();
-			if (implementationStyle != null && root != null)
-				implementationStyle = root.resolveVariables(implementationStyle);
+			String value = element.getAttribute(ATT_STYLE);
+			if (value!=null) {
+				IntroModelRoot root = getModelRoot();
+				ArrayList list = new ArrayList();
+				StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
+				for (;stok.hasMoreTokens();) {
+					String oneStyle = stok.nextToken().trim();
+					if (root!=null)
+						oneStyle = root.resolveVariables(oneStyle);
+					list.add(oneStyle);
+				}
+				implementationStyles = (String[])list.toArray(new String[list.size()]);
+			}
 			implementationKind = element.getAttribute(ATT_KIND);
 			// get Head contribution, regardless of implementation class.
 			// Implementation class is created lazily by UI.
 			head = getHead(element);
 			// Resolve.
-			implementationStyle = ModelUtil.resolveURL(implementationStyle, element);
+			if (implementationStyles!=null) {
+				for (int i=0; i<implementationStyles.length; i++) {
+					implementationStyles[i] = ModelUtil.resolveURL(implementationStyles[i], element);
+				}
+			}
 		}
 	}
 
 	/**
-	 * Returns the style associated with the Presentation. May be null if no shared presentation
+	 * Returns the styles associated with the Presentation. May be null if no shared presentation
 	 * style is needed, or in the case of static HTML OOBE.
 	 * 
-	 * @return Returns the style.
+	 * @return Returns the array of styles or null if not defined.
 	 */
-	public String getImplementationStyle() {
-		return implementationStyle;
+	public String[] getImplementationStyles() {
+		return implementationStyles;
 	}
 
 	/**

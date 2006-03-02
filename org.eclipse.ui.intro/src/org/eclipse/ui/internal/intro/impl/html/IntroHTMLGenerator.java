@@ -133,22 +133,24 @@ public class IntroHTMLGenerator {
 		// create the HTML style block
 		head.addContent(generateStyleElement(indentLevel + 1));
 		// add the presentation style
-		String style = IntroPlugin.getDefault().getIntroModelRoot().getPresentation()
-				.getImplementationStyle();
-		if (style != null && introPage.injectSharedStyle())
-			head.addContent(generateLinkElement(style, indentLevel + 1));
-		style = introPage.getStyle();
-		if (style != null)
-			head.addContent(generateLinkElement(style, indentLevel + 1));
+		String[] presentationStyles = IntroPlugin.getDefault().getIntroModelRoot().getPresentation()
+				.getImplementationStyles();
+		if (presentationStyles != null && introPage.injectSharedStyle()) {
+			for (int i=0; i<presentationStyles.length; i++)
+				head.addContent(generateLinkElement(presentationStyles[i], indentLevel + 1));
+		}
+		String pageStyle = introPage.getStyle();
+		if (pageStyle != null)
+			head.addContent(generateLinkElement(pageStyle, indentLevel + 1));
 		// add javascript
 		head.addContent(generateJavascriptElement(indentLevel + 1));
 
 		// add the page's inherited style(s)
 		String[] pageStyles = introPage.getStyles();
 		for (int i = 0; i < pageStyles.length; i++) {
-			style = pageStyles[i];
-			if (style != null)
-				head.addContent(generateLinkElement(style, indentLevel + 1));
+			pageStyle = pageStyles[i];
+			if (pageStyle != null)
+				head.addContent(generateLinkElement(pageStyle, indentLevel + 1));
 		}
 		// if there is additional head conent specified in an external file,
 		// include it. Additional head content can be specified at the
@@ -310,6 +312,7 @@ public class IntroHTMLGenerator {
 				HTMLElement link = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_ANCHOR,
 						indentLevel + 1, true);
 				link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, href);
+				link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-title-link"); //$NON-NLS-1$
 				String call = "return (toggleSection('" + clientId + "'))"; //$NON-NLS-1$ //$NON-NLS-2$
 				link.addAttribute("onClick", call); //$NON-NLS-1$
 				link.addContent(divLabel);

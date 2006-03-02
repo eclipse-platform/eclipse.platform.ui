@@ -1,0 +1,46 @@
+/* 
+ * This file contains styles shared between multiple themes.
+ */
+
+
+/* Folding section settings. */
+
+/* The foldable part of the section. It is off by default. */
+.section-body {
+	display: none;
+	background-color : cyan;
+}
+
+/* The label part of the folding section */
+.section-title-link .section-title {
+	display : inline;
+	font-size : 10pt;
+	color: #00517d;
+}
+
+/* The toggle image part of the folding section. */
+#page-content .section-title-link .section-toggle-image {
+	display: inline;
+	clear: right;
+	width : 7px;
+	height : 7px;
+	background-image : url(../graphics/icons/ctool/widget_closed.gif);
+}
+
+/*
+ * Section title during hover.
+ */
+.section-title-link:hover .section-title,
+.section-title-link:focus .section-title,
+.section-title-link:active .section-title {
+	color: #6699cc;
+}
+
+/*
+ * Toggle image during hover.
+ */
+a:hover .section-title-link .section-toggle-image,
+a:focus .section-title-link .section-toggle-image,
+a:active .section-title-link .section-toggle-image {
+	background-image : url(../graphics/icons/ctool/widget_closed_hov.gif);
+}

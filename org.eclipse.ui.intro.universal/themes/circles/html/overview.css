@@ -1,4 +1,3 @@
-
 /* show the "selected" image for this page */
 #navigation-links a#overview img, #navigation-links a#overview:hover img { 
 	background-image : url(../graphics/icons/ctool/ov_nav_64.gif);
