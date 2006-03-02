@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.ui.viewers.DefaultTableUpdatePolicy;
+import org.eclipse.debug.internal.ui.viewers.TableUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.ui.progress.UIJob;
@@ -29,7 +29,7 @@ import org.eclipse.ui.progress.UIJob;
  * when the memory block has changed when the rendering is not visible
  *
  */
-class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
+class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 {
 	public void modelChanged(IModelDelta node) {
 		

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -20,14 +19,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * 
  * @since 3.2
  */
-public class DefaultTableUpdatePolicy extends org.eclipse.debug.internal.ui.model.viewers.AbstractUpdatePolicy implements IModelChangedListener {
+public class TableUpdatePolicy extends org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy implements IModelChangedListener {
 
     public void modelChanged(IModelDelta delta) {
         updateNodes(new IModelDelta[] {delta});
     }
 
     private void handleState(IModelDelta node) {
-        AsynchronousModelViewer viewer = getViewer();
+        AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
             Object element = node.getElement();
 			viewer.update(element);
@@ -35,7 +34,7 @@ public class DefaultTableUpdatePolicy extends org.eclipse.debug.internal.ui.mode
         }
     }
     private void handleContent(IModelDelta node) {
-    	AsynchronousModelViewer viewer = getViewer();
+    	AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
         	Object element = node.getElement();
 			viewer.refresh(element);
@@ -44,7 +43,7 @@ public class DefaultTableUpdatePolicy extends org.eclipse.debug.internal.ui.mode
     }
 
     private void updateSelection(Object element, int flags) {
-    	AsynchronousModelViewer viewer = getViewer();
+    	AsynchronousViewer viewer = getViewer();
         if (viewer != null) {
             if ((flags & IModelDelta.SELECT) != 0) {
                 getViewer().setSelection(new StructuredSelection(element));

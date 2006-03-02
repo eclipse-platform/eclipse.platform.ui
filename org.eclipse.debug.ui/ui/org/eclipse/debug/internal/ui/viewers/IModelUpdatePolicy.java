@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 
 
@@ -26,7 +26,7 @@ public interface IModelUpdatePolicy {
 	 * 
 	 * @param viewer viewer to update
 	 */
-	public void init(AsynchronousModelViewer viewer);
+	public void init(AsynchronousViewer viewer);
 	
 	/**
 	 * Disposes this update policy.

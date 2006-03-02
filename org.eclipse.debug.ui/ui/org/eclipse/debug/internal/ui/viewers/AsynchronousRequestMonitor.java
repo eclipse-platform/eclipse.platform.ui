@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -20,11 +20,11 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * Base implementation of an asynchronous request monitor.
  * <p>
  * Not intended to be subclassed or instantiated by clients. For internal use
- * with the <code>AsynchronousModelViewer</code> implementation.
+ * with the <code>AsynchronousViewer</code> implementation.
  * </p>
  * @since 3.2
  */
-public abstract class AsynchronousModelRequestMonitor implements IAsynchronousRequestMonitor {
+public abstract class AsynchronousRequestMonitor implements IAsynchronousRequestMonitor {
     
 	/**
 	 * Model node the upadte is rooted at
@@ -46,20 +46,20 @@ public abstract class AsynchronousModelRequestMonitor implements IAsynchronousRe
      */
     private IStatus fStatus = null;
 
-    protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("AsynchronousModelRequestMonitor.fViewerUpdateJob") { //$NON-NLS-1$
+    protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("Asynchronous viewer update") { //$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
             // necessary to check if widget is disposed. The item may
             // have been removed from the tree when another children update
             // occured.
-        	getModel().viewerUpdateScheduled(AsynchronousModelRequestMonitor.this);
-            getModel().requestComplete(AsynchronousModelRequestMonitor.this);
+        	getModel().viewerUpdateScheduled(AsynchronousRequestMonitor.this);
+            getModel().requestComplete(AsynchronousRequestMonitor.this);
             if (!isCanceled() && !getNode().isDisposed()) {
                 if (fStatus != null && !fStatus.isOK()) {
-                	getModel().getViewer().handlePresentationFailure(AsynchronousModelRequestMonitor.this, fStatus);
+                	getModel().getViewer().handlePresentationFailure(AsynchronousRequestMonitor.this, fStatus);
                 }
                 performUpdate();
             }
-            getModel().viewerUpdateComplete(AsynchronousModelRequestMonitor.this);
+            getModel().viewerUpdateComplete(AsynchronousRequestMonitor.this);
             return Status.OK_STATUS;
         }
     };
@@ -70,7 +70,7 @@ public abstract class AsynchronousModelRequestMonitor implements IAsynchronousRe
      * @param node model node
      * @param model model the node is in
      */
-    public AsynchronousModelRequestMonitor(ModelNode node, AsynchronousModel model) {
+    public AsynchronousRequestMonitor(ModelNode node, AsynchronousModel model) {
         fNode = node;
         fModel = model;
         fViewerUpdateJob.setSystem(true);
@@ -195,6 +195,6 @@ public abstract class AsynchronousModelRequestMonitor implements IAsynchronousRe
      * @param update update to compare to
      * @return whether this update will also perform the given update
      */
-    protected abstract boolean contains(AsynchronousModelRequestMonitor update);
+    protected abstract boolean contains(AsynchronousRequestMonitor update);
     
 }

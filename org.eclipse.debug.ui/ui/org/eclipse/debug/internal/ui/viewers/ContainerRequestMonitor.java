@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 
@@ -17,11 +17,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonito
  * an element contains children. 
  * <p>
  * Not intended to be subclassed or instantiated by clients. For use
- * speficially with <code>AsynchronousTreeModelViewer</code>.
+ * speficially with <code>AsynchronousTreeViewer</code>.
  * </p>
  * @since 3.2
  */
-class ContainerModelRequestMonitor extends AsynchronousModelRequestMonitor implements IContainerRequestMonitor {
+class ContainerRequestMonitor extends AsynchronousRequestMonitor implements IContainerRequestMonitor {
 	
 	/**
 	 * Whether the item has children
@@ -34,7 +34,7 @@ class ContainerModelRequestMonitor extends AsynchronousModelRequestMonitor imple
 	 * @param node node to update
 	 * @param mode model the update was issued for
 	 */
-	ContainerModelRequestMonitor(ModelNode node, AsynchronousModel model) {
+	ContainerRequestMonitor(ModelNode node, AsynchronousModel model) {
 		super(node, model);
 	}
 
@@ -48,8 +48,8 @@ class ContainerModelRequestMonitor extends AsynchronousModelRequestMonitor imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
 	 */
-	protected boolean contains(AsynchronousModelRequestMonitor update) {
-		return (update instanceof ModelChildrenRequestMonitor || update instanceof ContainerModelRequestMonitor) && contains(update.getNode());
+	protected boolean contains(AsynchronousRequestMonitor update) {
+		return (update instanceof ChildrenRequestMonitor || update instanceof ContainerRequestMonitor) && contains(update.getNode());
 	}
 
 	/* (non-Javadoc)

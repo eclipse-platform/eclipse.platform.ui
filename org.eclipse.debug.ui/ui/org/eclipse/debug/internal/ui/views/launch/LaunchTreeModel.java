@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModel;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeModel;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
@@ -37,7 +37,7 @@ import org.osgi.framework.Bundle;
  */
 public class LaunchTreeModel extends AsynchronousTreeModel {
 
-    public LaunchTreeModel(AsynchronousTreeModelViewer viewer) {
+    public LaunchTreeModel(AsynchronousTreeViewer viewer) {
         super(viewer);
     }
 

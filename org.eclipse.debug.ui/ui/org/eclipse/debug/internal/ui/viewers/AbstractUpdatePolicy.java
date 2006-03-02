@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 
 /**
@@ -17,12 +17,12 @@ package org.eclipse.debug.internal.ui.model.viewers;
  */
 public abstract class AbstractUpdatePolicy implements IModelUpdatePolicy {
 
-	private AsynchronousModelViewer fViewer = null;
+	private AsynchronousViewer fViewer = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.IUpdatePolicy#init(org.eclipse.debug.ui.viewers.update.IPresentation)
 	 */
-	public void init(AsynchronousModelViewer viewer) {
+	public void init(AsynchronousViewer viewer) {
 		fViewer = viewer;
 	}
 	
@@ -39,7 +39,7 @@ public abstract class AbstractUpdatePolicy implements IModelUpdatePolicy {
 	 * 
 	 * @return presentation to update
 	 */
-	public AsynchronousModelViewer getViewer() {
+	public AsynchronousViewer getViewer() {
 		return fViewer;
 	}
 	

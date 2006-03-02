@@ -34,7 +34,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.ViewerState;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -78,7 +78,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	public static final String PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.MemoryBlocksTreeViewPane"; //$NON-NLS-1$
 	
 	private IViewPart fParent;
-	private AsynchronousTreeModelViewer fTreeViewer;
+	private AsynchronousTreeViewer fTreeViewer;
 	protected IMemoryBlockRetrieval fRetrieval;
 	private ViewPaneSelectionProvider fSelectionProvider;
 	private AddMemoryBlockAction fAddMemoryBlockAction;
@@ -238,8 +238,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	class MemoryViewerState extends ViewerState
 	{
 		private Hashtable fPathMap = new Hashtable(); 
-		private AsynchronousTreeModelViewer fViewer;
-		public MemoryViewerState(AsynchronousTreeModelViewer viewer) {
+		private AsynchronousTreeViewer fViewer;
+		public MemoryViewerState(AsynchronousTreeViewer viewer) {
 			super(viewer);
 			fViewer = viewer;
 		}
@@ -259,7 +259,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			return null;
 		}
 
-		protected TreePath decodePath(IPath path, AsynchronousTreeModelViewer viewer) throws DebugException {
+		protected TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException {
 			return (TreePath)fPathMap.get(path);
 		}
 	}
@@ -322,7 +322,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		composite.setLayout(layout);
 
 		fPaneId = paneId;
-		fTreeViewer = new AsynchronousTreeModelViewer(composite);
+		fTreeViewer = new AsynchronousTreeViewer(composite);
 		
 		MemoryViewPresentationContext presentationContext = new MemoryViewPresentationContext(fParent);
 		presentationContext.setContainerId(getId());

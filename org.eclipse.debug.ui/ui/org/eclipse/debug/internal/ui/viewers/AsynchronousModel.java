@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public abstract class AsynchronousModel {
 	private ModelNode fRoot; // root node
 	private Map fElementToNodes = new HashMap(); // map of element to corresponding tree nodes (list)
 	private Map fModelProxies = new HashMap(); // map of installed model proxies, by element
-	private AsynchronousModelViewer fViewer; // viewer this model works for
+	private AsynchronousViewer fViewer; // viewer this model works for
     private boolean fDisposed = false; // whether disposed
 	
 	/**
@@ -57,7 +57,7 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param viewer associated viewer
 	 */
-	public AsynchronousModel(AsynchronousModelViewer viewer) {
+	public AsynchronousModel(AsynchronousViewer viewer) {
 		fViewer = viewer;
 
 	}
@@ -75,7 +75,7 @@ public abstract class AsynchronousModel {
 		}		
 	}
 	
-	protected AsynchronousModelViewer getViewer() {
+	protected AsynchronousViewer getViewer() {
 		return fViewer;
 	}
 	
@@ -272,11 +272,11 @@ public abstract class AsynchronousModel {
 	 * @param update the update to schedule
 	 */
 	protected void requestScheduled(IAsynchronousRequestMonitor update) {
-		AsynchronousModelRequestMonitor absUpdate = (AsynchronousModelRequestMonitor) update;
+		AsynchronousRequestMonitor absUpdate = (AsynchronousRequestMonitor) update;
 		synchronized (fPendingUpdates) {
 			Iterator updates = fPendingUpdates.listIterator();
 			while (updates.hasNext()) {
-				AsynchronousModelRequestMonitor pendingUpdate = (AsynchronousModelRequestMonitor) updates.next();
+				AsynchronousRequestMonitor pendingUpdate = (AsynchronousRequestMonitor) updates.next();
 				if (absUpdate.contains(pendingUpdate)) {
 					updates.remove();
 					pendingUpdate.setCanceled(true);
@@ -344,7 +344,7 @@ public abstract class AsynchronousModel {
 		Object element = node.getElement();
 		IAsynchronousLabelAdapter adapter = getLabelAdapter(element);
 		if (adapter != null) {
-			ILabelRequestMonitor labelUpdate = new ModelLabelRequestMonitor(node, this);
+			ILabelRequestMonitor labelUpdate = new LabelRequestMonitor(node, this);
 			requestScheduled(labelUpdate);
 			adapter.retrieveLabel(element, getPresentationContext(), labelUpdate);
 		}		
@@ -400,7 +400,7 @@ public abstract class AsynchronousModel {
         Object element = parent.getElement();
         IAsynchronousContentAdapter adapter = getContentAdapter(element);
         if (adapter != null) {
-            IChildrenRequestMonitor update = new ModelChildrenRequestMonitor(parent, this);
+            IChildrenRequestMonitor update = new ChildrenRequestMonitor(parent, this);
             requestScheduled(update);
             adapter.retrieveChildren(element, getPresentationContext(), update);
         }
@@ -432,7 +432,7 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param monitor
 	 */
-	protected void requestCanceled(AsynchronousModelRequestMonitor monitor) {
+	protected void requestCanceled(AsynchronousRequestMonitor monitor) {
 		synchronized (fPendingUpdates) {
 			fPendingUpdates.remove(monitor);
 		}
@@ -466,7 +466,7 @@ public abstract class AsynchronousModel {
 	protected void setChildren(final ModelNode parentNode, List kids) {
 		
         final Object[] children = filter(parentNode.getElement(), kids.toArray());
-        final AsynchronousModelViewer viewer = getViewer();
+        final AsynchronousViewer viewer = getViewer();
         ViewerSorter sorter = viewer.getSorter();
         if (sorter != null) {
         	sorter.sort(viewer, children);

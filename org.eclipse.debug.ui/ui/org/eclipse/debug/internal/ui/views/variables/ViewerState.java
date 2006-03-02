@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Tree;
@@ -33,7 +33,7 @@ public class ViewerState extends AbstractViewerState {
 	/**
 	 * Constructs a memento for the given viewer.
 	 */
-	public ViewerState(AsynchronousTreeModelViewer viewer) {
+	public ViewerState(AsynchronousTreeViewer viewer) {
 		super(viewer);
 	}
 
@@ -54,7 +54,7 @@ public class ViewerState extends AbstractViewerState {
 	 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#decodePath(org.eclipse.core.runtime.IPath,
 	 *      org.eclipse.jface.viewers.TreeViewer)
 	 */
-	protected TreePath decodePath(IPath path, AsynchronousTreeModelViewer viewer) throws DebugException {
+	protected TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException {
 		String[] names = path.segments();
 		Tree tree = viewer.getTree();
 		TreeItem[] items = tree.getItems();

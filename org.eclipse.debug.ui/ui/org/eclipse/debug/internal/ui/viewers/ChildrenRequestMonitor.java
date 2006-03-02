@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,11 +21,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor
  * children from an asynchronous tree content adapter.  
  * <p>
  * Not intended to be subclassed or instantiated by clients. For use
- * speficially with <code>AsynchronousTreeModelViewer</code>.
+ * speficially with <code>AsynchronousTreeViewer</code>.
  * </p>
  * @since 3.2
  */
-class ModelChildrenRequestMonitor extends AsynchronousModelRequestMonitor implements IChildrenRequestMonitor {
+class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChildrenRequestMonitor {
     
     private boolean fFirstUpdate = true;
     
@@ -41,7 +41,7 @@ class ModelChildrenRequestMonitor extends AsynchronousModelRequestMonitor implem
      * @param parent parent to retrieve children for
      * @param model model being updated
      */
-    ModelChildrenRequestMonitor(ModelNode parent, AsynchronousModel model) {
+    ChildrenRequestMonitor(ModelNode parent, AsynchronousModel model) {
         super(parent, model);
     }
     
@@ -72,8 +72,8 @@ class ModelChildrenRequestMonitor extends AsynchronousModelRequestMonitor implem
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
      */
-    protected boolean contains(AsynchronousModelRequestMonitor update) {
-        return (update instanceof ModelChildrenRequestMonitor || update instanceof ContainerModelRequestMonitor) && contains(update.getNode());
+    protected boolean contains(AsynchronousRequestMonitor update) {
+        return (update instanceof ChildrenRequestMonitor || update instanceof ContainerRequestMonitor) && contains(update.getNode());
     }
 
     /* (non-Javadoc)

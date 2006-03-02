@@ -48,9 +48,9 @@ import org.eclipse.debug.internal.ui.actions.context.TerminateAndRemoveAction;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -235,7 +235,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
 		fLookupAction = new LookupSourceAction(this);
-		setAction(FIND_ACTION, new FindElementAction((AsynchronousTreeModelViewer) getViewer()));
+		setAction(FIND_ACTION, new FindElementAction((AsynchronousTreeViewer) getViewer()));
         
         
         IWorkbenchWindow window = getSite().getWorkbenchWindow();
@@ -278,7 +278,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		AsynchronousTreeModelViewer viewer = new LaunchViewer(parent, this);
+		AsynchronousTreeViewer viewer = new LaunchViewer(parent, this);
 		viewer.setContext(new PresentationContext(this));
         viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
         
@@ -435,8 +435,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	    Viewer viewer = getViewer();
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(this);
-			if (viewer instanceof AsynchronousTreeModelViewer) {
-				AsynchronousTreeModelViewer asyncTreeViewer = (AsynchronousTreeModelViewer) viewer;
+			if (viewer instanceof AsynchronousTreeViewer) {
+				AsynchronousTreeViewer asyncTreeViewer = (AsynchronousTreeViewer) viewer;
 				asyncTreeViewer.dispose();
 			}
 		}

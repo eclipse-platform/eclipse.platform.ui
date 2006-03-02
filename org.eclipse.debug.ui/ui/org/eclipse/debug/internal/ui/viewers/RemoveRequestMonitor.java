@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.jface.viewers.TreePath;
 
@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @since 3.2
  */
-class ModelRemoveRequestMonitor extends AbstractAddRemoveRequestMonitor {
+class RemoveRequestMonitor extends AbstractAddRemoveRequestMonitor {
 
 	/**
 	 * Removes the given node from the given model.
@@ -28,7 +28,7 @@ class ModelRemoveRequestMonitor extends AbstractAddRemoveRequestMonitor {
 	 * @param path path to the element to remove
 	 * @param model
 	 */
-	ModelRemoveRequestMonitor(ModelNode node, TreePath path, AsynchronousModel model) {
+	RemoveRequestMonitor(ModelNode node, TreePath path, AsynchronousModel model) {
 		super(node, path, model);
 	}
 	

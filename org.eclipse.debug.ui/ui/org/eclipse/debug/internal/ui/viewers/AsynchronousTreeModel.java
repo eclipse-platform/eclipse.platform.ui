@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	 * 
 	 * @param viewer associated viewer
 	 */
-	public AsynchronousTreeModel(AsynchronousModelViewer viewer) {
+	public AsynchronousTreeModel(AsynchronousViewer viewer) {
 		super(viewer);
 	}
 	
@@ -51,7 +51,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 	            for (int i = 0; i < nodes.length; i++) {
 	                ModelNode node = nodes[i];
 	                if (treePath.startsWith(node.getTreePath(), null)) {
-	                    ModelAddRequestMonitor addRequest = new ModelAddRequestMonitor(node, treePath, this);
+	                    AddRequestMonitor addRequest = new AddRequestMonitor(node, treePath, this);
 	                    requestScheduled(addRequest);
 	                    addRequest.done();
 	                    return;
@@ -95,7 +95,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
                 for (int i = 0; i < nodes.length; i++) {
                     ModelNode node = nodes[i];
                     if (node.correspondsTo(treePath)) {
-                        ModelRemoveRequestMonitor request = new ModelRemoveRequestMonitor(node, treePath, this);
+                        RemoveRequestMonitor request = new RemoveRequestMonitor(node, treePath, this);
                         requestScheduled(request);
                         request.done();
                         return;
@@ -139,7 +139,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
             unmapNode(node);
             node.dispose();
         }
-        final AsynchronousTreeModelViewer viewer = getTreeViewer();
+        final AsynchronousTreeViewer viewer = getTreeViewer();
         preservingSelection(new Runnable() {
 			public void run() {
 		        viewer.nodeDisposed(node);
@@ -203,8 +203,8 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         return paths;
     }	
 	
-    protected AsynchronousTreeModelViewer getTreeViewer() {
-    	return (AsynchronousTreeModelViewer) getViewer();
+    protected AsynchronousTreeViewer getTreeViewer() {
+    	return (AsynchronousTreeViewer) getViewer();
     }
     
     /**
@@ -217,7 +217,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         Object element = node.getElement();
         IAsynchronousContentAdapter adapter = getContentAdapter(element);
         if (adapter != null) {
-            IContainerRequestMonitor update = new ContainerModelRequestMonitor(node, this);
+            IContainerRequestMonitor update = new ContainerRequestMonitor(node, this);
             requestScheduled(update);
             adapter.isContainer(element, getPresentationContext(), update);
         }
@@ -240,7 +240,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
     }    
     
     /**
-     * Called by <code>ContainerModelRequestMonitor</code> after it is determined
+     * Called by <code>ContainerRequestMonitor</code> after it is determined
      * if the node contains children.
      * 
      * @param node
@@ -261,7 +261,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 			}
 		}
 //    	 update tree outside lock
-        AsynchronousTreeModelViewer viewer = getTreeViewer();
+        AsynchronousTreeViewer viewer = getTreeViewer();
 		if (containsChildren) {
             if (prevChildren == null) {
                 viewer.nodeChildrenChanged(node);

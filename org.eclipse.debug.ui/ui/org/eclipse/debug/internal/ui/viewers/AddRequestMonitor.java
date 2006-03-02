@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.jface.viewers.TreePath;
 
@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.TreePath;
  *  
  * @since 3.2
  */
-class ModelAddRequestMonitor extends AbstractAddRemoveRequestMonitor {
+class AddRequestMonitor extends AbstractAddRemoveRequestMonitor {
 
 	/**
 	 * Adds the given child to the specified parent.
@@ -29,7 +29,7 @@ class ModelAddRequestMonitor extends AbstractAddRemoveRequestMonitor {
 	 * @param viewer
 	 * 
 	 */
-	ModelAddRequestMonitor(ModelNode parent, TreePath path, AsynchronousModel model) {
+	AddRequestMonitor(ModelNode parent, TreePath path, AsynchronousModel model) {
 		super(parent, path, model);
 	}
 	/* (non-Javadoc)

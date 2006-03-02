@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
+import org.eclipse.debug.internal.ui.viewers.ModelNode;
 
 
 public class TableRenderingModel extends AbstractVirtualContentTableModel

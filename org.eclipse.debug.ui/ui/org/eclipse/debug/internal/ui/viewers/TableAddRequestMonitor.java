@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelRequestMonitor;
-import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 
 /**
  * @since 3.2
  *
  */
-public class TableAddRequestMonitor extends AsynchronousModelRequestMonitor {
+public class TableAddRequestMonitor extends AsynchronousRequestMonitor {
 	
 	protected Object[] fElements;
 
@@ -32,16 +29,16 @@ public class TableAddRequestMonitor extends AsynchronousModelRequestMonitor {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelRequestMonitor#performUpdate()
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousRequestMonitor#performUpdate()
 	 */
 	protected void performUpdate() {
 		((AsynchronousTableModel)getModel()).added(fElements);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelRequestMonitor#contains(org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelRequestMonitor)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.internal.ui.model.viewers.AsynchronousRequestMonitor)
 	 */
-	protected boolean contains(AsynchronousModelRequestMonitor update) {
+	protected boolean contains(AsynchronousRequestMonitor update) {
 		return false;
 	}
 

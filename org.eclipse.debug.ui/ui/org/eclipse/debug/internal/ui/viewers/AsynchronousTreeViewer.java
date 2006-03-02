@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +62,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  * @since 3.2
  */
-public class AsynchronousTreeModelViewer extends AsynchronousModelViewer implements Listener {
+public class AsynchronousTreeViewer extends AsynchronousViewer implements Listener {
 
     /**
      * The tree
@@ -86,7 +86,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @param parent
      *            the parent control
      */
-    public AsynchronousTreeModelViewer(Composite parent) {
+    public AsynchronousTreeViewer(Composite parent) {
         this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
     }
 
@@ -100,7 +100,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @param style
      *            the SWT style bits used to create the tree.
      */
-    public AsynchronousTreeModelViewer(Composite parent, int style) {
+    public AsynchronousTreeViewer(Composite parent, int style) {
         this(new Tree(parent, style));
     }
 
@@ -112,7 +112,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
      * @param tree
      *            the tree control
      */
-    public AsynchronousTreeModelViewer(Tree tree) {
+    public AsynchronousTreeViewer(Tree tree) {
         super();
         Assert.isTrue((tree.getStyle() & SWT.VIRTUAL) != 0);
         fTree = tree;
@@ -384,7 +384,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
      */
     protected void setItemCount(Widget widget, int itemCount) {
         if (widget == fTree) {
@@ -395,7 +395,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
      */
     protected Widget getChildWidget(Widget parent, int index) {
 		if (parent instanceof Tree) {
@@ -438,7 +438,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
      */
     protected int getChildIndex(Widget parent, Event event) {
         if (parent instanceof TreeItem) {
@@ -468,7 +468,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#clear(org.eclipse.swt.widgets.Widget)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
      */
     protected void clear(Widget widget) {
     	if (widget instanceof TreeItem) {
@@ -518,7 +518,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
      */
     protected void internalRefresh(ModelNode node) {
         super.internalRefresh(node);
@@ -797,7 +797,7 @@ public class AsynchronousTreeModelViewer extends AsynchronousModelViewer impleme
     }    
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#createUpdatePolicy()
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createUpdatePolicy()
 	 */
 	public IModelUpdatePolicy createUpdatePolicy() {
 		return new TreeUpdatePolicy();

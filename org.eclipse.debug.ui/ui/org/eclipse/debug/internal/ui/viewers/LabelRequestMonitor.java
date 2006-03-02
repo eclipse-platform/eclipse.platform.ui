@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Widget;
  * attributes from an asynchronous label adapter.
  * <p>
  * Not intended to be subclassed or instantiated by clients. For use speficially
- * with <code>AsynchronousModelViewer</code>.
+ * with <code>AsynchronousViewer</code>.
  * </p>
  * 
  * @since 3.2
  */
-class ModelLabelRequestMonitor extends AsynchronousModelRequestMonitor implements ILabelRequestMonitor {
+class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRequestMonitor {
 
 	/**
 	 * Retrieved label text. Only <code>null</code> if cancelled or failed.
@@ -56,7 +56,7 @@ class ModelLabelRequestMonitor extends AsynchronousModelRequestMonitor implement
 	 * @param node node to update
 	 * @param model model containing the node
 	 */
-	ModelLabelRequestMonitor(ModelNode node, AsynchronousModel model) {
+	LabelRequestMonitor(ModelNode node, AsynchronousModel model) {
 		super(node, model);
 	}
 
@@ -66,7 +66,7 @@ class ModelLabelRequestMonitor extends AsynchronousModelRequestMonitor implement
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
 	 */
 	protected void performUpdate() {
-		AsynchronousModelViewer viewer = getModel().getViewer();
+		AsynchronousViewer viewer = getModel().getViewer();
 		Widget widget = viewer.findItem(getNode());
 		if (widget != null && !widget.isDisposed()) {
     		viewer.setLabels(widget, fLabels, fImageDescriptors);
@@ -80,8 +80,8 @@ class ModelLabelRequestMonitor extends AsynchronousModelRequestMonitor implement
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
 	 */
-	protected boolean contains(AsynchronousModelRequestMonitor update) {
-		return update instanceof ModelLabelRequestMonitor && update.getNode() == getNode();
+	protected boolean contains(AsynchronousRequestMonitor update) {
+		return update instanceof LabelRequestMonitor && update.getNode() == getNode();
 	}
 
 	/*

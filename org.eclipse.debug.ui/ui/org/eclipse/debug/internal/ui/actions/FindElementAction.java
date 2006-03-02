@@ -12,9 +12,9 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeNavigationDialog;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeNavigationModel;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeNavigationDialog;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeNavigationModel;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -25,9 +25,9 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  */
 public class FindElementAction extends Action implements IUpdate {
 	
-	private AsynchronousTreeModelViewer fViewer;
+	private AsynchronousTreeViewer fViewer;
 
-	public FindElementAction(AsynchronousTreeModelViewer viewer) {
+	public FindElementAction(AsynchronousTreeViewer viewer) {
 		setText(ActionMessages.FindAction_0);
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindElementAction"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_ELEMENT_ACTION);

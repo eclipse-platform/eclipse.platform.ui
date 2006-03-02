@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
-import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 
 /**
  * @since 3.2
@@ -29,7 +27,7 @@ public class TableRemoveRequestMonitor extends TableAddRequestMonitor {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelRequestMonitor#performUpdate()
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousRequestMonitor#performUpdate()
 	 */
 	protected void performUpdate() {
 		((AsynchronousTableModel)getModel()).removed(fElements);

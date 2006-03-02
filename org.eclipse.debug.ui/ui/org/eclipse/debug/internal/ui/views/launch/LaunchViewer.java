@@ -11,12 +11,12 @@
 
 package org.eclipse.debug.internal.ui.views.launch;
 
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.IModelUpdatePolicy;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.IModelUpdatePolicy;
 import org.eclipse.swt.widgets.Composite;
 
-public class LaunchViewer extends AsynchronousTreeModelViewer {
+public class LaunchViewer extends AsynchronousTreeViewer {
 	
 	private LaunchView fView;
 

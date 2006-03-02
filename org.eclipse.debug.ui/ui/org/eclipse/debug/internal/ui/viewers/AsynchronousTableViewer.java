@@ -7,10 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.IModelUpdatePolicy;
-import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CellEditor;
@@ -45,7 +41,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * @since 3.2
  */
-public class AsynchronousTableViewer extends AsynchronousModelViewer implements Listener {
+public class AsynchronousTableViewer extends AsynchronousViewer implements Listener {
 
     private Table fTable;
 
@@ -156,7 +152,7 @@ public class AsynchronousTableViewer extends AsynchronousModelViewer implements 
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
      */
     protected void internalRefresh(ModelNode node) {
         super.internalRefresh(node);
@@ -409,14 +405,14 @@ public class AsynchronousTableViewer extends AsynchronousModelViewer implements 
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#createModel()
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createModel()
 	 */
 	protected AsynchronousModel createModel() {
 		return new AsynchronousTableModel(this);
 	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
      */
     protected void setItemCount(Widget parent, int itemCount) {
 		fTable.setItemCount(itemCount);
@@ -428,14 +424,14 @@ public class AsynchronousTableViewer extends AsynchronousModelViewer implements 
     }
     
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#createUpdatePolicy()
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createUpdatePolicy()
 	 */
 	public IModelUpdatePolicy createUpdatePolicy() {
-		return new DefaultTableUpdatePolicy();
+		return new TableUpdatePolicy();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getParentWidget(org.eclipse.swt.widgets.Widget)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getParentWidget(org.eclipse.swt.widgets.Widget)
 	 */
 	protected Widget getParentWidget(Widget widget) {
 		if (widget instanceof TableItem) {
@@ -445,7 +441,7 @@ public class AsynchronousTableViewer extends AsynchronousModelViewer implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
 	 */
 	protected int getChildIndex(Widget parent, Event event) {
 		if (parent instanceof Table) {
@@ -455,7 +451,7 @@ public class AsynchronousTableViewer extends AsynchronousModelViewer implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
 	 */
 	protected Widget getChildWidget(Widget parent, int index) {
 		if (index < fTable.getItemCount()) {
@@ -465,7 +461,7 @@ public class AsynchronousTableViewer extends AsynchronousModelViewer implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#clear(org.eclipse.swt.widgets.Widget)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
 	 */
 	protected void clear(Widget item) {
 		if (item instanceof TableItem) {

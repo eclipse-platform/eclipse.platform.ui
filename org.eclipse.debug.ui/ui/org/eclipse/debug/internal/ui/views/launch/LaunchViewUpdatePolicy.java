@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.TreeUpdatePolicy;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.TreeUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 
 /**
@@ -37,7 +37,7 @@ public class LaunchViewUpdatePolicy extends TreeUpdatePolicy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DefaultUpdatePolicy#handleState(org.eclipse.debug.internal.ui.viewers.AsynchronousTreeModelViewer, org.eclipse.debug.internal.ui.viewers.IModelDelta)
 	 */
-	protected void handleState(AsynchronousTreeModelViewer viewer, IModelDelta delta) {
+	protected void handleState(AsynchronousTreeViewer viewer, IModelDelta delta) {
 		 super.handleState(viewer, delta);
 		 // only context change if not already selected
 		 if ((delta.getFlags() & IModelDelta.SELECT) == 0) {

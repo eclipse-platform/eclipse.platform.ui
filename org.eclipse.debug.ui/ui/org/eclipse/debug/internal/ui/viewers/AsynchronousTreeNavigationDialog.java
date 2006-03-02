@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.viewers.TreePath;
@@ -29,7 +29,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 public class AsynchronousTreeNavigationDialog extends ElementListSelectionDialog {
 	
 	private AsynchronousTreeNavigationModel fLabelProvider = null;
-	private AsynchronousTreeModelViewer fViewer = null;
+	private AsynchronousTreeViewer fViewer = null;
 	
 	/**
 	 * Constructs a dialog to navigate to an element in the given viewer.

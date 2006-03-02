@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 
 /**
  * @since 3.2
@@ -29,7 +26,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	 * 
 	 * @param viewer
 	 */
-	public AsynchronousTableModel(AsynchronousModelViewer viewer) {
+	public AsynchronousTableModel(AsynchronousViewer viewer) {
 		super(viewer);
 	}
 

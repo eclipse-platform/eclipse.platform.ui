@@ -12,13 +12,13 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableModel;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousViewer;
+import org.eclipse.debug.internal.ui.viewers.ModelNode;
 
 abstract public class AbstractVirtualContentTableModel extends AsynchronousTableModel{
 
-	public AbstractVirtualContentTableModel(AsynchronousModelViewer viewer) {
+	public AbstractVirtualContentTableModel(AsynchronousViewer viewer) {
 		super(viewer);
 	}
 

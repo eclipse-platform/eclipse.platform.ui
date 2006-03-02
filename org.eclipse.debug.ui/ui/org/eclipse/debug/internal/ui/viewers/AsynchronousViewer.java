@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,7 +67,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </p>
  * @since 3.2
  */
-public abstract class AsynchronousModelViewer extends StructuredViewer implements Listener {
+public abstract class AsynchronousViewer extends StructuredViewer implements Listener {
 	
 	/**
 	 * Model of elements for this viewer
@@ -125,7 +125,7 @@ public abstract class AsynchronousModelViewer extends StructuredViewer implement
 	/**
 	 * Creates a new viewer 
 	 */
-	protected AsynchronousModelViewer() {
+	protected AsynchronousViewer() {
 		setContentProvider(new NullContentProvider());
 		setUseHashlookup(true);
 	}

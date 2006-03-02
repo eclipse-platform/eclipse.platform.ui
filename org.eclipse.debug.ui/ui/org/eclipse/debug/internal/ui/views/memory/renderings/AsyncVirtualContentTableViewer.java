@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;

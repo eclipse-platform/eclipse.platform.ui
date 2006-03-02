@@ -3,8 +3,8 @@ package org.eclipse.debug.internal.ui.views.variables;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
-import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.ModelNode;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
@@ -14,7 +14,7 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.2
  *
  */
-public class VariablesViewer extends AsynchronousTreeModelViewer{
+public class VariablesViewer extends AsynchronousTreeViewer{
 
 	private VariablesView fView;
 
@@ -45,7 +45,7 @@ public class VariablesViewer extends AsynchronousTreeModelViewer{
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
 	 */
 	protected void internalRefresh(ModelNode node) {
 		super.internalRefresh(node);

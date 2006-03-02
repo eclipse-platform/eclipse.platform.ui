@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.model.viewers;
+package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.jface.viewers.TreePath;
 
@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.TreePath;
  *  
  * @since 3.2
  */
-abstract class AbstractAddRemoveRequestMonitor extends AsynchronousModelRequestMonitor {
+abstract class AbstractAddRemoveRequestMonitor extends AsynchronousRequestMonitor {
 	
 	private TreePath fPath;
 
@@ -43,7 +43,7 @@ abstract class AbstractAddRemoveRequestMonitor extends AsynchronousModelRequestM
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelRequestMonitor#contains(org.eclipse.debug.internal.ui.viewers.AsynchronousModelRequestMonitor)
 	 */
-	protected boolean contains(AsynchronousModelRequestMonitor update) {
+	protected boolean contains(AsynchronousRequestMonitor update) {
 		if (update instanceof AbstractAddRemoveRequestMonitor) {
 			((AbstractAddRemoveRequestMonitor)update).getPath().equals(getPath());
 		}
