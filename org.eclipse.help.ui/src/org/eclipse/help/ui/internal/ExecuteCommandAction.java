@@ -12,9 +12,12 @@ package org.eclipse.help.ui.internal;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -47,10 +50,41 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
+				forceDialogsOnTop();
 				executeSerializedCommand();
 			}
 		});
 
+	}
+	
+	/**
+	 * This was introduced to work around the behavior described in
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=130206
+	 */
+	private void forceDialogsOnTop() {
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		Shell windowShell=null;
+		
+		Shell[] shells = display.getShells();
+		for (int i=0; i<shells.length; i++) {
+			Object data = shells[i].getData();
+			if (data!=null && data instanceof IWorkbenchWindow) {
+				windowShell=shells[i];
+				break;
+			}
+		}
+		
+		if (windowShell!=null) {
+			windowShell.forceActive();
+			if (Platform.getWS().equals(Platform.WS_WIN32)) {
+				// feature in Windows. Without this code,
+				// the window will only flash in the launch bar.
+				windowShell.setVisible(false);
+				windowShell.setMinimized(true);
+				windowShell.setVisible(true);
+				windowShell.setMinimized(false);
+			}
+		}
 	}
 
 	private void executeSerializedCommand() {
