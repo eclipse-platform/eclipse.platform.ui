@@ -113,13 +113,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private HistoryResourceListener resourceListener;
 	
-	// preferences
-	public final static String PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS = "pref_generichistory_show_comments"; //$NON-NLS-1$
-
-	public final static String PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS = "pref_generichistory_wrap_comments"; //$NON-NLS-1$
-
-	public final static String PREF_GENERIC_HISTORYVIEW_SHOW_TAGS = "pref_generichistory_show_tags"; //$NON-NLS-1$
-
 	//toggle constants for default click action
 	private boolean compareMode = false;
 	
@@ -129,7 +122,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static int LOCAL_MODE = 2;
 	
 	//grouping on
-	private boolean groupingOn = true; 
+	private boolean groupingOn; 
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -239,10 +232,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		localMode =  new Action(CVSUIMessages.CVSHistoryPage_LocalModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE)) {
 			public void run() {
-				if (isChecked())
+				if (isChecked()){
+					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, LOCAL_MODE);
 					updateFilterMode(LOCAL_MODE);
+				}
 			}
 		};
 		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip); 
@@ -251,8 +247,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		remoteMode =  new Action(CVSUIMessages.CVSHistoryPage_RemoteModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY)) {
 			public void run() {
-				if (isChecked())
+				if (isChecked()){
+					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, REMOTE_MODE);
 					updateFilterMode(REMOTE_MODE);
+				}
 			}
 		};
 		remoteMode.setToolTipText(CVSUIMessages.CVSHistoryPage_RemoteModeTooltip); 
@@ -261,8 +259,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		remoteLocalMode =  new Action(CVSUIMessages.CVSHistoryPage_CombinedModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE)) {
 			public void run() {
-				if (isChecked())
+				if (isChecked()){
+					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, REMOTE_LOCAL_MODE);
 					updateFilterMode(REMOTE_LOCAL_MODE);
+				}
 			}
 		};
 		remoteLocalMode.setToolTipText(CVSUIMessages.CVSHistoryPage_CombinedModeTooltip); 
@@ -270,17 +270,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		remoteLocalMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
 		
 		//set the inital filter to both remote and local
-		updateFilterMode(REMOTE_LOCAL_MODE);
+		updateFilterMode(store.getInt(ICVSUIConstants.PREF_REVISION_MODE));
 		
 
 		groupByDateMode = new Action(CVSUIMessages.CVSHistoryPage_GroupByDate, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY)){
 			public void run() {
 				groupingOn = !groupingOn;
 				toggleCompareAction.setChecked(groupingOn);
+				store.setValue(ICVSUIConstants.PREF_GROUPBYDATE_MODE, groupingOn);
 				refresh();
 			}
 		};
-		groupByDateMode.setChecked(true);
+		groupingOn = store.getBoolean(ICVSUIConstants.PREF_GROUPBYDATE_MODE);
+		groupByDateMode.setChecked(groupingOn);
 		groupByDateMode.setToolTipText(CVSUIMessages.CVSHistoryPage_GroupByDate);
 		groupByDateMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY));
 		groupByDateMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY));
@@ -427,34 +429,33 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
         
 		// Toggle text visible action
-		final IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
 		toggleTextAction = new Action(TeamUIMessages.GenericHistoryView_ShowCommentViewer) {
 			public void run() {
 				setViewerVisibility();
-				store.setValue(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS, toggleTextAction.isChecked());
+				store.setValue(ICVSUIConstants.PREF_SHOW_COMMENTS, toggleTextAction.isChecked());
 			}
 		};
-		toggleTextAction.setChecked(store.getBoolean(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_SHOW_COMMENTS));
+		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
 
 		// Toggle wrap comments action
 		toggleTextWrapAction = new Action(TeamUIMessages.GenericHistoryView_WrapComments) {
 			public void run() {
 				setViewerVisibility();
-				store.setValue(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS, toggleTextWrapAction.isChecked());
+				store.setValue(ICVSUIConstants.PREF_WRAP_COMMENTS, toggleTextWrapAction.isChecked());
 			}
 		};
-		toggleTextWrapAction.setChecked(store.getBoolean(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_WRAP_COMMENTS));
+		toggleTextWrapAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_WRAP_COMMENTS));
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextWrapAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);   
 
 		// Toggle list visible action
 		toggleListAction = new Action(TeamUIMessages.GenericHistoryView_ShowTagViewer) {
 			public void run() {
 				setViewerVisibility();
-				store.setValue(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS, toggleListAction.isChecked());
+				store.setValue(ICVSUIConstants.PREF_SHOW_TAGS, toggleListAction.isChecked());
 			}
 		};
-		toggleListAction.setChecked(store.getBoolean(CVSHistoryPage.PREF_GENERIC_HISTORYVIEW_SHOW_TAGS));
+		toggleListAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_TAGS));
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
 
 		toggleCompareAction = new Action(CVSUIMessages.CVSHistoryPage_CompareModeToggleAction){

@@ -71,6 +71,8 @@ public interface ICVSUIConstants {
 	public final String IMG_CVSLOGO = "etool16/newconnect_wiz.gif"; //$NON-NLS-1$
 	
 	// preferences
+	public final String PREF_REVISION_MODE = "pref_revision_mode"; //$NON-NLS-1$
+	public final String PREF_GROUPBYDATE_MODE = "pref_groupbydate_mode"; //$NON-NLS-1$
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
 	public final String PREF_WRAP_COMMENTS = "pref_wrap_comments"; //$NON-NLS-1$
 	public final String PREF_SHOW_TAGS = "pref_show_tags"; //$NON-NLS-1$
