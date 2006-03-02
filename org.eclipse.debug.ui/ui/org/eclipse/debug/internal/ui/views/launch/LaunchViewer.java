@@ -11,9 +11,9 @@
 
 package org.eclipse.debug.internal.ui.views.launch;
 
+import org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.IModelUpdatePolicy;
 import org.eclipse.swt.widgets.Composite;
 
 public class LaunchViewer extends AsynchronousTreeViewer {
@@ -36,10 +36,8 @@ public class LaunchViewer extends AsynchronousTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#createUpdatePolicy()
 	 */
-	public IModelUpdatePolicy createUpdatePolicy() {
-		IModelUpdatePolicy policy = new LaunchViewUpdatePolicy(fView);
-		policy.init(this);
-		return policy;
+	public AbstractUpdatePolicy createUpdatePolicy() {
+		return new LaunchViewUpdatePolicy(fView);
 	}
 	
     /* (non-Javadoc)

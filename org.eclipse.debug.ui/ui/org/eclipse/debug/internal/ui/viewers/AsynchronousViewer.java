@@ -108,7 +108,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * The update policy for this viewer.
 	 */
-	private IModelUpdatePolicy fUpdatePolicy;
+	private AbstractUpdatePolicy fUpdatePolicy;
 	
 	protected static final Rectangle NOT_VISIBLE = new Rectangle(0, 0, 0, 0);
 
@@ -287,7 +287,11 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 */
 	protected abstract AsynchronousModel createModel();
 
-	public abstract IModelUpdatePolicy createUpdatePolicy();
+	/**
+	 * Creates and returns this viewers update policy.
+	 * @return update policy
+	 */
+	public abstract AbstractUpdatePolicy createUpdatePolicy();
 
 	Image[] getImages(ImageDescriptor[] descriptors) {
 		if (descriptors == null || descriptors.length == 0) {

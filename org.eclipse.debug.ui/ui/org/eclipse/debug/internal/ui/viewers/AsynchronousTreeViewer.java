@@ -799,7 +799,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createUpdatePolicy()
 	 */
-	public IModelUpdatePolicy createUpdatePolicy() {
+	public AbstractUpdatePolicy createUpdatePolicy() {
 		return new TreeUpdatePolicy();
 	}
 

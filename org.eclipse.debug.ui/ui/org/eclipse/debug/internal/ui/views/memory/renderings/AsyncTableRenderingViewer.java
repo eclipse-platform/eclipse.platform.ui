@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
-import org.eclipse.debug.internal.ui.viewers.IModelUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.jface.resource.JFaceResources;
@@ -87,7 +87,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		createCursor(getTable());
 	}
 
-	public IModelUpdatePolicy createUpdatePolicy() {
+	public AbstractUpdatePolicy createUpdatePolicy() {
 		return new AsyncTableRenderingUpdatePolicy();
 	}
 	
