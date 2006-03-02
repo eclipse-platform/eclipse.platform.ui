@@ -181,7 +181,7 @@ public class BundleUtil {
      */
     public static URL getResourceAsURL(String resource, String pluginId) {
         Bundle bundle = Platform.getBundle(pluginId);
-        URL localLocation = localLocation = FileLocator.find(bundle, new Path(
+        URL localLocation = FileLocator.find(bundle, new Path(
             resource), null);
         return localLocation;
     }
