@@ -257,9 +257,16 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		if (visible)
+		if (visible) {
+			if (fText.getWordWrap()) {
+				Point currentSize= fPopupDialog.getShell().getSize();
+				fPopupDialog.getShell().pack(true);
+				Point newSize= fPopupDialog.getShell().getSize();
+				if (newSize.x > currentSize.x || newSize.y > currentSize.y)
+					setSize(currentSize.x, currentSize.y); // restore previous size
+			}
 			fPopupDialog.open();
-		else
+		} else
 			fPopupDialog.getShell().setVisible(false);
 	}
 
@@ -306,7 +313,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		if (fMaxWidth > -1 && fText.getWordWrap())
 			widthHint= fMaxWidth;
 		
-		return fPopupDialog.getShell().computeSize(widthHint, SWT.DEFAULT);
+		return fPopupDialog.getShell().computeSize(widthHint, SWT.DEFAULT, true);
 	}
 
 	/*
