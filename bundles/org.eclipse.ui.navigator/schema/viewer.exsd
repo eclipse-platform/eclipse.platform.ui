@@ -521,10 +521,10 @@ are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; element. The &lt;i&gt
        &lt;viewerActionBinding 
              viewerId=&quot;org.acme.viewer&quot;&gt;
             &lt;includes&gt;
-                &lt;contentExtension pattern=&quot;org.acme.actions.*&quot; /&gt;
+                &lt;actionExtension pattern=&quot;org.acme.actions.*&quot; /&gt;
             &lt;/includes&gt;
             &lt;excludes&gt;
-                &lt;contentExtension pattern=&quot;org.acme.actions.tests.*&quot; /&gt;
+                &lt;actionExtension pattern=&quot;org.acme.actions.tests.*&quot; /&gt;
             &lt;/excludes&gt;
        &lt;/viewerActionBinding&gt;
    &lt;/extension&gt; 
