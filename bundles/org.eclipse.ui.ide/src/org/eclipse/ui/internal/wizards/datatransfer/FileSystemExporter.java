@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -25,16 +28,25 @@ import org.eclipse.core.runtime.IPath;
  * Helper class for exporting resources to the file system.
  */
 public class FileSystemExporter {
+	private static final int DEFAULT_BUFFER_SIZE = 16*1024;
+	
     /**
      *  Creates the specified file system directory at <code>destinationPath</code>.
      *  This creates a new file system directory.
+     *  
+     *  @param destinationPath location to which files will be written
      */
     public void createFolder(IPath destinationPath) {
         new File(destinationPath.toOSString()).mkdir();
     }
 
     /**
-     *  Writes the passed resource to the specified location recursively
+     *  Writes the passed resource to the specified location recursively.
+     *  
+     *  @param resource the resource to write out to the file system
+     *  @param destinationPath location where the resource will be written
+     *  @exception CoreException if the operation fails 
+     *  @exception IOException if an I/O error occurs when writing files
      */
     public void write(IResource resource, IPath destinationPath)
             throws CoreException, IOException {
@@ -65,26 +77,39 @@ public class FileSystemExporter {
      */
     protected void writeFile(IFile file, IPath destinationPath)
             throws IOException, CoreException {
-        FileOutputStream output = null;
+        OutputStream output = null;
         InputStream contentStream = null;
 
         try {
-            contentStream = file.getContents(false);
-            output = new FileOutputStream(destinationPath.toOSString());
-            int chunkSize = contentStream.available();
+            contentStream = new BufferedInputStream(file.getContents(false));
+            output = new BufferedOutputStream(new FileOutputStream(destinationPath.toOSString()));
+            // for large files, need to make sure the chunk size can be handled by the VM
+            int available = contentStream.available();
+            available = available <= 0 ? DEFAULT_BUFFER_SIZE : available;
+            int chunkSize = Math.min(DEFAULT_BUFFER_SIZE, available);
             byte[] readBuffer = new byte[chunkSize];
             int n = contentStream.read(readBuffer);
 
             while (n > 0) {
-                output.write(readBuffer);
+            	// only write the number of bytes read
+                output.write(readBuffer, 0, n);
                 n = contentStream.read(readBuffer);
             }
         } finally {
             if (output != null) {
-				output.close();
+            	// wrapped in a try-catch to ensure attempt to close contentStream
+            	try {
+            		output.close();
+            	}
+            	catch(IOException e){ // do nothing
+            	}
 			}
             if (contentStream != null) {
-				contentStream.close();
+            	try {
+            		contentStream.close();
+            	}
+            	catch(IOException e){ // do nothing
+            	}
 			}
         }
     }
