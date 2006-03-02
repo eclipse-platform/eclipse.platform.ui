@@ -205,7 +205,7 @@ public abstract class Expression {
 	/**
 	 * Method to compute the hash code for this object. The result
 	 * returned from this method in cached in the <code>fHashCode</code>
-	 * field. If the value returned from the method equals {@link HASH_CODE_NOT_COMPUTED}
+	 * field. If the value returned from the method equals {@link #HASH_CODE_NOT_COMPUTED}
 	 * (e.g. <code>-1</code>) then the value is incremented by one.
 	 * <p>
 	 * This default implementation calls <code>super.hashCode()</code>
