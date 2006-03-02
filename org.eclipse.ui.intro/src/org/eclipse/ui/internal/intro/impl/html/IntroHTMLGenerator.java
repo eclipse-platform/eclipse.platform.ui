@@ -405,6 +405,10 @@ public class IntroHTMLGenerator {
 			if (img != null)
 				anchor.addContent(img);
 		}
+		HTMLElement imageDiv = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_DIV, indentLevel+1, false);
+		imageDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, 
+				IIntroHTMLConstants.LINK_EXTRA_DIV);
+		anchor.addContent(imageDiv);
 		// add <SPAN class="link-label">linkLabel</SPAN>
 		if (element.getLabel() != null) {
 			HTMLElement label = generateSpanElement(IIntroHTMLConstants.SPAN_CLASS_LINK_LABEL,
