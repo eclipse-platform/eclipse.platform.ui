@@ -179,6 +179,10 @@ public class ContentProposalAdapter {
 				if (e.type == SWT.Traverse) {
 					e.detail = SWT.TRAVERSE_NONE;
 					e.doit = true;
+				} else {
+					// Default is to only propagate when configured that way.
+					// Some keys will always set doit to false anyway.
+					e.doit = propagateKeys;
 				}
 
 				char key = e.character;
@@ -1409,19 +1413,15 @@ public class ContentProposalAdapter {
 						dump("Traverse and KeyDown received by adapter", e); //$NON-NLS-1$
 					}
 					// If the popup is open, it gets first shot at the
-					// keystroke.
+					// keystroke and should set the doit flags appropriately.
 					if (popup != null) {
 						popup.getTargetControlListener().handleEvent(e);
-						// If we are not propagating keys to the control while
-						// the popup is open, then we are done.
-						if (!propagateKeys) {
-							e.doit = false;
-							return;
-						}
-						// We were only listening to traverse events for the popup
-						if (e.type == SWT.Traverse) {
-							return;
-						}
+						return;
+					}
+					
+					// We were only listening to traverse events for the popup
+					if (e.type == SWT.Traverse) {
+						return;
 					}
 
 					// The popup is not open. We are looking at keydown events
