@@ -222,8 +222,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 					new IDESelectionConversionService());
 
 			initializeSettingsChangeListener();
-//			Display.getCurrent().addListener(SWT.Settings,
-//					settingsChangeListener);
+			Display.getCurrent().addListener(SWT.Settings,
+					settingsChangeListener);
 		} finally {// Resume background jobs after we startup
 			Platform.getJobManager().resume();
 		}
@@ -234,8 +234,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private void initializeSettingsChangeListener() {
 		settingsChangeListener = new Listener() {
+			
+			boolean currentHighContrast = Display.getCurrent().getHighContrast();
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-
+				if(Display.getCurrent().getHighContrast() == currentHighContrast)
+					return;
+				
+				currentHighContrast = !currentHighContrast;
+				
 				// make sure they really want to do this
 				if (new MessageDialog(null,
 						IDEWorkbenchMessages.SystemSettingsChange_title, null,

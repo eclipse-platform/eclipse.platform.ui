@@ -1115,8 +1115,8 @@
       </data>
       
       <theme
-            id="org.eclipse.ui.ide.highContrast"
-            name="%ThemeName.HighContrast">
+            id="org.eclipse.ui.ide.systemDefault"
+            name="%ThemeName.SystemDefault">
          <description>%HighContrast.ThemeDescription</description>
          <fontOverride
                id="org.eclipse.jface.bannerfont"
@@ -1129,13 +1129,13 @@
                />
          <colorOverride
                id="ERROR_COLOR"
-               value="COLOR_WHITE"/>
+               value="COLOR_LIST_FOREGROUND"/>
          <colorOverride
                id="HYPERLINK_COLOR"
-               value="COLOR_WHITE"/>
+               value="COLOR_LIST_FOREGROUND"/>
          <colorOverride
                id="ACTIVE_HYPERLINK_COLOR"
-               value="COLOR_WHITE"/>
+               value="COLOR_LIST_FOREGROUND"/>
       </theme>
    </extension>
    <extension

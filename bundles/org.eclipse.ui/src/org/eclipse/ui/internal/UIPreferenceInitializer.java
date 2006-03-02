@@ -36,7 +36,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	 private static final String HIGH_CONTRAST_THEME = "org.eclipse.ui.ide.highContrast";//$NON-NLS-1$
+	 private static final String SYSTEM_DEFAULT_THEME = "org.eclipse.ui.ide.systemDefault";//$NON-NLS-1$
 	 
 	public void initializeDefaultPreferences() {
 		
@@ -106,7 +106,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		// Set the default theme.
 		if (highContrast[0]) {
 			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
-					HIGH_CONTRAST_THEME);
+					SYSTEM_DEFAULT_THEME);
 		} else {
 			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
 					IThemeManager.DEFAULT_THEME);
