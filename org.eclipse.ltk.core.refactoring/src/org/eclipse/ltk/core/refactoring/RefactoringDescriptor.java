@@ -28,7 +28,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * </p>
  * <p>
  * Refactoring descriptors are potentially heavy weight objects which should not
- * be held on to. Use refactoring descriptor handles
+ * be held on to. Use refactoring descriptor proxies
  * {@link RefactoringDescriptorProxy} to store refactoring information.
  * </p>
  * <p>
