@@ -465,6 +465,7 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	position : relative;
 	top : -50px;
 	left : 60px;
+	margin-right: 60px;
 }
 
 #page-content * a > .link-label { left: 65px; }
@@ -474,6 +475,7 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	position : relative;
 	top : -45px;
 	left : 53px;
+	margin-right: 53px;
 }
 
 #page-content * a p > .text { left: 58px; }

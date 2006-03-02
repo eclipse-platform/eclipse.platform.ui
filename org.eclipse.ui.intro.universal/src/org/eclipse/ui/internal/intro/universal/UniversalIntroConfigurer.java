@@ -89,9 +89,11 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			PageData pdata = idata.getPage(pageId);
 			if (pdata != null) {
 				ExtensionData ed = pdata.findExtension(extensionId, false);
-				int importance = ed.getImportance();
-				if (importance != ExtensionData.HIDDEN)
-					return ExtensionData.IMPORTANCE_STYLE_TABLE[importance];
+				if (ed!=null) {
+					int importance = ed.getImportance();
+					if (importance != ExtensionData.HIDDEN)
+						return ExtensionData.IMPORTANCE_STYLE_TABLE[importance];
+				}
 			}
 		}
 		return null;
