@@ -114,6 +114,8 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String UndoManager2_no_change;
 
+	public static String UnknownRefactoringDescriptor_cannot_create_refactoring;
+
 	public static String UnknownRefactoringDescriptor_initialization_error;
 
 	public static String ValidateEditChecker_failed;

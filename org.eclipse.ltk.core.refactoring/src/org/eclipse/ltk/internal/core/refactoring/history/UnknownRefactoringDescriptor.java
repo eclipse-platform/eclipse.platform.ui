@@ -6,6 +6,8 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
+
 /**
  * Refactoring descriptor to denote the unknown refactoring.
  * 
@@ -27,6 +29,7 @@ public final class UnknownRefactoringDescriptor extends RefactoringDescriptor {
 	 * {@inheritDoc}
 	 */
 	public Refactoring createRefactoring(final RefactoringStatus status) throws CoreException {
+		status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.UnknownRefactoringDescriptor_cannot_create_refactoring));
 		return null;
 	}
 }
