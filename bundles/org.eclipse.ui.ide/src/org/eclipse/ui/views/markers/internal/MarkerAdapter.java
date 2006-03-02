@@ -353,7 +353,7 @@ public class MarkerAdapter {
 	 */
 	public MarkerList getCurrentMarkers() {
 		if (lastMarkers == null) {// First time?
-			view.scheduleMarkerUpdate();
+			view.scheduleMarkerUpdate(Util.SHORT_DELAY);
 			building = true;
 		}
 		if (building) {
@@ -371,7 +371,7 @@ public class MarkerAdapter {
 	public Object[] getElements() {
 
 		if (lastMarkers == null) {// First time?
-			view.scheduleMarkerUpdate();
+			view.scheduleMarkerUpdate(Util.SHORT_DELAY);
 			building = true;
 		}
 		if (building) {

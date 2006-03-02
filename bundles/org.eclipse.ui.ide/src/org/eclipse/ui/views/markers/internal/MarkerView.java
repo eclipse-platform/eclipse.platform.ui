@@ -18,18 +18,15 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
@@ -140,27 +137,15 @@ public abstract class MarkerView extends TableView {
 			setSystem(true);
 		}
 
-		boolean buildDone = true;
-
-		private Collection refreshes = new ArrayList();
-
-		private Collection adds = new ArrayList();
-
-		private Collection removes = new ArrayList();
-
-		private Object updateKey = new Object();
-
 		/*
 		 * (non-Javadoc)
 		 * 
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			synchronized (updateKey) {
-				updateJob.refreshAll();
-				updateForContentsRefresh(monitor);
-				return Status.OK_STATUS;
-			}
+			updateForContentsRefresh(monitor);
+			return Status.OK_STATUS;
+
 		}
 
 		/*
@@ -169,47 +154,7 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
-			return buildDone && PlatformUI.isWorkbenchRunning();
-		}
-
-		/**
-		 * Refresh all of the contents of changed.
-		 * 
-		 * @param changed
-		 *            Collection of ConcreteMarker
-		 */
-		public void refresh(Collection changed) {
-			synchronized (updateKey) {
-				refreshes.addAll(changed);
-			}
-		}
-
-		/**
-		 * Add all of the contents of changed.
-		 * 
-		 * @param addedMarkers
-		 *            Collection of ConcreteMarker
-		 */
-		public void add(Collection addedMarkers) {
-			synchronized (updateKey) {
-				adds.addAll(addedMarkers);
-				refreshes.removeAll(addedMarkers);
-			}
-
-		}
-
-		/**
-		 * Remove all of the contents of changed.
-		 * 
-		 * @param removedMarkers
-		 *            Collection of ConcreteMarker
-		 */
-		public void remove(Collection removedMarkers) {
-			synchronized (updateKey) {
-				removes.addAll(removedMarkers);
-				refreshes.removeAll(removedMarkers);
-				adds.removeAll(removedMarkers);
-			}
+			return PlatformUI.isWorkbenchRunning();
 		}
 
 	}
@@ -218,37 +163,10 @@ public abstract class MarkerView extends TableView {
 
 	private class UpdateJob extends WorkbenchJob {
 
-		boolean buildDone = true;
-
-		private Collection pendingMarkerUpdates = Collections
-				.synchronizedSet(new HashSet());
-
-		boolean refreshAll = false;
-
 		private Collection categoriesToExpand = new HashSet();
 
 		UpdateJob() {
 			super(MarkerMessages.MarkerView_queueing_updates);
-		}
-
-		/**
-		 * Refresh the changed list.
-		 * 
-		 * @param changed
-		 */
-		void refresh(Collection changed) {
-			if (refreshAll) {
-				return;
-			}
-			pendingMarkerUpdates.addAll(changed);
-		}
-
-		/**
-		 * Refresh the whole view
-		 */
-		void refreshAll() {
-			refreshAll = true;
-			pendingMarkerUpdates.clear();
 		}
 
 		/*
@@ -262,19 +180,7 @@ public abstract class MarkerView extends TableView {
 				return Status.CANCEL_STATUS;
 			}
 
-			if (refreshAll) {
-				getViewer().refresh(true);
-				refreshAll = false;
-
-			} else if (!pendingMarkerUpdates.isEmpty()) {
-				Object[] markers = pendingMarkerUpdates.toArray();
-				for (int i = 0; i < markers.length; i++) {
-					getViewer().refresh(markers[i], true);
-				}
-				pendingMarkerUpdates.clear();
-			}
-
-			pendingMarkerUpdates.clear();
+			getViewer().refresh(true);
 
 			Tree tree = getTree();
 
@@ -336,6 +242,7 @@ public abstract class MarkerView extends TableView {
 	private Clipboard clipboard;
 
 	IResourceChangeListener markerUpdateListener = new IResourceChangeListener() {
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -343,58 +250,47 @@ public abstract class MarkerView extends TableView {
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
 
-			String[] markerTypes = getMarkerTypes();
-			Collection changedMarkers = new ArrayList();
-			Collection addedMarkers = new ArrayList();
-			Collection removedMarkers = new ArrayList();
-
-			if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
-				markerProcessJob.buildDone = false;
-				return;
-			}
-
 			if (event.getType() == IResourceChangeEvent.POST_BUILD) {
-				markerProcessJob.buildDone = true;
-				scheduleMarkerUpdate();
+				scheduleMarkerUpdate(Util.SHORT_DELAY);
 				return;
 			}
 
-			for (int idx = 0; idx < markerTypes.length; idx++) {
-				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
-						markerTypes[idx], true);
-				for (int i = 0; i < markerDeltas.length; i++) {
-					IMarkerDelta delta = markerDeltas[i];
-					int kind = delta.getKind();
-
-					if (kind == IResourceDelta.CHANGED) {
-						changedMarkers.add(delta.getMarker());
-					}
-					if (kind == IResourceDelta.ADDED) {
-						addedMarkers.add(delta.getMarker());
-					}
-					if (kind == IResourceDelta.REMOVED) {
-						removedMarkers.add(delta.getMarker());
-					}
-				}
-
-			}
-
-			if (!changedMarkers.isEmpty()) {
-				MarkerList changed = getCurrentMarkers().findMarkers(
-						changedMarkers);
-				if (changed.getItemCount() > 0) {
-					changed.refresh();
-					markerProcessJob.refresh(changed.asList());
-				}
-			}
-
-			if (addedMarkers.size() > 0 || removedMarkers.size() > 0) {
-				markerProcessJob.add(addedMarkers);
-				markerProcessJob.remove(removedMarkers);
-			}
+			// After 30 seconds do updates anyways
+			getProgressService().schedule(markerProcessJob, Util.LONG_DELAY);
 
 		}
 
+		/**
+		 * Return whether or not any of the deltas indicate a required update.
+		 * 
+		 * @param event
+		 * @param markerTypes
+		 * @param needsUpdate
+		 * @return boolean
+		 */
+		// boolean checkIfUpdateRequired(IResourceChangeEvent event,
+		// String[] markerTypes) {
+		// for (int idx = 0; idx < markerTypes.length; idx++) {
+		// IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
+		// markerTypes[idx], true);
+		// for (int i = 0; i < markerDeltas.length; i++) {
+		// IMarkerDelta delta = markerDeltas[i];
+		// int kind = delta.getKind();
+		//
+		// if (kind == IResourceDelta.CHANGED) {
+		// return true;
+		// }
+		// if (kind == IResourceDelta.ADDED) {
+		// return true;
+		// }
+		// if (kind == IResourceDelta.REMOVED) {
+		// return true;
+		// }
+		// }
+		//
+		// }
+		// return false;
+		// }
 	};
 
 	private class ContextProvider implements IContextProvider {
@@ -570,7 +466,7 @@ public abstract class MarkerView extends TableView {
 
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
 
-		writeFiltersSettings(memento);		
+		writeFiltersSettings(memento);
 
 		StringWriter writer = new StringWriter();
 		try {
@@ -588,6 +484,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Write the filter settings to the memento.
+	 * 
 	 * @param memento
 	 */
 	protected void writeFiltersSettings(XMLMemento memento) {
@@ -1327,7 +1224,7 @@ public abstract class MarkerView extends TableView {
 	 * Refresh the contents of the viewer.
 	 */
 	public void refreshViewer() {
-		scheduleMarkerUpdate();
+		scheduleMarkerUpdate(Util.SHORT_DELAY);
 	}
 
 	/**
@@ -1630,13 +1527,14 @@ public abstract class MarkerView extends TableView {
 	}
 
 	/**
-	 * Schedule an update of the markers
+	 * Schedule an update of the markers with a delay of time
+	 * 
+	 * @param time
 	 */
-	void scheduleMarkerUpdate() {
+	void scheduleMarkerUpdate(int time) {
 		markerProcessJob.cancel();
 		updateJob.cancel();
-		updateJob.refreshAll();
-		getProgressService().schedule(markerProcessJob, 100);
+		getProgressService().schedule(markerProcessJob, time);
 	}
 
 	/*

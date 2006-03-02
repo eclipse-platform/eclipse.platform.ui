@@ -216,6 +216,10 @@ public final class Util {
 				IStatus.ERROR,message , exception);
 	}
 
+	static final int SHORT_DELAY = 100;//The 100 ms short delay for scheduling
+
+	static final int LONG_DELAY = 30000;//The 30s long delay to run without a builder update
+
 	private Util() {
 		super();
 	}
