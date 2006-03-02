@@ -367,7 +367,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryPane.setContent(fHistoryViewer.getControl());
 		fCommentField= new Text(fSplitterControl, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 		fCommentField.setText(fControlConfiguration.getCommentCaption());
-		fSplitterControl.setWeights(new int[] { 75, 25});
+		fSplitterControl.setWeights(new int[] { 80, 20});
 
 		Dialog.applyDialogFont(this);
 	}
