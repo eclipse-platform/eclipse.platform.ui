@@ -69,8 +69,5 @@ public class ActionRevealMarker extends MarkerSelectionProviderAction {
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(Util.isSingleConcreteSelection(selection));
-		if (isEnabled()) {
-			run();
-		}
 	}
 }
