@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.update;
+package org.eclipse.debug.internal.ui.viewers;
 
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousViewer;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -21,14 +20,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * 
  * @since 3.2
  */
-public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IModelChangedListener {
+public class DefaultTableUpdatePolicy extends org.eclipse.debug.internal.ui.model.viewers.AbstractUpdatePolicy implements IModelChangedListener {
 
     public void modelChanged(IModelDelta delta) {
         updateNodes(new IModelDelta[] {delta});
     }
 
     private void handleState(IModelDelta node) {
-        AsynchronousViewer viewer = getViewer();
+        AsynchronousModelViewer viewer = getViewer();
         if (viewer != null) {
             Object element = node.getElement();
 			viewer.update(element);
@@ -36,7 +35,7 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
         }
     }
     private void handleContent(IModelDelta node) {
-    	AsynchronousViewer viewer = getViewer();
+    	AsynchronousModelViewer viewer = getViewer();
         if (viewer != null) {
         	Object element = node.getElement();
 			viewer.refresh(element);
@@ -45,10 +44,10 @@ public class DefaultTableUpdatePolicy extends AbstractUpdatePolicy implements IM
     }
 
     private void updateSelection(Object element, int flags) {
-        AsynchronousViewer viewer = getViewer();
+    	AsynchronousModelViewer viewer = getViewer();
         if (viewer != null) {
             if ((flags & IModelDelta.SELECT) != 0) {
-                ((AsynchronousTableViewer) getViewer()).setSelection(new StructuredSelection(element));
+                getViewer().setSelection(new StructuredSelection(element));
             }
         }
     }

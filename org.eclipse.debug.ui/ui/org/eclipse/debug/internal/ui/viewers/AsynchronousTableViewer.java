@@ -3,16 +3,14 @@ package org.eclipse.debug.internal.ui.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.update.DefaultTableUpdatePolicy;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer;
+import org.eclipse.debug.internal.ui.model.viewers.IModelUpdatePolicy;
+import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CellEditor;
@@ -36,21 +34,20 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * TODO non virtual table support 
- * TODO sorting by column
+ * @since 3.2
  */
-public class AsynchronousTableViewer extends AsynchronousViewer {
+public class AsynchronousTableViewer extends AsynchronousModelViewer implements Listener {
 
     private Table fTable;
-
-    private AsynchronousTableViewerContentManager fContentManager;
 
     private TableEditor fTableEditor;
 
@@ -74,7 +71,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
     public AsynchronousTableViewer(Table table) {
         Assert.isTrue((table.getStyle() & SWT.VIRTUAL) != 0);
         fTable = table;
-        fContentManager = createContentManager();
         hookControl(fTable);
         fTableEditor = new TableEditor(fTable);
         fTableEditorImpl = createTableEditorImpl();
@@ -86,23 +82,14 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
             public void mouseDown(MouseEvent e) {
                 fTableEditorImpl.handleMouseDown(e);
             }
-        });
-    }
-
-    public IUpdatePolicy createUpdatePolicy() {
-        return new DefaultTableUpdatePolicy();
+        });      
     }
 
     public synchronized void dispose() {
-        fContentManager.dispose();
         fTable.dispose();
         fTableEditor.dispose();
         super.dispose();
-    }
-
-    protected AsynchronousTableViewerContentManager createContentManager() {
-        return new AsynchronousTableViewerContentManager(this);
-    }
+    }  
 
     protected ISelection doAttemptSelectionToWidget(ISelection selection, boolean reveal) {
         if (acceptsSelection(selection)) {
@@ -113,22 +100,24 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
             }
 
             int[] indices = new int[list.size()];
-            Object[] elements = fContentManager.getElements();
-            int index = 0;
-
-            // I'm not sure if it would be faster to check TableItems first...
-            for (int i = 0; i < elements.length; i++) {
-                Object element = elements[i];
-                if (list.contains(element)) {
-                    indices[index] = i;
-                    index++;
-                }
-            }
-
-            fTable.setSelection(indices);
-            if (reveal && indices.length > 0) {
-                TableItem item = fTable.getItem(indices[0]);
-                fTable.showItem(item);
+            ModelNode[] nodes = getModel().getRootNode().getChildrenNodes();
+            if (nodes != null) {
+	            int index = 0;
+	
+	            // I'm not sure if it would be faster to check TableItems first...
+	            for (int i = 0; i < nodes.length; i++) {
+	                Object element = nodes[i].getElement();
+	                if (list.contains(element)) {
+	                    indices[index] = i;
+	                    index++;
+	                }
+	            }
+	
+	            fTable.setSelection(indices);
+	            if (reveal && indices.length > 0) {
+	                TableItem item = fTable.getItem(indices[0]);
+	                fTable.showItem(item);
+	            }
             }
         }
         return StructuredSelection.EMPTY;
@@ -145,25 +134,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
     protected Widget getParent(Widget widget) {
         if (widget instanceof TableItem) {
             return fTable;
-        }
-        return null;
-    }
-
-    /*this is wrong... should look in content manager
-     * as the data may not be set on the widget yet.
-     * (non-Javadoc)
-     * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
-     */
-    protected Widget doFindInputItem(Object element) {
-        if (element.equals(getInput())) {
-            return fTable;
-        }
-        TableItem[] items = fTable.getItems();
-        for (int i = 0; i < items.length; i++) {
-            Object data = items[i].getData();
-            if (data != null && equals(data, element)) {
-                return items[i];
-            }
         }
         return null;
     }
@@ -185,60 +155,15 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
         return (Table) getControl();
     }
 
-    protected void setChildren(Widget widget, List children) {
-        Object[] elements = filter(children.toArray());
-        if (elements.length > 0) {
-            ViewerSorter sorter = getSorter();
-            if (sorter != null)
-                sorter.sort(this, elements);
-
-            fContentManager.setElements(elements);
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
+     */
+    protected void internalRefresh(ModelNode node) {
+        super.internalRefresh(node);
+        if (node.getElement().equals(getInput())) {
+            updateChildren(node);
         }
-    }
-
-    protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
-        super.doUpdateItem(item, element, fullMap);
-    }
-
-    protected void updateLabel(Object element, Widget item) {
-        if (item instanceof Item) {
-            IAsynchronousLabelAdapter adapter = getLabelAdapter(element);
-            if (adapter != null) {
-                ILabelRequestMonitor labelUpdate = new LabelRequestMonitor(item, this);
-                schedule(labelUpdate);
-                adapter.retrieveLabel(element, getPresentationContext(), labelUpdate);
-            }
-        }
-    }
-
-    protected void inputChanged(Object input, Object oldInput) {
-        super.inputChanged(input, oldInput);
-        map(input, fTable);
-        refresh();
-    }
-
-    protected void internalRefresh(Object element, Widget widget) {
-        super.internalRefresh(element, widget);
-        if (element.equals(getRoot())) {
-            IAsynchronousContentAdapter adapter = getTableContentAdapter(element);
-            if (adapter != null) {
-                IChildrenRequestMonitor update = new ChildrenRequestMonitor(widget, this);
-                schedule(update);
-                adapter.retrieveChildren(element, getPresentationContext(), update);
-            }
-        }
-    }
-
-    private IAsynchronousContentAdapter getTableContentAdapter(Object element) {
-        IAsynchronousContentAdapter adapter = null;
-        if (element instanceof IAsynchronousContentAdapter) {
-            adapter = (IAsynchronousContentAdapter) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IAsynchronousContentAdapter) adaptable.getAdapter(IAsynchronousContentAdapter.class);
-        }
-        return adapter;
-    }
+    } 
 
     public void setLabels(Widget widget, String[] labels, ImageDescriptor[] imageDescriptors) {
         TableItem item = (TableItem) widget;
@@ -396,20 +321,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
     }
 
     /**
-     * FIXME: currently requires UI Thread
-     * 
-     * @param index
-     */
-    void clear(int index) {
-        TableItem item = fTable.getItem(index);
-        Object data = item.getData();
-        if (item.getData() != null) {
-            unmap(data, item);
-        }
-        fTable.clear(index);
-    }
-
-    /**
      * This is not asynchronous. This method must be called in the UI Thread.
      */
     public void cancelEditing() {
@@ -458,11 +369,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
         return min;
     }
 
-    
-    protected void add(Widget parent, Object element) {
-        add(element);
-    }
-
     public void add(Object element) {
         if (element != null)
             add(new Object[] { element });
@@ -471,27 +377,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
     public void add(Object[] elements) {
         if (elements == null || elements.length == 0)
             return; // done
-
-        ViewerSorter sorter = getSorter();
-        if (sorter != null) {
-            insert(elements, 0);
-            return;
-        }
-
-        final Object[] filteredElements = filter(elements);
-        if (filteredElements.length == 0)
-            return;
-
-        WorkbenchJob job = new WorkbenchJob("AsychronousTableViewer.add") { //$NON-NLS-1$
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                if (!monitor.isCanceled())
-                    fContentManager.add(filteredElements);
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem(true);
-        job.setPriority(Job.INTERACTIVE);
-        job.schedule();
+        ((AsynchronousTableModel)getModel()).add(elements);
     }
 
     public void remove(Object element) {
@@ -502,17 +388,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
     public void remove(final Object[] elements) {
         if (elements == null || elements.length == 0)
             return; // done
-
-        WorkbenchJob job = new WorkbenchJob("AsychronousTableViewer.remove") { //$NON-NLS-1$
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                if (!monitor.isCanceled())
-                    fContentManager.remove(elements);
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem(true);
-        job.setPriority(Job.INTERACTIVE);
-        job.schedule();
+        ((AsynchronousTableModel)getModel()).remove(elements);
     }
 
     public void insert(Object element, int position) {
@@ -520,67 +396,85 @@ public class AsynchronousTableViewer extends AsynchronousViewer {
             insert(new Object[] { element }, position);
     }
 
-    public void insert(Object[] elements, final int position) {
+    public void insert(Object[] elements, int position) {
         if (elements == null || elements.length == 0)
             return;
-
-        final Object[] filteredElements = filter(elements);
-        WorkbenchJob job = new WorkbenchJob("AsychronousTableViewer.insert") { //$NON-NLS-1$
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                if (monitor.isCanceled())
-                    return Status.OK_STATUS;
-
-                ViewerSorter sorter = getSorter();
-                if (sorter == null) {
-                    fContentManager.insert(filteredElements, position);
-                } else {
-                    for (int i = 0; i < filteredElements.length; i++) {
-                        Object element = filteredElements[i];
-                        int index = indexForElement(element);
-                        fContentManager.insert(new Object[] { element }, index);
-                    }
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem(true);
-        job.setPriority(Job.INTERACTIVE);
-        job.schedule();
+        ((AsynchronousTableModel)getModel()).insert(elements, position);
     }
 
-    public void replace(final Object element, final Object replacement) {
+    public void replace(Object element, Object replacement) {
         if (element == null || replacement == null)
             throw new IllegalArgumentException("unexpected null parameter"); //$NON-NLS-1$
+        ((AsynchronousTableModel)getModel()).replace(element, replacement);
+    }
 
-        Object[] filtered = filter(new Object[] { replacement });
-        if (filtered.length == 0) {
-            remove(element);
-            return;
-        }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#createModel()
+	 */
+	protected AsynchronousModel createModel() {
+		return new AsynchronousTableModel(this);
+	}
 
-        WorkbenchJob job = new WorkbenchJob("AsychronousTableViewer.replace") { //$NON-NLS-1$
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                if (monitor.isCanceled())
-                    return Status.OK_STATUS;
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
+     */
+    protected void setItemCount(Widget parent, int itemCount) {
+		fTable.setItemCount(itemCount);
+	}  
 
-                ViewerSorter sorter = getSorter();
-                if (sorter == null) {
-                    fContentManager.replace(element, replacement);
-                } else {
-                    fContentManager.remove(new Object[] { element });
-                    int position = indexForElement(replacement);
-                    fContentManager.insert(new Object[] { replacement }, position);
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem(true);
-        job.setPriority(Job.INTERACTIVE);
-        job.schedule();
+	protected int getVisibleItemCount(int top) {
+        int itemCount = fTable.getItemCount();
+        return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
     }
     
-    public AsynchronousTableViewerContentManager getContentManager()
-    {
-    	return fContentManager;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#createUpdatePolicy()
+	 */
+	public IModelUpdatePolicy createUpdatePolicy() {
+		return new DefaultTableUpdatePolicy();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getParentWidget(org.eclipse.swt.widgets.Widget)
+	 */
+	protected Widget getParentWidget(Widget widget) {
+		if (widget instanceof TableItem) {
+			return ((TableItem)widget).getParent();
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
+	 */
+	protected int getChildIndex(Widget parent, Event event) {
+		if (parent instanceof Table) {
+			return ((Table)parent).indexOf((TableItem)event.item);
+		}
+		return -1;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
+	 */
+	protected Widget getChildWidget(Widget parent, int index) {
+		if (index < fTable.getItemCount()) {
+			return fTable.getItem(index);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#clear(org.eclipse.swt.widgets.Widget)
+	 */
+	protected void clear(Widget item) {
+		if (item instanceof TableItem) {
+			int i = fTable.indexOf((TableItem)item);
+			if (i >= 0) {
+				fTable.clear(i);
+			}
+		}
+	}
+	
+	
 }

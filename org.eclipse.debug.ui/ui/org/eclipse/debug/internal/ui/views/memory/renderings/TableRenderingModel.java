@@ -15,25 +15,58 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.ui.model.viewers.ModelNode;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewerContentManager;
 
-public class TableRenderingContentManager extends
-		AsynchronousTableViewerContentManager implements IVirtualContentManager, IContentChangeComputer {
+
+public class TableRenderingModel extends AbstractVirtualContentTableModel
+		implements IContentChangeComputer {
+
 
 	private Hashtable fCache;
 	private Vector fOrderedCache;			// needed to re-organize cache
 	
-	public TableRenderingContentManager(AsynchronousTableViewer viewer) {
+	private boolean fMBSupportsChangeManagement;
+	private IMemoryBlock fMemoryBlock;
+
+	class SupportsChangeMgmtJob extends Job {
+		
+		SupportsChangeMgmtJob()
+		{
+			super("Support Change Management"); //$NON-NLS-1$
+			setSystem(true);
+		}
+
+		protected IStatus run(IProgressMonitor monitor) {
+			IMemoryBlock mb = getMemoryBlock();
+			if (mb instanceof IMemoryBlockExtension)
+			{
+				IMemoryBlockExtension mbExt = (IMemoryBlockExtension)mb;
+				fMBSupportsChangeManagement = mbExt.supportsChangeManagement();
+			}
+			return Status.OK_STATUS;
+		}
+		
+	}
+	
+	
+	public TableRenderingModel(AsynchronousTableViewer viewer) {
 		super(viewer);
 		fCache = new Hashtable();
 		fOrderedCache = new Vector();
 	}
 	
-	public int indexOf(Object key)
+	public int indexOfKey(Object key)
 	{
 		if (key instanceof BigInteger)
 		{
@@ -327,6 +360,53 @@ public class TableRenderingContentManager extends
 //		}
 //		System.out.println(buf.toString());
 //	}
+	
+	private AsynchronousTableViewer getTableViewer()
+	{
+		return (AsynchronousTableViewer)getViewer();
+	}
 
+	protected void setChildren(ModelNode parentNode, List kids) {
+		
+		if (computeChanges())
+		{
+			Object[] newContent = compare(kids.toArray());
+			ArrayList newList = new ArrayList();
+			for (int i=0; i<newContent.length; i++)
+			{
+				newList.add(newContent[i]);
+			}
+			super.setChildren(parentNode, newList);
+		}
+		else
+			super.setChildren(parentNode, kids);
+	}
+	
+	private boolean computeChanges()
+	{ 
+		if (isEmpty())
+			return false;
+		
+		if (fMBSupportsChangeManagement)
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private IMemoryBlock getMemoryBlock()
+	{
+		return fMemoryBlock;
+	}
+	
 
+	public void init(Object root) {
+		if (root instanceof IMemoryBlock)
+		{
+			fMemoryBlock = (IMemoryBlock)root;
+			new SupportsChangeMgmtJob().schedule();
+		}
+		super.init(root);
+	}
 }

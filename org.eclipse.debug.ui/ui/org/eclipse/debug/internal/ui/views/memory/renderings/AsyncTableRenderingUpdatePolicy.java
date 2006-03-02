@@ -18,10 +18,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewerContentManager;
+import org.eclipse.debug.internal.ui.viewers.DefaultTableUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.update.DefaultTableUpdatePolicy;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -35,40 +34,44 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 	public void modelChanged(IModelDelta node) {
 		
 		// clear current cache as it becomes invalid when the memory block is changed
-		AsynchronousTableViewerContentManager contentManager = getTableViewer().getContentManager();
-		IContentChangeComputer computer = null;
-		if (contentManager instanceof IContentChangeComputer)
-			computer = (IContentChangeComputer)contentManager;
+		AbstractVirtualContentTableModel model = getTableViewer().getVirtualContentModel();
 		
-		clearCache(computer);
-		
-		if (!shouldHandleEvent(node))
+		if (model != null)
 		{
-			return;
-		}
-		
-		if (node.getElement() instanceof IMemoryBlock && (node.getFlags() & IModelDelta.CONTENT) != 0)
-		{
-			if (computer != null && getTableViewer() != null)
+			IContentChangeComputer computer = null;
+			if (model instanceof IContentChangeComputer)
+				computer = (IContentChangeComputer)model;
+			
+			clearCache(computer);
+			
+			if (!containsEvent(node))
 			{
-				// only cache if the rendering is not currently displaying error
-				if (!getTableViewer().getRendering().isDisplayingError())
-				{
-					// cache visible elelements
-					computer.cache(getTableViewer().getContentManager().getElements());
-				}
+				return;
 			}
 			
-			// override handling of content node
-			// let the super class deals with the rest of the changes
-			if (node.getElement() instanceof IMemoryBlock)
+			if (node.getElement() instanceof IMemoryBlock && (node.getFlags() & IModelDelta.CONTENT) != 0)
 			{
-				// update policy figured out what's changed in the memory block
-				// and will tell rendering to update accordinly.
-				// Updating the rendering indirectly update the table viewer
-				notifyRendering(node);
-				handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
-				return;
+				if (computer != null && getTableViewer() != null)
+				{
+					// only cache if the rendering is not currently displaying error
+					if (!getTableViewer().getRendering().isDisplayingError())
+					{
+						// cache visible elelements
+						computer.cache(model.getElements());
+					}
+				}
+				
+				// override handling of content node
+				// let the super class deals with the rest of the changes
+				if (node.getElement() instanceof IMemoryBlock)
+				{
+					// update policy figured out what's changed in the memory block
+					// and will tell rendering to update accordinly.
+					// Updating the rendering indirectly update the table viewer
+					notifyRendering(node);
+					handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
+					return;
+				}
 			}
 		}
 		
@@ -149,7 +152,7 @@ class AsyncTableRenderingUpdatePolicy extends DefaultTableUpdatePolicy
 		return null;
 	}
 	
-	private boolean shouldHandleEvent(IModelDelta delta)
+	private boolean containsEvent(IModelDelta delta)
 	{
 		if (getViewer().getPresentationContext() instanceof TableRenderingPresentationContext)
 		{

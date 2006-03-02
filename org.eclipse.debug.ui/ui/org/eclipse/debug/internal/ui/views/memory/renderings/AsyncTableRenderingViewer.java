@@ -12,24 +12,17 @@
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewerContentManager;
-import org.eclipse.debug.internal.ui.viewers.IUpdatePolicy;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
+import org.eclipse.debug.internal.ui.model.viewers.IModelUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -60,11 +53,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.UIJob;
 
 public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
-	
+
 	private AbstractAsyncTableRendering fRendering;
 	
 	// selection keys
@@ -83,33 +75,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private FocusAdapter fEditorFocusListener;
 	private KeyAdapter fEditorKeyListener;
 	
-	private boolean fMBSupportsChangeManagement;
-	
-	class SupportsChangeMgmtJob extends Job {
-		
-		SupportsChangeMgmtJob()
-		{
-			super("Support Change Management"); //$NON-NLS-1$
-			setSystem(true);
-		}
-
-		protected IStatus run(IProgressMonitor monitor) {
-			IMemoryBlock mb = fRendering.getMemoryBlock();
-			if (mb instanceof IMemoryBlockExtension)
-			{
-				IMemoryBlockExtension mbExt = (IMemoryBlockExtension)mb;
-				fMBSupportsChangeManagement = mbExt.supportsChangeManagement();
-			}
-			return Status.OK_STATUS;
-		}
-		
-	}
-	
 	public AsyncTableRenderingViewer(AbstractAsyncTableRendering rendering, Composite parent, int style) {
 		super(parent, style);
 		fRendering = rendering;
-		
-		new SupportsChangeMgmtJob().schedule();
 		
 		getTable().addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
@@ -119,64 +87,8 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		createCursor(getTable());
 	}
 
-	public IUpdatePolicy createUpdatePolicy() {
-		// TODO:  need pluggble update policy
+	public IModelUpdatePolicy createUpdatePolicy() {
 		return new AsyncTableRenderingUpdatePolicy();
-	}
-	
-	// TODO:  Need pluggable content manager to allow models to provide own content
-	// manager to translate model data to a key and vice versa
-	protected AsynchronousTableViewerContentManager createContentManager() {
-		return new TableRenderingContentManager(this);
-	}
-
-	protected void setChildren(Widget widget, List children) {
-		
-		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-		{
-			System.out.println("Set Children in AsyncTableRenderingViewer"); //$NON-NLS-1$
-			Iterator iter = children.iterator();
-			int i=0;
-			while(iter.hasNext())
-			{
-				System.out.println(i + " " + ((MemorySegment)iter.next()).getAddress().toString(16)); //$NON-NLS-1$
-				i++;
-			}
-		}
-		
-		Object[] newContent = compare(children);
-		ArrayList newList = new ArrayList();
-		for (int i=0; i<newContent.length; i++)
-		{
-			newList.add(newContent[i]);
-		}
-		
-		super.setChildren(widget, newList);
-		
-		if (widget == getTable())
-			attemptSetKeySelection();
-	}
-	
-	private Object[] compare(List newContent)
-	{ 
-		IContentChangeComputer computer = null;
-		
-		if (getContentManager() instanceof IContentChangeComputer)
-			computer = (IContentChangeComputer)getContentManager();
-		
-		if (computer == null)
-			return newContent.toArray();
-		
-		if (computer.isEmpty())
-			return newContent.toArray();
-		
-		if (isChangesManagedByMemoryBlock())
-		{
-			return newContent.toArray();
-		}
-		
-		Object[] content = computer.compare(newContent.toArray());
-		return content;
 	}
 	
 	public AbstractAsyncTableRendering getRendering()
@@ -202,6 +114,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			 	handleCursorKeyPressed(e);
 			 }	
 		};
+		
 		fTableCursor.addKeyListener(fCursorKeyAdapter);
 		
 		fCursorTraverseListener = new TraverseListener() {
@@ -268,7 +181,6 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	}
 	
 	private void handleCursorTraverseEvt(TraverseEvent e){
-		
 		if (fTableCursor.getRow() == null)
 			return;
 		
@@ -298,14 +210,14 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			fTableCursor.setSelection(row, col);
 		}			
 		
-//		handleCursorMoved();
+		handleCursorMoved();
 	}
 	
 	/**
 	 * Update selected address.
 	 * Load more memory if required.
 	 */
-	private synchronized void handleCursorMoved()
+	private void handleCursorMoved()
 	{	
 		fSelectionKey = getSelectionKeyFromCursor();
 		
@@ -331,7 +243,6 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	 */
 	public void setSelection(Object key)
 	{
-		fSelectionKey = key;
 		fPendingSelection = key;
 		attemptSetKeySelection();
 	}
@@ -341,19 +252,15 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		return fSelectionKey;
 	}
 	
-	synchronized private void attemptSetKeySelection()
+	private synchronized void attemptSetKeySelection()
 	{
 		if (fPendingSelection != null) {
-            Object remaining = doAttemptSetKeySelection(fPendingSelection);
-            if (remaining == null)
-            {
-            	fPendingSelection = remaining;
-            }
+            doAttemptSetKeySelection(fPendingSelection);
 		}
 		
 	}
 	
-	synchronized Object doAttemptSetKeySelection(Object key)
+	synchronized private Object doAttemptSetKeySelection(final Object key)
 	{	
 		if (getBufferTopKey() == null || getBufferEndKey() == null)
 			return key;
@@ -367,7 +274,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			return key;
 		}
 		
-		Object element = getContentManager().getElement(row);
+		Object element = getVirtualContentModel().getElement(row);
 		final int col = columnOf(element, key);
 		
 		if (col == -1)
@@ -380,17 +287,38 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
+					if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+						System.out.println(getRendering() + " set cursor selection " + ((BigInteger)key).toString(16)); //$NON-NLS-1$
+					
+					if (fPendingSelection != null && fPendingSelection != key)
+						return Status.OK_STATUS;
+					
+					fSelectionKey = key;
+					fPendingSelection = null;
+					
+					if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+					{
+						System.out.println(getRendering() + " set cursor selection, row is " + getTable().getItem(row).getData()); //$NON-NLS-1$
+						System.out.println(getRendering() + " set cursor selection, model is " + getVirtualContentModel().getElement(row)); //$NON-NLS-1$
+					}
+					
 					fTableCursor.setSelection(row, col);		
 					showTableCursor(true);
 					
+					
 					int topIndex = getTable().getTopIndex();
-					Object topKey = getVirtualContentManager().getKey(topIndex);
+					Object topKey = getVirtualContentModel().getKey(topIndex);
 					setTopIndexKey(topKey);
 					
 				} catch (RuntimeException e) {
-					// by the time this is called, the selection may no longer
-					// be valid, catch all exception and just hide cursor.
+					// hide cursor and retry selection
 					showTableCursor(false);
+					
+					// by the time this is called, the selection may no longer
+					// get the latest selection and try to set selection again
+					Object selectionKey = getSelectionKey();
+					fPendingSelection = selectionKey;
+					doAttemptSetKeySelection(selectionKey);
 				}
 				return Status.OK_STATUS;
 			}};
@@ -402,11 +330,11 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	}
 	
 	private Object getSelectionKeyFromCursor()
-	{
-		int row = getContentManager().indexOfElement((getElement(fTableCursor.getRow())));
+	{	
+		int idx = getTable().indexOf(fTableCursor.getRow());		
 		int col = fTableCursor.getColumn();
 		
-		return getVirtualContentManager().getKey(row, col);
+		return getVirtualContentModel().getKey(idx, col);
 	}
 	
 	private Object getBufferTopKey()
@@ -416,39 +344,39 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	private Object getBufferEndKey()
 	{
-		AsynchronousTableViewerContentManager mgr = getContentManager();
+		AbstractVirtualContentTableModel model = getVirtualContentModel();
 		
-		return getKey(mgr.getElements().length-1);
+		if (model != null)
+			return getKey(model.getElements().length-1);
+		return null;
 	}
 	
 	public int indexOf(Object key)
 	{
 		int idx = -1;
-		AsynchronousTableViewerContentManager mgr = getContentManager();
-		if (mgr instanceof IVirtualContentManager)
-		{
-			idx = ((IVirtualContentManager)mgr).indexOf(key);
-		}
+		AbstractVirtualContentTableModel model = getVirtualContentModel();
+		if (model != null)
+			idx = model.indexOfKey(key);
 		return idx;
 	}
 	
 	private int columnOf(Object element, Object key)
 	{
 		int idx = -1;
-		AsynchronousTableViewerContentManager mgr = getContentManager();
-		if (mgr instanceof IVirtualContentManager)
+		AbstractVirtualContentTableModel model = getVirtualContentModel();
+		if (model != null)
 		{
-			idx = ((IVirtualContentManager)mgr).columnOf(element, key);
+			idx = model.columnOf(element, key);
 		}
 		return idx;
 	}
 	
 	public Object getKey(int index)
 	{
-		AsynchronousTableViewerContentManager mgr = getContentManager();
-		if (mgr instanceof IVirtualContentManager)
+		AbstractVirtualContentTableModel model = getVirtualContentModel();
+		if (model != null)
 		{
-			Object key = ((IVirtualContentManager)mgr).getKey(index);
+			Object key = model.getKey(index);
 			return key;
 		}
 		return null;
@@ -456,7 +384,10 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	public Object getKey(int row, int col)
 	{		
-		return getVirtualContentManager().getKey(row, col);
+		AbstractVirtualContentTableModel model = getVirtualContentModel();
+		if (model != null)
+			return model.getKey(row, col);
+		return null;
 	}
 	
 	
@@ -471,7 +402,6 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		{
 			oldTopIndexKey = getPendingSetTopIndexKey();
 		}
-		
 		Object oldSelectionKey = null;
 		try {
 			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
@@ -482,13 +412,28 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					System.out.println("top index key is null, nothing to preserve"); //$NON-NLS-1$
 			}
 
-			oldSelectionKey = getSelectionKey();
+			if (fPendingSelection != null)
+				oldSelectionKey = fPendingSelection;
+			else
+				oldSelectionKey = getSelectionKey();
+			
+			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+			{
+				if (oldTopIndexKey != null)
+					System.out.println(getRendering() + " preserve selection: " + ((BigInteger)oldSelectionKey).toString(16)); //$NON-NLS-1$
+				else
+					System.out.println("selection key is null, nothing to preserve"); //$NON-NLS-1$
+			}
+			
 			// perform the update
 			updateCode.run();
 			
 		} finally {
+			
 			if (oldSelectionKey != null)
 			{
+				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+					System.out.println(getRendering() + " preserved selection " + ((BigInteger)oldSelectionKey).toString(16)); //$NON-NLS-1$
 				setSelection(oldSelectionKey);
 			}
 			
@@ -523,11 +468,15 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	public void showTableCursor(final boolean show)
 	{
+		
 		Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
 		if (Thread.currentThread() == display.getThread())
 		{
 			if (!fTableCursor.isDisposed())
-				fTableCursor.setVisible(show);
+			{
+				if (fTableCursor.isVisible() != show)
+					fTableCursor.setVisible(show);
+			}
 		}
 		else
 		{
@@ -535,30 +484,15 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					if (!fTableCursor.isDisposed())
-						fTableCursor.setVisible(show);
+					{
+						if (fTableCursor.isVisible() != show)
+							fTableCursor.setVisible(show);
+					}
 					return Status.OK_STATUS;
 				}};
 				
 			job.setSystem(true);
 			job.schedule();
-		}
-	}
-	
-	public void setLabels(Widget widget, String[] labels, ImageDescriptor[] imageDescriptors) {
-		super.setLabels(widget, labels, imageDescriptors);
-		
-		// when the cursor selection is set, the table viewer may not have been populated
-		// hence the table cursor may not have been drawn properly
-		if (widget == fTableCursor.getRow())
-		{
-			fTableCursor.redraw();
-		}
-		
-		// HACK:  hack to get cursor to be selected properly during reload
-		if (!hasPendingUpdates())
-		{
-			fPendingSelection = getSelectionKey();
-			attemptSetKeySelection();
 		}
 	}
 
@@ -927,10 +861,13 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			return;
 		}
 		
-		TableItem tableItem = getTable().getItem(row);
-
-		Object property = getColumnProperties()[col];
-		getCellModifier().modify(tableItem, (String)property, newValue);
+		if (row >= 0 && row < getTable().getItemCount())
+		{
+			TableItem tableItem = getTable().getItem(row);
+	
+			Object property = getColumnProperties()[col];
+			getCellModifier().modify(tableItem, (String)property, newValue);
+		}
 	}
 	
 	public TableCursor getCursor()
@@ -952,7 +889,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			}
 
 			public String getColumnText(Object element, int columnIndex) {
-				int idx = getContentManager().indexOfElement(element);
+				int idx = getVirtualContentModel().indexOfElement(element);
 				if (idx >= 0 )
 				{	
 					TableItem item = getTable().getItem(idx);
@@ -982,10 +919,10 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			public void run() {
 				// causes the content of the table viewer to be replaced
 				// without asking content adapter for content
-				AsynchronousTableViewerContentManager mgr = getContentManager();
-				if (mgr instanceof IVirtualContentManager)
+				AbstractVirtualContentTableModel model = getVirtualContentModel();
+				if (model != null)
 				{
-					((IVirtualContentManager)mgr).handleViewerChanged();
+					model.handleViewerChanged();
 				}
 			}});
 	}
@@ -1003,11 +940,6 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		super.handlePresentationFailure(monitor, status);
 	}
 	
-	private boolean isChangesManagedByMemoryBlock()
-	{
-		return fMBSupportsChangeManagement;
-	}
-	
 	public void refresh(boolean getContent)
 	{
 		if (getContent)
@@ -1017,11 +949,36 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			preservingSelection(new Runnable() {
 
 				public void run() {
-					AsynchronousTableViewerContentManager mgr = getContentManager();
-					Object[] elements = mgr.getElements();
-					mgr.remove(elements);
-					mgr.add(elements);
+					AbstractVirtualContentTableModel model = getVirtualContentModel();
+					if (model != null)
+					{
+						Object[] elements = model.getElements();
+						model.remove(elements);
+						model.add(elements);
+					}
 				}});
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#getModel()
+	 */
+	public AsynchronousModel getModel() {
+		return super.getModel();
+	}
+	
+	// TODO:  need pluggable model to be truly flexible
+	protected AbstractVirtualContentTableModel createVirtualContentTableModel() {
+		return new TableRenderingModel(this);
+	}
+
+	protected void updateComplete(IAsynchronousRequestMonitor monitor) {
+		super.updateComplete(monitor);
+		
+		if (!hasPendingUpdates())
+		{
+			attemptSetKeySelection();
+			fTableCursor.redraw();
 		}
 	}
 }

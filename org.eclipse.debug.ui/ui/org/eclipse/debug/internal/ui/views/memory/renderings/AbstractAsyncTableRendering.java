@@ -67,6 +67,8 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.TableCursor;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -114,7 +116,14 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		 */
 		public void run() {
 			fIsShowAddressColumn = !fIsShowAddressColumn;
-			resizeColumnsToPreferredSize();
+			if (!fIsShowAddressColumn)
+			{
+				fTableViewer.getTable().getColumn(0).setWidth(0);
+			}
+			else
+			{
+				fTableViewer.getTable().getColumn(0).pack();
+			}
 			updateActionLabel();
 		}
 
@@ -265,8 +274,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	public void resetRendering() throws DebugException {
 		BigInteger baseAddress = fContentDescriptor.getContentBaseAddress();
 		goToAddress(baseAddress);
-		fTableViewer.setTopIndex(baseAddress);
 		fTableViewer.setSelection(baseAddress);
+		fTableViewer.setTopIndex(baseAddress);
 	}
 
 	public Control createControl(Composite parent) {
@@ -778,8 +787,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		{
 			reloadTable(address);
 		}
-		Object selection = fTableViewer.getSelectionKey();
-		fTableViewer.setSelection(selection);
 	}
 	
 	private boolean isAtBottomBuffer(BigInteger address)
@@ -788,8 +795,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (idx < 0)
 			return true;
 		
-		int bottomIdx = idx + fTableViewer.getContentManager().getVisibleItemCount(idx);
-		int elementsCnt = fTableViewer.getContentManager().getElements().length;
+		int bottomIdx = idx + getNumberOfVisibleLines();
+		int elementsCnt = fTableViewer.getVirtualContentModel().getElements().length;
 		int numLinesLeft = elementsCnt - bottomIdx;
 		
 		if (numLinesLeft <= 3)
@@ -832,13 +839,12 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 			public void run() {			
 				// call this to make the table viewer to reload when needed
-				fTableViewer.setSelection(address);
-				
 				int i = fTableViewer.indexOf(address);
 				if (i < 0)
 				{
 					topVisibleAddressChanged(address);
 				}
+				fTableViewer.setSelection(address);
 			}
 		};
 		
@@ -1251,10 +1257,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	{	
 		BigInteger startAddress = fContentDescriptor.getStartAddress();
 		startAddress = MemoryViewUtil.alignDoubleWordBoundary(startAddress);
-		if (fTableViewer.getContentManager() instanceof IVirtualContentManager)
+		AbstractVirtualContentTableModel model = fTableViewer.getVirtualContentModel();
+		
+		if (model != null)
 		{
-			IVirtualContentManager vcMgr = (IVirtualContentManager)fTableViewer.getContentManager();
-			Object key = vcMgr.getKey(0);
+			Object key = model.getKey(0);
 			if (key instanceof BigInteger)
 			{
 				BigInteger startBufferAddress = (BigInteger)key;
@@ -1272,12 +1279,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		BigInteger endAddress = fContentDescriptor.getEndAddress();
 		endAddress = MemoryViewUtil.alignDoubleWordBoundary(endAddress);
 		
-		int numElements = fTableViewer.getContentManager().getElements().length;
-		
-		if (fTableViewer.getContentManager() instanceof IVirtualContentManager)
+		AbstractVirtualContentTableModel model = fTableViewer.getVirtualContentModel();
+		if (model != null)
 		{
-			IVirtualContentManager vcMgr = (IVirtualContentManager)fTableViewer.getContentManager();
-			Object key = vcMgr.getKey(numElements-1);
+			int numElements = model.getElements().length;
+			Object key = model.getKey(numElements-1);
 			if (key instanceof BigInteger)
 			{
 				BigInteger endBufferAddress = (BigInteger)key;
@@ -1644,7 +1650,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	public void goToAddress(BigInteger address) throws DebugException {
 		
-		int i = fTableViewer.getVirtualContentManager().indexOf(address);
+		if (fTableViewer.getVirtualContentModel() == null)
+			return;
+		
+		int i = fTableViewer.getVirtualContentModel().indexOfKey(address);
 
 		if (i >= 0)
 		{
@@ -1680,11 +1689,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				DebugException e = new DebugException(stat);
 				throw e;
 			}
-			
+	
 			// load at the address
-			reloadTable(address);
 			fTableViewer.setSelection(address);
-			
+			reloadTable(address);
+	
 			updateSyncSelectedAddress(address);
 
 			if (!isDynamicLoad())
@@ -1702,10 +1711,18 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	public void resizeColumnsToPreferredSize() {
 		fTableViewer.resizeColumnsToPreferredSize();
-		
 		if (!fIsShowAddressColumn)
 		{
-			fTableViewer.getTable().getColumn(0).setWidth(0);
+			final TableColumn column = fTableViewer.getTable().getColumn(0);
+			column.addControlListener(new ControlListener() {
+
+				public void controlMoved(ControlEvent e) {
+				}
+
+				public void controlResized(ControlEvent e) {
+					column.removeControlListener(this);
+					column.setWidth(0);
+				}});
 		}
 	}
 

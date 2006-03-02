@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -22,10 +21,11 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewerContentManager;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,10 +34,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
-public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
+abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 
 	private Object fPendingTopIndexKey;
 	private ArrayList fTopIndexQueue = new ArrayList();
@@ -47,7 +47,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 	private SelectionListener fScrollSelectionListener;
 	private ListenerList fPresentationErrorListeners;
 	private Object fTopIndexKey;
-	private IVirtualContentManager fVirtualContentManager;
+
 	public static boolean DEBUG_DYNAMIC_LOADING = false;
 	
 	public AsyncVirtualContentTableViewer(Composite parent, int style) {
@@ -65,12 +65,6 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 				handleScrollBarSelection();
 			}};
 		scroll.addSelectionListener(fScrollSelectionListener);
-	}
-	
-	
-	public void setLabels(Widget widget, String[] labels, ImageDescriptor[] imageDescriptors) {
-		super.setLabels(widget, labels, imageDescriptors);
-		fPendingResizeColumns = attemptResizeColumnsToPreferredSize();
 	}
 
 	public void setTopIndex(Object key)
@@ -126,27 +120,25 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 		if (fPendingResizeColumns)
 		{
 			if(!hasPendingUpdates()) {
-				Table table = getTable();
-				TableColumn[] columns = table.getColumns();
+				UIJob job = new UIJob("packcolumns"){ //$NON-NLS-1$
+
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						Table table = getTable();
+						TableColumn[] columns = table.getColumns();
+						
+						for (int i=0 ;i<columns.length-1; i++)
+						{	
+							columns[i].pack();
+						}
+						return Status.OK_STATUS;
+					}};
+				job.setSystem(true);
+				job.schedule();
 				
-				for (int i=0 ;i<columns.length-1; i++)
-				{	
-					columns[i].pack();
-				}
 				return false;
 			}
 		}
 		return fPendingResizeColumns;
-	}
-	
-	protected IVirtualContentManager getVirtualContentManager()
-	{
-		if (fVirtualContentManager == null)
-		{
-			if (getContentManager() instanceof IVirtualContentManager)
-				fVirtualContentManager = (IVirtualContentManager)getContentManager();
-		}
-		return fVirtualContentManager;
 	}
 	
 	/**
@@ -166,7 +158,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 	
 	private synchronized Object doAttemptSetTopIndex(final Object topIndexKey)
 	{
-		final int i = getVirtualContentManager().indexOf(topIndexKey);
+		final int i = getVirtualContentModel().indexOfKey(topIndexKey);
 		if (i >= 0)
 		{
 			UIJob job = new UIJob("set top index"){ //$NON-NLS-1$
@@ -177,7 +169,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 						
 						// remove the top index key from queue when it is processed
 						removeKeyFromQueue(topIndexKey);
-						int idx = getVirtualContentManager().indexOf(topIndexKey);
+						int idx = getVirtualContentModel().indexOfKey(topIndexKey);
 						if (idx >= 0)
 						{
 							if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
@@ -205,20 +197,6 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 		}
 		return topIndexKey;
 	}
-
-	 protected void setChildren(final Widget widget, final List children)
-	 {
-		 preservingSelection(new Runnable() {
-
-			public void run() {
-				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-					System.out.println(Thread.currentThread().getName() + " Set children"); //$NON-NLS-1$
-				 AsyncVirtualContentTableViewer.super.setChildren(widget, children);
-			}});
-		
-		 if (widget == getTable())
-			 attemptSetTopIndex();
-	 }
 	 
 	 public void addVirtualContentListener(IVirtualContentListener listener)
 	 {
@@ -255,8 +233,8 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 	 {
 		Object[] listeners = fVirtualContentListeners.getListeners();
 		int topIdx = getTable().getTopIndex();
-		int bottomIdx = topIdx + getContentManager().getVisibleItemCount(topIdx);
-		int elementsCnt = getContentManager().getElements().length;
+		int bottomIdx = topIdx + getNumberOfVisibleLines();
+		int elementsCnt = getVirtualContentModel().getElements().length;
 		int numLinesLeft = elementsCnt - bottomIdx;
 	 
 		for (int i = 0; i < listeners.length; i++) {
@@ -291,7 +269,7 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 			System.out.println(Thread.currentThread().getName() + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$
 		}
 
-		setTopIndexKey(getVirtualContentManager().getKey(getTable().getTopIndex()));
+		setTopIndexKey(getVirtualContentModel().getKey(getTable().getTopIndex()));
 
 		notifyListenersAtBufferStart();
 		notifyListenersAtBufferEnd();
@@ -362,16 +340,17 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 		}
 	}
 
-	// TODO:  viewer needs to create a content manager that implements IVirtualContentManager
-	protected AsynchronousTableViewerContentManager createContentManager() {
-		return super.createContentManager();
+	protected AsynchronousModel createModel() {
+		return createVirtualContentTableModel();
 	}
+	
+	abstract protected AbstractVirtualContentTableModel createVirtualContentTableModel();
 	
 	private void addKeyToQueue(Object topIndexKey)
 	{
 		synchronized(fTopIndexQueue){
 			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-				System.out.println(" >>> add to queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+				System.out.println(" >>> add to top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
 			fTopIndexQueue.add(topIndexKey);
 		}
 	}
@@ -380,9 +359,83 @@ public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 	{
 		synchronized(fTopIndexQueue){
 			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-				System.out.println(" >>> remove frome queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+				System.out.println(" >>> remove frome top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
 			fTopIndexQueue.remove(topIndexKey);
 		}
 	}
+	
+	public AbstractVirtualContentTableModel getVirtualContentModel()
+	{
+		if (getModel() instanceof AbstractVirtualContentTableModel)
+			return (AbstractVirtualContentTableModel) getModel();
+		return null;
+	}
+	
+	private int getNumberOfVisibleLines()
+	{	
+		Table table = getTable();
+		int height = table.getSize().y;
+		
+		// when table is not yet created, height is zero
+		if (height == 0)
+		{
+			// make use of the table viewer to estimate table size
+			height = table.getParent().getSize().y;
+		}
+		
+		// height of border
+		int border = table.getHeaderHeight();
+		
+		// height of scroll bar
+		int scroll = table.getHorizontalBar().getSize().y;
+
+		// height of table is table's area minus border and scroll bar height		
+		height = height-border-scroll;
+
+		// calculate number of visible lines
+		int lineHeight = getMinTableItemHeight(table);
+		
+		int numberOfLines = height/lineHeight;
+		
+		if (numberOfLines <= 0)
+			return 20;
+	
+		return numberOfLines;		
+	}
+	
+	private int getMinTableItemHeight(Table table){
+		
+		// Hack to get around Linux GTK problem.
+		// On Linux GTK, table items have variable item height as
+		// carriage returns are actually shown in a cell.  Some rows will be
+		// taller than others.  When calculating number of visible lines, we
+		// need to find the smallest table item height.  Otherwise, the rendering
+		// underestimates the number of visible lines.  As a result the rendering
+		// will not be able to get more memory as needed.
+		if (MemoryViewUtil.isLinuxGTK())
+		{
+			// check each of the items and find the minimum
+			TableItem[] items = table.getItems();
+			int minHeight = table.getItemHeight();
+			for (int i=0; i<items.length; i++)
+			{
+				minHeight = Math.min(items[i].getBounds(0).height, minHeight);
+			}
+			
+			return minHeight;
+				
+		}
+		return table.getItemHeight();
+	}
+
+	protected void updateComplete(IAsynchronousRequestMonitor monitor) {
+		super.updateComplete(monitor);
+		attemptSetTopIndex();
+		if (monitor instanceof ILabelRequestMonitor)
+		{
+			fPendingResizeColumns = attemptResizeColumnsToPreferredSize();
+		}
+	}
+	
 
 }
