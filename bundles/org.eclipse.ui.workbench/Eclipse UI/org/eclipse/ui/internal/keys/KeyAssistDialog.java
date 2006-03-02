@@ -29,6 +29,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.window.Window;
@@ -490,6 +491,7 @@ final class KeyAssistDialog extends PopupDialog {
 			}
 		}
 
+		Dialog.applyDialogFont(parent);
 		columnKeySequence.pack();
 		if (previousWidth != NO_REMEMBERED_WIDTH) {
 			columnKeySequence.setWidth(previousWidth);
