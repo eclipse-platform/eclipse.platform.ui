@@ -140,6 +140,7 @@ public interface IParserTags {
 	public static final String ID = "id";//$NON-NLS-1$
 	public static final String MANAGERDATA = "CSMData";//$NON-NLS-1$
 	public static final String MANAGERDATAKEY = "key"; //$NON-NLS-1$
+	public static final String MANAGERDATAVALUE = "value"; //$NON-NLS-1$
 	public static final String COMPLETED ="completed"; //$NON-NLS-1$
 	public static final String CURRENT = "current"; //$NON-NLS-1$
 	public static final String SUBITEMCOMPLETED ="subitemcompleted"; //$NON-NLS-1$
@@ -150,5 +151,6 @@ public interface IParserTags {
 	public static final String BUTTONSTATE = "buttonstate"; //$NON-NLS-1$
 	public static final String PATH = "path"; //$NON-NLS-1$
 	public static final String CHEATSHEET_STATE_REFERENCE = "CHEATSHEET_STATE_REFERENCE"; //$NON-NLS-1$
+	public static final String CHEATSHEET_STATE = "cheatsheetState"; //$NON-NLS-1$
 	
 }

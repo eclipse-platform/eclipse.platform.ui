@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,23 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ua.tests.cheatsheet.execution;
+package org.eclipse.ua.tests.cheatsheet.other;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Unit tests for the classes which execute commands and actions from a cheatsheet
+ * Unit tests for cheatsheets which don't fill into any other category
  */
-public class AllExecutionTests {
+public class AllOtherCheatSheetTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
-				"org.eclipse.ua.tests.cheatsheet.AllExecutionTests");
+				"org.eclipse.ua.tests.cheatsheet.AllOtherCheatSheetTests");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(TestVariableSubstitution.class);
-		suite.addTestSuite(TestActionExecution.class);
-		suite.addTestSuite(TestCommandExecution.class);
+		suite.addTestSuite(TestStatePersistence.class);
 		//$JUnit-END$
 		return suite;
 	}

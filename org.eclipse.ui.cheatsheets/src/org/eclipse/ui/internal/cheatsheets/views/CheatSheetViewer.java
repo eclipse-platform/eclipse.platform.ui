@@ -21,7 +21,6 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -30,6 +29,7 @@ import org.eclipse.help.ui.internal.views.HelpTray;
 import org.eclipse.help.ui.internal.views.IHelpPartPage;
 import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
@@ -67,6 +68,9 @@ import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
+import org.eclipse.ui.internal.cheatsheets.state.DefaultStateManager;
+import org.eclipse.ui.internal.cheatsheets.state.ICheatSheetStateManager;
+import org.eclipse.ui.internal.cheatsheets.state.TrayStateManager;
 import org.osgi.framework.Bundle;
 
 public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
@@ -108,10 +112,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private boolean inDialog;
 	private Listener listener;
 	
-	private IPath savePath = null;
-	private IPath nextSavePath = null;
+	private ICheatSheetStateManager stateManager; // The state manager to use when saving
+	private ICheatSheetStateManager preTrayManager; // The state manager in use before a tray was opened
 	private String restorePath;
-
 	/**
 	 * The constructor.
 	 * 
@@ -326,9 +329,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		return false;
 	}
 
-	private boolean checkSavedState() {
+	private boolean loadState() {
 		try {
-			Properties props = saveHelper.loadState(currentID, savePath);
+			Properties props = stateManager.getProperties();
 	
 			// There is a bug which causes the background of the buttons to
 			// remain white, even though the color is set. So instead of calling
@@ -351,7 +354,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			String cid = (String) props.get(IParserTags.ID);
 			Hashtable completedSubItems = (Hashtable) props.get(IParserTags.SUBITEMCOMPLETED);
 			Hashtable skippedSubItems = (Hashtable) props.get(IParserTags.SUBITEMSKIPPED);
-			Hashtable csmData = (Hashtable) props.get(IParserTags.MANAGERDATA);
 	
 			ArrayList completedSubItemsItemList = new ArrayList();
 			ArrayList skippedSubItemsItemList = new ArrayList();
@@ -366,8 +368,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	
 			if (cid != null)
 				currentID = cid;
-	
-			getManager().setData(csmData);
+
+			manager = stateManager.getCheatSheetManager();
 	
 			if (itemNum >= 0) {
 				currentItemNum = itemNum;
@@ -451,7 +453,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				if (buttonIsDown) {
 					if(expandRestoreAction != null)
 						expandRestoreAction.setCollapsed(true);
-					saveCurrentSheet();
 				}
 				
 				// If the last item is the current one and it is complete then
@@ -487,6 +488,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			// the cheat sheet has been modified since this previous execution. This most
 			// often occurs during development of cheat sheets and as such an end user is
 			// not as likely to encounter this.
+			
+			boolean reset = MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+					Messages.CHEATSHEET_STATE_RESTORE_FAIL_TITLE,
+					Messages.CHEATSHEET_STATE_RESET_CONFIRM);
+
+			if (reset) {
+				restart();
+				return true;
+			} 
 			
 			// Log the exception
 			String stateFile = saveHelper.getStateFile(currentID).toOSString();
@@ -646,7 +656,11 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			IHelpPartPage page = helpPart.createPage(CheatSheetHelpPart.ID, null, null);
 			page.setVerticalSpacing(0);
 			page.setHorizontalMargin(0);
-			helpPart.addPart(CheatSheetHelpPart.ID, new CheatSheetHelpPart(helpPart.getForm().getForm().getBody(), helpPart.getForm().getToolkit(), page.getToolBarManager(), contentElement, savePath));
+			ICheatSheetStateManager trayManager = new TrayStateManager();
+			preTrayManager = stateManager;
+			stateManager = trayManager;
+			saveCurrentSheet();      // Save the state into the tray manager
+			helpPart.addPart(CheatSheetHelpPart.ID, new CheatSheetHelpPart(helpPart.getForm().getForm().getBody(), helpPart.getForm().getToolkit(), page.getToolBarManager(), contentElement, trayManager));
 			page.addPart(CheatSheetHelpPart.ID, true);
 			helpPart.addPage(page);
 			helpPart.showPage(CheatSheetHelpPart.ID);
@@ -661,7 +675,11 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				public void handleEvent(Event event) {
 					control.setVisible(true);
 					Display.getCurrent().addFilter(SWT.Show, listener);
-					checkSavedState();
+					if (preTrayManager != null) {
+						loadState();   // Load from the tray manager
+						stateManager = preTrayManager;
+						preTrayManager = null;
+					}
 				}
 			});
 		}
@@ -813,15 +831,16 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	    CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after CheatSheetPage.createPart() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 	    if (model instanceof CheatSheet) {	
-			initManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
 			CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after fireEvent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 	
-			if(!checkSavedState()) {
+			if(!loadState()) {
 				// An error occurred when apply the saved state data.
 				control.setRedraw(true);
 				control.layout();
 				return;
 			}
+
+			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
 	    }
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after checkSavedState() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -960,17 +979,25 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	/*package*/ void saveCurrentSheet() {
 		if(currentID != null) {
 			if (currentPage instanceof CheatSheetPage) {
-				boolean expandRestoreActionState = false;
-				if(expandRestoreAction != null)
-					expandRestoreActionState = expandRestoreAction.isCollapsed();			
-				saveHelper.saveState(currentItemNum, viewItemList, expandRestoreActionState, expandRestoreList, currentID, restorePath, getManager());
+				Properties properties = saveHelper.createProperties(currentItemNum, viewItemList, getExpandRestoreActionState(), expandRestoreList, currentID, restorePath);
+			    IStatus status = stateManager.saveState(properties, getManager());
+			    if (!status.isOK()) {
+			    	CheatSheetPlugin.getPlugin().getLog().log(status);
+			    }
 			} else if (currentPage instanceof CompositeCheatSheetPage) {
 				((CompositeCheatSheetPage)currentPage).saveState();
 			}
 		}
 	}
+	
+	private boolean getExpandRestoreActionState() {
+		boolean expandRestoreActionState = false;
+		if(expandRestoreAction != null)
+			expandRestoreActionState = expandRestoreAction.isCollapsed();
+		return expandRestoreActionState;	
+	}
 
-	/*package*/ void setContent(CheatSheetElement element) {
+	/*package*/ void setContent(CheatSheetElement element, ICheatSheetStateManager inputStateManager) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.setContent(CheatSheetElement element)"); //$NON-NLS-1$
 
 		if (element != null && element.equals(contentElement))
@@ -981,6 +1008,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 		// Set the current content to new content
 		contentElement = element;
+		stateManager = inputStateManager;	
+		stateManager.setElement(element);
 
 		currentID = null;
 		contentURL = null;
@@ -1011,7 +1040,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() before initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 		// Initialize the view with the new contents
 		if (control != null) {
-			initSavePath();
 			initCheatSheetView();
 		}
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() after initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1029,11 +1057,16 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if (currentItem != null)
 			currentItem.getMainItemComposite().setFocus();
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String)
 	 */
 	public void setInput(String id) {
+		setInput(id, new DefaultStateManager());
+	}
+
+	public void setInput(String id, ICheatSheetStateManager inputStateManager) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.setInput(String id)"); //$NON-NLS-1$
 
 		CheatSheetElement element = null;
@@ -1055,7 +1088,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		}
 
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setInput(String id)", "Time in CheatSheetViewer.setInput(String id) before setContent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
-		setContent(element);
+		setContent(element, inputStateManager);
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setInput(String id)", "Time in CheatSheetViewer.setInput(String id) after setContent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Update most recently used cheat sheets list.
@@ -1067,6 +1100,10 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String, java.lang.String, java.net.URL)
 	 */
 	public void setInput(String id, String name, URL url) {
+		setInput(id, name, url, new DefaultStateManager());
+	}
+	
+	public void setInput(String id, String name, URL url, ICheatSheetStateManager inputStateManager) {
 		if (id == null || name == null || url == null) {
 			throw new IllegalArgumentException();
 		}
@@ -1076,7 +1113,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 		nullCheatSheetId = false;
 		invalidCheatSheetId = false;
-		setContent(element);
+		setContent(element, inputStateManager);
 	}
 	
     /*package*/ void toggleExpandRestore() {
@@ -1086,11 +1123,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if (expandRestoreAction.isCollapsed()) {
 			restoreExpandStates();
 			expandRestoreAction.setCollapsed(false);
-			saveCurrentSheet();
 		} else {
 			collapseAllButCurrent(true);
 			expandRestoreAction.setCollapsed(true);
-			saveCurrentSheet();
 		}
 
 	}
@@ -1106,32 +1141,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	public void copy() {
 		if (currentItem!=null)
 			currentItem.copy();
-	}
-	
-	/**
-	 * Sets the location to be used for saving the state of the 
-	 * cheatsheet which is currently displayed. 
-	 * @param path The path of a directory on the file system or null
-	 * to cause the default location to be used
-	 */
-	public void setSavePath(IPath path) {
-		saveHelper.setSavePath(path, currentID, true);
-		saveCurrentSheet();
-	}
-
-	/**
-	 * Sets the location where the state will be stored for the next cheatsheet
-	 * which is launched. Does not affect the state location for the currently
-	 * displayed cheatsheet.
-	 * @param savePath
-	 */
-	public void setNextSavePath(IPath savePath) {
-	    nextSavePath = savePath;		
-	}
-	
-	private void initSavePath() {
-		savePath = nextSavePath;
-		nextSavePath = null;
 	}
 
 	public void addListener(CheatSheetListener listener) {
@@ -1152,6 +1161,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		IntroItem introItem = (IntroItem) getViewItemAtIndex(0);
 		introItem.setIncomplete();
 		showIntroItem();		
+	}
+
+	public void saveState(IMemento memento) {
+		if (currentPage instanceof CheatSheetPage) {
+			Properties properties = saveHelper.createProperties(currentItemNum, viewItemList, getExpandRestoreActionState(), expandRestoreList, currentID, restorePath);
+		    saveHelper.saveToMemento(properties, getManager(), memento);
+		}
 	}
 
 }

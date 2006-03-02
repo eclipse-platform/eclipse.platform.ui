@@ -48,6 +48,8 @@ public final class Messages extends NLS {
 	public static String ERROR_INVALID_CHEATSHEET_ID;
 	public static String ERROR_CHEATSHEET_DOESNOT_EXIST;
 	public static String ERROR_APPLYING_STATE_DATA;
+	public static String CHEATSHEET_STATE_RESTORE_FAIL_TITLE;
+	public static String CHEATSHEET_STATE_RESET_CONFIRM;
 	public static String ERROR_APPLYING_STATE_DATA_LOG;
 	public static String INITIAL_VIEW_DIRECTIONS;
 	public static String ERROR_LOADING_CHEATSHEET_CONTENT;

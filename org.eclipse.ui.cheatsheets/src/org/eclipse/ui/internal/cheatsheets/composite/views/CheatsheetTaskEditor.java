@@ -21,19 +21,19 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.CheatSheetViewerFactory;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
-import org.eclipse.ui.cheatsheets.ICheatSheetViewer;
 import org.eclipse.ui.cheatsheets.IEditableTask;
 import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
+import org.eclipse.ui.internal.cheatsheets.state.MementoStateManager;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetViewer;
 
 public class CheatsheetTaskEditor extends TaskEditor {
-	private ICheatSheetViewer viewer;
+	private CheatSheetViewer viewer;
 	private IEditableTask task;
 
 	public void createControl(Composite parent, FormToolkit toolkit) {
-		viewer = CheatSheetViewerFactory.createCheatSheetView();
+		viewer = (CheatSheetViewer)CheatSheetViewerFactory.createCheatSheetView();
 		viewer.createPartControl(parent);
 	}
 	
@@ -47,22 +47,22 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		Dictionary params = task.getParameters();
 		String id = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
 		String path = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_PATH);
+		MementoStateManager stateManager = new MementoStateManager(memento);
 		if (path != null) {
 			URL url;
 			try {
 				url = task.getInputUrl(path);
-				viewer.setInput(id, task.getName(), url);				
+				viewer.setInput(id, task.getName(), url, stateManager);				
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 				return;
 			}
 		} else {
-		    viewer.setInput(id);
+		    viewer.setInput(id, stateManager);
 		}
-		CheatSheetViewer cheatSheetViewer = (CheatSheetViewer)viewer;
-		cheatSheetViewer.addListener(new TaskListener());
+		viewer.addListener(new TaskListener());
 		if (memento == null) {
-			cheatSheetViewer.restart();
+			viewer.restart();
 		}
 	}
 	
@@ -79,6 +79,6 @@ public class CheatsheetTaskEditor extends TaskEditor {
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Implement state save to memento
+		viewer.saveState(memento);
 	}
 }
