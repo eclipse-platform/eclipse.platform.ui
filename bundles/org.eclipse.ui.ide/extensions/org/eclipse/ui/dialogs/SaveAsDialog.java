@@ -274,15 +274,16 @@ public class SaveAsDialog extends TitleAreaDialog {
      * @return <code>true</code> if valid, and <code>false</code> otherwise
      */
     private boolean validatePage() {
-        setErrorMessage(null);
-
         if (!resourceGroup.areAllValuesValid()) {
             if (!resourceGroup.getResource().equals("")) { //$NON-NLS-1$
 				setErrorMessage(resourceGroup.getProblemMessage());
-			}
+			} else {
+            	setErrorMessage(null);
+            }
             return false;
         }
-
+        
+        setErrorMessage(null);
         return true;
     }
     
