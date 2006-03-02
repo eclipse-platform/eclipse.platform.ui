@@ -200,7 +200,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		else
 			message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
 		if (total > 1)
-			setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total) }));
+			setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
 		else
 			setTitle(message);
 	}
@@ -222,7 +222,6 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 				fTreeViewerPane.setText(RefactoringUIMessages.RefactoringHistoryPreviewPage_no_changes);
 				fNextAction.setEnabled(false);
 				fPreviousAction.setEnabled(false);
-				fFilterDropDownAction.setEnabled(false);
 				fTreeViewer.setInput(null);
 				return;
 			}
@@ -230,8 +229,16 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes);
 		fNextAction.setEnabled(true);
 		fPreviousAction.setEnabled(true);
-		fFilterDropDownAction.setEnabled(true);
 		fTreeViewer.setInput(input);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setVisible(final boolean visible) {
+		super.setVisible(visible);
+		if (fTreeViewer.getInput() == null)
+			fFilterDropDownAction.setEnabled(false);
 	}
 
 	/**
