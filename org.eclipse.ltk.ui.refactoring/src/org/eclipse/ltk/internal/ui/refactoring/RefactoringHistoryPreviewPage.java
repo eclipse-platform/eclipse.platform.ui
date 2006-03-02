@@ -222,6 +222,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 				fTreeViewerPane.setText(RefactoringUIMessages.RefactoringHistoryPreviewPage_no_changes);
 				fNextAction.setEnabled(false);
 				fPreviousAction.setEnabled(false);
+				fFilterDropDownAction.setEnabled(false);
 				fTreeViewer.setInput(null);
 				return;
 			}
@@ -229,6 +230,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes);
 		fNextAction.setEnabled(true);
 		fPreviousAction.setEnabled(true);
+		fFilterDropDownAction.setEnabled(true);
 		fTreeViewer.setInput(input);
 	}
 
