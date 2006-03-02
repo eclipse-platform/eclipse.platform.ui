@@ -192,11 +192,51 @@ body, .page{
 }
 
 #navigation-links a {
-	position: relative;
-	float : left;
 	text-align : left;
 	width : auto;
 	height : 64px;
+}
+
+/*
+ * Navigation links have a mixin style 'nav_link<n>' where <n> goes from
+ * 1 to N. This allows us to position these fixed link slots while
+ * not hand-coding the actual link IDs because they can be turned off
+ * by users or products via preferences.
+ */
+
+#navigation-links a.nav_link1 {
+	position: absolute;
+	left : 12;
+}
+
+#navigation-links a.nav_link2 {
+	position : absolute;
+	left : 76px;
+}
+
+#navigation-links a.nav_link3 {
+	position : absolute;
+	left : 140px;
+}
+
+#navigation-links a.nav_link4 {
+	position : absolute;
+	left : 204px;
+}
+
+#navigation-links a.nav_link5 {
+	position : absolute;
+	left : 268px;
+}
+
+#navigation-links a.nav_link6 {
+	position : absolute;
+	left : 332px;
+}
+
+#navigation-links a.nav_link7 {
+	position: absolute;
+	left : 396px;
 }
 
 #navigation-links a img {
@@ -208,6 +248,10 @@ body, .page{
 	top : 10px;
 	left : 9px;
 }
+
+/*
+ * Adjust image position for hover version.
+ */
 
 #navigation-links a:hover img,
 #navigation-links a:focus img,
@@ -224,6 +268,9 @@ body, .page{
 	display : none;
 }
 
+/*
+ * Not showing description for navigation links.
+ */
 #navigation-links a .text { display : none; }
 
 #navigation-links a:hover,
@@ -234,12 +281,6 @@ body, .page{
 	background-repeat: repeat-x;
 	background-position: 0px 2px;
 	z-index: 20;
-}
-
-#navigation-links a:hover:after,
-#navigation-links a:focus:after,
-#navigation-links a:active:after {
-	content : url(../graphics/icons/ctool/nav_rightedgehov.gif);
 }
 
 #navigation-links a:hover .link-label,
@@ -341,7 +382,11 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	clear : both;
 }
 
-/* Page content bins */
+/* Page content quadrants. Page content is placed in four quadrants.
+ * Upper pair is separated from the bottom pair with a divider
+ * to ensure bottom pair is aligned even with the uneven content
+ * in the upper pair.
+ */
 
 #page-content #top-left {
   border: none; float: left; margin: 0px; padding: 0px; width: 50%;
@@ -351,7 +396,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
   border: none; float: right; margin: 0px; padding: 0px; width: 50%;
   clear: right;
 }
-
 /* top-bottom divider - runs the entire width to ensure
  * bottom boxes start at the same y
  */
@@ -370,7 +414,9 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 }
 
 /*
- * Extension importance styles
+ * Extension importance styles. These styles are mixed in 
+ * with the extension content to provide importance-driven 
+ * highlight.
  */
 .importance-low {
 }
@@ -449,78 +495,7 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	float : none;
 	clear : both;
 	text-align: left;
-/*
-	background-color: #c0c0ff;
-	border-color: black;
-	border-style: solid;
-	border-width: 1px;
-*/
 }
-/*
-.content-group {
-	width : auto;
-	padding-left: 10px;
-	padding-right: 10px;
-	float : none;
-	clear : both;
-	text-align: left;
-	background-color: #8080b0;
-	border-color: black;
-	border-style: solid;
-	border-width: 1px;
-}
-
-.content-link {
-	text-align : left; 
-	margin-left : 5px;
-	margin-right : 5px;
-	margin-top : 10px;
-	vertical-align : top;
-	clear : both;
-	background-color: #80b080;
-	border-color: red;
-	border-style: solid;
-	border-width: 1px;
-}
-
-.content-group > .content-link {
-	float : left;
-	vertical-align : middle;
-}
-
-.content-link img  {
-	height : 57px;
-	width : 57px;
-	vertical-align : middle;
-}
-
-.content-group h4 {
-	float : none;
-	clear : both;
-}
-
-p #group-description {
-	padding-bottom : 10px;
-	float : none;
-	clear : both;
-	background-color: #b08080;
-}
-
-.content-link .link-label {
-	display : block;
-	top : -50px;
-	background-color: #b0b080;
-}
-
-.content-link p .text {
-	display : block;
-	position : relative;
-	top : -45px;
-	left : 53px;
-	background-color: #80b0b0;
-}
-
-*/
 
 .content-link:hover { border-right : 0px; }
 

@@ -186,9 +186,10 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
 		if (ids != null) {
 			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
+			int [] counter = new int [1];
 			while (stok.hasMoreTokens()) {
 				String id = stok.nextToken().trim();
-				IntroElement page = createNavLink(id, pageId);
+				IntroElement page = createNavLink(id, pageId, counter);
 				if (page != null)
 					links.add(page);
 			}
@@ -250,29 +251,29 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		return null;
 	}
 
-	private IntroElement createNavLink(String id, String pageId) {
+	private IntroElement createNavLink(String id, String pageId, int [] counter) {
 		if (id.equals(ID_OVERVIEW))
 			return createNavLink(Messages.SharedIntroConfigurer_overview_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$ 
+					createPageURL(id, false), id, "left nav_link"+(++counter[0])); //$NON-NLS-1$ 
 		if (id.equals(ID_FIRSTSTEPS))
 			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+					createPageURL(id, false), id, "left  nav_link"+(++counter[0])); //$NON-NLS-1$
 		if (id.equals(ID_TUTORIALS))
 			return createNavLink(Messages.SharedIntroConfigurer_tutorials_nav,
-					createPageURL(id, false), id, "left"); //$NON-NLS-1$
+					createPageURL(id, false), id, "left nav_link"+(++counter[0])); //$NON-NLS-1$
 		if (id.equals(ID_SAMPLES))
 			return createNavLink(Messages.SharedIntroConfigurer_samples_nav,
-					createPageURL(id, false), id, "right"); //$NON-NLS-1$
+					createPageURL(id, false), id, "right nav_link"+(++counter[0])); //$NON-NLS-1$
 		if (id.equals(ID_WHATSNEW))
 			return createNavLink(Messages.SharedIntroConfigurer_whatsnew_nav,
-					createPageURL(id, false), id, "right"); //$NON-NLS-1$
+					createPageURL(id, false), id, "right nav_link"+(++counter[0])); //$NON-NLS-1$
 		if (id.equals(ID_MIGRATE))
 			return createNavLink(Messages.SharedIntroConfigurer_migrate_nav,
-					createPageURL(id, false), id, "right"); //$NON-NLS-1$
+					createPageURL(id, false), id, "right nav_link"+(++counter[0])); //$NON-NLS-1$
 		if (id.equals(ID_WEBRESOURCES))
 			return createNavLink(
 					Messages.SharedIntroConfigurer_webresources_nav,
-					createPageURL(id, false), id, "right"); //$NON-NLS-1$
+					createPageURL(id, false), id, "right nav_link"+(++counter[0])); //$NON-NLS-1$
 		return null;
 	}
 
