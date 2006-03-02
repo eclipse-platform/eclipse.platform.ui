@@ -29,7 +29,7 @@ public abstract class IntroConfigurer {
 	/**
 	 * The identifier of the named group where the configurer can contribute local tool bar actions.
 	 * 
-	 * @see #init(IIntroSite)
+	 * @see #init(IIntroSite, Map)
 	 */
 	public static final String TB_ADDITIONS = "additions"; //$NON-NLS-1$
 
