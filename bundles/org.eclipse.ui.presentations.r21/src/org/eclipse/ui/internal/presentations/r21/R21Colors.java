@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.presentations.r21;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;

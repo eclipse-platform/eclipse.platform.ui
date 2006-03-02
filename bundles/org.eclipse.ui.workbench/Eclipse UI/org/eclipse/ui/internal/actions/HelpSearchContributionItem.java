@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -22,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * This is the contribution item that is used to add a help search field to

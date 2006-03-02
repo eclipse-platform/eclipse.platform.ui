@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IActionBars2;
@@ -21,7 +22,6 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.SubActionBars2;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**

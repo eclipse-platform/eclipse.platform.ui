@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,7 +22,6 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * An item in the editor history.

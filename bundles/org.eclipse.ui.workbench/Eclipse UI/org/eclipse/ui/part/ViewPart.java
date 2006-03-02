@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
@@ -18,7 +19,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.Util;
 
 /**

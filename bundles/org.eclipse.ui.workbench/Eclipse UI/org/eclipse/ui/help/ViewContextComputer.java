@@ -12,8 +12,8 @@ package org.eclipse.ui.help;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.help.IContext;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;

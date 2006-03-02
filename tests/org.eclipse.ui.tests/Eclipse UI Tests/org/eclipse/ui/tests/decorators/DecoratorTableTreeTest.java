@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * The DecoratorTableTreeTest is the test for table 

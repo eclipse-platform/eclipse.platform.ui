@@ -13,6 +13,7 @@ package org.eclipse.ui.preferences;
 import java.io.IOException;
 
 import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
@@ -29,7 +30,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**

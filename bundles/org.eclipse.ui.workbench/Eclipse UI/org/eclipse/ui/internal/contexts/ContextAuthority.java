@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
@@ -31,7 +32,6 @@ import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
 
@@ -416,10 +416,9 @@ final class ContextAuthority extends ExpressionAuthority {
 			}
 
 			// This shouldn't be possible.
-			Assert
-					.isTrue(
-							false,
-							"A registered shell should have at least one submission matching TYPE_WINDOW or TYPE_DIALOG"); //$NON-NLS-1$
+			Assert.isTrue(
+						false,
+						"A registered shell should have at least one submission matching TYPE_WINDOW or TYPE_DIALOG"); //$NON-NLS-1$
 			return IContextService.TYPE_NONE; // not reachable
 
 		} else if (shell.getParent() != null) {

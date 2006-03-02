@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.progress;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,7 +25,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

@@ -13,10 +13,10 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;

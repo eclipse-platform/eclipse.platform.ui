@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.actions;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -22,7 +23,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Action to open the Open Perspective dialog.

@@ -12,7 +12,7 @@ package org.eclipse.jface.tests.viewers;
 
 import junit.framework.AssertionFailedError;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;

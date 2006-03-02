@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.util;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Internal utility class to help with getting/setting preferences.

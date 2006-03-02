@@ -15,8 +15,8 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.WorkbenchEncoding;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**

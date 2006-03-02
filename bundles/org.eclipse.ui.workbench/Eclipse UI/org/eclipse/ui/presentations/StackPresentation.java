@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -17,7 +18,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISizeProvider;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * This represents an object that can supply trim around a IPresentablePart. 

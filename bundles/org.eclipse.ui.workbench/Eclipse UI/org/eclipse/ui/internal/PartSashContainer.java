@@ -14,7 +14,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.testing;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A testable object.

@@ -13,8 +13,8 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

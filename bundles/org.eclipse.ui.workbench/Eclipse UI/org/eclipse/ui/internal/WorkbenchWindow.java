@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -119,7 +120,6 @@ import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyMenuManager;
 import org.eclipse.ui.internal.menus.SMenuLayout;
 import org.eclipse.ui.internal.menus.WindowMenuService;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;

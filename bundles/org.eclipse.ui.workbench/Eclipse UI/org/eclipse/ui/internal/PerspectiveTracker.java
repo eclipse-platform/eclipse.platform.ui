@@ -11,13 +11,13 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Utility class for tracking the active perspective in a window.

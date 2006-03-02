@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * A DecorationReference is a class that holds onto the starting

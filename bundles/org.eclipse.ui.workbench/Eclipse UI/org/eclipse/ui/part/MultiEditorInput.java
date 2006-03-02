@@ -12,10 +12,10 @@ package org.eclipse.ui.part;
 
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Implements an input for a <code>MultiEditor</code>.

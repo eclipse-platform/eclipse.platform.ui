@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A preference history entry.

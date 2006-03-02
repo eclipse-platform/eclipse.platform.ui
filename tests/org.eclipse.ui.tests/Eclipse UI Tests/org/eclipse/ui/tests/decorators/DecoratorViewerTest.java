@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IDecoratorManager;
@@ -20,7 +21,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
 /**

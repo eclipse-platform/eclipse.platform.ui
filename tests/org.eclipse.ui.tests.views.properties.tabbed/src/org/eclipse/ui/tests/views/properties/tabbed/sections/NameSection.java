@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed.sections;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeNode;

@@ -16,13 +16,13 @@ import java.net.URL;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.internal.BundleGroupProperties;
 import org.eclipse.ui.internal.ProductProperties;
 

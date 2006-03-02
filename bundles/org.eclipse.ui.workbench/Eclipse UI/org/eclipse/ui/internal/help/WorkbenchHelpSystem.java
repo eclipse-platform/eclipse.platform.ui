@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.help;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -26,7 +27,6 @@ import org.eclipse.help.IHelp;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;

@@ -13,6 +13,7 @@ package org.eclipse.ui.part;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -26,7 +27,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Handles the redirection of the global actions Cut, Copy, Paste,

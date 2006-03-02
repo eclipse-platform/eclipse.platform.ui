@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.defaultpresentation;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;

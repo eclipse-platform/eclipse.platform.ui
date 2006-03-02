@@ -14,8 +14,8 @@ package org.eclipse.ui.internal.ide;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -79,8 +79,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
                 event.currentDataType)) {
             /* event.data is an array of EditorInputData, which contains an IEditorInput and 
              * the corresponding editorId */
-            Assert
-                    .isTrue(event.data instanceof EditorInputTransfer.EditorInputData[]);
+            Assert.isTrue(event.data instanceof EditorInputTransfer.EditorInputData[]);
             EditorInputTransfer.EditorInputData[] editorInputs = (EditorInputTransfer.EditorInputData []) event.data;
             for (int i = 0; i < editorInputs.length; i++) {
                 IEditorInput editorInput = editorInputs[i].input;

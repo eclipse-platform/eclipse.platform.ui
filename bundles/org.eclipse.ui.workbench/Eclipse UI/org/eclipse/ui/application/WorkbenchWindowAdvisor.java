@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
@@ -21,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**

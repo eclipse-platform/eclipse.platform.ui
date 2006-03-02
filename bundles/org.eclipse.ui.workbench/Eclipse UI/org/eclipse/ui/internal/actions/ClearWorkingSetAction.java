@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.actions;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
