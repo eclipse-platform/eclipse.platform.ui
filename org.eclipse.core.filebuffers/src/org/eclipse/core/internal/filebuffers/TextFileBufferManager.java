@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
@@ -284,7 +285,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 							throw (VirtualMachineError)t;
 					}
 				};
-				Platform.run(runnable);
+				SafeRunner.run(runnable);
 			}
 		}
 		final IDocument document;
@@ -323,7 +324,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 							throw (VirtualMachineError)t;
 					}
 				};
-				Platform.run(runnable);
+				SafeRunner.run(runnable);
 			}
 		}
 
@@ -436,7 +437,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.dirtyStateChanged(buffer, isDirty);
 				}
@@ -448,7 +449,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.bufferContentAboutToBeReplaced(buffer);
 				}
@@ -460,7 +461,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.bufferContentReplaced(buffer);
 				}
@@ -472,7 +473,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.underlyingFileMoved(buffer, target);
 				}
@@ -484,7 +485,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.underlyingFileDeleted(buffer);
 				}
@@ -496,7 +497,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.stateValidationChanged(buffer, isStateValidated);
 				}
@@ -508,7 +509,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.stateChanging(buffer);
 				}
@@ -520,7 +521,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.stateChangeFailed(buffer);
 				}
@@ -532,7 +533,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.bufferCreated(buffer);
 				}
@@ -544,7 +545,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() {
+			SafeRunner.run(new SafeNotifier() {
 				public void run() {
 					l.bufferDisposed(buffer);
 				}
