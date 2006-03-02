@@ -58,6 +58,9 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		createEditorReuseGroup(composite);
 
 		applyDialogFont(composite);
+		
+        super.setHelpContext(parent);
+        
 		return composite;
 	}
 	

@@ -85,12 +85,16 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         updateValidState();
 
-        // @issue the IDE subclasses this, but should provide its own help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
+        setHelpContext(parent);
 
         return composite;
     }
+
+	protected void setHelpContext(Composite parent) {
+		// @issue the IDE subclasses this, but should provide its own help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
+	}
 
     protected void createSpace(Composite parent) {
         WorkbenchPreferencePage.createSpace(parent);
