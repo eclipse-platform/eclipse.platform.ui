@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.GC;
 /*
  * Not a real reader. Could change if requested
  */
-class LineBreakingReader {
+public class LineBreakingReader {
 
 	private BufferedReader fReader;
 	private GC fGC;
@@ -31,12 +31,14 @@ class LineBreakingReader {
 	private int fOffset;
 
 	private BreakIterator fLineBreakIterator;
+	private boolean fBreakWords;
 
 	/**
 	 * Creates a reader that breaks an input text to fit in a given width.
+	 * 
 	 * @param reader Reader of the input text
 	 * @param gc The graphic context that defines the currently used font sizes
-	 * @param maxLineWidth The max width (in pixels) where the text has to fit in
+	 * @param maxLineWidth The max width (pixels) where the text has to fit in
 	 */
 	public LineBreakingReader(Reader reader, GC gc, int maxLineWidth) {
 		fReader= new BufferedReader(reader);
@@ -45,12 +47,20 @@ class LineBreakingReader {
 		fOffset= 0;
 		fLine= null;
 		fLineBreakIterator= BreakIterator.getLineInstance();
+		fBreakWords= true;
 	}
 
 	public boolean isFormattedLine() {
 		return fLine != null;
 	}
 
+	/**
+	 * Reads the next line. The lengths of the line will not exceed the given maximum
+	 * width.
+	 * 
+	 * @return the next line 
+	 * @throws IOException 
+	 */
 	public String readLine() throws IOException {
 		if (fLine == null) {
 			String line= fReader.readLine();
@@ -90,6 +100,19 @@ class LineBreakingReader {
 			if (nextWidth > fMaxWidth) {
 				if (currWidth > 0)
 					return currOffset;
+
+				if (!fBreakWords)
+					return nextOffset;
+
+				// need to fit into fMaxWidth
+				int length= word.length();
+				while (length >= 0) {
+					length--;
+					word= word.substring(0, length);
+					wordWidth= fGC.textExtent(word).x;
+					if (wordWidth + currWidth < fMaxWidth)
+						return currOffset + length;
+				}
 				return nextOffset;
 			}
 			currWidth= nextWidth;
