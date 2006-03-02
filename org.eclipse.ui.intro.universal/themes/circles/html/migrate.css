@@ -20,3 +20,7 @@
 #navigation-links a:active#migrate {
 	background-image : none;
 }
+
+#navigation-links a:hover#migrate .link-extra-div {
+	display: none;
+}

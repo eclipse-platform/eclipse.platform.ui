@@ -20,3 +20,7 @@
 #navigation-links a:active#firststeps {
 	background-image : none;
 }
+
+#navigation-links a:hover#firststeps .link-extra-div {
+	display: none;
+}

@@ -22,6 +22,10 @@
 	background-image : none;
 }
 
+#navigation-links a:hover#whatsnew .link-extra-div {
+	display: none;
+}
+
 /*
  * Default images for content links in this page.
  */

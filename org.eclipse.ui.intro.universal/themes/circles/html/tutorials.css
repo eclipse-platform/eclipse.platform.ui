@@ -21,3 +21,7 @@
 #navigation-links a:active#tutorials {
 	background-image : none;
 }
+
+#navigation-links a:hover#tutorials .link-extra-div {
+	display: none;
+}

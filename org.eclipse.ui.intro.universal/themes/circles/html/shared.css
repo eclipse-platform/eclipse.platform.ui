@@ -77,6 +77,11 @@ p .group-description {
 	font-weight : normal;
 }
 
+/* Hide the extra div in links by default. */
+.link-extra-div {
+	display : none;
+}
+
 /* 
  * Set up other general properties like padding/margins
  */
@@ -206,7 +211,7 @@ body, .page{
 
 #navigation-links a.nav_link1 {
 	position: absolute;
-	left : 12;
+	left : 12px;
 }
 
 #navigation-links a.nav_link2 {
@@ -295,51 +300,93 @@ body, .page{
 	padding-top: 7px;
 	padding-right: 5px;
 	margin-right: auto;
-	top : -40px;
+	top : -39px;
 	white-space: nowrap;
 	height : 32px;
+}
+
 /*
-	background-color: yellow;
-	*/
+ * Add the right edge by using the extra div generated for links
+ * and set the right edge image as the background.
+ */
+
+#navigation-links a:hover .link-extra-div,
+#navigation-links a:focus .link-extra-div,
+#navigation-links a:active .link-extra-div {
+	display: block;
+	position: absolute;
+	right : -2px;
+	top : 2px;
+	width : 2px;
+	height : 64px;
+	background-image: url(../graphics/icons/ctool/nav_rightedgehov.gif);
+	background-repeat: no-repeat;
 }
 
 /* properties for each of the navigation-links  */
-#navigation-links a#overview img { background-image : url(../graphics/icons/ctool/ov_nav_32.gif); }
+#navigation-links a#overview img { 
+	background-image : url(../graphics/icons/ctool/ov_nav_32.gif); 
+}
 #navigation-links a#overview:hover img,
 #navigation-links a#overview:focus img,
-#navigation-links a#overview:active img { background-image : url(../graphics/icons/ctool/ov_nav_hover.gif); }
+#navigation-links a#overview:active img { 
+	background-image : url(../graphics/icons/ctool/ov_nav_hover.gif); 
+}
 
-#navigation-links a#firststeps img { background-image : url(../graphics/icons/ctool/fs_nav_32.gif); }
+#navigation-links a#firststeps img { 
+	background-image : url(../graphics/icons/ctool/fs_nav_32.gif); 
+}
 #navigation-links a#firststeps:hover img,
 #navigation-links a#firststeps:focus img,
-#navigation-links a#firststeps:active img { background-image : url(../graphics/icons/ctool/fs_nav_hover.gif); }
+#navigation-links a#firststeps:active img { 
+	background-image : url(../graphics/icons/ctool/fs_nav_hover.gif); }
 
-#navigation-links a#tutorials img { background-image : url(../graphics/icons/ctool/tu_nav_32.gif); }
+#navigation-links a#tutorials img { 
+	background-image : url(../graphics/icons/ctool/tu_nav_32.gif); 
+}
 #navigation-links a#tutorials:hover img,
 #navigation-links a#tutorials:active img,
-#navigation-links a#tutorials:focus img { background-image : url(../graphics/icons/ctool/tu_nav_hover.gif); }
+#navigation-links a#tutorials:focus img { 
+	background-image : url(../graphics/icons/ctool/tu_nav_hover.gif); 
+}
 
-#navigation-links a#samples img { background-image : url(../graphics/icons/ctool/sa_nav_32.gif); }
+#navigation-links a#samples img { 
+	background-image : url(../graphics/icons/ctool/sa_nav_32.gif); 
+}
 #navigation-links a#samples:hover img,
 #navigation-links a#samples:active img,
-#navigation-links a#samples:focus img { background-image : url(../graphics/icons/ctool/sa_nav_hover.gif); }
+#navigation-links a#samples:focus img { 
+	background-image : url(../graphics/icons/ctool/sa_nav_hover.gif); 
+}
 
-#navigation-links a#whatsnew img { background-image : url(../graphics/icons/ctool/wn_nav_32.gif); }
+#navigation-links a#whatsnew img { 
+	background-image : url(../graphics/icons/ctool/wn_nav_32.gif); 
+}
 #navigation-links a#whatsnew:hover img,
 #navigation-links a#whatsnew:focus img,
-#navigation-links a#whatsnew:active img { background-image : url(../graphics/icons/ctool/wn_nav_hover.gif); }
+#navigation-links a#whatsnew:active img { 
+	background-image : url(../graphics/icons/ctool/wn_nav_hover.gif); 
+}
 
-#navigation-links a#migrate img { background-image : url(../graphics/icons/ctool/mi_nav_32.gif); }
+#navigation-links a#migrate img { 
+	background-image : url(../graphics/icons/ctool/mi_nav_32.gif); 
+}
 #navigation-links a#migrate:hover img,
 #navigation-links a#migrate:focus img,
-#navigation-links a#migrate:active img { background-image : url(../graphics/icons/ctool/mi_nav_hover.gif); }
+#navigation-links a#migrate:active img { 
+	background-image : url(../graphics/icons/ctool/mi_nav_hover.gif); 
+}
 
-#navigation-links a#webresources img { background-image : url(../graphics/icons/ctool/wr_nav_32.gif); }
+#navigation-links a#webresources img { 
+	background-image : url(../graphics/icons/ctool/wr_nav_32.gif); 
+}
 #navigation-links a#webresources:hover img,
 #navigation-links a#webresources:focus img,
-#navigation-links a#webresources:active img { background-image : url(../graphics/icons/ctool/wr_nav_hover.gif); }
+#navigation-links a#webresources:active img { 
+	background-image : url(../graphics/icons/ctool/wr_nav_hover.gif); 
+}
 
-#navigation-links a#workbench { 
+#navigation-links a#workbench {
 	position : absolute;  
 	left : 494px; 
 	text-align : left;
@@ -347,8 +394,10 @@ body, .page{
 #navigation-links a#workbench .text { display : none; }
 #navigation-links a#workbench img { 
 	background-image : url(../graphics/icons/ctool/wb_nav_32.gif); 
-	width : 32px; height : 32px;
+	width : 32px; 
+	height : 32px;
 }
+
 #navigation-links a#workbench:hover img,
 #navigation-links a#workbench:focus img,
 #navigation-links a#workbench:active img { 

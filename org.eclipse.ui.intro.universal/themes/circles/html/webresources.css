@@ -20,3 +20,7 @@
 #navigation-links a:active#webresources {
 	background-image : none;
 }
+
+#navigation-links a:hover#webresources .link-extra-div {
+	display: none;
+}

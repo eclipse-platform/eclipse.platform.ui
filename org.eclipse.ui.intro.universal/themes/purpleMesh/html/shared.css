@@ -56,6 +56,11 @@ a .link-label {
 	font-weight : normal;
 }
 
+/* Hide the 'special-effect' extra div in links by default. */
+.link-extra-div {
+	display : none;
+}
+
 #navigation-links a .link-label {
 	font-size : 9pt;
 	font-weight : normal;
