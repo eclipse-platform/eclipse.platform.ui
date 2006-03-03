@@ -2,6 +2,7 @@ package org.eclipse.ui.examples.fieldassist;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
@@ -41,6 +42,9 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.examples.fieldassist.preferences.PreferenceConstants;
 
+/**
+ * Example dialog that shows different field assist capabilities.
+ */
 public class ExampleDialog extends StatusDialog {
 
 	class SpinnerContentAdapter implements IControlContentAdapter {
@@ -197,6 +201,11 @@ public class ExampleDialog extends StatusDialog {
 
 	private Color defaultTextColor, errorColor;
 
+	/**
+	 * Open the exapmle dialog.
+	 * @param parent the parent shell
+	 * @param username the default username
+	 */
 	public ExampleDialog(Shell parent, String username) {
 		super(parent);
 		setTitle(TaskAssistExampleMessages.ExampleDialog_Title);
@@ -257,7 +266,7 @@ public class ExampleDialog extends StatusDialog {
 		});
 
 		text.setText(username);
-		installContentProposalAdapter(text);
+		installContentProposalAdapter(text, new TextContentAdapter());
 		field.getLayoutControl().setLayoutData(getDecoratedFieldGridData());
 
 		label = new Label(main, SWT.LEFT);
@@ -272,6 +281,10 @@ public class ExampleDialog extends StatusDialog {
 				});
 		final SmartField comboField = new UserField(field,
 				new ComboContentAdapter());
+		if (store.getBoolean(PreferenceConstants.PREF_SHOWCONTENTPROPOSALCUE)) {
+			field.addFieldDecoration(getCueDecoration(), SWT.TOP | SWT.LEFT,
+					true);
+		}
 		if (showRequiredFieldDecoration) {
 			field.addFieldDecoration(getRequiredFieldDecoration(), SWT.BOTTOM
 					| SWT.LEFT, false);
@@ -296,6 +309,7 @@ public class ExampleDialog extends StatusDialog {
 		combo.setText(username);
 		combo.setItems(validUsers);
 		field.getLayoutControl().setLayoutData(getDecoratedFieldGridData());
+		installContentProposalAdapter(combo, new ComboContentAdapter());
 
 		// Create a spinner representing a user age
 		label = new Label(main, SWT.LEFT);
@@ -438,7 +452,7 @@ public class ExampleDialog extends StatusDialog {
 	private void showError(SmartField smartField) {
 		FieldDecoration dec = smartField.getErrorDecoration();
 		if (showErrorMessage) {
-			updateStatus(new Status(Status.ERROR,
+			updateStatus(new Status(IStatus.ERROR,
 					"org.eclipse.examples.contentassist", 0, dec //$NON-NLS-1$
 							.getDescription(), null));
 		}
@@ -479,7 +493,7 @@ public class ExampleDialog extends StatusDialog {
 		}
 	}
 
-	private void installContentProposalAdapter(Text text) {
+	private void installContentProposalAdapter(Control control, IControlContentAdapter contentAdapter) {
 		IPreferenceStore store = FieldAssistPlugin.getDefault()
 				.getPreferenceStore();
 		boolean propagate = store
@@ -504,8 +518,8 @@ public class ExampleDialog extends StatusDialog {
 			}
 		}
 
-		ContentProposalAdapter adapter = new ContentProposalAdapter(text,
-				new TextContentAdapter(), getContentProposalProvider(),
+		ContentProposalAdapter adapter = new ContentProposalAdapter(control,
+				contentAdapter, getContentProposalProvider(),
 				keyStroke, autoActivationCharacters);
 		adapter.setAutoActivationDelay(autoActivationDelay);
 		adapter.setPropagateKeys(propagate);

@@ -38,6 +38,8 @@ public class FieldAssistPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance.
+	 * 
+	 * @return the shared plugin instance
 	 */
 	public static FieldAssistPlugin getDefault() {
 		return plugin;

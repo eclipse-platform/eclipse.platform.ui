@@ -22,6 +22,9 @@ import org.eclipse.ui.examples.fieldassist.TaskAssistExampleMessages;
 public class FieldAssistPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 
+	/**
+	 * Create the FieldAssistPreferencePage
+	 */
 	public FieldAssistPreferencePage() {
 		super(GRID);
 		setPreferenceStore(FieldAssistPlugin.getDefault().getPreferenceStore());
