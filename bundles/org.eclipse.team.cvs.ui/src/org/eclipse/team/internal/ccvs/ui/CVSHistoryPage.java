@@ -281,7 +281,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				groupingOn = !groupingOn;
 				toggleCompareAction.setChecked(groupingOn);
 				store.setValue(ICVSUIConstants.PREF_GROUPBYDATE_MODE, groupingOn);
-				refresh();
+				refreshHistory(false);
 			}
 		};
 		groupingOn = store.getBoolean(ICVSUIConstants.PREF_GROUPBYDATE_MODE);
@@ -1013,7 +1013,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			categories[0] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
 			//Get yesterday 
 			Calendar yesterdayCal = Calendar.getInstance();
-			yesterdayCal.roll(Calendar.DATE, -1);
+			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
 			categories[1] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
 			//Get last week
 			Calendar lastWeekCal = Calendar.getInstance();
