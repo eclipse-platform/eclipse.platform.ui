@@ -33,7 +33,7 @@ import org.eclipse.jface.text.ITextViewer;
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
  * <li>{@link org.eclipse.jface.text.reconciler.IReconcilerExtension} since version 3.0 introducing
- *		the ability to be aware of documents with multiple partitions.</li>
+ *		the ability to be aware of documents with multiple partitionings.</li>
  * </ul>
  * </p>
  * <p>

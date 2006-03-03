@@ -13,7 +13,7 @@ package org.eclipse.jface.text.reconciler;
 
 /**
  * Extends {@link org.eclipse.jface.text.reconciler.IReconciler} with
- * the ability to be aware of documents with multiple partitions.
+ * the ability to be aware of documents with multiple partitionings.
  *
  * @since 3.0
  */
