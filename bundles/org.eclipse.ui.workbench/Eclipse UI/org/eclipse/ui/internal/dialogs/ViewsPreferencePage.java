@@ -254,13 +254,33 @@ public class ViewsPreferencePage extends PreferencePage implements
 		data.horizontalSpan = 2;
 
 		overridePresButton = new Button(parent, SWT.CHECK);
-		overridePresButton.setText("O&verride presentation settings"); //$NON-NLS-1$
+		overridePresButton.setText(WorkbenchMessages.ViewsPreferencePage_override);
 		overridePresButton.setFont(parent.getFont());
 		overridePresButton.setLayoutData(data);
 
 		IPreferenceStore store = getPreferenceStore();
-		overridePresButton.setSelection(store
-				.getBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION));
+		boolean override = store.getBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION);
+		
+		// workaround to catch the case where the show text value was changed outside of this page
+		// turn off text on persp bar
+		boolean showText = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR);
+		if (showText && isR21(currentPresentationFactoryId) || !showText && isR30(currentPresentationFactoryId)) {
+			if (!override) {
+				store.setValue(IPreferenceConstants.OVERRIDE_PRESENTATION, true);
+				override = true;
+			}
+		}
+		// workaround to catch the case where the perspective switcher location was changed outside of this page
+		// turn off text on persp bar
+		String barLocation = PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
+		if (!barLocation.equals(IWorkbenchPreferenceConstants.LEFT) && isR21(currentPresentationFactoryId) || !barLocation.equals(IWorkbenchPreferenceConstants.TOP_RIGHT) && isR30(currentPresentationFactoryId)) {
+			if (!override) {
+				store.setValue(IPreferenceConstants.OVERRIDE_PRESENTATION, true);
+				override = true;
+			}
+		}
+			
+		overridePresButton.setSelection(override);
 		overridePresButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateOverrideState(overridePresButton.getSelection());
@@ -638,11 +658,19 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private void setPresentationPrefs(String id) {
-		if (R21PRESENTATION_ID.equals(id)) {
+		if (isR21(id)) {
 			setR21Preferences();
-		} else if (R30PRESENTATION_ID.equals(id)) {
+		} else if (isR30(id)) {
 			setR30Preferences();
 		}
+	}
+
+	private boolean isR30(String id) {
+		return R30PRESENTATION_ID.equals(id);
+	}
+
+	private boolean isR21(String id) {
+		return R21PRESENTATION_ID.equals(id);
 	}
 
 	private String getSelectedPresentationID() {

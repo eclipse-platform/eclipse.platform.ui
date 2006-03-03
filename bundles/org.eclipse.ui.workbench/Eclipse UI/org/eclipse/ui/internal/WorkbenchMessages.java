@@ -934,4 +934,7 @@ public class WorkbenchMessages extends NLS {
     public static String ContentAssist_Cue_Description_Key;
 
 
+	public static String ViewsPreferencePage_override;
+
+
 }
