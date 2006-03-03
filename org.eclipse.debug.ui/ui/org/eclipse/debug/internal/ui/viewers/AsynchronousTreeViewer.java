@@ -12,12 +12,18 @@ package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,8 +46,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -64,7 +72,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class AsynchronousTreeViewer extends AsynchronousViewer implements Listener {
 
-    /**
+	/**
      * The tree
      */
     private Tree fTree;
@@ -75,6 +83,41 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * to the viewer changes.
      */
     private List fPendingExpansion = new ArrayList();
+    
+    /**
+     * Current column presentation or <code>null</code>
+     */
+    private IColumnPresentation fColumnPresentation = null;
+    
+    /**
+     * Map of columns presentation id to its visible colums ids (String[])
+     * When a columns presentation is not in the map, default settings are used.
+     */
+    private Map fVisibleColumns = new HashMap();
+    
+    /**
+     * Map of column ids to persisted sizes
+     */
+    private Map fColumnSizes = new HashMap();
+    
+    /**
+	 * Memento type for column sizes. Sizes are keyed by colunm presentation id 
+	 */
+	private static final String COLUMN_SIZES = "COLUMN_SIZES"; //$NON-NLS-1$
+	/**
+	 * Memento type for the visible columns for a presentation context.
+	 * A memento is created for each colunm presentation keyed by column number
+	 */
+	private static final String VISIBLE_COLUMNS = "VISIBLE_COLUMNS";     //$NON-NLS-1$
+	/**
+	 * Memento key for the number of visible columns in a VISIBLE_COLUMNS memento
+	 * or for the width of a column
+	 */
+	private static final String SIZE = "SIZE";	 //$NON-NLS-1$
+	/**
+	 * Memento key prefix a visible column
+	 */
+	private static final String COLUMN = "COLUMN";	 //$NON-NLS-1$	
     
     /**
      * Creates an asynchronous tree viewer on a newly-created tree control under
@@ -299,7 +342,20 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
         return fTree;
     }
 
-    /*
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#dispose()
+     */
+    public synchronized void dispose() {
+		if (fColumnPresentation != null) {
+			// persist column sizes, if any
+			buildColumns(null);
+			fColumnPresentation.dispose();
+		}
+		super.dispose();
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object,
@@ -308,6 +364,137 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     synchronized protected void inputChanged(Object input, Object oldInput) {
         fPendingExpansion.clear();
         super.inputChanged(input, oldInput);
+        configureColumns(input);
+    }
+    
+    /**
+     * Refreshes the columns in the view, based on the viewer input.
+     */
+    public void refreshColumns() {
+    	if (fColumnPresentation != null) {
+    		buildColumns(fColumnPresentation);
+    	}
+    }
+    
+    /**
+     * Configures the columns for the given viewer input.
+     * 
+     * @param input
+     */
+    protected void configureColumns(Object input) {
+    	if (input != null) {
+    		// only change columns if the input is non-null (persist when empty)
+	    	IColumnPresenetationFactoryAdapter factory = getColumnPresenetationFactoryAdapter(input);
+	    	PresentationContext context = (PresentationContext) getPresentationContext();
+	    	String type = null;
+	    	if (factory != null) {
+	    		type = factory.getColumnPresentationId(context, input);
+	    	}
+			if (type != null) {
+				if (fColumnPresentation != null) {
+					if (fColumnPresentation.getId().equals(type)) {
+						// no changes
+						return;
+					} else {
+						// dispose old
+						fColumnPresentation.dispose();
+					}
+				}
+				IColumnPresentation presentation = factory.createColumnPresentation(context, input);
+				if (presentation != null) {
+					fColumnPresentation = presentation;
+					presentation.init(context);
+					buildColumns(presentation);
+				}
+			} else {
+				if (fColumnPresentation != null) {
+					// get rid of columns
+					buildColumns(null);
+					fColumnPresentation.dispose();
+					fColumnPresentation = null;
+				}
+			}
+    	}
+    }
+    
+    /**
+     * Creates new columns for the given presentation.
+     * 
+     * TODO: does this need to be async?
+     * 
+     * @param presentation
+     */
+    protected void buildColumns(IColumnPresentation presentation) {
+    	persistColumnSizes();
+    	// dispose current columns, persisting their weigts
+    	Tree tree = getTree();
+		TreeColumn[] columns = tree.getColumns();
+    	for (int i = 0; i < columns.length; i++) {
+    		TreeColumn treeColumn = columns[i];
+			treeColumn.dispose();
+		}
+    	// TODO: persist/restore columns per presentation
+    	if (presentation != null) {
+	    	String[] columnIds = getVisibleColumns();
+	    	for (int i = 0; i < columnIds.length; i++) {
+				String id = columnIds[i];
+				String header = presentation.getHeader(id);
+				// TODO: allow client to specify style
+				TreeColumn column = new TreeColumn(tree, SWT.LEFT, i);
+				column.setMoveable(true);
+				column.setText(header);
+				ImageDescriptor image = presentation.getImageDescriptor(id);
+				if (image != null) {
+					column.setImage(getImage(image));
+				}
+				column.setData(id);
+			}
+	    	tree.setHeaderVisible(true);
+	    	tree.setLinesVisible(true);
+    	} else {
+    		tree.setHeaderVisible(false);
+    		tree.setLinesVisible(false);
+    	}
+    	columns = tree.getColumns();
+    	for (int i = 0; i < columns.length; i++) {
+    		Integer width = (Integer) fColumnSizes.get(columns[i].getData());
+    		if (width == null) {
+    			columns[i].pack();
+    		} else {
+    			columns[i].setWidth(width.intValue());
+    		}
+		}
+    	
+    }
+
+    /**
+     * Persists column sizes in cache
+     */
+    protected void persistColumnSizes() { 
+		Tree tree = getTree();
+		TreeColumn[] columns = tree.getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			TreeColumn treeColumn = columns[i];
+			Object id = treeColumn.getData();
+			fColumnSizes.put(id, new Integer(treeColumn.getWidth()));
+		}
+    }
+    
+    /**
+     * Returns the column factory for the given element or <code>null</code>.
+     * 
+     * @param input
+     * @return column factory of <code>null</code>
+     */
+    protected IColumnPresenetationFactoryAdapter getColumnPresenetationFactoryAdapter(Object input) {
+    	if (input instanceof IColumnPresenetationFactoryAdapter) {
+			return (IColumnPresenetationFactoryAdapter) input;
+		}
+    	if (input instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) input;
+			return (IColumnPresenetationFactoryAdapter) adaptable.getAdapter(IColumnPresenetationFactoryAdapter.class);
+		}
+    	return null;
     }
 
     /**
@@ -813,6 +1000,124 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 			}
 			clear(tree);
 		}
+	}
+	
+	/**
+	 * Returns the current column presentation for this viewer, or <code>null</code>
+	 * if none.
+	 * 
+	 * @return column presentation or <code>null</code>
+	 */
+	public IColumnPresentation getColumnPresentation() {
+		return fColumnPresentation;
+	}
+	
+	/**
+	 * Returns identifiers of the visible columns in this viewer, or <code>null</code>
+	 * if there is currently no column presentation.
+	 *  
+	 * @return visible columns or <code>null</code>
+	 */
+	public String[] getVisibleColumns() {
+		IColumnPresentation presentation = getColumnPresentation();
+		if (presentation != null) {
+			String[] columns = (String[]) fVisibleColumns.get(presentation.getId());
+			if (columns == null) {
+				return presentation.getInitialColumns();
+			}
+			return columns;
+		}
+		return null;
+	}
+	
+	/**
+	 * Sets the ids of visible columns, or <code>null</code> to set default columns.
+	 * Only effects the current column presentation.
+	 * 
+	 * @param ids visible columns
+	 */
+	public void setVisibleColumns(String[] ids) {
+		IColumnPresentation presentation = getColumnPresentation();
+		if (presentation != null) {
+			fVisibleColumns.remove(presentation.getId());
+			if (ids != null) {
+				// put back in table if not default
+				String[] columns = presentation.getInitialColumns();
+				if (columns.length == ids.length) {
+					for (int i = 0; i < columns.length; i++) {
+						if (!ids[i].equals(columns[i])) {
+							fVisibleColumns.put(presentation.getId(), ids);
+							break;
+						}
+					}
+				} else {
+					fVisibleColumns.put(presentation.getId(), ids);
+				}
+			}
+			refreshColumns();
+		}
+	}
+	
+	/**
+	 * Save viewer state into the given memento.
+	 * 
+	 * @param memento
+	 */
+	public void saveState(IMemento memento) {
+		persistColumnSizes();
+		if (!fColumnSizes.isEmpty()) {
+			Iterator iterator = fColumnSizes.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Entry) iterator.next();
+				IMemento sizes = memento.createChild(COLUMN_SIZES, (String)entry.getKey());
+				sizes.putInteger(SIZE, ((Integer)entry.getValue()).intValue());
+			}
+		}
+		if (!fVisibleColumns.isEmpty()) {
+			Iterator iterator = fVisibleColumns.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Entry) iterator.next();
+				String id = (String) entry.getKey();
+				IMemento visible = memento.createChild(VISIBLE_COLUMNS, id);
+				String[] columns = (String[]) entry.getValue();
+				visible.putInteger(SIZE, columns.length);
+				for (int i = 0; i < columns.length; i++) {
+					visible.putString(COLUMN+Integer.toString(i), columns[i]);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Initializes veiwer state from the memento
+	 * 
+	 * @param memento
+	 */
+	public void initState(IMemento memento) {
+		IMemento[] mementos = memento.getChildren(COLUMN_SIZES);
+		for (int i = 0; i < mementos.length; i++) {
+			IMemento child = mementos[i];
+			String id = child.getID();
+			Integer size = child.getInteger(SIZE);
+			if (size != null) {
+				fColumnSizes.put(id, size);
+			}
+		}
+		mementos = memento.getChildren(VISIBLE_COLUMNS);
+		for (int i = 0; i < mementos.length; i++) {
+			IMemento child = mementos[i];
+			String id = child.getID();
+			Integer integer = child.getInteger(SIZE);
+			if (integer != null) {
+				int length = integer.intValue();
+				String[] columns = new String[length];
+				for (int j = 0; j < length; j++) {
+					columns[j] = child.getString(COLUMN+Integer.toString(j));
+				}
+				fVisibleColumns.put(id, columns);
+			}
+		}
+		
 	}
 
 }

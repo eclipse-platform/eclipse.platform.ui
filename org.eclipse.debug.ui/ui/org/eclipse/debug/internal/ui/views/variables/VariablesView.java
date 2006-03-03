@@ -40,6 +40,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
+import org.eclipse.debug.internal.ui.actions.ConfigureColumnsAction;
 import org.eclipse.debug.internal.ui.actions.FindElementAction;
 import org.eclipse.debug.internal.ui.actions.variables.AssignValueAction;
 import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
@@ -343,6 +344,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private boolean fToggledDetailOnce;
 	private String fCurrentDetailPaneOrientation = IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN;
 	private ToggleDetailPaneAction[] fToggleDetailPaneActions;
+	private ConfigureColumnsAction fConfigureColumnsAction;
 
 	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
@@ -538,14 +540,17 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		createDetailsViewer();
 		getSashForm().setMaximizedControl(variablesViewer.getControl());
 
-		createOrientationActions();
+		createOrientationActions(variablesViewer);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		String orientation = prefStore.getString(getDetailPanePreferenceKey());
 		for (int i = 0; i < fToggleDetailPaneActions.length; i++) {
 			fToggleDetailPaneActions[i].setChecked(fToggleDetailPaneActions[i].getOrientation().equals(orientation));
 		}
 		setDetailPaneOrientation(orientation);
-		
+		IMemento memento = getMemento();
+		if (memento != null) {
+			variablesViewer.initState(memento);
+		}
 		return variablesViewer;
 	}
 	
@@ -587,6 +592,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				memento.putInteger(SASH_WEIGHTS+"-"+i, weights[i]); //$NON-NLS-1$
 			}
 		}
+		getVariablesViewer().saveState(memento);
 	}
 
 	protected String getDetailPanePreferenceKey() {
@@ -844,7 +850,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		manager.add(fStatusLineItem);
 	} 
 	
-	private void createOrientationActions() {
+	private void createOrientationActions(VariablesViewer viewer) {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager viewMenu = actionBars.getMenuManager();
 		
@@ -858,7 +864,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		layoutSubMenu.add(fToggleDetailPaneActions[1]);
 		layoutSubMenu.add(fToggleDetailPaneActions[2]);
 		viewMenu.add(layoutSubMenu);
-		viewMenu.add(new Separator());		
+		viewMenu.add(new Separator());
+		
+		fConfigureColumnsAction = new ConfigureColumnsAction(viewer);
+		layoutSubMenu.add(fConfigureColumnsAction);
+		layoutSubMenu.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fConfigureColumnsAction.update();
+			}
+		});
 	}
 	
 	protected String getToggleActionLabel() {

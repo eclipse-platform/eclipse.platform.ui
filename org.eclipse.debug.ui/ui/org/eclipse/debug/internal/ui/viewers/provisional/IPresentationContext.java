@@ -31,4 +31,15 @@ public interface IPresentationContext {
      */
     public IWorkbenchPart getPart();
     
+    /**
+     * Returns identifiers of the visible columns in the order
+     * labels should be provided, or <code>null</code> if columns
+     * are not being displayed. Label providers use this
+     * information. 
+     * 
+     * @return visible column identifiers or <code>null</code>
+     * @see IColumnPresentation
+     */
+    public String[] getColumns();
+    
 }

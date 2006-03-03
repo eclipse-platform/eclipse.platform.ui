@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class PresentationContext implements IPresentationContext {
     
     private IWorkbenchPart fPart;
+    private String[] fColumns;
     
     /**
      * Constructs a presentation context for the given part.
@@ -39,5 +40,21 @@ public class PresentationContext implements IPresentationContext {
     public IWorkbenchPart getPart() {
         return fPart;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getColumns()
+	 */
+	public String[] getColumns() {
+		return fColumns;
+	}
+	
+	/**
+	 * Sets the visible column ids.
+	 * 
+	 * @param ids column identifiers
+	 */
+	protected void setColumns(String[] ids) {
+		fColumns = ids;
+	}
 
 }

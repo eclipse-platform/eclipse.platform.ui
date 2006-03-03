@@ -218,4 +218,10 @@ public class ActionMessages extends NLS {
     public static String TerminateAction_0;
 
     public static String TerminateAction_3;
+
+	public static String ConfigureColumnsAction_0;
+
+	public static String ConfigureColumnsAction_1;
+
+	public static String ConfigureColumnsAction_2;
 }
