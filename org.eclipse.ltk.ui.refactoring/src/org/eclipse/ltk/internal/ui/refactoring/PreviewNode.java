@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 /**
- * Instances of <code>PreviewNode<code> are used to present <code>
+ * Instances of <code>PreviewNode</code> are used to present <code>
  * IChange</code> object as nodes in a tree.
  */
 public abstract class PreviewNode {
