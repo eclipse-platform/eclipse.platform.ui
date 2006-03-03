@@ -18,7 +18,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -67,8 +66,6 @@ public class ProgressRegion implements IWindowTrim {
         gl.marginWidth = 0;
         gl.numColumns = 3;
         region.setLayout(gl);
-
-        new Label(region, SWT.SEPARATOR);
 
         viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36);
         viewer.setUseHashlookup(true);
