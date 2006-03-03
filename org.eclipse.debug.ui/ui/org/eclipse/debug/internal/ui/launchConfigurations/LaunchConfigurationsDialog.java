@@ -125,7 +125,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
-	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(700, 560);
+	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(700, 600);
 	
 	/**
 	 * defines some default sashweights when we have a new workspace
@@ -1110,8 +1110,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @since 3.2
 	 */
 	private void initializeSize() {
+		setShellSize(DEFAULT_INITIAL_DIALOG_SIZE.x, DEFAULT_INITIAL_DIALOG_SIZE.y);
 		if(fSashForm != null) {
-			setShellSize(DEFAULT_INITIAL_DIALOG_SIZE.x, DEFAULT_INITIAL_DIALOG_SIZE.y);
 			fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
 		}
 	}
@@ -1219,7 +1219,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  			Point psize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
  			int maxx = (int)(getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT),
  				maxy = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
- 			if((psize.x > maxx ? maxx : psize.x) > shell.x) {
+ 			if((psize.x > maxx ? maxx : psize.x) > shell.x || (psize.y > maxy ? maxy : psize.y) > shell.y) {
 				setShellSize(Math.min(psize.x, maxx), Math.min(psize.y, maxy));
  			}
 		}
