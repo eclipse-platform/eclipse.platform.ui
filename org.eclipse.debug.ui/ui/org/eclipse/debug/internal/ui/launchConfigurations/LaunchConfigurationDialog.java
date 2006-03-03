@@ -11,9 +11,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -33,26 +31,31 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	public LaunchConfigurationDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group) {
 		super(shell, launchConfiguration, group);
 	}
-
-	/**
-	 * This dialog has 'Launch' and 'Close' buttons.
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
 		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);  
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getShellTitle()
+	 */
 	protected String getShellTitle() {
 		return getLaunchConfiguration().getName();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getTitleAreaTitle()
+	 */
 	protected String getTitleAreaTitle() {
 		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Modify_attributes_and_launch__1; 
 	}
-	/**
-	 * @see ILaunchConfigurationDialog#updateButtons()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#updateButtons()
 	 */
 	public void updateButtons() {
 		// Launch button
@@ -61,22 +64,8 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 		
 	}
 		
-	protected String getHelpContextId() {
-		return IDebugHelpContextIds.SINGLE_LAUNCH_CONFIGURATION_DIALOG;
-	}
-	
-	protected void initializeContent() {
-		getTabViewer().setInput(getLaunchConfiguration());
-		IStatus status = getInitialStatus();
-		if (status != null) {
-			handleStatus(status);
-		}		
-	}
-		
-	/**
-	 * Returns the name of the section that this dialog stores its settings in
-	 *
-	 * @return String
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getDialogSettingsSectionName()
 	 */
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".SINGLE_LAUNCH_CONFIGURATION_DIALOG_SECTION"; //$NON-NLS-1$
