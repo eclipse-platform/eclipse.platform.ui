@@ -12,8 +12,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +36,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -70,7 +67,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -83,7 +79,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -116,32 +111,27 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected static final int ID_CANCEL_BUTTON = IDialogConstants.CLIENT_ID + 3;
 		
 	/**
-	 * Constrant String used as key for setting and retrieving current Control with focus
-	 */
-	private static final String FOCUS_CONTROL = "focusControl";//$NON-NLS-1$
-		
-	/**
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
-	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.75f;
+	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.68f;
 		
 	/**
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.65f;
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.68f;
 		
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
-	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(680, 560);
+	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(700, 560);
 	
 	/**
 	 * defines some default sashweights when we have a new workspace
 	 * @since 3.2
 	 */
-	protected static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 490};
+	protected static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 510};
 	
 	/**
 	 * Constant specifying that this dialog should be opened with the last configuration launched
@@ -176,14 +166,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
+	 * the last control to have focus before the progress part to focus
+	 * @since 3.2
+	 */
+	private Control fLastControl;
+	
+	/**
 	 * The Composite used to insert an adjustable 'sash' between the tree and the tabs.
 	 */
 	private SashForm fSashForm;
-			
-	/**
-	 * The launch configuration selection area.
-	 */
-	private Composite fSelectionArea;
 	
 	/**
 	 * Tree view of launch configurations
@@ -220,16 +211,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * progress monitor part
 	 */
 	private ProgressMonitorPart fProgressMonitorPart;
-	
-	/**
-	 * Default cursor for waiting
-	 */
-	private Cursor waitCursor;
-	
-	/**
-	 * Default cursor  for the arrow
-	 */
-	private Cursor arrowCursor;
 	
 	/**
 	 * Listener for a list
@@ -553,7 +534,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		tmanager.add(getDeleteAction());
 		tmanager.add(getFilterAction());
 		tmanager.update(true);
-
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
     
@@ -576,10 +556,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
         
         ToolBar toolBar = new ToolBar(viewForm, SWT.FLAT);
-        viewForm.setTopLeft(toolBar);
         ToolBarManager toolBarManager= new ToolBarManager(toolBar);
-        
-		fSelectionArea = viewForm;
+        viewForm.setTopLeft(toolBar);
         viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
@@ -589,7 +567,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         viewFormContents.setLayout(gridLayout);
         viewFormContents.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
         
-		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
 		
@@ -1245,43 +1222,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  			}
 		}
 	}
-	
-	/**
-	 * Restores the enabled/disabled state of the given control.
-	 *
-	 * @param w the control
-	 * @param h the map (key type: <code>String</code>, element type:
-	 *   <code>Boolean</code>)
-	 * @param key the key
-	 * @see #saveEnableStateAndSet
-	 */
-	private void restoreEnableState(Control w, Map h, String key) {
-		if (w != null) {
-			Boolean b = (Boolean) h.get(key);
-			if (b != null) {
-				w.setEnabled(b.booleanValue());
-			}
-		}
-	}
-
-	/**
-	 * Restores the enabled/disabled state of the wizard dialog's
-	 * buttons and the tree of controls for the currently showing page.
-	 *
-	 * @param state a map containing the saved state as returned by 
-	 *   <code>saveUIState</code>
-	 * @see #saveUIState
-	 */
-	private void restoreUIState(Map state) {
-		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
-		restoreEnableState(getButton(ID_CLOSE_BUTTON), state, "close");//$NON-NLS-1$
-		ControlEnableState treeState = (ControlEnableState) state.get("selectionarea");//$NON-NLS-1$
-		if (treeState != null) {
-			treeState.restore();
-		}
-		ControlEnableState tabState = (ControlEnableState) state.get("editarea");//$NON-NLS-1$
-		tabState.restore();
-	}
 
 	/***************************************************************************************
 	 * 
@@ -1294,29 +1234,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		if (isVisible()) {
-			Map savedState = null;
 			if (getShell() != null) {
 				// Save focus control
-				Control focusControl = getShell().getDisplay().getFocusControl();
-				if (focusControl != null && focusControl.getShell() != getShell()) {
-					focusControl = null;
+				fLastControl = getShell().getDisplay().getFocusControl();
+				if (fLastControl != null && fLastControl.getShell() != getShell()) {
+					fLastControl = null;
 				}
-				
-				// Set the busy cursor to all shells.
-				Display d = getShell().getDisplay();
-				waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-				setDisplayCursor(waitCursor);
-						
-				// Set the arrow cursor to the cancel component.
-				arrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
-				fProgressMonitorCancelButton.setCursor(arrowCursor);
 				fProgressMonitorCancelButton.setEnabled(true);
-				
-				// Deactivate shell
-				savedState = saveUIState();
-				if (focusControl != null) {
-					savedState.put(FOCUS_CONTROL, focusControl);
-				}	
 				// Attach the progress monitor part to the cancel button
 				fProgressMonitorPart.attachToCancelComponent(fProgressMonitorCancelButton);
 				fProgressMonitorPart.getParent().setVisible(true);
@@ -1328,52 +1252,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			} 
 			finally {
 				fActiveRunningOperations--;
-				stopped(savedState);
+				if (getShell() != null) {
+					fProgressMonitorPart.getParent().setVisible(false);
+					fProgressMonitorPart.removeFromCancelComponent(fProgressMonitorCancelButton);
+					if (fLastControl != null) {
+						fLastControl.setFocus();
+					}
+				}
 			}
 		} 
 		else {
 			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 		}
-	}
-
-	/**
-	 * Saves the enabled/disabled state of the given control in the
-	 * given map, which must be modifiable.
-	 *
-	 * @param w the control, or <code>null</code> if none
-	 * @param h the map (key type: <code>String</code>, element type:
-	 *   <code>Boolean</code>)
-	 * @param key the key
-	 * @param enabled <code>true</code> to enable the control, 
-	 *   and <code>false</code> to disable it
-	 * @see #restoreEnableStateAndSet
-	 */
-	private void saveEnableStateAndSet(Control w, Map h, String key, boolean enabled) {
-		if (w != null) {
-			h.put(key, Boolean.valueOf(w.isEnabled()));
-			w.setEnabled(enabled);
-		}
-	}
-
-	/**
-	 * Captures and returns the enabled/disabled state of the wizard dialog's
-	 * buttons and the tree of controls for the currently showing page. All
-	 * these controls are disabled in the process, with the possible exception of
-	 * the Cancel button.
-	 *
-	 * @return a map containing the saved state suitable for restoring later
-	 *   with <code>restoreUIState</code>
-	 * @see #restoreUIState
-	 */
-	private Map saveUIState() {
-		Map savedState= new HashMap(4);
-		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getButton(ID_CLOSE_BUTTON), savedState, "close", false);//$NON-NLS-1$
-		if (fSelectionArea != null) {
-			savedState.put("selectionarea", ControlEnableState.disable(fSelectionArea));//$NON-NLS-1$
-		}
-		savedState.put("editarea", ControlEnableState.disable(getEditArea()));//$NON-NLS-1$
-		return savedState;
 	}
 
 	/* (non-Javadoc)
@@ -1388,19 +1278,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void setActiveTab(int index) {
 		getTabViewer().setActiveTab(index);
-	}
-
-	/**
-	 * Sets the given cursor for all shells currently active
-	 * for this window's display.
-	 *
-	 * @param cursor the cursor
-	 */
-	private void setDisplayCursor(Cursor cursor) {
-		Shell[] shells = getShell().getDisplay().getShells();
-		for (int i = 0; i < shells.length; i++) {
-			shells[i].setCursor(cursor);
-		}
 	}
 	
 	/**
@@ -1541,33 +1418,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			return showSaveChangesDialog();
 		}
 		return showDiscardChangesDialog();
-	}
-
-	/**
-	 * A long running operation triggered through the dialog
-	 * was stopped either by user input or by normal end.
-	 * Hides the progress monitor and restores the enable state
-	 * of the dialog's buttons and controls.
-	 *
-	 * @param savedState the saved UI state as returned by <code>aboutToStart</code>
-	 * @see #aboutToStart
-	 */
-	private void stopped(Object savedState) {
-		if (getShell() != null) {
-			fProgressMonitorPart.getParent().setVisible(false);
-			fProgressMonitorPart.removeFromCancelComponent(fProgressMonitorCancelButton);
-			Map state = (Map)savedState;
-			restoreUIState(state);
-			setDisplayCursor(null);	
-			waitCursor.dispose();
-			waitCursor = null;
-			arrowCursor.dispose();
-			arrowCursor = null;
-			Control focusControl = (Control)state.get(FOCUS_CONTROL);
-			if (focusControl != null) {
-				focusControl.setFocus();
-			}
-		}
 	}
 
 	/* (non-Javadoc)
