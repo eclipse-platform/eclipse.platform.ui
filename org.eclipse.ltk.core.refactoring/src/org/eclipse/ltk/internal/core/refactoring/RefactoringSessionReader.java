@@ -159,9 +159,10 @@ public final class RefactoringSessionReader extends DefaultHandler {
 					description= value;
 				else if (IRefactoringSerializationConstants.ATTRIBUTE_FLAGS.equals(name))
 					flags= value;
-				else if (IRefactoringSerializationConstants.ATTRIBUTE_COMMENT.equals(name))
-					comment= value;
-				else if (fProjects && IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name))
+				else if (IRefactoringSerializationConstants.ATTRIBUTE_COMMENT.equals(name)) {
+					if (!"".equals(value)) //$NON-NLS-1$
+						comment= value;
+				} else if (fProjects && IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name))
 					project= value;
 				else if (!"".equals(name) && !"".equals(value)) //$NON-NLS-1$//$NON-NLS-2$
 					map.put(name, value);

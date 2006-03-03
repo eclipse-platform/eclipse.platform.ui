@@ -118,7 +118,7 @@ public final class RefactoringSessionTransformer {
 				attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_DESCRIPTION);
 				attribute.setValue(description);
 				attributes.setNamedItem(attribute);
-				if (comment != null) {
+				if (comment != null && !"".equals(comment)) { //$NON-NLS-1$
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 					attribute.setValue(comment);
 					attributes.setNamedItem(attribute);
@@ -161,7 +161,7 @@ public final class RefactoringSessionTransformer {
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
 				attribute.setValue(IRefactoringSerializationConstants.CURRENT_VERSION);
 				fSession.getAttributes().setNamedItem(attribute);
-				if (comment != null) {
+				if (comment != null && !"".equals(comment)) { //$NON-NLS-1$
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 					attribute.setValue(comment);
 					fSession.getAttributes().setNamedItem(attribute);
