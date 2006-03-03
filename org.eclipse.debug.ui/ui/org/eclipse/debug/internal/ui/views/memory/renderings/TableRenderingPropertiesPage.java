@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class TableRenderingPropertiesPage extends PropertyPage implements
@@ -30,6 +32,7 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 	}
 
 	protected Control createContents(Composite parent) {
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".TableRenderingPropertiesPage_context"); //$NON-NLS-1$
 		noDefaultAndApplyButton();
 		Composite composite = new Composite(parent, SWT.NONE);
 		if (getElement() instanceof AbstractBaseTableRendering)

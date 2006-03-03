@@ -599,8 +599,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	public Control getControl() {
-
-		return null;
+		return fPageBook;
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {

@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane{
 	
@@ -75,7 +74,6 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	 */
 	public Control createViewPane(Composite parent, String paneId, String label)
 	{	
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		fPaneId = paneId;
 		fLabel = label;
 		fCanvas = new Composite(parent, SWT.NONE);

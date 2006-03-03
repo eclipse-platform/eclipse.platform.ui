@@ -44,9 +44,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
@@ -100,6 +104,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private AbstractHandler fAddHandler;
 	private AbstractHandler fToggleMonitorsHandler;
 	private AbstractHandler fNextMemoryBlockHandler;
+	
+	private Control fActiveControl;
 	
 	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
 
@@ -310,10 +316,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
-		
 		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
+		
 		fSelectionProvider = new MemoryViewSelectionProvider();
 		
 		// set up selection provider and listeners
@@ -434,6 +438,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		fMemBlkViewer = new MemoryBlocksTreeViewPane(this);
 		fViewPanes.put(MemoryBlocksTreeViewPane.PANE_ID, fMemBlkViewer);
 		ViewForm viewerViewForm = new ViewForm(parent, SWT.NONE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewerViewForm, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		fViewPaneControls.put(MemoryBlocksTreeViewPane.PANE_ID, viewerViewForm);
 		fWeights.add(new Integer(15));
 		
@@ -458,19 +463,25 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		Label viewerLabel = new Label(viewerViewForm, SWT.WRAP);
 		viewerLabel.setText(DebugUIMessages.MemoryView_Memory_monitors); 
 		viewerViewForm.setTopLeft(viewerLabel);
+		
+		fMemBlkViewer.getControl().addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				fActiveControl = fMemBlkViewer.getControl();
+			}});
 	}
 
 	/**
 	 * 
 	 */
-	public void createRenderingViewPane(String paneId) {
+	public void createRenderingViewPane(final String paneId) {
 		RenderingViewPane renderingPane = new RenderingViewPane(this); 
 		fViewPanes.put(paneId, renderingPane);
 		ViewForm renderingViewForm = new ViewForm(fSashForm, SWT.NONE);
 		fViewPaneControls.put(paneId, renderingViewForm);
 		fWeights.add(new Integer(40));
 		
-		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings); 
+		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(renderingControl, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		renderingViewForm.setContent(renderingControl);
 		renderingPane.addSelectionListener(fSelectionProvider);
 		
@@ -487,11 +498,23 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		Label renderingLabel = new Label(renderingViewForm, SWT.NONE);
 		renderingLabel.setText(renderingPane.getLabel());
 		renderingViewForm.setTopLeft(renderingLabel);
+		
+		renderingControl.addListener(SWT.Activate, new Listener() {
+			private String id=paneId; 
+			public void handleEvent(Event event) {
+				IMemoryRenderingContainer container = getContainer(id);
+				fActiveControl = container.getActiveRendering().getControl();
+			}});
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
+		if (fActiveControl != null)
+			fActiveControl.setFocus();
+		else
+			fMemBlkViewer.getControl().setFocus();
 	}
 	
 	public void dispose() {

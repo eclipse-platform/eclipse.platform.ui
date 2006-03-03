@@ -236,6 +236,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout compositeLayout = new GridLayout();
 		compositeLayout.numColumns = 3;
@@ -368,7 +369,6 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	public AddMemoryRenderingDialog(Shell parent, IMemoryRenderingSite site) {
 		super(parent);
 		super.setTitle(DebugUIMessages.AddMemoryRenderingDialog_Add_memory_rendering); 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fSite = site;
 	}

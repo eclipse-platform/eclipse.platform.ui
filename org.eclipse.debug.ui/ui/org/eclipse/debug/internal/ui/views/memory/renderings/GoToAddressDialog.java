@@ -15,8 +15,8 @@ import java.util.Vector;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.0
  */
 
-public class GoToAddressDialog extends Dialog implements ModifyListener{
+public class GoToAddressDialog extends TrayDialog implements ModifyListener{
 
 	private static Vector history = new Vector();
 	private Combo expressionInput;
@@ -44,7 +44,7 @@ public class GoToAddressDialog extends Dialog implements ModifyListener{
 	 */
 	public GoToAddressDialog(Shell parentShell) {
 		super(parentShell);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell, IDebugUIConstants.PLUGIN_ID + ".GoToAddressDialog_context"); //$NON-NLS-1$
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/* (non-Javadoc)
@@ -52,6 +52,7 @@ public class GoToAddressDialog extends Dialog implements ModifyListener{
 	 */
 	protected Control createDialogArea(Composite parent) {
 	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".GoToAddressDialog_context"); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		GridData spec2= new GridData();
 		spec2.grabExcessVerticalSpace= true;

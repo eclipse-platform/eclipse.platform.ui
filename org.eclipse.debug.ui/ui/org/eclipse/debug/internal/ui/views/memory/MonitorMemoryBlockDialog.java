@@ -16,8 +16,8 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @since 3.0
  */
-public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
+public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListener{
 
 	private Combo expressionInput;
 	private Text lengthInput;
@@ -55,15 +55,14 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 		
 		fPrefillExp = prefillExp;
 		fPrefillLength = prefillLength;
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell, IDebugUIConstants.PLUGIN_ID + ".MonitorMemoryBlockDialog_context"); //$NON-NLS-1$
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MonitorMemoryBlockDialog_context"); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		GridData spec2= new GridData();
 		spec2.grabExcessVerticalSpace= true;
