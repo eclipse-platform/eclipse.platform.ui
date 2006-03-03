@@ -75,7 +75,7 @@ public class FileUtil {
 	 * Gets the contents of the result file with the given original relative path in
 	 * the given bundle, as a String (file must be encoded as UTF-8).
 	 */
-	public static String getResultFileContents(Bundle bundle, String absolutePath) throws IOException {
+	public static String getResultFileContents(Bundle bundle, String relative) throws IOException {
 		/*
 		 * Try [filename]_serialized_os_ws_arch.txt. If it's not there, try
 		 * [filename]_serialized.txt.
@@ -86,14 +86,14 @@ public class FileUtil {
 		 */
 		String contents = null;
 		try {
-			contents = getContents(bundle, getResultFile(absolutePath, true));
+			contents = getContents(bundle, getResultFile(relative, true));
 		}
 		catch(Exception e) {
 			// didn't find the _serialized_os_ws_arch.txt file, try just _serialized.txt
 		}
 		if (contents == null) {
 			try {
-				contents = getContents(bundle, getResultFile(absolutePath, false));
+				contents = getContents(bundle, getResultFile(relative, false));
 			}
 			catch(IOException e) {
 				throw e;

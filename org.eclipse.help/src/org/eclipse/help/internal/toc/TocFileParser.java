@@ -145,7 +145,8 @@ class TocFileParser extends DefaultHandler {
 	 */
 	public final void endElement(String namespaceURI, String localName,
 			String qName) throws SAXException {
-		if (!qName.equals("filter")) { //$NON-NLS-1$
+		if (qName.equals("toc") || qName.equals("topic") //$NON-NLS-1$ //$NON-NLS-2$
+				|| qName.equals("link") || qName.equals("anchor")) { //$NON-NLS-1$ //$NON-NLS-2$
 			elementStack.pop();
 		}
 	}

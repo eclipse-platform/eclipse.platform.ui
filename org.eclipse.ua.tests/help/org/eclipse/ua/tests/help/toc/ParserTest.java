@@ -58,23 +58,19 @@ public class ParserTest extends TestCase {
 			TocFile file = toc.getTocFile();
 
 			Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
-			String pluginRoot = bundle.getLocation().substring("update@".length());
 			String relativePath = file.getHref();
 			
 			/*
 			 * Only test what's in the toc test data folder.
 			 */
 			if (relativePath.startsWith("data/help/toc/")) {
-				String absolutePath = pluginRoot + relativePath;
-				String resultFile = FileUtil.getResultFile(absolutePath); 
-	
 				try {
-					String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath, true));
+					String expected = FileUtil.getResultFileContents(bundle, relativePath);
 					String actual = TocModelSerializer.serialize(toc);
-					Assert.assertEquals("Serialized toc model for " + relativePath + "did not match the expected result: " + FileUtil.getResultFile(relativePath), expected, actual);
+					Assert.assertEquals("Serialized toc model for " + relativePath + " did not match the expected result", expected, actual);
 				}
 				catch(IOException e) {
-					Assert.fail("An error occured while loading expected result file for TOC at: " + resultFile + ": " + e);
+					Assert.fail("An error occured while loading expected result file for TOC at: " + relativePath + ": " + e);
 				}
 			}
 		}

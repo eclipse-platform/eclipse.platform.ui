@@ -239,6 +239,9 @@
        <toc file="data/help/toc/filteredToc/toc.xml" primary="true" />
        <toc file="data/help/toc/filteredToc/filter.xml" />
        <toc file="data/help/toc/filteredToc/simple_toc.xml" />
+       <toc file="data/help/toc/extraContent/toc.xml" primary="true"/>
+       <toc file="data/help/toc/extraContent/toc2.xml" primary="true"/>
+       <toc file="data/help/toc/extraContent/simple_toc.xml" />
        <toc file="data/help/search/toc.xml" primary="true"/>
    </extension>
 
