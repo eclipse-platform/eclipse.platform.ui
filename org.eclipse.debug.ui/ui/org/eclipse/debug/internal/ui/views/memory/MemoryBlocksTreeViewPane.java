@@ -56,7 +56,6 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -315,14 +314,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	
 	public Control createViewPane(Composite parent, String paneId, String label)
 	{
-		Composite composite = new Composite(parent, SWT.FILL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.makeColumnsEqualWidth = false;
-		composite.setLayout(layout);
-
 		fPaneId = paneId;
-		fTreeViewer = new AsynchronousTreeViewer(composite);
+		fTreeViewer = new AsynchronousTreeViewer(parent);
 		
 		MemoryViewPresentationContext presentationContext = new MemoryViewPresentationContext(fParent);
 		presentationContext.setContainerId(getId());
@@ -363,7 +356,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		
 		updateActionsEnablement();
 		
-		return composite;
+		return fTreeViewer.getControl();
 	}
 	
 	
@@ -653,5 +646,10 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		{
 			MemoryBlocksTreeViewPane.this.selectionChanged(fParent, event.getSelection());
 		}
+	}
+	
+	public AsynchronousTreeViewer getViewer()
+	{
+		return fTreeViewer;
 	}
 }

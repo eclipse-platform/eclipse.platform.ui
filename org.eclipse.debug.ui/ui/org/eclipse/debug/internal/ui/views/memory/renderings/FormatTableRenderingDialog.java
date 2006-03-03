@@ -72,7 +72,7 @@ public class FormatTableRenderingDialog extends Dialog
 		
 		protected Control createDialogArea(Composite parent) {
 			getShell().setText(DebugUIMessages.FormatTableRenderingAction_0);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), IDebugUIConstants.PLUGIN_ID + ".FormatTableRenderingDialog_context"); //$NON-NLS-1$
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".FormatTableRenderingDialog_context"); //$NON-NLS-1$
 			
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout();

@@ -803,22 +803,6 @@
                style="toggle"
                id="org.eclipse.debug.ui.togglesplitpane"/>
          <action
-               helpContextId="SetPaddedStrAction_context"
-               label="%SetPaddedStrActionName"
-               class="org.eclipse.debug.internal.ui.views.memory.renderings.SetPaddedStringAction"
-               tooltip="%SetPaddedStrActionName"
-               style="push"
-               menubarPath="additions"
-               id="org.eclipse.debug.ui.setPaddedStrAction"/>
-         <action
-               class="org.eclipse.debug.internal.ui.views.memory.SelectCodePagesAction"
-               helpContextId="SelectCodePagesAction_context"
-               id="org.eclipse.debug.ui.selectCodePage"
-               label="%SelectCodepagesAction.label"
-               menubarPath="additions"
-               style="push"
-               tooltip="%SelectCodepagesAction.label"/>
-         <action
                class="org.eclipse.debug.internal.ui.views.memory.SwitchMemoryBlockAction"
                disabledIcon="$nl$/icons/full/dlcl16/display_selected_mb.gif"
                helpContextId="switchMemoryBlockAction_context"
@@ -829,11 +813,13 @@
                toolbarPath="switchMonitorGroup"
                tooltip="%switchMemoryBlock.label"/>
          <action
-               class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockPrefAction"
+               class="org.eclipse.debug.internal.ui.views.memory.MemoryViewPrefAction"
+               helpContextId="MemoryViewPreferences_context"
                id="org.eclipse.debug.ui.memoryViewPreferencesAction"
-               label="%resetMemoryMonitorPrefAction.label"
+               label="%memoryViewPrefAction.label"
                menubarPath="additions"
-               style="push"/>
+               style="push"
+               tooltip="%memoryViewPrefAction.label"/>
       </viewContribution>
    </extension>
    <extension

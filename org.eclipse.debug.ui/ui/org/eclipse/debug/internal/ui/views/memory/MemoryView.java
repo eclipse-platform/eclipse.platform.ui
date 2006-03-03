@@ -433,7 +433,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fMemBlkViewer = new MemoryBlocksTreeViewPane(this);
 		fViewPanes.put(MemoryBlocksTreeViewPane.PANE_ID, fMemBlkViewer);
-		ViewForm viewerViewForm = new ViewForm(parent, SWT.FLAT);
+		ViewForm viewerViewForm = new ViewForm(parent, SWT.NONE);
 		fViewPaneControls.put(MemoryBlocksTreeViewPane.PANE_ID, viewerViewForm);
 		fWeights.add(new Integer(15));
 		
@@ -466,7 +466,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	public void createRenderingViewPane(String paneId) {
 		RenderingViewPane renderingPane = new RenderingViewPane(this); 
 		fViewPanes.put(paneId, renderingPane);
-		ViewForm renderingViewForm = new ViewForm(fSashForm, SWT.FLAT);
+		ViewForm renderingViewForm = new ViewForm(fSashForm, SWT.NONE);
 		fViewPaneControls.put(paneId, renderingViewForm);
 		fWeights.add(new Integer(40));
 		

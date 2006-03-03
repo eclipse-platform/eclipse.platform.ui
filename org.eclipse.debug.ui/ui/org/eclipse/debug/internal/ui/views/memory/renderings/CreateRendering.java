@@ -321,7 +321,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 				
 				WorkbenchJob wbJob = new WorkbenchJob("Create Rendering Update Label"){ //$NON-NLS-1$
 
-					public IStatus runInUIThread(IProgressMonitor monitor) {
+					public IStatus runInUIThread(IProgressMonitor wbMonitor) {
 						if (fMemoryBlockLabel != null)
 						{
 							fMemoryBlockLabel.setText("  " + DebugUIMessages.CreateRenderingTab_Memory_monitor + fLabel + "  ");  //$NON-NLS-1$//$NON-NLS-2$

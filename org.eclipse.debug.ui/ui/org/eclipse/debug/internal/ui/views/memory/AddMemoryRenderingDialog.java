@@ -525,7 +525,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				final IMemoryBlock selectedBlk = selectMB;
 				WorkbenchJob wbJob = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
 
-					public IStatus runInUIThread(IProgressMonitor monitor) {
+					public IStatus runInUIThread(IProgressMonitor wbMonitor) {
 						doPopulateDialog(memoryBlock, fViewer, labels, idx, selectedBlk);	
 						return Status.OK_STATUS;
 					}};
