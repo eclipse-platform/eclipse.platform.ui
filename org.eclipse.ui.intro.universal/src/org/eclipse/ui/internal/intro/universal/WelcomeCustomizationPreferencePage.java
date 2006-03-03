@@ -545,18 +545,20 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	}
 
 	private void updatePageContainer(String pageId, PageData pd) {
-		if (pageId == null || pd == null)
+		if (pageId == null)
 			return;
-		topLeft.setInput(pd.findGroup(IUniversalIntroConstants.DIV_LAYOUT_TOP_LEFT));
-		topRight.setInput(pd.findGroup(IUniversalIntroConstants.DIV_LAYOUT_TOP_RIGHT));
-		bottomLeft.setInput(pd.findGroup(IUniversalIntroConstants.DIV_LAYOUT_BOTTOM_LEFT));
-		bottomRight.setInput(pd.findGroup(IUniversalIntroConstants.DIV_LAYOUT_BOTTOM_RIGHT));
-		available.setInput(pd.findGroup(IUniversalIntroConstants.HIDDEN));
-		updateColumnSizes(topLeft);
-		updateColumnSizes(topRight);
-		updateColumnSizes(bottomLeft);
-		updateColumnSizes(bottomRight);
-		updateColumnSizes(available);
+		refreshQuadrant(topLeft, pd, IUniversalIntroConstants.DIV_LAYOUT_TOP_LEFT);
+		refreshQuadrant(topRight, pd, IUniversalIntroConstants.DIV_LAYOUT_TOP_RIGHT);
+		refreshQuadrant(bottomLeft, pd, IUniversalIntroConstants.DIV_LAYOUT_BOTTOM_LEFT);
+		refreshQuadrant(bottomRight, pd, IUniversalIntroConstants.DIV_LAYOUT_BOTTOM_RIGHT);
+		refreshQuadrant(available, pd, IUniversalIntroConstants.HIDDEN);
+	}
+
+	private void refreshQuadrant(TableViewer viewer, PageData pd, String quadrant) {
+		GroupData gd = pd!=null?pd.findGroup(quadrant):null;
+		viewer.setInput(gd);
+		if (gd!=null)
+			updateColumnSizes(viewer);
 	}
 
 	private void onTabChange(TabItem item) {
