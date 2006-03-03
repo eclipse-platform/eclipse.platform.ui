@@ -1230,6 +1230,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingContainer#getActiveRendering()
 	 */
 	public IMemoryRendering getActiveRendering() {
+		if (getTopMemoryTab() == null)
+			return null;
 		return getTopMemoryTab().getRendering();
 	}
 	

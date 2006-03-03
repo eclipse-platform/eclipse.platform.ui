@@ -503,7 +503,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			private String id=paneId; 
 			public void handleEvent(Event event) {
 				IMemoryRenderingContainer container = getContainer(id);
-				fActiveControl = container.getActiveRendering().getControl();
+				if (container.getActiveRendering() != null)
+					fActiveControl = container.getActiveRendering().getControl();
 			}});
 
 	}
@@ -511,7 +512,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		if (fActiveControl != null)
+		if (fActiveControl != null && !fActiveControl.isDisposed())
 			fActiveControl.setFocus();
 		else
 			fMemBlkViewer.getControl().setFocus();
