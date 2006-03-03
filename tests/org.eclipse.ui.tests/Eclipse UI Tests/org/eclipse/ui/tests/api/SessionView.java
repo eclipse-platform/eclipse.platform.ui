@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.ui.IMemento;
@@ -76,38 +77,38 @@ public class SessionView extends MockViewPart {
     public void testMementoState(TestCase testCase) {
         // Verify that the memento was passed to us in
         // constructor.
-        TestCase.assertNotNull(memento);
+        Assert.assertNotNull(memento);
 
         // Read float.	
         Float bigFloat = memento.getFloat("float");
-        TestCase.assertNotNull(bigFloat);
-        TestCase.assertEquals(bigFloat.floatValue(), 0.50f, 0.0001);
+        Assert.assertNotNull(bigFloat);
+        Assert.assertEquals(bigFloat.floatValue(), 0.50f, 0.0001);
 
         // Read int.	
         Integer bigInt = memento.getInteger("integer");
-        TestCase.assertEquals(bigInt, new Integer(50));
+        Assert.assertEquals(bigInt, new Integer(50));
 
         // Read string.
         String str = memento.getString("string");
-        TestCase.assertEquals(str, "50");
+        Assert.assertEquals(str, "50");
 
         // Read single child.
         IMemento child = memento.getChild("single");
-        TestCase.assertNotNull(child);
+        Assert.assertNotNull(child);
         bigInt = child.getInteger("id");
-        TestCase.assertEquals(bigInt, new Integer(1));
+        Assert.assertEquals(bigInt, new Integer(1));
 
         // Read multiple children.
         bigInt = memento.getInteger("multiple.count");
-        TestCase.assertNotNull(bigInt);
+        Assert.assertNotNull(bigInt);
         int count = bigInt.intValue();
         IMemento[] children = memento.getChildren("multiple");
-        TestCase.assertEquals(count, children.length);
+        Assert.assertEquals(count, children.length);
         for (int nX = 0; nX < count; nX++) {
             child = children[nX];
-            TestCase.assertNotNull(child);
+            Assert.assertNotNull(child);
             bigInt = child.getInteger("id");
-            TestCase.assertEquals(bigInt, new Integer(nX));
+            Assert.assertEquals(bigInt, new Integer(nX));
         }
     }
 }

@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.harness.util;
 
 import java.lang.reflect.Method;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.action.ActionContributionItem;
@@ -36,7 +37,7 @@ public class ActionUtil {
      * @param item an action contribution item
      */
     public static void runAction(TestCase test, IContributionItem item) {
-        TestCase.assertTrue(item instanceof ActionContributionItem);
+        Assert.assertTrue(item instanceof ActionContributionItem);
         ((ActionContributionItem) item).getAction().run();
     }
 
@@ -63,7 +64,7 @@ public class ActionUtil {
                 }
             }
         }
-        TestCase.fail("Unable to find action: " + label);
+        Assert.fail("Unable to find action: " + label);
     }
 
     /**
@@ -92,7 +93,7 @@ public class ActionUtil {
     public static void runActionUsingPath(TestCase test, IMenuManager mgr,
             String idPath) {
         IContributionItem item = mgr.findUsingPath(idPath);
-        TestCase.assertNotNull(item);
+        Assert.assertNotNull(item);
         runAction(test, item);
     }
 

@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.api;
 
 import java.util.ArrayList;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.action.Action;
@@ -142,7 +143,7 @@ public class ListView extends MockViewPart implements IMenuListener {
      * Tests that the menu mgr contains the expected actions.
      */
     public void verifyActions(TestCase test, IMenuManager menuMgr) {
-        TestCase.assertNotNull(menuMgr.find(ADD_ACTION_ID));
+        Assert.assertNotNull(menuMgr.find(ADD_ACTION_ID));
     }
 
     public void addStandardItems() {

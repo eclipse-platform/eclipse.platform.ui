@@ -76,7 +76,7 @@ public class RemoveMarkersAction implements IWorkbenchWindowActionDelegate {
 
         e.printStackTrace();
 
-        IStatus status = new Status(Status.ERROR, TestPlugin.getDefault()
+        IStatus status = new Status(IStatus.ERROR, TestPlugin.getDefault()
                 .getDescriptor().getUniqueIdentifier(), 0, msg, e);
 
         TestPlugin.getDefault().getLog().log(status);

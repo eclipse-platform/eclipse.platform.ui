@@ -11,13 +11,14 @@
 package org.eclipse.ui.examples.undo;
 
 import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.examples.undo.preferences.PreferenceConstants;
@@ -108,7 +109,7 @@ public final class PromptingUserApprover implements IOperationApprover {
 
 		if (createdShell)
 			shell.dispose();
-		if (dialog.getReturnCode() == MessageDialogWithToggle.OK)
+		if (dialog.getReturnCode() == Window.OK)
 			return Status.OK_STATUS;
 		return Status.CANCEL_STATUS;
 	}

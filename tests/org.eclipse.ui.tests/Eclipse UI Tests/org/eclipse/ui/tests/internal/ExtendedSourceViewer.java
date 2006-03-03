@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -38,7 +39,7 @@ public class ExtendedSourceViewer extends SourceViewer {
     public ISelection getSelection() {
         Point p = getSelectedRange();
         if (p.x == -1 || p.y == -1)
-            return ExtendedTextSelection.emptySelection();
+            return TextSelection.emptySelection();
 
         return new ExtendedTextSelection(getDocument(), p.x, p.y);
     }
