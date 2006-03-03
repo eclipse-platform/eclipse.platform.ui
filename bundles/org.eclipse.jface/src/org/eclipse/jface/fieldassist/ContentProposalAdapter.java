@@ -301,9 +301,10 @@ public class ContentProposalAdapter {
 						filterText = filterText.substring(0, filterText
 								.length() - 1);
 					}
-					// Proposals are always recomputed because the client may
-					// be implementing their own cursor position based filtering
-					recomputeProposals(filterText);
+					// Recompute the proposals even if the filter text
+					// did not change.  Some clients provide their own
+					// filtering based on content.  
+					asyncRecomputeProposals(filterText);
 					break;
 
 				default:
@@ -316,7 +317,8 @@ public class ContentProposalAdapter {
 						} else if (filterStyle == FILTER_CHARACTER) {
 							filterText = String.valueOf(key);
 						}
-						recomputeProposals(filterText);
+						// Recompute proposals after processing this event.
+						asyncRecomputeProposals(filterText);
 					}
 					break;
 				}
@@ -860,6 +862,26 @@ public class ContentProposalAdapter {
 		private void recomputeProposals(String filterText) {
 			setProposals(getProposals(filterText));
 		}
+		
+		/*
+		 * In an async block, request the proposals.
+		 * This is used when clients are in the middle of processing
+		 * an event that affects the widget content. By using an
+		 * async, we ensure that the widget content is up to date with
+		 * the event.
+		 */
+		private void asyncRecomputeProposals(final String filterText) {
+			if (isValid()) {
+				control.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						recomputeProposals(filterText);
+					}
+				});
+			} else {
+				recomputeProposals(filterText);
+			}
+		}
+
 
 		/*
 		 * Filter the provided list of content proposals according to the filter
@@ -872,8 +894,7 @@ public class ContentProposalAdapter {
 			}
 
 			// Check each string for a match. Use the string displayed to the
-			// user,
-			// not the proposal content.
+			// user, not the proposal content.
 			ArrayList list = new ArrayList();
 			for (int i = 0; i < proposals.length; i++) {
 				String string = getString(proposals[i]);

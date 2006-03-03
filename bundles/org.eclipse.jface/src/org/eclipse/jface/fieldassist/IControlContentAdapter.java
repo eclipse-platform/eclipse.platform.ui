@@ -47,7 +47,7 @@ public interface IControlContentAdapter {
 	 *            the String to be inserted into the control contents.
 	 * @param cursorPosition
 	 *            the zero-based index representing the desired cursor position
-	 *            in the control's contents after the insertion is made.
+	 *            within the inserted contents after the insertion is made.
 	 */
 	public void insertControlContents(Control control, String contents,
 			int cursorPosition);

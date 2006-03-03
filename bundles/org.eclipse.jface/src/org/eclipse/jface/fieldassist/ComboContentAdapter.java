@@ -61,7 +61,7 @@ public class ComboContentAdapter implements IControlContentAdapter {
 		StringBuffer sb = new StringBuffer();
 		sb.append(contents.substring(0, selection.x));
 		sb.append(text);
-		if (selection.y > contents.length()) {
+		if (selection.y < contents.length()) {
 			sb.append(contents.substring(selection.y, contents.length()));
 		}
 		combo.setText(sb.toString());
