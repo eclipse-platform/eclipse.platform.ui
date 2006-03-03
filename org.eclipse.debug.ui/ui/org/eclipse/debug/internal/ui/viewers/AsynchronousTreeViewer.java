@@ -371,8 +371,12 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * Refreshes the columns in the view, based on the viewer input.
      */
     public void refreshColumns() {
+    	PresentationContext context = (PresentationContext) getPresentationContext();
     	if (fColumnPresentation != null) {
     		buildColumns(fColumnPresentation);
+    		context.setColumns(getVisibleColumns());
+    	} else {
+    		context.setColumns(null);
     	}
     }
     
@@ -414,7 +418,9 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 					fColumnPresentation = null;
 				}
 			}
+			context.setColumns(getVisibleColumns());
     	}
+    	
     }
     
     /**
