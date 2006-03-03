@@ -78,7 +78,7 @@ public class DragUtil {
      * @return
      */
     private static List getTargetList(Control control) {
-        List result = (List) control.getData(DROP_TARGET_ID);;
+        List result = (List) control.getData(DROP_TARGET_ID);
         return result;
     }
 

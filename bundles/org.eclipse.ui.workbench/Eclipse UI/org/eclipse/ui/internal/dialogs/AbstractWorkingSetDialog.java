@@ -110,7 +110,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);;
+		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);
 		buttonComposite.setLayoutData(data);
 
 		newButton = createButton(buttonComposite, ID_NEW,

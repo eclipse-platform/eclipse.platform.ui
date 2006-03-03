@@ -85,7 +85,7 @@ public final class UpdatableTreeContentProvider implements ITreeContentProvider 
         public void doFireStale(boolean isStale) {
         	fireStale(isStale);
         }
-    };
+    }
 
     private KnownElementsSet elements = new KnownElementsSet();
 

@@ -12,7 +12,7 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.6 $  $Date: 2006/01/26 21:35:39 $ 
+ *  $Revision: 1.7 $  $Date: 2006/02/14 20:03:46 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -26,31 +26,31 @@ import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
 public class UpdatableFactoriesTest extends ScenariosTestCase {
 
 	interface Root {
-	};
+	}
 
 	interface None extends Root {
-	};
+	}
 
 	interface Middle extends None {
-	};
+	}
 
 	interface StandAlone {
-	};
+	}
 
 	class RootClass implements Root {
-	};
+	}
 
 	class NoneClass implements None {
-	};
+	}
 
 	class MiddleClass implements Middle {
-	};
+	}
 
 	class AllClass implements StandAlone, Middle, Root {
-	};
+	}
 
 	class MiddleChild extends MiddleClass {
-	};
+	}
 
 	interface TestIUpdatable extends IUpdatable {
 		public Class getType();

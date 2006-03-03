@@ -162,12 +162,12 @@ public class SWTUtil {
 		SafeRunnable.run(new SafeRunnable() {
 			public void run() throws Exception {
 				throw t;
-			};
+			}
 			public void handleException(Throwable e) {
 				// IMPORTANT: Do not call the super implementation, since
 				// it opens a modal dialog, and may cause *syncExecs to run
 				// too early.
-			};
+			}
 		});
 	}
 }

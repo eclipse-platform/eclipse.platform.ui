@@ -78,7 +78,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 					.getWorkbench().getSharedImages()
 					.getImageDescriptor(
 							ISharedImages.IMG_TOOL_DELETE));
-		};    	
+		}    	
     }
     
     public MockViewPart() {

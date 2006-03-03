@@ -74,7 +74,6 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
-			;
 		}
 
 		/*
