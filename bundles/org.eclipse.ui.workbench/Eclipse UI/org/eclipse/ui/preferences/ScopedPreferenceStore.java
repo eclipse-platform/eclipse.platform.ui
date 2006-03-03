@@ -651,10 +651,20 @@ public class ScopedPreferenceStore extends EventManager implements
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setToDefault(java.lang.String)
 	 */
 	public void setToDefault(String name) {
-		// removing a non-existing preference is a no-op so call the Core API
-		// directly
-		getStorePreferences().remove(name);
-		dirty = true;
+
+		String oldValue = getString(name);
+		String defaultValue = getDefaultString(name);
+		try {
+			silentRunning = true;// Turn off updates from the store
+			// removing a non-existing preference is a no-op so call the Core
+			// API directly
+			getStorePreferences().remove(name);
+			dirty = true;
+			firePropertyChangeEvent(name, oldValue, defaultValue);
+		} finally {
+			silentRunning = false;// Restart listening to preferences
+		}
+
 	}
 
 	/*
@@ -839,7 +849,7 @@ public class ScopedPreferenceStore extends EventManager implements
 		}
 		if (preferencesListener != null) {
 			preferences.removePreferenceChangeListener(preferencesListener);
-			preferencesListener= null;
+			preferencesListener = null;
 		}
 	}
 
