@@ -2698,39 +2698,40 @@
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <problemFilter
-            enabled="true"
+            enabled="false"
             id="problemTest.onAnyError"
             name="On Any Error"
             scope="ON_ANY"
             severity="ERROR"/>
       <problemFilter
-            enabled="true"
+            enabled="false"
             id="problemTest.onSelectedWarning"
             name="On Selected Warning"
             scope="ON_SELECTED_ONLY"
             severity="WARNING"/>
       <problemFilter
-            enabled="true"
+            enabled="false"
             id="problemTest.infoAndChildren"
             name="On Selected Info And Children"
             scope="ON_SELECTED_AND_CHILDREN"
             severity="INFO"/>
       <problemFilter
-            enabled="true"
+            enabled="false"
             id="problemTest.sameContainerNoSeverity"
             name="Same Container No Severity"
             scope="ON_ANY_IN_SAME_CONTAINER"/>
       <problemFilter
-            enabled="true"
+            enabled="false"
             id="problemTest.onMethod"
             name="On Method"
             onDescription="method"/>
       <problemFilter
+            enabled="false"
             id="problemTest.notOnMethod"
             name="Not On Method"
             onDescription="!method"/>
       <problemFilter
-            enabled="true"
+            enabled="false"
             id="problemTest.onProblem"
             name="On MarkerType">
          <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
