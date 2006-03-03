@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -160,14 +163,23 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setMenuCreator(this);
 		}
 		public void initialize(Collection groupCategories) {
+			List list= new ArrayList(groupCategories);
+			Collections.sort(list, new Comparator() {
+			
+				public final int compare(final Object first, final Object second) {
+					final GroupCategory left= (GroupCategory) first;
+					final GroupCategory right= (GroupCategory) second;
+					return Collator.getInstance().compare(left.getName(), right.getName());
+				}
+			});
 			fShowAllAction= new ShowAllAction(this);
 			fActiveAction= fShowAllAction;
-			fFilterActions= new FilterAction[groupCategories.size()];
+			fFilterActions= new FilterAction[list.size()];
 			int i= 0;
-			for (Iterator iter= groupCategories.iterator(); iter.hasNext();) {
+			for (Iterator iter= list.iterator(); iter.hasNext();) {
 				fFilterActions[i++]= new FilterAction(this, (GroupCategory)iter.next());
 			}
-			setEnabled(groupCategories.size() > 0);
+			setEnabled(list.size() > 0);
 		}
 		public void dispose() {
 			if (fMenu != null) {
