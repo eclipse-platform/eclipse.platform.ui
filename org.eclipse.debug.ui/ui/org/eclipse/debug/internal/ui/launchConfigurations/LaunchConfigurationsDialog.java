@@ -1125,6 +1125,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (status != null) {
 			handleStatus(status);
 		}
+		fLaunchConfigurationView.getFilteringTextControl().setFocus();
 	}
 	
 	/**
