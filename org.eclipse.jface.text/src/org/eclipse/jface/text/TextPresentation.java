@@ -434,6 +434,10 @@ public class TextPresentation {
 	 */
 	private void applyStyle(StyleRange template, StyleRange target, boolean merge) {
 		if (merge) {
+			if (template.font != null)
+				target.font= template.font;
+			if (template.metrics != null)
+				target.metrics= template.metrics;
 			if (template.foreground != null)
 				target.foreground= template.foreground;
 			if (template.background != null)
@@ -447,6 +451,8 @@ public class TextPresentation {
 			target.fontStyle= template.fontStyle;
 			target.strikeout= template.strikeout;
 			target.underline= template.underline;
+			target.font= template.font;
+			target.metrics= template.metrics;
 		}
 	}
 
