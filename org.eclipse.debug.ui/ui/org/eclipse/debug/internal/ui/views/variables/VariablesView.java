@@ -853,9 +853,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT, null);
 		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, getToggleActionLabel());
 		viewMenu.add(new Separator());
-		viewMenu.add(fToggleDetailPaneActions[0]);
-		viewMenu.add(fToggleDetailPaneActions[1]);
-		viewMenu.add(fToggleDetailPaneActions[2]);
+		MenuManager layoutSubMenu = new MenuManager(VariablesViewMessages.VariablesView_40);
+		layoutSubMenu.add(fToggleDetailPaneActions[0]);
+		layoutSubMenu.add(fToggleDetailPaneActions[1]);
+		layoutSubMenu.add(fToggleDetailPaneActions[2]);
+		viewMenu.add(layoutSubMenu);
 		viewMenu.add(new Separator());		
 	}
 	

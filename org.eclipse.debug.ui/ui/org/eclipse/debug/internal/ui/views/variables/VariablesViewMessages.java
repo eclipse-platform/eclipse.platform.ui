@@ -51,4 +51,6 @@ public class VariablesViewMessages extends NLS {
 	public static String MaxDetailsLengthDialog_2;
 
 	public static String MaxDetailsLengthDialog_3;
+
+	public static String VariablesView_40;
 }
