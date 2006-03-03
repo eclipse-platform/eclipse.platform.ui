@@ -235,7 +235,8 @@ public final class ContextManager extends HandleObjectManager implements
 		}
 
 		if (DEBUG) {
-			Tracing.printTrace("CONTEXTS", activeContextIds.toString()); //$NON-NLS-1$
+			Tracing.printTrace("CONTEXTS", (activeContextIds == null) ? "none" //$NON-NLS-1$ //$NON-NLS-2$
+					: activeContextIds.toString());
 		}
 
 		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
