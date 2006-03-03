@@ -238,7 +238,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (isChecked()){
 					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, LOCAL_MODE);
 					updateFilterMode(LOCAL_MODE);
-				}
+				} else 
+					setChecked(true);
 			}
 		};
 		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip); 
@@ -250,7 +251,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (isChecked()){
 					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, REMOTE_MODE);
 					updateFilterMode(REMOTE_MODE);
-				}
+				} else
+					setChecked(true);
 			}
 		};
 		remoteMode.setToolTipText(CVSUIMessages.CVSHistoryPage_RemoteModeTooltip); 
@@ -262,7 +264,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (isChecked()){
 					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, REMOTE_LOCAL_MODE);
 					updateFilterMode(REMOTE_LOCAL_MODE);
-				}
+				} else
+					setChecked(true);
 			}
 		};
 		remoteLocalMode.setToolTipText(CVSUIMessages.CVSHistoryPage_CombinedModeTooltip); 
