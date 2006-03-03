@@ -492,12 +492,14 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	clear : both;
 }
 
+/*
 #page-content #top-left > *, 
 #page-content #top-right > *,
 #page-content #bottom-left > *,
 #page-content #bottom-right > * {
 	display: block;
 }
+*/
 
 #page-content * > a {
 	vertical-align : middle; 
@@ -546,13 +548,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	float : none;
 	clear : both;
 	text-align: left;
-}
-
-#page-content .content-group .section-body,
-#page-content .content-group .section-title {
-	position: relative;
-	left : 60px;
-	margin-right: 60px;
 }
 
 .content-link:hover { border-right : 0px; }

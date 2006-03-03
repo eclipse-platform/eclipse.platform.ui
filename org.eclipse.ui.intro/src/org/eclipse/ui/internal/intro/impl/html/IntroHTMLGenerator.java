@@ -308,24 +308,41 @@ public class IntroHTMLGenerator {
 				divLabel.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
 												"section-title");//$NON-NLS-1$
 				String clientId = element.getId() + "-content"; //$NON-NLS-1$
+				String toggleClosedId = element.getId() + "-toggle-closed"; //$NON-NLS-1$
+				String toggleOpenId = element.getId() + "-toggle-open"; //$NON-NLS-1$
 				String href = "#"; //$NON-NLS-1$
 				HTMLElement link = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_ANCHOR,
 						indentLevel + 1, true);
 				link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, href);
 				link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-title-link"); //$NON-NLS-1$
-				String call = "return (toggleSection('" + clientId + "'))"; //$NON-NLS-1$ //$NON-NLS-2$
-				link.addAttribute("onClick", call); //$NON-NLS-1$
+				StringBuffer call = new StringBuffer();
+				call.append("return (toggleSection('");//$NON-NLS-1$
+				call.append(clientId);
+				call.append("','");//$NON-NLS-1$ 
+				call.append(toggleClosedId);
+				call.append("','");//$NON-NLS-1$ 
+				call.append(toggleOpenId);
+				call.append("'))"); //$NON-NLS-1$ 
+				link.addAttribute("onClick", call.toString()); //$NON-NLS-1$
 				link.addContent(divLabel);
 				divElement.addContent(link);
-				String toggleId = element.getId() + "-toggle"; //$NON-NLS-1$
-				HTMLElement toggleImage = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG,
+				// Add toggle images
+				HTMLElement toggleImageClosed = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG,
 						indentLevel + 2, false);
-				toggleImage.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, toggleId);
-				toggleImage.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, BundleUtil
+				toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, toggleClosedId);
+				toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, BundleUtil
 						.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
 								IIntroConstants.PLUGIN_ID));
-				toggleImage.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-toggle-image"); //$NON-NLS-1$
-				link.addContent(toggleImage);
+				toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-toggle-image-closed"); //$NON-NLS-1$
+				link.addContent(toggleImageClosed);
+				HTMLElement toggleImageOpen = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG,
+						indentLevel + 2, false);
+				toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, toggleOpenId);
+				toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, BundleUtil
+						.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
+								IIntroConstants.PLUGIN_ID));
+				toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-toggle-image-open"); //$NON-NLS-1$
+				link.addContent(toggleImageOpen);
 				childContainer = generateDivElement(clientId, indentLevel + 1);
 				childContainer.addAttribute("class", "section-body"); //$NON-NLS-1$//$NON-NLS-2$
 				divElement.addContent(childContainer);
