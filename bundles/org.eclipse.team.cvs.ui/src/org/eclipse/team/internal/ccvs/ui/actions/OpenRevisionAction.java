@@ -46,7 +46,12 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 			Object[] objArray = structSel.toArray();
 
 			for (int i = 0; i < objArray.length; i++) {
-				final IFileRevision revision = (IFileRevision) objArray[i];
+				Object tempRevision = objArray[i];
+				//If not a revision, don't try opening
+				if (tempRevision instanceof AbstractCVSHistoryCategory)
+					continue;
+				
+				final IFileRevision revision = (IFileRevision) tempRevision;
 				if (revision == null || !revision.exists()) {
 					MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, TeamUIMessages.OpenRevisionAction_DeletedRevisionMessage);
 				} else {
@@ -112,6 +117,9 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 	private boolean shouldShow() {
 		IStructuredSelection structSel = selection;
 		Object[] objArray = structSel.toArray();
+		
+		if (objArray.length == 0)
+			return false;
 		
 		for (int i = 0; i < objArray.length; i++) {
 			//Don't bother showing if this a category

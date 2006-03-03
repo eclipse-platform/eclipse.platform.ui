@@ -307,13 +307,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
 		handler.addOpenListener(new IOpenEventListener() {
 		public void handleOpen(SelectionEvent e) {
-				Object tableSelection = ((StructuredSelection) treeViewer.getSelection()).getFirstElement();
+				StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
 				if (compareMode){
-					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableSelection});
+					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
 					compareAction.selectionChanged(sel);
 					compareAction.run();
 				} else {
-					StructuredSelection sel = new StructuredSelection(new Object[] {tableSelection});
+					//Pass in the entire structured selection to allow for multiple editor openings
+					StructuredSelection sel = tableStructuredSelection;
 					openAction.selectionChanged(sel);
 					openAction.run();
 				}

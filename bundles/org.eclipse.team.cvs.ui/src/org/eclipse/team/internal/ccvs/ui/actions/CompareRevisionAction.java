@@ -43,12 +43,23 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 			switch (structSel.size()){
 				case 1:
 					file1 = page.getCurrentFileRevision();
-					file2 = (IFileRevision) objArray[0];
+					Object tempRevision = objArray[0];
+					if (tempRevision instanceof IFileRevision)
+						file2 = (IFileRevision) tempRevision;
+					else 
+						return;
 				break;
 				
 				case 2:
-					file1 = (IFileRevision) objArray[0];
-					file2 = (IFileRevision) objArray[1];
+					Object tempRevision2 = objArray[0];
+					Object tempRevision3 = objArray[1];
+					
+					if (tempRevision2 instanceof IFileRevision &&
+						tempRevision3 instanceof IFileRevision){
+						file1 = (IFileRevision) objArray[0];
+						file2 = (IFileRevision) objArray[1];
+					} else 
+						return;
 				break;
 			}
 
@@ -120,6 +131,9 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	private boolean shouldShow() {
 		IStructuredSelection structSel = selection;
 		Object[] objArray = structSel.toArray();
+		
+		if (objArray.length == 0)
+			return false;
 		
 		for (int i = 0; i < objArray.length; i++) {
 			
