@@ -112,7 +112,6 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		super.configureShell(newShell);
 		newShell.setText(MarkerMessages.resolveMarkerAction_dialogTitle);
 	}
-	
 
 	/*
 	 * (non-Javadoc)
@@ -187,7 +186,6 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 					 */
 					public void selectionChanged(SelectionChangedEvent event) {
-						setComplete(false);
 						addMatching
 								.setEnabled(getSelectedWorkbenchResolution() != null);
 						markersTable.refresh();
@@ -513,18 +511,20 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 						IMarker.SEVERITY, -1));
 			}
 		});
-		
-		markersTable.addCheckStateListener(new ICheckStateListener(){
-			/* (non-Javadoc)
+
+		markersTable.addCheckStateListener(new ICheckStateListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				if(event.getChecked() == true) {
+				if (event.getChecked() == true) {
 					setComplete(true);
-				} else{
+				} else {
 					setComplete(markersTable.getCheckedElements().length > 0);
 				}
-				
+
 			}
 		});
 
@@ -559,12 +559,10 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		setTitle(MarkerMessages.MarkerResolutionDialog_Title);
-		// If there is only one select it
-		if (resolutionsList.getList().getItemCount() == 1) {
-			resolutionsList.getList().select(0);
-			markersTable.refresh();
-		}
-		setComplete(false);
+		resolutionsList.getList().select(0);
+		markersTable.refresh();
+		markersTable.setAllChecked(true);
+		setComplete(true);
 	}
 
 	/*
