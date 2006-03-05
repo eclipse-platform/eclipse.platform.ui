@@ -102,4 +102,8 @@ public class SomeMathFunction extends ObservableMapping {
 		// ignore, no need to listen to immutable Double objects
 	}
 
+	public Object getValueType() {
+		return Double.class;
+	}
+
 }

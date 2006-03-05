@@ -59,7 +59,7 @@ public class AsynchronousTestSet extends ObservableSet {
 	private static List allSets = new ArrayList();
 	
 	public AsynchronousTestSet() {
-		super(new HashSet());
+		super(new HashSet(), Object.class);
 		display = Display.getCurrent();
 		if (display == null) {
 			throw new IllegalStateException("This object can only be created in the UI thread"); //$NON-NLS-1$
