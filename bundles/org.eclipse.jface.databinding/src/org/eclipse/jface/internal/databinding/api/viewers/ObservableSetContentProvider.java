@@ -36,7 +36,7 @@ public final class ObservableSetContentProvider implements
 	private class KnownElementsSet extends ObservableSet {
 
 		KnownElementsSet(Set wrappedSet) {
-			super(wrappedSet);
+			super(wrappedSet, Object.class);
 		}
 
 		void doFireDiff(Set added, Set removed) {
@@ -53,7 +53,7 @@ public final class ObservableSetContentProvider implements
 	}
 
 	private IObservableSet readableSet = new ObservableSet(
-			Collections.EMPTY_SET) {
+			Collections.EMPTY_SET, Object.class) {
 	};
 
 	private Viewer viewer;
@@ -159,7 +159,7 @@ public final class ObservableSetContentProvider implements
 	private void setInput(IObservableSet newSet) {
 		boolean updateViewer = true;
 		if (newSet == null) {
-			newSet = new ObservableSet(Collections.EMPTY_SET) {
+			newSet = new ObservableSet(Collections.EMPTY_SET, Object.class) {
 			};
 			// don't update the viewer - its input is null
 			updateViewer = false;

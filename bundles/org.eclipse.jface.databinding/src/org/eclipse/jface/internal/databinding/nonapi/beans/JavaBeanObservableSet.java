@@ -67,7 +67,7 @@ public class JavaBeanObservableSet extends ObservableSet {
 	 */
 	public JavaBeanObservableSet(Object object, PropertyDescriptor descriptor,
 			Class elementType) {
-		super(new HashSet());
+		super(new HashSet(), descriptor.getPropertyType());
 		this.object = object;
 		this.descriptor = descriptor;
 		this.elementType = elementType;
@@ -115,13 +115,6 @@ public class JavaBeanObservableSet extends ObservableSet {
 			}
 		}
 		return values;
-	}
-
-	/**
-	 * @return the elementType
-	 */
-	public Class getElementType() {
-		return elementType;
 	}
 
 }

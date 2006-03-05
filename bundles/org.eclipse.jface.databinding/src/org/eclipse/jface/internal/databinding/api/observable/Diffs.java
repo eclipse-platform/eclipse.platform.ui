@@ -12,12 +12,16 @@
 package org.eclipse.jface.internal.databinding.api.observable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
 import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
+import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 
 /**
  * @since 1.0
@@ -62,6 +66,19 @@ public class Diffs {
 	public static final boolean equals(final Object left, final Object right) {
 		return left == null ? right == null : ((right != null) && left
 				.equals(right));
+	}
+
+	/**
+	 * @param oldSet
+	 * @param wrappedSet
+	 * @return a set diff
+	 */
+	public static ISetDiff computeDiff(Set oldSet, Set newSet) {
+		Set additions = new HashSet(newSet);
+		additions.removeAll(oldSet);
+		Set removals = new HashSet(oldSet);
+		removals.removeAll(newSet);
+		return new SetDiff(additions, removals);
 	}
 
 }

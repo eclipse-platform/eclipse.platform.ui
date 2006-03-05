@@ -36,8 +36,11 @@ public abstract class ObservableSet extends AbstractObservable implements
 
 	private Object setChangeListeners;
 
-	protected ObservableSet(Set wrappedSet) {
+	protected Object elementType;
+
+	protected ObservableSet(Set wrappedSet, Object elementType) {
 		this.wrappedSet = wrappedSet;
+		this.elementType = elementType;
 	}
 
 	public void addSetChangeListener(ISetChangeListener listener) {
@@ -252,5 +255,9 @@ public abstract class ObservableSet extends AbstractObservable implements
 	public void dispose() {
 		setChangeListeners = null;
 		super.dispose();
+	}
+	
+	public Object getElementType() {
+		return elementType;
 	}
 }

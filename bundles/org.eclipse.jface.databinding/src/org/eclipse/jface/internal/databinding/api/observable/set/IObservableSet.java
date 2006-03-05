@@ -36,6 +36,11 @@ public interface IObservableSet extends Set, IObservable {
 	 * @param listener
 	 */
 	public void removeSetChangeListener(ISetChangeListener listener);
+	
+	/**
+	 * @return the element type
+	 */
+	public Object getElementType();
 
 	/**
 	 * @TrackedGetter

@@ -112,4 +112,8 @@ public class JavaBeanObservableMapping extends ObservableMapping {
 		}
 	}
 
+	public Object getValueType() {
+		return propertyDescriptor.getPropertyType();
+	}
+
 }

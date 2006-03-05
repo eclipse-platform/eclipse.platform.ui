@@ -85,7 +85,7 @@ public class MappedSet extends ObservableSet {
 	 * @param domain
 	 */
 	public MappedSet(IObservableSet input, IObservableMapping mapping) {
-		super(Collections.EMPTY_SET);
+		super(Collections.EMPTY_SET, mapping.getValueType());
 		setWrappedSet(valueCounts.keySet());
 		this.wrappedMapping = mapping;
 		this.input = input;
@@ -129,6 +129,10 @@ public class MappedSet extends ObservableSet {
 	public void dispose() {
 		wrappedMapping.removeMappingChangeListener(mappingChangeListener);
 		input.removeSetChangeListener(domainListener);
+	}
+
+	public Object getElementType() {
+		return wrappedMapping.getValueType();
 	}
 
 }

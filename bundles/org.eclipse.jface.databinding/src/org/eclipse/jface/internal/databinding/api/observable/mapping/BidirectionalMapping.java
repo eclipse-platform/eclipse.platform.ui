@@ -160,4 +160,8 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 		return domain;
 	}
 
+	public Object getValueType() {
+		return wrappedMapping.getValueType();
+	}
+
 }

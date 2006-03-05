@@ -27,14 +27,30 @@ public class WritableSet extends ObservableSet {
 	 * @param wrappedSet
 	 */
 	public WritableSet() {
-		super(new HashSet());
+		this(Object.class);
 	}
 
 	/**
 	 * @param c
 	 */
 	public WritableSet(Collection c) {
-		super(new HashSet(c));
+		this(c, Object.class);
+	}
+
+	/**
+	 * @param c
+	 * @param elementType 
+	 */
+	public WritableSet(Collection c, Object elementType) {
+		super(new HashSet(c), elementType);
+		this.elementType = elementType;
+	}
+
+	/**
+	 * @param elementType
+	 */
+	public WritableSet(Object elementType) {
+		super(new HashSet(), elementType);
 	}
 
 	public boolean add(Object o) {

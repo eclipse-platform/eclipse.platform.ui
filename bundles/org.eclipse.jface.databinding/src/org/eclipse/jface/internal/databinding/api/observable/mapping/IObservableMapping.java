@@ -28,4 +28,9 @@ public interface IObservableMapping extends IObservable, IMapping {
 	 * @param listener
 	 */
 	public void removeMappingChangeListener(IMappingChangeListener listener);
+	
+	/**
+	 * @return the type of the values
+	 */
+	public Object getValueType();
 }

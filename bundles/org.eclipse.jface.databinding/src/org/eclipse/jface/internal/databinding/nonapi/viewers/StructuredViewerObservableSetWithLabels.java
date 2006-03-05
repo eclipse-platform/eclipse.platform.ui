@@ -55,7 +55,7 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 	 */
 	public StructuredViewerObservableSetWithLabels(
 			StructuredViewer structuredViewer) {
-		super(new HashSet());
+		super(new HashSet(), Object.class);
 		this.structuredViewer = structuredViewer;
 		// set the content provider and input here and not in init().
 		// This way, we can bind just the observable set (and not use the
