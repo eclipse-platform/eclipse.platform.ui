@@ -116,7 +116,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	
 		// Build the launch configuration edit area and put it into the composite.
 		Composite editAreaComp = createLaunchConfigurationEditArea(topComp);
-		setEditArea(editAreaComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
 		editAreaComp.setFont(dialogComp.getFont());

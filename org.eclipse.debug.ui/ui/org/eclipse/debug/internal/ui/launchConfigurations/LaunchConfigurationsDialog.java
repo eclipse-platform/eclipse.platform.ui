@@ -44,7 +44,6 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -114,7 +113,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
-	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.85f;
+	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.75f;
 		
 	/**
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
@@ -131,7 +130,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * defines some default sashweights when we have a new workspace
 	 * @since 3.2
 	 */
-	protected static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 610};
+	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 610};
 	
 	/**
 	 * Constant specifying that this dialog should be opened with the last configuration launched
@@ -185,11 +184,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Tab edit area
 	 */
 	private LaunchConfigurationTabGroupViewer fTabViewer;
-	
-	/**
-	 * The launch configuration edit area.
-	 */
-	private Composite fEditArea;
 
 	/**
 	 * The 'cancel' button that appears when the in-dialog progress monitor is shown.
@@ -271,7 +265,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
 	private static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
-	private static final String DIALOG_PERSISTED_SIZE = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SIZED"; //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -324,7 +317,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		// Build the launch configuration edit area and put it into the composite.
 		Composite editAreaComp = createLaunchConfigurationEditArea(fSashForm);
-		setEditArea(editAreaComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
 		
@@ -816,15 +808,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION);
 	}
   	
-  	/**
-	 * Returns the launch configuration edit area control.
-	 * 
-	 * @return control
-	 */
-	protected Composite getEditArea() {
-		return fEditArea;
-	}
-  	
 	/**
 	 * Gets the help context id
 	 * 
@@ -1093,26 +1076,21 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			catch(NumberFormatException nfe) {
 				w1 = DEFAULT_SASH_WEIGHTS[0];
 				w2 = DEFAULT_SASH_WEIGHTS[1];
-				fSashForm.setSize(DEFAULT_INITIAL_DIALOG_SIZE);
 			}
 			fSashForm.setWeights(new int[] {w1, w2});
 		}
-		if(!settings.getBoolean(DIALOG_PERSISTED_SIZE)) {
-			initializeSize();
-		}
 		super.initializeBounds();
 	}
-
-	/**
-	 * sets the default sizes of the dialog if they have not been persisted by the user from
-	 * previous invocations
-	 * @since 3.2
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
 	 */
-	private void initializeSize() {
-		setShellSize(DEFAULT_INITIAL_DIALOG_SIZE.x, DEFAULT_INITIAL_DIALOG_SIZE.y);
-		if(fSashForm != null) {
-			fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+	protected Point getInitialSize() {
+		IDialogSettings settings = getDialogSettings();
+		if(settings.get(DIALOG_SASH_WEIGHTS_1) != null) {
+			return super.getInitialSize();
 		}
+		return DEFAULT_INITIAL_DIALOG_SIZE;
 	}
 
 	/**
@@ -1192,7 +1170,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			settings.put(DIALOG_SASH_WEIGHTS_1, sashWeights[0]);
 			settings.put(DIALOG_SASH_WEIGHTS_2, sashWeights[1]);
 		}
-		settings.put(DIALOG_PERSISTED_SIZE, true);
 	}
 	
 	/**
@@ -1224,12 +1201,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  			}
 		}
 	}
-
-	/***************************************************************************************
-	 * 
-	 * ProgressMonitor & IRunnableContext related methods
-	 * 
-	 ***************************************************************************************/
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
@@ -1280,15 +1251,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void setActiveTab(int index) {
 		getTabViewer().setActiveTab(index);
-	}
-	
-	/**
-	 * Sets the launch configuration edit area control.
-	 * 
-	 * @param editArea control
-	 */
-	protected void setEditArea(Composite editArea) {
-		fEditArea = editArea;
 	}
 	
 	/**

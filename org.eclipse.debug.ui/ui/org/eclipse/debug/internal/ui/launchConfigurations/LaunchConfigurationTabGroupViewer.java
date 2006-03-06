@@ -41,6 +41,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -59,8 +61,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -117,7 +117,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Tab folder
 	 */
-	private TabFolder fTabFolder;
+	private CTabFolder fTabFolder;
 	
 	/**
 	 * The current tab group being displayed
@@ -198,8 +198,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected void disposeTabGroup() {
 		if (getTabGroup() != null) {
 			getTabGroup().dispose();
-			setTabGroup(null);
-			setTabType(null);
+			fTabGroup = null;
+			fTabType = null;
 		}
 	}	
 	
@@ -269,7 +269,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
        
 		fNameWidget = new Text(fTabComposite, SWT.SINGLE | SWT.BORDER);
         fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        getNameWidget().addModifyListener(new ModifyListener() {
+        fNameWidget.addModifyListener(new ModifyListener() {
     				public void modifyText(ModifyEvent e) {
     					handleNameModified();
     				}
@@ -322,7 +322,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
-	}// end createSpacer
+	}
 	
 	/**
 	 * Creates some help text for the tab group launch types
@@ -385,7 +385,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			size = fTabFolder.getSize();
 			fTabFolder.dispose();
 		}
-		fTabFolder = new TabFolder(parent, SWT.NONE);
+		fTabFolder = new CTabFolder(parent, SWT.BORDER | SWT.NO_REDRAW_RESIZE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		fTabFolder.setLayoutData(gd);
@@ -395,7 +395,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 		getTabFolder().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				if (!isInitializingTabs()) {
+				if (!fInitializingTabs) {
 					handleTabSelected();
 				}
 			}
@@ -433,15 +433,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Sets the tab folder
 	 */
-	protected TabFolder getTabFolder() {
+	protected CTabFolder getTabFolder() {
 		return fTabFolder;
-	}
-		
-	/**
-	 * Returns the name widget
-	 */
-	private Text getNameWidget() {
-		return fNameWidget;
 	}
 	
 	/**
@@ -452,7 +445,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if (name == null) {
 				name = ""; //$NON-NLS-1$
 			}
-			getNameWidget().setText(name.trim());
+			fNameWidget.setText(name.trim());
 			refreshStatus();
 		}
 	}	
@@ -492,22 +485,22 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
 	public void refresh() {
-		if (isInitializingTabs()) {
+		if (fInitializingTabs) {
 			return;
 		}
 		
 		ILaunchConfigurationTab[] tabs = getTabs();
-		if (!isInitializingTabs() && tabs != null) {
+		if (!fInitializingTabs && tabs != null) {
 			// update the working copy from the active tab
 			getActiveTab().performApply(getWorkingCopy());
 			updateButtons();
 			// update error ticks
-			TabFolder folder = getTabFolder();
+			CTabFolder folder = getTabFolder();
 			for (int i = 0; i < tabs.length; i++) {
 				ILaunchConfigurationTab tab = tabs[i];
 				tab.isValid(getWorkingCopy());
 				boolean error = tab.getErrorMessage() != null;
-				TabItem item = folder.getItem(i);
+				CTabItem item = folder.getItem(i);
 				setTabIcon(item, error, tab);
 			}		
 		}
@@ -523,7 +516,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Set the specified tab item's icon to an error icon if <code>error</code> is true,
 	 * or a transparent icon of the same size otherwise.
 	 */
-	private void setTabIcon(TabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
+	private void setTabIcon(CTabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
 		Image image = null;
 		if (error) {
 			image = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getErrorTabImage(tab);
@@ -596,6 +589,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		updateVisibleControls(false);
 	}
 	
+	/**
+	 * Updates the visibility of controls based on the status provided 
+	 * @param visible the visibility status to be applied to the controls
+	 */
 	private void updateVisibleControls(boolean visible) {
 		getApplyButton().setVisible(visible);
 		getRevertButton().setVisible(visible);
@@ -609,6 +606,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fTabPlaceHolder.layout(true);
 	}
 	
+    /**
+     * sets the current widget focus to the 'Name' widget
+     */
     protected void setFocusOnName() {
         fNameWidget.setFocus();
         
@@ -625,7 +625,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	protected void displayInstanceTabs() {
 		// Turn on initializing flag to ignore message updates
-		setInitializingTabs(true);
+		fInitializingTabs = true;
 
 		ILaunchConfigurationType type = null;
 		try {
@@ -633,14 +633,14 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			showInstanceTabsFor(type);
 		} catch (CoreException e) {
 			errorDialog(e);
-			setInitializingTabs(false);
+			fInitializingTabs = false;
 			return;
 		}
 
 		// show the name area
 		updateVisibleControls(true);
 		// Update the name field before to avoid verify error
-		getNameWidget().setText(getWorkingCopy().getName());
+		fNameWidget.setText(getWorkingCopy().getName());
 
 		// Retrieve the current tab group.  If there is none, clean up and leave
 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
@@ -648,7 +648,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new String[]{type.getName()}), null); 
 			CoreException e = new CoreException(status);
 			errorDialog(e);
-			setInitializingTabs(false);
+			fInitializingTabs = false;
 			return;
 		}
 
@@ -656,17 +656,16 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		tabGroup.initializeFrom(getWorkingCopy());
 
 		// Update the name field after in case client changed it
-		getNameWidget().setText(getWorkingCopy().getName());
+		fNameWidget.setText(getWorkingCopy().getName());
 		
 		fCurrentTabIndex = getTabFolder().getSelectionIndex();
 
 		// Turn off initializing flag to update message
-		setInitializingTabs(false);
+		fInitializingTabs = false;
 		
 		if (!getVisibleArea().isVisible()) {
 			getVisibleArea().setVisible(true);
 		}
-		
 		refreshStatus();		
 	}
 	
@@ -697,11 +696,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 
 		showTabsFor(group);
-		setTabGroup(group);
-		setTabType(configType);
+		fTabGroup = group;
+		fTabType = configType;
 		
 		// select same tab as before, if possible
 		ILaunchConfigurationTab[] tabs = getTabs();
+		//set the default tab as the first one
+		setActiveTab(tabs[0]);
 		for (int i = 0; i < tabs.length; i++) {
 			ILaunchConfigurationTab tab = tabs[i];
 			if (tab.getClass().equals(tabKind)) {
@@ -709,7 +710,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				break;
 			}
 		}
-		
 		fDescription = getDescription(configType);
 	}	
 
@@ -740,13 +740,15 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Dispose the current tabs
 		disposeExistingTabs();
 
-		setTabGroup(tabGroup);
+		fTabGroup = tabGroup;
 
 		// Create the Control for each tab
 		ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+		CTabItem tab = null;
+		String name = ""; //$NON-NLS-1$
 		for (int i = 0; i < tabs.length; i++) {
-			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
-			String name = tabs[i].getName();
+			tab = new CTabItem(getTabFolder(), SWT.NONE);
+			name = tabs[i].getName();
 			if (name == null) {
 				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28; 
 			}
@@ -846,7 +848,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @return currently active <code>ILaunchConfigurationTab</code>, or <code>null</code>.
 	 */
 	public ILaunchConfigurationTab getActiveTab() {
-		TabFolder folder = getTabFolder();
+		CTabFolder folder = getTabFolder();
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (folder != null && tabs != null) {
 			int pageIndex = folder.getSelectionIndex();
@@ -883,7 +885,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * launch config dialog.
 	 */
 	protected void refreshStatus() {
-		if (!isInitializingTabs()) {
+		if (!fInitializingTabs) {
 			getLaunchConfigurationDialog().updateButtons();
 			getLaunchConfigurationDialog().updateMessage();
 		}
@@ -940,7 +942,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * </p>
 	 */
 	public boolean canSave() {
-		if (isInitializingTabs()) {
+		if (fInitializingTabs) {
 			return false;
 		}
 		// First make sure that name doesn't prevent saving the config
@@ -967,7 +969,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @see ILaunchConfigurationDialog#canLaunch()
 	 */
 	public boolean canLaunch() {
-		if(isInitializingTabs()) {
+		if(fInitializingTabs) {
 			return false;
 		}
 		if (getWorkingCopy() == null) {
@@ -995,7 +997,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Returns the current error message or <code>null</code> if none.
 	 */
 	public String getErrorMesssage() {
-		if (isInitializingTabs()) {
+		if (fInitializingTabs) {
 			return null;
 		}
 		
@@ -1046,7 +1048,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * or <code>null</code> if no message is defined 
 	 */
 	public String getMessage() {
-		if (isInitializingTabs()) {
+		if (fInitializingTabs) {
 			return null;
 		}
 		
@@ -1068,7 +1070,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	protected void verifyName() throws CoreException {
 		if (fNameWidget.isVisible()) {
-			String currentName = getNameWidget().getText().trim();
+			String currentName = fNameWidget.getText().trim();
 	
 			// If there is no name, complain
 			if (currentName.length() < 1) {
@@ -1105,7 +1107,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	
 			// Otherwise, if there's already a config with the same name, complain
 			if (!getOriginal().getName().equals(currentName)) {
-				if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
+				if (DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
 					throw new CoreException(new Status(IStatus.ERROR,
 														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,
@@ -1114,38 +1116,21 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				}
 			}
 		}
-	}
-	
-	private void setDisposingTabs(boolean disposing) {
-		fDisposingTabs = disposing;
-	}
-
-	private boolean isDisposingTabs() {
-		return fDisposingTabs;
-	}
-	
-	private void setInitializingTabs(boolean initializing) {
-		fInitializingTabs = initializing;
-	}
-
-	private boolean isInitializingTabs() {
-		return fInitializingTabs;
 	}		
 	
+	/**
+	 * Remove the existing tabs that are showing 
+	 */
 	private void disposeExistingTabs() {
-		setDisposingTabs(true);
-		TabItem[] oldTabs = getTabFolder().getItems();
+		fDisposingTabs = true;
+		CTabItem[] oldTabs = getTabFolder().getItems();
 		for (int i = 0; i < oldTabs.length; i++) {
 			oldTabs[i].dispose();
 		}
 		createTabFolder(fTabComposite);
 		disposeTabGroup();
-		setDisposingTabs(false);
+		fDisposingTabs = false;
 	}	
-	
-	private ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
 	
 	/**
 	 * Returns the type that tabs are currently displayed
@@ -1155,25 +1140,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private ILaunchConfigurationType getTabType() {
 		return fTabType;
-	}
-
-	/**
-	 * Sets the type that tabs are currently displayed
-	 * for, or <code>null</code> if none.
-	 *
-	 * @param tabType launch configuration type
-	 */
-	private void setTabType(ILaunchConfigurationType tabType) {
-		fTabType = tabType;
-	}	
-	
-	/**
-	 * Sets the current tab group being displayed
-	 *
-	 * @param group the current tab group being displayed
-	 */
-	private void setTabGroup(ILaunchConfigurationTabGroup group) {
-		fTabGroup = group;
 	}
 
 	/**
@@ -1193,7 +1159,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * the tab being entered.
 	 */
 	protected void handleTabSelected() {
-		if (isDisposingTabs() || isInitializingTabs()) {
+		if (fDisposingTabs || fInitializingTabs) {
 			return;
 		}
 		ILaunchConfigurationTab[] tabs = getTabs();
@@ -1217,7 +1183,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification the name field has been modified
 	 */
 	protected void handleNameModified() {
-		getWorkingCopy().rename(getNameWidget().getText().trim());
+		getWorkingCopy().rename(fNameWidget.getText().trim());
 		refreshStatus();
 	}		
 	
@@ -1227,20 +1193,19 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected void handleApplyPressed() {
 		try {
 			// trim name
-			Text widget = getNameWidget();
+			Text widget = fNameWidget;
 			String name = widget.getText();
 			String trimmed = name.trim();
 
 			// update launch config
-			setInitializingTabs(true);
+			fInitializingTabs = true;
 			if (!name.equals(trimmed)) {
 				widget.setText(trimmed);
 			}
 			getWorkingCopy().rename(trimmed);
 			getTabGroup().performApply(getWorkingCopy());
-			setInitializingTabs(false);
-			//
-			
+			fInitializingTabs = false;
+
 			if (isDirty()) {
 				getWorkingCopy().doSave();
 			}
