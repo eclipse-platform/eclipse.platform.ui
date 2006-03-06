@@ -220,6 +220,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private void handleCursorMoved()
 	{	
 		fSelectionKey = getSelectionKeyFromCursor();
+		fPendingSelection = null;
 		
 		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
 			System.out.println(Thread.currentThread().getName() + " cursor moved selection is: " + ((BigInteger)fSelectionKey).toString(16)); //$NON-NLS-1$
