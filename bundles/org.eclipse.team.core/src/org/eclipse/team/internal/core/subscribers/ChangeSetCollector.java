@@ -42,7 +42,7 @@ public abstract class ChangeSetCollector {
             Object[] listeners = getListeners();
             for (int i = 0; i < listeners.length; i++) {
                 final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
-                Platform.run(new ISafeRunnable() {
+                SafeRunner.run(new ISafeRunnable() {
                     public void handleException(Throwable exception) {
                         // Exceptions are logged by the platform
                     }
@@ -64,7 +64,7 @@ public abstract class ChangeSetCollector {
         Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
-            Platform.run(new ISafeRunnable() {
+            SafeRunner.run(new ISafeRunnable() {
                 public void handleException(Throwable exception) {
                     // Exceptions are logged by the platform
                 }
@@ -86,7 +86,7 @@ public abstract class ChangeSetCollector {
             Object[] listeners = getListeners();
             for (int i = 0; i < listeners.length; i++) {
                 final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
-                Platform.run(new ISafeRunnable() {
+                SafeRunner.run(new ISafeRunnable() {
                     public void handleException(Throwable exception) {
                         // Exceptions are logged by the platform
                     }
@@ -109,7 +109,7 @@ public abstract class ChangeSetCollector {
             Object[] listeners = getListeners();
             for (int i = 0; i < listeners.length; i++) {
                 final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
-                Platform.run(new ISafeRunnable() {
+                SafeRunner.run(new ISafeRunnable() {
                     public void handleException(Throwable exception) {
                         // Exceptions are logged by the platform
                     }
@@ -179,7 +179,7 @@ public abstract class ChangeSetCollector {
         Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
-            Platform.run(new ISafeRunnable() {
+            SafeRunner.run(new ISafeRunnable() {
                 public void handleException(Throwable exception) {
                     // Exceptions are logged by the platform
                 }
