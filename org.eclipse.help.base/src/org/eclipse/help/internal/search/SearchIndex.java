@@ -698,17 +698,11 @@ public class SearchIndex implements ISearchIndex {
 			return true;
 		Version version = new Version(currentLuceneVersion);
 		Version currentVersion = new Version(luceneVersion);
-		if (version.getMajor() == 1 && version.getMinor() == 4 && version.getMicro() == 103) {
-			// this is compatible with 1.4.3 after moving to the
-			// new format
-			version = new Version("1.4.3"); //$NON-NLS-1$
-		}
 		// must not compare with the qualifier because they
 		// change from build to build
 		return version.getMajor() == currentVersion.getMajor()
 				&& version.getMinor() == currentVersion.getMinor()
 				&& version.getMicro() == currentVersion.getMicro();
-		// return currentLuceneVersion.equals(luceneVersion);
 	}
 
 	private boolean isAnalyzerCompatible() {
