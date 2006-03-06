@@ -58,7 +58,12 @@ public abstract class RefactoringDescriptorProxy extends PlatformObject implemen
 	public int compareTo(final Object object) {
 		if (object instanceof RefactoringDescriptorProxy) {
 			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
-			return (int) (getTimeStamp() - proxy.getTimeStamp());
+			final long delta= getTimeStamp() - proxy.getTimeStamp();
+			if (delta > 0)
+				return 1;
+			else if (delta < 0)
+				return -1;
+			return 0;
 		}
 		return 0;
 	}

@@ -280,7 +280,14 @@ public final class RefactoringHistoryManager {
 			Arrays.sort(results, new Comparator() {
 
 				public final int compare(final Object first, final Object second) {
-					return (int) (((RefactoringDescriptor) first).getTimeStamp() - ((RefactoringDescriptor) second).getTimeStamp());
+					final RefactoringDescriptor predecessor= (RefactoringDescriptor) first;
+					final RefactoringDescriptor successor= (RefactoringDescriptor) second;
+					final long delta= predecessor.getTimeStamp() - successor.getTimeStamp();
+					if (delta > 0)
+						return 1;
+					else if (delta < 0)
+						return -1;
+					return 0;
 				}
 			});
 			monitor.worked(1);

@@ -65,7 +65,12 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 				public final int compare(final Object first, final Object second) {
 					final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
 					final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-					return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+					final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
+					if (delta > 0)
+						return 1;
+					else if (delta < 0)
+						return -1;
+					return 0;
 				}
 			});
 		}
