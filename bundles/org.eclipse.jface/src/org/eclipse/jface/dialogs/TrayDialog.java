@@ -84,7 +84,7 @@ public abstract class TrayDialog extends Dialog {
 	/*
 	 * Whether or not help is available for this dialog.
 	 */
-	private boolean helpAvailable;
+	private boolean helpAvailable = isDialogHelpAvailable();
 
 	/**
 	 * Creates a tray dialog instance. Note that the window will have no visual
@@ -143,7 +143,7 @@ public abstract class TrayDialog extends Dialog {
     	composite.setFont(parent.getFont());
 
 		// create help control if needed
-        if (isHelpAvailable() || isDialogHelpAvailable()) {
+        if (isHelpAvailable()) {
         	Control helpControl = createHelpControl(composite);
         	((GridData) helpControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		}

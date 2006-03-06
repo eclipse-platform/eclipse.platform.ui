@@ -40,6 +40,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.help.AbstractHelpUI;
 import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
@@ -123,6 +124,14 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 					}
 				}
 			}
+			
+			/*
+			 * If can't find it, show the "context is missing" context.
+			 */
+			if (context == null) {
+				context = HelpSystem.getContext(IWorkbenchHelpContextIds.MISSING);
+			}
+			
 			if (context != null) {
 				// determine a location in the upper right corner of the
 				// widget

@@ -25,6 +25,9 @@ import org.eclipse.ui.PlatformUI;
 public interface IWorkbenchHelpContextIds {
     public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
+    // Missing context help
+    public static final String MISSING = PREFIX + "missing"; //$NON-NLS-1$
+    
     // Actions
     
     public static final String DOCK_ON_PERSPECTIVE_ACTION = PREFIX

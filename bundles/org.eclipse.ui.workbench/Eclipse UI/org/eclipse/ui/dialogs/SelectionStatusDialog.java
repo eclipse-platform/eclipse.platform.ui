@@ -16,7 +16,6 @@ import java.util.Arrays;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -174,7 +173,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         composite.setFont(font);
 
-        if (!fStatusLineAboveButtons && (isHelpAvailable() || TrayDialog.isDialogHelpAvailable())) {
+        if (!fStatusLineAboveButtons && isHelpAvailable()) {
         	createHelpControl(composite);
         }
         fStatusLine = new MessageLine(composite);
@@ -182,7 +181,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
         GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
         fStatusLine.setErrorStatus(null);
         fStatusLine.setFont(font);
-        if (fStatusLineAboveButtons && (isHelpAvailable() || TrayDialog.isDialogHelpAvailable())) {
+        if (fStatusLineAboveButtons && isHelpAvailable()) {
         	statusData.horizontalSpan = 2;
         	createHelpControl(composite);
         }
