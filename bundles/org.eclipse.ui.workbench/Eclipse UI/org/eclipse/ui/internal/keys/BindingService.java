@@ -96,6 +96,16 @@ public final class BindingService implements IBindingService {
 				.getKeyFormatterForPlatform());
 	}
 
+	/**
+	 * TODO Promote this method to API
+	 * 
+	 * @param binding
+	 *            The binding to add; must not be <code>null</code>.
+	 */
+	public final void addBinding(final Binding binding) {
+		bindingManager.addBinding(binding);
+	}
+
 	public final void dispose() {
 		bindingPersistence.dispose();
 	}

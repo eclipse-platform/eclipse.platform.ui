@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyBinding;
@@ -46,14 +45,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.commands.CommandImageManager;
 import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.expressions.LegacyActionExpressionWrapper;
 import org.eclipse.ui.internal.expressions.LegacyEditorContributionExpression;
 import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
+import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -181,19 +182,25 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * The binding manager which should be populated with bindings from actions;
 	 * must not be <code>null</code>.
 	 */
-	private final BindingManager bindingManager;
+	private final IBindingService bindingService;
 
 	/**
 	 * The command image manager which should be populated with the images from
 	 * the actions; must not be <code>null</code>.
 	 */
-	private final CommandImageManager commandImageManager;
+	private final ICommandImageService commandImageService;
 
 	/**
 	 * The command service which is providing the commands for the workbench;
 	 * must not be <code>null</code>.
 	 */
 	private final ICommandService commandService;
+
+	/**
+	 * The service locator from which services can be retrieved in the future;
+	 * must not be <code>null</code>.
+	 */
+	private final IServiceLocator locator;
 
 	/**
 	 * The menu contributions that have come from the registry. This is used to
@@ -211,27 +218,21 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	/**
 	 * Constructs a new instance of {@link LegacyActionPersistence}.
 	 * 
-	 * @param commandManager
-	 *            The command service which is providing the commands for the
-	 *            workbench; must not be <code>null</code>.
-	 * @param bindingManager
-	 *            The binding manager which should be populated with bindings
-	 *            from actions; must not be <code>null</code>.
-	 * @param commandImageManager
-	 *            The command image manager which should be populated with the
-	 *            images from the actions; must not be <code>null</code>.
-	 * @param menuService
-	 *            The menu service which should be populated with the values
-	 *            from the registry; must not be <code>null</code>.
+	 * @param locator
+	 *            The locator from which the services should be retrieved; must
+	 *            not be <code>null</code>.
 	 */
-	public LegacyActionPersistence(final ICommandService commandService,
-			final BindingManager bindingManager,
-			final CommandImageManager commandImageManager,
-			final IMenuService menuService) {
-		this.commandService = commandService;
-		this.bindingManager = bindingManager;
-		this.commandImageManager = commandImageManager;
-		this.menuService = menuService;
+	public LegacyActionPersistence(final IServiceLocator locator) {
+		this.bindingService = (IBindingService) locator
+				.getService(IBindingService.class);
+		this.commandService = (ICommandService) locator
+				.getService(ICommandService.class);
+		this.commandImageService = (ICommandImageService) locator
+				.getService(ICommandImageService.class);
+		this.menuService = (IMenuService) locator
+				.getService(IMenuService.class);
+		
+		this.locator = locator;
 	}
 
 	/**
@@ -297,12 +298,13 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					naturalKey);
 			final KeySequence keySequence = KeySequence.getInstance(keyStroke);
 
-			final Scheme activeScheme = bindingManager.getActiveScheme();
+			final Scheme activeScheme = bindingService.getActiveScheme();
 
 			final Binding binding = new KeyBinding(keySequence, command,
 					activeScheme.getId(), IContextIds.CONTEXT_ID_WINDOW, null,
 					null, null, Binding.SYSTEM);
-			bindingManager.addBinding(binding);
+			// TODO Blind casts are bad.
+			((BindingService) bindingService).addBinding(binding);
 		}
 	}
 
@@ -413,25 +415,25 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			return null;
 		}
 
-		final String style = commandImageManager.generateUnusedStyle(commandId);
+		final String style = commandImageService.generateUnusedStyle(commandId);
 
 		// Bind the images.
 		if (icon != null) {
-			final URL iconURL = BundleUtility
-					.find(element.getNamespace(), icon);
-			commandImageManager.bind(commandId,
+			final URL iconURL = BundleUtility.find(element
+					.getNamespaceIdentifier(), icon);
+			commandImageService.bind(commandId,
 					ICommandImageService.TYPE_DEFAULT, style, iconURL);
 		}
 		if (disabledIcon != null) {
 			final URL disabledIconURL = BundleUtility.find(element
-					.getNamespace(), disabledIcon);
-			commandImageManager.bind(commandId,
+					.getNamespaceIdentifier(), disabledIcon);
+			commandImageService.bind(commandId,
 					ICommandImageService.TYPE_DISABLED, style, disabledIconURL);
 		}
 		if (hoverIcon != null) {
-			final URL hoverIconURL = BundleUtility.find(element.getNamespace(),
-					hoverIcon);
-			commandImageManager.bind(commandId,
+			final URL hoverIconURL = BundleUtility.find(element
+					.getNamespaceIdentifier(), hoverIcon);
+			commandImageService.bind(commandId,
 					ICommandImageService.TYPE_HOVER, style, hoverIconURL);
 		}
 
@@ -518,7 +520,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		if (isPulldown(element)) {
 			final SWidget widget = menuService.getWidget(id);
 			final IWidget proxy = new PulldownDelegateWidgetProxy(element,
-					ATT_CLASS);
+					ATT_CLASS, command, locator);
 			widget.define(proxy, locations);
 			/*
 			 * TODO Cannot duplicate the class instance between handler and item

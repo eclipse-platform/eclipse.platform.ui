@@ -1310,8 +1310,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * code trying to access commands through legacy APIs should work.
 		 */
 		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
-				commandService, bindingManager, commandImageManager,
-				menuService);
+				this);
 		serviceLocator.registerService(LegacyActionPersistence.class,
 				deprecatedSupport);
 		deprecatedSupport.read();
