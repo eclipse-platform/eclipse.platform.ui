@@ -114,24 +114,24 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
-	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.68f;
+	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.85f;
 		
 	/**
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.65f;
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.67f;
 		
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
-	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(700, 600);
+	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(800, 600);
 	
 	/**
 	 * defines some default sashweights when we have a new workspace
 	 * @since 3.2
 	 */
-	protected static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 510};
+	protected static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 610};
 	
 	/**
 	 * Constant specifying that this dialog should be opened with the last configuration launched
@@ -285,7 +285,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setLaunchGroup(group);
 	}
-	
+
 	/**
 	 * Adds content to the dialog area
 	 * 
@@ -949,8 +949,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Notification the 'Close' button has been pressed.
 	 */
 	protected void handleClosePressed() {
-	    canDiscardCurrentConfig();
-	    cancelPressed();
+		canDiscardCurrentConfig();
+		cancelPressed();
 	}
 	
 	/**
