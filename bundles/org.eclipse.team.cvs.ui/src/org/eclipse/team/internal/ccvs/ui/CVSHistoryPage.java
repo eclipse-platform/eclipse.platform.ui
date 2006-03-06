@@ -992,7 +992,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			
 			//Go through the new categories and keep track of the previously expanded ones
 			ArrayList expandable = new ArrayList();
-			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){
+			for (int i = 0; i<categories.length; i++){
 				//check to see if this category is currently expanded
 				if (elementMap.containsKey(categories[i].getName())){
 					expandable.add(categories[i]);
@@ -1007,24 +1007,29 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			IFileRevision[] fileRevision = fileHistory.getFileRevisions();
 			
 			//Create the 4 categories
-			categories = new DateCVSHistoryCategory[NUMBER_OF_CATEGORIES];
+			DateCVSHistoryCategory[] tempCategories = new DateCVSHistoryCategory[NUMBER_OF_CATEGORIES];
 			//Get a calendar instance initialized to the current time
 			Calendar currentCal = Calendar.getInstance();
-			categories[0] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
+			tempCategories[0] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
 			//Get yesterday 
 			Calendar yesterdayCal = Calendar.getInstance();
 			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
-			categories[1] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
+			tempCategories[1] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
 			//Get last week
 			Calendar lastWeekCal = Calendar.getInstance();
 			lastWeekCal.roll(Calendar.DAY_OF_YEAR, -7);
-			categories[2] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_LastWeek, lastWeekCal, yesterdayCal);
+			tempCategories[2] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_LastWeek, lastWeekCal, yesterdayCal);
 			//Everything before after week is previous
-			categories[3] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, lastWeekCal);
+			tempCategories[3] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, lastWeekCal);
 		
+			ArrayList finalCategories = new ArrayList();
 			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){
-				categories[i].collectFileRevisions(fileRevision, false);
+				tempCategories[i].collectFileRevisions(fileRevision, false);
+				if (tempCategories[i].hasRevisions())
+					finalCategories.add(tempCategories[i]);
 			}
+			
+			categories = (DateCVSHistoryCategory[])finalCategories.toArray(new DateCVSHistoryCategory[finalCategories.size()]);
 		}
 	}
 	
