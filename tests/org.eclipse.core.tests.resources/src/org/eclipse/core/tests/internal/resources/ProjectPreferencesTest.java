@@ -834,7 +834,8 @@ public class ProjectPreferencesTest extends ResourceTest {
 		// ensure that the resource changes happen
 		waitForBuild();
 
-		// verification
+		// verification - note that the preference modify listener gets called
+		// here so that's why we are checking for "new value" and not the original one
 		node = context.getNode(qualifier);
 		assertEquals("5.0", newValue, node.get(key, null));
 	}
