@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -307,10 +308,14 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 * @return the ILaunch associated with the given object or <code>null</code>
 	 */
 	public static ILaunch getLaunch(Object object) {
+		ILaunch launch = null;
 		if (object instanceof IAdaptable) {
-			return (ILaunch) ((IAdaptable)object).getAdapter(ILaunch.class);
+			launch = (ILaunch) ((IAdaptable)object).getAdapter(ILaunch.class);
 		}
-		return null;
+		if (launch == null && object instanceof IDebugElement) {
+			launch = ((IDebugElement) object).getLaunch();
+		}
+		return launch;
 	}
 
 	/* (non-Javadoc)
