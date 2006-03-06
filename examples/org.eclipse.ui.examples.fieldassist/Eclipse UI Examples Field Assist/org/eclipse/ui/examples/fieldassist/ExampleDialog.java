@@ -268,6 +268,8 @@ public class ExampleDialog extends StatusDialog {
 		text.setText(username);
 		installContentProposalAdapter(text, new TextContentAdapter());
 		field.getLayoutControl().setLayoutData(getDecoratedFieldGridData());
+		// prime the required field color by calling the focus lost handler.
+		handleFocusLost(textField);
 
 		label = new Label(main, SWT.LEFT);
 		label.setText(TaskAssistExampleMessages.ExampleDialog_ComboUserName);
@@ -310,6 +312,8 @@ public class ExampleDialog extends StatusDialog {
 		combo.setItems(validUsers);
 		field.getLayoutControl().setLayoutData(getDecoratedFieldGridData());
 		installContentProposalAdapter(combo, new ComboContentAdapter());
+		// prime the required field color by calling the focus lost handler.
+		handleFocusLost(comboField);
 
 		// Create a spinner representing a user age
 		label = new Label(main, SWT.LEFT);
@@ -345,6 +349,9 @@ public class ExampleDialog extends StatusDialog {
 		});
 		spinner.setSelection(40);
 		field.getLayoutControl().setLayoutData(getDecoratedFieldGridData());
+
+		// prime the required field color by calling the focus lost handler.
+		handleFocusLost(spinnerField);
 
 		// This field is not managed by a decorated field
 		label = new Label(main, SWT.LEFT);
