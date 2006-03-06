@@ -13,6 +13,8 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+
 /**
  * An undo manager keeps track of performed changes. Use the method <code>addUndo</code>
  * to add change objects to the undo stack and <code>performUndo</code> and <code>
@@ -25,6 +27,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * As of 3.1 the implementation of the refactoring undo manager is based on the 
  * {@link org.eclipse.core.commands.operations.IOperationHistory} provided by the
  * <code>org.eclipse.core.commands</code> plug-in.
+ * </p>
+ * <p>
+ * As of 3.2 clients which need to examine refactorings which have been performed, undone or redone should use
+ * {@link IRefactoringHistoryService} for enhanced functionality.
  * </p>
  * 
  * @see org.eclipse.core.commands.operations.IOperationHistory

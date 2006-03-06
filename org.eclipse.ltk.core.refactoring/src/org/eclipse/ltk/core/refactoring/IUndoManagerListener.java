@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
 
 /**
  * Listener to monitor state changes of an {@link IUndoManager}.
  * <p>
  * Clients may implement this interface to listen to undo manger changes.
  * </p>
+ * <p>
+ * As of 3.2 clients which need to examine refactorings which have been performed, undone or redone should use
+ * {@link IRefactoringExecutionListener} for enhanced functionality.
+ * </p>
+ * 
  * @since 3.0
  */
 public interface IUndoManagerListener {

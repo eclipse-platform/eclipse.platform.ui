@@ -21,6 +21,9 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
  * An <code>IResourceMapper</code> can be obtained via  
  * {@link RefactoringProcessor#getAdapter(Class)}. 
  * </p>
+ * <p>
+ * This interface is intended to be implemented by clients.
+ * </p>
  * 
  * @since 3.2
  */
