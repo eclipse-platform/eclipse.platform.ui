@@ -233,7 +233,7 @@ public class JobManager implements IJobManager {
 						monitor = job.getProgressMonitor();
 						break;
 					}
-				//fall through for ABOUT_TO_RUN case
+					//fall through for ABOUT_TO_RUN case
 				default :
 					changeState(job, Job.NONE);
 			}
@@ -487,7 +487,7 @@ public class JobManager implements IJobManager {
 				//this doesn't need to be translated because it's just being logged
 				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
 				RuntimeLog.log(new Status(IStatus.WARNING, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, null));
-				
+
 				// TODO the RuntimeLog.log in its current implementation won't produce a log 
 				// during this stage of shutdown. For now add a standard error output.
 				// One the logging story is improved, the System.err output below can be removed:
@@ -707,33 +707,35 @@ public class JobManager implements IJobManager {
 			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
 			jobs = Collections.synchronizedSet(new HashSet(select(family, states)));
 			jobCount = jobs.size();
-			if (jobCount == 0) {
-				//use up the monitor
-				monitor.beginTask(JobMessages.jobs_blocked0, 1);
-				monitor.done();
-				return;
-			}
-			//if there is only one blocking job, use it in the blockage callback below
-			if (jobCount == 1)
-				blocking = (Job) jobs.iterator().next();
-			listener = new JobChangeAdapter() {
-				public void done(IJobChangeEvent event) {
-					//don't remove from list if job is being rescheduled
-					if (!((JobChangeEvent) event).reschedule)
-						jobs.remove(event.getJob());
-				}
+			if (jobCount > 0) {
+				//if there is only one blocking job, use it in the blockage callback below
+				if (jobCount == 1)
+					blocking = (Job) jobs.iterator().next();
+				listener = new JobChangeAdapter() {
+					public void done(IJobChangeEvent event) {
+						//don't remove from list if job is being rescheduled
+						if (!((JobChangeEvent) event).reschedule)
+							jobs.remove(event.getJob());
+					}
 
-				//update the list of jobs if new ones are added during the join
-				public void scheduled(IJobChangeEvent event) {
-					//don't add to list if job is being rescheduled
-					if (((JobChangeEvent) event).reschedule)
-						return;
-					Job job = event.getJob();
-					if (job.belongsTo(family))
-						jobs.add(job);
-				}
-			};
-			addJobChangeListener(listener);
+					//update the list of jobs if new ones are added during the join
+					public void scheduled(IJobChangeEvent event) {
+						//don't add to list if job is being rescheduled
+						if (((JobChangeEvent) event).reschedule)
+							return;
+						Job job = event.getJob();
+						if (job.belongsTo(family))
+							jobs.add(job);
+					}
+				};
+				addJobChangeListener(listener);
+			}
+		}
+		if (jobCount == 0) {
+			//use up the monitor outside synchronized block because monitors call untrusted code
+			monitor.beginTask(JobMessages.jobs_blocked0, 1);
+			monitor.done();
+			return;
 		}
 		//spin until all jobs are completed
 		try {
