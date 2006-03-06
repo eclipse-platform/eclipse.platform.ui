@@ -94,7 +94,7 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 						return IThreeWayDiff.CONFLICTING;
 				}
 			}
-			return direction;
+			return IDiff.NO_CHANGE;
 		} else if (element instanceof RefactoringDescriptorSynchronizationProxy) {
 			final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) element;
 			return proxy.getDirection();
