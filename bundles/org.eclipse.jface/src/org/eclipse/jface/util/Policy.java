@@ -15,9 +15,10 @@ package org.eclipse.jface.util;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ControlAnimator;
 
 /**
- * The Policy class handles debug flags and logging within JFace.
+ * The Policy class handles settings for behaviour, debug flags and logging within JFace.
  * 
  * @since 3.0
  */
@@ -36,6 +37,8 @@ public class Policy {
     private static ILogger log;
 
     private static Comparator viewerComparator;
+    
+    private static ControlAnimator animator;
     
     /**
      * A flag to indicate whether unparented dialogs should
@@ -138,5 +141,27 @@ public class Policy {
     	Assert.isTrue(viewerComparator == null);
     	viewerComparator = comparator;
     }
+    
+    /**
+	 * Sets the animator used by JFace to animate the display of an SWT Control.
+	 * 
+	 * @param controlAnimator the ControlAnimator to use.
+	 * @since 3.2
+	 */
+	public static void setAnimator(ControlAnimator controlAnimator){
+		animator = controlAnimator;
+	}
+
+	/**
+	 * Returns the animator used by JFace to animate the display of an SWT Control.
+	 * 
+	 * @return the ControlAnimator.
+	 * @since 3.2
+	 */
+	public static ControlAnimator getAnimator() {
+		if (animator == null)
+			animator = new ControlAnimator();
+		return animator;
+	}
 
 }
