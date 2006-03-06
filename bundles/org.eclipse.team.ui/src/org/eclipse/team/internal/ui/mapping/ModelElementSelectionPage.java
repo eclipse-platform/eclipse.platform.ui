@@ -25,14 +25,14 @@ import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshElementSelectionPage;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
-import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
+import org.eclipse.ui.navigator.*;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
-public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage {
+public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage implements INavigatorContentServiceListener {
 	
 	private INavigatorContentService service;
 	private ISynchronizationScopeManager manager;
@@ -63,6 +63,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		service = NavigatorContentServiceFactory.INSTANCE.createContentService(CommonViewerAdvisor.TEAM_NAVIGATOR_CONTENT, fViewer);
 		service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
 		service.getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
+		service.addListener(this);
 		data = new GridData(GridData.FILL_BOTH);
 		//data.widthHint = 200;
 		data.heightHint = 100;
@@ -127,6 +128,10 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 	protected void checkWorkingSetElements() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void onLoad(INavigatorContentExtension anExtension) {
+		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE, manager.getScope());
 	}
 
 }

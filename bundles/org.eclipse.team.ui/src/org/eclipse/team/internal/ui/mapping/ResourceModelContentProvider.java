@@ -72,6 +72,8 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			IResource resource = (IResource) object;
 			if (resource == null)
 				return false;
+			if (!resource.isAccessible())
+				return false;
 			if (scope.contains(resource))
 				return true;
 			if (hasChildrenInScope(scope, object, resource)) {
@@ -82,6 +84,8 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 	
 	private boolean hasChildrenInScope(ISynchronizationScope scope, Object object, IResource resource) {
+		if (!resource.isAccessible())
+			return false;
 		IResource[] roots = scope.getRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IResource root = roots[i];
@@ -121,6 +125,8 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
 		if (parent instanceof IResource) {
 			IResource resource = (IResource) parent;
+			if (!resource.isAccessible())
+				return new Object[0];
 			Object[] allChildren;
 			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
 				allChildren = getFlatChildren(context, resource);
