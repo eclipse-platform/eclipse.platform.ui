@@ -11,7 +11,6 @@
 package org.eclipse.ltk.ui.refactoring.history;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -49,6 +48,37 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	private static final Object[] NO_ELEMENTS= {};
 
 	/**
+	 * Implements a binary search which computes the index of the number, or a
+	 * nearest approximative index if the number has not been found.
+	 * <p>
+	 * The array must be sorted in descending order.
+	 * </p>
+	 * 
+	 * @param array
+	 *            the array, sorted in descending order, to search for the
+	 *            number
+	 * @param number
+	 *            the number to search for
+	 * @return the index of the number in the array, or the nearest index,
+	 *         depending on <code>right</code>
+	 */
+	private static int binarySearch(final long[] array, final long number) {
+		int left= 0;
+		int right= array.length - 1;
+		int median;
+		do {
+			median= (left + right) / 2;
+			if (number > array[median])
+				right= median - 1;
+			else
+				left= median + 1;
+		} while (number != array[median] && left <= right);
+		if (number == array[median])
+			return median;
+		return left;
+	}
+
+	/**
 	 * Returns the index of the specified root kind in the structure.
 	 * 
 	 * @param structure
@@ -70,6 +100,12 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/** The refactoring history, or <code>null</code> */
 	private RefactoringHistory fRefactoringHistory= null;
+
+	/**
+	 * The refactoring descriptor proxies, in descending order of their time
+	 * stamps, or <code>null</code>
+	 */
+	private RefactoringDescriptorProxy[] fRefactoringProxies= null;
 
 	/** The refactoring root structure, or <code>null</code> */
 	private long[][] fRefactoringRoots= null;
@@ -101,7 +137,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(final Object element) {
 		if (element instanceof RefactoringHistoryNode && fRefactoringHistory != null) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
-			final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
+			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 			if (proxies != null && proxies.length > 0) {
 				final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
 				final int kind= node.getKind();
@@ -115,29 +151,29 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 							final long stamp= date.getTimeStamp();
 							switch (kind) {
 								case RefactoringHistoryNode.TODAY:
-									return getRefactoringHistoryEntries(node, stamp, Long.MAX_VALUE);
+									return getRefactoringHistoryEntries(date, stamp, Long.MAX_VALUE);
 								case RefactoringHistoryNode.YESTERDAY:
-									return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.TODAY)][0] - 1);
+									return getRefactoringHistoryEntries(date, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.TODAY)][0] - 1);
 								case RefactoringHistoryNode.THIS_WEEK:
-									return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.YESTERDAY)][0] - 1);
+									return getRefactoringHistoryDays(date, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.YESTERDAY)][0] - 1);
 								case RefactoringHistoryNode.LAST_WEEK:
-									return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_WEEK)][0] - 1);
+									return getRefactoringHistoryDays(date, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_WEEK)][0] - 1);
 								case RefactoringHistoryNode.THIS_MONTH:
-									return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.LAST_WEEK)][0] - 1);
+									return getRefactoringHistoryWeeks(date, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.LAST_WEEK)][0] - 1);
 								case RefactoringHistoryNode.LAST_MONTH:
-									return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_MONTH)][0] - 1);
+									return getRefactoringHistoryWeeks(date, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_MONTH)][0] - 1);
 								case RefactoringHistoryNode.DAY:
-									return getRefactoringHistoryEntries(node, stamp, stamp + 1000 * 60 * 60 * 24 - 1);
+									return getRefactoringHistoryEntries(date, stamp, stamp + 1000 * 60 * 60 * 24 - 1);
 								case RefactoringHistoryNode.WEEK:
-									return getRefactoringHistoryDays(node, stamp, stamp + 1000 * 60 * 60 * 24 * 7 - 1);
+									return getRefactoringHistoryDays(date, stamp, stamp + 1000 * 60 * 60 * 24 * 7 - 1);
 								case RefactoringHistoryNode.MONTH:
 									calendar.setTimeInMillis(stamp);
 									calendar.add(Calendar.MONTH, 1);
-									return getRefactoringHistoryWeeks(node, stamp, calendar.getTimeInMillis() - 1);
+									return getRefactoringHistoryWeeks(date, stamp, calendar.getTimeInMillis() - 1);
 								case RefactoringHistoryNode.YEAR:
 									calendar.setTimeInMillis(stamp);
 									calendar.add(Calendar.YEAR, 1);
-									return getRefactoringHistoryMonths(node, stamp, calendar.getTimeInMillis() - 1);
+									return getRefactoringHistoryMonths(date, stamp, calendar.getTimeInMillis() - 1);
 							}
 						}
 					}
@@ -173,6 +209,24 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	}
 
 	/**
+	 * Returns the refactoring descriptor proxies, sorted in descending order of
+	 * their time stamps, and caches time stamp information.
+	 * 
+	 * @return the refactoring descriptor proxies
+	 */
+	private RefactoringDescriptorProxy[] getRefactoringDescriptorProxies() {
+		if (fRefactoringProxies == null)
+			fRefactoringProxies= fRefactoringHistory.getDescriptors();
+		if (fRefactoringStamps == null) {
+			final int length= fRefactoringProxies.length;
+			fRefactoringStamps= new long[length];
+			for (int index= 0; index < length; index++)
+				fRefactoringStamps[index]= fRefactoringProxies[index].getTimeStamp();
+		}
+		return fRefactoringProxies;
+	}
+
+	/**
 	 * Returns the refactoring history days.
 	 * 
 	 * @param parent
@@ -184,16 +238,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * 
 	 * @return the refactoring history days
 	 */
-	private Object[] getRefactoringHistoryDays(final RefactoringHistoryNode parent, final long start, final long end) {
-		Assert.isTrue(start >= 0);
-		Assert.isTrue(end >= start);
+	private Object[] getRefactoringHistoryDays(final RefactoringHistoryDate parent, final long start, final long end) {
 		final Calendar calendar= Calendar.getInstance();
-		final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
+		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
 		final List list= new ArrayList(proxies.length);
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
-			final long stamp= proxies[index].getTimeStamp();
+			long stamp= proxies[index].getTimeStamp();
 			if (stamp >= 0) {
 				calendar.setTimeInMillis(stamp);
 				final int day= calendar.get(Calendar.DAY_OF_YEAR);
@@ -203,43 +255,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.SECOND, 0);
 					calendar.set(Calendar.MINUTE, 0);
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
-					list.add(new RefactoringHistoryDate(parent, calendar.getTimeInMillis(), RefactoringHistoryNode.DAY));
+					stamp= calendar.getTimeInMillis();
+					if (stamp < parent.getTimeStamp())
+						list.add(new RefactoringHistoryDate(parent, parent.getTimeStamp(), RefactoringHistoryNode.DAY));
+					else
+						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.DAY));
 				}
 			}
 		}
-		return list.toArray();
-	}
-
-	/**
-	 * Returns the refactoring history descriptors and caches time stamp
-	 * information.
-	 * 
-	 * @return the refactoring history descriptors
-	 */
-	private RefactoringDescriptorProxy[] getRefactoringHistoryDescriptors() {
-		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-		if (fRefactoringStamps == null) {
-			final int length= proxies.length;
-			fRefactoringStamps= new long[length];
-			for (int index= 0; index < length; index++)
-				fRefactoringStamps[length - index - 1]= proxies[index].getTimeStamp();
-		}
-		return proxies;
-	}
-
-	/**
-	 * Returns the refactoring history entries.
-	 * 
-	 * @param parent
-	 *            the parent node, or <code>null</code>
-	 * 
-	 * @return the refactoring history entries
-	 */
-	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryNode parent) {
-		final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
-		final List list= new ArrayList(proxies.length);
-		for (int index= 0; index < proxies.length; index++)
-			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
 		return list.toArray();
 	}
 
@@ -255,13 +278,27 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * 
 	 * @return the refactoring history entries
 	 */
-	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryNode parent, final long start, final long end) {
-		Assert.isTrue(start >= 0);
-		Assert.isTrue(end >= start);
-		final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
+	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryDate parent, final long start, final long end) {
+		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
 		final List list= new ArrayList(proxies.length);
 		for (int index= range[0]; index <= range[1]; index++)
+			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
+		return list.toArray();
+	}
+
+	/**
+	 * Returns the refactoring history entries.
+	 * 
+	 * @param parent
+	 *            the parent node, or <code>null</code>
+	 * 
+	 * @return the refactoring history entries
+	 */
+	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryNode parent) {
+		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
+		final List list= new ArrayList(proxies.length);
+		for (int index= 0; index < proxies.length; index++)
 			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
 		return list.toArray();
 	}
@@ -278,16 +315,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * 
 	 * @return the refactoring history months
 	 */
-	private Object[] getRefactoringHistoryMonths(final RefactoringHistoryNode parent, final long start, final long end) {
-		Assert.isTrue(start >= 0);
-		Assert.isTrue(end >= start);
+	private Object[] getRefactoringHistoryMonths(final RefactoringHistoryDate parent, final long start, final long end) {
 		final Calendar calendar= Calendar.getInstance();
-		final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
+		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
 		final List list= new ArrayList(proxies.length);
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
-			final long stamp= proxies[index].getTimeStamp();
+			long stamp= proxies[index].getTimeStamp();
 			if (stamp >= 0) {
 				calendar.setTimeInMillis(stamp);
 				final int month= calendar.get(Calendar.MONTH);
@@ -298,7 +333,11 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.MINUTE, 0);
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					calendar.set(Calendar.DAY_OF_MONTH, 1);
-					list.add(new RefactoringHistoryDate(parent, calendar.getTimeInMillis(), RefactoringHistoryNode.MONTH));
+					stamp= calendar.getTimeInMillis();
+					if (stamp < parent.getTimeStamp())
+						list.add(new RefactoringHistoryDate(parent, parent.getTimeStamp(), RefactoringHistoryNode.MONTH));
+					else
+						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.MONTH));
 				}
 			}
 		}
@@ -315,23 +354,9 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return An array containing the index range
 	 */
 	private int[] getRefactoringHistoryRange(final long start, final long end) {
-		Assert.isTrue(start >= 0);
-		Assert.isTrue(end >= start);
-		getRefactoringHistoryDescriptors();
 		final int[] range= new int[2];
-		final int left= Arrays.binarySearch(fRefactoringStamps, start);
-		if (left >= 0)
-			range[0]= left;
-		else
-			range[0]= Math.max(0, -left - 1);
-		final int right= Arrays.binarySearch(fRefactoringStamps, end);
-		if (right >= 0)
-			range[1]= right;
-		else
-			range[1]= -right - 2;
-		final int temp= fRefactoringStamps.length - range[1] - 1;
-		range[1]= fRefactoringStamps.length - range[0] - 1;
-		range[0]= temp;
+		range[1]= binarySearch(fRefactoringStamps, start) - 1;
+		range[0]= binarySearch(fRefactoringStamps, end);
 		return range;
 	}
 
@@ -347,16 +372,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * 
 	 * @return the refactoring history weeks
 	 */
-	private Object[] getRefactoringHistoryWeeks(final RefactoringHistoryNode parent, final long start, final long end) {
-		Assert.isTrue(start >= 0);
-		Assert.isTrue(end >= start);
+	private Object[] getRefactoringHistoryWeeks(final RefactoringHistoryDate parent, final long start, final long end) {
 		final Calendar calendar= Calendar.getInstance();
-		final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
+		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
 		final List list= new ArrayList(proxies.length);
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
-			final long stamp= proxies[index].getTimeStamp();
+			long stamp= proxies[index].getTimeStamp();
 			if (stamp >= 0) {
 				calendar.setTimeInMillis(stamp);
 				final int week= calendar.get(Calendar.WEEK_OF_YEAR);
@@ -367,7 +390,11 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.MINUTE, 0);
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-					list.add(new RefactoringHistoryDate(parent, calendar.getTimeInMillis(), RefactoringHistoryNode.WEEK));
+					stamp= calendar.getTimeInMillis();
+					if (stamp < parent.getTimeStamp())
+						list.add(new RefactoringHistoryDate(parent, parent.getTimeStamp(), RefactoringHistoryNode.WEEK));
+					else
+						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.WEEK));
 				}
 			}
 		}
@@ -465,10 +492,10 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring history root elements
 	 */
 	public final Object[] getRootElements() {
-		final List list= new ArrayList();
-		if (!fRefactoringHistory.isEmpty()) {
-			final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
-			if (proxies != null && proxies.length > 0) {
+		final List list= new ArrayList(8);
+		if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
+			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
+			if (proxies.length > 0) {
 				final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
 				int begin= 0;
 				long end= Long.MAX_VALUE;
@@ -508,5 +535,6 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			fRefactoringHistory= null;
 		fRefactoringRoots= null;
 		fRefactoringStamps= null;
+		fRefactoringProxies= null;
 	}
 }
