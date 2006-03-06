@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringDescriptorImageDescriptor;
@@ -64,6 +63,9 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 
 	/** The resource bundle to use */
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
+
+	/** The cached date format, or <code>null</code> */
+	private DateFormat fDateFormat= null;
 
 	/** The decorated element image */
 	private Image fDecoratedElementImage= null;
@@ -147,6 +149,17 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	}
 
 	/**
+	 * Returns a cached date format for the current locale.
+	 * 
+	 * @return a cached date format for the current locale
+	 */
+	private DateFormat getDateFormat() {
+		if (fDateFormat == null)
+			fDateFormat= DateFormat.getTimeInstance();
+		return fDateFormat;
+	}
+
+	/**
 	 * Returns the label for the specified refactoring descriptor.
 	 * 
 	 * @param descriptor
@@ -157,7 +170,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		if (fControlConfiguration.isTimeDisplayed()) {
 			final long stamp= descriptor.getTimeStamp();
 			if (stamp >= 0)
-				return Messages.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), descriptor.getDescription()});
+				return NLS.bind(fControlConfiguration.getRefactoringPattern(), new String[] { getDateFormat().format(new Date(stamp)), descriptor.getDescription()});
 		}
 		return descriptor.getDescription();
 	}

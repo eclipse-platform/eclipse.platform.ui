@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Assert;
 
 /**
  * Date node of a refactoring history.
@@ -39,7 +38,6 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 	 *            the node kind
 	 */
 	public RefactoringHistoryDate(final RefactoringHistoryNode parent, final long stamp, final int kind) {
-		Assert.isTrue(stamp >= 0);
 		fParent= parent;
 		fStamp= stamp;
 		fKind= kind;

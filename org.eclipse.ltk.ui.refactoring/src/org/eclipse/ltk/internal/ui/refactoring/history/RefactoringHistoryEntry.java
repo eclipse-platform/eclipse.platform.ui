@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
@@ -36,7 +34,6 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 	 *            the refactoring descriptor proxy
 	 */
 	public RefactoringHistoryEntry(final RefactoringHistoryNode parent, final RefactoringDescriptorProxy proxy) {
-		Assert.isNotNull(proxy);
 		fParent= parent;
 		fDescriptorProxy= proxy;
 	}
