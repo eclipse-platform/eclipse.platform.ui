@@ -415,11 +415,11 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * Sets the temporary custom control creator, overriding this manager's default information control creator.
 	 *
-	 * @param informationControlCreator
+	 * @param informationControlCreator, possibly <code>null</code> 
 	 * @since 3.0
 	 */
 	protected void setCustomInformationControlCreator(IInformationControlCreator informationControlCreator)  {
-		if (fCustomInformationControlCreator  instanceof IInformationControlCreatorExtension) {
+		if (informationControlCreator != null && fCustomInformationControlCreator  instanceof IInformationControlCreatorExtension) {
 			IInformationControlCreatorExtension extension= (IInformationControlCreatorExtension) fCustomInformationControlCreator;
 			if (extension.canReplace(informationControlCreator))
 				return;
@@ -605,7 +605,7 @@ abstract public class AbstractInformationControlManager {
 			creator= fCustomInformationControlCreator;
 			if (creator instanceof IInformationControlCreatorExtension)  {
 				IInformationControlCreatorExtension extension= (IInformationControlCreatorExtension) creator;
-				if (extension.canReuse(fInformationControl))
+				if (fInformationControl != null && extension.canReuse(fInformationControl))
 					return fInformationControl;
 			}
 			if (fInformationControl != null)  {
