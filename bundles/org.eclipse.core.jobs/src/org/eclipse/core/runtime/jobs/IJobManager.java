@@ -273,8 +273,8 @@ public interface IJobManager {
 	 * Registers a progress provider with the job manager.  If there was a
 	 * provider already registered, it is replaced.
 	 * <p>
-	 * This method is for internal use by the platform-related plug-ins.  
-	 * Clients should not call this method.
+	 * This method is intended for use by the currently executing Eclipse application.
+	 * Plug-ins outside the currently running application should not call this method.
 	 * </p>
 	 * 
 	 * @param provider the new provider, or <code>null</code> if no progress

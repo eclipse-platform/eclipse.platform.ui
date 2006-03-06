@@ -16,8 +16,9 @@ import org.eclipse.core.runtime.*;
  * The progress provider supplies the job manager with progress monitors for
  * running jobs.  There can only be one progress provider at any given time.
  * <p>
- * This class is for internal use by the platform-related plug-ins.
- * Clients outside of the base platform should not reference or subclass this class.
+ * This class is intended for use by the currently executing Eclipse application.
+ * Plug-ins outside the currently running application should not reference or 
+ * subclass this class.
  * </p>
  * 
  * @see IJobManager#setProgressProvider(ProgressProvider)
