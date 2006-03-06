@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 public final class CreateRefactoringScriptAction implements IWorkbenchWindowActionDelegate {
 
 	/** The wizard height */
-	private static final int SIZING_WIZARD_HEIGHT= 570;
+	private static final int SIZING_WIZARD_HEIGHT= 575;
 
 	/** The wizard width */
 	private static final int SIZING_WIZARD_WIDTH= 490;

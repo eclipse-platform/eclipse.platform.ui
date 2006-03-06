@@ -96,7 +96,6 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			fNewSettings= false;
 			setDialogSettings(section);
 		}
-		fWizardPage= new CreateRefactoringScriptWizardPage(this);
 		final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 		try {
 			service.connect();
@@ -104,6 +103,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		} finally {
 			service.disconnect();
 		}
+		fWizardPage= new CreateRefactoringScriptWizardPage(this);
 	}
 
 	/**
@@ -279,6 +279,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			section= settings.addNewSection(DIALOG_SETTINGS_KEY);
 			setDialogSettings(section);
 		}
+		fWizardPage.performFinish();
 		return performExport();
 	}
 

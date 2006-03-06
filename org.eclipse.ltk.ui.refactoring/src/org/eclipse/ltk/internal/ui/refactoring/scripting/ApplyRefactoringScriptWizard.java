@@ -75,8 +75,11 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	/** The refactoring history, or <code>null</code> */
 	private RefactoringHistory fRefactoringHistory= null;
 
-	/** The URI of the script file, or <code>null</code> */
-	private URI fScriptURI= null;
+	/** The location of the refactoring script file, or <code>null</code> */
+	private URI fScriptLocation= null;
+
+	/** The apply script wizard page */
+	private ApplyRefactoringScriptWizardPage fWizardPage;
 
 	/**
 	 * Creates a new apply refactoring script wizard.
@@ -109,7 +112,8 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 * {@inheritDoc}
 	 */
 	protected void addUserDefinedPages() {
-		addPage(new ApplyRefactoringScriptWizardPage(this));
+		fWizardPage= new ApplyRefactoringScriptWizardPage(this);
+		addPage(fWizardPage);
 	}
 
 	/**
@@ -134,7 +138,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 * @return the location of the script, or <code>null</code>
 	 */
 	public URI getRefactoringScript() {
-		return fScriptURI;
+		return fScriptLocation;
 	}
 
 	/**
@@ -146,7 +150,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 			if (element instanceof IFile) {
 				final IFile file= (IFile) element;
 				if (file.getFileExtension().equals(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
-					fScriptURI= file.getRawLocationURI();
+					fScriptLocation= file.getRawLocationURI();
 			}
 		}
 	}
@@ -161,6 +165,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 			section= settings.addNewSection(DIALOG_SETTINGS_KEY);
 			setDialogSettings(section);
 		}
+		fWizardPage.performFinish();
 		return super.performFinish();
 	}
 
@@ -182,7 +187,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 *            the location of the script, or <code>null</code>
 	 */
 	public void setRefactoringScript(final URI uri) {
-		fScriptURI= uri;
+		fScriptLocation= uri;
 		getContainer().updateButtons();
 	}
 }

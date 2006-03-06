@@ -52,10 +52,10 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	/** The apply refactoring script wizard page name */
 	private static final String PAGE_NAME= "ApplyRefactoringScriptWizardPage"; //$NON-NLS-1$
 
-	/** The script location control */
-	private RefactoringScriptLocationControl fScriptControl= null;
+	/** The refactoring script location control */
+	private RefactoringScriptLocationControl fLocationControl= null;
 
-	/** The associated wizard */
+	/** The apply script wizard */
 	private final ApplyRefactoringScriptWizard fWizard;
 
 	/**
@@ -81,7 +81,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		new Label(composite, SWT.NONE).setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
-		fScriptControl= new RefactoringScriptLocationControl(fWizard, composite) {
+		fLocationControl= new RefactoringScriptLocationControl(fWizard, composite) {
 
 			protected final void handleClipboardScriptChanged() {
 				super.handleClipboardScriptChanged();
@@ -99,6 +99,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 				handleLocationChanged();
 			}
 		};
+		fLocationControl.loadHistory();
 		setPageComplete(false);
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -111,7 +112,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	private void handleClipboardChanged() {
 		Clipboard clipboard= null;
 		try {
-			clipboard= new Clipboard(fScriptControl.getDisplay());
+			clipboard= new Clipboard(fLocationControl.getDisplay());
 			final Object contents= clipboard.getContents(TextTransfer.getInstance());
 			if (contents == null) {
 				setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_empty_clipboard);
@@ -144,7 +145,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	 * Handles the location changed event.
 	 */
 	private void handleLocationChanged() {
-		final URI uri= fScriptControl.getRefactoringScript();
+		final URI uri= fLocationControl.getRefactoringScript();
 		if (uri == null) {
 			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_location);
 			setPageComplete(false);
@@ -181,6 +182,13 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	}
 
 	/**
+	 * Gets called if the wizard is finished.
+	 */
+	public void performFinish() {
+		fLocationControl.saveHistory();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void setVisible(final boolean visible) {
@@ -189,7 +197,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			if (uri != null) {
 				fWizard.setRefactoringScript(null);
 				try {
-					fScriptControl.setRefactoringScript(uri);
+					fLocationControl.setRefactoringScript(uri);
 					handleLocationChanged();
 				} catch (IllegalArgumentException exception) {
 					RefactoringUIPlugin.log(exception);

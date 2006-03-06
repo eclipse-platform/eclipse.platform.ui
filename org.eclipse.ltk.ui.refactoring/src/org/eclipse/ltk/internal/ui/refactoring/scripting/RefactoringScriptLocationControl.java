@@ -16,6 +16,7 @@ import java.net.URI;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringLocationControl;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
@@ -31,7 +32,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizard;
@@ -46,11 +46,14 @@ public class RefactoringScriptLocationControl extends Composite {
 	/** The clipboard dialog setting */
 	protected static final String SETTING_CLIPBOARD= "org.eclipse.ltk.ui.refactoring.useClipboard"; //$NON-NLS-1$
 
+	/** The history dialog setting */
+	protected static final String SETTING_HISTORY= "org.eclipse.ltk.ui.refactoring.scriptHistory"; //$NON-NLS-1$
+
 	/** The external browse button */
 	protected Button fExternalBrowseButton= null;
 
-	/** The external location text field */
-	protected Text fExternalLocationField= null;
+	/** The location control */
+	protected RefactoringLocationControl fExternalLocationControl= null;
 
 	/** The from clipboard button */
 	protected Button fFromClipboardButton= null;
@@ -90,7 +93,7 @@ public class RefactoringScriptLocationControl extends Composite {
 
 			public final void widgetSelected(final SelectionEvent event) {
 				final boolean selection= fFromClipboardButton.getSelection();
-				fExternalLocationField.setEnabled(!selection);
+				fExternalLocationControl.setEnabled(!selection);
 				fExternalBrowseButton.setEnabled(!selection);
 				handleClipboardScriptChanged();
 			}
@@ -105,16 +108,22 @@ public class RefactoringScriptLocationControl extends Composite {
 				handleExternalLocationChanged();
 			}
 		});
-		fExternalLocationField= new Text(this, SWT.SINGLE | SWT.BORDER);
-		fExternalLocationField.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 1, 0));
-		fExternalLocationField.setEnabled(!clipboard);
-		fExternalLocationField.addModifyListener(new ModifyListener() {
+		fExternalLocationControl= new RefactoringLocationControl(fWizard, this, SETTING_HISTORY);
+		fExternalLocationControl.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 1, 0));
+		fExternalLocationControl.setEnabled(!clipboard);
+		fExternalLocationControl.getControl().addModifyListener(new ModifyListener() {
 
 			public final void modifyText(final ModifyEvent event) {
 				handleExternalLocationChanged();
 			}
 		});
-		fExternalLocationField.setFocus();
+		fExternalLocationControl.getControl().addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(final SelectionEvent event) {
+				handleExternalLocationChanged();
+			}
+		});
+		fExternalLocationControl.setFocus();
 		fExternalBrowseButton= new Button(this, SWT.PUSH);
 		fExternalBrowseButton.setText(ScriptingMessages.ScriptLocationControl_browse_label);
 		fExternalBrowseButton.setEnabled(!clipboard);
@@ -174,7 +183,7 @@ public class RefactoringScriptLocationControl extends Composite {
 		file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
 		final String path= file.open();
 		if (path != null)
-			fExternalLocationField.setText(path);
+			fExternalLocationControl.setText(path);
 	}
 
 	/**
@@ -188,11 +197,25 @@ public class RefactoringScriptLocationControl extends Composite {
 	 * Handles the external location changed event.
 	 */
 	protected void handleExternalLocationChanged() {
-		final String text= fExternalLocationField.getText();
+		final String text= fExternalLocationControl.getText();
 		if (text != null && !"".equals(text)) //$NON-NLS-1$
 			fScriptLocation= new File(text).toURI();
 		else
 			fScriptLocation= null;
+	}
+
+	/**
+	 * Loads the history of this control.
+	 */
+	public void loadHistory() {
+		fExternalLocationControl.loadHistory();
+	}
+
+	/**
+	 * Saves the history of this control.
+	 */
+	public void saveHistory() {
+		fExternalLocationControl.saveHistory();
 	}
 
 	/**
@@ -204,17 +227,17 @@ public class RefactoringScriptLocationControl extends Composite {
 	 *            should be taken from the clipboard
 	 */
 	public void setRefactoringScript(final URI uri) {
-		if (fExternalLocationField != null)
-			fExternalLocationField.setEnabled(true);
+		if (fExternalLocationControl != null)
+			fExternalLocationControl.setEnabled(true);
 		if (fExternalBrowseButton != null)
 			fExternalBrowseButton.setEnabled(true);
 		if (uri == null)
-			fExternalLocationField.setText(""); //$NON-NLS-1$
+			fExternalLocationControl.setText(""); //$NON-NLS-1$
 		else {
 			try {
 				final String path= new File(uri).getCanonicalPath();
 				if (path != null && !"".equals(path)) //$NON-NLS-1$
-					fExternalLocationField.setText(path);
+					fExternalLocationControl.setText(path);
 				handleExternalLocationChanged();
 			} catch (IOException exception) {
 				RefactoringUIPlugin.log(exception);

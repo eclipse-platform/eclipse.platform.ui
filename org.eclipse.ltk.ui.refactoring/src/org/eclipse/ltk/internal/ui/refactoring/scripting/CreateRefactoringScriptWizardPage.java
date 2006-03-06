@@ -49,10 +49,10 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	/** The refactoring history control */
 	private SelectRefactoringHistoryControl fHistoryControl= null;
 
-	/** The script location control */
-	private RefactoringScriptLocationControl fScriptControl= null;
+	/** The refactoring script location control */
+	private RefactoringScriptLocationControl fLocationControl= null;
 
-	/** The associated wizard */
+	/** The create script wizard */
 	private final CreateRefactoringScriptWizard fWizard;
 
 	/**
@@ -106,7 +106,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		data.horizontalSpan= 1;
 		data.verticalIndent= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		label.setLayoutData(data);
-		fScriptControl= new RefactoringScriptLocationControl(fWizard, composite) {
+		fLocationControl= new RefactoringScriptLocationControl(fWizard, composite) {
 
 			protected void handleBrowseExternalLocation() {
 				final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
@@ -117,7 +117,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				if (path != null) {
 					if (!path.endsWith(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
 						path= path + ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension;
-					fExternalLocationField.setText(path);
+					fExternalLocationControl.setText(path);
 				}
 			}
 
@@ -138,6 +138,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				handleLocationChanged();
 			}
 		};
+		fLocationControl.loadHistory();
 		setPageComplete(false);
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -148,7 +149,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	 * Handles the location changed event.
 	 */
 	private void handleLocationChanged() {
-		final URI uri= fScriptControl.getRefactoringScript();
+		final URI uri= fLocationControl.getRefactoringScript();
 		if (uri == null) {
 			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_location);
 			setPageComplete(false);
@@ -158,5 +159,12 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 			setErrorMessage(null);
 			setPageComplete(true);
 		}
+	}
+
+	/**
+	 * Gets called if the wizard is finished.
+	 */
+	public void performFinish() {
+		fLocationControl.saveHistory();
 	}
 }
