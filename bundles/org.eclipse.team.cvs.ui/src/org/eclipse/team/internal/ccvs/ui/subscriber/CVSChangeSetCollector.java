@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamStatus;
-import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -30,10 +30,10 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
-import org.eclipse.team.internal.core.subscribers.ChangeSet;
-import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoSetChangeSetCollector;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 /**
  * Collector that fetches the log for incoming CVS change sets
@@ -194,7 +194,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
      * @see org.eclipse.team.ui.synchronize.SyncInfoSetChangeSetCollector#reset(org.eclipse.team.core.synchronize.SyncInfoSet)
      */
     public void reset(SyncInfoSet seedSet) {
-        // Notify thet handler to stop any fetches in progress
+        // Notify that handler to stop any fetches in progress
         LogEntryCacheUpdateHandler handler = getLogEntryHandler();
         if (handler != null) {
             handler.stopFetching();
@@ -343,7 +343,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
 	        IResourceVariant remote = info.getRemote();
 	        if ((base == null && remote != null) || (remote == null && base != null) || (remote != null && base != null && !base.equals(remote))) {
 	            synchronized(this) {
-			        ChangeSet set = getChangeSetFor(logEntry);
+			        CheckedInChangeSet set = getChangeSetFor(logEntry);
 			        if (set == null) {
 			            set = createChangeSetFor(logEntry);
 			        	add(set);
@@ -359,7 +359,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
     }
     
     private void addToDefaultSet(String name, SyncInfo info) {
-        ChangeSet set;
+        CheckedInChangeSet set;
         synchronized(this) {
 	        set = getChangeSetFor(name);
 	        if (set == null) {
@@ -370,33 +370,33 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
         }
     }
     
-    private ChangeSet createDefaultChangeSet(String name) {
+    private CheckedInChangeSet createDefaultChangeSet(String name) {
         return new DefaultCheckedInChangeSet(name);
     }
 
-    private ChangeSet createChangeSetFor(ILogEntry logEntry) {
+    private CheckedInChangeSet createChangeSetFor(ILogEntry logEntry) {
         return new CVSCheckedInChangeSet(logEntry);
     }
 
-    private ChangeSet getChangeSetFor(ILogEntry logEntry) {
-        ChangeSet[] sets = getSets();
+    private CheckedInChangeSet getChangeSetFor(ILogEntry logEntry) {
+    	ChangeSet[] sets = getSets();
         for (int i = 0; i < sets.length; i++) {
-            ChangeSet set = sets[i];
+        	ChangeSet set = sets[i];
             if (set instanceof CheckedInChangeSet &&
                     set.getComment().equals(logEntry.getComment()) &&
                     ((CheckedInChangeSet)set).getAuthor().equals(logEntry.getAuthor())) {
-                return set;
+                return (CheckedInChangeSet)set;
             }
         }
         return null;
     }
 
-    private ChangeSet getChangeSetFor(String name) {
+    private CheckedInChangeSet getChangeSetFor(String name) {
         ChangeSet[] sets = getSets();
         for (int i = 0; i < sets.length; i++) {
             ChangeSet set = sets[i];
             if (set.getName().equals(name)) {
-                return set;
+                return (CheckedInChangeSet)set;
             }
         }
         return null;

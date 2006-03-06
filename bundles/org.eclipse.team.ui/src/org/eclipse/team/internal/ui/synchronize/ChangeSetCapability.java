@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -73,10 +73,10 @@ public abstract class ChangeSetCapability {
      * return <code>null</code>.  This method must be
      * overridden by subclasses that support active change sets.
      * @param configuration the configuration of the page displaying the change sets
-     * @param infos the sync info to be added to the change set
+     * @param diffs the sync info to be added to the change set
      * @return the created set.
      */
-    public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, SyncInfo[] infos) {
+    public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, IDiff[] diffs) {
         return null;
     }
     

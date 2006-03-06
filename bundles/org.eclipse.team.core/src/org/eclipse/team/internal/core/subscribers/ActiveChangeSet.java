@@ -13,12 +13,11 @@ package org.eclipse.team.internal.core.subscribers;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.osgi.service.prefs.Preferences;
 
@@ -27,7 +26,7 @@ import org.osgi.service.prefs.Preferences;
  * that are grouped together as a single logical change.
  * @since 3.1
  */
-public class ActiveChangeSet extends ChangeSet {
+public class ActiveChangeSet extends DiffChangeSet {
     
     private static final String CTX_TITLE = "title"; //$NON-NLS-1$
     private static final String CTX_COMMENT = "comment"; //$NON-NLS-1$
@@ -97,15 +96,15 @@ public class ActiveChangeSet extends ChangeSet {
     /*
      * Override inherited method to only include outgoing changes
      */
-    protected boolean isValidChange(SyncInfo info) {
-        return getManager().isModified(info);
+    protected boolean isValidChange(IDiff diff) {
+        return getManager().isModified(diff);
     }
 
-    private void addResource(IResource resource) throws TeamException {
+    private void addResource(IResource resource) throws CoreException {
         Subscriber subscriber = getManager().getSubscriber();
-        SyncInfo info = subscriber.getSyncInfo(resource);
-        if (info != null) {
-            add(info);
+        IDiff diff = subscriber.getDiff(resource);
+        if (diff != null) {
+            add(diff);
         }
     }
 
@@ -143,9 +142,9 @@ public class ActiveChangeSet extends ChangeSet {
         comment = prefs.get(CTX_COMMENT, null);
         String resourcePaths = prefs.get(CTX_RESOURCES, null);
         if (resourcePaths != null) {
-            SyncInfoTree syncInfoSet = getSyncInfoSet();
+            ResourceDiffTree tree = internalGetDiffTree();
             try {
-                syncInfoSet.beginInput();
+                tree.beginInput();
 	            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	            StringTokenizer tokenizer = new StringTokenizer(resourcePaths, "\n"); //$NON-NLS-1$
 	            while (tokenizer.hasMoreTokens()) {
@@ -157,7 +156,7 @@ public class ActiveChangeSet extends ChangeSet {
                             if (resource != null && manager.getSubscriber().getSyncInfo(resource) != null) {
                                 try {
                                     addResource(resource);
-                                } catch (TeamException e) {
+                                } catch (CoreException e) {
                                     TeamPlugin.log(e);
                                 }
                             }
@@ -168,7 +167,7 @@ public class ActiveChangeSet extends ChangeSet {
 	                }
 	            }
             } finally {
-                syncInfoSet.endInput(null);
+                tree.endInput(null);
             }
         }
     }
@@ -196,20 +195,20 @@ public class ActiveChangeSet extends ChangeSet {
 
     /**
      * Add the resources to the change set if they are outgoing changes.
-     * @param resources the resouces to add.
-     * @throws TeamException
+     * @param resources the resources to add.
+     * @throws CoreException
      */
-    public void add(IResource[] resources) throws TeamException {
+    public void add(IResource[] resources) throws CoreException {
         List toAdd = new ArrayList();
         for (int i = 0; i < resources.length; i++) {
             IResource resource = resources[i];
-            SyncInfo info = manager.getSyncInfo(resource);
-            if (info != null) {
-                toAdd.add(info);
+            IDiff diff = getManager().getDiff(resource);
+            if (diff != null) {
+                toAdd.add(diff);
             }
         }
         if (!toAdd.isEmpty()) {
-            add((SyncInfo[]) toAdd.toArray(new SyncInfo[toAdd.size()]));
+            add((IDiff[]) toAdd.toArray(new IDiff[toAdd.size()]));
         }
     }
 }

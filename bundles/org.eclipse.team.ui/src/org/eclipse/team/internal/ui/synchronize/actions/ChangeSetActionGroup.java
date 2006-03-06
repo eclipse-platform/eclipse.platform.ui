@@ -11,16 +11,20 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
@@ -78,8 +82,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     syncExec(new Runnable() {
                         public void run() {
-		                    SyncInfo[] infos = getSyncInfoSet().getSyncInfos();
-		                    ActiveChangeSet set = createChangeSet(infos);
+		                    ActiveChangeSet set = createChangeSet(getDiffs(getSyncInfoSet().getResources()));
 		                    if (set != null) {
 		                        getActiveChangeSetManager().add(set);
 		                    }
@@ -188,13 +191,15 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
             return new SynchronizeModelOperation(configuration, elements) {
                 public void run(IProgressMonitor monitor)
                         throws InvocationTargetException, InterruptedException {
+                	IResource[] resources = getSyncInfoSet().getResources();
                     if (set != null) {
-                        set.add(getSyncInfoSet().getSyncInfos());
+                    	IDiff[] diffArray = getDiffs(resources);
+						set.add(diffArray);
                     } else {
                         ChangeSet[] sets = getActiveChangeSetManager().getSets();
                         for (int i = 0; i < sets.length; i++) {
                             ActiveChangeSet activeSet = (ActiveChangeSet)sets[i];
-                            activeSet.remove(getSyncInfoSet().getResources());
+							activeSet.remove(resources);
                         }
                     }
                 }
@@ -420,8 +425,8 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 		return new ChangeSetModelSorter(provider, sortCriteria);
 	}
 	
-    private ActiveChangeSet createChangeSet(SyncInfo[] infos) {
-        return getChangeSetCapability().createChangeSet(getConfiguration(), infos);
+    private ActiveChangeSet createChangeSet(IDiff[] diffs) {
+        return getChangeSetCapability().createChangeSet(getConfiguration(), diffs);
     }
     
     private void editChangeSet(ActiveChangeSet set) {
@@ -431,4 +436,22 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
     private ChangeSetCapability getChangeSetCapability() {
         return provider.getChangeSetCapability();
     }
+
+	private IDiff[] getDiffs(IResource[] resources) {
+		List diffs = new ArrayList();
+		Subscriber s = ((SubscriberParticipant)getConfiguration().getParticipant()).getSubscriber();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			try {
+				IDiff diff = s.getDiff(resource);
+				if (diff != null)
+					diffs.add(diff);
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+		IDiff[] diffArray = (IDiff[]) diffs
+				.toArray(new IDiff[diffs.size()]);
+		return diffArray;
+	}
 }

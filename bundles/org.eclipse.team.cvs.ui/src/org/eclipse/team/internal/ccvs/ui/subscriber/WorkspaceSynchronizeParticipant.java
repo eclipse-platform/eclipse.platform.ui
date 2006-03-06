@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,7 +21,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
@@ -132,8 +136,8 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
         /* (non-Javadoc)
          * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#createChangeSet(org.eclipse.team.core.synchronize.SyncInfo[])
          */
-        public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, SyncInfo[] infos) {
-	        ActiveChangeSet set = getActiveChangeSetManager().createSet(CVSUIMessages.WorkspaceChangeSetCapability_1, new SyncInfo[0]); 
+        public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, IDiff[] infos) {
+	        ActiveChangeSet set = getActiveChangeSetManager().createSet(CVSUIMessages.WorkspaceChangeSetCapability_1, new IDiff[0]); 
 			CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, getResources(infos),
 			        CVSUIMessages.WorkspaceChangeSetCapability_2, CVSUIMessages.WorkspaceChangeSetCapability_3); // 
 			dialog.open();
@@ -142,12 +146,15 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 			return set;
         }
 
-        private IResource[] getResources(SyncInfo[] infos) {
-            IResource[] resources = new IResource[infos.length];
-            for (int i = 0; i < resources.length; i++) {
-                resources[i] = infos[i].getLocal();
-            }
-            return resources;
+        private IResource[] getResources(IDiff[] diffs) {
+        	Set result = new HashSet();
+        	for (int i = 0; i < diffs.length; i++) {
+				IDiff diff = diffs[i];
+				IResource resource = ResourceDiffTree.getResourceFor(diff);
+				if (resource != null)
+					result.add(resource);
+			}
+            return (IResource[]) result.toArray(new IResource[result.size()]);
         }
         
         /* (non-Javadoc)
@@ -170,7 +177,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	}
 	
 	/**
-	 * No arg contructor used for
+	 * No-arg constructor used for
 	 * creation of persisted participant after startup
 	 */
 	public WorkspaceSynchronizeParticipant() {

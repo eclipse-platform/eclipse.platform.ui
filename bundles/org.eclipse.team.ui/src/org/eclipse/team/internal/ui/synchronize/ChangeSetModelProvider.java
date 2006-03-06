@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -51,7 +51,7 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
             final SyncInfoTree syncInfoSet;
             // TODO: May need to be modified to work with two-way
             if (set instanceof CheckedInChangeSet) {
-                syncInfoSet = set.getSyncInfoSet();
+                syncInfoSet = checkedInCollector.getSyncInfoSet(set);
             } else {
                 syncInfoSet = activeCollector.getSyncInfoSet(set);
             }
@@ -84,7 +84,7 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
         /* (non-Javadoc)
          * @see org.eclipse.team.core.subscribers.IChangeSetChangeListener#resourcesChanged(org.eclipse.team.core.subscribers.ChangeSet, org.eclipse.core.resources.IResource[])
          */
-        public void resourcesChanged(ChangeSet set, IResource[] resources) {
+        public void resourcesChanged(ChangeSet set, IPath[] paths) {
             // The sub-providers listen directly to the sets for changes
             // There is no global action to be taken for such changes
         }

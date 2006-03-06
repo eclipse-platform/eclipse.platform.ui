@@ -18,8 +18,10 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -46,7 +48,7 @@ public class CommitSetTests extends EclipseTest {
             // TODO Auto-generated method stub
             
         }
-        public void resourcesChanged(ChangeSet set, IResource[] resources) {
+        public void resourcesChanged(ChangeSet set, IPath[] paths) {
             // TODO Auto-generated method stub
             
         }
@@ -71,11 +73,11 @@ public class CommitSetTests extends EclipseTest {
      * @return the newly create commit set
      * @throws TeamException
      */
-    protected ActiveChangeSet createCommitSet(String title, IFile[] files, boolean manageSet) throws TeamException {
+    protected ActiveChangeSet createCommitSet(String title, IFile[] files, boolean manageSet) throws CoreException {
         assertIsModified(getName(), files);
         SubscriberChangeSetCollector manager = CVSUIPlugin.getPlugin().getChangeSetManager();
         ActiveChangeSet set = manager.createSet(title, files);
-        assertEquals("Not all files were asdded to the set", files.length, set.getResources().length);
+        assertEquals("Not all files were added to the set", files.length, set.getResources().length);
         if (manageSet) {
 	        manager.add(set);
 	        waitForSetAddedEvent(set);

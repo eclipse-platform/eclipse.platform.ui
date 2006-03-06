@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 
 /**
@@ -29,6 +29,7 @@ public interface IChangeSetChangeListener {
      * The default change set has change to be the given set.
      * All new modifications will be placed in the default
      * set.
+     * @param previousDefault 
      * @param set the default set
      */
     void defaultSetChanged(ChangeSet previousDefault, ChangeSet set);
@@ -51,8 +52,8 @@ public interface IChangeSetChangeListener {
      * or removed from the set. Callers can use the resources contained
      * in the set to determine if each resource is an addition or removal.
      * @param set the set that has changed
-     * @param resources the resources whose containment state has changed w.r.t the set
+     * @param paths the paths of the resources whose containment state has changed w.r.t the set
      */
-    void resourcesChanged(ChangeSet set, IResource[] resources);
+    void resourcesChanged(ChangeSet set, IPath[] paths);
 
 }

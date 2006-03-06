@@ -10,38 +10,31 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
- * Group incoming changes according to the active change set thet are
+ * Group incoming changes according to the active change set that are
  * located in
  */
-public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
+public class ActiveChangeSetCollector implements IDiffChangeListener {
 
     private final ISynchronizePageConfiguration configuration;
     
     /*
-     * Map active change sets to infos displayed by the particpant
+     * Map active change sets to infos displayed by the participant
      */
     private final Map activeSets = new HashMap();
     
@@ -81,7 +74,7 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
                 public void run(IProgressMonitor monitor) {
                     remove(set);
                     if (!set.isEmpty()) {
-                        add(set.getSyncInfoSet().getSyncInfos());
+                        add(getSyncInfos(set).getSyncInfos());
                     }
                 }
             }, true, true);
@@ -96,14 +89,14 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
             }, true, true);
         }
 
-        public void resourcesChanged(final ChangeSet set, final IResource[] resources) {
+        public void resourcesChanged(final ChangeSet set, final IPath[] paths) {
             // Look for any resources that were removed from the set but are still out-of sync.
             // Re-add those resources
             final List outOfSync = new ArrayList();
-            for (int i = 0; i < resources.length; i++) {
-                IResource resource = resources[i];
-                if (!set.contains(resource)) {
-                    SyncInfo info = provider.getSyncInfoSet().getSyncInfo(resource);
+            for (int i = 0; i < paths.length; i++) {
+				IPath path = paths[i];
+                if (!((DiffChangeSet)set).contains(path)) {
+                    SyncInfo info = getSyncInfo(path);
                     if (info != null && info.getKind() != SyncInfo.IN_SYNC) {
                         outOfSync.add(info);
                     }
@@ -117,11 +110,10 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
                 }, true, true);
             }
         }
-        
     };
 
     /**
-     * Listener that wants to recieve change events from this collector
+     * Listener that wants to receive change events from this collector
      */
     private IChangeSetChangeListener listener;
     
@@ -144,10 +136,10 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
     }
     
     /**
-     * Repopulate the change sets from the seed set.
+     * Re-populate the change sets from the seed set.
      * If <code>null</code> is passed, the state
      * of the collector is cleared but the set is not
-     * repopulated.
+     * re-populated.
      * <p>
      * This method is invoked by the model provider when the
      * model provider changes state. It should not
@@ -170,7 +162,7 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         }
         activeSets.clear();
         
-        // Now repopulate
+        // Now re-populate
         if (seedSet != null) {
             if (getConfiguration().getComparisonType() == ISynchronizePageConfiguration.THREE_WAY) {
 	            // Show all active change sets even if they are empty
@@ -255,7 +247,7 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
                 } else {
 	                for (int j = 0; j < sets.length; j++) {
 	                    ChangeSet set = sets[j];
-	                    SyncInfoSet targetSet = (SyncInfoSet)activeSets.get(set);
+	                    SyncInfoSet targetSet = getSyncInfoSet(set);
 	                    if (targetSet == null) {
 	                        // This will add all the appropriate sync info to the set
 	                        createSyncInfoSet(set);
@@ -306,7 +298,7 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
      * Add the set from the collector.
      */
     public void add(ChangeSet set) {
-        SyncInfoSet targetSet = (SyncInfoSet)activeSets.get(set);
+        SyncInfoSet targetSet = getSyncInfoSet(set);
         if (targetSet == null) {
             createSyncInfoSet(set);
         }
@@ -316,7 +308,7 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
     }
     
     private SyncInfoTree createSyncInfoSet(ChangeSet set) {
-        SyncInfoTree sis = (SyncInfoTree)activeSets.get(set);
+        SyncInfoTree sis = getSyncInfoSet(set);
         // Register the listener last since the add will
         // look for new elements
         boolean added = false;
@@ -330,24 +322,81 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
             sis.beginInput();
             if (!sis.isEmpty())
                 sis.removeAll(sis.getResources());
-            sis.addAll(select(set.getSyncInfoSet().getSyncInfos()));
+            sis.addAll(getSyncInfos(set));
         } finally {
             if (sis != null)
                 sis.endInput(null);
         }
         if (added) {
-            set.getSyncInfoSet().addSyncSetChangedListener(this);
+            ((DiffChangeSet)set).getDiffTree().addDiffChangeListener(this);
             if (listener != null)
                 listener.setAdded(set);
         }
         return sis;
     }
 
-    /*
+	private SyncInfoSet getSyncInfos(ChangeSet set) {
+		IDiff[] diffs = ((ResourceDiffTree)((DiffChangeSet)set).getDiffTree()).getDiffs();
+		return asSyncInfoSet(diffs);
+	}
+
+	private SyncInfoSet asSyncInfoSet(IDiff[] diffs) {
+		SyncInfoSet result = new SyncInfoSet();
+		for (int i = 0; i < diffs.length; i++) {
+			IDiff diff = diffs[i];
+			if (select(diff)) {
+				SyncInfo info = asSyncInfo(diff);
+				if (info != null)
+					result.add(info);
+			}
+		}
+		return result;
+	}
+
+    private SyncInfo asSyncInfo(IDiff diff) {
+		try {
+			return ((SubscriberParticipant)getConfiguration().getParticipant()).getSubscriber().getSyncInfo(ResourceDiffTree.getResourceFor(diff));
+		} catch (TeamException e) {
+			TeamUIPlugin.log(e);
+		}
+		return null;
+	}
+
+	private boolean select(IDiff diff) {
+    	return getSeedSet().getSyncInfo(ResourceDiffTree.getResourceFor(diff)) != null;
+	}
+	
+	/* private */ SyncInfo getSyncInfo(IPath path) {
+		return getSyncInfo(getSeedSet(), path);
+	}
+	
+	/* private */ IResource[] getResources(SyncInfoSet set, IPath[] paths) {
+		List result = new ArrayList();
+		for (int i = 0; i < paths.length; i++) {
+			IPath path = paths[i];
+			SyncInfo info = getSyncInfo(set, path);
+			if (info != null) {
+				result.add(info.getLocal());
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+
+	private SyncInfo getSyncInfo(SyncInfoSet set, IPath path) {
+		SyncInfo[] infos = set.getSyncInfos();
+		for (int i = 0; i < infos.length; i++) {
+			SyncInfo info = infos[i];
+			if (info.getLocal().getFullPath().equals(path))
+				return info;
+		}
+		return null;
+	}
+
+	/*
      * Remove the set from the collector.
      */
     public void remove(ChangeSet set) {
-        set.getSyncInfoSet().removeSyncSetChangedListener(this);
+    	((DiffChangeSet)set).getDiffTree().removeDiffChangeListener(this);
         activeSets.remove(set);
         if (listener != null) {
             listener.setRemoved(set);
@@ -359,53 +408,13 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
      * or null if there isn't one.
      */
     public SyncInfoTree getSyncInfoSet(ChangeSet set) {
-        SyncInfoTree sis = (SyncInfoTree)activeSets.get(set);
-        return sis;
+        return (SyncInfoTree)activeSets.get(set);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetReset(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void syncInfoSetReset(final SyncInfoSet set, IProgressMonitor monitor) {
-        provider.performUpdate(new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) {
-		        ChangeSet changeSet = getChangeSet(set);
-		        if (changeSet != null) {
-			        SyncInfoSet targetSet = (SyncInfoSet)activeSets.get(changeSet);
-			        if (targetSet != null) {
-				        targetSet.clear();
-				        targetSet.addAll(select(set.getSyncInfos()));
-				        rootSet.removeAll(set.getResources());
-			        }
-		        }
-            }
-        }, true /* preserver expansion */, true /* run in UI thread */);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoChanged(org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void syncInfoChanged(final ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
-        provider.performUpdate(new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) {
-                ChangeSet changeSet = getChangeSet(event.getSet());
-                if (changeSet != null) {
-	                SyncInfoSet targetSet = (SyncInfoSet)activeSets.get(changeSet);
-	                if (targetSet != null) {
-		                targetSet.removeAll(event.getRemovedResources());
-		                targetSet.addAll(select(event.getChangedResources()));
-		                targetSet.addAll(select(event.getAddedResources()));
-		                rootSet.removeAll(event.getSet().getResources());
-	                }
-                }
-            }
-        }, true /* preserver expansion */, true /* run in UI thread */);
-    }
-
-    private ChangeSet getChangeSet(SyncInfoSet set) {
+    private ChangeSet getChangeSet(IDiffTree tree) {
         for (Iterator iter = activeSets.keySet().iterator(); iter.hasNext();) {
             ChangeSet changeSet = (ChangeSet) iter.next();
-            if (changeSet.getSyncInfoSet() == set) {
+            if (((DiffChangeSet)changeSet).getDiffTree() == tree) {
                 return changeSet;
             }
         }
@@ -416,26 +425,8 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         return getSeedSet().getSyncInfo(info.getLocal()) != null;
     }
     
-    private SyncInfoSet select(SyncInfo[] syncInfos) {
-        SyncInfoSet result = new SyncInfoSet();
-        for (int i = 0; i < syncInfos.length; i++) {
-            SyncInfo info = syncInfos[i];
-            if (getSeedSet().getSyncInfo(info.getLocal()) != null) {
-                result.add(info);
-            }
-        }
-        return result;
-    }
-    
     private SyncInfoSet getSeedSet() {
         return provider.getSyncInfoSet();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetErrors(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.team.core.ITeamStatus[], org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void syncInfoSetErrors(SyncInfoSet set, ITeamStatus[] errors, IProgressMonitor monitor) {
-        // Errors are not injected into the active change sets
     }
 
     public void dispose() {
@@ -455,4 +446,26 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
             getActiveChangeSetManager().addListener(activeChangeSetListener);
         }
     }
+	
+	public void diffsChanged(final IDiffChangeEvent event, IProgressMonitor monitor) {
+        provider.performUpdate(new IWorkspaceRunnable() {
+            public void run(IProgressMonitor monitor) {
+                ChangeSet changeSet = getChangeSet(event.getTree());
+                if (changeSet != null) {
+	                SyncInfoSet targetSet = getSyncInfoSet(changeSet);
+	                if (targetSet != null) {
+		                targetSet.removeAll(getResources(targetSet, event.getRemovals()));
+		                targetSet.addAll(asSyncInfoSet(event.getAdditions()));
+		                targetSet.addAll(asSyncInfoSet(event.getChanges()));
+		                rootSet.removeAll(((IResourceDiffTree)event.getTree()).getAffectedResources());
+	                }
+                }
+            }
+
+        }, true /* preserver expansion */, true /* run in UI thread */);
+	}
+
+	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
+		// Nothing to do
+	}
 }

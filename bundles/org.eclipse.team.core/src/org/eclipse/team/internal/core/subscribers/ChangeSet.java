@@ -1,31 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 
 /**
- * A change set represents a set of changes that are logically 
- * grouped together as a single change. The changes are 
- * represented using a set of <code>SyncInfo</code>.
- * 
- * @since 3.1
+ * A set that contains a group of related changes
  */
 public abstract class ChangeSet {
-
+	
     private String name;
-    
-    private final SyncInfoTree set = new SyncInfoTree();
 
     /**
      * Create a change set with no name. Subclasses
@@ -43,88 +35,31 @@ public abstract class ChangeSet {
     public ChangeSet(String name) {
         this.name = name;
     }
-    
-    /**
-     * Return the SyncInfoSet that contains the resources that belong to this change set.
-     * @return  the SyncInfoSet that contains the resources that belong to this change set
-     */
-    public SyncInfoTree getSyncInfoSet() {
-        return set;
-    }
 
     /**
      * Return the resources that are contained in this set.
      * @return the resources that are contained in this set
      */
-    public IResource[] getResources() {
-        return set.getResources();
-    }
+    public abstract IResource[] getResources();
     
     /**
      * Return whether the set contains any files.
      * @return whether the set contains any files
      */
-    public boolean isEmpty() {
-        return set.isEmpty();
-    }
+    public abstract boolean isEmpty();
 
     /**
      * Return true if the given file is included in this set.
      * @param local a local file
      * @return true if the given file is included in this set
      */
-    public boolean contains(IResource local) {
-        return set.getSyncInfo(local) != null;
-    }
-    
-    /**
-     * Add the resource to this set if it is modified
-     * w.r.t. the subscriber.
-     * @param info
-     */
-    public void add(SyncInfo info) {
-        if (isValidChange(info)) {
-            set.add(info);
-        }
-    }
-    
-    /**
-     * Return whether the given sync info is a valid change
-     * and can be included in this set. This method is used
-     * by the <code>add</code> method to filter set additions.
-     * @param info a sync info
-     * @return whether the sync info is a valid member of this set
-     */
-    protected boolean isValidChange(SyncInfo info) {
-        return (info != null);
-    }
-
-    /**
-     * Add the resources to this set if they are modified
-     * w.r.t. the subscriber.
-     * @param infos the resources to be added.
-     */
-    public void add(SyncInfo[] infos) {
-       try {
-           set.beginInput();
-           for (int i = 0; i < infos.length; i++) {
-              SyncInfo info = infos[i];
-              add(info);
-           }
-       } finally {
-           set.endInput(null);
-       }
-    }
+    public abstract boolean contains(IResource local);
     
     /**
      * Remove the resource from the set.
      * @param resource the resource to be removed
      */
-    public void remove(IResource resource) {
-        if (contains(resource)) {
-            set.remove(resource);
-        }
-    }
+    public abstract void remove(IResource resource);
     
     /**
      * Remove the resources from the set.
@@ -143,16 +78,7 @@ public abstract class ChangeSet {
      * @param depth the depth of the removal (one of
      * <code>IResource.DEPTH_ZERO, IResource.DEPTH_ONE, IResource.DEPTH_INFINITE)</code>
      */
-    public void rootRemoved(IResource resource, int depth) {
-        SyncInfo[] infos = set.getSyncInfos(resource, depth);
-        if (infos.length > 0) {
-            IResource[] resources = new IResource[infos.length];
-            for (int i = 0; i < resources.length; i++) {
-                resources[i] = infos[i].getLocal();
-            }
-            set.removeAll(resources);
-        }
-    }
+    public abstract void rootRemoved(IResource resource, int depth);
     
     /**
      * Return a comment describing the change.

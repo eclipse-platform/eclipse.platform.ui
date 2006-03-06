@@ -1,27 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
 
 /**
- * This class defines the common aspects of collecting a set of change
- * sets, including event notification.
- * 
- * @since 3.1
+ * An abstract change set collector that is not tied to a particular type of change set.
  */
 public abstract class ChangeSetCollector {
 
@@ -82,21 +77,28 @@ public abstract class ChangeSetCollector {
     public void add(final ChangeSet set) {
         if (!contains(set)) {
             sets.add(set);
-            set.getSyncInfoSet().addSyncSetChangedListener(getChangeSetChangeListener());
-            Object[] listeners = getListeners();
-            for (int i = 0; i < listeners.length; i++) {
-                final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
-                SafeRunner.run(new ISafeRunnable() {
-                    public void handleException(Throwable exception) {
-                        // Exceptions are logged by the platform
-                    }
-                    public void run() throws Exception {
-                        listener.setAdded(set);
-                    }
-                });
-            }
+            handleSetAdded(set);
         }
     }
+
+    /**
+     * Handle the set addition by notifying listeners.
+     * @param set the added set
+     */
+	protected void handleSetAdded(final ChangeSet set) {
+		Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+		    final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
+		    SafeRunner.run(new ISafeRunnable() {
+		        public void handleException(Throwable exception) {
+		            // Exceptions are logged by the platform
+		        }
+		        public void run() throws Exception {
+		            listener.setAdded(set);
+		        }
+		    });
+		}
+	}
 
     /**
      * Remove the set from the list of active sets.
@@ -104,32 +106,29 @@ public abstract class ChangeSetCollector {
      */
     public void remove(final ChangeSet set) {
         if (contains(set)) {
-            set.getSyncInfoSet().removeSyncSetChangedListener(getChangeSetChangeListener());
             sets.remove(set);
-            Object[] listeners = getListeners();
-            for (int i = 0; i < listeners.length; i++) {
-                final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
-                SafeRunner.run(new ISafeRunnable() {
-                    public void handleException(Throwable exception) {
-                        // Exceptions are logged by the platform
-                    }
-                    public void run() throws Exception {
-                        listener.setRemoved(set);
-                    }
-                });
-            }
+            handleSetRemoved(set);
         }
     }
-    
+
     /**
-     * Return the change listener that will be registered with each 
-     * <code>SyncInfoSet</code> associated with the <code>ChangeSets</code>
-     * added to this collector.
-     * @return the change listener that will be registered with each 
-     * <code>SyncInfoSet</code> associated with the <code>ChangeSets</code>
-     * added to this collector
+     * Handle the set removal by notifying listeners.
+     * @param set the removed set
      */
-    protected abstract ISyncInfoSetChangeListener getChangeSetChangeListener();
+	protected void handleSetRemoved(final ChangeSet set) {
+		Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+		    final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
+		    SafeRunner.run(new ISafeRunnable() {
+		        public void handleException(Throwable exception) {
+		            // Exceptions are logged by the platform
+		        }
+		        public void run() throws Exception {
+		            listener.setRemoved(set);
+		        }
+		    });
+		}
+	}
 
     /**
      * Return whether the manager contains the given commit set
@@ -172,10 +171,11 @@ public abstract class ChangeSetCollector {
     }
 
     /**
+     * Fire resource change notifications to the listeners.
      * @param changeSet
      * @param allAffectedResources
      */
-    protected void fireResourcesChangedEvent(final ChangeSet changeSet, final IResource[] allAffectedResources) {
+    protected void fireResourcesChangedEvent(final ChangeSet changeSet, final IPath[] allAffectedResources) {
         Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
@@ -188,21 +188,5 @@ public abstract class ChangeSetCollector {
                 }
             });
         }
-    }
-    
-    /**
-     * Return the Change Set whose sync info set is the
-     * one given.
-     * @param set a sync info set
-     * @return the change set for the given sync info set
-     */
-    protected ChangeSet getChangeSet(SyncInfoSet set) {
-        for (Iterator iter = sets.iterator(); iter.hasNext();) {
-            ChangeSet changeSet = (ChangeSet) iter.next();
-            if (changeSet.getSyncInfoSet() == set) {
-                return changeSet;
-            }
-        }
-        return null;
     }
 }

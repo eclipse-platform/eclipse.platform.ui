@@ -17,8 +17,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.core.subscribers.ChangeSet;
-import org.eclipse.team.internal.core.subscribers.ChangeSetCollector;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -29,7 +28,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * <p>
  * This class does not register as a change listener with the seed set. It
  * is up to clients to invoke either the <code>reset</code> or <code>handleChange</code>
- * methods in reponse to seed set changes. 
+ * methods in response to seed set changes. 
  * @since 3.1
  */
 public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
@@ -121,9 +120,9 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
      * @param resources the resources to be removed
      */
     protected void remove(IResource[] resources) {
-        ChangeSet[] sets = getSets();
+    	ChangeSet[] sets = getSets();
         for (int i = 0; i < sets.length; i++) {
-            ChangeSet set = sets[i];
+        	ChangeSet set = sets[i];
             set.remove(resources);
         }
     }
@@ -136,9 +135,9 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
     }
     
     /**
-     * Repopulate the change sets from the seed set.
+     * Re-populate the change sets from the seed set.
      * If <code>null</code> is passed, clear any state
-     * but do not repopulate.
+     * but do not re-populate.
      * <p>
      * This method is invoked by the model provider when the
      * model provider changes state. It should not
@@ -151,12 +150,13 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
      * updated properly.
      * <p>
      * Subclasses may override this method.
+     * @param seedSet 
      */
     public void reset(SyncInfoSet seedSet) {
         // First, remove all the sets
         ChangeSet[] sets = getSets();
         for (int i = 0; i < sets.length; i++) {
-            ChangeSet set2 = sets[i];
+        	ChangeSet set2 = sets[i];
             remove(set2);
         }
         if (seedSet != null) {
@@ -217,7 +217,7 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
      * the updates occur in the proper thread in order to ensure thread safety.
      * <p>
      * The update may be run in a different thread then the caller.
-     * However, regardless of which thread the upate is run in, the view
+     * However, regardless of which thread the update is run in, the view
      * will be updated once the update is completed.
      * @param runnable the workspace runnable that updates the sync sets.
      * @param preserveExpansion whether the expansed items in the view should
@@ -236,7 +236,7 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
     }
 
     /**
-     * This method should wait unti any background processing is
+     * This method should wait until any background processing is
      * completed. It is for testing purposes. By default, it does not wait at all.
      * Subclasses that perform work in the background should override.
      * @param monitor a progress monitor
@@ -244,4 +244,35 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
     public void waitUntilDone(IProgressMonitor monitor) {
         // Do nothing, by default
     }
+    
+    protected void handleSetAdded(ChangeSet set) {
+    	((CheckedInChangeSet)set).getSyncInfoSet().addSyncSetChangedListener(getChangeSetChangeListener());
+    	super.handleSetAdded(set);
+    }
+    
+    protected void handleSetRemoved(ChangeSet set) {
+    	((CheckedInChangeSet)set).getSyncInfoSet().removeSyncSetChangedListener(getChangeSetChangeListener());
+    	super.handleSetRemoved(set);
+    }
+    
+    /**
+     * Return the Change Set whose sync info set is the
+     * one given.
+     * @param set a sync info set
+     * @return the change set for the given sync info set
+     */
+    protected ChangeSet getChangeSet(SyncInfoSet set) {
+        ChangeSet[] sets = getSets();
+        for (int i = 0; i < sets.length; i++) {
+        	ChangeSet changeSet = sets[i];
+            if (((CheckedInChangeSet)changeSet).getSyncInfoSet() == set) {
+                return changeSet;
+            }
+        }
+        return null;
+    }
+
+	public SyncInfoTree getSyncInfoSet(ChangeSet set) {
+		return ((CheckedInChangeSet)set).getSyncInfoSet();
+	}
 }

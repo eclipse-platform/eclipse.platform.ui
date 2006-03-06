@@ -48,8 +48,8 @@ public interface IDiffChangeEvent {
 	public IDiff[] getChanges();
 	
 	/**
-	 * Return any errors that occured while this change was taking place.
-	 * @return any errors that occured while this change was taking place
+	 * Return any errors that occurred while this change was taking place.
+	 * @return any errors that occurred while this change was taking place
 	 */
 	public IStatus[] getErrors();
 }

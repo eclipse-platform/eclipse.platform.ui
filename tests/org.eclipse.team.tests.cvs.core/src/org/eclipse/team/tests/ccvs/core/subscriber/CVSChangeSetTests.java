@@ -12,7 +12,6 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Test;
@@ -23,6 +22,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -405,7 +405,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
         newFile.create(new ByteArrayInputStream("Hi There".getBytes()), false, null);
         // Create an active commit set and assert that it appears in the sync view
         SubscriberChangeSetCollector manager = getActiveChangeSetManager();
-        ActiveChangeSet set = manager.createSet("test", new SyncInfo[0]);
+        ActiveChangeSet set = manager.createSet("test", new IDiff[0]);
         manager.add(set);
         assertInActiveSet(new IResource[] { }, set);
         assertInRootSet(new IResource[] {newFolder, newFile});
