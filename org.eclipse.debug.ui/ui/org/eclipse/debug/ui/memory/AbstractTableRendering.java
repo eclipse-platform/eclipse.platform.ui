@@ -2507,10 +2507,10 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	private boolean isAtTopLimit()
 	{	
 		BigInteger startAddress = fContentInput.getStartAddress();
-		startAddress = MemoryViewUtil.alignDoubleWordBoundary(startAddress);
+		startAddress = MemoryViewUtil.alignToBoundary(startAddress, getAddressableUnitPerLine() );
 		
 		BigInteger startBufferAddress = fContentProvider.getBufferTopAddress();
-		startBufferAddress = MemoryViewUtil.alignDoubleWordBoundary(startBufferAddress);
+		startBufferAddress = MemoryViewUtil.alignToBoundary(startBufferAddress, getAddressableUnitPerLine());
 		
 		if (startAddress.compareTo(startBufferAddress) == 0)
 			return true;
@@ -2521,10 +2521,10 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	private boolean isAtBottomLimit()
 	{
 		BigInteger endAddress = fContentInput.getEndAddress();
-		endAddress = MemoryViewUtil.alignDoubleWordBoundary(endAddress);
+		endAddress = MemoryViewUtil.alignToBoundary(endAddress, getAddressableUnitPerLine());
 		
 		BigInteger endBufferAddress = fContentProvider.getBufferEndAddress();
-		endBufferAddress = MemoryViewUtil.alignDoubleWordBoundary(endBufferAddress);
+		endBufferAddress = MemoryViewUtil.alignToBoundary(endBufferAddress, getAddressableUnitPerLine());
 		
 		if (endAddress.compareTo(endBufferAddress) == 0)
 			return true;

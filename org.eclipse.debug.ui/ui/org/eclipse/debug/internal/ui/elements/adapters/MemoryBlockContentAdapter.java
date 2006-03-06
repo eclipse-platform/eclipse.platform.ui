@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
@@ -209,21 +210,10 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		
 		String adjustedAddress = startAddress.toString(16);
 
-		// align starting address with double word boundary
+		// align to the closest boundary based on addressable size per line
 		if ( descriptor.getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
-			if (!adjustedAddress.endsWith("0")) //$NON-NLS-1$
-			{
-				adjustedAddress = adjustedAddress.substring(0, adjustedAddress.length() - 1);
-				adjustedAddress += "0"; //$NON-NLS-1$
-				
-				// adjust number of lines
-				BigInteger newAddress = new BigInteger(adjustedAddress, 16);
-				int reqLines = startAddress.subtract(newAddress).divide(BigInteger.valueOf(tableRendering.getBytesPerLine())).intValue();
-				numberOfLines = numberOfLines + reqLines;
-				
-				startAddress = new BigInteger(adjustedAddress, 16);	
-			}
+			startAddress = MemoryViewUtil.alignToBoundary(startAddress, tableRendering.getAddressableUnitPerLine());
 		}
 
 		IMemoryBlockExtension extMemoryBlock = null;

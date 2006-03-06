@@ -1255,7 +1255,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private boolean isAtTopLimit()
 	{	
 		BigInteger startAddress = fContentDescriptor.getStartAddress();
-		startAddress = MemoryViewUtil.alignDoubleWordBoundary(startAddress);
+		startAddress = MemoryViewUtil.alignToBoundary(startAddress, getAddressableUnitPerLine());
 		AbstractVirtualContentTableModel model = fTableViewer.getVirtualContentModel();
 		
 		if (model != null)
@@ -1264,7 +1264,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			if (key instanceof BigInteger)
 			{
 				BigInteger startBufferAddress = (BigInteger)key;
-				startBufferAddress = MemoryViewUtil.alignDoubleWordBoundary(startBufferAddress);
+				startBufferAddress = MemoryViewUtil.alignToBoundary(startBufferAddress, getAddressableUnitPerLine());
 				
 				if (startAddress.compareTo(startBufferAddress) == 0)
 					return true;
@@ -1276,7 +1276,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private boolean isAtBottomLimit()
 	{
 		BigInteger endAddress = fContentDescriptor.getEndAddress();
-		endAddress = MemoryViewUtil.alignDoubleWordBoundary(endAddress);
+		endAddress = MemoryViewUtil.alignToBoundary(endAddress, getAddressableUnitPerLine());
 		
 		AbstractVirtualContentTableModel model = fTableViewer.getVirtualContentModel();
 		if (model != null)
@@ -1286,7 +1286,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			if (key instanceof BigInteger)
 			{
 				BigInteger endBufferAddress = (BigInteger)key;
-				endBufferAddress = MemoryViewUtil.alignDoubleWordBoundary(endBufferAddress);
+				endBufferAddress = MemoryViewUtil.alignToBoundary(endBufferAddress, getAddressableUnitPerLine());
 				
 				if (endAddress.compareTo(endBufferAddress) == 0)
 					return true;

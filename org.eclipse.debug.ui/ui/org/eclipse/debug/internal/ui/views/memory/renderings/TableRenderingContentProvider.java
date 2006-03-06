@@ -30,6 +30,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryRenderingUpdater;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
@@ -285,21 +286,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		
 		int addressLength = addressSize * IInternalDebugUIConstants.CHAR_PER_BYTE;
 
-		// align starting address with double word boundary
-		if ( fInput.getMemoryBlock() instanceof IMemoryBlockExtension)
+		// align to the closest boundary based on addressable size per line
+		if ( getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
-			if (!adjustedAddress.endsWith("0")) //$NON-NLS-1$
-			{
-				adjustedAddress = adjustedAddress.substring(0, adjustedAddress.length() - 1);
-				adjustedAddress += "0"; //$NON-NLS-1$
-				
-				// adjust number of lines
-				BigInteger newAddress = new BigInteger(adjustedAddress, 16);
-				int reqLines = startingAddress.subtract(newAddress).divide(BigInteger.valueOf(getTableRendering(fInput).getBytesPerLine())).intValue();
-				numberOfLines = numberOfLines + reqLines;
-				
-				startingAddress = new BigInteger(adjustedAddress, 16);	
-			}
+			startingAddress = MemoryViewUtil.alignToBoundary(startingAddress, getTableRendering(fInput).getAddressableUnitPerLine());
 		}
 
 		IMemoryBlockExtension extMemoryBlock = null;

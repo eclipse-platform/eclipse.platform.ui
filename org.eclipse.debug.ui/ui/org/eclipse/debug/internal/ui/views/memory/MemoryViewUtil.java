@@ -175,16 +175,10 @@ public class MemoryViewUtil {
 		return true;
 	}
 	
-	public static BigInteger alignDoubleWordBoundary(BigInteger integer)
+	public static BigInteger alignToBoundary(BigInteger integer, int numberOfUnitsPerLine)
 	{
-		String str =integer.toString(16);
-		if (!str.endsWith("0")) //$NON-NLS-1$
-		{
-			str = str.substring(0, str.length() - 1);
-			str += "0"; //$NON-NLS-1$
-			integer = new BigInteger(str, 16);
-		}		
-		
+		BigInteger[] result = integer.divideAndRemainder(BigInteger.valueOf(numberOfUnitsPerLine));
+		integer = integer.subtract(result[1]);
 		return integer;
 	}
 	
