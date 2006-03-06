@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Helper class for exporting resources to the file system.
@@ -96,20 +97,20 @@ public class FileSystemExporter {
                 n = contentStream.read(readBuffer);
             }
         } finally {
-            if (output != null) {
-            	// wrapped in a try-catch to ensure attempt to close contentStream
-            	try {
-            		output.close();
-            	}
-            	catch(IOException e){ // do nothing
-            	}
-			}
             if (contentStream != null) {
+            	// wrap in a try-catch to ensure attempt to close output stream
             	try {
             		contentStream.close();
             	}
-            	catch(IOException e){ // do nothing
+            	catch(IOException e){
+            		IDEWorkbenchPlugin
+							.log(
+									"Error closing input stream for file: " + file.getLocation(), e); //$NON-NLS-1$
             	}
+			}
+        	if (output != null) {
+        		// propogate this error to the user
+           		output.close();
 			}
         }
     }
