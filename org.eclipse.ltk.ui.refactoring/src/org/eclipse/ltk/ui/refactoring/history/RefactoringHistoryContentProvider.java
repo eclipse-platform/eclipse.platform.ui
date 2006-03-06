@@ -239,6 +239,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring history days
 	 */
 	private Object[] getRefactoringHistoryDays(final RefactoringHistoryDate parent, final long start, final long end) {
+		final long time= parent.getTimeStamp();
 		final Calendar calendar= Calendar.getInstance();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
@@ -246,7 +247,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
 			long stamp= proxies[index].getTimeStamp();
-			if (stamp >= 0) {
+			if (stamp >= time) {
 				calendar.setTimeInMillis(stamp);
 				final int day= calendar.get(Calendar.DAY_OF_YEAR);
 				if (day != last) {
@@ -256,8 +257,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.MINUTE, 0);
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					stamp= calendar.getTimeInMillis();
-					if (stamp < parent.getTimeStamp())
-						list.add(new RefactoringHistoryDate(parent, parent.getTimeStamp(), RefactoringHistoryNode.DAY));
+					if (stamp < time)
+						list.add(new RefactoringHistoryDate(parent, time, RefactoringHistoryNode.DAY));
 					else
 						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.DAY));
 				}
@@ -316,6 +317,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring history months
 	 */
 	private Object[] getRefactoringHistoryMonths(final RefactoringHistoryDate parent, final long start, final long end) {
+		final long time= parent.getTimeStamp();
 		final Calendar calendar= Calendar.getInstance();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
@@ -323,7 +325,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
 			long stamp= proxies[index].getTimeStamp();
-			if (stamp >= 0) {
+			if (stamp >= time) {
 				calendar.setTimeInMillis(stamp);
 				final int month= calendar.get(Calendar.MONTH);
 				if (month != last) {
@@ -334,8 +336,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					calendar.set(Calendar.DAY_OF_MONTH, 1);
 					stamp= calendar.getTimeInMillis();
-					if (stamp < parent.getTimeStamp())
-						list.add(new RefactoringHistoryDate(parent, parent.getTimeStamp(), RefactoringHistoryNode.MONTH));
+					if (stamp < time)
+						list.add(new RefactoringHistoryDate(parent, time, RefactoringHistoryNode.MONTH));
 					else
 						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.MONTH));
 				}
@@ -373,6 +375,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring history weeks
 	 */
 	private Object[] getRefactoringHistoryWeeks(final RefactoringHistoryDate parent, final long start, final long end) {
+		final long time= parent.getTimeStamp();
 		final Calendar calendar= Calendar.getInstance();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
@@ -380,7 +383,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
 			long stamp= proxies[index].getTimeStamp();
-			if (stamp >= 0) {
+			if (stamp >= time) {
 				calendar.setTimeInMillis(stamp);
 				final int week= calendar.get(Calendar.WEEK_OF_YEAR);
 				if (week != last) {
@@ -391,8 +394,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 					stamp= calendar.getTimeInMillis();
-					if (stamp < parent.getTimeStamp())
-						list.add(new RefactoringHistoryDate(parent, parent.getTimeStamp(), RefactoringHistoryNode.WEEK));
+					if (stamp < time)
+						list.add(new RefactoringHistoryDate(parent, time, RefactoringHistoryNode.WEEK));
 					else
 						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.WEEK));
 				}
