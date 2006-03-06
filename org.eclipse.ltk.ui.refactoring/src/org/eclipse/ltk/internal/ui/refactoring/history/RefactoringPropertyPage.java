@@ -11,8 +11,9 @@
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -67,10 +68,10 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	/** The refactoring descriptor delete query */
 	private final class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
 
-		/** Has any refactoring descriptor been deleted? */
-		private boolean fDeletions= true;
+		/** The last choice */
+		private int fLastChoice= -1;
 
-		/** Has the user already been warned, if enabled? */
+		/** Has the user already been warned once? */
 		private boolean fWarned= false;
 
 		/**
@@ -80,24 +81,23 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		 *         <code>false</code> otherwise
 		 */
 		public boolean hasDeletions() {
-			return fDeletions;
+			return fLastChoice == IDialogConstants.YES_ID;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		public RefactoringStatus proceed(final RefactoringDescriptorProxy proxy) {
-			Assert.isNotNull(proxy);
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			MessageDialogWithToggle dialog= null;
-			if (!fWarned) {
+			if (!fWarned || !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
 				final String project= proxy.getProject();
 				dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, (project == null || "".equals(project)) ? Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_workspace_pattern, proxy.getDescription()) : Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_project_pattern, proxy.getDescription()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null); //$NON-NLS-1$
 				store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
-				fDeletions= dialog.getReturnCode() == IDialogConstants.YES_ID;
+				fLastChoice= dialog.getReturnCode();
 			}
 			fWarned= true;
-			if (fDeletions)
+			if (fLastChoice == IDialogConstants.YES_ID)
 				return new RefactoringStatus();
 			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
 		}
@@ -116,7 +116,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	private IWorkingCopyManager fManager= null;
 
 	/** The share history button, or <code>null</code> */
-	private Button fShareHistory= null;
+	private Button fShareHistoryButton= null;
 
 	/**
 	 * {@inheritDoc}
@@ -175,6 +175,19 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			public final void widgetSelected(final SelectionEvent event) {
 				final RefactoringDescriptorProxy[] selection= control.getCheckedDescriptors();
 				if (selection.length > 0) {
+					Arrays.sort(selection, new Comparator() {
+
+						public final int compare(final Object first, final Object second) {
+							final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
+							final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
+							final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
+							if (delta > 0)
+								return 1;
+							else if (delta < 0)
+								return -1;
+							return 0;
+						}
+					});
 					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
 						service.connect();
@@ -188,8 +201,10 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							else
 								RefactoringUIPlugin.log(exception);
 						}
-						if (query.hasDeletions())
+						if (query.hasDeletions()) {
 							control.setInput(service.getProjectHistory(getCurrentProject(), null));
+							control.setCheckedDescriptors(new RefactoringDescriptorProxy[0]);
+						}
 					} finally {
 						service.disconnect();
 					}
@@ -225,12 +240,12 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		fShareHistory= new Button(composite, SWT.CHECK);
-		fShareHistory.setText(RefactoringUIMessages.RefactoringPropertyPage_share_message);
-		fShareHistory.setData(RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY);
+		fShareHistoryButton= new Button(composite, SWT.CHECK);
+		fShareHistoryButton.setText(RefactoringUIMessages.RefactoringPropertyPage_share_message);
+		fShareHistoryButton.setData(RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY);
 
-		fShareHistory.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		fShareHistory.setSelection(hasSharedRefactoringHistory());
+		fShareHistoryButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		fShareHistoryButton.setSelection(hasSharedRefactoringHistory());
 
 		new Label(composite, SWT.NONE);
 
@@ -303,7 +318,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		final IProject project= getCurrentProject();
 		if (project != null)
-			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.valueOf(fShareHistory.getSelection()).toString());
+			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.valueOf(fShareHistoryButton.getSelection()).toString());
 		if (fManager != null)
 			try {
 				fManager.applyChanges();
