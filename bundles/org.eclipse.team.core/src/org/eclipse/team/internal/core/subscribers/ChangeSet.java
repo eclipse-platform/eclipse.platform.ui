@@ -17,7 +17,7 @@ import org.eclipse.team.core.synchronize.SyncInfoTree;
 /**
  * A change set represents a set of changes that are logically 
  * grouped together as a single change. The changes are 
- * represented usign a set of <code>SyncInfo</code>.
+ * represented using a set of <code>SyncInfo</code>.
  * 
  * @since 3.1
  */
@@ -38,6 +38,7 @@ public abstract class ChangeSet {
     
     /**
      * Create a change set with the given name.
+     * @param name the name of the change set
      */
     public ChangeSet(String name) {
         this.name = name;
@@ -69,7 +70,7 @@ public abstract class ChangeSet {
 
     /**
      * Return true if the given file is included in this set.
-     * @param local a ocal file
+     * @param local a local file
      * @return true if the given file is included in this set
      */
     public boolean contains(IResource local) {

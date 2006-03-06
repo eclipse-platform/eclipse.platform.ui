@@ -19,7 +19,7 @@ import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 /**
  * A change set capability is used by a SubscriberSynchronizePage
  * to determine what, if any change set capabilities should be enabled
- * for the pags of the particpant.
+ * for the pages of the participant.
  * @since 3.1
  */
 public abstract class ChangeSetCapability {
@@ -54,12 +54,12 @@ public abstract class ChangeSetCapability {
     
     /**
      * Return the change set collector that manages the active change
-     * set for the particpant associated with this capability. A <code>null</code>
+     * set for the participant associated with this capability. A <code>null</code>
      * is returned if active change sets are not supported. The default is to 
      * return <code>null</code>.  This method must be
      * overridden by subclasses that support active change sets.
      * @return the change set collector that manages the active change
-     * set for the particpant associated with this capability or
+     * set for the participant associated with this capability or
      * <code>null</code> if active change sets are not supported.
      */
     public SubscriberChangeSetCollector getActiveChangeSetManager() {
