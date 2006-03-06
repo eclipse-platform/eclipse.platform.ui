@@ -35,7 +35,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 public abstract class RefactoringHistory extends PlatformObject {
 
 	/**
-	 * Returns the refactoring descriptors of this history, in ascending order
+	 * Returns the refactoring descriptors of this history, in descending order
 	 * of their time stamps.
 	 * 
 	 * @return the refactoring descriptors, or an empty array
