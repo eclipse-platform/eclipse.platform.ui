@@ -71,6 +71,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -246,7 +247,10 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The index of the currently executed refactoring */
 	private int fCurrentRefactoring= 0;
 
-	/** The refactoring descriptor proxies, in ascending order of their time stamps, or <code>null</code> */
+	/**
+	 * The refactoring descriptor proxies, in ascending order of their time
+	 * stamps, or <code>null</code>
+	 */
 	private RefactoringDescriptorProxy[] fDescriptorProxies= null;
 
 	/** The error wizard page */
@@ -671,7 +675,8 @@ public class RefactoringHistoryWizard extends Wizard {
 					key= PREFERENCE_DO_NOT_SHOW_APPLY_ERROR;
 				}
 				if (!store.getBoolean(key)) {
-					final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), wizard.getShell().getText(), message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+					final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), wizard.getShell().getText(), null, message, MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
+					dialog.open();
 					store.setValue(key, dialog.getToggleState());
 					if (dialog.getReturnCode() == 1)
 						return null;
@@ -951,7 +956,8 @@ public class RefactoringHistoryWizard extends Wizard {
 				final String[] messages= { RefactoringUIMessages.RefactoringHistoryWizard_one_refactoring_undone + message, RefactoringUIMessages.RefactoringHistoryWizard_several_refactorings_undone + message};
 				final ChoiceFormat choice= new ChoiceFormat(new double[] { 1, Double.MAX_VALUE}, messages);
 				format.setFormatByArgumentIndex(0, choice);
-				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), getShell().getText(), format.format(new Object[] { new Integer(fExecutedRefactorings)}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+				final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), getShell().getText(), null, format.format(new Object[] { new Integer(fExecutedRefactorings)}), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
+				dialog.open();
 				store.setValue(PREFERENCE_DO_NOT_WARN_UNDO_ON_CANCEL, dialog.getToggleState());
 				if (dialog.getReturnCode() == 1)
 					return false;
@@ -1021,7 +1027,8 @@ public class RefactoringHistoryWizard extends Wizard {
 		} else {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH) && proxies.length > 0) {
-				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(getShell(), wizard.getShell().getText(), Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, getLabelAsText(IDialogConstants.FINISH_LABEL)), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+				final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), wizard.getShell().getText(), null, Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, getLabelAsText(IDialogConstants.FINISH_LABEL)), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
+				dialog.open();
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
 				if (dialog.getReturnCode() == IDialogConstants.CANCEL_ID)
 					return false;
