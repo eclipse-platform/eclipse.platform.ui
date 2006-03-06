@@ -232,6 +232,12 @@ public class GenerateDiffFileWizard extends Wizard {
 			    	return;
 				}
 				
+				//Make sure that a container has been selected
+				if (wsSelectedContainer == null){
+					getSelectedContainer();
+				}
+				Assert.isNotNull(wsSelectedContainer);
+				
 				IFile file = wsSelectedContainer.getFile(new Path(wsFilenameText.getText()));
 				if (file != null)
 					wsPathText.setText(file.getFullPath().toString());
@@ -240,6 +246,15 @@ public class GenerateDiffFileWizard extends Wizard {
 				super.okPressed();
 			}
 			
+			private void getSelectedContainer() {
+				Object obj = ((IStructuredSelection)wsTreeViewer.getSelection()).getFirstElement();
+                if (obj instanceof IContainer)
+                	wsSelectedContainer = (IContainer) obj;
+                else if (obj instanceof IFile){
+                	wsSelectedContainer = ((IFile) obj).getParent();
+                }
+			}
+
 			protected void cancelPressed() {
 			  validatePage();
 			  super.cancelPressed();
@@ -264,7 +279,6 @@ public class GenerateDiffFileWizard extends Wizard {
                         	wsSelectedContainer = tempFile.getParent();
                         	wsFilenameText.setText(tempFile.getName());
                         }
-          
                     }
                 });
         
