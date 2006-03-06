@@ -187,7 +187,12 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					public final int compare(final Object first, final Object second) {
 						final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
 						final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
+						final long delta= predecessor.getTimeStamp() - successor.getTimeStamp();
+						if (delta > 0)
+							return 1;
+						else if (delta < 0)
+							return -1;
+						return 0;
 					}
 				});
 				RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());
@@ -221,7 +226,12 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					public final int compare(final Object first, final Object second) {
 						final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
 						final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
+						final long delta= predecessor.getTimeStamp() - successor.getTimeStamp();
+						if (delta > 0)
+							return 1;
+						else if (delta < 0)
+							return -1;
+						return 0;
 					}
 				});
 				RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());

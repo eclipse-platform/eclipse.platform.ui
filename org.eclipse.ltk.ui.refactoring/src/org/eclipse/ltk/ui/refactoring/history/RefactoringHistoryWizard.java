@@ -246,7 +246,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The index of the currently executed refactoring */
 	private int fCurrentRefactoring= 0;
 
-	/** The refactoring descriptor proxies, or <code>null</code> */
+	/** The refactoring descriptor proxies, in ascending order of their time stamps, or <code>null</code> */
 	private RefactoringDescriptorProxy[] fDescriptorProxies= null;
 
 	/** The error wizard page */
@@ -779,7 +779,12 @@ public class RefactoringHistoryWizard extends Wizard {
 				public final int compare(final Object first, final Object second) {
 					final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
 					final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-					return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
+					final long delta= predecessor.getTimeStamp() - successor.getTimeStamp();
+					if (delta > 0)
+						return 1;
+					else if (delta < 0)
+						return -1;
+					return 0;
 				}
 			});
 			fDescriptorProxies= result;

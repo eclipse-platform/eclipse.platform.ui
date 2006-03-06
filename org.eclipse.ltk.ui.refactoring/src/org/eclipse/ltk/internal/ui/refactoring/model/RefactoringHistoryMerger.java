@@ -126,7 +126,12 @@ public final class RefactoringHistoryMerger implements IStreamMerger, IStorageMe
 			public final int compare(final Object first, final Object second) {
 				final RefactoringDescriptor predecessor= (RefactoringDescriptor) first;
 				final RefactoringDescriptor successor= (RefactoringDescriptor) second;
-				return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+				final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
+				if (delta > 0)
+					return 1;
+				else if (delta < 0)
+					return -1;
+				return 0;
 			}
 		});
 		RefactoringHistoryManager.writeRefactoringDescriptors(output, outputDescriptors, true);

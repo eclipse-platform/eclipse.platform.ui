@@ -134,7 +134,12 @@ public final class RefactoringIndexMerger implements IStreamMerger, IStorageMerg
 			public final int compare(final Object first, final Object second) {
 				final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
 				final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-				return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+				final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
+				if (delta > 0)
+					return 1;
+				else if (delta < 0)
+					return -1;
+				return 0;
 			}
 		});
 		final StringBuffer buffer= new StringBuffer(256);
