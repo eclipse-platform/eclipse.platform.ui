@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.*;
  * @since org.eclipse.core.runtime 3.2
  */
 public final class AdapterManagerListener implements IRegistryChangeListener {
+	public static final String ADAPTER_POINT_ID = "org.eclipse.core.runtime.adapters"; //$NON-NLS-1$
 
 	private AdapterManager theAdapterManager;
 
@@ -29,7 +30,7 @@ public final class AdapterManagerListener implements IRegistryChangeListener {
 	public AdapterManagerListener() {
 		theAdapterManager = AdapterManager.getDefault();
 		registerFactoryProxies();
-		Platform.getExtensionRegistry().addRegistryChangeListener(this);
+		RegistryFactory.getRegistry().addRegistryChangeListener(this);
 	}
 
 	/**
@@ -38,8 +39,7 @@ public final class AdapterManagerListener implements IRegistryChangeListener {
 	 * are loaded lazily as they are needed.
 	 */
 	private void registerFactoryProxies() {
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint point = registry.getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_ADAPTERS);
+		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ADAPTER_POINT_ID);
 		if (point == null)
 			return;
 		IExtension[] extensions = point.getExtensions();
@@ -63,11 +63,10 @@ public final class AdapterManagerListener implements IRegistryChangeListener {
 		//find the set of changed adapter extensions
 		HashSet toRemove = null;
 		IExtensionDelta[] deltas = event.getExtensionDeltas();
-		String adapterId = Platform.PI_RUNTIME + '.' + Platform.PT_ADAPTERS;
 		boolean found = false;
 		for (int i = 0; i < deltas.length; i++) {
 			//we only care about extensions to the adapters extension point
-			if (!adapterId.equals(deltas[i].getExtensionPoint().getUniqueIdentifier()))
+			if (!ADAPTER_POINT_ID.equals(deltas[i].getExtensionPoint().getUniqueIdentifier()))
 				continue;
 			found = true;
 			if (deltas[i].getKind() == IExtensionDelta.ADDED)
@@ -102,7 +101,6 @@ public final class AdapterManagerListener implements IRegistryChangeListener {
 	 * invoked during platform shutdown.
 	 */
 	public synchronized void stop() {
-		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+		RegistryFactory.getRegistry().removeRegistryChangeListener(this);
 	}
-
 }
