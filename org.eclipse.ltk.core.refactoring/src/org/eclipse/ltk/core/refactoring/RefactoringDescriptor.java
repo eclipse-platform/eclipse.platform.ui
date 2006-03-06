@@ -122,7 +122,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	/**
 	 * The description associated with this refactoring
 	 */
-	private String fDescription;
+	private final String fDescription;
 
 	/** The flags of the refactoring descriptor */
 	private final int fFlags;
@@ -136,7 +136,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	/**
 	 * The id of the used refactoring type.
 	 */
-	private String fRefactoringId;
+	private final String fRefactoringId;
 
 	/**
 	 * The time stamp, or <code>-1</code> if no time is associated with the
