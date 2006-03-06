@@ -76,6 +76,9 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			}
 			IFileStore sourceStore = node.getStore();
 			IFileStore destinationStore = destination.getStore();
+			//ensure the parent of the root destination exists (bug 126104)
+			if (destination == rootDestination)
+				destinationStore.getParent().mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 0));
 			sourceStore.copy(destinationStore, EFS.SHALLOW, Policy.subMonitorFor(monitor, 0));
 			//create the destination in the workspace
 			ResourceInfo info = localManager.getWorkspace().createResource(destination, updateFlags);
@@ -98,8 +101,10 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 		}
 	}
 
-	protected Resource getDestinationResource(Resource source, IPath sufix) {
-		IPath destinationPath = rootDestination.getFullPath().append(sufix);
+	protected Resource getDestinationResource(Resource source, IPath suffix) {
+		if (suffix.segmentCount() == 0)
+			return (Resource)rootDestination;
+		IPath destinationPath = rootDestination.getFullPath().append(suffix);
 		return getWorkspace().newResource(destinationPath, source.getType());
 	}
 

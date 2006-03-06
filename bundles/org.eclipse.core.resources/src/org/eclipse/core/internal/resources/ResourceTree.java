@@ -899,6 +899,8 @@ class ResourceTree implements IResourceTree {
 			boolean failedDeletingSource = false;
 			try {
 				destStore = localManager.getStore(destination);
+				//ensure parent of destination exists
+				destStore.getParent().mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 0));
 				localManager.move(source, destStore, flags, monitor);
 			} catch (CoreException e) {
 				failed(e.getStatus());
