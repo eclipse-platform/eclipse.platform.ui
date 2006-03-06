@@ -77,9 +77,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
         if (fConfigured) {
             return false;
         }
-		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
-		boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS);
-		if (enabled) {
+		if (shouldConfigure()) {
 			try {
                 ComponentHelper helper= ComponentHelper.getComponentHelper(getProjectNode().getProject());
                 ((AntModel) getAntModel()).removeDefinerTasks(getIdentifier(), helper.getAntTypeTable());
@@ -175,8 +173,15 @@ public class AntDefiningTaskNode extends AntTaskNode {
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#setLength(int)
      */
     public void setLength(int length) {
-       super.setLength(length);
-       getAntModel().setDefiningTaskNodeText(this);
+        super.setLength(length);
+        if (shouldConfigure()) {
+            getAntModel().setDefiningTaskNodeText(this);
+        }
+    }
+
+    private boolean shouldConfigure() {
+        IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
+        return store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS);
     }
 
     protected void setNeedsToBeConfigured(boolean configure) {
