@@ -68,12 +68,6 @@ public interface IWorkbenchGraphicConstants {
 
     public final static String IMG_LCL_SHOWCHILD_MODE = "IMG_LCL_SHOWCHILD_MODE"; //$NON-NLS-1$
 
-    public final static String IMG_LCL_TREE_MODE = "IMG_LCL_TREE_MODE"; //$NON-NLS-1$
-
-    public final static String IMG_LCL_DEFAULTS_PS = "IMG_LCL_DEFAULTS_PS"; //$NON-NLS-1$
-
-    public final static String IMG_LCL_FILTER_PS = "IMG_LCL_FILTER_PS"; //$NON-NLS-1$
-
     public final static String IMG_LCL_SHOWSYNC_RN = "IMG_LCL_SHOWSYNC_RN"; //$NON-NLS-1$
 
     public static final String IMG_LCL_LINKTO_HELP = "IMGS_LCL_LINKTO_HELP"; //$NON-NLS-1$
