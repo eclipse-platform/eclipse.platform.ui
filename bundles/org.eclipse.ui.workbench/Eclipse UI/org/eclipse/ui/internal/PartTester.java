@@ -57,7 +57,7 @@ public class PartTester {
         Assert.isNotNull(input.getName(),
 				"The editor input must have a non-null name"); //$NON-NLS-1$
 		Assert.isNotNull(input.getToolTipText(),
-				"The editor input must have non-null name"); //$NON-NLS-1$
+				"The editor input must have a non-null tool tip"); //$NON-NLS-1$
 
 		// Persistable element may be null
 		IPersistableElement persistableElement = input.getPersistable();
