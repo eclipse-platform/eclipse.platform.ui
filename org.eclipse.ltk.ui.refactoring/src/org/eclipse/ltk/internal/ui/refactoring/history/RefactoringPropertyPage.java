@@ -15,6 +15,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
@@ -230,7 +234,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 						if (dialog.open() == 0) {
 							service.setRefactoringComment(selection[0], dialog.getComment(), null);
 							control.setSelectedDescriptors(new RefactoringDescriptorProxy[0]);
-							control.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0] });
+							control.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0]});
 						}
 					} catch (CoreException exception) {
 						RefactoringUIPlugin.log(exception);
@@ -324,11 +328,23 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				fManager.applyChanges();
 				final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 				final boolean history= service.hasSharedRefactoringHistory(project);
-				if (history != fHasProjectHistory && project != null)
-					service.setSharedRefactoringHistory(project, history, null);
+				if (history != fHasProjectHistory && project != null) {
+					final Job job= new Job(history ? RefactoringUIMessages.RefactoringPropertyPage_sharing_refactoring_history : RefactoringUIMessages.RefactoringPropertyPage_unsharing_refactoring_history) {
+
+						public final IStatus run(final IProgressMonitor monitor) {
+							try {
+								service.setSharedRefactoringHistory(project, history, null);
+							} catch (CoreException exception) {
+								RefactoringUIPlugin.log(exception);
+								return exception.getStatus();
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					job.setPriority(Job.SHORT);
+					job.schedule();
+				}
 			} catch (BackingStoreException exception) {
-				RefactoringUIPlugin.log(exception);
-			} catch (CoreException exception) {
 				RefactoringUIPlugin.log(exception);
 			}
 		return super.performOk();

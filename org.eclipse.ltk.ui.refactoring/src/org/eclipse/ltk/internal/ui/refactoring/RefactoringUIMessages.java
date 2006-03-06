@@ -248,6 +248,10 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringPropertyPage_share_message;
 
+	public static String RefactoringPropertyPage_sharing_refactoring_history;
+
+	public static String RefactoringPropertyPage_unsharing_refactoring_history;
+
 	public static String RefactoringStatusDialog_Cannot_proceed;
 
 	public static String RefactoringStatusDialog_Continue;
