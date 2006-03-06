@@ -40,338 +40,347 @@ import org.eclipse.ui.views.IViewDescriptor;
  * progress API.
  */
 public class ProgressManagerUtil {
-    /**
-     * A constant used by the progress support to determine if an operation is
-     * too short to show progress.
-     */
-    public static long SHORT_OPERATION_TIME = 250;
-    
-    static final QualifiedName KEEP_PROPERTY = IProgressConstants.KEEP_PROPERTY;
+	/**
+	 * A constant used by the progress support to determine if an operation is
+	 * too short to show progress.
+	 */
+	public static long SHORT_OPERATION_TIME = 250;
+
+	static final QualifiedName KEEP_PROPERTY = IProgressConstants.KEEP_PROPERTY;
 
 	static final QualifiedName KEEPONE_PROPERTY = IProgressConstants.KEEPONE_PROPERTY;
 
 	static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
-    private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue;
+	private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue;
 
-    /**
-     * Return a status for the exception.
-     * 
-     * @param exception
-     * @return IStatus
-     */
-    static IStatus exceptionStatus(Throwable exception) {
-        return StatusUtil.newStatus(IStatus.ERROR,
-                exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$, 
-                exception);
-    }
+	/**
+	 * Return a status for the exception.
+	 * 
+	 * @param exception
+	 * @return IStatus
+	 */
+	static IStatus exceptionStatus(Throwable exception) {
+		return StatusUtil.newStatus(IStatus.ERROR,
+				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$, 
+				exception);
+	}
 
-    /**
-     * Log the exception for debugging.
-     * 
-     * @param exception
-     */
-    static void logException(Throwable exception) {
-        BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
-    }
+	/**
+	 * Log the exception for debugging.
+	 * 
+	 * @param exception
+	 */
+	static void logException(Throwable exception) {
+		BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
+	}
 
-    //	/**
-    //	 * Sets the label provider for the viewer.
-    //	 * 
-    //	 * @param viewer
-    //	 */
-    //	static void initLabelProvider(ProgressTreeViewer viewer) {
-    //		viewer.setLabelProvider(new ProgressLabelProvider());
-    //	}
-    /**
-     * Return a viewer sorter for looking at the jobs.
-     * 
-     * @return ViewerSorter
-     */
-    static ViewerSorter getProgressViewerSorter() {
-        return new ViewerSorter() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
-             *      java.lang.Object, java.lang.Object)
-             */
-            public int compare(Viewer testViewer, Object e1, Object e2) {
-                return ((Comparable) e1).compareTo(e2);
-            }
-        };
-    }
+	// /**
+	// * Sets the label provider for the viewer.
+	// *
+	// * @param viewer
+	// */
+	// static void initLabelProvider(ProgressTreeViewer viewer) {
+	// viewer.setLabelProvider(new ProgressLabelProvider());
+	// }
+	/**
+	 * Return a viewer sorter for looking at the jobs.
+	 * 
+	 * @return ViewerSorter
+	 */
+	static ViewerSorter getProgressViewerSorter() {
+		return new ViewerSorter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Viewer testViewer, Object e1, Object e2) {
+				return ((Comparable) e1).compareTo(e2);
+			}
+		};
+	}
 
-    /**
-     * Open the progress view in the supplied window.
-     * 
-     * @param window
-     */
-    static void openProgressView(WorkbenchWindow window) {
-        IWorkbenchPage page = window.getActivePage();
-        if (page == null) {
+	/**
+	 * Open the progress view in the supplied window.
+	 * 
+	 * @param window
+	 */
+	static void openProgressView(WorkbenchWindow window) {
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
 			return;
 		}
-        try {
-        	IViewDescriptor reference =
-        		WorkbenchPlugin.getDefault()
-        			.getViewRegistry().find(IProgressConstants.PROGRESS_VIEW_ID);
-        	
-            if(reference == null) {
+		try {
+			IViewDescriptor reference = WorkbenchPlugin.getDefault()
+					.getViewRegistry()
+					.find(IProgressConstants.PROGRESS_VIEW_ID);
+
+			if (reference == null) {
 				return;
 			}
-            page.showView(IProgressConstants.PROGRESS_VIEW_ID);
-        } catch (PartInitException exception) {
-            logException(exception);
-        }
-    }
+			page.showView(IProgressConstants.PROGRESS_VIEW_ID);
+		} catch (PartInitException exception) {
+			logException(exception);
+		}
+	}
 
-    /**
-     * Shorten the given text <code>t</code> so that its length doesn't exceed
-     * the given width. The default implementation replaces characters in the
-     * center of the original string with an ellipsis ("..."). Override if you
-     * need a different strategy.
-     * @param textValue
-     * @param control
-     * @return String
-     */
-    static String shortenText(String textValue, Control control) {
-        if (textValue == null) {
+	/**
+	 * Shorten the given text <code>t</code> so that its length doesn't exceed
+	 * the given width. The default implementation replaces characters in the
+	 * center of the original string with an ellipsis ("..."). Override if you
+	 * need a different strategy.
+	 * 
+	 * @param textValue
+	 * @param control
+	 * @return String
+	 */
+	static String shortenText(String textValue, Control control) {
+		if (textValue == null) {
 			return null;
 		}
-        GC gc = new GC(control);
-        int maxWidth = control.getBounds().width - 5;
-        if (gc.textExtent(textValue).x < maxWidth) {
-            gc.dispose();
-            return textValue;
-        }
-        int length = textValue.length();
-        int ellipsisWidth = gc.textExtent(ellipsis).x;
-        //Find the second space seperator and start from there
-        int secondWord = findSecondWhitespace(textValue, gc, maxWidth);
-        int pivot = ((length - secondWord) / 2) + secondWord;
-        int start = pivot;
-        int end = pivot + 1;
-        while (start >= secondWord && end < length) {
-            String s1 = textValue.substring(0, start);
-            String s2 = textValue.substring(end, length);
-            int l1 = gc.textExtent(s1).x;
-            int l2 = gc.textExtent(s2).x;
-            if (l1 + ellipsisWidth + l2 < maxWidth) {
-                gc.dispose();
-                return s1 + ellipsis + s2;
-            }
-            start--;
-            end++;
-        }
-        gc.dispose();
-        return textValue;
-    }
+		GC gc = new GC(control);
+		int maxWidth = control.getBounds().width - 5;
+		if (gc.textExtent(textValue).x < maxWidth) {
+			gc.dispose();
+			return textValue;
+		}
+		int length = textValue.length();
+		int ellipsisWidth = gc.textExtent(ellipsis).x;
+		// Find the second space seperator and start from there
+		int secondWord = findSecondWhitespace(textValue, gc, maxWidth);
+		int pivot = ((length - secondWord) / 2) + secondWord;
+		int start = pivot;
+		int end = pivot + 1;
+		while (start >= secondWord && end < length) {
+			String s1 = textValue.substring(0, start);
+			String s2 = textValue.substring(end, length);
+			int l1 = gc.textExtent(s1).x;
+			int l2 = gc.textExtent(s2).x;
+			if (l1 + ellipsisWidth + l2 < maxWidth) {
+				gc.dispose();
+				return s1 + ellipsis + s2;
+			}
+			start--;
+			end++;
+		}
+		gc.dispose();
+		return textValue;
+	}
 
-    /**
-     * Find the second index of a whitespace. Return the first index if there
-     * isn't one or 0 if there is no space at all.
-     * 
-     * @param textValue
-     * @param gc
-     *            The GC to test max length
-     * @param maxWidth
-     *            The maximim extent
-     * @return int
-     */
-    private static int findSecondWhitespace(String textValue, GC gc,
-            int maxWidth) {
-        int firstCharacter = 0;
-        char[] chars = textValue.toCharArray();
-        //Find the first whitespace
-        for (int i = 0; i < chars.length; i++) {
-            if (Character.isWhitespace(chars[i])) {
-                firstCharacter = i;
-                break;
-            }
-        }
-        //If we didn't find it once don't continue
-        if (firstCharacter == 0) {
+	/**
+	 * Find the second index of a whitespace. Return the first index if there
+	 * isn't one or 0 if there is no space at all.
+	 * 
+	 * @param textValue
+	 * @param gc
+	 *            The GC to test max length
+	 * @param maxWidth
+	 *            The maximim extent
+	 * @return int
+	 */
+	private static int findSecondWhitespace(String textValue, GC gc,
+			int maxWidth) {
+		int firstCharacter = 0;
+		char[] chars = textValue.toCharArray();
+		// Find the first whitespace
+		for (int i = 0; i < chars.length; i++) {
+			if (Character.isWhitespace(chars[i])) {
+				firstCharacter = i;
+				break;
+			}
+		}
+		// If we didn't find it once don't continue
+		if (firstCharacter == 0) {
 			return 0;
 		}
-        //Initialize to firstCharacter in case there is no more whitespace
-        int secondCharacter = firstCharacter;
-        //Find the second whitespace
-        for (int i = firstCharacter; i < chars.length; i++) {
-            if (Character.isWhitespace(chars[i])) {
-                secondCharacter = i;
-                break;
-            }
-        }
-        //Check that we haven't gone over max width. Throw
-        //out an index that is too high
-        if (gc.textExtent(textValue.substring(0, secondCharacter)).x > maxWidth) {
-            if (gc.textExtent(textValue.substring(0, firstCharacter)).x > maxWidth) {
+		// Initialize to firstCharacter in case there is no more whitespace
+		int secondCharacter = firstCharacter;
+		// Find the second whitespace
+		for (int i = firstCharacter; i < chars.length; i++) {
+			if (Character.isWhitespace(chars[i])) {
+				secondCharacter = i;
+				break;
+			}
+		}
+		// Check that we haven't gone over max width. Throw
+		// out an index that is too high
+		if (gc.textExtent(textValue.substring(0, secondCharacter)).x > maxWidth) {
+			if (gc.textExtent(textValue.substring(0, firstCharacter)).x > maxWidth) {
 				return 0;
 			}
-            return firstCharacter;
-        }
-        return secondCharacter;
-    }
+			return firstCharacter;
+		}
+		return secondCharacter;
+	}
 
-    /**
-     * If there are any modal shells open reschedule openJob to wait until they
-     * are closed. Return true if it rescheduled, false if there is nothing
-     * blocking it.
-     * 
-     * @param openJob
-     * @return boolean. true if the job was rescheduled due to modal dialogs.
-     */
-    public static boolean rescheduleIfModalShellOpen(Job openJob) {
-        Shell modal = getModalShellExcluding(null);
-        if (modal == null) {
+	/**
+	 * If there are any modal shells open reschedule openJob to wait until they
+	 * are closed. Return true if it rescheduled, false if there is nothing
+	 * blocking it.
+	 * 
+	 * @param openJob
+	 * @return boolean. true if the job was rescheduled due to modal dialogs.
+	 */
+	public static boolean rescheduleIfModalShellOpen(Job openJob) {
+		Shell modal = getModalShellExcluding(null);
+		if (modal == null) {
 			return false;
 		}
 
-        //try again in a few seconds
-        openJob.schedule(PlatformUI.getWorkbench().getProgressService()
-                .getLongOperationTime());
-        return true;
-    }
+		// try again in a few seconds
+		openJob.schedule(PlatformUI.getWorkbench().getProgressService()
+				.getLongOperationTime());
+		return true;
+	}
 
-    /**
-     * Return whether or not it is safe to open this dialog. If so then
-     * return <code>true</code>. If not then set it to open itself when it
-     * has had ProgressManager#longOperationTime worth of ticks.
-     * 
-     * @param dialog ProgressMonitorJobsDialog that will be opening
-     * @param excludedShell The shell
-     * @return boolean. <code>true</code> if it can open. Otherwise return
-     * false and set the dialog to tick.
-     */
-    public static boolean safeToOpen(ProgressMonitorJobsDialog dialog, Shell excludedShell) {
-        Shell modal = getModalShellExcluding(excludedShell);
-        if (modal == null) {
+	/**
+	 * Return whether or not it is safe to open this dialog. If so then return
+	 * <code>true</code>. If not then set it to open itself when it has had
+	 * ProgressManager#longOperationTime worth of ticks.
+	 * 
+	 * @param dialog
+	 *            ProgressMonitorJobsDialog that will be opening
+	 * @param excludedShell
+	 *            The shell
+	 * @return boolean. <code>true</code> if it can open. Otherwise return
+	 *         false and set the dialog to tick.
+	 */
+	public static boolean safeToOpen(ProgressMonitorJobsDialog dialog,
+			Shell excludedShell) {
+		Shell modal = getModalShellExcluding(excludedShell);
+		if (modal == null) {
 			return true;
 		}
 
-        dialog.watchTicks();
-        return false;
-    }
+		dialog.watchTicks();
+		return false;
+	}
 
-    /**
-     * Return the modal shell that is currently open. If there isn't one then
-     * return null.
-     * @param shell A shell to exclude from the search. May be
-     * 	<code>null</code>.
-     * 
-     * @return Shell or <code>null</code>.
-     */
-    public static Shell getModalShellExcluding(Shell shell) {
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        Shell[] shells = workbench.getDisplay().getShells();
-        int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
-                | SWT.PRIMARY_MODAL;
-        for (int i = 0; i < shells.length; i++) {
-        	if(shells[i].equals(shell)) {
+	/**
+	 * Return the modal shell that is currently open. If there isn't one then
+	 * return null.
+	 * 
+	 * @param shell
+	 *            A shell to exclude from the search. May be <code>null</code>.
+	 * 
+	 * @return Shell or <code>null</code>.
+	 */
+	public static Shell getModalShellExcluding(Shell shell) {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		Shell[] shells = workbench.getDisplay().getShells();
+		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
+				| SWT.PRIMARY_MODAL;
+		for (int i = 0; i < shells.length; i++) {
+			if (shells[i].equals(shell)) {
 				break;
 			}
-            //Do not worry about shells that will not block the user.
-            if (shells[i].isVisible()) {
-                int style = shells[i].getStyle();
-                if ((style & modal) != 0) {
-                    return shells[i];
-                }
-            }
-        }
-        return null;
-    }
+			// Do not worry about shells that will not block the user.
+			if (shells[i].isVisible()) {
+				int style = shells[i].getStyle();
+				if ((style & modal) != 0) {
+					return shells[i];
+				}
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Utility method to get the best parenting possible for a dialog. If there
-     * is a modal shell create it so as to avoid two modal dialogs. If not then
-     * return the shell of the active workbench window. If neither can be found
-     * return null.
-     * 
-     * @return Shell or <code>null</code>
-     */
-    public static Shell getDefaultParent() {
-        Shell modal = getModalShellExcluding(null);
-        if (modal != null) {
+	/**
+	 * Utility method to get the best parenting possible for a dialog. If there
+	 * is a modal shell create it so as to avoid two modal dialogs. If not then
+	 * return the shell of the active workbench window. If neither can be found
+	 * return null.
+	 * 
+	 * @return Shell or <code>null</code>
+	 */
+	public static Shell getDefaultParent() {
+		Shell modal = getModalShellExcluding(null);
+		if (modal != null) {
 			return modal;
 		}
 
-        return getNonModalShell();
-    }
+		return getNonModalShell();
+	}
 
-    /**
-     * Get the active non modal shell. If there isn't one return
-     * null.
-     * @return Shell
-     */
-    public static Shell getNonModalShell() {
-        IWorkbenchWindow window = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
-        if (window != null) {
+	/**
+	 * Get the active non modal shell. If there isn't one return null.
+	 * 
+	 * @return Shell
+	 */
+	public static Shell getNonModalShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window == null) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+					.getWorkbenchWindows();
+			if (windows.length > 0)
+				return windows[0].getShell();
+		} else
 			return window.getShell();
-		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Animate the closing of a window given the start position down to the
-     * progress region.
-     * 
-     * @param startPosition
-     *            Rectangle. The position to start drawing from.
-     */
-    public static void animateDown(Rectangle startPosition) {
-        IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
-        if (currentWindow == null) {
+	/**
+	 * Animate the closing of a window given the start position down to the
+	 * progress region.
+	 * 
+	 * @param startPosition
+	 *            Rectangle. The position to start drawing from.
+	 */
+	public static void animateDown(Rectangle startPosition) {
+		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (currentWindow == null) {
 			return;
 		}
-        WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
-		
+		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
+
 		ProgressRegion progressRegion = internalWindow.getProgressRegion();
 		if (progressRegion == null) {
 			return;
 		}
-        Rectangle endPosition = progressRegion.getControl().getBounds();
-		
-        Point windowLocation = internalWindow.getShell().getLocation();
+		Rectangle endPosition = progressRegion.getControl().getBounds();
+
+		Point windowLocation = internalWindow.getShell().getLocation();
 		endPosition.x += windowLocation.x;
 		endPosition.y += windowLocation.y;
-        RectangleAnimation animation = new RectangleAnimation(internalWindow
-                .getShell(), startPosition, endPosition);
-        animation.schedule();
-    }
+		RectangleAnimation animation = new RectangleAnimation(internalWindow
+				.getShell(), startPosition, endPosition);
+		animation.schedule();
+	}
 
-    /**
-     * Animate the opening of a window given the start position down to the
-     * progress region.
-     * 
-     * @param endPosition
-     *            Rectangle. The position to end drawing at.
-     */
-    public static void animateUp(Rectangle endPosition) {
-        IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
-        if (currentWindow == null) {
+	/**
+	 * Animate the opening of a window given the start position down to the
+	 * progress region.
+	 * 
+	 * @param endPosition
+	 *            Rectangle. The position to end drawing at.
+	 */
+	public static void animateUp(Rectangle endPosition) {
+		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (currentWindow == null) {
 			return;
 		}
-        WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
-        Point windowLocation = internalWindow.getShell().getLocation();
-		
+		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
+		Point windowLocation = internalWindow.getShell().getLocation();
+
 		ProgressRegion progressRegion = internalWindow.getProgressRegion();
 		if (progressRegion == null) {
 			return;
 		}
-        Rectangle startPosition = progressRegion.getControl().getBounds();
+		Rectangle startPosition = progressRegion.getControl().getBounds();
 		startPosition.x += windowLocation.x;
 		startPosition.y += windowLocation.y;
-        
+
 		RectangleAnimation animation = new RectangleAnimation(internalWindow
-                .getShell(), startPosition, endPosition);
-        animation.schedule();
-    }
-	
+				.getShell(), startPosition, endPosition);
+		animation.schedule();
+	}
+
 	/**
 	 * Get the shell provider to use in the progress support dialogs. This
 	 * provider will try to always parent off of an existing modal shell. If
@@ -381,8 +390,10 @@ public class ProgressManagerUtil {
 	 */
 	static IShellProvider getShellProvider() {
 		return new IShellProvider() {
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.window.IShellProvider#getShell()
 			 */
 			public Shell getShell() {
