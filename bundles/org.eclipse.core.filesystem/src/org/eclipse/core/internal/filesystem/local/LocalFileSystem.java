@@ -24,9 +24,20 @@ import org.eclipse.core.runtime.Platform;
  * @since 3.2
  */
 public class LocalFileSystem extends FileSystem {
+	/**
+	 * Cached constant indicating if the current OS is Mac OSX
+	 */
+	static final boolean MACOSX = LocalFileSystem.getOS().equals(Platform.OS_MACOSX);
 
-	private static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
+	/**
+	 * Whether the current file system is case sensitive
+	 */
+	private static final boolean caseSensitive = MACOSX ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 
+	/**
+	 * The attributes of this file system
+	 */
+	private int attributes = -1;
 	/**
 	 * The singleton instance of this file system.
 	 */
@@ -39,6 +50,15 @@ public class LocalFileSystem extends FileSystem {
 	 */
 	public static IFileSystem getInstance() {
 		return instance;
+	}
+	
+	/**
+	 * Returns the current OS.  This is equivalent to Platform.getOS(), but
+	 * is tolerant of the platform runtime not being present.
+	 */
+	static String getOS() {
+		String os = System.getProperty("osgi.os"); //$NON-NLS-1$
+		return os != null ? os : ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -54,9 +74,11 @@ public class LocalFileSystem extends FileSystem {
 	 * @see org.eclipse.core.filesystem.IFileSystem#attributes()
 	 */
 	public int attributes() {
-		int attributes = EFS.ATTRIBUTE_READ_ONLY;
+		if (attributes != -1)
+			return attributes;
+		attributes = EFS.ATTRIBUTE_READ_ONLY;
 		//intern so we can compare with constants using identity
-		String os = Platform.getOS().intern();
+		String os = getOS().intern();
 		if (os == Platform.OS_WIN32)
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
 		else if (os == Platform.OS_LINUX || os == Platform.OS_MACOSX)
