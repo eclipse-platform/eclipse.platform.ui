@@ -341,6 +341,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							return Status.OK_STATUS;
 						}
 					};
+					job.setRule(project);
 					job.setPriority(Job.SHORT);
 					job.schedule();
 				}
