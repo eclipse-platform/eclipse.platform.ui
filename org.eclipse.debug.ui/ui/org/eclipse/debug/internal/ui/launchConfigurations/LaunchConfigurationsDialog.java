@@ -949,9 +949,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Notification the 'Close' button has been pressed.
 	 */
 	protected void handleClosePressed() {
-		if (canDiscardCurrentConfig()) {
-			cancelPressed();
-		}
+	    canDiscardCurrentConfig();
+	    cancelPressed();
 	}
 	
 	/**
