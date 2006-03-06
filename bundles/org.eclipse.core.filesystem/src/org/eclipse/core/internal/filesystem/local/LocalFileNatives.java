@@ -10,19 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
-import java.io.File;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.filesystem.Messages;
 import org.eclipse.core.internal.filesystem.Policy;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 
 abstract class LocalFileNatives {
-
-	/** Indicates whether or not this FS is case sensitive */
-	private static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	private static boolean hasNatives = false;
 	private static boolean isUnicode = false;
 
@@ -108,14 +103,6 @@ abstract class LocalFileNatives {
 	 * attributes that the platform supports will be set. (Unicode version - should not 
 	 * be called if <code>isUnicode</code> is <code>false</code>). */
 	private static final native boolean internalSetFileInfoW(char[] fileName, IFileInfo attribute, int options);
-
-	/**
-	 * @return <code>true</code> if this file system is case-sensitive, and
-	 * <code>false</code> otherwise.
-	 */
-	public static boolean isCaseSensitive() {
-		return caseSensitive;
-	}
 
 	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
