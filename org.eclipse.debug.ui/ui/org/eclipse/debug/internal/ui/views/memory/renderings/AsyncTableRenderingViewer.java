@@ -294,6 +294,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					if (fPendingSelection != null && fPendingSelection != key)
 						return Status.OK_STATUS;
 					
+					if (fTableCursor.isDisposed())
+						return Status.OK_STATUS;
+					
 					fSelectionKey = key;
 					fPendingSelection = null;
 					
@@ -976,7 +979,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	protected void updateComplete(IAsynchronousRequestMonitor monitor) {
 		super.updateComplete(monitor);
 		
-		if (!hasPendingUpdates())
+		if (!hasPendingUpdates() && !fTableCursor.isDisposed())
 		{
 			attemptSetKeySelection();
 			fTableCursor.redraw();
