@@ -100,6 +100,10 @@ public class FieldMarkerGroup implements IField {
 		 */
 		public MarkerGroupingEntry testAttribute(ConcreteMarker marker) {
 			Object value;
+			
+			if(!marker.getMarker().exists())
+				return null;//If the marker was deleted during the update drop it
+			
 			try {
 				value = marker.getMarker().getAttribute(attribute);
 			} catch (CoreException e) {
