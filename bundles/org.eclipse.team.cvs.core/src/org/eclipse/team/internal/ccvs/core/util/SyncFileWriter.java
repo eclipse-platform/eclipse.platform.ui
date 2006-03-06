@@ -12,8 +12,11 @@ package org.eclipse.team.internal.ccvs.core.util;
 
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -64,10 +67,11 @@ public class SyncFileWriter {
 	 */
 	public static byte[][] readAllResourceSync(IContainer parent) throws CVSException {
         IFolder cvsSubDir = getCVSSubdirectory(parent);
-        if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
-            return null;
+        
+        if (!folderExists(cvsSubDir)){
+        	return null;
         }
-		
+        
 		if (Policy.DEBUG_METAFILE_CHANGES) {
 			System.out.println("Reading Entries file for " + parent.getFullPath()); //$NON-NLS-1$
 		}
@@ -117,6 +121,21 @@ public class SyncFileWriter {
 		return result;
 	}
 	
+	private static boolean folderExists(IFolder cvsSubDir) throws CVSException {
+	    try {
+	    	URI uri = cvsSubDir.getLocationURI();
+	    	if (uri != null){
+				IFileStore store = EFS.getStore(uri);
+				if (store != null){
+					return store.fetchInfo().exists();
+				}
+	    	}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} 
+		return false;
+	}
+
 	public static void writeAllResourceSync(IContainer parent, byte[][] infos) throws CVSException {
 		try {
 			if (Policy.DEBUG_METAFILE_CHANGES) {
@@ -147,11 +166,12 @@ public class SyncFileWriter {
 	 */
 	public static FolderSyncInfo readFolderSync(IContainer folder) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(folder);
-		if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
-            return null;
+		
+        if (!folderExists(cvsSubDir)){
+        	return null;
         }
 
-		if (Policy.DEBUG_METAFILE_CHANGES) {
+        if (Policy.DEBUG_METAFILE_CHANGES) {
 			System.out.println("Reading Root/Repository files for " + folder.getFullPath()); //$NON-NLS-1$
 		}
 		
@@ -284,10 +304,11 @@ public class SyncFileWriter {
 	 */
 	public static NotifyInfo[] readAllNotifyInfo(IContainer parent) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
-        if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
-            return null;
-        }
 
+        if (!folderExists(cvsSubDir)){
+        	return null;
+        }
+        
 		// process Notify file contents
 		String[] entries = readLines(cvsSubDir.getFile(NOTIFY));
 		if (entries == null) return null;
@@ -349,10 +370,11 @@ public class SyncFileWriter {
 	 */
 	public static BaserevInfo[] readAllBaserevInfo(IContainer parent) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
-        if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
-            return null;
+        
+        if (!folderExists(cvsSubDir)){
+        	return null;
         }
-
+        
 		// process Notify file contents
 		String[] entries = readLines(cvsSubDir.getFile(BASEREV));
 		if (entries == null) return null;
