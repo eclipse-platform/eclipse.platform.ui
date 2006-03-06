@@ -245,7 +245,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * The collection of debug event listeners.
 	 */
-	private ListenerList fEventListeners;
+	private ListenerList fEventListeners = new ListenerList();
 	
 	/**
 	 * Event filters, or <code>null</code> if none.
@@ -357,7 +357,7 @@ public class DebugPlugin extends Plugin {
          * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
          */
         public boolean shouldSchedule() {
-            return !(isShuttingDown() || fEventListeners == null);
+            return !(isShuttingDown() || fEventListeners.isEmpty());
         }
         
 	}
@@ -408,9 +408,6 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void addDebugEventListener(IDebugEventSetListener listener) {
-		if (fEventListeners == null) {
-			fEventListeners = new ListenerList();
-		}
 		fEventListeners.add(listener);
 	}	
 	
@@ -425,7 +422,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void fireDebugEventSet(DebugEvent[] events) {
-		if (isShuttingDown() || events == null || fEventListeners == null)
+		if (isShuttingDown() || events == null || fEventListeners.isEmpty())
 			return;
 		synchronized (fEventQueue) {
 			fEventQueue.add(events);
@@ -546,9 +543,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void removeDebugEventListener(IDebugEventSetListener listener) {
-		if (fEventListeners != null) {
-			fEventListeners.remove(listener);
-		}
+		fEventListeners.remove(listener);
 	}	
 
 	/* (non-Javadoc)
@@ -571,9 +566,7 @@ public class DebugPlugin extends Plugin {
 				fMemoryBlockManager.shutdown();
 			}
 			
-			if (fEventListeners != null) {
-				fEventListeners = null;
-			}
+			fEventListeners.clear();
             
             if (fEventFilters != null) {
                 fEventFilters = null;
