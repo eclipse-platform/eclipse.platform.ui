@@ -12,6 +12,7 @@ package org.eclipse.ltk.ui.refactoring.model;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -182,14 +183,14 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 					return true;
 				}
 			}, IResource.DEPTH_INFINITE);
-			for (final Iterator iterator= local.iterator(); iterator.hasNext();) {
+			for (final Iterator iterator= new ArrayList(local).iterator(); iterator.hasNext();) {
 				final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) iterator.next();
 				if (!remote.contains(proxy))
 					remote.add(proxy);
 				else
 					remote.remove(proxy);
 			}
-			for (final Iterator iterator= remote.iterator(); iterator.hasNext();) {
+			for (final Iterator iterator= new ArrayList(remote).iterator(); iterator.hasNext();) {
 				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) iterator.next();
 				if (!isVisible(new RefactoringDescriptorDiff(proxy, IDiff.CHANGE, proxy.getDirection())))
 					remote.remove(proxy);
