@@ -16,7 +16,7 @@ package org.eclipse.ltk.core.refactoring;
  * refactoring change descriptor, which allows to completely reconstruct the
  * particular refactoring instance from the encapsulated refactoring descriptor.
  * <p>
- * Note: this class is not indented to be subclassed by clients.
+ * Note: this class is not intended to be subclassed by clients.
  * </p>
  * 
  * @since 3.2

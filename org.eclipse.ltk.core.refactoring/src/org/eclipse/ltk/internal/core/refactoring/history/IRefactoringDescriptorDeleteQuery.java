@@ -17,7 +17,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * A query interface to decide whether a refactoring descriptor may be deleted.
  * <p>
  * Clients should be aware that the methods defined by this interface can be
- * called from a non user interface thread.
+ * called from a non-user interface thread.
  * </p>
  * 
  * @since 3.2
