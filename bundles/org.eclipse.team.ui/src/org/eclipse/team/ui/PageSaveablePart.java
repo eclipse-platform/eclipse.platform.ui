@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.internal.CompareEditor;
+import org.eclipse.compare.internal.ISavable;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.ToolBarManager;
@@ -407,9 +407,9 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		
 		for (int i=0; i<fDirtyViewers.size(); i++){
 			Object element = iter.next();
-			if (element instanceof ContentMergeViewer){
+			if (element instanceof ISavable){
 				try {
-					((ContentMergeViewer)element).save(monitor);
+					((ISavable)element).save(monitor);
 				} catch (CoreException e) {
 				}
 			}
