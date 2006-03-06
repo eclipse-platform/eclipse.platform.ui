@@ -424,7 +424,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		composite.setFont(font);
 		
 		// create help control if needed
-        if (isHelpAvailable() || TrayDialog.isDialogHelpAvailable()) {
+        if (isHelpAvailable()) {
         	createHelpControl(composite);
         }
 
