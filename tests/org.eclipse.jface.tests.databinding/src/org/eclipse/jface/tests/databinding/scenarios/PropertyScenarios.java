@@ -122,10 +122,6 @@ public class PropertyScenarios extends ScenariosTestCase {
 						return String.class;
 					}
 
-					public Object convertTargetToModel(Object object) {
-						return new Integer((String) object);
-					}
-
 					public Object convert(Object object) {
 						return object.toString();
 					}
@@ -313,10 +309,6 @@ public class PropertyScenarios extends ScenariosTestCase {
 
 					public Object convert(Object fromObject) {
 						return new Double((String) fromObject);
-					}
-
-					public Object convertModelToTarget(Object toObject) {
-						return ((Double) toObject).toString();
 					}
 				}, new IValidator() {
 					public ValidationError isPartiallyValid(Object value) {

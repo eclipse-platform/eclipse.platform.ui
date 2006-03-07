@@ -11,6 +11,7 @@
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -52,7 +53,7 @@ abstract public class ScenariosTestCase extends TestCase {
 	protected IDataBindingContext getDbc() {
 		return dbc;
 	}
-	
+
 	protected SWTObservableFactory getSWTObservableFactory() {
 		return swtObservableFactory;
 	}
@@ -90,7 +91,7 @@ abstract public class ScenariosTestCase extends TestCase {
 			Thread.currentThread().interrupt();
 		}
 	}
-	
+
 	protected void interact() {
 		if (!getShell().isVisible()) {
 			getShell().open();
@@ -148,5 +149,10 @@ abstract public class ScenariosTestCase extends TestCase {
 	protected void assertArrayEquals(Object[] expected, Object[] actual) {
 		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
 	}
-		
+
+	protected void assertSetEquals(Object[] expected, Object[] actual) {
+		assertEquals(new HashSet(Arrays.asList(expected)), new HashSet(Arrays
+				.asList(actual)));
+	}
+
 }

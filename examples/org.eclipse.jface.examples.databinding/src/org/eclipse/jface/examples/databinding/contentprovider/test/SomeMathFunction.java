@@ -68,12 +68,16 @@ public class SomeMathFunction extends ObservableMapping {
 		// domain.toCollection()
 		fireMappingValueChange(new AbstractMappingDiff(getDomain()) {
 
-			public Object getOldMappingValue(Object element) {
-				return doComputeResult(element, oldOp);
+			public Object[] getOldMappingValues(Object element, int[] indices) {
+				return new Object[] { doComputeResult(element, oldOp) };
 			}
 
-			public Object getNewMappingValue(Object element) {
-				return doComputeResult(element, operation);
+			public Object[] getNewMappingValues(Object element, int[] indices) {
+				return new Object[] { doComputeResult(element, operation) };
+			}
+
+			public int[] getAffectedIndices() {
+				return new int[]{0};
 			}
 		});
 	}

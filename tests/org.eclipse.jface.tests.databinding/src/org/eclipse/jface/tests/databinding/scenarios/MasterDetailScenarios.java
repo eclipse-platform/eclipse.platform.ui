@@ -19,6 +19,7 @@ import org.eclipse.jface.examples.databinding.model.Category;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.beans.TableModelDescription;
 import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
@@ -74,8 +75,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 	public void testScenario01() {
 
-		if(BindingTestSuite.failingTestsDisabled()) return;
-		
 		// Displaying the catalog's list of Lodging objects in a list viewer,
 		// using their names. The name of the currently selected Lodging can
 		// be edited in a text widget. There is always a selected Lodging
@@ -90,10 +89,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				return ((Lodging) element).getName();
 			}
 		});
-		getDbc().bind(listViewer,
-				new Property(catalog, "lodgings"), null);
+		getDbc().bind(
+				listViewer,
+				new TableModelDescription(new Property(catalog, "lodgings"),
+						new String[] { "name" }), null);
 
-		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
+		assertSetEquals(catalog.getLodgings(), getViewerContent(listViewer)
+				.toArray());
 
 		IObservableValue selectedLodging = (IObservableValue) getDbc()
 				.createObservable(
@@ -119,28 +121,29 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertEquals(SampleData.FIVE_STAR_HOTEL.getName(), txtName.getText());
 		SampleData.FIVE_STAR_HOTEL.setName("barfoo");
 		assertEquals("barfoo", txtName.getText());
-		
+
 		// Now make sure that the event listeners get removed on dispose()
 		// Values should no longer be updated
-//		selectedLodging.dispose();
-//		
-//		selectedLodging.setValue(SampleData.CAMP_GROUND);
-//		assertNotSame(SampleData.CAMP_GROUND, getViewerSelection(listViewer));
-//		assertNotSame(txtName.getText(), SampleData.CAMP_GROUND.getName());
-//		enterText(txtName, "foobar");
-//		assertNotSame("foobar", SampleData.CAMP_GROUND.getName());
-//		listViewer.setSelection(new StructuredSelection(
-//				SampleData.FIVE_STAR_HOTEL));
-//		assertNotSame(SampleData.FIVE_STAR_HOTEL, selectedLodging.getValue());
-//		assertNotSame(SampleData.FIVE_STAR_HOTEL.getName(), txtName.getText());
-//		SampleData.FIVE_STAR_HOTEL.setName("barfoo");
-//		assertNotSame("barfoo", txtName.getText());
+		selectedLodging.dispose();
+
+		// selectedLodging.setValue(SampleData.CAMP_GROUND);
+		// assertNotSame(SampleData.CAMP_GROUND,
+		// getViewerSelection(listViewer));
+		// assertNotSame(txtName.getText(), SampleData.CAMP_GROUND.getName());
+		// enterText(txtName, "foobar");
+		// assertNotSame("foobar", SampleData.CAMP_GROUND.getName());
+		// listViewer.setSelection(new StructuredSelection(
+		// SampleData.FIVE_STAR_HOTEL));
+		// assertNotSame(SampleData.FIVE_STAR_HOTEL,
+		// selectedLodging.getValue());
+		// assertNotSame(SampleData.FIVE_STAR_HOTEL.getName(),
+		// txtName.getText());
+		// SampleData.FIVE_STAR_HOTEL.setName("barfoo");
+		// assertNotSame("barfoo", txtName.getText());
 	}
 
 	public void testScenario02() {
 
-		if(BindingTestSuite.failingTestsDisabled()) return;
-		
 		// Selecting from the list of lodgings for an adventure and editing the
 		// properties of the selected lodging in text widgets. If no lodging is
 		// selected the input controls for name and adventure are disabled.
@@ -157,10 +160,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				return ((Lodging) element).getName();
 			}
 		});
-		getDbc().bind(listViewer,
-				new Property(catalog, "lodgings"), null);
+		getDbc().bind(
+				listViewer,
+				new TableModelDescription(new Property(catalog, "lodgings"),
+						new String[] { "name" }), null);
 
-		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
+		assertSetEquals(catalog.getLodgings(), getViewerContent(listViewer)
+				.toArray());
 
 		final IObservableValue selectedLodgingObservable = (IObservableValue) getDbc()
 				.createObservable(
@@ -170,7 +176,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		selectedLodgingObservable.setValue(null);
 		assertTrue(listViewer.getSelection().isEmpty());
 
-		ComputedValue selectionExistsObservable = new ComputedValue() {
+		ComputedValue selectionExistsObservable = new ComputedValue(
+				boolean.class) {
 			protected Object calculate() {
 				return new Boolean(selectedLodgingObservable.getValue() != null);
 			}
@@ -181,28 +188,24 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind(
-				new Property(txtName, SWTProperties.ENABLED),
+		getDbc().bind(new Property(txtName, SWTProperties.ENABLED),
 				selectionExistsObservable, null);
 		getDbc().bind(
 				new Property(txtName, SWTProperties.TEXT),
-				new Property(selectedLodgingObservable, "name",
-						String.class, Boolean.FALSE), null);
+				new Property(selectedLodgingObservable, "name", String.class,
+						Boolean.FALSE), null);
 
 		assertEquals(txtName.getText(), "");
 		assertFalse(txtName.getEnabled());
 
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
+		getDbc().bind(new Property(txtDescription, SWTProperties.ENABLED),
+				selectionExistsObservable, null);
 		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.ENABLED), selectionExistsObservable,
-				null);
-		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.TEXT),
-				new Property(selectedLodgingObservable,
-						"description", String.class, Boolean.FALSE), null);
+				new Property(txtDescription, SWTProperties.TEXT),
+				new Property(selectedLodgingObservable, "description",
+						String.class, Boolean.FALSE), null);
 
 		assertEquals(txtDescription.getText(), "");
 		assertFalse(txtDescription.getEnabled());
@@ -268,8 +271,9 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 	public void testScenario03() {
 
-		if(BindingTestSuite.failingTestsDisabled()) return;
-		
+		if (BindingTestSuite.failingTestsDisabled())
+			return;
+
 		// List adventures and for the selected adventure allow its default
 		// lodging�s name and description to be changed in text controls. If
 		// there is no selected adventure or the default lodging is null the
@@ -286,11 +290,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				return ((Category) element).getName();
 			}
 		});
-		getDbc().bind(categoryListViewer,
-				new Property(catalog, "categories"), null);
+		getDbc().bind(
+				categoryListViewer,
+				new TableModelDescription(new Property(catalog, "categories"),
+						new String[] { "name" }), null);
 
-		assertArrayEquals(catalog.getCategories(),
-				getViewerContent(categoryListViewer).toArray());
+		assertSetEquals(catalog.getCategories(), getViewerContent(
+				categoryListViewer).toArray());
 
 		final IObservableValue selectedCategoryObservable = (IObservableValue) getDbc()
 				.createObservable(
@@ -309,12 +315,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				adventureListViewer,
-				new Property(selectedCategoryObservable,
-						"adventures", Adventure.class, Boolean.TRUE), null);
+				new Property(selectedCategoryObservable, "adventures",
+						Adventure.class, Boolean.TRUE), null);
 
 		ComputedValue categorySelectionExistsObservable = new ComputedValue() {
 			protected Object calculate() {
-				return new Boolean(selectedCategoryObservable.getValue() != null);
+				return new Boolean(
+						selectedCategoryObservable.getValue() != null);
 			}
 		};
 
@@ -330,34 +337,31 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		ComputedValue adventureSelectionExistsObservable = new ComputedValue() {
 			protected Object calculate() {
-				return new Boolean(selectedAdventureObservable.getValue() != null);
+				return new Boolean(
+						selectedAdventureObservable.getValue() != null);
 			}
 		};
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind(
-				new Property(txtName, SWTProperties.ENABLED),
+		getDbc().bind(new Property(txtName, SWTProperties.ENABLED),
 				adventureSelectionExistsObservable, null);
 		getDbc().bind(
 				new Property(txtName, SWTProperties.TEXT),
-				new Property(selectedAdventureObservable, "name",
-						String.class, Boolean.FALSE), null);
+				new Property(selectedAdventureObservable, "name", String.class,
+						Boolean.FALSE), null);
 
 		assertEquals(txtName.getText(), "");
 		assertFalse(txtName.getEnabled());
 
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.ENABLED),
+		getDbc().bind(new Property(txtDescription, SWTProperties.ENABLED),
 				adventureSelectionExistsObservable, null);
 		getDbc().bind(
-				new Property(txtDescription,
-						SWTProperties.TEXT),
-				new Property(selectedAdventureObservable,
-						"description", String.class, Boolean.FALSE), null);
+				new Property(txtDescription, SWTProperties.TEXT),
+				new Property(selectedAdventureObservable, "description",
+						String.class, Boolean.FALSE), null);
 
 		assertFalse(adventureListViewer.getList().isEnabled());
 		categoryListViewer.setSelection(new StructuredSelection(
