@@ -30,7 +30,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
@@ -438,16 +437,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 			return ((TableItem)widget).getParent();
 		}
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
-	 */
-	protected int getChildIndex(Widget parent, Event event) {
-		if (parent instanceof Table) {
-			return ((Table)parent).indexOf((TableItem)event.item);
-		}
-		return -1;
 	}
 
 	/* (non-Javadoc)

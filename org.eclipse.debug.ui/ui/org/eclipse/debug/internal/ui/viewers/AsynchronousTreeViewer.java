@@ -630,17 +630,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     	return null;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildIndex(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Event)
-     */
-    protected int getChildIndex(Widget parent, Event event) {
-        if (parent instanceof TreeItem) {
-            return ((TreeItem) parent).indexOf((TreeItem)event.item);
-        } else if (parent instanceof Tree) {
-            return ((Tree)parent).indexOf((TreeItem)event.item);
-        }
-        return -1;
-	}
     
     /**
      * Expands the given tree item and all of its parents. Does *not* update

@@ -1012,7 +1012,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     public void handleEvent(final Event event) {
         Widget parentItem = getParentWidget(event.item);
         // TODO: we should be able to use event.index, but it seems to be 0 (zero) all the time
-        int index = getChildIndex(parentItem, event);
+        int index = event.index;
 
         ModelNode[] nodes = getModel().getNodes(parentItem.getData());
         if (nodes != null) {
@@ -1041,18 +1041,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
      * @param widget
      * @return parent widget or <code>null</code>
      */
-    protected abstract Widget getParentWidget(Widget widget);
-    
-    /**
-     * Returns the index of the child that has been revealed in the given event.
-     * 
-     * @param parent
-     * @param event
-     * @return
-     * 
-     * TODO: should not need this method when "event.item" is fixed
-     */
-    protected abstract int getChildIndex(Widget parent, Event event);
+    protected abstract Widget getParentWidget(Widget widget);    
 
     /**
      * Updates the children of the given node.
