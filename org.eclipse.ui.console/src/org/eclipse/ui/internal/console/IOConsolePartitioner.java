@@ -455,10 +455,10 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-                if (fBuffer > 1000) {
+                if (fBuffer > 10000) {
                     queueJob.schedule();
                 } else {
-                    queueJob.schedule(100);
+                    queueJob.schedule(150);
                 }
 			}
             
