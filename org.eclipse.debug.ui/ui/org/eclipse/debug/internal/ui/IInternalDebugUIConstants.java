@@ -169,15 +169,15 @@ public interface IInternalDebugUIConstants {
      * Preference for filtering launch configurations based on the currently active working sets
      * @since 3.2
      */
-    public static final String PREF_FILTER_WORKING_SETS = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_WORKING_SETS"; //$NON-NLS-1$
-    
-    /**
-     * Preference for using step filters.
-     * 
-     * @since 3.0
-     */
-    public static final String PREF_USE_STEP_FILTERS = IDebugUIConstants.PLUGIN_ID + ".USE_STEP_FILTERS"; //$NON-NLS-1$ 
+    public static final String PREF_FILTER_WORKING_SETS = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_WORKING_SETS"; //$NON-NLS-1$ 
      
+    /**
+	 * Preference for using step filters.
+	 * TODO: remove once API freeze is over
+	 * @since 3.2
+	 */
+	public static final String PREF_USE_STEP_FILTERS = IDebugUIConstants.PLUGIN_ID + ".USE_STEP_FILTERS"; //$NON-NLS-1$ 
+    
     /** 
      * Transparent overlay image identifier. 
      */

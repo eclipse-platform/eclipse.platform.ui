@@ -68,7 +68,8 @@ public class StepFilterManager implements ILaunchListener {
 	 * @return whether to use step filters
 	 */
 	public boolean isUseStepFilters() {
-		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS);
+		//TODO: revert once API freeze is over
+		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS/*IDebugUIConstants.PREF_USE_STEP_FILTERS*/);
 	}
 	
 	/**
@@ -77,7 +78,8 @@ public class StepFilterManager implements ILaunchListener {
 	 * @param useFilters whether to use step filters
 	 */
 	public void setUseStepFilters(boolean useFilters) {
-		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS, useFilters);
+		//TODO: revert onve API freeze is over
+		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS/*IDebugUIConstants.PREF_USE_STEP_FILTERS*/, useFilters);
 		ILaunch[] launchs = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		for (int i = 0; i < launchs.length; i++) {
 			ILaunch launch = launchs[i];

@@ -59,7 +59,8 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS)) {
+		//TODO: revert once API freeze is over
+		if (event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS/*IDebugUIConstants.PREF_USE_STEP_FILTERS*/)) {
 			Object newValue= event.getNewValue();
 			if (newValue instanceof Boolean) {
 				getAction().setChecked(((Boolean)(newValue)).booleanValue());
