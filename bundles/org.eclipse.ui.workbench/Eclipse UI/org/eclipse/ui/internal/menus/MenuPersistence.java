@@ -420,7 +420,7 @@ final class MenuPersistence extends RegistryPersistence {
 			final List warningsToLog) {
 		// Check to see if we have an activeWhen expression.
 		final IConfigurationElement[] layoutElements = parentElement
-				.getChildren(TAG_LOCATION);
+				.getChildren(TAG_LAYOUT);
 		
 		// If none is defined then return a default
 		if (layoutElements.length < 1) {
@@ -678,17 +678,17 @@ final class MenuPersistence extends RegistryPersistence {
 		if ((positionInteger == SOrder.POSITION_AFTER)
 				|| (positionInteger == SOrder.POSITION_BEFORE)) {
 			relativeTo = readRequired(
-					parentElement,
+					orderingElement,
 					ATT_RELATIVE_TO,
 					warningsToLog,
-					"A relativeTo attribute is required is the position is 'after' or 'before'", //$NON-NLS-1$
+					"A relativeTo attribute is required if the position is 'after' or 'before'", //$NON-NLS-1$
 					id);
 			if (relativeTo == null) {
 				return null;
 			}
 		} else {
 			// There should be no relativeTo attribute.
-			relativeTo = readOptional(parentElement, ATT_RELATIVE_TO);
+			relativeTo = readOptional(orderingElement, ATT_RELATIVE_TO);
 			if (relativeTo != null) {
 				addWarning(
 						warningsToLog,
