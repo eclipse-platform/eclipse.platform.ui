@@ -301,11 +301,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			super.doOperation(operation);
 		}
 		
-		public void setTextConverter(TabConverter tabConverter) {
+		protected void setTextConverter(TabConverter tabConverter) {
 			fTabConverter= tabConverter;
 		}
 		
-		public void updateIndentationPrefixes() {
+		protected void updateIndentationPrefixes() {
 			SourceViewerConfiguration configuration= getSourceViewerConfiguration();
 			String[] types= configuration.getConfiguredContentTypes(this);
 			for (int i= 0; i < types.length; i++) {
@@ -859,12 +859,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 
 		AntEditorSourceViewerConfiguration sourceViewerConfiguration= (AntEditorSourceViewerConfiguration)getSourceViewerConfiguration();
-		if (affectsTextPresentation(event)) {
-			sourceViewerConfiguration.adaptToPreferenceChange(event);
-		}
-		
-		sourceViewerConfiguration.changeConfiguration(event);
-							
+        if (sourceViewerConfiguration != null) {
+            if (affectsTextPresentation(event)) {
+                sourceViewerConfiguration.adaptToPreferenceChange(event);
+            }
+
+            sourceViewerConfiguration.changeConfiguration(event);
+        }					
 		super.handlePreferenceStoreChanged(event);
 	}
 	
