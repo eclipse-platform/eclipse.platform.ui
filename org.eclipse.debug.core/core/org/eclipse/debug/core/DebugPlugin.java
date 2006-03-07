@@ -1226,14 +1226,9 @@ public class DebugPlugin extends Plugin {
 				} else {
 					if (ch == '"') {
 					    StringBuffer buf = new StringBuffer();
-					    if (Platform.getOS().equals(Constants.OS_WIN32)) {
-					    	buf.append('"');
-					    }
 						buf.append(parseString());
-						if (Platform.getOS().equals(Constants.OS_WIN32)) {
-							buf.append('"');
-						} else if (buf.length() == 0) {
-							// empty string on non-windows platform
+						if (buf.length() == 0 && Platform.getOS().equals(Constants.OS_WIN32)) {
+							// empty string on windows platform
 							buf.append("\"\""); //$NON-NLS-1$
 						}
 						v.add(buf.toString());
