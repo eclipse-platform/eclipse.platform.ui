@@ -55,7 +55,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
@@ -428,7 +427,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
 		// create help control if needed
-        if (isHelpAvailable() || TrayDialog.isDialogHelpAvailable()) {
+        if (isHelpAvailable()) {
         	createHelpControl(composite);
         }
 		fCustomizeButton= createButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true); 
