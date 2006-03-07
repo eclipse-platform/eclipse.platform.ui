@@ -29,9 +29,13 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.core.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.themes.ITheme;
 
 public class CVSHistoryTableProvider {
 
+	public static final String CATEGORIES_COLOR = "org.eclipse.team.cvs.ui.fontsandcolors.cvshistorypagecategories";  //$NON-NLS-1$
+	
 	private IFileHistory currentFileHistory;
 	private ICVSFile cvsFile;
 
@@ -128,8 +132,10 @@ public class CVSHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
 		public Color getForeground(Object element) {
-			if (element instanceof AbstractCVSHistoryCategory)
-				return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE);
+			if (element instanceof AbstractCVSHistoryCategory){
+				ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+				return current.getColorRegistry().get(CVSHistoryTableProvider.CATEGORIES_COLOR);
+			}
 			
 			IFileRevision entry = adaptToFileRevision(element);
 			if (!entry.exists()) {
@@ -151,8 +157,9 @@ public class CVSHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
 		public Font getFont(Object element) {
-			if (element instanceof AbstractCVSHistoryCategory)
+			if (element instanceof AbstractCVSHistoryCategory) {
 				return getCurrentRevisionFont();
+			}
 			
 			IFileRevision entry = adaptToFileRevision(element);
 			if (entry == null)

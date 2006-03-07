@@ -1418,7 +1418,16 @@
         <description>
         %IgnoredResourceFont.description
         </description>
-      </fontDefinition>    
+      </fontDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
+            id="org.eclipse.team.cvs.ui.fontsandcolors.cvshistorypagecategories"
+            label="%CVSHistoryCategory.label"
+            value="COLOR_LIST_FOREGROUND">
+         <description>
+            %CVSHistoryCategory.description
+         </description>
+      </colorDefinition>
 </extension>
    
 <!-- ********** QuickDiff text editor support ************** -->
