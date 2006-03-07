@@ -75,6 +75,8 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private FocusAdapter fEditorFocusListener;
 	private KeyAdapter fEditorKeyListener;
 	
+	private boolean fPendingFormatViewer;
+	
 	public AsyncTableRenderingViewer(AbstractAsyncTableRendering rendering, Composite parent, int style) {
 		super(parent, style);
 		fRendering = rendering;
@@ -918,6 +920,19 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	public void formatViewer()
 	{
+		if (getModel() == null || !hasPendingUpdates())
+			doFormatViewer();
+		else 
+			// do not format in the middle of an update
+			// set pending update and will format when update is completed
+			fPendingFormatViewer = true;
+	}
+
+	/**
+	 * 
+	 */
+	private void doFormatViewer() {
+		fPendingFormatViewer = false;
 		preservingSelection(new Runnable() {
 
 			public void run() {
@@ -983,6 +998,12 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		{
 			attemptSetKeySelection();
 			fTableCursor.redraw();
+		}
+		
+		if (!hasPendingUpdates() && fPendingFormatViewer)
+		{
+			formatViewer();
+			resizeColumnsToPreferredSize();
 		}
 	}
 }
