@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.console;
 
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -19,6 +20,8 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -80,6 +83,10 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     public Expression getEnablementExpression() throws CoreException {
 		if (fEnablementExpression == null) {
 			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
+            if (elements.length == 0) {
+                String message = MessageFormat.format("{0} " +getLocalId() + " {1} " + getPluginId() + " {2}", new String[] {ConsoleMessages.PatternMatchListenerExtension_3,ConsoleMessages.PatternMatchListenerExtension_4,ConsoleMessages.PatternMatchListenerExtension_5}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                ConsolePlugin.log(new Status(IStatus.WARNING, ConsolePlugin.getUniqueIdentifier(), IStatus.OK, message, null));
+            }
 			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
 
 			if (enablement != null) {

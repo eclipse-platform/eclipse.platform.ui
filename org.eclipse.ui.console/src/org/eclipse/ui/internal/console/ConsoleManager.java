@@ -367,7 +367,12 @@ public class ConsoleManager implements IConsoleManager {
     		ArrayList list = new ArrayList();
     		for(Iterator i = fPatternMatchListeners.iterator(); i.hasNext(); ) {
     		    PatternMatchListenerExtension extension = (PatternMatchListenerExtension) i.next();
-    		    try {
+                try {
+                    if (extension.getEnablementExpression() == null) {
+                        i.remove();
+                        continue;
+                    }
+    		    
     		        if (extension.isEnabledFor(console)) {
     		            list.add(new PatternMatchListener(extension));
     		        }

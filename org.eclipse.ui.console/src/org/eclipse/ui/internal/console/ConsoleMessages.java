@@ -58,4 +58,10 @@ public class ConsoleMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);
 	}
+
+    public static String PatternMatchListenerExtension_3;
+
+    public static String PatternMatchListenerExtension_4;
+
+    public static String PatternMatchListenerExtension_5;
 }
