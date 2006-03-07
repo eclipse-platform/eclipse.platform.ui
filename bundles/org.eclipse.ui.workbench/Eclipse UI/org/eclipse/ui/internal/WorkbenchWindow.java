@@ -115,11 +115,11 @@ import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
-import org.eclipse.ui.internal.menus.ILayoutNode;
 import org.eclipse.ui.internal.menus.IMenuService;
+import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.LegacyMenuManager;
-import org.eclipse.ui.internal.menus.SMenuLayout;
-import org.eclipse.ui.internal.menus.WindowMenuService;
+import org.eclipse.ui.internal.menus.SMenuManager;
+import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -322,6 +322,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// an exception if workbench not created yet.
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		this.serviceLocator = new ServiceLocator(workbench);
+		initializeDefaultServices();
 
 		// Add contribution managers that are exposed to other plugins.
 		addMenuBar();
@@ -843,7 +844,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		workbench.getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
 
-		initializeDefaultServices();
+//		initializeDefaultServices();
 		final IContextService contextService = (IContextService) workbench
 				.getAdapter(IContextService.class);
 		contextService.registerShell(shell, IContextService.TYPE_WINDOW);
@@ -1053,10 +1054,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	protected MenuManager createMenuManager() {
 		if (Policy.EXPERIMENTAL_MENU) {
-			final IMenuService menuService = (IMenuService) getService(IMenuService.class);
-			final SMenuLayout layout = menuService.getLayout();
-			final ILayoutNode layoutNode = layout.getMenuBar();
-			return new LegacyMenuManager(this, layoutNode);
+			return new LegacyMenuManager(this);
 		}
 
 		return super.createMenuManager();
@@ -3558,10 +3556,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				parentContextService, defaultExpression);
 		serviceLocator.registerService(IContextService.class, contextService);
 
-		final IMenuService parentMenuService = (IMenuService) serviceLocator
-				.getService(IMenuService.class);
-		final IMenuService menuService = new WindowMenuService(
-				parentMenuService, this);
+		final ICommandService parentCommandService = (ICommandService) serviceLocator
+				.getService(ICommandService.class);
+		final ICommandService commandService = new SlaveCommandService(
+				parentCommandService);
+		serviceLocator.registerService(ICommandService.class, commandService);
+
+		final SMenuManager menuManager = new SMenuManager();
+		final IMenuService menuService = new WorkbenchMenuService(menuManager,
+				commandService);
+		menuService.readRegistry();
+
 		final ISourceProviderService sourceProviderService = (ISourceProviderService) serviceLocator
 				.getService(ISourceProviderService.class);
 		final ISourceProvider[] sourceProviders = sourceProviderService
@@ -3576,16 +3581,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		serviceLocator.registerService(IActionCommandMappingService.class,
 				mappingService);
 
+		final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(
+				serviceLocator);
+		serviceLocator.registerService(LegacyActionPersistence.class,
+				actionPersistence);
+		actionPersistence.read();
+
+
 		deprecatedSupport = new LegacyActionHandlerPersistence(this);
 		serviceLocator.registerService(LegacyActionHandlerPersistence.class,
 				deprecatedSupport);
 		deprecatedSupport.read();
-		
-		final ICommandService parentCommandService = (ICommandService) serviceLocator
-				.getService(ICommandService.class);
-		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService);
-		serviceLocator.registerService(ICommandService.class, commandService);
 
 	}
 

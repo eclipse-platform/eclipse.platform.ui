@@ -123,10 +123,6 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.menus.IMenuService;
-import org.eclipse.ui.internal.menus.LegacyActionPersistence;
-import org.eclipse.ui.internal.menus.SMenuManager;
-import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -1255,12 +1251,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
 
-		final SMenuManager menuManager = new SMenuManager();
-		final IMenuService menuService = new WorkbenchMenuService(menuManager,
-				commandService);
-		menuService.readRegistry();
-		serviceLocator.registerService(IMenuService.class, menuService);
-
 		/*
 		 * Phase 2 of the initialization of commands. The source providers that
 		 * the workbench provides are creating and registered with the above
@@ -1274,34 +1264,34 @@ public final class Workbench extends EventManager implements IWorkbench {
 				this);
 		handlerService.addSourceProvider(activeShellSourceProvider);
 		contextService.addSourceProvider(activeShellSourceProvider);
-		menuService.addSourceProvider(activeShellSourceProvider);
+		// menuService.addSourceProvider(activeShellSourceProvider);
 		sourceProviderService.registerProvider(activeShellSourceProvider);
 		final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
 				this);
 		handlerService.addSourceProvider(activePartSourceProvider);
 		contextService.addSourceProvider(activePartSourceProvider);
-		menuService.addSourceProvider(activePartSourceProvider);
+		// menuService.addSourceProvider(activePartSourceProvider);
 		sourceProviderService.registerProvider(activePartSourceProvider);
 		final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
 				contextService);
 		handlerService.addSourceProvider(activeContextSourceProvider);
-		menuService.addSourceProvider(activeContextSourceProvider);
+		// menuService.addSourceProvider(activeContextSourceProvider);
 		sourceProviderService.registerProvider(activeContextSourceProvider);
 		final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
 				this);
 		handlerService.addSourceProvider(currentSelectionSourceProvider);
 		contextService.addSourceProvider(currentSelectionSourceProvider);
-		menuService.addSourceProvider(currentSelectionSourceProvider);
+		// menuService.addSourceProvider(currentSelectionSourceProvider);
 		sourceProviderService.registerProvider(currentSelectionSourceProvider);
 		actionSetSourceProvider = new ActionSetSourceProvider();
 		handlerService.addSourceProvider(actionSetSourceProvider);
 		contextService.addSourceProvider(actionSetSourceProvider);
-		menuService.addSourceProvider(actionSetSourceProvider);
+		// menuService.addSourceProvider(actionSetSourceProvider);
 		sourceProviderService.registerProvider(actionSetSourceProvider);
 		menuSourceProvider = new MenuSourceProvider();
 		handlerService.addSourceProvider(menuSourceProvider);
 		contextService.addSourceProvider(menuSourceProvider);
-		menuService.addSourceProvider(menuSourceProvider);
+		// menuService.addSourceProvider(menuSourceProvider);
 		sourceProviderService.registerProvider(menuSourceProvider);
 
 		/*
@@ -1309,11 +1299,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * of wrappers for legacy APIs. By the time this phase completes, any
 		 * code trying to access commands through legacy APIs should work.
 		 */
-		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
-				this);
-		serviceLocator.registerService(LegacyActionPersistence.class,
-				deprecatedSupport);
-		deprecatedSupport.read();
 		workbenchContextSupport = new WorkbenchContextSupport(this,
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,

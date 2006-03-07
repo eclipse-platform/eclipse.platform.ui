@@ -182,7 +182,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * The binding manager which should be populated with bindings from actions;
 	 * must not be <code>null</code>.
 	 */
-	private final IBindingService bindingService;
+	private final BindingService bindingService;
 
 	/**
 	 * The command image manager which should be populated with the images from
@@ -223,8 +223,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *            not be <code>null</code>.
 	 */
 	public LegacyActionPersistence(final IServiceLocator locator) {
-		this.bindingService = (IBindingService) locator
+		// TODO Blind casts are bad.
+		this.bindingService = (BindingService) locator
 				.getService(IBindingService.class);
+		
 		this.commandService = (ICommandService) locator
 				.getService(ICommandService.class);
 		this.commandImageService = (ICommandImageService) locator
@@ -303,8 +305,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final Binding binding = new KeyBinding(keySequence, command,
 					activeScheme.getId(), IContextIds.CONTEXT_ID_WINDOW, null,
 					null, null, Binding.SYSTEM);
-			// TODO Blind casts are bad.
-			((BindingService) bindingService).addBinding(binding);
+			bindingService.addBinding(binding);
 		}
 	}
 
@@ -419,20 +420,20 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 		// Bind the images.
 		if (icon != null) {
-			final URL iconURL = BundleUtility.find(element
-					.getNamespaceIdentifier(), icon);
+			final URL iconURL = BundleUtility.find(element.getContributor()
+					.getName(), icon);
 			commandImageService.bind(commandId,
 					ICommandImageService.TYPE_DEFAULT, style, iconURL);
 		}
 		if (disabledIcon != null) {
 			final URL disabledIconURL = BundleUtility.find(element
-					.getNamespaceIdentifier(), disabledIcon);
+					.getContributor().getName(), disabledIcon);
 			commandImageService.bind(commandId,
 					ICommandImageService.TYPE_DISABLED, style, disabledIconURL);
 		}
 		if (hoverIcon != null) {
 			final URL hoverIconURL = BundleUtility.find(element
-					.getNamespaceIdentifier(), hoverIcon);
+					.getContributor().getName(), hoverIcon);
 			commandImageService.bind(commandId,
 					ICommandImageService.TYPE_HOVER, style, hoverIconURL);
 		}

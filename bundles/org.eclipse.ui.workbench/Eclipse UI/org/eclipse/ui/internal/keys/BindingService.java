@@ -97,10 +97,18 @@ public final class BindingService implements IBindingService {
 	}
 
 	/**
-	 * TODO Promote this method to API
+	 * TODO Promote this method to API.
+	 * <p>
+	 * Adds a single new binding to the existing array of bindings. If the array
+	 * is currently <code>null</code>, then a new array is created and this
+	 * binding is added to it. This method does not detect duplicates.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @param binding
-	 *            The binding to add; must not be <code>null</code>.
+	 *            The binding to be added; must not be <code>null</code>.
 	 */
 	public final void addBinding(final Binding binding) {
 		bindingManager.addBinding(binding);
@@ -213,4 +221,5 @@ public final class BindingService implements IBindingService {
 	public final void setKeyFilterEnabled(final boolean enabled) {
 		keyboard.getKeyDownFilter().setEnabled(enabled);
 	}
+	
 }
