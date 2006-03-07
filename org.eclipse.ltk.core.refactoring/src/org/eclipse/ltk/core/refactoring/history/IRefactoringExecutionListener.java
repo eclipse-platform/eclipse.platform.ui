@@ -15,8 +15,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 /**
  * Interface for refactoring execution listeners. Clients may register a
  * refactoring execution listener with the {@link IRefactoringHistoryService}
- * obtained by calling {@link RefactoringCore#getHistoryService()} in
- * order to get informed about refactoring execution events.
+ * obtained by calling {@link RefactoringCore#getHistoryService()} in order to
+ * get informed about refactoring execution events.
  * <p>
  * Note: this interface is intended to be implemented by clients.
  * </p>
@@ -30,6 +30,13 @@ public interface IRefactoringExecutionListener {
 
 	/**
 	 * Gets called if a refactoring execution event happened.
+	 * <p>
+	 * Implementors of this method should not rely on a fixed set of event
+	 * types.
+	 * </p>
+	 * <p>
+	 * The event object is valid only for the duration of this method.
+	 * </p>
 	 * 
 	 * @param event
 	 *            the refactoring execution event
