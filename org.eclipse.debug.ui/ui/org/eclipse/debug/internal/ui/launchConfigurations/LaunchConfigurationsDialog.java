@@ -12,6 +12,8 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -93,7 +95,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Keep track of the currently visible dialog instance
 	 */
 	private static ILaunchConfigurationDialog fgCurrentlyVisibleLaunchConfigurationDialog;
-	
 	/**
 	 * Id for 'Launch' button.
 	 */
@@ -103,35 +104,29 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Id for 'Close' button.
 	 */
 	protected static final int ID_CLOSE_BUTTON = IDialogConstants.CLIENT_ID + 2;
-	
 	/**
 	 * Id for 'Cancel' button.
 	 */
 	protected static final int ID_CANCEL_BUTTON = IDialogConstants.CLIENT_ID + 3;
-		
 	/**
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
 	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.75f;
-		
 	/**
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
 	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.67f;
-		
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
 	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(800, 600);
-	
 	/**
 	 * defines some default sashweights when we have a new workspace
 	 * @since 3.2
 	 */
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 610};
-	
 	/**
 	 * Constant specifying that this dialog should be opened with the last configuration launched
 	 * in the workspace selected.
@@ -147,7 +142,27 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * an existing launch configuration dialog was used.
 	 */
 	public static final int LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN = 4;
-	
+	/**
+	 * defines the empty string
+	 * @since 3.2
+	 */
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	/**
+	 * deinfes the delimiter used in the persistence of the expanded state
+	 * @since 3.2
+	 */
+	private static final String DELIMITER = ", "; //$NON-NLS-1$
+	/**
+	 * Specifies how this dialog behaves when opened.  Value is one of the 
+	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
+	 */
+	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
+	/**
+	 * dialog settings
+	 */
+	private static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
+	private static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
+	private static final String DIALOG_EXPANDED_NODES = IDebugUIConstants.PLUGIN_ID + ".EXPANDED_NODES"; //$NON-NLS-1$
 	/**
 	 * Returns the currently visible dialog
 	 * @return the currently visible launch dialog
@@ -155,7 +170,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public static ILaunchConfigurationDialog getCurrentlyVisibleLaunchConfigurationDialog() {
 		return fgCurrentlyVisibleLaunchConfigurationDialog;
 	}
-	
 	/**
 	 * Sets which launch dialog is currently the visible one
 	 * @param dialog the dialog to set as the visible one
@@ -252,20 +266,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private DeletedProjectFilter fDeletedProjectFilter;
 	private LaunchConfigurationTypeFilter fLCTFilter;
 	private WorkingSetsFilter fWorkingSetsFilter;
-	
-	
-	/**
-	 * Specifies how this dialog behaves when opened.  Value is one of the 
-	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
-	 */
-	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
 
-	/**
-	 * dialog settings
-	 */
-	private static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
-	private static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
-	
 	/**
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
@@ -324,7 +325,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		applyDialogFont(dialogComp);
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#addPageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
 	 */
@@ -341,9 +341,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == ID_LAUNCH_BUTTON) {
 			handleLaunchPressed();
-		} else if (buttonId == ID_CLOSE_BUTTON) {
+		} 
+		else if (buttonId == ID_CLOSE_BUTTON) {
 			handleClosePressed();
-		} else {
+		} 
+		else {
 			super.buttonPressed(buttonId);
 		}
 	}
@@ -369,6 +371,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	        return false;
 	    }
 	    persistSashWeights();
+	    persistExpansion();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		getBannerImage().dispose();
 		getTabViewer().dispose();
@@ -394,10 +397,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void create() {
 		super.create();
-		// bug 27011
 		if (getTabViewer().getInput() == null) {
 			getTabViewer().inputChanged(null);
-		}			
+		}	
 	}
 	
 	/* (non-Javadoc)
@@ -414,12 +416,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setFont(font);
-		
 		// create help control if needed
         if (isHelpAvailable()) {
         	createHelpControl(composite);
         }
-
 		Composite monitorComposite = new Composite(composite, SWT.NULL);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -427,17 +427,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		layout.numColumns = 2;
 		monitorComposite.setLayout(layout);
 		monitorComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		GridLayout pmLayout = new GridLayout();
 		fProgressMonitorPart = new ProgressMonitorPart(monitorComposite, pmLayout);
 		fProgressMonitorPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProgressMonitorPart.setFont(font);
-		
 		fProgressMonitorCancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_3, true);
 		fProgressMonitorCancelButton.setFont(font);
 		monitorComposite.setVisible(false);
 
-		
 		/* * This code is duplicated from Dialog#createButtonBar. We do not want
 		 * to call the TrayDialog implementation because it adds a help control.
 		 * Since this is a custom button bar, we explicitly added the help control
@@ -445,8 +442,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		 * createButtonBar, which does not add a help control.
 		 */
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
-		// create a layout with spacing and margins appropriate for the font
-		// size.
 		layout = new GridLayout();
 		layout.numColumns = 0; // this is incremented by createButton
 		layout.makeColumnsEqualWidth = true;
@@ -458,8 +453,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setFont(composite.getFont());
-		
-		// Add the buttons to the button bar.
 		createButtonsForButtonBar(buttonComposite);
 		return composite;
 	}
@@ -546,7 +539,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         comp.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
-        
         ToolBar toolBar = new ToolBar(viewForm, SWT.FLAT);
         ToolBarManager toolBarManager= new ToolBarManager(toolBar);
         viewForm.setTopLeft(toolBar);
@@ -558,14 +550,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         gridLayout.marginWidth = 5;
         viewFormContents.setLayout(gridLayout);
         viewFormContents.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
-        
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
 		
 	//create toolbar actions, we reuse the actions form the view so we wait until after
 	//the view is created to add them to the toolbar
 		createToolbarActions(toolBarManager);
-		
 		fDoubleClickAction = new Action() {
 			public void run() {
 				IStructuredSelection selection = (IStructuredSelection)fLaunchConfigurationView.getViewer().getSelection();
@@ -582,8 +572,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		};
 		fLaunchConfigurationView.setAction(IDebugView.DOUBLE_CLICK_ACTION, fDoubleClickAction);
 		Viewer viewer = fLaunchConfigurationView.getViewer();
-		
-		//set up the filters
+	//set up the filters
 		fClosedProjectFilter = new ClosedProjectFilter();
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
 			((StructuredViewer)viewer).addFilter(fClosedProjectFilter);
@@ -600,18 +589,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
 			((StructuredViewer)viewer).addFilter(fWorkingSetsFilter);
 		}
-		
 		Control control = viewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
         viewForm.setContent(viewFormContents);
-		
 		fFilteringLabel = new Label(viewFormContents, SWT.NONE);
 		fFilteringLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | SWT.BEGINNING));
 		fFilteringLabel.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
 		refreshFilteringLabel();
-		
-		// confirmation requestors
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
 			public boolean getConfirmation() {
 				return canDiscardCurrentConfig();
@@ -619,8 +604,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		};
 		getDuplicateAction().setConfirmationRequestor(requestor);
 		getNewAction().setConfirmationRequestor(requestor);
-		
-		//listeners
 		((StructuredViewer) viewer).addPostSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleLaunchConfigurationSelectionChanged(event);
@@ -629,7 +612,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 			}
 		});
-       
 		return comp;
 	}	
 
@@ -711,7 +693,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public String generateName(String name) {
 		if (name == null) {
-			name = ""; //$NON-NLS-1$
+			name = EMPTY_STRING;
 		}
 		return fLaunchManager.generateUniqueLaunchConfigurationNameFrom(name);
 	}
@@ -998,7 +980,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  			// bug 14758			
  			ILaunchConfigurationTabGroup newGroup = getTabGroup();
  			if (!isEqual(group, newGroup)) {
- 				if (isVisible()) {
+ 				if (getShell() != null && getShell().isVisible()) {
  					resize();
  				}
  			}
@@ -1103,6 +1085,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			handleStatus(status);
 		}
 		fLaunchConfigurationView.getFilteringTextControl().setFocus();
+		restoreExpansion();
 	}
 	
 	/**
@@ -1132,15 +1115,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Returns whether this dialog is currently open
-	 * 
-	 * @return if the current shell is visible or not
-	 */
-	private boolean isVisible() {
-		return getShell() != null && getShell().isVisible();
-	}
-	
-	/**
 	 * Determine the initial configuration for this dialog.
 	 * Open the dialog in the mode set using #setOpenMode(int) and return one of
 	 * <code>Window. OK</code> or <code>Window.CANCEL</code>.
@@ -1158,6 +1132,82 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}			
 		}
 		return super.open();
+	}
+	
+	/**
+	 * saves which of the nodes are expanded at the time the dialog is closed
+	 * @since 3.2
+	 */
+	protected void persistExpansion() {
+		if(fLaunchConfigurationView != null) {
+			IDialogSettings settings = getDialogSettings();
+			TreeItem[] items = fLaunchConfigurationView.getTreeViewer().getTree().getItems();
+			String value = settings.get(DIALOG_EXPANDED_NODES);
+			if(value == null) {
+				value = EMPTY_STRING;
+			}
+			ArrayList list = new ArrayList();
+			String[] persisted = value.split(DELIMITER); 
+			for(int i = 0; i < persisted.length; i++) {
+				list.add(persisted[i]);
+			}
+			String type = EMPTY_STRING;
+			//if the item is not in the list and is expanded add it, otherwise if it
+			//is not expanded do a remove...either way for the else we query the list
+			for(int i = 0; i < items.length; i++) {
+				type = ((ILaunchConfigurationType)items[i].getData()).getIdentifier();
+				if(!list.contains(type) & items[i].getExpanded()) {
+					list.add(type);
+				}
+				else if(!items[i].getExpanded()) {
+					list.remove(type);
+				}
+			}
+			value = EMPTY_STRING;
+			//build the preference string
+			for(Iterator iter = list.iterator(); iter.hasNext();) {
+				value += iter.next() + DELIMITER;
+			}
+			settings.put(DIALOG_EXPANDED_NODES, value);
+		}
+	}
+	
+	/**
+	 * Restore the original expansion state of the nodes in the viewer
+	 * @since 3.2
+	 */
+	protected void restoreExpansion() {
+		if(fLaunchConfigurationView != null) {
+			IDialogSettings settings = getDialogSettings();
+			String value = settings.get(DIALOG_EXPANDED_NODES);
+			if(value != null) {
+				String[] nodes = value.split(DELIMITER);
+				TreeItem[] items = fLaunchConfigurationView.getTreeViewer().getTree().getItems();
+				ArrayList toexpand = new ArrayList();
+				// if we have a selection make sure it is expanded
+				if(!fInitialSelection.isEmpty()) {
+					Object obj = fInitialSelection.getFirstElement();
+					if(obj instanceof ILaunchConfigurationType) {
+						toexpand.add(obj);
+					}
+					else if(obj instanceof ILaunchConfiguration) {
+						try {
+							toexpand.add(((ILaunchConfiguration) obj).getType());
+						} 
+						catch (CoreException e) {DebugUIPlugin.log(e);}					
+					}
+				}
+				for(int i = 0; i < nodes.length; i++) {
+					for(int k = 0; k < items.length; k++) {
+						ILaunchConfigurationType type = (ILaunchConfigurationType)items[k].getData();
+						if(type.getIdentifier().equals(nodes[i])) {
+							toexpand.add(type);
+						}
+					}
+				}
+				fLaunchConfigurationView.getTreeViewer().setExpandedElements(toexpand.toArray());
+			}
+		}
 	}
 	
 	/**
@@ -1206,7 +1256,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		if (isVisible()) {
+		if (getShell() != null && getShell().isVisible()) {
 			if (getShell() != null) {
 				// Save focus control
 				fLastControl = getShell().getDisplay().getFocusControl();
@@ -1410,7 +1460,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(final PropertyChangeEvent event) {
-		WorkbenchJob job = new WorkbenchJob("") { //$NON-NLS-1$
+		WorkbenchJob job = new WorkbenchJob(EMPTY_STRING) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
 				TreeSelection sel = (TreeSelection)viewer.getSelection();
@@ -1440,7 +1490,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 						viewer.addFilter(fLCTFilter);
 					}
 				}
-				viewer.expandAll();
+				//viewer.expandAll();
 				refreshFilteringLabel();
 				updateSelection(path, pidx, cidx);
 				return null;
