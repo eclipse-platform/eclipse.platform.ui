@@ -104,3 +104,10 @@ var	     { font-style: italic}
 div.revision { border-left-style: solid; border-left-width: thin; 
 				   border-left-color: #7B68EE; padding-left:5 }
 th	     { font-weight: bold }
+
+a.command-link {
+	padding-left: 20px;
+	background-image: url('run.gif');
+	background-repeat: no-repeat;
+	background-position: left center;
+}
