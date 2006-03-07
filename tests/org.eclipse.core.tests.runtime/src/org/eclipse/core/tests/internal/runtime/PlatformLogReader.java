@@ -55,7 +55,7 @@ public class PlatformLogReader {
 		tokenizer.nextToken();
 		// FIXME: handle the code to read status objects which were
 		// nested inside of CoreExceptions in the log.
-		int hasStatus = Integer.parseInt(tokenizer.nextToken());
+		Integer.parseInt(tokenizer.nextToken());
 		currentLine = reader.readLine();
 		return new FakeException(null, readText());
 	}

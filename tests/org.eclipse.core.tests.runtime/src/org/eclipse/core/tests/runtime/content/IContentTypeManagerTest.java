@@ -1014,8 +1014,8 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentTypeMatcher finder = manager.getMatcher(new LocalSelectionPolicy(), null);
 
 		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
-		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
-		IContentType dtdElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".dtd");
+		manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
+		manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".dtd");
 		// for an empty file, the most generic content type should be returned
 		IContentType selected = finder.findContentTypeFor(getInputStream(""), "foo.xml");
 		assertEquals("1.0", xml, selected);
