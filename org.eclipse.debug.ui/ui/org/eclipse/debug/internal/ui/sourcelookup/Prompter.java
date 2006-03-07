@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,11 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -40,7 +42,11 @@ public class Prompter implements IStatusHandler {
 	public Object handleStatus(final IStatus status, final Object source) throws CoreException {
 		final IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 		if (handler == null) {
-			// TODO: throw exception
+			throw new CoreException(new Status(IStatus.ERROR,
+									IDebugUIConstants.PLUGIN_ID,
+									IStatus.OK,
+									SourceLookupUIMessages.Prompter_0,
+									null));
 		}
 		Display display = DebugUIPlugin.getStandardDisplay();
 		if (display.getThread().equals(Thread.currentThread())) {

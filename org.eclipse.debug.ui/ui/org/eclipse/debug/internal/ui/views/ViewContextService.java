@@ -257,8 +257,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                     } finally {
                         fIgnoreChanges = false;
                     }
-                    // TODO:
-                    // bring to top if less relevant view is on top open
+                    // TODO: bring to top if less relevant view is on top open
                 }
             }
         }

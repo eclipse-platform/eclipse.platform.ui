@@ -74,4 +74,6 @@ public class SourceLookupUIMessages extends NLS {
 	public static String DirectorySourceContainerDialog_7;
 
 	public static String DirectorySourceContainerDialog_8;
+
+	public static String Prompter_0;
 }

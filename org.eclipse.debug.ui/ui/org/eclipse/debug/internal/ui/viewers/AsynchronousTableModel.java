@@ -33,10 +33,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModel#add(org.eclipse.debug.internal.ui.model.viewers.ModelNode, java.lang.Object)
 	 */
-	protected void add(ModelNode parent, Object element) {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void add(ModelNode parent, Object element) {}
 	
 	/**
 	 * Adds the given elements to the table.

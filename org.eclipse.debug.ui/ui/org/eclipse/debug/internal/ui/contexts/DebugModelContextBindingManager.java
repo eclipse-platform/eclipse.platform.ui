@@ -328,7 +328,6 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			final List activations = (List) fLanuchToContextActivations.remove(launch);
 			fLaunchToModelIds.remove(launch);
 			if (activations != null) {
-				// TODO: use UIJob
 				Runnable r = new Runnable() {
 					public void run() {
 						Iterator iterator = activations.iterator();
@@ -348,10 +347,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
-	public void launchesRemoved(ILaunch[] launches) {
-		// TODO Auto-generated method stub
-		// TODO: removed notification
-	}
+	public void launchesRemoved(ILaunch[] launches) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
