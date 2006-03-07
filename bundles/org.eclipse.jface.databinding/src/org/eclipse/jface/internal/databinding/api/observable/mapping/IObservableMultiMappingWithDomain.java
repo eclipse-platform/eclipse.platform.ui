@@ -9,25 +9,16 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.observable.set;
+package org.eclipse.jface.internal.databinding.api.observable.mapping;
 
-import java.util.Set;
-
-import org.eclipse.jface.internal.databinding.api.observable.IDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 
 /**
  * @since 1.0
  *
  */
-public interface ISetDiff extends IDiff {
+public interface IObservableMultiMappingWithDomain extends IObservableMultiMapping {
+
+	public IObservableSet getDomain();
 	
-	/**
-	 * @return the set of added elements
-	 */
-	public Set getAdditions();
-	
-	/**
-	 * @return the set of removed elements
-	 */
-	public Set getRemovals();
 }

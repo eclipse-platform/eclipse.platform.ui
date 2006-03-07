@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.api.observable.set;
 
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IMapping;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 
 /**
  * @since 3.2
@@ -22,7 +22,7 @@ public interface IObservableSetWithLabels extends IObservableSet {
 	/**
 	 * @param labelMapping
 	 */
-	public void init(IMapping labelMapping);
+	public void init(IMultiMapping labelMapping);
 
 	/**
 	 * @param elements

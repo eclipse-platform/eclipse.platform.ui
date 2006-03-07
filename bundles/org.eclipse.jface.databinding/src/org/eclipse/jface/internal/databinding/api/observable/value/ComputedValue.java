@@ -25,6 +25,7 @@ import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
 public abstract class ComputedValue extends AbstractObservableValue {
 
 	private boolean dirty = true;
+
 	private boolean stale = false;
 
 	private Object cachedValue = null;
@@ -36,6 +37,19 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 */
 	private IObservable[] dependencies = new IObservable[0];
 
+	/**
+	 * 
+	 */
+	public ComputedValue() {
+		this(Object.class);
+	}
+
+	/**
+	 * @param valueType
+	 */
+	public ComputedValue(Object valueType) {
+		this.valueType = valueType;
+	}
 
 	/**
 	 * Inner class that implements interfaces that we don't want to expose as
@@ -78,14 +92,16 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 	private PrivateInterface privateInterface = new PrivateInterface();
 
+	private Object valueType;
+
 	public final Object doGetValue() {
 		if (dirty) {
 			// This line will do the following:
 			// - Run the computeValue method
 			// - While doing so, add any updatable that is touched to the
 			// dependencies list
-			 IObservable[] newDependencies = ObservableTracker
-					.runAndMonitor(privateInterface, privateInterface, null);
+			IObservable[] newDependencies = ObservableTracker.runAndMonitor(
+					privateInterface, privateInterface, null);
 
 			stale = false;
 			for (int i = 0; i < newDependencies.length; i++) {
@@ -127,7 +143,8 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 			// copy the old value
 			final Object oldValue = cachedValue;
-			// Fire the "dirty" event. This implementation recomputes the new value lazily.
+			// Fire the "dirty" event. This implementation recomputes the new
+			// value lazily.
 			fireValueChange(new IValueDiff() {
 
 				public Object getOldValue() {
@@ -146,8 +163,8 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		getValue();
 		return stale;
 	}
-	
+
 	public Object getValueType() {
-		return Object.class;
+		return valueType;
 	}
 }

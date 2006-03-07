@@ -28,6 +28,8 @@ import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMultiMappingWithDomain;
+import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
@@ -127,14 +129,26 @@ public class DataBindingContext implements IDataBindingContext {
 				IObservableValue target = (IObservableValue) targetObservable;
 				IObservableValue model = (IObservableValue) modelObservable;
 				fillBindSpecDefaults(bindSpec, target.getValueType(), model
-						.getValueType(), null);
+						.getValueType());
 				binding = new ValueBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
 						"incompatible updatables: target is value, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
 			}
+		} else if (targetObservable instanceof IObservableSetWithLabels) {
+			if (modelObservable instanceof IObservableMultiMappingWithDomain) {
+				IObservableSetWithLabels target = (IObservableSetWithLabels) targetObservable;
+				IObservableMultiMappingWithDomain model = (IObservableMultiMappingWithDomain) modelObservable;
+				fillBindSpecDefaults(bindSpec, target.getElementType(), model
+						.getDomain().getElementType());
+				binding = new TableBinding(this, target, model, bindSpec);
+			} else {
+				throw new BindingException(
+						"incompatible updatables: target is observable set with labels, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
+			}
 		} else {
-			throw new BindingException("not yet implemented"); //$NON-NLS-1$
+			throw new BindingException(
+					"not yet implemented - target: " + targetObservable.getClass().getName() + ", model: " + modelObservable.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// DJO: Each binder is now responsible for adding its own change
 		// listeners.
@@ -176,13 +190,13 @@ public class DataBindingContext implements IDataBindingContext {
 			// fromType = ((IObservableCollection) targetObservable)
 			// .getElementType();
 		}
-		fillBindSpecDefaults(bindSpec, fromType, null, modelDescription);
+		fillBindSpecDefaults(bindSpec, fromType, null);
 		return bind(targetObservable, createObservable(modelDescription),
 				bindSpec);
 	}
 
 	protected void fillBindSpecDefaults(IBindSpec bindSpec, Object fromType,
-			Object toType, Object modelDescriptionOrNull) {
+			Object toType) {
 		if (bindSpec.getTypeConversionValidator() == null) {
 			((BindSpec) bindSpec)
 					.setValidator(createValidator(fromType, toType));

@@ -32,8 +32,4 @@ abstract public class AbstractMappingDiff implements IMappingDiff {
 		return elements;
 	}
 
-	abstract public Object getOldMappingValue(Object element);
-
-	abstract public Object getNewMappingValue(Object element);
-
 }

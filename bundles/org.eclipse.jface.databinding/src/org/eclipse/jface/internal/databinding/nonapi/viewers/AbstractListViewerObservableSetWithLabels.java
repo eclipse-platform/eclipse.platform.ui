@@ -12,12 +12,14 @@
 package org.eclipse.jface.internal.databinding.nonapi.viewers;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IMapping;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 import org.eclipse.jface.viewers.AbstractListViewer;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IViewerLabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @since 3.2
@@ -28,9 +30,9 @@ public class AbstractListViewerObservableSetWithLabels extends
 
 	private LabelProvider labelProvider = new LabelProvider();
 
-	private IMapping labelMapping;
+	private IMultiMapping labelMapping;
 
-	private class LabelProvider implements IViewerLabelProvider {
+	private class LabelProvider implements IViewerLabelProvider, ILabelProvider {
 
 		ListenerList listeners = new ListenerList();
 
@@ -61,7 +63,8 @@ public class AbstractListViewerObservableSetWithLabels extends
 		}
 
 		public void updateLabel(ViewerLabel label, Object element) {
-			Object mapping = labelMapping.getMappingValue(element);
+			Object mapping = labelMapping.getMappingValues(element,
+					new int[] { 0 })[0];
 			if (mapping instanceof ViewerLabel) {
 				ViewerLabel viewerLabel = (ViewerLabel) mapping;
 				label.setBackground(viewerLabel.getBackground());
@@ -71,6 +74,29 @@ public class AbstractListViewerObservableSetWithLabels extends
 				label.setText(viewerLabel.getText());
 			} else if (mapping != null) {
 				label.setText(mapping.toString());
+			}
+		}
+
+		public Image getImage(Object element) {
+			Object mapping = labelMapping.getMappingValues(element,
+					new int[] { 0 })[0];
+			if (mapping instanceof ViewerLabel) {
+				ViewerLabel viewerLabel = (ViewerLabel) mapping;
+				return viewerLabel.getImage();
+			}
+			return null;
+		}
+
+		public String getText(Object element) {
+			Object mapping = labelMapping.getMappingValues(element,
+					new int[] { 0 })[0];
+			if (mapping instanceof ViewerLabel) {
+				ViewerLabel viewerLabel = (ViewerLabel) mapping;
+				return viewerLabel.getText();
+			} else if (mapping != null) {
+				return mapping.toString();
+			} else {
+				return ""; //$NON-NLS-1$
 			}
 		}
 
@@ -84,7 +110,7 @@ public class AbstractListViewerObservableSetWithLabels extends
 		super(abstractListViewer);
 	}
 
-	public void init(IMapping labelMapping) {
+	public void init(IMultiMapping labelMapping) {
 		this.labelMapping = labelMapping;
 		getViewer().setLabelProvider(labelProvider);
 	}

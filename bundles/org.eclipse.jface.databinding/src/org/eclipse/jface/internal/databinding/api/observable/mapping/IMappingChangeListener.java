@@ -11,13 +11,19 @@
 
 package org.eclipse.jface.internal.databinding.api.observable.mapping;
 
+import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+
 /**
  * @since 1.0
  * 
  */
 public interface IMappingChangeListener {
 
-	void handleMappingValueChange(IObservableMapping source,
+	/**
+	 * @param source
+	 * @param diff
+	 */
+	void handleMappingValueChange(IObservable source,
 			IMappingDiff diff);
 
 }

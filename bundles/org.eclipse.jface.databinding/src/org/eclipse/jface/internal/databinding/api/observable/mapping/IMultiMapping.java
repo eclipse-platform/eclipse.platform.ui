@@ -9,25 +9,26 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.observable.set;
-
-import java.util.Set;
-
-import org.eclipse.jface.internal.databinding.api.observable.IDiff;
+package org.eclipse.jface.internal.databinding.api.observable.mapping;
 
 /**
- * @since 1.0
+ * @since 3.2
  *
  */
-public interface ISetDiff extends IDiff {
-	
+public interface IMultiMapping {
+
 	/**
-	 * @return the set of added elements
+	 * @param element
+	 * @param indices 
+	 * @return the mapping value for the given element
 	 */
-	public Set getAdditions();
-	
+	public Object[] getMappingValues(Object element, int[] indices);
+
 	/**
-	 * @return the set of removed elements
+	 * @param element
+	 * @param indices 
+	 * @param values 
 	 */
-	public Set getRemovals();
+	public void setMappingValues(Object element, int[] indices, Object[] values);
+
 }

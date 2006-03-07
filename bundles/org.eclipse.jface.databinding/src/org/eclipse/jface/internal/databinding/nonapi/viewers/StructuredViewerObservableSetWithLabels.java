@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IMapping;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
@@ -65,7 +65,7 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 		structuredViewer.setInput(this);
 	}
 
-	public abstract void init(IMapping labelMapping);
+	public abstract void init(IMultiMapping labelMapping);
 
 	public abstract void updateElements(Object[] elements);
 

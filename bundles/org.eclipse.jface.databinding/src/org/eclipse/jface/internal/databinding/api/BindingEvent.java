@@ -35,7 +35,7 @@ public class BindingEvent {
 	 * @param pipelinePosition
 	 *            The initial processing pipeline position.
 	 */
-	protected BindingEvent(IObservable model, IObservable target, IDiff diff, int copyType,
+	public BindingEvent(IObservable model, IObservable target, IDiff diff, int copyType,
 			int pipelinePosition) {
 		this.model = model;
 		this.target = target;

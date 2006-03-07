@@ -12,7 +12,7 @@
 package org.eclipse.jface.internal.databinding.nonapi.viewers;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IMapping;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
@@ -33,7 +33,7 @@ public class TableViewerObservableSetWithLabels extends
 
 	private TabelLabelProvider labelProvider = new TabelLabelProvider();
 
-	private IMapping labelMapping;
+	private IMultiMapping labelMapping;
 
 	private class TabelLabelProvider implements ITableLabelProvider,
 			ITableColorProvider, ITableFontProvider {
@@ -41,17 +41,8 @@ public class TableViewerObservableSetWithLabels extends
 		ListenerList listeners = new ListenerList();
 
 		private Object getColumnValue(Object element, int columnIndex) {
-			Object mappingValue = labelMapping.getMappingValue(element);
-			Object[] mappingValues;
-			if (mappingValue instanceof Object[]) {
-				mappingValues = (Object[]) mappingValue;
-			} else {
-				mappingValues = new Object[] { mappingValue };
-			}
-			if (columnIndex < mappingValues.length) {
-				return mappingValues[columnIndex];
-			}
-			return null;
+			return labelMapping.getMappingValues(element,
+					new int[] { columnIndex });
 		}
 
 		private ViewerLabel getColumnValueAsViewerLabel(Object element,
@@ -132,7 +123,7 @@ public class TableViewerObservableSetWithLabels extends
 		super(tableViewer);
 	}
 
-	public void init(IMapping labelMapping) {
+	public void init(IMultiMapping labelMapping) {
 		this.labelMapping = labelMapping;
 		getViewer().setLabelProvider(labelProvider);
 	}

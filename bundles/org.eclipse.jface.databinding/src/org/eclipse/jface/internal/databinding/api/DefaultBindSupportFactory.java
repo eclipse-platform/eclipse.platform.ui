@@ -41,7 +41,7 @@ import org.eclipse.jface.internal.databinding.nonapi.Pair;
  * @since 1.0
  *
  */
-public final class DefaultBindSupportFactory implements IBindSupportFactory {
+public final class DefaultBindSupportFactory extends BindSupportFactory {
 	
 	private ValidatorRegistry validatorRegistry = new ValidatorRegistry();
 	private Map converterMap;

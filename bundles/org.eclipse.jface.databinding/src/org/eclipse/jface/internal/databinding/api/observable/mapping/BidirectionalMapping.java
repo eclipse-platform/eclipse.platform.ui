@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
@@ -53,14 +54,17 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 			range.retainAll(valueToElements.keySet());
 		}
 	};
-	
-	private IMappingChangeListener mappingChangeListener = new IMappingChangeListener(){
-		public void handleMappingValueChange(IObservableMapping source, IMappingDiff diff) {
+
+	private IMappingChangeListener mappingChangeListener = new IMappingChangeListener() {
+		public void handleMappingValueChange(IObservable source,
+				IMappingDiff diff) {
 			Set affectedElements = diff.getElements();
 			for (Iterator it = affectedElements.iterator(); it.hasNext();) {
 				Object element = it.next();
-				Object oldFunctionValue = diff.getOldMappingValue(element);
-				Object newFunctionValue = diff.getNewMappingValue(element);
+				Object oldFunctionValue = diff.getOldMappingValues(element,
+						new int[0])[0];
+				Object newFunctionValue = diff.getNewMappingValues(element,
+						new int[0])[0];
 				removeMapping(oldFunctionValue, element);
 				addMapping(newFunctionValue, element);
 			}
@@ -79,18 +83,19 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 	public BidirectionalMapping(IObservableMappingWithDomain functionWithDomain) {
 		this(functionWithDomain, functionWithDomain.getDomain());
 	}
-	
+
 	/**
-	 * @param wrappedMapping
-	 * @param domain 
+	 * @param wrappedMapping 
+	 * @param domain
 	 */
-	public BidirectionalMapping(IObservableMapping wrappedFunction, IObservableSet domain) {
-		this.wrappedMapping = wrappedFunction;
+	public BidirectionalMapping(IObservableMapping wrappedMapping,
+			IObservableSet domain) {
+		this.wrappedMapping = wrappedMapping;
 		this.domain = domain;
 		Set tempRange = new HashSet();
 		for (Iterator it = domain.iterator(); it.hasNext();) {
 			Object element = it.next();
-			Object functionValue = wrappedFunction.getMappingValue(element);
+			Object functionValue = wrappedMapping.getMappingValue(element);
 			addMapping(functionValue, element);
 			tempRange.add(functionValue);
 		}
@@ -127,7 +132,7 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 		if (elementOrSet instanceof Set) {
 			Set set = (Set) elementOrSet;
 			set.remove(element);
-			if(set.size()==0) {
+			if (set.size() == 0) {
 				valueToElements.remove(functionValue);
 			}
 		} else {
@@ -138,7 +143,7 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 	protected Object doGetMappingValue(Object element) {
 		return wrappedMapping.getMappingValue(element);
 	}
-	
+
 	public void setMappingValue(Object element, Object value) {
 		wrappedMapping.setMappingValue(element, value);
 	}
@@ -150,7 +155,7 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 	public Set getDomainElementsForValue(Object value) {
 		return null;
 	}
-	
+
 	public void dispose() {
 		wrappedMapping.removeMappingChangeListener(mappingChangeListener);
 		domain.removeSetChangeListener(domainListener);

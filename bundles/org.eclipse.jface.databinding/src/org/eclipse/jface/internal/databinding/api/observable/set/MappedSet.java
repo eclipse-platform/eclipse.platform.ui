@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMapping;
@@ -58,15 +59,17 @@ public class MappedSet extends ObservableSet {
 	};
 
 	private IMappingChangeListener mappingChangeListener = new IMappingChangeListener() {
-		public void handleMappingValueChange(IObservableMapping source,
+		public void handleMappingValueChange(IObservable source,
 				IMappingDiff diff) {
 			Set affectedElements = diff.getElements();
 			Set additions = new HashSet();
 			Set removals = new HashSet();
 			for (Iterator it = affectedElements.iterator(); it.hasNext();) {
 				Object element = it.next();
-				Object oldFunctionValue = diff.getOldMappingValue(element);
-				Object newFunctionValue = diff.getNewMappingValue(element);
+				Object oldFunctionValue = diff.getOldMappingValues(element,
+						new int[] { 0 })[0];
+				Object newFunctionValue = diff.getNewMappingValues(element,
+						new int[] { 0 });
 				if (handleRemoval(oldFunctionValue)) {
 					removals.add(oldFunctionValue);
 				}
@@ -81,8 +84,8 @@ public class MappedSet extends ObservableSet {
 	private IObservableSet input;
 
 	/**
-	 * @param wrappedMapping
-	 * @param domain
+	 * @param input
+	 * @param mapping
 	 */
 	public MappedSet(IObservableSet input, IObservableMapping mapping) {
 		super(Collections.EMPTY_SET, mapping.getValueType());
@@ -100,7 +103,7 @@ public class MappedSet extends ObservableSet {
 
 	/**
 	 * @param mappingValue
-	 * @return
+	 * @return true if the given mappingValue was an addition
 	 */
 	protected boolean handleAddition(Object mappingValue) {
 		Integer count = (Integer) valueCounts.get(mappingValue);
@@ -114,7 +117,7 @@ public class MappedSet extends ObservableSet {
 
 	/**
 	 * @param mappingValue
-	 * @return
+	 * @return true if the given mappingValue has been removed
 	 */
 	protected boolean handleRemoval(Object mappingValue) {
 		Integer count = (Integer) valueCounts.get(mappingValue);

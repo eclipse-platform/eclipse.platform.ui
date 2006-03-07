@@ -18,22 +18,23 @@ import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
  * @since 1.0
  * 
  */
-public abstract class AbstractObservableMapping extends BaseObservableMapping
-		implements IObservableMapping {
+public abstract class AbstractObservableMultiMapping extends BaseObservableMapping
+		implements IObservableMultiMapping {
 
-	final public Object getMappingValue(Object element) {
+	final public Object[] getMappingValues(Object element, int[] indices) {
 		ObservableTracker.getterCalled(this);
-		return doGetMappingValue(element);
+		return doGetMappingValues(element, indices);
 	}
 	
-	public void setMappingValue(Object element, Object value) {
+	public void setMappingValues(Object element, int[] indices, Object[] values) {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
+	 * @param indices 
 	 * @return the value of this mapping for the given element
 	 */
-	abstract protected Object doGetMappingValue(Object element);
+	abstract protected Object[] doGetMappingValues(Object element, int[] indices);
 
 	public boolean isStale() {
 		return false;

@@ -24,7 +24,8 @@ import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ListToSetAdapter;
-import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableMapping;
+import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableList;
+import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableMultiMapping;
 import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableValue;
 
 /**
@@ -91,28 +92,7 @@ final public class BeanObservableFactory implements IObservableFactory {
 								// tables and handles Combos and Lists.
 								elementType = Object.class;
 							}
-							/*
-							 * FIXME: CopyOfJavaBeanObservableCollection is the
-							 * new IObservableCollection that fixes bug #119930.
-							 * It seems to work now. Unfortunately, there is a
-							 * bunch of code that depends on the
-							 * IObservableCollections themselves listening to
-							 * the generic change event on each of the
-							 * collections' elements.
-							 * 
-							 * Examples of this include
-							 * StructuredViewerObservableValue and the table
-							 * implementations. These need to be fixed to use
-							 * IObservableValues pointing to the specific
-							 * properties being displayed/edited rather than
-							 * expecting the IObservableCollection to be
-							 * registered to the generic property change event.
-							 */
-							// return new JavaBeanObservableCollection(object,
-							// descriptor, elementType);
-							// return new
-							// CopyOfJavaBeanObservableCollection(object,
-							// descriptor, elementType);
+							return new JavaBeanObservableList(object, descriptor, elementType);
 						}
 						return new JavaBeanObservableValue(object, descriptor);
 					}
@@ -147,11 +127,29 @@ final public class BeanObservableFactory implements IObservableFactory {
 						"collection inside a TableModelDescription needs to be IReadableSet or IReadableList"); //$NON-NLS-1$
 			}
 			Object[] columnIDs = tableModelDescription.getColumnIDs();
-			String[] propertyNames = new String[columnIDs.length];
-			for (int i = 0; i < propertyNames.length; i++) {
-				propertyNames[i] = (String) columnIDs[i];
+			PropertyDescriptor[] propertyDescriptors = new PropertyDescriptor[columnIDs.length];
+			Class elementType = (Class) readableSet.getElementType();
+			for (int i = 0; i < columnIDs.length; i++) {
+				propertyDescriptors[i] = getPropertyDescriptor(elementType, (String) columnIDs[i]);
+			}			
+			return new JavaBeanObservableMultiMapping(readableSet, propertyDescriptors);
+		}
+		return null;
+	}
+
+	private PropertyDescriptor getPropertyDescriptor(Class elementType, String propertyName) {
+		BeanInfo beanInfo;
+		try {
+			beanInfo = Introspector.getBeanInfo(elementType);
+		} catch (IntrospectionException ex) {
+			throw new BindingException("Cannot introspect " + elementType, ex); //$NON-NLS-1$
+		}
+		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+		PropertyDescriptor propertyDescriptor = null;
+		for (int i = 0; i < propertyDescriptors.length; i++) {
+			if(propertyDescriptors[i].getName().equals(propertyName)) {
+				return propertyDescriptors[i];
 			}
-			return new JavaBeanObservableMapping(readableSet, null /*propertyNames*/);
 		}
 		return null;
 	}

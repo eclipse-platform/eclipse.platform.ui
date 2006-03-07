@@ -19,19 +19,27 @@ import java.util.Set;
  */
 public interface IMappingDiff {
 	/**
-	 * @return the set of elements for which the function value has changed
+	 * @return the set of elements for which the mapping value has changed
 	 */
 	public Set getElements();
 
 	/**
-	 * @param element
-	 * @return the old value of the function for the given element
+	 * @return an array containing the affected indices.
 	 */
-	public Object getOldMappingValue(Object element);
+	public int[] getAffectedIndices();
 
 	/**
 	 * @param element
-	 * @return the new value of the function for the given element
+	 * @param indices 
+	 * @return the old values of the mapping for the given element at the given
+	 *         indices. 
 	 */
-	public Object getNewMappingValue(Object element);
+	public Object[] getOldMappingValues(Object element, int[] indices);
+
+	/**
+	 * @param element
+	 * @param indices 
+	 * @return the new value of the mapping for the given element
+	 */
+	public Object[] getNewMappingValues(Object element, int[] indices);
 }
