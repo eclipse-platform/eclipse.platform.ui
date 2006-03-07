@@ -415,7 +415,7 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * Sets the temporary custom control creator, overriding this manager's default information control creator.
 	 *
-	 * @param informationControlCreator, possibly <code>null</code> 
+	 * @param informationControlCreator the creator, possibly <code>null</code> 
 	 * @since 3.0
 	 */
 	protected void setCustomInformationControlCreator(IInformationControlCreator informationControlCreator)  {
