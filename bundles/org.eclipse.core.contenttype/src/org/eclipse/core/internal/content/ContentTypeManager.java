@@ -22,7 +22,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	public static final int BLOCK_SIZE = 0x400;
 	public static final String CONTENT_TYPE_PREF_NODE = IContentConstants.RUNTIME_NAME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_CONTENT_TYPES = "org.eclipse.core.contenttype/debug"; //$NON-NLS-1$;
-	static final boolean DEBUGGING = ContentOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_CONTENT_TYPES, false);
+	static final boolean DEBUGGING = Activator.getDefault().getBooleanDebugOption(OPTION_DEBUG_CONTENT_TYPES, false);
 	private ContentTypeCatalog catalog;
 	private int catalogGeneration;
 

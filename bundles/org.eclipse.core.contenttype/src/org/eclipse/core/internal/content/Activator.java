@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,56 +11,98 @@
 package org.eclipse.core.internal.content;
 
 import java.util.Hashtable;
+import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.*;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * The runtime contents plugin class.
+ * The bundle activator for the runtime content manager plug-in.
  */
 public class Activator implements BundleActivator {
 
-	/**
-	 * The bundle associated this plug-in
-	 */
+	private static Activator singleton;
 	private static BundleContext bundleContext;
-
-	/**
-	 * This plugin provides a JobManager service.
-	 */
 	private ServiceRegistration contentManagerService = null;
+	private ServiceTracker parserTracker = null;
+	private ServiceTracker debugTracker = null;
 
-	/**
-	 * This method is called upon plug-in activation
+	/*
+	 * Return this activator's singleton instance or null if it has not been started.
+	 */
+	public static Activator getDefault() {
+		return singleton;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
-		ContentTypeManager.startup();
-		registerServices();
-	}
-
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	public void stop(BundleContext context) throws Exception {
-		unregisterServices();
-		ContentTypeManager.shutdown();
-		ContentOSGiUtils.getDefault().closeServices();
-		bundleContext = null;
-	}
-
-	static BundleContext getContext() {
-		return bundleContext;
-	}
-
-	private void registerServices() {
+		singleton = this;
 		// ContentTypeManager should be started first
+		ContentTypeManager.startup();
 		contentManagerService = bundleContext.registerService(IContentTypeManager.class.getName(), ContentTypeManager.getInstance(), new Hashtable());
 	}
 
-	private void unregisterServices() {
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
 		if (contentManagerService != null) {
 			contentManagerService.unregister();
 			contentManagerService = null;
 		}
+		if (parserTracker != null) {
+			parserTracker.close();
+			parserTracker = null;
+		}
+		if (debugTracker != null) {
+			debugTracker.close();
+			debugTracker = null;
+		}
+		ContentTypeManager.shutdown();
+		bundleContext = null;
+	}
+
+	/*
+	 * Return this plug-in's bundle context.
+	 */
+	static BundleContext getContext() {
+		return bundleContext;
+	}
+
+	/*
+	 * Return the registered SAX parser factory or null if one
+	 * does not exist.
+	 */
+	public SAXParserFactory getFactory() {
+		if (parserTracker == null) {
+			parserTracker = new ServiceTracker(bundleContext, SAXParserFactory.class.getName(), null);
+			parserTracker.open();
+		}
+		SAXParserFactory theFactory = (SAXParserFactory) parserTracker.getService();
+		if (theFactory != null)
+			theFactory.setNamespaceAware(true);
+		return theFactory;
+	}
+
+	/*
+	 * Return the boolean value in the debug options for the given key, or
+	 * return the default value if there is none.
+	 */
+	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
+		if (debugTracker == null) {
+			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);
+			debugTracker.open();
+		}
+		DebugOptions options = (DebugOptions) debugTracker.getService();
+		if (options != null) {
+			String value = options.getOption(option);
+			if (value != null)
+				return "true".equalsIgnoreCase(value); //$NON-NLS-1$
+		}
+		return defaultValue;
 	}
 }

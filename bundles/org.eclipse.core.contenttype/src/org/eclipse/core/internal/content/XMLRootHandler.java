@@ -151,7 +151,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException, SAXException {
 		// Parse the file into we have what we need (or an error occurs).
 		try {
-			SAXParserFactory factory = ContentOSGiUtils.getDefault().getFactory();
+			SAXParserFactory factory = Activator.getDefault().getFactory();
 			if (factory == null)
 				return false;
 			final SAXParser parser = createParser(factory);
