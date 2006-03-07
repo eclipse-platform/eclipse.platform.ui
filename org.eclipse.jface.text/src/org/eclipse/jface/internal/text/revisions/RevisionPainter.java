@@ -39,10 +39,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
@@ -397,9 +400,26 @@ public final class RevisionPainter {
 	}
 
 	/**
+	 * The information control creator.
+	 */
+	private static final class InformationControlCreator extends AbstractReusableInformationControlCreator {
+		/*
+         * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+         */
+        protected IInformationControl doCreateInformationControl(Shell parent) {
+			int shellStyle= SWT.RESIZE | SWT.TOOL;
+			int style= SWT.V_SCROLL | SWT.H_SCROLL;
+			if (BrowserInformationControl.isAvailable(parent))
+				return new BrowserInformationControl(parent, shellStyle, style, null, true);
+			return new DefaultInformationControl(parent, shellStyle, style, null);
+        }
+	}
+	
+	/**
 	 * The revision hover displays information about the currently selected revision.
 	 */
 	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2 {
+
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer,
 		 *      int)
@@ -413,7 +433,7 @@ public final class RevisionPainter {
 		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 		 */
 		public IInformationControlCreator getHoverControlCreator() {
-			return null;
+			return new InformationControlCreator();
 		}
 
 		/*
