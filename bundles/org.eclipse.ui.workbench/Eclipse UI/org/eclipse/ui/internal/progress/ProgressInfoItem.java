@@ -488,7 +488,6 @@ class ProgressInfoItem extends Composite {
 
 		}
 
-		int taskCount = 0;
 		for (int i = 0; i < infos.length; i++) {
 			JobInfo jobInfo = infos[i];
 			if (jobInfo.hasTaskInfo()) {
@@ -511,8 +510,7 @@ class ProgressInfoItem extends Composite {
 					}
 				}
 				if (taskString != null) {
-					setLinkText(infos[i].getJob(), taskString, taskCount);
-					taskCount++;
+					setLinkText(infos[i].getJob(), taskString, i);
 				}
 			} else {// Check for the finished job state
 				Job job = jobInfo.getJob();
@@ -523,19 +521,18 @@ class ProgressInfoItem extends Composite {
 						message = result.getMessage();
 					}
 					setLinkText(job, message, i);
-					taskCount++;
 				}
 			}
 			setColor(i);
 		}
 
 		// Remove completed tasks
-		if (taskCount < taskEntries.size()) {
-			for (int i = taskCount; i < taskEntries.size(); i++) {
+		if (infos.length <= taskEntries.size()) {
+			for (int i = infos.length; i < taskEntries.size(); i++) {
 				((Link) taskEntries.get(i)).dispose();
 
 			}
-			taskEntries = taskEntries.subList(0, taskCount);
+			taskEntries = taskEntries.subList(0, infos.length-1);
 		}
 	}
 
