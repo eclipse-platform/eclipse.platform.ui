@@ -298,13 +298,6 @@ public class SubMenuManager extends SubContributionManager implements
         return getParentMenuManager().isSeparator();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.SubContributionManager#isVisible()
-     */
-    public boolean isVisible() {
-        return super.isVisible() && getParentMenuManager().isVisible();
-    }
-
     /**
      * Remove all contribution items.
      */
