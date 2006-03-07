@@ -622,7 +622,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void handleSetData(Event event) {
 		TableItem item= (TableItem) event.item;
-		int index= fProposalTable.indexOf(item);
+		int index= event.index;
 
 		if (0 <= index && index < fFilteredProposals.length) {
 			ICompletionProposal current= fFilteredProposals[index];
