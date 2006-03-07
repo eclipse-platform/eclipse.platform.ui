@@ -28,12 +28,16 @@ import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -52,6 +56,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -88,6 +93,10 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private static final String ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND = "org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"; //$NON-NLS-1$
 	private static final String ID_NEXT_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.nextMemoryBlock"; //$NON-NLS-1$
 	
+	public static final String VIEW_PANE_ORIENTATION_PREF = IDebugUIConstants.ID_MEMORY_VIEW+".orientation"; //$NON-NLS-1$
+	public static final int HORIZONTAL_VIEW_ORIENTATION = 0;
+	public static final int VERTICAL_VIEW_ORIENTATION =1;
+
 	private String[] defaultVisiblePaneIds ={MemoryBlocksTreeViewPane.PANE_ID, IDebugUIConstants.ID_RENDERING_VIEW_PANE_1};
 		
 	private MemoryBlocksTreeViewPane fMemBlkViewer;
@@ -105,7 +114,10 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private AbstractHandler fToggleMonitorsHandler;
 	private AbstractHandler fNextMemoryBlockHandler;
 	
-	private Control fActiveControl;
+	private ViewPaneOrientationAction[] fOrientationActions;
+	private int fViewOrientation = HORIZONTAL_VIEW_ORIENTATION;
+	
+	private String fActivePaneId;
 	
 	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
 
@@ -337,8 +349,10 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			intWeights[i] = weights[i].intValue();
 		}
 		fSashForm.setWeights(intWeights);
-
 		loadViewPanesVisibility();
+		
+		createOrientationActions();
+		loadOrientation();
 		
 		fPartListener = new MemoryViewPartListener(this);
 		getSite().getPage().addPartListener(fPartListener);
@@ -466,7 +480,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fMemBlkViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
-				fActiveControl = fMemBlkViewer.getControl();
+				fActivePaneId = fMemBlkViewer.getId();
 			}});
 	}
 
@@ -502,9 +516,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		renderingControl.addListener(SWT.Activate, new Listener() {
 			private String id=paneId; 
 			public void handleEvent(Event event) {
-				IMemoryRenderingContainer container = getContainer(id);
-				if (container.getActiveRendering() != null)
-					fActiveControl = container.getActiveRendering().getControl();
+				fActivePaneId = id;
 			}});
 
 	}
@@ -512,10 +524,11 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		if (fActiveControl != null && !fActiveControl.isDisposed())
-			fActiveControl.setFocus();
-		else
-			fMemBlkViewer.getControl().setFocus();
+		if (fActivePaneId == null)
+			fActivePaneId = fMemBlkViewer.getId();
+		
+		IMemoryViewPane pane = getViewPane(fActivePaneId);
+		pane.getControl().setFocus();
 	}
 	
 	public void dispose() {
@@ -707,6 +720,43 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fSashForm.layout();
 	}
+	
+	private void loadOrientation()
+	{
+		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
+		fViewOrientation = prefs.getInt(getOrientationPrefId());
+		
+		for (int i=0; i<fOrientationActions.length; i++)
+		{
+			if (fOrientationActions[i].getOrientation() == fViewOrientation)
+			{
+				fOrientationActions[i].run();
+			}
+		}
+		updateOrientationActions();
+	}
+	
+	private void saveOrientation()
+	{
+		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
+		prefs.setValue(getOrientationPrefId(), fViewOrientation);
+	}
+	
+	private void updateOrientationActions()
+	{
+		for (int i=0; i<fOrientationActions.length; i++)
+		{
+			if (fOrientationActions[i].getOrientation() == fViewOrientation)
+			{
+				fOrientationActions[i].setChecked(true);
+			}
+			else
+			{
+				fOrientationActions[i].setChecked(false);
+			}
+			
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#getSynchronizationService()
@@ -762,6 +812,17 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		return VISIBILITY_PREF;
 	}
 	
+	private String getOrientationPrefId()
+	{
+		IViewSite vs = getViewSite();
+		String viewId = vs.getSecondaryId();
+		
+		if (viewId != null)
+			return VIEW_PANE_ORIENTATION_PREF + "." + viewId; //$NON-NLS-1$
+
+		return VIEW_PANE_ORIENTATION_PREF;
+	}
+	
 	public void registerMemoryBlocks(IMemoryBlock[] memoryBlocks)
 	{
 		for (int i=0; i<memoryBlocks.length; i++)
@@ -779,4 +840,37 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		return fRegisteredMemoryBlocks.contains(memoryBlock);
 	}
 	
+	private void createOrientationActions()
+	{
+		IActionBars actionBars = getViewSite().getActionBars();
+		IMenuManager viewMenu = actionBars.getMenuManager();
+		
+		fOrientationActions = new ViewPaneOrientationAction[2];
+		fOrientationActions[0] = new ViewPaneOrientationAction(this, HORIZONTAL_VIEW_ORIENTATION);
+		fOrientationActions[1] = new ViewPaneOrientationAction(this, VERTICAL_VIEW_ORIENTATION);
+		
+		viewMenu.add(new Separator());
+		MenuManager layoutSubMenu = new MenuManager(VariablesViewMessages.VariablesView_40);
+		layoutSubMenu.add(fOrientationActions[0]);
+		layoutSubMenu.add(fOrientationActions[1]);
+		viewMenu.add(layoutSubMenu);
+		viewMenu.add(new Separator());
+	}
+	
+	public void setViewPanesOrientation(int orientation)
+	{
+		fViewOrientation = orientation;
+		if (fViewOrientation == VERTICAL_VIEW_ORIENTATION)
+			fSashForm.setOrientation(SWT.VERTICAL);
+		else
+			fSashForm.setOrientation(SWT.HORIZONTAL);
+		
+		saveOrientation();
+		updateOrientationActions();
+	}
+	
+	public int getViewPanesOrientation()
+	{
+		return fViewOrientation;
+	}
 }

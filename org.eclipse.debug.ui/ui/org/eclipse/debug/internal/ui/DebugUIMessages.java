@@ -255,4 +255,12 @@ public class DebugUIMessages extends NLS {
 	public static String CreateRendering_2;
 
 	public static String SetPaddedStringPreferencePage_0;
+
+	public static String ViewPaneOrientationAction_0;
+
+	public static String ViewPaneOrientationAction_1;
+
+	public static String ViewPaneOrientationAction_2;
+
+	public static String ViewPaneOrientationAction_3;
 }

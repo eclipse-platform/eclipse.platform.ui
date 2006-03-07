@@ -85,6 +85,7 @@ public class NewMemoryViewAction implements IViewActionDelegate {
 		{
 			MemoryView newMView = (MemoryView)newView;
 			IMemoryViewPane[] viewPanes = fView.getViewPanes();
+			int orientation = fView.getViewPanesOrientation();
 			for (int i=0; i<viewPanes.length; i++)
 			{
 				// copy view pane visibility
@@ -93,6 +94,9 @@ public class NewMemoryViewAction implements IViewActionDelegate {
 			
 			// do not want to copy renderings as it could be very expensive
 			// create a blank view and let user creates renderings as needed
+			
+			// set orientation of new view
+			newMView.setViewPanesOrientation(orientation);
 		}
 	}
 
