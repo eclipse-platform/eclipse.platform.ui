@@ -121,6 +121,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static int REMOTE_MODE = 1;
 	public final static int LOCAL_MODE = 2;
 	
+	//current filter mode
+	private int currentFilerMode = 0;
+	
 	//grouping on
 	private boolean groupingOn; 
 	
@@ -922,9 +925,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		private final static int NUMBER_OF_CATEGORIES = 4;
 		
 		private CVSFileHistory fileHistory;
-		private DateCVSHistoryCategory[] categories;
+		private AbstractCVSHistoryCategory[] categories;
 		private boolean grouping;
 		private Object[] elementsToExpand;
+		private boolean revisionsFound;
 		
 		public RefreshCVSFileHistory() {
 			super(CVSUIMessages.HistoryView_fetchHistoryJob);
@@ -959,7 +963,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (fileHistory != null && !shutdown) {
 					fileHistory.refresh(monitor);
 					if (grouping)
-						sortRevisions();
+						revisionsFound = sortRevisions();
 					
 					Utils.asyncExec(new Runnable() {
 							public void run() {
@@ -967,13 +971,23 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 								historyTableProvider.setFile(fileHistory, file);
 								if (grouping){
 									mapExpandedElements(treeViewer.getExpandedElements());
+									treeViewer.getTree().setLinesVisible(revisionsFound);
 									treeViewer.getTree().setRedraw(false);
 									treeViewer.setInput(categories);
 									treeViewer.setExpandedElements(elementsToExpand);
 									treeViewer.getTree().setRedraw(true);
 								}
-								else
-									treeViewer.setInput(fileHistory);
+								else {
+									if (fileHistory.getFileRevisions().length > 0){
+										treeViewer.getTree().setLinesVisible(true);
+										treeViewer.setInput(fileHistory);
+									}
+									else {
+										categories = new AbstractCVSHistoryCategory[]{getErrorMessage()};
+										treeViewer.getTree().setLinesVisible(false);
+										treeViewer.setInput(categories);
+									}
+								}
 							}
 						}, treeViewer);
 				}
@@ -1003,7 +1017,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			elementsToExpand = (Object[]) expandable.toArray(new Object[expandable.size()]);
 		}
 
-		private void sortRevisions() {
+		private boolean sortRevisions() {
 			IFileRevision[] fileRevision = fileHistory.getFileRevisions();
 			
 			//Create the 4 categories
@@ -1029,7 +1043,37 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					finalCategories.add(tempCategories[i]);
 			}
 			
-			categories = (DateCVSHistoryCategory[])finalCategories.toArray(new DateCVSHistoryCategory[finalCategories.size()]);
+			//Assume that some revisions have been found
+			boolean revisionsFound = true;
+			
+			if (finalCategories.size() == 0){
+				//no revisions found for the current mode, so add a message category
+				finalCategories.add(getErrorMessage());
+				revisionsFound = false;
+			}
+			
+			categories = (AbstractCVSHistoryCategory[])finalCategories.toArray(new AbstractCVSHistoryCategory[finalCategories.size()]);
+			return revisionsFound;
+		}
+		
+		private MessageCVSHistoryCategory getErrorMessage(){
+			String message = ""; //$NON-NLS-1$
+			switch(currentFilerMode){
+				case LOCAL_MODE:
+				message = CVSUIMessages.CVSHistoryPage_LocalModeTooltip;
+				break;
+				
+				case REMOTE_MODE:
+				message = CVSUIMessages.CVSHistoryPage_RemoteModeTooltip;
+				break;
+				
+				case REMOTE_LOCAL_MODE:
+				message = CVSUIMessages.CVSHistoryPage_NoRevisions;
+				break;
+			}
+		 
+			MessageCVSHistoryCategory messageCategory = new MessageCVSHistoryCategory(NLS.bind(CVSUIMessages.CVSHistoryPage_NoRevisionsForMode, new String[] { message }));
+			return messageCategory;
 		}
 	}
 	
@@ -1229,6 +1273,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 	
 	private void updateFilterMode(int mode) {
+		currentFilerMode=mode;
 		switch(mode){
 			case LOCAL_MODE:
 				localFilteredOut = false;

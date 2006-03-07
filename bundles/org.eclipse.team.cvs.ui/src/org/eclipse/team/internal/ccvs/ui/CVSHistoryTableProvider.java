@@ -62,7 +62,7 @@ public class CVSHistoryTableProvider {
 		}
 		
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (element instanceof AbstractCVSHistoryCategory &&
+			if (element instanceof DateCVSHistoryCategory &&
 				columnIndex == COL_REVISIONID){
 				desc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
 				return desc.createImage();

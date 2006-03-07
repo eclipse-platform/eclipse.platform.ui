@@ -1057,6 +1057,7 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_LocalModeTooltip;
 	public static String CVSHistoryPage_RemoteModeAction;
 	public static String CVSHistoryPage_RemoteModeTooltip;
+	public static String CVSHistoryPage_NoRevisions;
 	public static String CVSHistoryPage_CombinedModeAction;
 	public static String CVSHistoryPage_CombinedModeTooltip;
 	public static String CVSHistoryPage_CompareRevisionAction;
@@ -1071,5 +1072,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_Yesterday;
 	public static String CVSHistoryPage_LastWeek;
 	public static String CVSHistoryPage_Previous;
+	public static String CVSHistoryPage_NoRevisionsForMode;
 
 }
