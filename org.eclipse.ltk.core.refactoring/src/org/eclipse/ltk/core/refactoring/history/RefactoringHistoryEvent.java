@@ -34,8 +34,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 public final class RefactoringHistoryEvent {
 
 	/**
+	 * Event type indicating that a refactoring descriptor has been added to its
+	 * associated history (value 4)
+	 */
+	public static final int ADDED= 4;
+
+	/**
 	 * Event type indicating that a refactoring descriptor has been deleted from
-	 * its associated history (value 2)
+	 * its associated history (value 3)
 	 */
 	public static final int DELETED= 3;
 
