@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResult2;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
@@ -26,6 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -53,6 +55,8 @@ import org.osgi.framework.Bundle;
 
 public class EngineResultSection {
 
+	private static final String KEY_PREFIX_GRAYED = "grayed:"; //$NON-NLS-1$
+	
 	private SearchResultsPart part;
 
 	private EngineDescriptor desc;
@@ -149,6 +153,7 @@ public class EngineResultSection {
 		searchResults.setImage(IHelpUIConstants.IMAGE_ADD_BOOKMARK, HelpUIResources
 				.getImage(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		searchResults.setImage(desc.getId(), desc.getIconImage());
+		searchResults.setImage(KEY_PREFIX_GRAYED + desc.getId(), getGrayedImage(desc.getIconImage()));
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 
 			public void linkActivated(HyperlinkEvent e) {
@@ -291,6 +296,39 @@ public class EngineResultSection {
 			sorter.sort(null, results);
 		return results;
 	}
+	
+	/**
+	 * Returns a copy of the given image but grayed and half transparent.
+	 * This gives the icon a grayed/disabled look.
+	 * 
+	 * @param image the image to gray
+	 * @return the grayed image
+	 */
+	private Image getGrayedImage(Image image) {
+		// first gray the image
+		Image temp = new Image(image.getDevice(), image, SWT.IMAGE_GRAY);
+		// then add alpha to blend it 50/50 with the background
+		ImageData data = temp.getImageData();
+		ImageData maskData = data.getTransparencyMask();
+		if (maskData != null) {
+			for (int y=0;y<maskData.height;++y) {
+				for (int x=0;x<maskData.width;++x) {
+					if (maskData.getPixel(x, y) == 0) {
+						// masked; set to transparent
+						data.setAlpha(x, y, 0);
+					}
+					else {
+						// not masked; set to translucent
+						data.setAlpha(x, y, 128);
+					}
+				}
+			}
+			data.maskData = null;
+		}
+		Image grayed = new Image(image.getDevice(), data);
+		temp.dispose();
+		return grayed;
+	}
 
 	void updateResults(boolean reflow) {
 		ISearchEngineResult[] results = getResults();
@@ -328,14 +366,26 @@ public class EngineResultSection {
 			int bindent = part.getShowCategories() && cat != null ? 5 : 0;
 			buff.append("<li indent=\"" + indent + "\" bindent=\"" + bindent + "\" style=\"image\" value=\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			String imageId = desc.getId();
+			boolean isPotentialHit = (hit instanceof SearchHit && ((SearchHit)hit).getFilters() != null);
 			if (hit instanceof ISearchEngineResult2) {
 				URL iconURL = ((ISearchEngineResult2) hit).getIconURL();
 				if (iconURL != null) {
-					String id = registerHitIcon(iconURL);
+					String id = null;
+					if (isPotentialHit) {
+						id = registerGrayedHitIcon(iconURL);
+					}
+					else {
+						id = registerHitIcon(iconURL);
+					}
 					if (id != null)
 						imageId = id;
 				}
 			}
+			
+			if (isPotentialHit) {
+				imageId = KEY_PREFIX_GRAYED + imageId;
+			}
+			
 			buff.append(imageId);
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
@@ -361,7 +411,16 @@ public class EngineResultSection {
 				buff.append("\""); //$NON-NLS-1$
 			}
 			buff.append(">"); //$NON-NLS-1$
-			String elabel = part.parent.escapeSpecialChars(hit.getLabel());
+			String elabel = null;
+			if (isPotentialHit) {
+				// add "(potential hit)"
+				elabel = Messages.bind(Messages.SearchPart_potential_hit, hit.getLabel());
+			}
+			else {
+				elabel = hit.getLabel();
+			}
+			
+			elabel = part.parent.escapeSpecialChars(elabel);
 			buff.append(elabel);
 			buff.append("</a>"); //$NON-NLS-1$
 			if (!directOpen && !hit.getForceExternalWindow()) {
@@ -406,11 +465,36 @@ public class EngineResultSection {
 			part.reflow();
 	}
 
+	/**
+	 * Registers the given icon URL for use with this section. Icons
+	 * must be registered before use and referenced by the returned
+	 * ID.
+	 * 
+	 * @param iconURL the URL to the icon
+	 * @return the ID to use for referencing the icon
+	 */
 	private String registerHitIcon(URL iconURL) {
 		Image image = HelpUIResources.getImage(iconURL);
 		if (image != null) {
 			searchResults.setImage(iconURL.toString(), image);
 			return iconURL.toString();
+		}
+		return null;
+	}
+
+	/**
+	 * Same as registerHitIcon() but to register a grayed icon. You
+	 * can provide the same URL for both the regular and grayed icons,
+	 * but two different IDs will be returned.
+	 * 
+	 * @param iconURL the URL to the icon
+	 * @return the ID to use for referencing the icon
+	 */
+	private String registerGrayedHitIcon(URL iconURL) {
+		Image image = HelpUIResources.getImage(iconURL);
+		if (image != null) {
+			searchResults.setImage(iconURL.toString(), image);
+			return KEY_PREFIX_GRAYED + iconURL.toString();
 		}
 		return null;
 	}

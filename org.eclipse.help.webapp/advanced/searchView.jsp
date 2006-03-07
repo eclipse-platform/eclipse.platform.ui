@@ -92,14 +92,46 @@ setTimeout('refresh()', 2000);
 %>
 
 <tr class='list' id='r<%=topic%>'>
-	<td class='score' align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
+	<td class='score' align='<%=isRTL?"left":"right"%>'>
+
+<%
+		boolean isPotentialHit = data.isPotentialHit(topic);
+		if (isPotentialHit) {
+%>
+
+	<span class='grayed'><%=data.getTopicScore(topic)%></span>
+
+<%
+		}
+		else {
+%>
+
+	<%=data.getTopicScore(topic)%>
+
+<%
+		}
+%>
+
+	</td>
 	<td align='<%=isRTL?"right":"left"%>'>
 		<a class='link' id='a<%=topic%>' 
 		   href="<%=data.getTopicHref(topic)%>" 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
 		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)' 
-		   title="<%=data.getTopicTocLabel(topic)%>"><%=data.getTopicLabel(topic)%></a>
+		   title="<%=data.getTopicTocLabel(topic)%>">
+
+<%
+		String label = null;
+		if (isPotentialHit) {
+            label = ServletResources.getString("PotentialHit", data.getTopicLabel(topic), request);
+        }
+        else {
+            label = data.getTopicLabel(topic);
+        }
+%>
+
+        <%=label%></a>
 	</td>
 </tr>
 

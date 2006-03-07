@@ -18,7 +18,9 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -43,11 +45,6 @@ public class BrowsersPreferencePage extends PreferencePage implements
 	private Button alwaysExternal;
 
 	private static final String WBROWSER_PAGE_ID = "org.eclipse.ui.browser.preferencePage";//$NON-NLS-1$
-	/*
-	 * private Button[] externalBrowsers; private Button customBrowserRadio;
-	 * private Label customBrowserPathLabel; private Text customBrowserPath;
-	 * private Button customBrowserBrowse;
-	 */
 
 	private Button whelpAsViewButton;
 
@@ -60,6 +57,10 @@ public class BrowsersPreferencePage extends PreferencePage implements
 	private Button openInPlaceButton;
 
 	private Button openInEditorButton;
+
+	private Button showPotentialHitsButton;
+
+	private Button showActualHitsButton;
 
 	/**
 	 * Creates preference page controls on demand.
@@ -81,7 +82,6 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
 		description.setText(Messages.select_browser);
-		// createSpacer(mainComposite);
 		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
 			alwaysExternal = new Button(mainComposite, SWT.CHECK);
 			alwaysExternal
@@ -90,62 +90,17 @@ public class BrowsersPreferencePage extends PreferencePage implements
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getBoolean(
 							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
-			// createSpacer(mainComposite);
 		}
-		/*
-		 * Label tableDescription = new Label(mainComposite, SWT.NULL);
-		 * tableDescription.setText(HelpUIResources.getString("current_browser"));
-		 * //$NON-NLS-1$ //data = new
-		 * GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		 * //description.setLayoutData(data); Color bgColor =
-		 * parent.getDisplay().getSystemColor( SWT.COLOR_LIST_BACKGROUND); Color
-		 * fgColor = parent.getDisplay().getSystemColor(
-		 * SWT.COLOR_LIST_FOREGROUND); final ScrolledComposite
-		 * externalBrowsersScrollable = new ScrolledComposite( mainComposite,
-		 * SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL); GridData gd = new
-		 * GridData(GridData.FILL_BOTH); gd.heightHint =
-		 * convertHeightInCharsToPixels(2);
-		 * externalBrowsersScrollable.setLayoutData(gd);
-		 * externalBrowsersScrollable.setBackground(bgColor);
-		 * externalBrowsersScrollable.setForeground(fgColor); Composite
-		 * externalBrowsersComposite = new Composite(
-		 * externalBrowsersScrollable, SWT.NONE);
-		 * externalBrowsersScrollable.setContent(externalBrowsersComposite);
-		 * GridLayout layout2 = new GridLayout();
-		 * externalBrowsersComposite.setLayout(layout2);
-		 * externalBrowsersComposite.setBackground(bgColor);
-		 * externalBrowsersComposite.setForeground(fgColor); BrowserDescriptor[]
-		 * descriptors = BrowserManager.getInstance() .getBrowserDescriptors();
-		 * externalBrowsers = new Button[descriptors.length]; for (int i = 0; i <
-		 * descriptors.length; i++) { Button radio = new
-		 * Button(externalBrowsersComposite, SWT.RADIO);
-		 * org.eclipse.jface.dialogs.Dialog.applyDialogFont(radio);
-		 * radio.setBackground(bgColor); radio.setForeground(fgColor);
-		 * radio.setText(descriptors[i].getLabel()); if
-		 * (BrowserManager.getInstance().getCurrentBrowserID().equals(
-		 * descriptors[i].getID())) radio.setSelection(true); else
-		 * radio.setSelection(false); radio.setData(descriptors[i]);
-		 * externalBrowsers[i] = radio; if
-		 * (BrowserManager.BROWSER_ID_CUSTOM.equals(descriptors[i].getID())) {
-		 * customBrowserRadio = radio; radio.addSelectionListener(new
-		 * SelectionListener() { public void widgetSelected(SelectionEvent
-		 * selEvent) { setCustomBrowserPathEnabled(); } public void
-		 * widgetDefaultSelected(SelectionEvent selEvent) {
-		 * widgetSelected(selEvent); } }); } }
-		 * externalBrowsersComposite.setSize(externalBrowsersComposite
-		 * .computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		 * createCustomBrowserPathPart(mainComposite);
-		 */
 		createLinkArea(mainComposite);
 		createSpacer(mainComposite);
 		createDynamicHelpArea(mainComposite);
-		org.eclipse.jface.dialogs.Dialog.applyDialogFont(mainComposite);
+		createSpacer(mainComposite);
+		createSearchArea(mainComposite);
+		Dialog.applyDialogFont(mainComposite);
 		return mainComposite;
 	}
 
 	private void createLinkArea(Composite parent) {
-		// PreferenceManager manager =
-		// PlatformUI.getWorkbench().getPreferenceManager();
 		IPreferenceNode node = getPreferenceNode(WBROWSER_PAGE_ID);
 		if (node != null) {
 			PreferenceLinkArea linkArea = new PreferenceLinkArea(parent,
@@ -212,6 +167,25 @@ public class BrowsersPreferencePage extends PreferencePage implements
 			openInEditorButton.setSelection(openInBrowser);
 		}
 	}
+	
+	private void createSearchArea(Composite parent) {
+		Group searchGroup = new Group(parent, SWT.NONE);
+		searchGroup.setText(Messages.BrowsersPreferencePage_search);
+		searchGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		searchGroup.setLayout(new GridLayout());
+		
+		showPotentialHitsButton = new Button(searchGroup, SWT.RADIO);
+		showPotentialHitsButton.setText(Messages.BrowsersPreferencePage_searchPotentialHits);
+
+		showActualHitsButton = new Button(searchGroup, SWT.RADIO);
+		showActualHitsButton.setText(Messages.BrowsersPreferencePage_searchActualHits);
+
+		boolean showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
+			.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
+		
+		showPotentialHitsButton.setSelection(showPotentialHits);
+		showActualHitsButton.setSelection(!showPotentialHits);
+	}
 
 	private IPreferenceNode getPreferenceNode(String pageId) {
 		Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager()
@@ -224,46 +198,6 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		return null;
 	}
 
-	/*
-	 * private void createCustomBrowserPathPart(Composite mainComposite) { Font
-	 * font = mainComposite.getFont(); // vertical space new
-	 * Label(mainComposite, SWT.NULL); Composite bPathComposite = new
-	 * Composite(mainComposite, SWT.NULL);
-	 * PlatformUI.getWorkbench().getHelpSystem().setHelp(bPathComposite,
-	 * IHelpUIConstants.PREF_PAGE_CUSTOM_BROWSER_PATH); GridLayout layout = new
-	 * GridLayout(); layout.marginWidth = 0; layout.marginHeight = 0;
-	 * layout.numColumns = 3; bPathComposite.setLayout(layout);
-	 * bPathComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	 * customBrowserPathLabel = new Label(bPathComposite, SWT.LEFT);
-	 * customBrowserPathLabel.setFont(font);
-	 * customBrowserPathLabel.setText(HelpUIResources
-	 * .getString("CustomBrowserPreferencePage.Program")); //$NON-NLS-1$
-	 * customBrowserPath = new Text(bPathComposite, SWT.BORDER);
-	 * customBrowserPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	 * customBrowserPath.setFont(font);
-	 * customBrowserPath.setText(HelpBasePlugin.getDefault()
-	 * .getPluginPreferences().getString(
-	 * CustomBrowser.CUSTOM_BROWSER_PATH_KEY)); GridData data = new
-	 * GridData(GridData.FILL_HORIZONTAL); data.horizontalAlignment =
-	 * GridData.FILL; data.widthHint = convertWidthInCharsToPixels(10);
-	 * customBrowserPath.setLayoutData(data); customBrowserBrowse = new
-	 * Button(bPathComposite, SWT.NONE); customBrowserBrowse.setFont(font);
-	 * customBrowserBrowse.setText(HelpUIResources
-	 * .getString("CustomBrowserPreferencePage.Browse")); //$NON-NLS-1$ data =
-	 * new GridData(); data.horizontalAlignment = GridData.FILL; int widthHint =
-	 * convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	 * data.widthHint = Math.max(widthHint, customBrowserBrowse.computeSize(
-	 * SWT.DEFAULT, SWT.DEFAULT, true).x);
-	 * customBrowserBrowse.setLayoutData(data);
-	 * customBrowserBrowse.addSelectionListener(new SelectionListener() { public
-	 * void widgetDefaultSelected(SelectionEvent event) { } public void
-	 * widgetSelected(SelectionEvent event) { FileDialog d = new
-	 * FileDialog(getShell()); d.setText(HelpUIResources
-	 * .getString("CustomBrowserPreferencePage.Details")); //$NON-NLS-1$ String
-	 * file = d.open(); if (file != null) { customBrowserPath.setText("\"" +
-	 * file + "\" %1"); //$NON-NLS-1$ //$NON-NLS-2$ } } });
-	 * setCustomBrowserPathEnabled(); }
-	 */
 	/**
 	 * @see IWorkbenchPreferencePage
 	 */
@@ -280,17 +214,6 @@ public class BrowsersPreferencePage extends PreferencePage implements
 	 * </p>
 	 */
 	protected void performDefaults() {
-		/*
-		 * String defaultBrowserID = BrowserManager.getInstance()
-		 * .getDefaultBrowserID(); for (int i = 0; i < externalBrowsers.length;
-		 * i++) { BrowserDescriptor descriptor = (BrowserDescriptor)
-		 * externalBrowsers[i] .getData(); externalBrowsers[i]
-		 * .setSelection(descriptor.getID() == defaultBrowserID); }
-		 * customBrowserPath.setText(HelpBasePlugin.getDefault()
-		 * .getPluginPreferences().getDefaultString(
-		 * CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
-		 * setCustomBrowserPathEnabled();
-		 */
 		if (alwaysExternal != null) {
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getDefaultBoolean(
@@ -315,6 +238,11 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		openInEditorButton.setSelection(openInEditor);
 		}
 
+		boolean showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
+		.getDefaultBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
+		showPotentialHitsButton.setSelection(showPotentialHits);
+		showActualHitsButton.setSelection(!showPotentialHits);
+
 		super.performDefaults();
 	}
 
@@ -323,17 +251,6 @@ public class BrowsersPreferencePage extends PreferencePage implements
 	 */
 	public boolean performOk() {
 		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		/*
-		 * for (int i = 0; i < externalBrowsers.length; i++) { if
-		 * (externalBrowsers[i].getSelection()) { // set new current browser
-		 * String browserID = ((BrowserDescriptor) externalBrowsers[i]
-		 * .getData()).getID();
-		 * BrowserManager.getInstance().setCurrentBrowserID(browserID); // save
-		 * id in help preferences
-		 * pref.setValue(BrowserManager.DEFAULT_BROWSER_ID_KEY, browserID);
-		 * break; } } pref.setValue(CustomBrowser.CUSTOM_BROWSER_PATH_KEY,
-		 * customBrowserPath .getText());
-		 */
 		if (alwaysExternal != null) {
 			pref.setValue(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER,
 					alwaysExternal.getSelection());
@@ -347,6 +264,8 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		if (openInEditorButton!=null)
 			pref.setValue(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR,
 				openInEditorButton.getSelection());
+		pref.setValue(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS,
+				showPotentialHitsButton.getSelection());
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
@@ -364,11 +283,4 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		data.verticalAlignment = GridData.BEGINNING;
 		spacer.setLayoutData(data);
 	}
-	/*
-	 * private void setCustomBrowserPathEnabled() { boolean enabled =
-	 * customBrowserRadio.getSelection();
-	 * customBrowserPathLabel.setEnabled(enabled);
-	 * customBrowserPath.setEnabled(enabled);
-	 * customBrowserBrowse.setEnabled(enabled); }
-	 */
 }

@@ -157,6 +157,18 @@ public class SearchData extends ActivitiesData {
 		return HelpBasePlugin.getActivitySupport().isEnabledTopic(href,
 				getLocale());
 	}
+	
+	/**
+	 * Returns whether or not the ith hit is a potential hit. This means
+	 * it may not be an actual hit (i.e. it found something in a filtered
+	 * section of the document).
+	 * 
+	 * @param i the index of the hit to check
+	 * @return whether or not the hit is a potential hit
+	 */
+	public boolean isPotentialHit(int i) {
+		return (hits[i].getFilters() != null);
+	}
 
 	/**
 	 * Return indexed completion percentage

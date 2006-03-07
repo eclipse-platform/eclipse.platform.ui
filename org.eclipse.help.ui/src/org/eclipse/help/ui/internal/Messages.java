@@ -89,6 +89,7 @@ public final class Messages extends NLS {
 	public static String SearchPart_errors;
 	public static String SearchPart_collapse;
 	public static String SearchPart_expand;
+	public static String SearchPart_potential_hit;
 	public static String WorkingSetPageDescription;
 	public static String WorkingSetContent;
 	public static String selectAll;
@@ -142,6 +143,9 @@ public final class Messages extends NLS {
 	public static String BrowsersPreferencePage_view;
 	public static String BrowsersPreferencePage_dgroup;
 	public static String BrowsersPreferencePage_tray;
+	public static String BrowsersPreferencePage_search;
+	public static String BrowsersPreferencePage_searchPotentialHits;
+	public static String BrowsersPreferencePage_searchActualHits;
 	public static String InfoCenterPage_url;
 	public static String InfoCenterPage_invalidURL;
 	public static String InfoCenterPage_tocError;

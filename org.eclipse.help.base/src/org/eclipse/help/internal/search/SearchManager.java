@@ -38,6 +38,7 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.ITocsChangedListener;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.search.IndexingOperation.IndexingException;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
 import org.eclipse.help.internal.search.federated.FederatedSearchJob;
@@ -597,8 +598,8 @@ public class SearchManager implements ITocsChangedListener {
 			}
 		}
 		
-		final List definiteHits = new ArrayList();
-		final List potentialFalseHits = new ArrayList();
+		final List hits = new ArrayList();
+		final List potentialHits = new ArrayList();
 		final List needReindexingHits = new ArrayList();
 		final String[] highlightTerms = new String[1];
 
@@ -606,14 +607,14 @@ public class SearchManager implements ITocsChangedListener {
 		 * Pass 1: Search the master index. This will yield definite hits,
 		 * potentially false hits, and the terms to highlight.
 		 */
-		searchPass1(searchQuery, definiteHits, potentialFalseHits, highlightTerms);
-		
-		if (!potentialFalseHits.isEmpty()) {
+		searchPass1(searchQuery, hits, potentialHits, highlightTerms);
+
+		if (!potentialHits.isEmpty()) {
 			/*
 			 * Pass 2: Ensure that the cache index is up to date. This will yield
 			 * all potential false hits' docs that need to be reindexed for the cache.
 			 */
-			searchPass2(searchQuery, potentialFalseHits, needReindexingHits);
+			searchPass2(searchQuery, potentialHits, needReindexingHits);
 			if (!needReindexingHits.isEmpty()) {
 				reindex(needReindexingHits, searchQuery.getLocale());
 			}
@@ -622,14 +623,14 @@ public class SearchManager implements ITocsChangedListener {
 			 * Pass 3: Now that cache is up to date, search the cache and add
 			 * to the definite hits.
 			 */
-			searchPass3(searchQuery, definiteHits);
+			searchPass3(searchQuery, hits);
 			
 			// sort by score
-			Collections.sort(definiteHits);
+			Collections.sort(hits);
 		}
 		
 		// send out the final results
-		collector.addHits(definiteHits, highlightTerms[0]);
+		collector.addHits(hits, highlightTerms[0]);
 	}
 	
 	/**
@@ -652,17 +653,19 @@ public class SearchManager implements ITocsChangedListener {
 	 * potential false hits.
 	 * 
 	 * @param searchQuery what to search for
-	 * @param definiteHits those hits that we know for sure are not false hits
+	 * @param hits those hits that we know for sure are not false hits
 	 * @param potentialFalseHits hits that may be false hits (we are not sure)
 	 * @param highlightTerms the terms to highlight
 	 */
-	private void searchPass1(ISearchQuery searchQuery, Collection definiteHits, Collection potentialFalseHits, String[] highlightTerms) {
-		final Collection fDefiniteHits = definiteHits;
+	private void searchPass1(ISearchQuery searchQuery, Collection hits, Collection potentialFalseHits, String[] highlightTerms) {
+		final Collection fHits = hits;
 		final Collection fPotentialFalseHits = potentialFalseHits;
 		final String[] fHighlightTerms = highlightTerms;
 		ISearchHitCollector collector = new ISearchHitCollector() {
 			public void addHits(List hits, String wordsSearched) {
 				boolean isInfocenter = HelpSystem.isShared();
+				boolean showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
+					.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
 				fHighlightTerms[0] = wordsSearched;
 				Iterator iter = hits.iterator();
 				while (iter.hasNext()) {
@@ -670,11 +673,11 @@ public class SearchManager implements ITocsChangedListener {
 					String filters = hit.getFilters();
 					
 					// if it has filters it is potentially a false hit
-					if (!isInfocenter && filters != null) {
+					if (!showPotentialHits && !isInfocenter && filters != null) {
 						fPotentialFalseHits.add(hit);
 					}
 					else {
-						fDefiniteHits.add(hit);
+						fHits.add(hit);
 					}
 				}
 			}
