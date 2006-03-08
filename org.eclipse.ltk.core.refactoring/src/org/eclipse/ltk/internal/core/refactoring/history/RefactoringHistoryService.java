@@ -632,6 +632,44 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
+	 * Adds the specified refactoring descriptor to the corresponding
+	 * refactoring history.
+	 * <p>
+	 * If a descriptor with the same timestamp already exists, nothing happens.
+	 * </p>
+	 * 
+	 * @param proxy
+	 *            the refactoring descriptor proxy
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 */
+	public void addRefactoringDescriptor(final RefactoringDescriptorProxy proxy, IProgressMonitor monitor) {
+		Assert.isNotNull(proxy);
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		try {
+			final int size= fHistoryListeners.size();
+			monitor.beginTask("", size); //$NON-NLS-1$
+			for (int index= 0; index < size; index++) {
+				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+				SafeRunner.run(new ISafeRunnable() {
+
+					public void handleException(final Throwable throwable) {
+						RefactoringCorePlugin.log(throwable);
+					}
+
+					public void run() throws Exception {
+						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.ADDED, proxy));
+					}
+				});
+				monitor.worked(1);
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void connect() {

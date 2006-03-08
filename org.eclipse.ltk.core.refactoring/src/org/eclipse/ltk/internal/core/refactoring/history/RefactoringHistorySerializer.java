@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
@@ -42,44 +43,48 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 	 */
 	public void historyNotification(final RefactoringHistoryEvent event) {
 		Assert.isNotNull(event);
-		final int type= event.getEventType();
-		if (type == RefactoringHistoryEvent.DELETED || type == RefactoringHistoryEvent.PUSHED || type == RefactoringHistoryEvent.POPPED) {
-			final RefactoringDescriptorProxy proxy= event.getDescriptor();
-			final long stamp= proxy.getTimeStamp();
-			if (stamp >= 0) {
-				final String name= proxy.getProject();
-				final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER);
-				if (name != null && !"".equals(name)) { //$NON-NLS-1$
-					final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-					if (project.isAccessible()) {
-						if (RefactoringHistoryService.getInstance().hasSharedRefactoringHistory(project)) {
-							final URI uri= project.getLocationURI();
-							if (uri != null) {
-								try {
-									processHistoryNotification(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), event, name);
-								} catch (CoreException exception) {
-									RefactoringCorePlugin.log(exception);
-								} finally {
+		switch (event.getEventType()) {
+			case RefactoringHistoryEvent.ADDED:
+			case RefactoringHistoryEvent.DELETED:
+			case RefactoringHistoryEvent.PUSHED:
+			case RefactoringHistoryEvent.POPPED: {
+				final RefactoringDescriptorProxy proxy= event.getDescriptor();
+				final long stamp= proxy.getTimeStamp();
+				if (stamp >= 0) {
+					final String name= proxy.getProject();
+					final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER);
+					if (name != null && !"".equals(name)) { //$NON-NLS-1$
+						final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+						if (project.isAccessible()) {
+							if (RefactoringHistoryService.getInstance().hasSharedRefactoringHistory(project)) {
+								final URI uri= project.getLocationURI();
+								if (uri != null) {
 									try {
-										project.refreshLocal(IResource.DEPTH_INFINITE, null);
+										processHistoryNotification(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), event, name);
 									} catch (CoreException exception) {
 										RefactoringCorePlugin.log(exception);
+									} finally {
+										try {
+											project.refreshLocal(IResource.DEPTH_INFINITE, null);
+										} catch (CoreException exception) {
+											RefactoringCorePlugin.log(exception);
+										}
 									}
 								}
-							}
-						} else {
-							try {
-								processHistoryNotification(store.getChild(name), event, name);
-							} catch (CoreException exception) {
-								RefactoringCorePlugin.log(exception);
+							} else {
+								try {
+									processHistoryNotification(store.getChild(name), event, name);
+								} catch (CoreException exception) {
+									RefactoringCorePlugin.log(exception);
+								}
 							}
 						}
-					}
-				} else {
-					try {
-						processHistoryNotification(store.getChild(RefactoringHistoryService.NAME_WORKSPACE_PROJECT), event, name);
-					} catch (CoreException exception) {
-						RefactoringCorePlugin.log(exception);
+					} else {
+						try {
+							processHistoryNotification(store.getChild(RefactoringHistoryService.NAME_WORKSPACE_PROJECT), event, name);
+						} catch (CoreException exception) {
+							RefactoringCorePlugin.log(exception);
+						}
 					}
 				}
 			}
@@ -102,9 +107,12 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 		final RefactoringDescriptorProxy proxy= event.getDescriptor();
 		final int type= event.getEventType();
 		final RefactoringHistoryManager manager= new RefactoringHistoryManager(store, name);
-		if (type == RefactoringHistoryEvent.PUSHED)
-			manager.addRefactoringDescriptor(proxy.requestDescriptor(new NullProgressMonitor()), new NullProgressMonitor());
-		else if (type == RefactoringHistoryEvent.POPPED || type == RefactoringHistoryEvent.DELETED)
-			manager.removeRefactoringDescriptor(proxy.getTimeStamp(), new NullProgressMonitor());
+		final NullProgressMonitor monitor= new NullProgressMonitor();
+		if (type == RefactoringHistoryEvent.PUSHED || type == RefactoringHistoryEvent.ADDED) {
+			final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
+			if (descriptor != null)
+				manager.addRefactoringDescriptor(descriptor, type == RefactoringHistoryEvent.ADDED, monitor);
+		} else if (type == RefactoringHistoryEvent.POPPED || type == RefactoringHistoryEvent.DELETED)
+			manager.removeRefactoringDescriptor(proxy.getTimeStamp(), monitor);
 	}
 }

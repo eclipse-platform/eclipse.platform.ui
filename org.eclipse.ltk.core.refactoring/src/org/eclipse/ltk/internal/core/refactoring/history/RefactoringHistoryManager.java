@@ -96,7 +96,78 @@ public final class RefactoringHistoryManager {
 	private static final TimeZone LOCAL_TIME_ZONE= TimeZone.getTimeZone("GMT+00:00"); //$NON-NLS-1$
 
 	/**
-	 * Adds the specified index entry to the refactoring history,
+	 * Adds the specified index entry to the refactoring history.
+	 * 
+	 * @param file
+	 *            the history index file
+	 * @param descriptor
+	 *            the refactoring descriptor to add
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @throws CoreException
+	 *             if an error occurs while adding the index entry
+	 * @throws IOException
+	 *             if an input/output error occurs
+	 */
+	private static void addIndexEntry(final IFileStore file, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) throws CoreException, IOException {
+		BufferedReader reader= null;
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 5);
+			if (file.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
+				final StringBuffer temp= new StringBuffer(64);
+				temp.append(descriptor.getTimeStamp());
+				temp.append(DELIMITER_COMPONENT);
+				temp.append(escapeString(descriptor.getDescription()));
+				final String value= temp.toString();
+				reader= new BufferedReader(new InputStreamReader(new DataInputStream(new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)))), IRefactoringSerializationConstants.OUTPUT_ENCODING));
+				final StringBuffer buffer= new StringBuffer();
+				boolean inserted= false;
+				while (reader.ready()) {
+					final String line= reader.readLine();
+					if (line != null) {
+						buffer.append(line);
+						buffer.append(DELIMITER_ENTRY);
+						if (!inserted && value.compareTo(line) > 0) {
+							buffer.append(value);
+							buffer.append(DELIMITER_ENTRY);
+						}
+					}
+				}
+				monitor.worked(1);
+				try {
+					reader.close();
+					reader= null;
+				} catch (IOException exception) {
+					// Do nothing
+				}
+				OutputStream stream= null;
+				try {
+					file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+					stream= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+					stream.write(buffer.toString().getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
+				} finally {
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (IOException exception) {
+							// Do nothing
+						}
+					}
+				}
+			}
+		} finally {
+			monitor.done();
+			try {
+				if (reader != null)
+					reader.close();
+			} catch (IOException exception) {
+				// Do nothing
+			}
+		}
+	}
+
+	/**
+	 * Appends the specified index entry to the refactoring history,
 	 * 
 	 * @param file
 	 *            the history index file
@@ -109,7 +180,7 @@ public final class RefactoringHistoryManager {
 	 * @throws IOException
 	 *             if an input/output error occurs
 	 */
-	private static void addIndexEntry(final IFileStore file, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) throws CoreException, IOException {
+	private static void appendIndexEntry(final IFileStore file, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) throws CoreException, IOException {
 		OutputStream output= null;
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 2);
@@ -337,8 +408,8 @@ public final class RefactoringHistoryManager {
 	private static void removeIndexEntry(final IFileStore file, final long stamp, final IProgressMonitor monitor) throws CoreException, IOException {
 		BufferedReader reader= null;
 		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 4);
-			if (file.fetchInfo().exists()) {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 5);
+			if (file.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
 				final String value= new Long(stamp).toString();
 				reader= new BufferedReader(new InputStreamReader(new DataInputStream(new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)))), IRefactoringSerializationConstants.OUTPUT_ENCODING));
 				final StringBuffer buffer= new StringBuffer();
@@ -479,11 +550,11 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Unescapes the specified string from the history index.
+	 * Un-escapes the specified string from the history index.
 	 * 
 	 * @param string
 	 *            the string from the history index
-	 * @return the unescaped string
+	 * @return the un-escaped string
 	 */
 	public static String unescapeString(final String string) {
 		if (string.indexOf(DELIMITER_COMPONENT) < 0) {
@@ -627,72 +698,21 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Adds the specified history entry to the refactoring history,
-	 * 
-	 * @param file
-	 *            the refactoring history file
-	 * @param node
-	 *            the DOM node representing the entry
-	 * @param monitor
-	 *            the progress monitor to use
-	 * @throws CoreException
-	 *             if an error occurs while adding the history entry
-	 * @throws IOException
-	 *             if an input/output error occurs
-	 */
-	private void addHistoryEntry(final IFileStore file, final Node node, final IProgressMonitor monitor) throws CoreException, IOException {
-		OutputStream output= null;
-		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 2);
-			try {
-				file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-				output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-				final Transformer transformer= TransformerFactory.newInstance().newTransformer();
-				transformer.setOutputProperty(OutputKeys.INDENT, IRefactoringSerializationConstants.OUTPUT_INDENT);
-				transformer.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
-				transformer.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
-				try {
-					transformer.transform(new DOMSource(node), new StreamResult(output));
-				} finally {
-					fCachedDocument= null;
-					fCachedPath= null;
-					fCachedDescriptor= null;
-					fCachedStore= null;
-				}
-			} catch (TransformerConfigurationException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} catch (TransformerFactoryConfigurationError exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} catch (TransformerException exception) {
-				final Throwable throwable= exception.getException();
-				if (throwable instanceof IOException)
-					throw (IOException) throwable;
-				RefactoringCorePlugin.log(exception);
-			} finally {
-				if (output != null) {
-					try {
-						output.close();
-					} catch (IOException exception) {
-						// Do nothing
-					}
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/**
 	 * Adds the specified refactoring descriptor to the refactoring history.
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor to add
+	 * @param sort
+	 *            <code>true</code> if the refactoring descriptor should be
+	 *            inserted into the history according to its time stamp,
+	 *            <code>false</code> if the descriptor is assumed to be the
+	 *            most recent one, and its simply appended
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @throws CoreException
 	 *             if an error occurs while adding the descriptor to the history
 	 */
-	void addRefactoringDescriptor(final RefactoringDescriptor descriptor, final IProgressMonitor monitor) throws CoreException {
+	void addRefactoringDescriptor(final RefactoringDescriptor descriptor, boolean sort, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 5);
 			final long stamp= descriptor.getTimeStamp();
@@ -717,18 +737,34 @@ public final class RefactoringHistoryManager {
 								monitor.worked(1);
 								final Object result= transformDescriptor(descriptor, false);
 								if (result instanceof Document) {
+									boolean found= false;
 									final NodeList list= ((Document) result).getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
-									Assert.isTrue(list.getLength() == 1);
-									document.getDocumentElement().appendChild(document.importNode(list.item(0), true));
-									addHistoryEntry(history, document, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+									final Element root= document.getDocumentElement();
+									if (sort) {
+										final String string= Long.valueOf(stamp).toString();
+										for (int offset= 0; offset < list.getLength(); offset++) {
+											final Element element= (Element) list.item(offset);
+											final String attribute= element.getAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP);
+											if (attribute != null) {
+												if (string.compareTo(attribute) > 0) {
+													root.insertBefore(document.importNode(element, true), element);
+													found= true;
+													break;
+												}
+											}
+										}
+									}
+									if (!found)
+										root.appendChild(document.importNode(list.item(0), true));
+									writeHistoryEntry(history, document, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 									addIndexEntry(index, descriptor, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 								}
 							} catch (ParserConfigurationException exception) {
-								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+								throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 							} catch (IOException exception) {
-								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+								throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 							} catch (SAXException exception) {
-								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+								throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 							} finally {
 								if (input != null) {
 									try {
@@ -742,8 +778,8 @@ public final class RefactoringHistoryManager {
 							try {
 								final Object result= transformDescriptor(descriptor, false);
 								if (result instanceof Node) {
-									addHistoryEntry(history, (Node) result, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-									addIndexEntry(index, descriptor, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+									writeHistoryEntry(history, (Node) result, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+									appendIndexEntry(index, descriptor, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 								}
 							} catch (IOException exception) {
 								throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
@@ -878,7 +914,7 @@ public final class RefactoringHistoryManager {
 										if (length == 1)
 											removeIndexTree(folder, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 										else {
-											addHistoryEntry(history, document, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+											writeHistoryEntry(history, document, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 											removeIndexEntry(index, stamp, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 										}
 										break;
@@ -887,11 +923,11 @@ public final class RefactoringHistoryManager {
 							}
 						}
 					} catch (ParserConfigurationException exception) {
-						new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+						throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 					} catch (IOException exception) {
-						new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+						throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 					} catch (SAXException exception) {
-						new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+						throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 					} finally {
 						if (input != null) {
 							try {
@@ -999,13 +1035,13 @@ public final class RefactoringHistoryManager {
 									if (time.equals(element.getAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP)))
 										element.setAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT, comment);
 								}
-								addHistoryEntry(history, document, new SubProgressMonitor(monitor, 40, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								writeHistoryEntry(history, document, new SubProgressMonitor(monitor, 40, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 							} catch (ParserConfigurationException exception) {
-								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+								throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 							} catch (IOException exception) {
-								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+								throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 							} catch (SAXException exception) {
-								new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+								throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 							} finally {
 								if (input != null) {
 									try {
@@ -1016,6 +1052,62 @@ public final class RefactoringHistoryManager {
 								}
 							}
 						}
+					}
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * Writes the specified document node into the refactoring history.
+	 * 
+	 * @param file
+	 *            the refactoring history file
+	 * @param node
+	 *            the node representing the history entry
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @throws CoreException
+	 *             if an error occurs while adding the history entry
+	 * @throws IOException
+	 *             if an input/output error occurs
+	 */
+	private void writeHistoryEntry(final IFileStore file, final Node node, final IProgressMonitor monitor) throws CoreException, IOException {
+		OutputStream output= null;
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, 2);
+			try {
+				file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+				output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+				final Transformer transformer= TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.INDENT, IRefactoringSerializationConstants.OUTPUT_INDENT);
+				transformer.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
+				transformer.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
+				try {
+					transformer.transform(new DOMSource(node), new StreamResult(output));
+				} finally {
+					fCachedDocument= null;
+					fCachedPath= null;
+					fCachedDescriptor= null;
+					fCachedStore= null;
+				}
+			} catch (TransformerConfigurationException exception) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+			} catch (TransformerFactoryConfigurationError exception) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+			} catch (TransformerException exception) {
+				final Throwable throwable= exception.getException();
+				if (throwable instanceof IOException)
+					throw (IOException) throwable;
+				RefactoringCorePlugin.log(exception);
+			} finally {
+				if (output != null) {
+					try {
+						output.close();
+					} catch (IOException exception) {
+						// Do nothing
 					}
 				}
 			}
