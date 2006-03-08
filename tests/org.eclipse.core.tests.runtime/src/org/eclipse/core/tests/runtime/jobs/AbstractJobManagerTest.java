@@ -13,8 +13,8 @@ package org.eclipse.core.tests.runtime.jobs;
 import java.io.*;
 import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Base class for tests using IJobManager
@@ -90,5 +90,50 @@ public class AbstractJobManagerTest extends TestCase {
 		super.tearDown();
 		progressProvider.sanityCheck();
 		manager.setProgressProvider(null);
+	}
+
+	protected void sleep(long duration) {
+		try {
+			Thread.sleep(duration);
+		} catch (InterruptedException e) {
+			//ignore
+		}
+	}
+
+	/**
+	 * Ensure job completes within the given time.
+	 * @param job
+	 * @param waitTime time in milliseconds
+	 */
+	protected void waitForCompletion(Job job, int waitTime) {
+		int i = 0;
+		int tickLength = 10;
+		int ticks = waitTime / tickLength;
+		while (job.getState() != Job.NONE) {
+			sleep(tickLength);
+			//sanity test to avoid hanging tests
+			if (i++ > ticks) {
+				dumpState();
+				assertTrue("Timeout waiting for job to complete", false);
+			}
+		}
+	}
+
+	/**
+	 * Ensure given job completes within a second.
+	 */
+	protected void waitForCompletion(Job job) {
+		waitForCompletion(job, 1000);
+	}
+
+	/**
+	 * Extra debugging for bug 109898
+	 */
+	protected void dumpState() {
+		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); 
+		Job[] jobs = Platform.getJobManager().find(null);
+		for (int j = 0; j < jobs.length; j++)
+			System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j].getState())); 
+		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****");
 	}
 }

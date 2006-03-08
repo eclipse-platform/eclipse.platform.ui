@@ -13,7 +13,6 @@ package org.eclipse.core.tests.runtime.jobs;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.*;
@@ -121,14 +120,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		new TestJobListener()};
 		for (int i = 0; i < jobListeners.length; i++) {
 			manager.addJobChangeListener(jobListeners[i]);
-		}
-	}
-
-	private void sleep(long duration) {
-		try {
-			Thread.sleep(duration);
-		} catch (InterruptedException e) {
-			//ignore
 		}
 	}
 
@@ -1616,32 +1607,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	/**
-	 * Ensure job completes within the given time.
-	 * @param job
-	 * @param waitTime time in milliseconds
-	 */
-	private void waitForCompletion(Job job, int waitTime) {
-		int i = 0;
-		int tickLength = 10;
-		int ticks = waitTime / tickLength;
-		while (job.getState() != Job.NONE) {
-			sleep(tickLength);
-			//sanity test to avoid hanging tests
-			if (i++ > ticks) {
-				dumpState();
-				assertTrue("Timeout waiting for job to complete", false);
-			}
-		}
-	}
-
-	/**
-	 * Ensure given job completes within a second.
-	 */
-	private void waitForCompletion(Job job) {
-		waitForCompletion(job, 1000);
-	}
-
-	/**
 	 * A family of jobs have been canceled. Pause this thread until all of the jobs
 	 * in the family are canceled
 	 */
@@ -1678,16 +1643,5 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				assertTrue("Timeout waiting for job to start. Job: " + job + ", state: " + job.getState(), false);
 			}
 		}
-	}
-
-	/**
-	 * Extra debugging for bug 109898
-	 */
-	private void dumpState() {
-		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); 
-		Job[] jobs = Platform.getJobManager().find(null);
-		for (int j = 0; j < jobs.length; j++)
-			System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j].getState())); 
-		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****");
 	}
 }
