@@ -277,9 +277,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testJobFamilyCancel() {
-		//this test fails intermittently on Linux and Mac for unknown reasons  - see bug 109898
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
-			return;
 		//test the cancellation of a family of jobs
 		final int NUM_JOBS = 20;
 		Job[] jobs = new Job[NUM_JOBS];
@@ -356,9 +353,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testJobFamilyFind() {
-		//this test fails intermittently on Linux and Mac for unknown reasons  - see bug 109898
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
-			return;
 		//test of finding jobs based on the job family they belong to
 		final int NUM_JOBS = 20;
 		Job[] jobs = new Job[NUM_JOBS];
