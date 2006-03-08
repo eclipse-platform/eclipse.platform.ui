@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.test.performance.Dimension;
@@ -85,6 +87,23 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
      */
     protected void setUp() throws Exception {
        super.setUp();
+       IPreferenceStore debugPreferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
+       debugPreferenceStore.setValue(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED, false);
+       debugPreferenceStore.setValue(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED, false);
+       debugPreferenceStore.setValue(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, false);       
+       debugPreferenceStore.setValue(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS, false);
        EditorTestHelper.runEventQueue();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.test.performance.PerformanceTestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        IPreferenceStore debugPreferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
+        debugPreferenceStore.setToDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED);
+        debugPreferenceStore.setToDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED);
+        debugPreferenceStore.setToDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES);       
+        debugPreferenceStore.setToDefault(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS);
     }
 }
