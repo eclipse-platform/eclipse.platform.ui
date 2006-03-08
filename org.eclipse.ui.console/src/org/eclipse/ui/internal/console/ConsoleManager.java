@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -263,50 +264,68 @@ public class ConsoleManager implements IConsoleManager {
 		new ConsoleNotifier().notify(consoles, type);
 	}
 	
+	
+	private class ShowConsoleViewJob extends WorkbenchJob {
+		private IConsole console; 
+		
+		ShowConsoleViewJob() {
+			super("Show Console View"); //$NON-NLS-1$
+			setSystem(true);
+			setPriority(Job.SHORT);
+		}
+		
+		void setConsole(IConsole console) {
+			this.console = console;
+		}
+		
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			boolean consoleFound = false;
+            IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            if (window != null) {
+                IWorkbenchPage page= window.getActivePage();
+                if (page != null) {
+                    synchronized (fConsoleViews) {
+                        for (Iterator iter = fConsoleViews.iterator(); iter.hasNext();) {
+                            ConsoleView consoleView = (ConsoleView) iter.next();
+                            boolean consoleVisible = page.isPartVisible(consoleView);
+                            if (consoleVisible) {
+                                consoleFound = true;
+                            
+                                boolean bringToTop = shouldBringToTop(console, consoleView);
+                                if (bringToTop) {
+                                    page.bringToTop(consoleView);
+                                }
+                                
+                                consoleView.display(console);
+                            }
+                        }
+                    }
+                    
+                    if (!consoleFound) {
+                        try {
+                            IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
+                            boolean bringToTop = shouldBringToTop(console, consoleView);
+                            if (bringToTop) {
+                                page.bringToTop(consoleView);
+                            }
+                            consoleView.display(console);        
+                        } catch (PartInitException pie) {
+                            ConsolePlugin.log(pie);
+                        }
+                    }
+                }
+            }
+			return Status.OK_STATUS;
+		}		
+	}
+	
+	private ShowConsoleViewJob showJob = new ShowConsoleViewJob();
 	/**
 	 * @see IConsoleManager#showConsoleView(IConsole)
 	 */
 	public void showConsoleView(final IConsole console) {
-	    ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-	        public void run() {
-	            boolean consoleFound = false;
-	            IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-	            if (window != null) {
-	                IWorkbenchPage page= window.getActivePage();
-	                if (page != null) {
-	                    synchronized (fConsoleViews) {
-	                        for (Iterator iter = fConsoleViews.iterator(); iter.hasNext();) {
-	                            ConsoleView consoleView = (ConsoleView) iter.next();
-	                            boolean consoleVisible = page.isPartVisible(consoleView);
-                                if (consoleVisible) {
-                                    consoleFound = true;
-                                
-                                    boolean bringToTop = shouldBringToTop(console, consoleView);
-                                    if (bringToTop) {
-                                        page.bringToTop(consoleView);
-                                    }
-                                    
-                                    consoleView.display(console);
-                                }
-	                        }
-	                    }
-	                    
-	                    if (!consoleFound) {
-	                        try {
-	                            IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
-	                            boolean bringToTop = shouldBringToTop(console, consoleView);
-	                            if (bringToTop) {
-	                                page.bringToTop(consoleView);
-	                            }
-	                            consoleView.display(console);        
-	                        } catch (PartInitException pie) {
-	                            ConsolePlugin.log(pie);
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	    });
+		showJob.setConsole(console);
+		showJob.schedule(100);
 	}	
 	
 	/**

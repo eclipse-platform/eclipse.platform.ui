@@ -30,7 +30,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IOConsole;
@@ -495,7 +494,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * Updates the document. Will append everything that is available before 
 	 * finishing.
 	 */
-	private class QueueProcessingJob extends Job {
+	private class QueueProcessingJob extends WorkbenchJob {
 
         QueueProcessingJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$
@@ -505,60 +504,50 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
          *  (non-Javadoc)
          * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-		protected IStatus run(IProgressMonitor monitor) {
-		    synchronized (overflowLock) {
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+        	synchronized (overflowLock) {
+        		ArrayList pendingCopy = new ArrayList();
+        		StringBuffer buffer = null;
+        		boolean consoleClosed = false;
+        		while (pendingPartitions.size() > 0) {
+        			synchronized(pendingPartitions) {
+        				pendingCopy.addAll(pendingPartitions);
+        				pendingPartitions.clear();
+        				fBuffer = 0;
+        				pendingPartitions.notifyAll();
+        			}
 
-				Display display = ConsolePlugin.getStandardDisplay();
-				
-				ArrayList pendingCopy = new ArrayList();
-				StringBuffer buffer = null;
-				boolean consoleClosed = false;
-				while (pendingPartitions.size() > 0) {
-					synchronized(pendingPartitions) {
-						pendingCopy.addAll(pendingPartitions);
-						pendingPartitions.clear();
-                        fBuffer = 0;
-                        pendingPartitions.notifyAll();
-					}
-					
-					buffer = new StringBuffer();
-					for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-					    PendingPartition pp = (PendingPartition) i.next();
-					    if (pp != consoleClosedPartition) { 
-					        buffer.append(pp.text);
-					    } else {
-					        consoleClosed = true;
-					    }
-					}
-				}
-				
-				final ArrayList finalCopy = pendingCopy;
-				final String toAppend = buffer.toString();
-				final boolean notifyClosed = consoleClosed;
-				
-				display.asyncExec(new Runnable() {
-                    public void run() {
-				        if (connected) {
-				            setUpdateInProgress(true);
-				            updatePartitions = finalCopy;
-				            firstOffset = document.getLength();
-				            try {
-				                document.replace(firstOffset, 0, toAppend.toString());
-				            } catch (BadLocationException e) {
-				            }
-				            updatePartitions = null;
-				            setUpdateInProgress(false);
-				        }
-				        if (notifyClosed) {
-				            console.partitionerFinished();
-			            }
-				        checkBufferSize();
-				    }
-				});
-		    }
-			
-			return Status.OK_STATUS;
-		}        
+        			buffer = new StringBuffer();
+        			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
+        				PendingPartition pp = (PendingPartition) i.next();
+        				if (pp != consoleClosedPartition) { 
+        					buffer.append(pp.text);
+        				} else {
+        					consoleClosed = true;
+        				}
+        			}
+        		}
+
+        		if (connected) {
+        			setUpdateInProgress(true);
+        			updatePartitions = pendingCopy;
+        			firstOffset = document.getLength();
+        			try {
+        				document.replace(firstOffset, 0, buffer.toString());
+        			} catch (BadLocationException e) {
+        			}
+        			updatePartitions = null;
+        			setUpdateInProgress(false);
+        		}
+        		if (consoleClosed) {
+        			console.partitionerFinished();
+        		}
+        		checkBufferSize();
+
+        	}
+
+        	return Status.OK_STATUS;
+        }        
 		
         /* 
          * Job will process as much as it can each time it's run, but it gets

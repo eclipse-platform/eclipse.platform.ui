@@ -155,7 +155,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
      * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
      */
     public String getLineQualifier() {
-        return null;
+        return "\\n|\\r"; //$NON-NLS-1$
     }
 
 }
