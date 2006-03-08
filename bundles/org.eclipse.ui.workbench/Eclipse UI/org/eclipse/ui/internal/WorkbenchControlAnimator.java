@@ -33,7 +33,8 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 	private UIJob slideJob;
 	private Control control;
 	private int endY;
-	private boolean[] finished;
+	private boolean finished;
+	private boolean inTransition = false;
 	
 	private int LONG_DELAY = 1000;
 	private int SHORT_DELAY = 25;
@@ -43,9 +44,9 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 	 */
 	public void setVisible(boolean visible,Control control) {
 		this.control = control;
-		finished = new boolean[1];
-		
-		setAnimationState(visible ? OPENING: CLOSING);
+		finished = false;
+
+		control.setVisible(true);
 		
 		Rectangle parentBounds = control.getParent().getBounds();
 		int bottom = parentBounds.y + parentBounds.height;
@@ -64,7 +65,7 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 		
 		// Wait before displaying the control to allow for opening 
 		// condition to change, but no waiting before closing the control.
-		if(getAnimationState() == OPENING){
+		if(getAnimationState() == OPENING && !inTransition){
 			slideJob.schedule(LONG_DELAY);
 		} else {
 			slideJob.schedule(SHORT_DELAY);
@@ -82,39 +83,44 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 	 * @return the UIJob responsible for opening or closing the control
 	 */
 	private UIJob getSlideJob(){
-		UIJob slideJob = new UIJob("Sliding Message") { //$NON-NLS-1$
+		UIJob newSlideJob = new UIJob("Sliding Message") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if(!monitor.isCanceled() && !control.isDisposed()){
 					Point loc = control.getLocation();
 					switch (getAnimationState()) {
 					case OPENING:
 						loc.y--;
-						if (loc.y >= endY)
+						if (loc.y >= endY) {
 							control.setLocation(loc);
-						else {
-							finished[0] = true;
+						} else {
+							finished = true;
 							setAnimationState(OPEN);
 						}
 						break;
 					case CLOSING:
 						loc.y++;
-						if (loc.y <= endY)
+						if (loc.y <= endY) {
 							control.setLocation(loc);
-						else {
-							finished[0] = true;
+						} else {
+							finished = true;
 							setAnimationState(CLOSED);
+							control.setVisible(false);
 						}
 						break;
 					default:
 						break;
 					}
-					if(!finished[0])
-						getSlideJob().schedule(5);					
+					if(!finished) {
+						inTransition = true;
+						slideJob.schedule(5);					
+					} else
+						inTransition = false;
 					return Status.OK_STATUS;		
 				}
 				return Status.CANCEL_STATUS;
 			}		
 		};
-		return slideJob;
+		newSlideJob.setSystem(true);
+		return newSlideJob;
 	}
 }

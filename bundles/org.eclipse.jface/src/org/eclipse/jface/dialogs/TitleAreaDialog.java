@@ -478,6 +478,8 @@ public class TitleAreaDialog extends TrayDialog {
 						msgLabelBounds.width + messageImageLabel.getBounds().width,
 					messageArea.computeSize(SWT.DEFAULT,SWT.DEFAULT).y);
 		}		
+		Policy.getAnimator().setAnimationState(visible ? 
+				ControlAnimator.OPENING: ControlAnimator.CLOSING);
 		Policy.getAnimator().setVisible(visible, messageArea);
 	}
 

@@ -64,12 +64,14 @@ public class ControlAnimator {
 	 * @param control the control to be displayed or hidden.
 	 */
 	public void setVisible(boolean visible, Control control){
+		control.setVisible(visible);
 		Rectangle parentBounds = control.getParent().getBounds();
 		int bottom = parentBounds.y + parentBounds.height;		
 		final int endY = visible ? bottom - control.getBounds().height
 				: bottom;
 		Point loc = control.getLocation();
 		control.setLocation(loc.x,endY);
+		setAnimationState(visible ? OPEN: CLOSED);
 	}
 	
 	/**
