@@ -14,8 +14,8 @@ package org.eclipse.jface.examples.databinding.nestedselection;
 import java.util.List;
 
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
-import org.eclipse.jface.internal.databinding.api.Property;
-import org.eclipse.jface.internal.databinding.api.beans.TableModelDescription;
+import org.eclipse.jface.internal.databinding.api.description.Property;
+import org.eclipse.jface.internal.databinding.api.description.TableModelDescription;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.TableViewer;

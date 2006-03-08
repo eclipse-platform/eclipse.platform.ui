@@ -15,7 +15,7 @@ import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.examples.databinding.model.Transportation;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
-import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;

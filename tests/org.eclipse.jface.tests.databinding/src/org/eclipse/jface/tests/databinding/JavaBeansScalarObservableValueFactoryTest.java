@@ -14,9 +14,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
-import org.eclipse.jface.internal.databinding.api.IObservableFactory;
-import org.eclipse.jface.internal.databinding.api.Property;
 import org.eclipse.jface.internal.databinding.api.beans.JavaBeansScalarObservableValueFactory;
+import org.eclipse.jface.internal.databinding.api.description.Property;
+import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 
 public class JavaBeansScalarObservableValueFactoryTest extends TestCase {

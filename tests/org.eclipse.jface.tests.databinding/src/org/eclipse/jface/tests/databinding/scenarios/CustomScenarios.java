@@ -13,7 +13,7 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.AggregateObservableValue;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;

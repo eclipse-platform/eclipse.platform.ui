@@ -12,9 +12,9 @@ package org.eclipse.jface.examples.databinding;
 
 import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
-import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.api.beans.NestedObservableFactory;
+import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFactory;
 import org.eclipse.swt.events.DisposeEvent;

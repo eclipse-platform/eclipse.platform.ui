@@ -11,7 +11,7 @@
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import org.eclipse.jface.internal.databinding.api.observable.mapping.AbstractMappingDiff;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.ObservableMapping;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.ObservableMappingWithDomain;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
  * 
  * @since 1.0
  */
-public class SomeMathFunction extends ObservableMapping {
+public class SomeMathFunction extends ObservableMappingWithDomain {
 
 	/**
 	 * 
@@ -66,7 +66,8 @@ public class SomeMathFunction extends ObservableMapping {
 		// would include
 		// the subset of affected elements rather than using
 		// domain.toCollection()
-		fireMappingValueChange(new AbstractMappingDiff(getDomain()) {
+		fireMappingValueChange(new AbstractMappingDiff(getDomain(),
+				new int[] { 0 }) {
 
 			public Object[] getOldMappingValues(Object element, int[] indices) {
 				return new Object[] { doComputeResult(element, oldOp) };
@@ -74,10 +75,6 @@ public class SomeMathFunction extends ObservableMapping {
 
 			public Object[] getNewMappingValues(Object element, int[] indices) {
 				return new Object[] { doComputeResult(element, operation) };
-			}
-
-			public int[] getAffectedIndices() {
-				return new int[]{0};
 			}
 		});
 	}

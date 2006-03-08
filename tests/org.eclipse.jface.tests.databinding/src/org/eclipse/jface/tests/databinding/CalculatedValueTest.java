@@ -16,8 +16,8 @@ import junit.framework.TestCase;
 import org.eclipse.jface.examples.databinding.model.ModelObject;
 import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
-import org.eclipse.jface.internal.databinding.api.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 
