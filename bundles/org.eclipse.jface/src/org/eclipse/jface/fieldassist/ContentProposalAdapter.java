@@ -93,9 +93,10 @@ public class ContentProposalAdapter {
 												.hasFocus())) {
 									return;
 								}
-								// Workaround a problem on X and Mac, whereby at this
-								// point, the focus control is not known.  This can happen,
-								// for example, when resizing the popup shell on the Mac.
+								// Workaround a problem on X and Mac, whereby at
+								// this point, the focus control is not known. 
+								// This can happen, for example, when resizing 
+								// the popup shell on the Mac.
 								// Check the active shell.
 								Shell activeShell = e.display.getActiveShell();
 								if (activeShell == getShell()
@@ -302,8 +303,8 @@ public class ContentProposalAdapter {
 								.length() - 1);
 					}
 					// Recompute the proposals even if the filter text
-					// did not change.  Some clients provide their own
-					// filtering based on content.  
+					// did not change. Some clients provide their own
+					// filtering based on content.
 					asyncRecomputeProposals(filterText);
 					break;
 
@@ -485,15 +486,15 @@ public class ContentProposalAdapter {
 		 *            <code>null</code> if there is no info area.
 		 */
 		ContentProposalPopup(String infoText) {
-			// IMPORTANT:  Use of SWT.ON_TOP is critical here for ensuring 
-			// that the target control retains focus on Mac and Linux.  Without
-			// it, the focus will disappear, keystrokes will not go to the popup,
-			// and the popup closer will wrongly close the popup.
+			// IMPORTANT: Use of SWT.ON_TOP is critical here for ensuring
+			// that the target control retains focus on Mac and Linux. Without
+			// it, the focus will disappear, keystrokes will not go to the
+			// popup, and the popup closer will wrongly close the popup.
 			// On platforms where SWT.ON_TOP overrides SWT.RESIZE, we will live
 			// with this.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=126138
-			super(control.getShell(), SWT.RESIZE | SWT.ON_TOP,
-					false, false, false, false, null, infoText);
+			super(control.getShell(), SWT.RESIZE | SWT.ON_TOP, false, false,
+					false, false, null, infoText);
 			this.proposals = getProposals(filterText);
 		}
 
@@ -781,11 +782,14 @@ public class ContentProposalAdapter {
 		 * not filter the proposals based on the specified filter text.
 		 */
 		private IContentProposal[] getProposals(String filterString) {
-			if (proposalProvider == null) {
+			if (proposalProvider == null || !isValid()) {
 				return null;
 			}
-			int position = getControlContentAdapter().getCursorPosition(
-					getControl());
+			int position = insertionPos;
+			if (position == -1) {
+				position = getControlContentAdapter().getCursorPosition(
+						getControl());
+			}
 			String contents = getControlContentAdapter().getControlContents(
 					getControl());
 			IContentProposal[] proposals = proposalProvider.getProposals(
@@ -851,8 +855,14 @@ public class ContentProposalAdapter {
 		 * Accept the current proposal.
 		 */
 		private void acceptCurrentProposal() {
-			proposalAccepted(getSelectedProposal());
+			// Close before accepting the proposal.
+			// This is important so that the cursor position can be
+			// properly restored at acceptance, which does not work without
+			// focus on some controls.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=127108
+			IContentProposal proposal = getSelectedProposal();
 			close();
+			proposalAccepted(proposal);
 		}
 
 		/*
@@ -862,18 +872,18 @@ public class ContentProposalAdapter {
 		private void recomputeProposals(String filterText) {
 			setProposals(getProposals(filterText));
 		}
-		
+
 		/*
-		 * In an async block, request the proposals.
-		 * This is used when clients are in the middle of processing
-		 * an event that affects the widget content. By using an
-		 * async, we ensure that the widget content is up to date with
-		 * the event.
+		 * In an async block, request the proposals. This is used when clients
+		 * are in the middle of processing an event that affects the widget
+		 * content. By using an async, we ensure that the widget content is up
+		 * to date with the event.
 		 */
 		private void asyncRecomputeProposals(final String filterText) {
 			if (isValid()) {
 				control.getDisplay().asyncExec(new Runnable() {
 					public void run() {
+						recordCursorPosition();
 						recomputeProposals(filterText);
 					}
 				});
@@ -881,7 +891,6 @@ public class ContentProposalAdapter {
 				recomputeProposals(filterText);
 			}
 		}
-
 
 		/*
 		 * Filter the provided list of content proposals according to the filter
@@ -908,7 +917,7 @@ public class ContentProposalAdapter {
 			return (IContentProposal[]) list.toArray(new IContentProposal[list
 					.size()]);
 		}
-		
+
 		Listener getTargetControlListener() {
 			if (targetControlListener == null) {
 				targetControlListener = new TargetControlListener();
@@ -1078,6 +1087,13 @@ public class ContentProposalAdapter {
 	 * The desired size in pixels of the proposal popup.
 	 */
 	private Point popupSize;
+
+	/*
+	 * The remembered position of the insertion position. Not all controls will
+	 * restore the insertion position if the proposal popup gets focus, so we
+	 * need to remember it.
+	 */
+	private int insertionPos = -1;
 
 	/**
 	 * Construct a content proposal adapter that can assist the user with
@@ -1454,7 +1470,7 @@ public class ContentProposalAdapter {
 						popup.getTargetControlListener().handleEvent(e);
 						return;
 					}
-					
+
 					// We were only listening to traverse events for the popup
 					if (e.type == SWT.Traverse) {
 						return;
@@ -1505,32 +1521,42 @@ public class ContentProposalAdapter {
 						 */
 						if (autoActivated) {
 							e.doit = propagateKeys;
-				
-								if (autoActivationDelay > 0) {
-									Runnable runnable = new Runnable() {
-										public void run() {
-											try {
-												Thread
-														.sleep(autoActivationDelay);
-											} catch (InterruptedException e) {
-											}
-											if (!isValid()) {
-												return;
-											}
-											getControl().getDisplay().syncExec(
-													new Runnable() {
-														public void run() {
-															openProposalPopup();
-														}
-													});
+
+							if (autoActivationDelay > 0) {
+								Runnable runnable = new Runnable() {
+									public void run() {
+										try {
+											Thread.sleep(autoActivationDelay);
+										} catch (InterruptedException e) {
 										}
-									};
-									Thread t = new Thread(runnable);
-									t.start();
-								} else {
-									openProposalPopup();
-								}
-							
+										if (!isValid()) {
+											return;
+										}
+										getControl().getDisplay().syncExec(
+												new Runnable() {
+													public void run() {
+														openProposalPopup();
+													}
+												});
+									}
+								};
+								Thread t = new Thread(runnable);
+								t.start();
+							} else {
+								// Since we do not sleep, we must open the popup
+								// in an async exec. This is necessary because
+								// the cursor position and other important info
+								// changes as a result of this event occurring.
+								getControl().getDisplay().asyncExec(
+										new Runnable() {
+											public void run() {
+												if (isValid()) {
+													openProposalPopup();
+												}
+											}
+										});
+							}
+
 						}
 					}
 					break;
@@ -1580,14 +1606,17 @@ public class ContentProposalAdapter {
 	 * wait for a proposal to be selected.
 	 */
 	protected void openProposalPopup() {
-		if (popup == null) {
-			popup = new ContentProposalPopup(null);
-			popup.open();
-			popup.getShell().addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent event) {
-					popup = null;
-				}
-			});
+		if (isValid()) {
+			if (popup == null) {
+				recordCursorPosition();
+				popup = new ContentProposalPopup(null);
+				popup.open();
+				popup.getShell().addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent event) {
+						popup = null;
+					}
+				});
+			}
 		}
 	}
 
@@ -1634,10 +1663,17 @@ public class ContentProposalAdapter {
 
 	/*
 	 * Insert the specified text into the control content, setting the
-	 * cursorPosition at hte desired location within the new contents.
+	 * cursorPosition at the desired location within the new contents.
 	 */
 	private void insertControlContent(String text, int cursorPosition) {
 		if (isValid()) {
+			// Not all controls preserve their selection index when they lose
+			// focus, so we must set it explicitly here to what it was before
+			// the popup opened.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=127108
+			if (insertionPos != -1) {
+				controlContentAdapter.setCursorPosition(control, insertionPos);
+			}
 			controlContentAdapter.insertControlContents(control, text,
 					cursorPosition);
 		}
@@ -1649,5 +1685,16 @@ public class ContentProposalAdapter {
 	private boolean isValid() {
 		return control != null && !control.isDisposed()
 				&& controlContentAdapter != null;
+	}
+
+	/*
+	 * Record the control's cursor position.
+	 */
+	private void recordCursorPosition() {
+		if (isValid()) {
+			insertionPos = getControlContentAdapter()
+					.getCursorPosition(control);
+
+		}
 	}
 }

@@ -97,4 +97,14 @@ public class ComboContentAdapter implements IControlContentAdapter {
 				.getClientArea().y, 1, combo.getClientArea().height);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#setCursorPosition(org.eclipse.swt.widgets.Control,
+	 *      int)
+	 */
+	public void setCursorPosition(Control control, int index) {
+		((Combo) control).setSelection(new Point(index, index));
+	}
+
 }

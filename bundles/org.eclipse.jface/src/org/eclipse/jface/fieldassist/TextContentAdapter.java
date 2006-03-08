@@ -83,4 +83,14 @@ public class TextContentAdapter implements IControlContentAdapter {
 		return new Rectangle(caretOrigin.x, caretOrigin.y, 1, text
 				.getLineHeight());
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#setCursorPosition(org.eclipse.swt.widgets.Control,
+	 *      int)
+	 */
+	public void setCursorPosition(Control control, int position) {
+		((Text) control).setSelection(new Point(position, position));
+	}
 }

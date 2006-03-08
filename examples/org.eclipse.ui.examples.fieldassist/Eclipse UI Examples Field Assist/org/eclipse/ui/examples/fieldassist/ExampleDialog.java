@@ -48,6 +48,8 @@ import org.eclipse.ui.examples.fieldassist.preferences.PreferenceConstants;
 public class ExampleDialog extends StatusDialog {
 
 	class SpinnerContentAdapter implements IControlContentAdapter {
+		// We are only implementing this for our internal use, not for
+		// content assist, so many of the methods are ignored.
 		public String getControlContents(Control control) {
 			return new Integer(((Spinner) control).getSelection()).toString();
 		}
@@ -63,11 +65,15 @@ public class ExampleDialog extends StatusDialog {
 		}
 
 		public int getCursorPosition(Control control) {
+			// ignore
 			return 0;
 		}
 
 		public Rectangle getInsertionBounds(Control control) {
 			return control.getBounds();
+		}
+		public void setCursorPosition(Control control, int index) {
+			// ignore
 		}
 	}
 

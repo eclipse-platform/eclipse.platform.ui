@@ -88,4 +88,18 @@ public interface IControlContentAdapter {
 	 *         control and the insertion point.
 	 */
 	public Rectangle getInsertionBounds(Control control);
+
+	/**
+	 * Set the current cursor position in the control. The position is specified
+	 * as a zero-based index into the string. Valid ranges are from 0 to N,
+	 * where N is the size of the contents string. A value of N indicates that
+	 * the cursor is at the end of the contents.
+	 * 
+	 * @param control
+	 *            the control whose cursor position is to be set.
+	 * @param index
+	 *            the zero-based index representing the cursor position in the
+	 *            control's contents.
+	 */
+	public void setCursorPosition(Control control, int index);
 }
