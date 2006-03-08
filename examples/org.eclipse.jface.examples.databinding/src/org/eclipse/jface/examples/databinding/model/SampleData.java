@@ -13,8 +13,9 @@ package org.eclipse.jface.examples.databinding.model;
 import org.eclipse.jface.internal.databinding.api.DataBinding;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.api.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.factories.BindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.factories.DefaultBindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.factories.DefaultObservableFactory;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
@@ -187,7 +188,8 @@ public class SampleData {
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
 		final IDataBindingContext result = DataBinding.createContext(
-				new IObservableFactory[] { new NestedObservableFactory(),
+				new IObservableFactory[] { new DefaultObservableFactory(),
+						new NestedObservableFactory(),
 						new BeanObservableFactory(), swtObservableFactory,
 						viewersObservableFactory },
 				new BindSupportFactory[] { new DefaultBindSupportFactory() });
