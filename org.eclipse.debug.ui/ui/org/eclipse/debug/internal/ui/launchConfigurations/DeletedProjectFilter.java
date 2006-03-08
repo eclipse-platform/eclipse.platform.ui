@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -61,7 +62,9 @@ public class DeletedProjectFilter extends ViewerFilter {
 					}
 				}
 			}
-			catch(CoreException e) {e.printStackTrace();}
+			catch(CoreException e) {
+			    DebugUIPlugin.log(e);
+            }
 		}
 		return false;
 	}

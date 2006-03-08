@@ -180,7 +180,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				}
 			}
 		}
-		catch(CoreException e) {e.printStackTrace();}
+		catch(CoreException e) {
+            DebugUIPlugin.log(e);
+		}
 		return null;
 	}
 	

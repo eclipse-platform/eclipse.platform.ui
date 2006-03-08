@@ -1058,7 +1058,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			try {
 				ret &= new LaunchConfigurationTypeFilter().select(null, null, config.getType());
 			}
-			catch(CoreException e) {e.printStackTrace();}
+			catch(CoreException e) {
+			    DebugUIPlugin.log(e);
+			}
 		}
 		return ret;
 	}
