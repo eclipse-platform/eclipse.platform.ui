@@ -1904,6 +1904,11 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		}
 	}
 	
+
+	/* Returns the label of this rendering.
+	 * 
+	 * @return label of this rendering
+	 */
 	public String getLabel() {
 		if (fLabel == null)
 			fLabel = buildLabel(true);
@@ -2412,7 +2417,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * Create actions for the view tab
+	 * Create actions for this rendering
 	 */
 	protected void createActions() {
 		fCopyToClipboardAction = new CopyTableRenderingToClipboardAction(this, fTableViewer);
