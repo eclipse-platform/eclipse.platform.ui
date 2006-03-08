@@ -18,11 +18,11 @@ import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
+import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -34,7 +34,7 @@ public class NestedObservableSet extends ObservableSet {
 	private boolean updating = false;
 
 	private ISetChangeListener innerChangeListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+		public void handleSetChange(IObservableSet source, SetDiff diff) {
 			if (!updating) {
 				fireSetChange(diff);
 			}
@@ -70,10 +70,10 @@ public class NestedObservableSet extends ObservableSet {
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			Set oldSet = new HashSet(wrappedSet);
 			updateInnerObservableValue(outerObservableValue);
-			fireSetChange(Diffs.computeDiff(oldSet, wrappedSet));
+			fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));
 		}
 	};
 

@@ -11,34 +11,23 @@
 
 package org.eclipse.jface.internal.databinding.api.observable.set;
 
-import java.util.Collections;
 import java.util.Set;
+
+import org.eclipse.jface.internal.databinding.api.observable.IDiff;
 
 /**
  * @since 1.0
  *
  */
-public final class SetDiff implements ISetDiff {
-
-	private Set additions;
-	private Set removals;
-
+public abstract class SetDiff implements IDiff {
+	
 	/**
-	 * @param additions
-	 * @param removals
+	 * @return the set of added elements
 	 */
-	public SetDiff(Set additions, Set removals) {
-		super();
-		this.additions = Collections.unmodifiableSet(additions);
-		this.removals = Collections.unmodifiableSet(removals);
-	}
-
-	public Set getAdditions() {
-		return additions;
-	}
-
-	public Set getRemovals() {
-		return removals;
-	}
-
+	public abstract Set getAdditions();
+	
+	/**
+	 * @return the set of removed elements
+	 */
+	public abstract Set getRemovals();
 }

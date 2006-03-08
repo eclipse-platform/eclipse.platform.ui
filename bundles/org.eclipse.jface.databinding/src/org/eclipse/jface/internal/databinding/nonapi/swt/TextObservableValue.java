@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractVetoableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -46,10 +46,12 @@ public class TextObservableValue extends AbstractVetoableValue {
 				if (updatePolicy == SWT.FocusOut) {
 					bufferedValue = text.getText();
 					if (!oldValue.equals(newValue)) {
-						fireValueChange(new ValueDiff(oldValue, newValue));
+						fireValueChange(Diffs.createValueDiff(oldValue,
+								newValue));
 					}
 				} else {
-					fireValueChange(new ValueDiff(oldValue, text.getText()));
+					fireValueChange(Diffs.createValueDiff(oldValue, text
+							.getText()));
 				}
 			}
 		}
@@ -91,7 +93,8 @@ public class TextObservableValue extends AbstractVetoableValue {
 							.getText();
 					String newText = currentText.substring(0, e.start) + e.text
 							+ currentText.substring(e.end);
-					if(!fireValueChanging(new ValueDiff(currentText, newText))) {
+					if (!fireValueChanging(Diffs.createValueDiff(currentText,
+							newText))) {
 						e.doit = false;
 					}
 				}

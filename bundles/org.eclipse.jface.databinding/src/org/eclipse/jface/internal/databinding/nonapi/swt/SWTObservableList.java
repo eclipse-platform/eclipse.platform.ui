@@ -11,13 +11,14 @@
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
 import org.eclipse.jface.internal.databinding.api.BindingException;
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.ObservableTracker;
 import org.eclipse.jface.internal.databinding.api.observable.list.AbstractObservableList;
-import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
 
 /**
- * Abstract base class of CComboObservableList, ComboObservableList, and ListObservableList.
+ * Abstract base class of CComboObservableList, ComboObservableList, and
+ * ListObservableList.
+ * 
  * @since 3.2
  * 
  */
@@ -36,10 +37,10 @@ public abstract class SWTObservableList extends AbstractObservableList {
 		String[] newItems = new String[size + 1];
 		System.arraycopy(getItems(), 0, newItems, 0, index);
 		newItems[index] = (String) element;
-		System.arraycopy(getItems(), index, newItems, index + 1, size
-				- index);
+		System.arraycopy(getItems(), index, newItems, index + 1, size - index);
 		setItems(newItems);
-		fireListChange(new ListDiff(new ListDiffEntry(index, true, element)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
+				true, element)));
 	}
 
 	public int doGetSize() {
@@ -87,24 +88,25 @@ public abstract class SWTObservableList extends AbstractObservableList {
 		if (newItems.length > 0) {
 			System.arraycopy(getItems(), 0, newItems, 0, index);
 			if (size - 1 > index) {
-				System.arraycopy(getItems(), index + 1, newItems, index,
-						size - index - 1);
+				System.arraycopy(getItems(), index + 1, newItems, index, size
+						- index - 1);
 			}
 		}
 		setItems(newItems);
-		fireListChange(new ListDiff(new ListDiffEntry(index, false, oldElement)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
+				false, oldElement)));
 		return oldElement;
 	}
 
 	public Object set(int index, Object element) {
 		String oldElement = getItem(index);
 		setItem(index, (String) element);
-		fireListChange(new ListDiff(
-				new ListDiffEntry(index, false, oldElement), new ListDiffEntry(
-						index, true, element)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
+				false, oldElement), Diffs.createListDiffEntry(index, true,
+				element)));
 		return oldElement;
 	}
-	
+
 	/**
 	 * @param index
 	 * @param string

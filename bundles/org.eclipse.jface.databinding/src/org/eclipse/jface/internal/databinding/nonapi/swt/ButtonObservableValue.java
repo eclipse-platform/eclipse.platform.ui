@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
@@ -31,7 +31,7 @@ public class ButtonObservableValue extends AbstractObservableValue {
 		public void handleEvent(Event event) {
 			boolean oldSelectionValue = selectionValue;
 			selectionValue = button.getSelection();
-			fireValueChange(new ValueDiff(new Boolean(oldSelectionValue),
+			fireValueChange(Diffs.createValueDiff(new Boolean(oldSelectionValue),
 					new Boolean(selectionValue)));
 		}
 	};
@@ -51,7 +51,7 @@ public class ButtonObservableValue extends AbstractObservableValue {
 		selectionValue = value == null ? false : ((Boolean) value)
 				.booleanValue();
 		button.setSelection(selectionValue);
-		fireValueChange(new ValueDiff(new Boolean(oldSelectionValue),
+		fireValueChange(Diffs.createValueDiff(new Boolean(oldSelectionValue),
 				new Boolean(selectionValue)));
 	}
 

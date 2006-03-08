@@ -21,7 +21,7 @@ import java.util.Set;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.internal.databinding.api.observable.set.WritableSet;
 
 /**
@@ -38,7 +38,7 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 	private Map valueToElements = new HashMap();
 
 	private ISetChangeListener domainListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+		public void handleSetChange(IObservableSet source, SetDiff diff) {
 			Set rangeAdditions = new HashSet();
 			for (Iterator it = diff.getAdditions().iterator(); it.hasNext();) {
 				Object added = it.next();
@@ -57,7 +57,7 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 
 	private IMappingChangeListener mappingChangeListener = new IMappingChangeListener() {
 		public void handleMappingValueChange(IObservable source,
-				IMappingDiff diff) {
+				MappingDiff diff) {
 			Set affectedElements = diff.getElements();
 			for (Iterator it = affectedElements.iterator(); it.hasNext();) {
 				Object element = it.next();

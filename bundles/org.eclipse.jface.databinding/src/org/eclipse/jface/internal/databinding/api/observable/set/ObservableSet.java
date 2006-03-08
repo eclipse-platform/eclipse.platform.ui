@@ -102,7 +102,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 		return super.hasListeners() || setChangeListeners!=null;
 	}
 
-	protected void fireSetChange(ISetDiff diff) {
+	protected void fireSetChange(SetDiff diff) {
 		// fire general change event first
 		super.fireChange();
 

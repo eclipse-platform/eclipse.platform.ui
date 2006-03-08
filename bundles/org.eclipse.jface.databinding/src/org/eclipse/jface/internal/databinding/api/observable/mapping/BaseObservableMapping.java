@@ -80,7 +80,7 @@ public abstract class BaseObservableMapping extends AbstractObservable {
 		}
 	}
 
-	protected void fireMappingValueChange(IMappingDiff diff) {
+	protected void fireMappingValueChange(MappingDiff diff) {
 		if (mappingChangeListeners == null) {
 			return;
 		}

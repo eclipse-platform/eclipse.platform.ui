@@ -19,8 +19,8 @@ import org.eclipse.jface.internal.databinding.api.IBinding;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiff;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
@@ -64,12 +64,12 @@ public class ValidationErrorList extends ObservableList {
 		removeElementChangeListener();
 		final List oldList = wrappedList;
 		// lazy computation of diff
-		IListDiff listDiff = new IListDiff() {
-			IListDiffEntry[] cachedDifferences = null;
-			public IListDiffEntry[] getDifferences() {
+		ListDiff listDiff = new ListDiff() {
+			ListDiffEntry[] cachedDifferences = null;
+			public ListDiffEntry[] getDifferences() {
 				if(cachedDifferences==null) {
 					recompute();
-					cachedDifferences = Diffs.computeDiff(oldList, wrappedList).getDifferences();
+					cachedDifferences = Diffs.computeListDiff(oldList, wrappedList).getDifferences();
 				}
 				return cachedDifferences;
 			}

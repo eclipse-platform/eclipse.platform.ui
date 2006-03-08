@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.api.observable.value;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
+
 /**
  * @since 1.0
  * 
@@ -19,19 +21,29 @@ public class WritableValue extends AbstractObservableValue {
 
 	private final Object valueType;
 
+	/**
+	 * @param initialValue
+	 */
 	public WritableValue(Object initialValue) {
 		this(null, initialValue);
 	}
 
+	/**
+	 * @param type
+	 */
 	public WritableValue(Class type) {
 		this(type, null);
 	}
-	
+
+	/**
+	 * @param valueType
+	 * @param initialValue
+	 */
 	public WritableValue(Object valueType, Object initialValue) {
 		this.valueType = valueType;
 		this.value = initialValue;
 	}
-	
+
 	private Object value = null;
 
 	public Object doGetValue() {
@@ -43,7 +55,7 @@ public class WritableValue extends AbstractObservableValue {
 	 *            The value to set.
 	 */
 	public void setValue(Object value) {
-		fireValueChange(new ValueDiff(this.value, this.value = value));
+		fireValueChange(Diffs.createValueDiff(this.value, this.value = value));
 	}
 
 	public Object getValueType() {

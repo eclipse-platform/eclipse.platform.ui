@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -32,7 +32,7 @@ public class LabelObservableValue extends AbstractObservableValue {
 	public void setValue(final Object value) {
 		String oldValue = label.getText();
 		label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
-		fireValueChange(new ValueDiff(oldValue, label.getText()));
+		fireValueChange(Diffs.createValueDiff(oldValue, label.getText()));
 	}
 
 	public Object doGetValue() {
@@ -42,5 +42,5 @@ public class LabelObservableValue extends AbstractObservableValue {
 	public Object getValueType() {
 		return String.class;
 	}
-	
+
 }

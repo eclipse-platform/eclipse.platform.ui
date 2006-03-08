@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
@@ -52,8 +52,10 @@ public class ComboObservableValue extends AbstractObservableValue {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
 						String oldValue = currentValue;
-						currentValue = ComboObservableValue.this.combo.getText();
-						fireValueChange(new ValueDiff(oldValue, currentValue));
+						currentValue = ComboObservableValue.this.combo
+								.getText();
+						fireValueChange(Diffs.createValueDiff(oldValue,
+								currentValue));
 					}
 				}
 			});
@@ -88,7 +90,7 @@ public class ComboObservableValue extends AbstractObservableValue {
 		} finally {
 			updating = false;
 		}
-		fireValueChange(new ValueDiff(oldValue, combo.getText()));
+		fireValueChange(Diffs.createValueDiff(oldValue, combo.getText()));
 	}
 
 	public Object doGetValue() {

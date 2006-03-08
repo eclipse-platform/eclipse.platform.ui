@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
@@ -47,7 +47,8 @@ public class ListObservableValue extends AbstractObservableValue {
 				if (!updating) {
 					Object oldValue = currentValue;
 					currentValue = (String) doGetValue();
-					fireValueChange(new ValueDiff(oldValue, currentValue));
+					fireValueChange(Diffs.createValueDiff(oldValue,
+							currentValue));
 				}
 			}
 
@@ -75,7 +76,7 @@ public class ListObservableValue extends AbstractObservableValue {
 		} finally {
 			updating = false;
 		}
-		fireValueChange(new ValueDiff(oldValue, value));
+		fireValueChange(Diffs.createValueDiff(oldValue, value));
 	}
 
 	public Object doGetValue() {

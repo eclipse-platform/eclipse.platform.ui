@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
+
 /**
  * Mutable observable list backed by an ArrayList.
  * 
@@ -25,34 +27,36 @@ public class WritableList extends ObservableList {
 	private final Object elementType;
 
 	/**
-	 * Creates an empty writable list containing elements of type Object. 
+	 * Creates an empty writable list containing elements of type Object.
 	 */
 	public WritableList() {
 		this(Object.class);
 	}
 
 	/**
-	 * Creates an empty writable list containing elements of the given type. 
-	 * @param elementType 
+	 * Creates an empty writable list containing elements of the given type.
+	 * 
+	 * @param elementType
 	 */
 	public WritableList(Object elementType) {
 		super(new ArrayList());
 		this.elementType = elementType;
 	}
-	
+
 	public Object set(int index, Object element) {
 		getterCalled();
 		Object oldElement = wrappedList.set(index, element);
-		fireListChange(new ListDiff(
-				new ListDiffEntry(index, false, oldElement), new ListDiffEntry(
-						index, true, element)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
+				false, oldElement), Diffs.createListDiffEntry(index, true,
+				element)));
 		return oldElement;
 	}
 
 	public Object remove(int index) {
 		getterCalled();
 		Object oldElement = wrappedList.remove(index);
-		fireListChange(new ListDiff(new ListDiffEntry(index, false, oldElement)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
+				false, oldElement)));
 		return oldElement;
 	}
 
@@ -60,7 +64,7 @@ public class WritableList extends ObservableList {
 		getterCalled();
 		boolean added = wrappedList.add(element);
 		if (added) {
-			fireListChange(new ListDiff(new ListDiffEntry(
+			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
 					wrappedList.size() - 1, true, element)));
 		}
 		return added;
@@ -68,7 +72,8 @@ public class WritableList extends ObservableList {
 
 	public void add(int index, Object element) {
 		wrappedList.add(index, element);
-		fireListChange(new ListDiff(new ListDiffEntry(index, true, element)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
+				true, element)));
 	}
 
 	public boolean addAll(Collection c) {
@@ -77,10 +82,10 @@ public class WritableList extends ObservableList {
 		int addIndex = c.size();
 		for (Iterator it = c.iterator(); it.hasNext();) {
 			Object element = it.next();
-			entries[i++] = new ListDiffEntry(addIndex++, true, element);
+			entries[i++] = Diffs.createListDiffEntry(addIndex++, true, element);
 		}
 		boolean added = wrappedList.addAll(c);
-		fireListChange(new ListDiff(entries));
+		fireListChange(Diffs.createListDiff(entries));
 		return added;
 	}
 
@@ -90,10 +95,10 @@ public class WritableList extends ObservableList {
 		int addIndex = index;
 		for (Iterator it = c.iterator(); it.hasNext();) {
 			Object element = it.next();
-			entries[i++] = new ListDiffEntry(addIndex++, true, element);
+			entries[i++] = Diffs.createListDiffEntry(addIndex++, true, element);
 		}
 		boolean added = wrappedList.addAll(index, c);
-		fireListChange(new ListDiff(entries));
+		fireListChange(Diffs.createListDiff(entries));
 		return added;
 	}
 
@@ -103,7 +108,8 @@ public class WritableList extends ObservableList {
 			return false;
 		}
 		wrappedList.remove(index);
-		fireListChange(new ListDiff(new ListDiffEntry(index, false, o)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
+				false, o)));
 		return true;
 	}
 
@@ -114,10 +120,11 @@ public class WritableList extends ObservableList {
 			int removeIndex = wrappedList.indexOf(element);
 			if (removeIndex != -1) {
 				wrappedList.remove(removeIndex);
-				entries.add(new ListDiffEntry(removeIndex, true, element));
+				entries.add(Diffs.createListDiffEntry(removeIndex, true,
+						element));
 			}
 		}
-		fireListChange(new ListDiff((ListDiffEntry[]) entries
+		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
 				.toArray(new ListDiffEntry[entries.size()])));
 		return entries.size() > 0;
 	}
@@ -128,14 +135,15 @@ public class WritableList extends ObservableList {
 		for (Iterator it = wrappedList.iterator(); it.hasNext();) {
 			Object element = it.next();
 			if (!c.contains(element)) {
-				entries.add(new ListDiffEntry(removeIndex, false, element));
+				entries.add(Diffs.createListDiffEntry(removeIndex, false,
+						element));
 				it.remove();
 			} else {
 				// only increment if we haven't removed the current element
 				removeIndex++;
 			}
 		}
-		fireListChange(new ListDiff((ListDiffEntry[]) entries
+		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
 				.toArray(new ListDiffEntry[entries.size()])));
 		return entries.size() > 0;
 	}
@@ -145,9 +153,9 @@ public class WritableList extends ObservableList {
 		for (Iterator it = wrappedList.iterator(); it.hasNext();) {
 			Object element = it.next();
 			// always report 0 as the remove index
-			entries.add(new ListDiffEntry(0, false, element));
+			entries.add(Diffs.createListDiffEntry(0, false, element));
 		}
-		fireListChange(new ListDiff((ListDiffEntry[]) entries
+		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
 				.toArray(new ListDiffEntry[entries.size()])));
 	}
 

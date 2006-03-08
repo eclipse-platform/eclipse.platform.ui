@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,41 +7,29 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
+
 package org.eclipse.jface.internal.databinding.api.observable.list;
 
 /**
- * Standard implementation of IListDiffEntry.
- * 
+ * A single addition of an element to a list or removal of an element from a list.
+ *  
  * @since 1.0
  */
-public class ListDiffEntry implements IListDiffEntry {
-
-	private int position;
-	private boolean isAddition;
-	private Object element;
-
+public abstract class ListDiffEntry {
+	
 	/**
-	 * @param position
-	 * @param isAddition
-	 * @param element
+	 * @return the 0-based position of the addition or removal
 	 */
-	public ListDiffEntry(int position, boolean isAddition, Object element) {
-		this.position = position;
-		this.isAddition = isAddition;
-		this.element = element;
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public boolean isAddition() {
-		return isAddition;
-	}
-
-	public Object getElement() {
-		return element;
-	}
-
+	public abstract int getPosition();
+	
+	/**
+	 * @return true if this represents an addition, false if this represents a removal
+	 */
+	public abstract boolean isAddition();
+	
+	/**
+	 * @return the element that was added or removed
+	 */
+	public abstract Object getElement();
 }

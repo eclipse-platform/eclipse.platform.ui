@@ -99,7 +99,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		}
 	}
 
-	protected void fireListChange(IListDiff diff) {
+	protected void fireListChange(ListDiff diff) {
 		// fire general change event first
 		fireChange();
 

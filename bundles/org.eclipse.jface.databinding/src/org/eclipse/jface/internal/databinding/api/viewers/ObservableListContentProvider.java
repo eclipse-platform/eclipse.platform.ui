@@ -12,8 +12,8 @@
 package org.eclipse.jface.internal.databinding.api.viewers;
 
 import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiff;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
@@ -35,13 +35,13 @@ public class ObservableListContentProvider implements
 	private Viewer viewer;
 
 	private IListChangeListener listener = new IListChangeListener() {
-		public void handleListChange(IObservableList source, IListDiff diff) {
+		public void handleListChange(IObservableList source, ListDiff diff) {
 			if (viewer.getControl().isDisposed()) {
 				return;
 			}
-			IListDiffEntry[] differences = diff.getDifferences();
+			ListDiffEntry[] differences = diff.getDifferences();
 			for (int i = 0; i < differences.length; i++) {
-				IListDiffEntry entry = differences[i];
+				ListDiffEntry entry = differences[i];
 				if (entry.isAddition()) {
 					knownElements.add(entry.getElement());
 					if (viewer instanceof AbstractListViewer) {

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.CCombo;
@@ -54,7 +54,8 @@ public class CComboObservableValue extends AbstractObservableValue {
 						String oldValue = currentValue;
 						currentValue = CComboObservableValue.this.ccombo
 								.getText();
-						fireValueChange(new ValueDiff(oldValue, currentValue));
+						fireValueChange(Diffs.createValueDiff(oldValue,
+								currentValue));
 					}
 				}
 			});
@@ -89,7 +90,7 @@ public class CComboObservableValue extends AbstractObservableValue {
 		} finally {
 			updating = false;
 		}
-		fireValueChange(new ValueDiff(oldValue, ccombo.getText()));
+		fireValueChange(Diffs.createValueDiff(oldValue, ccombo.getText()));
 	}
 
 	public Object doGetValue() {

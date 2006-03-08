@@ -14,15 +14,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
+
 /**
  * @since 1.0
  * 
  */
-public abstract class AbstractVetoableValue extends AbstractObservableValue implements IVetoableValue {
+public abstract class AbstractVetoableValue extends AbstractObservableValue
+		implements IVetoableValue {
 
 	public void setValue(Object value) {
 		Object currentValue = doGetValue();
-		ValueDiff diff = new ValueDiff(currentValue, value);
+		ValueDiff diff = Diffs.createValueDiff(currentValue, value);
 		boolean okToProceed = fireValueChanging(diff);
 		if (!okToProceed) {
 			throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
@@ -30,7 +33,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue impl
 		doSetValue(value);
 		fireValueChange(diff);
 	}
-	
+
 	private Collection valueChangingListeners = null;
 
 	public void addValueChangingListener(IValueChangingListener listener) {
@@ -59,7 +62,6 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue impl
 		}
 	}
 
-
 	/**
 	 * Notifies listeners about a pending change, and returns true if no
 	 * listener vetoed the change.
@@ -70,9 +72,11 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue impl
 	protected boolean fireValueChanging(ValueDiff diff) {
 		if (valueChangingListeners != null) {
 			IValueChangingListener[] listeners = (IValueChangingListener[]) valueChangingListeners
-					.toArray(new IValueChangingListener[valueChangingListeners.size()]);
+					.toArray(new IValueChangingListener[valueChangingListeners
+							.size()]);
 			for (int i = 0; i < listeners.length; i++) {
-				boolean okToProceed = listeners[i].handleValueChanging(this, diff);
+				boolean okToProceed = listeners[i].handleValueChanging(this,
+						diff);
 				if (!okToProceed) {
 					return false;
 				}

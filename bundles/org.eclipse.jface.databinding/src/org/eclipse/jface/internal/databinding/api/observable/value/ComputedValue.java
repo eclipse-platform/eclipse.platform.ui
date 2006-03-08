@@ -145,7 +145,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 			final Object oldValue = cachedValue;
 			// Fire the "dirty" event. This implementation recomputes the new
 			// value lazily.
-			fireValueChange(new IValueDiff() {
+			fireValueChange(new ValueDiff() {
 
 				public Object getOldValue() {
 					return oldValue;

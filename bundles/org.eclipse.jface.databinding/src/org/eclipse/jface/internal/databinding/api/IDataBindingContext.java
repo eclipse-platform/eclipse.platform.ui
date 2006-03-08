@@ -11,11 +11,12 @@
 package org.eclipse.jface.internal.databinding.api;
 
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.api.factories.IBindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
 
 /**
@@ -74,7 +75,7 @@ public interface IDataBindingContext {
 	 * @param factory
 	 *            the factory to add.
 	 */
-	public void addBindSupportFactory(IBindSupportFactory factory);
+	public void addBindSupportFactory(BindSupportFactory factory);
 
 	/**
 	 * Adds a factory for creating observable objects from description objects
@@ -97,7 +98,7 @@ public interface IDataBindingContext {
 	 * @return The IBinding that manages this data flow
 	 */
 	public IBinding bind(IObservable targetObservable,
-			IObservable modelObservable, IBindSpec bindSpec);
+			IObservable modelObservable, BindSpec bindSpec);
 
 	/**
 	 * Convenience method to bind targetObservable and
@@ -110,7 +111,7 @@ public interface IDataBindingContext {
 	 * @return The IBinding that manages this data flow
 	 */
 	public IBinding bind(IObservable targetObservable, Object modelDescription,
-			IBindSpec bindSpec);
+			BindSpec bindSpec);
 
 	/**
 	 * Convenience method to bind createObservable(targetDescription) and
@@ -123,7 +124,7 @@ public interface IDataBindingContext {
 	 * @return The IBinding that manages this data flow
 	 */
 	public IBinding bind(Object targetDescription, IObservable modelObservable,
-			IBindSpec bindSpec);
+			BindSpec bindSpec);
 
 	/**
 	 * Convenience method to bind createObservable(targetDescription) and
@@ -136,7 +137,7 @@ public interface IDataBindingContext {
 	 * @return The IBinding that manages this data flow
 	 */
 	public IBinding bind(Object targetDescription, Object modelDescription,
-			IBindSpec bindSpec);
+			BindSpec bindSpec);
 
 	/**
 	 * Creates an observable object from a description. Description objects are
@@ -154,7 +155,7 @@ public interface IDataBindingContext {
 	 * toType or modelDescription can be <code>null</code>, but not both. The
 	 * implementation of this method will iterate over the registered bind
 	 * support factories in reverse order, passing the given arguments to
-	 * {@link IBindSupportFactory#createValidator(Class, Class, Object)}. The
+	 * {@link BindSupportFactory#createValidator(Class, Class, Object)}. The
 	 * first non-null validator will be returned.
 	 * 
 	 * @param fromType
@@ -165,12 +166,18 @@ public interface IDataBindingContext {
 	public IValidator createValidator(Object fromType, Object toType);
 
 	/**
+	 * @param modelType
+	 * @return an IValidator, or null if unsuccessful
+	 */
+	public IDomainValidator createDomainValidator(Object modelType);
+
+	/**
 	 * Tries to create a converter that can convert from values of type
 	 * fromType. Returns <code>null</code> if no converter could be created.
 	 * Either toType or modelDescription can be <code>null</code>, but not
 	 * both. The implementation of this method will iterate over the registered
 	 * bind support factories in reverse order, passing the given arguments to
-	 * {@link IBindSupportFactory#createConverter(Object, Object)}. The first
+	 * {@link BindSupportFactory#createConverter(Object, Object)}. The first
 	 * non-null converter will be returned.
 	 * 
 	 * @param fromType
@@ -214,7 +221,7 @@ public interface IDataBindingContext {
 	 * @return the validation error observable
 	 */
 	public IObservableValue getPartialValidationError();
-	
+
 	/**
 	 * Returns an observable list with elements of type ValidationError, ordered
 	 * by the time of detection
@@ -225,8 +232,8 @@ public interface IDataBindingContext {
 
 	/**
 	 * Returns an observable value of type ValidationError, containing the most
-	 * recent full validation error, i.e. the last element of the list
-	 * returned by getValidationErrors().
+	 * recent full validation error, i.e. the last element of the list returned
+	 * by getValidationErrors().
 	 * 
 	 * @return the validation observable
 	 */

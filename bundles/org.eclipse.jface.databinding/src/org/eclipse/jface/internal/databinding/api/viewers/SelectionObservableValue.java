@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.api.viewers;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -36,7 +36,7 @@ public class SelectionObservableValue extends AbstractObservableValue {
 			Object newSelection = selection.getFirstElement();
 			if (newSelection != oldSelection) {
 				currentSelection = newSelection;
-				fireValueChange(new ValueDiff(oldSelection, newSelection));
+				fireValueChange(Diffs.createValueDiff(oldSelection, newSelection));
 			}
 		}
 	};

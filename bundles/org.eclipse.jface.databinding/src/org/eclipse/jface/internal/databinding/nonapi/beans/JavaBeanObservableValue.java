@@ -16,8 +16,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.jface.internal.databinding.api.BindingException;
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 
 /**
  * @since 1.0
@@ -45,7 +45,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
 				if (!updating && event.getPropertyName().equals(propertyDescriptor.getName())) {
-					fireValueChange(new ValueDiff(event.getOldValue(), event
+					fireValueChange(Diffs.createValueDiff(event.getOldValue(), event
 							.getNewValue()));
 				}
 			}
@@ -86,7 +86,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 				writeMethod.setAccessible(true);
 			}
 			writeMethod.invoke(object, new Object[] { value });
-			fireValueChange(new ValueDiff(oldValue, doGetValue()));
+			fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));
 		} catch (Exception e) {
 			// TODO log exception, or maybe throw runtime exception?
 			e.printStackTrace();

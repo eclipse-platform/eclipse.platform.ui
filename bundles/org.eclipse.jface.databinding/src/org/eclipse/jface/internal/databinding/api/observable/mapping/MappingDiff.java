@@ -13,33 +13,35 @@ package org.eclipse.jface.internal.databinding.api.observable.mapping;
 
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.IDiff;
+
 /**
  * @since 1.0
  * 
  */
-public interface IMappingDiff {
+public abstract class MappingDiff implements IDiff {
 	/**
 	 * @return the set of elements for which the mapping value has changed
 	 */
-	public Set getElements();
+	public abstract Set getElements();
 
 	/**
 	 * @return an array containing the affected indices.
 	 */
-	public int[] getAffectedIndices();
+	public abstract int[] getAffectedIndices();
 
 	/**
 	 * @param element
-	 * @param indices 
+	 * @param indices
 	 * @return the old values of the mapping for the given element at the given
-	 *         indices. 
+	 *         indices.
 	 */
-	public Object[] getOldMappingValues(Object element, int[] indices);
+	public abstract Object[] getOldMappingValues(Object element, int[] indices);
 
 	/**
 	 * @param element
-	 * @param indices 
+	 * @param indices
 	 * @return the new value of the mapping for the given element
 	 */
-	public Object[] getNewMappingValues(Object element, int[] indices);
+	public abstract Object[] getNewMappingValues(Object element, int[] indices);
 }

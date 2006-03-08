@@ -62,7 +62,7 @@ abstract public class AbstractObservableValue extends AbstractObservable
 		throw new UnsupportedOperationException();
 	}
 
-	protected void fireValueChange(IValueDiff diff) {
+	protected void fireValueChange(ValueDiff diff) {
 		// fire general change event first
 		super.fireChange();
 		if (valueChangeListeners != null) {

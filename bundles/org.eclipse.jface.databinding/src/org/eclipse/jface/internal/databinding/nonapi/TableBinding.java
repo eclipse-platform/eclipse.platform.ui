@@ -11,16 +11,16 @@
 package org.eclipse.jface.internal.databinding.nonapi;
 
 import org.eclipse.jface.internal.databinding.api.BindingEvent;
-import org.eclipse.jface.internal.databinding.api.IBindSpec;
+import org.eclipse.jface.internal.databinding.api.BindSpec;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingDiff;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMultiMappingWithDomain;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
@@ -47,7 +47,7 @@ public class TableBinding extends Binding {
 	 */
 	public TableBinding(DataBindingContext context,
 			IObservableSetWithLabels target,
-			IObservableMultiMappingWithDomain model, IBindSpec bindSpec) {
+			IObservableMultiMappingWithDomain model, BindSpec bindSpec) {
 		super(context);
 		this.target = target;
 		this.model = model;
@@ -59,19 +59,19 @@ public class TableBinding extends Binding {
 	}
 
 	private final ISetChangeListener targetChangeListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+		public void handleSetChange(IObservableSet source, SetDiff diff) {
 		}
 	};
 
 	private IMappingChangeListener cellsChangeListener = new IMappingChangeListener() {
 		public void handleMappingValueChange(IObservable source,
-				IMappingDiff diff) {
+				MappingDiff diff) {
 			target.updateElements(diff.getElements().toArray());
 		}
 	};
 
 	private ISetChangeListener modelChangeListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+		public void handleSetChange(IObservableSet source, SetDiff diff) {
 			if (updating) {
 				return;
 			}
@@ -85,7 +85,7 @@ public class TableBinding extends Binding {
 			try {
 				// get setDiff from event object - might have been modified by a
 				// listener
-				ISetDiff setDiff = (ISetDiff) e.diff;
+				SetDiff setDiff = (SetDiff) e.diff;
 				target.addAll(setDiff.getAdditions());
 				target.removeAll(setDiff.getRemovals());
 				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;

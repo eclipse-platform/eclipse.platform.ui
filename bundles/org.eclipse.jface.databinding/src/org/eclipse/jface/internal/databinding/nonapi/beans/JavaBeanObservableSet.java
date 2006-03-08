@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
-import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -45,7 +45,8 @@ public class JavaBeanObservableSet extends ObservableSet {
 					removedElements.removeAll(newElements);
 					addedElements.removeAll(wrappedSet);
 					wrappedSet = newElements;
-					fireSetChange(new SetDiff(addedElements, removedElements));
+					fireSetChange(Diffs.createSetDiff(addedElements,
+							removedElements));
 				}
 			}
 		}

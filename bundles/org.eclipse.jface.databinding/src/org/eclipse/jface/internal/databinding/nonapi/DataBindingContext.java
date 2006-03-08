@@ -17,12 +17,11 @@ import java.util.List;
 import org.eclipse.jface.internal.databinding.api.BindSpec;
 import org.eclipse.jface.internal.databinding.api.BindingEvent;
 import org.eclipse.jface.internal.databinding.api.BindingException;
-import org.eclipse.jface.internal.databinding.api.IBindSpec;
 import org.eclipse.jface.internal.databinding.api.IBinding;
 import org.eclipse.jface.internal.databinding.api.IBindingListener;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.api.factories.IBindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
@@ -81,7 +80,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * 
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#addBindSupportFactory(org.eclipse.jface.databinding.IBindSupportFactory)
 	 */
-	public void addBindSupportFactory(IBindSupportFactory factory) {
+	public void addBindSupportFactory(BindSupportFactory factory) {
 		bindSupportFactories.add(factory);
 	}
 
@@ -119,7 +118,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public IBinding bind(IObservable targetObservable,
-			IObservable modelObservable, IBindSpec bindSpec) {
+			IObservable modelObservable, BindSpec bindSpec) {
 		Binding binding;
 		if (bindSpec == null) {
 			bindSpec = new BindSpec(null, null, null, null);
@@ -167,7 +166,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public IBinding bind(Object targetDescription, IObservable modelObservable,
-			IBindSpec bindSpec) {
+			BindSpec bindSpec) {
 		return bind(createObservable(targetDescription), modelObservable,
 				bindSpec);
 	}
@@ -179,7 +178,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public IBinding bind(IObservable targetObservable, Object modelDescription,
-			IBindSpec bindSpec) {
+			BindSpec bindSpec) {
 		if (bindSpec == null) {
 			bindSpec = new BindSpec(null, null, null, null);
 		}
@@ -195,29 +194,27 @@ public class DataBindingContext implements IDataBindingContext {
 				bindSpec);
 	}
 
-	protected void fillBindSpecDefaults(IBindSpec bindSpec, Object fromType,
+	protected void fillBindSpecDefaults(BindSpec bindSpec, Object fromType,
 			Object toType) {
 		if (bindSpec.getTypeConversionValidator() == null) {
-			((BindSpec) bindSpec)
-					.setValidator(createValidator(fromType, toType));
+			bindSpec.setValidator(createValidator(fromType, toType));
 		}
 		if (bindSpec.getDomainValidator() == null) {
-			((BindSpec) bindSpec)
-					.setDomainValidator(createDomainValidator(toType));
+			bindSpec.setDomainValidator(createDomainValidator(toType));
 		}
 		if (bindSpec.getModelToTargetConverter() == null) {
-			((BindSpec) bindSpec).setModelToTargetConverter(createConverter(
-					fromType, toType));
+			bindSpec
+					.setModelToTargetConverter(createConverter(fromType, toType));
 		}
 		if (bindSpec.getTargetToModelConverter() == null) {
-			((BindSpec) bindSpec).setTargetToModelConverter(createConverter(
-					toType, fromType));
+			bindSpec
+					.setTargetToModelConverter(createConverter(toType, fromType));
 		}
 	}
 
 	public IValidator createValidator(Object fromType, Object toType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
 					.get(i);
 			IValidator validator = bindSupportFactory.createValidator(fromType,
 					toType);
@@ -233,7 +230,7 @@ public class DataBindingContext implements IDataBindingContext {
 
 	public IDomainValidator createDomainValidator(Object modelType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
 					.get(i);
 			IDomainValidator validator = bindSupportFactory
 					.createDomainValidator(modelType);
@@ -249,7 +246,7 @@ public class DataBindingContext implements IDataBindingContext {
 
 	public IConverter createConverter(Object fromType, Object toType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
 					.get(i);
 			IConverter converter = bindSupportFactory.createConverter(fromType,
 					toType);
@@ -270,7 +267,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public IBinding bind(Object targetDescription, Object modelDescription,
-			IBindSpec bindSpec) {
+			BindSpec bindSpec) {
 		return bind(createObservable(targetDescription), modelDescription,
 				bindSpec);
 	}
@@ -376,7 +373,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 */
 	public boolean isAssignableFromTo(Object fromType, Object toType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
 					.get(i);
 			Boolean result = bindSupportFactory.isAssignableFromTo(fromType,
 					toType);

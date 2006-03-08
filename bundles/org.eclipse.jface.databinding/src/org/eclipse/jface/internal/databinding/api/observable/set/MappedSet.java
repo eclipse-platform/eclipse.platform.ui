@@ -18,9 +18,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingDiff;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMapping;
 
 /**
@@ -37,7 +38,7 @@ public class MappedSet extends ObservableSet {
 	private Map valueCounts = new HashMap();
 
 	private ISetChangeListener domainListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+		public void handleSetChange(IObservableSet source, SetDiff diff) {
 			Set additions = new HashSet();
 			for (Iterator it = diff.getAdditions().iterator(); it.hasNext();) {
 				Object added = it.next();
@@ -54,13 +55,13 @@ public class MappedSet extends ObservableSet {
 					removals.add(mappingValue);
 				}
 			}
-			fireSetChange(new SetDiff(additions, removals));
+			fireSetChange(Diffs.createSetDiff(additions, removals));
 		}
 	};
 
 	private IMappingChangeListener mappingChangeListener = new IMappingChangeListener() {
 		public void handleMappingValueChange(IObservable source,
-				IMappingDiff diff) {
+				MappingDiff diff) {
 			Set affectedElements = diff.getElements();
 			Set additions = new HashSet();
 			Set removals = new HashSet();
@@ -77,7 +78,7 @@ public class MappedSet extends ObservableSet {
 					additions.add(newFunctionValue);
 				}
 			}
-			fireSetChange(new SetDiff(additions, removals));
+			fireSetChange(Diffs.createSetDiff(additions, removals));
 		}
 	};
 

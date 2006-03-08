@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.swt.widgets.Control;
 
@@ -45,7 +45,7 @@ public class ControlObservableValue extends AbstractObservableValue {
 		} else if (attribute.equals(SWTProperties.VISIBLE)) {
 			control.setVisible(((Boolean) value).booleanValue());
 		}
-		fireValueChange(new ValueDiff(oldValue, value));
+		fireValueChange(Diffs.createValueDiff(oldValue, value));
 	}
 
 	public Object doGetValue() {

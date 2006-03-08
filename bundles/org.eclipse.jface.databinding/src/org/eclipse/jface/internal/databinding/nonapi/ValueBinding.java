@@ -12,13 +12,13 @@ package org.eclipse.jface.internal.databinding.nonapi;
 
 import org.eclipse.jface.internal.databinding.api.BindingEvent;
 import org.eclipse.jface.internal.databinding.api.BindingException;
-import org.eclipse.jface.internal.databinding.api.IBindSpec;
+import org.eclipse.jface.internal.databinding.api.BindSpec;
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangingListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.IVetoableValue;
+import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.api.validation.IValidator;
@@ -56,7 +56,7 @@ public class ValueBinding extends Binding {
 	 * @param bindSpec
 	 */
 	public ValueBinding(DataBindingContext context, IObservableValue target,
-			IObservableValue model, IBindSpec bindSpec) {
+			IObservableValue model, BindSpec bindSpec) {
 		super(context);
 		this.target = target;
 		this.model = model;
@@ -104,8 +104,7 @@ public class ValueBinding extends Binding {
 	}
 
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {
-		public boolean handleValueChanging(IVetoableValue source,
-				IValueDiff diff) {
+		public boolean handleValueChanging(IVetoableValue source, ValueDiff diff) {
 			if (updating)
 				return true;
 			// we are notified of a pending change, do validation
@@ -119,7 +118,7 @@ public class ValueBinding extends Binding {
 	};
 
 	private final IValueChangeListener targetChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			if (updating)
 				return;
 			// the target (usually a widget) has changed, validate
@@ -129,7 +128,7 @@ public class ValueBinding extends Binding {
 	};
 
 	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			if (updating)
 				return;
 			// The model has changed so we must update the target
@@ -139,14 +138,16 @@ public class ValueBinding extends Binding {
 
 	/**
 	 * This also does validation.
+	 * @param diff 
 	 * 
 	 * @param changeEvent
 	 *            TODO
 	 */
-	public void updateModelFromTarget(IValueDiff diff) {
+	public void updateModelFromTarget(ValueDiff diff) {
 		BindingEvent e = new BindingEvent(model, target, diff,
 				BindingEvent.EVENT_COPY_TO_MODEL,
-				BindingEvent.PIPELINE_AFTER_GET){};
+				BindingEvent.PIPELINE_AFTER_GET) {
+		};
 		e.originalValue = target.getValue();
 		if (failure(errMsg(fireBindingEvent(e)))) {
 			return;
@@ -231,12 +232,13 @@ public class ValueBinding extends Binding {
 	/**
 	 * @param diff
 	 */
-	public void doUpdateTargetFromModel(IValueDiff diff) {
+	public void doUpdateTargetFromModel(ValueDiff diff) {
 		try {
 			updating = true;
 			BindingEvent e = new BindingEvent(model, target, diff,
 					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET){};
+					BindingEvent.PIPELINE_AFTER_GET) {
+			};
 			e.originalValue = model.getValue();
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;

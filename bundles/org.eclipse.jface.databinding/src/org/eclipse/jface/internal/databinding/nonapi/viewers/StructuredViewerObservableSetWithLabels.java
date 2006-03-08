@@ -17,10 +17,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
-import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -72,7 +72,7 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 	public boolean add(Object o) {
 		boolean added = wrappedSet.add(o);
 		if (added) {
-			fireSetChange(new SetDiff(Collections.singleton(o),
+			fireSetChange(Diffs.createSetDiff(Collections.singleton(o),
 					Collections.EMPTY_SET));
 			// add to table after firing
 			addToViewer(o);
@@ -90,7 +90,7 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 			}
 		}
 		if (adds.size() > 0) {
-			fireSetChange(new SetDiff(adds, Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(adds, Collections.EMPTY_SET));
 			// add to viewer after firing
 			addToViewer(adds.toArray());
 			return true;
@@ -103,8 +103,8 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 		if (removed) {
 			// remove from viewer before firing
 			removeFromViewer(o);
-			fireSetChange(new SetDiff(Collections.EMPTY_SET, Collections
-					.singleton(o)));
+			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
+					Collections.singleton(o)));
 		}
 		return removed;
 	}
@@ -121,7 +121,7 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 		if (removes.size() > 0) {
 			// remove from vieiwer before firing
 			removeFromViewer(removes.toArray());
-			fireSetChange(new SetDiff(Collections.EMPTY_SET, removes));
+			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));
 			return true;
 		}
 		return false;
@@ -140,7 +140,7 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 		if (removes.size() > 0) {
 			// remove from viewer before firing
 			removeFromViewer(removes.toArray());
-			fireSetChange(new SetDiff(Collections.EMPTY_SET, removes));
+			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));
 			return true;
 		}
 		return false;
@@ -151,7 +151,7 @@ public abstract class StructuredViewerObservableSetWithLabels extends
 		wrappedSet.clear();
 		// refresh before firing
 		structuredViewer.refresh();
-		fireSetChange(new SetDiff(Collections.EMPTY_SET, removes));
+		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));
 	}
 
 	public void dispose() {

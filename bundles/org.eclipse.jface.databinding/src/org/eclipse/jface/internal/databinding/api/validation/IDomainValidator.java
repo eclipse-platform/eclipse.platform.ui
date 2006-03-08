@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.api.validation;
 
 /**
  * A validator for domain model values.  If this validator is associated with
- * a binding (via an IBindSpec), then it will be applied immediately before
+ * a binding (via an BindSpec), then it will be applied immediately before
  * a value is stored in the model object.  This validator operates in the
  * model's data type (after the conversion function object has been applied,
  * if applicable) and is responsible for applying range checks, special

@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal.databinding.api;
 
 import org.eclipse.jface.internal.databinding.api.factories.DefaultBindSupportFactory;
-import org.eclipse.jface.internal.databinding.api.factories.IBindSupportFactory;
+import org.eclipse.jface.internal.databinding.api.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.nonapi.DataBindingContext;
 
@@ -46,7 +46,7 @@ public class DataBinding {
 	 * @return a data binding context
 	 */
 	public static IDataBindingContext createContext(
-			IObservableFactory[] observableFactories, IBindSupportFactory[] bindSupportFactories) {
+			IObservableFactory[] observableFactories, BindSupportFactory[] bindSupportFactories) {
 		DataBindingContext result = new DataBindingContext();
 		if (observableFactories != null)
 			for (int i = 0; i < observableFactories.length; i++) {
@@ -69,7 +69,7 @@ public class DataBinding {
 	 * @return a data binding context
 	 */
 	public static IDataBindingContext createContext(IObservableFactory[] observableFactories) {
-		return createContext(observableFactories, new IBindSupportFactory[] {
+		return createContext(observableFactories, new BindSupportFactory[] {
 				new DefaultBindSupportFactory()
 			});
 	}

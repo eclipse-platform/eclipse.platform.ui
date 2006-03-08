@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,7 +26,7 @@ public class TableObservableValue extends AbstractObservableValue {
 	private final Table table;
 
 	private boolean updating = false;
-	
+
 	private int currentSelection;
 
 	/**
@@ -41,8 +41,10 @@ public class TableObservableValue extends AbstractObservableValue {
 			table.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					if (!updating) {
-						int newSelection = TableObservableValue.this.table.getSelectionIndex();
-						fireValueChange(new ValueDiff(new Integer(currentSelection), new Integer(newSelection)));
+						int newSelection = TableObservableValue.this.table
+								.getSelectionIndex();
+						fireValueChange(Diffs.createValueDiff(new Integer(
+								currentSelection), new Integer(newSelection)));
 						currentSelection = newSelection;
 					}
 				}

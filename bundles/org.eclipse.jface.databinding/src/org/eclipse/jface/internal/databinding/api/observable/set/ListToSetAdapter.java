@@ -14,9 +14,10 @@ package org.eclipse.jface.internal.databinding.api.observable.set;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiff;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiffEntry;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 
 /**
@@ -32,12 +33,12 @@ public class ListToSetAdapter extends ObservableSet {
 
 	private IListChangeListener listener = new IListChangeListener() {
 
-		public void handleListChange(IObservableList source, IListDiff diff) {
+		public void handleListChange(IObservableList source, ListDiff diff) {
 			Set added = new HashSet();
 			Set removed = new HashSet();
-			IListDiffEntry[] differences = diff.getDifferences();
+			ListDiffEntry[] differences = diff.getDifferences();
 			for (int i = 0; i < differences.length; i++) {
-				IListDiffEntry entry = differences[i];
+				ListDiffEntry entry = differences[i];
 				Object element = entry.getElement();
 				if (entry.isAddition()) {
 					if (wrappedSet.add(element)) {
@@ -50,7 +51,7 @@ public class ListToSetAdapter extends ObservableSet {
 						added.remove(element);
 					}
 				}
-				fireSetChange(new SetDiff(added, removed));
+				fireSetChange(Diffs.createSetDiff(added, removed));
 			}
 		}
 	};

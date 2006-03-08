@@ -11,13 +11,16 @@
 
 package org.eclipse.jface.internal.databinding.api.observable.value;
 
-
 /**
  * @since 1.0
- *
+ * 
  */
 public interface IValueChangeListener {
 
-	void handleValueChange(IObservableValue source, IValueDiff diff);
+	/**
+	 * @param source
+	 * @param diff
+	 */
+	void handleValueChange(IObservableValue source, ValueDiff diff);
 
 }

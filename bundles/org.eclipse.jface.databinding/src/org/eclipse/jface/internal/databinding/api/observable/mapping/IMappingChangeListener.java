@@ -24,6 +24,6 @@ public interface IMappingChangeListener {
 	 * @param diff
 	 */
 	void handleMappingValueChange(IObservable source,
-			IMappingDiff diff);
+			MappingDiff diff);
 
 }

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.swt;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
@@ -29,7 +29,7 @@ public class SpinnerObservableValue extends AbstractObservableValue {
 	private final String attribute;
 
 	private boolean updating = false;
-	
+
 	private int currentSelection;
 
 	/**
@@ -44,8 +44,10 @@ public class SpinnerObservableValue extends AbstractObservableValue {
 			spinner.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						int newSelection = SpinnerObservableValue.this.spinner.getSelection();
-						fireValueChange(new ValueDiff(new Integer(currentSelection), new Integer(newSelection)));
+						int newSelection = SpinnerObservableValue.this.spinner
+								.getSelection();
+						fireValueChange(Diffs.createValueDiff(new Integer(
+								currentSelection), new Integer(newSelection)));
 						currentSelection = newSelection;
 					}
 				}
@@ -77,8 +79,8 @@ public class SpinnerObservableValue extends AbstractObservableValue {
 				Assert.isTrue(false, "invalid attribute name:" + attribute); //$NON-NLS-1$
 				return;
 			}
-			fireValueChange(new ValueDiff(new Integer(oldValue), new Integer(
-					newValue)));
+			fireValueChange(Diffs.createValueDiff(new Integer(oldValue),
+					new Integer(newValue)));
 		} finally {
 			updating = false;
 		}

@@ -14,12 +14,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.IStaleListener;
-import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -40,7 +40,7 @@ public final class ObservableSetContentProvider implements
 		}
 
 		void doFireDiff(Set added, Set removed) {
-			fireSetChange(new SetDiff(added, removed));
+			fireSetChange(Diffs.createSetDiff(added, removed));
 		}
 
 		void doFireStale(boolean isStale) {
@@ -67,7 +67,7 @@ public final class ObservableSetContentProvider implements
 
 	private ISetChangeListener listener = new ISetChangeListener() {
 
-		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+		public void handleSetChange(IObservableSet source, SetDiff diff) {
 			boolean wasStale = knownElements.isStale();
 			if (isDisposed()) {
 				return;

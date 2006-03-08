@@ -24,6 +24,6 @@ public interface IListChangeListener {
 	 * @param source
 	 * @param diff
 	 */
-	void handleListChange(IObservableList source, IListDiff diff);
+	void handleListChange(IObservableList source, ListDiff diff);
 
 }

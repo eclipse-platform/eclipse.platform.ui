@@ -12,47 +12,39 @@
 package org.eclipse.jface.internal.databinding.api.observable.value;
 
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
+import org.eclipse.jface.internal.databinding.api.observable.IDiff;
 
 /**
  * @since 1.0
- *
+ * 
  */
-public class ValueDiff implements IValueDiff {
-	
-	private Object oldValue;
-	private Object newValue;
+public abstract class ValueDiff implements IDiff {
 
-	public ValueDiff(Object oldValue, Object newValue) {
-		this.oldValue = oldValue;
-		this.newValue = newValue;
+	/**
+	 * Creates a value diff.
+	 */
+	public ValueDiff() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding2.value.IValueDiff#getOldValue()
+	/**
+	 * @return the old value
 	 */
-	public Object getOldValue() {
-		return oldValue;
-	}
+	public abstract Object getOldValue();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding2.value.IValueDiff#getNewValue()
+	/**
+	 * @return the new value
 	 */
-	public Object getNewValue() {
-		return newValue;
-	}
+	public abstract Object getNewValue();
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof ValueDiff) {
 			ValueDiff val = (ValueDiff) obj;
-			
-			return Diffs.equals(val.newValue, newValue)
-				&& Diffs.equals(val.oldValue, oldValue);
-			
+
+			return Diffs.equals(val.getNewValue(), getNewValue())
+					&& Diffs.equals(val.getOldValue(), getOldValue());
+
 		}
 		return false;
 	}
-	
+
 }

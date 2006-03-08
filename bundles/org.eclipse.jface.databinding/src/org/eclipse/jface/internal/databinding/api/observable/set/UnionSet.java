@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.nonapi.observable.IStalenessConsumer;
 import org.eclipse.jface.internal.databinding.nonapi.observable.StalenessTracker;
 
@@ -57,7 +58,7 @@ public final class UnionSet extends ObservableSet {
 	}
 
 	private ISetChangeListener childSetChangeListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, ISetDiff diff) {
+		public void handleSetChange(IObservableSet source, SetDiff diff) {
 			processAddsAndRemoves(diff.getAdditions(), diff.getRemovals());
 		}
 	};
@@ -125,7 +126,7 @@ public final class UnionSet extends ObservableSet {
 		addsToFire.removeAll(removesToFire);
 
 		if (addsToFire.size() > 0 || removesToFire.size() > 0) {
-			fireSetChange(new SetDiff(addsToFire, removesToFire));
+			fireSetChange(Diffs.createSetDiff(addsToFire, removesToFire));
 		}
 	}
 

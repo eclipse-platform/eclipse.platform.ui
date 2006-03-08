@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.viewers;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,7 +50,7 @@ public class StructuredViewerObservableValue extends AbstractObservableValue {
 					if (!updating) {
 						Object oldSelection = currentSelection;
 						currentSelection = doGetValue();
-						fireValueChange(new ValueDiff(oldSelection,
+						fireValueChange(Diffs.createValueDiff(oldSelection,
 								currentSelection));
 					}
 				}
@@ -69,7 +69,8 @@ public class StructuredViewerObservableValue extends AbstractObservableValue {
 				viewer.setSelection(value == null ? StructuredSelection.EMPTY
 						: new StructuredSelection(value));
 				currentSelection = doGetValue();
-				fireValueChange(new ValueDiff(oldSelection, currentSelection));
+				fireValueChange(Diffs.createValueDiff(oldSelection,
+						currentSelection));
 			}
 		} finally {
 			updating = false;

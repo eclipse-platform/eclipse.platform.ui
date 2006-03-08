@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
+
 /**
  * @since 1.0
  * 
@@ -56,8 +58,7 @@ public class WritableSet extends ObservableSet {
 	public boolean add(Object o) {
 		boolean added = wrappedSet.add(o);
 		if (added) {
-			fireSetChange(new SetDiff(Collections.singleton(o),
-					Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(Collections.singleton(o), Collections.EMPTY_SET));
 		}
 		return added;
 	}
@@ -72,7 +73,7 @@ public class WritableSet extends ObservableSet {
 			}
 		}
 		if (adds.size() > 0) {
-			fireSetChange(new SetDiff(adds, Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(adds, Collections.EMPTY_SET));
 			return true;
 		}
 		return false;
@@ -81,7 +82,7 @@ public class WritableSet extends ObservableSet {
 	public boolean remove(Object o) {
 		boolean removed = wrappedSet.remove(o);
 		if (removed) {
-			fireSetChange(new SetDiff(Collections.EMPTY_SET, Collections
+			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, Collections
 					.singleton(o)));
 		}
 		return removed;
@@ -97,7 +98,7 @@ public class WritableSet extends ObservableSet {
 			}
 		}
 		if (removes.size() > 0) {
-			fireSetChange(new SetDiff(Collections.EMPTY_SET, removes));
+			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));
 			return true;
 		}
 		return false;
@@ -114,7 +115,7 @@ public class WritableSet extends ObservableSet {
 			}
 		}
 		if (removes.size() > 0) {
-			fireSetChange(new SetDiff(Collections.EMPTY_SET, removes));
+			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));
 			return true;
 		}
 		return false;
@@ -123,7 +124,7 @@ public class WritableSet extends ObservableSet {
 	public void clear() {
 		Set removes = new HashSet(wrappedSet);
 		wrappedSet.clear();
-		fireSetChange(new SetDiff(Collections.EMPTY_SET, removes));
+		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));
 	}
 
 }

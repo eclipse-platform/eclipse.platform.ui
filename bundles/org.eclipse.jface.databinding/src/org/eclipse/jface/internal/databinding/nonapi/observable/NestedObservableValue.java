@@ -12,10 +12,10 @@ package org.eclipse.jface.internal.databinding.nonapi.observable;
 
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.util.Assert;
 
@@ -28,7 +28,7 @@ public class NestedObservableValue extends AbstractObservableValue {
 	private boolean updating = false;
 
 	private IValueChangeListener innerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			if (!updating) {
 				fireValueChange(diff);
 			}
@@ -66,10 +66,10 @@ public class NestedObservableValue extends AbstractObservableValue {
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			Object oldValue = doGetValue();
 			updateInnerObservableValue(outerObservableValue);
-			fireValueChange(new ValueDiff(oldValue, doGetValue()));
+			fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));
 		}
 	};
 
@@ -129,16 +129,4 @@ public class NestedObservableValue extends AbstractObservableValue {
 		innerChangeListener = null;
 	}
 
-	public IObservableValue getInnerObservableValue() {
-		return innerObservableValue;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.internal.databinding.INestedObservableValue#getOuterObservableValue()
-	 */
-	public IObservableValue getOuterObservableValue() {
-		return outerObservableValue;
-	}
 }

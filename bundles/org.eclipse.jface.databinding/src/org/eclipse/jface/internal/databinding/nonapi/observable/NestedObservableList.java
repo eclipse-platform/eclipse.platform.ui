@@ -17,12 +17,12 @@ import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.list.IListDiff;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
+import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -34,7 +34,7 @@ public class NestedObservableList extends ObservableList {
 	private boolean updating = false;
 
 	private IListChangeListener innerChangeListener = new IListChangeListener() {
-		public void handleListChange(IObservableList source, IListDiff diff) {
+		public void handleListChange(IObservableList source, ListDiff diff) {
 			if (!updating) {
 				fireListChange(diff);
 			}
@@ -71,10 +71,10 @@ public class NestedObservableList extends ObservableList {
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			List oldList = new ArrayList(wrappedList);
 			updateInnerObservableValue(outerObservableValue);
-			fireListChange(Diffs.computeDiff(oldList, wrappedList));
+			fireListChange(Diffs.computeListDiff(oldList, wrappedList));
 		}
 	};
 

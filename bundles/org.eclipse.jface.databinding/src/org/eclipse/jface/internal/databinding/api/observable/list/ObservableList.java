@@ -97,7 +97,7 @@ public abstract class ObservableList extends AbstractObservable implements
 		return super.hasListeners() || listChangeListeners!=null;
 	}
 
-	protected void fireListChange(IListDiff diff) {
+	protected void fireListChange(ListDiff diff) {
 		// fire general change event first
 		super.fireChange();
 
@@ -355,7 +355,7 @@ public abstract class ObservableList extends AbstractObservable implements
 		// TODO this is a naive list diff algorithm, we need a
 		// smarter one
 		List oldList = wrappedList;
-		ListDiff listDiff = Diffs.computeDiff(oldList, newList);
+		ListDiff listDiff = Diffs.computeListDiff(oldList, newList);
 		wrappedList = newList;
 		fireListChange(listDiff);
 	}

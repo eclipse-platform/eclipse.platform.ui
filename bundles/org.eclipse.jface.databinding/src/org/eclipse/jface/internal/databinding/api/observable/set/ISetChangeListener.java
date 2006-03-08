@@ -22,6 +22,6 @@ public interface ISetChangeListener {
 	 * @param source
 	 * @param diff
 	 */
-	void handleSetChange(IObservableSet source, ISetDiff diff);
+	void handleSetChange(IObservableSet source, SetDiff diff);
 
 }
