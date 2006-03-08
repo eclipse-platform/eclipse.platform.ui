@@ -36,7 +36,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
 		super(selectionProvider, ActionMessages.OpenBreakpointMarkerAction__Go_to_File_1); 
 		setToolTipText(ActionMessages.OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2); 
-		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui", "icons/full/elcl16/gotoobj_tsk.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/elcl16/gotoobj_tsk.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+		setDisabledImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/dlcl16/gotoobj_tsk.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION);
