@@ -24,13 +24,13 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
+import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
-import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
-import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 
 public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
@@ -51,10 +51,10 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		if (!(parent instanceof IMemoryBlock))
 			return new Object[0];
 		
-		if (!(context instanceof TableRenderingPresentationContext))
+		if (!(context instanceof IMemoryViewPresentationContext))
 			return new Object[0];
 		
-		TableRenderingPresentationContext memoryViewContext = (TableRenderingPresentationContext)context; 
+		IMemoryViewPresentationContext memoryViewContext = (IMemoryViewPresentationContext)context; 
 		IMemoryRendering rendering = memoryViewContext.getRendering();
 		
 		if (!(rendering instanceof AbstractAsyncTableRendering))
@@ -72,8 +72,11 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	protected boolean hasChildren(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof TableRenderingPresentationContext)
-			return true;
+		if (context instanceof IMemoryViewPresentationContext)
+		{
+			if (((IMemoryViewPresentationContext)context).getRendering() != null)
+				return true;
+		}
 		
 		return false;
 	}
@@ -83,7 +86,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	}
 	
 	
-	private Object[] getMemoryFromMemoryBlock(TableRenderingPresentationContext context) throws DebugException {
+	private Object[] getMemoryFromMemoryBlock(IMemoryViewPresentationContext context) throws DebugException {
 		IMemoryBlock memoryBlock = context.getRendering().getMemoryBlock();
 		if (memoryBlock instanceof IMemoryBlockExtension)
 		{
@@ -97,88 +100,100 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	/**
 	 * @throws DebugException
 	 */
-	public Object[] loadContentForSimpleMemoryBlock(TableRenderingPresentationContext context) throws DebugException {
-		AbstractAsyncTableRendering rendering = context.getTableRendering();
-		IMemoryBlock memoryBlock = rendering.getMemoryBlock();
-		long startAddress = memoryBlock.getStartAddress();
-		BigInteger address = BigInteger.valueOf(startAddress);
-		long length = memoryBlock.getLength();
-		long numLines = length / rendering.getBytesPerLine();
-		return getMemoryToFitTable(address, numLines,  context);
+	public Object[] loadContentForSimpleMemoryBlock(IMemoryViewPresentationContext context) throws DebugException {
+		AbstractAsyncTableRendering rendering = getTableRendering(context);
+		if (rendering != null)
+		{
+			IMemoryBlock memoryBlock = rendering.getMemoryBlock();
+			long startAddress = memoryBlock.getStartAddress();
+			BigInteger address = BigInteger.valueOf(startAddress);
+			long length = memoryBlock.getLength();
+			long numLines = length / rendering.getBytesPerLine();
+			return getMemoryToFitTable(address, numLines,  context);
+		}
+		return EMPTY;
 	}
 
 	/**
 	 * @throws DebugException
 	 */
-	public Object[] loadContentForExtendedMemoryBlock(TableRenderingPresentationContext context) throws DebugException {
+	public Object[] loadContentForExtendedMemoryBlock(IMemoryViewPresentationContext context) throws DebugException {
 		
-		AbstractAsyncTableRendering rendering = context.getTableRendering();
-		TableRenderingContentDescriptor descriptor = context.getContentDescriptor();
-		// calculate top buffered address
-		BigInteger loadAddress = descriptor.getLoadAddress();
-		if (loadAddress == null)
+		AbstractAsyncTableRendering rendering = getTableRendering(context);
+		if (rendering != null)
 		{
-			loadAddress = new BigInteger("0"); //$NON-NLS-1$
-		}
-		
-		BigInteger mbStart = descriptor.getStartAddress();
-		BigInteger mbEnd = descriptor.getEndAddress();
-		
-		// check that the load address is within range
-		if (loadAddress.compareTo(mbStart) < 0 || loadAddress.compareTo(mbEnd) > 0)
-		{
-			// default load address to memory block base address
-			loadAddress = ((IMemoryBlockExtension)descriptor.getMemoryBlock()).getBigBaseAddress();
-			descriptor.setLoadAddress(loadAddress);
-		}
-		
-		// if address is still out of range, throw an exception
-		if (loadAddress.compareTo(mbStart) < 0 || loadAddress.compareTo(mbEnd) > 0)
-		{
-			throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_0 + loadAddress.toString(16), null));
-		}
-		
-		int addressableUnitsPerLine = rendering.getAddressableUnitPerLine();
-		BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(descriptor.getPreBuffer()*addressableUnitsPerLine));
-		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(descriptor.getPostBuffer()*addressableUnitsPerLine));
-		bufferEnd = bufferEnd.add(BigInteger.valueOf(descriptor.getNumLines()*addressableUnitsPerLine));
-		
-		// TODO:  should rely on input to tell us what to load
-		// instead of having the content adapter override the setting
-		if (context.isDynamicLoad())
-		{
-			if (bufferStart.compareTo(mbStart) < 0)
-				bufferStart = mbStart;
+			TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)rendering.getAdapter(TableRenderingContentDescriptor.class);
 			
-			if (bufferEnd.compareTo(mbEnd) > 0)
-				bufferEnd = mbEnd;
+			if (descriptor == null)
+				return new Object[0];
 			
-			// buffer end must be greater than buffer start
-			if (bufferEnd.compareTo(bufferStart) <= 0)
-				throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_1, null));
-			
-			int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue()+1;		
-			// get stoarage to fit the memory view tab size
-			return getMemoryToFitTable(bufferStart, numLines,context);
-		}
-		else
-		{
-			if (bufferStart.compareTo(mbStart) < 0)
-				bufferStart = mbStart;
-			
-			if (bufferEnd.compareTo(mbEnd) > 0)
+			// calculate top buffered address
+			BigInteger loadAddress = descriptor.getLoadAddress();
+			if (loadAddress == null)
 			{
-				bufferStart = mbEnd.subtract(BigInteger.valueOf((descriptor.getNumLines()-1)*addressableUnitsPerLine));
+				loadAddress = new BigInteger("0"); //$NON-NLS-1$
 			}
 			
-			// buffer end must be greater than buffer start
-			if (bufferEnd.compareTo(bufferStart) <= 0)
-				throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_2, null));
+			BigInteger mbStart = descriptor.getStartAddress();
+			BigInteger mbEnd = descriptor.getEndAddress();
 			
-			int numLines = descriptor.getNumLines();	
-			// get stoarage to fit the memory view tab size
-			return getMemoryToFitTable(bufferStart, numLines,  context);
+			// check that the load address is within range
+			if (loadAddress.compareTo(mbStart) < 0 || loadAddress.compareTo(mbEnd) > 0)
+			{
+				// default load address to memory block base address
+				loadAddress = ((IMemoryBlockExtension)descriptor.getMemoryBlock()).getBigBaseAddress();
+				descriptor.setLoadAddress(loadAddress);
+			}
+			
+			// if address is still out of range, throw an exception
+			if (loadAddress.compareTo(mbStart) < 0 || loadAddress.compareTo(mbEnd) > 0)
+			{
+				throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_0 + loadAddress.toString(16), null));
+			}
+			
+			int addressableUnitsPerLine = rendering.getAddressableUnitPerLine();
+			BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(descriptor.getPreBuffer()*addressableUnitsPerLine));
+			BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(descriptor.getPostBuffer()*addressableUnitsPerLine));
+			bufferEnd = bufferEnd.add(BigInteger.valueOf(descriptor.getNumLines()*addressableUnitsPerLine));
+			
+			// TODO:  should rely on input to tell us what to load
+			// instead of having the content adapter override the setting
+			if (descriptor.isDynamicLoad())
+			{
+				if (bufferStart.compareTo(mbStart) < 0)
+					bufferStart = mbStart;
+				
+				if (bufferEnd.compareTo(mbEnd) > 0)
+					bufferEnd = mbEnd;
+				
+				// buffer end must be greater than buffer start
+				if (bufferEnd.compareTo(bufferStart) <= 0)
+					throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_1, null));
+				
+				int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue()+1;		
+				// get stoarage to fit the memory view tab size
+				return getMemoryToFitTable(bufferStart, numLines,context);
+			}
+			else
+			{
+				if (bufferStart.compareTo(mbStart) < 0)
+					bufferStart = mbStart;
+				
+				if (bufferEnd.compareTo(mbEnd) > 0)
+				{
+					bufferStart = mbEnd.subtract(BigInteger.valueOf((descriptor.getNumLines()-1)*addressableUnitsPerLine));
+				}
+				
+				// buffer end must be greater than buffer start
+				if (bufferEnd.compareTo(bufferStart) <= 0)
+					throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_2, null));
+				
+				int numLines = descriptor.getNumLines();	
+				// get stoarage to fit the memory view tab size
+				return getMemoryToFitTable(bufferStart, numLines,  context);
+			}
 		}
+		return EMPTY;
 	}
 	
 	/**
@@ -188,15 +203,18 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	 * @param updateDelta
 	 * @throws DebugException
 	 */
-	public Object[]  getMemoryToFitTable(BigInteger startAddress, long numberOfLines, TableRenderingPresentationContext context) throws DebugException
+	public Object[]  getMemoryToFitTable(BigInteger startAddress, long numberOfLines, IMemoryViewPresentationContext context) throws DebugException
 	{
-		TableRenderingContentDescriptor descriptor = context.getContentDescriptor();
-		AbstractAsyncTableRendering tableRendering = context.getTableRendering();	
+		AbstractAsyncTableRendering tableRendering = getTableRendering(context);	
 		if (tableRendering == null)
 		{
 			DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.MemoryViewContentProvider_Unable_to_retrieve_content, null));
 			throw e;
 		}
+		
+		TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)tableRendering.getAdapter(TableRenderingContentDescriptor.class);
+		if(descriptor == null)
+			return new Object[0];
 		
 		// do not ask for memory from memory block if the debug target
 		// is already terminated
@@ -371,7 +389,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 
 	}
 
-	private Object[] organizeLines(long numberOfLines,  MemoryByte[] memoryBuffer, BigInteger address, boolean manageDelta, TableRenderingPresentationContext context) 
+	private Object[] organizeLines(long numberOfLines,  MemoryByte[] memoryBuffer, BigInteger address, boolean manageDelta, IMemoryViewPresentationContext context) 
 	{
 		Vector lineCache = new Vector();
 		IMemoryRendering rendering = context.getRendering();
@@ -440,5 +458,15 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 			memoryBuffer[i].setEndianessKnown(false);
 		}
 		return memoryBuffer;
+	}
+	
+	protected AbstractAsyncTableRendering getTableRendering(IMemoryViewPresentationContext context)
+	{
+		IMemoryRendering memRendering = context.getRendering();
+		if (memRendering != null && memRendering instanceof AbstractAsyncTableRendering)
+		{
+			return (AbstractAsyncTableRendering)memRendering;
+		}
+		return null;
 	}
 }

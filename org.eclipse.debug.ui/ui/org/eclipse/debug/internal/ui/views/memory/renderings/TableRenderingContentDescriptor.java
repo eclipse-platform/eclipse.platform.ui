@@ -30,6 +30,8 @@ public class TableRenderingContentDescriptor{
 	private int fAddressSize = -1;
 	private int fAddressableSize = -1;
 	
+	private boolean fIsDynamicLoad;
+	
 	public TableRenderingContentDescriptor(AbstractBaseTableRendering rendering)
 	{
 		fRendering = rendering;
@@ -178,6 +180,16 @@ public class TableRenderingContentDescriptor{
 
 	public void setAddressSize(int addressSize) {
 		fAddressSize = addressSize;
+	}
+	
+	public void setDynamicLoad(boolean dynamic)
+	{
+		fIsDynamicLoad = dynamic;
+	}
+	
+	public boolean isDynamicLoad()
+	{
+		return fIsDynamicLoad;
 	}
 
 }

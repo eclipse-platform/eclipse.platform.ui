@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.debug.internal.ui.views.memory.renderings;
+package org.eclipse.debug.internal.ui.memory.provisional;
 
 
 import java.math.BigInteger;
@@ -31,7 +31,26 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractVirtualContentTableModel;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncTableRenderingCellModifier;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncTableRenderingViewer;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncVirtualContentTableViewer;
+import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingToClipboardAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingDialog;
+import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.IPresentationErrorListener;
+import org.eclipse.debug.internal.ui.views.memory.renderings.IVirtualContentListener;
+import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
+import org.eclipse.debug.internal.ui.views.memory.renderings.PendingPropertyChanges;
+import org.eclipse.debug.internal.ui.views.memory.renderings.PrintTableRenderingAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.ResetToBaseAddressAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
+import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
@@ -94,12 +113,52 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.UIJob;
 
-//TODO:  different representation in a rendering
-//TODO:  show memory tab is busy updating
-//TODO:  linux - cannot resize columns to preferred size
-//TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
+/**
+ * Abstract implementation of a table rendering.
+ * <p>
+ * Clients should subclass from this class if they wish to provide a
+ * table rendering.
+ * </p>
+ * <p>
+ *
+ * The label of the rendering is constructed by retrieving the expression from
+ * <code>IMemoryBlockExtension</code>.  For IMemoryBlock, the label is constructed
+ * using the memory block's start address.
+ * 
+ * This rendering manages the change states of its memory bytes if the memory
+ * block does not opt to manage the change states.  For IMemoryBlockExtension, if
+ * the memory block returns false when #supportsChangeManagement() is called, this
+ * rendering will calculate the change state for each byte when its content is updated.
+ * Clients may manages the change states of its memory block by returning true when
+ * #supportsChangeManagement() is called.  This will cause this rendering to stop
+ * calculating the change states of the memory block.  Instead it would rely on the
+ * attributes returned in the MemoryByte array to determine if a byte has changed.
+ * For IMemoryBlock, this rendering will manage the change states its content.   
+ * 
+ *  When firing change event, be aware of the following:
+ *  - whenever a change event is fired, the content provider for Memory View
+ *    view checks to see if memory has actually changed.  
+ *  - If memory has actually changed, a refresh will commence.  Changes to the memory block
+ *    will be computed and will be shown with the delta icons.
+ *  - If memory has not changed, content will not be refreshed.  However, previous delta information 
+ * 	  will be erased.  The screen will be refreshed to show that no memory has been changed.  (All
+ *    delta icons will be removed.)
+ *    
+ * Please note that these APIs will be called multiple times by the Memory View.
+ * To improve performance, debug adapters need to cache the content of its memory block and only
+ * retrieve updated data when necessary.
+ * </p>
+
+ * @since 3.2
+ */
 public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering {
 
+	
+//	TODO:  different representation in a rendering
+//	TODO:  show memory tab is busy updating
+//	TODO:  linux - cannot resize columns to preferred size
+//	TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
+	
 	private class ToggleAddressColumnAction extends Action {
 
 		public ToggleAddressColumnAction() {
@@ -175,7 +234,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private AsyncTableRenderingViewer fTableViewer;
 	private TextViewer fTextViewer;
 	private Shell fToolTipShell;
-	private TableRenderingPresentationContext fPresentationContext;
+	private MemoryViewPresentationContext fPresentationContext;
 	private int fAddressableSize;
 	private TableRenderingContentDescriptor fContentDescriptor;
 	private int fBytePerLine;
@@ -203,11 +262,29 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private PendingPropertyChanges fPendingSyncProperties;
 	
-	// context menu group ids
-	// empty groups have been added to allow clients to insert actions in the context menu
+	/** 
+	 * Identifier for an empty group preceding all context menu actions 
+	 * (value <code>"popUpBegin"</code>).
+	 */
 	public static final String EMPTY_MEMORY_GROUP = "popUpBegin"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for an empty group following navigation actions in the rendering
+	 * (value <code>navigationGroup</code>).
+	 */
 	public static final String EMPTY_NAVIGATION_GROUP = "navigationGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for an empty group following actions that are only applicable in
+	 * non-auto loading mode
+	 * (value <code>nonAutoLoadGroup</code>).
+	 */
 	public static final String EMPTY_NON_AUTO_LOAD_GROUP = "nonAutoLoadGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for an empty group following properties actions
+	 * (value <code>propertyGroup</code>).
+	 */
 	public static final String EMPTY_PROPERTY_GROUP = "propertyGroup"; //$NON-NLS-1$
 	
 	private ISelectionChangedListener fViewerSelectionChangedListener = new ISelectionChangedListener() {
@@ -267,10 +344,20 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			showMessage(status.getMessage());
 		}};
 	
+	
+	/**
+	 * Constructs a new table rendering of the specified type.
+	 * 
+	 * @param renderingId memory rendering type identifier
+	 */
 	public AbstractAsyncTableRendering(String renderingId) {
 		super(renderingId);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IResettableMemoryRendering#resetRendering()
+	 */
 	public void resetRendering() throws DebugException {
 		BigInteger baseAddress = fContentDescriptor.getContentBaseAddress();
 		goToAddress(baseAddress);
@@ -278,6 +365,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		fTableViewer.setTopIndex(baseAddress);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public Control createControl(Composite parent) {
 
 		fPageBook = new PageBook(parent, SWT.NONE);
@@ -287,6 +377,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return fPageBook;
 	}
 	
+	/**
+	 * Create the error page of this rendering
+	 * @param parent
+	 */
 	private void createMessagePage(Composite parent)
 	{
 		if (fTextViewer == null)
@@ -328,8 +422,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 					public IStatus runInUIThread(IProgressMonitor progressMonitor) {
 						
 						fTableViewer = new AsyncTableRenderingViewer(AbstractAsyncTableRendering.this, parent, SWT.VIRTUAL | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
-						fPresentationContext = new TableRenderingPresentationContext(getMemoryRenderingContainer().getMemoryRenderingSite().getSite().getPart());
-						fPresentationContext.setContainerId(getMemoryRenderingContainer().getId());
+						fPresentationContext = new MemoryViewPresentationContext(getMemoryRenderingContainer().getMemoryRenderingSite().getSite().getPart());
+						fPresentationContext.setMemoryRenderingContainer(getMemoryRenderingContainer());
 						fPresentationContext.setRendering(AbstractAsyncTableRendering.this);
 						fTableViewer.setContext(fPresentationContext);
 						
@@ -352,8 +446,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 							fContentDescriptor.setPreBuffer(0);
 							fContentDescriptor.setPostBuffer(0);
 						} 
-						
-						fPresentationContext.setContentDescriptor(fContentDescriptor);
 						
 						setupInitialFormat();
 						fTableViewer.setCellModifier(createCellModifier());
@@ -407,6 +499,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		job.schedule();
 	}
 	
+	/**
+	 * Create popup menu for this rendering
+	 * @param control - control to create the popup menu for
+	 * @param menuListener - listener to notify when popup meu is about to show
+	 */
 	private void createPopupMenu(Control control, IMenuListener menuListener)
 	{
 		IMemoryRenderingContainer container = getMemoryRenderingContainer();
@@ -598,10 +695,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getControl()
+	 */
 	public Control getControl() {
 		return fPageBook;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		
 		if (!fIsCreated)
@@ -1156,10 +1259,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * Displays an error message for the given exception.
-	 * @param e exception to display 
+	 * Displays the given message on the error page
+	 * @param message - the message to display
 	 */
-	private void showMessage(final String message)
+	protected void showMessage(final String message)
 	{
 		UIJob job = new UIJob("Display Message Job"){ //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -1199,6 +1302,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return fBytePerLine;
 	}
 	
+	/**
+	 * Returns whether the error page is displayed.
+	 * 
+	 * @return whether the error page is displayed
+	 */
 	public boolean isDisplayingError()
 	{
 		return fShowMessage;
@@ -1388,6 +1496,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
    	}
 
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.AbstractMemoryRendering#dispose()
+	 */
 	public void dispose() {
 		
 		if (fIsDisposed)
@@ -1472,6 +1583,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return decorateLabel(label);
 	}
 	
+	/* Returns the label of this rendering.
+	 * 
+	 * @return label of this rendering
+	 */
 	public String getLabel() {
 		
 		if (fLabel == null)
@@ -1483,6 +1598,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return fLabel;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
 	public Object getAdapter(Class adapter) {
 		
 		if (adapter == IColorProvider.class)
@@ -1524,6 +1642,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			return fWorkbenchAdapter;
 		}
 		
+		if (adapter == TableRenderingContentDescriptor.class)
+			return getContentDescriptor();
+		
 		return super.getAdapter(adapter);
 	}
 	
@@ -1540,7 +1661,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * Create actions for the view tab
+	 * Create actions for this rendering
 	 */
 	protected void createActions() {
 		
@@ -1564,6 +1685,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		fPrevAction = new PrevPageAction();
 	}
 	
+	/**
+	 * Returns the currently selected address in this rendering.
+	 * 
+	 * @return the currently selected address in this rendering
+	 */
 	public BigInteger getSelectedAddress() {
 		Object key = fTableViewer.getSelectionKey();
 		
@@ -1647,6 +1773,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return tableItem.getText(col);	
 	}
 
+	/**
+	 * Moves the cursor to the specified address.
+	 * Will load more memory if the address is not currently visible.
+	 * 
+	 * @param address address to position cursor at
+	 * @throws DebugException if an exception occurrs
+	 */
 	public void goToAddress(BigInteger address) throws DebugException {
 		
 		if (fTableViewer.getVirtualContentModel() == null)
@@ -1704,10 +1837,18 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}			
 	
+	/**
+	 * Refresh the table viewer with the current top visible address.
+	 * Update labels in the memory rendering.
+	 */
 	public void refresh() {
 		fTableViewer.refresh();
 	}
 
+	
+	/**
+	 * Resize column to the preferred size.
+	 */
 	public void resizeColumnsToPreferredSize() {
 		fTableViewer.resizeColumnsToPreferredSize();
 		if (!fIsShowAddressColumn)
@@ -1826,7 +1967,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private boolean isDynamicLoad()
 	{
-		return fPresentationContext.isDynamicLoad();
+		return fContentDescriptor.isDynamicLoad();
 	}
 	
 	private int getPageSize()
@@ -1847,7 +1988,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private void setDynamicLoad(boolean load)
 	{
-		fPresentationContext.setDynamicLoad(load);
+		fContentDescriptor.setDynamicLoad(load);
 	}
 	
 	private void handlePageStartAddressChanged(BigInteger address)
@@ -1921,6 +2062,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
+	 */
 	public void becomesHidden() {
 		 
 		// creates new object for storing potential changes in sync properties
@@ -2489,36 +2633,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * Returns text for the given memory bytes at the specified address for the specified
-	 * rendering type. This is called by the label provider for.
-	 * Subclasses must override.
-	 * 
-	 * @param renderingTypeId rendering type identifier
-	 * @param address address where the bytes belong to
-	 * @param data the bytes
-	 * @return a string to represent the memory. Cannot not return <code>null</code>.
-	 * 	Returns a string to pad the cell if the memory cannot be converted
-	 *  successfully.
-	 */
-	abstract public String getString(String renderingTypeId, BigInteger address, MemoryByte[] data);
-	
-	/**
-	 * Returns bytes for the given text corresponding to bytes at the given
-	 * address for the specified rendering type. This is called by the cell modifier
-	 * when modifying bytes in a memory block.
-	 * Subclasses must convert the string value to an array of bytes.  The bytes will
-	 * be passed to the debug adapter for memory block modification.
-	 * Returns <code>null</code> if the bytes cannot be formatted properly.
-	 * 
-	 * @param renderingTypeId rendering type identifier
-	 * @param address address the bytes begin at
-	 * @param currentValues current values of the data in bytes format
-	 * @param newValue the string to be converted to bytes
-	 * @return the bytes converted from a string
-	 */
-	abstract public byte[] getBytes(String renderingTypeId, BigInteger address, MemoryByte[] currentValues, String newValue);
-
-	/**
 	 * @param topVisibleAddress
 	 */
 	private void createContentDescriptor(final BigInteger topVisibleAddress) {
@@ -2558,4 +2672,39 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 		
 	}
+	
+	private TableRenderingContentDescriptor getContentDescriptor()
+	{
+		return fContentDescriptor;
+	}
+	
+	/**
+	 * Returns text for the given memory bytes at the specified address for the specified
+	 * rendering type. This is called by the label provider for.
+	 * Subclasses must override.
+	 * 
+	 * @param renderingTypeId rendering type identifier
+	 * @param address address where the bytes belong to
+	 * @param data the bytes
+	 * @return a string to represent the memory. Cannot not return <code>null</code>.
+	 * 	Returns a string to pad the cell if the memory cannot be converted
+	 *  successfully.
+	 */
+	abstract public String getString(String renderingTypeId, BigInteger address, MemoryByte[] data);
+	
+	/**
+	 * Returns bytes for the given text corresponding to bytes at the given
+	 * address for the specified rendering type. This is called by the cell modifier
+	 * when modifying bytes in a memory block.
+	 * Subclasses must convert the string value to an array of bytes.  The bytes will
+	 * be passed to the debug adapter for memory block modification.
+	 * Returns <code>null</code> if the bytes cannot be formatted properly.
+	 * 
+	 * @param renderingTypeId rendering type identifier
+	 * @param address address the bytes begin at
+	 * @param currentValues current values of the data in bytes format
+	 * @param newValue the string to be converted to bytes
+	 * @return the bytes converted from a string
+	 */
+	abstract public byte[] getBytes(String renderingTypeId, BigInteger address, MemoryByte[] currentValues, String newValue);
 }

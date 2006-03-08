@@ -18,9 +18,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
+import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.TableUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -29,7 +32,7 @@ import org.eclipse.ui.progress.UIJob;
  * when the memory block has changed when the rendering is not visible
  *
  */
-class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
+public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 {
 	public void modelChanged(IModelDelta node) {
 		
@@ -98,36 +101,38 @@ class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 	protected void handleMemoryBlockChanged(IMemoryBlock mb, IModelDelta delta)
 	{
 		try {
-			if (getViewer().getPresentationContext() instanceof TableRenderingPresentationContext)
+			if (getViewer().getPresentationContext() instanceof IMemoryViewPresentationContext)
 			{
-				TableRenderingPresentationContext context = (TableRenderingPresentationContext)getViewer().getPresentationContext();
-				TableRenderingContentDescriptor descriptor = context.getContentDescriptor();
-
-				final AbstractAsyncTableRendering rendering = context.getTableRendering();
-				
+				IMemoryViewPresentationContext context = (IMemoryViewPresentationContext)getViewer().getPresentationContext();
+				final AbstractAsyncTableRendering rendering = getTableRendering(context);
 				if (rendering != null)
 				{
-					final BigInteger address = getMemoryBlockBaseAddress(mb);
-					if (!address.equals(descriptor.getContentBaseAddress()))
+					TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)rendering.getAdapter(TableRenderingContentDescriptor.class);
+					
+					if (descriptor != null)
 					{
-						descriptor.updateContentBaseAddress();
-						UIJob job = new UIJob("go to address"){ //$NON-NLS-1$
-	
-							public IStatus runInUIThread(IProgressMonitor monitor) {
-								try {
-									rendering.goToAddress(address);
-								} catch (DebugException e) {
-									if (getTableViewer() != null)
-										getTableViewer().handlePresentationFailure(null, e.getStatus());
-								}
-								return Status.OK_STATUS;
-							}};
-						job.setSystem(true);
-						job.schedule();
-					}
-					else
-					{
-						rendering.refresh();
+						final BigInteger address = getMemoryBlockBaseAddress(mb);
+						if (!address.equals(descriptor.getContentBaseAddress()))
+						{
+							descriptor.updateContentBaseAddress();
+							UIJob job = new UIJob("go to address"){ //$NON-NLS-1$
+		
+								public IStatus runInUIThread(IProgressMonitor monitor) {
+									try {
+										rendering.goToAddress(address);
+									} catch (DebugException e) {
+										if (getTableViewer() != null)
+											getTableViewer().handlePresentationFailure(null, e.getStatus());
+									}
+									return Status.OK_STATUS;
+								}};
+							job.setSystem(true);
+							job.schedule();
+						}
+						else
+						{
+							rendering.refresh();
+						}
 					}
 				}
 			}
@@ -154,9 +159,9 @@ class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 	
 	private boolean containsEvent(IModelDelta delta)
 	{
-		if (getViewer().getPresentationContext() instanceof TableRenderingPresentationContext)
+		if (getViewer().getPresentationContext() instanceof IMemoryViewPresentationContext)
 		{
-			TableRenderingPresentationContext context = (TableRenderingPresentationContext) getViewer().getPresentationContext();
+			IMemoryViewPresentationContext context = (IMemoryViewPresentationContext) getViewer().getPresentationContext();
 			if (context.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering rendering = (AbstractAsyncTableRendering)context.getRendering();
@@ -165,5 +170,15 @@ class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 			}
 		}
 		return true;
+	}
+	
+	protected AbstractAsyncTableRendering getTableRendering(IMemoryViewPresentationContext context)
+	{
+		IMemoryRendering memRendering = context.getRendering();
+		if (memRendering != null && memRendering instanceof AbstractAsyncTableRendering)
+		{
+			return (AbstractAsyncTableRendering)memRendering;
+		}
+		return null;
 	}
 }

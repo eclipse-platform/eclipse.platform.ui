@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTextRendering;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.PropertyChangeEvent;

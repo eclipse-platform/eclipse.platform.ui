@@ -1383,7 +1383,7 @@
             class="org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPropertiesPage"
             id="org.eclipse.debug.ui.properties.asynctablerendering"
             name="%TableRenderingInfo.label"
-            objectClass="org.eclipse.debug.internal.ui.views.memory.renderings.AbstractAsyncTableRendering"/>            
+            objectClass="org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering"/>            
    </extension>
 <!-- commands and their bindings
 NOTE: 

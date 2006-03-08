@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.memory.renderings;
+package org.eclipse.debug.internal.ui.memory.provisional;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -80,8 +80,9 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 		return fCodePage;
 	}
 	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
+	 * @see org.eclipse.debug.internal.ui.views.memory.provisional.AbstractAsyncTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
 	 */
 	public String getString(String dataType, BigInteger address,  MemoryByte[] data) {
 		try {
@@ -122,8 +123,9 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 		}
 	}
 	
+
 	/* (non-Javadoc)
-	 * @see com.ibm.debug.extended.ui.AbstractTableViewTabLabelProvider#getBytes(java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.views.memory.provisional.AbstractAsyncTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
 	 */
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		try {

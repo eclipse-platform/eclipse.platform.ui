@@ -17,7 +17,7 @@ import java.math.BigInteger;
  * These data will be used to sync up the rendering when it becomes visible again.
  *
  */
-class PendingPropertyChanges
+public class PendingPropertyChanges
 {
 	BigInteger fTopVisibleAddress;
 	BigInteger fSelectedAddress;

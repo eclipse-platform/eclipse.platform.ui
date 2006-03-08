@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 
 /**

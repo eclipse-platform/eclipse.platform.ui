@@ -17,11 +17,11 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
-import org.eclipse.debug.internal.ui.views.memory.MemoryViewPresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -168,14 +168,14 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		if (memoryBlocks.length == 1)
 			return true;
 		
-		if (getPresentationContext() instanceof MemoryViewPresentationContext)
+		if (getPresentationContext() instanceof IMemoryViewPresentationContext)
 		{
 			// if registered, meaning the memory block is added from this view, select
-			MemoryViewPresentationContext context = (MemoryViewPresentationContext)getPresentationContext();
+			IMemoryViewPresentationContext context = (IMemoryViewPresentationContext)getPresentationContext();
 			if (context.isMemoryBlockRegistered(memoryBlock))
 				return true;
 			// if display is not pinned, select
-			else if (!context.isPinMBDisplay())
+			else if (!context.isPinned())
 				return true;
 		}
 		return false;

@@ -39,6 +39,7 @@ import org.eclipse.debug.internal.ui.views.variables.ViewerState;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -72,7 +73,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * Tree viewer for memory blocks
  */
-public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionChangedListener,  IMemoryViewPane{
+public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionChangedListener,  IMemoryViewPane, IMemoryRenderingContainer{
 	
 	public static final String PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.MemoryBlocksTreeViewPane"; //$NON-NLS-1$
 	
@@ -87,7 +88,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	private boolean fVisible = true;
 	private TreeViewPaneContextListener fDebugContextListener;
 	private ViewPaneEventHandler fEvtHandler;
-	private Hashtable fViewerState = new Hashtable();			// for saving and restoring expansion and selection 
+	private Hashtable fViewerState = new Hashtable();			// for saving and restoring expansion and selection
+	private String fLabel;
 	
 	class TreeViewerRemoveMemoryBlocksAction extends Action
 	{
@@ -316,9 +318,10 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	{
 		fPaneId = paneId;
 		fTreeViewer = new AsynchronousTreeViewer(parent);
+		fLabel = label;
 		
 		MemoryViewPresentationContext presentationContext = new MemoryViewPresentationContext(fParent);
-		presentationContext.setContainerId(getId());
+		presentationContext.setMemoryRenderingContainer(this);
 		fTreeViewer.setContext(presentationContext);
 		
 		IAdaptable context = DebugUITools.getDebugContext();
@@ -651,5 +654,31 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	public AsynchronousTreeViewer getViewer()
 	{
 		return fTreeViewer;
+	}
+
+	public IMemoryRenderingSite getMemoryRenderingSite() {
+		if (fParent instanceof IMemoryRenderingSite)
+			return (IMemoryRenderingSite)fParent;
+		return null;
+	}
+
+	public void addMemoryRendering(IMemoryRendering rendering) {
+		// do nothing
+	}
+
+	public void removeMemoryRendering(IMemoryRendering rendering) {
+		// do nothing
+	}
+
+	public IMemoryRendering[] getRenderings() {
+		return new IMemoryRendering[0];
+	}
+
+	public IMemoryRendering getActiveRendering() {
+		return null;
+	}
+
+	public String getLabel() {
+		return fLabel;
 	}
 }

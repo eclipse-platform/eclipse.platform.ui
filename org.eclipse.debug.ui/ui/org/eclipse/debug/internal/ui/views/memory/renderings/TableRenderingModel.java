@@ -25,8 +25,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
+import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
 import org.eclipse.debug.internal.ui.viewers.ModelNode;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
 
 
 public class TableRenderingModel extends AbstractVirtualContentTableModel
@@ -159,12 +162,12 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 	private int getAddressableUnitsPerColumn()
 	{
 		AsynchronousTableViewer viewer = getTableViewer();
-		if (viewer.getPresentationContext() instanceof TableRenderingPresentationContext)
+		if (viewer.getPresentationContext() instanceof IMemoryViewPresentationContext)
 		{
-			TableRenderingPresentationContext context = (TableRenderingPresentationContext)viewer.getPresentationContext();
-			if (context.getTableRendering() != null)
+			IMemoryViewPresentationContext context = (IMemoryViewPresentationContext)viewer.getPresentationContext();
+			if (getTableRendering(context)!= null)
 			{
-				return context.getTableRendering().getAddressableUnitPerColumn();
+				return getTableRendering(context).getAddressableUnitPerColumn();
 			}
 		}
 		return -1;
@@ -242,6 +245,12 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		if (isEmpty())
 			return;
 		
+		IMemoryViewPresentationContext context = (IMemoryViewPresentationContext)getTableViewer().getPresentationContext();
+		AbstractAsyncTableRendering rendering = getTableRendering(context);
+		
+		if (rendering == null)
+			return;
+		
 		ArrayList segments = new ArrayList(); 
 		Enumeration enumeration = fOrderedCache.elements();
 		
@@ -260,14 +269,8 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		
 		int bytesPerLine = -1;
 		int numAddressableUnitPerLine = -1;
-		 
-		if (getTableViewer().getPresentationContext() instanceof TableRenderingPresentationContext)
-		{
-			TableRenderingPresentationContext context = (TableRenderingPresentationContext)getTableViewer().getPresentationContext();
-			AbstractAsyncTableRendering rendering = context.getTableRendering();
-			bytesPerLine = rendering.getBytesPerLine();
-			numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
-		}
+		bytesPerLine = rendering.getBytesPerLine();
+		numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
 		
 		clearCache();
 		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine);
@@ -279,6 +282,12 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 	
 	private void rebuildContent()
 	{
+		IMemoryViewPresentationContext context = (IMemoryViewPresentationContext)getTableViewer().getPresentationContext();
+		AbstractAsyncTableRendering rendering = getTableRendering(context);
+		
+		if (rendering == null)
+			return;
+		
 		ArrayList segments = new ArrayList();
 		Object[] elements = getElements();
 		for (int i=0; i<elements.length; i++)
@@ -294,14 +303,9 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		
 		int bytesPerLine = -1;
 		int numAddressableUnitPerLine = -1;
-		 
-		if (getTableViewer().getPresentationContext() instanceof TableRenderingPresentationContext)
-		{
-			TableRenderingPresentationContext context = (TableRenderingPresentationContext)getTableViewer().getPresentationContext();
-			AbstractAsyncTableRendering rendering = context.getTableRendering();
-			bytesPerLine = rendering.getBytesPerLine();
-			numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
-		}
+		
+		bytesPerLine = rendering.getBytesPerLine();
+		numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
 		
 		BigInteger address = (BigInteger)getKey(0);
 		
@@ -408,5 +412,15 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 			new SupportsChangeMgmtJob().schedule();
 		}
 		super.init(root);
+	}
+	
+	private AbstractAsyncTableRendering getTableRendering(IMemoryViewPresentationContext context)
+	{
+		IMemoryRendering memRendering = context.getRendering();
+		if (memRendering != null && memRendering instanceof AbstractAsyncTableRendering)
+		{
+			return (AbstractAsyncTableRendering)memRendering;
+		}
+		return null;
 	}
 }

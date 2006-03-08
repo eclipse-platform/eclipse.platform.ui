@@ -18,14 +18,14 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
+import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
-import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
-import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.debug.ui.memory.MemoryRenderingElement;
@@ -44,25 +44,29 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 	protected String[] getLabels(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof TableRenderingPresentationContext)
+		if (context instanceof IMemoryViewPresentationContext)
 		{
-			TableRenderingPresentationContext tableRenderingContext = (TableRenderingPresentationContext)context;
-			if (tableRenderingContext.getTableRendering() != null)
+			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
-				AbstractAsyncTableRendering tableRendering = tableRenderingContext.getTableRendering();
-				String addressStr = getColumnText(element, 0, tableRendering, tableRenderingContext.getContentDescriptor());
-				int numColumns = tableRendering.getAddressableUnitPerLine() / tableRendering.getAddressableUnitPerColumn();
-				
-				String[] labels = new String[numColumns+2];
-				labels[0] = addressStr;
-				
-				for (int i=0; i<=numColumns; i++)
+				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
+				TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)tableRendering.getAdapter(TableRenderingContentDescriptor.class);
+				if (descriptor != null)
 				{
-					labels[i+1] = getColumnText(element, i+1, tableRendering, tableRenderingContext.getContentDescriptor());
+					String addressStr = getColumnText(element, 0, tableRendering, descriptor);
+					int numColumns = tableRendering.getAddressableUnitPerLine() / tableRendering.getAddressableUnitPerColumn();
+					
+					String[] labels = new String[numColumns+2];
+					labels[0] = addressStr;
+					
+					for (int i=0; i<=numColumns; i++)
+					{
+						labels[i+1] = getColumnText(element, i+1, tableRendering, (TableRenderingContentDescriptor)tableRendering.getAdapter(TableRenderingContentDescriptor.class));
+					}
+					
+					labels[labels.length - 1 ] = ""; //$NON-NLS-1$
+					return labels;
 				}
-				
-				labels[labels.length - 1 ] = ""; //$NON-NLS-1$
-				return labels;
 			}
 		}
 		return new String[0];
@@ -133,12 +137,12 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 
 	protected ImageDescriptor[] getImageDescriptors(Object element,
 			IPresentationContext context) throws CoreException {
-		if (context instanceof TableRenderingPresentationContext)
+		if (context instanceof IMemoryViewPresentationContext)
 		{
-			TableRenderingPresentationContext tableRenderingContext = (TableRenderingPresentationContext)context;
-			if (tableRenderingContext.getTableRendering() != null)
+			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
-				AbstractAsyncTableRendering tableRendering = tableRenderingContext.getTableRendering();
+				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
 				int numColumns = tableRendering.getAddressableUnitPerLine() / tableRendering.getAddressableUnitPerColumn();
 				
 				ImageDescriptor[] images = new ImageDescriptor[numColumns+2];
@@ -206,12 +210,12 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 
 	protected FontData[] getFontDatas(Object element,
 			IPresentationContext context) throws CoreException {
-		if (context instanceof TableRenderingPresentationContext)
+		if (context instanceof IMemoryViewPresentationContext)
 		{
-			TableRenderingPresentationContext tableRenderingContext = (TableRenderingPresentationContext)context;
-			if (tableRenderingContext.getTableRendering() != null)
+			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
-				AbstractAsyncTableRendering tableRendering = tableRenderingContext.getTableRendering();
+				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
 				int numColumns = tableRendering.getAddressableUnitPerLine() / tableRendering.getAddressableUnitPerColumn();
 				
 				FontData[] fontData = new FontData[numColumns+2];
@@ -252,12 +256,12 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 	protected RGB[] getForegrounds(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof TableRenderingPresentationContext)
+		if (context instanceof IMemoryViewPresentationContext)
 		{
-			TableRenderingPresentationContext tableRenderingContext = (TableRenderingPresentationContext)context;
-			if (tableRenderingContext.getTableRendering() != null)
+			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
-				AbstractAsyncTableRendering tableRendering = tableRenderingContext.getTableRendering();
+				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
 				int numColumns = tableRendering.getAddressableUnitPerLine() / tableRendering.getAddressableUnitPerColumn();
 				
 				RGB[] colors = new RGB[numColumns+2];
@@ -354,12 +358,12 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 	protected RGB[] getBackgrounds(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof TableRenderingPresentationContext)
+		if (context instanceof IMemoryViewPresentationContext)
 		{
-			TableRenderingPresentationContext tableRenderingContext = (TableRenderingPresentationContext)context;
-			if (tableRenderingContext.getTableRendering() != null)
+			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
-				AbstractAsyncTableRendering tableRendering = tableRenderingContext.getTableRendering();
+				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
 				int numColumns = tableRendering.getAddressableUnitPerLine() / tableRendering.getAddressableUnitPerColumn();
 				
 				RGB[] colors = new RGB[numColumns+2];

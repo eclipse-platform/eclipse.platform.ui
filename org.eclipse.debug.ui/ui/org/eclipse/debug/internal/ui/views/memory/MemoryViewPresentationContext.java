@@ -11,13 +11,16 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class MemoryViewPresentationContext extends PresentationContext {
+public class MemoryViewPresentationContext extends PresentationContext implements IMemoryViewPresentationContext {
 
-	private String fContainerId;			// optional field to indicate which container the context is in
+	private IMemoryRenderingContainer fContainer;			// optional field to indicate which container the context is in
 	private IMemoryRendering fRendering;	// optional field to indicate which rendering the context is in
 	private MemoryView fMemoryView;
 	
@@ -29,14 +32,19 @@ public class MemoryViewPresentationContext extends PresentationContext {
 		}
 	}
 	
-	public void setContainerId(String paneId)
+	public IMemoryRenderingSite getMemoryRenderingSite()
 	{
-		fContainerId = paneId;
+		return fMemoryView;
 	}
 	
-	public String getContainerId()
+	public void setMemoryRenderingContainer(IMemoryRenderingContainer container)
 	{
-		return fContainerId;
+		fContainer = container;
+	}
+	
+	public IMemoryRenderingContainer getMemoryRenderingContainer()
+	{
+		return fContainer;
 	}
 	
 	public void setRendering(IMemoryRendering rendering)
@@ -49,7 +57,7 @@ public class MemoryViewPresentationContext extends PresentationContext {
 		return fRendering;
 	}
 	
-	public boolean isPinMBDisplay()
+	public boolean isPinned()
 	{
 		if (fMemoryView != null)
 		{
