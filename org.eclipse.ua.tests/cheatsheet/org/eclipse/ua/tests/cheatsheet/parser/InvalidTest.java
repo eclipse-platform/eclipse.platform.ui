@@ -42,7 +42,7 @@ public class InvalidTest extends TestCase {
 		Assert.assertTrue("Unable to find sample cheat sheets to test parser", urls.length > 0);
 		for (int i=0;i<urls.length;++i) {
 			CheatSheetParser parser = new CheatSheetParser();
-			CheatSheet sheet = (CheatSheet)parser.parse(urls[i]);
+			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], CheatSheetParser.SIMPLE_ONLY);
 			Assert.assertNull("Tried parsing an invalid rational cheat sheet but parser did not return null: " + urls[i], sheet);
 		}
 	}
