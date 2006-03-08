@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
 
 /**
@@ -205,7 +206,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		this.parent = parent;
 	}
 
-	public TaskGroup getParent() {
+	public ITaskGroup getParent() {
 		return parent;
 	}
 

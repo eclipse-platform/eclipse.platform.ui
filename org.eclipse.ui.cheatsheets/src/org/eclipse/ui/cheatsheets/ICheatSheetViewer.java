@@ -11,6 +11,8 @@
 package org.eclipse.ui.cheatsheets;
 
 import java.net.URL;
+import java.util.Map;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -113,4 +115,14 @@ public interface ICheatSheetViewer {
 	 * are <code>null</code>
 	 */
 	public void setInput(String id, String name, URL url);
+	
+	/**
+	 * Sets the currently active cheat sheet to its initial state and
+	 * initalizes the cheat sheet manager data.
+	 * @param cheatSheetData A map whose keys and values are all of type
+	 * <code>java.lang.String</code> or <code>null</code> to reset all data in 
+	 * the cheat sheet manager. 
+	 * @since 3.2
+	 */
+	public void reset(Map cheatSheetData);
 }

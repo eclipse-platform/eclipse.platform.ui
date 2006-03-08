@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetCommand;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
@@ -50,7 +49,7 @@ public class CommandRunner {
 	 * @return OK_STATUS if the command completes withour error, otherwise
 	 * an error status
 	 */
-	public IStatus executeCommand(CheatSheetCommand command, ICheatSheetManager csm) {
+	public IStatus executeCommand(CheatSheetCommand command, CheatSheetManager csm) {
 		ICommandService service = getCommandService();
 		if (service == null) {
 			return new Status
@@ -63,8 +62,7 @@ public class CommandRunner {
 		Object result;			
 		String rawSerialization = command.getSerialization();
 		try {
-			String substitutedSerialization = CheatSheetManager.performVariableSubstitution
-			    (rawSerialization, csm);
+			String substitutedSerialization = csm.performVariableSubstitution(rawSerialization);
 			selectedCommand = service.deserialize(substitutedSerialization);
 			result = selectedCommand.executeWithChecks(null, null);
 			
@@ -73,11 +71,11 @@ public class CommandRunner {
 				ParameterType returnType = selectedCommand.getCommand().getReturnType();
 				if ((returnType != null && (returnType.getValueConverter() != null))) {
 					String resultString = returnType.getValueConverter().convertToString(result);
-					csm.setData(returnsAttribute, resultString);
+					csm.setDataQualified(returnsAttribute, resultString);
 				}
 				else {
 					if (result instanceof String) {
-						csm.setData(returnsAttribute, (String)result);
+						csm.setDataQualified(returnsAttribute, (String)result);
 					}
 				}
 			}

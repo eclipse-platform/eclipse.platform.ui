@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.views;
 
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -279,8 +280,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	}
 
 	private void showTaskEditor(EditableTask task) {
-		startIfSelected(task);
-		TaskEditor editor = getTaskEditor(task);
+		startIfSelected(task, false);
+		TaskEditor editor = getTaskEditor(task, false);
 		if (editor != null) {
 		    setCurrentEditor(editor.getControl().getParent());
 		}
@@ -392,9 +393,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	/*
 	 * Ensure that if this task is visible and in a runnable state that it has been started
 	 */
-	private void startIfSelected(ICompositeCheatSheetTask task) {
+	private void startIfSelected(ICompositeCheatSheetTask task, boolean initialize) {
 		if (task == selectedTask) {
-			TaskEditor editor = getTaskEditor(task);
+			TaskEditor editor = getTaskEditor(task, initialize);
 			if (editor!=null) {
 				setCurrentEditor(editor.getControl());
 			}
@@ -413,7 +414,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				if (data instanceof EditableTask) {
 				    EditableTask task = (EditableTask)data;
 				    task.setStarted();
-				    startIfSelected(task);
+				    startIfSelected(task, true);
 				}
 			}     
             if (ref.equals(SKIP_HREF)) {
@@ -520,7 +521,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	/*
 	 * Get the task editor for this task. If no editor exists create one
 	 */
-	private TaskEditor getTaskEditor(ICompositeCheatSheetTask task) {
+	private TaskEditor getTaskEditor(ICompositeCheatSheetTask task, boolean initialize) {
 		if (task instanceof EditableTask) {
 			EditableTask editable = (EditableTask)task;
 			if (editable.getEditor() == null) {
@@ -530,7 +531,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 					editor.createControl(taskEditorContainer, mform.getToolkit());
 					editor.setInput(editable, model.getTaskMemento(task.getId()));
 					editable.setEditor(editor);
-				}				
+				} else if (initialize) {
+					editor.setInput(editable, model.getTaskMemento(task.getId()));
+				}
 			}
 			return editable.getEditor();
 		}
@@ -569,9 +572,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 							Messages.COMPOSITE_RESTART_DIALOG_TITLE, 
 							Messages.COMPOSITE_RESTART_CONFIRM_MESSAGE)) {
-					    model.resetAllTasks();
-					    currentExplorer.setSelection
-					        (new StructuredSelection(model.getRootTask()), true);	
+					    restart(null);	
 				    }
 				}
 			}
@@ -608,6 +609,13 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
         }
 
 		return index;
+	}
+
+	public void restart(Map cheatSheetData) {
+		model.resetAllTasks(cheatSheetData);
+		currentExplorer.setSelection
+		    (new StructuredSelection(model.getRootTask()), true);
+		
 	}
 
 }

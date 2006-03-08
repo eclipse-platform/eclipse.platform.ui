@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
@@ -447,11 +446,11 @@ public class CoreItem extends ViewItem {
 	}
 	
 	/*package*/
-	IStatus runExecutable(ICheatSheetManager csm) {
+	IStatus runExecutable(CheatSheetManager csm) {
 		return runExecutable(this.getItem().getExecutable(), csm);	
 	}
 	
-	IStatus runExecutable(AbstractExecutable executable, ICheatSheetManager csm) {
+	IStatus runExecutable(AbstractExecutable executable, CheatSheetManager csm) {
 		if(executable != null) {
 			return executable.execute(csm);
 		} 
@@ -540,8 +539,8 @@ public class CoreItem extends ViewItem {
 	 * this is the last step.
 	 */
 	void createCompletionComposite(boolean isFinalItem) {
-		String completionMessage = CheatSheetManager.performVariableSubstitution
-		    (item.getCompletionMessage(), viewer.getManager());
+		String completionMessage = viewer.getManager().performVariableSubstitution
+		    (item.getCompletionMessage());
 		if (completionMessage != null) {
 			Color backgroundColor = bodyWrapperComposite.getBackground();
 			completionComposite = page.getToolkit().createComposite(

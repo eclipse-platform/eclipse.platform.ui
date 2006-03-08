@@ -13,13 +13,13 @@ package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Observable;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
-import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
@@ -118,10 +118,6 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		if (task instanceof EditableTask) {
 		    EditableTask editable = (EditableTask)task;
 			editable.setState(ICompositeCheatSheetTask.NOT_STARTED);
-			TaskEditor editor = editable.getEditor();
-		    if (editor != null) {
-		    	editor.setInput(editable, null);
-		    }
 		} else if (task instanceof TaskGroup) { 
 			TaskGroup group = (TaskGroup)task;
 		    ICompositeCheatSheetTask[] subtasks = group.getSubtasks();
@@ -132,9 +128,13 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		}
 	}
 
-	public void resetAllTasks() {
+	public void resetAllTasks(Map cheatSheetData) {
         if (manager != null) {
-        	manager.setData(new Hashtable());
+    		if (cheatSheetData == null) {
+            	manager.setData(new Hashtable());
+    		} else {
+    			manager.setData(cheatSheetData);
+    		}
         }
         saveHelper.clearTaskMementos();	
 	    resetTask(getRootTask());

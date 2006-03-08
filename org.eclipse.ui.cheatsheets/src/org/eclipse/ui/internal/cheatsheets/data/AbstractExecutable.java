@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.cheatsheets.data;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 import org.w3c.dom.Node;
 
 /**
@@ -107,7 +107,7 @@ public abstract class AbstractExecutable {
 	 * completes with a failure result, error status if an exception was thrown
 	 * or the executable could not be initiated.
 	 */
-	public abstract IStatus execute(ICheatSheetManager csm);	
+	public abstract IStatus execute(CheatSheetManager csm);	
 
 	/**
 	 * @return true if this executable can have parameters

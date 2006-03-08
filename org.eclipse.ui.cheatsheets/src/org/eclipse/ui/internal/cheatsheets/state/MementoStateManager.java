@@ -17,6 +17,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
@@ -33,13 +34,15 @@ public class MementoStateManager implements ICheatSheetStateManager {
 	private CheatSheetElement element;
 	private CheatSheetSaveHelper saveHelper = new CheatSheetSaveHelper();
 	private Properties props;
+	private ICheatSheetManager parentCsm;
 
 	/**
 	 * @param memento The memento which will be used to initialize the state. May be
 	 * null to indicate that the state should be initialized.
 	 */
-	public MementoStateManager(IMemento memento) {
+	public MementoStateManager(IMemento memento, ICheatSheetManager parentCsm) {
 		this.memento = memento;
+		this.parentCsm = parentCsm;
 	}
 
 	/**
@@ -60,6 +63,7 @@ public class MementoStateManager implements ICheatSheetStateManager {
 		if (getProperties() != null) {
 		    result.setData((Hashtable) getProperties().get(IParserTags.MANAGERDATA));
 		}
+		result.setParent(parentCsm);
 		return result;
 	}
 

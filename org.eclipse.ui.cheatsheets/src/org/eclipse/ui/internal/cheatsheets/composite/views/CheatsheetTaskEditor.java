@@ -47,11 +47,14 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		Dictionary params = task.getParameters();
 		String id = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
 		String path = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_PATH);
-		MementoStateManager stateManager = new MementoStateManager(memento);
+		MementoStateManager stateManager = new MementoStateManager(memento, task.getCompositeCheatSheet().getCheatSheetManager());
 		if (path != null) {
 			URL url;
 			try {
 				url = task.getInputUrl(path);
+				if (id == null) { 
+					id = task.getId();
+				}
 				viewer.setInput(id, task.getName(), url, stateManager);				
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -61,9 +64,6 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		    viewer.setInput(id, stateManager);
 		}
 		viewer.addListener(new TaskListener());
-		if (memento == null) {
-			viewer.restart();
-		}
 	}
 	
 	/*

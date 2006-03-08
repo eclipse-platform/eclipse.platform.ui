@@ -20,11 +20,13 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
  */
 public class CheatSheetManager implements ICheatSheetManager {
 
+	private static final String PARENT_PREFIX = "parent."; //$NON-NLS-1$
 	private static final String VARIABLE_END = "}"; //$NON-NLS-1$
 	private static final String VARIABLE_BEGIN = "${"; //$NON-NLS-1$
 	private String cheatsheetID;
 	private List listeners;
 	private Map dataTable = null;
+	private ICheatSheetManager parent;
 	
 	public CheatSheetManager(CheatSheetElement element) {
 		cheatsheetID = element.getID();
@@ -71,26 +73,38 @@ public class CheatSheetManager implements ICheatSheetManager {
 			return null;
 		return (String) dataTable.get(key);
 	}
+	
+	/**
+	 * Similar to get data except that if the key is prefixed with "parent."
+	 * get the data from the parent
+	 * @param qualifiedKey
+	 * @return The data for this key
+	 */
+	public String getDataQualified(String qualifiedKey) {
+		if (qualifiedKey.startsWith(PARENT_PREFIX) && parent != null) {
+			return parent.getData(qualifiedKey.substring(PARENT_PREFIX.length()));
+		} else {
+			return getData(qualifiedKey);
+		}
+	}
 
 	public String getVariableData(String variable) {
 		String result = variable;
 		if(variable != null && variable.startsWith(VARIABLE_BEGIN) && variable.endsWith(VARIABLE_END)) {
 			result = variable.substring(2,variable.length()-1);
-			result = getData(result);
+			result = getDataQualified(result);
 		}
 		return result;
 	}
 	
     /**
      * Substitute occurences of ${data} with values from the cheatsheetmanager.
-     * This function is static to allow for JUnit testing
      * @param input The input string
      * @param csm The cheatsheet manager
      * @return The input string with substitutions made for any cheatsheet 
      * variables encountered.
      */
-	public static String performVariableSubstitution(String input,
-			             ICheatSheetManager csm)
+	public String performVariableSubstitution(String input)
 	{
 		String remaining = input;
 		String output = ""; //$NON-NLS-1$
@@ -103,7 +117,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 			} else {
                 String varName = remaining.substring(varIndex + VARIABLE_BEGIN.length(),
                 		                         endIndex);
-                String value = csm.getData(varName);
+                String value = getDataQualified(varName);
                 output += remaining.substring(0, varIndex);
                 if (value != null) {
                 	output += value;
@@ -137,6 +151,23 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 		dataTable.put(key, data);
 	}
+	
+	/**
+	 * Similar to setData except that if the key is prefixed by "parent." 
+	 * set the data in the parent.
+	 * @param qualifiedKey A key which may be prefixed by parent.
+	 * @param data The value to set
+	 */
+	public void setDataQualified(String qualifiedKey, String data) {
+		if (qualifiedKey == null) {
+			throw new IllegalArgumentException();
+		}
+		if (qualifiedKey.startsWith(PARENT_PREFIX) && parent != null) {
+			parent.setData(qualifiedKey.substring(PARENT_PREFIX.length()), data);
+		} else {
+			setData(qualifiedKey, data);
+		}
+	}
 
 	/**
 	 * Add a listener for cheatsheet events
@@ -145,6 +176,22 @@ public class CheatSheetManager implements ICheatSheetManager {
 	public void addListener(CheatSheetListener listener) {
 		if (listener != null) {
 		    listeners.add(listener);
+		}
+	}
+
+	public ICheatSheetManager getParent() {
+		return parent;
+	}
+	
+	public void setParent(ICheatSheetManager parent) {
+		this.parent = parent;
+	}
+
+	public Set getKeySet() {
+		if (dataTable == null) {
+			return new HashSet();
+		} else {
+		    return dataTable.keySet();
 		}
 	}
 }

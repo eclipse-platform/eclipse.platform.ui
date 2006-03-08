@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.cheatsheets;
 
+import java.util.Set;
+
 /**
  * Manages the running of a cheat sheet.
  * <p>
@@ -68,4 +70,20 @@ public interface ICheatSheetManager {
 	 * is <code>null</code>
 	 */
 	public void setData(String key, String data);
+	
+	/**
+	 * Get the cheat sheet manager for the enclosing composite cheat sheet.
+	 * @return The cheat sheet manager for the composite cheat sheet which contains
+	 * this cheat sheet as a task or <code>null</code> if this cheatsheet was not
+	 * opened as a subtask of a composite cheat sheet.
+	 * @since 3.2
+	 */
+	public ICheatSheetManager getParent();
+	
+	/**
+	 * Get the keys for the data in this cheat sheet manager
+	 * @return The set of keys.
+	 * @since 3.2
+	 */
+	public Set getKeySet();
 }

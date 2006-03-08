@@ -19,15 +19,15 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.ICheatSheetAction;
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.internal.cheatsheets.data.Action;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 import org.osgi.framework.Bundle;
 
 /**
  * Class which can run actions and determine the outcome
  */
 public class ActionRunner {
-	public IStatus runAction(Action cheatSheetAction, ICheatSheetManager csm) {
+	public IStatus runAction(Action cheatSheetAction, CheatSheetManager csm) {
 
 		IStatus status =  Status.OK_STATUS;
 		String pluginId = cheatSheetAction.getPluginID();
@@ -78,7 +78,7 @@ public class ActionRunner {
 					String param = clonedParams[i];
 					if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
 						param = param.substring(2,param.length()-1);
-						String value = csm.getData(param);
+						String value = csm.getDataQualified(param);
 						clonedParams[i] = value == null ? ICheatSheetResource.EMPTY_STRING : value;
 					}
 				}

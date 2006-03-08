@@ -13,9 +13,9 @@ package org.eclipse.ui.internal.cheatsheets.data;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.internal.cheatsheets.CommandRunner;
 import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 import org.w3c.dom.Node;
 
 /**
@@ -40,7 +40,7 @@ public class CheatSheetCommand extends AbstractExecutable {
 		return true;
 	}
 
-	public IStatus execute(ICheatSheetManager csm) {
+	public IStatus execute(CheatSheetManager csm) {
 		return new CommandRunner().executeCommand(this, csm);
 	}
 

@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -332,6 +333,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private boolean loadState() {
 		try {
 			Properties props = stateManager.getProperties();
+
+			manager = stateManager.getCheatSheetManager();
 	
 			// There is a bug which causes the background of the buttons to
 			// remain white, even though the color is set. So instead of calling
@@ -368,8 +371,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	
 			if (cid != null)
 				currentID = cid;
-
-			manager = stateManager.getCheatSheetManager();
 	
 			if (itemNum >= 0) {
 				currentItemNum = itemNum;
@@ -999,9 +1000,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 	/*package*/ void setContent(CheatSheetElement element, ICheatSheetStateManager inputStateManager) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.setContent(CheatSheetElement element)"); //$NON-NLS-1$
-
-		if (element != null && element.equals(contentElement))
-			return;
 		
 		// Cleanup previous contents
 		internalDispose();
@@ -1168,6 +1166,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			Properties properties = saveHelper.createProperties(currentItemNum, viewItemList, getExpandRestoreActionState(), expandRestoreList, currentID, restorePath);
 		    saveHelper.saveToMemento(properties, getManager(), memento);
 		}
+	}
+
+	public void reset(Map cheatSheetData) {
+		if (currentPage instanceof CheatSheetPage) {
+			restart();
+			getManager().setData(cheatSheetData);
+		} else if (currentPage instanceof CompositeCheatSheetPage) {
+			((CompositeCheatSheetPage)currentPage).restart(cheatSheetData);
+		}		
 	}
 
 }
