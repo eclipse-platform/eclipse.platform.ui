@@ -19,7 +19,10 @@ import org.eclipse.ant.tests.ui.performance.OpenLaunchConfigurationDialogTests;
 import org.eclipse.ant.tests.ui.performance.SeparateVMTests;
 
 /**
- * Performance Test suite for the Ant UI
+ * Performance Test suite for the Ant UI.
+ * All of the tests in this suite rely on the setup that occurs in the 
+ * ProjectCreationDecorator suite. It must always run before any of the other
+ * test suites.
  */
 public class AntUIPerformanceTests extends TestSuite {
 
