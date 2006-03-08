@@ -410,7 +410,7 @@ public abstract class TableView extends ViewPart {
 	 * 
 	 * @return Tree
 	 */
-	public Tree getTree() {
+	protected Tree getTree() {
 		return getViewer().getTree();
 	}
 
