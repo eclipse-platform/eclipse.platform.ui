@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.*;
@@ -28,7 +27,7 @@ class SimpleRuleRunner implements Runnable {
 	private IProgressMonitor monitor;
 	private int[] status;
 	RuntimeException exception;
-	private static final IJobManager manager = JobManager.getInstance();
+	private static final IJobManager manager = Job.getJobManager();
 
 	public SimpleRuleRunner(ISchedulingRule rule, int[] status, IProgressMonitor monitor) {
 		this.rule = rule;

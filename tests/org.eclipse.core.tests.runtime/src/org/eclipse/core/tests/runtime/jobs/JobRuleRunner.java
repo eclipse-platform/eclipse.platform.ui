@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.TestBarrier;
@@ -24,7 +23,6 @@ class JobRuleRunner extends Job {
 	private TestBarrier barrier;
 	private int numRepeats;
 	private boolean reportBlocking;
-	private static final IJobManager manager = JobManager.getInstance();
 
 	/**
 	 * This job will start applying the given rule in the manager

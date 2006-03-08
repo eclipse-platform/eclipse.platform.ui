@@ -23,6 +23,7 @@ import org.eclipse.core.tests.harness.*;
  * Tests implementation of ILock objects
  */
 public class DeadlockDetectionTest extends TestCase {
+	private final IJobManager manager = Job.getJobManager();
 	public DeadlockDetectionTest() {
 		super(null);
 	}
@@ -51,6 +52,10 @@ public class DeadlockDetectionTest extends TestCase {
 			}
 		}
 	}
+	
+	private LockManager getLockManager() {
+		return ((JobManager)manager).getLockManager();
+	}
 
 	/**
 	 * Asks all threads to stop executing
@@ -68,13 +73,13 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	public void testComplex() {
 		ArrayList allRunnables = new ArrayList();
-		LockManager manager = new LockManager();
-		OrderedLock lock1 = manager.newLock();
-		OrderedLock lock2 = manager.newLock();
-		OrderedLock lock3 = manager.newLock();
-		OrderedLock lock4 = manager.newLock();
-		OrderedLock lock5 = manager.newLock();
-		OrderedLock lock6 = manager.newLock();
+		LockManager lockManager = new LockManager();
+		OrderedLock lock1 = lockManager.newLock();
+		OrderedLock lock2 = lockManager.newLock();
+		OrderedLock lock3 = lockManager.newLock();
+		OrderedLock lock4 = lockManager.newLock();
+		OrderedLock lock5 = lockManager.newLock();
+		OrderedLock lock6 = lockManager.newLock();
 		createRunnables(new ILock[] {lock1, lock2, lock3}, 1, allRunnables, true);
 		createRunnables(new ILock[] {lock2, lock3, lock4}, 1, allRunnables, true);
 		createRunnables(new ILock[] {lock3, lock4, lock5}, 1, allRunnables, true);
@@ -98,7 +103,7 @@ public class DeadlockDetectionTest extends TestCase {
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
 		//the underlying array has to be empty
-		assertTrue("Locks not removed from graph.", manager.isEmpty());
+		assertTrue("Locks not removed from graph.", lockManager.isEmpty());
 	}
 
 	/**
@@ -106,9 +111,9 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	public void testSimpleDeadlock() {
 		ArrayList allRunnables = new ArrayList();
-		LockManager manager = new LockManager();
-		OrderedLock lock1 = manager.newLock();
-		OrderedLock lock2 = manager.newLock();
+		LockManager localManager = new LockManager();
+		OrderedLock lock1 = localManager.newLock();
+		OrderedLock lock2 = localManager.newLock();
 
 		createRunnables(new ILock[] {lock1, lock2}, 1, allRunnables, false);
 		createRunnables(new ILock[] {lock2, lock1}, 1, allRunnables, false);
@@ -130,7 +135,7 @@ public class DeadlockDetectionTest extends TestCase {
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
 		//the underlying array has to be empty
-		assertTrue("Locks not removed from graph.", manager.isEmpty());
+		assertTrue("Locks not removed from graph.", localManager.isEmpty());
 	}
 
 	/**
@@ -138,10 +143,10 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	public void testThreeLocks() {
 		ArrayList allRunnables = new ArrayList();
-		LockManager manager = new LockManager();
-		OrderedLock lock1 = manager.newLock();
-		OrderedLock lock2 = manager.newLock();
-		OrderedLock lock3 = manager.newLock();
+		LockManager lockManager = new LockManager();
+		OrderedLock lock1 = lockManager.newLock();
+		OrderedLock lock2 = lockManager.newLock();
+		OrderedLock lock3 = lockManager.newLock();
 
 		createRunnables(new ILock[] {lock1, lock2}, 1, allRunnables, false);
 		createRunnables(new ILock[] {lock2, lock3}, 1, allRunnables, false);
@@ -164,14 +169,13 @@ public class DeadlockDetectionTest extends TestCase {
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
 		//the underlying array has to be empty
-		assertTrue("Locks not removed from graph.", manager.isEmpty());
+		assertTrue("Locks not removed from graph.", lockManager.isEmpty());
 	}
 
 	/**
 	 * Test simple deadlock with 2 threads trying to get 1 rule and 1 lock.
 	 */
 	public void testRuleLockInteraction() {
-		final JobManager manager = JobManager.getInstance();
 		final ILock lock = manager.newLock();
 		final ISchedulingRule rule = new IdentityRule();
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
@@ -180,10 +184,10 @@ public class DeadlockDetectionTest extends TestCase {
 			public void run() {
 				lock.acquire();
 				status[0] = TestBarrier.STATUS_START;
-				assertTrue("1.0", manager.getLockManager().isLockOwner());
+				assertTrue("1.0", getLockManager().isLockOwner());
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 				manager.beginRule(rule, null);
-				assertTrue("2.0", manager.getLockManager().isLockOwner());
+				assertTrue("2.0", getLockManager().isLockOwner());
 				manager.endRule(rule);
 				lock.release();
 				status[0] = TestBarrier.STATUS_DONE;
@@ -194,10 +198,10 @@ public class DeadlockDetectionTest extends TestCase {
 			public void run() {
 				manager.beginRule(rule, null);
 				status[1] = TestBarrier.STATUS_START;
-				assertTrue("1.0", manager.getLockManager().isLockOwner());
+				assertTrue("1.0", getLockManager().isLockOwner());
 				TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 				lock.acquire();
-				assertTrue("2.0", manager.getLockManager().isLockOwner());
+				assertTrue("2.0", getLockManager().isLockOwner());
 				lock.release();
 				manager.endRule(rule);
 				status[1] = TestBarrier.STATUS_DONE;
@@ -220,14 +224,13 @@ public class DeadlockDetectionTest extends TestCase {
 		assertTrue("3.0", !first.isAlive());
 		assertTrue("4.0", !second.isAlive());
 		//the underlying array has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Test the interaction between jobs with rules and the acquisition of locks.
 	 */
 	public void testJobRuleLockInteraction() {
-		final JobManager manager = JobManager.getInstance();
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		final ISchedulingRule rule1 = new IdentityRule();
 		final ISchedulingRule rule2 = new IdentityRule();
@@ -236,12 +239,12 @@ public class DeadlockDetectionTest extends TestCase {
 		Job first = new Job("Test1") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					assertTrue("1.0", manager.getLockManager().isLockOwner());
+					assertTrue("1.0", getLockManager().isLockOwner());
 					monitor.beginTask("Testing", 1);
 					status[0] = TestBarrier.STATUS_START;
 					lock.acquire();
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
-					assertTrue("2.0", manager.getLockManager().isLockOwner());
+					assertTrue("2.0", getLockManager().isLockOwner());
 					lock.release();
 					monitor.worked(1);
 					status[0] = TestBarrier.STATUS_DONE;
@@ -255,12 +258,12 @@ public class DeadlockDetectionTest extends TestCase {
 		Job second = new Job("Test2") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					assertTrue("1.0", manager.getLockManager().isLockOwner());
+					assertTrue("1.0", getLockManager().isLockOwner());
 					monitor.beginTask("Testing", 1);
 					status[1] = TestBarrier.STATUS_START;
 					lock.acquire();
 					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
-					assertTrue("2.0", manager.getLockManager().isLockOwner());
+					assertTrue("2.0", getLockManager().isLockOwner());
 					lock.release();
 					monitor.worked(1);
 					status[1] = TestBarrier.STATUS_DONE;
@@ -292,14 +295,13 @@ public class DeadlockDetectionTest extends TestCase {
 		assertEquals("4.0", Job.NONE, second.getState());
 		assertEquals("4.1", Status.OK_STATUS, second.getResult());
 		//the underlying array has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Regression test for bug 46894. Stale entries left over in graph.
 	 */
 	public void testRuleHierarchyWaitReplace() {
-		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
@@ -400,14 +402,13 @@ public class DeadlockDetectionTest extends TestCase {
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
 		}
 		//the underlying graph has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Regression test for bug 46894. Deadlock was not detected (before).
 	 */
 	public void testDetectDeadlock() {
-		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
@@ -503,14 +504,13 @@ public class DeadlockDetectionTest extends TestCase {
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
 		}
 		//the underlying graph has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Test that when 3 columns and 1 row are empty, they are correctly removed from the graph.
 	 */
 	public void testMultipleColumnRemoval() {
-		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
@@ -595,14 +595,13 @@ public class DeadlockDetectionTest extends TestCase {
 		}
 
 		//the underlying graph has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Test that the graph is cleared after a thread stops waiting for a rule.
 	 */
 	public void testBeginRuleCancelAfterWait() {
-		final JobManager manager = JobManager.getInstance();
 		final ISchedulingRule rule1 = new PathRule("/testBeginRuleCancelAfterWait");
 		final ISchedulingRule rule2 = new PathRule("/testBeginRuleCancelAfterWait/B");
 
@@ -660,14 +659,13 @@ public class DeadlockDetectionTest extends TestCase {
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 		waitForCompletion(ruleOwner);
 		//the underlying graph should now be empty
-		assertTrue("Cancelled rule not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Canceled rule not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Test that implicit rules do not create extraneous entries
 	 */
 	public void testImplicitRules() {
-		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 4;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
@@ -787,14 +785,13 @@ public class DeadlockDetectionTest extends TestCase {
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
 		}
 		//the underlying graph has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Regression test for bug 46894. Stale rules left over in graph.
 	 */
 	public void _testRuleHierarchyLockInteraction() {
-		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 5;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
@@ -937,7 +934,7 @@ public class DeadlockDetectionTest extends TestCase {
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
 		}
 		//the underlying graph has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
@@ -946,13 +943,13 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	public void testVeryComplex() {
 		ArrayList allRunnables = new ArrayList();
-		LockManager manager = new LockManager();
-		OrderedLock lock1 = manager.newLock();
-		OrderedLock lock2 = manager.newLock();
-		OrderedLock lock3 = manager.newLock();
-		OrderedLock lock4 = manager.newLock();
-		OrderedLock lock5 = manager.newLock();
-		OrderedLock lock6 = manager.newLock();
+		LockManager lockManager = new LockManager();
+		OrderedLock lock1 = lockManager.newLock();
+		OrderedLock lock2 = lockManager.newLock();
+		OrderedLock lock3 = lockManager.newLock();
+		OrderedLock lock4 = lockManager.newLock();
+		OrderedLock lock5 = lockManager.newLock();
+		OrderedLock lock6 = lockManager.newLock();
 		createRunnables(new ILock[] {lock1, lock2, lock3}, 10, allRunnables, true);
 		createRunnables(new ILock[] {lock2, lock3, lock4}, 10, allRunnables, true);
 		createRunnables(new ILock[] {lock3, lock4, lock5}, 10, allRunnables, true);
@@ -976,7 +973,7 @@ public class DeadlockDetectionTest extends TestCase {
 			assertTrue("1." + i, !((Thread) allRunnables.get(i)).isAlive());
 		}
 		//the underlying array has to be empty
-		assertTrue("Locks not removed from graph.", manager.isEmpty());
+		assertTrue("Locks not removed from graph.", lockManager.isEmpty());
 	}
 
 	/**
@@ -1015,7 +1012,6 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Each job must acquire 1 rule and 2 locks in random order.
 	 */
 	public void _testComplexRuleLockInteraction() {
-		final JobManager manager = JobManager.getInstance();
 		final int NUM_LOCKS = 5;
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C"), new PathRule("/A/B/D"), new PathRule("/A/C/E")};
@@ -1036,7 +1032,7 @@ public class DeadlockDetectionTest extends TestCase {
 								manager.beginRule(rules[indexRule], null);
 								locks[indexLock].acquire();
 								locks[secondIndex].acquire();
-								assertTrue(indexRule + ".0", manager.getLockManager().isLockOwner());
+								assertTrue(indexRule + ".0", getLockManager().isLockOwner());
 								locks[secondIndex].release();
 								locks[indexLock].release();
 								manager.endRule(rules[indexRule]);
@@ -1044,7 +1040,7 @@ public class DeadlockDetectionTest extends TestCase {
 								locks[indexLock].acquire();
 								manager.beginRule(rules[indexRule], null);
 								locks[secondIndex].acquire();
-								assertTrue(indexLock + ".0", manager.getLockManager().isLockOwner());
+								assertTrue(indexLock + ".0", getLockManager().isLockOwner());
 								locks[secondIndex].release();
 								manager.endRule(rules[indexRule]);
 								locks[indexLock].release();
@@ -1088,21 +1084,20 @@ public class DeadlockDetectionTest extends TestCase {
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
 		}
 		//the underlying array has to be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
-	 * Test that when a job with a rule is cancelled, no stale entries are left in the graph.
+	 * Test that when a job with a rule is canceled, no stale entries are left in the graph.
 	 */
 	public void _testJobRuleCancellation() {
-		final JobManager manager = JobManager.getInstance();
 		final ISchedulingRule rule = new IdentityRule();
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 
 		Job first = new Job("Test1") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					assertTrue("1.0", manager.getLockManager().isLockOwner());
+					assertTrue("1.0", getLockManager().isLockOwner());
 					status[0] = TestBarrier.STATUS_START;
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
@@ -1117,7 +1112,7 @@ public class DeadlockDetectionTest extends TestCase {
 		Job second = new Job("Test2") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					assertTrue("2.0", manager.getLockManager().isLockOwner());
+					assertTrue("2.0", getLockManager().isLockOwner());
 					monitor.worked(1);
 				} finally {
 					monitor.done();
@@ -1144,15 +1139,14 @@ public class DeadlockDetectionTest extends TestCase {
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 		waitForCompletion(first);
 		//the underlying graph should now be empty
-		assertTrue("Cancelled job not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Canceled job not removed from graph.", getLockManager().isEmpty());
 	}
 
 	/**
 	 * Test that a lock which was acquired several times and then suspended to resolve deadlock
-	 * is set correctly to the proper depth when it is reacquired by the thread that used to own it.
+	 * is set correctly to the proper depth when it is re-acquired by the thread that used to own it.
 	 */
 	public void _testLockMultipleAcquireThenSuspend() {
-		final JobManager manager = JobManager.getInstance();
 		final ISchedulingRule rule = new IdentityRule();
 		final ILock lock = manager.newLock();
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
@@ -1213,14 +1207,14 @@ public class DeadlockDetectionTest extends TestCase {
 		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 
 		//the underlying graph should not be empty yet
-		assertTrue("Held lock removed from graph.", !manager.getLockManager().isEmpty());
+		assertTrue("Held lock removed from graph.", !getLockManager().isEmpty());
 
 		//wait until the jobs are done
 		status[1] = TestBarrier.STATUS_RUNNING;
 		waitForCompletion(first);
 		waitForCompletion(second);
 		//the underlying graph should now be empty
-		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+		assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
 	}
 
 	private void start(ArrayList allRunnables) {

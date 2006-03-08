@@ -1336,6 +1336,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 * [Thread[main,6,main]]End rule: R/
 	 * [Thread[main,6,main]]Resume rule: R/
 	 * [Thread[Worker-3,5,main]]End rule: L/JUnit/junit/tests/framework/Failure.java
+	 * @deprecated tests deprecated API
 	 */
 	public void testSuspendMismatchedBegins() {
 		PathRule rule1 = new PathRule("/TestSuspendMismatchedBegins");
@@ -1363,6 +1364,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	/**
 	 * Tests IJobManager suspend and resume API
+	 * @deprecated tests deprecated API
 	 */
 	public void testSuspendMultiThreadAccess() {
 		PathRule rule1 = new PathRule("/TestSuspend");

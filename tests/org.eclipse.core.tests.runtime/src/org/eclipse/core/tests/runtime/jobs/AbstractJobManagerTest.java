@@ -14,13 +14,14 @@ import java.io.*;
 import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Base class for tests using IJobManager
  */
 public class AbstractJobManagerTest extends TestCase {
-	protected JobManager manager;
+	protected IJobManager manager;
 	private FussyProgressProvider progressProvider;
 
 	public AbstractJobManagerTest() {
@@ -81,7 +82,7 @@ public class AbstractJobManagerTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		manager = JobManager.getInstance();
+		manager = Job.getJobManager();
 		progressProvider = new FussyProgressProvider();
 		manager.setProgressProvider(progressProvider);
 	}
