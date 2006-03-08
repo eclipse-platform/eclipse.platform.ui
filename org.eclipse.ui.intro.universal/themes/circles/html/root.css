@@ -5,11 +5,32 @@
 .intro-header H1 {
 	font-size : 18pt;
 }
-#page-links a .link-label, #action-links a .link-label {
-	font-size : 13pt;	font-weight : 600;	color : #E5E5E5;
+
+/*
+
+#navigation-links a:hover .link-extra-div,
+#navigation-links a:focus .link-extra-div,
+#navigation-links a:active .link-extra-div {
+	display: block;
+	position: absolute;
+	right : -2px;
+	top : 2px;
+	height : 64px;
+	background-image: url(../graphics/icons/ctool/nav_rightedgehov.gif);
+	background-repeat: no-repeat;
 }
+
+*/
+
+#page-links a .link-label, #action-links a .link-label {
+	font-size : 13pt;	font-weight : 600;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
 #page-links a p .text, #action-links a p .text {
-	font-size : 13pt;	font-weight : 500;	color : #E5E5E5;
+	font-size : 13pt;	font-weight : 500;
+	padding-bottom: 10px;
 }
 /*
  * Set up the content for the root page.
@@ -24,19 +45,8 @@ body {
 	background-color : #7169D1;
 }
 #root {
-/*
-	background-image : url(../graphics/rootpage/brandmark.gif);
-	*/
-/*
-	background-repeat : no-repeat;	background-position : bottom left;
-	*/
 	min-height : 450px;
 	height : expression(document.body.clientHeight < 450? "450px": "100%" );
-/*
-	border-color: magenta;
-	border-style : solid;
-	border-width : 1px;
-*/
 	overflow: hidden;
 }
 
@@ -47,11 +57,6 @@ body {
 	position: absolute;
 	bottom : 20px;
 	left : 20px;
-/*
-	border-style : solid;
-	border-width : 1px;
-	border-color: white;
-*/
 }
 
 /* 
@@ -60,8 +65,6 @@ body {
  */
 #links-background {
 	width : 100%;
-	/*	height : 177px;
-	*/
 	position: absolute;
 	top: 50%;	text-align : center;
 }
@@ -85,19 +88,12 @@ body {
 	width : 884px;
 	height: 387px;
 	position : relative;
-	left : -18px;
+	left : -17px;
 	top : -50%;
-/*
-	border-style : solid;
-	border-color: yellow;
-	border-width : 1px;
-*/
 }
 
 #page-links a {
 	position : absolute;	margin-left : 1em;	margin-right : 1em;	text-align : center;
-	/*	background-color: magenta;
-	*/
 }
 
 #page-links[id] { position: static; } 
@@ -113,19 +109,23 @@ body {
 	height : 80px;
 }
 
+#page-links a#overview {
+	left: -1px;
+	top: 5px;
+}
+
+#page-links a#overview:hover {
+	left: -16px;
+}
+
 #page-links a#overview img {
 	width : 141px;
 	height : 154px;
 }
 
-#page-links a:hover #overview img {
-	width : 202px;
+#page-links a#overview:hover img {
+	width : 217px;
 	height : 99px;
-}
-
-#page-links a#overview {
-	left: -1px;
-	top: 4px;
 }
 
 #page-links a#whatsnew {
@@ -169,51 +169,54 @@ body {
 #page-links a:hover {
 	/* This is needed for IE to force the hover pseudo selectors below to work.*/	padding : 0 em;
 }
-/* Hide both the label and the description of the link and remove them from static HTML flow, until user hovers over link */
-/* First, set the width of both the label and the description to a max of 15 em. */
-/* This can be changed when translated to different country locals. */
-#page-links a span {
-	width : 16em;}
-/* Set up left links orientation first. */
-#page-links a.left:link .link-label,
-#page-links a.left:visited .link-label {
-	display: none;
+
+#page-links a:hover,
+#page-links a:focus,
+#page-links a:active {
+	background-image: url(../graphics/icons/ctool/root_bottomhov.gif);
+	background-repeat: no-repeat;
+	background-position: bottom left;
+	z-index: 20;
 }
-#page-links a.left:hover .link-label,
-#page-links a.left:focus .link-label,
-#page-links a.left:active .link-label {
-	text-align: left;	display: block;	position: absolute;	top : 120 %;	left : 0;
+
+#page-links a#overview:hover,
+#page-links a#overview:focus,
+#page-links a#overview:active {
+	background-image: url(../graphics/icons/ctool/overview_bottomhov.gif);
+	background-image: no-repeat;
+	background-position: bottom 15px;
+	z-index: 20;
 }
-/* hide description and remove it from static HTML flow, until user hovers over link */
-#page-links a.left:link .text,
-#page-links a.left:visited .text {
-	display: none;
+
+/* Hide the link label in the normal state */
+#page-links a .link-label,
+#page-links a .text {
+	display : none;
 }
-#page-links a.left:hover .text,
-#page-links a.left:focus .text,
-#page-links a.left:active .text {
-	text-align: left;	display: block;	position: absolute;	left : 0;	top: 145%;
+
+#page-links a:hover .link-label,
+#page-links a:focus .link-label,
+#page-links a:active .link-label {
+	position: relative;
+	display : block;
 }
-/* Set up right links orientation now. */
-#page-links a.right:link .link-label,
-#page-links a.right:visited .link-label {
-	display: none;
+
+
+
+#page-links a:hover p .text,
+#page-links a:focus p .text,
+#page-links a:active p .text {
+	position: relative;
+	display : block;
 }
-#page-links a.right:hover .link-label,
-#page-links a.right:focus .link-label,
-#page-links a.right:active .link-label {
-	text-align: right;	display: block;	position: absolute;	top : 120 %;	right : 0;
+
+#page-links a#overview:hover p .text,
+#page-links a#overview:focus p .text,
+#page-links a:overview:active p .text {
+	padding-left: 20px;
+	padding-right: 20px;
 }
-/* hide description and remove it from static HTML flow, until user hovers over link */
-#page-links a.right:link .text,
-#page-links a.right:visited .text {
-	display: none;
-}
-#page-links a.right:hover .text,
-#page-links a.right:focus .text,
-#page-links a.right:active .text {
-	text-align: right;	display: block;	position: absolute;	right : 0;	top: 145%;
-}
+
 /* properties for each of the page-links  */
 #page-links a#overview img { background-image : url(../graphics/icons/ctool/overview.gif); }
 #page-links a:hover#overview img { background-image : url(../graphics/icons/ctool/overview_tophov.gif); }
@@ -253,25 +256,22 @@ body {
 
 #action-links a .background-image,
 #action-links a #workbench_img {
-	height : 103px;	width : 103px;
+	width : 202px;
+	height : 103px;	
 	position : absolute;
 	left : 364px;
 	top : -83px;
 }
 
 #action-links a:hover#workbench img {
-	width : 202px;
-	height : 80px;
 }
 
-/* special case for mozilla */
-#action-links a > .background-image,
-#action-links a > #workbench_img {
-	vertical-align : middle;
+#action-links a#workbench img { 
+	background-image : url(../graphics/icons/ctool/workbench.gif); 
 }
-
-#action-links a#workbench img { background-image : url(../graphics/icons/ctool/workbench.gif); }
-#action-links a:hover#workbench img { background-image : url(../graphics/icons/ctool/workbench_tophov.gif); }
+#action-links a:hover#workbench img { 
+	background-image : url(../graphics/icons/ctool/workbench_tophov.gif); 
+}
 
 /* hide the link and description until users hover over the link */
 #action-links a p .text, #action-links a .link-label {
@@ -288,10 +288,3 @@ body {
 #action-links a:active p .text {
 	display : block;	width : 16em;
 }
-/*
-#action-links a:hover,
-#action-links a:focus,
-#action-links a:active {
-	border : 0px;
-}
-*/
