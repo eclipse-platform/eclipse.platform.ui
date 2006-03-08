@@ -55,6 +55,8 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	public void createPart(Composite parent) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetPage.createPart()"); //$NON-NLS-1$		
 		super.createPart(parent);
+		toolkit.getHyperlinkGroup().setActiveBackground(null);
+		toolkit.getHyperlinkGroup().setBackground(null);
 		CheatSheetStopWatch
 				.printLapTime(
 						"CheatSheetPage.createPart()", "Time in CheatSheetPage.createInfoArea() after super.createInfoArea(): "); //$NON-NLS-1$ //$NON-NLS-2$
