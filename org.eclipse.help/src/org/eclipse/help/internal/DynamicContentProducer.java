@@ -11,11 +11,8 @@ package org.eclipse.help.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Locale;
 
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.util.ResourceLocator;
@@ -58,8 +55,8 @@ public class DynamicContentProducer implements IHelpContentProducer {
 	}
 
 	/**
-	 * Opens an input stream to an xhtml file contained in a plugin. This includes includes OS, WS
-	 * and NL lookup.
+	 * Opens an input stream to an xhtml file contained in a plugin or in a doc.zip
+	 * in the plugin. This includes includes OS, WS and NL lookup.
 	 * 
 	 * @param pluginDesc
 	 *            the plugin description of the plugin that contains the file you are trying to find
@@ -73,45 +70,24 @@ public class DynamicContentProducer implements IHelpContentProducer {
 	 * @return an InputStream to the file or <code>null</code> if the file wasn't found
 	 */
 	private InputStream openXHTMLFromPlugin(String pluginID, String file, String locale, boolean filter) {
-		InputStream inputStream = openStreamFromPlugin(pluginID, file, locale);
-		if (inputStream != null) {
-			UAContentParser parser = new UAContentParser(inputStream);
-			Document dom = parser.getDocument();
-			XHTMLSupport support = new XHTMLSupport(pluginID, file, dom, locale);
-			dom = support.processDOM(filter);
-			try {
-				inputStream.close();
-			} catch (IOException e) {
+		Bundle bundle = Platform.getBundle(pluginID);
+		if (bundle != null) {
+			// look in the doc.zip and in the plugin to find the xhtml file.
+			InputStream inputStream = ResourceLocator.openFromZip(bundle, "doc.zip", //$NON-NLS-1$
+						file, locale);
+			if (inputStream == null) {
+				inputStream = ResourceLocator.openFromPlugin(bundle, file, locale);
 			}
-			return UATransformManager.getAsInputStream(dom);
-		}
-		return null;
-	}
-
-	/**
-	 * Opens the stream from a file relative to the plug-in and the provided locale.
-	 * 
-	 * @param pluginID
-	 *            the unique plug-in ID
-	 * @param file
-	 *            the relative file name
-	 * @param locale
-	 *            the locale
-	 * @return the input stream or <code>null</code> if the operation failed for some reason. The
-	 *         caller is responsible for closing the stream.
-	 */
-
-	public static InputStream openStreamFromPlugin(String pluginID, String file, String locale) {
-		ArrayList pathPrefix = ResourceLocator.getPathPrefix(locale);
-
-		Bundle pluginDesc = Platform.getBundle(pluginID);
-
-		URL flatFileURL = ResourceLocator.find(pluginDesc, new Path(file), pathPrefix);
-		if (flatFileURL != null) {
-			try {
-				return flatFileURL.openStream();
-			} catch (IOException e) {
-				return null;
+			if (inputStream != null) {
+				UAContentParser parser = new UAContentParser(inputStream);
+				Document dom = parser.getDocument();
+				XHTMLSupport support = new XHTMLSupport(pluginID, file, dom, locale);
+				dom = support.processDOM(filter);
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+				}
+				return UATransformManager.getAsInputStream(dom);
 			}
 		}
 		return null;

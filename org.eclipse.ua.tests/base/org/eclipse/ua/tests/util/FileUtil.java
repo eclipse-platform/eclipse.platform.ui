@@ -137,7 +137,7 @@ public class FileUtil {
 	 * Reads the contents of the input stream as UTF-8 and constructs and returns
 	 * as a String.
 	 */
-	private static String readString(InputStream in) throws IOException {
+	public static String readString(InputStream in) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		byte[] buffer = new byte[4096];
 		int num;
