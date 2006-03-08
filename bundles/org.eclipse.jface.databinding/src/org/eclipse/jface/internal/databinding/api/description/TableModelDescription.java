@@ -9,9 +9,8 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.beans;
+package org.eclipse.jface.internal.databinding.api.description;
 
-import org.eclipse.jface.internal.databinding.api.Property;
 
 /**
  * TODO Javadoc

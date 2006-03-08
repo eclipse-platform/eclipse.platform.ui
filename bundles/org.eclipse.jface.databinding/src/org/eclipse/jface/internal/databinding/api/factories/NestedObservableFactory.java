@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.beans;
+package org.eclipse.jface.internal.databinding.api.factories;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -18,12 +18,11 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.internal.databinding.api.BindingException;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
-import org.eclipse.jface.internal.databinding.api.IObservableFactory;
-import org.eclipse.jface.internal.databinding.api.NestedObservableList;
-import org.eclipse.jface.internal.databinding.api.NestedProperty;
-import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.description.NestedProperty;
+import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.nonapi.observable.NestedObservableList;
 import org.eclipse.jface.internal.databinding.nonapi.observable.NestedObservableValue;
 
 /**

@@ -18,8 +18,9 @@ import java.util.Collection;
 
 import org.eclipse.jface.internal.databinding.api.BindingException;
 import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
-import org.eclipse.jface.internal.databinding.api.IObservableFactory;
-import org.eclipse.jface.internal.databinding.api.Property;
+import org.eclipse.jface.internal.databinding.api.description.Property;
+import org.eclipse.jface.internal.databinding.api.description.TableModelDescription;
+import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
@@ -145,7 +146,6 @@ final public class BeanObservableFactory implements IObservableFactory {
 			throw new BindingException("Cannot introspect " + elementType, ex); //$NON-NLS-1$
 		}
 		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-		PropertyDescriptor propertyDescriptor = null;
 		for (int i = 0; i < propertyDescriptors.length; i++) {
 			if(propertyDescriptors[i].getName().equals(propertyName)) {
 				return propertyDescriptors[i];

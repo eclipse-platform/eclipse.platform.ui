@@ -21,7 +21,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
  * @since 1.0
  * 
  */
-abstract public class ObservableMultiMapping extends AbstractObservableMultiMapping implements IObservableMultiMappingWithDomain {
+abstract public class ObservableMappingWithDomain extends AbstractObservableMapping implements IObservableMappingWithDomain {
 
 	private ISetChangeListener listener = new ISetChangeListener() {
 		public void handleSetChange(IObservableSet source, ISetDiff diff) {
@@ -39,7 +39,7 @@ abstract public class ObservableMultiMapping extends AbstractObservableMultiMapp
 	/**
 	 * 
 	 */
-	public ObservableMultiMapping() {
+	public ObservableMappingWithDomain() {
 	}
 	
 	/**

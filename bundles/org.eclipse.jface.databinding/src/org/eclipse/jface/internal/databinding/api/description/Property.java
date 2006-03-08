@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.api;
+package org.eclipse.jface.internal.databinding.api.description;
 
 /**
  * A standard description type representing a property of an object. Description

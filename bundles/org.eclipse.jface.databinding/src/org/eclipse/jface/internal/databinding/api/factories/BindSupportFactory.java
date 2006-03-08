@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api;
+package org.eclipse.jface.internal.databinding.api.factories;
 
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;

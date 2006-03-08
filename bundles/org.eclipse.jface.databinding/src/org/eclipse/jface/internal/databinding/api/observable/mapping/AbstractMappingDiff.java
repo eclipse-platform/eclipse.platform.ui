@@ -20,16 +20,22 @@ import java.util.Set;
 abstract public class AbstractMappingDiff implements IMappingDiff {
 
 	private Set elements;
+	private final int[] indices;
 
 	/**
 	 * @param elements
+	 * @param indices 
 	 */
-	public AbstractMappingDiff(Set elements) {
+	public AbstractMappingDiff(Set elements, int[] indices) {
 		this.elements = elements;
+		this.indices = indices;
 	}
 
 	public Set getElements() {
 		return elements;
 	}
 
+	public int[] getAffectedIndices() {
+		return indices;
+	}
 }

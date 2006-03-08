@@ -8,27 +8,35 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.api;
+package org.eclipse.jface.internal.databinding.nonapi.observable;
 
-import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.description.Property;
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
+import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
+import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
+import org.eclipse.jface.internal.databinding.api.observable.set.ISetDiff;
+import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
  * 
  */
-public class NestedObservableValue extends AbstractObservableValue {
+public class NestedObservableSet extends ObservableSet {
 
 	private boolean updating = false;
 
-	private IValueChangeListener innerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+	private ISetChangeListener innerChangeListener = new ISetChangeListener() {
+		public void handleSetChange(IObservableSet source, ISetDiff diff) {
 			if (!updating) {
-				fireValueChange(diff);
+				fireSetChange(diff);
 			}
 		}
 	};
@@ -37,11 +45,9 @@ public class NestedObservableValue extends AbstractObservableValue {
 
 	private Object feature;
 
-	private IObservableValue innerObservableValue;
+	private IObservableSet innerObservableSet;
 
 	private IDataBindingContext databindingContext;
-
-	private Object featureType;
 
 	private IObservableValue outerObservableValue;
 
@@ -51,12 +57,12 @@ public class NestedObservableValue extends AbstractObservableValue {
 	 * @param feature
 	 * @param featureType
 	 */
-	public NestedObservableValue(IDataBindingContext databindingContext,
+	public NestedObservableSet(IDataBindingContext databindingContext,
 			IObservableValue outerObservableValue, Object feature,
 			Object featureType) {
+		super(new HashSet(), featureType);
 		this.databindingContext = databindingContext;
 		this.feature = feature;
-		this.featureType = featureType;
 		this.outerObservableValue = outerObservableValue;
 		updateInnerObservableValue(outerObservableValue);
 
@@ -65,48 +71,35 @@ public class NestedObservableValue extends AbstractObservableValue {
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(IObservableValue source, IValueDiff diff) {
-			Object oldValue = doGetValue();
+			Set oldSet = new HashSet(wrappedSet);
 			updateInnerObservableValue(outerObservableValue);
-			fireValueChange(new ValueDiff(oldValue, doGetValue()));
+			fireSetChange(Diffs.computeDiff(oldSet, wrappedSet));
 		}
 	};
 
 	private void updateInnerObservableValue(
 			IObservableValue outerObservableValue) {
 		currentOuterValue = outerObservableValue.getValue();
-		if (innerObservableValue != null) {
-			innerObservableValue.removeValueChangeListener(innerChangeListener);
-			innerObservableValue.dispose();
+		if (innerObservableSet != null) {
+			innerObservableSet.removeSetChangeListener(innerChangeListener);
+			innerObservableSet.dispose();
 		}
 		if (currentOuterValue == null) {
-			innerObservableValue = null;
+			innerObservableSet = null;
+			wrappedSet = new HashSet();
 		} else {
-			this.innerObservableValue = (IObservableValue) databindingContext
+			this.innerObservableSet = (IObservableSet) databindingContext
 					.createObservable(new Property(currentOuterValue, feature));
-			Object innerValueType = innerObservableValue.getValueType();
-			if (featureType == null) {
-				featureType = innerValueType;
+			wrappedSet = innerObservableSet;
+			Object innerValueType = innerObservableSet.getElementType();
+			if (elementType == null) {
+				elementType = innerValueType;
 			} else {
-				Assert.isTrue(featureType.equals(innerValueType),
+				Assert.isTrue(elementType.equals(innerValueType),
 						"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
 			}
-			innerObservableValue.addValueChangeListener(innerChangeListener);
+			innerObservableSet.addSetChangeListener(innerChangeListener);
 		}
-	}
-
-	public void setValue(Object value) {
-		if (innerObservableValue != null) {
-			innerObservableValue.setValue(value);
-		}
-	}
-
-	public Object doGetValue() {
-		return innerObservableValue == null ? null : innerObservableValue
-				.getValue();
-	}
-
-	public Object getValueType() {
-		return featureType;
 	}
 
 	public void dispose() {
@@ -116,14 +109,14 @@ public class NestedObservableValue extends AbstractObservableValue {
 			outerObservableValue.removeValueChangeListener(outerChangeListener);
 			outerObservableValue.dispose();
 		}
-		if (innerObservableValue != null) {
-			innerObservableValue.removeValueChangeListener(innerChangeListener);
-			innerObservableValue.dispose();
+		if (innerObservableSet != null) {
+			innerObservableSet.removeSetChangeListener(innerChangeListener);
+			innerObservableSet.dispose();
 		}
 		currentOuterValue = null;
 		databindingContext = null;
 		feature = null;
-		innerObservableValue = null;
+		innerObservableSet = null;
 		innerChangeListener = null;
 	}
 }

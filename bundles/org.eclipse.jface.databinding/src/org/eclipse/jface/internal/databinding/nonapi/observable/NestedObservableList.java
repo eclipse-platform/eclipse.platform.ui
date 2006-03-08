@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.api;
+package org.eclipse.jface.internal.databinding.nonapi.observable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListDiff;

@@ -9,6 +9,8 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.jface.internal.databinding.api,
  org.eclipse.jface.internal.databinding.api.beans,
  org.eclipse.jface.internal.databinding.api.conversion,
+ org.eclipse.jface.internal.databinding.api.description,
+ org.eclipse.jface.internal.databinding.api.factories,
  org.eclipse.jface.internal.databinding.api.observable,
  org.eclipse.jface.internal.databinding.api.observable.list,
  org.eclipse.jface.internal.databinding.api.observable.mapping,

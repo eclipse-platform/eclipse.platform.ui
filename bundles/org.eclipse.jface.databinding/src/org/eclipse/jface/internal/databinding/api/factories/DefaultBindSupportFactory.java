@@ -9,13 +9,14 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api;
+package org.eclipse.jface.internal.databinding.api.factories;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.internal.databinding.api.BindingException;
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.api.conversion.IdentityConverter;
 import org.eclipse.jface.internal.databinding.api.validation.IDomainValidator;

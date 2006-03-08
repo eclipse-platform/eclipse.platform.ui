@@ -14,12 +14,11 @@ package org.eclipse.jface.internal.databinding.nonapi.beans;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.util.Collections;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingDiff;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.ObservableMultiMapping;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.AbstractMappingDiff;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.ObservableMultiMappingWithDomain;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.util.Policy;
 
@@ -27,7 +26,7 @@ import org.eclipse.jface.util.Policy;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableMultiMapping extends ObservableMultiMapping {
+public class JavaBeanObservableMultiMapping extends ObservableMultiMappingWithDomain {
 
 	private final PropertyDescriptor[] propertyDescriptors;
 
@@ -38,15 +37,9 @@ public class JavaBeanObservableMultiMapping extends ObservableMultiMapping {
 					if (propertyDescriptors[i].getName().equals(
 							event.getPropertyName())) {
 						final int index = i;
-						fireMappingValueChange(new IMappingDiff() {
-							public Set getElements() {
-								return Collections.singleton(event.getSource());
-							}
-
-							public int[] getAffectedIndices() {
-								return new int[] { index };
-							}
-
+						fireMappingValueChange(new AbstractMappingDiff(
+								Collections.singleton(event.getSource()),
+								new int[] { index }) {
 							public Object[] getOldMappingValues(Object element,
 									int[] indices) {
 								return new Object[] { event.getOldValue() };
