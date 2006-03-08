@@ -741,7 +741,7 @@ public final class RefactoringHistoryManager {
 									final NodeList list= ((Document) result).getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
 									final Element root= document.getDocumentElement();
 									if (sort) {
-										final String string= Long.valueOf(stamp).toString();
+										final String string= Long.toString(stamp);
 										for (int offset= 0; offset < list.getLength(); offset++) {
 											final Element element= (Element) list.item(offset);
 											final String attribute= element.getAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP);
