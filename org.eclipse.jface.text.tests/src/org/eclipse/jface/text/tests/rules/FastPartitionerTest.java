@@ -24,6 +24,7 @@ import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 
 
@@ -198,6 +199,25 @@ public class FastPartitionerTest extends TestCase {
 		fDoc.replace(40, 8, "	/*foo*/");
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
+	
+	public void testPR130900() throws Exception {
+		fPartitioner.disconnect();
+		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
+			{
+				IToken comment= new Token(COMMENT);
+				IPredicateRule[] rules= new IPredicateRule[] { new SingleLineRule("#", null, comment, (char) 0, true, false) };
+				setPredicateRules(rules);
+			}
+		};
+		fPartitioner= createPartitioner(scanner);
+		fDoc.setDocumentPartitioner(fPartitioner);
+		fPartitioner.connect(fDoc);
+		
+		fDoc.set("#");
+		int[] offsets= new int[] { 0, 1 };
+		assertComputePartitioning_InterleavingPartitions(offsets);
+
+    }
 	
 	private void assertComputePartitioning_InterleavingPartitions(int[] offsets) {
 		assertComputePartitioning_InterleavingPartitions(0, fDoc.getLength(), offsets, DEFAULT);

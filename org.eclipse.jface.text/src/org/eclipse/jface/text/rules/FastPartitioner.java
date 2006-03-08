@@ -335,7 +335,7 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 
 			fScanner.setPartialRange(fDocument, reparseStart, fDocument.getLength() - reparseStart, contentType, partitionStart);
 
-			int lastScannedPosition= reparseStart;
+			int behindLastScannedPosition= reparseStart;
 			IToken token= fScanner.nextToken();
 
 			while (!token.isEOF()) {
@@ -350,7 +350,8 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 				int start= fScanner.getTokenOffset();
 				int length= fScanner.getTokenLength();
 
-				lastScannedPosition= start + length - 1;
+				behindLastScannedPosition= start + length;
+				int lastScannedPosition= behindLastScannedPosition - 1;
 
 				// remove all affected positions
 				while (first < category.length) {
@@ -387,13 +388,7 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 				token= fScanner.nextToken();
 			}
 
-
-			// remove all positions behind lastScannedPosition since there aren't any further types
-			if (lastScannedPosition != reparseStart) {
-				// if this condition is not met, nothing has been scanned because of a deletion
-				++ lastScannedPosition;
-			}
-			first= fDocument.computeIndexInCategory(fPositionCategory, lastScannedPosition);
+			first= fDocument.computeIndexInCategory(fPositionCategory, behindLastScannedPosition);
 
 			clearPositionCache();
 			category= getPositions();
