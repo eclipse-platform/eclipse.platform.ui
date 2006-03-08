@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -33,12 +34,14 @@ public class IntroItem extends ViewItem {
 
 	/*package*/ void setStartImage() {
 		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START));
+		startButton.setText(Messages.START_CHEATSHEET_TOOLTIP);
 		startButton.setToolTipText(Messages.START_CHEATSHEET_TOOLTIP);
 //		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
 
 	/*package*/ void setRestartImage() {
 		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_RESTART));
+		startButton.setText(Messages.RESTART_CHEATSHEET_TOOLTIP);
 		startButton.setToolTipText(Messages.RESTART_CHEATSHEET_TOOLTIP);
 //		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
@@ -64,7 +67,8 @@ public class IntroItem extends ViewItem {
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
 
-		startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START), this, itemColor, Messages.START_CHEATSHEET_TOOLTIP);
+		startButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START), this, itemColor, Messages.START_CHEATSHEET_TOOLTIP);
+		startButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		page.getToolkit().adapt(startButton, true, true);
 		startButton.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
