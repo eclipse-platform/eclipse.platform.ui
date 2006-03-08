@@ -68,7 +68,7 @@ public class DeleteLaunchConfigurations implements IStatusHandler {
 	}
 
 	/**
-	 * Gets to launch configuration associated with the specified project.
+	 * Gets the launch configuration associated with the specified project.
 	 * This method relies on the resource mapping existing, if no such mapping 
 	 * exists the launch configuration is ignored.
 	 * 
@@ -91,13 +91,15 @@ public class DeleteLaunchConfigurations implements IStatusHandler {
 				}
 			}
 		}
-		catch (CoreException e) {e.printStackTrace();}
+		catch (CoreException e) {
+		    DebugUIPlugin.log(e);
+        }
 		return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
 	}
 	
 	/**
 	 * Actually performs the deletion of the launch configurations.
-	 * @param launch the launch configurations to delete
+	 * @param launches the launch configurations to delete
 	 */
 	private void doDelete(Object[] launches) {
 		try {
@@ -105,7 +107,9 @@ public class DeleteLaunchConfigurations implements IStatusHandler {
 				((ILaunchConfiguration)launches[i]).delete();
 			}
 		}
-		catch (CoreException e) {e.printStackTrace();}
+		catch (CoreException e) {
+            DebugUIPlugin.log(e);
+		}
 	}
 	
 }
