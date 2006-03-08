@@ -65,6 +65,13 @@
    			class="org.eclipse.ui.tests.performance.ContentDescriberForTestsOnly" />
    	</content-type>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.ui.tests.performance.parts.PerformanceProblemsView"
+            id="org.eclipse.ui.tests.performance.problemsView"
+            name="Performance Problems View"/>
+   </extension>
     
  
 </plugin>

@@ -23,9 +23,9 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.tests.performance.parts.PerformanceProblemsView;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
-import org.eclipse.ui.views.markers.internal.ProblemView;
 
 /**
  * The ProblemsViewPerformanceTest is a test of population of the problems view.
@@ -39,7 +39,7 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 
 	private String EMPTY_PERSPECTIVE_ID = "org.eclipse.ui.tests.harness.util.EmptyPerspective";
 
-	private String PROBLEMS_VIEW_ID = "org.eclipse.ui.views.ProblemView";
+	private String PROBLEMS_VIEW_ID = "org.eclipse.ui.tests.performance.problemsView";
 
 	/**
 	 * Create a new instance of the receiver.
@@ -57,10 +57,10 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 		IWorkbenchWindow window = openTestWindow(EMPTY_PERSPECTIVE_ID);
 		final IWorkbenchPage page = window.getActivePage();
 
-		ProblemView view;
+		PerformanceProblemsView view;
 
 		try {
-			view = (ProblemView) page.showView(PROBLEMS_VIEW_ID);
+			view = (PerformanceProblemsView) page.showView(PROBLEMS_VIEW_ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 			fail();
@@ -74,11 +74,11 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 			createMarkers();
 			processEvents();
 			startMeasuring();
-			while (view.getTree().getItemCount() == 0)
+			while (view.getTreeWidget().getItemCount() == 0)
 				processEvents();
 			stopMeasuring();
 			removeMarkers();
-			while (view.getTree().getItemCount() > 0)
+			while (view.getTreeWidget().getItemCount() > 0)
 				processEvents();
 		}
 		commitMeasurements();
