@@ -109,7 +109,8 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	}
 	
 	public void addContext(IUndoContext context) {
-		fContexts.add(context);
+		if (!fContexts.contains(context))
+			fContexts.add(context);
 	}
 
 	public boolean hasContext(IUndoContext context) {
