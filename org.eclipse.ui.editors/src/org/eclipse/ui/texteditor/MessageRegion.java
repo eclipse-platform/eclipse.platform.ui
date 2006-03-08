@@ -146,10 +146,7 @@ class MessageRegion {
 				&& newImage == messageImageLabel.getImage())
 			return;
 		messageImageLabel.setImage(newImage);
-		if (newMessage == null)
-			messageText.setText("");//$NON-NLS-1$
-		else
-			messageText.setText(newMessage);
+		messageText.setText(newMessage);
 		if (showingError)
 			setMessageColors(JFaceColors.getErrorBackground(messageComposite.getDisplay()));
 		else {

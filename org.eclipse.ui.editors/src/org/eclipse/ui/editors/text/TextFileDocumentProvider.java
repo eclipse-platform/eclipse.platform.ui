@@ -914,8 +914,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			// continue with next strategy
 		} finally {
 			try {
-				if (reader != null)
-					reader.close();
+				reader.close();
 			} catch (IOException x) {
 			}
 		}

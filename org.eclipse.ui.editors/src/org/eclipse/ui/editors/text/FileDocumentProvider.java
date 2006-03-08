@@ -677,8 +677,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			// continue with next strategy
 		} finally {
 			try {
-				if (reader != null)
-					reader.close();
+				reader.close();
 			} catch (IOException x) {
 			}
 		}
@@ -1045,7 +1044,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					try {
 						encoding= file.getCharset();
 					} catch (CoreException e) {
-						encoding= null;
 					}
 				}
 				return encoding;
