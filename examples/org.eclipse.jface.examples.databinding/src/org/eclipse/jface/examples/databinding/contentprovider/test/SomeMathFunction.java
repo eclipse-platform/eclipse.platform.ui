@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.jface.internal.databinding.api.observable.mapping.AbstractMappingDiff;
+import java.util.Set;
+
+import org.eclipse.jface.internal.databinding.api.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.ObservableMappingWithDomain;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 
@@ -66,8 +68,15 @@ public class SomeMathFunction extends ObservableMappingWithDomain {
 		// would include
 		// the subset of affected elements rather than using
 		// domain.toCollection()
-		fireMappingValueChange(new AbstractMappingDiff(getDomain(),
-				new int[] { 0 }) {
+		final int[] indices = new int[] { 0 };
+		fireMappingValueChange(new MappingDiff() {
+			public Set getElements() {
+				return getDomain();
+			}
+
+			public int[] getAffectedIndices() {
+				return indices;
+			}
 
 			public Object[] getOldMappingValues(Object element, int[] indices) {
 				return new Object[] { doComputeResult(element, oldOp) };

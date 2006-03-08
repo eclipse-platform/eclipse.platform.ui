@@ -12,12 +12,16 @@ package org.eclipse.jface.examples.databinding.model;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 
+/**
+ * @since 3.2
+ *
+ */
 public class AggregateObservableValue extends AbstractObservableValue {
 
 	private IObservableValue[] observableValues;
@@ -25,17 +29,22 @@ public class AggregateObservableValue extends AbstractObservableValue {
 	private String delimiter;
 
 	private boolean updating = false;
-	
+
 	private String currentValue;
 
 	private IValueChangeListener listener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, IValueDiff diff) {
+		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			if (!updating) {
-				fireValueChange(new ValueDiff(currentValue, doGetValue()));
+				fireValueChange(Diffs.createValueDiff(currentValue,
+						doGetValue()));
 			}
 		}
 	};
 
+	/**
+	 * @param observableValues
+	 * @param delimiter
+	 */
 	public AggregateObservableValue(IObservableValue[] observableValues,
 			String delimiter) {
 		this.observableValues = observableValues;
@@ -63,7 +72,7 @@ public class AggregateObservableValue extends AbstractObservableValue {
 			updating = false;
 		}
 		doGetValue();
-		fireValueChange(new ValueDiff(oldValue, value));
+		fireValueChange(Diffs.createValueDiff(oldValue, value));
 	}
 
 	public Object doGetValue() {

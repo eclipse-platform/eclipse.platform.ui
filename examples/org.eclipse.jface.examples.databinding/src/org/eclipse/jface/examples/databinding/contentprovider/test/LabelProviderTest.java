@@ -17,7 +17,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.internal.databinding.api.observable.set.WritableSet;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
+import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.viewers.ListeningLabelProvider;
 import org.eclipse.jface.internal.databinding.api.viewers.ObservableSetContentProvider;
 import org.eclipse.jface.internal.databinding.api.viewers.SelectionObservableValue;
@@ -147,7 +147,7 @@ public class LabelProviderTest {
 				selectedRenamable
 						.addValueChangeListener(new IValueChangeListener() {
 							public void handleValueChange(
-									IObservableValue source, IValueDiff diff) {
+									IObservableValue source, ValueDiff diff) {
 								boolean shouldEnable = selectedRenamable
 										.getValue() != null;
 								removeButton.setEnabled(shouldEnable);

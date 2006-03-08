@@ -12,8 +12,8 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.tests.databinding.util.Mocks;
 
@@ -28,7 +28,7 @@ public class ObservableTest extends TestCase {
 		}
 
 		public void fireChange(Object oldValue, Object newValue) {
-			fireValueChange(new ValueDiff(oldValue, newValue));
+			fireValueChange(Diffs.createValueDiff(oldValue, newValue));
 		}
 
 	}

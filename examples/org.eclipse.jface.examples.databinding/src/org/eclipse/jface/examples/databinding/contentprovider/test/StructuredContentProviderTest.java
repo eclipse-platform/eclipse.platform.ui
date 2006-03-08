@@ -18,7 +18,7 @@ import org.eclipse.jface.internal.databinding.api.observable.set.WritableSet;
 import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.value.IValueDiff;
+import org.eclipse.jface.internal.databinding.api.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.api.swt.ControlUpdater;
 import org.eclipse.jface.internal.databinding.api.viewers.ObservableSetContentProvider;
@@ -192,13 +192,14 @@ public class StructuredContentProviderTest {
 		// elements in the inputSet.
 		// We will allow the user to change the current function through a set
 		// of radio buttons
-		currentFunction = new WritableValue(new Integer(SomeMathFunction.OP_MULTIPLY));
+		currentFunction = new WritableValue(new Integer(
+				SomeMathFunction.OP_MULTIPLY));
 
 		// mathFunction implements the selected function
 		mathFunction = new SomeMathFunction(inputSet);
 		currentFunction.addValueChangeListener(new IValueChangeListener() {
 			public void handleValueChange(IObservableValue source,
-					IValueDiff diff) {
+					ValueDiff diff) {
 				mathFunction
 						.setOperation(((Integer) currentFunction.getValue())
 								.intValue());
@@ -293,7 +294,8 @@ public class StructuredContentProviderTest {
 			listOfInts.setLabelProvider(new ViewerLabelProvider());
 			listOfInts.setInput(inputSet);
 
-			final IObservableValue selectedInt = new SelectionObservableValue(listOfInts);
+			final IObservableValue selectedInt = new SelectionObservableValue(
+					listOfInts);
 
 			GridData listData = new GridData(GridData.FILL_BOTH);
 			listData.minimumHeight = 1;
