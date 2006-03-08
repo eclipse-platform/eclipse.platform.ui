@@ -32,6 +32,7 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(BeginEndRuleTest.class);
 		suite.addTestSuite(JobTest.class);
 		suite.addTestSuite(DeadlockDetectionTest.class);
+		suite.addTestSuite(Bug_129551.class);
 		return suite;
 	}
 }
