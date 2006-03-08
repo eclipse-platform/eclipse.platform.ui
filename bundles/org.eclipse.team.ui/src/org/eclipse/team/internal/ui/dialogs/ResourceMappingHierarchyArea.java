@@ -57,7 +57,8 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
             createWrappingLabel(composite, description, 1);
         
         viewer = new CommonViewer(TEAM_NAVIGATOR_CONTENT, composite, SWT.BORDER);
-        viewer.setSorter(new TeamViewerSorter(new CommonViewerSorter()));
+        viewer.setSorter(new CommonViewerSorter());
+        viewer.setSorter(new TeamViewerSorter((CommonViewerSorter)viewer.getSorter()));
         viewer.getNavigatorContentService().bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
         viewer.getNavigatorContentService().getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(scope), true);
         GridData data = new GridData(GridData.FILL_BOTH);
