@@ -14,7 +14,9 @@ package org.eclipse.ant.internal.ui.editor.actions;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.actions.OpenAction;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.ui.handlers.IHandlerService;
 
 public class OpenDeclarationAction extends OpenAction {
 	
@@ -24,7 +26,8 @@ public class OpenDeclarationAction extends OpenAction {
 		super(antEditor.getSite());
 		fEditor= antEditor;
 		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EDITOR);
-		antEditor.getSite().getKeyBindingService().registerAction(this);
+		IHandlerService handlerServer= (IHandlerService) antEditor.getSite().getService(IHandlerService.class);
+        handlerServer.activateHandler(IJavaEditorActionDefinitionIds.OPEN_EDITOR, new ActionHandler(this));
 
 		setText(AntEditorActionMessages.getString("OpenDeclarationAction.0"));  //$NON-NLS-1$
 		setDescription(AntEditorActionMessages.getString("OpenDeclarationAction.1")); //$NON-NLS-1$

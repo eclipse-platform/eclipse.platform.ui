@@ -26,12 +26,14 @@ import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * This action opens the selected tasks manual page in an external 
@@ -39,16 +41,17 @@ import org.eclipse.ui.IEditorPart;
  */
 public class OpenExternalDocAction extends Action implements IEditorActionDelegate {
 		
-	private AntEditor fEditor;
+	private static final String COMMAND_ID = "org.eclipse.ant.ui.openExternalDoc"; //$NON-NLS-1$
+    private AntEditor fEditor;
 	
 	public OpenExternalDocAction() {
 	}
 	
 	public OpenExternalDocAction(AntEditor antEditor) {
 		fEditor= antEditor;
-		setActionDefinitionId("org.eclipse.ant.ui.openExternalDoc"); //$NON-NLS-1$
-		antEditor.getSite().getKeyBindingService().registerAction(this);
-
+		setActionDefinitionId(COMMAND_ID);
+        IHandlerService handlerService= (IHandlerService) antEditor.getSite().getService(IHandlerService.class);
+        handlerService.activateHandler(COMMAND_ID, new ActionHandler(this));
 		setText(AntEditorActionMessages.getString("OpenExternalDocAction.1")); //$NON-NLS-1$
 		setDescription(AntEditorActionMessages.getString("OpenExternalDocAction.2")); //$NON-NLS-1$
 		setToolTipText(AntEditorActionMessages.getString("OpenExternalDocAction.2")); //$NON-NLS-1$
@@ -136,7 +139,8 @@ public class OpenExternalDocAction extends Action implements IEditorActionDelega
     public void setActiveEditor(IAction action, IEditorPart targetEditor) {
         fEditor= (AntEditor) targetEditor;
         if (fEditor != null) {
-        	fEditor.getSite().getKeyBindingService().registerAction(this);
+            IHandlerService handlerService= (IHandlerService) fEditor.getSite().getService(IHandlerService.class);
+            handlerService.activateHandler(COMMAND_ID, new ActionHandler(this));
         }
     }
 
