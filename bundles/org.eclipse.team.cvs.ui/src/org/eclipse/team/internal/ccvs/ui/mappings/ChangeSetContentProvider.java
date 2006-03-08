@@ -229,7 +229,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		for (int i = 0; i < otherRoots.length; i++) {
 			IPath path = otherRoots[i];
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-			if (project.isAccessible())
+			if (project.isAccessible() && hasChildren(TreePath.EMPTY.createChildPath(project)))
 				result.add(project);
 		}
 		return result.toArray();
