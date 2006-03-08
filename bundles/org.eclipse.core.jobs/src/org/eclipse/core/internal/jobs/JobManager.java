@@ -263,6 +263,7 @@ public class JobManager implements IJobManager {
 	 * necessary queues or sets.
 	 */
 	private void changeState(InternalJob job, int newState) {
+		int blockedJobCount = 0;
 		synchronized (lock) {
 			int oldState = job.internalGetState();
 			switch (oldState) {
@@ -290,6 +291,15 @@ public class JobManager implements IJobManager {
 				case Job.RUNNING :
 				case InternalJob.ABOUT_TO_RUN :
 					running.remove(job);
+					//add any blocked jobs back to the wait queue
+					InternalJob blocked = job.previous();
+					job.remove();
+					while (blocked != null) {
+						InternalJob previous = blocked.previous();
+						changeState(blocked, Job.WAITING);
+						blockedJobCount++;
+						blocked = previous;
+					}
 					break;
 				default :
 					Assert.isLegal(false, "Invalid job state: " + job + ", state: " + oldState); //$NON-NLS-1$ //$NON-NLS-2$
@@ -321,6 +331,9 @@ public class JobManager implements IJobManager {
 					Assert.isLegal(false, "Invalid job state: " + job + ", state: " + newState); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		//notify queue outside sync block
+		for (int i = 0; i < blockedJobCount ; i++)
+			pool.jobQueued();
 	}
 
 	/**
@@ -520,21 +533,11 @@ public class JobManager implements IJobManager {
 			job.setProgressMonitor(null);
 			job.setThread(null);
 			rescheduleDelay = job.getStartTime();
-			blocked = job.previous();
-			job.remove();
 			changeState(job, Job.NONE);
-
-			//add any blocked jobs back to the wait queue
-			while (blocked != null) {
-				InternalJob previous = blocked.previous();
-				changeState(blocked, Job.WAITING);
-				blockedJobCount++;
-				blocked = previous;
-			}
 		}
 		//notify queue outside sync block
 		for (int i = 0; i < blockedJobCount; i++)
-			pool.jobQueued(blocked);
+			pool.jobQueued();
 		//notify listeners outside sync block
 		final boolean reschedule = active && rescheduleDelay > InternalJob.T_NONE && job.shouldSchedule();
 		if (notify)
@@ -885,7 +888,7 @@ public class JobManager implements IJobManager {
 		synchronized (lock) {
 			suspended = false;
 			//poke the job pool
-			pool.jobQueued(null);
+			pool.jobQueued();
 		}
 	}
 
@@ -943,7 +946,7 @@ public class JobManager implements IJobManager {
 		//schedule the job
 		doSchedule(job, delay);
 		//call the pool outside sync block to avoid deadlock
-		pool.jobQueued(job);
+		pool.jobQueued();
 	}
 
 	/**
@@ -1186,7 +1189,7 @@ public class JobManager implements IJobManager {
 			doSchedule(job, delay);
 		}
 		//call the pool outside sync block to avoid deadlock
-		pool.jobQueued(job);
+		pool.jobQueued();
 
 		//only notify of wake up if immediate
 		if (delay == 0)

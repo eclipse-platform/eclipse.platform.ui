@@ -124,7 +124,7 @@ class WorkerPool {
 	 * Notification that a job has been added to the queue. Wake a worker,
 	 * creating a new worker if necessary. The provided job may be null.
 	 */
-	protected synchronized void jobQueued(InternalJob job) {
+	protected synchronized void jobQueued() {
 		//if there is a sleeping thread, wake it up
 		if (sleepingThreads > 0) {
 			notify();
@@ -223,7 +223,7 @@ class WorkerPool {
 				}
 				//see if we need to wake another worker
 				if (manager.sleepHint() <= 0)
-					jobQueued(null);
+					jobQueued();
 			}
 		} finally {
 			//decrement busy thread count if we're not running a job
