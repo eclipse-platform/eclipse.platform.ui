@@ -37,6 +37,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSetCollector;
 import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
@@ -81,7 +82,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	private RepositoryManager repositoryManager;
 	
-    private SubscriberChangeSetCollector changeSetManager;
+    private CVSActiveChangeSetCollector changeSetManager;
 
 	/**
 	 * CVSUIPlugin constructor
@@ -268,7 +269,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	
     public synchronized SubscriberChangeSetCollector getChangeSetManager() {
         if (changeSetManager == null) {
-            changeSetManager = new SubscriberChangeSetCollector(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+            changeSetManager = new CVSActiveChangeSetCollector(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
         }
         return changeSetManager;
     }

@@ -110,6 +110,9 @@
                    name="otherActions2"
                    separator="true"/> 
              <insertionPoint
+                   name="changeSetActions"
+                   separator="true"/> 
+             <insertionPoint
                    name="sort"
                    separator="true"/>
              <insertionPoint
@@ -1519,6 +1522,40 @@
       <action
             class="org.eclipse.team.internal.ccvs.ui.CVSResourceDropAdapter"
             id="org.eclipse.team.cvs.ui.cvsRemoteDrop"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            activeByDefault="false"
+            contentProvider="org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetContentProvider"
+            icon="$nl$/icons/full/obj16/changelog_obj.gif"
+            id="org.eclipse.team.cvs.ui.changeSetContent"
+            labelProvider="org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetLabelProvider"
+            name="CVS Change Sets"
+            priority="normal">
+         <enablement>
+           <or>         
+            <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"/>
+            <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSet"/>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+            <instanceof value="org.eclipse.team.core.mapping.ISynchronizationScope"/>
+            <instanceof value="org.eclipse.team.core.mapping.ISynchronizationContext"/>
+           </or>
+         </enablement>
+         <commonSorter
+               class="org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetSorter"
+               id="org.eclipse.team.cvs.ui.changeSetSorter"/>
+         <actionProvider
+               class="org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetActionProvider"
+               id="org.eclipse.team.cvs.ui.changeSetActions"/>
+       </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.team.ui.teamContentProviders">
+      <teamContentProvider
+            contentExtensionId="org.eclipse.team.cvs.ui.changeSetContent"
+            icon="$nl$/icons/full/obj16/changelog_obj.gif"
+            modelProviderId="org.eclipse.team.cvs.core.changeSetModel"/>
    </extension>
    
 </plugin>

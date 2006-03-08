@@ -43,15 +43,15 @@ public abstract class FastDiffFilter extends DiffFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.diff.DiffNodeFilter#select(org.eclipse.team.core.diff.IDiffNode, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public final boolean select(IDiff node, IProgressMonitor monitor) {
-		return select(node);
+	public final boolean select(IDiff diff, IProgressMonitor monitor) {
+		return select(diff);
 	}
 
 	/**
 	 * Return <code>true</code> if the provided <code>IDiffNode</code> matches the filter.
 	 * 
-	 * @param node the <code>IDiffNode</code> to be tested
+	 * @param diff the <code>IDiffNode</code> to be tested
 	 * @return <code>true</code> if the <code>IDiffNode</code> matches the filter
 	 */
-	public abstract boolean select(IDiff node);
+	public abstract boolean select(IDiff diff);
 }

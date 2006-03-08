@@ -140,5 +140,9 @@ public abstract class DiffChangeSet extends ChangeSet {
 	public boolean contains(IPath path) {
 		return getDiffTree().getDiff(path) != null;
 	}
+	
+	public boolean containsChildren(IResource resource, int depth) {
+		return getDiffTree().getDiffs(resource, depth).length > 0;
+	}
 
 }

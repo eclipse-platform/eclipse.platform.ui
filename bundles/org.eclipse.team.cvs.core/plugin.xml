@@ -213,5 +213,22 @@
          <run class="org.eclipse.team.internal.ccvs.core.filesystem.CVSFileSystem"/>
       </filesystem>
    </extension>
+   <extension
+         id="changeSetModel"
+         name="Change Sets"
+         point="org.eclipse.core.resources.modelProviders">
+      <modelProvider
+            class="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"
+            name="Change Sets"/>
+      <extends-model id="org.eclipse.core.resources.modelProvider"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSet"
+            class="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetAdapterFactory">
+         <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+      </factory>
+   </extension>
 
 </plugin>

@@ -145,4 +145,8 @@ public abstract class CheckedInChangeSet extends ChangeSet {
             set.removeAll(resources);
         }
     }
+    
+    public boolean containsChildren(IResource resource, int depth) {
+    	return set.getSyncInfos(resource, depth).length > 0;
+    }
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
@@ -22,19 +23,22 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.MergeAllActionHandler;
+import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 
 public class WorkspaceModelParticipant extends
-		ModelSynchronizeParticipant {
+		ModelSynchronizeParticipant implements IChangeSetProvider {
 
 	public static final String VIEWER_ID = "org.eclipse.team.cvs.ui.workspaceSynchronization"; //$NON-NLS-1$
 	
@@ -169,6 +173,8 @@ public class WorkspaceModelParticipant extends
 			}
 		}
 	}
+
+	private WorkspaceChangeSetCapability capability;
 	
 	public WorkspaceModelParticipant() {
 	}
@@ -229,5 +235,30 @@ public class WorkspaceModelParticipant extends
         pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); 
         return pages;
     }
+    
+    public ModelProvider[] getEnabledModelProviders() {
+    	ModelProvider[] enabledProviders = super.getEnabledModelProviders();
+    	for (int i = 0; i < enabledProviders.length; i++) {
+			ModelProvider provider = enabledProviders[i];
+			if (provider.getId().equals(ChangeSetModelProvider.ID))
+				return enabledProviders;
+		}
+    	ModelProvider[] extended = new ModelProvider[enabledProviders.length + 1];
+    	for (int i = 0; i < enabledProviders.length; i++) {
+			extended[i] = enabledProviders[i];
+		}
+		ChangeSetModelProvider provider = ChangeSetModelProvider.getProvider();
+		if (provider == null)
+			return enabledProviders;
+		extended[extended.length - 1] = provider;
+		return extended;
+    }
+
+	public ChangeSetCapability getChangeSetCapability() {
+        if (capability == null) {
+            capability = new WorkspaceChangeSetCapability();
+        }
+        return capability;
+	}
 	
 }

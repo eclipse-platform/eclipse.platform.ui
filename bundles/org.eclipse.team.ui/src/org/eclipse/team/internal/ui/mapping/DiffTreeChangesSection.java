@@ -94,7 +94,12 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 	private boolean hasChangesFor(String id, ISynchronizationCompareAdapter adapter, ISynchronizationContext context, int[] states, int mask) {
 		ResourceTraversal[] traversals = context.getScope().getTraversals(id);
-		return context.getDiffTree().hasMatchingDiffs(traversals, FastDiffFilter.getStateFilter(states, mask));
+		if (context.getDiffTree().hasMatchingDiffs(traversals, FastDiffFilter.getStateFilter(states, mask)))
+			return true;
+		// Return true if there are no traversals to accommodate change sets
+		if (traversals.length == 0) 
+			return true;
+		return false;
 	}
 
 	protected long getVisibleChangesCount() {

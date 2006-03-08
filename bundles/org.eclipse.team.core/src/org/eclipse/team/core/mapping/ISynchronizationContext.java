@@ -84,9 +84,9 @@ public interface ISynchronizationContext {
 
 	/**
 	 * Return a tree that contains {@link IDiff} entries for resources that
-	 * are out-of-sync. The tree will contain diffs for any out-of-sync
+	 * are out-of-sync. The tree will contain entries for any out-of-sync
 	 * resources that are within the scope of this context. The tree may include
-	 * diffs for additional resources, which should be ignored by the client.
+	 * entries for additional resources, which should be ignored by the client.
 	 * Clients can test for inclusion using the method
 	 * {@link ISynchronizationScope#contains(IResource)}.
 	 * <p>
@@ -94,7 +94,7 @@ public interface ISynchronizationContext {
 	 * {@link IResourceDiff} or {@link IThreeWayDiff} instances. Any
 	 * {@link IThreeWayDiff} contained in the returned tree will contain
 	 * {@link IResourceDiff} instances as the local and remote changes. This
-	 * interface also has several helper methods for handling diffs contained in
+	 * interface also has several helper methods for handling entries contained in
 	 * the returned diff tree.
 	 * 
 	 * @return a tree that contains an entry for any

@@ -127,24 +127,29 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			IResource resource = (IResource) parent;
 			if (!resource.isAccessible())
 				return new Object[0];
-			Object[] allChildren;
-			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
-				allChildren = getFlatChildren(context, resource);
-			} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.PROJECT) {
-				allChildren = getCompressedChildren(context, (IProject)resource, children);
-			} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
-				allChildren = getCompressedChildren(context, (IFolder)resource, children);
-			} else {
-				allChildren = getTreeChildren(context, resource, children);
-			}
+			IResourceDiffTree diffTree = context.getDiffTree();
+			Object[] allChildren = filterChildren(diffTree, resource, children);
 			return super.getChildrenInContext(context, parent, allChildren);
 		}
 		return super.getChildrenInContext(context, parent, children);
 	}
 
-	private Object[] getCompressedChildren(ISynchronizationContext context, IProject project, Object[] children) {
+	protected Object[] filterChildren(IResourceDiffTree diffTree, IResource resource, Object[] children) {
+		Object[] allChildren;
+		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
+			allChildren = getFlatChildren(diffTree, resource);
+		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.PROJECT) {
+			allChildren = getCompressedChildren(diffTree, (IProject)resource, children);
+		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+			allChildren = getCompressedChildren(diffTree, (IFolder)resource, children);
+		} else {
+			allChildren = getTreeChildren(diffTree, resource, children);
+		}
+		return allChildren;
+	}
+
+	private Object[] getCompressedChildren(IResourceDiffTree diffTree, IProject project, Object[] children) {
 		Set result = new HashSet();
-		IResourceDiffTree diffTree = context.getDiffTree();
 		IDiff[] diffs = diffTree.getDiffs(project, IResource.DEPTH_INFINITE);
 		for (int i = 0; i < diffs.length; i++) {
 			IDiff diff = diffs[i];
@@ -164,7 +169,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	/*
 	 * Only return the files that are direct children of the folder
 	 */
-	private Object[] getCompressedChildren(ISynchronizationContext context, IFolder folder, Object[] children) {
+	private Object[] getCompressedChildren(IResourceDiffTree diffTree, IFolder folder, Object[] children) {
 		Set result = new HashSet();
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
@@ -174,7 +179,6 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 					result.add(resource);
 			}
 		}
-		IResourceDiffTree diffTree = context.getDiffTree();
 		IDiff[] diffs = diffTree.getDiffs(folder, IResource.DEPTH_ONE);
 		for (int i = 0; i < diffs.length; i++) {
 			IDiff diff = diffs[i];
@@ -185,9 +189,8 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		return result.toArray();
 	}
 
-	private Object[] getFlatChildren(ISynchronizationContext context, IResource resource) {
+	private Object[] getFlatChildren(IResourceDiffTree diffTree, IResource resource) {
 		Object[] allChildren;
-		IResourceDiffTree diffTree = context.getDiffTree();
 		IDiff[] diffs = diffTree.getDiffs(resource, IResource.DEPTH_INFINITE);
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < diffs.length; i++) {
@@ -198,16 +201,16 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		return allChildren;
 	}
 
-	private Object[] getTreeChildren(ISynchronizationContext context, IResource resource, Object[] children) {
+	private Object[] getTreeChildren(IResourceDiffTree diffTree, IResource resource, Object[] children) {
 		Set result = new HashSet();
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
 			result.add(object);
 		}
-		IPath[] childPaths = context.getDiffTree().getChildren(resource.getFullPath());
+		IPath[] childPaths = diffTree.getChildren(resource.getFullPath());
 		for (int i = 0; i < childPaths.length; i++) {
 			IPath path = childPaths[i];
-			IDiff delta = context.getDiffTree().getDiff(path);
+			IDiff delta = diffTree.getDiff(path);
 			IResource child;
 			if (delta == null) {
 				// the path has descendent deltas so it must be a folder
@@ -217,11 +220,9 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 					child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
 				}
 			} else {
-				child = context.getDiffTree().getResource(delta);
+				child = diffTree.getResource(delta);
 			}
-			if (isInScope(context.getScope(), resource, child)) {
-				result.add(child);
-			}
+			result.add(child);
 		}
 		Object[] allChildren = result.toArray(new Object[result.size()]);
 		return allChildren;
@@ -364,7 +365,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		return (StructuredViewer)getViewer();
 	}
 	
-	private String getLayout() {
+	protected String getLayout() {
 		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 	}
 	

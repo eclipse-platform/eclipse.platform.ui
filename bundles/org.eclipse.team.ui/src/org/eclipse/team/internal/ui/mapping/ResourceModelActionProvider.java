@@ -49,7 +49,7 @@ public class ResourceModelActionProvider extends SynchronizationActionProvider {
 				(ISynchronizePageConfiguration)getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION));
 		registerHandler(MARK_AS_MERGE_ACTION_ID, markAsMergedHandler);
 		
-		ICommonViewerSite cvs = getExtensionSite().getViewSite();
+		ICommonViewerSite cvs = getActionSite().getViewSite();
 		ISynchronizePageConfiguration configuration = getSynchronizePageConfiguration();
 		if (cvs instanceof ICommonViewerWorkbenchSite && configuration != null) {
 			ICommonViewerWorkbenchSite cvws = (ICommonViewerWorkbenchSite) cvs;

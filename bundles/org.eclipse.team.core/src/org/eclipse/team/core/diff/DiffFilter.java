@@ -27,9 +27,9 @@ public abstract class DiffFilter {
 	/**
 	 * Return <code>true</code> if the provided <code>IDiffNode</code> matches the filter.
 	 * 
-	 * @param node the <code>IDiffNode</code> to be tested
+	 * @param diff the <code>IDiffNode</code> to be tested
 	 * @param monitor a progress monitor
 	 * @return <code>true</code> if the <code>IDiffNode</code> matches the filter
 	 */
-	public abstract boolean select(IDiff node, IProgressMonitor monitor);
+	public abstract boolean select(IDiff diff, IProgressMonitor monitor);
 }

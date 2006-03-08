@@ -30,5 +30,6 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)";resolution:=op
  org.eclipse.team.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.team.cvs.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.compare;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.ui.navigator.resources;bundle-version="[3.2.0,4.0.0)
+ org.eclipse.ui.navigator.resources;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.ui.navigator
 Eclipse-LazyStart: true

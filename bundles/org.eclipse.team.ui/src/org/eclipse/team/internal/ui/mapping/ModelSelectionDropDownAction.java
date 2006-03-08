@@ -48,7 +48,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		this.configuration.addPropertyChangeListener(listener);
 		TeamUI.getTeamContentProviderManager().addPropertyChangeListener(listener);
 		getSynchronizationContext().getScope().addScopeChangeListener(this);
-		showAllAction = new Action(TeamUIMessages.ModelSelectionDropDownAction_0) { 
+		showAllAction = new Action(TeamUIMessages.ModelSelectionDropDownAction_0, IAction.AS_RADIO_BUTTON) { 
 			public void run() {
 				Viewer v = ModelSelectionDropDownAction.this.configuration.getPage().getViewer();
 				v.setInput(getSynchronizationContext());
@@ -86,6 +86,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 			menuManager = new MenuManager();
 			fMenu = menuManager.createContextMenu(parent);
 			menuManager.add(showAllAction);
+			showAllAction.setChecked(getActiveProviderId().equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE));
 			ModelProvider[] modelProviders = getEnabledModelProviders();
 			if (modelProviders.length > 0)
 				menuManager.add(new Separator());
@@ -157,6 +158,7 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		setToolTipText(text);
 		setText(text);
 		if (menuManager != null) {
+			showAllAction.setChecked(getActiveProviderId().equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE));
 			IContributionItem[] items = menuManager.getItems();
 			for (int i = 0; i < items.length; i++) {
 				IContributionItem item = items[i];

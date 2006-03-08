@@ -325,12 +325,21 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
      * @return the created set
      */
     public ActiveChangeSet createSet(String title, IDiff[] diffs) {
-        ActiveChangeSet commitSet = new ActiveChangeSet(this, title);
+        ActiveChangeSet commitSet = doCreateSet(title);
         if (diffs != null && diffs.length > 0) {
             commitSet.add(diffs);
         }
         return commitSet;
     }
+
+    /**
+     * Create a change set with the given name.
+     * @param name the name of the change set
+     * @return the created change set
+     */
+	protected ActiveChangeSet doCreateSet(String name) {
+		return new ActiveChangeSet(this, name);
+	}
 
     /**
      * Create a change set containing the given files if
@@ -486,7 +495,7 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
      * @return the created change set
      */
     protected ActiveChangeSet createSet(String title, Preferences childPrefs) {
-        ActiveChangeSet changeSet = new ActiveChangeSet(this, title);
+        ActiveChangeSet changeSet = doCreateSet(title);
         changeSet.init(childPrefs);
         return changeSet;
     }

@@ -63,10 +63,9 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 
 	private Map handlers = new HashMap();
 	private OpenWithActionGroup openWithActions;
-	private ICommonActionExtensionSite site;
 
 	public void init(ICommonActionExtensionSite site) {
-		this.site = site;
+		super.init(site);
 		initialize();
 	}
 
@@ -93,7 +92,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * 
 	 */
 	protected void initializeOpenActions() {
-		ICommonViewerSite cvs = site.getViewSite();
+		ICommonViewerSite cvs = getActionSite().getViewSite();
 		ISynchronizePageConfiguration configuration = getSynchronizePageConfiguration();
 		if (cvs instanceof ICommonViewerWorkbenchSite && configuration != null) {
 			ICommonViewerWorkbenchSite cvws = (ICommonViewerWorkbenchSite) cvs;
@@ -121,7 +120,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 	 * action provider
 	 */
 	protected final IExtensionStateModel getExtensionStateModel() {
-		return site.getExtensionStateModel();
+		return getActionSite().getExtensionStateModel();
 	}
 	
 	/**
@@ -198,10 +197,11 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 
 	/**
 	 * Return the extension site for this action provider.
+	 * This method just calls {@link #getActionSite()}.
 	 * @return the extension site for this action provider
 	 */
 	public ICommonActionExtensionSite getExtensionSite() {
-		return site;
+		return getActionSite();
 	}
 
 }

@@ -70,14 +70,14 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 
 	/**
 	 * Property that gives access to a set the
-	 * contains all out-of-sync resources for the particpant
+	 * contains all out-of-sync resources for the participant
 	 * in the selected working set.
 	 */
 	public static final String P_WORKING_SET_SYNC_INFO_SET = TeamUIPlugin.ID + ".P_WORKING_SET_SYNC_INFO_SET"; //$NON-NLS-1$
 
 	/**
 	 * Property that gives access to a set the
-	 * contains all out-of-sync resources for the particpant
+	 * contains all out-of-sync resources for the participant
 	 * before any filtering (working set or modes) is applied.
 	 */
 	public static final String P_PARTICIPANT_SYNC_INFO_SET = TeamUIPlugin.ID + ".P_PARTICIPANT_SYNC_INFO_SET"; //$NON-NLS-1$
@@ -111,8 +111,8 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	private IRunnableContext context;
 	
 	/**
-	 * Create a configuration for creating a page from the given particpant.
-	 * @param participant the particpant whose page is being configured
+	 * Create a configuration for creating a page from the given participant.
+	 * @param participant the participant whose page is being configured
 	 */
 	public SynchronizePageConfiguration(ISynchronizeParticipant participant) {
 		this.participant = participant;
@@ -224,7 +224,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 		final PropertyChangeEvent event = new PropertyChangeEvent(this, key, oldValue, newValue);
 		for (int i = 0; i < listeners.length; i++) {
 			final IPropertyChangeListener listener = (IPropertyChangeListener)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Error is logged by platform
 				}
@@ -252,7 +252,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
         }
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Logged by Platform
 				}
@@ -274,7 +274,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
         }
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Logged by Platform
 				}
@@ -297,7 +297,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
         }
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Logged by Platform
 				}
@@ -309,7 +309,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	}
 
 	/**
-	 * Callback invoked from the page to fil the action bars.
+	 * Callback invoked from the page to fill the action bars.
 	 * @param actionBars the action bars of the view
 	 */
 	public void fillActionBars(final IActionBars actionBars) {
@@ -322,7 +322,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
         }
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Logged by Platform
 				}
@@ -343,7 +343,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
         }
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Logged by Platform
 				}
@@ -364,7 +364,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
         }
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Logged by Platform
 				}
@@ -387,7 +387,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
         }
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// Logged by Platform
 				}

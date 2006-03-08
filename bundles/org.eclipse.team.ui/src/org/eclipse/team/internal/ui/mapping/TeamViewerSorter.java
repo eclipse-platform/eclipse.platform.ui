@@ -38,7 +38,7 @@ public class TeamViewerSorter extends TreePathViewerSorter {
 	}
 	
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
-		if (parentPath.getSegmentCount() == 0) {
+		if (parentPath == null || parentPath.getSegmentCount() == 0) {
 			// We need to handle the sorting at the top level
 	        int cat1 = category(e1);
 	        int cat2 = category(e2);

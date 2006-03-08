@@ -104,4 +104,14 @@ public abstract class ChangeSet {
     protected void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * Return whether the set contains descendants of the given resource
+     * to the given depth.
+     * @param resource the resource
+     * @param depth the depth
+     * @return whether the set contains descendants of the given resource
+     * to the given depth
+     */
+	public abstract boolean containsChildren(IResource resource, int depth);
 }
