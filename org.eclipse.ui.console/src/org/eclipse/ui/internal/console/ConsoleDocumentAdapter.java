@@ -45,7 +45,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     int[] lengths = new int[5000];
     private int regionCount = 0;
     
-    private Pattern pattern = Pattern.compile("^", Pattern.MULTILINE); //$NON-NLS-1$
+    private Pattern pattern = Pattern.compile("^.*$", Pattern.MULTILINE); //$NON-NLS-1$
     
     
     public ConsoleDocumentAdapter(int width) {
@@ -350,9 +350,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                 count += (line.length() / consoleWidth);
             } 
         }
-        
-
-        
         return count;
     }
 
