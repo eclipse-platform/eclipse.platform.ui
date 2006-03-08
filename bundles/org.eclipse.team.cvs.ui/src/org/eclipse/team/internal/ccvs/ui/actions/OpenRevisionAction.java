@@ -147,8 +147,11 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 				IFileRevision inputRevision = (IFileRevision) input.getAdapter(IFileRevision.class);
 				IFileRevision editorRevision = (IFileRevision) part.getEditorInput().getAdapter(IFileRevision.class);
 				
-				if (inputRevision.equals(editorRevision))
+				if (inputRevision.equals(editorRevision)){
+					//make the editor that already contains the revision current
+					page.getSite().getPage().activate(part);
 					return true;
+				}
 			}
 		}
 		return false;
