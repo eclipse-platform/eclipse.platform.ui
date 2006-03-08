@@ -170,8 +170,6 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationsDialog_4;
 
-	public static String LaunchConfigurationsDialog_5;
-
 	public static String LaunchConfigurationsDialog_6;
 
 	public static String DeleteLaunchConfigurations_0;
@@ -193,5 +191,8 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String FilterDropDownMenuCreator_3;
 
 	public static String FilterDropDownMenuCreator_4;
+
+	public static String LaunchConfigurationsDialog_5;
+	public static String LaunchConfigurationsDialog_c_ancel;
 
 }

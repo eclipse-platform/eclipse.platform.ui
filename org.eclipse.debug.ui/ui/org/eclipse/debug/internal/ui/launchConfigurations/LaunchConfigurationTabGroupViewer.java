@@ -285,23 +285,23 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		gd.horizontalSpan = 2;
 		buttonComp.setLayoutData(gd);
 
-		setApplyButton(new Button(buttonComp, SWT.PUSH));
-		getApplyButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); 
+		fApplyButton = new Button(buttonComp, SWT.PUSH);
+		fApplyButton.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		getApplyButton().setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(getApplyButton());
-		getApplyButton().addSelectionListener(new SelectionAdapter() {
+		fApplyButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fApplyButton);
+		fApplyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
 			}
 		});
 
-		setRevertButton(new Button(buttonComp, SWT.PUSH));
-		getRevertButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2);   
+		fRevertButton = new Button(buttonComp, SWT.PUSH);
+		fRevertButton.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2);   
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		getRevertButton().setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(getRevertButton());
-		getRevertButton().addSelectionListener(new SelectionAdapter() {
+		fRevertButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fRevertButton);
+		fRevertButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleRevertPressed();
 			}
@@ -402,26 +402,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	}
 	
 	/**
-	 * Sets the apply button
-	 */
-	private void setApplyButton(Button button) {
-		fApplyButton = button;
-	}
-	
-	/**
 	 * Returns the apply button
 	 */
 	protected Button getApplyButton() {
 		return fApplyButton;
 	}	
-	
-	/**
-	 * Sets the revert button
-	 */
-	private void setRevertButton(Button button) {
-		fRevertButton = button;
-	}	
-	
+
 	/**
 	 * Returns the revert button
 	 */
@@ -507,8 +493,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 
 	private void updateButtons() {
 		boolean dirty = isDirty();
-		getApplyButton().setEnabled(dirty && canSave());
-		getRevertButton().setEnabled(dirty);
+		fApplyButton.setEnabled(dirty && canSave());
+		fRevertButton.setEnabled(dirty);
 	}
 	
 	/**
@@ -593,8 +579,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @param visible the visibility status to be applied to the controls
 	 */
 	private void updateVisibleControls(boolean visible) {
-		getApplyButton().setVisible(visible);
-		getRevertButton().setVisible(visible);
+		fApplyButton.setVisible(visible);
+		fRevertButton.setVisible(visible);
 		if(visible) {
 			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fTabComposite;
 			fTabComposite.layout();

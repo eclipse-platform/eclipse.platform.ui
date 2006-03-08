@@ -917,8 +917,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Notification the 'Close' button has been pressed.
 	 */
 	protected void handleClosePressed() {
-		canDiscardCurrentConfig();
-		cancelPressed();
+		if(canDiscardCurrentConfig()) {
+			cancelPressed();
+		}
 	}
 	
 	/**
@@ -1388,9 +1389,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 												 null,
 												 buffer.toString(),
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33}, // 
+												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, 
+															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},  
 												 1);
-		if (dialog.open() == IDialogConstants.OK_ID) {
+		if (dialog.open() == 0) {
+			fLaunchConfigurationView.setAutoSelect(false);
+			getTabViewer().handleRevertPressed();
+			fLaunchConfigurationView.setAutoSelect(true);
 			return true;
 		}
 		return false;
@@ -1410,12 +1415,20 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 												 null,
 												 message,
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},  
+												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, 
+															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33,
+															   LaunchConfigurationsMessages.LaunchConfigurationsDialog_c_ancel},  
 												 0);
 		int ret = dialog.open();
-		if (ret == IDialogConstants.OK_ID) {
+		if (ret == 0) {
 			fLaunchConfigurationView.setAutoSelect(false);
 			getTabViewer().handleApplyPressed();
+			fLaunchConfigurationView.setAutoSelect(true);
+			return true;
+		}
+		if(ret == 1) {
+			fLaunchConfigurationView.setAutoSelect(false);
+			getTabViewer().handleRevertPressed();
 			fLaunchConfigurationView.setAutoSelect(true);
 			return true;
 		}
@@ -1456,7 +1469,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void updateMessage() {
 		setErrorMessage(getTabViewer().getErrorMesssage());
-		setMessage(getTabViewer().getMessage());				
+		setMessage(getTabViewer().getMessage());	
 	}
 
 	/* (non-Javadoc)
