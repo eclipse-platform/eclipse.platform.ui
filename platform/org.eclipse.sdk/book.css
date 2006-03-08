@@ -106,8 +106,9 @@ div.revision { border-left-style: solid; border-left-width: thin;
 th	     { font-weight: bold }
 
 a.command-link {
-	padding-left: 20px;
+	padding-left: 18px;
 	background-image: url('run.gif');
 	background-repeat: no-repeat;
-	background-position: left center;
+	background-position: top left;
+	white-space: nowrap;
 }
