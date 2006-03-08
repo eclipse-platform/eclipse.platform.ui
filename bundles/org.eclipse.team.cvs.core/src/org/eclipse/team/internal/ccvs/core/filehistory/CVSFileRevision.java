@@ -66,6 +66,17 @@ public class CVSFileRevision extends FileRevision {
 	public String getContentIdentifier() {
 		return entry.getRevision();
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof CVSFileRevision){
+			CVSFileRevision objRevision = (CVSFileRevision) obj;
+			ICVSRemoteFile remFile = objRevision.getCVSRemoteFile();
+			if (remFile.equals(this.getCVSRemoteFile()) &&
+				objRevision.getContentIdentifier().equals(this.getContentIdentifier()))
+				return true;
+		}
+		return false;
+	}
 
 	public URI getURI() {
 		return null;//return entry.getRemoteFile().

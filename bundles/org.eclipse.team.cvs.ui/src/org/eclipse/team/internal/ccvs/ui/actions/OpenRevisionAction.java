@@ -61,7 +61,9 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 							try {
 								file = revision.getStorage(monitor);
 								String id = getEditorID(file.getName(), file.getContents());
-								page.getSite().getPage().openEditor(new FileRevisionEditorInput(revision), id);
+								FileRevisionEditorInput fileRevEditorInput = new FileRevisionEditorInput(revision); 
+								if (!editorAlreadyOpenOnContents(fileRevEditorInput))
+									page.getSite().getPage().openEditor(fileRevEditorInput, id);
 							} catch (CoreException e) {
 								//TODO: Better error handling here - a message would be good
 							}
@@ -133,6 +135,23 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 		}
 		
 		return true;
+	}
+	
+	
+	private boolean editorAlreadyOpenOnContents(FileRevisionEditorInput input) {
+		IEditorReference[] editorRefs = page.getSite().getPage().getEditorReferences();	
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorPart part = editorRefs[i].getEditor(false);
+			if(part != null 
+			   && part.getEditorInput() instanceof FileRevisionEditorInput) {
+				IFileRevision inputRevision = (IFileRevision) input.getAdapter(IFileRevision.class);
+				IFileRevision editorRevision = (IFileRevision) part.getEditorInput().getAdapter(IFileRevision.class);
+				
+				if (inputRevision.equals(editorRevision))
+					return true;
+			}
+		}
+		return false;
 	}
 
 }
