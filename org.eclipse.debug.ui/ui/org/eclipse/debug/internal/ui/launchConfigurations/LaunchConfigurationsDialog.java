@@ -572,6 +572,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		};
 		fLaunchConfigurationView.setAction(IDebugView.DOUBLE_CLICK_ACTION, fDoubleClickAction);
 		Viewer viewer = fLaunchConfigurationView.getViewer();
+        
 	//set up the filters
 		fClosedProjectFilter = new ClosedProjectFilter();
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
@@ -657,7 +658,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			fFilteringLabel.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_6, new Object[] {new Integer(filtered), new Integer(total)}));
 			
 		}
-		catch(CoreException e) {e.printStackTrace();}
+		catch(CoreException e) {
+            DebugUIPlugin.log(e);
+		}
 	}
 	
 	/**
