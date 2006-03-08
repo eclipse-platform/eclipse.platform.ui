@@ -1243,7 +1243,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private  synchronized void  reloadTable(final BigInteger topAddress) {
 		
 		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-			System.out.println("reload at: " + topAddress.toString(16)); //$NON-NLS-1$
+			System.out.println(this + " reload at: " + topAddress.toString(16)); //$NON-NLS-1$
 		
 		fContentDescriptor.setLoadAddress(topAddress);
 		fContentDescriptor.setNumLines(getNumLinesToLoad());
@@ -1655,7 +1655,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		int i = fTableViewer.getVirtualContentModel().indexOfKey(address);
 
 		if (i >= 0)
-		{
+		{	
 			// address is within range, set cursor and reveal
 			fTableViewer.setSelection(address);
 			updateSyncTopAddress(address);

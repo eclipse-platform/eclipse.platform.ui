@@ -165,10 +165,11 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 
 				public IStatus runInUIThread(IProgressMonitor monitor)  {
 						if (getTable().isDisposed())
+						{
+							fTopIndexQueue.clear();
 							return Status.OK_STATUS;
+						}
 						
-						// remove the top index key from queue when it is processed
-						removeKeyFromQueue(topIndexKey);
 						int idx = getVirtualContentModel().indexOfKey(topIndexKey);
 						if (idx >= 0)
 						{
@@ -177,6 +178,7 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 							fPendingTopIndexKey = null;
 							setTopIndexKey(topIndexKey);
 							getTable().setTopIndex(idx);
+							tableTopIndexSetComplete();
 						}
 						else
 						{
@@ -184,6 +186,10 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 								System.out.println("cannot find key, put it back to the queue: " + topIndexKey); //$NON-NLS-1$
 							fPendingTopIndexKey = topIndexKey;
 						}
+						
+						// remove the top index key from queue when it is processed
+						removeKeyFromQueue(topIndexKey);
+						
 					return Status.OK_STATUS;
 				}};
 				
@@ -196,6 +202,11 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 			return topIndexKey;
 		}
 		return topIndexKey;
+	}
+	
+	protected void tableTopIndexSetComplete()
+	{
+		
 	}
 	 
 	 public void addVirtualContentListener(IVirtualContentListener listener)
@@ -266,7 +277,7 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
 		{
 			MemorySegment a = (MemorySegment)getTable().getItem(getTable().getTopIndex()).getData();
-			System.out.println(Thread.currentThread().getName() + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$
+			System.out.println(Thread.currentThread().getName() + " " + this + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		setTopIndexKey(getVirtualContentModel().getKey(getTable().getTopIndex()));
@@ -437,5 +448,9 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		}
 	}
 	
+	protected boolean hasPendingSetTopIndex()
+	{
+		return !fTopIndexQueue.isEmpty();
+	}
 
 }

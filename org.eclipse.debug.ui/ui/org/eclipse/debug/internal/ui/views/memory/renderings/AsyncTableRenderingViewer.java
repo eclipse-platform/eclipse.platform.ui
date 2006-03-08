@@ -269,20 +269,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			return key;
 		
 		// calculate selected row address
-		final int row = indexOf(key);
-			
-		if (row == -1)
+		int[] location = getCoordinatesFromKey(key);
+		if(location.length == 0)
 		{
-			showTableCursor(false);
-			return key;
-		}
-		
-		Object element = getVirtualContentModel().getElement(row);
-		final int col = columnOf(element, key);
-		
-		if (col == -1)
-		{
-			showTableCursor(false);
 			return key;
 		}
 		
@@ -299,26 +288,32 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					if (fTableCursor.isDisposed())
 						return Status.OK_STATUS;
 					
+					// by the time this is called, the location may not be valid anymore
+					int[] newLocation = getCoordinatesFromKey(key);
+					if (newLocation.length == 0)
+					{
+						Object selectionKey = getSelectionKey();
+						fPendingSelection = selectionKey;
+						return Status.OK_STATUS;
+					}
+					
 					fSelectionKey = key;
 					fPendingSelection = null;
 					
 					if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
 					{
-						System.out.println(getRendering() + " set cursor selection, row is " + getTable().getItem(row).getData()); //$NON-NLS-1$
-						System.out.println(getRendering() + " set cursor selection, model is " + getVirtualContentModel().getElement(row)); //$NON-NLS-1$
+						System.out.println(getRendering() + " set cursor selection, row is " + getTable().getItem(newLocation[0]).getData()); //$NON-NLS-1$
+						System.out.println(getRendering() + " set cursor selection, model is " + getVirtualContentModel().getElement(newLocation[0])); //$NON-NLS-1$
 					}
 					
-					fTableCursor.setSelection(row, col);		
+					fTableCursor.setSelection(newLocation[0], newLocation[1]);
 					showTableCursor(true);
-					
 					
 					int topIndex = getTable().getTopIndex();
 					Object topKey = getVirtualContentModel().getKey(topIndex);
 					setTopIndexKey(topKey);
 					
 				} catch (RuntimeException e) {
-					// hide cursor and retry selection
-					showTableCursor(false);
 					
 					// by the time this is called, the selection may no longer
 					// get the latest selection and try to set selection again
@@ -333,6 +328,32 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		uiJob.schedule();
 		
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @return the coordinates of the key
+	 * Element[0] is the row index
+	 * Element[1] is the column index
+	 */
+	private int[] getCoordinatesFromKey(Object key)
+	{
+		final int row = indexOf(key);
+		
+		if (row == -1)
+		{
+			return new int[0];
+		}
+		
+		Object element = getVirtualContentModel().getElement(row);
+		final int col = columnOf(element, key);
+		
+		if (col == -1)
+		{
+			return new int[0];
+		}
+		return new int[]{row, col};
 	}
 	
 	private Object getSelectionKeyFromCursor()
@@ -681,7 +702,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					// show cursor after modification is completed
 					setSelection(fSelectionKey);
 					fTableCursor.moveAbove(text);
-					fTableCursor.setVisible(true);
+					showTableCursor(true);
 				}
 				catch (NumberFormatException e1)
 				{
@@ -979,6 +1000,20 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		}
 	}
 	
+	protected void tableTopIndexSetComplete() {
+		
+		if (!fTableCursor.isDisposed())
+		{
+			// TODO:  work around swt bug, must force a table cursor redraw after top index is changed
+			// BUG 130130
+			int[] coordinates = getCoordinatesFromKey(getSelectionKey());
+			if (coordinates.length > 0)
+				fTableCursor.setVisible(true);
+			else
+				fTableCursor.setVisible(false);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getModel()
 	 */
@@ -998,6 +1033,22 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		{
 			attemptSetKeySelection();
 			fTableCursor.redraw();
+			
+			// if the viewer has pending top index, then more updates will come in
+			// and the cursor should not be redrawn yet.
+			if (!hasPendingSetTopIndex())
+			{
+				preservingSelection(new Runnable() {
+
+					public void run() {
+
+						int[] coordinates = getCoordinatesFromKey(getSelectionKey());
+						if (coordinates.length > 0)
+							fTableCursor.setVisible(true);
+						else
+							fTableCursor.setVisible(false);
+					}});
+			}
 		}
 		
 		if (!hasPendingUpdates() && fPendingFormatViewer)
