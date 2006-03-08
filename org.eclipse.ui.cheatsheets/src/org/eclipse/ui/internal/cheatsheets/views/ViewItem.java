@@ -241,17 +241,6 @@ public abstract class ViewItem {
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after setBold: "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-
-	protected ImageHyperlink createButtonWithText(Composite parent, Image image, ViewItem item, Color color, String linkText) {
-		ImageHyperlink button = page.getToolkit().createImageHyperlink(parent, SWT.NULL);
-		button.setImage(image);
-		button.setData(item);
-		button.setBackground(color);
-		button.setText(linkText);
-		button.setToolTipText(linkText);
-		return button;
-	}
-
 	protected ImageHyperlink createButton(Composite parent, Image image, ViewItem item, Color color, String toolTipText) {
 		ImageHyperlink button = new ImageHyperlink(parent, SWT.NULL);
 		page.getToolkit().adapt(button, true, true);

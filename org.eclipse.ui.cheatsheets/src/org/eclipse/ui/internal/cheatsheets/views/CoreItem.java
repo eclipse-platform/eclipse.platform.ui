@@ -57,7 +57,7 @@ public class CoreItem extends ViewItem {
 
 	private void createButtonComposite() {
 		buttonComposite = page.getToolkit().createComposite(bodyWrapperComposite);
-		GridLayout buttonlayout = new GridLayout(1, false);
+		GridLayout buttonlayout = new GridLayout(4, false);
 		buttonlayout.marginHeight = 2;
 		buttonlayout.marginWidth = 2;
 		buttonlayout.verticalSpacing = 2;
@@ -68,6 +68,11 @@ public class CoreItem extends ViewItem {
 		buttonComposite.setLayoutData(buttonData);
 		buttonComposite.setBackground(itemColor);
 
+		Label spacer = page.getToolkit().createLabel(buttonComposite, null);
+		spacer.setBackground(itemColor);
+		GridData spacerData = new GridData();
+		spacerData.widthHint = 16;
+		spacer.setLayoutData(spacerData);
 	}
 	
 
@@ -80,8 +85,7 @@ public class CoreItem extends ViewItem {
 		boolean isDialogAction = getItem().isDialog();
 		boolean hideAction = isDialogAction && inDialog;
 		if (executable != null && !hideAction) {
-			final ImageHyperlink startButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
-			startButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			final ImageHyperlink startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -90,7 +94,7 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (item.isSkip()) {
-			final ImageHyperlink skipButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
+			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
 			page.getToolkit().adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -99,7 +103,7 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (executable == null || executable.isConfirm()) {
-			final ImageHyperlink completeButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
+			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
 			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -511,8 +515,7 @@ public class CoreItem extends ViewItem {
 		ImageHyperlink startButton = getStartButton();
 		if (startButton != null) {
 			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
-			startButton.setText(Messages.RESTART_TASK_TOOLTIP);
-		    startButton.setToolTipText(Messages.RESTART_TASK_TOOLTIP);
+			startButton.setToolTipText(Messages.RESTART_TASK_TOOLTIP);
 		}
 	}
 
@@ -520,10 +523,7 @@ public class CoreItem extends ViewItem {
 		ImageHyperlink startButton = getStartButton();
 		if (startButton != null) {
 			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));
-			if (startButton.getText() != null) {
-			    startButton.setText(Messages.PERFORM_TASK_TOOLTIP);
-			}
-		    startButton.setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
+			startButton.setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
 		}
 	}
 
@@ -546,7 +546,7 @@ public class CoreItem extends ViewItem {
 			completionComposite = page.getToolkit().createComposite(
 					bodyWrapperComposite);
 			TableWrapLayout completionlayout = new TableWrapLayout();
-			completionlayout.numColumns = 1;
+			completionlayout.numColumns = 2;
 
 			TableWrapData completionData = new TableWrapData(TableWrapData.FILL);
 
@@ -557,7 +557,7 @@ public class CoreItem extends ViewItem {
 			Label completionLabel = page.getToolkit().createLabel(completionComposite,
 					completionMessage, SWT.WRAP);
 			completionLabel.setBackground(backgroundColor);
-			final ImageHyperlink skipButton = createButtonWithText(
+			final ImageHyperlink skipButton = createButton(
 					completionComposite,
 					getCompletionButtonIcon(isFinalItem),
 					this, 
@@ -601,12 +601,6 @@ public class CoreItem extends ViewItem {
 		composite.layout();
 		getMainItemComposite().layout();
 		page.getForm().reflow(true);
-	}
-	
-	public void refreshItem() {
-		if (buttonComposite != null) {
-			refresh(buttonComposite);
-		}
 	}
 		
 }

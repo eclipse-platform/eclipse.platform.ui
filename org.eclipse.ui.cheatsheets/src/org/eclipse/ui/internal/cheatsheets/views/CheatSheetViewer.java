@@ -206,7 +206,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			if (isFinalItem) {
 				getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 			}
-			saveCurrentSheet();
 			return;
 		}
 
@@ -293,7 +292,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				/* LP-subitem event */
 				// fireManagerSubItemEvent(ICheatSheetItemEvent.ITEM_SKIPPED, ciws, subItemID);
 			}
-			ciws.refreshItem();
 		}
 
 		boolean allAttempted = checkAllAttempted(list);
