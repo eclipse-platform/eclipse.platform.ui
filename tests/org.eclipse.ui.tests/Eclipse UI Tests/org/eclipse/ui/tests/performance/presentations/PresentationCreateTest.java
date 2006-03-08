@@ -8,52 +8,45 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.presentations;
+package org.eclipse.ui.tests.performance.presentations;
 
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.tests.performance.TestRunnable;
 import org.eclipse.ui.tests.performance.layout.PresentationWidgetFactory;
 
-public class PresentationActivePartPropertyTest extends PresentationPerformanceTest {
+public class PresentationCreateTest extends PresentationPerformanceTest {
     
     private int type;
     private int number;
     private AbstractPresentationFactory factory;
+
+    public PresentationCreateTest(AbstractPresentationFactory factory, int type, int number) {
+        this(factory, type, number, "creation");
+    }
     
-    public PresentationActivePartPropertyTest(AbstractPresentationFactory factory, int type, int number) {
-        super(PresentationWidgetFactory.describePresentation(factory, type) + " active part properties");
+    public PresentationCreateTest(AbstractPresentationFactory factory, int type, int number, String message) {
+        super(PresentationWidgetFactory.describePresentation(factory, type) + " " + message);
         this.type = type;
         this.number = number;
         this.factory = factory;
-       
     }
     
     protected void runTest() throws Throwable {
-        
-    	setDegradationComment("See https://bugs.eclipse.org/bugs/show_bug.cgi?id=101072");
-    	 
-        final PresentationTestbed testbed = createPresentation(factory, type, number);
-        
-        final TestPresentablePart part = (TestPresentablePart)testbed.getSelection();
-        
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 
                 startMeasuring();
-            
-                twiddleProperty(DESCRIPTION, part);
-                twiddleProperty(DIRTY, part);
-                twiddleProperty(IMAGE, part);
-                twiddleProperty(NAME, part);
-                twiddleProperty(TITLE, part);
-                twiddleProperty(TOOLBAR, part);
-                twiddleProperty(TOOLTIP, part);
+                
+                PresentationTestbed testbed = createPresentation(factory, type, number);
+                processEvents();
+                testbed.getControl().dispose();
+                processEvents();
                 
                 stopMeasuring();
             } 
         });
         
         commitMeasurements();
-        assertPerformance();                
+        assertPerformance();    
     }
 }

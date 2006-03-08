@@ -14,6 +14,7 @@ package org.eclipse.jface.tests.performance;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -28,6 +29,7 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 	Shell browserShell;
 	
 	public static int ITERATIONS = 100;
+	public static int MIN_ITERATIONS = 20;
 
 	public ViewerTest(String testName, int tagging) {
 		super(testName, tagging);
@@ -90,6 +92,27 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 			browserShell.close();
 			browserShell = null;
 		}
+	}
+	
+	/**
+	 * Return the number of iterations for tests that are slow on Linux
+	 * @return int
+	 */
+	public int slowGTKIterations(){
+		if(SWT.getPlatform().equals("gtk"))
+			return ITERATIONS / 5;
+		return ITERATIONS;
+	}
+	
+	
+	/**
+	 * Return the number of iterations for tests that are slow on Linux
+	 * @return int
+	 */
+	public int slowWindowsIterations(){
+		if(SWT.getPlatform().equals("win32"))
+			return ITERATIONS / 5;
+		return ITERATIONS;
 	}
 
 }

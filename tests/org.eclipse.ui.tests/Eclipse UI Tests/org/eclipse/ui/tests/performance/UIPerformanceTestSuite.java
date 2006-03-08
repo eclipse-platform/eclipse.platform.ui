@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.performance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.tests.presentations.PresentationPerformanceTestSuite;
+import org.eclipse.ui.tests.performance.presentations.PresentationPerformanceTestSuite;
 
 /**
  * Test all areas of the UI API.

@@ -8,21 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.presentations;
+package org.eclipse.ui.tests.performance.presentations;
 
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.tests.performance.TestRunnable;
 import org.eclipse.ui.tests.performance.layout.PresentationWidgetFactory;
 
-public class PresentationSelectTest extends PresentationPerformanceTest {
+public class PresentationInactivePartPropertyTest extends PresentationPerformanceTest {
     
     private int type;
     private int number;
     private AbstractPresentationFactory factory;
     
-    public PresentationSelectTest(AbstractPresentationFactory factory, int type, int number) {
-        super(PresentationWidgetFactory.describePresentation(factory, type) + " selection change");
+    public PresentationInactivePartPropertyTest(AbstractPresentationFactory factory, int type, int number) {
+        super(PresentationWidgetFactory.describePresentation(factory, type) + " inactive part properties");
         this.type = type;
         this.number = number;
         this.factory = factory;
@@ -31,18 +30,22 @@ public class PresentationSelectTest extends PresentationPerformanceTest {
     protected void runTest() throws Throwable {
         final PresentationTestbed testbed = createPresentation(factory, type, number);
         
-        final IPresentablePart[] parts = testbed.getPartList();
+        final TestPresentablePart part = new TestPresentablePart(theShell, img);
+        testbed.add(part);
         
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 
                 startMeasuring();
                 
-                for (int i = 0; i < parts.length; i++) {
-                    IPresentablePart part = parts[i];
-                    
-                    testbed.setSelection(part);
-                    processEvents();
+                for (int counter = 0; counter < 5; counter++) {
+                    twiddleProperty(DESCRIPTION, part);
+                    twiddleProperty(DIRTY, part);
+                    twiddleProperty(IMAGE, part);
+                    twiddleProperty(NAME, part);
+                    twiddleProperty(TITLE, part);
+                    twiddleProperty(TOOLBAR, part);
+                    twiddleProperty(TOOLTIP, part);
                 }
                 
                 stopMeasuring();
@@ -50,6 +53,6 @@ public class PresentationSelectTest extends PresentationPerformanceTest {
         });
         
         commitMeasurements();
-        assertPerformance(); 
+        assertPerformance();       
     }
 }

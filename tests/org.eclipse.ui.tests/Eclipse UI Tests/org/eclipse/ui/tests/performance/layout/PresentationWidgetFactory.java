@@ -21,8 +21,8 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.presentations.PresentationTestbed;
-import org.eclipse.ui.tests.presentations.TestPresentablePart;
+import org.eclipse.ui.tests.performance.presentations.PresentationTestbed;
+import org.eclipse.ui.tests.performance.presentations.TestPresentablePart;
 
 public class PresentationWidgetFactory extends TestWidgetFactory {
 

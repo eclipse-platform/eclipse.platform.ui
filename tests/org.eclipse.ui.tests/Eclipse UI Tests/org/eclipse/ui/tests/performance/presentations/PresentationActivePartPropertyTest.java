@@ -8,48 +8,52 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.presentations;
+package org.eclipse.ui.tests.performance.presentations;
 
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.presentations.StackPresentation;
 import org.eclipse.ui.tests.performance.TestRunnable;
 import org.eclipse.ui.tests.performance.layout.PresentationWidgetFactory;
 
-public class PresentationActivateTest extends PresentationPerformanceTest {
+public class PresentationActivePartPropertyTest extends PresentationPerformanceTest {
     
     private int type;
     private int number;
     private AbstractPresentationFactory factory;
     
-    public PresentationActivateTest(AbstractPresentationFactory factory, int type, int number) {
-        super(PresentationWidgetFactory.describePresentation(factory, type) + " activation");
+    public PresentationActivePartPropertyTest(AbstractPresentationFactory factory, int type, int number) {
+        super(PresentationWidgetFactory.describePresentation(factory, type) + " active part properties");
         this.type = type;
         this.number = number;
         this.factory = factory;
+       
     }
     
     protected void runTest() throws Throwable {
+        
+    	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=101072>See Bug 101072</a> ");
+    	 
         final PresentationTestbed testbed = createPresentation(factory, type, number);
+        
+        final TestPresentablePart part = (TestPresentablePart)testbed.getSelection();
         
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 
                 startMeasuring();
-                
-                for (int i = 0; i < 100; i++) {
-                    testbed.setActive(StackPresentation.AS_ACTIVE_FOCUS);
-                    processEvents();                    
-                    testbed.setActive(StackPresentation.AS_ACTIVE_NOFOCUS);
-                    processEvents();
-                    testbed.setActive(StackPresentation.AS_INACTIVE);
-                    processEvents();
-                }
+            
+                twiddleProperty(DESCRIPTION, part);
+                twiddleProperty(DIRTY, part);
+                twiddleProperty(IMAGE, part);
+                twiddleProperty(NAME, part);
+                twiddleProperty(TITLE, part);
+                twiddleProperty(TOOLBAR, part);
+                twiddleProperty(TOOLTIP, part);
                 
                 stopMeasuring();
             } 
         });
         
         commitMeasurements();
-        assertPerformance();   
+        assertPerformance();                
     }
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.presentations;
+package org.eclipse.ui.tests.performance.presentations;
 
 import java.util.ArrayList;
 import java.util.List;

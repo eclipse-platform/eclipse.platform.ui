@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.presentations;
+package org.eclipse.ui.tests.performance.presentations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,16 +59,16 @@ public class TestPresentablePart implements IPresentablePart {
     // Set methods called from presentation (all ignored)
     public void setBounds(Rectangle bounds) {
         control.setBounds(bounds);
-    };
+    }
     
     public void setVisible(boolean isVisible) {
         control.setVisible(isVisible);
         toolbar.setVisible(isVisible);
-    };
+    }
     
     public void setFocus() {
         control.setFocus();
-    };
+    }
 
     public void addPropertyListener(IPropertyListener listener) {
         listeners.add(listener);

@@ -22,12 +22,12 @@ public class EmptyPerspective implements IPerspectiveFactory {
     /**
      * The perspective id for the empty perspective.
      */
-    public static final String PERSP_ID = "org.eclipse.ui.tests.util.EmptyPerspective";
+    public static final String PERSP_ID = "org.eclipse.ui.tests.harness.util.EmptyPerspective";
 
     /**
      * The perspective id for the second empty perspective.
      */
-    public static final String PERSP_ID2 = "org.eclipse.ui.tests.util.EmptyPerspective2";
+    public static final String PERSP_ID2 = "org.eclipse.ui.tests.harness.util.EmptyPerspective2";
 
     /**
      * Constructs a new Default layout engine.

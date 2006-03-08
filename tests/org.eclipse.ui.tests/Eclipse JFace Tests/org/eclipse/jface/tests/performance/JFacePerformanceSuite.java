@@ -24,7 +24,7 @@ public class JFacePerformanceSuite extends TestSuite {
 	//Some of these tests are very slow on 3.0
 	//Specify the minimum number of iterations
 	//and the time to drop down to a lower number
-	public static int MIN_ITERATIONS = 25;
+	
 	public static int MAX_TIME = 10000;
 	
 	/**
@@ -37,13 +37,13 @@ public class JFacePerformanceSuite extends TestSuite {
 	public JFacePerformanceSuite() {
 		super();
 		addTest(new ListViewerRefreshTest("testRefresh"));
-		addTest(new ComboViewerRefreshTest("testRefresh",BasicPerformanceTest.LOCAL));
-		addTest(new TableViewerRefreshTest("testRefresh"));
-		addTest(new TableViewerRefreshTest("testUpdate"));
-		addTest(new TreeTest("testAddTen"));
-		addTest(new TreeTest("testAddFifty"));
+		addTest(new ComboViewerRefreshTest("testRefreshSmall",BasicPerformanceTest.LOCAL));
+		addTest(new FastTableViewerRefreshTest("testRefreshMultiple"));
+		addTest(new FastTableViewerRefreshTest("testUpdateMultiple"));
+		addTest(new FastTreeTest("testAddTenTenTimes"));
+		addTest(new FastTreeTest("testAddFiftyTenTimes"));
 		addTest(new TreeTest("testAddThousand"));
-		addTest(new TreeTest("testAddHundred", BasicPerformanceTest.LOCAL));
+		addTest(new FastTreeTest("testAddHundredTenTimes", BasicPerformanceTest.LOCAL));
 		addTest(new TreeTest("testAddThousandPreSort", BasicPerformanceTest.GLOBAL));
 
 	}

@@ -8,45 +8,48 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.presentations;
+package org.eclipse.ui.tests.performance.presentations;
 
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.presentations.StackPresentation;
 import org.eclipse.ui.tests.performance.TestRunnable;
 import org.eclipse.ui.tests.performance.layout.PresentationWidgetFactory;
 
-public class PresentationCreateTest extends PresentationPerformanceTest {
+public class PresentationActivateTest extends PresentationPerformanceTest {
     
     private int type;
     private int number;
     private AbstractPresentationFactory factory;
-
-    public PresentationCreateTest(AbstractPresentationFactory factory, int type, int number) {
-        this(factory, type, number, "creation");
-    }
     
-    public PresentationCreateTest(AbstractPresentationFactory factory, int type, int number, String message) {
-        super(PresentationWidgetFactory.describePresentation(factory, type) + " " + message);
+    public PresentationActivateTest(AbstractPresentationFactory factory, int type, int number) {
+        super(PresentationWidgetFactory.describePresentation(factory, type) + " activation");
         this.type = type;
         this.number = number;
         this.factory = factory;
     }
     
     protected void runTest() throws Throwable {
+        final PresentationTestbed testbed = createPresentation(factory, type, number);
+        
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 
                 startMeasuring();
                 
-                PresentationTestbed testbed = createPresentation(factory, type, number);
-                processEvents();
-                testbed.getControl().dispose();
-                processEvents();
+                for (int i = 0; i < 100; i++) {
+                    testbed.setActive(StackPresentation.AS_ACTIVE_FOCUS);
+                    processEvents();                    
+                    testbed.setActive(StackPresentation.AS_ACTIVE_NOFOCUS);
+                    processEvents();
+                    testbed.setActive(StackPresentation.AS_INACTIVE);
+                    processEvents();
+                }
                 
                 stopMeasuring();
             } 
         });
         
         commitMeasurements();
-        assertPerformance();    
+        assertPerformance();   
     }
 }

@@ -21,12 +21,12 @@
       <perspective
             name="UI Test Empty Perspective"
             class="org.eclipse.ui.tests.util.EmptyPerspective"
-            id="org.eclipse.ui.tests.util.EmptyPerspective">
+            id="org.eclipse.ui.tests.harness.util.EmptyPerspective">
       </perspective>
       <perspective
             name="UI Test Empty Perspective 2"
             class="org.eclipse.ui.tests.util.EmptyPerspective"
-            id="org.eclipse.ui.tests.util.EmptyPerspective2">
+            id="org.eclipse.ui.tests.harness.util.EmptyPerspective2">
       </perspective>
       <perspective
             name="UI Test Drag Test Perspective"
