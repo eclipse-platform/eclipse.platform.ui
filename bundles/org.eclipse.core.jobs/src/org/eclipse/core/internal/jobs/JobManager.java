@@ -143,7 +143,7 @@ public class JobManager implements IJobManager {
 	/**
 	 * Returns the job manager singleton. For internal use only.
 	 */
-	public static synchronized JobManager getInstance() {
+	static synchronized JobManager getInstance() {
 		if (instance == null)
 			new JobManager();
 		return instance;

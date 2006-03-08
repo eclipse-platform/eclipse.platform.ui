@@ -25,7 +25,7 @@ import org.eclipse.core.internal.jobs.LockManager;
  * @since 3.0
  */
 public class LockListener {
-	private final LockManager manager = JobManager.getInstance().getLockManager();
+	private final LockManager manager = ((JobManager)Job.getJobManager()).getLockManager();
 
 	/**
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
