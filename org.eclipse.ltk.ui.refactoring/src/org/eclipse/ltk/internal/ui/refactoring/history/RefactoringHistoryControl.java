@@ -34,6 +34,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
@@ -113,11 +114,16 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				 * {@inheritDoc}
 				 */
 				public final void treeExpanded(final TreeExpansionEvent event) {
-					final Object element= event.getElement();
-					if (getChecked(element)) {
-						setSubTreeGrayed(element, false);
-						setSubtreeChecked(element, true);
-					}
+					BusyIndicator.showWhile(getDisplay(), new Runnable() {
+
+						public final void run() {
+							final Object element= event.getElement();
+							if (getChecked(element)) {
+								setSubTreeGrayed(element, false);
+								setSubtreeChecked(element, true);
+							}
+						}
+					});
 				}
 			});
 		}
