@@ -23,6 +23,7 @@ public class AllOtherCheatSheetTests {
 		TestSuite suite = new TestSuite(
 				"org.eclipse.ua.tests.cheatsheet.AllOtherCheatSheetTests");
 		//$JUnit-BEGIN$
+		suite.addTestSuite(TestCheatSheetManager.class);
 		suite.addTestSuite(TestStatePersistence.class);
 		//$JUnit-END$
 		return suite;

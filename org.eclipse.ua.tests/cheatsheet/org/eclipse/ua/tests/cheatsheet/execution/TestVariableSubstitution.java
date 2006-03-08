@@ -16,22 +16,22 @@ package org.eclipse.ua.tests.cheatsheet.execution;
  * command execution
  */
 
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 import junit.framework.TestCase;
 
 public class TestVariableSubstitution extends TestCase {
-	private ICheatSheetManager manager;
+	private CheatSheetManager manager;
 	
 	protected void setUp() throws Exception {
-		manager = new MockCheatSheetManager();
+		manager = new CheatSheetManager(new CheatSheetElement("name"));
 		manager.setData("p1", "one");
 		manager.setData("p2", "two");
 	}
 	
 	private String substitute(String input) {
-		return CheatSheetManager.performVariableSubstitution(input, manager);
+		return manager.performVariableSubstitution(input);
 	}
 
 	public void testNoSubstitution() {

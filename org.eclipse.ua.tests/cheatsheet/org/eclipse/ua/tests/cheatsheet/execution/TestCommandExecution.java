@@ -24,10 +24,11 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.cheatsheets.CommandRunner;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetCommand;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 /**
  * Tests which exercise the CommandRunner class
@@ -46,9 +47,16 @@ public class TestCommandExecution extends TestCase {
 	    + PARAM1_ID + '=' + PARAM1_VALUE + ',' 
 	    + PARAM2_ID + '=' + PARAM2_VALUE + ')';	
 	private static final String RETURN_STORE = "retData";
+	private static final String PARENT_RETURN_STORE = "parent.retData";
 
 	protected void setUp() throws Exception {
 		CommandHandler.reset();
+	}
+
+	public CheatSheetManager createManager() {
+		CheatSheetElement element = new CheatSheetElement("Name");
+		element.setID("TestCommandExecutionId");
+		return new CheatSheetManager(element);
 	}
 	
 	private ICommandService getService() {
@@ -96,7 +104,7 @@ public class TestCommandExecution extends TestCase {
 	
 	public void testCommandRunner() {
 		CheatSheetCommand command = new CheatSheetCommand();
-		ICheatSheetManager csm = new MockCheatSheetManager();
+		CheatSheetManager csm = createManager();
 		command.setSerialization(SERIALIZED_COMMAND);
 		
 		IStatus status = new CommandRunner().executeCommand(command, csm);
@@ -104,10 +112,10 @@ public class TestCommandExecution extends TestCase {
 		
 		checkCommandExecution();
 	}
-	
+
 	public void testCommandWithResult() {
 		CheatSheetCommand command = new CheatSheetCommand();
-		ICheatSheetManager csm = new MockCheatSheetManager();
+		CheatSheetManager csm = createManager();
 		command.setSerialization(SERIALIZED_COMMAND);
 		command.setReturns(RETURN_STORE);
 		
@@ -119,9 +127,27 @@ public class TestCommandExecution extends TestCase {
 		checkCommandExecution();
 	}
 	
+	/**
+	 * Test that if the return is set to parent.retData the
+	 * return value is written to the parent cheat sheet manager.
+	 */
+	public void testCommandWithQualifiedResult() {
+		CheatSheetCommand command = new CheatSheetCommand();
+		CheatSheetManager csm = createManager();
+		CheatSheetManager parentManager = createManager();
+		csm.setParent(parentManager);
+		command.setSerialization(SERIALIZED_COMMAND);
+		command.setReturns(PARENT_RETURN_STORE);
+		
+		IStatus status = new CommandRunner().executeCommand(command, csm);
+		assertTrue(status.isOK());
+		assertNull(csm.getData(RETURN_STORE));
+		assertNotNull(parentManager.getData(RETURN_STORE));
+	}
+	
 	public void testInvalidCommandId() {
 		CheatSheetCommand command = new CheatSheetCommand();
-		ICheatSheetManager csm = new MockCheatSheetManager();
+		CheatSheetManager csm = createManager();
 		command.setSerialization(COMMAND_ID + ".invalid");	 //$NON-NLS-1$
 		IStatus status = new CommandRunner().executeCommand(command, csm);
 		assertFalse(status.isOK());		
@@ -129,7 +155,7 @@ public class TestCommandExecution extends TestCase {
 	
 	public void testCommandException() {
 		CheatSheetCommand command = new CheatSheetCommand();
-		ICheatSheetManager csm = new MockCheatSheetManager();
+		CheatSheetManager csm = createManager();
 		command.setSerialization(SERIALIZED_COMMAND);
 		CommandHandler.setThrowException(true);
 		
@@ -142,7 +168,7 @@ public class TestCommandExecution extends TestCase {
 	
 	public void testCommandWithIntegerValues() {
 		CheatSheetCommand command = new CheatSheetCommand();
-		ICheatSheetManager csm = new MockCheatSheetManager();
+		CheatSheetManager csm = createManager();
 		command.setSerialization(NEGATE_INTEGER_COMMAND_ID);
 		command.setReturns(INT_RETURN_STORE);
 		
