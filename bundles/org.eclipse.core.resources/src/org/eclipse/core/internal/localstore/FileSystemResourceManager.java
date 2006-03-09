@@ -214,7 +214,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				return true;
 			return !Arrays.equals(newContents, oldContents);
 		} catch (Exception e) {
-			System.out.println(e);
+			Policy.log(e);
 			//if we failed to compare, just write the new contents
 		} finally {
 			FileUtil.safeClose(stream);
