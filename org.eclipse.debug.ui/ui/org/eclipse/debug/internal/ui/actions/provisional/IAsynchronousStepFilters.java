@@ -13,25 +13,32 @@ package org.eclipse.debug.internal.ui.actions.provisional;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 
 /**
- * Adapter for performing a drop to frame.
+ * Adapter for enabling and disabling step filters.
  * 
  * @since 3.2
  */
-public interface IAsynchronousDropToFrameAdapter {
+public interface IAsynchronousStepFilters {
 
 	/**
-	 * Asynchronously determines whether the given element can perform a drop to frame.
-	 *  
+	 * Asynchronously determines whether the given element supports step filters.
+	 *
 	 * @param element element
 	 * @param monitor request monitor
 	 */
-	public void canDropToFrame(Object element, IBooleanRequestMonitor monitor);
-	
+	public void supportsStepFilters(Object element, IBooleanRequestMonitor monitor);
 	/**
-	 * Asynchronously drops to the given frame.
-	 *  
+	 * Asynchronously determines whether step filters are enabled.
+	 *
 	 * @param element element
 	 * @param monitor request monitor
 	 */
-	public void dropToFrame(Object element, IAsynchronousRequestMonitor monitor);	
+	public void isStepFiltersEnabled(Object element, IBooleanRequestMonitor monitor);
+	/**
+	 * Asynchronously enables or disables step filters on the given element.
+	 *
+	 * @param element element
+	 * @param enabled whether step filters should be enabled
+	 * @param monitor request monitor
+	 */
+	public void setStepFiltersEnabled(Object element, boolean enabled, IAsynchronousRequestMonitor monitor);
 }
