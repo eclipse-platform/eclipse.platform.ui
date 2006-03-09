@@ -84,7 +84,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -152,9 +151,6 @@ import org.eclipse.ui.progress.UIJob;
  */
 public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering {
 
-	
-//	TODO:  different representation in a rendering
-//	TODO:  show memory tab is busy updating
 //	TODO:  linux - cannot resize columns to preferred size
 //	TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
 	
@@ -1707,36 +1703,40 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public MemoryByte[] getSelectedAsBytes()
 	{
-		// TODO:  must be called on UI thread or fails... need to look at this and make
-		// sure that this can be called on non-UI thread
 		if (getSelectedAddress() == null)
 			return new MemoryByte[0];
 		
-		TableCursor cursor = fTableViewer.getCursor();
-		int col = cursor.getColumn();
-		TableItem rowItem = cursor.getRow();
+		Object key = fTableViewer.getSelectionKey();
+		AbstractVirtualContentTableModel model = fTableViewer.getVirtualContentModel();
 		
-		// check precondition
-		if (col == 0 || col > getBytesPerLine()/getBytesPerColumn())
+		if (model != null)
 		{
-			return new MemoryByte[0];
+			model = (AbstractVirtualContentTableModel)fTableViewer.getModel();
+			int row = model.indexOfKey(key);
+			Object element = model.getElement(row);
+			int col = model.columnOf(element, key);
+		
+			// check precondition
+			if (col <= 0 || col > getBytesPerLine()/getBytesPerColumn())
+			{
+				return new MemoryByte[0];
+			}
+			
+			if (!(element instanceof MemorySegment))
+				return new MemoryByte[0];
+			
+			MemorySegment line = (MemorySegment)element;
+			int offset = (col-1)*(getAddressableUnitPerColumn()*getAddressableSize());
+			
+			// make a copy of the bytes to ensure that data cannot be changed
+			// by caller
+			MemoryByte[] bytes = line.getBytes(offset, getAddressableUnitPerColumn()*getAddressableSize());
+			MemoryByte[] retBytes = new MemoryByte[bytes.length];
+			
+			System.arraycopy(bytes, 0, retBytes, 0, bytes.length);
+			return retBytes;
 		}
-		
-		Object data = rowItem.getData();
-		if (data == null || !(data instanceof MemorySegment))
-			return new MemoryByte[0];
-		
-		MemorySegment line = (MemorySegment)data;
-		int offset = (col-1)*(getAddressableUnitPerColumn()*getAddressableSize());
-		
-		// make a copy of the bytes to ensure that data cannot be changed
-		// by caller
-		MemoryByte[] bytes = line.getBytes(offset, getAddressableUnitPerColumn()*getAddressableSize());
-		MemoryByte[] retBytes = new MemoryByte[bytes.length];
-		
-		System.arraycopy(bytes, 0, retBytes, 0, bytes.length);
-		
-		return retBytes;
+		return new MemoryByte[0];
 	}
 
 	/**
@@ -1746,31 +1746,17 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public String getSelectedAsString() {
 
-		// TODO:  must be called on UI thread or fails... need to look at this and make
-		// sure that this can be called on non-UI thread
-		
 		if (getSelectedAddress() == null)
 			return ""; //$NON-NLS-1$
 		
-		TableCursor cursor = fTableViewer.getCursor();
-		int col = cursor.getColumn();
-		TableItem rowItem = cursor.getRow();
-		int row = fTableViewer.getTable().indexOf(rowItem);
-		
-		if (col == 0)
+		MemoryByte[] bytes = getSelectedAsBytes();
+		if (bytes.length > 0)
 		{
-			return rowItem.getText(0);
+			return getString(this.getRenderingId(), getSelectedAddress(), bytes);
 		}
-		
-		// check precondition
-		if (col > getBytesPerLine()/getBytesPerColumn())
-		{
+		else
 			return ""; //$NON-NLS-1$
-		}
-				
-		TableItem tableItem = fTableViewer.getTable().getItem(row);
 		
-		return tableItem.getText(col);	
 	}
 
 	/**
