@@ -36,12 +36,12 @@
       </perspective>
       <perspective
             name="UI Test Standalone View Perspective"
-            class="org.eclipse.ui.tests.presentations.StandaloneViewPerspective"
+            class="org.eclipse.ui.tests.performance.presentations.StandaloneViewPerspective"
             id="org.eclipse.ui.tests.presentations.StandaloneViewPerspective">
       </perspective>
       <perspective
             name="UI Test Standalone View Perspective  2 "
-            class="org.eclipse.ui.tests.presentations.StandaloneViewPerspective2"
+            class="org.eclipse.ui.tests.performance.presentations.StandaloneViewPerspective2"
             id="org.eclipse.ui.tests.presentations.StandaloneViewPerspective2">
       </perspective>
       <perspective
