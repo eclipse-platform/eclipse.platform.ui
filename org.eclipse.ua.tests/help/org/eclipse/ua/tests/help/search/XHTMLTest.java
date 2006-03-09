@@ -23,7 +23,10 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
@@ -33,6 +36,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 public class XHTMLTest extends TestCase {
+	
+	private boolean oldPreference;
 	
 	/*
 	 * The test data for testXHTMLSearch(). The first string in each array
@@ -78,9 +83,25 @@ public class XHTMLTest extends TestCase {
 	/*
 	 * Ensure that org.eclipse.help.ui is started. It contributes extra content
 	 * filtering that is used by this test. See UIContentFilterProcessor.
+	 * 
+	 * Also, turn off potential hits searching for this test.
 	 */
 	protected void setUp() throws Exception {
 		HelpUIPlugin.getDefault();
+		
+		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		oldPreference = pref.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
+		pref.setValue(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS, false);
+		HelpBasePlugin.getDefault().savePluginPreferences();
+	}
+	
+	/*
+	 * Set the preference value back to whatever it was before.
+	 */
+	protected void tearDown() throws Exception {
+		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		pref.setValue(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS, oldPreference);
+		HelpBasePlugin.getDefault().savePluginPreferences();
 	}
 
 	public void testXHTMLSearch() throws Exception {
