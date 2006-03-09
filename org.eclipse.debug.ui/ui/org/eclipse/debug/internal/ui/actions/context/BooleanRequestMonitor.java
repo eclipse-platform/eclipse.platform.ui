@@ -36,8 +36,10 @@ public class BooleanRequestMonitor extends AbstractRequestMonitor implements IBo
 	 */
 	public void setResult(boolean result) {
 		fNumOfVotes++;
-		if (!result) {
-			setCanceled(true);
+		if (!isCanceled()) {
+			if (!result) {
+				setCanceled(true);
+			}
 		}
 	}
 
