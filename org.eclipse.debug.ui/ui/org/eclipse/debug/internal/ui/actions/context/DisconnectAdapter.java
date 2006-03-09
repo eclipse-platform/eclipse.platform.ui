@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDisconnect;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousDisconnectAdapter;
 import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
