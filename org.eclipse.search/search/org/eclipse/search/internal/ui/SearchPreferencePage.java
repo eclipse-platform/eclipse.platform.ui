@@ -14,15 +14,6 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ColorFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
-import org.eclipse.search.internal.ui.util.ComboFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -34,11 +25,24 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
+import org.eclipse.search.internal.ui.util.ComboFieldEditor;
+
+import org.eclipse.search2.internal.ui.text2.TextSearchQueryProviderRegistry;
 
 /*
  * The page for setting the Search preferences.
@@ -55,9 +59,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String LIMIT_TABLE_TO= "org.eclipse.search.limitTableTo"; //$NON-NLS-1$
 	public static final String LIMIT_TABLE= "org.eclipse.search.limitTable"; //$NON-NLS-1$
     public static final String TEXT_SEARCH_ENGINE = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
-
-    public static final String EXPERIMENTAL_SEARCH_VIEW = "org.eclipse.search.experimentalSearchResultView"; //$NON-NLS-1$
-
+    public static final String TEXT_SEARCH_QUERY_PROVIDER = "org.eclipse.search.textSearchQueryProvider"; //$NON-NLS-1$
     
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
@@ -98,8 +100,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(LIMIT_TABLE_TO, 200);
 		store.setDefault(LIMIT_TABLE, false);
 		store.setDefault(TEXT_SEARCH_ENGINE, ""); //default search engine is empty string //$NON-NLS-1$
-	
-		store.setDefault(EXPERIMENTAL_SEARCH_VIEW, false);
+		store.setDefault(TEXT_SEARCH_QUERY_PROVIDER, ""); // default query provider is empty string  //$NON-NLS-1$
 	}
 
 
@@ -166,15 +167,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
                     engineNamesAndIds,
                     getFieldEditorParent());
             addField(comboEditor);
-        }
-        
- 		boolEditor= new BooleanFieldEditor(
-				EXPERIMENTAL_SEARCH_VIEW,
-				"Use the experimental text search result view (work in progress)", //$NON-NLS-1$
-				getFieldEditorParent()
-				);
-		addField(boolEditor);
-        
+        }        
 	}
 
 	private void createTableLimit() {
@@ -361,9 +354,4 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
 	}
 	
-	public static boolean useNewTextSearch() {
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(EXPERIMENTAL_SEARCH_VIEW);
-	}
-
 }

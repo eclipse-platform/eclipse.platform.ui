@@ -11,8 +11,8 @@
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
 	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
   	<extension-point name="%searchResultViewPages" id="searchResultViewPages" schema="schema/searchResultViewPages.exsd"/>
-    <extension-point name="%textSearchMatchInformationProvider" id="textSearchMatchInformationProvider" schema="schema/textSearchMatchInformationProvider.exsd"/>
     <extension-point name="%textSearchEngine" id="textSearchEngine" schema="schema/textSearchEngine.exsd"/>
+    <extension-point name="%textSearchQueryProvider" id="textSearchQueryProvider" schema="schema/textSearchQueryProvider.exsd"/>
 	
 	
 	<!-- Extensions -->
@@ -96,11 +96,6 @@
 			description="%ViewCommand.searchView.description"
 		/>
 		
-		<command
-        categoryId="org.eclipse.search.ui.category.search"
-        description="%command.performTextSearch.description"
-        id="org.eclipse.search.ui.performTextSearch"
-        name="%command.performTextSearch.name"/>
 		<command 
 			categoryId="org.eclipse.search.ui.category.search" 
   			id="org.eclipse.search.ui.performTextSearchWorkingSet" 
@@ -154,7 +149,7 @@
 		/>
 		<key 
 			sequence="M1+M3+G" 
-			commandId="org.eclipse.search.ui.performTextSearch" 
+			commandId="org.eclipse.search.ui.performTextSearchWorkspace" 
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"  
 	    />
 	</extension>
@@ -199,21 +194,23 @@
 				helpContextId="open_search_dialog_action_context"
 				class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
         		
+            <!-- Various actions for the text search in a sub menu -->
+  		    <menu id="textSearchSubMenu"
+		        label="%textSearchSubMenu.label"
+        		path="org.eclipse.search.menu/contextMenuActionsGroup">
+        		<groupMarker name="group1"/>
+        		<groupMarker name="additions"/>
+        		<groupMarker name="group2"/>
+            </menu>
+            
          	<action id="org.eclipse.search.TextSearchWorkingSet"
          	    definitionId="org.eclipse.search.ui.performTextSearchWorkingSet"
-         	    menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+         	    menubarPath="org.eclipse.search.menu/textSearchSubMenu/group2"
          	    style="push" 
          	    label="%action.performTextSearchWorkingSet.label" 
          	    tooltip= "%action.performTextSearchWorkingSet.tooltip"
          	    class="org.eclipse.search2.internal.ui.text2.FindInWorkingSetActionDelegate"/>         	    
 
-            <!-- Various actions for the text search in a sub menu -->
-  		    <menu id="textSearchSubMenu"
-		        label="%textSearchSubMenu.label"
-        		path="org.eclipse.search.menu/contextMenuActionsGroup">
-        		<separator name="group0"/>
-        		<separator name="group1"/>
-            </menu>
          	<action id="org.eclipse.search.TextSearchFile"
          	    definitionId="org.eclipse.search.ui.performTextSearchFile"
          	    menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
@@ -238,14 +235,6 @@
          	    tooltip= "%action.performTextSearchWorkspace.tooltip"
          	    class="org.eclipse.search2.internal.ui.text2.FindInWorkspaceActionDelegate"/>
 
-         	<action
-                class="org.eclipse.search2.internal.ui.text2.FindInRecentScopeActionDelegate"
-                definitionId="org.eclipse.search.ui.performTextSearch"
-                id="org.eclipse.search.TextSearch"
-                label="%action.performTextSearch.label"
-                menubarPath="org.eclipse.search.menu/textSearchSubMenu/group0"
-                style="push"
-                tooltip="%action.performTextSearch.tooltip"/>
 	     </actionSet>
 	</extension>
 		
@@ -275,14 +264,6 @@
 			id="org.eclipse.search.text.FileSearchResultPage"
 			searchResultClass="org.eclipse.search.internal.ui.text.FileSearchResult"
 			class="org.eclipse.search.internal.ui.text.FileSearchPage">
-		</viewPage>
-		<viewPage
-        	class="org.eclipse.search2.internal.ui.text2.RetrieverPage"
-        	emptyPageUseful="true"
-        	icon="icons/full/obj16/tsearch_dpdn_obj.gif"
-        	id="org.eclipse.search.text.RetrieverPage"
-        	label="%RetrieverPage.label"
-        	searchResultClass="org.eclipse.search2.internal.ui.text2.RetrieverResult">
 		</viewPage>
 	</extension>
 	

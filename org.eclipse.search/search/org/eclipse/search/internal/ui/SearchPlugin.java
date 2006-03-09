@@ -47,7 +47,7 @@ import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.text2.SearchMatchInformationProviderRegistry;
+import org.eclipse.search2.internal.ui.text2.TextSearchQueryProviderRegistry;
 
 import org.osgi.framework.BundleContext;
 
@@ -75,14 +75,14 @@ public class SearchPlugin extends AbstractUIPlugin {
 	private List fPageDescriptors;
 	private List fSorterDescriptors;
 	private TextSearchEngineRegistry fTextSearchEngineRegistry;
-	private SearchMatchInformationProviderRegistry fSearchMatchInformationProviderRegistry;
+	private TextSearchQueryProviderRegistry fTextSearchQueryProviderRegistry;
 
 	public SearchPlugin() {
 		super();
 		Assert.isTrue(fgSearchPlugin == null);
 		fgSearchPlugin= this;
 		fTextSearchEngineRegistry= null;
-		fSearchMatchInformationProviderRegistry= null;
+		fTextSearchQueryProviderRegistry= null;
 	}
 
 	/**
@@ -303,11 +303,11 @@ public class SearchPlugin extends AbstractUIPlugin {
         return fTextSearchEngineRegistry;
     }
     
-    public SearchMatchInformationProviderRegistry getSearchMatchInformationProviderRegistry() {
-        if (fSearchMatchInformationProviderRegistry == null) {
-        	fSearchMatchInformationProviderRegistry= new SearchMatchInformationProviderRegistry();
+    public TextSearchQueryProviderRegistry getTextSearchQueryProviderRegistry() {
+        if (fTextSearchQueryProviderRegistry == null) {
+        	fTextSearchQueryProviderRegistry= new TextSearchQueryProviderRegistry();
         }
-        return fSearchMatchInformationProviderRegistry;
+        return fTextSearchQueryProviderRegistry;
     }
 
 	/**

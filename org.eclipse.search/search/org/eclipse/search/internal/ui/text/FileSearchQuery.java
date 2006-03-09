@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
@@ -58,19 +59,22 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 	}
-
-	private String fSearchString;
-	private String fSearchOptions;
-	private FileNamePatternSearchScope fScope;
+	
+	private final FileTextSearchScope fScope;
+	private final String fSearchText;
+	private final boolean fIsRegEx;
+	private final boolean fIsCaseSensitive;
+	
 	private FileSearchResult fResult;
-
-	public FileSearchQuery(FileNamePatternSearchScope scope, String options, String searchString) {
+	
+	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, FileTextSearchScope scope) {
+		fSearchText= searchText;
+		fIsRegEx= isRegEx;
+		fIsCaseSensitive= isCaseSensitive;
 		fScope= scope;
-		fSearchOptions= options;
-		fSearchString= searchString;
 	}
 	
-	public FileNamePatternSearchScope getSearchScope() {
+	public FileTextSearchScope getSearchScope() {
 		return fScope;
 	}
 	
@@ -94,27 +98,24 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 	
 	public String getSearchString() {
-		return fSearchString;
+		return fSearchText;
 	}
 	
-	public String getSearchOptions() {
-		return fSearchOptions;
-	}
-
 	public String getResultLabel(int nMatches) {
+		String searchString= getSearchString();
 		if (nMatches == 1) {
-			if (fSearchString.length() > 0) {
-				Object[] args= { fSearchString, fScope.getDescription() };
+			if (searchString.length() > 0) {
+				Object[] args= { searchString, fScope.getDescription() };
 				return Messages.format(SearchMessages.FileSearchQuery_singularLabel, args); 
 			}
-			Object[] args= { fScope.getFileNamePatternDescription(), fScope.getDescription() };
+			Object[] args= { fScope.getFilterDescription(), fScope.getDescription() };
 			return Messages.format(SearchMessages.FileSearchQuery_singularLabel_fileNameSearch, args); 
 		}
-		if (fSearchString.length() > 0) {
-			Object[] args= { fSearchString, new Integer(nMatches), fScope.getDescription() };
+		if (searchString.length() > 0) {
+			Object[] args= { searchString, new Integer(nMatches), fScope.getDescription() };
 			return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args); 
 		}
-		Object[] args= { fScope.getFileNamePatternDescription(), new Integer(nMatches), fScope.getDescription() };
+		Object[] args= { fScope.getFilterDescription(), new Integer(nMatches), fScope.getDescription() };
 		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args); 
 	}
 
@@ -135,28 +136,15 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 	
 	protected Pattern getSearchPattern() {
-		String searchString= fSearchString;
-		if (searchString.trim().equals(String.valueOf('*'))) {
-			searchString= new String();
-		}		
-		return PatternConstructor.createPattern(searchString, isRegexSearch(), true, isCaseSensitive(), false);
+		return PatternConstructor.createPattern(fSearchText, fIsCaseSensitive, fIsRegEx);
 	}
-	
 	
 	public boolean isRegexSearch() {
-		return isRegexSearch(getSearchOptions());
+		return fIsRegEx;
 	}
 	
-	public static boolean isRegexSearch(String options) {
-		return options.indexOf('r') != -1;
-	}
-
 	public boolean isCaseSensitive() {
-		return isCaseSensitive(getSearchOptions());
-	}
-
-	public static boolean isCaseSensitive(String options) {
-		return options.indexOf('i') == -1;
+		return fIsCaseSensitive;
 	}
 
 	public boolean canRerun() {

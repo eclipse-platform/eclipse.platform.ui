@@ -122,6 +122,7 @@ public final class SearchMessages extends NLS {
 	public static String WorkspaceScope;
 	public static String WorkingSetScope;
 	public static String SelectionScope;
+	public static String FileScope;
 	public static String EnclosingProjectsScope;
 	public static String EnclosingProjectScope;
 	public static String ScopePart_group_text;
@@ -195,4 +196,5 @@ public final class SearchMessages extends NLS {
 	public static String ReplaceDialog2_nomatches_error;
     public static String SearchPreferencePage_textSearchEngine;
 	public static String TextSearchEngineRegistry_defaulttextsearch_label;
+    public static String SearchPreferencePage_textSearchUI;
 }

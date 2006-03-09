@@ -11,15 +11,15 @@
 
 package org.eclipse.search.ui.actions;
 
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-
-import org.eclipse.search.ui.IContextMenuConstants;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.text2.FindInFileActionDelegate;
@@ -35,9 +35,11 @@ import org.eclipse.search2.internal.ui.text2.FindInWorkspaceActionDelegate;
  * @since 3.2
  */
 public class TextSearchGroup extends ActionGroup {
+	
+	private static final String CTX_MENU_ID= "org.eclipse.search.text.ctxmenu"; //$NON-NLS-1$
+
 	private String fAppendToGroup= ITextEditorActionConstants.GROUP_FIND;
 	private String fMenuText= SearchMessages.TextSearchGroup_submenu_text;
-
 	private FindInRecentScopeActionDelegate[] fActions;
 
 	/**
@@ -66,7 +68,8 @@ public class TextSearchGroup extends ActionGroup {
 	}
 
 	private void createActions(IEditorPart editor) {
-		fActions= new FindInRecentScopeActionDelegate[] {new FindInRecentScopeActionDelegate(), new FindInWorkspaceActionDelegate(), new FindInProjectActionDelegate(), new FindInFileActionDelegate(), new FindInWorkingSetActionDelegate()};
+		fActions= new FindInRecentScopeActionDelegate[] {
+				new FindInWorkspaceActionDelegate(), new FindInProjectActionDelegate(), new FindInFileActionDelegate(), new FindInWorkingSetActionDelegate()};
 		for (int i= 0; i < fActions.length; i++) {
 			FindInRecentScopeActionDelegate action= fActions[i];
 			action.setActiveEditor(action, editor);
@@ -77,14 +80,15 @@ public class TextSearchGroup extends ActionGroup {
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager menu) {
-		MenuManager textSearchMM= new MenuManager(fMenuText, IContextMenuConstants.GROUP_SEARCH);
-		textSearchMM.add(fActions[0]);
-		textSearchMM.add(new Separator());
-		for (int i= 1; i < fActions.length; i++) {
+		MenuManager textSearchMM= new MenuManager(fMenuText, CTX_MENU_ID);
+		int i=0;
+		for (i= 0; i < fActions.length-1; i++) {
 			textSearchMM.add(fActions[i]);
 		}
+		textSearchMM.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		textSearchMM.add(new Separator());
+		textSearchMM.add(fActions[i]);
 
 		menu.appendToGroup(fAppendToGroup, textSearchMM);
 	}
-
 }

@@ -11,6 +11,8 @@
 package org.eclipse.search2.internal.ui.text2;
 
 
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
@@ -20,20 +22,15 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
-
-import org.eclipse.search2.internal.ui.SearchMessages;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
 
 /**
  * @author markus.schorn@windriver.com
  */
-public class FindInRecentScopeActionDelegate extends RetrieverAction implements IWorkbenchWindowActionDelegate, IEditorActionDelegate {
+abstract public class FindInRecentScopeActionDelegate extends RetrieverAction implements IWorkbenchWindowActionDelegate, IEditorActionDelegate {
 	private IWorkbenchWindow fWindow;
-
-	public FindInRecentScopeActionDelegate() {
-		this(SearchMessages.FindInRecentScopeActionDelegate_text);
-	}
 
 	public FindInRecentScopeActionDelegate(String text) {
 		setText(text);
@@ -74,19 +71,5 @@ public class FindInRecentScopeActionDelegate extends RetrieverAction implements 
 		return null;
 	}
 
-	protected boolean modifyQuery(RetrieverQuery query) {
-		IWorkbenchPage page= getWorkbenchPage();
-		if (page == null) {
-			return false;
-		}
-		String searchFor= getSearchForString(page);
-		query.setSearchString(searchFor);
-		return true;
-	}
-
-	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
-		return null;
-	}
-	
-
+	abstract protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException;
 }

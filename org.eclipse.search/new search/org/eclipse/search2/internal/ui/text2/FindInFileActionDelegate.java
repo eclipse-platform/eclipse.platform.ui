@@ -11,6 +11,8 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
@@ -23,7 +25,8 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -33,6 +36,7 @@ public class FindInFileActionDelegate extends FindInRecentScopeActionDelegate {
 	
 	public FindInFileActionDelegate() {
 		super(SearchMessages.FindInFileActionDelegate_text);
+		setActionDefinitionId("org.eclipse.search.ui.performTextSearchFile"); //$NON-NLS-1$
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -59,16 +63,6 @@ public class FindInFileActionDelegate extends FindInRecentScopeActionDelegate {
 		super.setActiveEditor(action, editor);
 	}
 
-	protected boolean modifyQuery(RetrieverQuery query) {
-		if (super.modifyQuery(query)) {
-			IFile file= getFile();
-			if (file != null) {
-				query.setSearchScope(new SingleFileScopeDescription(file));
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	private IFile getFile() {
 		if (fEditor != null) {
@@ -79,13 +73,9 @@ public class FindInFileActionDelegate extends FindInRecentScopeActionDelegate {
 		}
 		return null;
 	}
-	
-	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
-		IFile file= getFile();
-		if (file != null) {
-			return FileNamePatternSearchScope.newSearchScope(SearchMessages.FindInFileActionDelegate_scope_label, new IResource[] { file }, includeDerived);
-		}
-		return FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
+
+	protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException {
+		return provider.createQuery(searchForString, new IResource[] { getFile() });
 	}
 	
 }

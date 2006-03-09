@@ -11,6 +11,8 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
@@ -23,7 +25,8 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -32,6 +35,7 @@ public class FindInProjectActionDelegate extends FindInRecentScopeActionDelegate
 
 	public FindInProjectActionDelegate() {
 		super(SearchMessages.FindInProjectActionDelegate_text);
+		setActionDefinitionId("org.eclipse.search.ui.performTextSearchProject"); //$NON-NLS-1$
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -58,17 +62,6 @@ public class FindInProjectActionDelegate extends FindInRecentScopeActionDelegate
 		super.setActiveEditor(action, fEditor);
 	}
 
-	protected boolean modifyQuery(RetrieverQuery query) {
-		if (super.modifyQuery(query)) {
-			IProject proj= getCurrentProject();
-			if (proj != null) {
-				query.setSearchScope(new SelectedResourcesScopeDescription(new IResource[] {proj}, false));
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	protected IProject getCurrentProject() {
 		if (fEditor != null) {
 			IEditorInput ei= fEditor.getEditorInput();
@@ -78,12 +71,12 @@ public class FindInProjectActionDelegate extends FindInRecentScopeActionDelegate
 		}
 		return null;
 	}
-	
-	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
+
+	protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException {
 		IProject proj= getCurrentProject();
 		if (proj != null) {
-			return FileNamePatternSearchScope.newSearchScope(SearchMessages.FindInProjectActionDelegate_scope_label, new IResource[] { proj }, includeDerived);
+			return provider.createQuery(searchForString, new IResource[] { getCurrentProject() });
 		}
-		return FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
-	}
+		return provider.createQuery(searchForString);
+	}	
 }

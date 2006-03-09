@@ -12,10 +12,6 @@ package org.eclipse.search2.internal.ui;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -30,8 +26,6 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
 import org.eclipse.search.internal.ui.SearchPluginImages;
-
-import org.osgi.framework.Bundle;
 
 class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 
@@ -72,32 +66,6 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 			InternalSearchUI.getInstance().showSearchResult(fSearchView, fSearch, false);
 		}
 	}
-	
-	private class ShowEmptySearchAction extends Action {
-		private final String fPageId;
-
-		public ShowEmptySearchAction(IConfigurationElement elem) {
-			fPageId= elem.getAttribute(SearchPageRegistry.ATTRIB_ID);
-			
-			String pageLabel= elem.getAttribute(SearchPageRegistry.ATTRIB_LABEL);
-			String text= Messages.format(SearchMessages.SearchHistoryDropDownAction_showemptyview_title, pageLabel);
-			setText(text);
-			
-			String tooltip= Messages.format(SearchMessages.SearchHistoryDropDownAction_showemptyview_tooltip, pageLabel);
-			setToolTipText(tooltip);
-			
-			String imageName= elem.getAttribute(SearchPageRegistry.ATTRIB_ICON);
-			if (imageName != null) {
-				Bundle bundle = Platform.getBundle(elem.getContributor().getName());
-				setImageDescriptor(SearchPluginImages.createImageDescriptor(bundle, new Path(imageName), true));
-			}
-		}
-		
-		public void run() {
-			fSearchView.showEmptySearchPage(fPageId);
-		}
-	}
-	
 
 	public static final int RESULTS_IN_DROP_DOWN= 10;
 
@@ -114,8 +82,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 	
 	public void updateEnablement() {
 		boolean hasQueries= InternalSearchUI.getInstance().getSearchManager().hasQueries();
-		boolean emptyPageExt= fSearchView.getSearchPageRegistry().hasEmptyPageExtensions();
-		setEnabled(hasQueries || emptyPageExt);
+		setEnabled(hasQueries);
 	}
 
 	public void dispose() {
@@ -136,21 +103,9 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		disposeMenu();
 		
 		fMenu= new Menu(parent);
-		
-		IConfigurationElement[] emptyPageExtensions= fSearchView.getSearchPageRegistry().getEmptyPageExtensions();
-		if (emptyPageExtensions.length > 0) {
-			for (int i= 0; i < emptyPageExtensions.length; i++) {
-				ShowEmptySearchAction action= new ShowEmptySearchAction(emptyPageExtensions[i]);
-				addActionToMenu(fMenu, action);
-			}
-		}
-		
+				
 		ISearchQuery[] searches= InternalSearchUI.getInstance().getSearchManager().getQueries();
-		if (searches.length > 0) {
-			if (emptyPageExtensions.length > 0) {
-				new MenuItem(fMenu, SWT.SEPARATOR);
-			}
-			
+		if (searches.length > 0) {			
 			for (int i= 0; i < searches.length; i++) {
 				ISearchResult search= searches[i].getSearchResult();
 				ShowSearchFromHistoryAction action= new ShowSearchFromHistoryAction(search);

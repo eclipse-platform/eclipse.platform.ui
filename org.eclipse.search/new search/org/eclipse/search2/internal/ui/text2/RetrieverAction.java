@@ -11,8 +11,7 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
-import java.util.regex.Pattern;
-
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.OperationCanceledException;
 
@@ -22,6 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -38,28 +40,23 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-import org.eclipse.search.internal.ui.text.FileSearchPage;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
 
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.SearchView;
+import org.eclipse.search2.internal.ui.SearchMessages;
 
 abstract public class RetrieverAction extends Action {
 	public RetrieverAction() {
@@ -70,85 +67,53 @@ abstract public class RetrieverAction extends Action {
 		if (page == null) {
 			return;
 		}
-		if (SearchPreferencePage.useNewTextSearch()) {
-			runNewSearchQuery(page);
-		} else {
-			runOldSearchQuery(page);
-		}
-	}
-
-	private void runNewSearchQuery(IWorkbenchPage page) {
-		RetrieverQuery query= new RetrieverQuery(page);
-		RetrieverPage.initializeQuery(query);
-		if (modifyQuery(query)) {
-			String searchPattern= query.getSearchText();
-			NewSearchUI.runQueryInBackground(query);
-			if (searchPattern == null || searchPattern.length() == 0) {
-				SearchView view= (SearchView) InternalSearchUI.getInstance().getSearchViewManager().activateSearchView(true);
-				view.showEmptySearchPage(RetrieverPage.ID);
-			} 
-		}
-	}
-	
-	private FileSearchQuery findLastUsedOldQuery() {
-		ISearchResultViewPart searchView= InternalSearchUI.getInstance().getSearchViewManager().getActiveSearchView();
-		if (searchView instanceof SearchView) {
-			FileSearchPage searchPage= (FileSearchPage) ((SearchView) searchView).getSearchPageRegistry().findPageForPageId("org.eclipse.search.text.FileSearchResultPage", false); //$NON-NLS-1$
-			if (searchPage != null) {
-				AbstractTextSearchResult searchResult= searchPage.getInput();
-				if (searchResult instanceof FileSearchResult) {
-					ISearchQuery query= searchResult.getQuery();
-					if (query instanceof FileSearchQuery) {
-						return (FileSearchQuery) query;
-					}
-				}
-			}
-		}
-		return null;	
-	}
-	
-	private void runOldSearchQuery(IWorkbenchPage page) {
+		TextSearchQueryProvider provider= TextSearchQueryProvider.getPreferred();
 		String searchForString= getSearchForString(page);
-		if (searchForString == null) {
+		if (searchForString.length() == 0) {
+			setStatusBarMessage(SearchMessages.RetrieverAction_empty_selection);
 			return;
 		}
-		FileSearchQuery lastQuery= findLastUsedOldQuery();
-		boolean includeDerived= lastQuery != null && lastQuery.getSearchScope().isIncludeDerived();
-		
 		try {
-			FileNamePatternSearchScope scope= getOldSearchScope(includeDerived);
-			if (scope == null) {
-				if (lastQuery != null) {
-					scope= lastQuery.getSearchScope();
-				} else {
-					scope= FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
-				}
-			}
-	
-			Pattern fileExtensionPattern= null;
-			if (lastQuery != null) {
-				fileExtensionPattern= lastQuery.getSearchScope().getFileNamePattern();
-				scope.setFileNamePattern(fileExtensionPattern);
-			} else {
-				SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
-				String[] fileExtensions= registry.getDefaultFilePatterns();
-				for (int i= 0; i < fileExtensions.length; i++) {
-					scope.addFileNamePattern(fileExtensions[i]);
-				}
-			}
-	
-			String searchOptions= lastQuery != null ? lastQuery.getSearchOptions() : new String();
-			FileSearchQuery query= new FileSearchQuery(scope, searchOptions, searchForString);
-			NewSearchUI.runQueryInBackground(query);
-		} catch (OperationCanceledException e) {
-			// cancelled
+			ISearchQuery query= createQuery(provider, searchForString);
+			if (query != null) {
+				NewSearchUI.runQueryInBackground(query);
+			}	
+		} catch (OperationCanceledException ex) {
+			// action cancelled
+		} catch (CoreException e) {
+			ErrorDialog.openError(getShell(), SearchMessages.RetrieverAction_error_title, SearchMessages.RetrieverAction_error_message, e.getStatus());
 		}
 	}
 	
-	protected abstract FileNamePatternSearchScope getOldSearchScope(boolean includeDerived);
+	private void setStatusBarMessage(String message) {
+		IWorkbenchPart part= getActivePart();
+		if (part instanceof IEditorPart) {
+			IEditorActionBarContributor contributor= ((IEditorPart) part).getEditorSite().getActionBarContributor();
+			if (contributor instanceof EditorActionBarContributor) {
+				IStatusLineManager manager= ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
+				manager.setMessage(message);
+			}
+		}
+	}
 
-	abstract protected boolean modifyQuery(RetrieverQuery query);
+	private IWorkbenchPart getActivePart() {
+		IWorkbenchPage page= getWorkbenchPage();
+		if (page != null) {
+			return page.getActivePart();
+		}
+		return null;
+	}
+	
+	private Shell getShell() {
+		IWorkbenchPart part= getActivePart();
+		if (part != null) {
+			return part.getSite().getShell();
+		}
+		return SearchPlugin.getActiveWorkbenchShell();
+	}
+
 	abstract protected IWorkbenchPage getWorkbenchPage();
+	abstract protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException;
 
 	final protected String extractSearchTextFromEditor(IEditorPart editor) {
 		if (editor != null) {

@@ -55,7 +55,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
@@ -99,6 +101,7 @@ import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
 import org.eclipse.search2.internal.ui.basic.views.TableViewerNavigator;
 import org.eclipse.search2.internal.ui.basic.views.TreeViewerNavigator;
 import org.eclipse.search2.internal.ui.text.AnnotationManagers;
+import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 /**
  * An abstract base implementation for classes showing
@@ -206,7 +209,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private ISearchResultListener fListener;
 	private IQueryListener fQueryListener;
 	private MenuManager fMenu;
-	private ISearchResult fInput;
+	private AbstractTextSearchResult fInput;
 	// Actions
 	private CopyToClipboardAction fCopyToClipboardAction;
 	private Action fRemoveSelectedMatches;
@@ -592,11 +595,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			return;
 		fCurrentLayout = layout;
 		ISelection selection = fViewer.getSelection();
-		ISearchResult result = disconnectViewer();
+		disconnectViewer();
 		disposeViewer();
 		createViewer(fViewerContainer, layout);
 		fViewerContainer.layout(true);
-		connectViewer(result);
+		connectViewer(fInput);
 		fViewer.setSelection(selection, true);
 		getSettings().put(KEY_LAYOUT, layout);
 		getViewPart().updateLabel();
@@ -711,23 +714,32 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setInput(ISearchResult search, Object viewState) {
-		ISearchResult oldSearch = disconnectViewer();
-		if (oldSearch != null)
+	public void setInput(ISearchResult newSearch, Object viewState) {
+		if (newSearch != null && !(newSearch instanceof AbstractTextSearchResult))
+			return; // ignore
+		
+		AbstractTextSearchResult oldSearch= fInput;
+		if (oldSearch != null) {
+			disconnectViewer();
 			oldSearch.removeListener(fListener);
-		AnnotationManagers.searchResultActivated(getSite().getWorkbenchWindow(), (AbstractTextSearchResult) search);
-		fInput= search;
-		if (search != null) {
-			search.addListener(fListener);
-			connectViewer(search);
+			AnnotationManagers.removeSearchResult(getSite().getWorkbenchWindow(), oldSearch);
+		}
+		fInput= (AbstractTextSearchResult) newSearch;
+		
+		if (fInput != null) {
+			AnnotationManagers.addSearchResult(getSite().getWorkbenchWindow(), fInput);
+			
+			fInput.addListener(fListener);
+			connectViewer(fInput);
 			if (viewState instanceof ISelection)
 				fViewer.setSelection((ISelection) viewState, true);
 			else
 				navigateNext(true);
+			
+			updateBusyLabel();
+			turnOffDecoration();
+			scheduleUIUpdate();
 		}
-		updateBusyLabel();
-		turnOffDecoration();
-		scheduleUIUpdate();
 	}	
 
 	/**
@@ -737,14 +749,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return fViewer.getSelection();
 	}
 
-	private void connectViewer(ISearchResult search) {
+	private void connectViewer(AbstractTextSearchResult search) {
 		fViewer.setInput(search);
 	}
 
-	private ISearchResult disconnectViewer() {
-		ISearchResult result = (ISearchResult) fViewer.getInput();
+	private void disconnectViewer() {
 		fViewer.setInput(null);
-		return result;
 	}
 
 	/**
@@ -767,12 +777,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			}
 
 			public void run() throws Exception {
-				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
-				if (currentPosition != null) {
-					showMatch(match, currentPosition.getOffset(), currentPosition.getLength(), activateEditor);
-				} else {
-					showMatch(match, match.getOffset(), match.getLength(), activateEditor);
-				}
+				IRegion location= getCurrentMatchLocation(match);
+				showMatch(match, location.getOffset(), location.getLength(), activateEditor);
 			}
 		};
 		SafeRunner.run(runnable);
@@ -786,7 +792,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @see AbstractTextSearchViewPage#setInput(ISearchResult, Object)
 	 */
 	public AbstractTextSearchResult getInput() {
-		return (AbstractTextSearchResult) fInput;
+		return fInput;
 	}
 
 	/**
@@ -882,6 +888,31 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return result.getMatches(element);		
 	}
 	
+	/** 
+	 * Returns the current location of the match. This takes possible
+	 * modifications of the file into account. Therefore the result may
+	 * differ from the position information that can be obtained directly 
+	 * off the match.
+	 * @param match the match to get the position for.
+	 * @return the current position of the match.
+	 * 
+	 * @since 3.2
+	 */
+	public IRegion getCurrentMatchLocation(Match match) {
+		PositionTracker tracker= InternalSearchUI.getInstance().getPositionTracker();
+		
+		int offset, length;
+		Position pos= tracker.getCurrentPosition(match);
+		if (pos == null) {
+			offset= match.getOffset();
+			length= match.getLength();
+		} else {
+			offset= pos.getOffset();
+			length= pos.getLength();
+		}
+		return new Region(offset, length);
+	}
+	
 	/**
 	 * Returns the number of matches that are currently displayed for the given
 	 * element. While the default implementation just forwards to the current
@@ -915,7 +946,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
-		//disconnectViewer();
+		AbstractTextSearchResult oldSearch = getInput();
+		if (oldSearch != null)
+			AnnotationManagers.removeSearchResult(getSite().getWorkbenchWindow(), oldSearch);
 		super.dispose();
 		NewSearchUI.removeQueryListener(fQueryListener);
 	}

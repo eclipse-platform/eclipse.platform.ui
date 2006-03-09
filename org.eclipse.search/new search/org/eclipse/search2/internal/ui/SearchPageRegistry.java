@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ public class SearchPageRegistry {
 	public static final String ATTRIB_SEARCH_RESULT_CLASS= "searchResultClass"; //$NON-NLS-1$
 	public static final String ATTRIB_ID= "id"; //$NON-NLS-1$
 
-	public static final String ATTRIB_EMPTY_PAGE_USEFUL= "emptyPageUseful"; //$NON-NLS-1$
 	public static final String ATTRIB_LABEL= "label"; //$NON-NLS-1$
 	public static final String ATTRIB_ICON= "icon"; //$NON-NLS-1$
 	
@@ -65,31 +63,7 @@ public class SearchPageRegistry {
 		}
 		return null;
 	}
-	
-	public boolean hasEmptyPageExtensions() {
-		for (int i= 0; i < fExtensions.length; i++) {
-			IConfigurationElement curr= fExtensions[i];
-			String attribute= curr.getAttribute(ATTRIB_EMPTY_PAGE_USEFUL);
-			if (attribute != null && Boolean.valueOf(attribute).booleanValue()) {
-				return true;
-			}
-		}
-		return false;
-	}
-		
-	public IConfigurationElement[] getEmptyPageExtensions() {
-		ArrayList res= new ArrayList();
-		for (int i= 0; i < fExtensions.length; i++) {
-			IConfigurationElement curr= fExtensions[i];
-			String attribute= curr.getAttribute(ATTRIB_EMPTY_PAGE_USEFUL);
-			if (attribute != null && Boolean.valueOf(attribute).booleanValue()) {
-				res.add(curr);
-			}
-		}
-		return (IConfigurationElement[]) res.toArray(new IConfigurationElement[res.size()]);
-	}
-	
-		
+					
 	private ISearchResultPage getSearchResultPage(final IConfigurationElement configElement, boolean create) {
 		ISearchResultPage instance= (ISearchResultPage) fExtensionToInstance.get(configElement);
 		if (instance == null && create) {

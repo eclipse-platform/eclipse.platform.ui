@@ -12,7 +12,23 @@
 package org.eclipse.search2.internal.ui.text;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+
+import org.eclipse.jface.util.Assert;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -22,22 +38,9 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
 
-import org.eclipse.core.resources.IFile;
-
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.util.Assert;
-
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 public class EditorAnnotationManager implements ISearchResultListener {
 	
-	private AbstractTextSearchResult fResult;
+	private ArrayList fResults;
 	private IEditorPart fEditor;
 	private Highlighter fHighlighter; // initialized lazy
 	
@@ -52,7 +55,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		Assert.isNotNull(editorPart);
 		fEditor= editorPart;
 		fHighlighter= null; // lazy initialization
-		fResult= null;
+		fResults= new ArrayList(3);
 	}
 	
 
@@ -62,55 +65,75 @@ public class EditorAnnotationManager implements ISearchResultListener {
 
 
 	void dispose() {
-		removeAnnotations();
+		removeAllAnnotations();
 		if (fHighlighter != null)
 			fHighlighter.dispose();
-		if (fResult != null)
-			fResult.removeListener(this);
+		
+		for (int i= 0; i < fResults.size(); i++) {
+			((AbstractTextSearchResult) fResults.get(i)).removeListener(this);
+		}
+		fResults.clear();
 	}
 	
 	public synchronized void doEditorInputChanged() {
-		removeAnnotations();
+		removeAllAnnotations();
 		
 		if (fHighlighter != null) {
 			fHighlighter.dispose();
 			fHighlighter= null;
 		}
-		addAnnotations();
+		
+		for (int i= 0; i < fResults.size(); i++) {
+			AbstractTextSearchResult curr= (AbstractTextSearchResult) fResults.get(i);
+			addAnnotations(curr);
+		}
 	}
 
-	public synchronized void setSearchResult(AbstractTextSearchResult result) {
-		if (result == fResult)
-			return;
-		if (fResult != null) {
-			removeAnnotations();
-			fResult.removeListener(this);
+	public synchronized void setSearchResults(List results) {
+		removeAllAnnotations();
+		for (int i= 0; i < fResults.size(); i++) {
+			((AbstractTextSearchResult) fResults.get(i)).removeListener(this);
 		}
-		fResult= result;
-		if (fResult != null) {
-			fResult.addListener(this);
-			addAnnotations();
+		fResults.clear();
+		
+		for (int i= 0; i < results.size(); i++) {
+			addSearchResult((AbstractTextSearchResult) results.get(i));
 		}
 	}
+	
+	public synchronized void addSearchResult(AbstractTextSearchResult result) {
+		fResults.add(result);
+		result.addListener(this);
+		addAnnotations(result);
+	}
+	
+	public synchronized void removeSearchResult(AbstractTextSearchResult result) {
+		fResults.remove(result);
+		result.removeListener(this);
+		removeAnnotations(result);
+	}
+	
 
 	public synchronized void searchResultChanged(SearchResultEvent e) {
-		if (fResult == null)
-			return;
-		if (e instanceof MatchEvent) {
-			IEditorMatchAdapter adapter= fResult.getEditorMatchAdapter();
-			if (adapter != null) { 
-				MatchEvent me= (MatchEvent) e;
-				Match[] matchesInEditor= getMatchesInEditor(me.getMatches(), adapter);
-				if (matchesInEditor != null && matchesInEditor.length > 0) {
-					if (me.getKind() == MatchEvent.ADDED) {
-						addAnnotations(matchesInEditor);
-					} else {
-						removeAnnotations(matchesInEditor);
+		ISearchResult searchResult= e.getSearchResult();
+		if (searchResult instanceof AbstractTextSearchResult) {
+			AbstractTextSearchResult result= (AbstractTextSearchResult) searchResult;
+			if (e instanceof MatchEvent) {
+				IEditorMatchAdapter adapter= result.getEditorMatchAdapter();
+				if (adapter != null) { 
+					MatchEvent me= (MatchEvent) e;
+					Match[] matchesInEditor= getMatchesInEditor(me.getMatches(), adapter);
+					if (matchesInEditor != null && matchesInEditor.length > 0) {
+						if (me.getKind() == MatchEvent.ADDED) {
+							addAnnotations(matchesInEditor);
+						} else {
+							removeAnnotations(matchesInEditor);
+						}
 					}
 				}
+			} else if (e instanceof RemoveAllEvent) {
+				removeAnnotations(result);
 			}
-		} else if (e instanceof RemoveAllEvent) {
-			removeAnnotations();
 		}
 	}
 
@@ -136,11 +159,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		return null;
 	}
 
-
-
-
-
-	private void removeAnnotations() {
+	private void removeAllAnnotations() {
 		if (fHighlighter != null)
 			fHighlighter.removeAll();
 	}
@@ -186,16 +205,25 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		return null;
 	}
 
-	private void addAnnotations() {
-		if (fResult == null)
-			return;
-		IEditorMatchAdapter matchAdapter= fResult.getEditorMatchAdapter();
+	private void addAnnotations(AbstractTextSearchResult result) {
+		IEditorMatchAdapter matchAdapter= result.getEditorMatchAdapter();
 		if (matchAdapter == null)
 			return;
-		Match[] matches= matchAdapter.computeContainedMatches(fResult, fEditor);
+		Match[] matches= matchAdapter.computeContainedMatches(result, fEditor);
 		if (matches == null || matches.length == 0)
 			return;
 		addAnnotations(matches);
+	}
+	
+	private void removeAnnotations(AbstractTextSearchResult result) {
+		removeAllAnnotations();
+		
+		for (int i= 0; i < fResults.size(); i++) {
+			AbstractTextSearchResult curr= (AbstractTextSearchResult) fResults.get(i);
+			if (curr != result) {
+				addAnnotations(curr);
+			}
+		}
 	}
 
 	private void addAnnotations(Match[] matches) {

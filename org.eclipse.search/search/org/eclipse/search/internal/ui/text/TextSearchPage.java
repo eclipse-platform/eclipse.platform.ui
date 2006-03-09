@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
@@ -56,7 +57,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -69,25 +69,16 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.FileTextSearchScope;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
+import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
-import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
-import org.eclipse.search.internal.ui.Messages;
-import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
-import org.eclipse.search2.internal.ui.text2.IScopeDescription;
-import org.eclipse.search2.internal.ui.text2.RetrieverQuery;
-import org.eclipse.search2.internal.ui.text2.SearchMatchInformationProviderRegistry;
-import org.eclipse.search2.internal.ui.text2.SelectedResourcesScopeDescription;
-import org.eclipse.search2.internal.ui.text2.WindowWorkingSetScopeDescription;
-import org.eclipse.search2.internal.ui.text2.WorkingSetScopeDescription;
-import org.eclipse.search2.internal.ui.text2.WorkspaceScopeDescription;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
@@ -186,16 +177,68 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		}
 
+		public String getPattern() {
+			return textPattern;
+		}
+
+		public boolean isCaseSensitive() {
+			return isCaseSensitive;
+		}
+
+		public boolean isRegExSearch() {
+			return isRegExSearch;
+		}
+
+		public boolean isStringMatcherPattern() {
+			return !isRegExSearch;
+		}
 	}
+	
+	private static class TextSearchPageInput extends TextSearchInput {
+		
+		private final String fSearchText;
+		private final boolean fIsCaseSensitive;
+		private final boolean fIsRegEx;
+		private final FileTextSearchScope fScope;
+
+		public TextSearchPageInput(String searchText, boolean isCaseSensitive, boolean isRegEx, FileTextSearchScope scope) {
+			fSearchText= searchText;
+			fIsCaseSensitive= isCaseSensitive;
+			fIsRegEx= isRegEx;
+			fScope= scope;
+		}
+
+		public String getSearchText() {
+			return fSearchText;
+		}
+
+		public boolean isCaseSensitiveSearch() {
+			return fIsCaseSensitive;
+		}
+
+		public boolean isRegExSearch() {
+			return fIsRegEx;
+		}
+
+		public FileTextSearchScope getScope() {
+			return fScope;
+		}
+	}
+	
 	//---- Action Handling ------------------------------------------------
 	
+	private ISearchQuery newQuery() throws CoreException {
+		SearchPatternData data= getPatternData();
+		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, createTextSearchScope());
+		return TextSearchQueryProvider.getPreferred().createQuery(input);
+	}
+	
 	public boolean performAction() {
-		if (!SearchPreferencePage.useNewTextSearch() ||  getPattern().length() == 0) {
-			// bugzilla 128050
-			NewSearchUI.runQueryInBackground(getSearchQuery());
-		}
-		else {
-			NewSearchUI.runQueryInBackground(getNewSearchQuery());
+		try {
+			NewSearchUI.runQueryInBackground(newQuery());
+		} catch (CoreException e) {
+			ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_searchproblems_message, e.getStatus());
+			return false;
 		}
  		return true;
 	}
@@ -204,122 +247,106 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
 	 */
 	public boolean performReplace() {
-		
-		ISearchQuery searchQuery= getSearchQuery();
-		
-		IStatus status= NewSearchUI.runQueryInForeground(getContainer().getRunnableContext(), searchQuery);
-		if (status.matches(IStatus.CANCEL)) {
-			return false;
-		}
-		
-		if (!status.isOK()) {
-			ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_searchproblems_message, status); 
-		}
-		
-		
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
-				if (view != null) {
-					ISearchResultPage page= view.getActivePage();
-					if (page instanceof FileSearchPage) {
-						FileSearchPage filePage= (FileSearchPage) page;
-						Object[] elements= filePage.getInput().getElements();
-						IFile[] files= new IFile[elements.length];
-						System.arraycopy(elements, 0, files, 0, files.length);
-						new ReplaceAction2(filePage, files).run();
+		try {
+			IStatus status= NewSearchUI.runQueryInForeground(getContainer().getRunnableContext(), newQuery());
+			if (status.matches(IStatus.CANCEL)) {
+				return false;
+			}
+			if (!status.isOK()) {
+				ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, "The search could not be initialized.", status);
+			}
+			
+			
+			Display.getCurrent().asyncExec(new Runnable() {
+				public void run() {
+					ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
+					if (view != null) {
+						ISearchResultPage page= view.getActivePage();
+						if (page instanceof FileSearchPage) {
+							FileSearchPage filePage= (FileSearchPage) page;
+							Object[] elements= filePage.getInput().getElements();
+							IFile[] files= new IFile[elements.length];
+							System.arraycopy(elements, 0, files, 0, files.length);
+							new ReplaceAction2(filePage, files).run();
+						}
 					}
 				}
-			}
-		});
-		return true;
-	}
-
-	private ISearchQuery getSearchQuery() {
-		
-		SearchPatternData patternData= getPatternData();
-	
-		// Setup search scope
-		FileNamePatternSearchScope scope= null;
-		switch (getContainer().getSelectedScope()) {
-			case ISearchPageContainer.WORKSPACE_SCOPE:
-				scope= FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
-				break;
-			case ISearchPageContainer.SELECTION_SCOPE:
-				scope= getSelectedResourcesScope();
-				break;
-			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
-				scope= getEnclosingProjectScope();
-				break;
-			case ISearchPageContainer.WORKING_SET_SCOPE:
-				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
-				String desc= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets)); 
-				scope= FileNamePatternSearchScope.newSearchScope(desc, workingSets, fSearchDerived);
-				break;
-			default:
-				// unknown scope
-				scope= FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
+			});
+			return true;
+		} catch (CoreException e) {
+			ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, "The search could not be initialized.", e.getStatus());
+			return false;
 		}
-		String[] fileExtensions= patternData.fileNamePatterns;
-		for (int i= 0; i < fileExtensions.length; i++) {
-			scope.addFileNamePattern(fileExtensions[i]);
-		}
-		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern);
 	}
-
-    private ISearchQuery getNewSearchQuery() {
-        // create query
-        RetrieverQuery query= new RetrieverQuery(getActivePage());
-
-        // extract data
-        SearchPatternData patternData= getPatternData();
-
-        // check if we have a string matcher pattern.
-        String pattern= patternData.textPattern;
-        boolean isRegex= patternData.isRegExSearch;
-        if (!isRegex) {
-            String literal= PatternConstructor.appendAsRegEx(false, pattern, new StringBuffer()).toString();
-            String strMatcher= PatternConstructor.appendAsRegEx(true, pattern, new StringBuffer()).toString();
-            if (!literal.equals(strMatcher)) {
-                isRegex= true;
-                pattern= strMatcher;
-            }
-        }
-        
-        // Setup search scope
-        IScopeDescription scope= null;
-        switch (getContainer().getSelectedScope()) {
-            case ISearchPageContainer.SELECTION_SCOPE:
-                scope= getSelectedResourcesScopeDescription();
-                break;
-            case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
-                scope= getEnclosingProjectScopeDescription();
-                break;
-            case ISearchPageContainer.WORKING_SET_SCOPE:
-                scope= getWorkingSetScopeDescription();
-                break;
-            case ISearchPageContainer.WORKSPACE_SCOPE:
-            default:
-                scope= new WorkspaceScopeDescription();
-                break;
-        }
-
-        query.setSearchString(pattern);
-        query.setIsCaseSensitive(patternData.isCaseSensitive);
-        query.setIsRegularExpression(isRegex);
-
-        query.setFilePatterns(patternData.fileNamePatterns);
-        query.setSearchScope(scope, fSearchDerived);
-        return query;
-    }
-
-    private IWorkbenchPage getActivePage() {
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-    }
 
 	private String getPattern() {
 		return fPattern.getText();
 	}
+	
+	public FileTextSearchScope createTextSearchScope() {
+		// Setup search scope
+		switch (getContainer().getSelectedScope()) {
+			case ISearchPageContainer.WORKSPACE_SCOPE:
+				return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
+			case ISearchPageContainer.SELECTION_SCOPE:
+				return getSelectedResourcesScope();
+			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
+				return getEnclosingProjectScope();
+			case ISearchPageContainer.WORKING_SET_SCOPE:
+				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
+				return FileTextSearchScope.newSearchScope(workingSets, getExtensions(), fSearchDerived);
+			default:
+				// unknown scope
+				return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
+		}
+	}
+	
+	private FileTextSearchScope getSelectedResourcesScope() {
+		HashSet resources= new HashSet();
+		ISelection sel= getContainer().getSelection();
+		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
+			Iterator iter= ((IStructuredSelection) sel).iterator();
+			while (iter.hasNext()) {
+				Object curr= iter.next();
+				if (curr instanceof IWorkingSet) {
+					IWorkingSet workingSet= (IWorkingSet) curr;
+					if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+						return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
+					}
+					IAdaptable[] elements= workingSet.getElements();
+					for (int i= 0; i < elements.length; i++) {
+						IResource resource= (IResource)elements[i].getAdapter(IResource.class);
+						if (resource != null && resource.isAccessible()) {
+							resources.add(resource);
+						}
+					}
+				} else if (curr instanceof IAdaptable) {
+					IResource resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
+					if (resource != null && resource.isAccessible()) {
+						resources.add(resource);
+					}
+				}
+			}
+		}
+		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
+		return FileTextSearchScope.newSearchScope(arr, getExtensions(), fSearchDerived);
+	}
+
+	private FileTextSearchScope getEnclosingProjectScope() {
+		String[] enclosingProjectName= getContainer().getSelectedProjectNames();
+		if (enclosingProjectName == null) {
+			return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
+		}
+		
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IResource[] res= new IResource[enclosingProjectName.length];
+		for (int i= 0; i < res.length; i++) {
+			res[i]= root.getProject(enclosingProjectName[i]);
+		}
+		
+		return FileTextSearchScope.newSearchScope(res, getExtensions(), fSearchDerived);
+	}
+
 	
 	private SearchPatternData findInPrevious(String pattern) {
 		for (Iterator iter= fPreviousSearchPatterns.iterator(); iter.hasNext();) {
@@ -371,18 +398,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			patterns[i]= ((SearchPatternData) fPreviousSearchPatterns.get(i)).textPattern;
 		return patterns;
 	}
-	
-	private String getSearchOptions() {
-		StringBuffer result= new StringBuffer();
-		if (!isCaseSensitive())
-			result.append('i');
-
-		if (fIsRegExSearch)
-			result.append('r');
-
-		return result.toString();	
-	}
-	
+		
 	private String[] getExtensions() {
 		return fFileTypeEditor.getFileTypes();
 	}
@@ -401,9 +417,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				// Set item and text here to prevent page from resizing
 				fPattern.setItems(getPreviousSearchPatterns());
 				fExtensions.setItems(getPreviousExtensions());
-				if (fExtensions.getItemCount() == 0) {
-					loadFilePatternDefaults();
-				}
+//				if (fExtensions.getItemCount() == 0) {
+//					loadFilePatternDefaults();
+//				}
 				if (!initializePatternControl()) {
 					fPattern.select(0);
 					fExtensions.setText("*"); //$NON-NLS-1$
@@ -574,12 +590,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return false;
 	}
 	
-	private void loadFilePatternDefaults() {
-		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
-		String[] defaults= registry.getDefaultFilePatterns();
-		fExtensions.setItems(defaults);
-		fExtensions.setText(defaults[0]);
-	}
+//	private void loadFilePatternDefaults() {
+//		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
+//		String[] defaults= registry.getDefaultFilePatterns();
+//		fExtensions.setItems(defaults);
+//		fExtensions.setText(defaults[0]);
+//	}
 
 	private String insertEscapeChars(String text) {
 		if (text == null || text.equals("")) //$NON-NLS-1$
@@ -683,125 +699,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private ISelection getSelection() {
 		return fContainer.getSelection();
 	}
-	
-	private FileNamePatternSearchScope getEnclosingProjectScope() {
-		String[] enclosingProjectName= getContainer().getSelectedProjectNames();
-		if (enclosingProjectName == null) {
-			return FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
-		}
 		
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IResource[] res= new IResource[enclosingProjectName.length];
-		for (int i= 0; i < res.length; i++) {
-			res[i]= root.getProject(enclosingProjectName[i]);
-		}
-		String name;
-		int elementCount= res.length;
-		if (elementCount > 1)
-			name= Messages.format(SearchMessages.EnclosingProjectsScope, enclosingProjectName[0]); 
-		else if (elementCount == 1)
-			name= Messages.format(SearchMessages.EnclosingProjectScope, enclosingProjectName[0]); 
-		else 
-			name= Messages.format(SearchMessages.EnclosingProjectScope, "");  //$NON-NLS-1$
-		
-		return FileNamePatternSearchScope.newSearchScope(name, res, fSearchDerived);
-	}
-	
-    private IScopeDescription getEnclosingProjectScopeDescription() {
-        String[] enclosingProjectName= getContainer().getSelectedProjectNames();
-        if (enclosingProjectName == null) {
-            return new WorkspaceScopeDescription();
-        }
-        
-        IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-        IResource[] res= new IResource[enclosingProjectName.length];
-        for (int i= 0; i < res.length; i++) {
-            res[i]= root.getProject(enclosingProjectName[i]);
-        }
-        if (res.length == 0) {
-            return new SelectedResourcesScopeDescription();
-        }
-        return getScopeDescription(res);
-    }
-    
-    private IScopeDescription getScopeDescription(IResource[] res) {
-    	return new SelectedResourcesScopeDescription(res, false);
-    }
-    
-    private IScopeDescription getWorkingSetScopeDescription() {
-        IWorkingSet[] wss= getContainer().getSelectedWorkingSets();
-        if (wss.length == 0) {
-            return new WorkspaceScopeDescription();
-        }
-        if (wss.length == 1) {
-            if (wss[0].equals(getActivePage().getAggregateWorkingSet())) {
-                return new WindowWorkingSetScopeDescription();
-            }
-        }
-        return new WorkingSetScopeDescription(wss);
-    }
-
-	private FileNamePatternSearchScope getSelectedResourcesScope() {
-		HashSet resources= new HashSet();
-		ISelection selection= getSelection();
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			Iterator iter= ((IStructuredSelection) selection).iterator();
-			while (iter.hasNext()) {
-				Object curr= iter.next();
-				if (curr instanceof IWorkingSet) {
-					IWorkingSet workingSet= (IWorkingSet) curr;
-					if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
-						return FileNamePatternSearchScope.newWorkspaceScope(fSearchDerived);
-					}
-					IAdaptable[] elements= workingSet.getElements();
-					for (int i= 0; i < elements.length; i++) {
-						IResource resource= (IResource)elements[i].getAdapter(IResource.class);
-						if (resource != null && resource.isAccessible()) {
-							resources.add(resource);
-						}
-					}
-				} else if (curr instanceof IAdaptable) {
-					IResource resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
-					if (resource != null && resource.isAccessible()) {
-						resources.add(resource);
-					}
-				}
-			}
-		}
-		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
-		return FileNamePatternSearchScope.newSearchScope(SearchMessages.SelectionScope, arr, fSearchDerived);
-	}
-
-    private IScopeDescription getSelectedResourcesScopeDescription() {
-        HashSet resources= new HashSet();
-        ISelection selection= getSelection();
-        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-            Iterator iter= ((IStructuredSelection) selection).iterator();
-            while (iter.hasNext()) {
-                Object curr= iter.next();
-                if (curr instanceof IWorkingSet) {
-                    IWorkingSet workingSet= (IWorkingSet) curr;
-                    if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
-                        return new WorkspaceScopeDescription();
-                    }
-                    IAdaptable[] elements= workingSet.getElements();
-                    for (int i= 0; i < elements.length; i++) {
-                        IResource resource= (IResource)elements[i].getAdapter(IResource.class);
-                        if (resource != null && resource.isAccessible()) {
-                            resources.add(resource);
-                        }
-                    }
-                } else if (curr instanceof IAdaptable) {
-                    IResource resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
-                    if (resource != null && resource.isAccessible()) {
-                        resources.add(resource);
-                    }
-                }
-            }
-        }
-        return getScopeDescription((IResource[]) resources.toArray(new IResource[resources.size()]));
-    }
-
 
 	//--------------- Configuration handling --------------
 	

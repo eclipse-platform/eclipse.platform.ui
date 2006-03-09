@@ -61,13 +61,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="emptyPageUseful" type="boolean">
-            <annotation>
-               <documentation>
-                  specifies that the empty search page is useful (e.g. offers search controls)
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="label" type="string">
             <annotation>
                <documentation>

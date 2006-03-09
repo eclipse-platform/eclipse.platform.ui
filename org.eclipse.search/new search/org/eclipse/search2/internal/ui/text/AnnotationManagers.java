@@ -50,13 +50,22 @@ public class AnnotationManagers {
 			mgr.dispose();
 	}
 
-	public static void searchResultActivated(IWorkbenchWindow window, AbstractTextSearchResult result) {
+	public static void addSearchResult(IWorkbenchWindow window, AbstractTextSearchResult newResult) {
+		getWindowAnnotationManager(window).addSearchResult(newResult);
+	}
+	
+	public static void removeSearchResult(IWorkbenchWindow window, AbstractTextSearchResult result) {
+		getWindowAnnotationManager(window).removeSearchResult(result);
+	}
+	
+	private static WindowAnnotationManager getWindowAnnotationManager(IWorkbenchWindow window) {
 		WindowAnnotationManager mgr= (WindowAnnotationManager) fgManagerMap.get(window);
 		if (mgr == null) {
 			mgr= new WindowAnnotationManager(window);
 			fgManagerMap.put(window, mgr);
 		}
-		mgr.setSearchResult(result);
+		return mgr;
 	}
+	
 
 }

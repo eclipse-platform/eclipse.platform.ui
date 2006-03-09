@@ -8,28 +8,28 @@
  * Contributors: 
  * Markus Schorn - initial API and implementation 
  *******************************************************************************/
-
 package org.eclipse.search2.internal.ui.text2;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
+
+/**
+ * @author markus.schorn@windriver.com
+ */
 public class FindInWorkspaceActionDelegate extends FindInRecentScopeActionDelegate {
 
 	public FindInWorkspaceActionDelegate() {
 		super(SearchMessages.FindInWorkspaceActionDelegate_text);
+		setActionDefinitionId("org.eclipse.search.ui.performTextSearchWorkspace"); //$NON-NLS-1$
 	}
 
-	protected boolean modifyQuery(RetrieverQuery query) {
-		if (super.modifyQuery(query)) {
-			query.setSearchScope(new WorkspaceScopeDescription());
-			return true;
-		}
-		return false;
-	}
-	
-	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
-		return FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
+	protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException {
+		return provider.createQuery(searchForString);
 	}
 }

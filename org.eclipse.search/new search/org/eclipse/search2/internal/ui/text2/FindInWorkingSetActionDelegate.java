@@ -11,6 +11,7 @@
 
 package org.eclipse.search2.internal.ui.text2;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.jface.window.Window;
@@ -21,7 +22,8 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -29,23 +31,10 @@ public class FindInWorkingSetActionDelegate extends FindInRecentScopeActionDeleg
 
 	public FindInWorkingSetActionDelegate() {
 		super(SearchMessages.FindInWorkingSetActionDelegate_text);
-	}
-
-	protected boolean modifyQuery(RetrieverQuery query) {
-		if (super.modifyQuery(query)) {
-			IWorkbenchPage page= getWorkbenchPage();
-			if (page != null) {
-				IScopeDescription scope= WorkingSetScopeDescription.createWithDialog(page, query.getScopeDescription());
-				if (scope != null) {
-					query.setSearchScope(scope);
-					return true;
-				}
-			}
-		}
-		return false;
+		setActionDefinitionId("org.eclipse.search.ui.performTextSearchWorkingSet"); //$NON-NLS-1$
 	}
 	
-	protected FileNamePatternSearchScope getOldSearchScope(boolean includeDerived) {
+	protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException {
 		IWorkbenchPage page= getWorkbenchPage();
 		if (page != null) {
 			IWorkingSetManager manager= PlatformUI.getWorkbench().getWorkingSetManager();
@@ -53,12 +42,10 @@ public class FindInWorkingSetActionDelegate extends FindInRecentScopeActionDeleg
 			if (dialog.open() == Window.OK) {
 				IWorkingSet[] workingSets= dialog.getSelection();
 				if (workingSets != null) {
-					return FileNamePatternSearchScope.newSearchScope(workingSets, includeDerived);
+					return provider.createQuery(searchForString, workingSets);
 				}
-			} else {
-				throw new OperationCanceledException();
 			}
 		}
-		return FileNamePatternSearchScope.newWorkspaceScope(includeDerived);
+		throw new OperationCanceledException();
 	}
 }
