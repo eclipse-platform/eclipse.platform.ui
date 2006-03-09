@@ -41,10 +41,12 @@ import org.eclipse.debug.internal.ui.elements.adapters.RegisterGroupContentAdapt
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameSourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.ThreadContentAdapter;
+import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnFactoryAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
@@ -80,6 +82,8 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IAsynchronousContentAdapter fgAsyncExpression = new ExpressionContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryBlock = new MemoryBlockContentAdapter();
+    
+    private static IColumnPresenetationFactoryAdapter fgVariableColumnFactory = new VariableColumnFactoryAdapter();
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -166,6 +170,12 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         		return new DefaultSelectionPolicy((IDebugElement)adaptableObject);
         	}
         }
+        
+        if (adapterType.equals(IColumnPresenetationFactoryAdapter.class)) {
+        	if (adaptableObject instanceof IStackFrame) {
+        		return fgVariableColumnFactory;
+        	}
+        }
         return null;
     }
 
@@ -174,7 +184,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      */
     public Class[] getAdapterList() {
         return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class,
-        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyAdapter.class};
+        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyAdapter.class, IColumnPresenetationFactoryAdapter.class};
     }
 
 }

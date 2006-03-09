@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -73,10 +75,17 @@ public interface IColumnPresentation {
 	 * 
 	 * @param id column id
 	 * @param element object to be edited
+	 * @param parent parent control to create the cell editor in
 	 * @return cell editor or <code>null</code>
 	 */
-	public Composite getCellEditor(String id, Object element);
+	public CellEditor getCellEditor(String id, Object element, Composite parent);
 	
+	/**
+	 * Returns the cell modifier for this set of columns.
+	 * 
+	 * @return cell modifier
+	 */
+	public ICellModifier getCellModifier();
 	/**
 	 * Returns an identifier for this columns presentation adapter.
 	 * The identifier should be unique per kind of column presentation 

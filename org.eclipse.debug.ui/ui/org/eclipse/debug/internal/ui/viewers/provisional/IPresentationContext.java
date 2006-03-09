@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -21,6 +22,12 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.2
  */
 public interface IPresentationContext {
+	
+	/**
+	 * Property name used for property change notification when the columns
+	 * in a presentation context change.
+	 */
+	public static final String PROPERTY_COLUMNS = "PROPERTY_COLUMNS"; //$NON-NLS-1$
     
     /**
      * Returns the part for which a request is being made
@@ -41,5 +48,19 @@ public interface IPresentationContext {
      * @see IColumnPresentation
      */
     public String[] getColumns();
+    
+    /**
+     * Registers the given listener for property change notification.
+     * 
+     * @param listener property listener
+     */
+    public void addPropertyChangeListener(IPropertyChangeListener listener);
+    
+    /**
+     * Deregisters the given listener from property change notification.
+     * 
+     * @param listener property listener.
+     */
+    public void removePropertyChangeListener(IPropertyChangeListener listener);
     
 }

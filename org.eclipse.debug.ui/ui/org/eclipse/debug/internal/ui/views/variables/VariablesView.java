@@ -51,6 +51,7 @@ import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -382,6 +383,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
 	/** Whether logical structuers are showing */
     private boolean fShowLogical;
+    /** Whether columns are showing */
+    private boolean fShowColumns;
 
 
 	/**
@@ -536,6 +539,17 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public Viewer createViewer(Composite parent) {
 		VariablesViewer variablesViewer = (VariablesViewer) createTreeViewer(parent);
 		variablesViewer.setContext(new PresentationContext(this));
+		variablesViewer.getPresentationContext().addPropertyChangeListener(
+				new IPropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent event) {
+						if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
+							IAction action = getAction("ShowTypeNames"); //$NON-NLS-1$
+							if (action != null) {
+								action.setEnabled(event.getNewValue() == null);
+							}
+						}
+					}
+				});
 		
 		createDetailsViewer();
 		getSashForm().setMaximizedControl(variablesViewer.getControl());
@@ -859,7 +873,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT, null);
 		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, getToggleActionLabel());
 		viewMenu.add(new Separator());
-		MenuManager layoutSubMenu = new MenuManager(VariablesViewMessages.VariablesView_40);
+		final MenuManager layoutSubMenu = new MenuManager(VariablesViewMessages.VariablesView_40);
+		layoutSubMenu.setRemoveAllWhenShown(true);
 		layoutSubMenu.add(fToggleDetailPaneActions[0]);
 		layoutSubMenu.add(fToggleDetailPaneActions[1]);
 		layoutSubMenu.add(fToggleDetailPaneActions[2]);
@@ -867,10 +882,18 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		viewMenu.add(new Separator());
 		
 		fConfigureColumnsAction = new ConfigureColumnsAction(viewer);
-		layoutSubMenu.add(fConfigureColumnsAction);
+		setAction("ToggleColmns", new ToggleShowColumnsAction(this)); //$NON-NLS-1$
+		
 		layoutSubMenu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
+				layoutSubMenu.add(fToggleDetailPaneActions[0]);
+				layoutSubMenu.add(fToggleDetailPaneActions[1]);
+				layoutSubMenu.add(fToggleDetailPaneActions[2]);
+				layoutSubMenu.add(getAction("ToggleColmns")); //$NON-NLS-1$
 				fConfigureColumnsAction.update();
+				if (fConfigureColumnsAction.isEnabled()) {
+					layoutSubMenu.add(fConfigureColumnsAction);
+				}
 			}
 		});
 	}
@@ -1402,7 +1425,25 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public boolean isShowLogicalStructure() {
 	    return fShowLogical;
-	}		
+	}	
+	
+	/**
+	 * Sets whether columns should be displayed.
+	 * 
+	 * @param flag
+	 */
+	public void setShowColumns(boolean flag) {
+		fShowColumns = flag;
+	}
+	
+	/**
+	 * Returns whether columns should be displayed.
+	 * 
+	 * @return whether columns should be displayed
+	 */
+	public boolean isShowColumns() {
+		return fShowColumns;
+	}
 
 	/**
 	 * Returns the number of entries that should be displayed in each
