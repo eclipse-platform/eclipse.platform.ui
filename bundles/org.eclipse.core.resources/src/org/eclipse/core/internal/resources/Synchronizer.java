@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -180,7 +181,7 @@ public class Synchronizer implements ISynchronizer {
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
 			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
-			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
+			Policy.log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 		}
 	}
 
@@ -196,7 +197,7 @@ public class Synchronizer implements ISynchronizer {
 				registry.remove(partner);
 			} catch (CoreException e) {
 				// XXX: flush needs to be more resilient and not throw exceptions all the time
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				Policy.log(e);
 			}
 		}
 	}

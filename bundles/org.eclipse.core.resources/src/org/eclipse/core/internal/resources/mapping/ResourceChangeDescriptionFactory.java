@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Factory for creating a resource delta that describes a proposed change.
@@ -79,7 +81,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	}
 
 	private void fail(CoreException e) {
-		ResourcesPlugin.getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), ResourcesPlugin.PI_RESOURCES, 0, "An internal error occurred while accumulating a change description.", e)); //$NON-NLS-1$
+		Policy.log(e.getStatus().getSeverity(), "An internal error occurred while accumulating a change description.", e); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -305,7 +305,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				endOperation(rule, build, null);
 			}
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 		}
 	}
 
@@ -1254,7 +1254,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (configs.length > 1) {
 				//XXX: should provide a meaningful status code
 				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneHook, null);
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				Policy.log(status);
 				return;
 			}
 			// otherwise we have exactly one hook extension. Try to create a new instance 
@@ -1267,7 +1267,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//provider plugin has probably already shut down
 				if (canCreateExtensions()) {
 					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initHook, e);
-					ResourcesPlugin.getPlugin().getLog().log(status);
+					Policy.log(status);
 				}
 			}
 		} finally {
@@ -1295,7 +1295,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (configs.length > 1) {
 				//XXX: should provide a meaningful status code
 				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneTeamHook, null);
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				Policy.log(status);
 				return;
 			}
 			// otherwise we have exactly one hook extension. Try to create a new instance 
@@ -1308,7 +1308,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//provider plugin has probably already shut down
 				if (canCreateExtensions()) {
 					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initTeamHook, e);
-					ResourcesPlugin.getPlugin().getLog().log(status);
+					Policy.log(status);
 				}
 			}
 		} finally {
@@ -1339,7 +1339,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (configs.length > 1) {
 			//XXX: should provide a meaningful status code
 			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneValidator, null);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			Policy.log(status);
 			return;
 		}
 		// otherwise we have exactly one validator extension. Try to create a new instance 
@@ -1353,7 +1353,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			//provider plugin has probably already shut down
 			if (canCreateExtensions()) {
 				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initValidator, e);
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				Policy.log(status);
 			}
 		}
 	}
@@ -1779,7 +1779,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		crashed = value;
 		if (crashed) {
 			String msg = "A workspace crash was detected. The previous session did not exit normally."; //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(ICoreConstants.CRASH_DETECTED, msg));
+			Policy.log(new ResourceStatus(ICoreConstants.CRASH_DETECTED, msg));
 			if (Policy.DEBUG)
 				System.out.println(msg);
 		}

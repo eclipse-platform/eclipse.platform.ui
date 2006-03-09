@@ -178,7 +178,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		try {
 			saveMasterTable(backup);
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 			backup.toFile().delete();
 			return;
 		}
@@ -187,7 +187,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		try {
 			saveMasterTable(location);
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 			location.toFile().delete();
 			return;
 		}
@@ -279,7 +279,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				result.put(plugin, context);
 			} catch (CoreException e) {
 				// FIXME: should return a status to the user and not just log it
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				Policy.log(e.getStatus());
 			}
 		}
 		return result;
@@ -639,7 +639,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				for (int i = 0; i < roots.length; i++)
 					((Project) roots[i]).startup();
 				if (!problems.isOK())
-					ResourcesPlugin.getPlugin().getLog().log(problems);
+					Policy.log(problems);
 			} finally {
 				workspace.getElementTree().immutable();
 			}
@@ -832,7 +832,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			} catch (Exception e) {
 				// only log the exception, we should not fail restoring the snapshot
 				message = Messages.resources_snapRead;
-				ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, e));
+				Policy.log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, e));
 			}
 		} finally {
 			monitor.done();
@@ -1286,7 +1286,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				}
 				if (parent == null) {
 					IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "null parent found while collapsing trees", null); //$NON-NLS-1$
-					ResourcesPlugin.getPlugin().getLog().log(status);
+					Policy.log(status);
 					return null;
 				}
 				oldest = parent;

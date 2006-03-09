@@ -11,9 +11,11 @@
 
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.*;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -45,9 +47,9 @@ public class ResourcesCompatibility {
 			// do not try to convert - return as it is
 			return newHistoryStore;
 		IStatus result = new HistoryStoreConverter().convertHistory(workspace, location, limit, newHistoryStore, rename);
+		// if we do anything (either we fail or succeed converting), a non-OK status is returned
 		if (result.getSeverity() != IStatus.OK)
-			// if we do anything (either we fail or succeed converting), a non-OK status is returned
-			ResourcesPlugin.getPlugin().getLog().log(result);
+			Policy.log(result);
 		return newHistoryStore;
 	}
 	/**
@@ -70,7 +72,7 @@ public class ResourcesCompatibility {
 		IStatus result = new PropertyStoreConverter().convertProperties(workspace, newPropertyManager);
 		if (result.getSeverity() != IStatus.OK)
 			// if we do anything (either we fail or succeed converting), a non-OK status is returned
-			ResourcesPlugin.getPlugin().getLog().log(result);
+			Policy.log(result);
 		return newPropertyManager;
 	}
 }

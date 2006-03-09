@@ -72,7 +72,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		} catch (RuntimeException e) {
 			String msg = Messages.resources_errorVisiting;
 			IResourceStatus errorStatus = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), msg, e);
-			ResourcesPlugin.getPlugin().getLog().log(errorStatus);
+			Policy.log(errorStatus);
 			throw new ResourceException(errorStatus);
 		} finally {
 			proxy.requestor = null;

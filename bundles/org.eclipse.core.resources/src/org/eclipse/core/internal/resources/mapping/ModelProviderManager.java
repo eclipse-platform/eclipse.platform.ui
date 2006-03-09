@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
 import org.eclipse.core.resources.mapping.ModelProvider;
@@ -62,7 +63,7 @@ public class ModelProviderManager {
 			try {
 				desc = new ModelProviderDescriptor(extensions[i]);
 			} catch (CoreException e) {
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				Policy.log(e);
 			}
 			if (desc != null)
 				descriptors.put(desc.getId(), desc);

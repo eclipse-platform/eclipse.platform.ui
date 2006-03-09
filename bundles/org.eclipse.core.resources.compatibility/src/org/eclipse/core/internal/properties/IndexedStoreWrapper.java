@@ -12,10 +12,8 @@ package org.eclipse.core.internal.properties;
 
 import org.eclipse.core.internal.indexing.*;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.resources.ResourceStatus;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
@@ -72,8 +70,7 @@ public class IndexedStoreWrapper {
 			store.close();
 		} catch (Exception e) {
 			String message = NLS.bind(CompatibilityMessages.indexed_couldNotClose, location.toOSString());
-			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			Policy.log(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e));
 		} finally {
 			store = null;
 		}
@@ -95,7 +92,7 @@ public class IndexedStoreWrapper {
 		try {
 			open();
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 			//failed to open -- copy store elsewhere and create a new one
 			recreate();
 			if (store == null) {
@@ -208,7 +205,7 @@ public class IndexedStoreWrapper {
 		try {
 			recreate();
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 		}
 	}
 }

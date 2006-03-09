@@ -277,7 +277,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		} catch (NumberFormatException e) {
 			cacheState = INVALID_CACHE;
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 			cacheState = INVALID_CACHE;
 		}
 		return cacheState;
@@ -379,7 +379,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		try {
 			setCacheState(INVALID_CACHE);
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 		}
 		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 			Policy.debug("Invalidated cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$		

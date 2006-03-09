@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -473,7 +474,7 @@ public class MarkerManager implements IManager {
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
 			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
-			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
+			Policy.log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 		}
 	}
 

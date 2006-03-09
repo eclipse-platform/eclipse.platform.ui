@@ -15,6 +15,7 @@ import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.RefreshProvider;
@@ -75,8 +76,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			try {
 				provider = (RefreshProvider) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_installError, e);
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				Policy.log(IStatus.WARNING, Messages.refresh_installError, e);
 			}
 			if (provider != null)
 				providerList.add(provider);
@@ -102,8 +102,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 					if (members[j].isLinked())
 						resourcesToMonitor.add(members[j]);
 			} catch (CoreException e) {
-				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_refreshErr, e);
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				Policy.log(IStatus.WARNING, Messages.refresh_refreshErr, e);
 			}
 		}
 		return resourcesToMonitor;
@@ -250,7 +249,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		}
 		if (t != null) {
 			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_installError, t);
-			ResourcesPlugin.getPlugin().getLog().log(error);
+			Policy.log(error);
 		}
 		return null;
 	}
@@ -317,8 +316,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		try {
 			children = project.members();
 		} catch (CoreException e) {
-			IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_refreshErr, e);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			Policy.log(IStatus.WARNING, Messages.refresh_refreshErr, e);
 		}
 		if (children != null && children.length > 0)
 			for (int i = 0; i < children.length; i++)

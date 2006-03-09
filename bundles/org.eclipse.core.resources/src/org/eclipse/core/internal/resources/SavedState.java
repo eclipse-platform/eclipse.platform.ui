@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.events.ResourceDelta;
 import org.eclipse.core.internal.events.ResourceDeltaFactory;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -77,9 +78,8 @@ public class SavedState implements ISavedState {
 				workspace.endOperation(rule, false, null);
 			}
 		} catch (CoreException e) {
-			// this is unlikelly to happen, so, just log it
-			ResourceStatus status = new ResourceStatus(IStatus.WARNING, null, e.getMessage(), e);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			// this is unlikely to happen, so, just log it
+			Policy.log(e);
 		}
 	}
 }

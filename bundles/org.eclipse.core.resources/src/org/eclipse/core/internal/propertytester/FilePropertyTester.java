@@ -11,9 +11,10 @@
 
 package org.eclipse.core.internal.propertytester;
 
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -69,9 +70,7 @@ public class FilePropertyTester extends ResourcePropertyTester {
 				actualValue = contentType.getId();
 			}
 		} catch (CoreException e) {
-			// Log the error.
-			String message = "Core exception while retrieving the content description"; //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			Policy.log(IStatus.ERROR, "Core exception while retrieving the content description", e);//$NON-NLS-1$
 		}
 		return expectedValue.equals(actualValue);
 	}

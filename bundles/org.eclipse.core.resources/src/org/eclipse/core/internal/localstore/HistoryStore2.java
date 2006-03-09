@@ -172,7 +172,7 @@ public class HistoryStore2 implements IHistoryStore {
 		} catch (Exception e) {
 			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			Policy.log(status);
 		}
 	}
 
@@ -198,13 +198,13 @@ public class HistoryStore2 implements IHistoryStore {
 		if (sourceResource == null || destinationResource == null) {
 			String message = Messages.history_copyToNull;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			Policy.log(status);
 			return;
 		}
 		if (sourceResource.equals(destinationResource)) {
 			String message = Messages.history_copyToSelf;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, sourceResource.getFullPath(), message, null);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			Policy.log(status);
 			return;
 		}
 
@@ -294,7 +294,7 @@ public class HistoryStore2 implements IHistoryStore {
 		IStatus status = e.getStatus();
 		if (status.getException() == null)
 			status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, "Internal error in history store", e); //$NON-NLS-1$
-		ResourcesPlugin.getPlugin().getLog().log(status);
+		Policy.log(status);
 	}
 
 	public synchronized void remove(IPath root, IProgressMonitor monitor) {
@@ -333,7 +333,7 @@ public class HistoryStore2 implements IHistoryStore {
 		} catch (Exception e) {
 			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			Policy.log(status);
 		}
 	}
 

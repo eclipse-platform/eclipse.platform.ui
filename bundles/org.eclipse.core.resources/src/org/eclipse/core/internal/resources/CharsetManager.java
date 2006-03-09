@@ -129,7 +129,7 @@ public class CharsetManager implements IManager {
 			} catch (BackingStoreException e) {
 				// problems with the project scope... we gonna miss the changes (but will log)
 				String message = Messages.resources_readingEncoding;
-				ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, currentProject.getFullPath(), message, e));
+				Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, currentProject.getFullPath(), message, e));
 				return;
 			}
 			for (int i = 0; i < affectedResources.length; i++) {
@@ -235,7 +235,7 @@ public class CharsetManager implements IManager {
 		} catch (BackingStoreException e) {
 			// nodeExists failed
 			String message = Messages.resources_readingEncoding;
-			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
+			Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
 		}
 		return null;
 	}

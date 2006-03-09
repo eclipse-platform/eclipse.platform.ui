@@ -19,6 +19,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -545,11 +546,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 		switch (problems.getSeverity()) {
 			case IStatus.ERROR :
-				ResourcesPlugin.getPlugin().getLog().log(problems);
+				Policy.log(problems);
 				return null;
 			case IStatus.WARNING :
 			case IStatus.INFO :
-				ResourcesPlugin.getPlugin().getLog().log(problems);
+				Policy.log(problems);
 			case IStatus.OK :
 			default :
 				return projectDescription;

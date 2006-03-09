@@ -247,7 +247,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 			} catch (CoreException e) {
 				// have to swallow the exception because it must be possible 
 				//to remove a nature that no longer exists in the install
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				Policy.log(e.getStatus());
 				return;
 			}
 		}
@@ -380,7 +380,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 					return true;
 		} catch (CoreException e) {
 			//not possible for project to be inaccessible
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e.getStatus());
 		}
 		return false;
 	}
@@ -453,7 +453,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 			try {
 				desc = new ProjectNatureDescriptor(extensions[i]);
 			} catch (CoreException e) {
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				Policy.log(e.getStatus());
 			}
 			if (desc != null)
 				descriptors.put(desc.getNatureId(), desc);

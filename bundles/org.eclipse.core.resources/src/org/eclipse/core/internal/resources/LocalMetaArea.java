@@ -16,6 +16,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -317,7 +318,7 @@ public class LocalMetaArea implements ICoreConstants {
 				} catch (Exception e) {
 					//don't allow failure to read the location to propagate
 					String msg = NLS.bind(Messages.resources_exReadProjectLocation, target.getName());
-					ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
+					Policy.log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
 				}
 				//try to read the dynamic references - will fail for old location files
 				int numRefs = dataIn.readInt();
