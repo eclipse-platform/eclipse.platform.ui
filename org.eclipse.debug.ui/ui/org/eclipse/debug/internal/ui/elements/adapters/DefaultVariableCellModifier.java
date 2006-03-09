@@ -87,5 +87,14 @@ public class DefaultVariableCellModifier implements ICellModifier {
 			}
 		}
 	}
+	
+	/**
+	 * Returns the context in which this cell modifier is being used.
+	 * 
+	 * @return presentation context
+	 */
+	protected IPresentationContext getPresentationContext() {
+		return fContext;
+	}
 
 }
