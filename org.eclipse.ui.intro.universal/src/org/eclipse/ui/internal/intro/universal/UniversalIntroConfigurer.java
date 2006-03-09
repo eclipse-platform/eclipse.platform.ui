@@ -137,9 +137,13 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		if (pageId.equals(ID_ROOT)) {
 			if (groupId.equals(DIV_PAGE_LINKS))
 				return getRootPageLinks(false);
+			if (groupId.equals(DIV_ACTION_LINKS))
+				return getRootPageActionLinks(false);
 		} else if (pageId.equals(ID_STANDBY)) {
 			if (groupId.equals(DIV_PAGE_LINKS))
 				return getRootPageLinks(true);
+			if (groupId.equals(DIV_ACTION_LINKS))
+				return getRootPageActionLinks(true);
 		} else {
 			// other pages
 			if (groupId.equals(DIV_PAGE_LINKS))
@@ -180,7 +184,26 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 					links.add(page);
 			}
 		}
+		// add workbench link if so configured by the theme
+		String wb = getVariable(VAR_WORKBENCH_AS_ROOT_LINK);
+		if (wb!=null && wb.equalsIgnoreCase("true")) { //$NON-NLS-1$
+			IntroElement page = createRootPageLink(ID_WORKBENCH, standby);
+			if (page !=null)
+				links.add(page);
+		}
 		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
+	}
+
+	private IntroElement[] getRootPageActionLinks(boolean standby) {
+		String wb = getVariable(VAR_WORKBENCH_AS_ROOT_LINK);
+		// only create the workbench link if 
+		// not already configured as a root link
+		if (wb==null || !wb.equalsIgnoreCase("true")) { //$NON-NLS-1$
+			IntroElement page = createRootPageLink(ID_WORKBENCH, standby);
+			if (page !=null)
+				return new IntroElement[] { page };
+		}
+		return new IntroElement [0];
 	}
 
 	private IntroElement[] getNavLinks(String pageId) {
@@ -249,6 +272,15 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 					"webresources_img", "css/graphics/root/webresources.gif", //$NON-NLS-1$ //$NON-NLS-2$
 					Messages.SharedIntroConfigurer_webresources_alt,
 					Messages.SharedIntroConfigurer_webresources_tooltip,
+					"right"); //$NON-NLS-1$
+		if (id.equals(ID_WORKBENCH))
+			return createRootLink(
+					Messages.SharedIntroConfigurer_workbench_name,
+					"http://org.eclipse.ui.intro/switchToLaunchBar", //$NON-NLS-1$
+					id,
+					"workbench_img", "css/graphics/root/workbench.gif", //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.SharedIntroConfigurer_workbench_alt,
+					Messages.SharedIntroConfigurer_workbench_tooltip,
 					"right"); //$NON-NLS-1$
 		return null;
 	}

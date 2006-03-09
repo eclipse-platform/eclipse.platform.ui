@@ -82,9 +82,11 @@ public interface IUniversalIntroConstants {
 	String ID_WHATSNEW = "whatsnew";//$NON-NLS-1$
 	String ID_MIGRATE = "migrate";//$NON-NLS-1$
 	String ID_WEBRESOURCES = "webresources";//$NON-NLS-1$
+	String ID_WORKBENCH = "workbench"; //$NON-NLS-1$
 	
 	// Page DIV ids
 	String DIV_PAGE_LINKS = "page-links"; //$NON-NLS-1$
+	String DIV_ACTION_LINKS = "action-links"; //$NON-NLS-1$
 	String DIV_LAYOUT_TOP_LEFT = "top-left";  //$NON-NLS-1$
 	String DIV_LAYOUT_TOP_RIGHT = "top-right"; //$NON-NLS-1$
 	String DIV_LAYOUT_BOTTOM_LEFT = "bottom-left"; //$NON-NLS-1$
@@ -94,6 +96,7 @@ public interface IUniversalIntroConstants {
 	String VAR_INTRO_BACKGROUND_IMAGE = "INTRO_BACKGROUND_IMAGE"; //$NON-NLS-1$
 	String VAR_INTRO_ROOT_PAGES = "INTRO_ROOT_PAGES"; //$NON-NLS-1$
 	String VAR_INTRO_DATA = "INTRO_DATA";  //$NON-NLS-1$
+	String VAR_WORKBENCH_AS_ROOT_LINK="workbenchAsRootLink"; //$NON-NLS-1$
 	
 	//Page table properties
 	String P_IMPORTANCE = "importance"; //$NON-NLS-1$

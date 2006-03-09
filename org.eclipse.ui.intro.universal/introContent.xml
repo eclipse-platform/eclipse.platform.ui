@@ -9,12 +9,7 @@
         <group id="links-background">
            <group id="page-links" computed="true"/>
         </group>
-        <group id="action-links">
-            <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
-                <img id="workbench_img" style-id="content-img" alt="Go to the workbench">
-                </img>
-                <text>Go to the workbench</text>
-            </link>
+        <group id="action-links" computed="true">
         </group>        
         <group id="branding">
         	<img src="$introBrandingImage$" alt="$introBrandingImageText$"/>
@@ -34,12 +29,7 @@
             <group id="page-links" computed="true">
             </group>
         </group>
-        <group id="action-links">
-            <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
-                <img id="workbench_img" style-id="content-img" alt="Go to the workbench">
-                </img>
-                <text>Go to the workbench</text>
-            </link>
+        <group id="action-links" computed="true">
         </group>        
         <group id="branding" style-id="branding" bgImage="$introBrandingImage$">
         </group>

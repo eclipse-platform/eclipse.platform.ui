@@ -42,6 +42,9 @@ public class Messages extends NLS {
 	public static String SharedIntroConfigurer_webresources_name;
 	public static String SharedIntroConfigurer_webresources_alt;
 	public static String SharedIntroConfigurer_webresources_tooltip;
+	public static String SharedIntroConfigurer_workbench_name;
+	public static String SharedIntroConfigurer_workbench_alt;
+	public static String SharedIntroConfigurer_workbench_tooltip;
 	public static String SharedIntroConfigurer_overview_nav;
 	public static String SharedIntroConfigurer_firststeps_nav;
 	public static String SharedIntroConfigurer_tutorials_nav;

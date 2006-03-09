@@ -55,6 +55,8 @@
             name="%theme.name.circles"
             path="$nl$/themes/circles"
             previewImage="themes/circles/preview.png">
+            <property name="workbenchAsRootLink"
+            		value="true"/>
             <property name="launchbarBackground"
             		value="#a1c2cb"/>
             <property name="launchbarOverviewIcon"

@@ -6,13 +6,23 @@
 	font-size : 18pt;
 }
 
-#page-links a .link-label, #action-links a .link-label {
+/* Hide the extra div for links in the normal state. */
+a .link-extra-div {
+	display: none;
+}
+
+/* Link label properties */
+#page-links a .link-label {
 	font-size : 13pt;	font-weight : 600;
 	padding-left: 10px;
 	padding-right: 10px;
+	position: relative;
+	top: -15px;
+	margin-bottom: -10px;
 }
 
-#page-links a p .text, #action-links a p .text {
+/* Link description properties */
+#page-links a p .text {
 	font-size : 13pt;	font-weight : 500;
 	padding-bottom: 10px;
 }
@@ -26,7 +36,7 @@ body {
 	background-attachment : fixed;
 	overflow : hidden;
 	overflow-clip: rect(0, auto, auto, 0);
-	background-color : #7169D1;
+	background-color : #345365;
 }
 #root {
 	min-height : 450px;
@@ -78,6 +88,9 @@ body {
 
 #page-links a {
 	position : absolute;	margin-left : 1em;	margin-right : 1em;	text-align : center;
+/*
+	background-color: magenta;
+	*/
 }
 
 #page-links[id] { position: static; } 
@@ -96,11 +109,10 @@ body {
 #page-links a#overview {
 	left: -1px;
 	top: 5px;
-	background-color: magenta;
 }
 
 #page-links a#overview:hover {
-	left: -5px;
+	left: -2px;
 }
 
 #page-links a#overview img {
@@ -113,47 +125,55 @@ body {
 	height : 99px;
 }
 
+/* Absolute positions of root links */
+
 #page-links a#whatsnew {
-	left: 149px;
-	top: 110px;
+	left: 150px;
+	top: 111px;
 }
 
 #page-links a#tutorials {
-	left: 430px;
-	top: 296px;
+	left: 431px;
+	top: 297px;
 }
 
 #page-links a#samples {
-	left: 242px;
-	top: 296px;
+	left: 243px;
+	top: 297px;
 }
 
 #page-links a#firststeps {
-	left: 336px;
-	top: 110px;
+	left: 337px;
+	top: 111px;
 }
 
 #page-links a#webresources {
-	left: 523px;
-	top: 203px;
+	left: 524px;
+	top: 204px;
 }
 
 #page-links a#migrate {
-	left: 710px;
-	top: 296px;
+	left: 711px;
+	top: 297px;
 }
 
+#page-links a#workbench {
+	left: 808px;
+	top: 111px;
+}
 
-/* remove the hover image from the flow of the document,
-   so it doesn't take up space and change the position
-   of the link label and descriptions */
+#page-links a:hover#workbench,
+#page-links a:focus#workbench,
+#page-links a:active#workbench {
+	left: 713px;
+}
+
+/* Turn the background image off */
 #page-links a .background-image {
-	position : absolute;
+	display : none;
 }
-/* properly align the link label and text based on class (left vs. right) */
-#page-links a:hover {
-	/* This is needed for IE to force the hover pseudo selectors below to work.*/	padding : 0 em;
-}
+
+/* Paint bottom edge of the text box as a background image */
 
 #page-links a:hover,
 #page-links a:focus,
@@ -169,6 +189,15 @@ body {
 #page-links a#overview:active {
 	background-image: url(../graphics/icons/ctool/overview_bottomhov.gif);
 	background-image: no-repeat;
+	background-position: bottom 1px;
+	z-index: 20;
+}
+
+#page-links a#workbench:hover,
+#page-links a#workbench:focus,
+#page-links a#workbench:active {
+	background-image: url(../graphics/icons/ctool/workbench_bottomhov.gif);
+	background-image: no-repeat;
 	background-position: bottom left;
 	z-index: 20;
 }
@@ -178,6 +207,8 @@ body {
 #page-links a .text {
 	display : none;
 }
+
+/* Show the link label and link text as block on hover */
 
 #page-links a:hover .link-label,
 #page-links a:focus .link-label,
@@ -193,53 +224,56 @@ body {
 	z-index: 40;
 }
 
-
 #page-links a#overview:hover .link-label,
 #page-links a#overview:focus .link-label,
 #page-links a:overview:active .link-label {
-	width: 215px;
+	width: 210px;
 }
 
 #page-links a#overview:hover p .text,
 #page-links a#overview:focus p .text,
 #page-links a:overview:active p .text {
-	width: 215px;
+	width: 210px;
 }
+
+/* Use the extra div to fill in the text box behind the text */
 
 #page-links a:hover .link-extra-div,
 #page-links a:focus .link-extra-div,
 #page-links a:active .link-extra-div {
 	display: block;
 	position: absolute;
+/*
 	top : 84px;
+	*/
 	left : 0px;
 	width: 215px;
-	height: auto;
+/*
+	top: 	84;
+	*/
+	height: 70px;
 	bottom: 2px;
 	z-index: -5;
-/*
 	background-image: url(../graphics/icons/ctool/root_midhov.gif);
 	background-repeat: repeat-y;
-	*/
-	background-color: cyan;
 }
-/*
+
 #page-links a#overview:hover .link-extra-div,
 #page-links a#overview:focus .link-extra-div,
 #page-links a#overview:active .link-extra-div {
-	display: block;
-	position: absolute;
-	top : 99px;
-	left : 7px;
+	left : 3px;
 	width: 217px;
-	height: auto;
-	bottom: 2px;
-	background-image: url(../graphics/icons/ctool/root_midhov.gif);
-	background-repeat: repeat-y;
 }
-*/
 
-/* properties for each of the page-links  */
+#page-links a#workbench:hover .link-extra-div,
+#page-links a#workbench:focus .link-extra-div,
+#page-links a#workbench:active .link-extra-div {
+	left : 0px;
+	width: 202px;
+	background-image: url(../graphics/icons/ctool/workbench_midhov.gif);
+}
+
+/* Link images */
 #page-links a#overview img { background-image : url(../graphics/icons/ctool/overview.gif); }
 #page-links a:hover#overview img { background-image : url(../graphics/icons/ctool/overview_tophov.gif); }
 
@@ -261,52 +295,12 @@ body {
 #page-links a#webresources img { background-image : url(../graphics/icons/ctool/webresources.gif); }
 #page-links a:hover#webresources img { background-image : url(../graphics/icons/ctool/webresources_tophov.gif); }
 
+#page-links a#workbench img { background-image : url(../graphics/icons/ctool/workbench.gif); }
+#page-links a:hover#workbench img { background-image : url(../graphics/icons/ctool/workbench_tophov.gif); }
+
 /*
- * Set up the action links
+ * Not using action links.
  */
 #action-links {
-	width : 100%;
-	position: absolute;
-	top: 50%;
-	text-align : center;
-}
-
-#action-links a {
-	position : relative;
-	top : -50%;
-}
-
-#action-links a .background-image,
-#action-links a #workbench_img {
-	width : 202px;
-	height : 103px;	
-	position : absolute;
-	left : 364px;
-	top : -83px;
-}
-
-#action-links a:hover#workbench img {
-}
-
-#action-links a#workbench img { 
-	background-image : url(../graphics/icons/ctool/workbench.gif); 
-}
-#action-links a:hover#workbench img { 
-	background-image : url(../graphics/icons/ctool/workbench_tophov.gif); 
-}
-
-/* hide the link and description until users hover over the link */
-#action-links a p .text, #action-links a .link-label {
-	display : none;
-}
-
-#action-links a:hover .link-label,
-#action-links a:focus .link-label,
-#action-links a:active .link-label {
-	display : block;	margin-left : 10px;
-}
-#action-links a:hover p .text,
-#action-links a:focus p .text,
-#action-links a:active p .text {
-	display : block;	width : 16em;
+	display: none;
 }
