@@ -55,14 +55,21 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IDropToFrame;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.core.model.IStepFilters;
+import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.actions.context.ActionAdapterFactory;
 import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
@@ -435,10 +442,20 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
 		SuspendTriggerAdapterFactory factory = new SuspendTriggerAdapterFactory();
 		manager.registerAdapters(factory, ILaunch.class);
+		
+		//action adapters
+		ActionAdapterFactory actionFactory = new ActionAdapterFactory();
+		manager.registerAdapters(actionFactory, IDisconnect.class);
+		manager.registerAdapters(actionFactory, IDropToFrame.class);
+		manager.registerAdapters(actionFactory, IStep.class);
+		manager.registerAdapters(actionFactory, IStepFilters.class);
+		manager.registerAdapters(actionFactory, ISuspendResume.class);
+		manager.registerAdapters(actionFactory, ITerminate.class);
+		
 		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
-					//initialize the selected resource manager
+					//initialize the selected resource `
 					SelectedResourceManager.getDefault();
 					// forces launch shortcuts to be intialized so their key-bindings work
 					getLaunchConfigurationManager().getLaunchShortcuts();
