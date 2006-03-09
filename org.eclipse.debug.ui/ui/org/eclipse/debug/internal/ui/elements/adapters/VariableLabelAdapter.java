@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Label adapter for variables.
@@ -27,21 +30,134 @@ import org.eclipse.swt.graphics.RGB;
 public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter#getLabels(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+	 */
+	protected String[] getLabels(Object element, IPresentationContext context) throws CoreException {
+		IWorkbenchPart part = context.getPart();
+		String[] ids = context.getColumns();
+		if (part != null && ids != null) {
+			String viewId = part.getSite().getId();
+			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(viewId)) {
+				IVariable variable = (IVariable) element;
+				IValue value = variable.getValue();
+				String[] columns = new String[ids.length];
+				for (int i = 0; i < ids.length; i++) {
+					columns[i] = getColumnText(variable, value, ids[i], context);
+				}
+				return columns;
+			}
+		}
+		return super.getLabels(element, context);
+	}
+	
+	/**
+	 * Returns the text for the given variable and value for the specified column.
+	 * 
+	 * @param variable
+	 * @param value
+	 * @param columnId
+	 * @return text
+	 * @throws CoreException
+	 */
+	protected String getColumnText(IVariable variable, IValue value, String columnId, IPresentationContext context) throws CoreException {
+		if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
+			return getVariableName(variable, context);
+		} else if (VariableColumnPresentation.COLUMN_VARIABLE_TYPE.equals(columnId)) {
+			return getVariableTypeName(variable, context);
+		} else if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(columnId)) {
+			return getValueText(variable, value, context);
+		} else if (VariableColumnPresentation.COLUMN_VALUE_TYPE.equals(columnId)) {
+			return getValueTypeName(variable, value, context);
+		}		
+		return null;
+	}
+	
+	/**
+	 * Returns the name of the given variable to display in <code>COLUMN_VARIABLE_NAME</code>.
+	 * 
+	 * @param variable
+	 * @return variable name
+	 * @throws CoreException
+	 */
+	protected String getVariableName(IVariable variable, IPresentationContext context) throws CoreException {
+		return variable.getName();
+	}
+	
+	/**
+	 * Returns the type name of the given variable to display in <code>COLUMN_VARIABLE_TYPE</code>.
+	 * 
+	 * @param variable
+	 * @return variable type name
+	 * @throws CoreException
+	 */
+	protected String getVariableTypeName(IVariable variable, IPresentationContext context) throws CoreException {
+		return variable.getReferenceTypeName();
+	}
+	
+	/**
+	 * Returns the label for the given value's type to display in <code>COLUMN_VARIABLE_VALUE</code>
+	 * 
+	 * @param variable
+	 * @param value
+	 * @return value label
+	 * @throws CoreException
+	 */
+	protected String getValueTypeName(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
+		return value.getReferenceTypeName();
+	}
+	
+	/**
+	 * Returns the label for the given value to display in <code>COLUMN_VALUE_TYPE</code>
+	 * 
+	 * @param variable
+	 * @param value
+	 * @return value label
+	 * @throws CoreException
+	 */
+	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
+		return value.getValueString();
+	}	
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getForeground(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
 	protected RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException {
-        if (element instanceof IVariable) {
-        	IVariable variable = (IVariable) element;
-        	try {
-				if (variable.hasValueChanged()) {
-					return new RGB[] {DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB()};
+		int numElements = getNumElements(context);
+		if (numElements == 1) {
+	        if (element instanceof IVariable) {
+	        	IVariable variable = (IVariable) element;
+	        	try {
+					if (variable.hasValueChanged()) {
+						RGB[] rgbs =  new RGB[numElements];
+						Arrays.fill(rgbs, DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB());
+						return rgbs;
+					}
+				} catch (DebugException e) {
 				}
-			} catch (DebugException e) {
-			}
-			return new RGB[] {DebugElementHelper.getForeground(element)};
-        }
+	        }
+		}
         return super.getForegrounds(element, context);
 	}
+
+	protected RGB[] getBackgrounds(Object element, IPresentationContext context) throws CoreException {
+		int numElements = getNumElements(context);
+		if (numElements > 1) {
+	        if (element instanceof IVariable) {
+	        	IVariable variable = (IVariable) element;
+	        	try {
+					if (variable.hasValueChanged()) {
+						RGB[] rgbs =  new RGB[numElements];
+						Arrays.fill(rgbs, new RGB(0xFF, 0xB6, 0xC1));
+						return rgbs;
+					}
+				} catch (DebugException e) {
+				}
+	        }
+		}
+        return super.getBackgrounds(element, context);
+	}
+	
+	
 
 	
 }

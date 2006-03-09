@@ -11,6 +11,7 @@
 
 package org.eclipse.debug.internal.ui.elements.adapters;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -89,21 +90,42 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getFontDatas(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
 	protected FontData[] getFontDatas(Object element, IPresentationContext context) throws CoreException {
-		return new FontData[] {DebugElementHelper.getFont(element)};
+		FontData[] datas = new FontData[getNumElements(context)];
+		Arrays.fill(datas, DebugElementHelper.getFont(element));
+		return datas;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getForegrounds(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
 	protected RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException {
-		return new RGB[] {DebugElementHelper.getForeground(element)};
+		RGB[] rgbs = new RGB[getNumElements(context)];
+		Arrays.fill(rgbs, DebugElementHelper.getForeground(element));
+		return rgbs;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getBackgrounds(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
 	protected RGB[] getBackgrounds(Object element, IPresentationContext context) throws CoreException {
-		return new RGB[] {DebugElementHelper.getBackground(element)};
+		RGB[] rgbs = new RGB[getNumElements(context)];
+		Arrays.fill(rgbs, DebugElementHelper.getBackground(element));
+		return rgbs;
+	}
+	
+	/**
+	 * Returns the number of columns in the given presentation context, or 1
+	 * if there are no columns.
+	 * 
+	 * @param context presentation context
+	 * @return number of columns or 1 if none
+	 */
+	protected int getNumElements(IPresentationContext context) {
+		String[] columns = context.getColumns();
+		if (columns == null) {
+			return 1;
+		} 
+		return columns.length;
 	}
 
 }

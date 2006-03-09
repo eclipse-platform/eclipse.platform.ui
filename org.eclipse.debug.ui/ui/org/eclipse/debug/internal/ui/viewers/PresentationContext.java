@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -24,6 +29,7 @@ public class PresentationContext implements IPresentationContext {
     
     private IWorkbenchPart fPart;
     private String[] fColumns;
+    private ListenerList fListeners = new ListenerList();
     
     /**
      * Constructs a presentation context for the given part.
@@ -49,12 +55,58 @@ public class PresentationContext implements IPresentationContext {
 	}
 	
 	/**
+	 * Fires a property change event to all registered listeners
+	 * 
+	 * @param property property name
+	 * @param oldValue old value or <code>null</code>
+	 * @param newValue new value or <code>null</code>
+	 */
+	protected void firePropertyChange(String property, Object oldValue, Object newValue) {
+		if (!fListeners.isEmpty()) {
+			final PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
+			Object[] listeners = fListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						listener.propertyChange(event);
+					}
+				});
+			}
+		}
+	}
+	
+	/**
 	 * Sets the visible column ids.
 	 * 
 	 * @param ids column identifiers
 	 */
 	protected void setColumns(String[] ids) {
+		String[] oldValue = fColumns;
 		fColumns = ids;
+		firePropertyChange(IPresentationContext.PROPERTY_COLUMNS, oldValue, ids);
+	}
+	
+	/**
+	 * Disposes this presentation context.
+	 */
+	protected void dispose() {
+		fListeners.clear();
+		fPart = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		fListeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		fListeners.remove(listener);
 	}
 
 }

@@ -26,11 +26,19 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFac
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.TreeEvent;
@@ -43,7 +51,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -76,6 +84,12 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * The tree
      */
     private Tree fTree;
+    
+    /**
+     * Cell editing
+     */
+    private TreeEditorImpl fTreeEditorImpl;
+    private TreeEditor fTreeEditor;
 
     /**
      * Collection of tree paths to be expanded. A path is removed from the
@@ -160,6 +174,8 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
         Assert.isTrue((tree.getStyle() & SWT.VIRTUAL) != 0);
         fTree = tree;
         hookControl(fTree);
+        fTreeEditor = new TreeEditor(tree);
+		initTreeViewerImpl();
     }
 
     /* (non-Javadoc)
@@ -168,6 +184,56 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     protected void hookControl(Control control) {
 		super.hookControl(control);
 		Tree tree = (Tree)control;
+        tree.addMouseListener(new MouseAdapter() {
+            public void mouseDown(MouseEvent e) {
+            	if (fColumnPresentation != null) {
+	            	Item[] items = fTreeEditorImpl.getSelection();
+	            	if (items.length > 0) {
+	            		TreeItem treeItem = (TreeItem) items[0];
+		            	if (treeItem != null) { 
+			            	int columnToEdit = -1;
+			                int columns = fTree.getColumnCount();
+			                if (columns == 0) {
+			                    // If no TreeColumn, Tree acts as if it has a single column
+			                    // which takes the whole width.
+			                    columnToEdit = 0;
+			                } else {
+			                    columnToEdit = -1;
+			                    for (int i = 0; i < columns; i++) {
+			                        Rectangle bounds = fTreeEditorImpl.getBounds(treeItem, i);
+			                        if (bounds.contains(e.x, e.y)) {
+			                            columnToEdit = i;
+			                            break;
+			                        }
+			                    }
+			                    if (columnToEdit == -1) {
+			                        return;
+			                    }
+			                }
+			                CellEditor cellEditor = fColumnPresentation.getCellEditor(getVisibleColumns()[columnToEdit], treeItem.getData(), fTree);
+			                if (cellEditor == null) {
+			                	return;
+			                }
+			                CellEditor[] cellEditors = getCellEditors();
+			                CellEditor[] newEditors = new CellEditor[columns];
+			                if (cellEditors != null) {
+			                	System.arraycopy(cellEditors, 0, newEditors, 0, cellEditors.length);
+			                }
+			                CellEditor old = newEditors[columnToEdit];
+			                if (old != null) {
+			                	old.dispose();
+			                }
+			                newEditors[columnToEdit] = cellEditor;
+			                setCellEditors(newEditors);
+			                setCellModifier(fColumnPresentation.getCellModifier());
+			                setColumnProperties(getVisibleColumns());
+		            	}
+	            	}
+            	}
+                
+                fTreeEditorImpl.handleMouseDown(e);
+            }
+        }); 		
         tree.addTreeListener(new TreeListener() {
             public void treeExpanded(TreeEvent e) {
                 ((TreeItem) e.item).setExpanded(true);
@@ -371,12 +437,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * Refreshes the columns in the view, based on the viewer input.
      */
     public void refreshColumns() {
-    	PresentationContext context = (PresentationContext) getPresentationContext();
-    	if (fColumnPresentation != null) {
-    		buildColumns(fColumnPresentation);
-    		context.setColumns(getVisibleColumns());
-    	} else {
-    		context.setColumns(null);
+    	Object input = getInput();
+    	if (input != null) {
+    		setInput(null);
+    		setInput(input);
     	}
     }
     
@@ -1051,7 +1115,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 					fVisibleColumns.put(presentation.getId(), ids);
 				}
 			}
-			refreshColumns();
+			PresentationContext presentationContext = (PresentationContext) getPresentationContext();
+			presentationContext.setColumns(getVisibleColumns());
+			buildColumns(presentation);
+			refresh();
 		}
 	}
 	
@@ -1117,4 +1184,129 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 		
 	}
 
+	/**
+	 * Initializes the tree viewer implementation.
+	 */
+	private void initTreeViewerImpl() {
+		fTreeEditorImpl = new TreeEditorImpl(this) {
+			Rectangle getBounds(Item item, int columnNumber) {
+				return ((TreeItem) item).getBounds(columnNumber);
+			}
+
+			int getColumnCount() {
+				return getTree().getColumnCount();
+			}
+
+			Item[] getSelection() {
+				return getTree().getSelection();
+			}
+
+			void setEditor(Control w, Item item, int columnNumber) {
+				fTreeEditor.setEditor(w, (TreeItem) item, columnNumber);
+			}
+
+			void setSelection(IStructuredSelection selection, boolean b) {
+				AsynchronousTreeViewer.this.setSelection(selection, b);
+			}
+
+			void showSelection() {
+				getTree().showSelection();
+			}
+
+			void setLayoutData(CellEditor.LayoutData layoutData) {
+				fTreeEditor.grabHorizontal = layoutData.grabHorizontal;
+				fTreeEditor.horizontalAlignment = layoutData.horizontalAlignment;
+				fTreeEditor.minimumWidth = layoutData.minimumWidth;
+			}
+
+			void handleDoubleClickEvent() {
+				Viewer viewer = getViewer();
+				fireDoubleClick(new DoubleClickEvent(viewer, viewer
+						.getSelection()));
+				fireOpen(new OpenEvent(viewer, viewer.getSelection()));
+			}
+		};
+	}
+	
+	/**
+	 * Starts editing the given element.
+	 * 
+	 * @param element
+	 *            the element
+	 * @param column
+	 *            the column number
+	 */
+	public void editElement(Object element, int column) {
+		fTreeEditorImpl.editElement(element, column);
+	}
+
+	/**
+	 * Returns the cell editors of this tree viewer.
+	 * 
+	 * @return the list of cell editors
+	 */
+	public CellEditor[] getCellEditors() {
+		return fTreeEditorImpl.getCellEditors();
+	}
+
+	/**
+	 * Returns the cell modifier of this tree viewer.
+	 * 
+	 * @return the cell modifier
+	 */
+	public ICellModifier getCellModifier() {
+		return fTreeEditorImpl.getCellModifier();
+	}	
+	
+	/**
+	 * Cancels a currently active cell editor. All changes already done in the
+	 * cell editor are lost.
+	 * 
+	 */
+	public void cancelEditing() {
+		fTreeEditorImpl.cancelEditing();
+	}	
+	
+	/**
+	 * Returns whether there is an active cell editor.
+	 * 
+	 * @return <code>true</code> if there is an active cell editor, and
+	 *         <code>false</code> otherwise
+	 */
+	public boolean isCellEditorActive() {
+		return fTreeEditorImpl.isCellEditorActive();
+	}	
+	
+	/**
+	 * Sets the cell editors of this tree viewer.
+	 * 
+	 * @param editors
+	 *            the list of cell editors
+	 */
+	public void setCellEditors(CellEditor[] editors) {
+		fTreeEditorImpl.setCellEditors(editors);
+	}
+
+	/**
+	 * Sets the cell modifier of this tree viewer.
+	 * 
+	 * @param modifier
+	 *            the cell modifier
+	 */
+	public void setCellModifier(ICellModifier modifier) {
+		fTreeEditorImpl.setCellModifier(modifier);
+	}
+	
+	/**
+	 * Sets the column properties of this tree viewer. The properties must
+	 * correspond with the columns of the tree control. They are used to
+	 * identify the column in a cell modifier.
+	 * 
+	 * @param columnProperties
+	 *            the list of column properties
+	 */
+	public void setColumnProperties(String[] columnProperties) {
+		fTreeEditorImpl.setColumnProperties(columnProperties);
+	}	
+	
 }

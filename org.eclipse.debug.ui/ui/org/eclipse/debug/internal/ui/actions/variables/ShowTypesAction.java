@@ -75,6 +75,20 @@ public class ShowTypesAction extends Action {
 	protected void setView(IDebugView view) {
 		fView = view;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		if (enabled) {
+			setToolTipText(ActionMessages.ShowTypesAction_Show_Type_Names);
+		} else {
+			setToolTipText("'Show Type Names' unavailable when columns are displayed.\nConfigure columns to display type names.");
+		}
+	}
+	
+	
 }
 
 

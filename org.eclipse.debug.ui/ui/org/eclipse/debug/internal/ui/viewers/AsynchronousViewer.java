@@ -170,6 +170,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (fUpdatePolicy != null) {
 			fUpdatePolicy.dispose();
 		}
+		if (fContext != null) {
+			((PresentationContext)fContext).dispose();
+		}
 	}
 
 	/**
@@ -1011,7 +1014,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
      */
     public void handleEvent(final Event event) {
         Widget parentItem = getParentWidget(event.item);
-        // TODO: we should be able to use event.index, but it seems to be 0 (zero) all the time
         int index = event.index;
 
         ModelNode[] nodes = getModel().getNodes(parentItem.getData());
