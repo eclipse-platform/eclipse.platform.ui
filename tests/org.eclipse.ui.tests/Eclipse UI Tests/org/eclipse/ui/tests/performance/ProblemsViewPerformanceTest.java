@@ -34,9 +34,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
  */
 public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 
-	private static final String PERFORMANCE_MARKER = "org.eclipse.ui.tests.categoryTestMarker";
-
-	private String EMPTY_PERSPECTIVE_ID = "org.eclipse.ui.tests.util.EmptyPerspective";
+	private String EMPTY_PERSPECTIVE_ID = "org.eclipse.ui.tests.harness.util.EmptyPerspective";
 
 	private String PROBLEMS_VIEW_ID = "org.eclipse.ui.tests.performance.problemsView";
 
@@ -72,10 +70,12 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 		for (int i = 0; i < 100; i++) {
 			createMarkers();
 			processEvents();
+			long start = System.currentTimeMillis();
 			startMeasuring();
 			while (view.getTableWidget().getItemCount() == 0)
 				processEvents();
 			stopMeasuring();
+			System.out.println(String.valueOf(System.currentTimeMillis() - start));
 			removeMarkers();
 			while (view.getTableWidget().getItemCount() > 0)
 				processEvents();
