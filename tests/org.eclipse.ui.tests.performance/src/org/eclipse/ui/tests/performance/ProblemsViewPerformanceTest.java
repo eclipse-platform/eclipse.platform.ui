@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.tests.performance.parts.PerformanceProblemsView;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
  * The ProblemsViewPerformanceTest is a test of population of the problems view.
@@ -34,8 +33,6 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
  * 
  */
 public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
-
-	private static final String PERFORMANCE_MARKER = "org.eclipse.ui.tests.categoryTestMarker";
 
 	private String EMPTY_PERSPECTIVE_ID = "org.eclipse.ui.tests.harness.util.EmptyPerspective";
 
@@ -83,7 +80,7 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 		}
 		commitMeasurements();
 		assertPerformance();
-		
+
 	}
 
 	/**
@@ -94,7 +91,7 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-			IMarker[] markers = root.findMarkers(PERFORMANCE_MARKER, false,
+			IMarker[] markers = root.findMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_ZERO);
 
 			for (int i = 0; i < markers.length; i++) {
@@ -107,7 +104,6 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail();
 		}
 
 	}
@@ -120,26 +116,13 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			Map attribs = new HashMap();
 			for (int i = 0; i < 1000; i++) {
-
-				if (i / 2 == 0) {
-					attribs
-							.put(MarkerViewUtil.NAME_ATTRIBUTE, "Test Name "
-									+ i);
-					attribs
-							.put(MarkerViewUtil.PATH_ATTRIBUTE, "Test Path "
-									+ i);
-				}
-
 				attribs.put(IMarker.SEVERITY, new Integer(
 						IMarker.SEVERITY_ERROR));
 				attribs.put(IMarker.MESSAGE, "this is a test " + i);
-				attribs.put(IMarker.LOCATION, "Location " + i);
-				attribs.put("testAttribute", String.valueOf(i / 2));
-				MarkerUtilities.createMarker(root, attribs, PERFORMANCE_MARKER);
+				MarkerUtilities.createMarker(root, attribs, IMarker.PROBLEM);
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail();
 		}
 
 	}
