@@ -133,6 +133,10 @@ public final class Messages extends NLS {
 	public static String ERROR_PARSING_TASK_INVALID_KIND;
 	public static String ERROR_PARSING_CHILDLESS_TASK_GROUP;
 	public static String ERROR_PARSING_NO_CHOICE;
+	public static String THIS_TASK_SKIPPED;
+	public static String PARENT_SKIPPED;
+	public static String PARENT_COMPLETED;
+	public static String PARENT_BLOCKED;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

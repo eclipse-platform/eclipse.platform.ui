@@ -46,5 +46,11 @@ public interface ICheatSheetResource {
 	public static final String CHEATSHEET_ITEM_BUTTON_SKIP = "CHEATSHEET_ITEM_BUTTON_SKIP"; //$NON-NLS-1$
 	public static final String CHEATSHEET_ITEM_BUTTON_COMPLETE = "CHEATSHEET_ITEM_BUTTON_COMPLETE"; //$NON-NLS-1$
 	public static final String CHEATSHEET_ITEM_BUTTON_RESTART = "CHEATSHEET_ITEM_BUTTON_RESTART"; //$NON-NLS-1$
+	public static final String COMPOSITE_TASK_START = "COMPOSITE_TASK_START"; //$NON-NLS-1$
+	public static final String COMPOSITE_TASK_SKIP = "COMPOSITE_TASK_SKIP"; //$NON-NLS-1$
+	public static final String COMPOSITE_TASK_REVIEW = "COMPOSITE_TASK_REVIEW"; //$NON-NLS-1$
+	public static final String COMPOSITE_GOTO_TASK = "COMPOSITE_GOTO_TASK"; //$NON-NLS-1$
+	public static final String COMPOSITE_RESTART_ALL = "COMPOSITE_RESTART_ALL"; //$NON-NLS-1$
+	public static final String CHEATSHEET_RETURN = "CHEATSHEET_RETURN"; //$NON-NLS-1$
 }
 

@@ -371,8 +371,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		} else {
 			task = new EditableTask(model, id, name, kind);
 		}
-		String completionMessage = NLS.bind(Messages.COMPLETED_TASK, (new Object[] {name}));
-		task.setCompletionMessage(completionMessage);
+		task.setCompletionMessage(Messages.COMPLETED_TASK);
 		return task;
 	}
 	

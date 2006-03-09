@@ -557,16 +557,16 @@ public class CoreItem extends ViewItem {
 			Label completionLabel = page.getToolkit().createLabel(completionComposite,
 					completionMessage, SWT.WRAP);
 			completionLabel.setBackground(backgroundColor);
-			final ImageHyperlink skipButton = createButtonWithText(
+			final ImageHyperlink completeButton = createButtonWithText(
 					completionComposite,
 					getCompletionButtonIcon(isFinalItem),
 					this, 
 					backgroundColor, 
 					getCompletionButtonTooltip(isFinalItem));
-			page.getToolkit().adapt(skipButton, true, true);
-			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
+			page.getToolkit().adapt(completeButton, true, true);
+			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					viewer.advanceItem(skipButton, true);
+					viewer.advanceItem(completeButton, true);
 				}
 			});
 			completionComposite.setVisible(false);
@@ -582,7 +582,7 @@ public class CoreItem extends ViewItem {
 			return CheatSheetPlugin
 			.getPlugin()
 			.getImage(
-					ICheatSheetResource.CHEATSHEET_RESTART);
+					ICheatSheetResource.CHEATSHEET_RETURN);
 		}
 		return CheatSheetPlugin
 				.getPlugin()

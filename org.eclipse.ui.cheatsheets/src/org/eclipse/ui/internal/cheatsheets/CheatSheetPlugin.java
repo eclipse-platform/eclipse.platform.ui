@@ -169,11 +169,36 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		path = ICONS_PATH.append(T_ELCL).append("restart_task.gif");//$NON-NLS-1$
 		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART, imageDescriptor);
+			
+		path = ICONS_PATH.append(T_ELCL).append("return_to_start.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.CHEATSHEET_RETURN, imageDescriptor);
 	
 		// Images used by composites
+
 		path = ICONS_PATH.append(T_OBJ).append("composite_obj.gif");//$NON-NLS-1$
 		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
 		reg.put(ICheatSheetResource.COMPOSITE_OBJ, imageDescriptor);
+
+		path = ICONS_PATH.append(T_ELCL).append("start_ccs_task.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.COMPOSITE_TASK_START, imageDescriptor);
+
+		path = ICONS_PATH.append(T_ELCL).append("skip_ccs_task.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.COMPOSITE_TASK_SKIP, imageDescriptor);
+
+		path = ICONS_PATH.append(T_ELCL).append("review_ccs_task.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.COMPOSITE_TASK_REVIEW, imageDescriptor);
+
+		path = ICONS_PATH.append(T_ELCL).append("goto_ccs_task.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.COMPOSITE_GOTO_TASK, imageDescriptor);
+
+		path = ICONS_PATH.append(T_ELCL).append("restart_all.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.COMPOSITE_RESTART_ALL, imageDescriptor);
 	}
 
 	/**

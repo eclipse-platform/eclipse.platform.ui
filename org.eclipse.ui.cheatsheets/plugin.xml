@@ -198,11 +198,11 @@
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <taskEditor
             class="org.eclipse.ui.internal.cheatsheets.composite.views.CheatsheetTaskEditor"
-            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
+            icon="$nl$/icons/obj16/cheatsheet_task.gif"
             id="cheatsheet"/>
       <taskExplorer
             class="org.eclipse.ui.internal.cheatsheets.composite.explorer.TreeTaskExplorer"
-            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
+            icon="$nl$/icons/elcl16/tree_explorer.gif"
             id="tree"
             name="Tree"/>
    </extension>
