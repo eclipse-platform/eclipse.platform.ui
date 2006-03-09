@@ -16,6 +16,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSHistoryPageSource;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.ui.history.IHistoryPageSource;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -75,7 +76,7 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	 * Method declared on IAdapterFactory.
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {IWorkbenchAdapter.class, IPropertySource.class, IDeferredWorkbenchAdapter.class, IHistoryPageSource.class};
+		return new Class[] {IWorkbenchAdapter.class, IPropertySource.class, IDeferredWorkbenchAdapter.class, IHistoryPageSource.class, ISynchronizationCompareAdapter.class};
 	}
 	/**
 	 * Returns the property source for the given object.  Caches

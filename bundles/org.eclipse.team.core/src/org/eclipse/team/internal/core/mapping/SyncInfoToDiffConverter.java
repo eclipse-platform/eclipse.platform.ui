@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.core.mapping;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.provider.ThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
@@ -21,6 +21,7 @@ import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariantComparator;
 
 /**
  * Covert a SyncInfo into a IDiff
@@ -62,6 +63,18 @@ public class SyncInfoToDiffConverter {
 		}
 	}
 
+	private static class PrecalculatedSyncInfo extends SyncInfo {
+		public int kind;
+		public PrecalculatedSyncInfo(int kind, IResource local, IResourceVariant base, IResourceVariant remote, IResourceVariantComparator comparator) {
+			super(local, base, remote, comparator);
+			this.kind = kind;
+		}
+
+		protected int calculateKind() throws TeamException {
+			return kind;
+		}
+	}
+	
 	public static int asDiffFlags(int syncInfoFlags) {
 		if (syncInfoFlags == SyncInfo.IN_SYNC)
 			return IDiff.NO_CHANGE;
@@ -91,6 +104,37 @@ public class SyncInfoToDiffConverter {
 			break;
 		}
 		return diffFlags;
+	}
+	
+	private static int asSyncInfoKind(IThreeWayDiff diff) {
+		int kind = diff.getKind();
+		if (diff.getKind() == IDiff.NO_CHANGE)
+			return SyncInfo.IN_SYNC;
+		int syncKind = 0;
+		switch (kind) {
+		case IDiff.ADD:
+			syncKind = SyncInfo.ADDITION;
+			break;
+		case IDiff.REMOVE:
+			syncKind = SyncInfo.DELETION;
+			break;
+		case IDiff.CHANGE:
+			syncKind = SyncInfo.CHANGE;
+			break;
+		}
+		int direction = diff.getDirection();
+		switch (direction) {
+		case IThreeWayDiff.INCOMING:
+			syncKind |= SyncInfo.INCOMING;
+			break;
+		case IThreeWayDiff.OUTGOING:
+			syncKind |= SyncInfo.OUTGOING;
+			break;
+		case IThreeWayDiff.CONFLICTING:
+			syncKind |= SyncInfo.CONFLICTING;
+			break;
+		}
+		return syncKind;
 	}
 	
 	public static IDiff getDeltaFor(SyncInfo info) {
@@ -181,20 +225,87 @@ public class SyncInfoToDiffConverter {
 	public static IResourceVariant getRemoteVariant(IThreeWayDiff twd) {
 		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
 		if (diff != null)
-			return ((ResourceVariantFileRevision)diff.getAfterState()).getVariant();
+			return asResourceVariant(diff.getAfterState());
 		diff = (IResourceDiff)twd.getLocalChange();
 		if (diff != null)
-			return ((ResourceVariantFileRevision)diff.getBeforeState()).getVariant();
+			return asResourceVariant(diff.getBeforeState());
 		return null;
 	}
 
 	public static IResourceVariant getBaseVariant(IThreeWayDiff twd) {
 		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
 		if (diff != null)
-			return ((ResourceVariantFileRevision)diff.getBeforeState()).getVariant();
+			return asResourceVariant(diff.getBeforeState());
 		diff = (IResourceDiff)twd.getLocalChange();
 		if (diff != null)
-			return ((ResourceVariantFileRevision)diff.getBeforeState()).getVariant();
+			return asResourceVariant(diff.getBeforeState());
+		return null;
+	}
+	
+	public static SyncInfo asSyncInfo(IDiff diff, IResourceVariantComparator comparator) {
+		if (diff instanceof ResourceDiff) {
+			ResourceDiff rd = (ResourceDiff) diff;
+			IResource local = rd.getResource();
+			IFileRevision afterState = rd.getAfterState();
+			IResourceVariant remote = asResourceVariant(afterState);
+			int kind;
+			if (remote == null) {
+				kind = SyncInfo.DELETION;
+			} else if (!local.exists()) {
+				kind = SyncInfo.ADDITION;
+			} else {
+				kind = SyncInfo.CHANGE;
+			}
+			PrecalculatedSyncInfo info = new PrecalculatedSyncInfo(kind, local, null, remote, comparator);
+			try {
+				info.init();
+			} catch (TeamException e) {
+				// Ignore
+			}
+			return info;
+		} else if (diff instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) diff;
+			IResource local = getLocal(twd);
+			if (local != null) {
+				IResourceVariant remote = getRemoteVariant(twd);
+				IResourceVariant base = getBaseVariant(twd);
+				int kind = asSyncInfoKind(twd);
+				PrecalculatedSyncInfo info = new PrecalculatedSyncInfo(kind, local, base, remote, comparator);
+				try {
+					info.init();
+				} catch (TeamException e) {
+					// Ignore
+				}
+				return info;
+			}
+		}
+		return null;
+	}
+
+	private static IResource getLocal(IThreeWayDiff twd) {
+		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
+		if (diff != null)
+			return diff.getResource();
+		diff = (IResourceDiff)twd.getLocalChange();
+		if (diff != null)
+			return diff.getResource();
+		return null;
+	}
+
+	public static IResourceVariant asResourceVariant(IFileRevision revision) {
+		if (revision == null)
+			return null;
+		if (revision instanceof ResourceVariantFileRevision) {
+			ResourceVariantFileRevision rvfr = (ResourceVariantFileRevision) revision;
+			return rvfr.getVariant();
+		}
+		if (revision instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) revision;
+			Object o = adaptable.getAdapter(IResourceVariant.class);
+			if (o instanceof IResourceVariant) {
+				return (IResourceVariant) o;
+			}
+		}
 		return null;
 	}
 }

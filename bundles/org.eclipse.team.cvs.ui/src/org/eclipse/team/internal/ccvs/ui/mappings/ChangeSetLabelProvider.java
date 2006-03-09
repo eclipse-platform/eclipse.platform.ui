@@ -14,7 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
+import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 
 public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
@@ -22,15 +22,15 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 	private Image changeSetImage;
 
 	protected String getDelegateText(Object element) {
-		if (element instanceof ActiveChangeSet) {
-			ActiveChangeSet set = (ActiveChangeSet) element;
+		if (element instanceof DiffChangeSet) {
+			DiffChangeSet set = (DiffChangeSet) element;
 			return set.getName();
 		}
 		return super.getDelegateText(element);
 	}
 	
 	protected Image getDelegateImage(Object element) {
-		if (element instanceof ActiveChangeSet) {
+		if (element instanceof DiffChangeSet) {
 			return getChangeSetImage();
 		}
 		return super.getDelegateImage(element);

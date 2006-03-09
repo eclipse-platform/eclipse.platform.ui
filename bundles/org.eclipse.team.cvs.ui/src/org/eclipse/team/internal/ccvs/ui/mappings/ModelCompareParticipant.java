@@ -13,6 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ComparePreferencePage;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -49,4 +51,8 @@ public class ModelCompareParticipant extends ModelSynchronizeParticipant
         pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); 
         return pages;
     }
+
+	public Subscriber getSubscriber() {
+		return ((SubscriberMergeContext)getContext()).getSubscriber();
+	}
 }

@@ -114,7 +114,7 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
         this.subProvierId = subProvierId;
         ChangeSetCapability changeSetCapability = getChangeSetCapability();
         if (changeSetCapability.supportsCheckedInChangeSets()) {
-	        checkedInCollector = changeSetCapability.createCheckedInChangeSetCollector(configuration);
+	        checkedInCollector = changeSetCapability.createSyncInfoSetChangeSetCollector(configuration);
 	        checkedInCollector.setProvider(this);
 	        checkedInCollector.addListener(changeSetListener);
         }

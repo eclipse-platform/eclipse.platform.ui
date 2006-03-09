@@ -36,7 +36,7 @@ public class CVSChangeSetCapability extends ChangeSetCapability {
     /* (non-Javadoc)
      * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#createCheckedInChangeSetCollector(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
      */
-    public SyncInfoSetChangeSetCollector createCheckedInChangeSetCollector(ISynchronizePageConfiguration configuration) {
+    public SyncInfoSetChangeSetCollector createSyncInfoSetChangeSetCollector(ISynchronizePageConfiguration configuration) {
         return new CVSChangeSetCollector(configuration);
     }
     

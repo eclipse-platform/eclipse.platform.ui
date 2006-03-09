@@ -24,10 +24,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -36,6 +38,10 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 public class DiffTreeChangesSection extends ForwardingChangesSection implements IDiffChangeListener, IPropertyChangeListener, IEmptyTreeListener {
 
 	private ISynchronizationContext context;
+	
+	public interface ITraversalFactory {
+		ResourceTraversal[] getTraversals(ISynchronizationScope scope);
+	}
 
 	public DiffTreeChangesSection(Composite parent, AbstractSynchronizePage page, ISynchronizePageConfiguration configuration) {
 		super(parent, page, configuration);
@@ -93,13 +99,14 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	}
 
 	private boolean hasChangesFor(String id, ISynchronizationCompareAdapter adapter, ISynchronizationContext context, int[] states, int mask) {
-		ResourceTraversal[] traversals = context.getScope().getTraversals(id);
-		if (context.getDiffTree().hasMatchingDiffs(traversals, FastDiffFilter.getStateFilter(states, mask)))
-			return true;
-		// Return true if there are no traversals to accommodate change sets
-		if (traversals.length == 0) 
-			return true;
-		return false;
+		ITraversalFactory factory = (ITraversalFactory)Utils.getAdapter(adapter, ITraversalFactory.class);
+		ResourceTraversal[] traversals;
+		if (factory == null) {
+			traversals = context.getScope().getTraversals(id);
+		} else {
+			traversals = factory.getTraversals(context.getScope());
+		}
+		return (context.getDiffTree().hasMatchingDiffs(traversals, FastDiffFilter.getStateFilter(states, mask)));
 	}
 
 	protected long getVisibleChangesCount() {

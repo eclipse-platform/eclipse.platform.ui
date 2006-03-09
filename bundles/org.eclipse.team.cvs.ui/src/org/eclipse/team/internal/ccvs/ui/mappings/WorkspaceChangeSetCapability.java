@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CommitSetDialog;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
@@ -85,5 +86,24 @@ public class WorkspaceChangeSetCapability extends ChangeSetCapability {
      */
     public SubscriberChangeSetCollector getActiveChangeSetManager() {
         return CVSUIPlugin.getPlugin().getChangeSetManager();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.synchronize.ChangeSetCapability#supportsCheckedInChangeSets()
+     */
+    public boolean supportsCheckedInChangeSets() {
+    	return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.synchronize.ChangeSetCapability#enableCheckedInChangeSetsFor(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+     */
+    public boolean enableCheckedInChangeSetsFor(ISynchronizePageConfiguration configuration) {
+        return supportsCheckedInChangeSets() && 
+    		configuration.getMode() != ISynchronizePageConfiguration.OUTGOING_MODE;
+    }
+    
+    public CheckedInChangeSetCollector createCheckedInChangeSetCollector(ISynchronizePageConfiguration configuration) {
+    	return new CheckedInChangeSetCollector(configuration, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
     }
 }

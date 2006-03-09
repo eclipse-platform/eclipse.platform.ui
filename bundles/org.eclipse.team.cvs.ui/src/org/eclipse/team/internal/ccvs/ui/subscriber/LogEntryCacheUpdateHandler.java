@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelCompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
@@ -171,7 +172,16 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
     }
 
     private Subscriber getSubscriber(ISynchronizePageConfiguration configuration) {
-        return ((SubscriberParticipant)configuration.getParticipant()).getSubscriber();
+        ISynchronizeParticipant participant = configuration.getParticipant();
+        if (participant instanceof SubscriberParticipant) {
+			SubscriberParticipant sp = (SubscriberParticipant) participant;
+			return sp.getSubscriber();
+		}
+        if (participant instanceof ModelCompareParticipant) {
+			ModelCompareParticipant mcp = (ModelCompareParticipant) participant;
+			return mcp.getSubscriber();
+		}
+        return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
     }
 
     public ISynchronizePageConfiguration getConfiguration() {
@@ -297,7 +307,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
         }
     }
 
-    protected ICVSRemoteResource getRemoteResource(SyncInfo info) {
+    public ICVSRemoteResource getRemoteResource(SyncInfo info) {
 		try {
 			ICVSRemoteResource remote = (ICVSRemoteResource) info.getRemote();
 			ICVSRemoteResource local = CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
@@ -505,7 +515,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
 	 * meaning that it can be placed inside an incoming commit set (i.e. the
 	 * set is determined using the comments from the log entry of the file). 
 	 */
-	protected boolean isRemoteChange(SyncInfo info) {
+	public boolean isRemoteChange(SyncInfo info) {
 		int kind = info.getKind();
 		if(info.getLocal().getType() != IResource.FILE) return false;
 		if(info.getComparator().isThreeWay()) {

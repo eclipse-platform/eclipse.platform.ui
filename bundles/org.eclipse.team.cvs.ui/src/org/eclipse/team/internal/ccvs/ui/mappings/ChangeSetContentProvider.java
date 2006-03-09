@@ -23,12 +23,14 @@ import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
+import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 public class ChangeSetContentProvider extends ResourceModelContentProvider implements ITreePathContentProvider {
@@ -39,7 +41,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	/*
 	 * Listener that reacts to changes made to the active change set collector
 	 */
-	private IChangeSetChangeListener activeListener = new IChangeSetChangeListener() {
+	private IChangeSetChangeListener collectorListener = new IChangeSetChangeListener() {
 	
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener#setAdded(org.eclipse.team.internal.core.subscribers.ChangeSet)
@@ -168,7 +170,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		 */
 		public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 			Object input = getViewer().getInput();
-			if (input instanceof ChangeSetModelProvider) {
+			if (input instanceof ChangeSetModelProvider && event.getTree() == theRest) {
 				Utils.asyncExec(new Runnable() {
 					public void run() {
 						// TODO: Need to be a bit more precise
@@ -179,6 +181,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		}
 	
 	};
+	private CheckedInChangeSetCollector checkedInCollector;
+	private boolean collectorInitialized;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider#getModelProviderId()
@@ -192,8 +196,13 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		if (input instanceof ChangeSetModelProvider) {
 			if (set instanceof ActiveChangeSet) {
 				ActiveChangeSet acs = (ActiveChangeSet) set;
-				// TODO: may nee to be more precise that this
+				// TODO: may need to be more precise that this
 				return getConfiguration().getMode() != ISynchronizePageConfiguration.INCOMING_MODE;
+			}
+			if (set instanceof DiffChangeSet) {
+				DiffChangeSet dcs = (DiffChangeSet) set;
+				// TODO: may need to be more precise that this
+				return getConfiguration().getMode() != ISynchronizePageConfiguration.OUTGOING_MODE;
 			}
 		}
 		return false;
@@ -216,6 +225,10 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	private Object[] getRootElements() {
+		if (checkedInCollector != null && !collectorInitialized) {
+			checkedInCollector.add(((ResourceDiffTree)getContext().getDiffTree()).getDiffs());
+			collectorInitialized = true;
+		}
 		List result = new ArrayList();
 		ChangeSet[] sets = getAllSets();
 		for (int i = 0; i < sets.length; i++) {
@@ -366,12 +379,22 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	private DiffChangeSet[] getAllSets() {
-		SubscriberChangeSetCollector collector = CVSUIPlugin.getPlugin().getChangeSetManager();
-		ChangeSet[] sets = collector.getSets();
 		List result = new ArrayList();
-		for (int i = 0; i < sets.length; i++) {
-			ChangeSet set = sets[i];
-			result.add(set);
+		ChangeSetCapability csc = getChangeSetCapability();
+		if (csc.supportsActiveChangeSets()) {
+			SubscriberChangeSetCollector collector = csc.getActiveChangeSetManager();
+			ChangeSet[] sets = collector.getSets();	
+			for (int i = 0; i < sets.length; i++) {
+				ChangeSet set = sets[i];
+				result.add(set);
+			}
+		}
+		if (checkedInCollector != null) {
+			ChangeSet[] sets = checkedInCollector.getSets();	
+			for (int i = 0; i < sets.length; i++) {
+				ChangeSet set = sets[i];
+				result.add(set);
+			}
 		}
 		return (DiffChangeSet[]) result.toArray(new DiffChangeSet[result.size()]);
 	}
@@ -383,23 +406,42 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	
 	public void init(ICommonContentExtensionSite site) {
 		super.init(site);
-		SubscriberChangeSetCollector collector = CVSUIPlugin.getPlugin().getChangeSetManager();
-		collector.addListener(activeListener);
-		ChangeSet[] sets = collector.getSets();
-		for (int i = 0; i < sets.length; i++) {
-			DiffChangeSet set = (DiffChangeSet)sets[i];
-			set.getDiffTree().addDiffChangeListener(diffTreeListener);
+		ChangeSetCapability csc = getChangeSetCapability();
+		if (csc.supportsActiveChangeSets()) {
+			SubscriberChangeSetCollector collector = csc.getActiveChangeSetManager();
+			collector.addListener(collectorListener);
+			ChangeSet[] sets = collector.getSets();
+			for (int i = 0; i < sets.length; i++) {
+				DiffChangeSet set = (DiffChangeSet)sets[i];
+				addListener(set);
+			}
+		}
+		if (csc.supportsCheckedInChangeSets()) {
+			checkedInCollector = ((WorkspaceChangeSetCapability)csc).createCheckedInChangeSetCollector(getConfiguration());
+			checkedInCollector.addListener(collectorListener);
+			ChangeSet[] sets = checkedInCollector.getSets();
+			for (int i = 0; i < sets.length; i++) {
+				DiffChangeSet set = (DiffChangeSet)sets[i];
+				addListener(set);
+			}
 		}
 	}
 	
 	public void dispose() {
-		CVSUIPlugin.getPlugin().getChangeSetManager().removeListener(activeListener);
-		for (Iterator iter = diffTrees.values().iterator(); iter.hasNext();) {
-			IDiffTree tree = (IDiffTree) iter.next();
-			tree.removeDiffChangeListener(diffTreeListener);
+		ChangeSetCapability csc = getChangeSetCapability();
+		if (csc.supportsActiveChangeSets()) {
+			csc.getActiveChangeSetManager().removeListener(collectorListener);
+		}
+		if (checkedInCollector != null) {
+			checkedInCollector.removeListener(collectorListener);
+			checkedInCollector.dispose();
 		}
 		if (theRest != null) {
 			theRest.removeDiffChangeListener(diffTreeListener);
+		}
+		for (Iterator iter = diffTrees.keySet().iterator(); iter.hasNext();) {
+			IDiffTree tree = (IDiffTree) iter.next();
+			tree.removeDiffChangeListener(diffTreeListener);
 		}
 		super.dispose();
 	}
@@ -460,6 +502,17 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		} finally {
 			getTheRest().endInput(monitor);
 		}
+		if (checkedInCollector != null)
+			checkedInCollector.handleChange(event);
 	}
+	
+    public ChangeSetCapability getChangeSetCapability() {
+        ISynchronizeParticipant participant = getConfiguration().getParticipant();
+        if (participant instanceof IChangeSetProvider) {
+            IChangeSetProvider provider = (IChangeSetProvider) participant;
+            return provider.getChangeSetCapability();
+        }
+        return null;
+    }
 
 }

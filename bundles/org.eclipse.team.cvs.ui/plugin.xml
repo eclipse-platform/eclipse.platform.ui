@@ -1509,6 +1509,11 @@
             class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
          <adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"
+            class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
+         <adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.team.ui.teamDecorators">
@@ -1538,8 +1543,6 @@
             <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"/>
             <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSet"/>
             <instanceof value="org.eclipse.core.resources.IResource"/>
-            <instanceof value="org.eclipse.team.core.mapping.ISynchronizationScope"/>
-            <instanceof value="org.eclipse.team.core.mapping.ISynchronizationContext"/>
            </or>
          </enablement>
          <commonSorter

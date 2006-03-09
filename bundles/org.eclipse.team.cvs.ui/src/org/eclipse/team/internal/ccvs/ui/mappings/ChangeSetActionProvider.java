@@ -383,6 +383,8 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 
 	private boolean isVisible(IDiff diff) {
 		ChangeSetContentProvider provider = getContentProvider();
+		if (provider == null)
+			return false;
 		return provider.isVisible(diff);
 	}
 	
@@ -396,7 +398,7 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 				return (ChangeSetContentProvider) provider;
 			}
 		}
-		throw new IllegalStateException();
+		return null;
 	}
 
 	private Object getModelProvider() {

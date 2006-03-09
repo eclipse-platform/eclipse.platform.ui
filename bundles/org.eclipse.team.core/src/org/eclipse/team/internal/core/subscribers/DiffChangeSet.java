@@ -145,4 +145,16 @@ public abstract class DiffChangeSet extends ChangeSet {
 		return getDiffTree().getDiffs(resource, depth).length > 0;
 	}
 
+	public void remove(IPath[] paths) {
+		try {
+			tree.beginInput();
+			for (int i = 0; i < paths.length; i++) {
+				IPath path = paths[i];
+				tree.remove(path);
+			}
+		} finally {
+			tree.endInput(null);
+		}
+	}
+
 }

@@ -98,7 +98,7 @@ public abstract class ChangeSetCapability {
      * @param configuration the configuration for the page that will be displaying the change sets
      * @return a change set collector
      */
-    public SyncInfoSetChangeSetCollector createCheckedInChangeSetCollector(ISynchronizePageConfiguration configuration) {
+    public SyncInfoSetChangeSetCollector createSyncInfoSetChangeSetCollector(ISynchronizePageConfiguration configuration) {
         return null;
     }
     
