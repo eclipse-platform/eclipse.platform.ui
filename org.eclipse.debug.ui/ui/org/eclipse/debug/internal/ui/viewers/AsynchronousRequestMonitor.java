@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.internal.ui.actions.context.AbstractRequestMonitor;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </p>
  * @since 3.2
  */
-public abstract class AsynchronousRequestMonitor implements IAsynchronousRequestMonitor {
+public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor {
     
 	/**
 	 * Model node the upadte is rooted at
@@ -36,16 +36,6 @@ public abstract class AsynchronousRequestMonitor implements IAsynchronousRequest
      */
     private AsynchronousModel fModel;
     
-    /**
-     * Whether this request has been canelled
-     */
-    private boolean fCanceled = false;
-    
-    /**
-     * Update request status or <code>null</code>
-     */
-    private IStatus fStatus = null;
-
     protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("Asynchronous viewer update") { //$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
             // necessary to check if widget is disposed. The item may
@@ -54,8 +44,9 @@ public abstract class AsynchronousRequestMonitor implements IAsynchronousRequest
         	getModel().viewerUpdateScheduled(AsynchronousRequestMonitor.this);
             getModel().requestComplete(AsynchronousRequestMonitor.this);
             if (!isCanceled() && !getNode().isDisposed()) {
-                if (fStatus != null && !fStatus.isOK()) {
-                	getModel().getViewer().handlePresentationFailure(AsynchronousRequestMonitor.this, fStatus);
+            	IStatus status = getStatus();
+                if (status != null && !status.isOK()) {
+                	getModel().getViewer().handlePresentationFailure(AsynchronousRequestMonitor.this, status);
                 }
                 performUpdate();
             }
@@ -116,56 +107,15 @@ public abstract class AsynchronousRequestMonitor implements IAsynchronousRequest
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.IAsynchronousRequestMonitor#setStatus(org.eclipse.core.runtime.IStatus)
-     */
-    public void setStatus(IStatus status) {
-        fStatus = status;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
-     */
-    public void beginTask(String name, int totalWork) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
-     */
-    public void internalWorked(double work) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
-     */
-    public boolean isCanceled() {
-        return fCanceled;
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
      */
     public void setCanceled(boolean value) {
-        fCanceled = true;
-        getModel().requestCanceled(this);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
-     */
-    public void setTaskName(String name) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
-     */
-    public void subTask(String name) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
-     */
-    public void worked(int work) {
+        super.setCanceled(value);
+        if (value) {
+        	getModel().requestCanceled(this);
+        }
     }
     
     /* (non-Javadoc)
