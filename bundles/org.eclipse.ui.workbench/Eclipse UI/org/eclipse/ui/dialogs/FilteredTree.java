@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -289,10 +290,10 @@ public class FilteredTree extends Composite {
 						Object[] elements = provider.getElements(treeViewer
 								.getInput());
 						for (int i = 0; i < elements.length; i++) {
-							treeViewer.setExpandedState(elements[i], true);
 							if (monitor.isCanceled()) {
 								return Status.CANCEL_STATUS;
 							}
+							treeViewer.expandToLevel(elements[i], AbstractTreeViewer.ALL_LEVELS);
 						}
 	
 			            TreeItem[] items = getViewer().getTree().getItems();
