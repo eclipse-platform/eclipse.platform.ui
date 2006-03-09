@@ -492,15 +492,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	clear : both;
 }
 
-/*
-#page-content #top-left > *, 
-#page-content #top-right > *,
-#page-content #bottom-left > *,
-#page-content #bottom-right > * {
-	display: block;
-}
-*/
-
 #page-content * > a {
 	vertical-align : middle; 
 }

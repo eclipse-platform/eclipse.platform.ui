@@ -6,22 +6,6 @@
 	font-size : 18pt;
 }
 
-/*
-
-#navigation-links a:hover .link-extra-div,
-#navigation-links a:focus .link-extra-div,
-#navigation-links a:active .link-extra-div {
-	display: block;
-	position: absolute;
-	right : -2px;
-	top : 2px;
-	height : 64px;
-	background-image: url(../graphics/icons/ctool/nav_rightedgehov.gif);
-	background-repeat: no-repeat;
-}
-
-*/
-
 #page-links a .link-label, #action-links a .link-label {
 	font-size : 13pt;	font-weight : 600;
 	padding-left: 10px;
@@ -105,17 +89,18 @@ body {
 }
 
 #page-links a:hover img {
-	width : 202px;
-	height : 80px;
+	width : 215px;
+	height : 84px;
 }
 
 #page-links a#overview {
 	left: -1px;
 	top: 5px;
+	background-color: magenta;
 }
 
 #page-links a#overview:hover {
-	left: -16px;
+	left: -5px;
 }
 
 #page-links a#overview img {
@@ -184,7 +169,7 @@ body {
 #page-links a#overview:active {
 	background-image: url(../graphics/icons/ctool/overview_bottomhov.gif);
 	background-image: no-repeat;
-	background-position: bottom 15px;
+	background-position: bottom left;
 	z-index: 20;
 }
 
@@ -197,25 +182,62 @@ body {
 #page-links a:hover .link-label,
 #page-links a:focus .link-label,
 #page-links a:active .link-label {
-	position: relative;
 	display : block;
+	z-index: 40;
 }
-
-
 
 #page-links a:hover p .text,
 #page-links a:focus p .text,
 #page-links a:active p .text {
-	position: relative;
 	display : block;
+	z-index: 40;
+}
+
+
+#page-links a#overview:hover .link-label,
+#page-links a#overview:focus .link-label,
+#page-links a:overview:active .link-label {
+	width: 215px;
 }
 
 #page-links a#overview:hover p .text,
 #page-links a#overview:focus p .text,
 #page-links a:overview:active p .text {
-	padding-left: 20px;
-	padding-right: 20px;
+	width: 215px;
 }
+
+#page-links a:hover .link-extra-div,
+#page-links a:focus .link-extra-div,
+#page-links a:active .link-extra-div {
+	display: block;
+	position: absolute;
+	top : 84px;
+	left : 0px;
+	width: 215px;
+	height: auto;
+	bottom: 2px;
+	z-index: -5;
+/*
+	background-image: url(../graphics/icons/ctool/root_midhov.gif);
+	background-repeat: repeat-y;
+	*/
+	background-color: cyan;
+}
+/*
+#page-links a#overview:hover .link-extra-div,
+#page-links a#overview:focus .link-extra-div,
+#page-links a#overview:active .link-extra-div {
+	display: block;
+	position: absolute;
+	top : 99px;
+	left : 7px;
+	width: 217px;
+	height: auto;
+	bottom: 2px;
+	background-image: url(../graphics/icons/ctool/root_midhov.gif);
+	background-repeat: repeat-y;
+}
+*/
 
 /* properties for each of the page-links  */
 #page-links a#overview img { background-image : url(../graphics/icons/ctool/overview.gif); }
