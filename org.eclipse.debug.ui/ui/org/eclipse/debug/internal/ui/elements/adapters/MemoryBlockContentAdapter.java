@@ -25,7 +25,7 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
-import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
+import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
@@ -51,10 +51,10 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		if (!(parent instanceof IMemoryBlock))
 			return new Object[0];
 		
-		if (!(context instanceof IMemoryViewPresentationContext))
+		if (!(context instanceof MemoryViewPresentationContext))
 			return new Object[0];
 		
-		IMemoryViewPresentationContext memoryViewContext = (IMemoryViewPresentationContext)context; 
+		MemoryViewPresentationContext memoryViewContext = (MemoryViewPresentationContext)context; 
 		IMemoryRendering rendering = memoryViewContext.getRendering();
 		
 		if (!(rendering instanceof AbstractAsyncTableRendering))
@@ -72,9 +72,9 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	protected boolean hasChildren(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof IMemoryViewPresentationContext)
+		if (context instanceof MemoryViewPresentationContext)
 		{
-			if (((IMemoryViewPresentationContext)context).getRendering() != null)
+			if (((MemoryViewPresentationContext)context).getRendering() != null)
 				return true;
 		}
 		
@@ -86,7 +86,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	}
 	
 	
-	private Object[] getMemoryFromMemoryBlock(IMemoryViewPresentationContext context) throws DebugException {
+	private Object[] getMemoryFromMemoryBlock(MemoryViewPresentationContext context) throws DebugException {
 		IMemoryBlock memoryBlock = context.getRendering().getMemoryBlock();
 		if (memoryBlock instanceof IMemoryBlockExtension)
 		{
@@ -100,7 +100,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	/**
 	 * @throws DebugException
 	 */
-	public Object[] loadContentForSimpleMemoryBlock(IMemoryViewPresentationContext context) throws DebugException {
+	public Object[] loadContentForSimpleMemoryBlock(MemoryViewPresentationContext context) throws DebugException {
 		AbstractAsyncTableRendering rendering = getTableRendering(context);
 		if (rendering != null)
 		{
@@ -117,7 +117,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	/**
 	 * @throws DebugException
 	 */
-	public Object[] loadContentForExtendedMemoryBlock(IMemoryViewPresentationContext context) throws DebugException {
+	public Object[] loadContentForExtendedMemoryBlock(MemoryViewPresentationContext context) throws DebugException {
 		
 		AbstractAsyncTableRendering rendering = getTableRendering(context);
 		if (rendering != null)
@@ -203,7 +203,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	 * @param updateDelta
 	 * @throws DebugException
 	 */
-	public Object[]  getMemoryToFitTable(BigInteger startAddress, long numberOfLines, IMemoryViewPresentationContext context) throws DebugException
+	public Object[]  getMemoryToFitTable(BigInteger startAddress, long numberOfLines, MemoryViewPresentationContext context) throws DebugException
 	{
 		AbstractAsyncTableRendering tableRendering = getTableRendering(context);	
 		if (tableRendering == null)
@@ -389,7 +389,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 
 	}
 
-	private Object[] organizeLines(long numberOfLines,  MemoryByte[] memoryBuffer, BigInteger address, boolean manageDelta, IMemoryViewPresentationContext context) 
+	private Object[] organizeLines(long numberOfLines,  MemoryByte[] memoryBuffer, BigInteger address, boolean manageDelta, MemoryViewPresentationContext context) 
 	{
 		Vector lineCache = new Vector();
 		IMemoryRendering rendering = context.getRendering();
@@ -460,7 +460,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		return memoryBuffer;
 	}
 	
-	protected AbstractAsyncTableRendering getTableRendering(IMemoryViewPresentationContext context)
+	protected AbstractAsyncTableRendering getTableRendering(MemoryViewPresentationContext context)
 	{
 		IMemoryRendering memRendering = context.getRendering();
 		if (memRendering != null && memRendering instanceof AbstractAsyncTableRendering)

@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IWatchExpression;
-import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
+import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
@@ -66,9 +66,9 @@ public class DefaultModelProxyFactory implements IModelProxyFactoryAdapter {
 			if (IDebugUIConstants.ID_MEMORY_VIEW.equals(id)) {
 				if (element instanceof IMemoryBlockRetrieval)
 					return new MemoryRetrievalProxy((IMemoryBlockRetrieval)element);
-				if (context instanceof IMemoryViewPresentationContext)
+				if (context instanceof MemoryViewPresentationContext)
 				{
-					if (((IMemoryViewPresentationContext)context).getRendering() != null)
+					if (((MemoryViewPresentationContext)context).getRendering() != null)
 					{
 						if (element instanceof IMemoryBlock)
 							return new MemoryBlockProxy((IMemoryBlock)element);

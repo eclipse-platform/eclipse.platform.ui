@@ -19,7 +19,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
-import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
+import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.TableUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
@@ -101,9 +101,9 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 	protected void handleMemoryBlockChanged(IMemoryBlock mb, IModelDelta delta)
 	{
 		try {
-			if (getViewer().getPresentationContext() instanceof IMemoryViewPresentationContext)
+			if (getViewer().getPresentationContext() instanceof MemoryViewPresentationContext)
 			{
-				IMemoryViewPresentationContext context = (IMemoryViewPresentationContext)getViewer().getPresentationContext();
+				MemoryViewPresentationContext context = (MemoryViewPresentationContext)getViewer().getPresentationContext();
 				final AbstractAsyncTableRendering rendering = getTableRendering(context);
 				if (rendering != null)
 				{
@@ -159,9 +159,9 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 	
 	private boolean containsEvent(IModelDelta delta)
 	{
-		if (getViewer().getPresentationContext() instanceof IMemoryViewPresentationContext)
+		if (getViewer().getPresentationContext() instanceof MemoryViewPresentationContext)
 		{
-			IMemoryViewPresentationContext context = (IMemoryViewPresentationContext) getViewer().getPresentationContext();
+			MemoryViewPresentationContext context = (MemoryViewPresentationContext) getViewer().getPresentationContext();
 			if (context.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering rendering = (AbstractAsyncTableRendering)context.getRendering();
@@ -172,7 +172,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 		return true;
 	}
 	
-	protected AbstractAsyncTableRendering getTableRendering(IMemoryViewPresentationContext context)
+	protected AbstractAsyncTableRendering getTableRendering(MemoryViewPresentationContext context)
 	{
 		IMemoryRendering memRendering = context.getRendering();
 		if (memRendering != null && memRendering instanceof AbstractAsyncTableRendering)

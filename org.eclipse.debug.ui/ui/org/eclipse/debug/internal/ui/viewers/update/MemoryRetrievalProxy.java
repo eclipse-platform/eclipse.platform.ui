@@ -17,7 +17,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
+import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
@@ -168,10 +168,10 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		if (memoryBlocks.length == 1)
 			return true;
 		
-		if (getPresentationContext() instanceof IMemoryViewPresentationContext)
+		if (getPresentationContext() instanceof MemoryViewPresentationContext)
 		{
 			// if registered, meaning the memory block is added from this view, select
-			IMemoryViewPresentationContext context = (IMemoryViewPresentationContext)getPresentationContext();
+			MemoryViewPresentationContext context = (MemoryViewPresentationContext)getPresentationContext();
 			if (context.isMemoryBlockRegistered(memoryBlock))
 				return true;
 			// if display is not pinned, select

@@ -19,7 +19,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
-import org.eclipse.debug.internal.ui.memory.provisional.IMemoryViewPresentationContext;
+import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
@@ -44,9 +44,9 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 	protected String[] getLabels(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof IMemoryViewPresentationContext)
+		if (context instanceof MemoryViewPresentationContext)
 		{
-			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			MemoryViewPresentationContext tableRenderingContext = (MemoryViewPresentationContext)context;
 			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
@@ -137,9 +137,9 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 
 	protected ImageDescriptor[] getImageDescriptors(Object element,
 			IPresentationContext context) throws CoreException {
-		if (context instanceof IMemoryViewPresentationContext)
+		if (context instanceof MemoryViewPresentationContext)
 		{
-			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			MemoryViewPresentationContext tableRenderingContext = (MemoryViewPresentationContext)context;
 			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
@@ -210,9 +210,9 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 
 	protected FontData[] getFontDatas(Object element,
 			IPresentationContext context) throws CoreException {
-		if (context instanceof IMemoryViewPresentationContext)
+		if (context instanceof MemoryViewPresentationContext)
 		{
-			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			MemoryViewPresentationContext tableRenderingContext = (MemoryViewPresentationContext)context;
 			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
@@ -256,9 +256,9 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 	protected RGB[] getForegrounds(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof IMemoryViewPresentationContext)
+		if (context instanceof MemoryViewPresentationContext)
 		{
-			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			MemoryViewPresentationContext tableRenderingContext = (MemoryViewPresentationContext)context;
 			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
@@ -358,9 +358,9 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 	protected RGB[] getBackgrounds(Object element, IPresentationContext context)
 			throws CoreException {
 		
-		if (context instanceof IMemoryViewPresentationContext)
+		if (context instanceof MemoryViewPresentationContext)
 		{
-			IMemoryViewPresentationContext tableRenderingContext = (IMemoryViewPresentationContext)context;
+			MemoryViewPresentationContext tableRenderingContext = (MemoryViewPresentationContext)context;
 			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();

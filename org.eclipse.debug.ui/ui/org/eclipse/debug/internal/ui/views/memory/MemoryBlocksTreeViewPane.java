@@ -34,6 +34,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.ViewerState;
 import org.eclipse.debug.ui.DebugUITools;
@@ -320,8 +321,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fTreeViewer = new AsynchronousTreeViewer(parent);
 		fLabel = label;
 		
-		MemoryViewPresentationContext presentationContext = new MemoryViewPresentationContext(fParent);
-		presentationContext.setMemoryRenderingContainer(this);
+		IMemoryRenderingSite site = getMemoryRenderingSite();
+		MemoryViewPresentationContext presentationContext = new MemoryViewPresentationContext(site, this, null);
 		fTreeViewer.setContext(presentationContext);
 		
 		IAdaptable context = DebugUITools.getDebugContext();

@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.views.memory.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractVirtualContentTableModel;
@@ -422,9 +421,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 					public IStatus runInUIThread(IProgressMonitor progressMonitor) {
 						
 						fTableViewer = new AsyncTableRenderingViewer(AbstractAsyncTableRendering.this, parent, SWT.VIRTUAL | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
-						fPresentationContext = new MemoryViewPresentationContext(getMemoryRenderingContainer().getMemoryRenderingSite().getSite().getPart());
-						fPresentationContext.setMemoryRenderingContainer(getMemoryRenderingContainer());
-						fPresentationContext.setRendering(AbstractAsyncTableRendering.this);
+						
+						IMemoryRenderingSite site = getMemoryRenderingContainer().getMemoryRenderingSite();
+						IMemoryRenderingContainer container = getMemoryRenderingContainer();
+						fPresentationContext = new MemoryViewPresentationContext(site, container, AbstractAsyncTableRendering.this);
 						fTableViewer.setContext(fPresentationContext);
 						
 						// must call this after the context is created as the info is stored in the context
