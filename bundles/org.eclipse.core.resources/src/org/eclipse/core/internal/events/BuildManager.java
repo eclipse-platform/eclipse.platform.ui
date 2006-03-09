@@ -81,8 +81,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (!hasBeenBuilt) {
 				hasBeenBuilt = true;
 				String msg = NLS.bind(Messages.events_skippingBuilder, name, getProject().getName());
-				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				Policy.log(IStatus.WARNING, msg, null);
 			}
 			return null;
 		}
@@ -684,7 +683,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		building = true;
 		if (Policy.DEBUG_BUILD_STACK) {
 			IStatus info = new Status(IStatus.INFO, ResourcesPlugin.PI_RESOURCES, 1, "Starting build: " + debugTrigger(trigger), new RuntimeException().fillInStackTrace()); //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(info);
+			Policy.log(info);
 		}
 	}
 
@@ -874,8 +873,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		} catch (CoreException e) {
 			//project is missing -- build state will be lost
 			//can't throw an exception because this happens on startup
-			IStatus error = new ResourceStatus(IStatus.ERROR, 1, project.getFullPath(), "Project missing in setBuildersPersistentInfo", null); //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(error);
+			Policy.log(new ResourceStatus(IStatus.ERROR, 1, project.getFullPath(), "Project missing in setBuildersPersistentInfo", null)); //$NON-NLS-1$
 		}
 	}
 

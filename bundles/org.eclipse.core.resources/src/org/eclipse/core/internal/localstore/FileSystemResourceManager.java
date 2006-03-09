@@ -494,7 +494,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		try {
 			tree.accept(visitor, depth);
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			Policy.log(e);
 			return false;
 		} catch (IsSynchronizedVisitor.ResourceChangedException e) {
 			//visitor throws an exception if out of sync
