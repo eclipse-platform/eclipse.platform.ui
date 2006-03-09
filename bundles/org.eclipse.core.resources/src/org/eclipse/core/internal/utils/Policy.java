@@ -24,8 +24,8 @@ public class Policy {
 	public static boolean DEBUG_BUILD_DELTA = false;
 	//debug constants
 	public static boolean DEBUG_BUILD_FAILURE = false;
-	public static boolean DEBUG_BUILD_INVOKING = false;
 	public static boolean DEBUG_BUILD_INTERRUPT = false;
+	public static boolean DEBUG_BUILD_INVOKING = false;
 
 	public static boolean DEBUG_BUILD_STACK = false;
 	public static boolean DEBUG_CONTENT_TYPE = false;
@@ -121,14 +121,18 @@ public class Policy {
 	}
 
 	public static void log(int severity, String message, Throwable t) {
+		if (message == null)
+			message = ""; //$NON-NLS-1$
+		log(new Status(severity, ResourcesPlugin.PI_RESOURCES, 1, message, t));
+	}
+
+	public static void log(IStatus status) {
 		final Bundle bundle = Platform.getBundle(ResourcesPlugin.PI_RESOURCES);
 		if (bundle == null)
 			return;
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		Platform.getLog(bundle).log(new Status(severity, ResourcesPlugin.PI_RESOURCES, 1, message, t));
+		Platform.getLog(bundle).log(status);
 	}
-	
+
 	/**
 	 * Logs a throwable, assuming severity of error
 	 * @param t
