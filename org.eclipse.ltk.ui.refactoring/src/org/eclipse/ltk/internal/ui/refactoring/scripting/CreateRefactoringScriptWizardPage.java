@@ -100,7 +100,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 			}
 		});
 		final Label label= new Label(composite, SWT.NONE);
-		label.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
+		label.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_destination_caption);
 		final GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_END);
 		data.horizontalIndent= 0;
 		data.horizontalSpan= 1;
@@ -110,7 +110,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 
 			protected void handleBrowseExternalLocation() {
 				final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
-				file.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_browse_caption);
+				file.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_browse_destination);
 				file.setFilterNames(new String[] { ScriptingMessages.ScriptLocationControl_filter_name_script, ScriptingMessages.ScriptLocationControl_filter_name_wildcard});
 				file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
 				String path= file.open();
