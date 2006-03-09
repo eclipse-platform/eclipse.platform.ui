@@ -130,6 +130,7 @@ public final class RefactoringHistoryManager {
 						if (!inserted && value.compareTo(line) > 0) {
 							buffer.append(value);
 							buffer.append(DELIMITER_ENTRY);
+							inserted= true;
 						}
 					}
 				}
