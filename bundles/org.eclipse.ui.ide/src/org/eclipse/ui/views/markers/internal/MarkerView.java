@@ -167,6 +167,7 @@ public abstract class MarkerView extends TableView {
 
 		UpdateJob() {
 			super(MarkerMessages.MarkerView_queueing_updates);
+			setSystem(true);
 		}
 
 		/*
