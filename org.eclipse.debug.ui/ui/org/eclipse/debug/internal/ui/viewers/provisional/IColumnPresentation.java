@@ -11,9 +11,6 @@
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * Defines the possible set of columns presented in a view for a model.
@@ -70,26 +67,9 @@ public interface IColumnPresentation {
 	public ImageDescriptor getImageDescriptor(String id);
 	
 	/**
-	 * Returns a cell editor to use for the specified column and object or <code>null</code>
-	 * if none.
-	 * 
-	 * @param id column id
-	 * @param element object to be edited
-	 * @param parent parent control to create the cell editor in
-	 * @return cell editor or <code>null</code>
-	 */
-	public CellEditor getCellEditor(String id, Object element, Composite parent);
-	
-	/**
-	 * Returns the cell modifier for this set of columns.
-	 * 
-	 * @return cell modifier
-	 */
-	public ICellModifier getCellModifier();
-	/**
-	 * Returns an identifier for this columns presentation adapter.
+	 * Returns an identifier for this columns presentation.
 	 * The identifier should be unique per kind of column presentation 
-	 * adapter (for example, the column adapter for Java stack frames
+	 * (for example, the column presentation for Java stack frames
 	 * in the variables view). Allows visible column information to be
 	 * persisted by the platform.
 	 * 

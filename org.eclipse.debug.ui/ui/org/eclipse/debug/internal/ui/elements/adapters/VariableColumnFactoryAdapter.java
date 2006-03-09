@@ -11,6 +11,9 @@
 package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
@@ -23,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since 3.2
  */
-public class VariableColumnFactoryAdapter implements IColumnPresenetationFactoryAdapter {
+public class VariableColumnFactoryAdapter implements IColumnPresenetationFactoryAdapter, IColumnEditorFactoryAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
@@ -59,6 +62,30 @@ public class VariableColumnFactoryAdapter implements IColumnPresenetationFactory
 			return ((VariablesView)part).isShowColumns();
 		}
 		return  false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#createColumnEditor(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
+	 */
+	public IColumnEditor createColumnEditor(IPresentationContext context, Object element) {
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+			if (element instanceof IVariable) {
+				return new VariableColumnEditor();
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#getColumnEditorId(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
+	 */
+	public String getColumnEditorId(IPresentationContext context, Object element) {
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+			if (element instanceof IVariable) {
+				return VariableColumnEditor.DEFAULT_VARIABLE_COLUMN_EDITOR;
+			}
+		}
+		return null;
 	}
 
 }

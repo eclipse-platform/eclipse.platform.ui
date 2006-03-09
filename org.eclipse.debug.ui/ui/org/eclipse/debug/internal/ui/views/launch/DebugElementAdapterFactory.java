@@ -46,6 +46,7 @@ import org.eclipse.debug.internal.ui.elements.adapters.VariableContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
@@ -176,6 +177,12 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         		return fgVariableColumnFactory;
         	}
         }
+        
+        if (adapterType.equals(IColumnEditorFactoryAdapter.class)) {
+        	if (adaptableObject instanceof IVariable) {
+        		return fgVariableColumnFactory;
+        	}
+        }        
         return null;
     }
 
@@ -184,7 +191,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      */
     public Class[] getAdapterList() {
         return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class,
-        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyAdapter.class, IColumnPresenetationFactoryAdapter.class};
+        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyAdapter.class, IColumnPresenetationFactoryAdapter.class, IColumnEditorFactoryAdapter.class};
     }
 
 }

@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -59,6 +61,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import com.sun.rsasign.f;
 
 /**
  * A tree viewer that retrieves children and labels asynchronously via adapters
@@ -102,6 +106,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * Current column presentation or <code>null</code>
      */
     private IColumnPresentation fColumnPresentation = null;
+    
+    /**
+     * Current column editor or <code>null</code>
+     */
+    private IColumnEditor fColumnEditor = null;
     
     /**
      * Map of columns presentation id to its visible colums ids (String[])
@@ -189,44 +198,48 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
             	if (fColumnPresentation != null) {
 	            	Item[] items = fTreeEditorImpl.getSelection();
 	            	if (items.length > 0) {
-	            		TreeItem treeItem = (TreeItem) items[0];
+	            		TreeItem treeItem = (TreeItem) items[0];	            		
 		            	if (treeItem != null) { 
-			            	int columnToEdit = -1;
-			                int columns = fTree.getColumnCount();
-			                if (columns == 0) {
-			                    // If no TreeColumn, Tree acts as if it has a single column
-			                    // which takes the whole width.
-			                    columnToEdit = 0;
-			                } else {
-			                    columnToEdit = -1;
-			                    for (int i = 0; i < columns; i++) {
-			                        Rectangle bounds = fTreeEditorImpl.getBounds(treeItem, i);
-			                        if (bounds.contains(e.x, e.y)) {
-			                            columnToEdit = i;
-			                            break;
-			                        }
-			                    }
-			                    if (columnToEdit == -1) {
-			                        return;
-			                    }
-			                }
-			                CellEditor cellEditor = fColumnPresentation.getCellEditor(getVisibleColumns()[columnToEdit], treeItem.getData(), fTree);
-			                if (cellEditor == null) {
-			                	return;
-			                }
-			                CellEditor[] cellEditors = getCellEditors();
-			                CellEditor[] newEditors = new CellEditor[columns];
-			                if (cellEditors != null) {
-			                	System.arraycopy(cellEditors, 0, newEditors, 0, cellEditors.length);
-			                }
-			                CellEditor old = newEditors[columnToEdit];
-			                if (old != null) {
-			                	old.dispose();
-			                }
-			                newEditors[columnToEdit] = cellEditor;
-			                setCellEditors(newEditors);
-			                setCellModifier(fColumnPresentation.getCellModifier());
-			                setColumnProperties(getVisibleColumns());
+		            		Object element = treeItem.getData();
+		            		updateColumnEditor(element);
+		            		if (fColumnEditor != null) {
+				            	int columnToEdit = -1;
+				                int columns = fTree.getColumnCount();
+				                if (columns == 0) {
+				                    // If no TreeColumn, Tree acts as if it has a single column
+				                    // which takes the whole width.
+				                    columnToEdit = 0;
+				                } else {
+				                    columnToEdit = -1;
+				                    for (int i = 0; i < columns; i++) {
+				                        Rectangle bounds = fTreeEditorImpl.getBounds(treeItem, i);
+				                        if (bounds.contains(e.x, e.y)) {
+				                            columnToEdit = i;
+				                            break;
+				                        }
+				                    }
+				                    if (columnToEdit == -1) {
+				                        return;
+				                    }
+				                }
+				                CellEditor cellEditor = fColumnEditor.getCellEditor(getVisibleColumns()[columnToEdit], element, fTree);
+				                if (cellEditor == null) {
+				                	return;
+				                }
+				                CellEditor[] cellEditors = getCellEditors();
+				                CellEditor[] newEditors = new CellEditor[columns];
+				                if (cellEditors != null) {
+				                	System.arraycopy(cellEditors, 0, newEditors, 0, cellEditors.length);
+				                }
+				                CellEditor old = newEditors[columnToEdit];
+				                if (old != null) {
+				                	old.dispose();
+				                }
+				                newEditors[columnToEdit] = cellEditor;
+				                setCellEditors(newEditors);
+				                setCellModifier(fColumnEditor.getCellModifier());
+				                setColumnProperties(getVisibleColumns());
+		            		}
 		            	}
 	            	}
             	}
@@ -271,6 +284,35 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
         });		
 	}
 
+    /**
+     * Sets the column editor for the given element
+     * 
+     * @param element
+     */
+    protected void updateColumnEditor(Object element) {
+    	IColumnEditorFactoryAdapter factoryAdapter = getColumnEditorFactoryAdapter(element);
+    	if (factoryAdapter != null) {    		
+    		if (fColumnEditor != null) {
+    			if (fColumnEditor.getId().equals(factoryAdapter.getColumnEditorId(getPresentationContext(), element))) {
+    				// no change
+    				return;
+    			} else {
+    				// dipose current
+    				fColumnEditor.dispose();
+    			}
+    		}
+   			// create new one
+			fColumnEditor = factoryAdapter.createColumnEditor(getPresentationContext(), element);
+			fColumnEditor.init(getPresentationContext());
+    	} else {
+    		// no editor - dispose current
+	    	if (fColumnEditor != null) {
+	    		fColumnEditor.dispose();
+	    		fColumnEditor = null;
+	    	}
+    	}
+    }
+    
 	/**
      * Returns the tree control for this viewer.
      * 
@@ -418,6 +460,9 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 			buildColumns(null);
 			fColumnPresentation.dispose();
 		}
+		if (fColumnEditor != null) {
+			fColumnEditor.dispose();
+		}
 		super.dispose();
 	}
 
@@ -551,10 +596,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     }
     
     /**
-     * Returns the column factory for the given element or <code>null</code>.
+     * Returns the column presentation factory for the given element or <code>null</code>.
      * 
      * @param input
-     * @return column factory of <code>null</code>
+     * @return column presentation factory of <code>null</code>
      */
     protected IColumnPresenetationFactoryAdapter getColumnPresenetationFactoryAdapter(Object input) {
     	if (input instanceof IColumnPresenetationFactoryAdapter) {
@@ -566,6 +611,23 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 		}
     	return null;
     }
+    
+    /**
+     * Returns the column editor factory for the given element or <code>null</code>.
+     * 
+     * @param input
+     * @return column editor factory of <code>null</code>
+     */
+    protected IColumnEditorFactoryAdapter getColumnEditorFactoryAdapter(Object input) {
+    	if (input instanceof IColumnEditorFactoryAdapter) {
+			return (IColumnEditorFactoryAdapter) input;
+		}
+    	if (input instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) input;
+			return (IColumnEditorFactoryAdapter) adaptable.getAdapter(IColumnEditorFactoryAdapter.class);
+		}
+    	return null;
+    }    
 
     /**
      * Constructs and returns a tree path for the given item. Must be called
