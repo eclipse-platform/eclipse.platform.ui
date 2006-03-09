@@ -1170,5 +1170,34 @@
       <encoding name="US-ASCII"/>
    </extension>
  
+<!-- Trim Area 'group' definitions -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <group id="command1">
+         <location>
+            <bar  type="trim"/>
+         </location>
+      </group>
+      <group id="command2" separatorsVisible="true">
+         <location>
+            <bar  path="" type="trim"/>
+         </location>
+      </group>
+      <group id="vertical1" separatorsVisible="true">
+         <location>
+            <bar  path="" type="trim"/>
+         </location>
+      </group>
+      <group id="vertical2" separatorsVisible="true">
+         <location>
+            <bar  path="" type="trim"/>
+         </location>
+      </group>
+      <group id="status" separatorsVisible="true">
+         <location>
+            <bar  path="" type="trim"/>
+         </location>
+      </group>
+   </extension>
    
 </plugin>

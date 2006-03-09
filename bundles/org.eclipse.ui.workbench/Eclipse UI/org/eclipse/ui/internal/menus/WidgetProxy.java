@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.menus.AbstractTrimWidget;
 import org.eclipse.jface.menus.IWidget;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
@@ -111,6 +112,25 @@ final class WidgetProxy implements IWidget {
 	}
 
 	/**
+	 * Convenience method that allows the trim layout manager to
+	 * inform widgets if they have changed locations. If the IWidget
+	 * implementation does not support the method then we default
+	 * to using the simpler <code>fill(final Composite parent)</code>.
+	 * 
+	 * @param parent The composite to create the controls in
+	 * @param oldSide The side the trim was previously displayed on
+	 * @param newSide The new side that the trim will be displayed on
+	 */
+	public final void fill(Composite parent, int oldSide, int newSide) {
+		// NOTE: isMoveableTrimWidget calls loadWidget...
+		if (isMoveableTrimWidget()) {
+			((AbstractTrimWidget) widget).fill(parent, oldSide, newSide);
+		} else {
+			widget.fill(parent);
+		}
+	}
+
+	/**
 	 * Loads the widget, if possible. If the widget is loaded, then the member
 	 * variables are updated accordingly.
 	 * 
@@ -146,6 +166,21 @@ final class WidgetProxy implements IWidget {
 		return true;
 	}
 
+	/**
+	 * Determine if the widget knows how to respond to changes in the
+	 * workbench 'side' that it is being displayed on.
+	 * 
+	 * @return <code>true</code> iff the <code>IWidget</code> implementation
+	 * is actually based on <code>AbstractTrimWidget</code> 
+	 */
+	private final boolean isMoveableTrimWidget() {
+		if (loadWidget()) {
+			return widget instanceof AbstractTrimWidget;
+		}
+		
+		return false;
+	}
+	
 	public final String toString() {
 		if (widget == null) {
 			return configurationElement.getAttribute(widgetAttributeName);

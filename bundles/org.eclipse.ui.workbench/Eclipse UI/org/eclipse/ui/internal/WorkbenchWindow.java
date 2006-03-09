@@ -119,6 +119,7 @@ import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.LegacyMenuManager;
 import org.eclipse.ui.internal.menus.SMenuManager;
+import org.eclipse.ui.internal.menus.TrimBarManager;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
@@ -990,6 +991,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (getShowHeapStatus()) {
 			createHeapStatus(shell);
 		}
+		
+		// Insert any contributed trim into the layout
+		// TODO: Hook this up with the Menu and/or CoolBar manager
+		// to allow for 'update' calls...
+		TrimBarManager trimMgr = new TrimBarManager(this);
+		trimMgr.update(true, false);
+		
 		trimDropTarget = new TrimDropTarget(shell, this);
 		DragUtil.addDragTarget(shell, trimDropTarget);
 
