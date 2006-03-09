@@ -85,7 +85,8 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 							}
 						}
 						else {
-							if(!deleteAll) {
+							if(!prompted) {
+								prompted = true;
 								deleteAll = MessageDialog.openConfirm(getView().getSite().getShell(), ActionMessages.RemoveBreakpointAction_0, ActionMessages.RemoveBreakpointAction_1);
 							}
 						}
