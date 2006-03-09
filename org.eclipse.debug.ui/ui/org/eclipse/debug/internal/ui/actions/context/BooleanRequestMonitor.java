@@ -11,36 +11,45 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
+import org.eclipse.jface.action.IAction;
 
 /**
+ * Boolean request monitor that collects boolean results from a number of voters.
+ * Request is cancelled when one voter votes false.
+ * 
  * @since 3.2
  *
  */
 public class BooleanRequestMonitor extends AbstractRequestMonitor implements IBooleanRequestMonitor {
 	
-	private boolean fResult;
+	private IAction fAction;
+	private int fNumVoters;
+	private int fNumOfVotes = 0;
+	
+	BooleanRequestMonitor(IAction action, int numVoters) {
+		fAction = action;
+		fNumVoters = numVoters;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor#setResult(boolean)
 	 */
 	public void setResult(boolean result) {
-		fResult = result;
+		fNumOfVotes++;
+		if (!result) {
+			setCanceled(true);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	public void done() {
-		// nothing to do 
-	}
-	
-	/**
-	 * Returns the boolean result.
-	 * 
-	 * @return boolean result
-	 */
-	boolean getResult() { 
-		return fResult;
+		if (isCanceled()) {
+			fAction.setEnabled(false);
+		} else if (fNumOfVotes == fNumVoters) {
+			fAction.setEnabled(true);
+		}
 	}
 
 }
