@@ -71,7 +71,7 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
         }
         
 		protected boolean isEnabledForSelection(IStructuredSelection selection) {
-			return containsLocalChanges(selection);
+			return isContentProviderEnabled() && containsLocalChanges(selection);
 		}
 	}
 	
@@ -112,7 +112,7 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 		}
 
 		protected boolean isEnabledForSelection(IStructuredSelection selection) {
-			return containsLocalChanges(selection);
+			return isContentProviderEnabled() && containsLocalChanges(selection);
 		}
 	}
 
@@ -419,5 +419,9 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 	        if (makeDefault != null)
 		        makeDefault.selectionChanged((IStructuredSelection)getContext().getSelection());
 		}
+	}
+
+	protected boolean isContentProviderEnabled() {
+		return getContentProvider() != null;
 	}
 }
