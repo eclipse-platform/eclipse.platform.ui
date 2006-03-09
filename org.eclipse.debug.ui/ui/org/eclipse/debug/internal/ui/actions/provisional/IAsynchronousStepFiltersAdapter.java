@@ -17,7 +17,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
  * 
  * @since 3.2
  */
-public interface IAsynchronousStepFilters {
+public interface IAsynchronousStepFiltersAdapter {
 
 	/**
 	 * Asynchronously determines whether the given element supports step filters.

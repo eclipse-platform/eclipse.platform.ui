@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IStepFilters;
-import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFilters;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter;
 import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 
@@ -26,10 +26,10 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
  * 
  * @since 3.2
  */
-public class StepFiltersAdapter implements IAsynchronousStepFilters {
+public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFilters#supportsStepFilters(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
+	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter#supportsStepFilters(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
 	 */
 	public void supportsStepFilters(final Object element, final IBooleanRequestMonitor requestMonitor) {
 		Assert.isTrue(element instanceof IDisconnect, "element must be instance of IStepFilters"); //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class StepFiltersAdapter implements IAsynchronousStepFilters {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFilters#isStepFiltersEnabled(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
+	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter#isStepFiltersEnabled(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
 	 */
 	public void isStepFiltersEnabled(final Object element, final IBooleanRequestMonitor requestMonitor) {
 		Assert.isTrue(element instanceof IDisconnect, "element must be instance of IStepFilters"); //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class StepFiltersAdapter implements IAsynchronousStepFilters {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFilters#setStepFiltersEnabled(java.lang.Object, boolean, org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
+	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter#setStepFiltersEnabled(java.lang.Object, boolean, org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
 	 */
 	public void setStepFiltersEnabled(final Object element, final boolean enabled, final IAsynchronousRequestMonitor requestMonitor) {
 		Assert.isTrue(element instanceof IDisconnect, "element must be instance of IStepFilters"); //$NON-NLS-1$
