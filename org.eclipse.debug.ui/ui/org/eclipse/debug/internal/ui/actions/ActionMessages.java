@@ -224,4 +224,16 @@ public class ActionMessages extends NLS {
 	public static String ConfigureColumnsAction_1;
 
 	public static String ConfigureColumnsAction_2;
+
+	public static String DeleteWorkingsetsMessageDialog_0;
+
+	public static String DeleteWorkingsetsMessageDialog_1;
+
+	public static String RemoveBreakpointAction_3;
+
+	public static String RemoveBreakpointAction_4;
+
+	public static String RemoveBreakpointAction_5;
+
+	public static String RemoveBreakpointAction_6;
 }

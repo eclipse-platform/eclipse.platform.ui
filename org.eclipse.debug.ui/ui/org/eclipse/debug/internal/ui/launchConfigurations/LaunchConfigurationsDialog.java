@@ -553,7 +553,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
 		
-	//create toolbar actions, we reuse the actions form the view so we wait until after
+	//create toolbar actions, we reuse the actions from the view so we wait until after
 	//the view is created to add them to the toolbar
 		createToolbarActions(toolBarManager);
 		fDoubleClickAction = new Action() {
@@ -1506,7 +1506,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 						viewer.addFilter(fLCTFilter);
 					}
 				}
-				//viewer.expandAll();
 				refreshFilteringLabel();
 				updateSelection(path, pidx, cidx);
 				return null;
