@@ -123,7 +123,8 @@ public class RefactoringScriptLocationControl extends Composite {
 				handleExternalLocationChanged();
 			}
 		});
-		fExternalLocationControl.setFocus();
+		if (!clipboard)
+			fExternalLocationControl.setFocus();
 		fExternalBrowseButton= new Button(this, SWT.PUSH);
 		fExternalBrowseButton.setText(ScriptingMessages.ScriptLocationControl_browse_label);
 		fExternalBrowseButton.setEnabled(!clipboard);
