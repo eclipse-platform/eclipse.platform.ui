@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
@@ -18,7 +22,19 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 public class ResourceModelSorter extends ResourceSorter {
 
 	public ResourceModelSorter() {
-		super(TYPE);
+		super(NAME);
+	}
+	
+	protected int compareNames(IResource r1, IResource r2) {
+		if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT)
+				&& r1 instanceof IFolder
+				&& r2 instanceof IFolder) {	
+			return collator.compare(r1.getProjectRelativePath().toString(), r2.getProjectRelativePath().toString());
+		}
+		return super.compareNames(r1, r2);
 	}
 
+	protected String getLayout() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
+	}
 }

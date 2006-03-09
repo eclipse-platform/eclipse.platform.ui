@@ -125,7 +125,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
 		if (parent instanceof IResource) {
 			IResource resource = (IResource) parent;
-			if (!resource.getProject().isAccessible())
+			if (resource.getType() != IResource.ROOT && !resource.getProject().isAccessible())
 				return new Object[0];
 			IResourceDiffTree diffTree = context.getDiffTree();
 			Object[] allChildren = filterChildren(diffTree, resource, children);
