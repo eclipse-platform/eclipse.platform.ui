@@ -13,33 +13,25 @@ package org.eclipse.debug.internal.ui.actions.provisional;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 
 /**
- * Adapter for terminating.
+ * Adapter for disconnecting.
  * 
  * @since 3.2
  */
-public interface IAsynchronousTerminateAdapter {
+public interface IAsynchronousDropToFrameAdapter {
 
 	/**
-	 * Asynchronously determines whether the given element can be terminated.
+	 * Asynchronously determines whether the given element can perform a drop to frame.
 	 *  
 	 * @param element element
 	 * @param monitor request monitor
 	 */
-	public void canTerminate(Object element, IBooleanRequestMonitor monitor);
+	public void canDropToFrame(Object element, IBooleanRequestMonitor monitor);
 	
 	/**
-	 * Asynchronously determines whether the given element is terminated.
+	 * Asynchronously drops to the given frame.
 	 *  
 	 * @param element element
 	 * @param monitor request monitor
 	 */
-	public void isTerminated(Object element, IBooleanRequestMonitor monitor);
-	
-	/**
-	 * Asynchronously terminates the given element.
-	 *  
-	 * @param element element
-	 * @param monitor request monitor
-	 */
-	public void terminate(Object element, IAsynchronousRequestMonitor monitor);	
+	public void dropToFrame(Object element, IAsynchronousRequestMonitor monitor);	
 }

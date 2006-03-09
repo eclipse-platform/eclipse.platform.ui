@@ -36,7 +36,7 @@ public interface IAsynchronousDisconnectAdapter {
 	public void isDisconnected(Object element, IBooleanRequestMonitor monitor);
 	
 	/**
-	 * Asynchronously disconnects the given elemnet.
+	 * Asynchronously disconnects the given element.
 	 *  
 	 * @param element element
 	 * @param monitor request monitor
