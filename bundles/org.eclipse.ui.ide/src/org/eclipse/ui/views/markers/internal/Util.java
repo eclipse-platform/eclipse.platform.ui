@@ -41,6 +41,8 @@ public final class Util {
 
 	static String LINE_FEED_AND_TAB = "\n\t";//$NON-NLS-1$
 
+	private static DateFormat format;
+
 	private static final String IMAGE_ERROR_PATH = "obj16/error_tsk.gif"; //$NON-NLS-1$
 
 	private static final String IMAGE_WARNING_PATH = "obj16/warn_tsk.gif"; //$NON-NLS-1$
@@ -48,10 +50,11 @@ public final class Util {
 	private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
 
 	static final MarkerNode[] EMPTY_MARKER_ARRAY = new MarkerNode[0];
-	
+
 	static final ConcreteMarker[] EMPTY_CONCRETE_MARKER_ARRAY = new ConcreteMarker[0];
 
-	protected static final Collection EMPTY_COLLECTION = Arrays.asList(new MarkerNode[0]);
+	protected static final Collection EMPTY_COLLECTION = Arrays
+			.asList(new MarkerNode[0]);
 
 	/**
 	 * Get the propery called property from the marker. If it is not found
@@ -84,8 +87,11 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getCreationTime(long timestamp) {
-		return DateFormat.getDateTimeInstance(DateFormat.LONG,
-				DateFormat.MEDIUM).format(new Date(timestamp));
+		if (format == null) {
+			format = DateFormat.getDateTimeInstance(DateFormat.LONG,
+					DateFormat.MEDIUM);
+		}
+		return format.format(new Date(timestamp));
 	}
 
 	/**
@@ -155,7 +161,7 @@ public final class Util {
 	 * @param exception
 	 */
 	public static void log(CoreException exception) {
-		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(),exception);
+		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
 	}
 
 	/**
@@ -209,16 +215,17 @@ public final class Util {
 	 */
 	public static IStatus errorStatus(Throwable exception) {
 		String message = exception.getLocalizedMessage();
-		if(message == null) {
+		if (message == null) {
 			message = EMPTY_STRING;
 		}
 		return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-				IStatus.ERROR,message , exception);
+				IStatus.ERROR, message, exception);
 	}
 
-	static final int SHORT_DELAY = 100;//The 100 ms short delay for scheduling
+	static final int SHORT_DELAY = 100;// The 100 ms short delay for scheduling
 
-	static final int LONG_DELAY = 30000;//The 30s long delay to run without a builder update
+	static final int LONG_DELAY = 30000;// The 30s long delay to run without a
+										// builder update
 
 	private Util() {
 		super();
@@ -259,6 +266,7 @@ public final class Util {
 
 	/**
 	 * Return the text for severity
+	 * 
 	 * @param severity
 	 * @return String
 	 */
@@ -274,11 +282,12 @@ public final class Util {
 		}
 
 		return EMPTY_STRING;
-		
+
 	}
 
 	/**
 	 * Get the short name for the container
+	 * 
 	 * @param marker
 	 * @return String
 	 */
@@ -298,69 +307,71 @@ public final class Util {
 
 		IResource resource = marker.getResource();
 		int type = resource.getType();
-		
-		//Cannot be project relative if it is the root or a project
-		if(type == IResource.PROJECT) {
+
+		// Cannot be project relative if it is the root or a project
+		if (type == IResource.PROJECT) {
 			return resource.getName();
 		}
-		
-		if(type == IResource.ROOT) {
+
+		if (type == IResource.ROOT) {
 			return MarkerMessages.Util_WorkspaceRoot;
 		}
-		
-		String result =  marker.getResource().getProjectRelativePath().removeLastSegments(1).toOSString();
-		if(result.trim().length() == 0) {
+
+		String result = marker.getResource().getProjectRelativePath()
+				.removeLastSegments(1).toOSString();
+		if (result.trim().length() == 0) {
 			return MarkerMessages.Util_ProjectRoot;
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Return whether or not the selection has one element that
-	 * is concrete.
+	 * Return whether or not the selection has one element that is concrete.
+	 * 
 	 * @param selection
-	 * @return <true>code</true> if the selection has one element that
-	 * is concrete.
+	 * @return <true>code</true> if the selection has one element that is
+	 *         concrete.
 	 */
 	static boolean isSingleConcreteSelection(IStructuredSelection selection) {
-		if( selection != null && selection.size() == 1){
+		if (selection != null && selection.size() == 1) {
 			Object first = selection.getFirstElement();
-			if(first instanceof MarkerNode) {
-				return((MarkerNode) first).isConcrete();
+			if (first instanceof MarkerNode) {
+				return ((MarkerNode) first).isConcrete();
 			}
 		}
-		return false;	
+		return false;
 	}
 
 	/**
-	 * Return whether or not all of the elements in the selection
-	 * are concrete.
+	 * Return whether or not all of the elements in the selection are concrete.
+	 * 
 	 * @param selection
 	 * @return <true>code</true> if all of the elements are concrete.
 	 */
 	public static boolean allConcreteSelection(IStructuredSelection selection) {
-		if( selection != null && selection.size()>0){
+		if (selection != null && selection.size() > 0) {
 			Iterator nodes = selection.iterator();
-			while(nodes.hasNext()){
-				if(((MarkerNode) nodes.next()).isConcrete()) {
+			while (nodes.hasNext()) {
+				if (((MarkerNode) nodes.next()).isConcrete()) {
 					continue;
 				}
 				return false;
 			}
 			return true;
 		}
-		return false;	
+		return false;
 	}
-	
+
 	/**
 	 * Return the name of the marker type if it can be determined.
+	 * 
 	 * @param marker
 	 * @param model
 	 * @return String or <code>null</code>
 	 */
 	public static String getMarkerTypeName(ConcreteMarker marker) {
 		try {
-			String typeId =  marker.getMarker().getType();
+			String typeId = marker.getMarker().getType();
 			MarkerType type = MarkerTypesModel.getInstance().getType(typeId);
 			return type.getLabel();
 		} catch (CoreException e) {
