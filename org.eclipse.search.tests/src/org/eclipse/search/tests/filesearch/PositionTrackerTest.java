@@ -28,9 +28,9 @@ import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.internal.ui.text.FileSearchResult;
@@ -59,9 +59,10 @@ public class PositionTrackerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope(false);
-		scope.addFileNamePattern("*.java");
-		fQuery1= new FileSearchQuery(scope,  "", "Test");
+		String[] fileNamePatterns= { "*.java" };
+		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
+	
+		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 	
 	public void testInsertAt0() throws Exception {

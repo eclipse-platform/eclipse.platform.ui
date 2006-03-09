@@ -14,15 +14,17 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.tests.ResourceHelper;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FileTextSearchScope;
+
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+
+import org.eclipse.search.tests.ResourceHelper;
 
 public class ResultUpdaterTest extends TestCase {
 	private FileSearchQuery fQuery1;
@@ -52,9 +54,10 @@ public class ResultUpdaterTest extends TestCase {
 		// create a own project to make modifications
 		fProject= ResourceHelper.createJUnitSourceProject(PROJECT_TO_MODIFY);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("xx", new IResource[] { fProject }, false);
-		scope.addFileNamePattern("*.java");
-		fQuery1= new FileSearchQuery(scope,  "", "Test");
+		String[] fileNamePatterns= { "*.java" };
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { fProject }, fileNamePatterns, false);
+	
+		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 	
 	/* (non-Javadoc)

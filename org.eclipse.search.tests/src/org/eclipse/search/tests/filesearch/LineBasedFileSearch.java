@@ -26,9 +26,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
@@ -119,11 +119,11 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 		}
 	}
 	
-	private final FileNamePatternSearchScope fScope;
+	private final FileTextSearchScope fScope;
 	
 	
-	public LineBasedFileSearch(FileNamePatternSearchScope scope, String options, String searchString) {
-		super(scope, options, searchString);
+	public LineBasedFileSearch(FileTextSearchScope scope, boolean isRegEx, boolean isCaseSensitive, String searchString) {
+		super(searchString, isRegEx, isCaseSensitive, scope);
 		fScope= scope;
 	}
 

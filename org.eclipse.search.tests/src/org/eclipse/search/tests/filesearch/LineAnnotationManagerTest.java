@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -34,9 +35,9 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
@@ -68,10 +69,10 @@ public class LineAnnotationManagerTest extends TestCase {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope(false);
-		scope.addFileNamePattern("*.java");
+		String[] fileNamePatterns= { "*.java" };
+		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
 	
-		fLineQuery= new LineBasedFileSearch(scope,  "", "Test");
+		fLineQuery= new LineBasedFileSearch(scope, false, true, "Test");
 	}
 	
 	protected void tearDown() throws Exception {
@@ -81,7 +82,7 @@ public class LineAnnotationManagerTest extends TestCase {
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLLIGHTER_ANY);
 		super.tearDown();
 	}
-	
+		
 	public void testLineBasedQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fLineQuery);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fLineQuery.getSearchResult();
@@ -93,7 +94,7 @@ public class LineAnnotationManagerTest extends TestCase {
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				annotationModel.getAnnotationIterator();
-				HashSet positions= new HashSet();
+				ArrayList positions= new ArrayList();
 				for (Iterator iter= annotationModel.getAnnotationIterator(); iter.hasNext();) {
 					Annotation annotation= (Annotation) iter.next();
 					if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {

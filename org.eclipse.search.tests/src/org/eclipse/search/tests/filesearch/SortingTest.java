@@ -19,9 +19,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
 public class SortingTest extends TestCase {
@@ -46,9 +46,10 @@ public class SortingTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newWorkspaceScope(false);
-		scope.addFileNamePattern("*.java");
-		fQuery1= new FileSearchQuery(scope,  "", "Test");
+		String[] fileNamePatterns= { "*.java" };
+		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
+	
+		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 	
 	public void testSorted() throws Exception {
