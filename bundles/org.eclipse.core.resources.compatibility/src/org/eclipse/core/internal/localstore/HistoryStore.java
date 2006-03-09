@@ -96,7 +96,7 @@ public class HistoryStore implements IHistoryStore {
 	}
 
 	/**
-	 * @see IHistoryStore#addState(IPath, IFileStore, long, boolean)
+	 * @see IHistoryStore#addState(IPath, IFileStore, IFileInfo, boolean)
 	 */
 	public IFileState addState(IPath key, IFileStore localFile, IFileInfo info, boolean moveContents) {
 		long lastModified = info.getLastModified();
