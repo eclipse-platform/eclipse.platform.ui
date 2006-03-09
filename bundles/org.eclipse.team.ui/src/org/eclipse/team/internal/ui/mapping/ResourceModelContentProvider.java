@@ -72,7 +72,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			IResource resource = (IResource) object;
 			if (resource == null)
 				return false;
-			if (!resource.isAccessible())
+			if (!resource.getProject().isAccessible())
 				return false;
 			if (scope.contains(resource))
 				return true;
