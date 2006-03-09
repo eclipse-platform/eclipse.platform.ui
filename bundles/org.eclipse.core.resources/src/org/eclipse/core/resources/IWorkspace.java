@@ -1507,7 +1507,8 @@ public interface IWorkspace extends IAdaptable {
 	 * a location path should also obey the following rules:
 	 * <ul>
 	 * <li>must not be the same as another open or closed project</li>
-	 * <li>must not overlap with the platform's working directory</li>
+	 * <li>must not occupy the default location for any project, whether existing or not</li>
+	 * <li>must not be the same as or a parent of the platform's working directory</li>
 	 * <li>must not be the same as or a child of the location of any existing
 	 * linked resource in the given project</li>
 	 * </ul>
