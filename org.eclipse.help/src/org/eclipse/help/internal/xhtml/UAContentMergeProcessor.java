@@ -96,16 +96,19 @@ public class UAContentMergeProcessor {
 
 		Bundle bundle = Platform.getBundle(pluginID);
 		ArrayList pathPrefix = ResourceLocator.getPathPrefix(locale);
-		URL flatFileURL = ResourceLocator.find(bundle, new Path(pluginRelativePath), pathPrefix);
-		if (flatFileURL != null)
-			try {
-				InputStream inputStream = flatFileURL.openStream();
-				UAContentParser parser = new UAContentParser(inputStream);
-				Document dom = parser.getDocument();
-				return DOMUtil.getElementById(dom, include_id, "*"); //$NON-NLS-1$
-			} catch (IOException e) {
-				return null;
+		if (bundle != null) {
+			URL flatFileURL = ResourceLocator.find(bundle, new Path(pluginRelativePath), pathPrefix);
+			if (flatFileURL != null) {
+				try {
+					InputStream inputStream = flatFileURL.openStream();
+					UAContentParser parser = new UAContentParser(inputStream);
+					Document dom = parser.getDocument();
+					return DOMUtil.getElementById(dom, include_id, "*"); //$NON-NLS-1$
+				} catch (IOException e) {
+					return null;
+				}
 			}
+		}
 		return null;
 	}
 
