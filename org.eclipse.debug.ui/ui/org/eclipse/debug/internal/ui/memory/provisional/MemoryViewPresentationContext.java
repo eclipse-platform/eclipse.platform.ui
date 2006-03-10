@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.memory.provisional;
 
-import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
