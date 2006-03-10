@@ -48,10 +48,10 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * <p>
@@ -70,16 +70,16 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		IObjectWithState {
 
 	/**
-	 * The identifier of the actions to create as a wrapper to the command
-	 * architecture. This value may be <code>null</code>.
-	 */
-	private String actionId;
-
-	/**
 	 * The fake action that proxies all of the command-based services. This
 	 * value is never <code>null</code>.
 	 */
 	private CommandLegacyActionWrapper action;
+
+	/**
+	 * The identifier of the actions to create as a wrapper to the command
+	 * architecture. This value may be <code>null</code>.
+	 */
+	private String actionId;
 
 	/**
 	 * The command that will back the dummy actions exposed to this delegate.
@@ -93,15 +93,15 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	private ISelection currentSelection;
 
 	/**
+	 * The delegate, if it has been created yet.
+	 */
+	private IActionDelegate delegate;
+
+	/**
 	 * The name of the configuration element attribute which contains the
 	 * information necessary to instantiate the real handler.
 	 */
 	private String delegateAttributeName;
-
-	/**
-	 * The delegate, if it has been created yet.
-	 */
-	private IActionDelegate delegate;
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -141,7 +141,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * The workbench window in which this delegate is active. This value is
 	 * never <code>null</code>.
 	 */
-	private final WorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	/**
 	 * Constructs a new instance of <code>ActionDelegateHandlerProxy</code>
@@ -180,7 +180,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 */
 	public ActionDelegateHandlerProxy(final IConfigurationElement element,
 			final String delegateAttributeName, final String actionId,
-			final ParameterizedCommand command, final WorkbenchWindow window,
+			final ParameterizedCommand command, final IWorkbenchWindow window,
 			final String style, final Expression enabledWhenExpression,
 			final String viewId) {
 		if (element == null) {
@@ -233,11 +233,11 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	public final Object execute(final ExecutionEvent event) {
-		final IAction action = getAction();		
+		final IAction action = getAction();
 		if (loadDelegate() && (action != null)) {
 			final Object trigger = event.getTrigger();
 			final IActionDelegate delegate = getDelegate();
-			
+
 			// Attempt to update the selection.
 			final Object applicationContext = event.getApplicationContext();
 			if (applicationContext instanceof IEvaluationContext) {
@@ -249,7 +249,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 					delegate.selectionChanged(action, currentSelection);
 				}
 			}
-			
+
 			// Decide what type of delegate we have.
 			if ((delegate instanceof IActionDelegate2)
 					&& (trigger instanceof Event)) {
@@ -311,8 +311,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		return null;
 	}
 
-	public final void handleStateChange(final State state,
-			final Object oldValue) {
+	public final void handleStateChange(final State state, final Object oldValue) {
 		// TODO What should we do here?
 	}
 

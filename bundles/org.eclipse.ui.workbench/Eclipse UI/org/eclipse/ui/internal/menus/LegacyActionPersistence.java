@@ -15,10 +15,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -41,20 +43,27 @@ import org.eclipse.jface.commands.ToggleState;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.jface.menus.IWidget;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.expressions.LegacyActionExpressionWrapper;
+import org.eclipse.ui.internal.expressions.LegacyActionSetExpression;
 import org.eclipse.ui.internal.expressions.LegacyEditorContributionExpression;
+import org.eclipse.ui.internal.expressions.LegacySelectionEnablerWrapper;
 import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
+import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
+import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -197,10 +206,11 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final ICommandService commandService;
 
 	/**
-	 * The service locator from which services can be retrieved in the future;
-	 * must not be <code>null</code>.
+	 * The handler activations that have come from the registry. This is used to
+	 * flush the activations when the registry is re-read. This value is never
+	 * <code>null</code>
 	 */
-	private final IServiceLocator locator;
+	private final Collection handlerActivations = new ArrayList();
 
 	/**
 	 * The menu contributions that have come from the registry. This is used to
@@ -216,25 +226,50 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final IMenuService menuService;
 
 	/**
+	 * The service locator from which services can be retrieved in the future;
+	 * must not be <code>null</code>.
+	 */
+	private final IWorkbenchWindow window;
+
+	/**
 	 * Constructs a new instance of {@link LegacyActionPersistence}.
 	 * 
-	 * @param locator
-	 *            The locator from which the services should be retrieved; must
+	 * @param window
+	 *            The window from which the services should be retrieved; must
 	 *            not be <code>null</code>.
 	 */
-	public LegacyActionPersistence(final IServiceLocator locator) {
+	public LegacyActionPersistence(final IWorkbenchWindow window) {
 		// TODO Blind casts are bad.
-		this.bindingService = (BindingService) locator
+		this.bindingService = (BindingService) window
 				.getService(IBindingService.class);
-		
-		this.commandService = (ICommandService) locator
+
+		this.commandService = (ICommandService) window
 				.getService(ICommandService.class);
-		this.commandImageService = (ICommandImageService) locator
+		this.commandImageService = (ICommandImageService) window
 				.getService(ICommandImageService.class);
-		this.menuService = (IMenuService) locator
-				.getService(IMenuService.class);
-		
-		this.locator = locator;
+		this.menuService = (IMenuService) window.getService(IMenuService.class);
+
+		this.window = window;
+	}
+
+	/**
+	 * Deactivates all of the activations made by this class, and then clears
+	 * the collection. This should be called before every read.
+	 */
+	private final void clearActivations() {
+		final IHandlerService service = (IHandlerService) window
+				.getService(IHandlerService.class);
+		service.deactivateHandlers(handlerActivations);
+		final Iterator activationItr = handlerActivations.iterator();
+		while (activationItr.hasNext()) {
+			final IHandlerActivation activation = (IHandlerActivation) activationItr
+					.next();
+			final IHandler handler = activation.getHandler();
+			if (handler != null) {
+				handler.dispose();
+			}
+		}
+		handlerActivations.clear();
 	}
 
 	/**
@@ -389,6 +424,104 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	}
 
 	/**
+	 * <p>
+	 * Extracts the handler information from the given action element. These are
+	 * registered with the handler service. They are always active.
+	 * </p>
+	 * 
+	 * @param element
+	 *            The action element from which the handler should be read; must
+	 *            not be <code>null</code>.
+	 * @param actionId
+	 *            The identifier of the action for which a handler is being
+	 *            created; must not be <code>null</code>.
+	 * @param command
+	 *            The command for which this handler applies; must not be
+	 *            <code>null</code>.
+	 * @param activeWhenExpression
+	 *            The expression controlling when the handler is active; may be
+	 *            <code>null</code>.
+	 * @param viewId
+	 *            The view to which this handler is associated. This value is
+	 *            required if this is a view action; otherwise it can be
+	 *            <code>null</code>.
+	 * @param warningsToLog
+	 *            The collection of warnings while parsing this extension point;
+	 *            must not be <code>null</code>.
+	 */
+	private final void convertActionToHandler(
+			final IConfigurationElement element, final String actionId,
+			final ParameterizedCommand command,
+			final Expression activeWhenExpression, final String viewId,
+			final List warningsToLog) {
+		// Check to see if this is a retargettable action.
+		final boolean retarget = readBoolean(element, ATT_RETARGET, false);
+
+		// Read the class attribute.
+		final String classString = readOptional(element, ATT_CLASS);
+		if (retarget) {
+			if ((classString != null) && (!isPulldown(element))) {
+				addWarning(warningsToLog,
+						"The class was not null but retarget was set to true", //$NON-NLS-1$
+						element, actionId, "class", classString); //$NON-NLS-1$
+			}
+
+			// Add a mapping from this action id to the command id.
+			final IActionCommandMappingService mappingService = (IActionCommandMappingService) window
+					.getService(IActionCommandMappingService.class);
+			mappingService.map(actionId, command.getId());
+			return; // This is nothing more to be done.
+
+		} else if (classString == null) {
+			addWarning(
+					warningsToLog,
+					"There was no class provided, and the action is not retargettable", //$NON-NLS-1$
+					element, actionId);
+			return; // There is nothing to be done.
+		}
+
+		// Read the enablesFor attribute, and enablement and selection elements.
+		SelectionEnabler enabler = null;
+		if (element.getAttribute(ATT_ENABLES_FOR) != null) {
+			enabler = new SelectionEnabler(element);
+		} else {
+			IConfigurationElement[] kids = element.getChildren(TAG_ENABLEMENT);
+			if (kids.length > 0) {
+				enabler = new SelectionEnabler(element);
+			}
+		}
+		final Expression enabledWhenExpression;
+		if (enabler == null) {
+			enabledWhenExpression = null;
+		} else {
+			enabledWhenExpression = new LegacySelectionEnablerWrapper(enabler,
+					window);
+		}
+
+		/*
+		 * Create the handler. TODO The image style is read at the workbench
+		 * level, but it is hard to communicate this information to this point.
+		 * For now, I'll pass null, but this ultimately won't work.
+		 */
+		final ActionDelegateHandlerProxy handler = new ActionDelegateHandlerProxy(
+				element, ATT_CLASS, actionId, command, window, null,
+				enabledWhenExpression, viewId);
+
+		// Activate the handler.
+		final String commandId = command.getId();
+		final IHandlerService service = (IHandlerService) window
+				.getService(IHandlerService.class);
+		final IHandlerActivation handlerActivation;
+		if (activeWhenExpression == null) {
+			handlerActivation = service.activateHandler(commandId, handler);
+		} else {
+			handlerActivation = service.activateHandler(commandId, handler,
+					activeWhenExpression);
+		}
+		handlerActivations.add(handlerActivation);
+	}
+
+	/**
 	 * Extracts any image definitions from the action. These are defined as
 	 * image bindings on the given command with an auto-generated style.
 	 * 
@@ -521,7 +654,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		if (isPulldown(element)) {
 			final SWidget widget = menuService.getWidget(id);
 			final IWidget proxy = new PulldownDelegateWidgetProxy(element,
-					ATT_CLASS, command, locator);
+					ATT_CLASS, command, window);
 			widget.define(proxy, locations);
 			/*
 			 * TODO Cannot duplicate the class instance between handler and item
@@ -541,6 +674,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		}
 	}
 
+	public final void dispose() {
+		super.dispose();
+		clearActivations();
+		clearBindings();
+		clearImages();
+		clearMenus();
+	}
+
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		return !((event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_ACTION_SETS).length == 0)
@@ -550,13 +691,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 						IWorkbenchRegistryConstants.PL_POPUP_MENU).length == 0) && (event
 				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 						IWorkbenchRegistryConstants.PL_VIEW_ACTIONS).length == 0));
-	}
-
-	public final void dispose() {
-		super.dispose();
-		clearBindings();
-		clearImages();
-		clearMenus();
 	}
 
 	/**
@@ -674,13 +808,17 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param visibleWhenExpression
 	 *            The expression controlling visibility of the corresponding
 	 *            menu elements; may be <code>null</code>.
+	 * @param viewId
+	 *            The view to which this handler is associated. This value is
+	 *            required if this is a view action; otherwise it can be
+	 *            <code>null</code>.
 	 * @return References to the created menu elements; may be <code>null</code>,
 	 *         and may be empty.
 	 */
 	private final SReference[] readActions(final String primaryId,
 			final IConfigurationElement[] elements, final List warningsToLog,
 			final LegacyLocationInfo locationInfo,
-			final Expression visibleWhenExpression) {
+			final Expression visibleWhenExpression, final String viewId) {
 		final Collection references = new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			final IConfigurationElement element = elements[i];
@@ -701,6 +839,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			if (command == null) {
 				continue;
 			}
+
+			convertActionToHandler(element, id, command, visibleWhenExpression,
+					viewId, warningsToLog);
 
 			// TODO Read the helpContextId attribute
 			// TODO Read the overrideActionId attribute
@@ -739,6 +880,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param visibleWhenExpression
 	 *            The expression controlling visibility of the corresponding
 	 *            menu elements; may be <code>null</code>.
+	 * @param viewId
+	 *            The view to which this handler is associated. This value is
+	 *            required if this is a view action; otherwise it can be
+	 *            <code>null</code>.
 	 * @return An array of references to the created menu elements. This value
 	 *         may be <code>null</code> if there was a problem parsing the
 	 *         configuration element.
@@ -746,12 +891,12 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final SReference[] readActionsAndMenus(
 			final IConfigurationElement element, final String id,
 			final List warningsToLog, final LegacyLocationInfo locationInfo,
-			final Expression visibleWhenExpression) {
+			final Expression visibleWhenExpression, final String viewId) {
 		// Read its child elements.
 		final IConfigurationElement[] actionElements = element
 				.getChildren(TAG_ACTION);
 		final SReference[] itemReferences = readActions(id, actionElements,
-				warningsToLog, locationInfo, visibleWhenExpression);
+				warningsToLog, locationInfo, visibleWhenExpression, viewId);
 
 		// Read out the menus and groups, if any.
 		final IConfigurationElement[] menuElements = element
@@ -812,6 +957,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 				continue;
 			}
 
+			// Restrict the handler to when the action set is active.
+			final LegacyActionSetExpression expression = new LegacyActionSetExpression(
+					id, window);
+
 			// Read the description.
 			final String description = readOptional(element, ATT_DESCRIPTION);
 
@@ -820,7 +969,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements.
 			final SReference[] references = readActionsAndMenus(element, id,
-					warningsToLog, null, null);
+					warningsToLog, null, expression, null);
 			if ((references == null) || (references.length == 0)) {
 				continue;
 			}
@@ -875,7 +1024,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, null,
-					visibleWhenExpression);
+					visibleWhenExpression, null);
 		}
 
 		logWarnings(
@@ -1116,7 +1265,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, locationInfo,
-					visibleWhenExpression);
+					visibleWhenExpression, null);
 		}
 
 		logWarnings(
@@ -1166,7 +1315,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, locationInfo,
-					visibleWhenExpression);
+					visibleWhenExpression, targetId);
 		}
 
 		logWarnings(
@@ -1218,7 +1367,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, locationInfo,
-					visibleWhenExpression);
+					visibleWhenExpression, null);
 		}
 
 		logWarnings(

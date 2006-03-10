@@ -108,7 +108,6 @@ import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
-import org.eclipse.ui.internal.handlers.LegacyActionHandlerPersistence;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
@@ -3540,12 +3539,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	}
 
 	/**
-	 * The class that parsed all of the legacy action handlers. This value is
-	 * <code>null</code> until {@link #initializeDefaultServices()} is called.
-	 */
-	private LegacyActionHandlerPersistence deprecatedSupport;
-
-	/**
 	 * Initializes all of the default command-based services for the workbench
 	 * window.
 	 */
@@ -3590,16 +3583,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				mappingService);
 
 		final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(
-				serviceLocator);
+				this);
 		serviceLocator.registerService(LegacyActionPersistence.class,
 				actionPersistence);
 		actionPersistence.read();
-
-
-		deprecatedSupport = new LegacyActionHandlerPersistence(this);
-		serviceLocator.registerService(LegacyActionHandlerPersistence.class,
-				deprecatedSupport);
-		deprecatedSupport.read();
 
 	}
 
