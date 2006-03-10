@@ -16,10 +16,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * ControlAnimator provides a simple implementation to display or hide a control. 
- * Other animations will be written as subclasses of this class.  By setting the animator
- * in the method {@link org.eclipse.jface.util.Policy#setAnimator(ControlAnimator)} 
- * a new type of animator can be plugged into JFace.
+ * ControlAnimator provides a simple implementation to display or hide a control 
+ * at the bottom of the parent composite. Other animations will be written as 
+ * subclasses of this class.  By setting the animator in the method 
+ * {@link org.eclipse.jface.util.Policy#setAnimator(ControlAnimator)} a new type 
+ * of animator can be plugged into JFace.
  * </p>
  * 
  * This class is not intended to be extended by clients.
@@ -57,7 +58,7 @@ public class ControlAnimator {
 	private int state = CLOSED;
 	
 	/**
-	 * Displays or hides the given control.
+	 * Displays or hides the given control at the bottom of the parent composite.
 	 * 
 	 * @param visible <code>true</code> if the control should be shown, 
 	 * 		  and <code>false</code> otherwise.
@@ -66,7 +67,7 @@ public class ControlAnimator {
 	public void setVisible(boolean visible, Control control){
 		control.setVisible(visible);
 		Rectangle parentBounds = control.getParent().getBounds();
-		int bottom = parentBounds.y + parentBounds.height;		
+		int bottom = parentBounds.height;		
 		final int endY = visible ? bottom - control.getBounds().height
 				: bottom;
 		Point loc = control.getLocation();

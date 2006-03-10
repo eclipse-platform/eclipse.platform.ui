@@ -427,7 +427,10 @@ public class TitleAreaDialog extends TrayDialog {
         	messageArea.setImage(JFaceResources.getImage(DLG_IMG_TITLE_ERROR));
             setMessageAreaVisible(true);
          }
-     }
+        int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+        int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
+      }
     
 	/**
 	 * Sets whether the message area should appear or dissapear
@@ -457,8 +460,7 @@ public class TitleAreaDialog extends TrayDialog {
         FormData messageAreaData = new FormData();
         messageAreaData.right = new FormAttachment(titleImage);
         messageAreaData.left = new FormAttachment(leftFillerLabel);
-        messageAreaData.bottom = new FormAttachment(titleImage, 0,
-                 SWT.BOTTOM);
+        messageAreaData.bottom = new FormAttachment(100,0);
         messageArea.setLayoutData(messageAreaData);
 		messageArea.moveAbove(null);
 		

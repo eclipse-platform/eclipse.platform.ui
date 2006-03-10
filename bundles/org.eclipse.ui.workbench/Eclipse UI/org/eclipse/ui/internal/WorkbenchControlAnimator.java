@@ -49,7 +49,7 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 		control.setVisible(true);
 		
 		Rectangle parentBounds = control.getParent().getBounds();
-		int bottom = parentBounds.y + parentBounds.height;
+		int bottom = parentBounds.height;
 		endY = visible ? bottom - control.getBounds().height
 				: bottom;
 		
