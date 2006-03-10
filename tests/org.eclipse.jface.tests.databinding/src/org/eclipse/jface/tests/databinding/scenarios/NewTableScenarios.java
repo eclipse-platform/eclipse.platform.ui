@@ -423,7 +423,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 	 * occurs on a per key basic for a TextCellEditor // Show that converters
 	 * work for table columns Account[] accounts = catalog.getAccounts();
 	 * Account firstAccount = accounts[0];
-	 * SampleData.getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
+	 * SampleData.getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
 	 * TableViewerDescription tableViewerDescription = new
 	 * TableViewerDescription(tableViewer);
 	 * tableViewerDescription.addEditableColumn("lastName");

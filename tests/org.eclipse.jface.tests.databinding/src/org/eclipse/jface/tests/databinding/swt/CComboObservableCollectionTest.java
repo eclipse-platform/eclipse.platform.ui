@@ -29,7 +29,7 @@ public class CComboObservableCollectionTest extends AbstractGetAndSetSelectionOb
 //		for (int i = 0; i < values.length; i++) {
 //			this.ccombo.add(values[i]);
 //		}
-//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
+//		DataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
 //		return (SelectionAwareObservableCollection) ctx.createObservable(new Property(ccombo, SWTProperties.ITEMS, String.class, new Boolean(true)));
 //	}
 //	

@@ -12,8 +12,7 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.internal.databinding.api.DataBinding;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.beans.JavaBeansScalarObservableValueFactory;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
@@ -36,7 +35,7 @@ public class JavaBeansScalarObservableValueFactoryTest extends TestCase {
    public void test_getObservableValue() throws Exception {
       TestBean test = new TestBean();
       
-      IDataBindingContext dbc = DataBinding.createContext(new IObservableFactory[] {
+      DataBindingContext dbc = DataBindingContext.createContext(new IObservableFactory[] {
               new JavaBeansScalarObservableValueFactory()
         });
       IObservableValue observable = (IObservableValue) dbc.createObservable(new Property(test, "field"));

@@ -29,7 +29,7 @@ public class ComboObservableCollectionTest extends AbstractGetAndSetSelectionObs
 //		for (int i = 0; i < values.length; i++) {
 //			this.combo.add(values[i]);
 //		}
-//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
+//		DataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
 //		return (SelectionAwareObservableCollection) ctx.createObservable(new Property(combo, SWTProperties.ITEMS, String.class, new Boolean(true)));
 //	}
 //	

@@ -16,7 +16,7 @@ import java.util.HashSet;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,7 +34,7 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	private Composite composite;
 
-	private IDataBindingContext dbc;
+	private DataBindingContext dbc;
 
 	private Display display;
 
@@ -50,7 +50,7 @@ abstract public class ScenariosTestCase extends TestCase {
 		return composite;
 	}
 
-	protected IDataBindingContext getDbc() {
+	protected DataBindingContext getDbc() {
 		return dbc;
 	}
 

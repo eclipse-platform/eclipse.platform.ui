@@ -12,12 +12,11 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: ObservableFactoriesTest.java,v $
- *  $Revision: 1.1.2.3 $  $Date: 2006/02/14 03:40:01 $ 
+ *  $Revision: 1.1.2.4 $  $Date: 2006/03/08 15:49:57 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.internal.databinding.api.DataBinding;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
@@ -63,8 +62,7 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 			this.c = c;
 		}
 
-		public IObservable createObservable(IDataBindingContext bindingContext,
-				Object description) {
+		public IObservable createObservable(Object description) {
 			if (c.isInstance(description)) {
 				return new TestIObservable() {
 					public void dispose() {
@@ -108,11 +106,11 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 
 	IObservableFactory factory = new Factory(Object.class);
 
-	private IDataBindingContext myDbc = null;
+	private DataBindingContext myDbc = null;
 
-	protected IDataBindingContext getDbc() {
+	protected DataBindingContext getDbc() {
 		if (myDbc == null) {
-			myDbc = DataBinding.createContext(new IObservableFactory[0]);
+			myDbc = DataBindingContext.createContext(new IObservableFactory[0]);
 		}
 		return myDbc;
 	}

@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.internal.databinding.api.DataBinding;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.api.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.factories.DefaultBindSupportFactory;
-import org.eclipse.jface.internal.databinding.api.factories.DefaultObservableFactory;
-import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
+import org.eclipse.jface.internal.databinding.api.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFactory;
@@ -186,19 +183,24 @@ public class SampleData {
 		// initTrees();
 	}
 
-	public static IDataBindingContext getDatabindingContext(Control aControl) {
-		final IDataBindingContext result = DataBinding.createContext(
-				new IObservableFactory[] { new DefaultObservableFactory(),
-						new NestedObservableFactory(),
-						new BeanObservableFactory(), swtObservableFactory,
-						viewersObservableFactory },
-				new BindSupportFactory[] { new DefaultBindSupportFactory() });
+	/**
+	 * @param aControl
+	 * @return
+	 */
+	public static DataBindingContext getDatabindingContext(Control aControl) {
+		final DataBindingContext context = new DataBindingContext();
+		context.addObservableFactory(new NestedObservableFactory(context));
+		context.addObservableFactory(new BeanObservableFactory(context));
+		context.addObservableFactory(swtObservableFactory);
+		context.addObservableFactory(viewersObservableFactory);
+		context.addBindingFactory(new DefaultBindingFactory());
+		context.addBindSupportFactory(new DefaultBindSupportFactory());
 		aControl.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				result.dispose();
+				context.dispose();
 			}
 		});
-		return result;
+		return context;
 	}
 
 	public static SWTObservableFactory getSWTObservableFactory() {

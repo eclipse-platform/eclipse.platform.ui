@@ -388,7 +388,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// Show that converters work for table columns
 		Account[] accounts = catalog.getAccounts();
 		Account firstAccount = accounts[0];
-		SampleData.getSWTObservableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
+		SampleData.getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(tableViewer);
 		tableViewerDescription.addEditableColumn("lastName");
 		tableViewerDescription.addColumn("lastName");

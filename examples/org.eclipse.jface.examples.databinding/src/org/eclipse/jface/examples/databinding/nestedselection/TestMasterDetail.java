@@ -13,7 +13,7 @@ package org.eclipse.jface.examples.databinding.nestedselection;
 
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.description.TableModelDescription;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
@@ -172,7 +172,7 @@ public class TestMasterDetail {
 	Model model = new Model();
 
 	private void bind(Control parent) {
-		IDataBindingContext dbc = BindingFactory.createContext(parent);
+		DataBindingContext dbc = BindingFactory.createContext(parent);
 		TableViewer peopleViewer = new TableViewer(personsTable);
 		dbc.bind(new Property(peopleViewer, ViewersProperties.CONTENT),
 				new TableModelDescription(new Property(model, "personList"),

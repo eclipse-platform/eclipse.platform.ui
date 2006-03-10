@@ -26,7 +26,7 @@ public class TableViewerObservableCollectionTest extends AbstractGetAndSetSelect
 //	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
 //		Shell shell = BindingScenariosTestSuite.getShell();
 //		this.viewer = new TableViewer(shell, SWT.NONE);
-//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
+//		DataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new SWTObservableFactory()});
 //		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(new Property(viewer, ViewersProperties.CONTENT, String.class, new Boolean(true)));
 //		observableCollection.setElements(Arrays.asList(values));
 //		return observableCollection;

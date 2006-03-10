@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.nestedselection;
 
-import org.eclipse.jface.internal.databinding.api.DataBinding;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
@@ -40,7 +39,8 @@ public class BindingFactory {
 	 * POJO model objects with JavaBeans-style notification.
 	 * <p>
 	 * This method is a convenience method; its implementation is equivalent to
-	 * calling {@link DataBinding#createContext(Control, IObservableFactory[]) }
+	 * calling
+	 * {@link DataBindingContext#createContext(Control, IObservableFactory[]) }
 	 * where the array of factories consists of a
 	 * {@link NestedObservableFactory}, a {@link BeanObservableFactory}
 	 * instance, a {@link SWTObservableFactory}, and a
@@ -50,13 +50,8 @@ public class BindingFactory {
 	 * @param control
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext(Control control) {
-		final IDataBindingContext context = DataBinding
-				.createContext(new IObservableFactory[] {
-						new NestedObservableFactory(),
-						new BeanObservableFactory(),
-						new SWTObservableFactory(),
-						new ViewersObservableFactory() });
+	public static DataBindingContext createContext(Control control) {
+		final DataBindingContext context = createContext();
 		control.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				context.dispose();
@@ -74,7 +69,8 @@ public class BindingFactory {
 	 * as necessary.
 	 * <p>
 	 * This method is a convenience method; its implementation is equivalent to
-	 * calling {@link DataBinding#createContext(Control, IObservableFactory[]) }
+	 * calling
+	 * {@link DataBindingContext#createContext(Control, IObservableFactory[]) }
 	 * where the array of factories consists of a
 	 * {@link NestedObservableFactory}, a {@link BeanObservableFactory}
 	 * instance, a {@link SWTObservableFactory}, and a
@@ -83,9 +79,12 @@ public class BindingFactory {
 	 * 
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext() {
-		return DataBinding.createContext(new IObservableFactory[] {
-				new NestedObservableFactory(), new BeanObservableFactory(),
-				new SWTObservableFactory(), new ViewersObservableFactory() });
+	public static DataBindingContext createContext() {
+		DataBindingContext context = new DataBindingContext();
+		context.addObservableFactory(new NestedObservableFactory(context));
+		context.addObservableFactory(new BeanObservableFactory(context));
+		context.addObservableFactory(new SWTObservableFactory());
+		context.addObservableFactory(new ViewersObservableFactory());
+		return context;
 	}
 }

@@ -28,7 +28,7 @@ public class AutoSelectTableViewerCollectionExtendedTest extends TestCase {
 //		Shell shell = BindingScenariosTestSuite.getShell();
 //		this.viewer = new TableViewer(shell, SWT.NONE);
 //		TableViewerDescription description = new TableViewerDescription(viewer);
-//		IDataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new AutoSelectTableViewerFactory()});
+//		DataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new AutoSelectTableViewerFactory()});
 //		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(description);
 //		observableCollection.setElements(Arrays.asList(values));
 //		return observableCollection;

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding;
 
-import org.eclipse.jface.internal.databinding.api.DataBinding;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFactory;
@@ -49,13 +47,8 @@ public class ExampleBinding {
 	 * @param control
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext(Control control) {
-		final IDataBindingContext context = DataBinding
-				.createContext(new IObservableFactory[] {
-						new NestedObservableFactory(),
-						new BeanObservableFactory(),
-						new SWTObservableFactory(),
-						new ViewersObservableFactory() });
+	public static DataBindingContext createContext(Control control) {
+		final DataBindingContext context = createContext();
 		control.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				context.dispose();
@@ -81,9 +74,12 @@ public class ExampleBinding {
 	 * 
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext() {
-		return DataBinding.createContext(new IObservableFactory[] {
-				new NestedObservableFactory(), new BeanObservableFactory(),
-				new SWTObservableFactory(), new ViewersObservableFactory() });
+	public static DataBindingContext createContext() {
+		DataBindingContext context = new DataBindingContext();
+		context.addObservableFactory(new NestedObservableFactory(context));
+		context.addObservableFactory(new BeanObservableFactory(context));
+		context.addObservableFactory(new SWTObservableFactory());
+		context.addObservableFactory(new ViewersObservableFactory());
+		return context;
 	}
 }
