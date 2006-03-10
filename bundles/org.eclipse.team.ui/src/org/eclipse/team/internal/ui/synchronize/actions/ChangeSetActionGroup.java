@@ -420,6 +420,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
     /**
      * Return a viewer sorter that utilizes the sort criteria
      * selected by the user.
+     * @return a sorter
      */
 	public ViewerSorter getViewerSorter() {
 		return new ChangeSetModelSorter(provider, sortCriteria);

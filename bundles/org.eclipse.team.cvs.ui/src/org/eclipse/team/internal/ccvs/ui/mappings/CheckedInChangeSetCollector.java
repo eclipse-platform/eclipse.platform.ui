@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import java.text.DateFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
@@ -58,44 +57,6 @@ public class CheckedInChangeSetCollector extends ChangeSetCollector implements I
 		protected int calculateKind() throws TeamException {
 			return kind;
 		}
-	}
-	
-	private class CVSCheckedInChangeSet extends DiffChangeSet {
-
-        private final ILogEntry entry;
-
-        public CVSCheckedInChangeSet(ILogEntry entry) {
-            this.entry = entry;
-    		Date date = entry.getDate();
-    		String comment = HistoryView.flattenText(entry.getComment());
-    		if (date == null) {
-    			setName("["+entry.getAuthor()+ "] " + comment); //$NON-NLS-1$ //$NON-NLS-2$
-    		} else {
-    			String dateString = DateFormat.getDateTimeInstance().format(date);
-	    		setName("["+entry.getAuthor()+ "] (" + dateString +") " + comment); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-    		}
-        }
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.team.core.subscribers.CheckedInChangeSet#getAuthor()
-         */
-        public String getAuthor() {
-            return entry.getAuthor();
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.team.core.subscribers.CheckedInChangeSet#getDate()
-         */
-        public Date getDate() {
-            return entry.getDate();
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.team.core.subscribers.ChangeSet#getComment()
-         */
-        public String getComment() {
-            return entry.getComment();
-        }
 	}
 	
 	IDiffChangeListener diffTreeListener = new IDiffChangeListener() {

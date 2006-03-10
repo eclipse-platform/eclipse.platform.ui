@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
@@ -26,14 +27,12 @@ import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
-import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
-import org.eclipse.ui.navigator.INavigatorContentExtension;
-import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.*;
 
 public class ChangeSetActionProvider extends SynchronizationActionProvider {
 
@@ -42,6 +41,10 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
      */
     public final static String CHANGE_SET_GROUP = "changeSetActions"; //$NON-NLS-1$
     
+	// Constants for persisting sorting options
+	private static final String P_LAST_COMMENTSORT = TeamUIPlugin.ID + ".P_LAST_COMMENT_SORT"; //$NON-NLS-1$
+	
+	private MenuManager sortByComment;
 	private CreateChangeSetAction createChangeSet;
 	private MenuManager addToChangeSet;
     private EditChangeSetAction editChangeSet;
@@ -181,12 +184,85 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
         }
 	}
 	
+	/* *****************************************************************************
+	 * Action that allows changing the model providers sort order.
+	 */
+	private class ToggleSortOrderAction extends Action {
+		private int criteria;
+		protected ToggleSortOrderAction(String name, int criteria) {
+			super(name, IAction.AS_RADIO_BUTTON);
+			this.criteria = criteria;
+			update();		
+		}
+
+		public void run() {
+			int sortCriteria = getSortCriteria(getSynchronizePageConfiguration());
+			if (isChecked() && sortCriteria != criteria) {
+			    setSortCriteria(getSynchronizePageConfiguration(), criteria);
+				update();
+				((SynchronizePageConfiguration)getSynchronizePageConfiguration()).getPage().getViewer().refresh();
+			}
+		}
+		
+		public void update() {
+		    setChecked(criteria == getSortCriteria(getSynchronizePageConfiguration()));
+		}
+	}
+	
+    public static int getSortCriteria(ISynchronizePageConfiguration configuration) {
+    	int sortCriteria = ChangeSetSorter.DATE;
+    	if (configuration != null) {
+	    	Object o = configuration.getProperty(P_LAST_COMMENTSORT);
+	    	if (o instanceof Integer) {
+				Integer wrapper = (Integer) o;
+				sortCriteria = wrapper.intValue();
+			} else {
+				try {
+					IDialogSettings pageSettings = configuration.getSite().getPageSettings();
+					if(pageSettings != null) {
+						sortCriteria = pageSettings.getInt(P_LAST_COMMENTSORT);
+					}
+				} catch(NumberFormatException e) {
+					// ignore and use the defaults.
+				}
+			}
+		}
+		switch (sortCriteria) {
+        case ChangeSetSorter.COMMENT:
+        case ChangeSetSorter.DATE:
+        case ChangeSetSorter.USER:
+            break;
+        default:
+            sortCriteria = ChangeSetSorter.DATE;
+            break;
+        }
+		return sortCriteria;
+    }
+    
+	public static void setSortCriteria(ISynchronizePageConfiguration configuration, int criteria) {
+		configuration.setProperty(P_LAST_COMMENTSORT, new Integer(criteria));
+		IDialogSettings pageSettings = configuration.getSite().getPageSettings();
+		if(pageSettings != null) {
+			pageSettings.put(P_LAST_COMMENTSORT, criteria);
+		}
+	}
+	
 	public ChangeSetActionProvider() {
 		super();
 	}
 
 	protected void initialize() {
 		super.initialize();
+		if (getChangeSetCapability().supportsCheckedInChangeSets()) {
+			sortByComment = new MenuManager(TeamUIMessages.ChangeLogModelProvider_0a);	 
+			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_1a, ChangeSetSorter.COMMENT)); 
+			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_2a, ChangeSetSorter.DATE)); 
+			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_3a, ChangeSetSorter.USER));
+			ChangeSetSorter sorter = getSorter();
+			if (sorter != null) {
+				sorter.setConfiguration(getSynchronizePageConfiguration());
+			}
+		}
 		if (getChangeSetCapability().supportsActiveChangeSets()) {
 			addToChangeSet = new MenuManager(TeamUIMessages.ChangeLogModelProvider_12); 
 			addToChangeSet.setRemoveAllWhenShown(true);
@@ -203,9 +279,12 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 			removeChangeSet = new RemoveChangeSetAction(getSynchronizePageConfiguration());
 		}
 	}
-	
+
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
+        if (getChangeSetCapability().enableCheckedInChangeSetsFor(getSynchronizePageConfiguration())) {
+            appendToGroup(menu, ISynchronizePageConfiguration.SORT_GROUP, sortByComment);
+        }
         if (getChangeSetCapability().enableActiveChangeSetsFor(getSynchronizePageConfiguration())) {
 			appendToGroup(
 					menu, 
@@ -230,6 +309,10 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 	    if (addToChangeSet != null) {
 			addToChangeSet.dispose();
 			addToChangeSet.removeAll();
+	    }
+	    if (sortByComment != null) {
+			sortByComment.dispose();
+			sortByComment.removeAll();
 	    }
 		super.dispose();
 	}
@@ -364,7 +447,7 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 				return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { folder }, IResource.DEPTH_ZERO, IResource.NONE) };
 			}
 		}
-		return null;
+		return new ResourceTraversal[0];
 	}
 	
 	private FastDiffFilter getVisibleLocalChangesFilter() {
@@ -389,14 +472,35 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 	}
 	
 	private ChangeSetContentProvider getContentProvider() {
-		INavigatorContentService service = getActionSite().getContentService();
-		Set set = service.findContentExtensionsByTriggerPoint(getModelProvider());
-		for (Iterator iter = set.iterator(); iter.hasNext();) {
-			INavigatorContentExtension extension = (INavigatorContentExtension) iter.next();
+		INavigatorContentExtension extension = getExtension();
+		if (extension != null) {
 			ITreeContentProvider provider = extension.getContentProvider();
 			if (provider instanceof ChangeSetContentProvider) {
 				return (ChangeSetContentProvider) provider;
 			}
+		}
+		return null;
+	}
+	
+	private ChangeSetSorter getSorter() {
+		INavigatorContentService contentService = getActionSite().getContentService();
+		INavigatorSorterService sortingService = contentService.getSorterService();
+		INavigatorContentExtension extension = getExtension();
+		if (extension != null) {
+			ViewerSorter sorter = sortingService.findSorter(extension.getDescriptor(), getModelProvider(), new DiffChangeSet(), new DiffChangeSet());
+			if (sorter instanceof ChangeSetSorter) {
+				return (ChangeSetSorter) sorter;
+			}
+		}
+		return null;
+	}
+
+	private INavigatorContentExtension getExtension() {
+		INavigatorContentService service = getActionSite().getContentService();
+		Set set = service.findContentExtensionsByTriggerPoint(getModelProvider());
+		for (Iterator iter = set.iterator(); iter.hasNext();) {
+			INavigatorContentExtension extension = (INavigatorContentExtension) iter.next();
+			return extension;
 		}
 		return null;
 	}

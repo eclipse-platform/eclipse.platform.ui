@@ -16,7 +16,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 
-public abstract class DiffChangeSet extends ChangeSet {
+public class DiffChangeSet extends ChangeSet {
 
 	private final ResourceDiffTree tree = new ResourceDiffTree();
     
@@ -155,6 +155,10 @@ public abstract class DiffChangeSet extends ChangeSet {
 		} finally {
 			tree.endInput(null);
 		}
+	}
+	
+	public String getComment() {
+		return null;
 	}
 
 }
