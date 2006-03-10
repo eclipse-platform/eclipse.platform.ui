@@ -15,17 +15,17 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.IObservableCollection;
 
 /**
  * 
- * Clients must subclass {@link ObservableSet} instead of implementing
- * this interface directly.
+ * Clients must subclass {@link ObservableSet} instead of implementing this
+ * interface directly.
  * 
  * @since 1.0
  * 
  */
-public interface IObservableSet extends Set, IObservable {
+public interface IObservableSet extends Set, IObservableCollection {
 
 	/**
 	 * @param listener
@@ -36,7 +36,7 @@ public interface IObservableSet extends Set, IObservable {
 	 * @param listener
 	 */
 	public void removeSetChangeListener(ISetChangeListener listener);
-	
+
 	/**
 	 * @return the element type
 	 */

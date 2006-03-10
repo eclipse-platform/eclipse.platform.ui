@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.nonapi;
+package org.eclipse.jface.internal.databinding.nonapi.viewers;
 
 import org.eclipse.jface.internal.databinding.api.BindSpec;
 import org.eclipse.jface.internal.databinding.api.Binding;
@@ -20,44 +20,50 @@ import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMappi
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMultiMappingWithDomain;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
+import org.eclipse.jface.internal.databinding.api.viewers.IObservableCollectionWithLabels;
 
 /**
  * 
  * 
  */
-public class TableBinding extends Binding {
+public class MultiMappingAndSetBinding extends Binding {
 
 	private boolean updating = false;
 
-	private IObservableSetWithLabels target;
+	private IObservableCollectionWithLabels target;
 
 	private IObservableMultiMappingWithDomain model;
 
-	private IObservableSet modelDomain;
+	private IObservableSet modelSet;
+
+	private final IObservableSet targetSet;
 
 	/**
 	 * @param context
+	 * @param targetSet
 	 * @param target
+	 * @param modelSet
 	 * @param model
 	 * @param bindSpec
 	 */
-	public TableBinding(DataBindingContext context,
-			IObservableSetWithLabels target,
-			IObservableMultiMappingWithDomain model, BindSpec bindSpec) {
+	public MultiMappingAndSetBinding(DataBindingContext context,
+			IObservableSet targetSet, IObservableCollectionWithLabels target,
+			IObservableSet modelSet, IObservableMultiMappingWithDomain model,
+			BindSpec bindSpec) {
 		super(context);
+		this.targetSet = targetSet;
 		this.target = target;
 		this.model = model;
-		this.modelDomain = model.getDomain();
+		this.modelSet = modelSet;
 		// TODO validation/conversion as specified by the bindSpec
-		target.addSetChangeListener(targetChangeListener);
+		targetSet.addSetChangeListener(targetChangeListener);
 		model.addMappingChangeListener(cellsChangeListener);
-		modelDomain.addSetChangeListener(modelChangeListener);
+		modelSet.addSetChangeListener(modelChangeListener);
 		updateTargetFromModel();
 	}
 
@@ -79,7 +85,7 @@ public class TableBinding extends Binding {
 				return;
 			}
 			// TODO validation
-			BindingEvent e = new BindingEvent(model, target, diff,
+			BindingEvent e = new BindingEvent(model, targetSet, diff,
 					BindingEvent.EVENT_COPY_TO_TARGET,
 					BindingEvent.PIPELINE_AFTER_GET);
 			if (failure(errMsg(fireBindingEvent(e)))) {
@@ -89,8 +95,8 @@ public class TableBinding extends Binding {
 				// get setDiff from event object - might have been modified by a
 				// listener
 				SetDiff setDiff = (SetDiff) e.diff;
-				target.addAll(setDiff.getAdditions());
-				target.removeAll(setDiff.getRemovals());
+				targetSet.addAll(setDiff.getAdditions());
+				targetSet.removeAll(setDiff.getRemovals());
 				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 				if (failure(errMsg(fireBindingEvent(e)))) {
 					return;
@@ -127,8 +133,8 @@ public class TableBinding extends Binding {
 	 * @see org.eclipse.jface.internal.databinding.Binding#updateTargetFromModel(org.eclipse.jface.internal.provisional.databinding.ChangeEvent)
 	 */
 	public void updateTargetFromModel() {
-		target.clear();
-		target.addAll(modelDomain);
+		targetSet.clear();
+		targetSet.addAll(modelSet);
 		target.init(new IMultiMapping() {
 			public Object[] getMappingValues(Object element, int[] indices) {
 				return model.getMappingValues(element, indices);

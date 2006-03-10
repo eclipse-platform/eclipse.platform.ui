@@ -9,20 +9,13 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.observable.mapping;
-
-import org.eclipse.jface.internal.databinding.api.observable.IObservableCollection;
+package org.eclipse.jface.internal.databinding.api.observable;
 
 /**
- * @since 1.0
+ * Marker interface for observable collections.
  * 
+ * @since 3.2
  */
-public interface IObservableMultiMappingWithDomain extends
-		IObservableMultiMapping {
-
-	/**
-	 * @return the domain
-	 */
-	public IObservableCollection getDomain();
+public interface IObservableCollection extends IObservable {
 
 }

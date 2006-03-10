@@ -433,6 +433,32 @@ public final class DataBindingContext {
 				+ description);
 	}
 
+	/**
+	 * @param dataBindingContext
+	 * @param bindSpec
+	 * @param fromType
+	 * @param toType
+	 */
+	public void fillBindSpecDefaults(DataBindingContext dataBindingContext,
+			BindSpec bindSpec, Object fromType, Object toType) {
+		if (bindSpec.getTypeConversionValidator() == null) {
+			bindSpec.setValidator(dataBindingContext.createValidator(fromType,
+					toType));
+		}
+		if (bindSpec.getDomainValidator() == null) {
+			bindSpec.setDomainValidator(dataBindingContext
+					.createDomainValidator(toType));
+		}
+		if (bindSpec.getModelToTargetConverter() == null) {
+			bindSpec.setModelToTargetConverter(dataBindingContext
+					.createConverter(fromType, toType));
+		}
+		if (bindSpec.getTargetToModelConverter() == null) {
+			bindSpec.setTargetToModelConverter(dataBindingContext
+					.createConverter(toType, fromType));
+		}
+	}
+
 	/* package */ValidationError fireBindingEvent(BindingEvent event) {
 		ValidationError result = null;
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter

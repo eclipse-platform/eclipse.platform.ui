@@ -13,6 +13,7 @@ package org.eclipse.jface.internal.databinding.api.observable.mapping;
 
 import java.util.Iterator;
 
+import org.eclipse.jface.internal.databinding.api.observable.IObservableCollection;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
@@ -56,7 +57,7 @@ abstract public class ObservableMultiMappingWithDomain extends AbstractObservabl
 	/**
 	 * @return Returns the domain.
 	 */
-	public IObservableSet getDomain() {
+	public IObservableCollection getDomain() {
 		return domain;
 	}
 

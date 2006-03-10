@@ -16,10 +16,7 @@ import org.eclipse.jface.internal.databinding.api.Binding;
 import org.eclipse.jface.internal.databinding.api.BindingException;
 import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMultiMappingWithDomain;
-import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.nonapi.TableBinding;
 import org.eclipse.jface.internal.databinding.nonapi.ValueBinding;
 
 /**
@@ -46,7 +43,7 @@ public class DefaultBindingFactory implements IBindingFactory {
 			if (modelObservable instanceof IObservableValue) {
 				IObservableValue target = (IObservableValue) targetObservable;
 				IObservableValue model = (IObservableValue) modelObservable;
-				fillBindSpecDefaults(dataBindingContext, bindSpec, target
+				dataBindingContext.fillBindSpecDefaults(dataBindingContext, bindSpec, target
 						.getValueType(), model.getValueType());
 				binding = new ValueBinding(dataBindingContext, target, model,
 						bindSpec);
@@ -54,40 +51,8 @@ public class DefaultBindingFactory implements IBindingFactory {
 			}
 			throw new BindingException(
 					"incompatible updatables: target is value, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
-		} else if (targetObservable instanceof IObservableSetWithLabels) {
-			if (modelObservable instanceof IObservableMultiMappingWithDomain) {
-				IObservableSetWithLabels target = (IObservableSetWithLabels) targetObservable;
-				IObservableMultiMappingWithDomain model = (IObservableMultiMappingWithDomain) modelObservable;
-				fillBindSpecDefaults(dataBindingContext, bindSpec, target
-						.getElementType(), model.getDomain().getElementType());
-				binding = new TableBinding(dataBindingContext, target, model,
-						bindSpec);
-				return binding;
-			}
-			throw new BindingException(
-					"incompatible updatables: target is observable set with labels, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
 		}
 		return null;
-	}
-
-	private void fillBindSpecDefaults(DataBindingContext dataBindingContext,
-			BindSpec bindSpec, Object fromType, Object toType) {
-		if (bindSpec.getTypeConversionValidator() == null) {
-			bindSpec.setValidator(dataBindingContext.createValidator(fromType,
-					toType));
-		}
-		if (bindSpec.getDomainValidator() == null) {
-			bindSpec.setDomainValidator(dataBindingContext
-					.createDomainValidator(toType));
-		}
-		if (bindSpec.getModelToTargetConverter() == null) {
-			bindSpec.setModelToTargetConverter(dataBindingContext
-					.createConverter(fromType, toType));
-		}
-		if (bindSpec.getTargetToModelConverter() == null) {
-			bindSpec.setTargetToModelConverter(dataBindingContext
-					.createConverter(toType, fromType));
-		}
 	}
 
 }

@@ -16,14 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.IObservableCollection;
 
 /**
  * A list whose changes can be tracked by change listeners. 
  * 
  * @since 1.0
  */
-public interface IObservableList extends List, IObservable {
+public interface IObservableList extends List, IObservableCollection {
 	
 	/**
 	 * Adds the given list change listener to the list of list change listeners.

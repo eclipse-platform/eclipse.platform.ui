@@ -9,15 +9,16 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.api.observable.set;
+package org.eclipse.jface.internal.databinding.api.viewers;
 
+import org.eclipse.jface.internal.databinding.api.observable.IObservableCollection;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 
 /**
  * @since 3.2
  * 
  */
-public interface IObservableSetWithLabels extends IObservableSet {
+public interface IObservableCollectionWithLabels extends IObservableCollection {
 
 	/**
 	 * @param labelMapping

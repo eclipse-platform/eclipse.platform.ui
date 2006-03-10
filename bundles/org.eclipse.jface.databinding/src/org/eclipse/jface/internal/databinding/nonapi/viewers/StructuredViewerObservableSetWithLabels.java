@@ -19,8 +19,8 @@ import java.util.Set;
 
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
-import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.set.ObservableSet;
+import org.eclipse.jface.internal.databinding.api.viewers.IObservableCollectionWithLabels;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public abstract class StructuredViewerObservableSetWithLabels extends
-		ObservableSet implements IObservableSetWithLabels {
+		ObservableSet implements IObservableCollectionWithLabels {
 
 	private StructuredViewer structuredViewer;
 
