@@ -11,23 +11,35 @@
 
 package org.eclipse.jface.internal.databinding.api.factories;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.api.description.TableModelDescription;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class DefaultObservableFactory implements IObservableFactory {
 
-	public IObservable createObservable(IDataBindingContext bindingContext,
-			Object description) {
+	private final DataBindingContext dataBindingContext;
+
+	/**
+	 * @param dataBindingContext
+	 *            TODO
+	 * 
+	 */
+	public DefaultObservableFactory(DataBindingContext dataBindingContext) {
+		this.dataBindingContext = dataBindingContext;
+	}
+
+	public IObservable createObservable(Object description) {
 		if (description instanceof ListModelDescription) {
 			ListModelDescription listModelDescription = (ListModelDescription) description;
-			TableModelDescription tableModelDescription = new TableModelDescription(listModelDescription.getCollectionProperty(), new Object[]{listModelDescription.getPropertyID()});
-			return bindingContext.createObservable(tableModelDescription);
+			TableModelDescription tableModelDescription = new TableModelDescription(
+					listModelDescription.getCollectionProperty(),
+					new Object[] { listModelDescription.getPropertyID() });
+			return dataBindingContext.createObservable(tableModelDescription);
 		}
 		return null;
 	}

@@ -15,7 +15,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
@@ -33,9 +32,9 @@ public class JavaBeansScalarObservableValueFactory extends Object implements
 		IObservableFactory {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.api.IObservableFactory#createObservable(org.eclipse.jface.internal.databinding.api.IDataBindingContext, java.lang.Object)
+	 * @see org.eclipse.jface.internal.databinding.api.IObservableFactory#createObservable(org.eclipse.jface.internal.databinding.api.DataBindingContext, java.lang.Object)
 	 */
-	public IObservable createObservable(IDataBindingContext bindingContext, Object description) {
+	public IObservable createObservable(Object description) {
         if (! (description instanceof Property)) {
            return null;
         }

@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi;
 
+import org.eclipse.jface.internal.databinding.api.BindSpec;
+import org.eclipse.jface.internal.databinding.api.Binding;
 import org.eclipse.jface.internal.databinding.api.BindingEvent;
 import org.eclipse.jface.internal.databinding.api.BindingException;
-import org.eclipse.jface.internal.databinding.api.BindSpec;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangingListener;
@@ -101,6 +104,7 @@ public class ValueBinding extends Binding {
 					.addValueChangingListener(targetChangingListener);
 		}
 		model.addValueChangeListener(modelChangeListener);
+		updateTargetFromModel();
 	}
 
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {
@@ -138,7 +142,8 @@ public class ValueBinding extends Binding {
 
 	/**
 	 * This also does validation.
-	 * @param diff 
+	 * 
+	 * @param diff
 	 * 
 	 * @param changeEvent
 	 *            TODO
@@ -264,21 +269,16 @@ public class ValueBinding extends Binding {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.internal.databinding.api.IBinding#getValidationError()
-	 */
 	public IObservableValue getValidationError() {
 		return validationErrorObservable;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.internal.databinding.api.IBinding#getPartialValidationError()
-	 */
 	public IObservableValue getPartialValidationError() {
 		return partialValidationErrorObservable;
+	}
+
+	public void updateModelFromTarget() {
+		updateModelFromTarget(Diffs.createValueDiff(target.getValue(), target
+				.getValue()));
 	}
 }

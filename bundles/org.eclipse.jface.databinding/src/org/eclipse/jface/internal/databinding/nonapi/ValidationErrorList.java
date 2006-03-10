@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.api.IBinding;
+import org.eclipse.jface.internal.databinding.api.Binding;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
@@ -46,7 +46,7 @@ public class ValidationErrorList extends ObservableList {
 		}
 	};
 
-	protected ValidationErrorList(WritableList bindings,
+	public ValidationErrorList(WritableList bindings,
 			boolean usePartialErrors) {
 		super(new ArrayList());
 		this.bindings = bindings;
@@ -83,7 +83,7 @@ public class ValidationErrorList extends ObservableList {
 		if (isDirty) {
 			List newContents = new ArrayList();
 			for (Iterator it = bindings.iterator(); it.hasNext();) {
-				IBinding binding = (IBinding) it.next();
+				Binding binding = (Binding) it.next();
 				IObservableValue validationError = usePartialErrors ? binding
 						.getPartialValidationError() : binding
 						.getValidationError();

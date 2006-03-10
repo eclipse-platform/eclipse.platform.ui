@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.nonapi.observable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
@@ -47,7 +47,7 @@ public class NestedObservableList extends ObservableList {
 
 	private IObservableList innerObservableList;
 
-	private IDataBindingContext databindingContext;
+	private DataBindingContext databindingContext;
 
 	private IObservableValue outerObservableValue;
 
@@ -57,7 +57,7 @@ public class NestedObservableList extends ObservableList {
 	 * @param feature
 	 * @param featureType
 	 */
-	public NestedObservableList(IDataBindingContext databindingContext,
+	public NestedObservableList(DataBindingContext databindingContext,
 			IObservableValue outerObservableValue, Object feature,
 			Object featureType) {
 		super(new ArrayList());

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api.swt;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Text;
  */
 final public class SWTObservableFactory implements IObservableFactory {
 
-	private int updateTime = IDataBindingContext.TIME_LATE;
+	private int updateTime = DataBindingContext.TIME_LATE;
 
 	/**
 	 * Create a factory that can create observables for SWT controls
@@ -67,7 +67,7 @@ final public class SWTObservableFactory implements IObservableFactory {
 	/**
 	 * @param updateTime
 	 *            The update policy of IDataBineingContext.TIME_LATE or
-	 *            IDataBindingContext.TIME_EARLY is a hint that some editable
+	 *            DataBindingContext.TIME_EARLY is a hint that some editable
 	 *            controls may implement (such as Text) to determine when to
 	 *            fire updates
 	 */
@@ -75,8 +75,7 @@ final public class SWTObservableFactory implements IObservableFactory {
 		this.updateTime = updateTime;
 	}
 
-	public IObservable createObservable(IDataBindingContext bindingContext,
-			Object description) {
+	public IObservable createObservable(Object description) {
 		if (description instanceof Property) {
 			Object object = ((Property) description).getObject();
 			Object attribute = ((Property) description).getPropertyID();

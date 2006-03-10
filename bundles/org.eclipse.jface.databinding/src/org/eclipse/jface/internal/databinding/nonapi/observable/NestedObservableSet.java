@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.nonapi.observable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
@@ -47,7 +47,7 @@ public class NestedObservableSet extends ObservableSet {
 
 	private IObservableSet innerObservableSet;
 
-	private IDataBindingContext databindingContext;
+	private DataBindingContext databindingContext;
 
 	private IObservableValue outerObservableValue;
 
@@ -57,7 +57,7 @@ public class NestedObservableSet extends ObservableSet {
 	 * @param feature
 	 * @param featureType
 	 */
-	public NestedObservableSet(IDataBindingContext databindingContext,
+	public NestedObservableSet(DataBindingContext databindingContext,
 			IObservableValue outerObservableValue, Object feature,
 			Object featureType) {
 		super(new HashSet(), featureType);

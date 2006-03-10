@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api.viewers;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
@@ -55,15 +54,14 @@ final public class ViewersObservableFactory implements IObservableFactory {
 
 	/**
 	 * @param updateTime.
-	 *            Update policy of IDataBindingContext.TIME_EARLY or TIME_LATE.
+	 *            Update policy of DataBindingContext.TIME_EARLY or TIME_LATE.
 	 *            This is only a hint that some editable viewers may support
 	 */
 	public ViewersObservableFactory(int updateTime) {
 		this.updateTime = updateTime;
 	}
 
-	public IObservable createObservable(IDataBindingContext bindingContext,
-			Object description) {
+	public IObservable createObservable(Object description) {
 		if (description instanceof Property) {
 			Object object = ((Property) description).getObject();
 			Object attribute = ((Property) description).getPropertyID();

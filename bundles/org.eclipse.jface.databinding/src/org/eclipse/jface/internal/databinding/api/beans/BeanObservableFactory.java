@@ -17,7 +17,7 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 
 import org.eclipse.jface.internal.databinding.api.BindingException;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.description.TableModelDescription;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
@@ -51,8 +51,16 @@ import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableVal
  */
 final public class BeanObservableFactory implements IObservableFactory {
 
-	public IObservable createObservable(IDataBindingContext bindingContext,
-			Object description) {
+	private final DataBindingContext dataBindingContext;
+
+	/**
+	 * @param dataBindingContext
+	 */
+	public BeanObservableFactory(DataBindingContext dataBindingContext) {
+		this.dataBindingContext = dataBindingContext;
+	}
+
+	public IObservable createObservable(Object description) {
 		if (description instanceof Property) {
 			Property propertyDescription = (Property) description;
 			if (propertyDescription.getObject() != null) {
@@ -93,7 +101,8 @@ final public class BeanObservableFactory implements IObservableFactory {
 								// tables and handles Combos and Lists.
 								elementType = Object.class;
 							}
-							return new JavaBeanObservableList(object, descriptor, elementType);
+							return new JavaBeanObservableList(object,
+									descriptor, elementType);
 						}
 						return new JavaBeanObservableValue(object, descriptor);
 					}
@@ -111,7 +120,7 @@ final public class BeanObservableFactory implements IObservableFactory {
 			// (TreeModelDescription) description));
 		} else if (description instanceof TableModelDescription) {
 			TableModelDescription tableModelDescription = (TableModelDescription) description;
-			IObservable collectionObservable = bindingContext
+			IObservable collectionObservable = dataBindingContext
 					.createObservable(tableModelDescription
 							.getCollectionProperty());
 			if (collectionObservable == null) {
@@ -131,23 +140,27 @@ final public class BeanObservableFactory implements IObservableFactory {
 			PropertyDescriptor[] propertyDescriptors = new PropertyDescriptor[columnIDs.length];
 			Class elementType = (Class) readableSet.getElementType();
 			for (int i = 0; i < columnIDs.length; i++) {
-				propertyDescriptors[i] = getPropertyDescriptor(elementType, (String) columnIDs[i]);
-			}			
-			return new JavaBeanObservableMultiMapping(readableSet, propertyDescriptors);
+				propertyDescriptors[i] = getPropertyDescriptor(elementType,
+						(String) columnIDs[i]);
+			}
+			return new JavaBeanObservableMultiMapping(readableSet,
+					propertyDescriptors);
 		}
 		return null;
 	}
 
-	private PropertyDescriptor getPropertyDescriptor(Class elementType, String propertyName) {
+	private PropertyDescriptor getPropertyDescriptor(Class elementType,
+			String propertyName) {
 		BeanInfo beanInfo;
 		try {
 			beanInfo = Introspector.getBeanInfo(elementType);
 		} catch (IntrospectionException ex) {
 			throw new BindingException("Cannot introspect " + elementType, ex); //$NON-NLS-1$
 		}
-		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+		PropertyDescriptor[] propertyDescriptors = beanInfo
+				.getPropertyDescriptors();
 		for (int i = 0; i < propertyDescriptors.length; i++) {
-			if(propertyDescriptors[i].getName().equals(propertyName)) {
+			if (propertyDescriptors[i].getName().equals(propertyName)) {
 				return propertyDescriptors[i];
 			}
 		}

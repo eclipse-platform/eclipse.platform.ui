@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi.observable;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.value.AbstractObservableValue;
@@ -41,7 +41,7 @@ public class NestedObservableValue extends AbstractObservableValue {
 
 	private IObservableValue innerObservableValue;
 
-	private IDataBindingContext databindingContext;
+	private DataBindingContext databindingContext;
 
 	private Object featureType;
 
@@ -53,7 +53,7 @@ public class NestedObservableValue extends AbstractObservableValue {
 	 * @param feature
 	 * @param featureType
 	 */
-	public NestedObservableValue(IDataBindingContext databindingContext,
+	public NestedObservableValue(DataBindingContext databindingContext,
 			IObservableValue outerObservableValue, Object feature,
 			Class featureType) {
 		this.databindingContext = databindingContext;

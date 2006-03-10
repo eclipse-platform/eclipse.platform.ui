@@ -17,7 +17,7 @@ import java.beans.PropertyDescriptor;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.internal.databinding.api.BindingException;
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.NestedProperty;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
@@ -33,11 +33,22 @@ import org.eclipse.jface.internal.databinding.nonapi.observable.NestedObservable
  * 
  */
 public class NestedObservableFactory implements IObservableFactory {
-	public IObservable createObservable(IDataBindingContext bindingContext,
-			Object description) {
+
+	private final DataBindingContext dataBindingContext;
+
+	/**
+	 * @param dataBindingContext
+	 *            TODO
+	 * 
+	 */
+	public NestedObservableFactory(DataBindingContext dataBindingContext) {
+		this.dataBindingContext = dataBindingContext;
+	}
+
+	public IObservable createObservable(Object description) {
 		if (description instanceof NestedProperty) {
 			return createNestedObservable((NestedProperty) description,
-					bindingContext);
+					dataBindingContext);
 		} else if (description instanceof Property) {
 			Property propertyDescription = (Property) description;
 			Object o = propertyDescription.getObject();
@@ -56,10 +67,10 @@ public class NestedObservableFactory implements IObservableFactory {
 				}
 				Object propertyID = propertyDescription.getPropertyID();
 				if (isCollectionProperty.booleanValue()) {
-					return new NestedObservableList(bindingContext,
+					return new NestedObservableList(dataBindingContext,
 							observableValue, propertyID, propertyType);
 				}
-				return new NestedObservableValue(bindingContext,
+				return new NestedObservableValue(dataBindingContext,
 						observableValue, propertyID, propertyType);
 			}
 			// else if (o instanceof List) {
@@ -116,7 +127,7 @@ public class NestedObservableFactory implements IObservableFactory {
 	}
 
 	private IObservable createNestedObservable(NestedProperty nestedProperty,
-			IDataBindingContext bindingContext) {
+			DataBindingContext bindingContext) {
 		IObservable lastChildObservable = null;
 		Object targetObject = nestedProperty.getObject();
 		if (nestedProperty.getPrototypeClass() != null) {

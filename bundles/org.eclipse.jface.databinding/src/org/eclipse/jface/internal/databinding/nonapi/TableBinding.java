@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.nonapi;
 
-import org.eclipse.jface.internal.databinding.api.BindingEvent;
 import org.eclipse.jface.internal.databinding.api.BindSpec;
+import org.eclipse.jface.internal.databinding.api.Binding;
+import org.eclipse.jface.internal.databinding.api.BindingEvent;
+import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMappingChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IMultiMapping;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.IObservableMultiMappingWithDomain;
+import org.eclipse.jface.internal.databinding.api.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSetWithLabels;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
@@ -56,6 +58,7 @@ public class TableBinding extends Binding {
 		target.addSetChangeListener(targetChangeListener);
 		model.addMappingChangeListener(cellsChangeListener);
 		modelDomain.addSetChangeListener(modelChangeListener);
+		updateTargetFromModel();
 	}
 
 	private final ISetChangeListener targetChangeListener = new ISetChangeListener() {
@@ -144,5 +147,9 @@ public class TableBinding extends Binding {
 
 	public IObservableValue getPartialValidationError() {
 		return partialValidationErrorObservable;
+	}
+
+	public void updateModelFromTarget() {
+		// no-op since the target is never out of sync with the model
 	}
 }

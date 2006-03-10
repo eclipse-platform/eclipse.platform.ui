@@ -132,8 +132,8 @@ public class BindSpec {
 	 * 
 	 * @return the update policy, or <code>null</code> if unspecified
 	 * 
-	 * @see IDataBindingContext#POLICY_AUTOMATIC
-	 * @see IDataBindingContext#POLICY_EXPLICIT
+	 * @see DataBindingContext#POLICY_AUTOMATIC
+	 * @see DataBindingContext#POLICY_EXPLICIT
 	 */
 	public Integer getModelUpdatePolicy() {
 		return modelUpdatePolicy;
@@ -145,8 +145,8 @@ public class BindSpec {
 	 * 
 	 * @return the update policy, or <code>null</code> if unspecified
 	 * 
-	 * @see IDataBindingContext#POLICY_AUTOMATIC
-	 * @see IDataBindingContext#POLICY_EXPLICIT
+	 * @see DataBindingContext#POLICY_AUTOMATIC
+	 * @see DataBindingContext#POLICY_EXPLICIT
 	 */
 	public Integer getValidatePolicy() {
 		return validatePolicy;
@@ -158,8 +158,8 @@ public class BindSpec {
 	 * 
 	 * @return the update policy, or <code>null</code> if unspecified
 	 * 
-	 * @see IDataBindingContext#POLICY_AUTOMATIC
-	 * @see IDataBindingContext#POLICY_EXPLICIT
+	 * @see DataBindingContext#POLICY_AUTOMATIC
+	 * @see DataBindingContext#POLICY_EXPLICIT
 	 */
 	public Integer getTargetUpdatePolicy() {
 		return targetUpdatePolicy;

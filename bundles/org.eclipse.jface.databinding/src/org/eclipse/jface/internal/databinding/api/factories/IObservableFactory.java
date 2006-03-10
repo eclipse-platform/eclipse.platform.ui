@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.api.factories;
 
-import org.eclipse.jface.internal.databinding.api.IDataBindingContext;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 
 /**
@@ -32,12 +31,9 @@ public interface IObservableFactory {
 	 * cannot create observables for this description. The BindingException is
 	 * only thrown in error cases, e.g. if the description itself is invalid, or
 	 * if an error occurred during the creation of the observable.
-	 * 
 	 * @param description
-	 * @param bindingContext
-	 *            The data binding context
+	 * 
 	 * @return an updatable
 	 */
-	IObservable createObservable(IDataBindingContext bindingContext,
-			Object description);
+	IObservable createObservable(Object description);
 }

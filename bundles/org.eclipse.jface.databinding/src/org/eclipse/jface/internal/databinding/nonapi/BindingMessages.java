@@ -23,7 +23,7 @@ public class BindingMessages {
 	 * The Binding resource bundle; eagerly initialized.
 	 */
 	private static final ResourceBundle bundle = ResourceBundle
-			.getBundle("org.eclipse.jface.internal.databinding.messages"); //$NON-NLS-1$
+			.getBundle("org.eclipse.jface.internal.databinding.nonapi.messages"); //$NON-NLS-1$
 
 	/**
 	 * Returns the resource object with the given key in the resource bundle for
