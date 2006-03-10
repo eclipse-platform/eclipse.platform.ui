@@ -33,6 +33,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 import org.eclipse.ui.services.IServiceLocator;
@@ -437,6 +438,17 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 *            may be passed to deregister a handler.
 	 */
 	public void setGlobalActionHandler(String actionID, IAction handler) {
+		if (actionID == null) {
+			/*
+			 * Bug 124061. It used to be invalid to pass null as an action id,
+			 * but some people still did it. Handle this case by trapping the
+			 * exception and logging it.
+			 */
+			WorkbenchPlugin
+					.log("Cannot set the global action handler for a null action id"); //$NON-NLS-1$
+			return;
+		}
+		
 		if (handler != null) {
 			// Update the action handlers.
 			if (actionHandlers == null) {
