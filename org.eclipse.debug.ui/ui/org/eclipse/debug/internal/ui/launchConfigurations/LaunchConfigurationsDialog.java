@@ -435,15 +435,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fProgressMonitorCancelButton.setFont(font);
 		monitorComposite.setVisible(false);
 
-		/* * This code is duplicated from Dialog#createButtonBar. We do not want
-		 * to call the TrayDialog implementation because it adds a help control.
-		 * Since this is a custom button bar, we explicitly added the help control
-		 * in an appropriate place above, and we use the Dialog implementation of
-		 * createButtonBar, which does not add a help control.
-		 */
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = 0; // this is incremented by createButton
+		layout.numColumns = 0;
 		layout.makeColumnsEqualWidth = true;
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -457,6 +451,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return composite;
 	}
 
+	
+	
 	/**
 	 * A launch configuration dialog overrides this method
 	 * to create a custom set of buttons in the button bar.
@@ -550,7 +546,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         gridLayout.marginWidth = 5;
         viewFormContents.setLayout(gridLayout);
         viewFormContents.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
-		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
+		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup(), createViewerFilters());
 		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
 		
 	//create toolbar actions, we reuse the actions from the view so we wait until after
@@ -572,24 +568,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		};
 		fLaunchConfigurationView.setAction(IDebugView.DOUBLE_CLICK_ACTION, fDoubleClickAction);
 		Viewer viewer = fLaunchConfigurationView.getViewer();
-        
-	//set up the filters
-		fClosedProjectFilter = new ClosedProjectFilter();
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
-			((StructuredViewer)viewer).addFilter(fClosedProjectFilter);
-		}
-		fDeletedProjectFilter = new DeletedProjectFilter();
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
-			((StructuredViewer)viewer).addFilter(fDeletedProjectFilter);
-		}
-		fLCTFilter = new LaunchConfigurationTypeFilter();
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
-			((StructuredViewer)viewer).addFilter(fLCTFilter);
-		}
-		fWorkingSetsFilter = new WorkingSetsFilter();
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
-			((StructuredViewer)viewer).addFilter(fWorkingSetsFilter);
-		}
+		
 		Control control = viewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
@@ -616,6 +595,33 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return comp;
 	}	
 
+	/**
+	 * Create the filters to be initially applied to the viewer.
+	 * The initial filters are based on the persisted preferences
+	 * @return the array of initial filters
+	 * @since 3.2
+	 */
+	private ViewerFilter[] createViewerFilters() {
+		ArrayList filters = new ArrayList();
+		fClosedProjectFilter = new ClosedProjectFilter();
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
+			filters.add(fClosedProjectFilter);
+		}
+		fDeletedProjectFilter = new DeletedProjectFilter();
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
+			filters.add(fDeletedProjectFilter);
+		}
+		fLCTFilter = new LaunchConfigurationTypeFilter();
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
+			filters.add(fLCTFilter);
+		}
+		fWorkingSetsFilter = new WorkingSetsFilter();
+		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
+			filters.add(fWorkingSetsFilter);
+		}
+		return (ViewerFilter[]) filters.toArray(new ViewerFilter[filters.size()]);
+	}
+	
     /**
 	 * Returns whether the given categories are equal.
 	 * 

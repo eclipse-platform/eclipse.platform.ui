@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
@@ -98,11 +99,23 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private boolean fAutoSelect = true;
 	
 	/**
+	 * the group of additional filters to be added to the viewer
+	 * @since 3.2
+	 */
+	private ViewerFilter[] fFilters = null;
+	
+	/**
 	 * Constructs a launch configuration view for the given launch group
 	 */
 	public LaunchConfigurationView(LaunchGroupExtension launchGroup) {
 		super();
 		fLaunchGroup = launchGroup;
+	}
+	
+	public LaunchConfigurationView(LaunchGroupExtension launchGroup, ViewerFilter[] filters) {
+		super();
+		fLaunchGroup = launchGroup;
+		fFilters = filters;
 	}
 	
 	/**
@@ -124,6 +137,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		treeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		treeViewer.setSorter(new WorkbenchViewerSorter());
 		treeViewer.setContentProvider(new LaunchConfigurationTreeContentProvider(fLaunchGroup.getMode(), parent.getShell()));
+		if(fFilters != null) {
+			for (int i = 0; i < fFilters.length; i++) {
+				treeViewer.addFilter(fFilters[i]);
+			}
+		}
 		treeViewer.addFilter(new LaunchGroupFilter(getLaunchGroup()));
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		treeViewer.expandAll();
