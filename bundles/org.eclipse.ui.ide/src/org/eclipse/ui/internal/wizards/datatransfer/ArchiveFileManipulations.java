@@ -104,8 +104,9 @@ public class ArchiveFileManipulations {
 			// ie.- new value, so finalize&remove old value
 			zipProviderCache = new ZipLeveledStructureProvider(targetZip);
 		} else if (!zipProviderCache.getZipFile().equals(targetZip)) {
-			closeZipFile(targetZip, shell); // ie.- duplicate handle to same
-		// .zip
+			// duplicate handle to same zip
+			// dispose old zip and use new one in case old one is closed
+			zipProviderCache = new ZipLeveledStructureProvider(targetZip);
 		}
 
 		return zipProviderCache;

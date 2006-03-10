@@ -1126,6 +1126,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
+			ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
 			monitor.done();
 		}
 
