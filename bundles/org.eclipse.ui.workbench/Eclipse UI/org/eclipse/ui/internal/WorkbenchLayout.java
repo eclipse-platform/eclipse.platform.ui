@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.layout.TrimCommonUIHandle;
  * <p>
  * NOTE: This class is a part of a 'work in progress' and should not be used
  * without consulting the Platform UI group. No guarantees are made as to the
- * stability of the API (except that the javadoc will get better...;-).
+ * stability of the API.
  * </p>
  * 
  * @since 3.2
@@ -43,18 +43,54 @@ import org.eclipse.ui.internal.layout.TrimCommonUIHandle;
 public class WorkbenchLayout extends Layout {
 	private static int defaultMargin = 5;
 
+	/**
+	 * This is a convenience class that caches information for a single 'tiled'
+	 * line of trim.
+	 * 
+	 * @since 3.2
+	 * 
+	 */
 	private class TrimLine {
-		public List controls = new ArrayList();
+		/**
+		 * Teh list of controls in this trim line
+		 */
+		List controls = new ArrayList();
 
-		public List coomputedSizes = new ArrayList();
+		/**
+		 * A cache of the previously computed sizes of each trim control
+		 */
+		List computedSizes = new ArrayList();
 
-		public int minorMax = 0;
+		/**
+		 * In horizontal terms this is the 'height' of the tallest control.
+		 */
+		int minorMax = 0;
 
-		public int resizableCount = 0;
+		/**
+		 * The number of controls in the line that want to 'grab' extra space.
+		 * Any unused space in a trim line is shared equally among these
+		 * controls
+		 */
+		int resizableCount = 0;
 
-		public int extraSpace = 0;
+		/**
+		 * The amount of unused space in the line
+		 */
+		int extraSpace = 0;
 	}
 
+	/**
+	 * This layout is used to capture the CBanner's calls to 'computeSize' for
+	 * the left trim (which is used to determine the height of the CBanner) so
+	 * that it will compute its own height to be the max of either the left or
+	 * the right control.
+	 * <p>
+	 * NOTE: This class is expected to be removed once the CBanner mods are in.
+	 * </p>
+	 * 
+	 * @since 3.2
+	 * 
+	 */
 	private class LeftBannerLayout extends Layout {
 
 		/*
@@ -65,6 +101,8 @@ public class WorkbenchLayout extends Layout {
 		 */
 		protected Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
+			// 'topMax' is the maximum height of both the left and
+			// the right side
 			return new Point(wHint, WorkbenchLayout.this.topMax);
 		}
 
@@ -101,7 +139,7 @@ public class WorkbenchLayout extends Layout {
 	public Composite centerComposite;
 
 	// inter-element spacing
-	private int spacing = 3;
+	private int spacing = 0;
 
 	// Trim Areas
 	private TrimArea cmdPrimaryTrimArea;
@@ -126,6 +164,10 @@ public class WorkbenchLayout extends Layout {
 
 	private static Rectangle clientRect;
 
+	/**
+	 * Construct a new layout. This defines the trim areas that trim can be
+	 * placed into.
+	 */
 	public WorkbenchLayout() {
 		super();
 
@@ -142,6 +184,13 @@ public class WorkbenchLayout extends Layout {
 		dragHandles = new ArrayList();
 	}
 
+	/**
+	 * Create the CBanner control used to control the horizontal span of the
+	 * primary and secondary command areas.
+	 * 
+	 * @param workbenchComposite
+	 *            The workbench acting as the parent of the CBanner
+	 */
 	public void createCBanner(Composite workbenchComposite) {
 		banner = new CBanner(workbenchComposite, SWT.NONE);
 		banner.setSimple(false);
@@ -173,6 +222,7 @@ public class WorkbenchLayout extends Layout {
 				.getSystemColor(SWT.COLOR_DARK_BLUE));
 		banner.setLeft(bannerLeft);
 
+		// Create the right hand part of the CBanner
 		Composite bannerRight = new Composite(banner, SWT.NONE) {
 			/*
 			 * (non-Javadoc)
@@ -207,12 +257,19 @@ public class WorkbenchLayout extends Layout {
 			}
 		});
 
-		// banner.layout();
-
 		// Place the CBanner on the 'bottom' of the z-order
 		banner.moveBelow(null);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
+	 *      int, int, boolean)
+	 * 
+	 * Note that this is arbitrary since the we're a top level shell (so
+	 * computeSize won't be called.
+	 */
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
 		Point size = new Point(wHint, hHint);
@@ -225,6 +282,14 @@ public class WorkbenchLayout extends Layout {
 		return size;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
+	 *      boolean)
+	 * 
+	 * TODO: Supply a full description of the layout mechanicsS
+	 */
 	protected void layout(Composite composite, boolean flushCache) {
 		layoutComposite = composite;
 		clientRect = composite.getClientArea();
@@ -306,6 +371,12 @@ public class WorkbenchLayout extends Layout {
 		layoutCenter();
 	}
 
+	/**
+	 * Indicates whether or not the layout should use the CBanner or tile the
+	 * primary and secondary trim areas one above the other.
+	 * 
+	 * @return <code>true</code> iff the layout should use the CBanner.
+	 */
 	private boolean useCBanner() {
 		return (banner != null && banner.getVisible());
 	}
@@ -364,20 +435,43 @@ public class WorkbenchLayout extends Layout {
 		return trimContents;
 	}
 
+	/**
+	 * Lays out the center composite once the outer trim areas have all been
+	 * done.
+	 */
 	private void layoutCenter() {
-		// The center is the 'inner' bounding box of the other trim areas
-		Rectangle areaBounds = new Rectangle(
-				leftTrimArea.areaBounds.x + leftTrimArea.areaBounds.width,
-				topMax,
-				clientRect.width
-						- (leftTrimArea.areaBounds.width + rightTrimArea.areaBounds.width),
-				clientRect.height - (topMax + bottomTrimArea.areaBounds.height));
-
 		if (centerComposite != null) {
+			// The center is the 'inner' bounding box of the other trim areas
+			Rectangle areaBounds = new Rectangle(
+					leftTrimArea.areaBounds.x + leftTrimArea.areaBounds.width,
+					topMax,
+					clientRect.width
+							- (leftTrimArea.areaBounds.width + rightTrimArea.areaBounds.width),
+					clientRect.height
+							- (topMax + bottomTrimArea.areaBounds.height));
+
 			centerComposite.setBounds(areaBounds);
 		}
 	}
 
+	/**
+	 * Computes the size of a trim area given the length of its major dimension.
+	 * Depending on whether the trim area is horizontal or vertical one of the
+	 * two value will always match the supplied 'majorHint' ('x' if it's
+	 * horizontal).
+	 * <p>
+	 * Effectively, this computes the length of the minor dimension by tiling
+	 * the trim area's controls into multiple lines based on the length of the
+	 * major dimension.
+	 * </p>
+	 * 
+	 * @param areaId
+	 *            The area id to compute the size for
+	 * @param majorHint
+	 *            The length of the major dimension
+	 * 
+	 * @return The computed size
+	 */
 	private Point computeSize(String areaId, int majorHint) {
 		TrimArea trimArea = getTrimArea(areaId);
 		boolean horizontal = trimArea.orientation == SWT.TOP
@@ -412,6 +506,21 @@ public class WorkbenchLayout extends Layout {
 		return computedSize;
 	}
 
+	/**
+	 * This is where the information required to lay the controls belonging to a
+	 * particular trim area out.
+	 * <p>
+	 * Tile the controls in the trim area into one or more lines. Each line is
+	 * guaranteed to take up less than or equal to the 'majorHint' in the major
+	 * dimension. The result is a complete cache of the information needed to
+	 * lay the controls in the trim area out.
+	 * </p>
+	 * 
+	 * @param trimArea The trim area to create the cache info for
+	 * @param majorHint The length of the major dimension
+	 * 
+	 * @return A List of <code>TrimLine</code> elements
+	 */
 	private List computeWrappedTrim(TrimArea trimArea, int majorHint) {
 		boolean horizontal = trimArea.orientation == SWT.TOP
 				|| trimArea.orientation == SWT.BOTTOM;
@@ -554,7 +663,7 @@ public class WorkbenchLayout extends Layout {
 				// If we have to show a drag handle then do it here
 				if (td.listener != null) {
 					TrimCommonUIHandle handle = getDragHandle(trimArea.orientation);
-//					handle.setControl(control);
+					// handle.setControl(control);
 
 					if (horizontal) {
 						handle.setBounds(tilePosMajor, tilePosMinor,
@@ -600,30 +709,38 @@ public class WorkbenchLayout extends Layout {
 
 	private void resetDragHandles() {
 		for (Iterator iter = dragHandles.iterator(); iter.hasNext();) {
-//			TrimCommonUIHandle handle = (TrimCommonUIHandle) iter.next();
-//			handle.setControl(null);
+			// TrimCommonUIHandle handle = (TrimCommonUIHandle) iter.next();
+			// handle.setControl(null);
 		}
 	}
 
 	private TrimCommonUIHandle getDragHandle(int orientation) {
-//		boolean horizontal = orientation == SWT.TOP
-//				|| orientation == SWT.BOTTOM;
+		// boolean horizontal = orientation == SWT.TOP
+		// || orientation == SWT.BOTTOM;
 
 		for (Iterator iter = dragHandles.iterator(); iter.hasNext();) {
 			TrimCommonUIHandle handle = (TrimCommonUIHandle) iter.next();
-//			if (handle.toDrag == null && handle.horizontal == horizontal)
-				return handle;
+			// if (handle.toDrag == null && handle.horizontal == horizontal)
+			return handle;
 		}
 
 		// If we get here then we haven't found a new drag handle so create one
 		System.out.println("new Handle"); //$NON-NLS-1$
-//		TrimCommonUIHandle newHandle = new TrimCommonUIHandle(layoutComposite,
-//				horizontal);
-//		dragHandles.add(newHandle);
-//		return newHandle;
+		// TrimCommonUIHandle newHandle = new
+		// TrimCommonUIHandle(layoutComposite,
+		// horizontal);
+		// dragHandles.add(newHandle);
+		// return newHandle;
 		return null;
 	}
 
+	/**
+	 * Return the SWT side that the trim area is on
+	 * 
+	 * @param areaId The id of the area to get the orientation of
+	 * 
+	 * @return The SWT  side corresponding that the given area
+	 */
 	public static int getOrientation(String areaId) {
 		if (TRIMID_CMD_PRIMARY.equals(areaId)) {
 			return SWT.TOP;
