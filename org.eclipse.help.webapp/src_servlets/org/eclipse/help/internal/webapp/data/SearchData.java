@@ -46,6 +46,8 @@ public class SearchData extends ActivitiesData {
 
 	// QueryException if any
 	private QueryTooComplexException queryException = null;
+	
+	private boolean showPotentialHits;
 
 	/**
 	 * Constructs the xml data for the search resuls page.
@@ -80,6 +82,8 @@ public class SearchData extends ActivitiesData {
 			}
 		}
 
+		showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
+			.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
 	}
 
 	/**
@@ -167,7 +171,7 @@ public class SearchData extends ActivitiesData {
 	 * @return whether or not the hit is a potential hit
 	 */
 	public boolean isPotentialHit(int i) {
-		return (hits[i].getFilters() != null);
+		return (showPotentialHits && hits[i].getFilters() != null);
 	}
 
 	/**
