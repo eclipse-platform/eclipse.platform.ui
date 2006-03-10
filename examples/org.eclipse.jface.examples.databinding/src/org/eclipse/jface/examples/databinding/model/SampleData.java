@@ -16,6 +16,7 @@ import org.eclipse.jface.internal.databinding.api.factories.DefaultBindSupportFa
 import org.eclipse.jface.internal.databinding.api.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
+import org.eclipse.jface.internal.databinding.api.viewers.ViewersBindingFactory;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFactory;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -194,6 +195,7 @@ public class SampleData {
 		context.addObservableFactory(swtObservableFactory);
 		context.addObservableFactory(viewersObservableFactory);
 		context.addBindingFactory(new DefaultBindingFactory());
+		context.addBindingFactory(new ViewersBindingFactory());
 		context.addBindSupportFactory(new DefaultBindSupportFactory());
 		aControl.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
