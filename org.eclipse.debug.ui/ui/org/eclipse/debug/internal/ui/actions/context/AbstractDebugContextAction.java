@@ -106,9 +106,7 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
      */
     protected void updateEnableStateForContext(IStructuredSelection selection) {
         int size = selection.size();
-        if (size == 0) {
-            setEnabled(false);
-        }
+        setEnabled(false);
         BooleanRequestMonitor monitor = new BooleanRequestMonitor(this, size);
         Iterator itr = selection.iterator();
         while (itr.hasNext()) {
