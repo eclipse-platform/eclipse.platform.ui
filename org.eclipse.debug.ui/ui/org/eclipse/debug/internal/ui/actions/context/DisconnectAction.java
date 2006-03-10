@@ -11,11 +11,12 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousDisconnectAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -23,22 +24,28 @@ public class DisconnectAction extends AbstractDebugContextAction {
 
     /*
      * (non-Javadoc)
-     * 
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
      */
-    protected void doAction(Object element) throws DebugException {
-        if (element instanceof IDisconnect) {
-            ((IDisconnect) element).disconnect();
+    protected void doAction(Object element) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousDisconnectAdapter disconnect = (IAsynchronousDisconnectAdapter) adaptable.getAdapter(IAsynchronousDisconnectAdapter.class);
+            if (disconnect != null) 
+                disconnect.disconnect(element, new ActionRequestMonitor());
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
      */
-    protected boolean isEnabledFor(Object element) {
-        return element instanceof IDisconnect && ((IDisconnect) element).canDisconnect();
+    protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousDisconnectAdapter disconnect = (IAsynchronousDisconnectAdapter) adaptable.getAdapter(IAsynchronousDisconnectAdapter.class);
+            if (disconnect != null) 
+                disconnect.canDisconnect(element, monitor);
+        }
     }
 
     /*

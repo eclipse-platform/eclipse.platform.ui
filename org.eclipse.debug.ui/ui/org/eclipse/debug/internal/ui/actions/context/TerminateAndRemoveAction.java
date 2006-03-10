@@ -10,28 +10,60 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.views.launch.LaunchView;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class TerminateAndRemoveAction extends AbstractDebugContextAction {
 
-    protected void doAction(Object element) throws DebugException {
-        LaunchView.terminateAndRemove(element);
+    
+    class TerminateAndRemoveMonitor extends ActionRequestMonitor {
+        private Object fElement;
+        TerminateAndRemoveMonitor(Object element) {
+            fElement = element;
+        }
+        public void done() {
+            if(getStatus() == null) {
+                ILaunch launch= null;
+                
+                if (fElement instanceof ILaunch) {
+                    launch= (ILaunch) fElement;
+                } else if (fElement instanceof IDebugElement) {
+                    launch= ((IDebugElement) fElement).getLaunch();
+                } else if (fElement instanceof IProcess) {
+                    launch= ((IProcess) fElement).getLaunch();
+                }   
+                if (launch != null)
+                    DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
+            }
+            super.done();
+        }
+        
+    }
+    protected void doAction(Object element) {
+        if (element instanceof IAdaptable) {
+            IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
+            if (adapter != null) 
+                adapter.terminate(element, new TerminateAndRemoveMonitor(element));
+        }
     }
 
-    protected boolean isEnabledFor(Object element) {
-        if (element instanceof ITerminate) {
-            ITerminate terminate = (ITerminate) element;
-            // do not want to terminate an attach launch that does not
-            // have termination enabled
-            return terminate.canTerminate() || terminate.isTerminated();
+    
+    protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
+            if (adapter != null)
+                adapter.canTerminate(element, monitor);
         }
-        return false;
+    
     }
 
     protected String getStatusMessage() {

@@ -11,13 +11,14 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
  
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,16 +31,41 @@ import org.eclipse.jface.viewers.StructuredSelection;
 public class TerminateAllAction extends AbstractDebugContextAction {
 	
 
-	protected void doAction(Object element) throws DebugException {
-		if (element instanceof ILaunch) {
-			ILaunch launch = (ILaunch) element;
-			if (!launch.isTerminated() && DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
-				launch.terminate();
-			}			
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
+     */
+    protected void doAction(Object element) {
+        if (element instanceof ILaunch) {
+            ILaunch launch = (ILaunch) element;
+            if (!launch.isTerminated() && DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
+                IAsynchronousTerminateAdapter killer = (IAsynchronousTerminateAdapter) launch.getAdapter(IAsynchronousTerminateAdapter.class);
+                if (killer != null) 
+                    killer.terminate(element, new ActionRequestMonitor());
+            }
+        }
+    }
 	
-	/**
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
+     */
+	protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        
+        //not really async here because we don't need to ask the target if the launch has terminated...
+        // will this ever be called??? update is overridden in this class...
+        
+        if (element instanceof ILaunch) {
+            ILaunch launch = (ILaunch) element;
+            if (!launch.isTerminated() && DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
+                monitor.setResult(true);
+            } 
+        }
+        monitor.done();
+    }
+
+
+    /**
 	 * Update the action enablement based on the launches present in
 	 * the launch manager. selection is unused and can be <code>null</code>.
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)

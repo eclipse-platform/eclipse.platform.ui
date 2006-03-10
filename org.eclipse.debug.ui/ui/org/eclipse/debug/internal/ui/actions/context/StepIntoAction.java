@@ -10,29 +10,41 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class StepIntoAction extends StepAction {
-	
-	/*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.actions.context.StepAction#checkCapability(org.eclipse.debug.core.model.IStep)
-	 */
-	protected boolean checkCapability(IStep element) {
-		return element.canStepInto();
-	}
 
-	/*
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.StepAction#checkCapability(org.eclipse.debug.core.model.IStep, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
+     */
+	protected void checkCapability(IStep element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);
+            if (steppy != null) 
+                steppy.canStepInto(element, monitor);
+        }
+    }
+
+    /*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.context.StepAction#stepAction(org.eclipse.debug.core.model.IStep)
-	 */
-	protected void stepAction(IStep element) throws DebugException {
-		element.stepInto();
+     */
+	protected void stepAction(IStep element) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);
+            if (steppy != null) 
+                steppy.stepInto(element, new ActionRequestMonitor());
+        }
 	}
 
 	/*

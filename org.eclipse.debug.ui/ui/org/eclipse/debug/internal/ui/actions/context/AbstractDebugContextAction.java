@@ -13,14 +13,7 @@ package org.eclipse.debug.internal.ui.actions.context;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
@@ -33,100 +26,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public abstract class AbstractDebugContextAction extends Action implements IDebugContextListener {
 
     private IStructuredSelection fActiveContext;
 
-    /**
-     * Used to schedule jobs, or <code>null</code> if none
-     */
-    private IWorkbenchSiteProgressService fProgressService = null;
-
-    private DebugRequestJob fRequestJob = null;
-
-    class DebugRequestJob extends Job {
-
-        private Object[] fElements = null;
-
-        /**
-         * Constructs a new job to perform a debug request (for example, step)
-         * in the background.
-         */
-        public DebugRequestJob() {
-            super(DebugUIPlugin.removeAccelerators(getText()));
-            setPriority(Job.INTERACTIVE);
-            setSystem(true);
-        }
-
-        /*
-         * (non-Javadoc)
-         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        protected IStatus run(IProgressMonitor monitor) {
-            MultiStatus status = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null);
-            Object[] targets = null;
-            synchronized (this) {
-                targets = fElements;
-                fElements = null;
-            }
-            for (int i = 0; i < targets.length; i++) {
-                Object element = targets[i];
-                Object target = getTarget(element);
-                try {
-                    // Action's enablement could have been changed since
-                    // it was last enabled. Check that the action is still
-                    // enabled before running the action.
-                    if (target != null && isEnabledFor(target))
-                        doAction(target);
-                } catch (DebugException e) {
-                    status.merge(e.getStatus());
-                }
-            }
-            return status;
-        }
-
-        protected synchronized void setElements(Object[] elements) {
-            fElements = elements;
-        }
-
-    }
-
-    private UpdateEnablementJob fUpdateJob = null;
-
     private IWorkbenchWindow fWindow;
 
     private AbstractDebugContextActionDelegate fDelegate;
-
-    class UpdateEnablementJob extends Job {
-
-        ISelection targetSelection = null;
-
-        public UpdateEnablementJob() {
-            super(ActionMessages.AbstractDebugActionDelegate_1);
-            setPriority(Job.INTERACTIVE);
-            setSystem(true);
-        }
-
-        /*
-         * (non-Javadoc)
-         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        protected IStatus run(IProgressMonitor monitor) {
-            ISelection context = null;
-            synchronized (this) {
-                context = targetSelection;
-                targetSelection = null;
-            }
-            update(context);
-            return Status.OK_STATUS;
-        }
-
-        protected synchronized void setContext(ISelection context) {
-            targetSelection = context;
-        }
-    }
 
     public AbstractDebugContextAction() {
         super();
@@ -140,7 +47,7 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         fDelegate = delegate;
     }
 
-    protected abstract void doAction(Object target) throws DebugException;
+    protected abstract void doAction(Object target);
 
     public AbstractDebugContextAction(String text) {
         super(text);
@@ -159,30 +66,8 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
      * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
      */
     public void contextActivated(ISelection context, IWorkbenchPart part) {
-        if (part != null)
-            fProgressService = (IWorkbenchSiteProgressService) part.getSite().getAdapter(IWorkbenchSiteProgressService.class);
-        else
-            fProgressService = null;
-
         fActiveContext = null;
-        if (fUpdateJob == null) {
-            fUpdateJob = new UpdateEnablementJob();
-        }
-        fUpdateJob.setContext(context);
-        schedule(fUpdateJob);
-    }
-
-    /**
-     * Schedules the given job with this action's progress service
-     * 
-     * @param job
-     */
-    private void schedule(Job job) {
-        if (fProgressService == null) {
-            job.schedule();
-        } else {
-            fProgressService.schedule(job);
-        }
+        update(context);
     }
 
     /*
@@ -196,7 +81,7 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
     protected void update(ISelection context) {
         if (context instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) context;
-            setEnabled(getEnableStateForContext(ss));
+            updateEnableStateForContext(ss);
             fActiveContext = (IStructuredSelection) context;
         } else {
             setEnabled(false);
@@ -219,19 +104,19 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
      * Return whether the action should be enabled or not based on the given
      * selection.
      */
-    protected boolean getEnableStateForContext(IStructuredSelection selection) {
-        if (selection.size() == 0) {
-            return false;
+    protected void updateEnableStateForContext(IStructuredSelection selection) {
+        int size = selection.size();
+        if (size == 0) {
+            setEnabled(false);
         }
+        BooleanRequestMonitor monitor = new BooleanRequestMonitor(this, size);
         Iterator itr = selection.iterator();
         while (itr.hasNext()) {
             Object element = itr.next();
             Object target = getTarget(element);
-            if (target == null || !isEnabledFor(target)) {
-                return false;
-            }
+            if (target != null)
+                isEnabledFor(target, monitor);
         }
-        return true;
     }
 
     /**
@@ -245,9 +130,7 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         return selectee;
     }
 
-    protected boolean isEnabledFor(Object element) {
-        return true;
-    }
+    protected abstract void isEnabledFor(Object element, IBooleanRequestMonitor monitor);
 
     public void init(IWorkbenchWindow window) {
         setWindow(window);
@@ -259,10 +142,10 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
             // the window action is not instantiated until invoked the first
             // time must wait for enablement update or action will not run the first
             // time it is invoked, when it might be pending enablement
-            try {
-                fUpdateJob.join();
-            } catch (InterruptedException e) {
-            }
+//            try {
+//                fUpdateJob.join();
+//            } catch (InterruptedException e) {
+//            }
         }
     }
 
@@ -289,11 +172,11 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
             // disable the action so it cannot be run again until an event or
             // selection change updates the enablement
             setEnabled(false);
-            if (fRequestJob == null) {
-                fRequestJob = new DebugRequestJob();
+            for (Iterator iter = selection.iterator(); iter.hasNext();) {
+                Object element = iter.next();
+                Object target = getTarget(element);
+                doAction(target);
             }
-            fRequestJob.setElements(selection.toArray());
-            schedule(fRequestJob);
         }
     }
 

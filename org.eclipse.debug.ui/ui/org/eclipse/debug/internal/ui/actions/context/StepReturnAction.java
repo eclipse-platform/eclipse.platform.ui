@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class StepReturnAction extends StepIntoAction {
@@ -47,12 +49,23 @@ public class StepReturnAction extends StepIntoAction {
         return ActionMessages.StepReturnAction_3;
     }
 
-    protected boolean checkCapability(IStep element) {
-        return element.canStepReturn();
+    
+    protected void checkCapability(IStep element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);
+            if (steppy != null) 
+                steppy.canStepReturn(element, monitor);
+        }
     }
 
-    protected void stepAction(IStep element) throws DebugException {
-        element.stepReturn();
+    protected void stepAction(IStep element) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);
+            if (steppy != null) 
+                steppy.stepReturn(element, new ActionRequestMonitor());
+        }
     }
 
     protected String getStatusMessage() {

@@ -11,8 +11,8 @@
 
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 
 public abstract class StepAction extends AbstractDebugContextAction {
 	
@@ -20,8 +20,8 @@ public abstract class StepAction extends AbstractDebugContextAction {
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
 	 */
-	protected void doAction(Object object) throws DebugException {
-		if (object instanceof IStep) {
+	protected void doAction(Object object) {
+        if (object instanceof IStep) {
 			stepAction((IStep)object);
 		}
 	}
@@ -30,23 +30,18 @@ public abstract class StepAction extends AbstractDebugContextAction {
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object)
 	 */
-	protected boolean isEnabledFor(Object element) {
+	protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
 		if (element instanceof IStep) {
-			return checkCapability((IStep)element);
+			checkCapability((IStep)element, monitor);
 		}
-		return false;
 	}
 
-	/**
-	 * Returns whether the <code>IStep</code> has the capability to perform the
-	 * requested step action.
-	 */
-	protected abstract boolean checkCapability(IStep element);
 
+    protected abstract void checkCapability(IStep element, IBooleanRequestMonitor monitor);
 	/**
 	 * Performs the specific step action.
 	 *
 	 * @exception DebugException if the action fails
 	 */
-	protected abstract void stepAction(IStep element) throws DebugException;
+	protected abstract void stepAction(IStep element);
 }

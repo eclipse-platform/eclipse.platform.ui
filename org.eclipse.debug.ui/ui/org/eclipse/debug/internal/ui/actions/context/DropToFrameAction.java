@@ -11,11 +11,12 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDropToFrame;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousDropToFrameAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -24,26 +25,30 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class DropToFrameAction extends AbstractDebugContextAction {
     /*
      * (non-Javadoc)
-     * 
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
      */
-    protected void doAction(Object element) throws DebugException {
-        if (element instanceof IDropToFrame) {
-            IDropToFrame dropToFrame = (IDropToFrame) element;
-            if (dropToFrame.canDropToFrame()) {
-                dropToFrame.dropToFrame();
-            }
+    protected void doAction(Object element) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousDropToFrameAdapter dropper = (IAsynchronousDropToFrameAdapter) adaptable.getAdapter(IAsynchronousDropToFrameAdapter.class);
+            if (dropper != null) 
+                dropper.dropToFrame(element, new ActionRequestMonitor());
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
      */
-    protected boolean isEnabledFor(Object element) {
-        return element instanceof IDropToFrame && ((IDropToFrame) element).canDropToFrame();
+    protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousDropToFrameAdapter dropper = (IAsynchronousDropToFrameAdapter) adaptable.getAdapter(IAsynchronousDropToFrameAdapter.class);
+            if (dropper != null) 
+                dropper.canDropToFrame(element, monitor);
+        }
     }
+
 
     /*
      * (non-Javadoc)

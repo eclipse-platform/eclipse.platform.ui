@@ -16,6 +16,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter;
 import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
@@ -69,9 +74,11 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 		Assert.isTrue(element instanceof ITerminate, "element must be instance of ITerminate"); //$NON-NLS-1$
 		Job job = new Job("terminate") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				ITerminate terminate = (ITerminate) element;
 				try {
-					terminate.terminate();
+                    if (element instanceof IProcess) {
+                        killTargets((IProcess) element);
+                    }
+                    ((ITerminate) element).terminate();
 				} catch (DebugException e) {
 					requestMonitor.setStatus(e.getStatus());
 				}
@@ -81,7 +88,30 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 		};
 		job.setSystem(true);
 		job.schedule();
-
 	}
+
+    private void killTargets(IProcess process) throws DebugException {
+        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+        ILaunch[] launches = launchManager.getLaunches();
+
+        for (int i = 0; i < launches.length; i++) {
+            ILaunch launch = launches[i];
+            IProcess[] processes = launch.getProcesses();
+            for (int j = 0; j < processes.length; j++) {
+                IProcess process2 = processes[j];
+                if (process2.equals(process)) {
+                    IDebugTarget[] debugTargets = launch.getDebugTargets();
+                    for (int k = 0; k < debugTargets.length; k++) {
+                        IDebugTarget target = debugTargets[k];
+                        if (target.canTerminate()) {
+                            target.terminate();
+                        }
+                    }
+                    return; // all possible targets have been terminated for the
+                            // launch.
+                }
+            }
+        }
+    }
 
 }

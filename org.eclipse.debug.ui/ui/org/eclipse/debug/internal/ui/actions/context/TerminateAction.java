@@ -11,55 +11,33 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class TerminateAction extends AbstractDebugContextAction {
 
-    protected void doAction(Object element) throws DebugException {
-        if (element instanceof ITerminate) {
-            if (element instanceof IProcess) {
-                killTargets((IProcess) element);
-            }
-            ((ITerminate) element).terminate();
+    protected void doAction(final Object element) {
+        if (element instanceof IAdaptable) {
+            IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
+            if (adapter != null)
+                adapter.terminate(element, new ActionRequestMonitor());
         }
     }
 
-    private void killTargets(IProcess process) throws DebugException {
-        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-        ILaunch[] launches = launchManager.getLaunches();
 
-        for (int i = 0; i < launches.length; i++) {
-            ILaunch launch = launches[i];
-            IProcess[] processes = launch.getProcesses();
-            for (int j = 0; j < processes.length; j++) {
-                IProcess process2 = processes[j];
-                if (process2.equals(process)) {
-                    IDebugTarget[] debugTargets = launch.getDebugTargets();
-                    for (int k = 0; k < debugTargets.length; k++) {
-                        IDebugTarget target = debugTargets[k];
-                        if (target.canTerminate()) {
-                            target.terminate();
-                        }
-                    }
-                    return; // all possible targets have been terminated for the
-                            // launch.
-                }
+
+    protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
+            if (adapter != null) {
+                adapter.canTerminate(element, monitor);
             }
         }
-    }
-
-    protected boolean isEnabledFor(Object element) {
-        return element instanceof ITerminate && ((ITerminate) element).canTerminate();
     }
 
     protected String getStatusMessage() {

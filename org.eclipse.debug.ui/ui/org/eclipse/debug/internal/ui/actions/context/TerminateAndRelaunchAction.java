@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -18,7 +18,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -28,14 +29,20 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public class TerminateAndRelaunchAction extends AbstractDebugContextAction {
 
-    protected void doAction(Object element) throws DebugException {
+    protected void doAction(Object element) {
         final ILaunch launch = RelaunchActionDelegate.getLaunch(element);
         if (launch == null || !(element instanceof ITerminate)) {
             // Shouldn't happen because of enablement check.
             return;
         }
+        
+        if (element instanceof IAdaptable) {
+            IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
+            if (adapter != null)
+                adapter.terminate(element, new ActionRequestMonitor());
+        }
 
-        ((ITerminate) element).terminate();
+
         DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
                 // Must be run in the UI thread since the launch can require
@@ -45,10 +52,16 @@ public class TerminateAndRelaunchAction extends AbstractDebugContextAction {
         });
     }
 
-    protected boolean isEnabledFor(Object element) {
-        ILaunch launch = RelaunchActionDelegate.getLaunch(element);
-        return element instanceof ITerminate && ((ITerminate) element).canTerminate() && launch != null && LaunchConfigurationManager.isVisible(launch.getLaunchConfiguration());
+
+    protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
+            if (adapter != null)
+                adapter.canTerminate(element, monitor);
+        }
+        
     }
+
 
     public String getActionDefinitionId() {
         return ActionMessages.TerminateAndRelaunchAction_0;

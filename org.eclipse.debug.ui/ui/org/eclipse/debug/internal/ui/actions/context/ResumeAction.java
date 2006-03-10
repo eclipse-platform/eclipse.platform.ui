@@ -18,6 +18,8 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousSuspendResumeAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class ResumeAction extends AbstractDebugContextAction {
@@ -26,14 +28,28 @@ public class ResumeAction extends AbstractDebugContextAction {
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
      */
-    protected void doAction(Object object) throws DebugException {
-        if (isEnabledFor(object)) {
-            ISuspendResume resume = (ISuspendResume) object;
-            resume.resume();
-        } else {
-            doActionForAllThreads(object);
+    protected void doAction(Object element) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousSuspendResumeAdapter suspendResumer = (IAsynchronousSuspendResumeAdapter) adaptable.getAdapter(IAsynchronousSuspendResumeAdapter.class);
+            if (suspendResumer != null) 
+                suspendResumer.resume(element, new ActionRequestMonitor());
         }
     }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
+     */
+    protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousSuspendResumeAdapter suspendResumer = (IAsynchronousSuspendResumeAdapter) adaptable.getAdapter(IAsynchronousSuspendResumeAdapter.class);
+            if (suspendResumer != null) 
+                suspendResumer.canResume(element, monitor);
+        }        
+    }
+
 
     /**
      * Resumes all threads in the target associated with the given element
@@ -54,14 +70,6 @@ public class ResumeAction extends AbstractDebugContextAction {
                 }
             }
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object)
-     */
-    protected boolean isEnabledFor(Object element) {
-        return element instanceof ISuspendResume && ((ISuspendResume) element).canResume();
     }
 
     /**

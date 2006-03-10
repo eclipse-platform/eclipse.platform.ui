@@ -10,24 +10,43 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousSuspendResumeAdapter;
+import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class SuspendAction extends AbstractDebugContextAction {
 
-    protected void doAction(Object element) throws DebugException {
-        if (element instanceof ISuspendResume) {
-            ((ISuspendResume) element).suspend();
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
+     */
+    protected void doAction(Object element) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousSuspendResumeAdapter suspendResumer = (IAsynchronousSuspendResumeAdapter) adaptable.getAdapter(IAsynchronousSuspendResumeAdapter.class);
+            if (suspendResumer != null) 
+                suspendResumer.suspend(element, new ActionRequestMonitor());
         }
     }
 
-    protected boolean isEnabledFor(Object element) {
-        return element instanceof ISuspendResume && ((ISuspendResume) element).canSuspend();
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
+     */
+    protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
+        if (element instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) element;
+            IAsynchronousSuspendResumeAdapter suspendResumer = (IAsynchronousSuspendResumeAdapter) adaptable.getAdapter(IAsynchronousSuspendResumeAdapter.class);
+            if (suspendResumer != null) 
+                suspendResumer.canResume(element, monitor);
+        }
+        
     }
+
 
     protected String getStatusMessage() {
         return ActionMessages.SuspendActionDelegate_Exceptions_occurred_attempting_to_suspend__2;
