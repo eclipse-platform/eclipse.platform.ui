@@ -60,6 +60,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_PRINT_TOP_VIEW_TAB= "IMG_DLCL_PRINT_TOP_VIEW_TAB"; //$NON-NLS-1$
     public static final String IMG_DLCL_NEW_CONFIG = "IMG_DLCL_NEW_CONFIG"; //$NON-NLS-1$
     public static final String IMG_DLCL_DUPLICATE_CONFIG = "IMG_DLCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
+    public static final String IMG_DLCL_DELETE_CONFIG = "IMG_DLCL_DELETE_CONFIG"; //$NON-NLS-1$
     public static final String IMG_DLCL_FILTER_CONFIGS = "IMG_DLCL_FILTER_CONFIGS"; //$NON-NLS-1$
     public static final String IMG_DLCL_SUSPEND = "IMG_DLCL_SUSPEND"; //$NON-NLS-1$
     public static final String IMG_DLCL_RESUME = "IMG_DLCL_RESUME"; //$NON-NLS-1$
@@ -96,6 +97,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_HIERARCHICAL = "IMG_ELCL_HIERARCHICAL"; //$NON-NLS-1$
     public static final String IMG_ELCL_HELP = "IMG_ELCL_HELP"; //$NON-NLS-1$
     public static final String IMG_ELCL_NEW_CONFIG = "IMG_ELCL_NEW_CONFIG"; //$NON-NLS-1$
+    public static final String IMG_ELCL_DELETE_CONFIG = "IMG_ELCL_DELETE_CONFIG"; //$NON-NLS-1$
     public static final String IMG_ELCL_FILTER_CONFIGS = "IMG_ELCL_FILTER_CONFIGS"; //$NON-NLS-1$
     public static final String IMG_ELCL_DUPLICATE_CONFIG = "IMG_ELCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
     public static final String IMG_ELCL_SUSPEND = "IMG_ELCL_SUSPEND"; //$NON-NLS-1$

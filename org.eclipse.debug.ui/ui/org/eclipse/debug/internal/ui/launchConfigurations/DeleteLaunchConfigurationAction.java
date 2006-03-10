@@ -97,14 +97,14 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
 	 */
 	public ImageDescriptor getDisabledImageDescriptor() {
-		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE);
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DELETE_CONFIG);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE);
+		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG);
 	}
 
 	/* (non-Javadoc)

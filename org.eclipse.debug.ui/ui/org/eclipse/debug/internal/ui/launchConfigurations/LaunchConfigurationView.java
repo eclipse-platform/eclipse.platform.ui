@@ -144,7 +144,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		}
 		treeViewer.addFilter(new LaunchGroupFilter(getLaunchGroup()));
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		treeViewer.expandAll();
+/*		treeViewer.expandAll();*/
 		treeViewer.getControl().addHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent evt) {
 				handleHelpRequest(evt);

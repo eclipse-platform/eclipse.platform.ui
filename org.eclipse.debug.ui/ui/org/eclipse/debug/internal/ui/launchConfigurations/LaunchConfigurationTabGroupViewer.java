@@ -336,7 +336,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2);
 		createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG),
         		LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6);
-		createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE), 
+		createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG), 
 				LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4);
         createWrapLabel(parent, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS),
         		LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8);
