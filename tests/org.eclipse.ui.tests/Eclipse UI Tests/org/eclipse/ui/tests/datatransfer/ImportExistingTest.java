@@ -588,6 +588,95 @@ public class ImportExistingTest extends DataTransferTestCase {
 			fail(e.toString());
 		}
 	}
+
+	public void testImportZipDeleteContentsImportAgain() {
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			IProject[] workspaceProjects = root.getProjects();
+            for (int i = 0; i < workspaceProjects.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects[i]);
+			URL archiveFile = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(archiveFile.getPath());
+			
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+			waitForRefresh();
+			
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 1)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
+			if (helloFolder.exists())
+				fail("Project was imported as a folder into itself");
+			
+			verifyProjectInWorkspace(true, workspaceProjects[0], FILE_LIST, true);
+
+			// delete projects in workspace but not contents
+			for (int i = 0; i < workspaceProjects.length; i++){
+				workspaceProjects[i].delete(true, true, null);
+			}
+			assertTrue("Test project not deleted successfully.", root.getProjects().length == 0);
+			
+			// import again
+			IProject[] workspaceProjects2 = root.getProjects();
+            for (int i = 0; i < workspaceProjects2.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects2[i]);
+			URL archiveFile2 = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip")));
+			WizardProjectsImportPage wpip2 = getNewWizard();
+			HashSet projects2 = new HashSet();
+			projects2.add("HelloWorld");
+			
+			wpip2.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip2.updateProjectsList(archiveFile2.getPath());
+			
+			ProjectRecord[] selectedProjects2 = wpip2.getValidProjects();
+			ArrayList projectNames2 = new ArrayList();
+			for (int i = 0; i < selectedProjects2.length; i++) {
+				projectNames2.add(selectedProjects2[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in zip (2)", projectNames2.containsAll(projects2));
+
+			CheckboxTreeViewer projectsList2 = wpip2.getProjectsList();
+			projectsList2.setCheckedElements(selectedProjects2);
+			wpip2.createProjects(); // Try importing all the projects we found
+			waitForRefresh();
+			
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects2 = root.getProjects();
+			if (workspaceProjects2.length != 1)
+				fail("Incorrect Number of projects imported (2)");
+			IFolder helloFolder2 = workspaceProjects2[0].getFolder("HelloWorld");
+			if (helloFolder2.exists())
+				fail("Project was imported as a folder into itself (2)");
+			
+			verifyProjectInWorkspace(true, workspaceProjects2[0], FILE_LIST, true);
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+
+	}
 	
 	/**
 	 * Verify whether or not the imported project is in the current workspace location
