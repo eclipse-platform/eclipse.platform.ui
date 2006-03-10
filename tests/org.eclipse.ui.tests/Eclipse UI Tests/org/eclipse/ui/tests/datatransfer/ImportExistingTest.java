@@ -678,6 +678,58 @@ public class ImportExistingTest extends DataTransferTestCase {
 
 	}
 	
+	public void testImportArchiveMultiProject(){
+		try{
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			String zipLocation = copyZipLocation();
+			
+			IProject[] workspaceProjects = root.getProjects();
+	        for (int i = 0; i < workspaceProjects.length; i++) 
+	        	FileUtil.deleteProject(workspaceProjects[i]);
+
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			projects.add("WorldHello");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(zipLocation);
+			
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+			waitForRefresh();
+			
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 2)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
+			if (helloFolder.exists())
+				fail("HelloWorld was imported as a folder into itself");
+			IFolder folder2 = workspaceProjects[0].getFolder("WorldHello");
+			if (folder2.exists())
+				fail("WorldHello was imported as a folder into itself");
+			
+			for (int i = 0; i < workspaceProjects.length; i++)
+				verifyProjectInWorkspace(true, workspaceProjects[i], FILE_LIST, true);
+			
+					
+		} catch (IOException e){
+			fail(e.toString());
+		} catch (CoreException e){
+			fail(e.toString());
+		}
+	}
+	
 	/**
 	 * Verify whether or not the imported project is in the current workspace location
 	 * (i.e. copy projects was true) or in another workspace location (i.e. copy projects
@@ -740,6 +792,29 @@ public class ImportExistingTest extends DataTransferTestCase {
 		
 		File destination = new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir()).toOSString());
 		FileTool.unzip(zFile, destination);
+		return destination.getAbsolutePath();
+	}
+	
+	private String copyZipLocation() throws IOException {
+        TestPlugin plugin = TestPlugin.getDefault();
+        if (plugin == null)
+            throw new IllegalStateException(
+                    "TestPlugin default reference is null");
+        
+        URL fullPathString = plugin.getDescriptor().find(
+				new Path(WS_DATA_PREFIX).append(WS_DATA_LOCATION + ".zip"));
+        
+        if (fullPathString == null) 
+        	throw new IllegalArgumentException();
+        
+        IPath path = new Path(fullPathString.getPath());
+
+        File origin = path.toFile();
+        if (!origin.exists())
+			throw new IllegalArgumentException();
+		
+		File destination = new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir()).toOSString() + File.separator + ARCHIVE_HELLOWORLD + ".zip");
+		FileTool.copy(origin, destination);	
 		return destination.getAbsolutePath();
 	}
 	
