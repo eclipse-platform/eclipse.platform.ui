@@ -300,7 +300,9 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     		}
    			// create new one
 			fColumnEditor = factoryAdapter.createColumnEditor(getPresentationContext(), element);
-			fColumnEditor.init(getPresentationContext());
+			if (fColumnEditor != null) {
+				fColumnEditor.init(getPresentationContext());
+			}
     	} else {
     		// no editor - dispose current
 	    	if (fColumnEditor != null) {
