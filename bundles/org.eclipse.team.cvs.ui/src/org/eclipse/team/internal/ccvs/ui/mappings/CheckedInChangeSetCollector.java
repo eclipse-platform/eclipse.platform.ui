@@ -25,7 +25,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSChangeSetCollector;
@@ -36,7 +36,7 @@ import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
-public class CheckedInChangeSetCollector extends ChangeSetCollector implements ILogsFetchedListener {
+public class CheckedInChangeSetCollector extends BatchedChangeSetCollector implements ILogsFetchedListener {
 
 	/*
      * Constant used to store the log entry handler in the configuration so it can
@@ -451,7 +451,12 @@ public class CheckedInChangeSetCollector extends ChangeSetCollector implements I
         if (disposed) return;
         // Hold on to the cache so we can use it while commit sets are visible
         this.logEntryCache = logEntryCache;
-        handleRemoteChanges(set.getSyncInfos(), logEntryCache, monitor);
+        try {
+        	beginInput();
+        	handleRemoteChanges(set.getSyncInfos(), logEntryCache, monitor);
+        } finally {
+        	endInput(monitor);
+        }
     }
 
     public ICVSRemoteFile getImmediatePredecessor(ICVSRemoteFile file) throws TeamException {

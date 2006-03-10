@@ -23,7 +23,7 @@ public abstract class ChangeSetCollector {
     private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
     private Set sets = new HashSet();
     
-    private Object[] getListeners() {
+    protected Object[] getListeners() {
         return listeners.getListeners();
     }
     

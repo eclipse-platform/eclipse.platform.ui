@@ -24,6 +24,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.core.subscribers.*;
+import org.eclipse.team.internal.core.subscribers.BatchedChangeSetCollector.CollectorChangeEvent;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
@@ -35,28 +36,27 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 public class ChangeSetContentProvider extends ResourceModelContentProvider implements ITreePathContentProvider {
 
-	private ResourceDiffTree theRest;
-	private Map diffTrees = new HashMap();
-	
-	/*
-	 * Listener that reacts to changes made to the active change set collector
-	 */
-	private IChangeSetChangeListener collectorListener = new IChangeSetChangeListener() {
-	
+	private final class CollectorListener implements IChangeSetChangeListener, BatchedChangeSetCollector.IChangeSetCollectorChangeListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener#setAdded(org.eclipse.team.internal.core.subscribers.ChangeSet)
 		 */
 		public void setAdded(final ChangeSet set) {
-			// TODO: Should we listen to all sets for changes or just to the collector?
-			addListener((DiffChangeSet)set);
-			if (isVisible(set)) {
-				Utils.syncExec(new Runnable() {
-					public void run() {
-						Object input = getViewer().getInput();
-						((AbstractTreeViewer)getViewer()).add(input, set);
-					}
-				}, (StructuredViewer)getViewer());
+			// We only react here for active change sets.
+			// Checked-in change set changes are batched
+			if (set instanceof ActiveChangeSet) {
+				if (isVisible(set)) {
+					Utils.syncExec(new Runnable() {
+						public void run() {
+							Object input = getViewer().getInput();
+							((AbstractTreeViewer)getViewer()).add(input, set);
+						}
+					}, (StructuredViewer)getViewer());
+				}
+				handleSetAddition(set);
 			}
+		}
+
+		private void handleSetAddition(final ChangeSet set) {
 			IResource[] resources = set.getResources();
 			try {
 				getTheRest().beginInput();
@@ -86,14 +86,21 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		 * @see org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener#setRemoved(org.eclipse.team.internal.core.subscribers.ChangeSet)
 		 */
 		public void setRemoved(final ChangeSet set) {
-			removeListener((DiffChangeSet)set);
-			if (isVisible(set)) {
-				Utils.syncExec(new Runnable() {
-					public void run() {
-						((AbstractTreeViewer)getViewer()).remove(TreePath.EMPTY.createChildPath(set));
-					}
-				}, (StructuredViewer)getViewer());
+			// We only react here for active change sets.
+			// Checked-in change set changes are batched
+			if (set instanceof ActiveChangeSet) {
+				if (isVisible(set)) {
+					Utils.syncExec(new Runnable() {
+						public void run() {
+							((AbstractTreeViewer)getViewer()).remove(TreePath.EMPTY.createChildPath(set));
+						}
+					}, (StructuredViewer)getViewer());
+				}
+				handleSetRemoval(set);
 			}
+		}
+
+		private void handleSetRemoval(final ChangeSet set) {
 			IResource[] resources = set.getResources();
 			try {
 				getTheRest().beginInput();
@@ -125,36 +132,117 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		 * @see org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener#resourcesChanged(org.eclipse.team.internal.core.subscribers.ChangeSet, org.eclipse.core.runtime.IPath[])
 		 */
 		public void resourcesChanged(final ChangeSet set, final IPath[] paths) {
-			if (isVisible(set)) {
-				Utils.syncExec(new Runnable() {
-					public void run() {
-						// TODO: Should we refresh here or in a diff change listener
-						((AbstractTreeViewer)getViewer()).refresh(set, true);
-					}
-				}, (StructuredViewer)getViewer());
+			// We only react here for active change sets.
+			// Checked-in change set changes are batched
+			if (set instanceof ActiveChangeSet) {
+				if (isVisible(set)) {
+					Utils.syncExec(new Runnable() {
+						public void run() {
+							((AbstractTreeViewer)getViewer()).refresh(set, true);
+						}
+					}, (StructuredViewer)getViewer());
+				}
+				handleSetChange(set, paths);
 			}
+		}
+
+		private void handleSetChange(final ChangeSet set, final IPath[] paths) {
 			try {
 				getTheRest().beginInput();
-	            for (int i = 0; i < paths.length; i++) {
+			    for (int i = 0; i < paths.length; i++) {
 					IPath path = paths[i];
-	                boolean isContained = ((DiffChangeSet)set).contains(path);
+			        boolean isContained = ((DiffChangeSet)set).contains(path);
 					if (isContained) {
 						IDiff diff = ((DiffChangeSet)set).getDiffTree().getDiff(path);
 						if (diff != null) {
 							getTheRest().remove(ResourceDiffTree.getResourceFor(diff));
 						}
 					} else {
-	                    IDiff diff = getContext().getDiffTree().getDiff(path);
-	                    if (diff != null && !isContainedInSet(diff)) {
-	                        getTheRest().add(diff);
-	                    }
-	                }   
-	            }
+			            IDiff diff = getContext().getDiffTree().getDiff(path);
+			            if (diff != null && !isContainedInSet(diff)) {
+			                getTheRest().add(diff);
+			            }
+			        }   
+			    }
 			} finally {
 				getTheRest().endInput(null);
 			}
 		}
-	};
+
+		public void changeSetChanges(final CollectorChangeEvent event, IProgressMonitor monitor) {
+			ChangeSet[] addedSets = event.getAddedSets();
+			final ChangeSet[] visibleAddedSets = getVisibleSets(addedSets);
+			ChangeSet[] removedSets = event.getRemovedSets();
+			final ChangeSet[] visibleRemovedSets = getVisibleSets(removedSets);
+			ChangeSet[] changedSets = event.getChangedSets();
+			final ChangeSet[] visibleChangedSets = getVisibleSets(changedSets);
+			if (visibleAddedSets.length > 0 || visibleRemovedSets.length > 0 || visibleChangedSets.length > 0) {
+				Utils.syncExec(new Runnable() {
+					public void run() {
+						if (visibleAddedSets.length > 0) {
+							Object input = getViewer().getInput();
+							((AbstractTreeViewer)getViewer()).add(input, visibleAddedSets);
+						}
+						if (visibleRemovedSets.length > 0)
+							((AbstractTreeViewer)getViewer()).remove(visibleRemovedSets);
+						if (visibleChangedSets.length > 0) {
+							((AbstractTreeViewer)getViewer()).refresh(visibleChangedSets, true);
+						}
+					}
+				}, (StructuredViewer)getViewer());
+			}
+			try {
+				getTheRest().beginInput();
+				for (int i = 0; i < addedSets.length; i++) {
+					ChangeSet set = addedSets[i];
+					handleSetAddition(set);
+				}
+				for (int i = 0; i < removedSets.length; i++) {
+					ChangeSet set = removedSets[i];
+					handleSetRemoval(set);
+				}
+				for (int i = 0; i < visibleChangedSets.length; i++) {
+					ChangeSet set = visibleChangedSets[i];
+					IPath[] paths = event.getChangesFor(set);
+					if (event.getSource().contains(set)) {
+						handleSetChange(set, paths);
+					} else {
+						try {
+							getTheRest().beginInput();
+							for (int j = 0; j < paths.length; j++) {
+								IPath path = paths[j];
+								IDiff diff = getContext().getDiffTree().getDiff(path);
+								if (diff != null && !isContainedInSet(diff))
+									getTheRest().add(diff);
+							}
+						} finally {
+							getTheRest().endInput(null);
+						}
+					}
+				}
+			} finally {
+				getTheRest().endInput(monitor);
+			}
+		}
+
+		private ChangeSet[] getVisibleSets(ChangeSet[] sets) {
+			List result = new ArrayList(sets.length);
+			for (int i = 0; i < sets.length; i++) {
+				ChangeSet set = sets[i];
+				if (isVisible(set)) {
+					result.add(set);
+				}
+			}
+			return (ChangeSet[]) result.toArray(new ChangeSet[result.size()]);
+		}
+	}
+
+	private ResourceDiffTree theRest;
+	
+	/*
+	 * Listener that reacts to changes made to the active change set collector
+	 */
+	private IChangeSetChangeListener collectorListener = new CollectorListener();
 	
 	private IDiffChangeListener diffTreeListener = new IDiffChangeListener() {
 	
@@ -225,8 +313,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	private Object[] getRootElements() {
-		if (checkedInCollector != null && !collectorInitialized) {
-			checkedInCollector.add(((ResourceDiffTree)getContext().getDiffTree()).getDiffs());
+		if (!collectorInitialized) {
+			initializeCheckedInChangeSetCollector(getChangeSetCapability());
 			collectorInitialized = true;
 		}
 		List result = new ArrayList();
@@ -410,20 +498,14 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		if (csc.supportsActiveChangeSets()) {
 			SubscriberChangeSetCollector collector = csc.getActiveChangeSetManager();
 			collector.addListener(collectorListener);
-			ChangeSet[] sets = collector.getSets();
-			for (int i = 0; i < sets.length; i++) {
-				DiffChangeSet set = (DiffChangeSet)sets[i];
-				addListener(set);
-			}
 		}
+	}
+
+	private void initializeCheckedInChangeSetCollector(ChangeSetCapability csc) {
 		if (csc.supportsCheckedInChangeSets()) {
 			checkedInCollector = ((WorkspaceChangeSetCapability)csc).createCheckedInChangeSetCollector(getConfiguration());
 			checkedInCollector.addListener(collectorListener);
-			ChangeSet[] sets = checkedInCollector.getSets();
-			for (int i = 0; i < sets.length; i++) {
-				DiffChangeSet set = (DiffChangeSet)sets[i];
-				addListener(set);
-			}
+			checkedInCollector.add(((ResourceDiffTree)getContext().getDiffTree()).getDiffs());
 		}
 	}
 	
@@ -439,23 +521,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		if (theRest != null) {
 			theRest.removeDiffChangeListener(diffTreeListener);
 		}
-		for (Iterator iter = diffTrees.keySet().iterator(); iter.hasNext();) {
-			IDiffTree tree = (IDiffTree) iter.next();
-			tree.removeDiffChangeListener(diffTreeListener);
-		}
 		super.dispose();
-	}
-	
-	protected void addListener(DiffChangeSet set) {
-		IResourceDiffTree tree = set.getDiffTree();
-		diffTrees.put(tree, set);
-		tree.addDiffChangeListener(diffTreeListener);
-	}
-	
-	protected void removeListener(DiffChangeSet set) {
-		IResourceDiffTree tree = set.getDiffTree();
-		diffTrees.remove(tree);
-		tree.removeDiffChangeListener(diffTreeListener);
 	}
 	
 	public boolean isVisible(IDiff diff) {
