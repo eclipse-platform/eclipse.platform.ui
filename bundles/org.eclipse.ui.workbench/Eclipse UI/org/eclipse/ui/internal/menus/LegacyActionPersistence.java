@@ -498,6 +498,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					window);
 		}
 
+
 		/*
 		 * Create the handler. TODO The image style is read at the workbench
 		 * level, but it is hard to communicate this information to this point.
@@ -506,6 +507,12 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		final ActionDelegateHandlerProxy handler = new ActionDelegateHandlerProxy(
 				element, ATT_CLASS, actionId, command, window, null,
 				enabledWhenExpression, viewId);
+
+		// Read the help context id.
+		final String helpContextId = readOptional(element, ATT_HELP_CONTEXT_ID);
+		if (helpContextId != null) {
+			commandService.setHelpContextId(handler, helpContextId);
+		}
 
 		// Activate the handler.
 		final String commandId = command.getId();
@@ -842,8 +849,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			convertActionToHandler(element, id, command, visibleWhenExpression,
 					viewId, warningsToLog);
-
-			// TODO Read the helpContextId attribute
 			// TODO Read the overrideActionId attribute
 
 			convertActionToBinding(element, command);
