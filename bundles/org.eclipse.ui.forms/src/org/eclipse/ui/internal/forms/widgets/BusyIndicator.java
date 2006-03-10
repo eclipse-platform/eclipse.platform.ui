@@ -177,9 +177,9 @@ public class BusyIndicator extends Canvas {
 							try {
 								int ms = imageData.delayTime * 10;
 								if (ms < 20)
-									ms += 30;
+									ms += 50;
 								if (ms < 30)
-									ms += 10;
+									ms += 20;
 								Thread.sleep(ms);
 							} catch (InterruptedException e) {
 							}
