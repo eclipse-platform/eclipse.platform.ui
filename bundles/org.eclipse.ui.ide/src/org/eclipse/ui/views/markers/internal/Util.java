@@ -65,7 +65,7 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getProperty(String property, IMarker marker) {
-		if (marker == null) {
+		if (marker == null || !marker.exists()) {
 			return EMPTY_STRING;
 		}
 		try {
@@ -118,6 +118,9 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getContainerName(IMarker marker) {
+		
+		if(!marker.exists())
+			return Util.EMPTY_STRING;
 
 		try {
 			Object pathAttribute = marker
@@ -173,6 +176,9 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getResourceName(IMarker marker) {
+		
+		if(!marker.exists())
+			return Util.EMPTY_STRING;
 
 		try {
 			Object nameAttribute = marker
@@ -292,6 +298,9 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getShortContainerName(IMarker marker) {
+
+		if(!marker.exists())
+			return Util.EMPTY_STRING;
 
 		try {
 			Object pathAttribute = marker
