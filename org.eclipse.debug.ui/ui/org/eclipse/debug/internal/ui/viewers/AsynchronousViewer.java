@@ -23,7 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -521,7 +521,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @return
 	 */
 	protected boolean overrideSelection(ISelection current, ISelection candidate) {
-		IModelSelectionPolicyAdapter selectionPolicy = getSelectionPolicy(current);
+		IModelSelectionPolicy selectionPolicy = getSelectionPolicy(current);
 		if (selectionPolicy == null) {
 			return true;
 		}
@@ -576,15 +576,16 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @param selection or <code>null</code>
 	 * @return selection policy or <code>null</code>
 	 */
-	protected IModelSelectionPolicyAdapter getSelectionPolicy(ISelection selection) {
+	protected IModelSelectionPolicy getSelectionPolicy(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			Object element = ss.getFirstElement();
 			if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
 				IModelSelectionPolicyFactoryAdapter factory =  (IModelSelectionPolicyFactoryAdapter) adaptable.getAdapter(IModelSelectionPolicyFactoryAdapter.class);
-				if (factory != null)
+				if (factory != null) {
 					return factory.createModelSelectionPolicyAdapter(adaptable, getPresentationContext());
+				}
 			}
 		}
 		return null;

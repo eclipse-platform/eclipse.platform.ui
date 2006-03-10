@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -168,7 +169,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         }
         
         if (adapterType.equals(IModelSelectionPolicyFactoryAdapter.class)) {
-        	return fgModelSelectionPolicyFactoryAdapter;
+        	if (adaptableObject instanceof IDebugElement) {
+        		return fgModelSelectionPolicyFactoryAdapter;
+        	}
         }
         
         if (adapterType.equals(IColumnPresenetationFactoryAdapter.class)) {

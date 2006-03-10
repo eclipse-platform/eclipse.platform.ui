@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.ISelection;
  * @see IModelSelectionPolicyFactoryAdapter
  * @since 3.2
  */
-public interface IModelSelectionPolicyAdapter {
+public interface IModelSelectionPolicy {
 	
 	/**
 	 * Returns whether the given selection is contained in
