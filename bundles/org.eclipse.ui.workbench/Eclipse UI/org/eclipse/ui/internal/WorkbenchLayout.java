@@ -538,7 +538,8 @@ public class WorkbenchLayout extends Layout {
 
 			Point prefSize;
 			if (horizontal) {
-				prefSize = control.computeSize(majorHint, SWT.DEFAULT);
+				//prefSize = control.computeSize(majorHint, SWT.DEFAULT);
+				prefSize = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			} else {
 				prefSize = control.computeSize(SWT.DEFAULT, majorHint);
 			}
@@ -661,7 +662,7 @@ public class WorkbenchLayout extends Layout {
 				}
 
 				// If we have to show a drag handle then do it here
-				if (td.listener != null) {
+				if (td.listener != null && createHandles()) {
 					TrimCommonUIHandle handle = getDragHandle(trimArea.orientation);
 					// handle.setControl(control);
 
@@ -705,6 +706,14 @@ public class WorkbenchLayout extends Layout {
 			tilePosMinor += curLine.minorMax;
 			tilePosMajor = horizontal ? areaBounds.x : areaBounds.y;
 		}
+	}
+
+	/**
+	 * HACK>>>Remove if found in the wild...
+	 * @return
+	 */
+	private boolean createHandles() {
+		return false;
 	}
 
 	private void resetDragHandles() {
