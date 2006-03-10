@@ -72,35 +72,4 @@ public class MemoryViewPresentationContext extends PresentationContext  {
 	{
 		return fRendering;
 	}
-	
-	/**
-	 * Returns true if the Memory View is pinned, false otherwise.
-	 * TODO:  need to revisit to see what to do with this
-	 * 
-	 * @return true if the Memory View is pinned, false otherwise.
-	 */
-	public boolean isPinned()
-	{
-		if (fMemoryView instanceof MemoryView)
-		{
-			return ((MemoryView)fMemoryView).isPinMBDisplay();
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns true if the memory block registered to the Memory View, false otherwise.
-	 * A memory block is registered to the view if it is added from that memory view.
-	 * TODO:  need to revisit to see what to do with this
-	 * 
-	 * @return true if the memory block registered to the Memory View, false otherwise.
-	 */
-	public boolean isMemoryBlockRegistered(IMemoryBlock memoryBlock)
-	{
-		if (fMemoryView instanceof MemoryView)
-		{
-			return ((MemoryView)fMemoryView).isMemoryBlockRegistered(memoryBlock);
-		}
-		return false;
-	}
 }
