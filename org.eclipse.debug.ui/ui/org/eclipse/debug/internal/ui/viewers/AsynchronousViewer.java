@@ -24,6 +24,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -581,7 +582,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			Object element = ss.getFirstElement();
 			if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
-				return (IModelSelectionPolicyAdapter) adaptable.getAdapter(IModelSelectionPolicyAdapter.class);
+				IModelSelectionPolicyFactoryAdapter factory =  (IModelSelectionPolicyFactoryAdapter) adaptable.getAdapter(IModelSelectionPolicyFactoryAdapter.class);
+				if (factory != null)
+					return factory.createModelSelectionPolicyAdapter(adaptable, getPresentationContext());
 			}
 		}
 		return null;

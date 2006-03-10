@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -49,9 +48,9 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
-import org.eclipse.debug.internal.ui.viewers.update.DefaultSelectionPolicy;
+import org.eclipse.debug.internal.ui.viewers.update.DefaultModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
@@ -64,6 +63,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
 	
 	private static IModelProxyFactoryAdapter fgModelProxyFactoryAdapter = new DefaultModelProxyFactory();
 	private static ISourceDisplayAdapter fgStackFrameSourceDisplayAdapter = new StackFrameSourceDisplayAdapter();
+	private static IModelSelectionPolicyFactoryAdapter fgModelSelectionPolicyFactoryAdapter = new DefaultModelSelectionPolicyFactory();
     
     private static IAsynchronousLabelAdapter fgDebugLabelAdapter = new AsynchronousDebugLabelAdapter();
     private static IAsynchronousLabelAdapter fgVariableLabelAdapter = new VariableLabelAdapter();
@@ -85,6 +85,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IAsynchronousContentAdapter fgAsyncMemoryBlock = new MemoryBlockContentAdapter();
     
     private static IColumnPresenetationFactoryAdapter fgVariableColumnFactory = new VariableColumnFactoryAdapter();
+    
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -166,10 +167,8 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         }
         
-        if (adapterType.equals(IModelSelectionPolicyAdapter.class)) {
-        	if (adaptableObject instanceof IDebugElement) {
-        		return new DefaultSelectionPolicy((IDebugElement)adaptableObject);
-        	}
+        if (adapterType.equals(IModelSelectionPolicyFactoryAdapter.class)) {
+        	return fgModelSelectionPolicyFactoryAdapter;
         }
         
         if (adapterType.equals(IColumnPresenetationFactoryAdapter.class)) {
@@ -191,7 +190,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      */
     public Class[] getAdapterList() {
         return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class,
-        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyAdapter.class, IColumnPresenetationFactoryAdapter.class, IColumnEditorFactoryAdapter.class};
+        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyFactoryAdapter.class, IColumnPresenetationFactoryAdapter.class, IColumnEditorFactoryAdapter.class};
     }
 
 }

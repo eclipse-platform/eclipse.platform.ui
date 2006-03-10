@@ -22,10 +22,13 @@ import org.eclipse.jface.viewers.ISelection;
  * original selection is maintained if its model selection
  * policy specifies the selection to be 'sticky'.
  * <p>
- * A selection policy is obtained as an adapter from
- * an element in a viewer, and the adapter represents
- * selections from an instance of a model.
+ * A selection policy is obtained by querying for the selection
+ * policy factory for a given element.  The selection policy factory
+ * will then be asked to create a model selection policy adapter.
+ * The adapter represents selections from an instance of a model.
  * </p>
+ * 
+ * @see IModelSelectionPolicyFactoryAdapter
  * @since 3.2
  */
 public interface IModelSelectionPolicyAdapter {
