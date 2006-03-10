@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -28,6 +30,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 
+
+
 	/**
 	 * to determine if we should delete the working set as well 
 	 */
@@ -43,8 +47,16 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 	private Button fDeleteWS;
 	private Button fDeleteBPS;
 	
+	// dialog settings
+	private final static String DIALOG_SETTINGS = "DeleteBreakpointsDialogSettings"; //$NON-NLS-1$
+	private static final String DELETE_BREAKPOINTS = "DeleteBreakpoints";	 //$NON-NLS-1$
+	private static final String DELETE_WORKINGSETS = "DeleteWorkingSets";	 //$NON-NLS-1$
+	
 	public DeleteWorkingsetsMessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
 		super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
+		IDialogSettings section = getDialogSettings();
+		fDeleteBreakpoints = section.getBoolean(DELETE_BREAKPOINTS);
+		fDeleteWorkingsets = section.getBoolean(DELETE_WORKINGSETS);
 	}
 	
 	/* (non-Javadoc)
@@ -70,9 +82,12 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 	 * @see org.eclipse.jface.dialogs.MessageDialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if(buttonId == 0) {
+		if(buttonId == OK) {
 			fDeleteBreakpoints = fDeleteBPS.getSelection();
 			fDeleteWorkingsets = fDeleteWS.getSelection();
+			IDialogSettings dialogSettings = getDialogSettings();
+			dialogSettings.put(DELETE_BREAKPOINTS, fDeleteBreakpoints);
+			dialogSettings.put(DELETE_WORKINGSETS, fDeleteWorkingsets);
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -92,5 +107,24 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 	public boolean deleteAllBreakpoints() {
 		return fDeleteBreakpoints;
 	}
+
+	/**
+	 * Returns the dialog settings for this dialog.
+	 * 
+	 * @return dialog settings
+	 */
+	protected IDialogSettings getDialogSettings() {
+		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
+		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS);
+		if (section == null) {
+			section = workbenchSettings.addNewSection(DIALOG_SETTINGS);
+			section.put(DELETE_BREAKPOINTS, true);
+			section.put(DELETE_WORKINGSETS, false);
+		}
+		return section;
+	}
+	
+	
 	
 }
