@@ -1052,6 +1052,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 				status);
 			return false;
 		}
+		finally {
+			ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
+		}
 		return true;
 	}
 
@@ -1094,7 +1097,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 					this, fileSystemObjects);
 			operation.setContext(getShell());
 			operation.run(monitor);
-			record.provider.closeArchive();
 			return true;
 		}
 		//import from file system
@@ -1126,7 +1128,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
-			ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
 			monitor.done();
 		}
 
