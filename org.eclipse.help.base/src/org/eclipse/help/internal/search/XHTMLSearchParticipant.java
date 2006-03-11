@@ -174,17 +174,25 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 				handleText(text, data);
 		}
 		
-		/* (non-Javadoc)
+		/**
+		 * Note: throws clause does not declare IOException due to a bug in
+		 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
+		 * 
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
-		public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 			if (systemId.equals(XHTML1_TRANSITIONAL)
                     || systemId.equals(XHTML1_STRICT)
                     || systemId.equals(XHTML1_FRAMESET)) {
-                URL dtdURL = (URL) dtdMap.get(systemId);
-                InputSource in = new InputSource(dtdURL.openStream());
-                in.setSystemId(dtdURL.toExternalForm());
-                return in;
+				try {
+	                URL dtdURL = (URL) dtdMap.get(systemId);
+	                InputSource in = new InputSource(dtdURL.openStream());
+	                in.setSystemId(dtdURL.toExternalForm());
+	                return in;
+				}
+				catch (IOException e) {
+					throw new SAXException(e);
+				}
             }
             return null;
 		}
