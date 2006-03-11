@@ -392,15 +392,18 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			properties= prefs.getRemoteAntProperties();
 		}
 		
-		String key;
 		//if we have user properties this means that the user has chosen to override the global properties
-		//if in a separate VM and have only two user properties these are really only Eclipse generated properties
+		//if in a separate VM and have only two (or three if debug) user properties these are really only Eclipse generated properties
 		//and the user is still using the global properties
-		boolean useGlobalProperties = userProperties == null || (separateVM && userProperties.size() == 2);
+		int numberOfEclipseProperties= 2;
+		if (userProperties != null && userProperties.get("eclipse.connect.request_port") != null){
+			numberOfEclipseProperties= 3; //debug mode
+		}
+		boolean useGlobalProperties = userProperties == null || (separateVM && userProperties.size() == numberOfEclipseProperties);
 		if (useGlobalProperties) {
 			for (Iterator iter = properties.iterator(); iter.hasNext();) {
 				Property property = (Property) iter.next();
-				key= property.getName();
+				String key= property.getName();
 				String value= property.getValue(false);
 				if (value != null) {
 					appendProperty(commandLine, key, value);
