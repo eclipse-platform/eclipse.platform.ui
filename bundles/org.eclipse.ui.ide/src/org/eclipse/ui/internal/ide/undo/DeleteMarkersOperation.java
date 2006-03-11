@@ -28,10 +28,9 @@ public class DeleteMarkersOperation extends AbstractMarkersOperation {
 	 * 
 	 * @param markers
 	 * @param name
-	 * @param errorTitle
 	 */
-	public DeleteMarkersOperation(IMarker[] markers, String name, String errorTitle) {
-		super(markers, null, null, name, errorTitle); 
+	public DeleteMarkersOperation(IMarker[] markers, String name) {
+		super(markers, null, null, name);
 	}
 
 	protected void doExecute(IProgressMonitor monitor, IAdaptable info)

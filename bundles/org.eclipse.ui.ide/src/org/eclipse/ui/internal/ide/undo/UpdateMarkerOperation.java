@@ -31,11 +31,9 @@ public class UpdateMarkerOperation extends AbstractMarkersOperation {
 	 * @param marker
 	 * @param attributes
 	 * @param name
-	 * @param errorTitle
 	 */
-	public UpdateMarkerOperation(IMarker marker, Map attributes, String name,
-			String errorTitle) {
-		super(new IMarker[] { marker }, null, new Map [] {attributes}, name, errorTitle);
+	public UpdateMarkerOperation(IMarker marker, Map attributes, String name) {
+		super(new IMarker[] { marker }, null, new Map [] {attributes}, name);
 	}
 	
 	/**
@@ -44,11 +42,9 @@ public class UpdateMarkerOperation extends AbstractMarkersOperation {
 	 * @param markers
 	 * @param attributes
 	 * @param name
-	 * @param errorTitle
 	 */
-	public UpdateMarkerOperation(IMarker [] markers, Map attributes, String name,
-			String errorTitle) {
-		super(markers, null, new Map [] {attributes}, name, errorTitle);
+	public UpdateMarkerOperation(IMarker [] markers, Map attributes, String name) {
+		super(markers, null, new Map [] {attributes}, name);
 	}
 
 	protected void doExecute(IProgressMonitor monitor, IAdaptable info)

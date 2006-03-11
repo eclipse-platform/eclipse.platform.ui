@@ -35,8 +35,8 @@ public abstract class AbstractMarkersOperation extends
 
 	AbstractMarkersOperation(IMarker[] markers,
 			MarkerDescription[] markerDescriptions, Map[] attributes,
-			String name, String errorTitle) {
-		super(name, errorTitle);
+			String name) {
+		super(name);
 		this.markers = markers;
 		this.attributes = attributes;
 		this.markerDescriptions = markerDescriptions;

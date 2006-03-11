@@ -32,11 +32,11 @@ public class CreateMarkerOperation extends AbstractMarkersOperation {
 	 * @param attributes
 	 * @param resource
 	 * @param name
-	 * @param errorTitle
 	 */
-	public CreateMarkerOperation(String type, Map attributes, IResource resource, String name,
-			String errorTitle) {
-		super(null, new MarkerDescription [] {new MarkerDescription(type, attributes, resource)}, null, name, errorTitle);
+	public CreateMarkerOperation(String type, Map attributes,
+			IResource resource, String name) {
+		super(null, new MarkerDescription[] { new MarkerDescription(type,
+				attributes, resource) }, null, name);
 	}
 
 	protected void doExecute(IProgressMonitor monitor, IAdaptable info)
