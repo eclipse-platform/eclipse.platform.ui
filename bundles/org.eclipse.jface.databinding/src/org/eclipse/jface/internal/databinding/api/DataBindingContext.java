@@ -247,10 +247,10 @@ public final class DataBindingContext {
 	 */
 	public Binding bind(IObservable targetObservable,
 			IObservable modelObservable, BindSpec bindSpec) {
-		for (Iterator it = bindingFactories.iterator(); it.hasNext();) {
-			IBindingFactory factory = (IBindingFactory) it.next();
-			Binding binding = factory.createBinding(this,
-					targetObservable, modelObservable, bindSpec);
+		for (int i = bindingFactories.size() - 1; i >= 0; i--) {
+			IBindingFactory factory = (IBindingFactory) bindingFactories.get(i);
+			Binding binding = factory.createBinding(this, targetObservable,
+					modelObservable, bindSpec);
 			if (binding != null) {
 				bindings.add(binding);
 				return binding;
@@ -419,8 +419,7 @@ public final class DataBindingContext {
 			DataBindingContext thisDatabindingContext) {
 		for (int i = factories.size() - 1; i >= 0; i--) {
 			IObservableFactory factory = (IObservableFactory) factories.get(i);
-			IObservable result = factory.createObservable(
-					description);
+			IObservable result = factory.createObservable(description);
 			if (result != null) {
 				return result;
 			}
@@ -436,26 +435,26 @@ public final class DataBindingContext {
 	/**
 	 * @param dataBindingContext
 	 * @param bindSpec
-	 * @param fromType
-	 * @param toType
+	 * @param targetType
+	 * @param modelType
 	 */
 	public void fillBindSpecDefaults(DataBindingContext dataBindingContext,
-			BindSpec bindSpec, Object fromType, Object toType) {
+			BindSpec bindSpec, Object targetType, Object modelType) {
 		if (bindSpec.getTypeConversionValidator() == null) {
-			bindSpec.setValidator(dataBindingContext.createValidator(fromType,
-					toType));
+			bindSpec.setValidator(dataBindingContext.createValidator(
+					targetType, modelType));
 		}
 		if (bindSpec.getDomainValidator() == null) {
 			bindSpec.setDomainValidator(dataBindingContext
-					.createDomainValidator(toType));
+					.createDomainValidator(modelType));
 		}
 		if (bindSpec.getModelToTargetConverter() == null) {
 			bindSpec.setModelToTargetConverter(dataBindingContext
-					.createConverter(fromType, toType));
+					.createConverter(modelType, targetType));
 		}
 		if (bindSpec.getTargetToModelConverter() == null) {
 			bindSpec.setTargetToModelConverter(dataBindingContext
-					.createConverter(toType, fromType));
+					.createConverter(targetType, modelType));
 		}
 	}
 

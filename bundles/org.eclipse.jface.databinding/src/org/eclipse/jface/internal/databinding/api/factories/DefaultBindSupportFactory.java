@@ -80,16 +80,27 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 		if (!(fromType instanceof Class) || !(toType instanceof Class)) {
 			return null;
 		}
+		Class toClass = (Class) toType;
+		if (toClass.isPrimitive()) {
+			toClass = autoboxed(toClass);
+		}
+		Class fromClass = (Class) fromType;
+		if (fromClass.isPrimitive()) {
+			fromClass = autoboxed(fromClass);
+		}
+		if (toClass.isAssignableFrom(fromClass)) {
+			return new IdentityConverter(fromClass, toClass);
+		}
 		Map converterMap = getConverterMap();
 		Class[] supertypeHierarchyFlattened = ClassLookupSupport
-				.getTypeHierarchyFlattened((Class) fromType);
+				.getTypeHierarchyFlattened(fromClass);
 		for (int i = 0; i < supertypeHierarchyFlattened.length; i++) {
-			Class fromClass = supertypeHierarchyFlattened[i];
-			if (fromClass == toType) {
+			Class currentFromClass = supertypeHierarchyFlattened[i];
+			if (currentFromClass == toType) {
 				// converting to toType is just a widening
-				return new IdentityConverter(fromClass, (Class) toType);
+				return new IdentityConverter(fromClass, toClass);
 			}
-			Pair key = new Pair(fromClass, toType);
+			Pair key = new Pair(currentFromClass.getName(), toClass.getName());
 			Object converterOrClassname = converterMap.get(key);
 			if (converterOrClassname instanceof IConverter) {
 				return (IConverter) converterOrClassname;
@@ -111,6 +122,10 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 				}
 			}
 		}
+		// Since we found no converter yet, try a "downcast" converter
+		if (fromClass.isAssignableFrom(toClass)) {
+			return new IdentityConverter(fromClass, toClass);
+		}
 		return null;
 	}
 
@@ -123,34 +138,34 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 							new Pair("java.util.Date", "java.lang.String"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertDate2String"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.math.BigDecimal"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2BigDecimal"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.math.BigDecimal"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2BigDecimal"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Boolean"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Boolean"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Boolean"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Boolean"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Byte"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Byte"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Byte"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Byte"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Character"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Character"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Character"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Character"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.util.Date"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Date"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.util.Date"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Date"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Double"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Double"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Double"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Double"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Float"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Float"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Float"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Float"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Integer"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Integer"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Integer"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Integer"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Long"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Long"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Long"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Long"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.util.String", "java.lang.Short"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Short"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Short"), "org.eclipse.jface.internal.databinding.api.conversion.ConvertString2Short"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
 							new Pair("java.lang.Object", "java.lang.String"), "org.eclipse.jface.internal.databinding.api.conversion.ToStringConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
@@ -168,10 +183,33 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 
 	public Boolean isAssignableFromTo(Object fromType, Object toType) {
 		if (fromType instanceof Class && toType instanceof Class) {
-			return new Boolean(((Class) toType)
-					.isAssignableFrom((Class) fromType));
+			Class toClass = (Class) toType;
+			if (toClass.isPrimitive()) {
+				toClass = autoboxed(toClass);
+			}
+			Class fromClass = (Class) fromType;
+			if (fromClass.isPrimitive()) {
+				fromClass = autoboxed(fromClass);
+			}
+			return new Boolean((toClass).isAssignableFrom(fromClass));
 		}
 		return null;
+	}
+
+	private Class autoboxed(Class clazz) {
+		if (clazz == Float.TYPE)
+			return Float.class;
+		else if (clazz == Double.TYPE)
+			return Double.class;
+		else if (clazz == Short.TYPE)
+			return Short.class;
+		else if (clazz == Integer.TYPE)
+			return Integer.class;
+		else if (clazz == Long.TYPE)
+			return Long.class;
+		else if (clazz == Boolean.TYPE)
+			return Boolean.class;
+		return clazz;
 	}
 
 	private static class ValidatorRegistry {

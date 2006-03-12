@@ -17,8 +17,8 @@ import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.Diffs;
 import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
 import org.eclipse.jface.internal.databinding.api.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IValueChangeListener;
@@ -60,11 +60,10 @@ public class NestedObservableList extends ObservableList {
 	public NestedObservableList(DataBindingContext databindingContext,
 			IObservableValue outerObservableValue, Object feature,
 			Object featureType) {
-		super(new ArrayList());
+		super(new ArrayList(), featureType);
 		this.databindingContext = databindingContext;
 		this.feature = feature;
 		this.outerObservableValue = outerObservableValue;
-		elementType = featureType;
 		updateInnerObservableValue(outerObservableValue);
 
 		outerObservableValue.addValueChangeListener(outerChangeListener);
@@ -77,8 +76,6 @@ public class NestedObservableList extends ObservableList {
 			fireListChange(Diffs.computeListDiff(oldList, wrappedList));
 		}
 	};
-
-	private Object elementType;
 
 	private void updateInnerObservableValue(
 			IObservableValue outerObservableValue) {
@@ -95,12 +92,8 @@ public class NestedObservableList extends ObservableList {
 					.createObservable(new Property(currentOuterValue, feature));
 			wrappedList = innerObservableList;
 			Object innerValueType = innerObservableList.getElementType();
-			if (elementType == null) {
-				elementType = innerValueType;
-			} else {
-				Assert.isTrue(elementType.equals(innerValueType),
-						"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
-			}
+			Assert.isTrue(getElementType().equals(innerValueType),
+					"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
 			innerObservableList.addListChangeListener(innerChangeListener);
 		}
 	}
@@ -123,7 +116,4 @@ public class NestedObservableList extends ObservableList {
 		innerChangeListener = null;
 	}
 
-	public Object getElementType() {
-		return elementType;
-	}
 }

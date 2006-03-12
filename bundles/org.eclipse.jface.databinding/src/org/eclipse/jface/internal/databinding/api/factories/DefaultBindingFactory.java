@@ -16,7 +16,9 @@ import org.eclipse.jface.internal.databinding.api.Binding;
 import org.eclipse.jface.internal.databinding.api.BindingException;
 import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
+import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.nonapi.ListBinding;
 import org.eclipse.jface.internal.databinding.nonapi.ValueBinding;
 
 /**
@@ -43,14 +45,27 @@ public class DefaultBindingFactory implements IBindingFactory {
 			if (modelObservable instanceof IObservableValue) {
 				IObservableValue target = (IObservableValue) targetObservable;
 				IObservableValue model = (IObservableValue) modelObservable;
-				dataBindingContext.fillBindSpecDefaults(dataBindingContext, bindSpec, target
-						.getValueType(), model.getValueType());
+				dataBindingContext.fillBindSpecDefaults(dataBindingContext,
+						bindSpec, target.getValueType(), model.getValueType());
 				binding = new ValueBinding(dataBindingContext, target, model,
 						bindSpec);
 				return binding;
 			}
 			throw new BindingException(
-					"incompatible updatables: target is value, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
+					"incompatible observables: target is value, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
+		} else if (targetObservable instanceof IObservableList) {
+			if (modelObservable instanceof IObservableList) {
+				IObservableList target = (IObservableList) targetObservable;
+				IObservableList model = (IObservableList) modelObservable;
+				dataBindingContext.fillBindSpecDefaults(dataBindingContext,
+						bindSpec, target.getElementType(), model
+								.getElementType());
+				binding = new ListBinding(dataBindingContext, target, model,
+						bindSpec);
+				return binding;
+			}
+			throw new BindingException(
+					"incompatible observable: target is list, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
 		}
 		return null;
 	}

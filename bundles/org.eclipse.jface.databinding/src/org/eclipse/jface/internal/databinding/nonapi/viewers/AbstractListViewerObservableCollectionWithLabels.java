@@ -25,8 +25,8 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.2
  * 
  */
-public class AbstractListViewerObservableSetWithLabels extends
-		StructuredViewerObservableSetWithLabels {
+public class AbstractListViewerObservableCollectionWithLabels extends
+		StructuredViewerObservableCollectionWithLabels {
 
 	private LabelProvider labelProvider = new LabelProvider();
 
@@ -105,7 +105,7 @@ public class AbstractListViewerObservableSetWithLabels extends
 	/**
 	 * @param abstractListViewer
 	 */
-	public AbstractListViewerObservableSetWithLabels(
+	public AbstractListViewerObservableCollectionWithLabels(
 			AbstractListViewer abstractListViewer) {
 		super(abstractListViewer);
 	}
@@ -139,6 +139,11 @@ public class AbstractListViewerObservableSetWithLabels extends
 
 	protected void removeFromViewer(Object[] elements) {
 		((AbstractListViewer) getViewer()).remove(elements);
+	}
+
+	protected void addToViewer(int index, Object element) {
+		// since there is no insert(index, element), we need to refresh
+		getViewer().refresh();
 	}
 
 }

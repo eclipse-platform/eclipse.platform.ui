@@ -18,9 +18,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.internal.databinding.api.observable.IObservableCollection;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.api.observable.mapping.ObservableMultiMappingWithDomain;
-import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.util.Policy;
 
 /**
@@ -75,7 +75,7 @@ public class JavaBeanObservableMultiMapping extends
 	 * @param domain
 	 * @param propertyDescriptors
 	 */
-	public JavaBeanObservableMultiMapping(IObservableSet domain,
+	public JavaBeanObservableMultiMapping(IObservableCollection domain,
 			PropertyDescriptor[] propertyDescriptors) {
 		this.propertyDescriptors = propertyDescriptors;
 		initDomain(domain);

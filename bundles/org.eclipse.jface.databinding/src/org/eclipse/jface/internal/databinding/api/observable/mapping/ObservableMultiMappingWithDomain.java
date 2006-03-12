@@ -14,6 +14,10 @@ package org.eclipse.jface.internal.databinding.api.observable.mapping;
 import java.util.Iterator;
 
 import org.eclipse.jface.internal.databinding.api.observable.IObservableCollection;
+import org.eclipse.jface.internal.databinding.api.observable.list.IListChangeListener;
+import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiff;
+import org.eclipse.jface.internal.databinding.api.observable.list.ListDiffEntry;
 import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.api.observable.set.ISetChangeListener;
 import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
@@ -22,7 +26,9 @@ import org.eclipse.jface.internal.databinding.api.observable.set.SetDiff;
  * @since 1.0
  * 
  */
-abstract public class ObservableMultiMappingWithDomain extends AbstractObservableMultiMapping implements IObservableMultiMappingWithDomain {
+abstract public class ObservableMultiMappingWithDomain extends
+		AbstractObservableMultiMapping implements
+		IObservableMultiMappingWithDomain {
 
 	private ISetChangeListener listener = new ISetChangeListener() {
 		public void handleSetChange(IObservableSet source, SetDiff diff) {
@@ -35,23 +41,56 @@ abstract public class ObservableMultiMappingWithDomain extends AbstractObservabl
 		}
 	};
 
-	private IObservableSet domain;
+	private IListChangeListener listListener = new IListChangeListener() {
+
+		public void handleListChange(IObservableList source, ListDiff diff) {
+			ListDiffEntry[] entries = diff.getDifferences();
+			for (int i = 0; i < entries.length; i++) {
+				ListDiffEntry entry = entries[i];
+				if (entry.isAddition()) {
+					addListenerTo(entry.getElement());
+				} else {
+					removeListenerFrom(entry.getElement());
+				}
+			}
+		}
+	};
+
+	private IObservableCollection domain;
 
 	/**
 	 * 
 	 */
 	public ObservableMultiMappingWithDomain() {
 	}
-	
+
 	/**
 	 * @param domain
 	 */
-	protected void initDomain(IObservableSet domain) {
+	protected void initDomain(IObservableCollection domain) {
 		this.domain = domain;
-		domain.addSetChangeListener(listener);
-		for (Iterator it = domain.iterator(); it.hasNext();) {
+		if (domain instanceof IObservableList) {
+			IObservableList listDomain = (IObservableList) domain;
+			listDomain.addListChangeListener(listListener);
+		} else {
+			IObservableSet setDomain = (IObservableSet) domain;
+			((IObservableSet) domain).addSetChangeListener(listener);
+		}
+		for (Iterator it = getDomainIterator(domain); it.hasNext();) {
 			addListenerTo(it.next());
 		}
+	}
+
+	private Iterator getDomainIterator(IObservableCollection domain) {
+		Iterator it;
+		if (domain instanceof IObservableList) {
+			IObservableList listDomain = (IObservableList) domain;
+			it = listDomain.iterator();
+		} else {
+			IObservableSet setDomain = (IObservableSet) domain;
+			it = setDomain.iterator();
+		}
+		return it;
 	}
 
 	/**
@@ -72,10 +111,16 @@ abstract public class ObservableMultiMappingWithDomain extends AbstractObservabl
 	protected abstract void removeListenerFrom(Object domainElement);
 
 	public void dispose() {
-		for (Iterator iter = domain.iterator(); iter.hasNext();) {
+		for (Iterator iter = getDomainIterator(domain); iter.hasNext();) {
 			removeListenerFrom(iter.next());
 		}
-		domain.removeSetChangeListener(listener);
+		if (domain instanceof IObservableList) {
+			IObservableList listDomain = (IObservableList) domain;
+			listDomain.removeListChangeListener(listListener);
+		} else {
+			IObservableSet setDomain = (IObservableSet) domain;
+			setDomain.removeSetChangeListener(listener);
+		}
 		super.dispose();
 	}
 

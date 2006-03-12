@@ -46,9 +46,13 @@ public class ValidationErrorList extends ObservableList {
 		}
 	};
 
+	/**
+	 * @param bindings
+	 * @param usePartialErrors
+	 */
 	public ValidationErrorList(WritableList bindings,
 			boolean usePartialErrors) {
-		super(new ArrayList());
+		super(new ArrayList(), ValidationError.class);
 		this.bindings = bindings;
 		this.usePartialErrors = usePartialErrors;
 		bindings.addChangeListener(markDirtyChangeListener);

@@ -45,8 +45,6 @@ public class JavaBeanObservableList extends ObservableList {
 
 	private PropertyDescriptor descriptor;
 
-	private Class elementType = null;
-
 	private ListenerSupport collectionListenSupport = new ListenerSupport(
 			collectionListener);
 
@@ -57,10 +55,9 @@ public class JavaBeanObservableList extends ObservableList {
 	 */
 	public JavaBeanObservableList(Object object, PropertyDescriptor descriptor,
 			Class elementType) {
-		super(new ArrayList());
+		super(new ArrayList(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
-		this.elementType = elementType;
 		// initialize list without firing events
 		wrappedList.addAll(Arrays.asList(getValues()));
 	}
@@ -106,13 +103,6 @@ public class JavaBeanObservableList extends ObservableList {
 			}
 		}
 		return values;
-	}
-
-	/**
-	 * @return the elementType
-	 */
-	public Object getElementType() {
-		return elementType;
 	}
 
 }

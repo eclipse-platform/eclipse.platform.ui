@@ -42,8 +42,8 @@ public class ListToSetAdapter extends ObservableSet {
 				Object element = entry.getElement();
 				if (entry.isAddition()) {
 					if (wrappedSet.add(element)) {
-						added.add(element);
-						removed.remove(element);
+						if (!removed.remove(element))
+							added.add(element);
 					}
 				} else {
 					if (wrappedSet.remove(element)) {
@@ -51,8 +51,8 @@ public class ListToSetAdapter extends ObservableSet {
 						added.remove(element);
 					}
 				}
-				fireSetChange(Diffs.createSetDiff(added, removed));
 			}
+			fireSetChange(Diffs.createSetDiff(added, removed));
 		}
 	};
 

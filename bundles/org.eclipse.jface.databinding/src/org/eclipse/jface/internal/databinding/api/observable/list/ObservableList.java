@@ -38,8 +38,11 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	private Object listChangeListeners;
 
-	protected ObservableList(List wrappedList) {
+	private Object elementType;
+
+	protected ObservableList(List wrappedList, Object elementType) {
 		this.wrappedList = wrappedList;
+		this.elementType = elementType;
 	}
 
 	public void addListChangeListener(IListChangeListener listener) {
@@ -349,6 +352,10 @@ public abstract class ObservableList extends AbstractObservable implements
 	public void dispose() {
 		listChangeListeners = null;
 		super.dispose();
+	}
+	
+	public Object getElementType() {
+		return elementType;
 	}
 
 	protected void updateWrappedList(List newList) {

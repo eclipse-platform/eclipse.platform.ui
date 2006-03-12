@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.api.viewers;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
-import org.eclipse.jface.internal.databinding.nonapi.viewers.AbstractListViewerObservableSetWithLabels;
+import org.eclipse.jface.internal.databinding.nonapi.viewers.AbstractListViewerObservableCollectionWithLabels;
 import org.eclipse.jface.internal.databinding.nonapi.viewers.StructuredViewerObservableValue;
 import org.eclipse.jface.internal.databinding.nonapi.viewers.TableViewerObservableSetWithLabels;
 import org.eclipse.jface.viewers.AbstractListViewer;
@@ -75,7 +75,7 @@ final public class ViewersObservableFactory implements IObservableFactory {
 						(AbstractListViewer) object, (String) attribute);
 			else if (object instanceof AbstractListViewer
 					&& ViewersProperties.CONTENT.equals(attribute))
-				return new AbstractListViewerObservableSetWithLabels(
+				return new AbstractListViewerObservableCollectionWithLabels(
 						(AbstractListViewer) object);
 			else if (object instanceof TableViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {
@@ -83,7 +83,7 @@ final public class ViewersObservableFactory implements IObservableFactory {
 						(TableViewer) object);
 			}
 		} else if (description instanceof AbstractListViewer) {
-			return new AbstractListViewerObservableSetWithLabels(
+			return new AbstractListViewerObservableCollectionWithLabels(
 					(AbstractListViewer) description);
 		} else if (description instanceof TableViewer) {
 			return new TableViewerObservableSetWithLabels(

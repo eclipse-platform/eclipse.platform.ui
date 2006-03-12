@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Image;
  * 
  */
 public class TableViewerObservableSetWithLabels extends
-		StructuredViewerObservableSetWithLabels {
+		StructuredViewerObservableCollectionWithLabels {
 
 	private TabelLabelProvider labelProvider = new TabelLabelProvider();
 
@@ -152,6 +152,10 @@ public class TableViewerObservableSetWithLabels extends
 
 	protected void removeFromViewer(Object[] elements) {
 		((TableViewer) getViewer()).remove(elements);
+	}
+
+	protected void addToViewer(int index, Object element) {
+		((TableViewer) getViewer()).insert(element, index);
 	}
 
 }

@@ -24,8 +24,6 @@ import org.eclipse.jface.internal.databinding.api.observable.Diffs;
  */
 public class WritableList extends ObservableList {
 
-	private final Object elementType;
-
 	/**
 	 * Creates an empty writable list containing elements of type Object.
 	 */
@@ -39,8 +37,7 @@ public class WritableList extends ObservableList {
 	 * @param elementType
 	 */
 	public WritableList(Object elementType) {
-		super(new ArrayList());
-		this.elementType = elementType;
+		super(new ArrayList(), elementType);
 	}
 
 	public Object set(int index, Object element) {
@@ -159,7 +156,4 @@ public class WritableList extends ObservableList {
 				.toArray(new ListDiffEntry[entries.size()])));
 	}
 
-	public Object getElementType() {
-		return elementType;
-	}
 }

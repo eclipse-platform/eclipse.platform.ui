@@ -23,8 +23,6 @@ import org.eclipse.jface.internal.databinding.api.description.TableModelDescript
 import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.api.observable.IObservable;
 import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.api.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.api.observable.set.ListToSetAdapter;
 import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableList;
 import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableMultiMapping;
 import org.eclipse.jface.internal.databinding.nonapi.beans.JavaBeanObservableValue;
@@ -53,21 +51,58 @@ final public class BeanObservableFactory implements IObservableFactory {
 
 	private final DataBindingContext dataBindingContext;
 
+	private final Class[] includedTypes;
+
+	private final Class[] excludedTypes;
+
 	/**
 	 * @param dataBindingContext
+	 * @param includedTypes
+	 *            a list of supertypes to include, or null for including all
+	 *            types
+	 * @param excludedTypes
+	 *            a list of supertypes to exclude, or null for not excluding any
+	 *            types
 	 */
-	public BeanObservableFactory(DataBindingContext dataBindingContext) {
+	public BeanObservableFactory(DataBindingContext dataBindingContext,
+			Class[] includedTypes, Class[] excludedTypes) {
 		this.dataBindingContext = dataBindingContext;
+		this.includedTypes = includedTypes;
+		this.excludedTypes = excludedTypes;
 	}
 
 	public IObservable createObservable(Object description) {
 		if (description instanceof Property) {
-			Property propertyDescription = (Property) description;
-			if (propertyDescription.getObject() != null) {
-				Object object = propertyDescription.getObject();
+			Property property = (Property) description;
+			if (property.getObject() != null) {
+				Object object = property.getObject();
+				Class objectClass = object.getClass();
+				if (includedTypes != null) {
+					boolean included = false;
+					for (int i = 0; i < includedTypes.length; i++) {
+						if (includedTypes[i].isAssignableFrom(objectClass)) {
+							included = true;
+							break;
+						}
+					}
+					if (!included) {
+						// object's class is not a subtype of any type on the
+						// inclusion list
+						return null;
+					}
+				}
+				if (excludedTypes != null) {
+					for (int i = 0; i < excludedTypes.length; i++) {
+						if (excludedTypes[i].isAssignableFrom(objectClass)) {
+							// object's class is a subtype of one of the
+							// exclusions
+							return null;
+						}
+					}
+				}
 				BeanInfo beanInfo;
 				try {
-					beanInfo = Introspector.getBeanInfo(object.getClass());
+					beanInfo = Introspector.getBeanInfo(objectClass);
 				} catch (IntrospectionException e) {
 					// cannot introspect, give up
 					return null;
@@ -76,8 +111,7 @@ final public class BeanObservableFactory implements IObservableFactory {
 						.getPropertyDescriptors();
 				for (int i = 0; i < propertyDescriptors.length; i++) {
 					PropertyDescriptor descriptor = propertyDescriptors[i];
-					if (descriptor.getName().equals(
-							propertyDescription.getPropertyID())) {
+					if (descriptor.getName().equals(property.getPropertyID())) {
 						if (descriptor.getPropertyType().isArray()
 								|| Collection.class.isAssignableFrom(descriptor
 										.getPropertyType())) {
@@ -89,7 +123,7 @@ final public class BeanObservableFactory implements IObservableFactory {
 							// getHooves() and addHoof(Hoof aHoof)
 							Class elementType = descriptor.getPropertyType()
 									.isArray() ? descriptor.getPropertyType()
-									.getComponentType() : propertyDescription
+									.getComponentType() : property
 									.getPropertyType();
 							if (elementType == null) {
 								// If we don't know the element type, use the
@@ -126,24 +160,21 @@ final public class BeanObservableFactory implements IObservableFactory {
 			if (collectionObservable == null) {
 				return null;
 			}
-			IObservableSet readableSet;
-			if (collectionObservable instanceof IObservableSet) {
-				readableSet = (IObservableSet) collectionObservable;
-			} else if (collectionObservable instanceof IObservableList) {
-				readableSet = new ListToSetAdapter(
-						(IObservableList) collectionObservable);
+			IObservableList readableList;
+			if (collectionObservable instanceof IObservableList) {
+				readableList = (IObservableList) collectionObservable;
 			} else {
 				throw new BindingException(
-						"collection inside a TableModelDescription needs to be IReadableSet or IReadableList"); //$NON-NLS-1$
+						"collection inside a TableModelDescription needs to be IObservableList"); //$NON-NLS-1$
 			}
 			Object[] columnIDs = tableModelDescription.getColumnIDs();
 			PropertyDescriptor[] propertyDescriptors = new PropertyDescriptor[columnIDs.length];
-			Class elementType = (Class) readableSet.getElementType();
+			Class elementType = (Class) readableList.getElementType();
 			for (int i = 0; i < columnIDs.length; i++) {
 				propertyDescriptors[i] = getPropertyDescriptor(elementType,
 						(String) columnIDs[i]);
 			}
-			return new JavaBeanObservableMultiMapping(readableSet,
+			return new JavaBeanObservableMultiMapping(readableList,
 					propertyDescriptors);
 		}
 		return null;

@@ -11,20 +11,35 @@
  */
 package org.eclipse.jface.internal.databinding.api.conversion;
 
-
-
-
 /**
  * Converts any object to a string by calling its toString() method.
  */
 public class ToStringConverter implements IConverter {
-	
+
 	/**
 	 * A singleton for the toString() converter function
 	 */
 	public static final ToStringConverter TOSTRINGFUNCTION = new ToStringConverter();
 
-	/* (non-Javadoc)
+	private final Class fromClass;
+
+	/**
+	 * 
+	 */
+	public ToStringConverter() {
+		this(Object.class);
+	}
+
+	/**
+	 * @param fromClass
+	 */
+	public ToStringConverter(Class fromClass) {
+		this.fromClass = fromClass;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
@@ -35,7 +50,7 @@ public class ToStringConverter implements IConverter {
 	}
 
 	public Object getFromType() {
-		return Object.class;
+		return fromClass;
 	}
 
 	public Object getToType() {
