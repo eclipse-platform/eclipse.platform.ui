@@ -146,6 +146,9 @@
                    name="otherActions1"
                    separator="true"/>
              <insertionPoint
+                   name="changeSetActions"
+                   separator="true"/> 
+             <insertionPoint
                    name="sort"
                    separator="true"/>
              <insertionPoint
@@ -159,6 +162,39 @@
        <dragAssistant
              class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
              viewerId="org.eclipse.team.cvs.ui.mergeSynchronization"/>
+      <viewer viewerId="org.eclipse.team.cvs.ui.compareSynchronization">
+          <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.team.cvs.ui.compareSynchronizationMenu">
+             <insertionPoint name="file"/>  
+             <insertionPoint name="edit"/>          
+             <insertionPoint name="synchronize"/>
+             <insertionPoint
+                   name="navigate"
+                   separator="true"/>
+             <insertionPoint
+                   name="merge"
+                   separator="true"/>
+             <insertionPoint
+                   name="other"
+                   separator="true"/>
+             <insertionPoint
+                   name="changeSetActions"
+                   separator="true"/> 
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="properties"
+                   separator="true"/>  
+          </popupMenu>
+       </viewer>
+       <dragAssistant
+             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
+             viewerId="org.eclipse.team.cvs.ui.compareSynchronization"/>
    </extension>
    
 <!-- *************** Authenticator **************** -->

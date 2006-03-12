@@ -11,20 +11,27 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.ComparePreferencePage;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-public class ModelCompareParticipant extends ModelSynchronizeParticipant
-		implements ISynchronizeParticipant {
+public class ModelCompareParticipant extends CVSModelSynchronizeParticipant implements IChangeSetProvider {
 
+	public static final String VIEWER_ID = "org.eclipse.team.cvs.ui.compareSynchronization"; //$NON-NLS-1$
+	
+	public class CompareChangeSetCapability extends ModelParticipantChangeSetCapability {
+		public CheckedInChangeSetCollector createCheckedInChangeSetCollector(ISynchronizePageConfiguration configuration) {
+			return new CheckedInChangeSetCollector(configuration, getSubscriber());
+		}
+	}
+
+	private CompareChangeSetCapability capability;
+	
 	public ModelCompareParticipant(SynchronizationContext context) {
 		super(context);
 		try {
@@ -35,24 +42,22 @@ public class ModelCompareParticipant extends ModelSynchronizeParticipant
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getPreferencePages()
-     */
-    public PreferencePage[] getPreferencePages() {
-        return addCVSPreferencePages(super.getPreferencePages());
-    }
-
-    public static PreferencePage[] addCVSPreferencePages(PreferencePage[] inheritedPages) {
-        PreferencePage[] pages = new PreferencePage[inheritedPages.length + 1];
-        for (int i = 0; i < inheritedPages.length; i++) {
-            pages[i] = inheritedPages[i];
-        }
-        pages[pages.length - 1] = new ComparePreferencePage();
-        pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); 
-        return pages;
-    }
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+	 */
+	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
+		configuration.setProperty(ISynchronizePageConfiguration.P_VIEWER_ID, VIEWER_ID);
+		super.initializeConfiguration(configuration);
+	}
+	
 	public Subscriber getSubscriber() {
 		return ((SubscriberMergeContext)getContext()).getSubscriber();
+	}
+	
+	public ChangeSetCapability getChangeSetCapability() {
+        if (capability == null) {
+            capability = new CompareChangeSetCapability();
+        }
+        return capability;
 	}
 }

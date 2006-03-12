@@ -22,25 +22,20 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CommitSetDialog;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-public class WorkspaceChangeSetCapability extends ChangeSetCapability {
+public class WorkspaceChangeSetCapability extends ModelParticipantChangeSetCapability {
 
     /* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.synchronize.ChangeSetCapability#enableChangeSetsByDefault()
-     */
-    public boolean enableChangeSetsByDefault() {
-        return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT);
-    }
-    
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.synchronize.ChangeSetCapability#supportsActiveChangeSets()
 	 */
 	public boolean supportsActiveChangeSets() {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.ChangeSetCapability#enableActiveChangeSetsFor(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+	 */
 	public boolean enableActiveChangeSetsFor(ISynchronizePageConfiguration configuration) {
         return supportsActiveChangeSets() && 
     	configuration.getMode() != ISynchronizePageConfiguration.INCOMING_MODE;
@@ -88,22 +83,7 @@ public class WorkspaceChangeSetCapability extends ChangeSetCapability {
         return CVSUIPlugin.getPlugin().getChangeSetManager();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.synchronize.ChangeSetCapability#supportsCheckedInChangeSets()
-     */
-    public boolean supportsCheckedInChangeSets() {
-    	return true;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.synchronize.ChangeSetCapability#enableCheckedInChangeSetsFor(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
-     */
-    public boolean enableCheckedInChangeSetsFor(ISynchronizePageConfiguration configuration) {
-        return supportsCheckedInChangeSets() && 
-    		configuration.getMode() != ISynchronizePageConfiguration.OUTGOING_MODE;
-    }
-    
-    public CheckedInChangeSetCollector createCheckedInChangeSetCollector(ISynchronizePageConfiguration configuration) {
-    	return new CheckedInChangeSetCollector(configuration, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
-    }
+	public CheckedInChangeSetCollector createCheckedInChangeSetCollector(ISynchronizePageConfiguration configuration) {
+		return new CheckedInChangeSetCollector(configuration, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+	}
 }

@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.*;
@@ -23,7 +21,6 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
@@ -38,7 +35,7 @@ import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 
 public class WorkspaceModelParticipant extends
-		ModelSynchronizeParticipant implements IChangeSetProvider {
+	CVSModelSynchronizeParticipant implements IChangeSetProvider {
 
 	public static final String VIEWER_ID = "org.eclipse.team.cvs.ui.workspaceSynchronization"; //$NON-NLS-1$
 	
@@ -219,42 +216,7 @@ public class WorkspaceModelParticipant extends
 				mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getPreferencePages()
-     */
-    public PreferencePage[] getPreferencePages() {
-        return addCVSPreferencePages(super.getPreferencePages());
-    }
-
-    public static PreferencePage[] addCVSPreferencePages(PreferencePage[] inheritedPages) {
-        PreferencePage[] pages = new PreferencePage[inheritedPages.length + 1];
-        for (int i = 0; i < inheritedPages.length; i++) {
-            pages[i] = inheritedPages[i];
-        }
-        pages[pages.length - 1] = new ComparePreferencePage();
-        pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); 
-        return pages;
-    }
-    
-    public ModelProvider[] getEnabledModelProviders() {
-    	ModelProvider[] enabledProviders = super.getEnabledModelProviders();
-    	for (int i = 0; i < enabledProviders.length; i++) {
-			ModelProvider provider = enabledProviders[i];
-			if (provider.getId().equals(ChangeSetModelProvider.ID))
-				return enabledProviders;
-		}
-    	ModelProvider[] extended = new ModelProvider[enabledProviders.length + 1];
-    	for (int i = 0; i < enabledProviders.length; i++) {
-			extended[i] = enabledProviders[i];
-		}
-		ChangeSetModelProvider provider = ChangeSetModelProvider.getProvider();
-		if (provider == null)
-			return enabledProviders;
-		extended[extended.length - 1] = provider;
-		return extended;
-    }
-
-	public ChangeSetCapability getChangeSetCapability() {
+    public ChangeSetCapability getChangeSetCapability() {
         if (capability == null) {
             capability = new WorkspaceChangeSetCapability();
         }

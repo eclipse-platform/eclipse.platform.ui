@@ -503,7 +503,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 
 	private void initializeCheckedInChangeSetCollector(ChangeSetCapability csc) {
 		if (csc.supportsCheckedInChangeSets()) {
-			checkedInCollector = ((WorkspaceChangeSetCapability)csc).createCheckedInChangeSetCollector(getConfiguration());
+			checkedInCollector = ((ModelParticipantChangeSetCapability)csc).createCheckedInChangeSetCollector(getConfiguration());
 			checkedInCollector.addListener(collectorListener);
 			checkedInCollector.add(((ResourceDiffTree)getContext().getDiffTree()).getDiffs());
 		}
