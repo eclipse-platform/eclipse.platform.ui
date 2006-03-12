@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.navigator" id="linkHelper" name="Navigator Link Helper"/>
       </appInfo>
       <documentation>
-To be refined for M5.
+         To be refined for M5.
 
 &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
 part of a work in progress. There is a guarantee neither that this API will
@@ -14,9 +14,8 @@ work nor that it will remain the same. Please do not use this API without
 consulting with the Platform/UI team.
       </documentation>
    </annotation>
-   
-<include
-schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
@@ -59,7 +58,7 @@ schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.ILinkHelper"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -108,13 +107,6 @@ schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.
             <element ref="adapt"/>
             <element ref="iterate"/>
          </sequence>
-         <attribute name="navigatorContentExtensionId" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -122,14 +114,17 @@ schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.
       <appInfo>
          <meta.section type="since"/>
       </appInfo>
-      <documentation>3.2</documentation>
+      <documentation>
+         3.2
+      </documentation>
    </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
       </appInfo>
-      <documentation> 
+      <documentation>
+         
       </documentation>
    </annotation>
 
@@ -137,7 +132,8 @@ schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.
       <appInfo>
          <meta.section type="apiInfo"/>
       </appInfo>
-      <documentation> 
+      <documentation>
+         
       </documentation>
    </annotation>
 
@@ -145,7 +141,8 @@ schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.
       <appInfo>
          <meta.section type="implementation"/>
       </appInfo>
-      <documentation> 
+      <documentation>
+         
       </documentation>
    </annotation>
 
@@ -154,7 +151,7 @@ schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

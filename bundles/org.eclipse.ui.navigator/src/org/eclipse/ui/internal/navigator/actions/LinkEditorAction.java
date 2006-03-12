@@ -30,7 +30,7 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
-import org.eclipse.ui.internal.navigator.extensions.LinkHelperRegistry;
+import org.eclipse.ui.internal.navigator.extensions.LinkHelperManager;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ILinkHelper;
@@ -48,7 +48,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	private IPartListener partListener;
 	private final CommonViewer commonViewer;
 	private final CommonNavigator commonNavigator;
-	private LinkHelperRegistry linkHelperRegistry;
+	private LinkHelperManager linkHelperRegistry;
 
 	/**
 	 * Create a LinkEditorAction for the given navigator and viewer. 
@@ -140,7 +140,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		commonNavigator.addPropertyListener(this);
 		 
 		
-		linkHelperRegistry = new LinkHelperRegistry(commonViewer.getNavigatorContentService());
+		//linkHelperRegistry = new LinkHelperManager(commonViewer.getNavigatorContentService());
 	}
 	
 	/**
