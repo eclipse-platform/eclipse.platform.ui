@@ -38,11 +38,11 @@
        </viewer>
        <viewerContentBinding 
              viewerId="org.eclipse.ui.navigator.resourceContent">
-		          <includes>
-		       	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
-			          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
-		       	      <contentExtension pattern="org.eclipse.ui.navigator.resources.sorters.defaultSorter" />		       	      
-		          </includes>
+          <includes>
+       	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
+	          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
+       	      <contentExtension pattern="org.eclipse.ui.navigator.resources.sorters.defaultSorter" />		       	      
+          </includes>
        </viewerContentBinding>
        <viewerActionBinding
             viewerId="org.eclipse.ui.navigator.resourceContent">
