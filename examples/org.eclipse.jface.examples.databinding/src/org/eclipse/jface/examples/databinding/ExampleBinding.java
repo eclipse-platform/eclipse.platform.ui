@@ -18,6 +18,7 @@ import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFacto
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * An example application-level data binding factory implementation. This should
@@ -77,7 +78,7 @@ public class ExampleBinding {
 	public static DataBindingContext createContext() {
 		DataBindingContext context = new DataBindingContext();
 		context.addObservableFactory(new NestedObservableFactory(context));
-		context.addObservableFactory(new BeanObservableFactory(context));
+		context.addObservableFactory(new BeanObservableFactory(context, null, new Class[]{Widget.class}));
 		context.addObservableFactory(new SWTObservableFactory());
 		context.addObservableFactory(new ViewersObservableFactory());
 		return context;

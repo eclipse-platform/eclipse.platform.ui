@@ -14,6 +14,7 @@ import org.eclipse.jface.internal.databinding.api.DataBindingContext;
 import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.api.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.api.factories.DefaultBindingFactory;
+import org.eclipse.jface.internal.databinding.api.factories.DefaultObservableFactory;
 import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersBindingFactory;
@@ -21,6 +22,7 @@ import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFacto
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Widget;
 
 public class SampleData {
 
@@ -190,8 +192,9 @@ public class SampleData {
 	 */
 	public static DataBindingContext getDatabindingContext(Control aControl) {
 		final DataBindingContext context = new DataBindingContext();
+		context.addObservableFactory(new DefaultObservableFactory(context));
+		context.addObservableFactory(new BeanObservableFactory(context, null, new Class[]{Widget.class}));
 		context.addObservableFactory(new NestedObservableFactory(context));
-		context.addObservableFactory(new BeanObservableFactory(context));
 		context.addObservableFactory(swtObservableFactory);
 		context.addObservableFactory(viewersObservableFactory);
 		context.addBindingFactory(new DefaultBindingFactory());

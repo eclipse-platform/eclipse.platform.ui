@@ -18,13 +18,13 @@ import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.internal.databinding.api.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.description.TableModelDescription;
 import org.eclipse.jface.internal.databinding.api.observable.value.ComputedValue;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -94,7 +94,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				new TableModelDescription(new Property(catalog, "lodgings"),
 						new String[] { "name" }), null);
 
-		assertSetEquals(catalog.getLodgings(), getViewerContent(listViewer)
+		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer)
 				.toArray());
 
 		IObservableValue selectedLodging = (IObservableValue) getDbc()
@@ -165,7 +165,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				new TableModelDescription(new Property(catalog, "lodgings"),
 						new String[] { "name" }), null);
 
-		assertSetEquals(catalog.getLodgings(), getViewerContent(listViewer)
+		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer)
 				.toArray());
 
 		final IObservableValue selectedLodgingObservable = (IObservableValue) getDbc()
@@ -271,9 +271,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 	public void testScenario03() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		// List adventures and for the selected adventure allow its default
 		// lodging�s name and description to be changed in text controls. If
 		// there is no selected adventure or the default lodging is null the
@@ -292,10 +289,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		});
 		getDbc().bind(
 				categoryListViewer,
-				new TableModelDescription(new Property(catalog, "categories"),
-						new String[] { "name" }), null);
+				new ListModelDescription(new Property(catalog, "categories"),
+						"name"), null);
 
-		assertSetEquals(catalog.getCategories(), getViewerContent(
+		assertArrayEquals(catalog.getCategories(), getViewerContent(
 				categoryListViewer).toArray());
 
 		final IObservableValue selectedCategoryObservable = (IObservableValue) getDbc()
@@ -315,8 +312,9 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				adventureListViewer,
-				new Property(selectedCategoryObservable, "adventures",
-						Adventure.class, Boolean.TRUE), null);
+				new ListModelDescription(new Property(
+						selectedCategoryObservable, "adventures",
+						Adventure.class, Boolean.TRUE), "name"), null);
 
 		ComputedValue categorySelectionExistsObservable = new ComputedValue() {
 			protected Object calculate() {

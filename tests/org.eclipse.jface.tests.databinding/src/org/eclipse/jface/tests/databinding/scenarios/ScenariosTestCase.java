@@ -11,7 +11,6 @@
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Arrays;
-import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -148,11 +147,6 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected void assertArrayEquals(Object[] expected, Object[] actual) {
 		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
-	}
-
-	protected void assertSetEquals(Object[] expected, Object[] actual) {
-		assertEquals(new HashSet(Arrays.asList(expected)), new HashSet(Arrays
-				.asList(actual)));
 	}
 
 }

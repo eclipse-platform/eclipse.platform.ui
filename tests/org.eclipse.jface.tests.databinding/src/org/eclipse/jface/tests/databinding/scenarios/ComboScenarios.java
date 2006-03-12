@@ -24,9 +24,10 @@ import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.api.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.api.description.Property;
+import org.eclipse.jface.internal.databinding.api.observable.list.IObservableList;
+import org.eclipse.jface.internal.databinding.api.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.api.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.api.viewers.ViewersProperties;
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -140,10 +141,6 @@ public class ComboScenarios extends ScenariosTestCase {
 	 * 
 	 */
 	public void test_ROCombo_Scenario03_vanilla() {
-
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		Adventure skiAdventure = SampleData.WINTER_HOLIDAY; // selection will
 		// change its defaultLodging
 
@@ -155,7 +152,7 @@ public class ComboScenarios extends ScenariosTestCase {
 						"name"), null);
 
 		// Ensure that cv's content now has the catalog's lodgings
-		assertSetEquals(catalog.getLodgings(), getViewerContent(cviewer)
+		assertArrayEquals(catalog.getLodgings(), getViewerContent(cviewer)
 				.toArray());
 
 		// Ensure that the cv's labels are the same as the lodging descriptions
@@ -193,13 +190,13 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario03_collectionBindings() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		cviewer.setLabelProvider(lodgingLabelProvider); // TODO: need to resolve
 		// column binding
 		// Bind the ComboViewer's content to the available lodging
-		getDbc().bind(cviewer, new Property(catalog, "lodgings"), null);
+		getDbc().bind(
+				cviewer,
+				new ListModelDescription(new Property(catalog, "lodgings"),
+						"name"), null);
 
 		// Ensure that cv's content now has the catalog's lodgings
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(cviewer)
@@ -262,16 +259,13 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario01() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		// Read-Only Combo will not change its text property on a call to
 		// setText()
 
 		String[] items = new String[] { "FairyLand", "TuneLand", "NoWereLand",
 				"TinkerLand", "DreamLand" };
 		combo.setItems(items);
-		Account account = (Account) catalog.getAccounts()[0];
+		Account account = catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind(new Property(combo, SWTProperties.SELECTION),
@@ -306,16 +300,13 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario02_SWTCombo() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		// Create a list of Strings for the countries
-		List list = new ArrayList();
+		IObservableList list = new WritableList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)
 			list.add(catalog.getAccounts()[i].getCountry());
 
 		// Bind the combo's content to that of the String based list
-		getDbc().bind(combo, new Property(list, null), null);
+		getDbc().bind(combo, list, null);
 		assertEquals(Arrays.asList(combo.getItems()), list);
 
 		Account account = catalog.getAccounts()[0];
@@ -339,13 +330,13 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_Scenario02_ComboViewer() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		// Account label provider will fill the combo with the country
 		cviewer.setLabelProvider(accountLabelProvider);
 		// Bind the ComboViewer's content to the available accounts
-		getDbc().bind(cviewer, new Property(catalog, "accounts"), null);
+		getDbc().bind(
+				cviewer,
+				new ListModelDescription(new Property(catalog, "accounts"),
+						"country"), null);
 
 		// Ensure that cv's content now has the catalog's accounts
 		assertArrayEquals(catalog.getAccounts(), getViewerContent(cviewer)
@@ -376,15 +367,15 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_multipleBindings() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		Adventure skiAdventure = SampleData.WINTER_HOLIDAY; // for selection
 
 		cviewer.setLabelProvider(lodgingLabelProvider); // TODO: need to resolve
 		// column binding
 		// Bind the ComboViewer's content to the available lodging
-		getDbc().bind(cviewer, new Property(catalog, "lodgings"), null);
+		getDbc().bind(
+				cviewer,
+				new ListModelDescription(new Property(catalog, "lodgings"),
+						"name"), null);
 
 		// Ensure that cv's content now has the catalog's lodgings
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(cviewer)
@@ -396,7 +387,7 @@ public class ComboScenarios extends ScenariosTestCase {
 
 		ComboViewer otherViewer = new ComboViewer(getComposite(), SWT.NONE);
 		otherViewer.setLabelProvider(lodgingLabelProvider);
-		getDbc().bind(otherViewer, new Property(catalog, "lodgings"), null);
+		getDbc().bind(otherViewer, new ListModelDescription(new Property(catalog, "lodgings"),"name"), null);
 		// Ensure that cv's content now has the catalog's lodgings
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(otherViewer)
 				.toArray());
@@ -409,7 +400,7 @@ public class ComboScenarios extends ScenariosTestCase {
 				new Property(otherViewer, ViewersProperties.SINGLE_SELECTION),
 				new Property(skiAdventure, "defaultLodging"), null);
 
-		Lodging lodging = (Lodging) catalog.getLodgings()[0];
+		Lodging lodging = catalog.getLodgings()[0];
 
 		// Ensure that setting the selection is driven forward to the other
 		// combo
@@ -433,11 +424,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_SWTCCombo() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		// Create a list of Strings for the countries
-		List list = new ArrayList();
+		IObservableList list = new WritableList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)
 			list.add(catalog.getAccounts()[i].getCountry());
 
@@ -445,10 +433,10 @@ public class ComboScenarios extends ScenariosTestCase {
 				| SWT.DROP_DOWN);
 
 		// Bind the combo's content to that of the String based list
-		getDbc().bind(ccombo, new Property(list, null), null);
+		getDbc().bind(ccombo, list, null);
 		assertEquals(Arrays.asList(ccombo.getItems()), list);
 
-		Account account = (Account) catalog.getAccounts()[0];
+		Account account = catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind(new Property(ccombo, SWTProperties.SELECTION),
@@ -470,11 +458,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_WCombo_SWTCCombo() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		// Create a list of Strings for the countries
-		List list = new ArrayList();
+		IObservableList list = new WritableList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)
 			list.add(catalog.getAccounts()[i].getCountry());
 
@@ -482,10 +467,10 @@ public class ComboScenarios extends ScenariosTestCase {
 				| SWT.DROP_DOWN);
 
 		// Bind the combo's content to that of the String based list
-		getDbc().bind(ccombo, new Property(list, null), null);
+		getDbc().bind(ccombo, list, null);
 		assertEquals(Arrays.asList(ccombo.getItems()), list);
 
-		Account account = (Account) catalog.getAccounts()[0];
+		Account account = catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind(new Property(ccombo, SWTProperties.SELECTION),
@@ -516,11 +501,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	 */
 	public void test_ROCombo_SWTList() {
 
-		if (BindingTestSuite.failingTestsDisabled())
-			return;
-
 		// Create a list of Strings for the countries
-		List list = new ArrayList();
+		IObservableList list = new WritableList();
 		for (int i = 0; i < catalog.getAccounts().length; i++)
 			list.add(catalog.getAccounts()[i].getCountry());
 
@@ -528,10 +510,10 @@ public class ComboScenarios extends ScenariosTestCase {
 				getComposite(), SWT.READ_ONLY | SWT.SINGLE);
 
 		// Bind the combo's content to that of the String based list
-		getDbc().bind(swtlist, new Property(list, null), null);
+		getDbc().bind(swtlist, list, null);
 		assertEquals(Arrays.asList(swtlist.getItems()), list);
 
-		Account account = (Account) catalog.getAccounts()[0];
+		Account account = catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind(new Property(swtlist, SWTProperties.SELECTION),

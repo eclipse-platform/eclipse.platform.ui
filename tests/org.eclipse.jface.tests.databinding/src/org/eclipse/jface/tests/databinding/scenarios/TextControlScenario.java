@@ -69,8 +69,6 @@ public class TextControlScenario extends ScenariosTestCase {
 	
 	public void testScenario02() {
 
-		if(BindingTestSuite.failingTestsDisabled()) return;
-		
 		// Bind the transportation "price" property to a text field
 		// This is a Double.TYPE so we check that conversion and validation occurs
 		// Change the UI and verify the model changes
@@ -206,7 +204,7 @@ public class TextControlScenario extends ScenariosTestCase {
 	
 	public void testScenario08() {
 
-		if(BindingTestSuite.failingTestsDisabled()) return;
+		if(BindingTestSuite.failingTestsDisabled(this)) return;
 		
 		// Show that the BeanBindSupportFactory will automatically pick up the
 		// validator on the MaxNumberOfPeople property

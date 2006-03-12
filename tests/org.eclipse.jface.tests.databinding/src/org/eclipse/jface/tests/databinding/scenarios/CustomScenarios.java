@@ -15,7 +15,6 @@ import org.eclipse.jface.examples.databinding.model.AggregateObservableValue;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.api.description.Property;
 import org.eclipse.jface.internal.databinding.api.observable.value.IObservableValue;
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 
@@ -40,8 +39,6 @@ public class CustomScenarios extends ScenariosTestCase {
 
 	public void testScenario01() {
 
-		if(BindingTestSuite.failingTestsDisabled()) return;
-		
 		// Binding the name property of an Adventure object to the contents of
 		// Text controls, no conversion, no validation.
 

@@ -13,7 +13,6 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.api.description.Property;
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -41,8 +40,6 @@ public class SpinnerControlScenario extends ScenariosTestCase {
 
 	public void testScenario01() {
 
-		if(BindingTestSuite.failingTestsDisabled()) return;
-		
 		// Bind the adventure "maxNumberOfPeople" property to a spinner
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes

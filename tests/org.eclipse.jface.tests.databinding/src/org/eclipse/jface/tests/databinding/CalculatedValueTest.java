@@ -143,7 +143,7 @@ public class CalculatedValueTest extends TestCase {
 
 		// Hook beans...
 		DataBindingContext dbc = new DataBindingContext();
-		dbc.addObservableFactory(new BeanObservableFactory(dbc));
+		dbc.addObservableFactory(new BeanObservableFactory(dbc, null, null));
 
 		// cv.setDependencies(dbc, new Object[] {new Property(test1, "a"), new
 		// Property(test2, "a")});

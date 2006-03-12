@@ -76,29 +76,23 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(TableScenarios.class);
 		addTestSuite(NewTableScenarios.class);
 
-		if(!BindingTestSuite.failingTestsDisabled()) 
+		if (!BindingTestSuite.failingTestsDisabled(this))
 			addTestSuite(TreeScenarios.class);
 		// Test each of the basic SWT controls
 		addTestSuite(TextControlScenario.class);
-		addTestSuite(SpinnerControlScenario.class);	
-		addTestSuite(ButtonControlScenario.class);		
+		addTestSuite(SpinnerControlScenario.class);
+		addTestSuite(ButtonControlScenario.class);
 		// Test each of the basic JFace controls
-		addTestSuite(ComboViewerScenario.class);		
-		addTestSuite(ListViewerScenario.class);	
-		if(!BindingTestSuite.failingTestsDisabled()) 
-			addTestSuite(CComboObservableCollectionTest.class);
-		if(!BindingTestSuite.failingTestsDisabled()) 
-			addTestSuite(ComboObservableCollectionTest.class);
-		if(!BindingTestSuite.failingTestsDisabled()) 
-			addTestSuite(TableViewerObservableCollectionTest.class);
-		if(!BindingTestSuite.failingTestsDisabled()) 
-			addTestSuite(ListObservableCollectionTest.class);
-		if(!BindingTestSuite.failingTestsDisabled()) 
-			addTestSuite(ObservableCollectionViewerTest.class);
-		if(!BindingTestSuite.failingTestsDisabled()) 
-			addTestSuite(AutoSelectTableViewerCollectionTest.class);
-		if(!BindingTestSuite.failingTestsDisabled()) 
-			addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class);
+		addTestSuite(ComboViewerScenario.class);
+		addTestSuite(ListViewerScenario.class);
+		if(BindingTestSuite.failingTestsDisabled(this)) return;
+		addTestSuite(CComboObservableCollectionTest.class);
+		addTestSuite(ComboObservableCollectionTest.class);
+		addTestSuite(TableViewerObservableCollectionTest.class);
+		addTestSuite(ListObservableCollectionTest.class);
+		addTestSuite(ObservableCollectionViewerTest.class);
+		addTestSuite(AutoSelectTableViewerCollectionTest.class);
+		addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class);
 	}
 
 	public static Shell getShell() {
