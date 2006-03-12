@@ -19,7 +19,7 @@ that the extension may be able to provide a parent for. Clients
 should describe all elements that could be set as the selection
 to ensure that the link with editor support can properly 
 expand to the right node.
-&lt;p&gt; 
+&lt;p&gt;
       </documentation>
    </annotation>
 
@@ -549,7 +549,7 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
    <element name="possibleDropTargets">
       <annotation>
          <documentation>
-            Describe the possible drop targets that a particular &lt;b&gt;commonDropAdapter&lt;/b&gt; can handle.
+            Describe the possible drop targets that a particular &lt;b&gt;dropAssistant&lt;/b&gt; can handle.
          </documentation>
       </annotation>
       <complexType>
