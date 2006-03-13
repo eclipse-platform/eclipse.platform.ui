@@ -333,9 +333,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			public void run() {
 				ISynchronizationContext context = getContext();
 				if (context != null) {
-					IResource[] resources = getResources(context, paths);
-					if (resources.length > 0)
-						((AbstractTreeViewer)getViewer()).update(resources, null);
+					updateLabels(context, paths);
 				}
 			}
 		}, (StructuredViewer)getViewer());
@@ -423,5 +421,11 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			}
 		
 		}, getViewer().getControl());
+	}
+
+	protected void updateLabels(ISynchronizationContext context, final IPath[] paths) {
+		IResource[] resources = getResources(context, paths);
+		if (resources.length > 0)
+			((AbstractTreeViewer)getViewer()).update(resources, null);
 	}
 }

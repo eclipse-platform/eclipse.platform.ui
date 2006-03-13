@@ -16,7 +16,6 @@ import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -27,7 +26,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -294,13 +292,13 @@ public class CommitWizard extends ResizableWizard {
 		}
     }
 
-	public static void run(IWorkbenchPart part, Shell shell, final ResourceMapping[] mappings) throws CVSException {
+	public static void run(IWorkbenchPart part, Shell shell, final ResourceTraversal[] traversals) throws CVSException {
         try {
         	final IResource [][] resources = new IResource[][] { null };
     		PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
     			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
     				try {
-    					resources[0] = getDeepResourcesToCommit(mappings, monitor);
+    					resources[0] = getDeepResourcesToCommit(traversals, monitor);
     				} catch (CoreException e) {
     					throw new InvocationTargetException(e);
     				}
@@ -371,27 +369,21 @@ public class CommitWizard extends ResizableWizard {
         return cvsResource.isManaged();
     }
 
-    private static IResource[] getDeepResourcesToCommit(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+    private static IResource[] getDeepResourcesToCommit(ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
         List roots = new ArrayList();
-        for (int i = 0; i < mappings.length; i++) {
-            ResourceMapping mapping = mappings[i];
-            ResourceTraversal[] traversals = mapping.getTraversals(
-            		SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
-            		monitor);
-            for (int j = 0; j < traversals.length; j++) {
-                ResourceTraversal traversal = traversals[j];
-                IResource[] resources = traversal.getResources();
-                if (traversal.getDepth() == IResource.DEPTH_INFINITE) {
-                    roots.addAll(Arrays.asList(resources));
-                } else if (traversal.getDepth() == IResource.DEPTH_ZERO) {
-                    collectShallowFiles(resources, roots);
-                } else if (traversal.getDepth() == IResource.DEPTH_ONE) {
-                    collectShallowFiles(resources, roots);
-                    for (int k = 0; k < resources.length; k++) {
-                        IResource resource = resources[k];
-                        if (resource.getType() != IResource.FILE) {
-                            collectShallowFiles(members(resource), roots);
-                        }
+        for (int j = 0; j < traversals.length; j++) {
+            ResourceTraversal traversal = traversals[j];
+            IResource[] resources = traversal.getResources();
+            if (traversal.getDepth() == IResource.DEPTH_INFINITE) {
+                roots.addAll(Arrays.asList(resources));
+            } else if (traversal.getDepth() == IResource.DEPTH_ZERO) {
+                collectShallowFiles(resources, roots);
+            } else if (traversal.getDepth() == IResource.DEPTH_ONE) {
+                collectShallowFiles(resources, roots);
+                for (int k = 0; k < resources.length; k++) {
+                    IResource resource = resources[k];
+                    if (resource.getType() != IResource.FILE) {
+                        collectShallowFiles(members(resource), roots);
                     }
                 }
             }

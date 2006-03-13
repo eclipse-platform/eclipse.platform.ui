@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
+import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.PlatformUI;
 
@@ -46,19 +47,26 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         return getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
     }
 
-    protected static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-        Set result = new HashSet();
+    protected static ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+        CompoundResourceTraversal traversal = new CompoundResourceTraversal();
         for (int i = 0; i < mappings.length; i++) {
             ResourceMapping mapping = mappings[i];
             ResourceTraversal[] traversals = mapping.getTraversals(context, monitor);
-            for (int j = 0; j < traversals.length; j++) {
-                ResourceTraversal traversal = traversals[j];
-                IResource[] resources = traversal.getResources();
-                for (int k = 0; k < resources.length; k++) {
-                    IResource resource = resources[k];
-                    if (RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) != null) {
-                        result.add(resource);
-                    }
+            traversal.addTraversals(traversals);
+        }
+        return traversal.asTraversals();
+    }
+    
+    private static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+    	Set result = new HashSet();
+    	ResourceTraversal[] traversals = getTraversals(mappings, context, monitor);
+    	for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+            IResource[] resources = traversal.getResources();
+            for (int k = 0; k < resources.length; k++) {
+                IResource resource = resources[k];
+                if (RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) != null) {
+                    result.add(resource);
                 }
             }
         }

@@ -1578,7 +1578,7 @@
            <or>         
             <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"/>
             <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSet"/>
-            <instanceof value="org.eclipse.team.internal.ccvs.ui.mappings.CVSCheckedInChangeSet"/>
+            <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.CVSCheckedInChangeSet"/>
             <instanceof value="org.eclipse.core.resources.IResource"/>
            </or>
          </enablement>

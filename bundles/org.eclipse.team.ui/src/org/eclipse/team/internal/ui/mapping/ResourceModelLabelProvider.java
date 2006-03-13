@@ -136,13 +136,18 @@ public class ResourceModelLabelProvider extends
 			}
 		
 		if (!handledResources.isEmpty()) {
-		    Utils.asyncExec(new Runnable() {
-				public void run() {
-					contentProvider.getStructuredViewer().update(
-							(IResource[]) handledResources.toArray(new IResource[handledResources.size()]), null);
-				}
-			}, contentProvider.getStructuredViewer());
+			final IResource[] resources = (IResource[]) handledResources.toArray(new IResource[handledResources.size()]);
+		    updateLabels(resources);
 		}
+	}
+
+	protected void updateLabels(final Object[] resources) {
+		Utils.asyncExec(new Runnable() {
+			public void run() {
+				contentProvider.getStructuredViewer().update(
+						resources, null);
+			}
+		}, contentProvider.getStructuredViewer());
 	}
 	
 	private String getLayout() {

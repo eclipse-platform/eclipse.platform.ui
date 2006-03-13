@@ -406,6 +406,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	private boolean isVisible(Object object, IResourceDiffTree tree) {
+		//TODO: need to match diff direction with mode
 		if (object instanceof IResource) {
 			IResource resource = (IResource) object;
 			if (tree.getDiff(resource) != null)
@@ -572,7 +573,40 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			checkedInCollector.handleChange(event);
 	}
 	
-    public ChangeSetCapability getChangeSetCapability() {
+	protected void updateLabels(ISynchronizationContext context, IPath[] paths) {
+		super.updateLabels(context, paths);
+		ChangeSet[] sets = getSetsShowingPropogatedStateFrom(paths);
+		if (sets.length > 0)
+			((AbstractTreeViewer)getViewer()).update(sets, null);
+	}
+	
+	
+    private ChangeSet[] getSetsShowingPropogatedStateFrom(IPath[] paths) {
+		Set result = new HashSet();
+		for (int i = 0; i < paths.length; i++) {
+			IPath path = paths[i];
+			ChangeSet[] sets = getSetsShowingPropogatedStateFrom(path);
+			for (int j = 0; j < sets.length; j++) {
+				ChangeSet set = sets[j];
+				result.add(set);
+			}
+		}
+		return (ChangeSet[]) result.toArray(new ChangeSet[result.size()]);
+	}
+    
+	protected DiffChangeSet[] getSetsShowingPropogatedStateFrom(IPath path) {
+		List result = new ArrayList();
+		DiffChangeSet[] allSets = getAllSets();
+		for (int i = 0; i < allSets.length; i++) {
+			DiffChangeSet set = allSets[i];
+			if (set.getDiffTree().getDiff(path) != null || set.getDiffTree().getChildren(path).length > 0) {
+				result.add(set);
+			}
+		}
+		return (DiffChangeSet[]) result.toArray(new DiffChangeSet[result.size()]);
+	}
+
+	public ChangeSetCapability getChangeSetCapability() {
         ISynchronizeParticipant participant = getConfiguration().getParticipant();
         if (participant instanceof IChangeSetProvider) {
             IChangeSetProvider provider = (IChangeSetProvider) participant;

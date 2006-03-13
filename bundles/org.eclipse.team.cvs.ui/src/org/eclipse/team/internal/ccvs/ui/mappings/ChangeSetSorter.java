@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.team.internal.ccvs.core.mapping.CVSCheckedInChangeSet;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelSorter;

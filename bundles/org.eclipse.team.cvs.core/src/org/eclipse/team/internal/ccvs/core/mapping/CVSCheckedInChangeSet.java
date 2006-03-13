@@ -8,13 +8,13 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui.mappings;
+package org.eclipse.team.internal.ccvs.core.mapping;
 
 import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.ui.HistoryView;
+import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 
 public class CVSCheckedInChangeSet extends DiffChangeSet {
@@ -24,7 +24,7 @@ public class CVSCheckedInChangeSet extends DiffChangeSet {
     public CVSCheckedInChangeSet(ILogEntry entry) {
         this.entry = entry;
 		Date date = entry.getDate();
-		String comment = HistoryView.flattenText(entry.getComment());
+		String comment = LogEntry.flattenText(entry.getComment());
 		if (date == null) {
 			setName("["+entry.getAuthor()+ "] " + comment); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {

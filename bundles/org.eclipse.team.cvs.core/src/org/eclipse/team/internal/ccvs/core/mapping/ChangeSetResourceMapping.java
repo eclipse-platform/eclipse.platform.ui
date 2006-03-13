@@ -18,12 +18,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 
 public class ChangeSetResourceMapping extends ResourceMapping {
 
-	private final CVSActiveChangeSet changeSet;
+	private final DiffChangeSet changeSet;
 
-	public ChangeSetResourceMapping(CVSActiveChangeSet changeSet) {
+	public ChangeSetResourceMapping(DiffChangeSet changeSet) {
 		this.changeSet = changeSet;
 	}
 

@@ -14,9 +14,7 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
 import java.util.Date;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogEntry extends PlatformObject implements ILogEntry {
@@ -29,6 +27,26 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	private CVSTag[] tags;
     private String[] revisions;
     
+	/*
+	 * Flatten the text in the multi-line comment
+	 */
+	public static String flattenText(String string) {
+		StringBuffer buffer = new StringBuffer(string.length() + 20);
+		boolean skipAdjacentLineSeparator = true;
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			if (c == '\r' || c == '\n') {
+				if (!skipAdjacentLineSeparator)
+					buffer.append("/"); 
+				skipAdjacentLineSeparator = true;
+			} else {
+				buffer.append(c);
+				skipAdjacentLineSeparator = false;
+			}
+		}
+		return buffer.toString();
+	}
+	
 	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags) {
 		this.file = file.toRevision(revision);
 		this.author = author;

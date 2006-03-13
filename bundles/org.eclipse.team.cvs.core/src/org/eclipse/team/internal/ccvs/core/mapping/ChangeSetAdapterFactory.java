@@ -20,6 +20,10 @@ public class ChangeSetAdapterFactory implements IAdapterFactory {
 			CVSActiveChangeSet cs = (CVSActiveChangeSet) adaptableObject;
 			return new ChangeSetResourceMapping(cs);
 		}
+		if (adaptableObject instanceof CVSCheckedInChangeSet && adapterType == ResourceMapping.class) {
+			CVSCheckedInChangeSet cs = (CVSCheckedInChangeSet) adaptableObject;
+			return new ChangeSetResourceMapping(cs);
+		}
 		return null;
 	}
 

@@ -34,7 +34,7 @@ public class CommitAction extends WorkspaceTraversalAction {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
 	            try {
-	                CommitWizard.run(getTargetPart(), getShell(), getCVSResourceMappings());
+	                CommitWizard.run(getTargetPart(), getShell(), getTraversals(getCVSResourceMappings(), getResourceMappingContext(), monitor));
 	            } catch (CoreException e) {
 	                throw new InvocationTargetException(e);
 	            }
