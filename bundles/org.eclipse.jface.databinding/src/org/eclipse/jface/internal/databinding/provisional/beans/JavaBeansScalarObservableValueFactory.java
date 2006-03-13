@@ -22,8 +22,8 @@ import org.eclipse.jface.internal.databinding.provisional.observable.IObservable
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 
 /**
- * This is an optional IUpdatableFactory that forces all JavaBeans updatables
- * that it creates to be an IUpdatableValue, even if the actual type of
+ * This is an optional IObservableFactory that forces all JavaBeans observables
+ * that it creates to be an IObservableValue, even if the actual type of
  * the property is a collection.
  * 
  * @since 1.0
