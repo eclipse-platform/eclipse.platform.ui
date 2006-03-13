@@ -404,8 +404,10 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 		}
 		
 		// Apply size constraints
-		bounds.width= Math.min(fMaxWidth, bounds.width);
-		bounds.height= Math.min(fMaxHeight, bounds.height);
+		if (fMaxWidth != -1)
+			bounds.width= Math.min(fMaxWidth, bounds.width);
+		if (fMaxHeight != -1)
+			bounds.height= Math.min(fMaxHeight, bounds.height);
 		
 		// Ensure minimal size
 		bounds.width= Math.max(MIN_WIDTH, bounds.width);

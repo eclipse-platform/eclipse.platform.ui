@@ -408,7 +408,7 @@ public final class RevisionPainter {
          */
         protected IInformationControl doCreateInformationControl(Shell parent) {
 			int shellStyle= SWT.RESIZE | SWT.TOOL;
-			int style= SWT.V_SCROLL | SWT.H_SCROLL;
+			int style= SWT.NONE /*| SWT.V_SCROLL | SWT.H_SCROLL*/;
 			if (BrowserInformationControl.isAvailable(parent))
 				return new BrowserInformationControl(parent, shellStyle, style, null, true);
 			return new DefaultInformationControl(parent, shellStyle, style, null);
@@ -456,7 +456,8 @@ public final class RevisionPainter {
 		 */
 		public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
 			ChangeRegion region= getChangeRegion(lineRange.getStartLine());
-			return region == null ? null : region.getRevision().getHoverInfo();
+			Object info= region == null ? null : region.getRevision().getHoverInfo();
+			return info;
 		}
 
 		/*
