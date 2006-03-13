@@ -209,11 +209,17 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			
 			if (event.getKind() == DebugEvent.TERMINATE)
 			{
-				if (event.getSource() == fRetrieval)
+				IMemoryBlockRetrieval srcRetrieval = getMemoryBlockRetrieval(event.getSource());
+				if (srcRetrieval == fRetrieval)
 				{
 					// #setInput must be done on the UI thread
 					UIJob job = new UIJob("setInput"){ //$NON-NLS-1$
 						public IStatus runInUIThread(IProgressMonitor monitor) {
+							
+							// if viewpane is disposed, do not handle event							
+							if (fTreeViewer.getContentProvider() == null)
+								return  Status.OK_STATUS;
+							
 							fTreeViewer.setInput(null);
 							return Status.OK_STATUS;
 						}};
