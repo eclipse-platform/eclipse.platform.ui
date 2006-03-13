@@ -60,6 +60,7 @@ import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -1266,7 +1267,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 		}
 
-		if (path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) { 
+		if (Policy.EXPERIMENTAL_MENU 
+				&& path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) { 
 			System.err.println("adjustPath: " + path); //$NON-NLS-1$
 		}
 		return result;
