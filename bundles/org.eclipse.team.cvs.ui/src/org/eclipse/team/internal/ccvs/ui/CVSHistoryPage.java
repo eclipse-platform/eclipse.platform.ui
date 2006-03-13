@@ -1252,6 +1252,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	public boolean inputSet() {
+		//blank current input
+		this.treeViewer.setInput(null);
 		//reset default behaviour for clicks
 		compareMode = false;
 		//reset currentFileRevision
