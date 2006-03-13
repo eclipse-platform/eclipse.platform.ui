@@ -41,6 +41,23 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 
 	private WorkbenchContentProvider provider;
 
+	public static String getLayout() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
+	}
+	
+	public static int getLayoutDepth(IResource resource) {
+		if (resource.getType() == IResource.PROJECT)
+			return IResource.DEPTH_INFINITE;
+		if (resource.getType() == IResource.FILE) 
+			return IResource.DEPTH_ZERO;
+		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT)) {
+			return IResource.DEPTH_ZERO;
+		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT)) {
+			return IResource.DEPTH_ONE;
+		}
+		return IResource.DEPTH_INFINITE;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#getDelegateContentProvider()
 	 */
@@ -363,10 +380,6 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	
 	protected StructuredViewer getStructuredViewer() {
 		return (StructuredViewer)getViewer();
-	}
-	
-	protected String getLayout() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 	}
 	
 	public Object[] getChildren(Object parent) {
