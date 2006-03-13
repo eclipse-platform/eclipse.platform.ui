@@ -63,6 +63,8 @@ public class ImportExistingTest extends DataTransferTestCase {
 	
 	private String dataLocation = null;
 	
+	private String zipLocation = null;
+	
 	private boolean originalRefreshSetting;
 	
 	public ImportExistingTest(String testName) {
@@ -96,6 +98,16 @@ public class ImportExistingTest extends DataTransferTestCase {
 			}
 		}
 		dataLocation = null;	// reset for next test
+		
+		// do same for zip location
+		if (zipLocation != null){
+			File root = new File(zipLocation);
+			if (root.exists()){
+				// zipLocation is the zip file, not the temp directory it was copied to
+				deleteDirectory(root.getParentFile());
+			}
+		}
+		zipLocation = null;	// reset for next test
 		
 		ResourcesPlugin.getPlugin()
 			.getPluginPreferences().setValue(ResourcesPlugin.PREF_AUTO_REFRESH, 
@@ -681,7 +693,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 	public void testImportArchiveMultiProject(){
 		try{
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			String zipLocation = copyZipLocation();
+			zipLocation = copyZipLocation();
 			
 			IProject[] workspaceProjects = root.getProjects();
 	        for (int i = 0; i < workspaceProjects.length; i++) 
