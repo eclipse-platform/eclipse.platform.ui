@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.internal.viewers;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
