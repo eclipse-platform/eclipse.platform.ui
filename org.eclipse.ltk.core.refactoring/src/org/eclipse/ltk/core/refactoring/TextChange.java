@@ -477,7 +477,10 @@ public abstract class TextChange extends TextEditBasedChange {
 			TextEditBasedChangeGroup group= changeGroups[c];
 			TextEdit[] edits= group.getTextEdits();
 			for (int e= 0; e < edits.length; e++) {
-				Assert.isTrue(root == edits[e].getRoot(), "Wrong root edit"); //$NON-NLS-1$
+				
+				// TODO: enable once following bug is fixed
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=130909
+				// Assert.isTrue(root == edits[e].getRoot(), "Wrong root edit"); //$NON-NLS-1$
 			}
 		}
 		PreviewAndRegion result= getPreviewDocument(changeGroups, pm);
