@@ -32,6 +32,7 @@ import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -123,30 +124,48 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	}
 	
 	private class FilterAction extends Action {
+
 		private FilterDropDownAction fOwner;
+
 		private GroupCategory fGroupCategory;
+
 		public FilterAction(FilterDropDownAction owner, GroupCategory category) {
 			super(category.getName(), IAction.AS_RADIO_BUTTON);
 			setToolTipText(category.getDescription());
 			fOwner= owner;
 			fGroupCategory= category;
 		}
+
 		public void run() {
-			setActiveGroupCategory(fGroupCategory);
-			fOwner.executed(this);
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+
+				public void run() {
+					setActiveGroupCategory(fGroupCategory);
+					fOwner.executed(FilterAction.this);
+				}
+			});
 		}
 	}
+
 	private class ShowAllAction extends Action {
+
 		private FilterDropDownAction fOwner;
+
 		public ShowAllAction(FilterDropDownAction owner) {
 			super(RefactoringUIMessages.PreviewWizardPage_showAll_text, IAction.AS_RADIO_BUTTON);
 			super.setToolTipText(RefactoringUIMessages.PreviewWizardPage_showAll_description);
 			fOwner= owner;
 			setChecked(true);
 		}
+
 		public void run() {
-			clearGroupCategories();
-			fOwner.executed(this);
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+
+				public final void run() {
+					clearGroupCategories();
+					fOwner.executed(ShowAllAction.this);
+				}
+			});
 		}
 	}
 	private class FilterDropDownAction extends Action implements IMenuCreator {
