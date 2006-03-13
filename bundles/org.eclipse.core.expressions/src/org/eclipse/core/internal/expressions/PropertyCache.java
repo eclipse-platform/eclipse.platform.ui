@@ -10,22 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+import org.eclipse.core.internal.expressions.util.LRUCache;
 
 /* package */ class PropertyCache {
 	
-	private LinkedHashMap fCache;
+	private LRUCache fCache;
 	
 	public PropertyCache(final int cacheSize) {
-		// start with 100 elements but be able to grow until cacheSize
-		fCache= new LinkedHashMap(100, 0.75f, true) {
-			/** This class is not intended to be serialized. */
-			private static final long serialVersionUID= 1L;
-			protected boolean removeEldestEntry(Entry eldest) {
-				return size() > cacheSize;
-			}
-		};
+		fCache= new LRUCache(100);
+		fCache.setSpaceLimit(cacheSize);
 	}
 	
 	public Property get(Property key) {
@@ -37,6 +30,6 @@ import java.util.Map.Entry;
 	}
 	
 	public void remove(Property method) {
-		fCache.remove(method);
+		fCache.removeKey(method);
 	}
 }
