@@ -144,25 +144,6 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		}
 		return false;
 	}
-
-	public void installed() {
-		IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
-		if (memoryBlocks.length > 0)
-		{
-			ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NO_CHANGE);
-			
-			// Select the first memory block if nothing is selected in the view
-			// If something is selected, it means the view has restored selection and the
-			// proxy should not interfere.
-			IStructuredSelection selection = getCurrentSelection();
-			if (selection.isEmpty())
-			{
-				addSelectDeltaNode(delta);
-			}
-
-			fireModelChanged(delta);
-		}
-	}
 	
 	private boolean toSelect(IMemoryBlock memoryBlock)
 	{

@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,6 +29,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CreateRendering;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
@@ -975,6 +977,26 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					return;
 				
 				memoryBlock = (IMemoryBlock)elem;								
+			}
+		}
+		
+		if (memoryBlock == null)
+		{
+			// get a memory block from current debug context
+			IAdaptable context = DebugUITools.getDebugContext();
+			if (context != null)
+			{
+				IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)context.getAdapter(IMemoryBlockRetrieval.class);
+				if (retrieval == null && context instanceof IDebugElement)
+				{
+					retrieval = ((IDebugElement)context).getDebugTarget();
+				}
+				if (retrieval != null)
+				{
+					IMemoryBlock[] blocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
+					if (blocks.length > 0)
+						memoryBlock = blocks[0];
+				}
 			}
 		}
 		

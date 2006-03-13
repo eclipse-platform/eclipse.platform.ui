@@ -269,6 +269,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	class TreeViewPaneContextListener implements IDebugContextListener
 	{
 		public void contextActivated(ISelection selection, IWorkbenchPart part) {
+			if (!isVisible())
+				return;
 			
 			if (selection instanceof IStructuredSelection)
 			{
@@ -276,29 +278,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				if (obj instanceof IAdaptable)
 				{
 					IAdaptable context = (IAdaptable)obj;
-					IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(context);
-					if (retrieval != null && fTreeViewer != null && retrieval != fRetrieval)
-					{
-						// save current setting
-						if (fRetrieval != null)
-						{
-							MemoryViewerState state = (MemoryViewerState)fViewerState.get(fRetrieval);
-							if (state == null)
-								state = new MemoryViewerState(fTreeViewer);
-							state.saveState(fTreeViewer);
-							fViewerState.put(fRetrieval, state);
-						}
-						
-						// set new setting
-						fRetrieval = retrieval;
-						fTreeViewer.setInput(fRetrieval);
-						
-						MemoryViewerState newState = (MemoryViewerState)fViewerState.get(fRetrieval);
-						if (newState != null)
-						{
-							newState.restoreState(fTreeViewer);
-						}
-					}
+					debugContextActivated(context);
 					updateActionsEnablement();
 				}
 			}
@@ -602,8 +582,16 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			
 			if(fVisible)
 			{
-				fTreeViewer.refresh();
+				IAdaptable context = DebugUITools.getDebugContext();
+				debugContextActivated(context);
 				fTreeViewer.getControl().setFocus();
+				updateActionsEnablement();
+			}
+			else
+			{
+				saveViewerState();
+				fRetrieval = null;
+				fTreeViewer.setInput(null);
 			}
 		}
 	}
@@ -681,5 +669,42 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 
 	public String getLabel() {
 		return fLabel;
+	}
+
+	/**
+	 * @param context
+	 */
+	private void debugContextActivated(IAdaptable context) {
+		IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(context);
+		if (retrieval != null && fTreeViewer != null && retrieval != fRetrieval)
+		{
+			if (fTreeViewer.getInput() != null)
+				// save current setting
+				saveViewerState();
+			
+			// set new setting
+			fRetrieval = retrieval;
+			fTreeViewer.setInput(fRetrieval);
+			
+			MemoryViewerState newState = (MemoryViewerState)fViewerState.get(fRetrieval);
+			if (newState != null)
+			{
+				newState.restoreState(fTreeViewer);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void saveViewerState() {
+		if (fRetrieval != null)
+		{
+			MemoryViewerState state = (MemoryViewerState)fViewerState.get(fRetrieval);
+			if (state == null)
+				state = new MemoryViewerState(fTreeViewer);
+			state.saveState(fTreeViewer);
+			fViewerState.put(fRetrieval, state);
+		}
 	}
 }
