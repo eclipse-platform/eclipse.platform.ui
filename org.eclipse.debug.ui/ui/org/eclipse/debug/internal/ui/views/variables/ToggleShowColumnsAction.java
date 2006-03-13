@@ -19,6 +19,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Action to toggle the use of contributed variables content providers on and off.
@@ -26,13 +27,13 @@ import org.eclipse.ui.PlatformUI;
  * are used.  When off, the default content provider (that shows all children)
  * is used for all debug models.
  */
-public class ToggleShowColumnsAction extends Action {
+public class ToggleShowColumnsAction extends Action implements IUpdate {
 	
-	private VariablesView fView;
+	private AsynchronousTreeViewer fViewer;
 
-	public ToggleShowColumnsAction(VariablesView view) {
+	public ToggleShowColumnsAction(AsynchronousTreeViewer viewew) {
 		super(VariablesViewMessages.ToggleShowColumnsAction_0, IAction.AS_CHECK_BOX);
-		setView(view);
+		fViewer = viewew;
 		setToolTipText(VariablesViewMessages.ToggleShowColumnsAction_1);  
 		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB));
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ToggleShowColumsAction"); //$NON-NLS-1$
@@ -43,30 +44,23 @@ public class ToggleShowColumnsAction extends Action {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		if (!getView().isAvailable()) {
+		if (fViewer.getControl().isDisposed()) {
 			return;
 		}
-		getView().setShowColumns(isChecked());	
-		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				((AsynchronousTreeViewer)getView().getViewer()).refreshColumns();					
+				fViewer.setShowColumns(isChecked());				
 			}
 		});		
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#setChecked(boolean)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
-	public void setChecked(boolean value) {
-		super.setChecked(value);
-	}
+	public void update() {
+		setEnabled(fViewer.canToggleColumns());
+		setChecked(fViewer.isShowColumns());
+	}	
 	
-	protected VariablesView getView() {
-		return fView;
-	}
-
-	protected void setView(VariablesView view) {
-		fView = view;
-	}
 
 }

@@ -76,5 +76,13 @@ public interface IColumnPresentation {
 	 * @return identifier
 	 */
 	public String getId();
+	
+	/**
+	 * Returns whether this column presentation is optional. When a column presentation
+	 * is optional, the user may toggle columns on/off.
+	 * 
+	 * @return whether this column presentation is optional
+	 */
+	public boolean isOptional();
 
 }

@@ -383,9 +383,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
 	/** Whether logical structuers are showing */
     private boolean fShowLogical;
-    /** Whether columns are showing */
-    private boolean fShowColumns;
-
 
 	/**
 	 * Remove myself as a selection listener
@@ -883,14 +880,18 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		viewMenu.add(new Separator());
 		
 		fConfigureColumnsAction = new ConfigureColumnsAction(viewer);
-		setAction("ToggleColmns", new ToggleShowColumnsAction(this)); //$NON-NLS-1$
+		setAction("ToggleColmns", new ToggleShowColumnsAction(viewer)); //$NON-NLS-1$
 		
 		layoutSubMenu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
 				layoutSubMenu.add(fToggleDetailPaneActions[0]);
 				layoutSubMenu.add(fToggleDetailPaneActions[1]);
 				layoutSubMenu.add(fToggleDetailPaneActions[2]);
-				layoutSubMenu.add(getAction("ToggleColmns")); //$NON-NLS-1$
+				IAction action = getAction("ToggleColmns"); //$NON-NLS-1$
+				((IUpdate)action).update();
+				if (action.isEnabled()) {
+					layoutSubMenu.add(action);
+				}
 				fConfigureColumnsAction.update();
 				if (fConfigureColumnsAction.isEnabled()) {
 					layoutSubMenu.add(fConfigureColumnsAction);
@@ -1427,24 +1428,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public boolean isShowLogicalStructure() {
 	    return fShowLogical;
 	}	
-	
-	/**
-	 * Sets whether columns should be displayed.
-	 * 
-	 * @param flag
-	 */
-	public void setShowColumns(boolean flag) {
-		fShowColumns = flag;
-	}
-	
-	/**
-	 * Returns whether columns should be displayed.
-	 * 
-	 * @return whether columns should be displayed
-	 */
-	public boolean isShowColumns() {
-		return fShowColumns;
-	}
 
 	/**
 	 * Returns the number of entries that should be displayed in each

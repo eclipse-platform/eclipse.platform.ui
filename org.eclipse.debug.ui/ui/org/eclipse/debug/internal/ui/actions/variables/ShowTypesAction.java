@@ -84,7 +84,7 @@ public class ShowTypesAction extends Action {
 		if (enabled) {
 			setToolTipText(ActionMessages.ShowTypesAction_Show_Type_Names);
 		} else {
-			setToolTipText("'Show Type Names' unavailable when columns are displayed.\nConfigure columns to display type names.");
+			setToolTipText(ActionMessages.ShowTypesAction_0);
 		}
 	}
 	

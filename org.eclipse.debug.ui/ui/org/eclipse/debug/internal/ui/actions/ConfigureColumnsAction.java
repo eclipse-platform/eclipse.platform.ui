@@ -109,7 +109,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		setEnabled(fViewer.getColumnPresentation() != null);
+		setEnabled(fViewer.isShowColumns());
 	}
 
 	/* (non-Javadoc)

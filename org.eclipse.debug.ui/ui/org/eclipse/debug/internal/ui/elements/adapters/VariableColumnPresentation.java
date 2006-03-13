@@ -150,4 +150,11 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 		return INITIAL_COLUMNS;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
+	 */
+	public boolean isOptional() {
+		return true;
+	}
+
 }

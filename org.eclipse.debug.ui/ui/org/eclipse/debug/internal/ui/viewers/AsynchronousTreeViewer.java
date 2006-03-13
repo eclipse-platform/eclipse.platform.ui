@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -67,13 +68,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * Retrieving children and labels asynchrnously allows for arbitrary latency
  * without blocking the UI thread.
  * <p>
- * TODO: tree editor not implemented TODO: table tree - what implications does
- * it have on IPresentationAdapter?
- * 
- * TODO: Deprecate the public/abstract deferred workbench adapter in favor of
- * the presentation adapter.
- * </p>
- * <p>
  * Clients may instantiate and subclass this class.
  * </p>
  * 
@@ -121,6 +115,18 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     private Map fColumnSizes = new HashMap();
     
     /**
+     * Map of column presentation id to whether columns should be displayed
+     * for that presentation (the user can toggle columns on/off when a 
+     * presentation is optional.
+     */
+    private Map fShowColumns = new HashMap();
+    
+    /**
+     * Whether columns need re-building.
+     */
+    private boolean fBuildColumns = true;
+    
+    /**
 	 * Memento type for column sizes. Sizes are keyed by colunm presentation id 
 	 */
 	private static final String COLUMN_SIZES = "COLUMN_SIZES"; //$NON-NLS-1$
@@ -129,6 +135,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	 * A memento is created for each colunm presentation keyed by column number
 	 */
 	private static final String VISIBLE_COLUMNS = "VISIBLE_COLUMNS";     //$NON-NLS-1$
+	/**
+	 * Memento type for whether columns are visible for a presentation context.
+	 * Booleans are keyed by column presentation id
+	 */
+	private static final String SHOW_COLUMNS = "SHOW_COLUMNS";     //$NON-NLS-1$	
 	/**
 	 * Memento key for the number of visible columns in a VISIBLE_COLUMNS memento
 	 * or for the width of a column
@@ -474,18 +485,15 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     synchronized protected void inputChanged(Object input, Object oldInput) {
         fPendingExpansion.clear();
         super.inputChanged(input, oldInput);
-        configureColumns(input);
+        resetColumns(input);
     }
     
     /**
      * Refreshes the columns in the view, based on the viewer input.
      */
     public void refreshColumns() {
-    	Object input = getInput();
-    	if (input != null) {
-    		setInput(null);
-    		setInput(input);
-    	}
+    	configureColumns();
+    	refresh();
     }
     
     /**
@@ -493,7 +501,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * 
      * @param input
      */
-    protected void configureColumns(Object input) {
+    protected void resetColumns(Object input) {
     	if (input != null) {
     		// only change columns if the input is non-null (persist when empty)
 	    	IColumnPresenetationFactoryAdapter factory = getColumnPresenetationFactoryAdapter(input);
@@ -504,31 +512,47 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	    	}
 			if (type != null) {
 				if (fColumnPresentation != null) {
-					if (fColumnPresentation.getId().equals(type)) {
-						// no changes
-						return;
-					} else {
-						// dispose old
+					if (!fColumnPresentation.getId().equals(type)) {
+						// dispose old, create new
 						fColumnPresentation.dispose();
+						fColumnPresentation = null;
 					}
 				}
-				IColumnPresentation presentation = factory.createColumnPresentation(context, input);
-				if (presentation != null) {
-					fColumnPresentation = presentation;
-					presentation.init(context);
-					buildColumns(presentation);
+				if (fColumnPresentation == null) {
+					fColumnPresentation = factory.createColumnPresentation(context, input);
+					if (fColumnPresentation != null) {
+						fColumnPresentation.init(context);
+					}
 				}
+				
 			} else {
 				if (fColumnPresentation != null) {
-					// get rid of columns
-					buildColumns(null);
 					fColumnPresentation.dispose();
 					fColumnPresentation = null;
 				}
 			}
-			context.setColumns(getVisibleColumns());
+			configureColumns();
     	}
-    	
+    }    
+    
+    /**
+     * Configures the columns based on the current settings.
+     * 
+     * @param input
+     */
+    protected void configureColumns() {
+    	if (fColumnPresentation != null) {
+			if (fBuildColumns) {
+				IColumnPresentation build = null;
+				if (isShowColumns(fColumnPresentation.getId())) {
+					build = fColumnPresentation;
+				}
+				buildColumns(build);					
+			}
+		} else {
+			// get rid of columns
+			buildColumns(null);
+		}
     }
     
     /**
@@ -547,7 +571,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     		TreeColumn treeColumn = columns[i];
 			treeColumn.dispose();
 		}
-    	// TODO: persist/restore columns per presentation
+    	PresentationContext presentationContext = (PresentationContext) getPresentationContext();
     	if (presentation != null) {
 	    	String[] columnIds = getVisibleColumns();
 	    	for (int i = 0; i < columnIds.length; i++) {
@@ -565,9 +589,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 			}
 	    	tree.setHeaderVisible(true);
 	    	tree.setLinesVisible(true);
+	    	presentationContext.setColumns(getVisibleColumns());
     	} else {
     		tree.setHeaderVisible(false);
     		tree.setLinesVisible(false);
+    		presentationContext.setColumns(null);
     	}
     	columns = tree.getColumns();
     	for (int i = 0; i < columns.length; i++) {
@@ -578,7 +604,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     			columns[i].setWidth(width.intValue());
     		}
 		}
-    	
+    	fBuildColumns = false;
     }
 
     /**
@@ -1176,10 +1202,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 					fVisibleColumns.put(presentation.getId(), ids);
 				}
 			}
+			fBuildColumns = true;
 			PresentationContext presentationContext = (PresentationContext) getPresentationContext();
 			presentationContext.setColumns(getVisibleColumns());
-			buildColumns(presentation);
-			refresh();
+			refreshColumns();
 		}
 	}
 	
@@ -1197,6 +1223,14 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 				IMemento sizes = memento.createChild(COLUMN_SIZES, (String)entry.getKey());
 				sizes.putInteger(SIZE, ((Integer)entry.getValue()).intValue());
 			}
+		}
+		if (!fShowColumns.isEmpty()) {
+			Iterator iterator = fShowColumns.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Entry) iterator.next();
+				IMemento sizes = memento.createChild(SHOW_COLUMNS, (String)entry.getKey());
+				sizes.putString(SHOW_COLUMNS, ((Boolean)entry.getValue()).toString());
+			}			
 		}
 		if (!fVisibleColumns.isEmpty()) {
 			Iterator iterator = fVisibleColumns.entrySet().iterator();
@@ -1226,6 +1260,15 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 			Integer size = child.getInteger(SIZE);
 			if (size != null) {
 				fColumnSizes.put(id, size);
+			}
+		}
+		mementos = memento.getChildren(SHOW_COLUMNS);
+		for (int i = 0; i < mementos.length; i++) {
+			IMemento child = mementos[i];
+			String id = child.getID();
+			Boolean bool = Boolean.valueOf(child.getString(SHOW_COLUMNS));
+			if (!bool.booleanValue()) {
+				fShowColumns.put(id, bool);
 			}
 		}
 		mementos = memento.getChildren(VISIBLE_COLUMNS);
@@ -1369,5 +1412,56 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	public void setColumnProperties(String[] columnProperties) {
 		fTreeEditorImpl.setColumnProperties(columnProperties);
 	}	
+	
+	/**
+	 * Toggles columns on/off for the current column presentation, if any.
+	 * 
+	 * @param show whether to show columns if the current input suppports
+	 * 	columns
+	 */
+	public void setShowColumns(boolean show) {
+		if (show) {
+			if (!isShowColumns()) {
+				fShowColumns.remove(fColumnPresentation.getId());
+				fBuildColumns = true;
+			}
+		} else {
+			if (isShowColumns()){
+				fShowColumns.put(fColumnPresentation.getId(), Boolean.FALSE);
+				fBuildColumns = true;
+			}
+		}
+		refreshColumns();
+	}
+	
+	/**
+	 * Returns whether columns are being displayed currently.
+	 * 
+	 * @return
+	 */
+	public boolean isShowColumns() {
+		if (fColumnPresentation != null) {
+			return isShowColumns(fColumnPresentation.getId());
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether columns can be toggled on/off for the current input.
+	 * 
+	 * @return whether columns can be toggled on/off for the current input
+	 */
+	public boolean canToggleColumns() {
+		return fColumnPresentation != null && fColumnPresentation.isOptional();
+	}
+	
+	protected boolean isShowColumns(String columnPresentationId) {
+		Boolean bool = (Boolean) fShowColumns.get(columnPresentationId);
+		if (bool == null) {
+			return true;
+		}
+		return bool.booleanValue();
+	}
+	 
 	
 }

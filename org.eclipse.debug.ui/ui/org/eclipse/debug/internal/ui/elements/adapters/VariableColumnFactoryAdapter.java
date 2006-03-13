@@ -17,9 +17,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAda
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Factory for default variable column presentation.
@@ -32,11 +30,9 @@ public class VariableColumnFactoryAdapter implements IColumnPresenetationFactory
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-		if (isShowingColumns(context)) {
-			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
-				if (element instanceof IStackFrame) {
-					return new VariableColumnPresentation();
-				}
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+			if (element instanceof IStackFrame) {
+				return new VariableColumnPresentation();
 			}
 		}
 		return null;
@@ -46,22 +42,12 @@ public class VariableColumnFactoryAdapter implements IColumnPresenetationFactory
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
-		if (isShowingColumns(context)) {
-			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
-				if (element instanceof IStackFrame) {
-					return VariableColumnPresentation.DEFAULT_VARIABLE_COLUMN_PRESENTATION;
-				}
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+			if (element instanceof IStackFrame) {
+				return VariableColumnPresentation.DEFAULT_VARIABLE_COLUMN_PRESENTATION;
 			}
 		}
 		return null;
-	}
-	
-	public static boolean isShowingColumns(IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part instanceof VariablesView) {
-			return ((VariablesView)part).isShowColumns();
-		}
-		return  false;
 	}
 
 	/* (non-Javadoc)
