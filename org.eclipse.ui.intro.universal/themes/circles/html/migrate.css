@@ -21,6 +21,8 @@
 	background-image : none;
 }
 
-#navigation-links a:hover#migrate .link-extra-div {
-	display: none;
+#navigation-links a:hover#migrate .link-extra-div,
+#navigation-links a:focus#migrate .link-extra-div,
+#navigation-links a:active#migrate .link-extra-div {
+	background-image : none;
 }

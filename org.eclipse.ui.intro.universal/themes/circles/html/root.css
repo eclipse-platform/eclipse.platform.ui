@@ -13,39 +13,67 @@ a .link-extra-div {
 
 /* Link label properties */
 #page-links a .link-label {
-	font-size : 13pt;	font-weight : 600;
-	padding-left: 10px;
-	padding-right: 10px;
+	margin-left: 10px;
 	position: relative;
-	top: -15px;
-	margin-bottom: -10px;
+	top: -1.2em;
+	font-size : 13pt;	font-weight : 600;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-bottom: -1.2pm;
 }
 
 /* Link description properties */
 #page-links a p .text {
+	margin-left: 3px;
+	position: relative;
+	top: -1.5em;
+	padding-top: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-bottom: -1.5em;
 	font-size : 13pt;	font-weight : 500;
+/*
 	padding-bottom: 10px;
+	*/
+	background-image: url("../graphics/icons/ctool/root_midhov2.gif");
+	background-repeat: repeat-y;
 }
+
+#page-links a#overview p .text {
+	margin-left: 5px;
+}
+
+#page-links a#workbench p .text {
+	margin-left: -9px;
+}
+
+/* Some differences between Mozilla and IE here */
+/*
+#page-links a#workbench > p .text {
+	margin-left: -7px;
+}
+*/
+
 /*
  * Set up the content for the root page.
  */
 body {
-	min-width : 770px;	/* since IE doesn't support min-width, use expression */
-	width:expression(document.body.clientWidth < 770? "770px": "auto" );
-	background-image : url(../graphics/rootpage/welcomebckgrd.jpg);	background-repeat : no-repeat;	background-position : center center;
+/*
+	min-width : 770px;	width:expression(document.body.clientWidth < 770? "770px": "auto" );
+*/
+	background-image : url("../graphics/rootpage/welcomebckgrd.jpg");	background-repeat : no-repeat;	background-position : center center;
 	background-attachment : fixed;
 	overflow : hidden;
 	overflow-clip: rect(0, auto, auto, 0);
 	background-color : #345365;
 }
 #root {
+/*
 	min-height : 450px;
 	height : expression(document.body.clientHeight < 450? "450px": "100%" );
+*/
 	overflow: hidden;
 }
-
-	/* For non-IE browsers */
-#root[id] {	display: table; position: static; }
 
 #branding {
 	position: absolute;
@@ -58,42 +86,25 @@ body {
  * of the page
  */
 #links-background {
+/*
 	width : 100%;
+	*/
 	position: absolute;
-	top: 50%;	text-align : center;
-}
-
-/* for non-IE browsers only */
-#links-background[id] {
-	display: table-cell; 
-	vertical-align: middle; 
-	position: static;
-}
-
-/* specify a width for Moz so we can center.  
- * **Important** If additional links are added, we will have to increase this width 
- * to accomodate them, otherwise they will wrap to a new line 
- */
-#links-background > #page-links {
-	width : 33em;	margin : 0 auto;
+	top: 50%;
+	left: 50%;	text-align : center;
 }
 
 #page-links {
-	width : 884px;
-	height: 387px;
 	position : relative;
-	left : -17px;
-	top : -50%;
+	left : -442px;
+	top : -193px;
 }
 
 #page-links a {
-	position : absolute;	margin-left : 1em;	margin-right : 1em;	text-align : center;
-/*
-	background-color: magenta;
-	*/
+	position : absolute;
+	text-align : center;
+	padding-bottom: 2px;
 }
-
-#page-links[id] { position: static; } 
 
 /* Position root links using absolute coordinates */
 #page-links a img {
@@ -124,6 +135,17 @@ body {
 	width : 217px;
 	height : 99px;
 }
+
+#page-links a#workbench img {
+	width : 107px;
+	height : 103px;
+}
+
+#page-links a#workbench:hover img {
+	width : 202px;
+	height : 84px;
+}
+
 
 /* Absolute positions of root links */
 
@@ -165,7 +187,13 @@ body {
 #page-links a:hover#workbench,
 #page-links a:focus#workbench,
 #page-links a:active#workbench {
-	left: 713px;
+	left: 707px;
+}
+
+#page-links > a:hover#workbench,
+#page-links > a:focus#workbench,
+#page-links > a:active#workbench {
+	left: 711px;
 }
 
 /* Turn the background image off */
@@ -178,7 +206,7 @@ body {
 #page-links a:hover,
 #page-links a:focus,
 #page-links a:active {
-	background-image: url(../graphics/icons/ctool/root_bottomhov.gif);
+	background-image: url("../graphics/icons/ctool/root_bottomhov.gif");
 	background-repeat: no-repeat;
 	background-position: bottom left;
 	z-index: 20;
@@ -187,20 +215,22 @@ body {
 #page-links a#overview:hover,
 #page-links a#overview:focus,
 #page-links a#overview:active {
-	background-image: url(../graphics/icons/ctool/overview_bottomhov.gif);
-	background-image: no-repeat;
-	background-position: bottom 1px;
-	z-index: 20;
+	background-image: url("../graphics/icons/ctool/overview_bottomhov.gif");
 }
 
 #page-links a#workbench:hover,
 #page-links a#workbench:focus,
 #page-links a#workbench:active {
-	background-image: url(../graphics/icons/ctool/workbench_bottomhov.gif);
-	background-image: no-repeat;
-	background-position: bottom left;
-	z-index: 20;
+	background-image: url("../graphics/icons/ctool/workbench_bottomhov.gif");
+	background-position: bottom 5px;
 }
+
+#page-links > a#workbench:hover,
+#page-links > a#workbench:focus,
+#page-links > a#workbench:active {
+	background-position: bottom 2px;
+}
+
 
 /* Hide the link label in the normal state */
 #page-links a .link-label,
@@ -221,82 +251,81 @@ body {
 #page-links a:focus p .text,
 #page-links a:active p .text {
 	display : block;
-	z-index: 40;
+	z-index: 35;
 }
 
-#page-links a#overview:hover .link-label,
-#page-links a#overview:focus .link-label,
-#page-links a:overview:active .link-label {
-	width: 210px;
-}
-
-#page-links a#overview:hover p .text,
-#page-links a#overview:focus p .text,
-#page-links a:overview:active p .text {
-	width: 210px;
-}
-
-/* Use the extra div to fill in the text box behind the text */
-
-#page-links a:hover .link-extra-div,
-#page-links a:focus .link-extra-div,
-#page-links a:active .link-extra-div {
-	display: block;
-	position: absolute;
-/*
-	top : 84px;
-	*/
-	left : 0px;
-	width: 215px;
-/*
-	top: 	84;
-	*/
-	height: 70px;
-	bottom: 2px;
-	z-index: -5;
-	background-image: url(../graphics/icons/ctool/root_midhov.gif);
-	background-repeat: repeat-y;
-}
-
-#page-links a#overview:hover .link-extra-div,
-#page-links a#overview:focus .link-extra-div,
-#page-links a#overview:active .link-extra-div {
-	left : 3px;
-	width: 217px;
-}
-
-#page-links a#workbench:hover .link-extra-div,
-#page-links a#workbench:focus .link-extra-div,
-#page-links a#workbench:active .link-extra-div {
-	left : 0px;
+#page-links a:hover .link-label,
+#page-links a:focus .link-label,
+#page-links a:active .link-label {
 	width: 202px;
-	background-image: url(../graphics/icons/ctool/workbench_midhov.gif);
+}
+
+#page-links a:hover p .text,
+#page-links a:focus p .text,
+#page-links a:active p .text {
+	width: 202px;
+}
+
+#page-links a:hover > .link-label,
+#page-links a:focus > .link-label,
+#page-links a:active > .link-label {
+	width: 192px;
+}
+
+#page-links a:hover > p .text,
+#page-links a:focus > p .text,
+#page-links a:active > p .text {
+	width: 192px;
+}
+
+#page-links a#workbench:hover .link-label,
+#page-links a#workbench:focus .link-label,
+#page-links a#workbench:active .link-label {
+	width: 202px;
+}
+
+#page-links a#workbench:hover p .text,
+#page-links a#workbench:focus p .text,
+#page-links a#workbench:active p .text {
+	width: 202px;
+}
+
+#page-links a#workbench:hover > .link-label,
+#page-links a#workbench:focus > .link-label,
+#page-links a#workbench:active > .link-label {
+	width: 182px;
+}
+
+#page-links a#workbench:hover p > .text,
+#page-links a#workbench:focus p > .text,
+#page-links a#workbench:active p > .text {
+	width: 193px;
 }
 
 /* Link images */
-#page-links a#overview img { background-image : url(../graphics/icons/ctool/overview.gif); }
-#page-links a:hover#overview img { background-image : url(../graphics/icons/ctool/overview_tophov.gif); }
+#page-links a#overview img { background-image : url("../graphics/icons/ctool/overview.gif"); }
+#page-links a:hover#overview img { background-image : url("../graphics/icons/ctool/overview_tophov.gif"); }
 
-#page-links a#tutorials img { background-image : url(../graphics/icons/ctool/tutorials.gif); }
-#page-links a:hover#tutorials img { background-image : url(../graphics/icons/ctool/tutorials_tophov.gif); }
+#page-links a#tutorials img { background-image : url("../graphics/icons/ctool/tutorials.gif"); }
+#page-links a:hover#tutorials img { background-image : url("../graphics/icons/ctool/tutorials_tophov.gif"); }
 
-#page-links a#samples img { background-image : url(../graphics/icons/ctool/samples.gif); }
-#page-links a:hover#samples img { background-image : url(../graphics/icons/ctool/samples_tophov.gif); }
+#page-links a#samples img { background-image : url("../graphics/icons/ctool/samples.gif"); }
+#page-links a:hover#samples img { background-image : url("../graphics/icons/ctool/samples_tophov.gif"); }
 
-#page-links a#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew.gif); }
-#page-links a:hover#whatsnew img { background-image : url(../graphics/icons/ctool/whatsnew_tophov.gif); }
+#page-links a#whatsnew img { background-image : url("../graphics/icons/ctool/whatsnew.gif"); }
+#page-links a:hover#whatsnew img { background-image : url("../graphics/icons/ctool/whatsnew_tophov.gif"); }
 
-#page-links a#firststeps img { background-image : url(../graphics/icons/ctool/firststeps.gif); }
-#page-links a:hover#firststeps img { background-image : url(../graphics/icons/ctool/firststeps_tophov.gif); }
+#page-links a#firststeps img { background-image : url("../graphics/icons/ctool/firststeps.gif"); }
+#page-links a:hover#firststeps img { background-image : url("../graphics/icons/ctool/firststeps_tophov.gif"); }
 
-#page-links a#migrate img { background-image : url(../graphics/icons/ctool/migrate.gif); }
-#page-links a:hover#migrate img { background-image : url(../graphics/icons/ctool/migrate_tophov.gif); }
+#page-links a#migrate img { background-image : url("../graphics/icons/ctool/migrate.gif"); }
+#page-links a:hover#migrate img { background-image : url("../graphics/icons/ctool/migrate_tophov.gif"); }
 
-#page-links a#webresources img { background-image : url(../graphics/icons/ctool/webresources.gif); }
-#page-links a:hover#webresources img { background-image : url(../graphics/icons/ctool/webresources_tophov.gif); }
+#page-links a#webresources img { background-image : url("../graphics/icons/ctool/webresources.gif"); }
+#page-links a:hover#webresources img { background-image : url("../graphics/icons/ctool/webresources_tophov.gif"); }
 
-#page-links a#workbench img { background-image : url(../graphics/icons/ctool/workbench.gif); }
-#page-links a:hover#workbench img { background-image : url(../graphics/icons/ctool/workbench_tophov.gif); }
+#page-links a#workbench img { background-image : url("../graphics/icons/ctool/workbench.gif"); }
+#page-links a:hover#workbench img { background-image : url("../graphics/icons/ctool/workbench_tophov.gif"); }
 
 /*
  * Not using action links.

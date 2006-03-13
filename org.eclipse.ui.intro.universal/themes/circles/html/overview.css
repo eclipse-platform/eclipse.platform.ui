@@ -21,7 +21,9 @@
 	background-image : none;
 }
 
-#navigation-links a:hover#overview .link-extra-div {
+#navigation-links a:hover#overview .link-extra-div,
+#navigation-links a:focus#overview .link-extra-div,
+#navigation-links a:active#overview .link-extra-div {
 	display: none;
 }
 

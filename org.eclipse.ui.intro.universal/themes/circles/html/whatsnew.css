@@ -22,10 +22,11 @@
 	background-image : none;
 }
 
-#navigation-links a:hover#whatsnew .link-extra-div {
-	display: none;
+#navigation-links a:hover#whatsnew .link-extra-div,
+#navigation-links a:focus#whatsnew .link-extra-div,
+#navigation-links a:active#whatsnew .link-extra-div {
+	background-image : none;
 }
-
 /*
  * Default images for content links in this page.
  */

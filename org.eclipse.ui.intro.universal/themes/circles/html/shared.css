@@ -126,6 +126,10 @@ a img {
 /*
  * to get scrollbars working in both IE and Mozilla
  */
+
+/*
+ * to get scrollbars working in both IE and Mozilla
+ */
 html,body { overflow: auto; }
 html>body { overflow: visible; }
 
@@ -155,23 +159,16 @@ body {
 /*
  * Dimensions.
  */
-body, .page{
+body, .page {
 	min-width : 770px;
 	/* since IE doesn't support min-width, try expression */
 	width:expression(document.body.clientWidth < 770? "770px": "auto" );
-	/*
 	min-height : 425px;
-	*/
 	height : 100%;
-	/*
 	height : expression(document.body.clientHeight < 425? "425px": "100%" );
-	*/
 }
 
 .page {
-/*
-	min-height : 475px;
-	*/
 	background-image : url(../graphics/contentpage/background.jpg);
 	background-repeat : repeat-x;
 	background-position : top left;
@@ -180,7 +177,7 @@ body, .page{
 #page-content {
 	background-repeat : no-repeat;
 	background-position : bottom right;
-	height : 70%;
+	height : 65%;
 }
 
 /* 
@@ -300,7 +297,7 @@ body, .page{
 	padding-top: 7px;
 	padding-right: 5px;
 	margin-right: auto;
-	top : -39px;
+	top : -35px;
 	white-space: nowrap;
 	height : 32px;
 }

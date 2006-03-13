@@ -21,6 +21,8 @@
 	background-image : none;
 }
 
-#navigation-links a:hover#firststeps .link-extra-div {
+#navigation-links a:hover#firststeps .link-extra-div,
+#navigation-links a:focus#firststeps .link-extra-div,
+#navigation-links a:active#firststeps .link-extra-div {
 	display: none;
 }

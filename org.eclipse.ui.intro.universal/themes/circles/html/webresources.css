@@ -21,6 +21,8 @@
 	background-image : none;
 }
 
-#navigation-links a:hover#webresources .link-extra-div {
-	display: none;
+#navigation-links a:hover#webresources .link-extra-div,
+#navigation-links a:focus#webresources .link-extra-div,
+#navigation-links a:active#webresources .link-extra-div {
+	background-image : none;
 }

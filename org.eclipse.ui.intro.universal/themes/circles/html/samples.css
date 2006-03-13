@@ -21,3 +21,9 @@
 #navigation-links a:active#samples {
 	background-image : none;
 }
+
+#navigation-links a:hover#samples .link-extra-div,
+#navigation-links a:focus#samples .link-extra-div,
+#navigation-links a:active#samples .link-extra-div {
+	background-image : none;
+}
