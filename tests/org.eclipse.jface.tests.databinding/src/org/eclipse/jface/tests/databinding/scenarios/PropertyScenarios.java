@@ -19,6 +19,7 @@ import org.eclipse.jface.examples.databinding.model.Cart;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.conversion.Converter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverter;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;

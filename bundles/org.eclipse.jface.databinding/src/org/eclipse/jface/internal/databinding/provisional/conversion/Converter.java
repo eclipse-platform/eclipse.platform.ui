@@ -9,9 +9,8 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.tests.databinding.scenarios;
+package org.eclipse.jface.internal.databinding.provisional.conversion;
 
-import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 
 /**
  * @since 1.0
