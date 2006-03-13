@@ -19,6 +19,9 @@ package org.eclipse.jface.internal.databinding.provisional.validation;
  * if applicable) and is responsible for applying range checks, special
  * formatting requirements, and so on.
  * <p>
+ * 
+ * FIXME: This is wrong.  See bug #128142
+ * 
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
  * unchanged during the 3.2 release cycle. Please do not use this API without
