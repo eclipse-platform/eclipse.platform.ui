@@ -173,6 +173,10 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		if (element.getName().equals(TAG_FILTER)) {
 			return true;
 		}
+		
+		if (element.getName().equals(CHILD_ENABLEMENT)) {
+			return true;
+		}
 
 		if (element.getName().equals(TAG_KEYWORD_REFERENCE)) {
 			return true;
