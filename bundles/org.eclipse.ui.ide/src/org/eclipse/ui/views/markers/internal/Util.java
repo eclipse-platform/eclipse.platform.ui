@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
@@ -42,12 +43,6 @@ public final class Util {
 	static String LINE_FEED_AND_TAB = "\n\t";//$NON-NLS-1$
 
 	private static DateFormat format;
-
-	private static final String IMAGE_ERROR_PATH = "obj16/error_tsk.gif"; //$NON-NLS-1$
-
-	private static final String IMAGE_WARNING_PATH = "obj16/warn_tsk.gif"; //$NON-NLS-1$
-
-	private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
 
 	static final MarkerNode[] EMPTY_MARKER_ARRAY = new MarkerNode[0];
 
@@ -118,8 +113,8 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getContainerName(IMarker marker) {
-		
-		if(!marker.exists())
+
+		if (!marker.exists())
 			return Util.EMPTY_STRING;
 
 		try {
@@ -176,8 +171,8 @@ public final class Util {
 	 * @return String
 	 */
 	public static String getResourceName(IMarker marker) {
-		
-		if(!marker.exists())
+
+		if (!marker.exists())
 			return Util.EMPTY_STRING;
 
 		try {
@@ -231,7 +226,8 @@ public final class Util {
 	static final int SHORT_DELAY = 100;// The 100 ms short delay for scheduling
 
 	static final int LONG_DELAY = 30000;// The 30s long delay to run without a
-										// builder update
+
+	// builder update
 
 	private Util() {
 		super();
@@ -246,13 +242,13 @@ public final class Util {
 	public static Image getImage(int severity) {
 
 		if (severity == IMarker.SEVERITY_ERROR) {
-			return getIDEImage(IMAGE_ERROR_PATH);
+			return getIDEImage(IDEInternalWorkbenchImages.IMG_OBJS_ERROR_PATH);
 		}
 		if (severity == IMarker.SEVERITY_WARNING) {
-			return getIDEImage(IMAGE_WARNING_PATH);
+			return getIDEImage(IDEInternalWorkbenchImages.IMG_OBJS_WARNING_PATH);
 		}
 		if (severity == IMarker.SEVERITY_INFO) {
-			return getIDEImage(IMAGE_INFO_PATH);
+			return getIDEImage(IDEInternalWorkbenchImages.IMG_OBJS_INFO_PATH);
 		}
 
 		return null;
@@ -264,9 +260,10 @@ public final class Util {
 	 * @param path
 	 * @return Image
 	 */
-	private static Image getIDEImage(String path) {
+	private static Image getIDEImage(String constantName) {
+
 		return JFaceResources.getResources().createImageWithDefault(
-				IDEWorkbenchPlugin.getIDEImageDescriptor(path));
+				IDEInternalWorkbenchImages.getImageDescriptor(constantName));
 
 	}
 
@@ -299,7 +296,7 @@ public final class Util {
 	 */
 	public static String getShortContainerName(IMarker marker) {
 
-		if(!marker.exists())
+		if (!marker.exists())
 			return Util.EMPTY_STRING;
 
 		try {

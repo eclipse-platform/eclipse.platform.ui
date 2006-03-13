@@ -628,6 +628,15 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_BANNER, PATH_OBJECT
 						+ "welcome_banner.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_OBJS_ERROR_PATH, PATH_OBJECT
+						+ "error_tsk.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_OBJS_WARNING_PATH, PATH_OBJECT
+						+ "warn_tsk.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_OBJS_INFO_PATH, PATH_OBJECT
+						+ "info_tsk.gif", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_LCL_FLAT_LAYOUT, PATH_ELOCALTOOL
