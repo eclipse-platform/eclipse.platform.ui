@@ -76,8 +76,6 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(TableScenarios.class);
 		addTestSuite(NewTableScenarios.class);
 
-		if (!BindingTestSuite.failingTestsDisabled(this))
-			addTestSuite(TreeScenarios.class);
 		// Test each of the basic SWT controls
 		addTestSuite(TextControlScenario.class);
 		addTestSuite(SpinnerControlScenario.class);
@@ -85,7 +83,8 @@ public class BindingScenariosTestSuite extends TestSuite {
 		// Test each of the basic JFace controls
 		addTestSuite(ComboViewerScenario.class);
 		addTestSuite(ListViewerScenario.class);
-		if(BindingTestSuite.failingTestsDisabled(this)) return;
+		if (BindingTestSuite.failingTestsDisabled(this))
+			return;
 		addTestSuite(CComboObservableCollectionTest.class);
 		addTestSuite(ComboObservableCollectionTest.class);
 		addTestSuite(TableViewerObservableCollectionTest.class);

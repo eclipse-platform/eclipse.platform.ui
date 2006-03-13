@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.nestedselection;
 
-import org.eclipse.jface.internal.databinding.api.DataBindingContext;
-import org.eclipse.jface.internal.databinding.api.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.api.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.api.factories.NestedObservableFactory;
-import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
-import org.eclipse.jface.internal.databinding.api.viewers.ViewersObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;

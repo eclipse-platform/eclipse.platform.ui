@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.internal.databinding.api.validation.IValidator;
-import org.eclipse.jface.internal.databinding.api.validation.String2IntValidator;
-import org.eclipse.jface.internal.databinding.api.validation.ValidationError;
+import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 public class Adventure extends ModelObject {
 
@@ -50,28 +49,17 @@ public class Adventure extends ModelObject {
 		firePropertyChange("maxNumberOfPeople", oldValue, maxNumberOfPeople);
 	}
 	
-	public IValidator getMaxNumberOfPeopleValidator(Class fromType) {
-		if (fromType.equals(String.class))
-			return new IValidator() {
-				IValidator delegate = new String2IntValidator();
-				public ValidationError isPartiallyValid(Object value) {
-					return delegate.isPartiallyValid(value);
+	public IDomainValidator getMaxNumberOfPeopleDomainValidator() {
+		return new IDomainValidator() {
+			public ValidationError isValid(Object value) {
+				int intValue = ((Integer)value).intValue();
+				if (intValue < 1 || intValue > 20) {
+					return ValidationError
+							.error("Max number of people must be between 1 and 20 inclusive");
 				}
-	
-				public ValidationError isValid(Object value) {
-					ValidationError error = delegate.isValid(value);
-					if (error != null) {
-						return error;
-					}
-					int intValue = Integer.valueOf((String)value).intValue();
-					if (intValue < 1 || intValue > 20) {
-						return ValidationError.error("Max number of people must be between 1 and 20 inclusive");
-					}
-					return null;
-				}
-				
-			};
-		return null;
+				return null;
+			}
+		};
 	}
 
 	public Lodging getDefaultLodging() {

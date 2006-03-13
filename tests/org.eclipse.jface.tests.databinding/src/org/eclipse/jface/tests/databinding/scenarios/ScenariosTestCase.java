@@ -15,8 +15,8 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.api.DataBindingContext;
-import org.eclipse.jface.internal.databinding.api.swt.SWTObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
