@@ -8,6 +8,9 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IRegistryChangeEvent;
@@ -197,8 +200,24 @@ public class BrowserIntroPartImplementation extends
         else {
             HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
                 this);
-            if (html != null)
-                content = html.toString();
+            if (html != null) {
+            	IntroModelRoot root = getModel();
+            	if (root!=null) {
+            		Map props = root.getTheme().getProperties();
+            		if (props!=null) {
+            			String value = (String)props.get("standardSupport"); //$NON-NLS-1$
+            			String doctype=null;
+            			if ("strict".equalsIgnoreCase(value)) //$NON-NLS-1$
+            				doctype = generateDoctype(true);
+            			else if ("loose".equalsIgnoreCase(value)) //$NON-NLS-1$
+            				doctype = generateDoctype(false);
+            			if (doctype!=null)
+            				content = doctype+html.toString();
+            		}
+            	}
+            	if (content==null)
+            		content = html.toString();
+            }
         }
 
 
@@ -265,6 +284,21 @@ public class BrowserIntroPartImplementation extends
         // this restores the DOM to its original state.
         reinjectDynamicContent(dom, contentProviderElements);
         return content;
+    }
+    
+    private String generateDoctype(boolean strict) {
+    	StringWriter swriter = new StringWriter();
+    	PrintWriter writer = new PrintWriter(swriter);
+    	if (strict) {
+    		writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\""); //$NON-NLS-1$
+    		writer.println("\t\t\t\"http://www.w3.org/TR/html4/strict.dtd\">"); //$NON-NLS-1$
+    	}
+    	else {
+    		writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\""); //$NON-NLS-1$
+    		writer.println("\t\t\t\"http://www.w3.org/TR/html4/loose.dtd\">"); //$NON-NLS-1$    		
+    	}
+    	writer.close();
+    	return swriter.toString();
     }
 
     /**
