@@ -541,9 +541,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				if (w != null) {
 					path = internalGetSorterParentPath(w, sorter);
 				}
-				if (path == null) {
-					path = TreePath.EMPTY.createChildPath(parentElementOrTreePath);
-				}
 			}
 	    	tpvs.sort(this, path, result);
 		} else if (sorter != null) {
