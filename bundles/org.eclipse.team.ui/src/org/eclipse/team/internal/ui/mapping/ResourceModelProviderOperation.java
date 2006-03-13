@@ -15,18 +15,29 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.team.core.diff.FastDiffFilter;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public abstract class ResourceModelProviderOperation extends SynchronizationOperation {
 
-	protected ResourceModelProviderOperation(ISynchronizePageConfiguration configuration, Object[] elements) {
-		super(configuration, elements);
+	private final IStructuredSelection selection;
+
+	protected ResourceModelProviderOperation(ISynchronizePageConfiguration configuration, IStructuredSelection selection) {
+		super(configuration, getElements(selection));
+		this.selection = selection;
+	}
+
+	private static Object[] getElements(IStructuredSelection selection) {
+		return selection.toArray();
 	}
 
 	/**
@@ -36,43 +47,34 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 * @param elements the selected elements
 	 * @return the file deltas contained in or descended from the selection
 	 */
-	protected IDiff[] getFileDeltas(Object[] elements) {
+	private IDiff[] getFileDeltas(Object[] pathOrElements) {
 		Set result = new HashSet();
-		for (int j = 0; j < elements.length; j++) {
-			Object element = elements[j];
-			IDiff[] diffs = getFileDeltas(element);
-			for (int i = 0; i < diffs.length; i++) {
-				IDiff node = diffs[i];
+		for (int i = 0; i < pathOrElements.length; i++) {
+			Object pathOrElement = pathOrElements[i];
+			IDiff[] diffs = getFileDeltas(pathOrElement);
+			for (int j = 0; j < diffs.length; j++) {
+				IDiff node = diffs[j];
 				result.add(node);
 			}
 		}
 		return (IDiff[]) result.toArray(new IDiff[result.size()]);
 	}
 	
-	private IDiff[] getFileDeltas(Object o) {
-		IResource resource = Utils.getResource(o);
-		if (resource != null) {
+	private IDiff[] getFileDeltas(Object pathOrElement) {
+		List result = new ArrayList();
+		ResourceTraversal[] traversals = getTraversals(pathOrElement);
+		if (traversals.length > 0) {
 			ISynchronizationContext context = getContext();
 			final IResourceDiffTree diffTree = context.getDiffTree();
-			if (resource.getType() == IResource.FILE) {
-				IDiff delta = diffTree.getDiff(resource);
-				if (getDiffFilter().select(delta))
-					return new IDiff[] { delta };
-			} else {
-				// Find all the deltas for the folder
-				ResourceTraversal[] traversals = getTraversals(o);
-				IDiff[] diffs = diffTree.getDiffs(traversals);
-				// Now filter the diffs by the mode of the configuration
-				List result = new ArrayList();
-				for (int i = 0; i < diffs.length; i++) {
-					IDiff node = diffs[i];
-					if (isVisible(node) && getDiffFilter().select(node))
-						result.add(node);
-				}
-				return (IDiff[]) result.toArray(new IDiff[result.size()]);
+			IDiff[] diffs = diffTree.getDiffs(traversals);
+			// Now filter the by the mode of the configuration
+			for (int i = 0; i < diffs.length; i++) {
+				IDiff node = diffs[i];
+				if (isVisible(node) && getDiffFilter().select(node))
+					result.add(node);
 			}
 		}
-		return new IDiff[0];
+		return (IDiff[]) result.toArray(new IDiff[result.size()]);
 	}
 	
 	/**
@@ -82,45 +84,43 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 * @return whether the given node is visible in the page
 	 */
 	protected boolean isVisible(IDiff node) {
-		ISynchronizePageConfiguration configuration = getConfiguration();
-		if (configuration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY 
-				&& node instanceof IThreeWayDiff) {
-			IThreeWayDiff twd = (IThreeWayDiff) node;
-			int mode = configuration.getMode();
-			switch (mode) {
-			case ISynchronizePageConfiguration.INCOMING_MODE:
-				if (twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.INCOMING) {
-					return true;
-				}
-				break;
-			case ISynchronizePageConfiguration.OUTGOING_MODE:
-				if (twd.getDirection() == IThreeWayDiff.CONFLICTING || twd.getDirection() == IThreeWayDiff.OUTGOING) {
-					return true;
-				}
-				break;
-			case ISynchronizePageConfiguration.CONFLICTING_MODE:
-				if (twd.getDirection() == IThreeWayDiff.CONFLICTING) {
-					return true;
-				}
-				break;
-			case ISynchronizePageConfiguration.BOTH_MODE:
-				return true;
-			}
-		}
-		return configuration.getComparisonType() == ISynchronizePageConfiguration.TWO_WAY && node instanceof IResourceDiff;
+		return ((SynchronizePageConfiguration)getConfiguration()).isVisible(node);
 	}
 
-	private ResourceTraversal[] getTraversals(Object o) {
-		ResourceMapping mapping = Utils.getResourceMapping(o);
+	private ResourceTraversal[] getTraversals(Object pathOrElement) {
+		// First check to see if the element is a tree path
+		Object element;
+		if (pathOrElement instanceof TreePath) {
+			TreePath tp = (TreePath) pathOrElement;
+			Object o = tp.getFirstSegment();
+			if (o instanceof DiffChangeSet) {
+				// Special handling for change sets
+				DiffChangeSet dcs = (DiffChangeSet) o;
+				return getTraversalCalculator().getTraversals(dcs, tp);
+			}
+			element = tp.getLastSegment();
+		} else {
+			element = pathOrElement;
+		}
+		
+		// Check for resources and adjust the depth to match the provider depth
+		if (isResourcePath(pathOrElement)) {
+			IResource resource = (IResource) element;
+			return getTraversalCalculator().getTraversals(resource);
+		}
+		
+		// Finally, just get the traversals from the mapping.
+		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
 			// First, check if we have already calculated the traversal
 			ResourceTraversal[] traversals = getContext().getScope().getTraversals(mapping);
 			if (traversals != null)
 				return traversals;
-			// We need to determine the traversals from the mapping
-			// TODO: this is not right: see bug 120114
+			// We need to determine the traversals from the mapping.
+			// By default, use the local context. Models will need to provide
+			// custom handlers if this doesn't work for them
 			try {
-				return mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
+				return mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
 			} catch (CoreException e) {
 				TeamUIPlugin.log(e);
 			}
@@ -128,6 +128,14 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 		return new ResourceTraversal[0];
 	}
 	
+	private boolean isResourcePath(Object pathOrElement) {
+		if (pathOrElement instanceof TreePath) {
+			TreePath tp = (TreePath) pathOrElement;
+			return getTraversalCalculator().isResourcePath(tp);
+		}
+		return false;
+	}
+
 	/**
 	 * Return the filter used to match diffs to which this action applies.
 	 * @return the filter used to match diffs to which this action applies
@@ -139,14 +147,30 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 */
 	public boolean shouldRun() {
 		// TODO: may be too long for enablement
-		return getFileDeltas(getElements()).length > 0;
+		return getTargetDiffs().length > 0;
 	}
 	
+	protected IDiff[] getTargetDiffs() {
+		return getFileDeltas(getTreePathsOrElements());
+	}
+
+	private Object[] getTreePathsOrElements() {
+		if (selection instanceof ITreeSelection) {
+			ITreeSelection ts = (ITreeSelection) selection;
+			return ts.getPaths();
+		}
+		return getElements();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.TeamOperation#canRunAsJob()
 	 */
 	protected boolean canRunAsJob() {
 		return true;
+	}
+	
+	protected ResourceModelTraversalCalculator getTraversalCalculator() {
+		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
 	}
 
 }

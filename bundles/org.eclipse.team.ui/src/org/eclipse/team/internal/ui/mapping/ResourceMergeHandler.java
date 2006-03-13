@@ -35,7 +35,7 @@ public class ResourceMergeHandler extends MergeActionHandler {
 	 */
 	protected synchronized SynchronizationOperation getOperation() {
 		if (operation == null) {
-			operation = new ResourceModelProviderOperation(getConfiguration(), getStructuredSelection().toArray()) {
+			operation = new ResourceModelProviderOperation(getConfiguration(), getStructuredSelection()) {
 				/* (non-Javadoc)
 				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
@@ -43,7 +43,7 @@ public class ResourceMergeHandler extends MergeActionHandler {
 						InterruptedException {
 					try {
 						IMergeContext context = (IMergeContext)getContext();
-						IDiff[] diffs = getFileDeltas(getElements());
+						IDiff[] diffs = getTargetDiffs();
 						IStatus status = context.merge(diffs, overwrite, monitor);
 						if (!status.isOK())
 							throw new CoreException(status);

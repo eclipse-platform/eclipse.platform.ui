@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.mapping.ResourceModelTraversalCalculator;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
@@ -465,10 +466,11 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 	}
 
 	private boolean isVisible(IDiff diff) {
-		ChangeSetContentProvider provider = getContentProvider();
-		if (provider == null)
-			return false;
-		return provider.isVisible(diff);
+		return ((SynchronizePageConfiguration)getSynchronizePageConfiguration()).isVisible(diff);
+	}
+	
+	protected ResourceModelTraversalCalculator getTraversalCalculator() {
+		return (ResourceModelTraversalCalculator)getSynchronizePageConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
 	}
 	
 	private ChangeSetContentProvider getContentProvider() {

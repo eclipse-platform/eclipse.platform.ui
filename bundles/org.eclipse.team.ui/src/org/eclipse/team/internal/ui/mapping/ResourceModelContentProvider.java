@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.diff.IDiff;
@@ -41,23 +40,6 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 
 	private WorkbenchContentProvider provider;
 
-	public static String getLayout() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
-	}
-	
-	public static int getLayoutDepth(IResource resource) {
-		if (resource.getType() == IResource.PROJECT)
-			return IResource.DEPTH_INFINITE;
-		if (resource.getType() == IResource.FILE) 
-			return IResource.DEPTH_ZERO;
-		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT)) {
-			return IResource.DEPTH_ZERO;
-		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT)) {
-			return IResource.DEPTH_ONE;
-		}
-		return IResource.DEPTH_INFINITE;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#getDelegateContentProvider()
 	 */
@@ -118,6 +100,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	public void init(ICommonContentExtensionSite site) {
 		super.init(site);
 		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
+		getConfiguration().setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, new ResourceModelTraversalCalculator());
 	}
 	
 	/* (non-Javadoc)
@@ -142,107 +125,13 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
 		if (parent instanceof IResource) {
 			IResource resource = (IResource) parent;
-			if (resource.getType() != IResource.ROOT && !resource.getProject().isAccessible())
+			if (resource.getType() == IResource.PROJECT && !resource.getProject().isAccessible())
 				return new Object[0];
 			IResourceDiffTree diffTree = context.getDiffTree();
-			Object[] allChildren = filterChildren(diffTree, resource, children);
+			Object[] allChildren = getTraversalCalculator().filterChildren(diffTree, resource, children);
 			return super.getChildrenInContext(context, parent, allChildren);
 		}
 		return super.getChildrenInContext(context, parent, children);
-	}
-
-	protected Object[] filterChildren(IResourceDiffTree diffTree, IResource resource, Object[] children) {
-		Object[] allChildren;
-		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
-			allChildren = getFlatChildren(diffTree, resource);
-		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.PROJECT) {
-			allChildren = getCompressedChildren(diffTree, (IProject)resource, children);
-		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
-			allChildren = getCompressedChildren(diffTree, (IFolder)resource, children);
-		} else {
-			allChildren = getTreeChildren(diffTree, resource, children);
-		}
-		return allChildren;
-	}
-
-	private Object[] getCompressedChildren(IResourceDiffTree diffTree, IProject project, Object[] children) {
-		Set result = new HashSet();
-		IDiff[] diffs = diffTree.getDiffs(project, IResource.DEPTH_INFINITE);
-		for (int i = 0; i < diffs.length; i++) {
-			IDiff diff = diffs[i];
-			IResource resource = diffTree.getResource(diff);
-			if (resource.getType() == IResource.FILE) {
-				IContainer parent = resource.getParent();
-				if (parent.getType() == IResource.FOLDER)
-					result.add(parent);
-				else 
-					result.add(resource);
-			} else if (resource.getType() == IResource.FOLDER)
-				result.add(resource);
-		}
-		return result.toArray();
-	}
-
-	/*
-	 * Only return the files that are direct children of the folder
-	 */
-	private Object[] getCompressedChildren(IResourceDiffTree diffTree, IFolder folder, Object[] children) {
-		Set result = new HashSet();
-		for (int i = 0; i < children.length; i++) {
-			Object object = children[i];
-			if (object instanceof IResource) {
-				IResource resource = (IResource) object;
-				if (resource.getType() == IResource.FILE)
-					result.add(resource);
-			}
-		}
-		IDiff[] diffs = diffTree.getDiffs(folder, IResource.DEPTH_ONE);
-		for (int i = 0; i < diffs.length; i++) {
-			IDiff diff = diffs[i];
-			IResource resource = diffTree.getResource(diff);
-			if (resource.getType() == IResource.FILE)
-				result.add(resource);
-		}
-		return result.toArray();
-	}
-
-	private Object[] getFlatChildren(IResourceDiffTree diffTree, IResource resource) {
-		Object[] allChildren;
-		IDiff[] diffs = diffTree.getDiffs(resource, IResource.DEPTH_INFINITE);
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < diffs.length; i++) {
-			IDiff diff = diffs[i];
-			result.add(diffTree.getResource(diff));
-		}
-		allChildren = result.toArray();
-		return allChildren;
-	}
-
-	private Object[] getTreeChildren(IResourceDiffTree diffTree, IResource resource, Object[] children) {
-		Set result = new HashSet();
-		for (int i = 0; i < children.length; i++) {
-			Object object = children[i];
-			result.add(object);
-		}
-		IPath[] childPaths = diffTree.getChildren(resource.getFullPath());
-		for (int i = 0; i < childPaths.length; i++) {
-			IPath path = childPaths[i];
-			IDiff delta = diffTree.getDiff(path);
-			IResource child;
-			if (delta == null) {
-				// the path has descendent deltas so it must be a folder
-				if (path.segmentCount() == 1) {
-					child = ((IWorkspaceRoot)resource).getProject(path.lastSegment());
-				} else {
-					child = ((IContainer)resource).getFolder(new Path(path.lastSegment()));
-				}
-			} else {
-				child = diffTree.getResource(delta);
-			}
-			result.add(child);
-		}
-		Object[] allChildren = result.toArray(new Object[result.size()]);
-		return allChildren;
 	}
 
 	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object) {
@@ -427,5 +316,13 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		IResource[] resources = getResources(context, paths);
 		if (resources.length > 0)
 			((AbstractTreeViewer)getViewer()).update(resources, null);
+	}
+	
+	protected ResourceModelTraversalCalculator getTraversalCalculator() {
+		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+	}
+	
+	protected boolean isVisible(IDiff diff) {
+		return super.isVisible(diff);
 	}
 }

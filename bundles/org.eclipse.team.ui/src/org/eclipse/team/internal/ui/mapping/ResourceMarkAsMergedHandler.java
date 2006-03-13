@@ -40,7 +40,7 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 	protected synchronized SynchronizationOperation getOperation() {
 		if (operation == null) {
 			operation = new ResourceModelProviderOperation(getConfiguration(),
-						getStructuredSelection().toArray()) {
+						getStructuredSelection()) {
 				/* (non-Javadoc)
 				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
@@ -48,7 +48,7 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 						throws InvocationTargetException, InterruptedException {
 					try {
 						final IMergeContext context = (IMergeContext) getContext();
-						final IDiff[] deltas = getFileDeltas(getElements());
+						final IDiff[] deltas = getTargetDiffs();
 						ISchedulingRule rule = getMergeRule(context, deltas);
 						context.run(new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)

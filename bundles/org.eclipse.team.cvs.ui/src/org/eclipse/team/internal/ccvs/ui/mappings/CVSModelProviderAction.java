@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
+import org.eclipse.team.internal.ui.mapping.ResourceModelTraversalCalculator;
 import org.eclipse.team.internal.ui.mapping.SynchronizationResourceMappingContext;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelParticipantAction;
@@ -85,6 +85,10 @@ public abstract class CVSModelProviderAction extends ModelParticipantAction {
 	protected ResourceMappingContext getResourceMappingContext() {
 		return new SynchronizationResourceMappingContext(getSynchronizationContext());
 	}
+	
+	protected ResourceModelTraversalCalculator getTraversalCalculator() {
+		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+	}
 
 	/**
 	 * Return a traversal that includes the resources that are visible 
@@ -102,7 +106,7 @@ public abstract class CVSModelProviderAction extends ModelParticipantAction {
 				}
 				if (o instanceof IResource) {
 					IResource resource = (IResource) o;
-					int depth = ResourceModelContentProvider.getLayoutDepth(resource);
+					int depth = getTraversalCalculator().getLayoutDepth(resource);
 					IDiff[] diffs = set.getDiffTree().getDiffs(resource, depth);
 					Set resources = new HashSet();
 					for (int i = 0; i < diffs.length; i++) {
@@ -113,6 +117,10 @@ public abstract class CVSModelProviderAction extends ModelParticipantAction {
 					}
 					return new ResourceTraversal[] { new ResourceTraversal((IResource[]) resources.toArray(new IResource[resources.size()]), IResource.DEPTH_ZERO, IResource.NONE) };
 				}
+			} 
+			if (getTraversalCalculator().isResourcePath(path)) {
+				IResource resource = (IResource) o;
+				return getTraversalCalculator().getTraversals(resource);
 			}
 			return getTraversals(o, monitor);
 		}

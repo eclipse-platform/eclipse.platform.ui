@@ -141,6 +141,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 
 	private void setContextBusy(final IProgressMonitor monitor) {
 		try {
+			// TODO: This may miss setting some diffs (i.e. those that don't exist locally)
 			ResourceTraversal[] traversals = Utils.getTraversals(getElements());
 			final IResourceDiffTree diffTree = getContext().getDiffTree();
 			IDiff[] diffs = diffTree.getDiffs(traversals);

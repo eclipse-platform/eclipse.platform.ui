@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -22,6 +26,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.PlatformUI;
 
 public class CreatePatchAction extends CVSModelProviderAction {
 
@@ -75,12 +80,44 @@ public class CreatePatchAction extends CVSModelProviderAction {
     }
     
     public void run() {
-    	try {
-			IResource[] resources = getVisibleResources(getStructuredSelection());
+    	final ResourceTraversal [][] traversals = new ResourceTraversal[][] { null };
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						traversals[0] = getResourceTraversals(getStructuredSelection(), monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			Utils.handleError(getConfiguration().getSite().getShell(), e, null, null);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+		if (traversals[0] != null) {
+			IResource[] resources = getVisibleResources(traversals[0]);
 			GenerateDiffFileWizard.run(getConfiguration().getSite().getPart(), resources, false);
-		} catch (CoreException e) {
-			CVSUIPlugin.openError(getConfiguration().getSite().getShell(), null, null, e);
 		}
     }
+
+	private IResource[] getVisibleResources(ResourceTraversal[] traversals) {
+		final Set resources = new HashSet();
+		final IResourceDiffTree diffTree = getSynchronizationContext().getDiffTree();
+		IDiff[] diffs = diffTree.getDiffs(traversals);
+		for (int i = 0; i < diffs.length; i++) {
+			IDiff diff = diffs[i];
+			IResource child = diffTree.getResource(diff);
+			if (child.getType() == IResource.FILE && diff instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) diff;
+				IDiff local = twd.getLocalChange();
+				if (local != null && local.getKind() != IDiff.NO_CHANGE) {
+					resources.add(child);
+				}
+			}
+		}
+		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+	}
 
 }

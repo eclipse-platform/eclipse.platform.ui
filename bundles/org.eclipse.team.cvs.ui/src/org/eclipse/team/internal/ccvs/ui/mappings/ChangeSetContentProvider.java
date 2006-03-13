@@ -25,7 +25,6 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.core.subscribers.BatchedChangeSetCollector.CollectorChangeEvent;
-import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
@@ -411,16 +410,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			IResource resource = (IResource) object;
 			if (tree.getDiff(resource) != null)
 				return true;
-			switch (resource.getType()) {
-			case IResource.PROJECT:
-				return tree.getDiffs(resource, IResource.DEPTH_INFINITE).length > 0;
-			case IResource.FOLDER:
-				if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT)) {
-					return tree.getDiffs(resource, IResource.DEPTH_ONE).length > 0;
-				} else if (getLayout().equals(IPreferenceIds.TREE_LAYOUT)) {
-					return tree.getDiffs(resource, IResource.DEPTH_INFINITE).length > 0;
-				}
-			}
+			int depth = getTraversalCalculator().getLayoutDepth(resource);
+			return tree.getDiffs(resource, depth).length > 0;
 		}
 		return false;
 	}

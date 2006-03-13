@@ -19,6 +19,9 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.CommonViewerAdvisor;
@@ -593,5 +596,46 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 		if (viewerId != null)
 			return viewerId;
 		return CommonViewerAdvisor.TEAM_NAVIGATOR_CONTENT;
+	}
+	
+	/**
+	 * Return whether the given node is visible in the page based
+	 * on the mode in the configuration.
+	 * @param node a diff node
+	 * @return whether the given node is visible in the page
+	 */
+	public boolean isVisible(IDiff node) {
+		if (getComparisonType() == ISynchronizePageConfiguration.THREE_WAY 
+				&& node instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) node;
+			return includeDirection(twd.getDirection());
+		}
+		return getComparisonType() == ISynchronizePageConfiguration.TWO_WAY && node instanceof IResourceDiff;
+	}
+	
+	/**
+	 * Return whether elements with the given direction should be included in
+	 * the contents.
+	 * 
+	 * @param direction
+	 *            the synchronization direction
+	 * @return whether elements with the given synchronization kind should be
+	 *         included in the contents
+	 */
+	public boolean includeDirection(int direction) {
+		int mode = getMode();
+		switch (mode) {
+		case ISynchronizePageConfiguration.BOTH_MODE:
+			return true;
+		case ISynchronizePageConfiguration.CONFLICTING_MODE:
+			return direction == IThreeWayDiff.CONFLICTING;
+		case ISynchronizePageConfiguration.INCOMING_MODE:
+			return direction == IThreeWayDiff.CONFLICTING || direction == IThreeWayDiff.INCOMING;
+		case ISynchronizePageConfiguration.OUTGOING_MODE:
+			return direction == IThreeWayDiff.CONFLICTING || direction == IThreeWayDiff.OUTGOING;
+		default:
+			break;
+		}
+		return true;
 	}
 }

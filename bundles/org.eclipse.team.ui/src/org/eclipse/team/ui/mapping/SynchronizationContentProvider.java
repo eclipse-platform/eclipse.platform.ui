@@ -19,11 +19,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.SynchronizationResourceMappingContext;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.*;
@@ -286,34 +287,23 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	}
 	
 	/**
-	 * Return whether elements with the given synchronization kind (as define in
-	 * the {@link SyncInfo} class) should be included in the contents. This
-	 * method is invoked by the {@link #getChildrenInContext(ISynchronizationContext, Object, Object[])}
-	 * method to filter the list of children returned when {@link #getChildren(Object) }
-	 * is called. It accessing the <code>ISynchronizePageConfiguration.P_MODE</code>
-	 * property on the state model provided by the view to determine what kinds
-	 * should be included.
+	 * Return whether elements with the given direction should be included in
+	 * the contents. The direction is one of {@link IThreeWayDiff#INCOMING},
+	 * {@link IThreeWayDiff#OUTGOING} or {@link IThreeWayDiff#CONFLICTING}.
+	 * This method is invoked by the
+	 * {@link #getChildrenInContext(ISynchronizationContext, Object, Object[])}
+	 * method to filter the list of children returned when
+	 * {@link #getChildren(Object) } is called. It accessing the
+	 * <code>ISynchronizePageConfiguration.P_MODE</code> property on the state
+	 * model provided by the view to determine what kinds should be included.
 	 * 
-	 * @param direction the synchronization kind as described in the {@link SyncInfo}
-	 *            class
+	 * @param direction
+	 *            the synchronization direction
 	 * @return whether elements with the given synchronization kind should be
 	 *         included in the contents
 	 */
 	protected boolean includeDirection(int direction) {
-		int mode = getConfiguration().getMode();
-		switch (mode) {
-		case ISynchronizePageConfiguration.BOTH_MODE:
-			return true;
-		case ISynchronizePageConfiguration.CONFLICTING_MODE:
-			return direction == IThreeWayDiff.CONFLICTING;
-		case ISynchronizePageConfiguration.INCOMING_MODE:
-			return direction == IThreeWayDiff.CONFLICTING || direction == IThreeWayDiff.INCOMING;
-		case ISynchronizePageConfiguration.OUTGOING_MODE:
-			return direction == IThreeWayDiff.CONFLICTING || direction == IThreeWayDiff.OUTGOING;
-		default:
-			break;
-		}
-		return true;
+		return ((SynchronizePageConfiguration)getConfiguration()).includeDirection(direction);
 	}
 	
 	/**
@@ -540,10 +530,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	protected boolean isVisible(IDiff diff) {
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
-			if (includeDirection(twd.getDirection())) {
-				return true;
-			}
-			return false;
+			return includeDirection(twd.getDirection());
 		}
 		return diff.getKind() != IDiff.NO_CHANGE;
 	}
