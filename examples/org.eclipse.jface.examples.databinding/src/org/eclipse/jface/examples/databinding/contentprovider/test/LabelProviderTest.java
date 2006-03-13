@@ -13,21 +13,19 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.Collections;
 
-import org.eclipse.jface.examples.databinding.ExampleBinding;
-import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
-import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
-import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
-import org.eclipse.jface.internal.provisional.databinding.IReadableValue;
-import org.eclipse.jface.internal.provisional.databinding.Property;
-import org.eclipse.jface.internal.provisional.databinding.updatables.WritableSet;
-import org.eclipse.jface.internal.provisional.databinding.viewers.ListeningLabelProvider;
-import org.eclipse.jface.internal.provisional.databinding.viewers.UpdatableSetContentProvider;
-import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersProperties;
-import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.internal.databinding.provisional.observable.set.WritableSet;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ListeningLabelProvider;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableSetContentProvider;
+import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,30 +35,38 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 /**
- * Tests UpdatableTreeContentProvider and DirtyIndicationLabelProvider.
- * Creates a tree containing three randomly-generated sets of integers,
- * and one node that contains the union of the other sets.
+ * Tests UpdatableTreeContentProvider and DirtyIndicationLabelProvider. Creates
+ * a tree containing three randomly-generated sets of integers, and one node
+ * that contains the union of the other sets.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class LabelProviderTest {
-	
+
 	private Shell shell;
+
 	private ListViewer list;
+
 	private Label exploredNodesLabel;
+
 	private WritableSet setOfRenamables;
+
 	private Button addButton;
+
 	private Button removeButton;
+
 	private Button renameButton;
+
 	private SelectionListener buttonSelectionListener = new SelectionAdapter() {
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
 		public void widgetSelected(SelectionEvent e) {
-			Button pressed = (Button)e.widget;
+			Button pressed = (Button) e.widget;
 			if (pressed == addButton) {
 				setOfRenamables.add(new RenamableItem());
 			} else if (pressed == removeButton) {
@@ -68,137 +74,116 @@ public class LabelProviderTest {
 			} else if (pressed == renameButton) {
 				rename(getCurrentSelection());
 			}
-			
+
 			super.widgetSelected(e);
 		}
 	};
-	private IReadableValue selectedRenamable;
-	
+
+	private IObservableValue selectedRenamable;
+
+	/**
+	 * 
+	 */
 	public LabelProviderTest() {
-				
+
 		// Create shell
 		shell = new Shell(Display.getCurrent());
 		{ // Initialize shell
 			setOfRenamables = new WritableSet();
-			
+
 			list = new ListViewer(shell);
-			UpdatableSetContentProvider contentProvider = new UpdatableSetContentProvider();
+			ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
 			list.setContentProvider(contentProvider);
-			list.setLabelProvider(new ListeningLabelProvider(contentProvider.getKnownElements()) {
-				IChangeListener listener = new IChangeListener() {
-					/* (non-Javadoc)
-					 * @see org.eclipse.jface.internal.provisional.databinding.IChangeListener#handleChange(org.eclipse.jface.internal.provisional.databinding.ChangeEvent)
-					 */
-					public void handleChange(ChangeEvent changeEvent) {
-						fireChangeEvent(Collections.singleton(changeEvent.getSource()));
+			list.setLabelProvider(new ListeningLabelProvider(contentProvider
+					.getKnownElements()) {
+				RenamableItem.Listener listener = new RenamableItem.Listener() {
+					public void handleChanged(RenamableItem item) {
+						fireChangeEvent(Collections.singleton(item));
 					}
 				};
-				
-				/* (non-Javadoc)
-				 * @see org.eclipse.jface.internal.provisional.databinding.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, java.lang.Object)
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.databinding.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
+				 *      java.lang.Object)
 				 */
 				public void updateLabel(ViewerLabel label, Object element) {
 					if (element instanceof RenamableItem) {
 						RenamableItem item = (RenamableItem) element;
-						
+
 						label.setText(item.getName());
 					}
 				}
-				
+
 				protected void addListenerTo(Object next) {
-					RenamableItem item = (RenamableItem)next;
-					
+					RenamableItem item = (RenamableItem) next;
+
 					item.addListener(listener);
 				}
-				
+
 				protected void removeListenerFrom(Object next) {
-					RenamableItem item = (RenamableItem)next;
-					
-					item.removeListener(listener);					
+					RenamableItem item = (RenamableItem) next;
+
+					item.removeListener(listener);
 				}
 			});
 			list.setInput(setOfRenamables);
-	
-			IDataBindingContext viewerContext = ExampleBinding.createContext(list.getControl());
-			selectedRenamable = (IReadableValue)viewerContext.createUpdatable(new Property(list, ViewersProperties.SINGLE_SELECTION));
-			
+
+			selectedRenamable = new SelectionObservableValue(list);
+
 			Composite buttonBar = new Composite(shell, SWT.NONE);
-			{   // Initialize buttonBar
+			{ // Initialize buttonBar
 				addButton = new Button(buttonBar, SWT.PUSH);
-				addButton.setText("Add");
+				addButton.setText("Add"); //$NON-NLS-1$
 				addButton.addSelectionListener(buttonSelectionListener);
 				removeButton = new Button(buttonBar, SWT.PUSH);
 				removeButton.addSelectionListener(buttonSelectionListener);
-				removeButton.setText("Remove");
+				removeButton.setText("Remove"); //$NON-NLS-1$
 				renameButton = new Button(buttonBar, SWT.PUSH);
 				renameButton.addSelectionListener(buttonSelectionListener);
-				renameButton.setText("Rename");
+				renameButton.setText("Rename"); //$NON-NLS-1$
 
-				selectedRenamable.addChangeListener(new IChangeListener() {
-					public void handleChange(ChangeEvent changeEvent) {
-						boolean shouldEnable = selectedRenamable.getValue() != null;
-						
-						removeButton.setEnabled(shouldEnable);
-						renameButton.setEnabled(shouldEnable);
-					}
-				});
+				selectedRenamable
+						.addValueChangeListener(new IValueChangeListener() {
+							public void handleValueChange(
+									IObservableValue source, ValueDiff diff) {
+								boolean shouldEnable = selectedRenamable
+										.getValue() != null;
+								removeButton.setEnabled(shouldEnable);
+								renameButton.setEnabled(shouldEnable);
+							}
+						});
 				removeButton.setEnabled(false);
 				renameButton.setEnabled(false);
-				
+
 				GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
 			}
-			
+
 		}
-		GridLayoutFactory.fillDefaults().numColumns(2).margins(LayoutConstants.getMargins()).generateLayout(shell);
+		GridLayoutFactory.fillDefaults().numColumns(2).margins(
+				LayoutConstants.getMargins()).generateLayout(shell);
 	}
 
 	/**
 	 * @param currentSelection
 	 */
 	protected void rename(final RenamableItem currentSelection) {
-		final Shell promptShell = new Shell(shell, SWT.DIALOG_TRIM);
-		{
-			Label prompt = new Label(promptShell, SWT.WRAP);
-			
-			prompt.setText("Enter a the new item name");
-			final Text promptText = new Text(promptShell, SWT.BORDER);
-			promptText.setText(currentSelection.getName());
-			
-			Composite buttonBar = new Composite(promptShell, SWT.NONE);
-			{
-				Button okay = new Button(buttonBar, SWT.PUSH);
-				okay.addSelectionListener(new SelectionAdapter() {
-					/* (non-Javadoc)
-					 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-					 */
-					public void widgetSelected(SelectionEvent e) {
-						currentSelection.setName(promptText.getText());
-
-						promptShell.close();
-					}
-				});
-				
-				okay.setText("Okay");
-				GridLayoutFactory.fillDefaults().numColumns(1).generateLayout(buttonBar);
-			}
-			GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).applyTo(buttonBar);
-
+		InputDialog inputDialog = new InputDialog(
+				shell,
+				"Edit name", "Enter the new item name", currentSelection.getName(), null); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Window.OK == inputDialog.open()) {
+			currentSelection.setName(inputDialog.getValue());
 		}
-		
-		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins()).generateLayout(promptShell);
-		
-		promptShell.pack();
-		
-		promptShell.setVisible(true);
 	}
 
 	/**
 	 * @return
 	 */
 	protected RenamableItem getCurrentSelection() {
-		return (RenamableItem)selectedRenamable.getValue();
+		return (RenamableItem) selectedRenamable.getValue();
 	}
-	
+
 	/**
 	 * @param args
 	 */

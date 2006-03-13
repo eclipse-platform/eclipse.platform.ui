@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,14 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.jface.tests.databinding.swt.AutoSelectTableViewerCollectionExtendedTest;
 import org.eclipse.jface.tests.databinding.swt.AutoSelectTableViewerCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.CComboUpdatableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.ComboUpdatableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.ListUpdatableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.TableViewerUpdatableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.UpdatableCollectionViewerTest;
+import org.eclipse.jface.tests.databinding.swt.CComboObservableCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.ComboObservableCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.ListObservableCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.ObservableCollectionViewerTest;
+import org.eclipse.jface.tests.databinding.swt.TableViewerObservableCollectionTest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -66,7 +67,7 @@ public class BindingScenariosTestSuite extends TestSuite {
 	}
 
 	public BindingScenariosTestSuite() {
-		addTestSuite(UpdatableFactoriesTest.class);
+		addTestSuite(ObservableFactoriesTest.class);
 		addTestSuite(PropertyScenarios.class);
 		addTestSuite(CustomScenarios.class);
 		addTestSuite(CustomConverterScenarios.class);
@@ -74,19 +75,21 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(ComboScenarios.class);
 		addTestSuite(TableScenarios.class);
 		addTestSuite(NewTableScenarios.class);
-		addTestSuite(TreeScenarios.class);
+
 		// Test each of the basic SWT controls
 		addTestSuite(TextControlScenario.class);
-		addTestSuite(SpinnerControlScenario.class);	
-		addTestSuite(ButtonControlScenario.class);		
+		addTestSuite(SpinnerControlScenario.class);
+		addTestSuite(ButtonControlScenario.class);
 		// Test each of the basic JFace controls
-		addTestSuite(ComboViewerScenario.class);		
-		addTestSuite(ListViewerScenario.class);	
-		addTestSuite(CComboUpdatableCollectionTest.class);
-		addTestSuite(ComboUpdatableCollectionTest.class);
-		addTestSuite(TableViewerUpdatableCollectionTest.class);
-		addTestSuite(ListUpdatableCollectionTest.class);
-		addTestSuite(UpdatableCollectionViewerTest.class);
+		addTestSuite(ComboViewerScenario.class);
+		addTestSuite(ListViewerScenario.class);
+		if (BindingTestSuite.failingTestsDisabled(this))
+			return;
+		addTestSuite(CComboObservableCollectionTest.class);
+		addTestSuite(ComboObservableCollectionTest.class);
+		addTestSuite(TableViewerObservableCollectionTest.class);
+		addTestSuite(ListObservableCollectionTest.class);
+		addTestSuite(ObservableCollectionViewerTest.class);
 		addTestSuite(AutoSelectTableViewerCollectionTest.class);
 		addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class);
 	}

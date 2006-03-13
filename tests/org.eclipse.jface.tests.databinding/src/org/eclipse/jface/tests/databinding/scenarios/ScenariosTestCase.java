@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,8 +15,8 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
-import org.eclipse.jface.internal.provisional.databinding.swt.SWTUpdatableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,7 +33,7 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	private Composite composite;
 
-	private IDataBindingContext dbc;
+	private DataBindingContext dbc;
 
 	private Display display;
 
@@ -43,18 +43,18 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected Text dummyText;
 
-	private SWTUpdatableFactory swtUpdatableFactory;
+	private SWTObservableFactory swtObservableFactory;
 
 	protected Composite getComposite() {
 		return composite;
 	}
 
-	protected IDataBindingContext getDbc() {
+	protected DataBindingContext getDbc() {
 		return dbc;
 	}
-	
-	protected SWTUpdatableFactory getSWTUpdatableFactory() {
-		return swtUpdatableFactory;
+
+	protected SWTObservableFactory getSWTObservableFactory() {
+		return swtObservableFactory;
 	}
 
 	public Shell getShell() {
@@ -90,7 +90,7 @@ abstract public class ScenariosTestCase extends TestCase {
 			Thread.currentThread().interrupt();
 		}
 	}
-	
+
 	protected void interact() {
 		if (!getShell().isVisible()) {
 			getShell().open();
@@ -120,7 +120,7 @@ abstract public class ScenariosTestCase extends TestCase {
 		SampleData.initializeData(); // test may manipulate the data... let
 		// all start from fresh
 		dbc = SampleData.getDatabindingContext(composite);
-		swtUpdatableFactory = SampleData.getSWTUpdatableFactory();
+		swtObservableFactory = SampleData.getSWTObservableFactory();
 		dummyText = new Text(getComposite(), SWT.NONE);
 		dummyText.setText("dummy");
 	}
@@ -148,33 +148,5 @@ abstract public class ScenariosTestCase extends TestCase {
 	protected void assertArrayEquals(Object[] expected, Object[] actual) {
 		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
 	}
-		
-	public static void invokeNonUI(final Runnable aRunnable){
-		
-		final RuntimeException[] nonUIException = new RuntimeException[1];
-		Thread t = new Thread(aRunnable){
-			public void run(){
-				try{
-					super.run();
-				} catch (Exception exc){
-					RuntimeException runtimeException = new RuntimeException(exc);
-					runtimeException.fillInStackTrace();
-					nonUIException[0] = runtimeException; 
-					exc.printStackTrace();
-				}
-			}
-		};
-		t.start();
-		while(t.isAlive()) {
-			while(Display.getCurrent().readAndDispatch());
-			try {
-				t.join(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		if(nonUIException[0] != null){
-			throw nonUIException[0];
-		}
-	}
+
 }

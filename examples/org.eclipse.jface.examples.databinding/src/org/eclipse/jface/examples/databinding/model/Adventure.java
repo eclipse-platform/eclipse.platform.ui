@@ -1,17 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
-import org.eclipse.jface.internal.provisional.databinding.validators.String2IntValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 public class Adventure extends ModelObject {
 
@@ -49,28 +49,17 @@ public class Adventure extends ModelObject {
 		firePropertyChange("maxNumberOfPeople", oldValue, maxNumberOfPeople);
 	}
 	
-	public IValidator getMaxNumberOfPeopleValidator(Class fromType) {
-		if (fromType.equals(String.class))
-			return new IValidator() {
-				IValidator delegate = new String2IntValidator();
-				public String isPartiallyValid(Object value) {
-					return delegate.isPartiallyValid(value);
+	public IDomainValidator getMaxNumberOfPeopleDomainValidator() {
+		return new IDomainValidator() {
+			public ValidationError isValid(Object value) {
+				int intValue = ((Integer)value).intValue();
+				if (intValue < 1 || intValue > 20) {
+					return ValidationError
+							.error("Max number of people must be between 1 and 20 inclusive");
 				}
-	
-				public String isValid(Object value) {
-					String error = delegate.isValid(value);
-					if (error != null) {
-						return error;
-					}
-					int intValue = Integer.valueOf((String)value).intValue();
-					if (intValue < 1 || intValue > 20) {
-						return "Max number of people must be between 1 and 20 inclusive";
-					}
-					return null;
-				}
-				
-			};
-		return null;
+				return null;
+			}
+		};
 	}
 
 	public Lodging getDefaultLodging() {

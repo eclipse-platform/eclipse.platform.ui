@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -39,25 +39,22 @@ public class SpinnerControlScenario extends ScenariosTestCase {
 	}
 
 	public void testScenario01() {
+
 		// Bind the adventure "maxNumberOfPeople" property to a spinner
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
 		Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
-		getDbc().bind(spinner, new Property(adventure, "maxNumberOfPeople"), null);
+		getDbc().bind(spinner, new Property(adventure, "maxNumberOfPeople"),
+				null);
 		assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
-		// Verify the model is updated when the GUI is changed		
-		spinner.setSelection(5);	
-		assertEquals(5,adventure.getMaxNumberOfPeople());
+		// Verify the model is updated when the GUI is changed
+		spinner.setSelection(5);
+		assertEquals(5, adventure.getMaxNumberOfPeople());
 		// Verify the GUI is updated when the model changes
 		adventure.setMaxNumberOfPeople(7);
-		assertEquals(7,spinner.getSelection());
-		// Verify that updates can occured to the model on a non UI thread
-		invokeNonUI(new Runnable(){
-			public void run(){
-				adventure.setMaxNumberOfPeople(11);
-			}
-		});
+		assertEquals(7, spinner.getSelection());
+		adventure.setMaxNumberOfPeople(11);
 		spinEventLoop(0);
-		assertEquals(11,spinner.getSelection());
+		assertEquals(11, spinner.getSelection());
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,17 +17,18 @@ import java.util.Locale;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Cart;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.provisional.databinding.BindSpec;
-import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
-import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
-import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
-import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
-import org.eclipse.jface.internal.provisional.databinding.Property;
-import org.eclipse.jface.internal.provisional.databinding.converter.Converter;
-import org.eclipse.jface.internal.provisional.databinding.converter.IConverter;
-import org.eclipse.jface.internal.provisional.databinding.converters.IdentityConverter;
-import org.eclipse.jface.internal.provisional.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.provisional.databinding.validator.IValidator;
+import org.eclipse.jface.internal.databinding.provisional.BindSpec;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.conversion.Converter;
+import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverter;
+import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
+import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
+import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -113,29 +114,37 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(cart, "lodgingDays"),
 				new BindSpec(new IConverter() {
-					public Class getModelType() {
+					public Object getFromType() {
 						return int.class;
 					}
 
-					public Class getTargetType() {
+					public Object getToType() {
 						return String.class;
 					}
 
-					public Object convertTargetToModel(Object object) {
-						return new Integer((String) object);
-					}
-
-					public Object convertModelToTarget(Object object) {
+					public Object convert(Object object) {
 						return object.toString();
 					}
-				}, null));
+				}, new IConverter() {
+					public Object getFromType() {
+						return String.class;
+					}
+
+					public Object getToType() {
+						return int.class;
+					}
+
+					public Object convert(Object object) {
+						return new Integer((String) object);
+					}
+				}, null, null));
 		assertEquals(new Integer(cart.getLodgingDays()).toString(), text
 				.getText());
 		// TODO API extension needed: getChangeable() and setChangeable() on
-		// IUpdatableValue or IUpdatable
+		// IObservableValue or IObservable
 		// assertEquals(
 		// "Needs API extension: getChangeable() and setChangeable() on
-		// IUpdatableValue or IUpdatable.",
+		// IObservableValue or IObservable.",
 		// false, text.getEditable());
 	}
 
@@ -150,13 +159,12 @@ public class PropertyScenarios extends ScenariosTestCase {
 		// be to the new default lodging's description, shouldn't we move this
 		// scenario to the master/detail section? I'm assuming the latter for
 		// now.
-		IUpdatableValue defaultLodging = (IUpdatableValue) getDbc()
-				.createUpdatable(
-						new Property(adventure, "defaultLodging"));
+		IObservableValue defaultLodging = (IObservableValue) getDbc()
+				.createObservable(new Property(adventure, "defaultLodging"));
 		getDbc().bind(
 				text,
-				new Property(defaultLodging, "description",
-						String.class, Boolean.FALSE), null);
+				new Property(defaultLodging, "description", String.class,
+						Boolean.FALSE), null);
 
 		// test changing the description
 		assertEquals(adventure.getDefaultLodging().getDescription(), text
@@ -197,19 +205,15 @@ public class PropertyScenarios extends ScenariosTestCase {
 		adventure.setName("UPPERCASE");
 		getDbc().bind(text, new Property(adventure, "name"),
 				new BindSpec(new IConverter() {
-					public Class getModelType() {
+					public Object getFromType() {
 						return String.class;
 					}
 
-					public Class getTargetType() {
+					public Object getToType() {
 						return String.class;
 					}
 
-					public Object convertTargetToModel(Object fromObject) {
-						return ((String) fromObject).toUpperCase();
-					}
-
-					public Object convertModelToTarget(Object toObject) {
+					public Object convert(Object toObject) {
 						String modelValue = (String) toObject;
 						if (modelValue == null || modelValue.equals("")) {
 							return modelValue;
@@ -219,7 +223,19 @@ public class PropertyScenarios extends ScenariosTestCase {
 						return firstChar.toUpperCase()
 								+ remainingChars.toLowerCase();
 					}
-				}, null));
+				}, new IConverter() {
+					public Object getFromType() {
+						return String.class;
+					}
+
+					public Object getToType() {
+						return String.class;
+					}
+
+					public Object convert(Object fromObject) {
+						return ((String) fromObject).toUpperCase();
+					}
+				}, null, null));
 		// spinEventLoop(1);
 		assertEquals("Uppercase", text.getText());
 		enterText(text, "lowercase");
@@ -241,34 +257,37 @@ public class PropertyScenarios extends ScenariosTestCase {
 				text,
 				new Property(adventure, "name"),
 				new BindSpec(new IdentityConverter(String.class),
-						new IValidator() {
-							public String isPartiallyValid(Object value) {
+						new IdentityConverter(String.class), new IValidator() {
+							public ValidationError isPartiallyValid(Object value) {
 								return isValid(value);
 							}
 
-							public String isValid(Object value) {
+							public ValidationError isValid(Object value) {
 								String stringValue = (String) value;
 								if (stringValue.length() > 15) {
-									return max15CharactersMessage;
+									return ValidationError
+											.error(max15CharactersMessage);
 								} else if (stringValue.indexOf(' ') != -1) {
-									return noSpacesMessage;
+									return ValidationError
+											.error(noSpacesMessage);
 								} else {
 									return null;
 								}
 							}
-						}));
+						}, null));
 		// no validation message
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
-		text.setText("Invalid Value");
-		assertEquals(noSpacesMessage, getDbc().getCombinedValidationMessage()
-				.getValue());
+		assertEquals(null, getDbc().getPartialValidationError().getValue());
+		enterText(text,"Invalid Value");
+		assertEquals(noSpacesMessage, ((ValidationError)getDbc().getPartialValidationError()
+				.getValue()).message);
 		assertEquals("ValidValue", text.getText());
 		text.setText("InvalidValueBecauseTooLong");
-		assertEquals(max15CharactersMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(max15CharactersMessage, ((ValidationError)getDbc()
+				.getPartialValidationError().getValue()).message);
 		assertEquals("ValidValue", text.getText());
 		enterText(text, "anothervalid");
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc()
+				.getPartialValidationError().getValue());
 		assertEquals("anothervalid", text.getText());
 		assertEquals("anothervalid", adventure.getName());
 	}
@@ -282,51 +301,52 @@ public class PropertyScenarios extends ScenariosTestCase {
 		final String cannotBeNegativeMessage = "Price cannot be negative.";
 		final String mustBeCurrencyMessage = "Price must be a currency.";
 		getDbc().bind(text, new Property(adventure, "price"),
-				new BindSpec(new Converter(String.class, double.class) {
-
-					public Object convertTargetToModel(Object fromObject) {
-						return new Double((String) fromObject);
-					}
-
-					public Object convertModelToTarget(Object toObject) {
+				new BindSpec(new Converter(double.class, String.class) {
+					public Object convert(Object toObject) {
 						return ((Double) toObject).toString();
 					}
+				}, new Converter(String.class, double.class) {
+
+					public Object convert(Object fromObject) {
+						return new Double((String) fromObject);
+					}
 				}, new IValidator() {
-					public String isPartiallyValid(Object value) {
+					public ValidationError isPartiallyValid(Object value) {
 						return null;
 					}
 
-					public String isValid(Object value) {
+					public ValidationError isValid(Object value) {
 						String stringValue = (String) value;
 						try {
 							double doubleValue = new Double(stringValue)
 									.doubleValue();
 							if (doubleValue < 0.0) {
-								return cannotBeNegativeMessage;
+								return ValidationError
+										.error(cannotBeNegativeMessage);
 							}
 							return null;
 						} catch (NumberFormatException ex) {
-							return mustBeCurrencyMessage;
+							return ValidationError.error(mustBeCurrencyMessage);
 						}
 					}
-				}));
+				}, null));
 		assertEquals("5.0", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "0.65");
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		assertEquals(0.65, adventure.getPrice(), 0.0001);
 		adventure.setPrice(42.24);
 		assertEquals("42.24", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "jygt");
-		assertEquals(mustBeCurrencyMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(mustBeCurrencyMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		enterText(text, "-23.9");
-		assertEquals(cannotBeNegativeMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(cannotBeNegativeMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		assertEquals(42.24, adventure.getPrice(), 0.0001);
 		adventure.setPrice(0.0);
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 	}
 
 	public void testScenario08() {
@@ -341,9 +361,14 @@ public class PropertyScenarios extends ScenariosTestCase {
 		final NumberFormat currencyFormat = NumberFormat
 				.getCurrencyInstance(Locale.CANADA);
 		getDbc().bind(text, new Property(adventure, "price"),
-				new BindSpec(new Converter(String.class, double.class) {
+				new BindSpec(new Converter(double.class, String.class) {
+					public Object convert(Object toObject) {
+						return currencyFormat.format(((Double) toObject)
+								.doubleValue());
+					}
+				}, new Converter(String.class, double.class) {
 
-					public Object convertTargetToModel(Object fromObject) {
+					public Object convert(Object fromObject) {
 						try {
 							return currencyFormat.parse((String) fromObject);
 						} catch (ParseException e) {
@@ -352,47 +377,43 @@ public class PropertyScenarios extends ScenariosTestCase {
 							return new Double(0);
 						}
 					}
-
-					public Object convertModelToTarget(Object toObject) {
-						return currencyFormat.format(((Double) toObject)
-								.doubleValue());
-					}
 				}, new IValidator() {
-					public String isPartiallyValid(Object value) {
+					public ValidationError isPartiallyValid(Object value) {
 						return null;
 					}
 
-					public String isValid(Object value) {
+					public ValidationError isValid(Object value) {
 						String stringValue = (String) value;
 						try {
 							double doubleValue = currencyFormat.parse(
 									stringValue).doubleValue();
 							if (doubleValue < 0.0) {
-								return cannotBeNegativeMessage;
+								return ValidationError
+										.error(cannotBeNegativeMessage);
 							}
 							return null;
 						} catch (ParseException e) {
-							return mustBeCurrencyMessage;
+							return ValidationError.error(mustBeCurrencyMessage);
 						}
 					}
-				}));
+				}, null));
 		assertEquals("$5.00", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "$0.65");
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		assertEquals(0.65, adventure.getPrice(), 0.0001);
 		adventure.setPrice(42.24);
 		assertEquals("$42.24", text.getText());
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "jygt");
-		assertEquals(mustBeCurrencyMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(mustBeCurrencyMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		enterText(text, "-$23.9");
-		assertEquals(cannotBeNegativeMessage, getDbc()
-				.getCombinedValidationMessage().getValue());
+		assertEquals(cannotBeNegativeMessage, ((ValidationError)getDbc()
+				.getValidationError().getValue()).message);
 		assertEquals(42.24, adventure.getPrice(), 0.0001);
 		adventure.setPrice(0.0);
-		assertEquals("", getDbc().getCombinedValidationMessage().getValue());
+		assertEquals(null, getDbc().getValidationError().getValue());
 	}
 
 	public void testScenario09() {
@@ -402,8 +423,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		// checkbox.setText("Pets allowed");
 		// checkbox.setLayoutData(new GridData(SWT.LEFT,SWT.TOP, false,false));
 		adventure.setPetsAllowed(true);
-		getDbc().bind(checkbox,
-				new Property(adventure, "petsAllowed"), null);
+		getDbc().bind(checkbox, new Property(adventure, "petsAllowed"), null);
 		assertEquals(true, checkbox.getSelection());
 		setButtonSelectionWithEvents(checkbox, false);
 		assertEquals(false, adventure.isPetsAllowed());
@@ -427,8 +447,8 @@ public class PropertyScenarios extends ScenariosTestCase {
 		spinner1.setMaximum(100);
 		Spinner spinner2 = new Spinner(getComposite(), SWT.NONE);
 		spinner2.setMaximum(1);
-		getDbc().bind(spinner1,
-				new Property(spinner2, SWTProperties.MAX), null);
+		getDbc()
+				.bind(spinner1, new Property(spinner2, SWTProperties.MAX), null);
 		assertEquals(1, spinner1.getSelection());
 		spinner1.setSelection(10);
 		spinner1.notifyListeners(SWT.Modify, new Event());
@@ -445,34 +465,24 @@ public class PropertyScenarios extends ScenariosTestCase {
 		checkbox2.setSelection(false);
 		Text text1 = new Text(getComposite(), SWT.NONE);
 		Text text2 = new Text(getComposite(), SWT.NONE);
-		IUpdatableValue checkbox1Selected = (IUpdatableValue) getDbc()
-				.createUpdatable(checkbox1);
-		IUpdatableValue checkbox2Selected = (IUpdatableValue) getDbc()
-				.createUpdatable(checkbox2);
+		IObservableValue checkbox1Selected = (IObservableValue) getDbc()
+				.createObservable(checkbox1);
+		IObservableValue checkbox2Selected = (IObservableValue) getDbc()
+				.createObservable(checkbox2);
 		// bind the two checkboxes so that if one is checked, the other is not
 		// and vice versa.
+		Converter negatingConverter = new Converter(boolean.class,
+				boolean.class) {
+			private Boolean negated(Boolean booleanObject) {
+				return new Boolean(!booleanObject.booleanValue());
+			}
+
+			public Object convert(Object targetObject) {
+				return negated((Boolean) targetObject);
+			}
+		};
 		getDbc().bind(checkbox1Selected, checkbox2Selected,
-				new BindSpec(new IConverter() {
-					public Class getModelType() {
-						return boolean.class;
-					}
-
-					public Class getTargetType() {
-						return boolean.class;
-					}
-
-					private Boolean negated(Boolean booleanObject) {
-						return new Boolean(!booleanObject.booleanValue());
-					}
-
-					public Object convertTargetToModel(Object targetObject) {
-						return negated((Boolean) targetObject);
-					}
-
-					public Object convertModelToTarget(Object modelObject) {
-						return negated((Boolean) modelObject);
-					}
-				}, null));
+				new BindSpec(negatingConverter, negatingConverter, null, null));
 		// bind the enabled state of the two text widgets to one of the
 		// checkboxes each.
 		getDbc().bind(new Property(text1, SWTProperties.ENABLED),
@@ -495,7 +505,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 	public void testScenario13() {
 		// Changing the update policy to be not automatic, but on explicit
 		// method call (e.g. triggered by a button click).
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_LATE);
+		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_LATE);
 		Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		// uncomment the following line to see what's happening
@@ -517,15 +527,15 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text t1 = new Text(getComposite(), SWT.BORDER);
 		Text t2 = new Text(getComposite(), SWT.BORDER);
 
-		getSWTUpdatableFactory().setUpdateTime(IDataBindingContext.TIME_EARLY);
+		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
 		getDbc().bind(t1, new Property(adventure, "name"), null);
 		getDbc().bind(t2, new Property(adventure, "name"), null);
 
 		final int[] counter = { 0 };
-		IUpdatableValue uv = (IUpdatableValue) getDbc().createUpdatable(
+		IObservableValue uv = (IObservableValue) getDbc().createObservable(
 				new Property(adventure, "name"));
 		uv.addChangeListener(new IChangeListener() {
-			public void handleChange(ChangeEvent changeEvent) {
+			public void handleChange(IObservable source) {
 				// Count how many times adventure has changed
 				counter[0]++;
 			}

@@ -11,60 +11,46 @@
 
 package org.eclipse.jface.tests.databinding.swt;
 
-import java.util.Arrays;
-
 import junit.framework.TestCase;
 
-import org.eclipse.jface.internal.provisional.databinding.DataBinding;
-import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
-import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.SelectionAwareUpdatableCollection;
-import org.eclipse.jface.internal.provisional.databinding.viewers.AutoSelectTableViewerFactory;
-import org.eclipse.jface.internal.provisional.databinding.viewers.TableViewerDescription;
-import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
-
 /**
- * @since 3.2
+ * @since 1.0
  *
  */
 public class AutoSelectTableViewerCollectionExtendedTest extends TestCase {
-
-	/*
-	 * Test method for 'org.eclipse.jface.tests.databinding.swt.CComboUpdatableCollection.getSelectedObject()'
-	 */
-	private TableViewer viewer;
-	
-	protected SelectionAwareUpdatableCollection getSelectionAwareUpdatable(String[] values) {
-		Shell shell = BindingScenariosTestSuite.getShell();
-		this.viewer = new TableViewer(shell, SWT.NONE);
-		TableViewerDescription description = new TableViewerDescription(viewer);
-		IDataBindingContext ctx = DataBinding.createContext(new IUpdatableFactory[] {new AutoSelectTableViewerFactory()});
-		SelectionAwareUpdatableCollection  updatableCollection = (SelectionAwareUpdatableCollection) ctx.createUpdatable(description);
-		updatableCollection.setElements(Arrays.asList(values));
-		return updatableCollection;
-	}
-	
-	protected Object getSelectedObjectOfControl() {
-		StructuredSelection selection = (StructuredSelection) this.viewer.getSelection();
-		if (selection.isEmpty()) {
-			return null;
-		}
-		return selection.getFirstElement();
-	}
-	
-	protected void setSelectedValueOfControl(String value) {
-		this.viewer.setSelection(new StructuredSelection(new String[]{value}));
-	}
-	
-	/*
-	 * Test method for 'org.eclipse.jface.tests.databinding.swt.CComboUpdatableCollection.setSelectedObject(Object)'
-	 */
-	public void testAutoSelect() {
-		SelectionAwareUpdatableCollection updatable = getSelectionAwareUpdatable(new String[] {"foo", "bar"}); 
-		assertEquals("foo", getSelectedObjectOfControl());
-	}
+//
+//	/*
+//	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.getSelectedObject()'
+//	 */
+//	private TableViewer viewer;
+//	
+//	protected SelectionAwareObservableCollection getSelectionAwareObservable(String[] values) {
+//		Shell shell = BindingScenariosTestSuite.getShell();
+//		this.viewer = new TableViewer(shell, SWT.NONE);
+//		TableViewerDescription description = new TableViewerDescription(viewer);
+//		DataBindingContext ctx = DataBinding.createContext(new IObservableFactory[] {new AutoSelectTableViewerFactory()});
+//		SelectionAwareObservableCollection  observableCollection = (SelectionAwareObservableCollection) ctx.createObservable(description);
+//		observableCollection.setElements(Arrays.asList(values));
+//		return observableCollection;
+//	}
+//	
+//	protected Object getSelectedObjectOfControl() {
+//		StructuredSelection selection = (StructuredSelection) this.viewer.getSelection();
+//		if (selection.isEmpty()) {
+//			return null;
+//		}
+//		return selection.getFirstElement();
+//	}
+//	
+//	protected void setSelectedValueOfControl(String value) {
+//		this.viewer.setSelection(new StructuredSelection(new String[]{value}));
+//	}
+//	
+//	/*
+//	 * Test method for 'org.eclipse.jface.internal.databinding.swt.CComboObservableCollection.setSelectedObject(Object)'
+//	 */
+//	public void testAutoSelect() {
+//		SelectionAwareObservableCollection observable = getSelectionAwareObservable(new String[] {"foo", "bar"}); 
+//		assertEquals("foo", getSelectedObjectOfControl());
+//	}
 }

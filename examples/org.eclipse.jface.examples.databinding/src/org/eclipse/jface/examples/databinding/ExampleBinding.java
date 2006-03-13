@@ -1,13 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jface.examples.databinding;
 
-import org.eclipse.jface.internal.provisional.databinding.DataBinding;
-import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
-import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.beans.BeanUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.beans.NestedUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersUpdatableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * An example application-level data binding factory implementation. This should
@@ -18,7 +29,7 @@ import org.eclipse.swt.widgets.Control;
  * first.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class ExampleBinding {
 
@@ -37,10 +48,14 @@ public class ExampleBinding {
 	 * @param control
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext(Control control) {
-		return DataBinding.createContext(control, new IUpdatableFactory[] {
-				new NestedUpdatableFactory(), new BeanUpdatableFactory(),
-				new SWTUpdatableFactory(), new ViewersUpdatableFactory() });
+	public static DataBindingContext createContext(Control control) {
+		final DataBindingContext context = createContext();
+		control.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				context.dispose();
+			}
+		});
+		return context;
 	}
 
 	/**
@@ -60,9 +75,12 @@ public class ExampleBinding {
 	 * 
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext() {
-		return DataBinding.createContext(new IUpdatableFactory[] {
-				new NestedUpdatableFactory(), new BeanUpdatableFactory(),
-				new SWTUpdatableFactory(), new ViewersUpdatableFactory() });
+	public static DataBindingContext createContext() {
+		DataBindingContext context = new DataBindingContext();
+		context.addObservableFactory(new NestedObservableFactory(context));
+		context.addObservableFactory(new BeanObservableFactory(context, null, new Class[]{Widget.class}));
+		context.addObservableFactory(new SWTObservableFactory());
+		context.addObservableFactory(new ViewersObservableFactory());
+		return context;
 	}
 }

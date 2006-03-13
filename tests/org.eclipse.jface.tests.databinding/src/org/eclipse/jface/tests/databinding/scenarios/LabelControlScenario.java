@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 
@@ -50,12 +50,7 @@ public class LabelControlScenario extends ScenariosTestCase {
 		assertEquals(adventure.getName(), label.getText());
 		adventure.setName("France");
 		assertEquals("France", label.getText());
-		// Verify that the model can be changed in a non-UI thread and the SWT Label still gets updated OK
-		invokeNonUI(new Runnable(){
-			public void run(){
 				adventure.setName("Climb Everest");
-			}
-		});		
 		spinEventLoop(0);
 		assertEquals("Climb Everest",label.getText());		
 	}

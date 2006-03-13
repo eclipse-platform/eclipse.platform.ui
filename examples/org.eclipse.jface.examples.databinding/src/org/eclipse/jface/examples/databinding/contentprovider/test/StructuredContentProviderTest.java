@@ -1,23 +1,29 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.eclipse.jface.examples.databinding.ExampleBinding;
-import org.eclipse.jface.internal.provisional.databinding.ChangeEvent;
-import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
-import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
-import org.eclipse.jface.internal.provisional.databinding.IReadableValue;
-import org.eclipse.jface.internal.provisional.databinding.Property;
-import org.eclipse.jface.internal.provisional.databinding.swt.ControlUpdator;
-import org.eclipse.jface.internal.provisional.databinding.updatables.ConvertingSet;
-import org.eclipse.jface.internal.provisional.databinding.updatables.LazyCalculatedValue;
-import org.eclipse.jface.internal.provisional.databinding.updatables.SettableValue;
-import org.eclipse.jface.internal.provisional.databinding.updatables.WritableSet;
-import org.eclipse.jface.internal.provisional.databinding.viewers.UpdatableSetContentProvider;
-import org.eclipse.jface.internal.provisional.databinding.viewers.ViewerLabelProvider;
-import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersProperties;
+import org.eclipse.jface.internal.databinding.provisional.observable.set.MappedSet;
+import org.eclipse.jface.internal.databinding.provisional.observable.set.WritableSet;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.ComputedValue;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.WritableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableSetContentProvider;
+import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,24 +39,25 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Tests UpdatableSetContentProvider, ComputableValue, ControlUpdator, UpdatableFunction,
- * and ConvertingSet.
+ * Tests UpdatableSetContentProvider, ComputableValue, ControlUpdator,
+ * UpdatableFunction, and ConvertingSet.
  * 
  * <p>
  * This test displays a dialog with user-editable list of Doubles. It allows the
- * user to select a math function to apply to the set, and displays the result in a
- * new list. A line of text along the bottom of the dialog displays the sum of the elements
- * from the transformed set. Although this dialog is rather silly, it is a good example of 
- * a dialog where a lot of things can change from many directions.
+ * user to select a math function to apply to the set, and displays the result
+ * in a new list. A line of text along the bottom of the dialog displays the sum
+ * of the elements from the transformed set. Although this dialog is rather
+ * silly, it is a good example of a dialog where a lot of things can change from
+ * many directions.
  * </p>
  * 
  * <p>
- * An UpdatableSetContentProvider is used to supply the contents each ListViewer. 
- * ControlUpdators
+ * An UpdatableSetContentProvider is used to supply the contents each
+ * ListViewer. ControlUpdators
  * 
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class StructuredContentProviderTest {
 
@@ -58,98 +65,109 @@ public class StructuredContentProviderTest {
 	 * Top-level shell for the dialog
 	 */
 	private Shell shell;
-	
+
 	/**
 	 * Random number stream. Used for the "add" button.
 	 */
 	protected Random random = new Random();
 
 	// Data model ////////////////////////////////////////////////////////
-	
+
 	/**
 	 * inputSet stores a set of Doubles. The user is allowed to add and remove
 	 * Doubles from this set.
 	 */
 	private WritableSet inputSet;
-	
+
 	/**
 	 * currentFunction is an Integer, set to one of the SomeMathFunction.OP_*
 	 * constants. It identifies which function will be applied to inputSet.
 	 */
-	private SettableValue currentFunction;
-	
+	private WritableValue currentFunction;
+
 	/**
-	 * mathFunction is the transformation. It can multiply by 2, round down
-	 * to the nearest integer, or do nothing (identity)
+	 * mathFunction is the transformation. It can multiply by 2, round down to
+	 * the nearest integer, or do nothing (identity)
 	 */
 	private SomeMathFunction mathFunction;
-	
+
 	/**
-	 * Set of Doubles. Holds the result of applying mathFunction to the inputSet.
+	 * Set of Doubles. Holds the result of applying mathFunction to the
+	 * inputSet.
 	 */
-	private ConvertingSet outputSet;
-	
+	private MappedSet outputSet;
+
 	/**
 	 * A Double. Stores the sum of the Doubles in outputSet
 	 */
-	private IReadableValue sumOfOutputSet;
+	private IObservableValue sumOfOutputSet;
 
 	/**
 	 * Creates the test dialog as a top-level shell.
 	 */
 	public StructuredContentProviderTest() {
-		
+
 		// Initialize the data model
 		createDataModel();
 
 		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
 		{ // Initialize shell
 			final Label someDoubles = new Label(shell, SWT.NONE);
-			someDoubles.setText("A list of random Doubles");
-			someDoubles.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-		    
+			someDoubles.setText("A list of random Doubles"); //$NON-NLS-1$
+			someDoubles.setLayoutData(new GridData(
+					GridData.HORIZONTAL_ALIGN_FILL
+							| GridData.VERTICAL_ALIGN_FILL));
+
 			Control addRemoveComposite = createInputControl(shell, inputSet);
-			
+
 			GridData addRemoveData = new GridData(GridData.FILL_BOTH);
 			addRemoveData.minimumHeight = 1;
 			addRemoveData.minimumWidth = 1;
-			
+
 			addRemoveComposite.setLayoutData(addRemoveData);
-			
+
 			Group operation = new Group(shell, SWT.NONE);
 			{ // Initialize operation group
-				operation.setText("Select transformation");
-				
-				createRadioButton(operation, currentFunction, "f(x) = x", new Integer(SomeMathFunction.OP_IDENTITY));
-				createRadioButton(operation, currentFunction, "f(x) = 2 * x", new Integer(SomeMathFunction.OP_MULTIPLY));
-				createRadioButton(operation, currentFunction, "f(x) = floor(x)", new Integer(SomeMathFunction.OP_ROUND));
-				
+				operation.setText("Select transformation"); //$NON-NLS-1$
+
+				createRadioButton(operation, currentFunction, "f(x) = x", //$NON-NLS-1$
+						new Integer(SomeMathFunction.OP_IDENTITY));
+				createRadioButton(operation, currentFunction, "f(x) = 2 * x", //$NON-NLS-1$
+						new Integer(SomeMathFunction.OP_MULTIPLY));
+				createRadioButton(operation, currentFunction,
+						"f(x) = floor(x)", new Integer( //$NON-NLS-1$
+								SomeMathFunction.OP_ROUND));
+
 				GridLayout layout = new GridLayout();
 				layout.numColumns = 1;
 				operation.setLayout(layout);
 			}
-			operation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-			
+			operation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_FILL));
+
 			Control outputControl = createOutputComposite(shell);
 			GridData outputData = new GridData(GridData.FILL_BOTH);
 			outputData.minimumHeight = 1;
 			outputData.minimumWidth = 1;
 			outputData.widthHint = 300;
 			outputData.heightHint = 150;
-			
-			outputControl.setLayoutData(outputData);			
-			
+
+			outputControl.setLayoutData(outputData);
+
 			final Label sumLabel = new Label(shell, SWT.NONE);
-			new ControlUpdator(sumLabel) {
+			new ControlUpdater(sumLabel) {
 				protected void updateControl() {
-					double sum = ((Double)sumOfOutputSet.getValue()).doubleValue();
-					int size = outputSet.toCollection().size();
-					
-					sumLabel.setText("The sum of the above " + size + " doubles is " + sum);
+					double sum = ((Double) sumOfOutputSet.getValue())
+							.doubleValue();
+					int size = outputSet.size();
+
+					sumLabel.setText("The sum of the above " + size //$NON-NLS-1$
+							+ " doubles is " + sum); //$NON-NLS-1$
 				}
 			};
-			sumLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-			
+			sumLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_FILL));
+
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 1;
 			shell.setLayout(layout);
@@ -161,38 +179,48 @@ public class StructuredContentProviderTest {
 	 * Create the updatables for this dialog
 	 */
 	private void createDataModel() {
-		// Initialize data model. We will create a user-editable set of Doubles. The user can run
+		// Initialize data model. We will create a user-editable set of Doubles.
+		// The user can run
 		// a transformation on this set and view the result in a list viewer.
-		
-		// inputSet will be a writable set of doubles. The user will add and remove entries from this set
+
+		// inputSet will be a writable set of doubles. The user will add and
+		// remove entries from this set
 		// through the UI.
 		inputSet = new WritableSet();
-		
-		// currentFunction holds the ID currently selected function to apply to elements in the inputSet.
-		// We will allow the user to change the current function through a set of radio buttons
-		currentFunction = new SettableValue(Integer.class, new Integer(SomeMathFunction.OP_MULTIPLY));
-		
+
+		// currentFunction holds the ID currently selected function to apply to
+		// elements in the inputSet.
+		// We will allow the user to change the current function through a set
+		// of radio buttons
+		currentFunction = new WritableValue(new Integer(
+				SomeMathFunction.OP_MULTIPLY));
+
 		// mathFunction implements the selected function
 		mathFunction = new SomeMathFunction(inputSet);
-		currentFunction.addChangeListener(new IChangeListener() {
-			public void handleChange(ChangeEvent changeEvent) {
-				mathFunction.setOperation(((Integer)currentFunction.getValue()).intValue());
+		currentFunction.addValueChangeListener(new IValueChangeListener() {
+			public void handleValueChange(IObservableValue source,
+					ValueDiff diff) {
+				mathFunction
+						.setOperation(((Integer) currentFunction.getValue())
+								.intValue());
 			}
 		});
-		mathFunction.setOperation(((Integer)currentFunction.getValue()).intValue());
-		
-		// outputSet holds the result. It displays the result of applying the currently-selected
+		mathFunction.setOperation(((Integer) currentFunction.getValue())
+				.intValue());
+
+		// outputSet holds the result. It displays the result of applying the
+		// currently-selected
 		// function on all the elements in the input set.
-		outputSet = new ConvertingSet(inputSet, mathFunction);
-		
-		// sumOfOutputSet stores the current sum of the the Doubles in the output set 
-		sumOfOutputSet = new LazyCalculatedValue() {
+		outputSet = new MappedSet(inputSet, mathFunction);
+
+		// sumOfOutputSet stores the current sum of the the Doubles in the
+		// output set
+		sumOfOutputSet = new ComputedValue() {
 			protected Object calculate() {
 				double sum = 0.0;
-				Collection value = outputSet.toCollection();
-				for (Iterator iter = value.iterator(); iter.hasNext();) {
+				for (Iterator iter = outputSet.iterator(); iter.hasNext();) {
 					Double next = (Double) iter.next();
-					
+
 					sum += next.doubleValue();
 				}
 				return new Double(sum);
@@ -201,16 +229,22 @@ public class StructuredContentProviderTest {
 	}
 
 	/**
-	 * Creates a radio button in the given parent composite. When selected, the button will change
-	 * the given SettableValue to the given value.
-	 *  
-	 * @param parent parent composite
-	 * @param model SettableValue that will hold the value of the currently-selected radio button
-	 * @param string text to appear in the radio button
-	 * @param value value of this radio button (SettableValue will hold this value when the radio
-	 * button is selected)
+	 * Creates a radio button in the given parent composite. When selected, the
+	 * button will change the given SettableValue to the given value.
+	 * 
+	 * @param parent
+	 *            parent composite
+	 * @param model
+	 *            SettableValue that will hold the value of the
+	 *            currently-selected radio button
+	 * @param string
+	 *            text to appear in the radio button
+	 * @param value
+	 *            value of this radio button (SettableValue will hold this value
+	 *            when the radio button is selected)
 	 */
-	private void createRadioButton(Composite parent, final SettableValue model, String string, final Object value) {
+	private void createRadioButton(Composite parent, final WritableValue model,
+			String string, final Object value) {
 		final Button button = new Button(parent, SWT.RADIO);
 		button.setText(string);
 		button.addSelectionListener(new SelectionAdapter() {
@@ -219,106 +253,122 @@ public class StructuredContentProviderTest {
 				super.widgetSelected(e);
 			}
 		});
-		new ControlUpdator(button) {
+		new ControlUpdater(button) {
 			protected void updateControl() {
 				button.setSelection(model.getValue().equals(value));
 			}
 		};
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_FILL));
 	}
 
 	private Control createOutputComposite(Composite parent) {
-		ListViewer listOfInts = new ListViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
-		
-		listOfInts.setContentProvider(new UpdatableSetContentProvider());
+		ListViewer listOfInts = new ListViewer(parent, SWT.BORDER
+				| SWT.V_SCROLL | SWT.H_SCROLL);
+
+		listOfInts.setContentProvider(new ObservableSetContentProvider());
 		listOfInts.setLabelProvider(new ViewerLabelProvider());
 		listOfInts.setInput(outputSet);
 		return listOfInts.getControl();
 	}
-	
+
 	/**
-	 * Creates and returns a control that will allow the user to add and remove Doubles
-	 * from the given input set.
+	 * Creates and returns a control that will allow the user to add and remove
+	 * Doubles from the given input set.
 	 * 
-	 * @param parent parent control
-	 * @param inputSet input set
-	 * @return a newly created SWT control that displays Doubles from the input set
-	 * and allows the user to add and remove entries
+	 * @param parent
+	 *            parent control
+	 * @param inputSet
+	 *            input set
+	 * @return a newly created SWT control that displays Doubles from the input
+	 *         set and allows the user to add and remove entries
 	 */
-	private Control createInputControl(Composite parent, final WritableSet inputSet) {
+	private Control createInputControl(Composite parent,
+			final WritableSet inputSet) {
 		Composite addRemoveComposite = new Composite(parent, SWT.NONE);
 		{ // Initialize addRemoveComposite
-			ListViewer listOfInts = new ListViewer(addRemoveComposite, SWT.BORDER);
-			
-			listOfInts.setContentProvider(new UpdatableSetContentProvider());
+			ListViewer listOfInts = new ListViewer(addRemoveComposite,
+					SWT.BORDER);
+
+			listOfInts.setContentProvider(new ObservableSetContentProvider());
 			listOfInts.setLabelProvider(new ViewerLabelProvider());
 			listOfInts.setInput(inputSet);
-			
-			// Get the current selection as an IReadableValue
-			IDataBindingContext viewerContext = ExampleBinding.createContext(listOfInts.getControl());
-			final IReadableValue selectedInt = (IReadableValue)viewerContext.createUpdatable(new Property(listOfInts, ViewersProperties.SINGLE_SELECTION));
-			
+
+			final IObservableValue selectedInt = new SelectionObservableValue(
+					listOfInts);
+
 			GridData listData = new GridData(GridData.FILL_BOTH);
 			listData.minimumHeight = 1;
 			listData.minimumWidth = 1;
 			listData.widthHint = 150;
 			listData.heightHint = 150;
 			listOfInts.getControl().setLayoutData(listData);
-			
+
 			Composite buttonBar = new Composite(addRemoveComposite, SWT.NONE);
 			{ // Initialize button bar
-			
+
 				Button add = new Button(buttonBar, SWT.PUSH);
-				add.setText("Add");
+				add.setText("Add"); //$NON-NLS-1$
 				add.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						inputSet.add(new Double(random.nextDouble() * 100.0));
 						super.widgetSelected(e);
 					}
 				});
-				add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-				
+				add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+						| GridData.VERTICAL_ALIGN_FILL));
+
 				final Button remove = new Button(buttonBar, SWT.PUSH);
-				remove.setText("Remove");
-				// Enable the Remove button if and only if there is currently an element selected.
-				new ControlUpdator(remove) {
+				remove.setText("Remove"); //$NON-NLS-1$
+				// Enable the Remove button if and only if there is currently an
+				// element selected.
+				new ControlUpdater(remove) {
 					protected void updateControl() {
-						// This block demonstrates auto-listening. 
-						// When updateControl is running, the framework remembers each
-						// updatable that gets touched. Since we're calling selectedInt.getValue()
-						// here, this updator will be flagged as dependant on selectedInt. This
-						// means that whenever selectedInt changes, this block of code will re-run
-						// itself. 
-						
-						// The result is that the remove button will recompute its enablement
-						// whenever the selection in the listbox changes, and it was not necessary
+						// This block demonstrates auto-listening.
+						// When updateControl is running, the framework
+						// remembers each
+						// updatable that gets touched. Since we're calling
+						// selectedInt.getValue()
+						// here, this updator will be flagged as dependant on
+						// selectedInt. This
+						// means that whenever selectedInt changes, this block
+						// of code will re-run
+						// itself.
+
+						// The result is that the remove button will recompute
+						// its enablement
+						// whenever the selection in the listbox changes, and it
+						// was not necessary
 						// to attach any listeners.
 						remove.setEnabled(selectedInt.getValue() != null);
 					}
 				};
-				
+
 				remove.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						inputSet.remove(selectedInt.getValue());
 						super.widgetSelected(e);
 					}
 				});
-				remove.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-				
+				remove.setLayoutData(new GridData(
+						GridData.HORIZONTAL_ALIGN_FILL
+								| GridData.VERTICAL_ALIGN_FILL));
+
 				GridLayout buttonLayout = new GridLayout();
 				buttonLayout.numColumns = 1;
 				buttonBar.setLayout(buttonLayout);
-				
+
 			} // End button bar
-			buttonBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING));
-			
+			buttonBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_BEGINNING));
+
 			GridLayout addRemoveLayout = new GridLayout();
 			addRemoveLayout.numColumns = 2;
 			addRemoveComposite.setLayout(addRemoveLayout);
 		}
 		return addRemoveComposite;
 	}
-	
+
 	/**
 	 * @param args
 	 */

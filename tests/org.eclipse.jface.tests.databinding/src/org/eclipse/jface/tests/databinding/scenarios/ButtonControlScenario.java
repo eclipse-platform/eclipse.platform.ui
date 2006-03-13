@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 
@@ -55,14 +55,9 @@ public class ButtonControlScenario extends ScenariosTestCase {
 		button.setSelection(newBoolean);
 		button.notifyListeners(SWT.Selection,null);
 		assertEquals(newBoolean,adventure.isPetsAllowed());
-		// Verify that changes to the model can occur in a non UI thread
 		newBoolean = !newBoolean;
 		final boolean finalNewBoolean = newBoolean;
-		invokeNonUI(new Runnable(){
-			public void run(){
 				adventure.setPetsAllowed(finalNewBoolean);
-			}
-		});
 		spinEventLoop(0);
 		assertEquals(newBoolean,button.getSelection());
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.examples.databinding.model.Adventure;
-import org.eclipse.jface.examples.databinding.model.AggregateUpdatableValue;
+import org.eclipse.jface.examples.databinding.model.AggregateObservableValue;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.provisional.databinding.IUpdatableValue;
-import org.eclipse.jface.internal.provisional.databinding.Property;
+import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 
@@ -38,23 +38,24 @@ public class CustomScenarios extends ScenariosTestCase {
 	}
 
 	public void testScenario01() {
+
 		// Binding the name property of an Adventure object to the contents of
 		// Text controls, no conversion, no validation.
 
 		Adventure adventure = SampleData.WINTER_HOLIDAY;
 		Text text = new Text(getComposite(), SWT.BORDER);
 
-		IUpdatableValue descriptionUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(new Property(adventure, "description"));
-		IUpdatableValue nameUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable(new Property(adventure, "name"));
+		IObservableValue descriptionObservable = (IObservableValue) getDbc()
+				.createObservable(new Property(adventure, "description"));
+		IObservableValue nameObservable = (IObservableValue) getDbc()
+				.createObservable(new Property(adventure, "name"));
 
-		AggregateUpdatableValue customUpdatable_comma = new AggregateUpdatableValue(
-				new IUpdatableValue[] { descriptionUpdatable, nameUpdatable },
+		AggregateObservableValue customObservable_comma = new AggregateObservableValue(
+				new IObservableValue[] { descriptionObservable, nameObservable },
 				",");
 
-		getDbc().bind(getDbc().createUpdatable(new Property(text, "text")),
-								customUpdatable_comma, null);
+		getDbc().bind(getDbc().createObservable(new Property(text, "text")),
+								customObservable_comma, null);
 		// spinEventLoop(1);
 		// Make sure that the description on the model match the widget
 		assertEquals(adventure.getDescription() + "," + adventure.getName(),

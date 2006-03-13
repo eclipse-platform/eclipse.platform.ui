@@ -1,29 +1,28 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.eclipse.jface.internal.provisional.databinding.DataBinding;
-import org.eclipse.jface.internal.provisional.databinding.IChangeListener;
-import org.eclipse.jface.internal.provisional.databinding.IDataBindingContext;
-import org.eclipse.jface.internal.provisional.databinding.ITree;
-import org.eclipse.jface.internal.provisional.databinding.IUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.beans.BeanUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.beans.NestedUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.swt.SWTUpdatableFactory;
-import org.eclipse.jface.internal.provisional.databinding.viewers.ViewersUpdatableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Widget;
 
 public class SampleData {
 
@@ -60,17 +59,18 @@ public class SampleData {
 	public static Cart CART;
 
 	public static AdventureFactory FACTORY;
-	
-	public static ITree CATALOG_TREE;
-	
-	public static ITree CATEGORY_TREE;
-	
-	public static Signon SIGNON_ADMINISTRATOR;
-	
-	public static Signon SIGNON_JOEBLOGGS;	
 
-	private static SWTUpdatableFactory swtUpdatableFactory = new SWTUpdatableFactory();
-	private static ViewersUpdatableFactory viewersUpdatableFactory = new ViewersUpdatableFactory();
+	// public static ITree CATALOG_TREE;
+	//	
+	// public static ITree CATEGORY_TREE;
+
+	public static Signon SIGNON_ADMINISTRATOR;
+
+	public static Signon SIGNON_JOEBLOGGS;
+
+	private static SWTObservableFactory swtObservableFactory = new SWTObservableFactory();
+
+	private static ViewersObservableFactory viewersObservableFactory = new ViewersObservableFactory();
 
 	static {
 		initializeData();
@@ -100,7 +100,7 @@ public class SampleData {
 		WINTER_HOLIDAY.setLocation("Chamonix");
 		WINTER_HOLIDAY.setPrice(4000.52d);
 		WINTER_HOLIDAY.setId("150");
-		WINTER_HOLIDAY.setMaxNumberOfPeople(3);		
+		WINTER_HOLIDAY.setMaxNumberOfPeople(3);
 		WINTER_CATEGORY.addAdventure(WINTER_HOLIDAY);
 
 		ICE_FISHING = FACTORY.createAdventure();
@@ -145,7 +145,7 @@ public class SampleData {
 		// Transporation
 		GREYHOUND_BUS = FACTORY.createTransportation();
 		GREYHOUND_BUS.setArrivalTime("14:30");
-		GREYHOUND_BUS.setPrice(25.50);		
+		GREYHOUND_BUS.setPrice(25.50);
 		CATALOG_2005.addTransportation(GREYHOUND_BUS);
 		EXECUTIVE_JET = FACTORY.createTransportation();
 		EXECUTIVE_JET.setArrivalTime("11:10");
@@ -174,106 +174,46 @@ public class SampleData {
 		CATALOG_2005.addAccount(PRESIDENT);
 		CATALOG_2005.addAccount(DENTIST);
 		CATALOG_2005.addAccount(SANTA_CLAUS);
-		
+
 		// Signons
-		SIGNON_ADMINISTRATOR = new Signon("Administrator","Foo123Bar");
-		SIGNON_JOEBLOGGS = new Signon("JoeBloggs","Harry5Potter");
+		SIGNON_ADMINISTRATOR = new Signon("Administrator", "Foo123Bar");
+		SIGNON_JOEBLOGGS = new Signon("JoeBloggs", "Harry5Potter");
 		CATALOG_2005.addSignon(SIGNON_ADMINISTRATOR);
-		CATALOG_2005.addSignon(SIGNON_JOEBLOGGS);				
+		CATALOG_2005.addSignon(SIGNON_JOEBLOGGS);
 
 		CART = FACTORY.createCart();
-		
-		CATALOG_TREE = new ITree() {
-			Catalog catalog = CATALOG_2005;						
-			public boolean hasChildren(Object element) {
-				if (element instanceof Catalog) {					
-					return true;  
-				}
-				else if (element instanceof Category) {
-					Adventure[] list = ((Category)element).getAdventures();
-					return list==null?true:list.length>0;
-				}
-				else if (element instanceof Lodging) {
-					
-				}
-				return false;				
-			}
-			public void setChildren(Object parentElement, Object[] children) {
-				// ReadOnly for Adding Elements
-			}
-			public Object[] getChildren(Object parentElement) {
-				if (parentElement==null)
-					return new Object[] { catalog };
-				else if (parentElement instanceof Catalog) {
-					List list = new ArrayList();					
-					list.addAll(Arrays.asList(((Catalog)parentElement).getCategories()));
-					list.addAll(Arrays.asList(((Catalog)parentElement).getLodgings()));
-					list.addAll(Arrays.asList(((Catalog)parentElement).getAccounts()));
-					return list.toArray();
-				}
-				else if (parentElement instanceof Category)
-				   return ((Category)parentElement).getAdventures();				
-				return null;
-			}
-			public Class[] getTypes() {				
-				return new Class[]  { Catalog.class, Category.class, Lodging.class, Account.class, Adventure.class } ;
-			}
-			public void addTreeChangeListener(IChangeListener listener) {		
-			}
-			public void removeTreeChangeListener(IChangeListener listener) {
-			}
-			public void dispose() {				
-			}
-		};
-		
-		CATEGORY_TREE = new ITree() {
-			Catalog catalog = CATALOG_2005;						
-			public boolean hasChildren(Object element) {
-				if (element instanceof Catalog) {					
-					return true;  
-				}
-				else if (element instanceof Category) {
-					Adventure[] list = ((Category)element).getAdventures();
-					return list==null?true:list.length>0;
-				}			
-				return false;				
-			}
-			public void setChildren(Object parentElement, Object[] children) {
-				// ReadOnly for Adding Elements
-			}
-			public Object[] getChildren(Object parentElement) {
-				if (parentElement==null)
-					return catalog.getCategories();
-				else if (parentElement instanceof Category)
-				   return ((Category)parentElement).getAdventures();				
-				return null;
-			}
-			public Class[] getTypes() {				
-				return new Class[]  { Category.class, Account.class } ;
-			}
-			public void addTreeChangeListener(IChangeListener listener) {		
-			}
-			public void removeTreeChangeListener(IChangeListener listener) {
-			}
-			public void dispose() {				
-			}
-		};
+
+		// initTrees();
 	}
 
-	public static IDataBindingContext getDatabindingContext(Control aControl) {
-		IDataBindingContext result = DataBinding.createContext(aControl,
-				new IUpdatableFactory[] { new NestedUpdatableFactory(),
-						new BeanUpdatableFactory(), swtUpdatableFactory,
-						viewersUpdatableFactory });
-		return result;
+	/**
+	 * @param aControl
+	 * @return
+	 */
+	public static DataBindingContext getDatabindingContext(Control aControl) {
+		final DataBindingContext context = new DataBindingContext();
+		context.addObservableFactory(new DefaultObservableFactory(context));
+		context.addObservableFactory(new BeanObservableFactory(context, null, new Class[]{Widget.class}));
+		context.addObservableFactory(new NestedObservableFactory(context));
+		context.addObservableFactory(swtObservableFactory);
+		context.addObservableFactory(viewersObservableFactory);
+		context.addBindingFactory(new DefaultBindingFactory());
+		context.addBindingFactory(new ViewersBindingFactory());
+		context.addBindSupportFactory(new DefaultBindSupportFactory());
+		aControl.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				context.dispose();
+			}
+		});
+		return context;
 	}
 
-	public static SWTUpdatableFactory getSWTUpdatableFactory() {
-		return swtUpdatableFactory;
+	public static SWTObservableFactory getSWTObservableFactory() {
+		return swtObservableFactory;
 	}
-	
-	public static ViewersUpdatableFactory getViewersUpdatableFactory(){
-		return viewersUpdatableFactory;
+
+	public static ViewersObservableFactory getViewersObservableFactory() {
+		return viewersObservableFactory;
 	}
 
 }
