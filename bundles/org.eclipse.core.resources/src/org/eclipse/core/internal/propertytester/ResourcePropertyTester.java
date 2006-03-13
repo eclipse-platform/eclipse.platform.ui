@@ -12,6 +12,7 @@
 package org.eclipse.core.internal.propertytester;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -176,7 +177,7 @@ public class ResourcePropertyTester extends PropertyTester {
 				return false;
 			return expectedVal == null || expectedVal.equals(actualVal.toString());
 		} catch (CoreException e) {
-			// ignore
+			Policy.log(e);
 		}
 		return false;
 	}
