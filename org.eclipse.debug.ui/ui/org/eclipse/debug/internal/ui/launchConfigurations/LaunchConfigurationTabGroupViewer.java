@@ -32,6 +32,8 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -49,9 +51,9 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -61,6 +63,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A viewer that displays tabs for a launch configuration, with apply and revert
@@ -238,9 +242,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
         mainComp.setLayout(layout);
         fViewform.setContent(mainComp);
 
-		/*
-		 * fix for bug 66576 and 79709
-		 */
 		fTabPlaceHolder = new Composite(mainComp, SWT.NONE);
 		fTabPlaceHolder.setLayout(new StackLayout());
 		gd = new GridData(GridData.FILL_BOTH);
@@ -379,26 +380,28 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @param parent
 	 */
 	private void createTabFolder(Composite parent) {
-		Point size = null;
-		if (fTabFolder != null) {
-			size = fTabFolder.getSize();
-			fTabFolder.dispose();
-		}
-		fTabFolder = new CTabFolder(parent, SWT.BORDER | SWT.NO_REDRAW_RESIZE);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
-		fTabFolder.setLayoutData(gd);
-		fTabFolder.setFont(parent.getFont());
-		if (size != null) {
-			fTabFolder.setSize(size);
-		}
-		getTabFolder().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				if (!fInitializingTabs) {
-					handleTabSelected();
+		if (fTabFolder == null) {
+			Color clr1 = getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+			Color clr2 = getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+			Color[] activeEditorGradient = new Color[] { clr1, clr2};
+			int[] activeEditorPercentages = new int[] {100};
+			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.horizontalSpan = 2;
+			fTabFolder.setSelectionBackground(activeEditorGradient, activeEditorPercentages, true);
+			fTabFolder.setSelectionForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+			fTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+			fTabFolder.setLayoutData(gd);
+	        fTabFolder.setBorderVisible(true);
+			fTabFolder.setFont(parent.getFont());
+			fTabFolder.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent event) {
+					if (!fInitializingTabs) {
+						handleTabSelected();
+					}
 				}
-			}
-		});		
+			});		
+		}
 	}
 	
 	/**
@@ -480,12 +483,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			getActiveTab().performApply(getWorkingCopy());
 			updateButtons();
 			// update error ticks
-			CTabFolder folder = getTabFolder();
 			for (int i = 0; i < tabs.length; i++) {
 				ILaunchConfigurationTab tab = tabs[i];
 				tab.isValid(getWorkingCopy());
 				boolean error = tab.getErrorMessage() != null;
-				CTabItem item = folder.getItem(i);
+				CTabItem item = fTabFolder.getItem(i);
 				setTabIcon(item, error, tab);
 			}		
 		}
@@ -643,7 +645,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Update the name field after in case client changed it
 		fNameWidget.setText(getWorkingCopy().getName());
 		
-		fCurrentTabIndex = getTabFolder().getSelectionIndex();
+		fCurrentTabIndex = fTabFolder.getSelectionIndex();
 
 		// Turn off initializing flag to update message
 		fInitializingTabs = false;
@@ -732,7 +734,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		CTabItem tab = null;
 		String name = ""; //$NON-NLS-1$
 		for (int i = 0; i < tabs.length; i++) {
-			tab = new CTabItem(getTabFolder(), SWT.NONE);
+			tab = new CTabItem(fTabFolder, SWT.BORDER);
 			name = tabs[i].getName();
 			if (name == null) {
 				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28; 
@@ -803,7 +805,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 						ILaunchConfigurationTab tab = tabs[i];
 						if (tab.equals(object)) {
 							fCurrentTabIndex = i;
-							getTabFolder().setSelection(i);
+							fTabFolder.setSelection(i);
 						}
 						return;
 					}
@@ -833,10 +835,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @return currently active <code>ILaunchConfigurationTab</code>, or <code>null</code>.
 	 */
 	public ILaunchConfigurationTab getActiveTab() {
-		CTabFolder folder = getTabFolder();
 		ILaunchConfigurationTab[] tabs = getTabs();
-		if (folder != null && tabs != null) {
-			int pageIndex = folder.getSelectionIndex();
+		if (fTabFolder != null && tabs != null) {
+			int pageIndex = fTabFolder.getSelectionIndex();
 			if (pageIndex >= 0) {
 				return tabs[pageIndex];
 			}
@@ -1108,7 +1109,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private void disposeExistingTabs() {
 		fDisposingTabs = true;
-		CTabItem[] oldTabs = getTabFolder().getItems();
+		CTabItem[] oldTabs = fTabFolder.getItems();
 		for (int i = 0; i < oldTabs.length; i++) {
 			oldTabs[i].dispose();
 		}
@@ -1148,7 +1149,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			return;
 		}
 		ILaunchConfigurationTab[] tabs = getTabs();
-		if (fCurrentTabIndex == getTabFolder().getSelectionIndex() || tabs == null || tabs.length == 0 || fCurrentTabIndex > (tabs.length - 1)) {
+		if (fCurrentTabIndex == fTabFolder.getSelectionIndex() || tabs == null || tabs.length == 0 || fCurrentTabIndex > (tabs.length - 1)) {
 			return;
 		}
 		if (fCurrentTabIndex != -1) {
@@ -1159,7 +1160,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				getActiveTab().activated(wc);
 			}
 		}
-		fCurrentTabIndex = getTabFolder().getSelectionIndex();
+		fCurrentTabIndex = fTabFolder.getSelectionIndex();
 		SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
 		fireSelectionChanged(event);
 	}
@@ -1252,7 +1253,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	public void setActiveTab(int index) {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (index >= 0 && index < tabs.length) {
-			getTabFolder().setSelection(index);
+			fTabFolder.setSelection(index);
 			handleTabSelected();
 		}
 	}
