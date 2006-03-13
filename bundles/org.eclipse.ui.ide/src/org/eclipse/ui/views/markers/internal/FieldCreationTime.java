@@ -70,7 +70,7 @@ public class FieldCreationTime extends AbstractField {
             return ""; //$NON-NLS-1$
         }
         ConcreteMarker marker = (ConcreteMarker) obj;
-        return Util.getCreationTime(marker.getCreationTime());
+        return String.valueOf(marker.getCreationTime());
     }
 
     /*
