@@ -463,29 +463,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
   clear: right;
 }
 
-/*
- * Extension importance styles. These styles are mixed in 
- * with the extension content to provide importance-driven 
- * highlight.
- */
-.importance-low {
-}
-
-.importance-medium {
-	background-color: #ffeeee;
-}
-
-.importance-high {
-	background-color: #ffffee;
-}
-
-.importance-new {
-}
-
-.importance-callout {
-	background-color: #eeeeee;
-}
-
 #page-content #content-header H4, .page-description {
 	text-align : left;
 	margin-right : 10px;

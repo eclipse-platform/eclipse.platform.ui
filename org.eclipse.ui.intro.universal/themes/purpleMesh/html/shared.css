@@ -315,27 +315,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
   clear: right;
 }
 
-/*
- * Extension importance styles
- */
-.importance-low {
-}
-
-.importance-medium {
-	background-color: #ffeeee;
-}
-
-.importance-high {
-	background-color: #ffffee;
-}
-
-.importance-new {
-}
-
-.importance-callout {
-	background-color: #eeeeee;
-}
-
 #page-content #content-header H4, .page-description {
 	text-align : left;
 	margin-right : 10px;
@@ -399,55 +378,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	clear : both;
 	text-align : left;
 }
-/*
-.content-link {
-	text-align : left; 
-	margin-left : 5px;
-	margin-right : 5px;
-	margin-top : 10px;
-	margin-bottom : -20px;
-	vertical-align : top;
-	clear : both;
-}
-
-.content-group > .content-link {
-	float : left;
-	vertical-align : middle;
-}
-
-.content-link img  {
-	height : 57px;
-	width : 57px;
-	vertical-align : middle;
-}
-
-.content-group h4 {
-	float : none;
-	clear : both;
-}
-
-p #group-description {
-	padding-bottom : 10px;
-	float : none;
-	clear : both;
-}
-
-.content-link .link-label {
-	display : block;
-	position : relative;
-	top : -50px;
-	left : 60px;
-}
-
-
-.content-link p .text {
-	display : block;
-	position : relative;
-	top : -45px;
-	left : 53px;
-}
-
-*/
 
 .content-link:hover { border-right : 0px; }
 
