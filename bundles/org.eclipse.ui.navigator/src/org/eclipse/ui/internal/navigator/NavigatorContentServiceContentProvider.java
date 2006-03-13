@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +23,7 @@ import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -137,7 +137,8 @@ public class NavigatorContentServiceContentProvider implements
 		if (rootContentExtensions.size() == 0) {
 			return NO_CHILDREN;
 		}
-		Set finalElementsSet = new LinkedHashSet();
+		ContributorTrackingSet finalElementsSet = new ContributorTrackingSet(contentService);
+		ContributorTrackingSet localSet = new ContributorTrackingSet(contentService);		
 
 		Object[] contributedChildren = null;
 		NavigatorContentExtension foundExtension;
@@ -151,22 +152,17 @@ public class NavigatorContentServiceContentProvider implements
 
 					contributedChildren = foundExtension.internalGetContentProvider()
 							.getElements(anInputElement);
+					
+					localSet.setContents(contributedChildren);
 
 					overridingExtensions = foundExtension
 							.getOverridingExtensionsForTriggerPoint(anInputElement);
 
-					if (overridingExtensions.length > 0) {
-						contributedChildren = pipelineElements(anInputElement,
-								overridingExtensions,
-								new HashSet(Arrays.asList(contributedChildren)))
-								.toArray();
+					if (overridingExtensions.length > 0) { 
+						localSet = pipelineElements(anInputElement,
+								overridingExtensions, localSet);						
 					}
-
-					if (contributedChildren != null
-							&& contributedChildren.length > 0) {
-						finalElementsSet.addAll(Arrays
-								.asList(contributedChildren));
-					}
+					finalElementsSet.addAll(localSet);
 				}
 			} catch (RuntimeException re) {
 				NavigatorPlugin
@@ -230,7 +226,8 @@ public class NavigatorContentServiceContentProvider implements
 		if (enabledExtensions.size() == 0) {
 			return NO_CHILDREN;
 		}
-		Set finalChildrenSet = new LinkedHashSet();
+		ContributorTrackingSet finalChildrenSet = new ContributorTrackingSet(contentService);
+		ContributorTrackingSet localSet = new ContributorTrackingSet(contentService);
 
 		Object[] contributedChildren = null;
 		NavigatorContentExtension foundExtension;
@@ -247,20 +244,15 @@ public class NavigatorContentServiceContentProvider implements
 
 					overridingExtensions = foundExtension
 							.getOverridingExtensionsForTriggerPoint(aParentElement);
+					
+					localSet.setContents(contributedChildren);
 
 					if (overridingExtensions.length > 0) {
-						// TODO: could pass tree path through pipeline
-						contributedChildren = pipelineChildren(aParentElement,
-								overridingExtensions,
-								new HashSet(Arrays.asList(contributedChildren)))
-								.toArray();
+						// TODO: could pass tree path through pipeline						
+						localSet = pipelineChildren(aParentElement,
+								overridingExtensions, localSet);
 					}
-
-					if (contributedChildren != null
-							&& contributedChildren.length > 0) {
-						finalChildrenSet.addAll(Arrays
-								.asList(contributedChildren));
-					}
+					finalChildrenSet.addAll(localSet);
 				}
 			} catch (RuntimeException re) {
 				NavigatorPlugin
@@ -302,19 +294,23 @@ public class NavigatorContentServiceContentProvider implements
 	 *            modifiable)
 	 * @return The set of children to return to the viewer
 	 */
-	private Set pipelineChildren(Object aParentOrPath,
+	private ContributorTrackingSet pipelineChildren(Object aParentOrPath,
 			NavigatorContentExtension[] theOverridingExtensions,
-			Set theCurrentChildren) {
+			ContributorTrackingSet theCurrentChildren) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
-		Set pipelinedChildren = theCurrentChildren;
+		ContributorTrackingSet pipelinedChildren = theCurrentChildren;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
 
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
+				
+				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());				
 				pipelinedContentProvider.getPipelinedChildren(aParentOrPath,
 						pipelinedChildren);
+				pipelinedChildren.setContributor(null);
+				
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(aParentOrPath);
 				if (overridingExtensions.length > 0) {
@@ -342,20 +338,22 @@ public class NavigatorContentServiceContentProvider implements
 	 *            modifiable)
 	 * @return The set of elements to return to the viewer
 	 */
-	private Set pipelineElements(Object anInputElement,
+	private ContributorTrackingSet pipelineElements(Object anInputElement,
 			NavigatorContentExtension[] theOverridingExtensions,
-			Set theCurrentElements) {
+			ContributorTrackingSet theCurrentElements) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
-		Set pipelinedElements = theCurrentElements;
+		ContributorTrackingSet pipelinedElements = theCurrentElements;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
 
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
 
+				pipelinedElements.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());
 				pipelinedContentProvider.getPipelinedElements(anInputElement,
 						pipelinedElements);
+				pipelinedElements.setContributor(null);
 
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(anInputElement);
