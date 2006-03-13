@@ -396,7 +396,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		//if in a separate VM and have only two (or three if debug) user properties these are really only Eclipse generated properties
 		//and the user is still using the global properties
 		int numberOfEclipseProperties= 2;
-		if (userProperties != null && userProperties.get("eclipse.connect.request_port") != null){
+		if (userProperties != null && userProperties.get("eclipse.connect.request_port") != null){ //$NON-NLS-1$
 			numberOfEclipseProperties= 3; //debug mode
 		}
 		boolean useGlobalProperties = userProperties == null || (separateVM && userProperties.size() == numberOfEclipseProperties);
