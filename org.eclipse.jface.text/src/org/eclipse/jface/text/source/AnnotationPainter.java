@@ -65,17 +65,27 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 
 	/**
-	 * A drawing strategy responsible for drawing a certain decoration.
+	 * A drawing strategy draws the decoration for an annotation onto the text widget.
 	 *
 	 * @since 3.0
 	 */
 	public interface IDrawingStrategy {
 		/**
-		 * Draws a decoration of the given length start at the given offset in the
-		 * given color onto the specified GC.
-		 *
+		 * Draws a decoration for an annotation onto the specified GC at the given text range. There
+		 * are two different invocation modes of the <code>draw</code> method:
+		 * <ul>
+		 * <li><strong>drawing mode:</strong> the passed GC is the graphics context of a paint
+		 * event occurring on the text widget. The strategy should draw the decoration onto the
+		 * graphics context, such that the decoration appears at the given range in the text
+		 * widget.</li>
+		 * <li><strong>clearing mode:</strong> the passed GC is <code>null</code>. In this case
+		 * the strategy must invalidate enough of the text widget's client area to cover any
+		 * decoration drawn in drawing mode. This can usually be accomplished by calling
+		 * {@linkplain StyledText#redrawRange(int, int, boolean) textWidget.redrawRange(offset, length, true)}.</li>
+		 * </ul>
+		 * 
 		 * @param annotation the annotation to be drawn
-		 * @param gc the graphical context
+		 * @param gc the graphics context, <code>null</code> when in clearing mode
 		 * @param textWidget the text widget to draw on
 		 * @param offset the offset of the line
 		 * @param length the length of the line
