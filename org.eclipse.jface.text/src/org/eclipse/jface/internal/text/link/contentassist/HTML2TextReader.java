@@ -40,6 +40,8 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		fgTags= new HashSet();
 		fgTags.add("b"); //$NON-NLS-1$
 		fgTags.add("br"); //$NON-NLS-1$
+		fgTags.add("br/"); //$NON-NLS-1$
+		fgTags.add("div"); //$NON-NLS-1$
 		fgTags.add("h1"); //$NON-NLS-1$
 		fgTags.add("h2"); //$NON-NLS-1$
 		fgTags.add("h3"); //$NON-NLS-1$
@@ -188,7 +190,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			return LINE_DELIM;
 		}
 
-		if ("br".equals(html)) //$NON-NLS-1$
+		if ("br".equals(html) || "br/".equals(html) || "div".equals(html)) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return LINE_DELIM;
 
 		if ("/p".equals(html))  { //$NON-NLS-1$
