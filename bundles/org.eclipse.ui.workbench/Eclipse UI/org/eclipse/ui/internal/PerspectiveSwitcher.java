@@ -1299,7 +1299,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
                         toolItems[i].getBounds().height);
             }
             // This sets the CBanner's minimum height to support large fonts
-            topBar.setRightMinimumSize(new Point(SWT.DEFAULT, maxRowHeight));
+            // TODO: Actually calculate the correct 'min' size for the right side
+            topBar.setRightMinimumSize(new Point(45, maxRowHeight));
         }
 
         LayoutUtil.resize(perspectiveBar.getControl());
