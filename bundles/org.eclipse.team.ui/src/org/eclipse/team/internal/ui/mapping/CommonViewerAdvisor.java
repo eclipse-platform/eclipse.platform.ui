@@ -150,7 +150,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		String visibleModel = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
 		if (visibleModel != null && !visibleModel.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
 			ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(visibleModel);
-			if (desc != null)
+			if (desc != null && desc.isEnabled())
 				return new String[] { desc.getContentExtensionId() };
 		}
 		ModelSynchronizeParticipant participant = (ModelSynchronizeParticipant)configuration.getParticipant();
@@ -159,7 +159,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
 			ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
-			if (desc != null)
+			if (desc != null && desc.isEnabled())
 				result.add(desc.getContentExtensionId());
 		}
 		return (String[]) result.toArray(new String[result.size()]);
