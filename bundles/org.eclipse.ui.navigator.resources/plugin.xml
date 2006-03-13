@@ -8,14 +8,15 @@
       <view
             category="org.eclipse.ui"
             class="org.eclipse.ui.navigator.CommonNavigator"
-            id="org.eclipse.ui.navigator.resourceContent"
+            icon="icons/full/eview16/resource_persp.gif"
+            id="org.eclipse.ui.navigator.ProjectExplorer"
             name="%Common_Resource_Navigator"/>
    </extension>
    
    <extension
          point="org.eclipse.ui.navigator.viewer">
        <viewer
-             viewerId="org.eclipse.ui.navigator.resourceContent">
+             viewerId="org.eclipse.ui.navigator.ProjectExplorer">
           <popupMenu
                 allowsPlatformContributions="true"
                 id="org.eclipse.ui.navigator.resourceContent#PopupMenu">  
@@ -37,7 +38,7 @@
           </popupMenu>
        </viewer>
        <viewerContentBinding 
-             viewerId="org.eclipse.ui.navigator.resourceContent">
+             viewerId="org.eclipse.ui.navigator.ProjectExplorer">
           <includes>
        	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
 	          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
@@ -45,14 +46,14 @@
           </includes>
        </viewerContentBinding>
        <viewerActionBinding
-            viewerId="org.eclipse.ui.navigator.resourceContent">
+            viewerId="org.eclipse.ui.navigator.ProjectExplorer">
          <includes>
              <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
          </includes>
        </viewerActionBinding>
        <dragAssistant
              class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
-             viewerId="org.eclipse.ui.navigator.resourceContent"/>
+             viewerId="org.eclipse.ui.navigator.ProjectExplorer"/>
        
    </extension>
    
@@ -221,5 +222,12 @@
 	         </enablement>
 		</commonWizard>
    </extension>
-
+   <!--
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ui.navigator.CommonNavigator"
+            class="org.eclipse.ui.internal.navigator.resources.workbench.TabbedPropertySheetAdapterFactory"/>
+   </extension>
+	-->
 </plugin> 

@@ -141,7 +141,7 @@
       </viewerContentBinding>
       
       <!-- For testing -->
-      <viewerContentBinding viewerId="org.eclipse.ui.navigator.resourceContent">
+      <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
          <includes>
             <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/> 
             <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
