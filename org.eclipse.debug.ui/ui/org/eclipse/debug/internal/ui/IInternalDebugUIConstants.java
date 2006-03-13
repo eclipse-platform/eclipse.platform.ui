@@ -360,5 +360,12 @@ public interface IInternalDebugUIConstants {
      * 
      * @since 3.2
      */
-    public static final String ANNOTATION_TYPE_DYNAMIC_INSTRUCTION_POINTER = "org.eclipse.debug.ui.dynamicIP"; //$NON-NLS-1$    
+    public static final String ANNOTATION_TYPE_DYNAMIC_INSTRUCTION_POINTER = "org.eclipse.debug.ui.dynamicIP"; //$NON-NLS-1$
+    
+    /**
+     * Preference for background color in tree columns when a value changes color.
+     * 
+     * @since 3.2
+     */
+    public static final String PREF_CHANGED_VALUE_BACKGROUND = IDebugUIConstants.PLUGIN_ID + ".PREF_CHANGED_VALUE_BACKGROUND"; //$NON-NLS-1$
 }

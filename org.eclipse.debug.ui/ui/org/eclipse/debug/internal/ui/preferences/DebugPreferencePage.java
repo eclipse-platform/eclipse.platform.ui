@@ -65,6 +65,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		createSpacer(getFieldEditorParent(), 2);
 		ColorFieldEditor mem= new ColorFieldEditor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR, DebugPreferencesMessages.DebugPreferencePage_4, getFieldEditorParent()); 
 		addField(mem);
+		mem = new ColorFieldEditor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND, DebugPreferencesMessages.DebugPreferencePage_28, getFieldEditorParent());
+		addField(mem);
 		mem= new ColorFieldEditor(IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR, DebugPreferencesMessages.DebugPreferencePage_0, getFieldEditorParent()); 
 		addField(mem);
 		mem= new ColorFieldEditor(IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR, DebugPreferencesMessages.DebugPreferencePage_27, getFieldEditorParent()); 
