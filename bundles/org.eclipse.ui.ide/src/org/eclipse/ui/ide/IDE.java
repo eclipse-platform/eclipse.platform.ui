@@ -19,10 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ModelStatus;
-import org.eclipse.core.resources.mapping.ResourceChangeValidator;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -1027,9 +1024,9 @@ public final class IDE {
      * @param shell the shell to parent the prompt dialog
      * @param title the title of the dialog
      * @param message the message for the dialog
-     * @param delta a delta built using an <code>IProposedResourceDeltaFactory</code>
+     * @param delta a delta built using an {@link IResourceChangeDescriptionFactory}
      * @param ignoreModelProviderIds model providers to be ignored
-     * @param syncExec prompt in a sync exec (required when called from a non-UI thread
+     * @param syncExec prompt in a sync exec (required when called from a non-UI thread)
      * @return whether the user chose to continue
      * @since 3.2
      */
