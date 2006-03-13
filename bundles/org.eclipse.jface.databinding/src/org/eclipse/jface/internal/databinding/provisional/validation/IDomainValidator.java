@@ -20,7 +20,8 @@ package org.eclipse.jface.internal.databinding.provisional.validation;
  * formatting requirements, and so on.
  * <p>
  * 
- * FIXME: This is wrong.  See bug #128142
+ * FIXME: This is wrong.  See bug #128142.  Eventually this class will go away
+ * and be replaced entirely by IValidator.
  * 
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
