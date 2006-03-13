@@ -92,14 +92,14 @@ public class RecursiveTrimLayoutWidgetFactory extends TestWidgetFactory {
             // Add a resizable child
             Composite child = new Composite(composite, SWT.NONE);
             WindowTrimProxy proxy = new WindowTrimProxy(child, 
-            		"child1." + side + "." + depth, "Resizable Child", side, true);
+            		"child1." + side + "." + depth, "Resizable Child", SWT.NONE, true);
             layout.addTrim(side, proxy);
             createTrimLayout(child, depth - 1, nextSide); 
 
             // Add a non-resizable child
             child = new Composite(composite, SWT.NONE);
             proxy = new WindowTrimProxy(child, 
-            		"child2." + side + "." + depth, "Non-Resizable Child", side, false);
+            		"child2." + side + "." + depth, "Non-Resizable Child", SWT.NONE, false);
             layout.addTrim(side, proxy);
             createTrimLayout(child, depth - 1, nextSide);
             
