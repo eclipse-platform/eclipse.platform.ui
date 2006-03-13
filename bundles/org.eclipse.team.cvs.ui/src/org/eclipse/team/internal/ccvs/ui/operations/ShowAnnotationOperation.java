@@ -12,16 +12,21 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DateFormat;
+import java.util.*;
 
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.revisions.Revision;
+import org.eclipse.jface.text.revisions.RevisionInformation;
+import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -35,7 +40,9 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.ui.*;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 /**
  * An operation to fetch the annotations for a file from the repository and
@@ -59,28 +66,40 @@ public class ShowAnnotationOperation extends CVSOperation {
      * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
-        
-        monitor.beginTask(null, 100);
-        
-        // Get the annotations from the repository.
-        final AnnotateListener listener= new AnnotateListener();
-        fetchAnnotation(listener, fCVSResource, fRevision, Policy.subMonitorFor(monitor, 80));
-        try {
-    	    if (hasCharset(fCVSResource, listener.getContents())) {
-    	        listener.setContents(getRemoteContents(fCVSResource, Policy.subMonitorFor(monitor, 20)));
-    	    }
-    	} catch (CoreException e) {
-    	    // Log and continue, using the original fetched contents
-    	    CVSUIPlugin.log(e);
-    	}
-    	
-    	// Open the view and display it from the UI thread.
-    	final Display display= getPart().getSite().getShell().getDisplay();
-    	display.asyncExec(new Runnable() {
-    	    public void run() { showView(listener); }
-    	});
-    	monitor.done();
-    }
+
+		monitor.beginTask(null, 120);
+
+		// Get the annotations from the repository.
+		final AnnotateListener listener= new AnnotateListener();
+		fetchAnnotation(listener, fCVSResource, fRevision, Policy.subMonitorFor(monitor, 80));
+
+		// this is not needed if there is a live editor - but we don't know, and the user might have closed the live editor since...
+		fetchContents(listener, Policy.subMonitorFor(monitor, 20));
+
+		// this is not needed if there is no live annotate
+		final RevisionInformation information= createRevisionInformation(listener, Policy.subMonitorFor(monitor, 20));
+
+		// Open the view and display it from the UI thread.
+		final Display display= getPart().getSite().getShell().getDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				// is there an open editor for the given input? If yes, use live annotate
+				AbstractDecoratedTextEditor editor= getEditor();
+				if (editor != null){
+					editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
+					try {
+						GenericHistoryView historyView = (GenericHistoryView) getPart().getSite().getPage().showView(GenericHistoryView.viewId);
+						historyView.showHistoryFor(fCVSResource.getIResource());
+					} catch (PartInitException e) {
+						CVSException.wrapException(e);
+					}
+				}
+				else
+					showView(listener); 
+			}
+		});
+		monitor.done();
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
@@ -127,7 +146,29 @@ public class ShowAnnotationOperation extends CVSOperation {
             CVSUIPlugin.log(e);
         }
     }
-    
+
+	private AbstractDecoratedTextEditor getEditor() {
+        final IWorkbench workbench= PlatformUI.getWorkbench();
+        final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+        IEditorReference[] references= window.getActivePage().getEditorReferences();
+        IResource resource= fCVSResource.getIResource();
+		if (resource == null)
+			return null;
+
+		for (int i= 0; i < references.length; i++) {
+			IEditorReference reference= references[i];
+			try {
+				if (resource != null && resource.equals(reference.getEditorInput().getAdapter(IFile.class))) {
+					IEditorPart editor= reference.getEditor(false);
+					if (editor instanceof AbstractDecoratedTextEditor)
+						return (AbstractDecoratedTextEditor) editor;
+				}
+			} catch (PartInitException e) {
+				// ignore
+			}
+		}
+        return null;
+	}
 
     private void fetchAnnotation(AnnotateListener listener, ICVSResource cvsResource, String revision, IProgressMonitor monitor) throws CVSException {
     
@@ -164,7 +205,75 @@ public class ShowAnnotationOperation extends CVSOperation {
         }
     }
 
-    private InputStream getRemoteContents(ICVSResource resource, IProgressMonitor monitor) throws CoreException {
+    private RevisionInformation createRevisionInformation(final AnnotateListener listener, IProgressMonitor monitor) {
+	    Map logEntriesByRevision= new HashMap();
+		if (fCVSResource instanceof ICVSFile) {
+			try {
+				ILogEntry[] logEntries= ((ICVSFile) fCVSResource).getLogEntries(Policy.subMonitorFor(monitor, 20));
+				for (int i= 0; i < logEntries.length; i++) {
+					ILogEntry entry= logEntries[i];
+					logEntriesByRevision.put(entry.getRevision(), entry);
+				}
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+
+		final CommitterColors colors= CommitterColors.getDefault();
+		RevisionInformation info= new RevisionInformation();
+		HashMap sets= new HashMap();
+		List annotateBlocks= listener.getCvsAnnotateBlocks();
+		for (Iterator blocks= annotateBlocks.iterator(); blocks.hasNext();) {
+			final CVSAnnotateBlock block= (CVSAnnotateBlock) blocks.next();
+			final String revisionString= block.getRevision();
+			Revision revision= (Revision) sets.get(revisionString);
+			if (revision == null) {
+				final ILogEntry entry= (ILogEntry) logEntriesByRevision.get(revisionString);
+				
+				revision= new Revision() {
+					public Object getHoverInfo() {
+						if (entry != null)
+							return "<b>" + entry.getAuthor() + " " + entry.getRevision() + " " + DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(entry.getDate()) + "</b><p>" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+							entry.getComment() + "</p>"; //$NON-NLS-1$
+						return block.toString().substring(0, block.toString().indexOf(" (")); //$NON-NLS-1$
+					}
+					
+					private String getCommitterId() {
+						return block.toString().substring(0, block.toString().indexOf(' '));
+					}
+					
+					public String getId() {
+						return revisionString;
+					}
+					
+					public Date getDate() {
+						return entry.getDate();
+					}
+					
+					public RGB getColor() {
+						return colors.getCommitterRGB(getCommitterId());
+					}
+				};
+				sets.put(revisionString, revision);
+				info.addRevision(revision);
+			}
+			revision.addRange(new LineRange(block.getStartLine(), block.getEndLine() - block.getStartLine() + 1));
+		}
+		return info;
+	}
+    
+	private void fetchContents(final AnnotateListener listener, IProgressMonitor monitor) {
+		try {
+			if (hasCharset(fCVSResource, listener.getContents())) {
+				listener.setContents(getRemoteContents(fCVSResource, monitor));
+			}
+		} catch (CoreException e) {
+			// Log and continue, using the original fetched contents
+			CVSUIPlugin.log(e);
+		}
+	}
+
+	private InputStream getRemoteContents(ICVSResource resource, IProgressMonitor monitor) throws CoreException {
         
     	final ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(resource);
     	if (remote == null) {
