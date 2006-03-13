@@ -2194,8 +2194,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * Persistent properties are intended to be used by plug-ins to store
 	 * resource-specific information that should be persisted across platform sessions.
-	 * The value of a persistent property is a string which should be
-	 * short (i.e., under 2KB). Unlike session properties, persistent properties are
+	 * The value of a persistent property is a string that must be short -
+	 * 2KB or less in length. Unlike session properties, persistent properties are
 	 * stored on disk and maintained across workspace shutdown and restart.
 	 * </p>
 	 * <p>
