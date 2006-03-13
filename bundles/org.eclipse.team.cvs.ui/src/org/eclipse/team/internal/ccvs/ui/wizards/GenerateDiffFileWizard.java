@@ -564,10 +564,18 @@ public class GenerateDiffFileWizard extends Wizard {
             
             wsPathText= new Text(nameGroup, SWT.BORDER);
             GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+            gd.verticalAlignment = GridData.CENTER;
+            gd.grabExcessVerticalSpace = false;
+            gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
             wsPathText.setLayoutData(gd);
             wsPathText.setEditable(false);
             
             wsBrowseButton = new Button(nameGroup, SWT.NULL);
+            gd = new GridData();
+    		gd.horizontalAlignment = GridData.FILL;
+    		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+    		gd.widthHint = Math.max(widthHint, wsBrowseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+    		wsBrowseButton.setLayoutData(gd);
             wsBrowseButton.setText(CVSUIMessages.Browse____4); 
         }
         
@@ -590,9 +598,17 @@ public class GenerateDiffFileWizard extends Wizard {
             
             fsPathText= new Text(nameGroup, SWT.BORDER);
             GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+            gd.verticalAlignment = GridData.CENTER;
+            gd.grabExcessVerticalSpace = false;
+            gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
             fsPathText.setLayoutData(gd);
             
             fsBrowseButton = new Button(nameGroup, SWT.NULL);
+            gd = new GridData();
+    		gd.horizontalAlignment = GridData.FILL;
+    		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+    		gd.widthHint = Math.max(widthHint, fsBrowseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+    		fsBrowseButton.setLayoutData(gd);
             fsBrowseButton.setText(CVSUIMessages.Browse____4); 
         }
         
