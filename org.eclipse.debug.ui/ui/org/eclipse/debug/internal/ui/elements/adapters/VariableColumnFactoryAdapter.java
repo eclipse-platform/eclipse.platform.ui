@@ -30,7 +30,8 @@ public class VariableColumnFactoryAdapter implements IColumnPresenetationFactory
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+		String id = context.getPart().getSite().getId();
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
 			if (element instanceof IStackFrame) {
 				return new VariableColumnPresentation();
 			}
@@ -42,7 +43,8 @@ public class VariableColumnFactoryAdapter implements IColumnPresenetationFactory
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+		String id = context.getPart().getSite().getId();
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
 			if (element instanceof IStackFrame) {
 				return VariableColumnPresentation.DEFAULT_VARIABLE_COLUMN_PRESENTATION;
 			}
@@ -54,7 +56,8 @@ public class VariableColumnFactoryAdapter implements IColumnPresenetationFactory
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#createColumnEditor(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public IColumnEditor createColumnEditor(IPresentationContext context, Object element) {
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+		String id = context.getPart().getSite().getId();
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
 			if (element instanceof IVariable) {
 				return new VariableColumnEditor();
 			}
@@ -66,7 +69,8 @@ public class VariableColumnFactoryAdapter implements IColumnPresenetationFactory
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#getColumnEditorId(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public String getColumnEditorId(IPresentationContext context, Object element) {
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getPart().getSite().getId())) {
+		String id = context.getPart().getSite().getId();
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
 			if (element instanceof IVariable) {
 				return VariableColumnEditor.DEFAULT_VARIABLE_COLUMN_EDITOR;
 			}

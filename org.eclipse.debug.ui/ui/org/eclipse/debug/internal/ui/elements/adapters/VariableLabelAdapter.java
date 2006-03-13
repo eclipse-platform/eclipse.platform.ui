@@ -38,7 +38,7 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
 		String[] ids = context.getColumns();
 		if (part != null && ids != null) {
 			String viewId = part.getSite().getId();
-			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(viewId)) {
+			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(viewId) || IDebugUIConstants.ID_REGISTER_VIEW.equals(viewId)) {
 				IVariable variable = (IVariable) element;
 				IValue value = variable.getValue();
 				String[] columns = new String[ids.length];
