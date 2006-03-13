@@ -195,4 +195,10 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_5;
 	public static String LaunchConfigurationsDialog_c_ancel;
 
+	public static String CollapseAllLaunchConfigurationAction_0;
+
+	public static String CollapseAllLaunchConfigurationAction_1;
+
+	public static String CollapseAllLaunchConfigurationAction_2;
+
 }

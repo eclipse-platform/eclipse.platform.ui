@@ -86,6 +86,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private CreateLaunchConfigurationAction fCreateAction;
 	private DeleteLaunchConfigurationAction fDeleteAction;
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
+	private CollapseAllLaunchConfigurationAction fCollapseAllAction;
 	
 	/**
 	 * Action for providing filtering to the Launch Configuraiton Dialog
@@ -248,6 +249,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fDuplicateAction = new DuplicateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION, fDuplicateAction);
 		
+		fCollapseAllAction = new CollapseAllLaunchConfigurationAction((TreeViewer)getViewer());
+		setAction(CollapseAllLaunchConfigurationAction.ID_COLLAPSEALL_ACTION, fCollapseAllAction);
+		
 		fFilterAction = new FilterLaunchConfigurationAction();
 		setAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION, fFilterAction);
 	}
@@ -292,6 +296,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fDeleteAction.dispose();
 		fDuplicateAction.dispose();
 		fFilterAction = null;
+		fCollapseAllAction = null;
 		getLaunchManager().removeLaunchConfigurationListener(this);
 	}
 

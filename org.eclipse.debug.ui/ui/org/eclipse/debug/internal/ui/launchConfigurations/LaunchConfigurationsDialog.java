@@ -37,6 +37,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -513,6 +514,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		tmanager.add(getNewAction());
 		tmanager.add(getDuplicateAction());
 		tmanager.add(getDeleteAction());
+		tmanager.add(new Separator());
+		tmanager.add(getCollapseAllAction());
 		tmanager.add(getFilterAction());
 		tmanager.update(true);
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -743,6 +746,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected IAction getFilterAction() {
 		return fLaunchConfigurationView.getAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION);
+	}
+	
+	/**
+	 * Gets the collpase all action
+	 * @return the collapse all action
+	 * @since 3.2
+	 */
+	protected IAction getCollapseAllAction() {
+		return fLaunchConfigurationView.getAction(CollapseAllLaunchConfigurationAction.ID_COLLAPSEALL_ACTION);
 	}
 	
 	 /* (non-Javadoc)
