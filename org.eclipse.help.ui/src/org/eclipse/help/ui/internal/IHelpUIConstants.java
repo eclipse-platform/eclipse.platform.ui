@@ -35,6 +35,7 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_HELP_SEARCH = "etool16/helpsearch_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_RELATED_TOPICS = "etool16/reltopics_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ALL_TOPICS = "etool16/alltopics_co.gif"; //$NON-NLS-1$	
+	public static final String IMAGE_INDEX = "etool16/index_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_HELP = "etool16/help.gif"; //$NON-NLS-1$
 	public static final String IMAGE_DHELP = "view16/help_view.gif"; //$NON-NLS-1$
 	public static final String IMAGE_NW = "elcl16/openseparate_co.gif"; //$NON-NLS-1$
@@ -64,6 +65,10 @@ public interface IHelpUIConstants {
 	public static final String HV_BROWSER_PAGE = "browser-page"; //$NON-NLS-1$
 	public static final String HV_RELATED_TOPICS = "related-topics"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page"; //$NON-NLS-1$
+
+	public static final String HV_INDEX = "index"; //$NON-NLS-1$
+	public static final String HV_INDEX_TYPEIN = "index-typein"; //$NON-NLS-1$
+	public static final String HV_INDEX_PAGE = "index-page"; //$NON-NLS-1$
 
 	static final String ENGINE_EXP_ID = "org.eclipse.help.ui.searchEngine"; //$NON-NLS-1$
 	static final String TAG_ENGINE = "engine"; //$NON-NLS-1$

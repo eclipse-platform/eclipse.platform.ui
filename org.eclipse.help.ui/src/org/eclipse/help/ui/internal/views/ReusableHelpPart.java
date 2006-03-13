@@ -30,6 +30,7 @@ import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
@@ -104,6 +105,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	public static final int SEARCH = 1 << 3;
 
 	public static final int BOOKMARKS = 1 << 4;
+
+	public static final int INDEX = 1 << 5;
 
 	public static final Collator SHARED_COLLATOR = Collator.getInstance();
 
@@ -631,7 +634,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public ReusableHelpPart(IRunnableContext runnableContext) {
-		this(runnableContext, CONTEXT_HELP | SEARCH | ALL_TOPICS | BOOKMARKS);
+		this(runnableContext, getDefaultStyle());
 	}
 
 	public ReusableHelpPart(IRunnableContext runnableContext, int style) {
@@ -734,6 +737,16 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_RELATED_TOPICS, true);
+		page.addPart(HV_SEE_ALSO, false);
+		pages.add(page);
+
+		// index page
+		page = new HelpPartPage(HV_INDEX_PAGE,
+				Messages.ReusableHelpPart_indexPage_name,
+				IHelpUIConstants.IMAGE_INDEX); 
+		page.setVerticalSpacing(0);
+		page.addPart(HV_INDEX_TYPEIN, false);
+		page.addPart(HV_INDEX, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 	}
@@ -1080,6 +1093,10 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			part = new SearchPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_BOOKMARKS_TREE)) {
 			part = new BookmarksPart(parent, mform.getToolkit(), tbm);
+		} else if (id.equals(HV_INDEX)) {
+			part = new IndexPart(parent, mform.getToolkit(), tbm);
+		} else if (id.equals(HV_INDEX_TYPEIN)) {
+			part = new IndexTypeinPart(parent, mform.getToolkit(), tbm);
 		}
 		if (part != null) {
 			mform.addPart(part);			
@@ -1240,6 +1257,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private void contributeToDropDownMenu(IMenuManager manager) {
 		addPageAction(manager, IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_ALL_TOPICS_PAGE);
+		if (HelpPlugin.getIndexManager().isIndexContributed()) {
+			addPageAction(manager, IHelpUIConstants.HV_INDEX_PAGE);
+		}
 		addPageAction(manager, IHelpUIConstants.HV_FSEARCH_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_BOOKMARKS_PAGE);
 	}
@@ -1637,6 +1657,15 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			engineManager = new EngineDescriptorManager();
 		}
 		return engineManager;
+	}
+
+	static public int getDefaultStyle() {
+		int style = ALL_TOPICS | CONTEXT_HELP | SEARCH | BOOKMARKS;
+
+		if (HelpPlugin.getIndexManager().isIndexContributed())
+			style |= INDEX;
+
+		return style; 
 	}
 }
 

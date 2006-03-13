@@ -59,6 +59,7 @@ public final class Messages extends NLS {
 	public static String ReusableHelpPart_copyAction_label;
 	public static String ReusableHelpPart_bookmarkAction_label;
 	public static String ReusableHelpPart_status;
+	public static String ReusableHelpPart_indexPage_name;
 	public static String HelpView_defaultText;
 	public static String expression;
 	public static String expression_label;
@@ -68,6 +69,7 @@ public final class Messages extends NLS {
 	public static String SeeAlsoPart_goto;
 	public static String SeeAlsoPart_contextHelp;
 	public static String SeeAlsoPart_bookmarks;
+	public static String SeeAlsoPart_index;
 	public static String ContextHelpPart_about;
 	public static String ContextHelpPart_aboutP;
 	public static String ContextHelpPart_dynamicHelp;
@@ -179,4 +181,6 @@ public final class Messages extends NLS {
 	public static String ReusableHelpPart_internalWebBrowserError;
 	public static String ScopeSet_errorLoading;
 	public static String ScopeSet_errorSaving;
+	public static String IndexInstructions;
+	public static String IndexButton;
 }

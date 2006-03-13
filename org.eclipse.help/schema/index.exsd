@@ -66,7 +66,11 @@
 &lt;p&gt;&lt;b&gt;The topic element&lt;/b&gt;
 &lt;p&gt;The topic element provides reference to help content related to the keyword. The href attribute is relative to the plug-in that manifest file belongs to. If you need to access a file in another plug-in, you can use the syntax
 &lt;p&gt;&lt;tt&gt;&amp;lt;topic label=&quot;topic in another plug-in&quot; href=&quot;../other.plugin.id/concepts/some_other_file.html&quot;/&gt;&lt;/tt&gt;
-&lt;p&gt;The title attribute is optional. It is used to name the link to help content in the Index View in case when multiple topics are associated with the single keyword. If the attribute is not presented, the title comes from a TOC which own the link. If the attribute is not presented and the topic is not owned by any TOC, the title will be empty.
+&lt;p&gt;The title attribute is used to name the link to help content when multiple
+topics are associated with the single keyword. If the attribute is not
+specified, the title comes from a TOC which owns the link. If the link does not
+belong to any TOC, the title attribute must be specified, or else the title
+becomes undefined.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>

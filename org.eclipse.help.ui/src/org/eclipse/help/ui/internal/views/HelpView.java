@@ -359,8 +359,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getHelpPartStyle()
 	 */
 	protected int getHelpPartStyle() {
-		return ReusableHelpPart.ALL_TOPICS | ReusableHelpPart.CONTEXT_HELP
-				| ReusableHelpPart.SEARCH | ReusableHelpPart.BOOKMARKS;
+		return ReusableHelpPart.getDefaultStyle();
 	}
 
 	public void setFocus() {

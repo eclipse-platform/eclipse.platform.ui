@@ -90,13 +90,6 @@ public class IndexManager {
         return contributedIndexFiles;
     }
     
-    /**
-     * @return Returns the contributingPlugins.
-     */
-    public Collection getContributingPlugins() {
-        return contributingPlugins;
-    }
-    
     public Index getIndex(String locale) {
         if (locale == null)
             return new Index();
@@ -135,5 +128,15 @@ public class IndexManager {
 					"Problems occurred reading plug-in preferences.", e); //$NON-NLS-1$
 		}
     	return ignored;
+    }
+
+    public boolean isIndexContributed() {
+        return isIndexContributed(Platform.getNL());
+    }
+
+    public boolean isIndexContributed(String locale) {
+        if (locale == null)
+            return false;
+        return !getContributedIndexFiles(locale).isEmpty();
     }
 }
