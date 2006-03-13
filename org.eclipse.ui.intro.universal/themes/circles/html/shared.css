@@ -193,6 +193,10 @@ body, .page {
 	width : 100%;
 }
 
+.page > #navigation-links {
+	width: 99.1%;
+}
+
 #navigation-links a {
 	text-align : left;
 	width : auto;

@@ -60,11 +60,15 @@ body {
  * **Important** If additional links are added, we will have to increase this width 
  * to accomodate them, otherwise they will wrap to a new line 
  */
+
 #links-background > #page-links {
-	width : 33em;	margin : 0 auto;
+	width: 33em;
+	margin: 0 auto;
 }
+
 #page-links {
 	position : relative;	top : 50px;
+	text-align: center;
 }
 #page-links a {
 	position : relative;	width : 86px;	margin-left : 1em;	margin-right : 1em;	text-align : center;	vertical-align : top;
