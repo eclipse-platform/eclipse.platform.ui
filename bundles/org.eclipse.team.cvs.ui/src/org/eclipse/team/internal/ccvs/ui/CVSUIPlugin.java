@@ -111,15 +111,15 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * Creates an image and places it in the image registry.
 	 */
 	protected void createImageDescriptor(String id) {
-		URL url = Platform.find(CVSUIPlugin.getPlugin().getBundle(), new Path(ICVSUIConstants.ICON_PATH + id));
+		URL url = FileLocator.find(CVSUIPlugin.getPlugin().getBundle(), new Path(ICVSUIConstants.ICON_PATH + id), null);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		imageDescriptors.put(id, desc);
 	}
 	
 	/**
 	 * Returns the active workbench page. Note that the active page may not be
-	 * the one that the usr perceives as active in some situations so this
-	 * method of obtaining the activae page should only be used if no other
+	 * the one that the user perceives as active in some situations so this
+	 * method of obtaining the activate page should only be used if no other
 	 * method is available.
 	 * 
 	 * @return the active workbench page
@@ -136,7 +136,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Deregister as a Team property changes.
+	 * Remove a Team property changes.
 	 */
 	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
 		propertyChangeListeners.remove(listener);
@@ -230,7 +230,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @param runnable the runnable
 	 * 
 	 * @exception InvocationTargetException when an exception is thrown from the runnable
-	 * @exception InterruptedException when the progress monitor is cancelled
+	 * @exception InterruptedException when the progress monitor is canceled
 	 */
 	public static void runWithProgress(Shell parent, boolean cancelable,
 									   final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
@@ -368,7 +368,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @param shell a valid shell or null
 	 * @param exception the exception to be report
 	 * @param title the title to be displayed
-	 * @param flags customizing attributes for the error handling
+	 * @param flags customized attributes for the error handling
 	 * @return IStatus the status that was displayed to the user
 	 */
 	public static IStatus openError(Shell providedShell, String title, String message, Throwable exception, int flags) {
@@ -446,7 +446,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Open the dialog code provided in the IOpenableInShell, ensuring that 
-	 * the provided whll is valid. This method will provide a shell to the
+	 * the provided shell is valid. This method will provide a shell to the
 	 * IOpenableInShell if one is not provided to the method.
 	 * 
 	 * @param providedShell
@@ -619,7 +619,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
             console = new CVSOutputConsole();
         } catch (RuntimeException e) {
             // Don't let the console bring down the CVS UI
-            log(IStatus.ERROR, "Errors occurred starting the CVS conbsole", e); //$NON-NLS-1$
+            log(IStatus.ERROR, "Errors occurred starting the CVS console", e); //$NON-NLS-1$
         }
 
 		// Must load the change set manager on startup since it listens to deltas
@@ -632,7 +632,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			// decorator on the first start of the CVS plugin since this indicates that 
 			// the user has done something with CVS. Subsequent startups will load
 			// the CVS plugin unless the user disables the decorator. In this case,
-			// we will not reenable since we only enable auatomatically on the first startup.
+			// we will not re-enable since we only enable automatically on the first startup.
 			PlatformUI.getWorkbench().getDecoratorManager().setEnabled(CVSLightweightDecorator.ID, true);
 			store.setValue(ICVSUIConstants.PREF_FIRST_STARTUP, false);
 		}
