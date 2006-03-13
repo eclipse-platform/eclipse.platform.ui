@@ -526,7 +526,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
 		Object[] result =  getFilteredChildren(parentElementOrTreePath);
 		ViewerSorter sorter = getSorter();
-		if (sorter instanceof TreePathViewerSorter) {
+		if (parentElementOrTreePath!=null && sorter instanceof TreePathViewerSorter) {
 			TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
 			
 			// be sure we're not modifying the original array from the model

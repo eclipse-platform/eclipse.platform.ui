@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -128,5 +129,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 			// callbacksEnabled = true;
 			tree.setRedraw(true);
 		}
+	}
+	
+	public void testSetSorterOnNullInput() {
+		fViewer.setInput(null);
+		fViewer.setSorter(new ViewerSorter());
 	}
 }

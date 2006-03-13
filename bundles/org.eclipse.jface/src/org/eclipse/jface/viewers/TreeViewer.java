@@ -942,7 +942,15 @@ public class TreeViewer extends AbstractTreeViewer {
 		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
 		if (widget instanceof Tree || ((TreeItem)widget).getExpanded()) {
 			// widget shows children - it is safe to call getChildren
-			lazyTreeContentProvider.updateChildCount(element, getChildren(widget).length);
+			if (element != null) {
+				lazyTreeContentProvider.updateChildCount(element, getChildren(widget).length);
+			} else {
+				if (widget instanceof Tree) {
+					((Tree)widget).setItemCount(0);
+				} else {
+					((TreeItem)widget).setItemCount(0);
+				}
+			}
 			// need to get children again because they might have been updated through a callback to setChildCount.
 			Item[] items = getChildren(widget);
 			for (int i = 0; i < items.length; i++) {
