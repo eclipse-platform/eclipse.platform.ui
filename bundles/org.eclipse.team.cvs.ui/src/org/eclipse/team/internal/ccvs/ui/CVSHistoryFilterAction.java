@@ -44,17 +44,9 @@ public class CVSHistoryFilterAction extends Action {
 		if (historyDialog.open() == Window.CANCEL) {
 			return;
 		}
-		if (filter != null) {
-			viewer.removeFilter(filter);
-		}
+		
 		filter = historyDialog.getFilter();
-		/*//don't add the filter if it is blank
-		 if (!(filter.hasAuthor() || filter.hasDate() || filter.hasComment())) {
-		 return;
-		 }*/
-		viewer.addFilter(filter);
-
-		page.setSorter(filter.showLocal());
+		page.showFilter(filter);
 	}
 
 	/**

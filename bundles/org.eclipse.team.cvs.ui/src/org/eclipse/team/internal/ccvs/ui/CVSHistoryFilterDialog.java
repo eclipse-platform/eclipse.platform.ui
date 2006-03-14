@@ -37,7 +37,6 @@ public class CVSHistoryFilterDialog extends Dialog {
 	private Combo toYearCombo;
 	private Text author;
 	private Text comment;
-	private Button localCheckbox;
 
 	public CVSHistoryFilterDialog(Shell shell) {
 		super(shell);
@@ -148,14 +147,6 @@ public class CVSHistoryFilterDialog extends Dialog {
 		fromYearCombo.select(0);
 		toYearCombo.select(0);
 
-		//Include local revisions checkbox button
-		localCheckbox = new Button(topLevel, SWT.CHECK);
-		localCheckbox.setText(CVSUIMessages.CVSHistoryFilterDialog_showLocalRevisions);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		localCheckbox.setLayoutData(data);
-		localCheckbox.setSelection(true);
-
 		initializeValues();
 
 		// set F1 help
@@ -200,8 +191,6 @@ public class CVSHistoryFilterDialog extends Dialog {
 			}
 			toYearCombo.select(index);
 		}
-
-		localCheckbox.setSelection(historyFilter.showLocal());
 	}
 
 	/**
@@ -224,7 +213,7 @@ public class CVSHistoryFilterDialog extends Dialog {
 		}
 
 		//create the filter
-		historyFilter = new CVSHistoryFilter(author.getText(), comment.getText(), fromDate, toDate, orRadio.getSelection(), localCheckbox.getSelection());
+		historyFilter = new CVSHistoryFilter(author.getText(), comment.getText(), fromDate, toDate, orRadio.getSelection());
 
 		super.buttonPressed(buttonId);
 	}

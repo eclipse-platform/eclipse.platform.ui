@@ -84,6 +84,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
 	private IAction toggleCompareAction;
+	private IAction toggleFilterAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
@@ -125,7 +126,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private int currentFilerMode = 0;
 	
 	//grouping on
-	private boolean groupingOn; 
+	private boolean groupingOn;
+	private CVSHistoryFilter historyFilter; 
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -465,6 +467,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		toggleListAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_TAGS));
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
 
+		toggleFilterAction = new Action(CVSUIMessages.CVSHistoryPage_NoFilter){
+			public void run(){
+				if (historyFilter != null)
+					treeViewer.removeFilter(historyFilter);
+					historyFilter = null;
+					toggleFilterAction.setEnabled(false);
+			}
+		};
+		toggleFilterAction.setEnabled(historyFilter != null);
+		
+		
 		toggleCompareAction = new Action(CVSUIMessages.CVSHistoryPage_CompareModeToggleAction){
 			public void run() {
 				compareMode = !compareMode;
@@ -503,6 +516,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleTextAction);
 					actionBarsMenu.add(toggleListAction);
+					actionBarsMenu.add(new Separator());
+					actionBarsMenu.add(toggleFilterAction);
 				}
 				// Create actions for the text editor
 				copyAction = new TextViewerAction(textViewer, ITextOperationTarget.COPY);
@@ -1310,5 +1325,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
+	}
+
+	public void showFilter(CVSHistoryFilter filter) {
+		if (historyFilter != null)
+			treeViewer.removeFilter(historyFilter);
+		
+		historyFilter = filter;
+		treeViewer.addFilter(filter);
+		toggleFilterAction.setEnabled(true);
 	}
 }

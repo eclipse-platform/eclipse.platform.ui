@@ -15,7 +15,6 @@ import java.util.Date;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
-import org.eclipse.team.internal.core.LocalFileRevision;
 
 public class CVSHistoryFilter extends ViewerFilter {
 	public String author;
@@ -23,21 +22,22 @@ public class CVSHistoryFilter extends ViewerFilter {
 	public Date toDate;
 	public String comment;
 	public boolean isOr;
-	public boolean showLocal;
 
-	public CVSHistoryFilter(String author, String comment, Date fromDate, Date toDate, boolean isOr, boolean showLocal) {
+	public CVSHistoryFilter(String author, String comment, Date fromDate, Date toDate, boolean isOr) {
 		this.author = author;
 		this.comment = comment;
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.isOr = isOr;
-		this.showLocal = showLocal;
 	}
 
 	/**
 	 * @see ViewerFilter#select(Viewer, Object, Object)
 	 */
 	public boolean select(Viewer aviewer, Object parentElement, Object element) {
+		if (element instanceof AbstractCVSHistoryCategory)
+			return true;
+		
 		if (element instanceof CVSFileRevision) {
 			CVSFileRevision entry = (CVSFileRevision) element;
 			if (isOr) {
@@ -48,8 +48,6 @@ public class CVSHistoryFilter extends ViewerFilter {
 				//empty fields should be considered a match
 				return (!hasAuthor() || authorMatch(entry)) && (!hasDate() || dateMatch(entry)) && (!hasComment() || commentMatch(entry));
 			}
-		} else if (element instanceof LocalFileRevision) {
-			return showLocal();
 		}
 		return false;
 	}
@@ -76,12 +74,5 @@ public class CVSHistoryFilter extends ViewerFilter {
 
 	protected boolean hasDate() {
 		return fromDate != null && toDate != null;
-	}
-
-	/*
-	 * Used to indicate if this filter should show local file revisions
-	 */
-	protected boolean showLocal() {
-		return showLocal;
 	}
 }
