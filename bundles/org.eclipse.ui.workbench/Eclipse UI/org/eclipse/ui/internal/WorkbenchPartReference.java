@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
@@ -272,7 +273,15 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             // Any other properties are just reported to listeners verbatim
             firePropertyChange(propId);
         }
-
+        
+        // Let the model manager know as well
+        if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
+        	IWorkbenchPart actualPart = getPart(false);
+        	if (actualPart != null) {
+				SaveableModelManager modelManager = (SaveableModelManager) actualPart.getSite().getService(ISaveableModelManager.class);
+	        	modelManager.dirtyChanged(actualPart);
+        	}
+        }
     }
 
     /**
