@@ -28,6 +28,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
@@ -80,6 +81,32 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}, getMergeRule(node), IResource.NONE, monitor);
 	}
 
+	protected void makeInSync(final IDiff diff, IProgressMonitor monitor) throws CoreException {
+		run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				// Get the latest sync info for the file (i.e. not what is in the set).
+				// We do this because the client may have modified the file since the
+				// set was populated.
+				IResource resource = getDiffTree().getResource(diff);
+				if (resource.getType() != IResource.FILE)
+					return;
+				SyncInfo info = getSyncInfo(resource);
+				ensureRemotesMatch(resource, diff, info);
+				IResourceVariant remote = info.getRemote();
+				if (info instanceof CVSSyncInfo) {
+					CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
+					cvsInfo.makeOutgoing(monitor);
+					if (resource.getType() == IResource.FILE && info.getRemote() != null) {
+						ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+						if (remote != null && remote instanceof RemoteFile)
+							cvsFile.setExecutable(((RemoteFile)remote).isExecutable());
+						cvsFile.checkedIn(null, false /* not a commit */);
+					}
+				}
+			}
+		}, getMergeRule(diff), IResource.NONE, monitor);
+	}
+	
 	protected void ensureRemotesMatch(IResource resource, IDiff node, SyncInfo info) throws CVSException {
 		IResourceVariant variant = info.getRemote();
 		IFileRevision remote = getRemote(node);

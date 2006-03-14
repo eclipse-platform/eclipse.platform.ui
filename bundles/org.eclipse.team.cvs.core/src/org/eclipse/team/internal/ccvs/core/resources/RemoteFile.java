@@ -54,6 +54,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	private ILogEntry entry;
 	// state that indicates that the handle is actively fetching content
 	private boolean fetching = false;
+	// executable bit
+	private boolean executable = false;
 			
 	/**
 	 * Static method which creates a file as a single child of its parent.
@@ -628,14 +630,15 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setExecutable(boolean)
 	 */
 	public void setExecutable(boolean executable) throws CVSException {
-		// remote files are never executable
+		// store executable bit;
+		this.executable = executable;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#isExecutable()
 	 */
 	public boolean isExecutable() throws CVSException {
-		// remote files are always not executable
-		return false;
+		// return executable bit
+		return executable;
 	}
 }
