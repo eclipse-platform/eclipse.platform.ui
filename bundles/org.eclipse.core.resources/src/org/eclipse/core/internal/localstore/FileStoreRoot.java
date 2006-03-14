@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.io.File;
 import java.net.URI;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -116,7 +117,8 @@ public class FileStoreRoot {
 	 */
 	private IPath toLocalPath(URI uri) {
 		try {
-			return new Path(EFS.getStore(uri).toLocalFile(EFS.NONE, null).getAbsolutePath());
+			final File localFile = EFS.getStore(uri).toLocalFile(EFS.NONE, null);
+			return localFile == null ? null : new Path(localFile.getAbsolutePath());
 		} catch (CoreException e) {
 			return FileUtil.toPath(uri);
 		}
