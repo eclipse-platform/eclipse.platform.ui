@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConsta
 
 /**
  * 
- * Describes a <b>commonFilter</b> element under a
+ * Describes a <b>commonSorter</b> element under a
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension.
  * 
  * @since 3.2
@@ -36,8 +36,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 	private String id;
 
-	protected CommonSorterDescriptor(IConfigurationElement anElement) {
-
+	protected CommonSorterDescriptor(IConfigurationElement anElement) { 
 		element = anElement;
 		init();
 	}
@@ -56,30 +55,13 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 	/**
 	 * 
-	 * @return An identifier used to determine whether the filter is visible.
+	 * @return An identifier used to determine whether the sorter is visible.
 	 *         May not be unique.
 	 */
 	public String getId() {
 		return id;
 	}
-
-	/**
-	 * 
-	 * @return A translated name to identify the filter
-	 */
-	public String getName() {
-		return element.getAttribute(ATT_NAME);
-	}
-
-	/**
-	 * 
-	 * @return A translated description to explain to the user what the defined
-	 *         filter will hide from the view.
-	 */
-	public String getDescription() {
-		return element.getAttribute(ATT_DESCRIPTION);
-	}
-
+ 
 	/**
 	 * 
 	 * @param aParent
@@ -126,6 +108,6 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "CommonSorterDescriptor[" + getName() + " (" + getId() + ")]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return "CommonSorterDescriptor[" + getId() + "]"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
