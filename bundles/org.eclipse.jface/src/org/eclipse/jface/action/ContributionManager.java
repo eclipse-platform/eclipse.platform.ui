@@ -301,7 +301,7 @@ public abstract class ContributionManager implements IContributionManager {
     public void insertAfter(String ID, IContributionItem item) {
         IContributionItem ci = find(ID);
         if (ci == null) {
-			throw new IllegalArgumentException("can't find ID");//$NON-NLS-1$
+			throw new IllegalArgumentException("can't find ID" + ID);//$NON-NLS-1$
 		}
         int ix = contributions.indexOf(ci);
         if (ix >= 0) {
