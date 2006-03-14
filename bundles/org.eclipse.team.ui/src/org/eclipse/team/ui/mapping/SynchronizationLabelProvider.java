@@ -96,7 +96,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	public String getDescription(Object anElement) {
 		ILabelProvider provider = getDelegateLabelProvider();
 		if (provider instanceof IDescriptionProvider) {
-			return ((IDescriptionProvider) provider).getDescription(anElement);
+			return ((IDescriptionProvider) provider).getDescription(internalGetElement(anElement));
 		}
 		return null;
 	}
@@ -113,7 +113,7 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 */
 	public Image getImage(Object element) {
 		Image image = super.getImage(element);
-		if (image == null && element instanceof ModelProvider) {
+		if (image == null && internalGetElement(element) instanceof ModelProvider) {
 			image = super.getImage(getModelRoot());
 		}
 		return image;
@@ -152,5 +152,13 @@ public abstract class SynchronizationLabelProvider extends AbstractSynchronizeLa
 	 */
 	public ICommonContentExtensionSite getExtensionSite() {
 		return site;
+	}
+	
+	private Object internalGetElement(Object element) {
+		if (element instanceof TreePath) {
+			TreePath tp = (TreePath) element;
+			element = tp.getLastSegment();
+		}
+		return element;
 	}
 }

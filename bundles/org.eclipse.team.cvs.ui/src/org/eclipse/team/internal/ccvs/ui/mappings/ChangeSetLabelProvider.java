@@ -14,20 +14,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 
-public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
+public class ChangeSetLabelProvider extends ResourceModelLabelProvider implements ITreePathLabelProvider {
 
 	private Image changeSetImage;
 
-	protected String getDelegateText(Object element) {
+	protected String getDelegateText(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof DiffChangeSet) {
 			DiffChangeSet set = (DiffChangeSet) element;
 			return set.getName();
@@ -35,7 +39,8 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 		return super.getDelegateText(element);
 	}
 	
-	protected Image getDelegateImage(Object element) {
+	protected Image getDelegateImage(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof DiffChangeSet) {
 			return getChangeSetImage();
 		}
@@ -58,7 +63,8 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 		super.dispose();
 	}
 	
-	protected boolean isBusy(Object element) {
+	protected boolean isBusy(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof DiffChangeSet) {
 			DiffChangeSet dcs = (DiffChangeSet) element;
 			IResource[] resources = dcs.getResources();
@@ -72,7 +78,8 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 		return super.isBusy(element);
 	}
 	
-	protected boolean hasDecendantConflicts(Object element) {
+	protected boolean hasDecendantConflicts(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof DiffChangeSet) {
 			DiffChangeSet dcs = (DiffChangeSet) element;
 			IResource[] resources = dcs.getResources();
@@ -83,10 +90,37 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 			}
 			return false;
 		}
+		if (elementOrPath instanceof TreePath && element instanceof IResource) {
+			DiffChangeSet set = internalGetChangeSet(elementOrPath);
+			if (set != null) {
+				ResourceTraversal[] traversals = getTraversalCalculator().getTraversals(set, (TreePath)elementOrPath);
+				return (getContext().getDiffTree().hasMatchingDiffs(traversals, new FastDiffFilter() {
+					public boolean select(IDiff diff) {
+						if (diff instanceof IThreeWayDiff) {
+							IThreeWayDiff twd = (IThreeWayDiff) diff;
+							return twd.getDirection() == IThreeWayDiff.CONFLICTING;
+						}
+						return false;
+					}
+				}));
+			}
+		}
 		return super.hasDecendantConflicts(element);
 	}
 	
-	protected int getMarkerSeverity(Object element) {
+	private DiffChangeSet internalGetChangeSet(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			Object o = tp.getFirstSegment();
+			if (o instanceof DiffChangeSet) {
+				return (DiffChangeSet) o;
+			}
+		}
+		return null;
+	}
+
+	protected int getMarkerSeverity(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof DiffChangeSet) {
 			DiffChangeSet dcs = (DiffChangeSet) element;
 			Set projects = new HashSet();
@@ -136,6 +170,22 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 
 	private ChangeSetContentProvider getContentProvider() {
 		return (ChangeSetContentProvider)getExtensionSite().getExtension().getContentProvider();
+	}
+
+	public void updateLabel(ViewerLabel label, TreePath elementPath) {
+		label.setImage(getImage(elementPath));
+		label.setText(getText(elementPath));
+		Font f = getFont(elementPath);
+		if (f != null)
+			label.setFont(f);
+	}
+	
+	private Object internalGetElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			return tp.getLastSegment();
+		}
+		return elementOrPath;
 	}
 
 }

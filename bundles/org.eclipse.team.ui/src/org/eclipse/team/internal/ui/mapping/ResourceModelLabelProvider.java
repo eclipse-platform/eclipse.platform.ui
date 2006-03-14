@@ -20,9 +20,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
@@ -62,19 +65,18 @@ public class ResourceModelLabelProvider extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.AbstractSynchronizationLabelProvider#getSyncDelta(java.lang.Object)
 	 */
-	protected IDiff getDiff(Object element) {
-		IResource resource = getResource(element);
-		if (resource != null) {
-			ISynchronizationContext context = getContext();
-			if (context != null) {
-				IDiff delta = context.getDiffTree().getDiff(resource.getFullPath());
-				return delta;
-			}
+	protected IDiff getDiff(Object elementOrPath) {
+		IResource resource = getResource(elementOrPath);
+		IResourceDiffTree tree = getDiffTree(elementOrPath);
+		if (tree != null && resource != null) {
+			IDiff delta = tree.getDiff(resource.getFullPath());
+			return delta;
 		}		
 		return null;
 	}
 
-	private IResource getResource(Object element) {
+	private IResource getResource(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof IResource) {
 			return (IResource) element;
 		}
@@ -91,27 +93,32 @@ public class ResourceModelLabelProvider extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#isBusy(java.lang.Object)
 	 */
-	protected boolean isBusy(Object element) {
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;
-			ISynchronizationContext context = getContext();
-			if (context != null)
-				return context.getDiffTree().getProperty(resource.getFullPath(), IDiffTree.P_BUSY_HINT);
+	protected boolean isBusy(Object elementOrPath) {
+		IResource resource = getResource(elementOrPath);
+		IResourceDiffTree tree = getDiffTree(elementOrPath);
+		if (tree != null && resource != null) {
+			return tree.getProperty(resource.getFullPath(), IDiffTree.P_BUSY_HINT);
 		}
-		return super.isBusy(element);
+		return super.isBusy(elementOrPath);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#hasDecendantConflicts(java.lang.Object)
 	 */
-	protected boolean hasDecendantConflicts(Object element) {
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;
-			ISynchronizationContext context = getContext();
-			if (context != null)
-				return context.getDiffTree().getProperty(resource.getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
+	protected boolean hasDecendantConflicts(Object elementOrPath) {
+		IResource resource = getResource(elementOrPath);
+		IResourceDiffTree tree = getDiffTree(elementOrPath);
+		if (tree != null && resource != null) {
+			return tree.getProperty(resource.getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
 		}
-		return super.hasDecendantConflicts(element);
+		return super.hasDecendantConflicts(elementOrPath);
+	}
+
+	protected IResourceDiffTree getDiffTree(Object elementOrPath) {
+		ISynchronizationContext context = getContext();
+		if (context != null)
+			return context.getDiffTree();
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -154,13 +161,19 @@ public class ResourceModelLabelProvider extends
 		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 	}
 	
-	protected String getDelegateText(Object element) {
+	protected String getDelegateText(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
+		Object parent = internalGetElementParent(elementOrPath);
 		if (element instanceof IResource) {
 			IResource resource = (IResource) element;			
-			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) 
+					&& resource.getType() == IResource.FOLDER
+					&& (parent == null || parent instanceof IProject)) {
 				return resource.getProjectRelativePath().toString();
 			}
-			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.FILE) {
+			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) 
+					&& resource.getType() == IResource.FILE
+					&& (parent == null || parent instanceof IProject)) {
 				IPath parentPath = resource.getProjectRelativePath().removeLastSegments(1);
 				if (!parentPath.isEmpty())
 					return NLS.bind("{0} - {1}", resource.getName(), parentPath.toString());
@@ -169,15 +182,48 @@ public class ResourceModelLabelProvider extends
 		return super.getDelegateText(element);
 	}
 	
-	protected Image getDelegateImage(Object element) {
+	protected Image getDelegateImage(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
+		Object parent = internalGetElementParent(elementOrPath);
 		if (element instanceof IResource) {
-			IResource resource = (IResource) element;			
-			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+			IResource resource = (IResource) element;
+			// Only use the compressed folder icon if the parent is not known
+			// or the parent is a project
+			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) 
+					&& resource.getType() == IResource.FOLDER
+					&& (parent == null || parent instanceof IProject)) {
 				if (compressedFolderImage == null)
 					compressedFolderImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER).createImage();
 				return compressedFolderImage;
 			}
 		}
 		return super.getDelegateImage(element);
+	}
+	
+	private Object internalGetElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			return tp.getLastSegment();
+		}
+		return elementOrPath;
+	}
+	
+	private Object internalGetElementParent(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			if (tp.getSegmentCount() > 1) {
+				return tp.getSegment(tp.getSegmentCount() - 2);
+			}
+			
+		}
+		return null;
+	}
+	
+	protected ResourceModelTraversalCalculator getTraversalCalculator() {
+		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+	}
+
+	private ISynchronizePageConfiguration getConfiguration() {
+		return (ISynchronizePageConfiguration)getExtensionSite().getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
 	}
 }

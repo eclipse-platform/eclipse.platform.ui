@@ -92,8 +92,16 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 */
 	protected Image getDelegateImage(Object element) {
 		ILabelProvider modelLabelProvider = getDelegateLabelProvider();
-		Image base = modelLabelProvider.getImage(element);
+		Image base = modelLabelProvider.getImage(internalGetElement(element));
 		return base;
+	}
+
+	private Object internalGetElement(Object element) {
+		if (element instanceof TreePath) {
+			TreePath tp = (TreePath) element;
+			element = tp.getLastSegment();
+		}
+		return element;
 	}
 
 	private Image getCompareImage(Image base, IDiff node) {
@@ -147,6 +155,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 */
 	protected String getDelegateText(Object element) {
 		ILabelProvider modelLabelProvider = getDelegateLabelProvider();
+		element = internalGetElement(element);
 		String base = modelLabelProvider.getText(element);
 		if (base == null || base.length() == 0) {
 			if (element instanceof ModelProvider) {
@@ -204,7 +213,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
-		return getDelegateLabelProvider().isLabelProperty(element, property);
+		return getDelegateLabelProvider().isLabelProperty(internalGetElement(element), property);
 	}
 
 	/* (non-Javadoc)
@@ -305,9 +314,9 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * By default, <code>false</code> is returned. Subclasses may override
 	 * and control individual overlays by overriding the appropriate
 	 * query methods. Overlays provided by this class include problem marker
-	 * severity ({@link #getMarkerSeverity(Object)}), propogated conflicts 
+	 * severity ({@link #getMarkerSeverity(Object)}), propagated conflicts 
 	 * ({@link #hasDecendantConflicts(Object)} and busy state ({@link #isBusy(Object)}).
-	 * @return hether the overlays provided by this class should be applied
+	 * @return whether the overlays provided by this class should be applied
 	 */
 	protected boolean isIncludeOverlays() {
 		return false;
@@ -328,7 +337,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * @return the marker severity
 	 */
 	protected int getMarkerSeverity(Object element) {
-		ResourceMapping mapping = Utils.getResourceMapping(element);
+		ResourceMapping mapping = Utils.getResourceMapping(internalGetElement(element));
 		int result = -1;
 		if (mapping != null) {
 			try {
@@ -352,11 +361,11 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	}
 
 	/**
-	 * Return whether the given element has decendant conflicts.
-	 * By defautl, <code>false</code> is returned. Subclasses 
+	 * Return whether the given element has descendant conflicts.
+	 * By default, <code>false</code> is returned. Subclasses 
 	 * may override.
 	 * @param element the element
-	 * @return whether the given element has decendant conflicts
+	 * @return whether the given element has descendant conflicts
 	 */
 	protected boolean hasDecendantConflicts(Object element) {
 		return false;
@@ -375,10 +384,10 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 
 	/**
 	 * Return whether the given element is busy (i.e. is involved
-	 * in an opertion. By default, <code>false</code> is returned.
+	 * in an operation. By default, <code>false</code> is returned.
 	 * Subclasses may override.
 	 * @param element the element
-	 * @return hether the given element is busy
+	 * @return whether the given element is busy
 	 */
 	protected boolean isBusy(Object element) {
 		return false;
@@ -390,10 +399,10 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * {@link IFontProvider}, subclasses that wish to get 
 	 * busy indication using a font can do so.
 	 * @param element the element
-	 * @return the font to indicate tahtthe element is busy
+	 * @return the font to indicate that the element is busy
 	 */
 	public Font getFont(Object element) {
-		if(isBusy(element)) {
+		if(isBusy(internalGetElement(element))) {
 			if (busyFont == null) {
 				Font defaultFont = JFaceResources.getDefaultFont();
 				FontData[] data = defaultFont.getFontData();
