@@ -14,9 +14,10 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -38,7 +39,8 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	
 	private boolean fDetectRoots = false;
-	private Map fRoots = new HashMap(5);
+	private Set fPotentialRoots = null;
+	private List fRoots = new ArrayList();
 	private String fArchivePath = null;
 	/**
 	 * Unique identifier for the external archive source container type
@@ -54,13 +56,10 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * @param detectRootPaths whether root container paths should be detected. When
 	 *   <code>true</code>, searching is performed relative to a root path
 	 *   within the archive based on fully qualified file names. A root
-	 *   path is automatically determined for each file type when the first
+	 *   path is automatically determined for when the first
 	 *   successful search is performed. For example, when searching for a file
 	 *   named <code>a/b/c.d</code>, and an entry in the archive named
-	 *   <code>r/a/b/c.d</code> exists, the root path is set to <code>r</code>
-	 *   for file type <code>d</code>.
-	 *   From that point on, searching is performed relative to <code>r</code>
-	 *   for files of type <code>d</code>.
+	 *   <code>r/a/b/c.d</code> exists, a root path is set to <code>r</code>.
 	 *   When searching for an unqualified file name, root containers are not
 	 *   considered.
 	 *   When <code>false</code>, searching is performed by
@@ -80,15 +79,9 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		synchronized (file) {
 			boolean isQualfied = name.indexOf('/') > 0;
 			if (fDetectRoots && isQualfied) {
-				String root = getRoot(file, name);
-				if (root != null) {
-					if (root.length() > 0) {
-						name = root + name;
-					}
-					ZipEntry entry = file.getEntry(name);
-					if (entry != null) {
-						return new Object[]{new ZipEntryStorage(file, entry)};
-					}
+				ZipEntry entry = searchRoots(file, name);
+				if (entry != null) {
+					return new Object[]{new ZipEntryStorage(file, entry)};
 				}
 			} else {
 				// try exact match
@@ -133,51 +126,64 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * @param name file name
 	 * @exception CoreException if an exception occurrs while detecting the root
 	 */
-	private String getRoot(ZipFile file, String name) throws CoreException {
-		int index = name.lastIndexOf('.');
-		String fileType = null;
-		if (index >= 0) {
-			fileType = name.substring(index);
-		} else {
-			// no filetype, use "" as key
-			fileType = ""; //$NON-NLS-1$
-		}
-		String root = (String) fRoots.get(fileType);
-		if (root == null) {
-			root = detectRoot(file, name);
-			if (root != null) {
-				fRoots.put(fileType, root);
-			}
-		}
-		return root;
-	}
-	
-	/**
-	 * Detects and returns the root path in this archive by searching for an entry
-	 * with the given name, as a suffix.
-	 * 
-	 * @param file zip file to search in
-	 * @param name entry to search for
-	 * @return root
-	 * @exception CoreException if an exception occurrs while detecting the root
-	 */
-	private String detectRoot(ZipFile file, String name) throws CoreException {
-		synchronized (file) {
+	private ZipEntry searchRoots(ZipFile file, String name) {
+		if (fPotentialRoots == null) {
+			fPotentialRoots = new HashSet();
+			fPotentialRoots.add(""); //$NON-NLS-1$
+			// all potential roots are the directories
 			Enumeration entries = file.entries();
-			try {
-				while (entries.hasMoreElements()) {
-					ZipEntry entry = (ZipEntry)entries.nextElement();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				if (entry.isDirectory()) {
+					fPotentialRoots.add(entry.getName());
+				} else {
 					String entryName = entry.getName();
-					if (entryName.endsWith(name)) {
-						int rootLength = entryName.length() - name.length();
-						if (rootLength > 0) {
-							return entryName.substring(0, rootLength);
-						} 
-						return ""; //$NON-NLS-1$
+					int index = entryName.lastIndexOf("/"); //$NON-NLS-1$
+					while (index > 0) {
+						if (fPotentialRoots.add(entryName.substring(0, index + 1))) {
+							entryName = entryName.substring(0, index);
+							index = entryName.lastIndexOf("/"); //$NON-NLS-1$
+						} else {
+							break;
+						}
 					}
 				}
-			} catch (IllegalStateException e) {
-				abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_1, new String[] {getName()}), e); 
+			}
+		}
+		int i = 0;
+		while (i < fRoots.size()) {
+			String root = (String) fRoots.get(i);
+			ZipEntry entry = file.getEntry(root+name);
+			if (entry != null) {
+				return entry;
+			}
+			i++;
+		}
+		if (!fPotentialRoots.isEmpty()) {
+			Iterator roots = fPotentialRoots.iterator();
+			String root = null;
+			ZipEntry entry = null;
+			while (roots.hasNext()) {
+				root = (String) roots.next();
+				entry = file.getEntry(root+name);
+				if (entry != null) {
+					break;
+				}
+			}
+			if (entry != null) {
+				if (root != null) {
+					fRoots.add(root);
+					fPotentialRoots.remove(root);
+					// remove any roots that begin with the new root, as roots cannot be nested
+					Iterator rs = fPotentialRoots.iterator();
+					while (rs.hasNext()) {
+						String r = (String) rs.next();
+						if (r.startsWith(root)) {
+							rs.remove();
+						}
+					}
+				}				
+				return entry;
 			}
 		}
 		return null;
@@ -240,6 +246,9 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 */
 	public void dispose() {
 		super.dispose();
+		if (fPotentialRoots != null) {
+			fPotentialRoots.clear();
+		}
 		fRoots.clear();
 	}	
 }
