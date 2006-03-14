@@ -295,6 +295,11 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		return false;
 	}
 
+	private boolean isEnabled() {
+		final Object input = getViewer().getInput();
+		return (input instanceof ChangeSetModelProvider);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider#getElements(java.lang.Object)
 	 */
@@ -381,6 +386,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	public Object[] getChildren(TreePath parentPath) {
+		if (!isEnabled())
+			return new Object[0];
 		if (parentPath.getSegmentCount() == 0)
 			return getRootElements();
 		Object first = parentPath.getFirstSegment();
