@@ -477,7 +477,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * <code>fIndentation</code>.
 	 */
 	protected void computeIndentations() {
-		if (fCanvas == null)
+		if (fCanvas == null || fCanvas.isDisposed())
 			return;
 
 		GC gc= new GC(fCanvas);
