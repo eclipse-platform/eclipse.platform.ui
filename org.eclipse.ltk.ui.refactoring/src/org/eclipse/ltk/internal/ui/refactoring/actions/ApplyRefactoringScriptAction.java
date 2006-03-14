@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.scripting.ApplyRefactoringScriptWizard;
 
@@ -36,6 +38,28 @@ public final class ApplyRefactoringScriptAction implements IWorkbenchWindowActio
 	/** The wizard width */
 	private static final int SIZING_WIZARD_WIDTH= 470;
 
+	/**
+	 * Shows the apply script wizard.
+	 * 
+	 * @param window
+	 *            the workbench window
+	 */
+	public static void showApplyScriptWizard(final IWorkbenchWindow window) {
+		Assert.isNotNull(window);
+		final IWorkbenchWizard wizard= new ApplyRefactoringScriptWizard();
+		final ISelection selection= window.getSelectionService().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			final IStructuredSelection structured= (IStructuredSelection) selection;
+			wizard.init(window.getWorkbench(), structured);
+		} else
+			wizard.init(window.getWorkbench(), null);
+		final WizardDialog dialog= new WizardDialog(window.getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
+		dialog.open();
+	}
+
 	/** The workbench window, or <code>null</code> */
 	private IWorkbenchWindow fWindow= null;
 
@@ -58,18 +82,7 @@ public final class ApplyRefactoringScriptAction implements IWorkbenchWindowActio
 	 */
 	public void run(final IAction action) {
 		if (fWindow != null) {
-			final IWorkbenchWizard wizard= new ApplyRefactoringScriptWizard();
-			final ISelection selection= fWindow.getSelectionService().getSelection();
-			if (selection instanceof IStructuredSelection) {
-				final IStructuredSelection structured= (IStructuredSelection) selection;
-				wizard.init(fWindow.getWorkbench(), structured);
-			} else
-				wizard.init(fWindow.getWorkbench(), null);
-			final WizardDialog dialog= new WizardDialog(fWindow.getShell(), wizard);
-			dialog.create();
-			dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
-			dialog.open();
+			showApplyScriptWizard(fWindow);
 		}
 	}
 
