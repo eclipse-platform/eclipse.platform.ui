@@ -1,5 +1,14 @@
 package org.eclipse.ui.internal.progress;
-
+/*******************************************************************************
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -41,8 +50,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
- * JobTreeElementInfoItem is the abstract superclass of items for displaying
- * jobs and groups of jobs.
+ * ProgressInfoItem is the item used to show jobs.
  * 
  * @since 3.1
  * 
@@ -532,7 +540,10 @@ class ProgressInfoItem extends Composite {
 				((Link) taskEntries.get(i)).dispose();
 
 			}
-			taskEntries = taskEntries.subList(0, infos.length-1);
+			if(infos.length > 1)
+				taskEntries = taskEntries.subList(0, infos.length-1);
+			else
+				taskEntries.clear();
 		}
 	}
 
