@@ -42,14 +42,14 @@ public class LaunchTreeModel extends AsynchronousTreeModel {
     }
 
     protected IAsynchronousContentAdapter getContentAdapter(Object element) {
+        IAsynchronousContentAdapter contentAdapter = super.getContentAdapter(element);
+        if (contentAdapter != null) {
+            return contentAdapter;
+        }
+        
         AsynchronousContentAdapter legacyAdapter = getLegacyAdapter(element);
         if (legacyAdapter != null) {
             return legacyAdapter;
-        }
-
-        IAsynchronousContentAdapter presentationAdapter = super.getContentAdapter(element);
-        if (presentationAdapter != null) {
-            return presentationAdapter;
         }
         
         return new BogusTreeAdapter();

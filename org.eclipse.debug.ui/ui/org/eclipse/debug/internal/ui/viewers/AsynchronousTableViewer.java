@@ -1,12 +1,18 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CellEditor;
@@ -33,14 +39,35 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * @since 3.2
  */
 public class AsynchronousTableViewer extends AsynchronousViewer implements Listener {
+    /**
+     * Memento type for column sizes. Sizes are keyed by colunm presentation id 
+     */
+    private static final String COLUMN_SIZES = "COLUMN_SIZES"; //$NON-NLS-1$
+    /**
+     * Memento type for the visible columns for a presentation context.
+     * A memento is created for each colunm presentation keyed by column number
+     */
+    private static final String VISIBLE_COLUMNS = "VISIBLE_COLUMNS";     //$NON-NLS-1$
+    /**
+     * Memento key for the number of visible columns in a VISIBLE_COLUMNS memento
+     * or for the width of a column
+     */
+    private static final String SIZE = "SIZE";   //$NON-NLS-1$
+    /**
+     * Memento key prefix a visible column
+     */
+    private static final String COLUMN = "COLUMN";   //$NON-NLS-1$  
+    
 
     private Table fTable;
 
@@ -48,6 +75,25 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     private TableEditorImpl fTableEditorImpl;
 
+    /**
+     * Map of column ids to persisted sizes
+     */
+    private Map fColumnSizes = new HashMap();
+    
+    /**
+     * Whether columns need re-building.
+     */
+    private boolean fBuildColumns = true;
+    
+    /**
+     * Current column presentation or <code>null</code>
+     */
+    private IColumnPresentation fColumnPresentation;
+    /**
+     * Map of columns presentation id to its visible colums ids (String[])
+     * When a columns presentation is not in the map, default settings are used.
+     */
+    private Map fVisibleColumns = new HashMap();    
     public AsynchronousTableViewer(Composite parent) {
         this(parent, SWT.VIRTUAL);
     }
@@ -70,7 +116,178 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         fTableEditor = new TableEditor(fTable);
         fTableEditorImpl = createTableEditorImpl();
     }
+    
+    protected void persistColumnSizes() {
+        Table table = getTable();
+        TableColumn[] columns = table.getColumns();
+        for (int i = 0; i < columns.length; i++) {
+            TableColumn tableColumn = columns[i];
+            Object id = tableColumn.getData();
+            fColumnSizes.put(id, new Integer(tableColumn.getWidth()));
+        }
+    }
+    
+    /**
+     * Returns identifiers of the visible columns in this viewer, or <code>null</code>
+     * if there is currently no column presentation.
+     *  
+     * @return visible columns or <code>null</code>
+     */
+    public String[] getVisibleColumns() {
+        IColumnPresentation presentation = getColumnPresentation();
+        if (presentation != null) {
+            String[] columns = (String[]) fVisibleColumns.get(presentation.getId());
+            if (columns == null) {
+                return presentation.getInitialColumns();
+            }
+            return columns;
+        }
+        return null;
+    }
+    
+    /**
+     * Configures the columns based on the current settings.
+     * 
+     * @param input
+     */
+    protected void configureColumns() {
+        if (fColumnPresentation != null) {
+            if (fBuildColumns) {
+                buildColumns(fColumnPresentation);                    
+            }
+        } else {
+            // get rid of columns
+            buildColumns(null);
+        }
+    }
+    
+    /**
+     * Returns whether columns can be toggled on/off for the current input.
+     * 
+     * @return whether columns can be toggled on/off for the current input
+     */
+    public boolean canToggleColumns() {
+        return fColumnPresentation != null && fColumnPresentation.isOptional();
+    }
+    
+    /**
+     * Returns the current column presentation for this viewer, or <code>null</code>
+     * if none.
+     * 
+     * @return column presentation or <code>null</code>
+     */
+    public IColumnPresentation getColumnPresentation() {
+        return fColumnPresentation;
+    }
 
+    /**
+     * Returns the column editor factory for the given element or <code>null</code>.
+     * 
+     * @param input
+     * @return column editor factory of <code>null</code>
+     */
+    protected IColumnEditorFactoryAdapter getColumnEditorFactoryAdapter(Object input) {
+        if (input instanceof IColumnEditorFactoryAdapter) {
+            return (IColumnEditorFactoryAdapter) input;
+        }
+        if (input instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) input;
+            return (IColumnEditorFactoryAdapter) adaptable.getAdapter(IColumnEditorFactoryAdapter.class);
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the column presentation factory for the given element or <code>null</code>.
+     * 
+     * @param input
+     * @return column presentation factory of <code>null</code>
+     */
+    protected IColumnPresentationFactoryAdapter getColumnPresenetationFactoryAdapter(Object input) {
+        if (input instanceof IColumnPresentationFactoryAdapter) {
+            return (IColumnPresentationFactoryAdapter) input;
+        }
+        if (input instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) input;
+            return (IColumnPresentationFactoryAdapter) adaptable.getAdapter(IColumnPresentationFactoryAdapter.class);
+        }
+        return null;
+    }
+    
+    protected void buildColumns(IColumnPresentation presentation) {
+        persistColumnSizes();
+        // dispose current columns, persisting their weigts
+        Table table = getTable();
+        TableColumn[] columns = table.getColumns();
+        for (int i = 0; i < columns.length; i++) {
+            columns[i].dispose();
+        }
+        // TODO: persist/restore columns per presentation
+        if (presentation != null) {
+            String[] columnIds = getVisibleColumns();
+            for (int i = 0; i < columnIds.length; i++) {
+                String id = columnIds[i];
+                String header = presentation.getHeader(id);
+                // TODO: allow client to specify style
+                TableColumn column = new TableColumn(table, SWT.LEFT, i);
+                column.setMoveable(true);
+                column.setText(header);
+                ImageDescriptor image = presentation.getImageDescriptor(id);
+                if (image != null) {
+                    column.setImage(getImage(image));
+                }
+                column.setData(id);
+            }
+            table.setHeaderVisible(true);
+            table.setLinesVisible(true);
+        } else {
+            table.setHeaderVisible(false);
+            table.setLinesVisible(false);
+        }
+        columns = table.getColumns();
+        for (int i = 0; i < columns.length; i++) {
+            Integer width = (Integer) fColumnSizes.get(columns[i].getData());
+            if (width == null) {
+                columns[i].pack();
+            } else {
+                columns[i].setWidth(width.intValue());
+            }
+        }
+        
+    }
+
+    /**
+     * Initializes veiwer state from the memento
+     * 
+     * @param memento
+     */
+    public void initState(IMemento memento) {
+        IMemento[] mementos = memento.getChildren(COLUMN_SIZES);
+        for (int i = 0; i < mementos.length; i++) {
+            IMemento child = mementos[i];
+            String id = child.getID();
+            Integer size = child.getInteger(SIZE);
+            if (size != null) {
+                fColumnSizes.put(id, size);
+            }
+        }
+        mementos = memento.getChildren(VISIBLE_COLUMNS);
+        for (int i = 0; i < mementos.length; i++) {
+            IMemento child = mementos[i];
+            String id = child.getID();
+            Integer integer = child.getInteger(SIZE);
+            if (integer != null) {
+                int length = integer.intValue();
+                String[] columns = new String[length];
+                for (int j = 0; j < length; j++) {
+                    columns[j] = child.getString(COLUMN+Integer.toString(j));
+                }
+                fVisibleColumns.put(id, columns);
+            }
+        }
+        
+    }
+    
     protected void hookControl(Control control) {
         super.hookControl(control);
         control.addMouseListener(new MouseAdapter() {
@@ -81,8 +298,15 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     }
 
     public synchronized void dispose() {
+        if (fColumnPresentation != null) {
+            // persist column sizes, if any
+            buildColumns(null);
+            fColumnPresentation.dispose();
+        }
+        if (fTableEditor != null)
+            fTableEditor.dispose();
         fTable.dispose();
-        fTableEditor.dispose();
+        
         super.dispose();
     }  
 
@@ -460,6 +684,4 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 			}
 		}
 	}
-	
-	
 }

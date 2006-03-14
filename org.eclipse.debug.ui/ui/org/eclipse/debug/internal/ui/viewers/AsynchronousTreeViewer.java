@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
@@ -504,7 +504,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     protected void resetColumns(Object input) {
     	if (input != null) {
     		// only change columns if the input is non-null (persist when empty)
-	    	IColumnPresenetationFactoryAdapter factory = getColumnPresenetationFactoryAdapter(input);
+	    	IColumnPresentationFactoryAdapter factory = getColumnPresenetationFactoryAdapter(input);
 	    	PresentationContext context = (PresentationContext) getPresentationContext();
 	    	String type = null;
 	    	if (factory != null) {
@@ -626,13 +626,13 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * @param input
      * @return column presentation factory of <code>null</code>
      */
-    protected IColumnPresenetationFactoryAdapter getColumnPresenetationFactoryAdapter(Object input) {
-    	if (input instanceof IColumnPresenetationFactoryAdapter) {
-			return (IColumnPresenetationFactoryAdapter) input;
+    protected IColumnPresentationFactoryAdapter getColumnPresenetationFactoryAdapter(Object input) {
+    	if (input instanceof IColumnPresentationFactoryAdapter) {
+			return (IColumnPresentationFactoryAdapter) input;
 		}
     	if (input instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) input;
-			return (IColumnPresenetationFactoryAdapter) adaptable.getAdapter(IColumnPresenetationFactoryAdapter.class);
+			return (IColumnPresentationFactoryAdapter) adaptable.getAdapter(IColumnPresentationFactoryAdapter.class);
 		}
     	return null;
     }

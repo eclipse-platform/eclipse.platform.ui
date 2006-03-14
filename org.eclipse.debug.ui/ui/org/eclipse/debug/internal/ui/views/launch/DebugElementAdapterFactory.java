@@ -47,7 +47,7 @@ import org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
@@ -85,7 +85,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IAsynchronousContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryBlock = new MemoryBlockContentAdapter();
     
-    private static IColumnPresenetationFactoryAdapter fgVariableColumnFactory = new VariableColumnFactoryAdapter();
+    private static IColumnPresentationFactoryAdapter fgVariableColumnFactory = new VariableColumnFactoryAdapter();
     
 
     /* (non-Javadoc)
@@ -174,7 +174,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         }
         
-        if (adapterType.equals(IColumnPresenetationFactoryAdapter.class)) {
+        if (adapterType.equals(IColumnPresentationFactoryAdapter.class)) {
         	if (adaptableObject instanceof IStackFrame) {
         		return fgVariableColumnFactory;
         	}
@@ -193,7 +193,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      */
     public Class[] getAdapterList() {
         return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class,
-        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyFactoryAdapter.class, IColumnPresenetationFactoryAdapter.class, IColumnEditorFactoryAdapter.class};
+        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyFactoryAdapter.class, IColumnPresentationFactoryAdapter.class, IColumnEditorFactoryAdapter.class};
     }
 
 }
