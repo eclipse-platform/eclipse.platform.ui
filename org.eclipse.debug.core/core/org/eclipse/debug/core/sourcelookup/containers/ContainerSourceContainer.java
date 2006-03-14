@@ -47,7 +47,6 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	private boolean fSubfolders = false;
 	
 	private IPath fRootPath = null;
-	private String[] fRootSegments = null;
 	private File fRootFile = null;
 	private IWorkspaceRoot fRoot = null;
 
@@ -63,7 +62,6 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		fSubfolders = subfolders;
 		fRootPath = fContainer.getLocation();
 		if (fRootPath != null) {
-			fRootSegments = fRootPath.segments();
 			fRootFile = fRootPath.toFile();
 			fRoot = ResourcesPlugin.getWorkspace().getRoot();
 		}
@@ -102,26 +100,14 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 				File osFile = new File(fRootFile, name);
 				if (osFile.exists()) {
 					try {
-						// See bug 82627 and bug 95679 - we have to append the container path in the case
-						// that Eclipse thinks it is, with the file system case of the file in order to
-						// be successful when finding the IFile for a location.
-						// See bug 98090 - we need to handle relative path names
-						Path canonicalPath = new Path(osFile.getCanonicalPath());
-						String[] canonicalSegments = canonicalPath.segments();
-						IPath workspacePath = new Path(""); //$NON-NLS-1$
-						workspacePath = workspacePath.setDevice(canonicalPath.getDevice());
-						for (int i = 0; i < canonicalSegments.length; i++) {
-							String segment = canonicalSegments[i];
-							if (i < fRootSegments.length) {
-								if (fRootSegments[i].equalsIgnoreCase(segment)) {
-									workspacePath = workspacePath.append(fRootSegments[i]);
-								} else {
-									workspacePath = workspacePath.append(segment);
-								}
-							} else {
-								workspacePath = workspacePath.append(segment);
-							}
-						}
+						// 1. See bug 82627 - case insensitive source lookup
+						
+						// 2. We no longer have to account for bug 95832, so we just create a path
+						//    on the OS canonical path (fix to bug 95679 was removed).
+						
+						// 3. See bug 98090 - we need to handle relative path names
+						
+						IPath workspacePath = new Path(osFile.getCanonicalPath());
 						IFile[] files = fRoot.findFilesForLocation(workspacePath);
 						if (isFindDuplicates() && files.length > 1) {
 							for (int i = 0; i < files.length; i++) {
