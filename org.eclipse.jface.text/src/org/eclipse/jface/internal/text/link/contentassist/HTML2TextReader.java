@@ -54,6 +54,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		fgTags.add("li"); //$NON-NLS-1$
 		fgTags.add("ul"); //$NON-NLS-1$
 		fgTags.add("pre"); //$NON-NLS-1$
+		fgTags.add("head"); //$NON-NLS-1$
 
 		fgEntityLookup= new HashMap(7);
 		fgEntityLookup.put("lt", "<"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -71,6 +72,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	private int fStartOffset= -1;
 	private boolean fInParagraph= false;
 	private boolean fIsPreformattedText= false;
+	private boolean fIgnore= false;
 
 	/**
 	 * Transforms the HTML text from the reader to formatted text.
@@ -124,6 +126,8 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 		if (c == '<')
 			return  processHTMLTag();
+		else if (fIgnore)
+			return EMPTY_STRING;
 		else if (c == '&')
 			return processEntity();
 		else if (fIsPreformattedText)
@@ -206,6 +210,16 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 		if ("/dd".equals(html)) //$NON-NLS-1$
 			return LINE_DELIM;
+		
+		if ("head".equals(html)) { //$NON-NLS-1$
+			fIgnore= true;
+			return EMPTY_STRING;
+		}
+		
+		if ("/head".equals(html)) { //$NON-NLS-1$
+			fIgnore= false;
+			return EMPTY_STRING;
+		}
 
 		return EMPTY_STRING;
 	}

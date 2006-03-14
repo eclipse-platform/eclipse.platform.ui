@@ -308,6 +308,8 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 		else if (fHideScrollBars && true)
 			styles= new String[] { "overflow:hidden;", "word-wrap: break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
 		
+		content= content.replaceAll("overflow: auto;", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		if (styles != null) {
 			StringBuffer buffer= new StringBuffer(content);
 			insertStyles(buffer, styles);
@@ -334,6 +336,8 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 
 		// Find insertion index
 		int index= buffer.indexOf("<body "); //$NON-NLS-1$
+		if (index == -1)
+			index= buffer.indexOf("<body>"); //$NON-NLS-1$
 		if (index == -1)
 			return;
 
@@ -393,7 +397,7 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 		}
 		Rectangle bounds= fTextLayout.getBounds();
 		
-		bounds.width= bounds.width + 15; 
+		bounds.width= bounds.width + 80; 
 		bounds.height= bounds.height + 25; 
 		
 		if (fStatusFieldText != null) {
