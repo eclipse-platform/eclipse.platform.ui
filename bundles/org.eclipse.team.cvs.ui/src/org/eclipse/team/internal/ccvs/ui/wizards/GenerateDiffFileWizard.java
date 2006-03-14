@@ -1097,7 +1097,7 @@ public class GenerateDiffFileWizard extends Wizard {
             //Add new files for now
             options.add(Diff.INCLUDE_NEWFILES);
             
-            if(unifiedDiffOption.getSelection() || unified_workspaceRelativeOption.getSelection()) {
+            if(unifiedDiffOption.getSelection()) {
                 options.add(Diff.UNIFIED_FORMAT);
             } else if(contextDiffOption.getSelection()) {
                 options.add(Diff.CONTEXT_FORMAT);
