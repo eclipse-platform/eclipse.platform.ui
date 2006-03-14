@@ -47,6 +47,12 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		Dictionary params = task.getParameters();
 		String id = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
 		String path = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_PATH);
+		boolean showIntro = true;
+		String showIntroParam = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_SHOW_INTRO);
+		if (showIntroParam != null) {
+			showIntro = showIntroParam.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
+		
 		MementoStateManager stateManager = new MementoStateManager(memento, task.getCompositeCheatSheet().getCheatSheetManager());
 		if (path != null) {
 			URL url;
@@ -62,6 +68,9 @@ public class CheatsheetTaskEditor extends TaskEditor {
 			}
 		} else {
 		    viewer.setInput(id, stateManager);
+		}
+		if (!showIntro) {
+			viewer.advanceIntroItem();
 		}
 		viewer.addListener(new TaskListener());
 	}

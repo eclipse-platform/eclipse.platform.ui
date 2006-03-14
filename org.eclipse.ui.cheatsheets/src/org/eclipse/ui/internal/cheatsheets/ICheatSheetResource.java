@@ -52,5 +52,6 @@ public interface ICheatSheetResource {
 	public static final String COMPOSITE_GOTO_TASK = "COMPOSITE_GOTO_TASK"; //$NON-NLS-1$
 	public static final String COMPOSITE_RESTART_ALL = "COMPOSITE_RESTART_ALL"; //$NON-NLS-1$
 	public static final String CHEATSHEET_RETURN = "CHEATSHEET_RETURN"; //$NON-NLS-1$
+	public static final String CHEATSHEET_VIEW = "CHEATSHEET_VIEW"; //$NON-NLS-1$
 }
 

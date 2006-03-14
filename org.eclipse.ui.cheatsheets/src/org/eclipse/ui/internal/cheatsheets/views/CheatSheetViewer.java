@@ -127,7 +127,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		saveHelper = new CheatSheetSaveHelper();
 	}
 
-	/*package*/ void advanceIntroItem() {
+	public void advanceIntroItem() {
 		resetItemState();
 		/* LP-item event */
 		// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, introItem);

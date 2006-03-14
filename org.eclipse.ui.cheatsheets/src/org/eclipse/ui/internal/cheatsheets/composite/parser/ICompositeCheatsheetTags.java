@@ -36,6 +36,7 @@ public interface ICompositeCheatsheetTags {
     // Cheatsheet task parameters
 	public static final String CHEATSHEET_TASK_ID = "id"; //$NON-NLS-1$
 	public static final String CHEATSHEET_TASK_PATH = "path"; //$NON-NLS-1$
+	public static final String CHEATSHEET_TASK_SHOW_INTRO = "showIntro"; //$NON-NLS-1$
 	
     // Tags used in Memento
 	public static final String TASK_DATA = "taskData"; //$NON-NLS-1$

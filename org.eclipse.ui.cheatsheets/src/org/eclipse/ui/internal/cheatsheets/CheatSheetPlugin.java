@@ -63,6 +63,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	public static final IPath ICONS_PATH = new Path("$nl$/icons/"); //$NON-NLS-1$	
 	public static final String T_OBJ = "obj16/"; //$NON-NLS-1$
 	public static final String T_ELCL = "elcl16/"; //$NON-NLS-1$
+	public static final String T_VIEW = "view16/"; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.
@@ -199,6 +200,10 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		path = ICONS_PATH.append(T_ELCL).append("restart_all.gif");//$NON-NLS-1$
 		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
 		reg.put(ICheatSheetResource.COMPOSITE_RESTART_ALL, imageDescriptor);
+
+		path = ICONS_PATH.append(T_VIEW).append("cheatsheet_view.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.CHEATSHEET_VIEW, imageDescriptor);
 	}
 
 	/**

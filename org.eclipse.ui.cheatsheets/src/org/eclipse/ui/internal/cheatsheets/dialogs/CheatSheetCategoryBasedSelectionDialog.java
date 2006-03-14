@@ -92,6 +92,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	private final static String STORE_EXPANDED_CATEGORIES_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 
 	private final static String STORE_SELECTED_CHEATSHEET_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_SELECTED_CHEATSHEET_ID"; //$NON-NLS-1$
+	
+	private final static String STORE_RADIO_SETTING = "CheatSheetCategoryBasedSelectionDialog.STORE_RADIO_SETTING"; //$NON-NLS-1$
+	
+	private final static String STORE_CHEATSHEET_FILENAME = "CheatSheetCategoryBasedSelectionDialog.STORE_CHEATSHEET_FILENAME"; //$NON-NLS-1$
 
 	private Button browseFileButton;
 
@@ -176,6 +180,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		newShell.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_VIEW));
 		//TODO need to add help context id
 		// WorkbenchHelp.setHelp(newShell,
 		// IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
@@ -225,7 +230,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		treeViewer = new TreeViewer(tree);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 300;
-		data.heightHint = 300;
+		data.heightHint = 220;
 		treeViewer.getTree().setLayoutData(data);
 		treeViewer.setContentProvider(getCheatSheetProvider());
 		treeViewer.setLabelProvider(new CheatsheetLabelProvider());
@@ -238,7 +243,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		desc.setEditable(false);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 100;
-		data.heightHint = 48;
+		data.heightHint = 40;
 		desc.setLayoutData(data);
 
 		if (activityViewerFilter.getHasEncounteredFilteredItem())
@@ -269,15 +274,16 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		selectFileLayout.numColumns = 2;
 		selectFileComposite.setLayout(selectFileLayout);
 		GridData sfCompositeData = new GridData(GridData.FILL_HORIZONTAL);
+		sfCompositeData.widthHint = 300;
 		selectFileComposite.setLayoutData(sfCompositeData);
 		selectFileText = new Text(selectFileComposite, SWT.BORDER);
 		GridData sfTextData = new GridData(GridData.FILL_HORIZONTAL);
 		selectFileText.setLayoutData(sfTextData);
 		browseFileButton = new Button(selectFileComposite, SWT.NULL);
 		browseFileButton.setText(Messages.SELECTION_DIALOG_FILEPICKER_BROWSE);
-		selectRegisteredRadio.setSelection(true);
 		
 		restoreWidgetValues();
+		restoreFileSettings();
 
 		if (!treeViewer.getSelection().isEmpty())
 			// we only set focus if a selection was restored
@@ -529,6 +535,19 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		if (category != null)
 			selectPreviouslySelectedCheatSheet(category);
 	}
+	
+	/**
+	 * Restores the state of the radio button and file name fields
+	 */
+	private void restoreFileSettings() {
+	    final boolean isFileSelected = settings.getBoolean(STORE_RADIO_SETTING);
+		selectFileRadio.setSelection(isFileSelected);	
+		selectRegisteredRadio.setSelection(!isFileSelected);	
+		final String fileName = settings.get(STORE_CHEATSHEET_FILENAME);
+		if (fileName != null) {
+			selectFileText.setText(fileName);	
+		}
+	}
 
 	/**
 	 * Store the current values of self's widgets so that they can be restored
@@ -538,6 +557,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	public void saveWidgetValues() {
 		storeExpandedCategories();
 		storeSelectedCheatSheet();
+		storeFileSettings();
 	}
 
 	/**
@@ -601,5 +621,13 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 			return;
 
 		settings.put(STORE_SELECTED_CHEATSHEET_ID, element.getID());
+	}
+	
+	/**
+	 * Stores the state of the radio button and file name fields
+	 */
+	private void storeFileSettings() {
+		settings.put(STORE_RADIO_SETTING, selectFileRadio.getSelection());	
+		settings.put(STORE_CHEATSHEET_FILENAME, selectFileText.getText());	
 	}
 }
