@@ -81,10 +81,6 @@ import org.eclipse.ui.keys.IBindingService;
  */
 public final class LegacyActionPersistence extends RegistryPersistence {
 
-	/**
-	 * 
-	 */
-	private static final String STUPID_NAVIGATE = "navigate"; //$NON-NLS-1$
 
 	/**
 	 * The index of the action set elements in the indexed array.
@@ -504,7 +500,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					window);
 		}
 
-
 		/*
 		 * Create the handler. TODO The image style is read at the workbench
 		 * level, but it is hard to communicate this information to this point.
@@ -632,7 +627,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		final char mnemonic = LegacyActionTools.extractMnemonic(label);
 
 		// Count how many locations there will be.
-		final String menubarPath = adjustPath(readOptional(element, ATT_MENUBAR_PATH));
+		final String menubarPath = adjustPath(readOptional(element,
+				ATT_MENUBAR_PATH));
 		final String toolbarPath = readOptional(element, ATT_TOOLBAR_PATH);
 		int locationCount = 0;
 		if (menubarPath != null) {
@@ -903,21 +899,19 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element, final String id,
 			final List warningsToLog, final LegacyLocationInfo locationInfo,
 			final Expression visibleWhenExpression, final String viewId) {
-		
+
 		// Read out the menus and groups, if any.
 		// they must be read first, to allow anybody elses path to be adjusted
 		final IConfigurationElement[] menuElements = element
 				.getChildren(TAG_MENU);
 		final SReference[] menuAndGroupReferences;
 		if ((menuElements != null) && (menuElements.length > 0)) {
-			menuAndGroupReferences = readMenusAndGroups(
-					menuElements, id, warningsToLog, locationInfo,
-					visibleWhenExpression);
+			menuAndGroupReferences = readMenusAndGroups(menuElements, id,
+					warningsToLog, locationInfo, visibleWhenExpression);
 		} else {
 			menuAndGroupReferences = null;
 		}
-		
-		
+
 		// Read its child elements.
 		final IConfigurationElement[] actionElements = element
 				.getChildren(TAG_ACTION);
@@ -965,10 +959,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		// SGroup nav = menuService.getGroup(STUPID_NAVIGATE);
 		// if (!nav.isDefined()) {
 		// nav.define(new SLocation(new SBar(SBar.TYPE_MENU, null)));
-		//		}
+		// }
 		// stupid navigate group
-		
-		
+
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -1251,24 +1244,36 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		if (path == null) {
 			return null;
 		}
-		String result = path;
-		int revIdx = path.lastIndexOf('/');
-		String id = path;
-		if (revIdx > -1) {
-			id = path.substring(revIdx + 1);
+
+		SBar loc = new SBar(SBar.TYPE_MENU, path);
+		ILocationElementTokenizer tokenizer = loc.getTokenizer();
+		LocationElementToken token = null;
+		while (tokenizer.hasMoreTokens()) {
+			token = tokenizer.nextToken();
 		}
-		if (path.equals(STUPID_NAVIGATE)) {
-			result = null;
-		} else if (id.length() > 0 && menuService.getGroup(id).isDefined()) {
-			if (revIdx > -1) {
-				result = path.substring(0, revIdx);
+		if (token == null || token.getId() == null
+				|| token.getId().length() == 0) {
+			return null;
+		}
+
+		String result = null;
+		LocationElement element = token.getLocation().getPath();
+		if (element instanceof LeafLocationElement) {
+			result = ((LeafLocationElement) element).getPath();
+		} else if (Policy.EXPERIMENTAL_MENU) {
+			System.err.println("adjustPath: not a leaf: " + element); //$NON-NLS-1$
+		}
+
+		if (menuService.getMenu(token.getId()).isDefined()) {
+			if (result == null) {
+				result = token.getId();
 			} else {
-				result = null;
+				result += LeafLocationElement.PATH_SEPARATOR + token.getId();
 			}
 		}
 
-		if (Policy.EXPERIMENTAL_MENU 
-				&& path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) { 
+		if (Policy.EXPERIMENTAL_MENU
+				&& path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) {
 			System.err.println("adjustPath: " + path); //$NON-NLS-1$
 		}
 		return result;
