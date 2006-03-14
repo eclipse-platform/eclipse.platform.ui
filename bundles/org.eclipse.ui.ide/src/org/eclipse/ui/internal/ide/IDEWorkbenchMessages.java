@@ -210,6 +210,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String DeleteResourceAction_outOfSyncQuestion;
 	public static String DeleteResourceAction_deletionExceptionMessage;
 	public static String DeleteResourceAction_jobName;
+	public static String DeleteResourceAction_checkJobName;
 
 	public static String AddBookmarkLabel;
 	public static String AddBookmarkToolTip;

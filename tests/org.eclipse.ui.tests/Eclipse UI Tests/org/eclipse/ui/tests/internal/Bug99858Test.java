@@ -115,7 +115,25 @@ public class Bug99858Test extends TestCase {
 		// the delete even ran
 		assertTrue(newDel.fRan);
 
+		//Join twice as there are two jobs now
 		boolean joined = false;
+		while (!joined) {
+			try {
+				Platform
+						.getJobManager()
+						.join(
+								IDEWorkbenchMessages.DeleteResourceAction_jobName,
+								null);
+				joined = true;
+			} catch (InterruptedException ex) {
+				// we might be blocking some other thread, spin the event loop
+				// to run syncExecs
+				chewUpEvents();
+				// and now keep trying to join
+			}
+		}
+
+		joined = false;
 		while (!joined) {
 			try {
 				Platform
