@@ -142,7 +142,10 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
     public void dispose() {
-        getOrganizer().dispose();
+    	// don't instantiate the delegate if it has not been used
+    	if (fDelegate != null) {
+    		fDelegate.dispose();
+    	}
     }
 
     /* (non-Javadoc)
