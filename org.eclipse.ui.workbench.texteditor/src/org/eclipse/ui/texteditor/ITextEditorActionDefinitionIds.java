@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+
 /**
  * Defines the definitions ids for the text editor actions. These actions are
  * navigation, selection, and modification actions.
@@ -434,6 +435,10 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	/**
 	 * Action definition ID of the edit -> content assist proposal action
 	 * Value: <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>).
+	 * <p>
+	 * Note: Since 3.2 the command is defined in <code>org.eclipse.ui</code> and
+	 * its ID can also be accessed using {@link org.eclipse.ui.fieldassist.ContentAssistCommandAdapter#CONTENT_PROPOSAL_COMMAND}.
+	 * </p>
 	 * @since 2.1
 	 */
 	String CONTENT_ASSIST_PROPOSALS= "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
