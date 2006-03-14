@@ -120,12 +120,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * presentation is optional.
      */
     private Map fShowColumns = new HashMap();
-    
-    /**
-     * Whether columns need re-building.
-     */
-    private boolean fBuildColumns = true;
-    
+        
     /**
 	 * Memento type for column sizes. Sizes are keyed by colunm presentation id 
 	 */
@@ -522,16 +517,16 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 					fColumnPresentation = factory.createColumnPresentation(context, input);
 					if (fColumnPresentation != null) {
 						fColumnPresentation.init(context);
+						configureColumns();
 					}
 				}
-				
 			} else {
 				if (fColumnPresentation != null) {
 					fColumnPresentation.dispose();
 					fColumnPresentation = null;
+					configureColumns();
 				}
 			}
-			configureColumns();
     	}
     }    
     
@@ -542,13 +537,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      */
     protected void configureColumns() {
     	if (fColumnPresentation != null) {
-			if (fBuildColumns) {
-				IColumnPresentation build = null;
-				if (isShowColumns(fColumnPresentation.getId())) {
-					build = fColumnPresentation;
-				}
-				buildColumns(build);					
+			IColumnPresentation build = null;
+			if (isShowColumns(fColumnPresentation.getId())) {
+				build = fColumnPresentation;
 			}
+			buildColumns(build);					
 		} else {
 			// get rid of columns
 			buildColumns(null);
@@ -604,7 +597,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     			columns[i].setWidth(width.intValue());
     		}
 		}
-    	fBuildColumns = false;
     }
 
     /**
@@ -1202,7 +1194,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 					fVisibleColumns.put(presentation.getId(), ids);
 				}
 			}
-			fBuildColumns = true;
 			PresentationContext presentationContext = (PresentationContext) getPresentationContext();
 			presentationContext.setColumns(getVisibleColumns());
 			refreshColumns();
@@ -1423,12 +1414,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 		if (show) {
 			if (!isShowColumns()) {
 				fShowColumns.remove(fColumnPresentation.getId());
-				fBuildColumns = true;
 			}
 		} else {
 			if (isShowColumns()){
 				fShowColumns.put(fColumnPresentation.getId(), Boolean.FALSE);
-				fBuildColumns = true;
 			}
 		}
 		refreshColumns();
