@@ -22,6 +22,7 @@ import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
@@ -100,7 +101,9 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	public void init(ICommonContentExtensionSite site) {
 		super.init(site);
 		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
-		getConfiguration().setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, new ResourceModelTraversalCalculator());
+		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (configuration != null)
+			configuration.setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, new ResourceModelTraversalCalculator());
 	}
 	
 	/* (non-Javadoc)
