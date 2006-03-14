@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.ProjectMetaFileOperation;
 import org.eclipse.ui.*;
 
 /**
- * Gathers all information necesary for a checkout from a repository.
+ * Gathers all information necessary for a checkout from a repository.
  */
 public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 	
@@ -51,7 +51,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 	public void addPages() {
 		setNeedsProgressMonitor(true);
 		
-		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
+		ImageDescriptor substImage = getBannerImageDescriptor();
 
 		ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
 		if (locations.length > 0) {
@@ -80,6 +80,10 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 			}
 		};
 		addPage(dummyPage);
+	}
+
+	protected ImageDescriptor getBannerImageDescriptor() {
+		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
 	}
 	
 	/* (non-Javadoc)
@@ -112,7 +116,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 			} catch (InvocationTargetException e) {
 				CVSUIPlugin.openError(getShell(), null, null, e);
 			} catch (InterruptedException e) {
-				// Cancelled. fall through.
+				// Canceled. fall through.
 			}
 			return false;
 		}
@@ -193,7 +197,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 						final boolean withName = CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout();
 
 						// attempt to retrieve the project description depending on preferences
-						// this is a bit circumvoluted to batch the metafile check and retrieval in one op
+						// this is a bit convoluted to batch the meta-file check and retrieval in one operation
 						final ICVSRemoteFolder[] folderResult = new ICVSRemoteFolder [1];
 						final boolean[] booleanResult = new boolean[] { true };
 						
@@ -217,7 +221,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 					// Show the error and fall through to return null as the next page
 					CVSUIPlugin.openError(getShell(), null, null, e);
 				} catch (InterruptedException e) {
-					// Cancelled by user. Fall through and return null
+					// Canceled by user. Fall through and return null
 				}
 				return null;
 			} else {

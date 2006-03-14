@@ -1503,9 +1503,9 @@
       <category name="%newWizardCategoryName" id="org.eclipse.team.cvs.ui.importWizards">
       </category>
       <wizard
-            icon="$nl$/icons/full/etool16/newconnect_wiz.gif"
+            icon="$nl$/icons/full/obj16/import_obj.gif"
             name="%newProjectCheckoutWizard"
-            class="org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard"
+            class="org.eclipse.team.internal.ccvs.ui.wizards.ImportWizard"
             category="org.eclipse.team.cvs.ui.importWizards"
             id="org.eclipse.team.cvs.ui.newProjectCheckout">
             <description> 

@@ -303,6 +303,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_KEYWORD);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION);
+		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_IMPORT);
 		createImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT);
 		createImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE);
 		createImageDescriptor(ICVSUIConstants.IMG_MERGED);

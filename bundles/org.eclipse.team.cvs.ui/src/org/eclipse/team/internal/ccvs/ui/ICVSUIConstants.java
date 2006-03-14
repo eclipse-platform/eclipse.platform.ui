@@ -177,6 +177,7 @@ public interface ICVSUIConstants {
 	public final String IMG_WIZBAN_KEYWORD = "wizban/keywordsub_wizban.png"; //$NON-NLS-1$
 	public final String IMG_WIZBAN_NEW_LOCATION = "wizban/newlocation_wizban.png"; //$NON-NLS-1$
 	public final String IMG_WIZBAN_CHECKOUT = "wizban/newconnect_wizban.png";	 //$NON-NLS-1$
+	public final String IMG_WIZBAN_IMPORT = "wizban/import_wiz.png";	 //$NON-NLS-1$
 	
 	// Properties
 	public final String PROP_NAME = "cvs.name"; //$NON-NLS-1$
