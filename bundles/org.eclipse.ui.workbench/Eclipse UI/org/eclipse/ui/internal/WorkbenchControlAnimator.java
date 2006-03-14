@@ -36,7 +36,7 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 	private boolean finished;
 	private boolean inTransition = false;
 	
-	private int LONG_DELAY = 1000;
+	private int LONG_DELAY = 300;
 	private int SHORT_DELAY = 25;
 
 	/* (non-Javadoc)
