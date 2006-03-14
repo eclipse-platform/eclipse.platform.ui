@@ -340,13 +340,18 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			theRest = new ResourceDiffTree();
 			theRest.addDiffChangeListener(diffTreeListener);
 			IResourceDiffTree allChanges = getContext().getDiffTree();
-			allChanges.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiff diff) {
-					if (!isContainedInSet(diff))
-						theRest.add(diff);
-					return true;
-				}
-			}, IResource.DEPTH_INFINITE);
+			try {
+				theRest.beginInput();
+				allChanges.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+					public boolean visit(IDiff diff) {
+						if (!isContainedInSet(diff))
+							theRest.add(diff);
+						return true;
+					}
+				}, IResource.DEPTH_INFINITE);
+			} finally {
+				theRest.endInput(null);
+			}
 		}
 		return theRest;
 	}
