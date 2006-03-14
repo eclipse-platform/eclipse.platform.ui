@@ -517,7 +517,6 @@ public class JobManager implements IJobManager {
 	 * about allocating objects.
 	 */
 	protected void endJob(InternalJob job, IStatus result, boolean notify) {
-		InternalJob blocked = null;
 		int blockedJobCount = 0;
 		long rescheduleDelay = InternalJob.T_NONE;
 		synchronized (lock) {
