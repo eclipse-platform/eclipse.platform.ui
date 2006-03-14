@@ -151,6 +151,30 @@ import org.eclipse.ui.progress.UIJob;
  */
 public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering {
 
+	/**
+	 *  Property identifier for the selected address in a table rendering
+	 *  This property is used for synchronization between renderings.
+	 */
+	public static final String PROPERTY_SELECTED_ADDRESS = AbstractTableRendering.PROPERTY_SELECTED_ADDRESS;
+	
+	/**
+	 * Property identifier for the column size in a table rendering
+	 * This property is used for synchronization between renderings.
+	 */
+	public static final String PROPERTY_COL_SIZE = AbstractTableRendering.PROPERTY_COL_SIZE;
+	
+	/**
+	 * Property identifier for the top row address in a table rendering. 
+	 * This property is used for synchronization between renderings.
+	 */
+	public static final String PROPERTY_TOP_ADDRESS = AbstractTableRendering.PROPERTY_TOP_ADDRESS;
+	
+	/**
+	 * Property identifier for the row size in a table rendering
+	 * This property is used for synchronization between renderings.
+	 */
+	public static final String PROPERTY_ROW_SIZE = AbstractTableRendering.PROPERTY_ROW_SIZE;
+	
 //	TODO:  linux - cannot resize columns to preferred size
 //	TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
 	
@@ -526,7 +550,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	private BigInteger getInitialSelectedAddress() {
 		// figure out selected address 
-		BigInteger selectedAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
+		BigInteger selectedAddress = (BigInteger) getSynchronizedProperty(AbstractAsyncTableRendering.PROPERTY_SELECTED_ADDRESS);
 		if (selectedAddress == null)
 		{
 			if (getMemoryBlock() instanceof IMemoryBlockExtension) {
@@ -606,7 +630,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	private BigInteger getInitialTopVisibleAddress() {
-		BigInteger topVisibleAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
+		BigInteger topVisibleAddress = (BigInteger) getSynchronizedProperty(AbstractAsyncTableRendering.PROPERTY_TOP_ADDRESS);
 		if (topVisibleAddress == null)
 		{
 			if (getMemoryBlock() instanceof IMemoryBlockExtension)
@@ -775,19 +799,19 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		String propertyName = event.getProperty();
 		Object value = event.getNewValue();
 		
-		if (propertyName.equals(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS) && value instanceof BigInteger)
+		if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_SELECTED_ADDRESS) && value instanceof BigInteger)
 		{
 			selectedAddressChanged((BigInteger)value);
 		}
-		else if (propertyName.equals(AbstractTableRendering.PROPERTY_COL_SIZE) && value instanceof Integer)
+		else if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_COL_SIZE) && value instanceof Integer)
 		{
 			columnSizeChanged(((Integer)value).intValue());
 		}
-		else if (propertyName.equals(AbstractTableRendering.PROPERTY_ROW_SIZE) && value instanceof Integer)
+		else if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_ROW_SIZE) && value instanceof Integer)
 		{
 			rowSizeChanged(((Integer)value).intValue());
 		}
-		else if (propertyName.equals(AbstractTableRendering.PROPERTY_TOP_ADDRESS) && value instanceof BigInteger)
+		else if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_TOP_ADDRESS) && value instanceof BigInteger)
 		{
 			topVisibleAddressChanged((BigInteger)value);
 		}
@@ -824,20 +848,20 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			}
 		}
 		
-		if (propertyName.equals(AbstractTableRendering.PROPERTY_COL_SIZE) && value instanceof Integer)
+		if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_COL_SIZE) && value instanceof Integer)
 		{
 			fPendingSyncProperties.setColumnSize(((Integer)value).intValue());
 		}
-		else if (propertyName.equals(AbstractTableRendering.PROPERTY_ROW_SIZE) && value instanceof Integer)
+		else if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_ROW_SIZE) && value instanceof Integer)
 		{
 			fPendingSyncProperties.setRowSize(((Integer)value).intValue());
 		}
 		
-		else if (propertyName.equals(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS) && value instanceof BigInteger)
+		else if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_SELECTED_ADDRESS) && value instanceof BigInteger)
 		{
 			fPendingSyncProperties.setSelectedAddress((BigInteger)value);
 		}
-		else if (propertyName.equals(AbstractTableRendering.PROPERTY_TOP_ADDRESS) && value instanceof BigInteger)
+		else if (propertyName.equals(AbstractAsyncTableRendering.PROPERTY_TOP_ADDRESS) && value instanceof BigInteger)
 		{
 			fPendingSyncProperties.setTopVisibleAddress((BigInteger)value);
 		}
@@ -965,7 +989,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		columnSize = columnSize * getAddressableSize();
 		
 		// check synchronized col size
-		Integer colSize = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
+		Integer colSize = (Integer)getSynchronizedProperty(AbstractAsyncTableRendering.PROPERTY_COL_SIZE);
 		if (colSize != null)
 		{
 			// column size is stored as actual number of bytes in synchronizer
@@ -1004,7 +1028,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		int bytePerLine = rowSize * getAddressableSize();
 		
 		// check synchronized row size
-		Integer size = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_ROW_SIZE);
+		Integer size = (Integer)getSynchronizedProperty(AbstractAsyncTableRendering.PROPERTY_ROW_SIZE);
 		if (size != null)
 		{
 			// row size is stored as actual number of bytes in synchronizer
@@ -2224,7 +2248,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 		if (!fIsCreated)
 			return;
-		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractTableRendering.PROPERTY_SELECTED_ADDRESS, null, address);
+		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_SELECTED_ADDRESS, null, address);
 		firePropertyChangedEvent(event);
 	}
 	
@@ -2236,7 +2260,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (!fIsCreated)
 			return;
 		
-		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractTableRendering.PROPERTY_COL_SIZE, null, new Integer(fColumnSize));
+		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_COL_SIZE, null, new Integer(fColumnSize));
 		firePropertyChangedEvent(event);
 	}
 	
@@ -2248,7 +2272,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (!fIsCreated)
 			return;
 		
-		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractTableRendering.PROPERTY_ROW_SIZE, null, new Integer(fBytePerLine));
+		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_ROW_SIZE, null, new Integer(fBytePerLine));
 		firePropertyChangedEvent(event);
 	}
 	
@@ -2260,7 +2284,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (!fIsCreated)
 			return;
 
-		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractTableRendering.PROPERTY_TOP_ADDRESS, null, address);
+		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_TOP_ADDRESS, null, address);
 		firePropertyChangedEvent(event);
 	}
 	
