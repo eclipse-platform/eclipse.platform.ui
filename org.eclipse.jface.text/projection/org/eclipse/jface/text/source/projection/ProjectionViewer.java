@@ -1570,30 +1570,54 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	private void copyToClipboard(int offset, int length, boolean delete, StyledText textWidget) {
 
-		IDocument document= getDocument();
-		Clipboard clipboard= new Clipboard(textWidget.getDisplay());
+		String copyText= null;
 
 		try {
+			IDocument document= getDocument();
+			copyText= document.get(offset, length);
+		} catch (BadLocationException ex) {
+			// XXX: should log here, but JFace Text has no Log
+			// As a fallback solution let the widget handle this
+			textWidget.copy();
+		}
 
-			Transfer[] dataTypes= new Transfer[] { TextTransfer.getInstance() };
-			Object[] data= new Object[] { document.get(offset, length) };
+		if (copyText != null && copyText.equals(textWidget.getSelectionText())) {
+			/*
+			 * XXX: Reduce pain of https://bugs.eclipse.org/bugs/show_bug.cgi?id=64498 
+			 * by letting the widget handle the copy operation in this special case.
+			 */ 
+			textWidget.copy();
+		} else if (copyText != null) {
+
+			Clipboard clipboard= new Clipboard(textWidget.getDisplay());
+
 			try {
-				clipboard.setContents(data, dataTypes);
-			} catch (SWTError e) {
-				if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
-					throw e;
-				// TODO see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59459
-				// we should either log and/or inform the user
-				// silently fail for now.
-				return;
+				Transfer[] dataTypes= new Transfer[] { TextTransfer.getInstance() };
+				Object[] data= new Object[] { copyText };
+				try {
+					clipboard.setContents(data, dataTypes);
+				} catch (SWTError e) {
+					if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+						throw e;
+					/*
+					 * TODO see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59459
+					 * we should either log and/or inform the user
+					 * silently fail for now.
+					 */
+					return;
+				}
+
+			} finally {
+				clipboard.dispose();
 			}
+		}
 
-			if (delete)
+		if (delete) {
+			try {
 				deleteTextRange(offset, length, textWidget);
-
-		} catch (BadLocationException x) {
-		} finally {
-			clipboard.dispose();
+			} catch (BadLocationException x) {
+				// XXX: should log here, but JFace Text has no Log
+			}
 		}
 	}
 
