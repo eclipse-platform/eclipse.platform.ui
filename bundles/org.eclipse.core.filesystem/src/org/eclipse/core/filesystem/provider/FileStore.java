@@ -392,6 +392,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * this store does not exist.
 	 */
 	public java.io.File toLocalFile(int options, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
 		//caching is the only recognized option
 		if (options != EFS.CACHE)
 			return null;
