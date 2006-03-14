@@ -253,7 +253,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				return false;
 			}
 			if (!status.isOK()) {
-				ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, "The search could not be initialized.", status);
+				ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_runproblem_message, status);
 			}
 			
 			
@@ -274,7 +274,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			});
 			return true;
 		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, "The search could not be initialized.", e.getStatus());
+			ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_querycreationproblem_message, e.getStatus());
 			return false;
 		}
 	}

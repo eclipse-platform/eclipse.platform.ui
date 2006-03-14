@@ -87,6 +87,8 @@ public final class SearchMessages extends NLS {
 	public static String SearchPage_regularExpression;
 	public static String TextSearchEngine_scanning;
 	public static String TextSearchEngine_statusMessage;
+	public static String TextSearchPage_replace_querycreationproblem_message;
+	public static String TextSearchPage_replace_runproblem_message;
 	public static String TextSearchPage_searchDerived_label;
 	public static String TextSearchVisitor_scanning;
 	public static String TextSearchVisitor_error;
