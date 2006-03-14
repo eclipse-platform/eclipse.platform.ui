@@ -19,7 +19,7 @@
              viewerId="org.eclipse.ui.navigator.ProjectExplorer">
           <popupMenu
                 allowsPlatformContributions="true"
-                id="org.eclipse.ui.navigator.resourceContent#PopupMenu">  
+                id="org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">  
              <insertionPoint name="group.new"/>
              <insertionPoint name="group.open" />
              <insertionPoint name="group.openWith"/>   
