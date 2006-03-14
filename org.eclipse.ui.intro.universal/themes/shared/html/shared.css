@@ -63,55 +63,66 @@
 }
 
 /* 
- * Importance highlights for page content
+ * Importance highlights for page content. Gradient image is
+ * tiled vertically. In addition, background color is applied
+ * to fill in the areas not covered by the gradient image.
  */
 .importance-high,
 .importance-low,
 .importance-callout,
 .importance-medium,
 .importance-new {
-	background-position: top right;
+	background-position: top left;
 	background-repeat: repeat-y;
 }
 
-body #overview .importance-medium {
-	background-image: url("../graphics/contentpage/ov_med.gif");
+body #overview .importance-high {
+	background-color: #fff7da;
+	background-image: url("../graphics/contentpage/ov_high.gif");
 }
 
-body #overview .importance-high {
-	background-image: url("../graphics/contentpage/ov_high.gif");
+body #overview .importance-medium {
+	background-color: #fffbec;
+	background-image: url("../graphics/contentpage/ov_med.gif");
 }
 
 body #tutorials .importance-high,
 body #samples .importance-high {
+	background-color: #e1eaf2;
 	background-image: url("../graphics/contentpage/tu-sa_high.gif");
 }
 
 body #tutorials .importance-medium,
 body #samples .importance-medium {
+	background-color: #f0f4f8;
 	background-image: url("../graphics/contentpage/tu-sa_med.gif");
 }
 
 body #whatsnew .importance-high,
 body #firststeps .importance-high {
+	background-color: #f3ecdb;
 	background-image: url("../graphics/contentpage/wn-fs_high.gif");
 }
 
 body #whatsnew .importance-medium,
 body #firststeps .importance-medium {
+	background-color: #f7f2e7;
 	background-image: url("../graphics/contentpage/wn-fs_med.gif");
 }
 
 body #webresources .importance-high,
 body #migrate .importance-high {
+	background-color: #ecf4d7;
 	background-image: url("../graphics/contentpage/wr-mi_high.gif");
 }
 
 body #webresources .importance-medium,
 body #migrate .importance-medium {
+	background-color: #f5f9eb;
 	background-image: url("../graphics/contentpage/wr-mi_med.gif");
 }
 
 .importance-callout {
+	background-color: #eeeeee;
 	background-image: url("../graphics/contentpage/grey_callout.gif");
 }
