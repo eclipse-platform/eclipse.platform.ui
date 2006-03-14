@@ -65,7 +65,7 @@ import org.eclipse.ui.part.Page;
  * <p>
  * If no root entry is set then a default model is created which uses the
  * <code>IPropertySource</code> interface to obtain the properties of
- * the current slection. This requires that the selected objects provide an
+ * the current selection. This requires that the selected objects provide an
  * <code>IPropertySource</code> adapter (or implement 
  * <code>IPropertySource</code> directly). This restiction can be overcome
  * by providing this page with an <code>IPropertySourceProvider</code>. If
