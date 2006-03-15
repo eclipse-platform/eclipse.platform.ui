@@ -63,7 +63,15 @@ public class SearchPageRegistry {
 		}
 		return null;
 	}
-					
+
+	public String findLabelForPageId(String pageId) {
+		IConfigurationElement configElement= findConfigurationElement(pageId);
+		if (configElement != null) {
+			return configElement.getAttribute(ATTRIB_LABEL);
+		}
+		return null;
+	}
+
 	private ISearchResultPage getSearchResultPage(final IConfigurationElement configElement, boolean create) {
 		ISearchResultPage instance= (ISearchResultPage) fExtensionToInstance.get(configElement);
 		if (instance == null && create) {

@@ -16,6 +16,7 @@ package org.eclipse.search2.internal.ui;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -66,6 +67,9 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
 	
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
+	private static final String MEMENTO_KEY_IS_PINNED= "isPinned"; //$NON-NLS-1$
+	private static final String MEMENTO_KEY_LAST_ACTIVATION= "org.eclipse.search.lastActivation"; //$NON-NLS-1$
+	private static final String MEMENTO_KEY_RESTORE= "org.eclipse.search.restore"; //$NON-NLS-1$
 	private HashMap fPartsToPages;
 	private HashMap fPagesToParts;
 	private HashMap fSearchViewStates;
@@ -79,6 +83,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	
 	private IMemento fPageState;
 	private boolean fIsPinned;
+	private int fActivationCount= 0;
+	private String fDefaultPartName;
 	
 	/**
 	 * Creates the groups and separators for the search view's context menu
@@ -141,7 +147,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		toolbar.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
 	}
 
-	class DummyPart implements IWorkbenchPart {
+	static class DummyPart implements IWorkbenchPart { 
+		private int fLastActivation= 0;
+		public void setLastActivation(int lastActivation) {
+			fLastActivation= lastActivation;
+		}
+		public int getLastActivation() {
+			return fLastActivation;
+		}
 		public void addPropertyListener(IPropertyListener listener) {/*dummy*/}
 		public void createPartControl(Composite parent) {/*dummy*/}
 		public void dispose() {/*dummy*/}
@@ -330,13 +343,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 		if (page != null) {
 			if (page != currentPage) {
-				IWorkbenchPart part= (IWorkbenchPart) fPagesToParts.get(page);
+				DummyPart part= (DummyPart) fPagesToParts.get(page);
 				if (part == null) {
 					part= new DummyPart();
 					fPagesToParts.put(page, part);
 					fPartsToPages.put(part, page);
 					page.setViewPart(this);
 				}
+				part.setLastActivation(++fActivationCount);
 				partActivated(part);
 			}
 			
@@ -344,9 +358,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			Object uiState= search != null ? fSearchViewStates.get(search) : null;
 			page.setInput(search, uiState);
 		}
+		updatePartName();
 		updateLabel();
 		updateCancelAction();
-		
 	}
 	
 	
@@ -367,7 +381,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-	
+		fDefaultPartName= getPartName();
 		createActions();
 		initializeToolBar();
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
@@ -378,6 +392,33 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		 * XXX: This is not dynamic, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=99120
 		 */ 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ISearchHelpContextIds.New_SEARCH_VIEW);
+		restorePageFromMemento();
+	}
+
+	private void restorePageFromMemento() {
+		if (fPageState != null) {
+			int bestActivation= -1;
+			IMemento restorePageMemento= null;
+			IMemento[] children= fPageState.getChildren(MEMENTO_TYPE);
+			for (int i= 0; i < children.length; i++) {
+				IMemento pageMemento= children[i];
+				if (pageMemento.getString(MEMENTO_KEY_RESTORE) != null) {
+					Integer lastActivation= pageMemento.getInteger(MEMENTO_KEY_LAST_ACTIVATION);
+					if (lastActivation != null && lastActivation.intValue() > bestActivation) {
+						bestActivation= lastActivation.intValue();
+						restorePageMemento= pageMemento;
+					}
+				}
+			}
+			if (restorePageMemento != null) {
+				showEmptySearchPage(restorePageMemento.getID());
+				String pinned= fPageState.getString(MEMENTO_KEY_IS_PINNED);
+				if (String.valueOf(true).equals(pinned)) {
+					setPinned(true);
+					fPinSearchViewAction.update();
+				}
+			}
+		}
 	}
 
 	private void initializeToolBar() {
@@ -473,11 +514,16 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	// Methods related to saving page state. -------------------------------------------
 
 	public void saveState(IMemento memento) {
-		for (Iterator pages = fPagesToParts.keySet().iterator(); pages.hasNext(); ) {
-			ISearchResultPage page = (ISearchResultPage) pages.next();
+		for (Iterator iter= fPagesToParts.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry= (Map.Entry) iter.next();
+			ISearchResultPage page= (ISearchResultPage) entry.getKey();
+			DummyPart part= (DummyPart) entry.getValue();
+
 			IMemento child= memento.createChild(MEMENTO_TYPE, page.getID());
 			page.saveState(child);
+			child.putInteger(MEMENTO_KEY_LAST_ACTIVATION, part.getLastActivation());
 		}
+		memento.putString(MEMENTO_KEY_IS_PINNED, String.valueOf(isPinned()));
 	}
 	
 
@@ -571,5 +617,17 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	 */
 	public boolean isPinned() {
 		return fIsPinned;
+	}
+	
+	public void updatePartName() {
+		if (fDefaultPartName != null) {
+			// mstodo not yet enabled.
+//			String partName= null;
+//			ISearchResultPage page= getActivePage();
+//			if (page != null && isPinned()) {
+//				partName= getSearchPageRegistry().findLabelForPageId(page.getID());
+//			}
+//			setPartName(partName != null ? partName : fDefaultPartName);
+		}
 	}
 }

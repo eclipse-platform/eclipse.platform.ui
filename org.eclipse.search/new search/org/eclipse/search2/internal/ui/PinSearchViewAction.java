@@ -40,6 +40,7 @@ public class PinSearchViewAction extends Action implements IUpdate {
 	 */
 	public void run() {
 		fView.setPinned(isChecked());
+		fView.updatePartName();
 	}
 		
 	/* (non-Javadoc)
