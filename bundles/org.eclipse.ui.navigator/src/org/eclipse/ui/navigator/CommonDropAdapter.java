@@ -200,7 +200,10 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			CommonDropAdapterAssistant[] assistants = dndService
 					.findCommonDropAdapterAssistants(aDropTarget,
 							theTransferData);
-
+			if (DEBUG) {
+				System.out
+						.println("CommonDropAdapter.validateDrop found " + assistants.length + " drop assistants"); //$NON-NLS-1$//$NON-NLS-2$
+			}
 			for (int i = 0; i < assistants.length; i++) {
 				try {
 					valid = assistants[i].validateDrop(aDropTarget,
