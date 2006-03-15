@@ -45,7 +45,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 		super();
 	}
 
-	public IStatus loadCompositeState(CompositeCheatSheetModel model) {
+	public IStatus loadCompositeState(CompositeCheatSheetModel model, Map layoutData) {
 		XMLMemento readMemento = CheatSheetPlugin.getPlugin().readMemento(model.getId() + DOT_XML);
 		if (readMemento == null) {
 			return Status.OK_STATUS;
@@ -53,6 +53,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
         taskMementoMap = createTaskMap(readMemento);
         loadTaskState(taskMementoMap, (AbstractTask)model.getRootTask());
         loadCheatsheetManagerData(readMemento, model.getCheatSheetManager());
+        loadLayoutData(readMemento, layoutData);
         return Status.OK_STATUS;
 	}
 
@@ -97,18 +98,36 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 			manager.setData(key, value);
 		}
 	}
+	
+	private void loadLayoutData(XMLMemento readMemento, Map layoutData) {
+		if (layoutData == null) {
+			return;
+		}
+		IMemento[] children = readMemento.getChildren(ICompositeCheatsheetTags.LAYOUT_DATA);
+		for (int i = 0; i < children.length; i++) {
+			IMemento childMemento = children[i];
+			String key = childMemento.getString(ICompositeCheatsheetTags.KEY);
+			String value = childMemento.getString(ICompositeCheatsheetTags.VALUE);
+			layoutData.put(key, value);
+		}
+	}
 
 	/**
 	 * Save the state of a composite cheat sheet model
 	 * @param model
+	 * @param selectedTask 
+	 * @param layoutData Will contain pairs of name/value Strings used to save and restore layout
 	 * @return
 	 */
-	public IStatus saveCompositeState(CompositeCheatSheetModel model) {
+	public IStatus saveCompositeState(CompositeCheatSheetModel model, Map layoutData) {
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE);
 		writeMemento.putString(IParserTags.ID, model.getId());		
         saveTaskState(writeMemento, (AbstractTask)model.getRootTask());
         saveCheatSheetManagerData(writeMemento, model.getCheatSheetManager());
 		taskMementoMap = createTaskMap(writeMemento);
+		if (layoutData != null) {
+			saveMap(writeMemento, layoutData, ICompositeCheatsheetTags.LAYOUT_DATA);
+		}
 		return CheatSheetPlugin.getPlugin().saveMemento(writeMemento, model.getId() + DOT_XML);
 	}
 
@@ -117,10 +136,14 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 			return;
 		}		
 		Map data = ((CheatSheetManager)manager).getData();
+		saveMap(writeMemento, data, ICompositeCheatsheetTags.CHEAT_SHEET_MANAGER);
+	}
+
+	private void saveMap(XMLMemento writeMemento, Map data, String tag) {
 		for (Iterator iter = data.keySet().iterator(); iter.hasNext();) {
 			String key = (String)iter.next();
-			String value = manager.getData(key);
-			IMemento childMemento = writeMemento.createChild(ICompositeCheatsheetTags.CHEAT_SHEET_MANAGER);
+			String value = (String) data.get(key);
+			IMemento childMemento = writeMemento.createChild(tag);
 			childMemento.putString(ICompositeCheatsheetTags.KEY, key);
 			childMemento.putString(ICompositeCheatsheetTags.VALUE, value);		
 		}

@@ -43,5 +43,7 @@ public interface ICompositeCheatsheetTags {
 	public static final String CHEAT_SHEET_MANAGER = "cheatSheetManager"; //$NON-NLS-1$
 	public static final String KEY = "key"; //$NON-NLS-1$
 	public static final String TASK_ID = "id"; //$NON-NLS-1$
+	public static final String SELECTED_TASK = "selectedTask"; //$NON-NLS-1$
+	public static final String LAYOUT_DATA = "layout"; //$NON-NLS-1$
 	
 }

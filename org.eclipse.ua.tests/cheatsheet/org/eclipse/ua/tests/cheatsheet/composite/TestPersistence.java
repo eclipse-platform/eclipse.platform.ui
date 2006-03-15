@@ -11,6 +11,9 @@
 
 package org.eclipse.ua.tests.cheatsheet.composite;
 
+import java.util.Hashtable;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IStatus;
@@ -88,10 +91,10 @@ public class TestPersistence extends TestCase {
     	createCompositeCheatSheet();
     	task1.setState(ICompositeCheatSheetTask.IN_PROGRESS);
     	task2.setState(ICompositeCheatSheetTask.COMPLETED);
-    	helper.saveCompositeState(model);
+    	helper.saveCompositeState(model, null);
 
     	createCompositeCheatSheet();
-    	model.loadState();
+    	model.loadState(new Hashtable());
     	assertEquals(ICompositeCheatSheetTask.IN_PROGRESS, task1.getState());
     	assertEquals(ICompositeCheatSheetTask.COMPLETED, task2.getState());
     }
@@ -113,14 +116,31 @@ public class TestPersistence extends TestCase {
     	// Set the values to save in the memento
     	editor1.setValue(value1);
     	editor2.setValue(value2);
-    	helper.saveCompositeState(model);
+    	helper.saveCompositeState(model, null);
     	
     	createCompositeCheatSheet();
-    	model.loadState();
+    	model.loadState(new Hashtable());
     	editor1.setInput(task1, model.getTaskMemento(task1.getId()));
     	editor2.setInput(task2, model.getTaskMemento(task2.getId()));
     	assertEquals(value1, editor1.getValue());
     	assertEquals(value2, editor2.getValue());
+    }
+    
+    /**
+     * Test that layout data is restored
+     */
+    public void testSaveLayoutData() {
+    	createCompositeCheatSheet();
+    	Map values = new Hashtable();
+    	values.put("One", "1");
+    	values.put("Two", "2");
+    	helper.saveCompositeState(model, values);
+        Map restoredValues = new Hashtable();
+    	createCompositeCheatSheet();
+    	model.loadState(restoredValues);
+    	assertEquals(2, restoredValues.size());
+    	assertEquals("1", values.get("One"));
+    	assertEquals("2", values.get("Two"));
     }
 	
 }

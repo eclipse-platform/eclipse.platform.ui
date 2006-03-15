@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.cheatsheets.IEditableTask;
+import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -121,7 +122,13 @@ public class DescriptionPanel {
 		}
 		
 		if (isSkippable) {
-			addHyperlink(buf, CompositeCheatSheetPage.SKIP_HREF, SKIP_IMAGE, Messages.COMPOSITE_PAGE_SKIP_TASK);
+			String skipMessage;
+			if (task instanceof ITaskGroup) {
+				skipMessage = Messages.COMPOSITE_PAGE_SKIP_TASK_GROUP;
+			} else {
+				skipMessage = Messages.COMPOSITE_PAGE_SKIP_TASK;					
+			}
+		    addHyperlink(buf, CompositeCheatSheetPage.SKIP_HREF, SKIP_IMAGE, skipMessage);
 		}
 
 		if (!startable && !isBlocked) {
@@ -153,9 +160,7 @@ public class DescriptionPanel {
 	private void showBlockingTasks(String message, final ICompositeCheatSheetTask task, StringBuffer buf) {
 		buf.append("<p/>"); //$NON-NLS-1$
 		buf.append("<p>"); //$NON-NLS-1$
-		buf.append("<b>"); //$NON-NLS-1$
 		buf.append(message);
-		buf.append("</b>"); //$NON-NLS-1$
 		buf.append("</p>");	 //$NON-NLS-1$// Add the list of blocking tasks
 		
 		ICompositeCheatSheetTask[] requiredTasks = task.getRequiredTasks();
@@ -167,7 +172,6 @@ public class DescriptionPanel {
 	}
 	
 	private void addHyperlink(StringBuffer buf, String href, String imageRef, String message) {
-		buf.append("<p/>"); //$NON-NLS-1$
 		buf.append("<p><a href=\""); //$NON-NLS-1$
 		buf.append(href);
 		buf.append("\">"); //$NON-NLS-1$

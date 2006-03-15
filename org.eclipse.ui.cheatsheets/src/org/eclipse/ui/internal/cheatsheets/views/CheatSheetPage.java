@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.HyperlinkGroup;
+import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
@@ -55,8 +57,11 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	public void createPart(Composite parent) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetPage.createPart()"); //$NON-NLS-1$		
 		super.createPart(parent);
-		toolkit.getHyperlinkGroup().setActiveBackground(null);
-		toolkit.getHyperlinkGroup().setBackground(null);
+		HyperlinkGroup hyperlinkGroup = toolkit.getHyperlinkGroup();
+		hyperlinkGroup.setActiveBackground(null);
+		hyperlinkGroup.setBackground(null);
+		hyperlinkGroup.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
+		
 		CheatSheetStopWatch
 				.printLapTime(
 						"CheatSheetPage.createPart()", "Time in CheatSheetPage.createInfoArea() after super.createInfoArea(): "); //$NON-NLS-1$ //$NON-NLS-2$

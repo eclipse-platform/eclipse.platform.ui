@@ -107,8 +107,8 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		this.manager = manager;	
 	}
 
-	public void loadState() {
-		saveHelper.loadCompositeState(this);	
+	public void loadState(Map layoutData) {
+		saveHelper.loadCompositeState(this, layoutData);	
 	}
 	
 	/*

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.views;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -41,6 +42,7 @@ import org.eclipse.ui.cheatsheets.IEditableTask;
 import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.cheatsheets.TaskExplorer;
 import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -87,6 +89,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 
 	public void createPart(Composite parent) {
 		init(parent.getDisplay());
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
 		form = toolkit.createScrolledForm(parent);		
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
 		FormColors colors = toolkit.getColors();
@@ -169,7 +172,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		super.dispose();
 	}
 
-	private void setInputModel(CompositeCheatSheetModel model) {
+	private void setInputModel(CompositeCheatSheetModel model, Map layout) {
 		this.model = model;
 		mform.getForm().setText(model.getName());
 		String explorerId = model.getTaskExplorerId();
@@ -182,6 +185,14 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				updateTask(task);
 			}
 		});
+		String selectedTaskId = (String) layout.get(ICompositeCheatsheetTags.SELECTED_TASK);
+		if (selectedTaskId != null) {
+			AbstractTask selectedTask =
+			    model.getDependencies().getTask(selectedTaskId);
+			if (selectedTask != null)  {
+				currentExplorer.setSelection(new StructuredSelection(selectedTask), true);
+			}
+		}
 	}
 
 	private void setCurrentExplorerFromId(String explorerId) {
@@ -272,7 +283,11 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	}
 
 	public void saveState() {
-		saveHelper.saveCompositeState(model);	
+		Map layout = new HashMap();
+		if (selectedTask != null) {
+		    layout.put(ICompositeCheatsheetTags.SELECTED_TASK, selectedTask.getId());
+		}
+		saveHelper.saveCompositeState(model, layout);	
 	}
 
 	private void showDescription(final ICompositeCheatSheetTask task) {
@@ -376,8 +391,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	public void initialized() {
 		// Open the model
 		model.setSaveHelper(saveHelper);
-		model.loadState();
-		setInputModel(model);
+		Map layout = new HashMap();
+		model.loadState(layout);
+		setInputModel(model, layout);
 	}
 
 	public int contributeToViewMenu(Menu menu, int index) {	
