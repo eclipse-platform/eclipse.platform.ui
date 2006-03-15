@@ -100,13 +100,12 @@ public class RefactorActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 
 		if (textActionHandler == null) {
-			textActionHandler = new TextActionHandler(actionBars); // hooks
-																	// handlers
-			textActionHandler.setCopyAction(copyAction);
-			textActionHandler.setPasteAction(pasteAction);
-			textActionHandler.setDeleteAction(deleteAction);
-			renameAction.setTextActionHandler(textActionHandler);
+			textActionHandler = new TextActionHandler(actionBars); // hook handlers
 		}
+		textActionHandler.setCopyAction(copyAction);
+		textActionHandler.setPasteAction(pasteAction);
+		textActionHandler.setDeleteAction(deleteAction);
+		renameAction.setTextActionHandler(textActionHandler);
 		updateActionBars();
 
 		textActionHandler.updateActionBars();
