@@ -55,21 +55,22 @@ public class RefactoringWizardDialog extends WizardDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		wizard.setDialogSettings(settings);
-		fSettings= settings.getSection(DIALOG_SETTINGS);
+		String settingsSectionId= DIALOG_SETTINGS + '.'+ wizard.getRefactoring().getName();
+		fSettings= settings.getSection(settingsSectionId);
 		if (fSettings == null) {
-			fSettings= new DialogSettings(DIALOG_SETTINGS);
+			fSettings= new DialogSettings(settingsSectionId);
 			settings.addSection(fSettings);
-			fSettings.put(WIDTH, 600);
-			fSettings.put(HEIGHT, 400);
+			fSettings.put(WIDTH, 100);
+			fSettings.put(HEIGHT, 100);
+			setMinimumPageSize(100, 100);
+		} else {
+			try {
+				int width= fSettings.getInt(WIDTH);
+				int height= fSettings.getInt(HEIGHT);
+				setPageSize(width, height);
+			} catch (NumberFormatException e) {
+			}
 		}
-		int width= 600;
-		int height= 400;
-		try {
-			width= fSettings.getInt(WIDTH);
-			height= fSettings.getInt(HEIGHT);
-		} catch (NumberFormatException e) {
-		}
-		setMinimumPageSize(width, height);
 	}
 	
 	/**
@@ -80,16 +81,28 @@ public class RefactoringWizardDialog extends WizardDialog {
 		getRefactoringWizard().getRefactoring().setValidationContext(newShell);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void cancelPressed() {
+		storeCurrentSize();
+		super.cancelPressed();
+	}
+	
 	/*
 	 * @see WizardDialog#finishPressed()
 	 */
 	protected void finishPressed() {
+		storeCurrentSize();
+		super.finishPressed();
+	}
+
+	private void storeCurrentSize() {
 		IWizardPage page= getCurrentPage();
 		Control control= page.getControl().getParent();
 		Point size = control.getSize();
 		fSettings.put(WIDTH, size.x);
 		fSettings.put(HEIGHT, size.y);
-		super.finishPressed();
 	}	
 
 	/*
