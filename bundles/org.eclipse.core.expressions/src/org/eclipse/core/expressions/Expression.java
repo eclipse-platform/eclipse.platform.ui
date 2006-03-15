@@ -36,6 +36,8 @@ public abstract class Expression {
 	 * @param right the second object to compare; may be <code>null</code>.
 	 * @return <code>true</code> if the two objects are equivalent;
 	 *         <code>false</code> otherwise.
+	 *         
+	 * @since 3.2
 	 */
     protected static final boolean equals(final Object left, final Object right) {
         return left == null ? right == null : ((right != null) && left
@@ -54,6 +56,8 @@ public abstract class Expression {
 	 *  
 	 * @return <code>true</code> if the arrays are equal length and the elements 
 	 *  at the same position are equal; <code>false</code> otherwise.
+	 *         
+	 * @since 3.2
 	 */
 	protected static final boolean equals(final Object[] leftArray, final Object[] rightArray) {
 		if (leftArray == rightArray) {
@@ -91,6 +95,8 @@ public abstract class Expression {
 	 *  
 	 * @return The hash code of the object; zero if the object is
 	 *  <code>null</code>.
+	 *         
+	 * @since 3.2
 	 */
     protected static final int hashCode(final Object object) {
         return object != null ? object.hashCode() : 0;
@@ -104,6 +110,8 @@ public abstract class Expression {
 	 *  <code>null</code>.
 	 * @return the hash code of the array; zero if the object is
 	 *  <code>null</code>.
+	 *         
+	 * @since 3.2
 	 */
 	protected static final int hashCode(final Object[] array) {
 		if (array == null) {
@@ -180,7 +188,8 @@ public abstract class Expression {
 	 * using {@link Expression#collectExpressionInfo(ExpressionInfo)}.
 	 * </p>
 	 * 
-	 * @return the expression information 
+	 * @return the expression information
+	 *  
 	 * @since 3.2
 	 */
 	public final ExpressionInfo computeExpressionInfo() {
@@ -196,6 +205,7 @@ public abstract class Expression {
 	 * 
 	 * @param info the expression information object used
 	 *  to collect the information
+	 *  
 	 * @since 3.2
 	 */
 	public void collectExpressionInfo(ExpressionInfo info) {
@@ -211,6 +221,8 @@ public abstract class Expression {
 	 * This default implementation calls <code>super.hashCode()</code>
 	 * </p>
 	 * @return a hash code for this object.
+	 *         
+	 * @since 3.2
 	 */
 	protected int computeHashCode() {
 		return super.hashCode();
