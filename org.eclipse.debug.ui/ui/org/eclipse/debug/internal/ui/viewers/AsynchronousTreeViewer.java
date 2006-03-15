@@ -40,6 +40,8 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -144,6 +146,28 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	 * Memento key prefix a visible column
 	 */
 	private static final String COLUMN = "COLUMN";	 //$NON-NLS-1$	
+	
+	/**
+	 * Persist column sizes when they change.
+	 * 
+	 * @since 3.2
+	 */
+	class ColumnListener implements ControlListener {
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
+		 */
+		public void controlMoved(ControlEvent e) {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
+		 */
+		public void controlResized(ControlEvent e) {
+			persistColumnSizes();
+		}
+	}
+	
+	private ColumnListener fListener = new ColumnListener();
     
     /**
      * Creates an asynchronous tree viewer on a newly-created tree control under
@@ -564,12 +588,12 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      * @param presentation
      */
     protected void buildColumns(IColumnPresentation presentation) {
-    	persistColumnSizes();
     	// dispose current columns, persisting their weigts
     	Tree tree = getTree();
 		TreeColumn[] columns = tree.getColumns();
     	for (int i = 0; i < columns.length; i++) {
     		TreeColumn treeColumn = columns[i];
+    		treeColumn.removeControlListener(fListener);
 			treeColumn.dispose();
 		}
     	PresentationContext presentationContext = (PresentationContext) getPresentationContext();
@@ -598,12 +622,14 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     	}
     	columns = tree.getColumns();
     	for (int i = 0; i < columns.length; i++) {
-    		Integer width = (Integer) fColumnSizes.get(columns[i].getData());
+    		TreeColumn treeColumn = columns[i];
+			Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
     		if (width == null) {
-    			columns[i].pack();
+    			treeColumn.pack();
     		} else {
-    			columns[i].setWidth(width.intValue());
+    			treeColumn.setWidth(width.intValue());
     		}
+    		treeColumn.addControlListener(fListener);
 		}
     }
 
@@ -1214,7 +1240,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	 * @param memento
 	 */
 	public void saveState(IMemento memento) {
-		persistColumnSizes();
 		if (!fColumnSizes.isEmpty()) {
 			Iterator iterator = fColumnSizes.entrySet().iterator();
 			while (iterator.hasNext()) {
