@@ -20,15 +20,21 @@ h2 {
 
 /* For regular div labels */
 H4 .div-label {
-	font-size : 10pt;
-	font-weight : bold;
+	font-family: Verdana, Arial, Helvetica; 
+	font-size: 10pt; 
+	font-weight: bold; 
+	color: #4A4D4A; 
+	line-height:1.3;
 }
 
 /* For the main page content's title */
 #content-header H4 .div-label {
-	font-size : 14pt;
-	font-weight : normal;
-	color : #8C96A2;
+	font-family: Verdana, Arial, Helvetica;
+	color:#333333; 
+	font-size: 23pt; 
+	font-weight: normal; 
+	letter-spacing:-0.03em;
+	margin-left: 60px;
 	float : none;
 	clear : both;
 }
@@ -43,7 +49,9 @@ HR {
 
 /* Page description if the page has it. */
 .page-description {
-	font-size : 10pt;
+	font-family: Verdana, Arial, Helvetica; 
+	font-size: 10pt; 
+	line-height:1.3;
 	float : none;
 	clear : both;
 }
@@ -74,6 +82,7 @@ a .text {
 
 p .group-description {
 	font-size : 10pt;
+	font-family: Verdana, Arial, Helvetica; 
 	font-weight : normal;
 }
 
@@ -421,7 +430,8 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	clear : both;
 	text-align : center;
 	position : relative;
-	top : -40px;
+	top : -50px;
+	margin-bottom: -50px;
 	z-index : 10;
 }
 
@@ -519,7 +529,24 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	text-align: left;
 }
 
-.content-link:hover { border-right : 0px; }
+.content-link .link-label {
+	font-family: Verdana, Arial, Helvetica; 
+	font-size: 11pt; 
+	font-weight: bold; 
+	line-height:1.5;
+	color: #00507C;
+}
+
+.content-link:hover .link-label {
+	color: #69c; 
+	text-decoration : underline;
+}
+
+.content-link .text {
+	font-family: Verdana, Arial, Helvetica; 
+	font-size: 10pt;
+	line-height: 1.3;
+}
 
 /*
  * This part is for hosting embedded document inside
@@ -532,7 +559,7 @@ iframe {
 	width:100%;
 	height:100%;
 	padding-left:10px;
-	}
+}
 
 /* mozilla scrollbar appearing off page fix */
 #page-content > iframe {

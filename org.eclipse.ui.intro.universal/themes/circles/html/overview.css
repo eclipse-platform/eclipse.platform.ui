@@ -1,5 +1,8 @@
 /* show the "selected" image for this page */
-#navigation-links a#overview img, #navigation-links a#overview:hover img { 
+#navigation-links a#overview img, 
+#navigation-links a#overview:hover img,
+#navigation-links a#overview:focus img,
+#navigation-links a#overview:active img {
 	background-image : url(../graphics/icons/ctool/ov_nav_64.gif);
 	top : 2px; 
 	left : -3px;

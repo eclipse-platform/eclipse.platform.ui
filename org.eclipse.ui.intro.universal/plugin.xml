@@ -57,10 +57,6 @@
             previewImage="themes/circles/preview.png">
             <property name="workbenchAsRootLink"
             		value="true"/>
-		  <!--
-			<property name="standardSupport"
-					value="strict"/>
-			  -->
             <property name="launchbarBackground"
             		value="#a1c2cb"/>
             <property name="launchbarOverviewIcon"
@@ -85,6 +81,8 @@
             previewImage="themes/purpleMesh/preview.png">
             <property name="launchbarBackground"
             		value="#c6c3e8"/>
+            <property name="capitalizeTitles"
+            		value="true"/>
             <property name="launchbarOverviewIcon"
             		  value="$theme$graphics/launchbar/overview.gif"/>
             <property name="launchbarFirststepsIcon"

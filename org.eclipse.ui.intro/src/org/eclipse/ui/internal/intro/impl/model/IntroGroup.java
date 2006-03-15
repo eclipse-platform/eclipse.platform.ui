@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import org.eclipse.ui.intro.config.IntroElement;
 import org.osgi.framework.Bundle;
@@ -27,19 +28,39 @@ public class IntroGroup extends AbstractIntroContainer {
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
     private static final String ATT_COMPUTED = "computed"; //$NON-NLS-1$
     private static final String ATT_EXPANDABLE = "expandable"; //$NON-NLS-1$
+    private static final String P_UPPERCASE = "capitalizeTitles"; //$NON-NLS-1$
     private String label;
     /**
      * @param element
      */
     IntroGroup(Element element, Bundle bundle, String base) {
         super(element, bundle, base);
-        label = getAttribute(element, ATT_LABEL);
+    }
+    
+    protected void loadFromParent() {
+    }
+    
+    private void resolve() {
+    	// reinitialize if there are variables in the value.
+    	if (label==null) {
+    		label = getAttribute(element, ATT_LABEL);
+    		if (label!=null) {
+    			IntroModelRoot root = getModelRoot();
+    			if (root!=null && root.getTheme()!=null) {
+    				Map props = root.getTheme().getProperties();
+    				String value = (String)props.get(P_UPPERCASE);
+    				if (value!=null && value.equalsIgnoreCase("true")) //$NON-NLS-1$
+    					label = label.toUpperCase();
+    			}
+    		}
+   		}
     }
 
     /**
      * @return Returns the label.
      */
     public String getLabel() {
+    	resolve();
         return label;
     }
     
