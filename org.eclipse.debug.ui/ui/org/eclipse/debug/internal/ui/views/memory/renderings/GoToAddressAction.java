@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,72 +79,9 @@ public class GoToAddressAction extends Action
 			// get expression from dialog
 			String expression = dialog.getExpression();
 			
-			expression = expression.toUpperCase();
-			expression = expression.trim();
+			expression = parseExpression(expression);
 			
-			if (expression.startsWith("0X")) //$NON-NLS-1$
-			{
-				expression = expression.substring(2);
-			}
-			
-			// convert expression to address
-			BigInteger address = new BigInteger(expression, 16);
-			
-			// look at this address and figure out if a new memory block should
-			// be opened.
-			IMemoryBlock mb = fRendering.getMemoryBlock();
-			if (mb instanceof IMemoryBlockExtension)
-			{
-				IMemoryBlockExtension mbExt = (IMemoryBlockExtension)mb;
-				BigInteger mbStart = mbExt.getMemoryBlockStartAddress();
-				BigInteger mbEnd = mbExt.getMemoryBlockEndAddress();
-				
-				if (mbStart != null)
-				{
-					// if trying to go beyond the start address
-					// of the memory block
-					if (address.compareTo(mbStart) < 0)
-					{
-						IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
-						IDebugTarget dt = mbExt.getDebugTarget();
-						
-						if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
-							retrieval = (IMemoryBlockRetrievalExtension)dt;
-						
-						// add a new memory block and then the same rendering as fRendering
-						// in the same container.
-						if (retrieval != null)
-						{
-							addNewMemoryBlock(expression, retrieval);
-							return;
-						}
-					}
-				}
-				if (mbEnd != null)
-				{
-					// if trying to go beyond the end address
-					// of the memory block
-					if (address.compareTo(mbEnd) > 0)
-					{
-						IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
-						IDebugTarget dt = mbExt.getDebugTarget();
-						
-						if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
-							retrieval = (IMemoryBlockRetrievalExtension)dt;
-						
-						// add a new memory block and then the same rendering as fRendering
-						// in the same container.
-						if (retrieval != null)
-						{
-							addNewMemoryBlock(expression, retrieval);
-							return;
-						}
-					}
-				}
-			}
-			
-			// go to specified address
-			fRendering.goToAddress(address);
+			doGoToAddress(expression);
 		}
 		// open error in case of any error
 		catch (DebugException e)
@@ -157,6 +94,84 @@ public class GoToAddressAction extends Action
 			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
 				DebugUIMessages.GoToAddressAction_Address_is_invalid, null);
 		}
+	}
+	/**
+	 * @param expression
+	 * @return
+	 */
+	public String parseExpression(String expression) {
+		expression = expression.toUpperCase();
+		expression = expression.trim();
+		
+		if (expression.startsWith("0X")) //$NON-NLS-1$
+		{
+			expression = expression.substring(2);
+		}
+		return expression;
+	}
+	/**
+	 * @param expression
+	 * @throws DebugException
+	 */
+	public void doGoToAddress(String expression) throws DebugException, NumberFormatException {
+		// convert expression to address
+		BigInteger address = new BigInteger(expression, 16);
+		
+		// look at this address and figure out if a new memory block should
+		// be opened.
+		IMemoryBlock mb = fRendering.getMemoryBlock();
+		if (mb instanceof IMemoryBlockExtension)
+		{
+			IMemoryBlockExtension mbExt = (IMemoryBlockExtension)mb;
+			BigInteger mbStart = mbExt.getMemoryBlockStartAddress();
+			BigInteger mbEnd = mbExt.getMemoryBlockEndAddress();
+			
+			if (mbStart != null)
+			{
+				// if trying to go beyond the start address
+				// of the memory block
+				if (address.compareTo(mbStart) < 0)
+				{
+					IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
+					IDebugTarget dt = mbExt.getDebugTarget();
+					
+					if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
+						retrieval = (IMemoryBlockRetrievalExtension)dt;
+					
+					// add a new memory block and then the same rendering as fRendering
+					// in the same container.
+					if (retrieval != null)
+					{
+						addNewMemoryBlock(expression, retrieval);
+							return;
+					}
+				}
+			}
+			if (mbEnd != null)
+			{
+				// if trying to go beyond the end address
+				// of the memory block
+				if (address.compareTo(mbEnd) > 0)
+				{
+					IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
+					IDebugTarget dt = mbExt.getDebugTarget();
+					
+					if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
+						retrieval = (IMemoryBlockRetrievalExtension)dt;
+					
+					// add a new memory block and then the same rendering as fRendering
+					// in the same container.
+					if (retrieval != null)
+					{
+						addNewMemoryBlock(expression, retrieval);
+							return;
+					}
+				}
+			}
+		}
+		
+		// go to specified address
+		fRendering.goToAddress(address);
 	}
 	
 	private void addNewMemoryBlock(String expression, IMemoryBlockRetrievalExtension retrieval)

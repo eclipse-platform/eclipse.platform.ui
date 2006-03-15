@@ -13,7 +13,12 @@ package org.eclipse.debug.internal.ui.memory.provisional;
 
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -41,6 +46,7 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingT
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingDialog;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
 import org.eclipse.debug.internal.ui.views.memory.renderings.IPresentationErrorListener;
 import org.eclipse.debug.internal.ui.views.memory.renderings.IVirtualContentListener;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
@@ -64,6 +70,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -83,9 +90,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -95,6 +105,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -104,8 +115,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.PageBook;
@@ -168,6 +182,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * This property is used for synchronization between renderings.
 	 */
 	public static final String PROPERTY_TOP_ADDRESS = AbstractTableRendering.PROPERTY_TOP_ADDRESS;
+	
+	private static final String ID_ASYNC_TABLE_RENDERING_CONTEXT = "org.eclipse.debug.ui.memory.abstractasynctablerendering"; //$NON-NLS-1$
+	private static final String ID_GO_TO_ADDRESS_COMMAND = "org.eclipse.debug.ui.command.gotoaddress"; //$NON-NLS-1$
 	
 	/**
 	 * Property identifier for the row size in a table rendering
@@ -249,6 +266,17 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 	
+	private class RenderingGoToAddressAction extends GoToAddressAction
+	{
+		public RenderingGoToAddressAction(AbstractBaseTableRendering rendering) {
+			super(rendering);
+		}
+		
+		public void run() {
+			showGoToAddressComposite();
+		}
+	}
+	
 	private PageBook fPageBook;
 	private AsyncTableRenderingViewer fTableViewer;
 	private TextViewer fTextViewer;
@@ -262,6 +290,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private String fLabel;
 	private IWorkbenchAdapter fWorkbenchAdapter;
 	private int fPageSize;
+	private SashForm fSashForm;
+	private GoToAddressComposite fGoToAddressComposite;
 	
 	// actions
 	private GoToAddressAction fGoToAddressAction;
@@ -274,6 +304,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private PropertyDialogAction fPropertiesDialogAction;
 	private NextPageAction fNextAction;
 	private PrevPageAction fPrevAction;
+	
+	private ArrayList fContext = new ArrayList();
+	private AbstractHandler fGoToAddressHandler;
 	
 	private boolean fIsCreated = false;
 	private boolean fIsDisposed = false;
@@ -384,15 +417,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		fTableViewer.setTopIndex(baseAddress);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public Control createControl(Composite parent) {
-
+		
 		fPageBook = new PageBook(parent, SWT.NONE);
 		createMessagePage(fPageBook);
 		createTableViewer(fPageBook);
 		addListeners();
+		
 		return fPageBook;
 	}
 	
@@ -412,6 +443,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 	
+	/**
+	 * @param parent
+	 */
 	private void createTableViewer(final Composite parent)
 	{
 		Job job = new Job("Create Table Viewer") { //$NON-NLS-1$
@@ -437,10 +471,15 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				
 				// batch update on UI thread
 				UIJob uiJob = new UIJob("Create Table Viewer UI Job"){ //$NON-NLS-1$
-
 					public IStatus runInUIThread(IProgressMonitor progressMonitor) {
 						
-						fTableViewer = new AsyncTableRenderingViewer(AbstractAsyncTableRendering.this, parent, SWT.VIRTUAL | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
+						fSashForm = new SashForm(parent, SWT.VERTICAL);
+						fTableViewer = new AsyncTableRenderingViewer(AbstractAsyncTableRendering.this, fSashForm, SWT.VIRTUAL | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
+						GridData data = new GridData(GridData.FILL_BOTH);
+						fTableViewer.getControl().setLayoutData(data);
+						
+						createGoToAddressComposite(fSashForm);
+						hideGotoAddressComposite();
 						
 						IMemoryRenderingSite site = getMemoryRenderingContainer().getMemoryRenderingSite();
 						IMemoryRenderingContainer container = getMemoryRenderingContainer();
@@ -719,7 +758,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getControl()
 	 */
 	public Control getControl() {
-		return fPageBook;
+		return fPageBook.getParent();
 	}
 
 	/* (non-Javadoc)
@@ -1338,9 +1377,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	public void showTable()
 	{
 		UIJob job = new UIJob("Display Table Job"){ //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+			public IStatus runInUIThread(IProgressMonitor monitor) {	
 				fShowMessage = false;
-				fPageBook.showPage(fTableViewer.getControl());
+				fPageBook.showPage(fTableViewer.getControl().getParent());
 				return Status.OK_STATUS;
 			}};
 		job.setSystem(true);
@@ -1686,7 +1725,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	protected void createActions() {
 		
 		fCopyToClipboardAction = new CopyTableRenderingToClipboardAction(this, fTableViewer);
-		fGoToAddressAction = new GoToAddressAction(this);
+		fGoToAddressAction = new RenderingGoToAddressAction(this);
 		fResetMemoryBlockAction = new ResetToBaseAddressAction(this);
 		
 		fPrintViewTabAction = new PrintTableRenderingAction(this, fTableViewer);
@@ -2686,6 +2725,128 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private TableRenderingContentDescriptor getContentDescriptor()
 	{
 		return fContentDescriptor;
+	}
+	
+	private void createGoToAddressComposite(Composite parent)
+	{
+		fGoToAddressComposite = new GoToAddressComposite();
+		fGoToAddressComposite.createControl(parent);
+		Button button = fGoToAddressComposite.getButton(IDialogConstants.OK_ID);
+		if (button != null)
+		{
+			button.addSelectionListener(new SelectionAdapter() {
+
+				public void widgetSelected(SelectionEvent e) {
+					doGoToAddress();
+				}
+			});
+			
+			button = fGoToAddressComposite.getButton(IDialogConstants.CANCEL_ID);
+			if (button != null)
+			{
+				button.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						hideGotoAddressComposite();
+					}});
+			}
+		}
+		
+		fGoToAddressComposite.getExpressionWidget().addSelectionListener(new SelectionAdapter() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				doGoToAddress();
+			}});
+		
+		fGoToAddressComposite.getExpressionWidget().addKeyListener(new KeyAdapter() {
+
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ESC)
+					hideGotoAddressComposite();
+				super.keyPressed(e);
+			}});
+	}
+	
+	private void showGoToAddressComposite() {
+	
+		double height = fGoToAddressComposite.getHeight();
+		double canvasHeight = fSashForm.getParent().getClientArea().height;
+		double tableHeight = canvasHeight - height;
+		
+		double tableWeight = (tableHeight/canvasHeight) * 100;
+		double textWeight = (height / canvasHeight) * 100;
+		fSashForm.setWeights(new int[]{(int)tableWeight, (int)textWeight});
+		fSashForm.setMaximizedControl(null);
+		
+		fGoToAddressComposite.getExpressionWidget().setFocus();
+	}
+	
+	private void hideGotoAddressComposite()
+	{
+		fSashForm.setMaximizedControl(fTableViewer.getControl());
+		fTableViewer.getControl().setFocus();
+	}
+	
+	/**
+	 * 
+	 */
+	private void doGoToAddress() {
+		try {
+			String exp = fGoToAddressAction.parseExpression(fGoToAddressComposite.getExpressionText());
+			fGoToAddressAction.doGoToAddress(exp);
+			hideGotoAddressComposite();
+		} catch (DebugException e1) {
+			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+					DebugUIMessages.GoToAddressAction_Go_to_address_failed, e1);
+		} catch (NumberFormatException e1)
+		{
+			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+				DebugUIMessages.GoToAddressAction_Address_is_invalid, null);
+		}
+	}
+	
+	public void activated() {
+		super.activated();
+
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
+		
+		if (commandSupport != null && contextSupport != null)
+		{
+			fContext.add(contextSupport.activateContext(ID_ASYNC_TABLE_RENDERING_CONTEXT));
+			Command gotoCommand = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
+
+			if (fGoToAddressHandler == null)
+			{
+				fGoToAddressHandler = new AbstractHandler() {
+					public Object execute(ExecutionEvent event) throws ExecutionException {
+						if (fSashForm.getMaximizedControl() != null)
+							fGoToAddressAction.run();
+						else
+							hideGotoAddressComposite();
+						return null;
+					}};
+			}
+			gotoCommand.setHandler(fGoToAddressHandler);
+		}
+		
+	}
+
+
+	public void deactivated() {
+    	IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
+		
+		if (commandSupport != null && contextSupport != null)
+		{
+			// 	remove handler
+			Command command = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
+			command.setHandler(null);
+
+			if (fContext != null)
+				contextSupport.deactivateContexts(fContext);
+		}
+		super.deactivated();
 	}
 	
 	/**

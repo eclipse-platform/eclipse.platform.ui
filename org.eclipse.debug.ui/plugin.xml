@@ -1584,6 +1584,11 @@ M4 = Platform-specific fourth key
        description="%nextMemoryBlockCommand.description"
        id="org.eclipse.debug.ui.commands.nextMemoryBlock"
        name="%nextMemoryBlockCommand.label"/>
+ <command
+       categoryId="org.eclipse.debug.ui.category.run"
+       description="%command.description.0"
+       id="org.eclipse.debug.ui.command.gotoaddress"
+       name="%command.name.0"/>
    </extension>
    <extension point="org.eclipse.ui.bindings">
      <key
@@ -1683,7 +1688,12 @@ M4 = Platform-specific fourth key
              commandId="org.eclipse.debug.ui.commands.nextMemoryBlock"
              contextId="org.eclipse.debug.ui.memoryview"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-             sequence="M1+M3+N"/>             
+             sequence="M1+M3+N"/>
+       <key
+             commandId="org.eclipse.debug.ui.command.gotoaddress"
+             contextId="org.eclipse.debug.ui.memory.abstractasynctablerendering"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+G"/>             
   	</extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
@@ -2058,7 +2068,12 @@ M4 = Platform-specific fourth key
            description="%Context.memoryview.description"
            id="org.eclipse.debug.ui.memoryview"
            parentId="org.eclipse.ui.contexts.window">
-     </context>      
+     </context>
+     <context
+           description="%context.description.0"
+           id="org.eclipse.debug.ui.memory.abstractasynctablerendering"
+           name="%context.name.0"
+           parentId="org.eclipse.debug.ui.debugging"/>      
   </extension>
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">
