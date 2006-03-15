@@ -56,8 +56,6 @@ public class JavaBeanObservableSet extends ObservableSet {
 
 	private PropertyDescriptor descriptor;
 
-	private Class elementType = null;
-
 	private ListenerSupport collectionListenSupport = new ListenerSupport(
 			collectionListener);
 
@@ -71,7 +69,6 @@ public class JavaBeanObservableSet extends ObservableSet {
 		super(new HashSet(), descriptor.getPropertyType());
 		this.object = object;
 		this.descriptor = descriptor;
-		this.elementType = elementType;
 		wrappedSet.addAll(Arrays.asList(getValues()));
 	}
 

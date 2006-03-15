@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.provisional.observable;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
+import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff;
 

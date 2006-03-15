@@ -13,6 +13,7 @@ package org.eclipse.jface.internal.databinding.provisional.observable;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMappingChangeListener;
+import org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener;
 
 /**

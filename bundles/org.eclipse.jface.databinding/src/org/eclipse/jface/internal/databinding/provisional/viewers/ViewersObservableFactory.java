@@ -44,8 +44,6 @@ import org.eclipse.jface.viewers.TableViewer;
  */
 final public class ViewersObservableFactory implements IObservableFactory {
 
-	private int updateTime;
-
 	/**
 	 * Create a factory that can create udatables for JFace viewers
 	 */
@@ -58,7 +56,6 @@ final public class ViewersObservableFactory implements IObservableFactory {
 	 *            This is only a hint that some editable viewers may support
 	 */
 	public ViewersObservableFactory(int updateTime) {
-		this.updateTime = updateTime;
 	}
 
 	public IObservable createObservable(Object description) {
