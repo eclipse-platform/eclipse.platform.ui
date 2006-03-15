@@ -454,8 +454,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      */
     public synchronized void dispose() {
 		if (fColumnPresentation != null) {
-			// persist column sizes, if any
-			buildColumns(null);
 			fColumnPresentation.dispose();
 		}
 		disposeCellEditors();
