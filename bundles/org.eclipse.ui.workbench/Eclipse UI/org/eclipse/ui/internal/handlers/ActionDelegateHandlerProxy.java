@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -318,7 +318,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	/**
 	 * Initialize the action delegate by calling its lifecycle method.
 	 */
-	private void initDelegate() {
+	private final boolean initDelegate() {
 		final IWorkbenchPage page = window.getActivePage();
 		final IWorkbenchPart activePart;
 		final IEditorPart activeEditor;
@@ -331,7 +331,17 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 		final IActionDelegate delegate = getDelegate();
 		final IAction action = getAction();
+		
+		// Check to see if the view delegate should be initialized.
+		if ((viewId != null) && (page != null)
+				&& (delegate instanceof IViewActionDelegate)) {
+			final IViewPart viewPart = page.findView(viewId);
+			if (viewPart == null) {
+				return false;
+			}
+		}
 
+		// Initialize the delegate.
 		final ISafeRunnable runnable = new ISafeRunnable() {
 			public final void handleException(final Throwable exception) {
 				// Do nothing.
@@ -358,14 +368,11 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				}
 
 				// Handle IViewActionDelegates
-				if (viewId != null) {
-					if (page != null) {
-						final IViewPart viewPart = page.findView(viewId);
-						if (delegate instanceof IViewActionDelegate) {
-							final IViewActionDelegate viewActionDelegate = (IViewActionDelegate) delegate;
-							viewActionDelegate.init(viewPart);
-						}
-					}
+				if ((viewId != null) && (page != null)
+						&& (delegate instanceof IViewActionDelegate)) {
+					final IViewPart viewPart = page.findView(viewId);
+					final IViewActionDelegate viewActionDelegate = (IViewActionDelegate) delegate;
+					viewActionDelegate.init(viewPart);
 				}
 
 				// Handle IWorkbenchWindowActionDelegate
@@ -375,7 +382,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				}
 			}
 		};
-		Platform.run(runnable);
+		SafeRunner.run(runnable);
+		return true;
 	}
 
 	public final boolean isEnabled() {
@@ -460,10 +468,14 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			try {
 				delegate = (IActionDelegate) element
 						.createExecutableExtension(delegateAttributeName);
-				initDelegate();
-				element = null;
-				delegateAttributeName = null;
-				return true;
+				if (initDelegate()) {
+					element = null;
+					delegateAttributeName = null;
+					return true;
+				}
+
+				delegate = null;
+				return false;
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied delegate was the wrong class"; //$NON-NLS-1$
