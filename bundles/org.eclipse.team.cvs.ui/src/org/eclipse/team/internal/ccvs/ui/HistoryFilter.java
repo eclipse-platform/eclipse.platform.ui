@@ -14,7 +14,7 @@ import java.util.Date;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-
+//TODO: Remove for M6
 public class HistoryFilter extends ViewerFilter {
 	public String author;
 	public Date fromDate;

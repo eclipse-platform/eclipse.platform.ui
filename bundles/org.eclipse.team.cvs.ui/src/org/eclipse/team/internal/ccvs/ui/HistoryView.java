@@ -50,7 +50,7 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-
+//TODO:Remove for M6
 /**
  * The history view allows browsing of an array of resource revisions
  */

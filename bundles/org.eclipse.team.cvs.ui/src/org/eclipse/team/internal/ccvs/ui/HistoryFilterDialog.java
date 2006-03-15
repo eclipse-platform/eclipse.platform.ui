@@ -22,7 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-
+//TODO:Remove for M6
 public class HistoryFilterDialog extends Dialog {
 
 	private HistoryFilter historyFilter;	

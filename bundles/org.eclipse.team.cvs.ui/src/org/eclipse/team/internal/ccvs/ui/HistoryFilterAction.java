@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-
+//TODO: Remove for M6
 public class HistoryFilterAction implements IViewActionDelegate {
 	private HistoryView view;
 	private HistoryFilter filter;
