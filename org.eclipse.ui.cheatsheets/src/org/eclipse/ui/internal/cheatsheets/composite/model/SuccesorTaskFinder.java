@@ -14,8 +14,8 @@ package org.eclipse.ui.internal.cheatsheets.composite.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskGroup;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 public class SuccesorTaskFinder {
 	

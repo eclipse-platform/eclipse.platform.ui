@@ -16,7 +16,8 @@ Export-Package: org.eclipse.ui.cheatsheets,
  org.eclipse.ui.internal.cheatsheets.data;x-friends:="org.eclipse.ua.tests",
  org.eclipse.ui.internal.cheatsheets.dialogs;x-friends:="org.eclipse.ua.tests",
  org.eclipse.ui.internal.cheatsheets.registry;x-friends:="org.eclipse.ua.tests",
- org.eclipse.ui.internal.cheatsheets.views;x-friends:="org.eclipse.ua.tests"
+ org.eclipse.ui.internal.cheatsheets.views;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.ui.internal.provisional.cheatsheets;x-friends:="org.eclipse.ua.tests"
 Require-Bundle: org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.forms;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.help;bundle-version="[3.1.0,4.0.0)",

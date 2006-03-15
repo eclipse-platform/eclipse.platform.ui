@@ -13,9 +13,9 @@ package org.eclipse.ui.internal.cheatsheets.composite.explorer;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
-import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheet;
+import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 class TreeContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {

@@ -19,10 +19,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheet;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 /**
  * A single task within a composite cheatsheet. This class encapsulates the

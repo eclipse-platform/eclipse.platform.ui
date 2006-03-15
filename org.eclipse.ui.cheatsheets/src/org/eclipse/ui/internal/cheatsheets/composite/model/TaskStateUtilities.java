@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskGroup;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 /**
  * This class contains utility functions to determine the state of a task based on

@@ -12,10 +12,10 @@
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.util.ArrayList;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.TaskGroupParseStrategy;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 public class TaskGroup extends AbstractTask implements ITaskGroup {
 	

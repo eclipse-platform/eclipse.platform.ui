@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.cheatsheets.IEditableTask;
-import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 
 public class TestTaskEditor extends TaskEditor {
 

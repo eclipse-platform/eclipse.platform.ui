@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 public class TaskSetCompletionStrategy implements TaskGroup.CompletionStrategy {
 

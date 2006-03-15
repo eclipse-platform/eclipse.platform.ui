@@ -15,10 +15,10 @@ package org.eclipse.ua.tests.cheatsheet.composite;
  * Test that dependencies get satisfied when the required tasks are completed
  */
 
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 import junit.framework.TestCase;
 

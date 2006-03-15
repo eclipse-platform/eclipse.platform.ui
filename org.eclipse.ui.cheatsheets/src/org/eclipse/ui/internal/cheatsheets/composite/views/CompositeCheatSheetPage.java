@@ -37,10 +37,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.IEditableTask;
-import org.eclipse.ui.cheatsheets.TaskEditor;
-import org.eclipse.ui.cheatsheets.TaskExplorer;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.ManagedForm;
@@ -58,6 +54,10 @@ import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheet
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader.TaskExplorerNode;
 import org.eclipse.ui.internal.cheatsheets.views.Page;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
+import org.eclipse.ui.internal.provisional.cheatsheets.TaskExplorer;
 import org.eclipse.ui.part.PageBook;
 
 /**

@@ -21,12 +21,12 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.CheatSheetViewerFactory;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
-import org.eclipse.ui.cheatsheets.IEditableTask;
-import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.state.MementoStateManager;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetViewer;
+import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 
 public class CheatsheetTaskEditor extends TaskEditor {
 	private CheatSheetViewer viewer;

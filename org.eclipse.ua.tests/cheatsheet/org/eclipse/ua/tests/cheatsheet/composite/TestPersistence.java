@@ -19,12 +19,12 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ua.tests.cheatsheet.util.MockTaskEditor;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 public class TestPersistence extends TestCase {
 	

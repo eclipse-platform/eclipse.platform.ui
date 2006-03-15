@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.cheatsheets;
+package org.eclipse.ui.internal.provisional.cheatsheets;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,7 +20,6 @@ import java.net.URL;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @since 3.2
  */
 
 public interface IEditableTask extends ICompositeCheatSheetTask {

@@ -15,11 +15,11 @@ package org.eclipse.ui.internal.cheatsheets.composite.model;
  * The concrete implementation of an editable task
  */
 
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.IEditableTask;
-import org.eclipse.ui.cheatsheets.TaskEditor;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.EditableTaskParseStrategy;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 
 public class EditableTask extends AbstractTask implements IEditableTask {
 	

@@ -18,10 +18,10 @@ import java.util.Observable;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheet;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 public class CompositeCheatSheetModel extends Observable implements ICompositeCheatSheet, ICheatSheet{
 

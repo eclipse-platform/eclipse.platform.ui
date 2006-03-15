@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.cheatsheets;
+package org.eclipse.ui.internal.provisional.cheatsheets;
 
 import java.util.Dictionary;
 
@@ -18,7 +18,6 @@ import java.util.Dictionary;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @since 3.2
  */
 
 public interface ICompositeCheatSheetTask {
@@ -112,4 +111,21 @@ public interface ICompositeCheatSheetTask {
 	 * @return the composite cheat sheet which contains this task
 	 */
 	public ICompositeCheatSheet getCompositeCheatSheet();
+	
+	/**
+	 * Get the parent task group
+	 * @return The task group which contains this task or <code>null</code> 
+	 * if this is the root of the composite cheat sheet.
+	 */
+	public ITaskGroup getParent();
+
+	/**
+	 * Test whether this task can be skipped. Skippable tasks are optional
+	 * tasks which are identified in the content file by having the attribute
+	 * <code>skip = "true"</code>. Only skippable tasks can be skipped.
+	 * @return true if this task has the skip attribute set to true in the 
+	 * content file.
+	 */
+	public boolean isSkippable();
+
 }

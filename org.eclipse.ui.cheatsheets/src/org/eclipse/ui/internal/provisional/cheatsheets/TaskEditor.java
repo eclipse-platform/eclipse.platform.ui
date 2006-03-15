@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.cheatsheets;
+package org.eclipse.ui.internal.provisional.cheatsheets;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -21,7 +21,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * A task editor is responsible for saving the state of the task whenever
  * it changes.
  * 
- * @since 3.2
  */
 
 public abstract class TaskEditor {

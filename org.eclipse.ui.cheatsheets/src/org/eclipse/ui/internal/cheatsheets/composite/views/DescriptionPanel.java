@@ -15,9 +15,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.cheatsheets.IEditableTask;
-import org.eclipse.ui.cheatsheets.ITaskGroup;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -30,6 +27,9 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.SuccesorTaskFinder;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskStateUtilities;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 /**
  * The description panel of a composite cheat sheet panel. This panel shows the introduction

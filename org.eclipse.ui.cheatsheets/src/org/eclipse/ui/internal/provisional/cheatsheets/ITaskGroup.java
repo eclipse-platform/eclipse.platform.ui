@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.cheatsheets;
+package org.eclipse.ui.internal.provisional.cheatsheets;
 
 /**
  * A group of tasks within a composite cheatsheet. Each taskGroup will have
@@ -18,7 +18,6 @@ package org.eclipse.ui.cheatsheets;
  * * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @since 3.2
  */
 
 public interface ITaskGroup extends ICompositeCheatSheetTask {

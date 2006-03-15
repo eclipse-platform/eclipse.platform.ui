@@ -21,9 +21,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.IStatusContainer;
+import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 /**
  * Class to keep track of dependencies between tasks

@@ -165,7 +165,9 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
             <meta.element labelAttribute="id"/>
          </appInfo>
          <documentation>
-            The taskEditor extension point allows for custom UI to appear in the editor pane of a composite cheatsheet. Any task in a compostite cheatsheet whose kind matches the id of this extension will use the class defined in this extension point to create the editor area.
+            This extension point is provisional, being based on the provisional API class TaskEditor. 
+
+The taskEditor extension point allows for custom UI to appear in the editor pane of a composite cheatsheet. Any task in a compostite cheatsheet whose kind matches the id of this extension will use the class defined in this extension point to create the editor area.
          </documentation>
       </annotation>
       <complexType>
@@ -205,7 +207,9 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
             <meta.element labelAttribute="id"/>
          </appInfo>
          <documentation>
-            This extension point allows for the contribution of a task explorer which will be used when opening a composite cheatsheet.
+            This extension point is provisional, being based on the provisional API class TaskExplorer. 
+
+This extension point allows for the contribution of a task explorer which will be used when opening a composite cheatsheet.
          </documentation>
       </annotation>
       <complexType>
