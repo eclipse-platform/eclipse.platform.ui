@@ -404,15 +404,15 @@ public final class RevisionPainter {
 	 */
 	private static final class InformationControlCreator extends AbstractReusableInformationControlCreator {
 		/*
-         * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-         */
-        protected IInformationControl doCreateInformationControl(Shell parent) {
+		 * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+		 */
+		protected IInformationControl doCreateInformationControl(Shell parent) {
 			int shellStyle= SWT.RESIZE | SWT.TOOL;
 			int style= SWT.NONE /*| SWT.V_SCROLL | SWT.H_SCROLL*/;
 			if (BrowserInformationControl.isAvailable(parent))
 				return new BrowserInformationControl(parent, shellStyle, style, null, true);
 			return new DefaultInformationControl(parent, shellStyle, style, null);
-        }
+		}
 	}
 	
 	/**
@@ -457,8 +457,142 @@ public final class RevisionPainter {
 		public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
 			ChangeRegion region= getChangeRegion(lineRange.getStartLine());
 			Object info= region == null ? null : region.getRevision().getHoverInfo();
+			if (info instanceof String) {
+				info= addCSSToHTMLFragment((String) info);
+			}
 			return info;
 		}
+
+		/**
+		 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
+		 * &lt;html&gt; section).
+		 * 
+		 * @param html the html / text produced by a revision
+		 * @return modified html
+		 */
+		private Object addCSSToHTMLFragment(String html) {
+			int max= Math.min(100, html.length());
+			if (html.substring(0, max).indexOf("<html>") != -1) //$NON-NLS-1$
+				// there is already a header
+				return html;
+			
+			StringBuffer info= new StringBuffer(512 + html.length());
+			HTMLPrinter.insertPageProlog(info, 0, getStyles());
+			info.append(html);
+			HTMLPrinter.addPageEpilog(info);
+			return info.toString();
+		}
+
+		private String getStyles() {
+			return "P.Code {\n" +  //$NON-NLS-1$
+					"	display: block;\n" +  //$NON-NLS-1$
+					"	text-align: left;\n" +  //$NON-NLS-1$
+					"	text-indent: 0.00pt;\n" +  //$NON-NLS-1$
+					"	margin-top: 0.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-bottom: 0.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-right: 0.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-left: 0pt;\n" +  //$NON-NLS-1$
+					"	font-size: 9.000000pt;\n" +  //$NON-NLS-1$
+					"	font-weight: medium;\n" +  //$NON-NLS-1$
+					"	font-style: Regular;\n" +  //$NON-NLS-1$
+					"	color: #4444CC;\n" +  //$NON-NLS-1$
+					"	text-decoration: none;\n" +  //$NON-NLS-1$
+					"	vertical-align: baseline;\n" +  //$NON-NLS-1$
+					"	text-transform: none;\n" +  //$NON-NLS-1$
+					"	font-family: \"Courier New\";\n" +  //$NON-NLS-1$
+					"}\n" +  //$NON-NLS-1$
+					"H6.CaptionFigColumn {\n" +  //$NON-NLS-1$
+					"	display: block;\n" +  //$NON-NLS-1$
+					"	text-align: left;\n" +  //$NON-NLS-1$
+					"	text-indent: 0.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-top: 3.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-bottom: 11.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-right: 0.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-left: 0.000000pt;\n" +  //$NON-NLS-1$
+					"	font-size: 9.000000pt;\n" +  //$NON-NLS-1$
+					"	font-weight: medium;\n" +  //$NON-NLS-1$
+					"	font-style: Italic;\n" +  //$NON-NLS-1$
+					"	color: #000000;\n" +  //$NON-NLS-1$
+					"	text-decoration: none;\n" +  //$NON-NLS-1$
+					"	vertical-align: baseline;\n" +  //$NON-NLS-1$
+					"	text-transform: none;\n" +  //$NON-NLS-1$
+					"	font-family: \"Arial\";\n" +  //$NON-NLS-1$
+					"}\n" +  //$NON-NLS-1$
+					"P.Note {\n" +  //$NON-NLS-1$
+					"	display: block;\n" +  //$NON-NLS-1$
+					"	text-align: left;\n" +  //$NON-NLS-1$
+					"	text-indent: 0pt;\n" +  //$NON-NLS-1$
+					"	margin-top: 19.500000pt;\n" +  //$NON-NLS-1$
+					"	margin-bottom: 19.500000pt;\n" +  //$NON-NLS-1$
+					"	margin-right: 0.000000pt;\n" +  //$NON-NLS-1$
+					"	margin-left: 30pt;\n" +  //$NON-NLS-1$
+					"	font-size: 11.000000pt;\n" +  //$NON-NLS-1$
+					"	font-weight: medium;\n" +  //$NON-NLS-1$
+					"	font-style: Italic;\n" +  //$NON-NLS-1$
+					"	color: #000000;\n" +  //$NON-NLS-1$
+					"	text-decoration: none;\n" +  //$NON-NLS-1$
+					"	vertical-align: baseline;\n" +  //$NON-NLS-1$
+					"	text-transform: none;\n" +  //$NON-NLS-1$
+					"	font-family: \"Arial\";\n" +  //$NON-NLS-1$
+					"}\n" +  //$NON-NLS-1$
+					"EM.UILabel {\n" +  //$NON-NLS-1$
+					"	font-weight: Bold;\n" +  //$NON-NLS-1$
+					"	font-style: Regular;\n" +  //$NON-NLS-1$
+					"	text-decoration: none;\n" +  //$NON-NLS-1$
+					"	vertical-align: baseline;\n" +  //$NON-NLS-1$
+					"	text-transform: none;\n" +  //$NON-NLS-1$
+					"}\n" +  //$NON-NLS-1$
+					"EM.CodeName {\n" +  //$NON-NLS-1$
+					"	font-weight: Bold;\n" +  //$NON-NLS-1$
+					"	font-style: Regular;\n" +  //$NON-NLS-1$
+					"	text-decoration: none;\n" +  //$NON-NLS-1$
+					"	vertical-align: baseline;\n" +  //$NON-NLS-1$
+					"	text-transform: none;\n" +  //$NON-NLS-1$
+					"	font-family:\"Courier New\";\n" +  //$NON-NLS-1$
+					"}\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"/* following font face declarations need to be removed for DBCS */\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: Arial, Helvetica, sans-serif; color: #000000}\n" +  //$NON-NLS-1$
+					"pre				{ font-family: \"Courier New\", monospace}\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"/* end font face declarations */\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"/* following font size declarations should be OK for DBCS */\n" +  //$NON-NLS-1$
+					"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-size: 8pt; }\n" +  //$NON-NLS-1$
+					"pre				{ font-size: 8pt}\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"/* end font size declarations */\n" +  //$NON-NLS-1$
+					"\n" +  //$NON-NLS-1$
+					"body	     { overflow: auto; margin-top: 0; margin-bottom: 4; margin-left: 3; margin-right: 0 }\n" +  //$NON-NLS-1$
+					"h1           { font-size: 10pt; margin-top: 5; margin-bottom: 1 }	\n" +  //$NON-NLS-1$
+					"h2           { font-size: 10pt; margin-top: 25; margin-bottom: 3 }\n" +  //$NON-NLS-1$
+					"h3           { font-size: 10pt; margin-top: 20; margin-bottom: 3 }\n" +  //$NON-NLS-1$
+					"h4           { font-size: 10pt; margin-top: 20; margin-bottom: 3; font-style: italic }\n" +  //$NON-NLS-1$
+					"h5           { font-size: 8pt; margin-top: 0; margin-bottom: 0 }\n" +  //$NON-NLS-1$
+					"p            { margin-top: 10px; margin-bottom: 10px }\n" +  //$NON-NLS-1$
+					"pre	     { margin-left: 6 }\n" +  //$NON-NLS-1$
+					"a:link	     { color: #0000FF }\n" +  //$NON-NLS-1$
+					"a:hover	     { color: #000080 }\n" +  //$NON-NLS-1$
+					"a:visited    { text-decoration: underline }\n" +  //$NON-NLS-1$
+					"ul	     { margin-top: 0; margin-bottom: 10 }\n" +  //$NON-NLS-1$
+					"li	     { margin-top: 0; margin-bottom: 0 } \n" +  //$NON-NLS-1$
+					"li p	     { margin-top: 0; margin-bottom: 0 } \n" +  //$NON-NLS-1$
+					"ol	     { margin-top: 0; margin-bottom: 10 }\n" +  //$NON-NLS-1$
+					"dl	     { margin-top: 0; margin-bottom: 10 }\n" +  //$NON-NLS-1$
+					"dt	     { margin-top: 0; margin-bottom: 0; font-weight: bold }\n" +  //$NON-NLS-1$
+					"dd	     { margin-top: 0; margin-bottom: 0 }\n" +  //$NON-NLS-1$
+					"strong	     { font-weight: bold}\n" +  //$NON-NLS-1$
+					"em	     { font-style: italic}\n" +  //$NON-NLS-1$
+					"var	     { font-style: italic}\n" +  //$NON-NLS-1$
+					"div.revision { border-left-style: solid; border-left-width: thin; \n" +  //$NON-NLS-1$
+					"				   border-left-color: #7B68EE; padding-left:5 }\n" +  //$NON-NLS-1$
+					"th	     { font-weight: bold }\n" +  //$NON-NLS-1$
+					""; //$NON-NLS-1$
+        }
 
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer,

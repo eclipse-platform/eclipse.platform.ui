@@ -312,7 +312,7 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 		
 		if (styles != null) {
 			StringBuffer buffer= new StringBuffer(content);
-			insertStyles(buffer, styles);
+			HTMLPrinter.insertStyles(buffer, styles);
 			content= buffer.toString();
 		}
 		
@@ -320,30 +320,6 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	
 	}
 	
-	/*
-	 * From HTMLPrinter
-	 */
-	private static void insertStyles(StringBuffer buffer, String[] styles) {
-		if (styles == null || styles.length == 0)
-			return;
-
-		StringBuffer styleBuf= new StringBuffer(10 * styles.length);
-		for (int i= 0; i < styles.length; i++) {
-			styleBuf.append(" style=\""); //$NON-NLS-1$
-			styleBuf.append(styles[i]);
-			styleBuf.append('"');
-		}
-
-		// Find insertion index
-		int index= buffer.indexOf("<body "); //$NON-NLS-1$
-		if (index == -1)
-			index= buffer.indexOf("<body>"); //$NON-NLS-1$
-		if (index == -1)
-			return;
-
-		buffer.insert(index+5, styleBuf);
-	}
-
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.IInformationControlExtension4#setStatusText(java.lang.String)
 	 * @since 3.2
