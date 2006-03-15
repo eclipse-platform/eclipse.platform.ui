@@ -42,6 +42,7 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
      * Return a resource mapping context suitable for comparison operations.
      * Comparisons require that any out-of-sync resources have contents
      * that differ.
+     * @param subscriber the subscriber
      * @return a resource mapping context suitable for compare operations
      */
     public static RemoteResourceMappingContext createContext(Subscriber subscriber) {
@@ -52,6 +53,7 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
      * Create a resource mapping context for the given subscriber
      * @param subscriber the subscriber
      * from the local contents
+     * @param autoRefresh whether the context should auto-refresh when queried
      */
     public SubscriberResourceMappingContext(Subscriber subscriber, boolean autoRefresh) {
         this.subscriber = subscriber;
