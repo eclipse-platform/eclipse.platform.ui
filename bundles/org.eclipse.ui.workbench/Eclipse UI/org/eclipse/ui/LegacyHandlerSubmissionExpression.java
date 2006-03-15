@@ -16,7 +16,6 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -27,17 +26,6 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.1
  */
 public final class LegacyHandlerSubmissionExpression extends Expression {
-
-	/**
-	 * The constant integer hash code value meaning the hash code has not yet
-	 * been computed.
-	 */
-	private static final int HASH_CODE_NOT_COMPUTED = -1;
-
-	/**
-	 * A factor for computing the hash code for all schemes.
-	 */
-	private static final int HASH_FACTOR = 89;
 
 	/**
 	 * The seed for the hash code for all schemes.
@@ -65,12 +53,6 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	 * site may be active.
 	 */
 	private final IWorkbenchPartSite activeSite;
-
-	/**
-	 * The hash code for this object. This value is computed lazily, and marked
-	 * as invalid when one of the values on which it is based changes.
-	 */
-	private transient int hashCode = HASH_CODE_NOT_COMPUTED;
 
 	/**
 	 * Constructs a new instance of
@@ -108,12 +90,19 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		}
 	}
 
+	protected final int computeHashCode() {
+		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(activePartId);
+		hashCode = hashCode * HASH_FACTOR + hashCode(activeShell);
+		hashCode = hashCode * HASH_FACTOR + hashCode(activeSite);
+		return hashCode;
+	}
+
 	public final boolean equals(final Object object) {
 		if (object instanceof LegacyHandlerSubmissionExpression) {
 			final LegacyHandlerSubmissionExpression that = (LegacyHandlerSubmissionExpression) object;
-			return Util.equals(this.activePartId, that.activePartId)
-					&& Util.equals(this.activeShell, that.activeShell)
-					&& Util.equals(this.activeSite, that.activeSite);
+			return equals(this.activePartId, that.activePartId)
+					&& equals(this.activeShell, that.activeShell)
+					&& equals(this.activeSite, that.activeSite);
 		}
 
 		return false;
@@ -159,23 +148,6 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		}
 
 		return EvaluationResult.TRUE;
-	}
-
-	/**
-	 * Computes the hash code for this object based on the id.
-	 * 
-	 * @return The hash code for this object.
-	 */
-	public final int hashCode() {
-		if (hashCode == HASH_CODE_NOT_COMPUTED) {
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(activePartId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeShell);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeSite);
-			if (hashCode == HASH_CODE_NOT_COMPUTED) {
-				hashCode++;
-			}
-		}
-		return hashCode;
 	}
 
 	public final String toString() {
