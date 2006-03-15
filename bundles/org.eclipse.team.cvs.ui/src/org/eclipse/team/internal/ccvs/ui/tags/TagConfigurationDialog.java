@@ -44,7 +44,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Allows configuration of the CVS tags that are shown within the workbench.
  */
-public class TagConfigurationDialog extends Dialog {
+public class TagConfigurationDialog extends TrayDialog {
 	
 	// show the resource contained within the roots
 	private TreeViewer cvsResourceTree;

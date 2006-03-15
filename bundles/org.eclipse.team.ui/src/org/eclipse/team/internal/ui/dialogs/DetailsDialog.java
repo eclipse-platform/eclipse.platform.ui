@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.dialogs;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A simple superclass for detail button dialogs.
  */
-abstract public class DetailsDialog extends Dialog {
+abstract public class DetailsDialog extends TrayDialog {
 	/**
 	 * The Details button.
 	 */

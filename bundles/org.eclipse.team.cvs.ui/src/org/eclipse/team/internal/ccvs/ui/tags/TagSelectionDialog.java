@@ -11,10 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.tags;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -34,7 +35,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 /**
  * Dialog to prompt the user to choose a tag for a selected resource
  */
-public class TagSelectionDialog extends Dialog implements IPropertyChangeListener {
+public class TagSelectionDialog extends TrayDialog implements IPropertyChangeListener {
 	
 	private TagSelectionArea tagSelectionArea;
 	private Cursor appBusyCursor;

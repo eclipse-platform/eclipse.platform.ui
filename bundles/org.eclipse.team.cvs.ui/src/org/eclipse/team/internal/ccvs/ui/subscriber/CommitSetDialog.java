@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
  * Dialog for creating and editing commit set
  * title and comment
  */
-public class CommitSetDialog extends Dialog {
+public class CommitSetDialog extends TrayDialog {
 
     private static final int DEFAULT_WIDTH_IN_CHARS= 80;
     

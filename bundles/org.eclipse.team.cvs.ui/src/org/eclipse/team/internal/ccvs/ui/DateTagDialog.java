@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Dialog for obtaining a date from the user
  */
-public class DateTagDialog extends Dialog {
+public class DateTagDialog extends TrayDialog {
 
 	DateArea dateArea;
 	TimeArea timeArea;

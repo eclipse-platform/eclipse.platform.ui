@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.ui.PlatformUI;
 
-public class IgnoreResourcesDialog extends Dialog {
+public class IgnoreResourcesDialog extends TrayDialog {
 	// resources that should be ignored
 	private IResource[] resources;
 

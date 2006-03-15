@@ -12,6 +12,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
@@ -24,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @author <a href="mailto:gregor.kohlwes@csc.com,kohlwes@gmx.net">Gregor Kohlwes</a>
  */
-public class EditorsDialog extends Dialog {
+public class EditorsDialog extends TrayDialog {
 	/**
 	 * Constructor EditorsDialog.
 	 * @param shell
