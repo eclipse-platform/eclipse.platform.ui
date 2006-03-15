@@ -420,10 +420,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		return fAction;
 	}
 	
-	protected void setView(IViewPart viewPart) {
-		fViewPart = viewPart;
-	}
-	
 	protected boolean isInitialized() {
 		return fInitialized;
 	}
