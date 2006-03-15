@@ -66,11 +66,11 @@
             pattern="CVS.adm">
       </ignore>
       <ignore
-            enabled="true"
+            enabled="false"
             pattern="tags">
       </ignore>
       <ignore
-            enabled="true"
+            enabled="false"
             pattern="TAGS">
       </ignore>
       <ignore
