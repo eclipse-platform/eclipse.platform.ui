@@ -24,6 +24,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * @since 3.2
+ *
+ */
 public class CompositeTableTest {
 
 	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
@@ -33,6 +37,9 @@ public class CompositeTableTest {
 	
 	private LinkedList personList = new LinkedList();
 	
+	/**
+	 * 
+	 */
 	public CompositeTableTest() {
 		personList.add(new Person("John", "1234", "Wheaton", "IL"));
 		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
