@@ -387,6 +387,10 @@ public class CompositeTable extends Canvas {
 		int extra = 100 % numChildren;
 		for (int i = 0; i < result.length-1; i++) {
 			result[i] = weight;
+	        if (extra > 0) {
+	           result[i]++;
+	           extra--;
+	        }
 		}
 		result[numChildren-1] = weight + extra;
 		return result;
