@@ -121,7 +121,7 @@ A viewer may have multiple viewerContentBindings defined, and their includes/exc
 &lt;br&gt;&lt;br&gt;
 A viewer may have multiple &lt;b&gt;viewerActionBinding&lt;/b&gt;s defined, and their &lt;b&gt;includes&lt;/b&gt;/&lt;b&gt;excludes&lt;/b&gt; statements will be aggregated to produce the final behavior.
 &lt;br&gt;&lt;br&gt;
-For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; definition, clients may specify a custom id. If clients do not specify an id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider&quot;. For clients that wish to pick up &lt;b&gt;actionProvider&lt;/b&gt;s with no specific id, clients must define a &lt;b&gt;viewerActionBinding&lt;/b&gt; for the default id. See the examples section for how this is done.
+For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; definition, clients may specify a custom id. If clients do not specify an id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider.X&quot;. For clients that wish to pick up &lt;b&gt;actionProvider&lt;/b&gt;s with no specific id, clients must define a &lt;b&gt;viewerActionBinding&lt;/b&gt; for the default id. See the examples section for how this is done.
          </documentation>
       </annotation>
       <complexType>
@@ -533,7 +533,7 @@ are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; element. The &lt;i&gt
 &lt;p&gt;
 The following example makes any actionProvider with no &quot;id&quot; attribute &lt;i&gt;visible&lt;/i&gt;
 to the viewer &quot;org.acme.viewer&quot;. The &lt;b&gt;actionProvider&lt;/b&gt;s with no &quot;id&quot; attribute
-have a default id of &quot;org.eclipse.ui.navigator.actionProvider&quot;. Of course,
+have a default id of &quot;org.eclipse.ui.navigator.actionProvider.X&quot;. Of course,
 the &lt;b&gt;viewerActionBindings&lt;/b&gt; only apply to &lt;b&gt;actionProvider&lt;/b&gt; elements that 
 are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; element. The &lt;i&gt;visibility&lt;/i&gt; of nested 
 &lt;b&gt;actionProvider&lt;/b&gt; elements is controlled by &lt;b&gt;viewerContentBinding&lt;/b&gt;s for the enclosing
@@ -546,7 +546,7 @@ are not nested under a &lt;b&gt;navigatorContent&lt;/b&gt; element. The &lt;i&gt
        &lt;viewerActionBinding 
              viewerId=&quot;org.acme.viewer&quot;&gt;
             &lt;includes&gt;
-                &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.actionProvider&quot; /&gt;
+                &lt;actionExtension pattern=&quot;org.eclipse.ui.navigator.actionProvider.*&quot; /&gt;
             &lt;/includes&gt; 
        &lt;/viewerActionBinding&gt;
    &lt;/extension&gt; 

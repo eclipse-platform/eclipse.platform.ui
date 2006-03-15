@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.actions;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.expressions.ElementHandler;
@@ -47,6 +47,8 @@ public class CommonActionProviderDescriptor implements
 		INavigatorContentExtPtConstants {
 
 	private static final String DEFAULT_ID = "org.eclipse.ui.navigator.actionProvider"; //$NON-NLS-1$
+	
+	private static int count = 0;
 
 	private final IConfigurationElement configurationElement;
 
@@ -54,15 +56,21 @@ public class CommonActionProviderDescriptor implements
 
 	private Set dependentDescriptors;
 
+	private Set overridingDescriptors;
+
 	private IConfigurationElement enablementElement;
 
 	private Expression enablement;
 
 	private boolean hasLoadingFailed;
 
-	private String id;
+	private String definedId;
+
+	private String visibilityId;
 
 	private String dependsOnId;
+
+	private String overridesId;
 
 	private String toString;
 
@@ -107,7 +115,7 @@ public class CommonActionProviderDescriptor implements
 				|| TAG_ENABLEMENT.equals(anEnablementExpression.getName()));
 		configurationElement = aConfigElement;
 		enablementElement = anEnablementExpression;
-		id = anOverrideId;
+		visibilityId = anOverrideId;
 		isNested = nestedUnderNavigatorContent;
 		init();
 	}
@@ -116,16 +124,21 @@ public class CommonActionProviderDescriptor implements
 
 		try {
 
-			// we try the id attribute if no override id was supplied.
-			if (id == null) {
-				id = configurationElement.getAttribute(ATT_ID);
-			}
+			definedId = configurationElement.getAttribute(ATT_ID);
+
 			// if there was no id attribute, use the default id.
-			if (id == null) {
-				id = DEFAULT_ID;
+			if (definedId == null) {
+				definedId = DEFAULT_ID + "." + count++; //$NON-NLS-1$
+			}
+
+			// we try the id attribute if no override id was supplied.
+			if (visibilityId == null) {
+				visibilityId = definedId;
 			}
 
 			dependsOnId = configurationElement.getAttribute(ATT_DEPENDS_ON);
+
+			overridesId = configurationElement.getAttribute(ATT_OVERRIDES);
 
 			IConfigurationElement[] children = configurationElement
 					.getChildren(TAG_ENABLEMENT);
@@ -235,10 +248,22 @@ public class CommonActionProviderDescriptor implements
 	/**
 	 * 
 	 * @return An identifier for this ICommonActionProvider. Defaults to
-	 *         'org.eclipse.ui.navigator.actionProvider'. May not be unique.
+	 *         "org.eclipse.ui.navigator.actionProvider". May not be unique.
+	 *         Used to filter the actionProvider using the visibility state
+	 *         information.
 	 */
 	public String getId() {
-		return id;
+		return visibilityId;
+	}
+
+	/**
+	 * 
+	 * @return An identifier for this ICommonActionProvider. Defaults to
+	 *         'org.eclipse.ui.navigator.actionProvider'. May not be unique.
+	 *         Used to determine override or depends on cases.
+	 */
+	public String getDefinedId() {
+		return definedId;
 	}
 
 	/**
@@ -251,11 +276,20 @@ public class CommonActionProviderDescriptor implements
 
 	/**
 	 * 
-	 * @return The value specified by the 'dependsOn' attribute of the
+	 * @return The value specified by the <i>dependsOn</i> attribute of the
 	 *         &lt;actionProvider /&gt; element.
 	 */
 	public String getDependsOnId() {
 		return dependsOnId;
+	}
+
+	/**
+	 * 
+	 * @return The value specified by the <i>overridesId</i> attribute of the
+	 *         &lt;actionProvider /&gt; element.
+	 */
+	public String getOverridesId() {
+		return overridesId;
 	}
 
 	public boolean equals(Object obj) {
@@ -265,32 +299,46 @@ public class CommonActionProviderDescriptor implements
 			return getId().equals(other.getId());
 		}
 		return false;
-	}
-
-	public int hashCode() {
-		return getId().hashCode();
-	}
+	} 
 
 	protected void addDependentDescriptor(
 			CommonActionProviderDescriptor dependentDescriptor) {
 		Assert.isTrue(this != dependentDescriptor);
 		if (dependentDescriptors == null) {
-			dependentDescriptors = new HashSet();
+			dependentDescriptors = new LinkedHashSet();
 		}
 		dependentDescriptors.add(dependentDescriptor);
+	}
+
+	protected void addOverridingDescriptor(
+			CommonActionProviderDescriptor overridingDescriptor) {
+		Assert.isTrue(this != overridingDescriptor);
+		if (overridingDescriptors == null) {
+			overridingDescriptors = new LinkedHashSet();
+		}
+		overridingDescriptors.add(overridingDescriptor);
 	}
 
 	protected boolean hasDependentDescriptors() {
 		return dependentDescriptors != null && !dependentDescriptors.isEmpty();
 	}
 
+	protected boolean hasOverridingDescriptors() {
+		return overridingDescriptors != null
+				&& !overridingDescriptors.isEmpty();
+	}
+
 	protected Iterator dependentDescriptors() {
 		return dependentDescriptors.iterator();
 	}
 
+	protected Iterator overridingDescriptors() {
+		return overridingDescriptors.iterator();
+	}
+
 	public String toString() {
 		if (toString == null) {
-			toString = "CommonActionProviderDescriptor[" + getId() + ", dependsOn=" + getDependsOnId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			toString = "CommonActionProviderDescriptor[" + getId() + ", dependsOn=" + getDependsOnId() + ", overrides=" + getOverridesId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 		}
 		return toString;
 	}

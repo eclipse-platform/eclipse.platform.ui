@@ -2,10 +2,11 @@ package org.eclipse.ui.internal.navigator.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -42,10 +43,13 @@ public class CommonActionDescriptorManager {
 	}
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Map dependentDescriptors = new HashMap();
+	private final Map dependentDescriptors = new LinkedHashMap();
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Map rootDescriptors = new HashMap();
+	private final Set overridingDescriptors = new LinkedHashSet();
+
+	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
+	private final Map rootDescriptors = new LinkedHashMap();
 
 	/**
 	 * 
@@ -55,15 +59,14 @@ public class CommonActionDescriptorManager {
 	protected void addActionDescriptor(
 			CommonActionProviderDescriptor aDescriptor) {
 
-		if(rootDescriptors.containsKey(aDescriptor.getId()) || dependentDescriptors.containsKey(aDescriptor.getId())) {
-			NavigatorPlugin.logError(0, "The id \""+aDescriptor.getId()+"\" is used for two different actionProviders", null);  //$NON-NLS-1$//$NON-NLS-2$
-			return;
-		}
-		
 		if (aDescriptor.getDependsOnId() == null) {
-			rootDescriptors.put(aDescriptor.getId(), aDescriptor);
+			rootDescriptors.put(aDescriptor.getDefinedId(), aDescriptor);
 		} else {
-			dependentDescriptors.put(aDescriptor.getId(), aDescriptor);
+			dependentDescriptors.put(aDescriptor.getDefinedId(), aDescriptor);
+		}
+
+		if (aDescriptor.getOverridesId() != null) {
+			overridingDescriptors.add(aDescriptor);
 		}
 	}
 
@@ -76,6 +79,23 @@ public class CommonActionDescriptorManager {
 	protected void computeOrdering() {
 		CommonActionProviderDescriptor dependentDescriptor;
 		CommonActionProviderDescriptor requiredDescriptor;
+
+		CommonActionProviderDescriptor descriptor;
+		CommonActionProviderDescriptor overriddenDescriptor;
+		for (Iterator iter = overridingDescriptors.iterator(); iter.hasNext();) {
+			descriptor = (CommonActionProviderDescriptor) iter.next();
+			if (rootDescriptors.containsKey(descriptor.getOverridesId())) {
+				overriddenDescriptor = (CommonActionProviderDescriptor) rootDescriptors
+						.get(descriptor.getOverridesId());
+				overriddenDescriptor.addOverridingDescriptor(descriptor);
+			} else if (dependentDescriptors.containsKey(descriptor
+					.getOverridesId())) {
+				overriddenDescriptor = (CommonActionProviderDescriptor) dependentDescriptors
+						.get(descriptor.getOverridesId());
+				overriddenDescriptor.addOverridingDescriptor(descriptor);
+			}
+
+		}
 
 		Collection unresolvedDependentDescriptors = new ArrayList(
 				dependentDescriptors.values());
@@ -109,7 +129,7 @@ public class CommonActionDescriptorManager {
 			for (int i = 0; i < unresolvedDescriptors.length; i++) {
 				errorMessage
 						.append(
-								"\nUnresolved dependency specified for actionProvider: ").append(unresolvedDescriptors[i].getId()); //$NON-NLS-1$
+								"\nUnresolved dependency specified for actionProvider: ").append(unresolvedDescriptors[i].getDefinedId()); //$NON-NLS-1$
 			}
 
 			NavigatorPlugin.log(IStatus.WARNING, 0, errorMessage.toString(),
@@ -143,7 +163,7 @@ public class CommonActionDescriptorManager {
 		}
 
 		CommonActionProviderDescriptor actionDescriptor = null;
-		List providers = new ArrayList();
+		Set providers = new LinkedHashSet();
 		for (Iterator providerItr = rootDescriptors.values().iterator(); providerItr
 				.hasNext();) {
 			actionDescriptor = (CommonActionProviderDescriptor) providerItr
@@ -165,12 +185,21 @@ public class CommonActionDescriptorManager {
 	 * @param actionDescriptor
 	 * @param providers
 	 */
-	private void addProviderIfRelevant(
+	private boolean addProviderIfRelevant(
 			INavigatorContentService aContentService,
 			IStructuredSelection structuredSelection,
-			CommonActionProviderDescriptor actionDescriptor, List providers) {
+			CommonActionProviderDescriptor actionDescriptor, Set providers) {
 		if (isVisible(aContentService, actionDescriptor)
 				&& actionDescriptor.isEnabledFor(structuredSelection)) {
+			
+			if(actionDescriptor.hasOverridingDescriptors()) {
+				for (Iterator iter = actionDescriptor.overridingDescriptors(); iter.hasNext();) {
+					CommonActionProviderDescriptor descriptor = (CommonActionProviderDescriptor) iter.next();
+					if(addProviderIfRelevant(aContentService, structuredSelection, descriptor, providers))
+						return true;
+					
+				}
+			}			
 			providers.add(actionDescriptor);
 			if (actionDescriptor.hasDependentDescriptors()) {
 				for (Iterator iter = actionDescriptor.dependentDescriptors(); iter
@@ -180,7 +209,9 @@ public class CommonActionDescriptorManager {
 							providers);
 				}
 			}
+			return true;
 		}
+		return false;
 	}
 
 	private boolean isVisible(INavigatorContentService aContentService,

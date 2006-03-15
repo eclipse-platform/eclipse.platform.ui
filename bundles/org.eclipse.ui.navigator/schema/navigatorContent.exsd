@@ -256,7 +256,7 @@ be picked up by matching &lt;b&gt;viewerContentBinding&lt;/b&gt;s. See &lt;b&gt;
 &lt;br&gt;&lt;br&gt;
 Clients may provide &lt;b&gt;actionProvider&lt;/b&gt;(s) under the root &lt;b&gt;extention&lt;/b&gt; element (peer to other &lt;b&gt;navigatorContent&lt;/b&gt;) in order to better control their enablement and viewer binding (see &lt;b&gt;veiwerActionBinding&lt;/b&gt;).
 &lt;br&gt;&lt;br&gt;
-For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider&quot;. For these &lt;b&gt;actionProvider&lt;/b&gt;s to be given the opportunity to contribute the menus or action bars of a viewer, a &lt;b&gt;viewerActionBinding&lt;/b&gt; must be defined (as part of the &lt;b&gt;org.eclipse.ui.navigator.viewer extension point&lt;/b&gt;) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider&quot;). See the documentation for &lt;b&gt;viewerActionBinding&lt;/b&gt; under the schema documentation of &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information.
+For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider.X&quot;. For these &lt;b&gt;actionProvider&lt;/b&gt;s to be given the opportunity to contribute the menus or action bars of a viewer, a &lt;b&gt;viewerActionBinding&lt;/b&gt; must be defined (as part of the &lt;b&gt;org.eclipse.ui.navigator.viewer extension point&lt;/b&gt;) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider.*&quot;). See the documentation for &lt;b&gt;viewerActionBinding&lt;/b&gt; under the schema documentation of &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information.
          </documentation>
       </annotation>
       <complexType>
@@ -288,6 +288,13 @@ For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot
 Specifying a dependency on another action provider does not guarantee that this action provider will be invoked whereever the required action provider is invoked. The downstream action provider must be bound to the particular viewer to be invoked.  
 &lt;br&gt;&lt;br&gt;
 If the required action provider is disabled or unbound to the current viewer, then this action provider will not be applied. If a cycle exists, the framework will try to continue, but there are no guarantees as to what menu items or action bar contributions will be available.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="overrides" type="string">
+            <annotation>
+               <documentation>
+                  Specify the id of an &lt;b&gt;actionProvider&lt;/b&gt; which is defined by an upstream contributor that must be overridden. The upstream &lt;b&gt;actionProvider&lt;/b&gt; will not be given an opportunity to contribute menu options or retargetable actions when this &lt;b&gt;actionProvider&lt;/b&gt; is &lt;i&gt;visible&lt;/i&gt; and &lt;i&gt;enabled&lt;/i&gt;.
                </documentation>
             </annotation>
          </attribute>
