@@ -47,6 +47,11 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 * <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>)
 	 */
 	public static final String CONTENT_PROPOSAL_COMMAND = "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
+	
+	// Default autoactivation delay in milliseconds
+	// TODO:  This should eventually be controlled by
+	// a platform UI preference.
+	private static final int DEFAULT_AUTO_ACTIVATION_DELAY = 500;
 
 	private IHandlerService handlerService;
 
@@ -98,11 +103,13 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		}
 
 		// If no autoactivation characters were specified, set them to the empty
-		// array
-		// so that we don't get the alphanumeric auto-trigger of our superclass.
+		// array so that we don't get the alphanumeric auto-trigger of our 
+		// superclass.
 		if (autoActivationCharacters == null) {
 			this.setAutoActivationCharacters(new char[] {});
 		}
+		// Set a default autoactivation delay.
+		setAutoActivationDelay(DEFAULT_AUTO_ACTIVATION_DELAY);
 
 		// Add listeners to the control to manage activation of the handler
 		addListeners(control);
