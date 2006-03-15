@@ -81,7 +81,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getFullPath(java.lang.Object)
 	 */
 	public String getFullPath(Object element) {
-		return ((IFileStore) element).toURI().getRawPath();
+		return ((IFileStore) element).toURI().getSchemeSpecificPart();
 	}
 
 	/*
