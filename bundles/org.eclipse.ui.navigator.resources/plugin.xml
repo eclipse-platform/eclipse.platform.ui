@@ -8,7 +8,7 @@
       <view
             category="org.eclipse.ui"
             class="org.eclipse.ui.navigator.CommonNavigator"
-            icon="icons/full/eview16/resource_persp.gif"
+            icon="$nl$/icons/full/eview16/resource_persp.gif"
             id="org.eclipse.ui.navigator.ProjectExplorer"
             name="%Common_Resource_Navigator"/>
    </extension>
