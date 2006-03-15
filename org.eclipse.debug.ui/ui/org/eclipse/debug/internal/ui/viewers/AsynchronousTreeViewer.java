@@ -229,15 +229,8 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 				                if (cellEditor == null) {
 				                	return;
 				                }
-				                CellEditor[] cellEditors = getCellEditors();
+				                disposeCellEditors();
 				                CellEditor[] newEditors = new CellEditor[columns];
-				                if (cellEditors != null) {
-				                	System.arraycopy(cellEditors, 0, newEditors, 0, cellEditors.length);
-				                }
-				                CellEditor old = newEditors[columnToEdit];
-				                if (old != null) {
-				                	old.dispose();
-				                }
 				                newEditors[columnToEdit] = cellEditor;
 				                setCellEditors(newEditors);
 				                setCellModifier(fColumnEditor.getCellModifier());
@@ -465,10 +458,27 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 			buildColumns(null);
 			fColumnPresentation.dispose();
 		}
+		disposeCellEditors();
 		if (fColumnEditor != null) {
 			fColumnEditor.dispose();
 		}
 		super.dispose();
+	}
+
+    /**
+     * Disposes cell editors
+     */
+	protected void disposeCellEditors() {
+		CellEditor[] cellEditors = getCellEditors();
+		if (cellEditors != null) {
+			for (int i = 0; i < cellEditors.length; i++) {
+				CellEditor editor = cellEditors[i];
+				if (editor != null) {
+					editor.dispose();
+				}
+			}
+		}
+		setCellEditors(null);
 	}
 
 	/*
@@ -1378,7 +1388,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	 * @param editors
 	 *            the list of cell editors
 	 */
-	public void setCellEditors(CellEditor[] editors) {
+	protected void setCellEditors(CellEditor[] editors) {
 		fTreeEditorImpl.setCellEditors(editors);
 	}
 
@@ -1388,7 +1398,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	 * @param modifier
 	 *            the cell modifier
 	 */
-	public void setCellModifier(ICellModifier modifier) {
+	protected void setCellModifier(ICellModifier modifier) {
 		fTreeEditorImpl.setCellModifier(modifier);
 	}
 	
@@ -1400,7 +1410,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 	 * @param columnProperties
 	 *            the list of column properties
 	 */
-	public void setColumnProperties(String[] columnProperties) {
+	protected void setColumnProperties(String[] columnProperties) {
 		fTreeEditorImpl.setColumnProperties(columnProperties);
 	}	
 	
