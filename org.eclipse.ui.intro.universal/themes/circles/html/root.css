@@ -13,13 +13,22 @@ a .link-extra-div {
 
 /* Link label properties */
 #page-links a .link-label {
-	margin-left: 10px;
+	margin-left: 7px;
 	position: relative;
 	top: -1.2em;
 	font-size : 13pt;	font-weight : 600;
-	padding-left: 5px;
+	padding-left: 10px;
 	padding-right: 5px;
 	margin-bottom: -1.2pm;
+}
+
+#page-links a#overview .link-label {
+	margin-left: 8px;
+}
+
+#page-links a#workbench .link-label {
+	padding-left: 0px;
+	margin-left: 5px;
 }
 
 /* Link description properties */
@@ -45,7 +54,7 @@ a .link-extra-div {
 }
 
 #page-links a#workbench p .text {
-	margin-left: -9px;
+	margin-left: -10px;
 }
 
 /* Some differences between Mozilla and IE here */
@@ -103,7 +112,7 @@ body {
 
 #page-links a {
 	position : absolute;
-	text-align : center;
+	text-align : left;
 	padding-bottom: 2px;
 }
 
@@ -188,13 +197,7 @@ body {
 #page-links a:hover#workbench,
 #page-links a:focus#workbench,
 #page-links a:active#workbench {
-	left: 707px;
-}
-
-#page-links > a:hover#workbench,
-#page-links > a:focus#workbench,
-#page-links > a:active#workbench {
-	left: 711px;
+	left: 713px;
 }
 
 /* Turn the background image off */
@@ -223,7 +226,7 @@ body {
 #page-links a#workbench:focus,
 #page-links a#workbench:active {
 	background-image: url("../graphics/icons/ctool/workbench_bottomhov.gif");
-	background-position: bottom 5px;
+	background-position: bottom left;
 }
 
 #page-links > a#workbench:hover,
