@@ -85,14 +85,16 @@ public class Section extends ExpandableComposite {
 			descriptionControl = new Text(this, SWT.READ_ONLY | SWT.WRAP | rtl);
 		}
 		if ((style & TITLE_BAR) != 0) {
-			addListener(SWT.Resize, new Listener() {
+			Listener listener = new Listener() {
 				public void handleEvent(Event e) {
 					Image image = Section.super.getBackgroundImage();
 					if (image != null)
 						image.dispose();
 					Section.super.setBackgroundImage(null);
 				}
-			});
+			};
+			addListener(SWT.Dispose, listener);
+			addListener(SWT.Resize, listener);
 		}
 	}
 	
