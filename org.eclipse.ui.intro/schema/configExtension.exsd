@@ -6,7 +6,9 @@
          <meta.schema plugin="org.eclipse.ui.intro" id="configExtension" name="Intro Part Configuration Extension"/>
       </appInfo>
       <documentation>
-         This extension point is used to extend an existing intro configuration by providing more content, additional StandbyContentParts or additional IntroUrl actions.
+         &lt;p&gt;This extension point is used to extend an existing intro configuration by providing more content, additional StandbyContentParts or additional IntroUrl actions.
+&lt;/p&gt;
+&lt;p&gt;Since 3.2, this extension point is also used to contribute a presentation theme that can be used by welcome implementations to separate presentation and content.
       </documentation>
    </annotation>
 
@@ -241,6 +243,13 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
     &lt;action
          name=&quot;customAction&quot;
          replaces=&quot;runAction?pluginId=com.org.xyz&amp;amp;class=com.org.xyz.CustomAction&amp;amp;param1=value1&quot;/&gt;
+
+    &lt;theme
+         id=&quot;com.example.intro.flowers&quot;
+         name=&quot;A Nice Flowers Welcome&quot;
+         path=&quot;$nl$/themes/flowers&quot;
+         previewImage=&quot;$nl$/themes/flowers/preview.png&quot;&gt;
+    &lt;/theme&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
