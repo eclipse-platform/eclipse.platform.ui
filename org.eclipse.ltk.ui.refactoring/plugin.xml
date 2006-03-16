@@ -27,13 +27,9 @@
             adaptable="true"
             class="org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPropertyPage"
             id="org.eclipse.ltk.ui.refactoring.property.page"
-            name="%RefactoringPropertyPage_name">
+            name="%RefactoringPropertyPage_name"
+            objectClass="org.eclipse.core.resources.IProject">
          <keywordReference id="org.eclipse.ltk.ui.refactoring.property.page"/>
-         <enablement>
-            <or>
-               <objectClass name="org.eclipse.core.resources.IProject"/>
-            </or>
-         </enablement>
       </page>
    </extension>
    <extension
