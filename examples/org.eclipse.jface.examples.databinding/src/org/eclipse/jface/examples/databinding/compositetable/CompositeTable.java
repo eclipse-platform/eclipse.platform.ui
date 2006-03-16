@@ -483,7 +483,7 @@ public class CompositeTable extends Canvas {
 		this.gridLinesOn = gridLinesOn;
 	}
 	
-	String insertHint = "Press <INS> to insert new data."; //$NON-NLS-1$
+	String insertHint = "Press <Ctrl-INSERT> to insert new data."; //$NON-NLS-1$
 	
 	/**
 	 * Returns the hint string that will be displayed when there are no rows in the table.
