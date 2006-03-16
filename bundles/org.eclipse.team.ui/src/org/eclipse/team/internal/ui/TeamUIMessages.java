@@ -20,7 +20,29 @@ public class TeamUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
 	
-    public static String information;
+    public static String ExportProjectSetMainPage_Browse;
+
+	public static String ExportProjectSetMainPage_DeselectAll;
+
+	public static String ExportProjectSetMainPage_FileButton;
+
+	public static String ExportProjectSetMainPage_SelectAll;
+
+	public static String ExportProjectSetMainPage_WorkspaceButton;
+
+	public static String ExportProjectSetMainPage_WorkspaceDialogErrorFilenameSegments;
+
+	public static String ExportProjectSetMainPage_WorkspaceDialogErrorNoFilename;
+
+	public static String ExportProjectSetMainPage_WorkspaceDialogFilename;
+
+	public static String ExportProjectSetMainPage_WorkspaceDialogMessage;
+
+	public static String ExportProjectSetMainPage_WorkspaceDialogTitle;
+
+	public static String ExportProjectSetMainPage_WorkspaceDialogTitleMessage;
+
+	public static String information;
     
 	public static String ConfigureProjectAction_configureProject;
 	public static String ConfigureProjectWizard_configureProject;
