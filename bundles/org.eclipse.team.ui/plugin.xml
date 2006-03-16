@@ -409,7 +409,7 @@
          point="org.eclipse.team.ui.teamContentProviders">
       <teamContentProvider
             contentExtensionId="org.eclipse.team.ui.resourceContent"
-            icon="/$nl$/icons/full/obj/resource_model.gif"
+            icon="/$nl$/icons/full/obj/workspace_obj.gif"
             modelProviderId="org.eclipse.core.resources.modelProvider"/>
    </extension>
    <extension
