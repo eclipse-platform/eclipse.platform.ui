@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -128,7 +129,7 @@ public class NavigatorContentDescriptorManager {
 			return cache.getDescriptors(anElement);
 		}
 
-		Set descriptors = new HashSet();
+		Set descriptors = new LinkedHashSet();
 
 	 	/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = firstClassDescriptors.values()

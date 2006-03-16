@@ -84,14 +84,17 @@ public class INavigatorContentServiceTests extends TestCase {
 		contentService = viewer.getNavigatorContentService();
 	}
 
-	protected void tearDown() throws Exception { 
+	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
 
-public void testFindValidExtensions() {
+	public void testFindValidExtensions() {
 
-		contentService.getActivationService().activateExtensions(new String[] { TEST_EXTENSION_ID,
-				RESOURCE_EXTENSION_ID }, true);
+		contentService
+				.getActivationService()
+				.activateExtensions(
+						new String[] { TEST_EXTENSION_ID, RESOURCE_EXTENSION_ID },
+						true);
 
 		ITreeContentProvider contentServiceContentProvider = contentService
 				.createCommonContentProvider();
@@ -118,7 +121,8 @@ public void testFindValidExtensions() {
 			ext = (INavigatorContentExtension) i.next();
 			if (ext.getContentProvider() instanceof TestContentProvider) {
 
-				TestContentProvider testContentProvider = (TestContentProvider) ext.getContentProvider();
+				TestContentProvider testContentProvider = (TestContentProvider) ext
+						.getContentProvider();
 				Object[] projectChildren = testContentProvider
 						.getChildren(project);
 				assertEquals(
@@ -137,7 +141,9 @@ public void testFindValidExtensions() {
 
 		assertTrue("The test content provider was not found.", found);
 
-	}	public void testDeactivateTestExtension() {
+	}
+
+	public void testDeactivateTestExtension() {
 
 		contentService.getActivationService().activateExtensions(
 				new String[] { RESOURCE_EXTENSION_ID }, true);
@@ -169,9 +175,11 @@ public void testFindValidExtensions() {
 				.createContentService(COMMON_NAVIGATOR_INSTANCE_ID);
 		INavigatorContentDescriptor[] boundDescriptors = contentServiceWithProgrammaticBindings
 				.bindExtensions(new String[] { TEST_EXTENSION_2_ID }, false);
-		contentServiceWithProgrammaticBindings.getActivationService().activateExtensions(
-				new String[] { RESOURCE_EXTENSION_ID, TEST_EXTENSION_ID,
-						TEST_EXTENSION_2_ID }, false);
+		contentServiceWithProgrammaticBindings
+				.getActivationService()
+				.activateExtensions(
+						new String[] { RESOURCE_EXTENSION_ID,
+								TEST_EXTENSION_ID, TEST_EXTENSION_2_ID }, false);
 
 		assertEquals("One descriptor should have been returned.", 1,
 				boundDescriptors.length);

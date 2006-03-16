@@ -77,6 +77,8 @@ public final class NavigatorContentDescriptor implements
 
 	private INavigatorContentDescriptor overriddenDescriptor;
 
+	private int hashCode;
+
 	/**
 	 * Creates a new content descriptor from a configuration element.
 	 * 
@@ -411,6 +413,17 @@ public final class NavigatorContentDescriptor implements
 	 */
 	public String toString() {
 		return "Content[" + id + ", \"" + name + "\"]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		if(hashCode == -1) {
+			String hashCodeString = configElement.getNamespaceIdentifier() + getId();
+			hashCode = hashCodeString.hashCode();
+		}
+		return hashCode;
 	}
 
 	/**
