@@ -1044,6 +1044,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					try {
 						encoding= file.getCharset();
 					} catch (CoreException e) {
+						encoding= null;
 					}
 				}
 				return encoding;
