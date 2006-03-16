@@ -21,62 +21,6 @@
       </product> 
    </extension> 
 
-   <extension  
-         point="org.eclipse.ui.intro">
-      <intro
-            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
-            id="org.eclipse.platform.intro"
-            icon="eclipse.png">
-      </intro>
-      <introProductBinding
-            introId="org.eclipse.platform.intro"
-            productId="org.eclipse.platform.ide">
-      </introProductBinding>
-   </extension>
-   <extension   
-         id="intro"
-         point="org.eclipse.ui.intro.config">
-      <config
-            introId="org.eclipse.platform.intro"
-            id="org.eclipse.platform.introConfig"
-            content="$nl$/intro/introContent.xml">
-         <presentation
-               home-page-id="root" standby-page-id="standby">
-            <implementation
-                  style="$nl$/intro/css/shared.css"
-                  kind="html"
-                  os="win32,linux,macosx">
-            </implementation>
-            <implementation
-                  kind="swt">
-            </implementation>
-            <!--
-            fg="#7269d2" 
-            -->
-            <launchBar 	
-            	location="fastview" 
-            	bg="#c6c3e8" 
-            	>
-               <shortcut
-                     icon="intro/css/graphics/icons/etool/overview.gif"
-                     tooltip="%shortcut.overview.tooltip"
-                     url="http://org.eclipse.ui.intro/showPage?id=overview"/>
-               <shortcut
-                     tooltip="%shortcut.tutorials.tooltip"
-                     icon="intro/css/graphics/icons/etool/tutorials.gif"
-                     url="http://org.eclipse.ui.intro/showPage?id=tutorials"/>
-               <shortcut
-                     tooltip="%shortcut.samples.tooltip"
-                     icon="intro/css/graphics/icons/etool/samples.gif"
-                     url="http://org.eclipse.ui.intro/showPage?id=samples"/>
-               <shortcut
-                     tooltip="%shortcut.whatsnew.tooltip"
-                     icon="intro/css/graphics/icons/etool/whatsnew.gif"
-                     url="http://org.eclipse.ui.intro/showPage?id=news"/>                                             
-            </launchBar>
-         </presentation>
-      </config>
-   </extension>
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
@@ -102,15 +46,15 @@
             pluginId="org.eclipse.platform"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="new-intro/overviewEx.xml"/>
+            content="intro/overviewEx.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="new-intro/whatsnewEx1.xml"/>
+            content="intro/whatsnewEx1.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="new-intro/whatsnewEx2.xml"/>
+            content="intro/whatsnewEx2.xml"/>
    </extension>
-   <!-- -->
+
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -121,6 +65,5 @@
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
    </extension>
- <!-- -->
 
 </plugin>
