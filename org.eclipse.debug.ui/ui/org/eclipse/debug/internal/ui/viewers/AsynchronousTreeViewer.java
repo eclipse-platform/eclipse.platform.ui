@@ -222,7 +222,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
 		Tree tree = (Tree)control;
         tree.addMouseListener(new MouseAdapter() {
             public void mouseDown(MouseEvent e) {
-            	if (fColumnPresentation != null) {
+            	if (isShowColumns()) {
 	            	Item[] items = fTreeEditorImpl.getSelection();
 	            	if (items.length > 0) {
 	            		TreeItem treeItem = (TreeItem) items[0];	            		
