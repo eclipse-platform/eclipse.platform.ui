@@ -183,7 +183,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		}
 		if (getDelegateContentProvider().hasChildren(element)) {
 			ISynchronizationContext sc = getContext();
-			if (context == null) {
+			if (sc == null) {
 				ISynchronizationScope scope = getScope();
 				if (scope == null) {
 					return true;
@@ -193,6 +193,10 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			} else {
 				return hasChildrenInContext(sc, elementOrPath);
 			}
+		} else {
+			ISynchronizationContext sc = getContext();
+			if (sc != null)
+				return hasChildrenInContext(sc, elementOrPath);
 		}
 		return false;
 	}
