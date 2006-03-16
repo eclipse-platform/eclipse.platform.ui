@@ -90,5 +90,9 @@ public class ModelProviderResourceMapping extends ResourceMapping {
 		}
 		return getProjects();
 	}
+	
+	public boolean contains(ResourceMapping mapping) {
+		return (mapping.getModelProviderId().equals(getModelProviderId()));
+	}
 
 }

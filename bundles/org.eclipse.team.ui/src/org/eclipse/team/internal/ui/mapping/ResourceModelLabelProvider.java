@@ -176,14 +176,16 @@ public class ResourceModelLabelProvider extends
 	}
 	
 	protected String getDelegateText(Object elementOrPath) {
-		String label = getTraversalCalculator().getLabel(elementOrPath);
-		if (label == null)
-			label = super.getDelegateText(internalGetElement(elementOrPath));
-		return label;
+		if (getConfiguration() != null) {
+			String label = getTraversalCalculator().getLabel(elementOrPath);
+			if (label != null)
+				return label;
+		}
+		return super.getDelegateText(internalGetElement(elementOrPath));
 	}
 	
 	protected Image getDelegateImage(Object elementOrPath) {
-		if (getTraversalCalculator().isCompressedFolder(elementOrPath)) {
+		if (getConfiguration() != null && getTraversalCalculator().isCompressedFolder(elementOrPath)) {
 			if (compressedFolderImage == null)
 				compressedFolderImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER).createImage();
 			return compressedFolderImage;

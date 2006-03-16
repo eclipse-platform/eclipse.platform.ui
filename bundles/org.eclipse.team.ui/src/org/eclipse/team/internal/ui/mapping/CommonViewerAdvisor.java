@@ -48,10 +48,6 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			super(id, parent, style);
 			this.listener = listener;
 		}
-		protected ILabelProvider wrapLabelProvider(ILabelProvider provider) {
-			// Don't wrap since we don't want any decoration
-			return provider;
-		}
 		public void createChildren(TreeItem item) {
 			super.createChildren(item);
 		}
