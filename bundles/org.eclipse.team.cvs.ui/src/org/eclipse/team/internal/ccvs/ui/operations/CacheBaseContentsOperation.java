@@ -36,11 +36,9 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 
-	private final boolean includeOutgoing;
 
 	public CacheBaseContentsOperation(IWorkbenchPart part, ResourceMapping[] mappings, IResourceDiffTree tree, boolean includeOutgoing) {
 		super(part, mappings, tree);
-		this.includeOutgoing = includeOutgoing;
 	}
 
 	/* (non-Javadoc)

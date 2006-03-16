@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.history;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
@@ -21,7 +20,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.history.IFileHistory;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 
 public class LocalHistoryTableProvider {
@@ -98,10 +96,6 @@ public class LocalHistoryTableProvider {
 	private static final int COL_DATE = 0;
 	private static final int COL_AUTHOR = 1;
 	private static final int COL_COMMENT = 2;
-	
-	private IFileHistory currentFileHistory;
-	private Object currentFile;
-	private Object currentRevision;
 
 	protected IFileState adaptToFileState(Object element) {
 		// Get the log entry for the provided object
@@ -180,10 +174,4 @@ public class LocalHistoryTableProvider {
 		//col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(50, true));
 	}
-
-	public void setFile(IFileHistory fileHistory, IFile newfile) {
-		this.currentFileHistory = fileHistory;
-		this.currentFile = newfile;
-	}
-
 }

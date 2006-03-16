@@ -220,7 +220,7 @@ public class CVSDecoration {
 			decoration.addPrefix(prefix);
 		ImageDescriptor overlay = getOverlay();
 		if(overlay != null)
-			decoration.addOverlay(getOverlay());
+			decoration.addOverlay(overlay);
 		Color bc = getBackgroundColor();
 		if(bc != null)
 			decoration.setBackgroundColor(bc);
@@ -293,6 +293,9 @@ public class CVSDecoration {
 			}
 			return checkedIn;
 		}
+		if (needsMerge)
+			return merged;
+		
 		//nothing matched
 		return null;
 	}	

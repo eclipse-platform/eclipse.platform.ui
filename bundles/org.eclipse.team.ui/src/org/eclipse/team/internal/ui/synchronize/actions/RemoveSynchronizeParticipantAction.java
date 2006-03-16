@@ -136,7 +136,7 @@ public class RemoveSynchronizeParticipantAction extends Action {
 					view.getSite().getShell(), TeamUIMessages.RemoveSynchronizeParticipantAction_3,
 				null, message, MessageDialog.QUESTION, buttons, 0);
 			
-			int choice = choice = d.open();
+			int choice = d.open();
 
 			// Branch on the user choice.
 			// The choice id is based on the order of button labels

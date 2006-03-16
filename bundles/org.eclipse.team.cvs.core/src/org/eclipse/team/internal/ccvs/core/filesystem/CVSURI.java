@@ -52,7 +52,7 @@ public class CVSURI {
 		if (i == -1) {
 			return CVSTag.DEFAULT;
 		}
-		String name = f.substring(i + 1);
+		
 		return new CVSTag();//just use HEAD for now (name, CVSTag.BRANCH);
 	}
 

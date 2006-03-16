@@ -2,23 +2,10 @@ package org.eclipse.team.internal.ccvs.core.filesystem;
 
 import java.util.HashMap;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.RLog;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
@@ -48,7 +35,7 @@ public class RemoteLogger {
 			try {
 				session.open(Policy.subMonitorFor(monitor, 10));
 				RLog rlog = new RLog();
-				IStatus status = rlog.execute(session, Command.NO_GLOBAL_OPTIONS, localOptions, new ICVSRemoteResource[] {this.remoteFolder}, listener, Policy.subMonitorFor(monitor, 90));
+				rlog.execute(session, Command.NO_GLOBAL_OPTIONS, localOptions, new ICVSRemoteResource[] {this.remoteFolder}, listener, Policy.subMonitorFor(monitor, 90));
 			} catch (CVSException e) {
 			}
 		} finally {
@@ -131,7 +118,6 @@ public class RemoteLogger {
 
 	private void verifyRevision(CVSTag tag, ILogEntry entry, ICVSRemoteFile remoteFile) throws CVSException {
 		if (entry instanceof LogEntry) {
-			int finalRevisionNumber;
 			LogEntry logEntry = (LogEntry) entry;
 			String[] allBranchRevisions = logEntry.getBranchRevisions();
 			CVSTag[] allCVSTags = entry.getTags();

@@ -17,8 +17,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -169,17 +167,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			}
 		}
 
-	};
-
-	/**
-	 * The action bar property listener. 
-	 */
-	private IPropertyChangeListener actionBarPropListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS) && currentPageContainer.getPage() != null && event.getSource() == currentPageContainer.getSubBars()) {
-				refreshGlobalActionHandlers();
-			}
-		}
 	};
 
 	private boolean linkingEnabled;
@@ -340,17 +327,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Prepares the page in the given page rec for use
-	 * in this view.
-	 * @param rec
-	 */
-	private void preparePage(PageContainer pageContainer) {
-		pageContainer.getSubBars().addPropertyChangeListener(actionBarPropListener);
-		//for backward compability with IPage
-		pageContainer.getPage().setActionBars(pageContainer.getSubBars());
 	}
 
 	/**

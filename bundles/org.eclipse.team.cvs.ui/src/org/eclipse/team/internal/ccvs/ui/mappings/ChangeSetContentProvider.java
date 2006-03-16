@@ -282,12 +282,10 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		final Object input = getViewer().getInput();
 		if (input instanceof ChangeSetModelProvider) {
 			if (set instanceof ActiveChangeSet) {
-				ActiveChangeSet acs = (ActiveChangeSet) set;
 				// TODO: may need to be more precise that this
 				return getConfiguration().getMode() != ISynchronizePageConfiguration.INCOMING_MODE;
 			}
 			if (set instanceof DiffChangeSet) {
-				DiffChangeSet dcs = (DiffChangeSet) set;
 				// TODO: may need to be more precise that this
 				return getConfiguration().getMode() != ISynchronizePageConfiguration.OUTGOING_MODE;
 			}

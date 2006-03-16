@@ -594,7 +594,7 @@ public class RemoteFolderTreeBuilder {
 								// The change could be a local change conflicting with a remote deletion.
 								// If so, the deltas may already have a DELETED for the file.
 								// We shouldn't override this DELETED
-								Map deltas = deltas = (Map)fileDeltas.get(Util.removeLastSegment(filename));
+								Map deltas = (Map)fileDeltas.get(Util.removeLastSegment(filename));
 								DeltaNode d = deltas != null ? (DeltaNode)deltas.get(Util.getLastSegment(filename)) : null;
 								if ((d!=null) && (d.getRevision() == DELETED))
 									break;
