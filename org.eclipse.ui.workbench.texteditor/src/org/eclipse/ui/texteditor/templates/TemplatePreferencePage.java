@@ -643,10 +643,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 						fTemplateStore.add(data);
 					}
 				} finally {
-					try {
-						input.close();
-					} catch (IOException x) {
-						// ignore
+					if (input != null) {
+						try {
+							input.close();
+						} catch (IOException x) {
+							// ignore
+						}
 					}
 				}
 			}
