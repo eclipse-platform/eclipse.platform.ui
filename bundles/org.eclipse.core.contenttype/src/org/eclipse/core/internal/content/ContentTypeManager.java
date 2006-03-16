@@ -37,41 +37,43 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	/**
 	 * Creates and initializes the platform's content type manager. A reference to the
 	 * content type manager can later be obtained by calling <code>getInstance()</code>.
-	 * <p>
-	 * Since calling this method will cause the content type manager to register a registry change listener, 
-	 * this method must be called while the extension registry is available.
-	 * </p>
 	 */
+	// TODO we can remove this sometime, it is no longer needed
 	public static void startup() {
-		instance = new ContentTypeManager();
-		RegistryFactory.getRegistry().addRegistryChangeListener(instance, IContentConstants.RUNTIME_NAME);
-		RegistryFactory.getRegistry().addRegistryChangeListener(instance, IContentConstants.CONTENT_NAME);
+		getInstance();
+	}
+
+	public static void addRegistryChangeListener(IExtensionRegistry registry) {
+		if (registry == null)
+			return;
+		registry.addRegistryChangeListener(getInstance(), IContentConstants.RUNTIME_NAME);
+		registry.addRegistryChangeListener(getInstance(), IContentConstants.CONTENT_NAME);
 	}
 
 	/**
 	 * Shuts down the platform's content type manager. After this call returns,
 	 * the content type manager will be closed for business.
-	 * <p>
-	 * Since calling this method will cause the content type manager to unregister a registry change listener, 
-	 * this method must be called while the extension registry is available.
-	 * </p>
 	 */
 	public static void shutdown() {
-		RegistryFactory.getRegistry().removeRegistryChangeListener(instance);
+		// there really is nothing left to do except null the instance.
 		instance = null;
+	}
+
+	public static void removeRegistryChangeListener(IExtensionRegistry registry) {
+		if (registry == null)
+			return;
+		getInstance().invalidate();
+		registry.removeRegistryChangeListener(getInstance());
 	}
 
 	/**
 	 * Obtains this platform's content type manager. 
-	 * <p>
-	 * It has to have been created first by a call to <code>create()</code>,
-	 * otherwise an <code>AssertionFailedException</code> will be thrown.
-	 * </p> 
 	 * 
 	 * @return the content type manager
 	 */
 	public static ContentTypeManager getInstance() {
-		Assert.isNotNull(instance);
+		if (instance == null)
+			instance = new ContentTypeManager();
 		return instance;
 	}
 

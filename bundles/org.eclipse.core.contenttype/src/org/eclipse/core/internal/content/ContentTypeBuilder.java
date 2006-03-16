@@ -181,6 +181,8 @@ public class ContentTypeBuilder {
 	 */
 	protected IConfigurationElement[] getConfigurationElements() {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		if (registry == null)
+			return emptyConfArray;
 		IConfigurationElement[] oldConfigElements = emptyConfArray;
 		IConfigurationElement[] newConfigElements = emptyConfArray;
 		// "old" extenstion point

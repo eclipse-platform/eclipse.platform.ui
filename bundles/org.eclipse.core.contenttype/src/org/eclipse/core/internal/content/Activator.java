@@ -12,21 +12,24 @@ package org.eclipse.core.internal.content;
 
 import java.util.Hashtable;
 import javax.xml.parsers.SAXParserFactory;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * The bundle activator for the runtime content manager plug-in.
  */
-public class Activator implements BundleActivator {
+public class Activator implements BundleActivator, ServiceTrackerCustomizer {
 
 	private static Activator singleton;
 	private static BundleContext bundleContext;
 	private ServiceRegistration contentManagerService = null;
 	private ServiceTracker parserTracker = null;
 	private ServiceTracker debugTracker = null;
+	private ServiceTracker registryTracker = null;
 
 	/*
 	 * Return this activator's singleton instance or null if it has not been started.
@@ -44,6 +47,8 @@ public class Activator implements BundleActivator {
 		// ContentTypeManager should be started first
 		ContentTypeManager.startup();
 		contentManagerService = bundleContext.registerService(IContentTypeManager.class.getName(), ContentTypeManager.getInstance(), new Hashtable());
+		registryTracker = new ServiceTracker(context, IExtensionRegistry.class.getName(), this);
+		registryTracker.open();
 	}
 
 	/* (non-Javadoc)
@@ -61,6 +66,10 @@ public class Activator implements BundleActivator {
 		if (debugTracker != null) {
 			debugTracker.close();
 			debugTracker = null;
+		}
+		if (registryTracker != null) {
+			registryTracker.close();
+			registryTracker = null;
 		}
 		ContentTypeManager.shutdown();
 		bundleContext = null;
@@ -104,5 +113,21 @@ public class Activator implements BundleActivator {
 				return "true".equalsIgnoreCase(value); //$NON-NLS-1$
 		}
 		return defaultValue;
+	}
+
+	public Object addingService(ServiceReference reference) {
+		IExtensionRegistry registry = (IExtensionRegistry) bundleContext.getService(reference);
+		// registry is available; add the change listener
+		ContentTypeManager.addRegistryChangeListener(registry);
+		return registry;
+	}
+
+	public void modifiedService(ServiceReference reference, Object service) {
+		// do nothing
+	}
+
+	public void removedService(ServiceReference reference, Object service) {
+		// registry is unavailable; remove the change listener
+		ContentTypeManager.removeRegistryChangeListener((IExtensionRegistry) service); 
 	}
 }
