@@ -29,6 +29,9 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 
 /**
  * A label provider wrapper that adds synchronization image and/or text decorations
@@ -39,7 +42,7 @@ import org.eclipse.team.ui.ISharedImages;
 public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider {
 	
 	// Cache for images that have been overlayed
-	private Map fgImageCache;
+	private Map fgImageCache = new HashMap(10);
 	
 	// Font used to display busy elements
 	private Font busyFont;
@@ -93,9 +96,26 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	protected Image getDelegateImage(Object element) {
 		ILabelProvider modelLabelProvider = getDelegateLabelProvider();
 		Image base = modelLabelProvider.getImage(internalGetElement(element));
+		if (base == null && element instanceof ModelProvider) {
+			ModelProvider mp = (ModelProvider) element;
+			base = (Image)fgImageCache.get(mp);
+			if (base == null) {
+				ImageDescriptor desc = getImageDescriptor(mp);
+				if (desc != null) {
+					base = desc.createImage();
+					fgImageCache.put(mp, base);
+				}
+			}
+		}
 		return base;
 	}
 
+	private ImageDescriptor getImageDescriptor(ModelProvider provider) {
+		ITeamContentProviderManager manager = TeamUI.getTeamContentProviderManager();
+		ITeamContentProviderDescriptor desc = manager.getDescriptor(provider.getId());
+		return desc.getImageDescriptor();
+	}
+	
 	private Object internalGetElement(Object element) {
 		if (element instanceof TreePath) {
 			TreePath tp = (TreePath) element;
@@ -296,9 +316,6 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 				locationInts[i] = ((Integer) locations.get(i)).intValue();
 			}
 			ImageDescriptor overlay = new OverlayIcon(base, overlayImages, locationInts, new Point(base.getBounds().width, base.getBounds().height));
-			if (fgImageCache == null) {
-				fgImageCache = new HashMap(10);
-			}
 			Image conflictDecoratedImage = (Image) fgImageCache.get(overlay);
 			if (conflictDecoratedImage == null) {
 				conflictDecoratedImage = overlay.createImage();
