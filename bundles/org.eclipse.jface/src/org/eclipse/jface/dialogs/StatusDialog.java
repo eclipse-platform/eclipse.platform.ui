@@ -220,16 +220,33 @@ public abstract class StatusDialog extends TrayDialog {
 		}
 
 		layout.marginHeight = 0;
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+        if (!fStatusLineAboveButtons && isHelpAvailable()) {
+        	createHelpControl(composite);
+        }
 		fStatusLine = new MessageLine(composite);
 		fStatusLine.setAlignment(SWT.LEFT);
-		fStatusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
 		fStatusLine.setErrorStatus(null);
+        if (fStatusLineAboveButtons && isHelpAvailable()) {
+        	statusData.horizontalSpan = 2;
+        	createHelpControl(composite);
+        }
+		fStatusLine.setLayoutData(statusData);
 		applyDialogFont(composite);
+		
+		/*
+		 * Create the rest of the button bar, but tell it not to
+		 * create a help button (we've already created it).
+		 */
+		boolean helpAvailable = isHelpAvailable();
+		setHelpAvailable(false);
 		super.createButtonBar(composite);
+		setHelpAvailable(helpAvailable);
 		return composite;
 	}
 
