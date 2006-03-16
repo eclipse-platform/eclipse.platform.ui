@@ -252,12 +252,12 @@ public class DebugUIMessages extends NLS {
 	public static String ViewPaneOrientationAction_3;
 	public static String GoToAddressComposite_0;
 	public static String GoToAddressComposite_1;
-	public static String GoToAddressComposite_2;	
+	public static String GoToAddressComposite_2;
+	public static String GoToAddressComposite_3;
+	public static String GoToAddressComposite_4;
 	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
 	}
-
-
 }

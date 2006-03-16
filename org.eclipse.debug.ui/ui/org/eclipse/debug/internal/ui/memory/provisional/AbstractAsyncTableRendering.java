@@ -2790,7 +2790,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	private void doGoToAddress() {
 		try {
-			String exp = fGoToAddressAction.parseExpression(fGoToAddressComposite.getExpressionText());
+			String exp = null;
+			if (fGoToAddressComposite.isOffset())
+				exp = getOffsetAddress(getSelectedAddress(), fGoToAddressComposite.getExpressionText());
+			else
+				exp = fGoToAddressAction.parseExpression(fGoToAddressComposite.getExpressionText());
 			fGoToAddressAction.doGoToAddress(exp);
 			hideGotoAddressComposite();
 		} catch (DebugException e1) {
@@ -2801,6 +2805,37 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
 				DebugUIMessages.GoToAddressAction_Address_is_invalid, null);
 		}
+	}
+	
+	private String getOffsetAddress(BigInteger address, String expression) throws NumberFormatException
+	{
+		boolean add = true;
+		boolean hex = false;
+		
+		if (expression.startsWith("+")) //$NON-NLS-1$
+		{
+			expression = expression.substring(1);
+		}
+		else if (expression.startsWith("-")) //$NON-NLS-1$
+		{
+			expression = expression.substring(1);
+			add = false;
+		}
+		
+		if (expression.startsWith("0x") || expression.startsWith("0X")) //$NON-NLS-1$ //$NON-NLS-2$
+			hex = true;
+		
+		expression = fGoToAddressAction.parseExpression(expression);
+		
+		BigInteger gotoAddress = hex?new BigInteger(expression, 16):new BigInteger(expression);
+		
+		if (add)
+			gotoAddress = address.add(gotoAddress);
+		else
+			gotoAddress = address.subtract(gotoAddress);
+		
+		return gotoAddress.toString(16);
+			
 	}
 	
 	public void activated() {

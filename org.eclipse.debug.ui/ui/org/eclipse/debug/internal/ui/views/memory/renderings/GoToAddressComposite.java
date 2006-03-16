@@ -13,6 +13,8 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,6 +30,7 @@ public class GoToAddressComposite {
 	private Button fOKButton;
 	private Button fCancelButton;
 	private Composite fComposite;
+	private Button fOffsetButton;
 	
 	/**
 	 * @param parent
@@ -37,7 +40,7 @@ public class GoToAddressComposite {
 	{
 		fComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 4;
+		layout.numColumns = 5;
 		layout.makeColumnsEqualWidth = false;
 		layout.marginHeight = 0;
 		layout.marginLeft = 0;
@@ -49,9 +52,20 @@ public class GoToAddressComposite {
 		fExpression = new Text(fComposite, SWT.SINGLE | SWT.BORDER);
 		fExpression.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		fOffsetButton = new Button(fComposite, SWT.CHECK);
+		fOffsetButton.setText(DebugUIMessages.GoToAddressComposite_3);
+		fOffsetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fOffsetButton.getSelection())
+					fLabel.setText(DebugUIMessages.GoToAddressComposite_4);
+				else
+					fLabel.setText(DebugUIMessages.GoToAddressComposite_0);
+				fComposite.layout();
+			}});
+		
+		
 		fOKButton = new Button(fComposite, SWT.NONE);
 		fOKButton.setText(DebugUIMessages.GoToAddressComposite_1);
-
 		
 		fCancelButton = new Button(fComposite, SWT.NONE);
 		fCancelButton.setText(DebugUIMessages.GoToAddressComposite_2);
@@ -83,4 +97,11 @@ public class GoToAddressComposite {
 	{
 		return fExpression;
 	}
+	
+	public boolean isOffset()
+	{
+		return fOffsetButton.getSelection();
+	}
+	
+
 }
