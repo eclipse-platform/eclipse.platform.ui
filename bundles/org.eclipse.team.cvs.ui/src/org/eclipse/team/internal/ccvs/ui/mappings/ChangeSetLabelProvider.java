@@ -93,15 +93,7 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 			DiffChangeSet set = internalGetChangeSet(elementOrPath);
 			if (set != null) {
 				ResourceTraversal[] traversals = getTraversalCalculator().getTraversals(set, (TreePath)elementOrPath);
-				return (getContext().getDiffTree().hasMatchingDiffs(traversals, new FastDiffFilter() {
-					public boolean select(IDiff diff) {
-						if (diff instanceof IThreeWayDiff) {
-							IThreeWayDiff twd = (IThreeWayDiff) diff;
-							return twd.getDirection() == IThreeWayDiff.CONFLICTING;
-						}
-						return false;
-					}
-				}));
+				return (getContext().getDiffTree().hasMatchingDiffs(traversals, CONFLICT_FILTER));
 			}
 		}
 		return super.hasDecendantConflicts(elementOrPath);

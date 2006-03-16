@@ -17,8 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.*;
@@ -34,6 +33,16 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 public class ResourceModelLabelProvider extends
 		SynchronizationLabelProvider implements IFontProvider, IResourceChangeListener, ITreePathLabelProvider {
 
+	public static final FastDiffFilter CONFLICT_FILTER = new FastDiffFilter() {
+		public boolean select(IDiff diff) {
+			if (diff instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) diff;
+				return twd.getDirection() == IThreeWayDiff.CONFLICTING;
+			}
+			return false;
+		}
+	};
+	
 	private ILabelProvider provider = new WorkbenchLabelProvider();
 	private ResourceModelContentProvider contentProvider;
 	private Image compressedFolderImage;
@@ -101,6 +110,13 @@ public class ResourceModelLabelProvider extends
 		return super.isBusy(elementOrPath);
 	}
 	
+	private TreePath internalGetPath(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			return (TreePath) elementOrPath;
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#hasDecendantConflicts(java.lang.Object)
 	 */
@@ -108,7 +124,10 @@ public class ResourceModelLabelProvider extends
 		IResource resource = getResource(elementOrPath);
 		IResourceDiffTree tree = getDiffTree(elementOrPath);
 		if (tree != null && resource != null) {
-			return tree.getProperty(resource.getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
+			int depth = getTraversalCalculator().getLayoutDepth(resource, internalGetPath(elementOrPath));
+			if (depth == IResource.DEPTH_INFINITE || resource.getType() == IResource.FILE)
+				return tree.getProperty(resource.getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
+			return tree.hasMatchingDiffs(getTraversalCalculator().getTraversals(resource, internalGetPath(elementOrPath)), CONFLICT_FILTER);
 		}
 		return super.hasDecendantConflicts(elementOrPath);
 	}
