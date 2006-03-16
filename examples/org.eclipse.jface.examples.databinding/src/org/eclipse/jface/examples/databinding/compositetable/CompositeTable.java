@@ -329,7 +329,7 @@ public class CompositeTable extends Canvas {
 			if (finalChildren[i] instanceof Composite) {
 				Composite child = (Composite) finalChildren[i];
 				if (child.getLayout() == null) {
-					height = layoutHeaderOrRow(child);
+					height = layoutHeaderOrRow(child, i==0);	// The 0th element is the header
 				} else {
 					height = finalChildren[i].computeSize(SWT.DEFAULT,
 							SWT.DEFAULT).y;
@@ -357,9 +357,10 @@ public class CompositeTable extends Canvas {
 	 * 
 	 * @param child
 	 *            The child object to layout.
+	 * @param isHeader If we're laying out a header or a row object
 	 * @return the height of the header or row
 	 */
-	int layoutHeaderOrRow(Composite child) {
+	int layoutHeaderOrRow(Composite child, boolean isHeader) {
 		Control[] children = child.getChildren();
 		if (children.length == 0) {
 			return 50;
@@ -369,8 +370,7 @@ public class CompositeTable extends Canvas {
 
 		int maxHeight = 0;
 		for (int i = 0; i < children.length; i++) {
-			int height = children[i]
-					.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+			int height = computeDesiredHeight(children[i], isHeader);
 			if (maxHeight < height) {
 				maxHeight = height;
 			}
@@ -381,8 +381,7 @@ public class CompositeTable extends Canvas {
 		int totalSize = widthRemaining;
 		for (int i = 0; i < children.length - 1; i++) {
 			int left = totalSize - widthRemaining;
-			int desiredHeight = children[i].computeSize(SWT.DEFAULT,
-					SWT.DEFAULT, false).y;
+			int desiredHeight = computeDesiredHeight(children[i], isHeader);
 			int top = maxHeight - desiredHeight - 1;
 			int width = (int) (((float) weights[i]) / 100 * totalSize);
 			children[i].setBounds(left + 2, top, width - 4, desiredHeight);
@@ -390,13 +389,29 @@ public class CompositeTable extends Canvas {
 		}
 
 		int left = totalSize - widthRemaining;
-		int desiredHeight = children[children.length - 1].computeSize(
-				SWT.DEFAULT, SWT.DEFAULT, false).y;
+		int desiredHeight = computeDesiredHeight(children[children.length - 1], isHeader);
 		int top = maxHeight - desiredHeight - 1;
 		children[children.length - 1].setBounds(left + 2, top,
 				widthRemaining - 4, desiredHeight);
 
 		return maxHeight;
+	}
+	
+	int computeDesiredHeight(Control control, boolean isHeader) {
+		int rowControlHeight = control.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT, false).y;
+		if (maxRowsVisible == Integer.MAX_VALUE || isHeader) {
+			return rowControlHeight;
+		}
+		if (fittingVertically && isRunTime()) {
+			// FIXME: Yuck: bad code smell here...  (coupling with contentPane)
+			int fitControlHeight = contentPane.clientAreaHeight / maxRowsVisible;
+			if (fitControlHeight < rowControlHeight) {
+				return rowControlHeight;
+			}
+			return fitControlHeight-2;
+		}
+		return rowControlHeight;
 	}
 
 	/**

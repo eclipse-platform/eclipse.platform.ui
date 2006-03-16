@@ -75,6 +75,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	private int numRowsVisible = 0;
 	private LinkedList rows = new LinkedList();
 	private LinkedList spareRows = new LinkedList();
+	int clientAreaHeight;
 
 	// The prototype header/row objects and Constructors so we can duplicate them
 	private Constructor headerConstructor;
@@ -100,6 +101,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 		controlHolder.addListener(SWT.MouseWheel, this);
 
 		maxRowsVisible = parent.getMaxRowsVisible();
+		fittingVertically = parent.isFittingVertically();
 		numRowsInCollection = parent.getNumRowsInCollection();
 		topRow = parent.getTopRow();
 		
@@ -265,10 +267,10 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 */
 	protected void layoutControlHolder() {
 		if (myHeader != null)
-			layoutChild(myHeader);
+			layoutChild(myHeader, true);
 		for (Iterator rowsIter = rows.iterator(); rowsIter.hasNext();) {
 			TableRow row = (TableRow) rowsIter.next();
-			layoutChild(row.getRowControl());
+			layoutChild(row.getRowControl(), false);
 		}
 		updateVisibleRows();
 	}
@@ -279,13 +281,14 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * Otherwise, we use the built in table layout manager.
 	 * 
 	 * @param child The row or header control to layout.
+	 * @param isHeader TODO
 	 * @return height of child
 	 */
-	private int layoutChild(Control child) {
+	private int layoutChild(Control child, boolean isHeader) {
 		if (child instanceof Composite) {
 			Composite composite = (Composite) child;
 			if (composite.getLayout() == null) {
-				return parent.layoutHeaderOrRow(composite);
+				return parent.layoutHeaderOrRow(composite, isHeader);
 			}
 			composite.layout(true);
 			return composite.getSize().y;
@@ -324,7 +327,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 					headerComp.addPaintListener(headerPaintListener);
 				}
 			}
-			layoutChild(myHeader);
+			layoutChild(myHeader, true);
 		}
 	}
 	
@@ -344,8 +347,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 			return;
 		}
 		
-		// Figure out how many rows we can stack vertically
-		int clientAreaHeight = controlHolder.getSize().y;
+		clientAreaHeight = controlHolder.getSize().y;
 		if (clientAreaHeight <= 0) {
 			return;
 		}
@@ -358,7 +360,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 			clientAreaHeight -= headerHeight;
 			topPosition += headerHeight;
 		}
-		numRowsInDisplay = clientAreaHeight / rowControl.getSize().y;
+		numRowsInDisplay = clientAreaHeight / getRowHeight(clientAreaHeight);
 		
 		// Make sure we have something to lay out to begin with
 		if (numRowsInCollection > 0) {
@@ -451,16 +453,30 @@ public class InternalCompositeTable extends Composite implements Listener {
 		}
 		
 		// Now the rows.
-		int rowHeight = 50;
-		rowHeight = rowControl.getSize().y;
+		int rowHeight = getRowHeight(clientAreaHeight);
 		
 		for (Iterator rowsIter = rows.iterator(); rowsIter.hasNext();) {
 			TableRow row = (TableRow) rowsIter.next();
 			Control rowControl = row.getRowControl();
 			rowControl.setBounds(0, topPosition, width, rowHeight);
-			layoutChild(rowControl);
+			layoutChild(rowControl, false);
 			topPosition += rowHeight;
 		}
+	}
+
+	int getRowHeight(int clientAreaHeight) {
+		int rowControlHeight = rowControl.getSize().y;
+		if (maxRowsVisible == Integer.MAX_VALUE) {
+			return rowControlHeight;
+		}
+		if (fittingVertically) {
+			int fitControlHeight = clientAreaHeight / maxRowsVisible;
+			if (fitControlHeight < rowControlHeight) {
+				return rowControlHeight;
+			}
+			return fitControlHeight;
+		}
+		return rowControlHeight;
 	}
 
 	/**
