@@ -298,9 +298,14 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	public abstract AbstractUpdatePolicy createUpdatePolicy();
 
 	Image[] getImages(ImageDescriptor[] descriptors) {
-		if (descriptors == null || descriptors.length == 0) {
-			return new Image[0];
-		}
+        if (descriptors == null || descriptors.length == 0) {
+            String[] columns = getPresentationContext().getColumns();
+            if (columns == null) {
+                return new Image[1];
+            } else {
+                return new Image[columns.length];
+            }
+        }
 		Image[] images = new Image[descriptors.length];
 		for (int i = 0; i < images.length; i++) {
 			images[i] = getImage(descriptors[i]);
@@ -329,8 +334,13 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	}
 
 	protected Font[] getFonts(FontData[] fontDatas) {
-		if (fontDatas == null) {
-			return new Font[0];
+		if (fontDatas == null || fontDatas.length == 0) {
+            String[] columns = getPresentationContext().getColumns();
+            if (columns == null) {
+                return new Font[1];
+            } else {
+                return new Font[columns.length];
+            }
 		}
 		
 		Font[] fonts = new Font[fontDatas.length];
@@ -359,10 +369,15 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return font;
 	}
 	
-	protected Color[] getColor(RGB[] rgb) {
-		if (rgb == null) {
-			return new Color[0];
-		}
+	protected Color[] getColors(RGB[] rgb) {
+        if (rgb == null || rgb.length == 0) {
+            String[] columns = getPresentationContext().getColumns();
+            if (columns == null) {
+                return new Color[1];
+            } else {
+                return new Color[columns.length];
+            }
+        }
 		Color[] colors = new Color[rgb.length];
 		for (int i = 0; i < colors.length; i++) {
 			colors[i] = getColor(rgb[i]);

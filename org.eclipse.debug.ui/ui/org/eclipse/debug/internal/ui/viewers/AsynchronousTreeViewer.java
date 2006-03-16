@@ -1039,11 +1039,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     protected void setColors(Widget widget, RGB[] foregrounds, RGB[] backgrounds) {
         if (widget instanceof TreeItem) {
             TreeItem item = (TreeItem) widget;
-            Color[] fgs = getColor(foregrounds);
+            Color[] fgs = getColors(foregrounds);
             for (int i = 0; i < fgs.length; i++) {
 				item.setForeground(i, fgs[i]);
 			}
-            Color[] bgs = getColor(backgrounds);
+            Color[] bgs = getColors(backgrounds);
             for (int i = 0; i < bgs.length; i++) {
                 item.setBackground(i, bgs[i]);
             }
