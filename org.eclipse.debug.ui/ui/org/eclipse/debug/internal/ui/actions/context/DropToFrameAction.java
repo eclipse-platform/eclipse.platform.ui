@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.IDropToFrame;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -47,22 +46,6 @@ public class DropToFrameAction extends AbstractDebugContextAction {
             if (dropper != null) 
                 dropper.canDropToFrame(element, monitor);
         }
-    }
-
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#getTarget(java.lang.Object)
-     */
-    protected Object getTarget(Object selectee) {
-        if (selectee instanceof IDropToFrame) {
-            return selectee;
-        }
-        if (selectee instanceof IAdaptable) {
-            return ((IAdaptable) selectee).getAdapter(IDropToFrame.class);
-        }
-        return null;
     }
 
     /*

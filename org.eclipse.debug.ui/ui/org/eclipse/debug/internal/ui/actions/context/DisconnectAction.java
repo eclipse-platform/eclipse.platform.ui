@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -64,21 +63,6 @@ public class DisconnectAction extends AbstractDebugContextAction {
      */
     protected String getErrorDialogMessage() {
         return ActionMessages.DisconnectActionDelegate_Disconnect_failed_1;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#getTarget(java.lang.Object)
-     */
-    protected Object getTarget(Object selectee) {
-        if (selectee instanceof IDisconnect) {
-            return selectee;
-        }
-        if (selectee instanceof IAdaptable) {
-            return ((IAdaptable) selectee).getAdapter(IDisconnect.class);
-        }
-        return null;
     }
 
     /*

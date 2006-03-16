@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -46,16 +45,6 @@ public class TerminateAction extends AbstractDebugContextAction {
 
     protected String getErrorDialogMessage() {
         return ActionMessages.TerminateActionDelegate_Terminate_failed__1;
-    }
-
-    protected Object getTarget(Object selectee) {
-        if (selectee instanceof ITerminate) {
-            return selectee;
-        }
-        if (selectee instanceof IAdaptable) {
-            return ((IAdaptable) selectee).getAdapter(ITerminate.class);
-        }
-        return null;
     }
 
     public String getText() {

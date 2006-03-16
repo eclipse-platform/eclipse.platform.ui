@@ -111,21 +111,8 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         Iterator itr = selection.iterator();
         while (itr.hasNext()) {
             Object element = itr.next();
-            Object target = getTarget(element);
-            if (target != null)
-                isEnabledFor(target, monitor);
+            isEnabledFor(element, monitor);
         }
-    }
-
-    /**
-     * Translates the selected object to the target to operate on as required.
-     * For example, an adapter on the selection.
-     * 
-     * @param selectee
-     * @return target to operate/enable action on
-     */
-    protected Object getTarget(Object selectee) {
-        return selectee;
     }
 
     protected abstract void isEnabledFor(Object element, IBooleanRequestMonitor monitor);
@@ -172,8 +159,7 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
             setEnabled(false);
             for (Iterator iter = selection.iterator(); iter.hasNext();) {
                 Object element = iter.next();
-                Object target = getTarget(element);
-                doAction(target);
+                doAction(element);
             }
         }
     }
