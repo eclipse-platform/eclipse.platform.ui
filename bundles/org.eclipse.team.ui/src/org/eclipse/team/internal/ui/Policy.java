@@ -64,4 +64,10 @@ public class Policy {
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
 	}
+
+	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		return monitor;
+	}
 }
