@@ -832,13 +832,11 @@ public class BrowserViewer extends Composite {
     }
 
     public boolean setFocus() {
-        if (combo != null)
-            combo.setFocus();
-        else if (browser!=null)
+        if (browser!=null) {
             browser.setFocus();
-        else if (text!=null)
-            text.setFocus();
-        updateHistory();
+            updateHistory();
+            return true;
+        }
         return super.setFocus();
     }
 
